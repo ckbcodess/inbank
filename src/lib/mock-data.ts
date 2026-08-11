@@ -1,0 +1,1000 @@
+/**
+ * Mock domain data for the NIBS MVP prototype.
+ *
+ * No backend — every screen reads from here so the state models in section 13
+ * can be exercised directly from the UI.
+ */
+
+import type { Actor, Profile } from "./roles";
+import type { TransactionKind, TransactionState, TradeApprovalState } from "./states";
+import { getGlobalShowAmounts } from "@/components/providers/AmountVisibilityProvider";
+
+/* ── Actors ────────────────────────────────────────────────────────────────── */
+
+const RETAIL_PROFILE: Profile = {
+  id: "prof-retail",
+  kind: "RETAIL",
+  name: "Personal Banking",
+  reference: "•••• 4821",
+};
+
+const CORPORATE_PROFILE: Profile = {
+  id: "prof-corp",
+  kind: "CORPORATE",
+  name: "Adinkra Textiles Ltd",
+  reference: "CORP-90114",
+};
+
+/**
+ * Demo identities. Each is a separate credential — per section 12.1 no identity
+ * spans both shells, which is why internal staff carry no profiles.
+ */
+export const ACTORS: Actor[] = [
+  {
+    id: "u-retail",
+    name: "Ama Serwaa",
+    email: "ama.serwaa@example.com",
+    role: "RETAIL_CUSTOMER",
+    shell: "customer",
+    profiles: [RETAIL_PROFILE],
+    tradeEligible: false,
+  },
+  {
+    id: "u-dual",
+    name: "Kwame Boateng",
+    email: "kwame.boateng@example.com",
+    role: "CORPORATE_MAKER",
+    shell: "customer",
+    // Holds two relationships → Profile Selection (S03) is shown at login.
+    profiles: [RETAIL_PROFILE, CORPORATE_PROFILE],
+    tradeEligible: true,
+  },
+  {
+    id: "u-approver",
+    name: "Efua Mensah",
+    email: "efua.mensah@example.com",
+    role: "CORPORATE_APPROVER",
+    shell: "customer",
+    profiles: [RETAIL_PROFILE, CORPORATE_PROFILE],
+    tradeEligible: true,
+  },
+  {
+    id: "u-corpadmin",
+    name: "Yaw Oppong",
+    email: "yaw.oppong@example.com",
+    role: "CORPORATE_ADMIN",
+    shell: "customer",
+    profiles: [CORPORATE_PROFILE],
+    tradeEligible: true,
+  },
+  {
+    id: "u-tradeofficer",
+    name: "Nana Addo",
+    email: "nana.addo@bank.internal",
+    role: "TRADE_OFFICER",
+    shell: "admin",
+    profiles: [],
+    tradeEligible: false,
+  },
+  {
+    id: "u-ops",
+    name: "Abena Owusu",
+    email: "abena.owusu@bank.internal",
+    role: "OPERATIONS_USER",
+    shell: "admin",
+    profiles: [],
+    tradeEligible: false,
+  },
+  {
+    id: "u-bankadmin",
+    name: "Kofi Asante",
+    email: "kofi.asante@bank.internal",
+    role: "BANK_ADMIN",
+    shell: "admin",
+    profiles: [],
+    tradeEligible: false,
+  },
+];
+
+export function findActorByEmail(email: string): Actor | undefined {
+  return ACTORS.find((a) => a.email.toLowerCase() === email.trim().toLowerCase());
+}
+
+/* ── Accounts ──────────────────────────────────────────────────────────────── */
+
+export interface Account {
+  id: string;
+  name: string;
+  number: string;
+  type: "Current" | "Savings" | "Foreign Currency";
+  currency: string;
+  balance: number;
+  available: number;
+  status: "Active" | "Dormant";
+  profileKind?: "RETAIL" | "CORPORATE";
+}
+
+export const ACCOUNTS: Account[] = [
+  {
+    id: "acc-001",
+    name: "Corporate Current Account",
+    number: "1001 2345 6789",
+    type: "Current",
+    currency: "GHS",
+    balance: 1_284_530.44,
+    available: 1_190_000.0,
+    status: "Active",
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "acc-002",
+    name: "Payroll Account",
+    number: "1001 2345 7710",
+    type: "Current",
+    currency: "GHS",
+    balance: 342_118.9,
+    available: 342_118.9,
+    status: "Active",
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "acc-003",
+    name: "USD Trade Account",
+    number: "2200 8891 0043",
+    type: "Foreign Currency",
+    currency: "USD",
+    balance: 486_220.15,
+    available: 452_000.0,
+    status: "Active",
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "acc-004",
+    name: "Reserve Savings",
+    number: "3300 1122 5566",
+    type: "Savings",
+    currency: "GHS",
+    balance: 95_400.0,
+    available: 95_400.0,
+    status: "Dormant",
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "acc-ret-001",
+    name: "Personal Savings Account",
+    number: "4001 9922 1100",
+    type: "Savings",
+    currency: "GHS",
+    balance: 14_250.0,
+    available: 14_250.0,
+    status: "Active",
+    profileKind: "RETAIL",
+  },
+  {
+    id: "acc-ret-002",
+    name: "Personal Current Account",
+    number: "4001 9922 3344",
+    type: "Current",
+    currency: "GHS",
+    balance: 3_820.5,
+    available: 3_820.5,
+    status: "Active",
+    profileKind: "RETAIL",
+  },
+];
+
+export function accountsForProfile(kind: "RETAIL" | "CORPORATE" = "CORPORATE"): Account[] {
+  return ACCOUNTS.filter((a) => (a.profileKind ?? "CORPORATE") === kind);
+}
+
+export function findAccount(id: string): Account | undefined {
+  return ACCOUNTS.find((a) => a.id === id);
+}
+
+/* ── Transactions ──────────────────────────────────────────────────────────── */
+
+export interface Transaction {
+  id: string;
+  reference: string;
+  date: string;
+  valueDate: string;
+  description: string;
+  counterparty: string;
+  counterpartyAccount: string;
+  accountId: string;
+  currency: string;
+  amount: number;
+  direction: "debit" | "credit";
+  kind: TransactionKind;
+  state: TransactionState;
+  channel: string;
+  profileKind?: "RETAIL" | "CORPORATE";
+  /** Populated for failed states — drives the recovery path. */
+  failureReason?: string;
+  /** For failed-bulk: the batch this record belongs to. */
+  batchId?: string;
+  /** For failed-trade: the trade whose version history to open. */
+  tradeId?: string;
+  /** For reversed: reference of the reversing entry. */
+  reversalReference?: string;
+  fee?: number;
+}
+
+export const TRANSACTIONS: Transaction[] = [
+  {
+    id: "txn-001",
+    reference: "NIB-2026-884213",
+    date: "2026-08-10",
+    valueDate: "2026-08-10",
+    description: "Supplier payment — Accra Fabrics",
+    counterparty: "Accra Fabrics Ltd",
+    counterpartyAccount: "0231 4455 8890",
+    accountId: "acc-001",
+    currency: "GHS",
+    amount: 48_500.0,
+    direction: "debit",
+    kind: "single",
+    state: "completed",
+    channel: "Internet Banking",
+    fee: 12.5,
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "txn-002",
+    reference: "NIB-2026-884219",
+    date: "2026-08-10",
+    valueDate: "2026-08-11",
+    description: "Payroll batch — August",
+    counterparty: "Multiple (142 beneficiaries)",
+    counterpartyAccount: "—",
+    accountId: "acc-002",
+    currency: "GHS",
+    amount: 286_400.0,
+    direction: "debit",
+    kind: "bulk",
+    state: "pending",
+    channel: "Bulk Upload",
+    batchId: "batch-0091",
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "txn-003",
+    reference: "NIB-2026-884101",
+    date: "2026-08-09",
+    valueDate: "2026-08-09",
+    description: "Vendor settlement — Tema Logistics",
+    counterparty: "Tema Logistics",
+    counterpartyAccount: "0554 7781 2200",
+    accountId: "acc-001",
+    currency: "GHS",
+    amount: 15_750.0,
+    direction: "debit",
+    kind: "single",
+    state: "failed-single",
+    channel: "Internet Banking",
+    failureReason:
+      "Beneficiary account name does not match the account number at the receiving bank (FR-32).",
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "txn-004",
+    reference: "NIB-2026-883940",
+    date: "2026-08-08",
+    valueDate: "2026-08-08",
+    description: "Payroll record — K. Amoah",
+    counterparty: "Kwesi Amoah",
+    counterpartyAccount: "0119 2234 7781",
+    accountId: "acc-002",
+    currency: "GHS",
+    amount: 4_200.0,
+    direction: "debit",
+    kind: "bulk",
+    state: "failed-bulk",
+    channel: "Bulk Upload",
+    batchId: "batch-0090",
+    failureReason: "Record 37 of 140 — beneficiary account closed.",
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "txn-005",
+    reference: "TRD-2026-00417",
+    date: "2026-08-07",
+    valueDate: "2026-08-07",
+    description: "Documentary collection — cotton import",
+    counterparty: "Shenzhen Textile Group",
+    counterpartyAccount: "CN-8891-40023",
+    accountId: "acc-003",
+    currency: "USD",
+    amount: 128_000.0,
+    direction: "debit",
+    kind: "trade",
+    state: "failed-trade",
+    channel: "Trade Portal",
+    tradeId: "trade-0417",
+    failureReason:
+      "Returned by bank operations — commercial invoice does not match the bill of lading quantity.",
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "txn-006",
+    reference: "NIB-2026-883712",
+    date: "2026-08-06",
+    valueDate: "2026-08-06",
+    description: "Incoming transfer — Ghana Cocoa Board",
+    counterparty: "Ghana Cocoa Board",
+    counterpartyAccount: "0044 1123 9080",
+    accountId: "acc-001",
+    currency: "GHS",
+    amount: 512_000.0,
+    direction: "credit",
+    kind: "single",
+    state: "completed",
+    channel: "RTGS",
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "txn-ret-001",
+    reference: "NIB-2026-901124",
+    date: "2026-08-11",
+    valueDate: "2026-08-11",
+    description: "Supermarket Purchase — Melcom",
+    counterparty: "Melcom Stores",
+    counterpartyAccount: "0012 3456 7890",
+    accountId: "acc-ret-002",
+    currency: "GHS",
+    amount: 450.0,
+    direction: "debit",
+    kind: "single",
+    state: "completed",
+    channel: "POS Card",
+    profileKind: "RETAIL",
+  },
+  {
+    id: "txn-ret-002",
+    reference: "NIB-2026-901125",
+    date: "2026-08-10",
+    valueDate: "2026-08-10",
+    description: "Monthly Salary Credit",
+    counterparty: "Employer Ltd",
+    counterpartyAccount: "1001 2345 6789",
+    accountId: "acc-ret-002",
+    currency: "GHS",
+    amount: 8_500.0,
+    direction: "credit",
+    kind: "single",
+    state: "completed",
+    channel: "ACH Direct Credit",
+    profileKind: "RETAIL",
+  },
+  {
+    id: "txn-ret-003",
+    reference: "NIB-2026-901126",
+    date: "2026-08-08",
+    valueDate: "2026-08-08",
+    description: "Transfer to Savings",
+    counterparty: "Personal Savings Account",
+    counterpartyAccount: "4001 9922 1100",
+    accountId: "acc-ret-001",
+    currency: "GHS",
+    amount: 2_000.0,
+    direction: "credit",
+    kind: "single",
+    state: "completed",
+    channel: "Mobile Banking",
+    profileKind: "RETAIL",
+  },
+];
+
+export function findTransaction(id: string): Transaction | undefined {
+  return TRANSACTIONS.find((t) => t.id === id);
+}
+
+export function transactionsForAccount(accountId: string): Transaction[] {
+  return TRANSACTIONS.filter((t) => t.accountId === accountId);
+}
+
+export function transactionsForProfile(kind: "RETAIL" | "CORPORATE" = "CORPORATE"): Transaction[] {
+  return TRANSACTIONS.filter((t) => (t.profileKind ?? "CORPORATE") === kind);
+}
+
+/* ── Beneficiaries ─────────────────────────────────────────────────────────── */
+
+export interface Beneficiary {
+  id: string;
+  name: string;
+  accountNumber: string;
+  bank: string;
+  currency: string;
+}
+
+export const BENEFICIARIES: Beneficiary[] = [
+  { id: "ben-1", name: "Accra Fabrics Ltd", accountNumber: "0231 4455 8890", bank: "Standard Bank Ghana", currency: "GHS" },
+  { id: "ben-2", name: "Tema Logistics", accountNumber: "0554 7781 2200", bank: "Ecobank Ghana", currency: "GHS" },
+  { id: "ben-3", name: "Volta Machinery Ltd", accountNumber: "0661 9902 3345", bank: "Absa Ghana", currency: "GHS" },
+  { id: "ben-4", name: "Kumasi Supplies", accountNumber: "0788 3312 0091", bank: "GCB Bank", currency: "GHS" },
+  { id: "ben-5", name: "Shenzhen Textile Group", accountNumber: "CN-8891-40023", bank: "Bank of China", currency: "USD" },
+];
+
+/* ── Approval queue ────────────────────────────────────────────────────────── */
+
+export interface ApprovalItem {
+  id: string;
+  reference: string;
+  type: "payment" | "trade";
+  description: string;
+  counterparty: string;
+  currency: string;
+  amount: number;
+  submittedBy: string;
+  submittedAt: string;
+  /** Approver authority check — drives 13.4 within-limit vs exceeds-limit. */
+  approvalLimit: number;
+  priority: "standard" | "urgent";
+}
+
+export const APPROVAL_QUEUE: ApprovalItem[] = [
+  {
+    id: "apr-001",
+    reference: "NIB-2026-884260",
+    type: "payment",
+    description: "Equipment purchase — Volta Machinery",
+    counterparty: "Volta Machinery Ltd",
+    currency: "GHS",
+    amount: 96_000.0,
+    submittedBy: "Kwame Boateng",
+    submittedAt: "2026-08-11 09:14",
+    approvalLimit: 250_000.0,
+    priority: "standard",
+  },
+  {
+    id: "apr-002",
+    reference: "NIB-2026-884288",
+    type: "payment",
+    description: "Quarterly supplier settlement",
+    counterparty: "Accra Fabrics Ltd",
+    currency: "GHS",
+    amount: 480_000.0,
+    submittedBy: "Kwame Boateng",
+    submittedAt: "2026-08-11 10:02",
+    approvalLimit: 250_000.0, // exceeds → 13.4 exceeds-limit
+    priority: "urgent",
+  },
+  {
+    id: "apr-003",
+    reference: "TRD-2026-00421",
+    type: "trade",
+    description: "Letter of credit — cotton import Q3",
+    counterparty: "Shenzhen Textile Group",
+    currency: "USD",
+    amount: 210_000.0,
+    submittedBy: "Kwame Boateng",
+    submittedAt: "2026-08-10 16:41",
+    approvalLimit: 500_000.0,
+    priority: "standard",
+  },
+  {
+    id: "apr-004",
+    reference: "TRD-2026-00423",
+    type: "trade",
+    description: "Documentary collection — machinery parts",
+    counterparty: "Hamburg Werke GmbH",
+    currency: "USD",
+    amount: 74_500.0,
+    submittedBy: "Yaw Oppong",
+    submittedAt: "2026-08-11 08:30",
+    approvalLimit: 500_000.0,
+    priority: "standard",
+  },
+];
+
+export function findApproval(id: string): ApprovalItem | undefined {
+  return APPROVAL_QUEUE.find((a) => a.id === id);
+}
+
+/* ── Trade documents & versions (13.5) ─────────────────────────────────────── */
+
+export interface TradeDocument {
+  id: string;
+  name: string;
+  type: string;
+  pages: number;
+  uploadedAt: string;
+  status: "received" | "missing" | "superseded";
+}
+
+export const TRADE_DOCUMENTS: TradeDocument[] = [
+  { id: "doc-1", name: "Commercial Invoice", type: "PDF", pages: 3, uploadedAt: "2026-08-10 16:38", status: "received" },
+  { id: "doc-2", name: "Bill of Lading", type: "PDF", pages: 2, uploadedAt: "2026-08-10 16:39", status: "received" },
+  { id: "doc-3", name: "Packing List", type: "PDF", pages: 4, uploadedAt: "2026-08-10 16:40", status: "received" },
+  { id: "doc-4", name: "Certificate of Origin", type: "PDF", pages: 1, uploadedAt: "—", status: "missing" },
+  { id: "doc-5", name: "Insurance Certificate", type: "PDF", pages: 2, uploadedAt: "2026-08-10 16:41", status: "received" },
+];
+
+export interface TradeVersion {
+  version: number;
+  submittedAt: string;
+  submittedBy: string;
+  summary: string;
+}
+
+export const TRADE_VERSIONS: TradeVersion[] = [
+  { version: 1, submittedAt: "2026-08-04 11:20", submittedBy: "Kwame Boateng", summary: "Initial submission" },
+  { version: 2, submittedAt: "2026-08-08 09:55", submittedBy: "Kwame Boateng", summary: "Corrected invoice quantity after clarification" },
+  { version: 3, submittedAt: "2026-08-10 16:41", submittedBy: "Kwame Boateng", summary: "Added insurance certificate, revised incoterms" },
+];
+
+/** Field-level diff between v(n-1) and v(n) — 13.5 requires a visual diff. */
+export interface VersionFieldDiff {
+  field: string;
+  previous: string;
+  current: string;
+  changed: boolean;
+}
+
+export const VERSION_DIFF: VersionFieldDiff[] = [
+  { field: "Goods description", previous: "Raw cotton, grade A", current: "Raw cotton, grade A", changed: false },
+  { field: "Quantity", previous: "18,000 kg", current: "16,400 kg", changed: true },
+  { field: "Unit price", previous: "USD 7.10 / kg", current: "USD 7.80 / kg", changed: true },
+  { field: "Total value", previous: "USD 127,800.00", current: "USD 127,920.00", changed: true },
+  { field: "Incoterms", previous: "FOB Shenzhen", current: "CIF Tema", changed: true },
+  { field: "Latest shipment date", previous: "2026-09-15", current: "2026-09-15", changed: false },
+  { field: "Beneficiary", previous: "Shenzhen Textile Group", current: "Shenzhen Textile Group", changed: false },
+];
+
+export const TRADE_APPROVAL_DEFAULT_STATE: TradeApprovalState = "awaiting-decision";
+
+/* ── Cards — FR-33 (fund prepaid card), FR-34 (block / unblock) ─────────────── */
+
+export type CardStatus = "Active" | "Blocked" | "Expired";
+
+export interface PaymentCard {
+  id: string;
+  name: string;
+  /** Only the last four digits are ever held or rendered. */
+  maskedNumber: string;
+  type: "Prepaid" | "Debit";
+  scheme: "Visa" | "Mastercard";
+  currency: string;
+  /** Prepaid cards carry their own balance; debit cards draw on the linked account. */
+  balance: number | null;
+  linkedAccountId: string;
+  holder: string;
+  expiry: string;
+  status: CardStatus;
+  /** FR-33 applies only to eligible prepaid cards. */
+  fundable: boolean;
+  profileKind?: "RETAIL" | "CORPORATE";
+}
+
+export const CARDS: PaymentCard[] = [
+  {
+    id: "card-001",
+    name: "Corporate Prepaid — Travel",
+    maskedNumber: "•••• 4412",
+    type: "Prepaid",
+    scheme: "Visa",
+    currency: "GHS",
+    balance: 12_450.0,
+    linkedAccountId: "acc-001",
+    holder: "Ama Serwaa",
+    expiry: "09/28",
+    status: "Active",
+    fundable: true,
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "card-002",
+    name: "Corporate Prepaid — Procurement",
+    maskedNumber: "•••• 8830",
+    type: "Prepaid",
+    scheme: "Mastercard",
+    currency: "USD",
+    balance: 3_180.5,
+    linkedAccountId: "acc-003",
+    holder: "Kwabena Mensah",
+    expiry: "02/27",
+    status: "Active",
+    fundable: true,
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "card-003",
+    name: "Business Debit",
+    maskedNumber: "•••• 1207",
+    type: "Debit",
+    scheme: "Visa",
+    currency: "GHS",
+    balance: null,
+    linkedAccountId: "acc-001",
+    holder: "Ama Serwaa",
+    expiry: "11/29",
+    status: "Active",
+    fundable: false,
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "card-004",
+    name: "Payroll Prepaid",
+    maskedNumber: "•••• 6654",
+    type: "Prepaid",
+    scheme: "Mastercard",
+    currency: "GHS",
+    balance: 0,
+    linkedAccountId: "acc-002",
+    holder: "Yaw Boateng",
+    expiry: "05/26",
+    status: "Blocked",
+    fundable: true,
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "card-ret-001",
+    name: "Visa Personal Debit",
+    maskedNumber: "•••• 9102",
+    type: "Debit",
+    scheme: "Visa",
+    currency: "GHS",
+    balance: null,
+    linkedAccountId: "acc-ret-002",
+    holder: "Efua Mensah",
+    expiry: "12/28",
+    status: "Active",
+    fundable: false,
+    profileKind: "RETAIL",
+  },
+];
+
+export function cardsForProfile(kind: "RETAIL" | "CORPORATE" = "CORPORATE"): PaymentCard[] {
+  return CARDS.filter((c) => (c.profileKind ?? "CORPORATE") === kind);
+}
+
+export function findCard(id: string): PaymentCard | undefined {
+  return CARDS.find((c) => c.id === id);
+}
+
+/* ── FX rates — FR-30 (Bank's published daily rates) ────────────────────────── */
+
+export interface FxRate {
+  pair: string;
+  base: string;
+  quote: string;
+  buy: number;
+  sell: number;
+  mid: number;
+  /** Day-on-day change in the mid rate, as a percentage. */
+  changePct: number;
+}
+
+/**
+ * FR-30 is explicitly a *published rates* board — read-only reference data, not
+ * a dealing screen. There is no conversion or booking action here.
+ */
+export const FX_PUBLISHED_AT = "2026-08-11T08:30:00Z";
+
+export const FX_RATES: FxRate[] = [
+  { pair: "USD/GHS", base: "USD", quote: "GHS", buy: 11.42, sell: 11.68, mid: 11.55, changePct: 0.34 },
+  { pair: "GBP/GHS", base: "GBP", quote: "GHS", buy: 14.55, sell: 14.89, mid: 14.72, changePct: -0.18 },
+  { pair: "EUR/GHS", base: "EUR", quote: "GHS", buy: 12.48, sell: 12.77, mid: 12.63, changePct: 0.11 },
+  { pair: "CHF/GHS", base: "CHF", quote: "GHS", buy: 12.9, sell: 13.24, mid: 13.07, changePct: 0.05 },
+  { pair: "ZAR/GHS", base: "ZAR", quote: "GHS", buy: 0.62, sell: 0.67, mid: 0.645, changePct: -0.42 },
+  { pair: "NGN/GHS", base: "NGN", quote: "GHS", buy: 0.0071, sell: 0.0079, mid: 0.0075, changePct: -1.05 },
+  { pair: "CNY/GHS", base: "CNY", quote: "GHS", buy: 1.58, sell: 1.66, mid: 1.62, changePct: 0.22 },
+];
+
+/* ── Billers & standing instructions — FR-05 ────────────────────────────────── */
+
+export interface Biller {
+  id: string;
+  name: string;
+  category: "Utilities" | "Telecom" | "Government" | "Insurance";
+  reference: string;
+}
+
+export const BILLERS: Biller[] = [
+  { id: "bil-001", name: "ECG — Electricity", category: "Utilities", reference: "Meter number" },
+  { id: "bil-002", name: "Ghana Water", category: "Utilities", reference: "Account number" },
+  { id: "bil-003", name: "MTN Ghana", category: "Telecom", reference: "Mobile number" },
+  { id: "bil-004", name: "GRA — Tax Payment", category: "Government", reference: "TIN" },
+  { id: "bil-005", name: "SIC Insurance", category: "Insurance", reference: "Policy number" },
+];
+
+export type InstructionFrequency = "Weekly" | "Monthly" | "Quarterly";
+
+export interface StandingInstruction {
+  id: string;
+  beneficiary: string;
+  accountId: string;
+  amount: number;
+  currency: string;
+  frequency: InstructionFrequency;
+  nextRun: string;
+  status: "Active" | "Paused";
+}
+
+export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
+  {
+    id: "si-001",
+    beneficiary: "Adom Facilities Ltd — Office rent",
+    accountId: "acc-001",
+    amount: 18_500,
+    currency: "GHS",
+    frequency: "Monthly",
+    nextRun: "2026-09-01",
+    status: "Active",
+  },
+  {
+    id: "si-002",
+    beneficiary: "SIC Insurance — Fleet premium",
+    accountId: "acc-001",
+    amount: 4_200,
+    currency: "GHS",
+    frequency: "Quarterly",
+    nextRun: "2026-10-01",
+    status: "Active",
+  },
+  {
+    id: "si-003",
+    beneficiary: "Zenith Cleaning Services",
+    accountId: "acc-002",
+    amount: 2_750,
+    currency: "GHS",
+    frequency: "Monthly",
+    nextRun: "2026-09-05",
+    status: "Paused",
+  },
+];
+
+/* ── Notifications — FR-22 ──────────────────────────────────────────────────── */
+
+export type NotificationKind = "submission" | "approval" | "rejection" | "status";
+
+export interface AppNotification {
+  id: string;
+  kind: NotificationKind;
+  title: string;
+  body: string;
+  date: string;
+  read: boolean;
+  /** Where the notification resolves to, when it refers to an object. */
+  href?: string;
+}
+
+export const NOTIFICATIONS: AppNotification[] = [
+  {
+    id: "ntf-001",
+    kind: "approval",
+    title: "Payment approved",
+    body: "GHS 84,200.00 to Ridge Logistics Ltd was approved by Kwabena Mensah.",
+    date: "2026-08-11T09:14:00Z",
+    read: false,
+    href: "/transactions/txn-001",
+  },
+  {
+    id: "ntf-002",
+    kind: "rejection",
+    title: "Trade request returned for clarification",
+    body: "LC-2026-0043 needs a corrected commercial invoice before it can proceed.",
+    date: "2026-08-11T07:52:00Z",
+    read: false,
+    href: "/trade/trd-001",
+  },
+  {
+    id: "ntf-003",
+    kind: "status",
+    title: "Bulk batch partially failed",
+    body: "3 of 128 records in PAYROLL-AUG-2026 failed validation and need correction.",
+    date: "2026-08-10T16:20:00Z",
+    read: false,
+    href: "/payments/bulk/bat-001",
+  },
+  {
+    id: "ntf-004",
+    kind: "submission",
+    title: "Payment submitted for approval",
+    body: "GHS 12,000.00 to Nsawam Foods Ltd is awaiting approver action.",
+    date: "2026-08-10T11:05:00Z",
+    read: true,
+    href: "/transactions/txn-004",
+  },
+  {
+    id: "ntf-005",
+    kind: "status",
+    title: "Card blocked",
+    body: "Payroll Prepaid •••• 6654 was blocked at your request.",
+    date: "2026-08-09T14:41:00Z",
+    read: true,
+    href: "/cards/card-004",
+  },
+];
+
+/* ── Audit log — FR-21, NFR-05 (immutable, searchable) ──────────────────────── */
+
+export interface AuditEvent {
+  id: string;
+  timestamp: string;
+  actor: string;
+  role: string;
+  action: string;
+  target: string;
+  channel: "Internet Banking" | "Admin Portal";
+  ip: string;
+}
+
+export const AUDIT_EVENTS: AuditEvent[] = [
+  {
+    id: "aud-001",
+    timestamp: "2026-08-11T09:14:22Z",
+    actor: "Kwabena Mensah",
+    role: "Corporate Approver",
+    action: "Approved payment",
+    target: "TXN-2026-0001 · GHS 84,200.00",
+    channel: "Internet Banking",
+    ip: "102.176.44.18",
+  },
+  {
+    id: "aud-002",
+    timestamp: "2026-08-11T08:58:03Z",
+    actor: "Ama Serwaa",
+    role: "Corporate Maker",
+    action: "Submitted payment for approval",
+    target: "TXN-2026-0001",
+    channel: "Internet Banking",
+    ip: "102.176.44.02",
+  },
+  {
+    id: "aud-003",
+    timestamp: "2026-08-10T17:31:47Z",
+    actor: "Efua Danso",
+    role: "Bank Admin",
+    action: "Suspended customer user",
+    target: "Yaw Boateng · Reason: pending KYC refresh",
+    channel: "Admin Portal",
+    ip: "10.20.5.114",
+  },
+  {
+    id: "aud-004",
+    timestamp: "2026-08-10T15:02:10Z",
+    actor: "Ama Serwaa",
+    role: "Corporate Admin",
+    action: "Changed user limits",
+    target: "Yaw Boateng · Daily limit GHS 50,000 → GHS 25,000",
+    channel: "Internet Banking",
+    ip: "102.176.44.02",
+  },
+  {
+    id: "aud-005",
+    timestamp: "2026-08-09T14:41:55Z",
+    actor: "Ama Serwaa",
+    role: "Corporate Admin",
+    action: "Blocked card",
+    target: "Payroll Prepaid •••• 6654 · Reason: reported lost by holder",
+    channel: "Internet Banking",
+    ip: "102.176.44.02",
+  },
+  {
+    id: "aud-006",
+    timestamp: "2026-08-09T09:12:31Z",
+    actor: "Kojo Antwi",
+    role: "Trade Officer",
+    action: "Returned trade request for clarification",
+    target: "LC-2026-0043",
+    channel: "Admin Portal",
+    ip: "10.20.5.088",
+  },
+];
+
+/* ── Fee concessions — FR-37 ────────────────────────────────────────────────── */
+
+export interface FeeConcession {
+  id: string;
+  customer: string;
+  feeType: string;
+  /** Percentage discount off the standard tariff. */
+  concessionPct: number;
+  effectiveFrom: string;
+  effectiveTo: string;
+  status: "Active" | "Pending approval" | "Expired";
+  approvedBy: string;
+}
+
+export const FEE_CONCESSIONS: FeeConcession[] = [
+  {
+    id: "fee-001",
+    customer: "Ridge Logistics Ltd",
+    feeType: "Outward transfer — GIP",
+    concessionPct: 50,
+    effectiveFrom: "2026-01-01",
+    effectiveTo: "2026-12-31",
+    status: "Active",
+    approvedBy: "Efua Danso",
+  },
+  {
+    id: "fee-002",
+    customer: "Accra Textiles Plc",
+    feeType: "LC issuance commission",
+    concessionPct: 25,
+    effectiveFrom: "2026-03-01",
+    effectiveTo: "2027-02-28",
+    status: "Active",
+    approvedBy: "Efua Danso",
+  },
+  {
+    id: "fee-003",
+    customer: "Nsawam Foods Ltd",
+    feeType: "Bulk payment processing",
+    concessionPct: 100,
+    effectiveFrom: "2026-09-01",
+    effectiveTo: "2027-08-31",
+    status: "Pending approval",
+    approvedBy: "—",
+  },
+  {
+    id: "fee-004",
+    customer: "Tema Steel Works",
+    feeType: "Account maintenance",
+    concessionPct: 15,
+    effectiveFrom: "2025-01-01",
+    effectiveTo: "2025-12-31",
+    status: "Expired",
+    approvedBy: "Efua Danso",
+  },
+];
+
+/* ── Formatting helpers ────────────────────────────────────────────────────── */
+
+export function formatMoney(amount: number, currency = "GHS", showAmounts?: boolean): string {
+  const visible = showAmounts ?? getGlobalShowAmounts();
+  if (!visible) {
+    const symbol =
+      currency.toUpperCase() === "USD"
+        ? "$"
+        : currency.toUpperCase() === "EUR"
+        ? "€"
+        : currency.toUpperCase() === "GBP"
+        ? "£"
+        : "GH₵";
+    return `${symbol} ••••••`;
+  }
+  return new Intl.NumberFormat("en-GH", {
+    style: "currency",
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+}
+
+export function formatDate(iso: string): string {
+  if (!iso || iso === "—") return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(d);
+}
+
+/** Audit (FR-21) and notifications (FR-22) need time-of-day, not just the date. */
+export function formatDateTime(iso: string): string {
+  if (!iso || iso === "—") return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(d);
+}
+
+/** Relative age for notification rows; falls back to the absolute date. */
+export function formatRelative(iso: string, now: Date = new Date("2026-08-11T10:00:00Z")): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const mins = Math.round((now.getTime() - d.getTime()) / 60000);
+  if (mins < 1) return "Just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.round(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.round(hours / 24);
+  if (days <= 7) return `${days}d ago`;
+  return formatDate(iso);
+}

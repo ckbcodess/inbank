@@ -1,0 +1,112 @@
+"use client";
+
+/**
+ * Customer Details — section 7. STUB.
+ *
+ * Customer relationship, status and associated users, with User Access managed
+ * as a SECTION inside this screen rather than a separate surface (section 7).
+ *
+ * Suspend/Deactivate uses the shared compliance modal — the same component the
+ * customer shell's User Details uses (12.6: build once, not twice).
+ */
+
+import { use, useState } from "react";
+import { Building2, ShieldAlert, UserCog } from "lucide-react";
+import PageHeader from "@/components/layout/PageHeader";
+import StubNotice from "@/components/StubNotice";
+import SuspensionDialog from "@/components/SuspensionDialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+
+const CUSTOMER_USERS = [
+  { id: "u1", name: "Kwame Boateng", role: "Maker", status: "Active" },
+  { id: "u2", name: "Efua Mensah", role: "Approver", status: "Active" },
+  { id: "u3", name: "Yaw Oppong", role: "Corporate Admin", status: "Active" },
+  { id: "u4", name: "Adjoa Frimpong", role: "Viewer", status: "Suspended" },
+];
+
+export default function CustomerDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  const [suspendOpen, setSuspendOpen] = useState(false);
+  const [suspended, setSuspended] = useState(false);
+
+  return (
+    <div className="flex flex-col gap-5">
+      <PageHeader
+        title="Adinkra Textiles Ltd"
+        description={`CORP-90114 · ${id}`}
+        backTo={{ href: "/admin/customers", label: "Customers" }}
+        actions={
+          <Button variant="destructive" size="sm" onClick={() => setSuspendOpen(true)} disabled={suspended}>
+            <ShieldAlert size={14} strokeWidth={1.9} aria-hidden="true" />
+            {suspended ? "Suspended" : "Suspend customer"}
+          </Button>
+        }
+      />
+
+      <StubNotice section="section 7 / sitemap 12.5" />
+
+      <section className="rounded-2xl border border-border bg-card p-5">
+        <div className="flex items-center gap-3 border-b border-border pb-4">
+          <span className="flex size-10 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+            <Building2 size={19} strokeWidth={1.8} aria-hidden="true" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[15px] text-foreground">Corporate relationship</p>
+            <p className="mt-0.5 text-[12.5px] text-muted-foreground tabular">
+              Onboarded 12 Mar 2021 · Relationship manager: A. Owusu
+            </p>
+          </div>
+          <Badge variant={suspended ? "warning" : "success"}>{suspended ? "Suspended" : "Active"}</Badge>
+        </div>
+
+        <dl className="grid grid-cols-1 gap-x-8 gap-y-4 pt-5 sm:grid-cols-3">
+          <Fact label="Segment" value="Corporate" />
+          <Fact label="Accounts" value="4" />
+          <Fact label="Users" value={String(CUSTOMER_USERS.length)} />
+        </dl>
+      </section>
+
+      {/* User Access — a section within Customer Details, not its own screen */}
+      <section className="rounded-2xl border border-border bg-card">
+        <h2 className="flex items-center gap-2 border-b border-border px-5 py-4 text-[15px] text-foreground">
+          <UserCog size={16} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
+          User access
+        </h2>
+        <ul className="divide-y divide-border">
+          {CUSTOMER_USERS.map((u) => (
+            <li key={u.id} className="flex items-center gap-4 px-5 py-3.5">
+              <span className="min-w-0 flex-1 truncate text-[13px] text-foreground">{u.name}</span>
+              <Badge variant="outline">{u.role}</Badge>
+              <Badge variant={u.status === "Active" ? "success" : "warning"}>{u.status}</Badge>
+              <Button variant="ghost" size="xs" disabled>
+                Manage
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Shared compliance modal — identical component in both shells */}
+      <SuspensionDialog
+        open={suspendOpen}
+        onOpenChange={setSuspendOpen}
+        subject="Adinkra Textiles Ltd"
+        action="suspend"
+        onConfirm={() => {
+          setSuspendOpen(false);
+          setSuspended(true);
+        }}
+      />
+    </div>
+  );
+}
+
+function Fact({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="text-[12px] text-muted-foreground">{label}</dt>
+      <dd className="mt-0.5 text-[13px] text-foreground tabular">{value}</dd>
+    </div>
+  );
+}
