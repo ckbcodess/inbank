@@ -8,11 +8,23 @@
  * flow, not nav destinations (12.4).
  */
 
+import { useState } from "react";
 import Link from "next/link";
 import { FileCheck, FileText, Landmark, Receipt } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Button } from "@/components/ui/button";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import type { TradeState } from "@/lib/states";
+
+const TRADE_STATES: readonly TradeState[] = [
+  "draft",
+  "submitted-in-review",
+  "under-bank-review",
+  "approved-active",
+  "returned-for-correction",
+  "completed-closed",
+] as const;
 
 const TRADE_TYPES = [
   {
@@ -39,6 +51,8 @@ const TRADE_TYPES = [
 ];
 
 export default function TradeTypeSelectionPage() {
+  const [state, setState] = useState<TradeState>("draft");
+
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
@@ -46,6 +60,8 @@ export default function TradeTypeSelectionPage() {
         description="Choose the instrument — the request form changes to match it."
         backTo={{ href: "/trade", label: "Trade" }}
       />
+
+      <StateSwitcher section="13.6" states={TRADE_STATES} value={state} onChange={setState} />
 
       <StubNotice section="section 6" states="13.3 form pattern" />
 

@@ -8,13 +8,25 @@
  * Nav entry is hidden entirely when the actor isn't trade-eligible.
  */
 
+import { useState } from "react";
 import Link from "next/link";
 import { ChevronRight, FileText, Plus, Ship } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
 import { formatMoney } from "@/lib/mock-data";
+
+const LIST_STATES: readonly ListState[] = [
+  "loading",
+  "empty",
+  "filtered-empty",
+  "populated",
+  "partial-load",
+  "error",
+] as const;
 
 const TRADES = [
   { id: "trade-0417", ref: "TRD-2026-00417", desc: "Documentary collection — cotton import", cp: "Shenzhen Textile Group", amount: 128000, ccy: "USD", status: "Returned for correction", tone: "warning" as const },
@@ -24,6 +36,7 @@ const TRADES = [
 ];
 
 export default function TradeHubPage() {
+  const [state, setState] = useState<ListState>("populated");
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
@@ -35,6 +48,14 @@ export default function TradeHubPage() {
             New trade request
           </Button>
         }
+      />
+
+      <StateSwitcher
+        section="13.1"
+        states={LIST_STATES}
+        value={state}
+        onChange={setState}
+        labels={LIST_STATE_LABEL}
       />
 
       <StubNotice section="section 6 / sitemap 12.4" states="13.6 Trade Details" />

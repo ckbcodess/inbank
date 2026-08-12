@@ -14,12 +14,22 @@
  *   Read-only transparency      Assist / view-only indicators
  */
 
-import { use } from "react";
+import { useState, use } from "react";
 import { AlertTriangle, Eye, FileSearch, History, ScrollText } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Badge } from "@/components/ui/badge";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import type { TradeApprovalState } from "@/lib/states";
 import { TRADE_DOCUMENTS, TRADE_VERSIONS, formatMoney } from "@/lib/mock-data";
+
+const TRADE_APPROVAL_STATES: readonly TradeApprovalState[] = [
+  "awaiting-decision",
+  "documents-incomplete",
+  "version-comparison",
+  "returned-for-clarification",
+  "decision-submitted",
+] as const;
 
 const AUDIT = [
   { at: "2026-08-04 11:20", actor: "Kwame Boateng", event: "v1 submitted" },
@@ -31,6 +41,7 @@ const AUDIT = [
 
 export default function TradeOfficerWorkstationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const [state, setState] = useState<TradeApprovalState>("documents-incomplete");
 
   return (
     <div className="flex flex-col gap-5">
@@ -39,6 +50,8 @@ export default function TradeOfficerWorkstationPage({ params }: { params: Promis
         description={`${id.toUpperCase()} · Adinkra Textiles Ltd`}
         backTo={{ href: "/admin/trade", label: "Trade monitoring" }}
       />
+
+      <StateSwitcher section="13.5" states={TRADE_APPROVAL_STATES} value={state} onChange={setState} />
 
       <StubNotice section="section 6 / sitemap 12.5" />
 

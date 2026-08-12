@@ -27,6 +27,7 @@ import {
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
 import { accountsForProfile, formatMoney } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
+import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 
 const LIST_STATES: readonly ListState[] = [
   "loading",
@@ -38,6 +39,7 @@ const LIST_STATES: readonly ListState[] = [
 ] as const;
 
 export default function AccountsPage() {
+  useAmountVisibility();
   const activeProfile = useSession((s) => s.activeProfile);
   const accounts = accountsForProfile(activeProfile?.kind);
 
@@ -156,10 +158,10 @@ export default function AccountsPage() {
 
                     <span className="flex shrink-0 flex-col items-end">
                       <span className="text-[14px] text-foreground tabular">
-                        {formatMoney(acc.balance, acc.currency)}
+                        <RevealingAmount amount={acc.balance} currency={acc.currency} />
                       </span>
                       <span className="mt-0.5 text-[12px] text-muted-foreground tabular">
-                        {formatMoney(acc.available, acc.currency)} available
+                        <RevealingAmount amount={acc.available} currency={acc.currency} /> available
                       </span>
                     </span>
 

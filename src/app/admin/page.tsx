@@ -8,16 +8,24 @@
  * Bank Admin each land on a different overview.
  */
 
+import { useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, ArrowRight, Building2, ArrowLeftRight, Ship } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { SummaryCard } from "@/components/SummaryCard";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import type { BaselineState } from "@/lib/states";
 import { useSession } from "@/lib/session-store";
 import { ROLE_LABEL } from "@/lib/roles";
+import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
+
+const BASELINE_STATES: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 
 export default function AdminOverviewPage() {
+  useAmountVisibility();
   const actor = useSession((s) => s.actor);
+  const [state, setState] = useState<BaselineState>("populated");
   if (!actor) return null;
 
   const isOps = actor.role === "OPERATIONS_USER";
@@ -30,6 +38,8 @@ export default function AdminOverviewPage() {
         title="Operations overview"
         description={`${ROLE_LABEL[actor.role]} · internal staff portal`}
       />
+
+      <StateSwitcher section="12.5" states={BASELINE_STATES} value={state} onChange={setState} />
 
       <StubNotice section="sitemap 12.5" />
 

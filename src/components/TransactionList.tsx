@@ -30,7 +30,7 @@ import {
 } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
 import { formatDate, formatMoney, type Transaction } from "@/lib/mock-data";
-import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
+import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 
 const LIST_STATES: readonly ListState[] = [
   "loading",
@@ -53,6 +53,8 @@ interface TransactionListProps {
   emptyTitle?: string;
   emptyDescription?: string;
 }
+
+
 
 export default function TransactionList({
   transactions,
@@ -222,7 +224,7 @@ export default function TransactionList({
                       }`}
                     >
                       {t.direction === "debit" ? "−" : "+"}
-                      {formatMoney(t.amount, t.currency)}
+                      <RevealingAmount amount={t.amount} currency={t.currency} />
                     </span>
 
                     <span className="w-[120px] shrink-0 text-right">

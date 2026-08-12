@@ -18,6 +18,15 @@ import StubNotice from "@/components/StubNotice";
 import SuspensionDialog from "@/components/SuspensionDialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import type { WizardStepState } from "@/lib/states";
+
+const WIZARD_STATES: readonly WizardStepState[] = [
+  "locked",
+  "valid",
+  "invalid",
+  "review-pending",
+] as const;
 
 type Role = "Viewer" | "Maker" | "Approver" | "Corporate Admin";
 
@@ -55,6 +64,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
   const [role, setRole] = useState<Role>("Maker");
   const [suspendOpen, setSuspendOpen] = useState(false);
   const [suspended, setSuspended] = useState(false);
+  const [wizardState, setWizardState] = useState<WizardStepState>("valid");
 
   return (
     <div className="flex flex-col gap-5">
@@ -74,6 +84,8 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
           </Button>
         }
       />
+
+      <StateSwitcher section="13.7" states={WIZARD_STATES} value={wizardState} onChange={setWizardState} />
 
       <StubNotice section="section 5" states="13.7" />
 

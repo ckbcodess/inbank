@@ -9,12 +9,25 @@
  * screen.
  */
 
-import { use } from "react";
+import { useState, use } from "react";
 import { AlertTriangle, Eye } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import { TRANSACTION_STATE_LABEL, type TransactionState } from "@/lib/states";
 import { findTransaction, formatDate, formatMoney } from "@/lib/mock-data";
+
+const TRANSACTION_STATES: readonly TransactionState[] = [
+  "pending",
+  "completed",
+  "failed-single",
+  "failed-bulk",
+  "failed-trade",
+  "reversed",
+  "disputed",
+  "awaiting-approval",
+] as const;
 
 const AUDIT_TRAIL = [
   { at: "2026-08-10 09:14", actor: "Kwame Boateng", event: "Payment submitted via Internet Banking" },
@@ -25,6 +38,7 @@ const AUDIT_TRAIL = [
 
 export default function OpsTransactionDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const [state, setState] = useState<TransactionState>("pending");
   const txn = findTransaction(id);
 
   if (!txn) {
@@ -39,6 +53,14 @@ export default function OpsTransactionDetailsPage({ params }: { params: Promise<
         title={txn.description}
         description={`${txn.reference} · ${txn.channel}`}
         backTo={{ href: "/admin/transactions", label: "Transaction monitoring" }}
+      />
+
+      <StateSwitcher
+        section="13.2"
+        states={TRANSACTION_STATES}
+        value={state}
+        onChange={setState}
+        labels={TRANSACTION_STATE_LABEL}
       />
 
       <StubNotice section="section 7" states="13.2 operations variant" />

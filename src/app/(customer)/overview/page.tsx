@@ -38,19 +38,26 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import type { BaselineState } from "@/lib/states";
 import { useSession } from "@/lib/session-store";
 import { isApprover, isCorporateAdmin } from "@/lib/roles";
 import { accountsForProfile, cardsForProfile, transactionsForProfile, APPROVAL_QUEUE, BILLERS, formatMoney, formatDate } from "@/lib/mock-data";
 import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
+import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
+
+const BASELINE_STATES: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 
 type QuickModalType = "transfer" | "pay-bill" | "customize" | null;
 
 export default function OverviewPage() {
   const actor = useSession((s) => s.actor);
   const activeProfile = useSession((s) => s.activeProfile);
+  useAmountVisibility();
 
   const [activeModal, setActiveModal] = useState<QuickModalType>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [pageState, setPageState] = useState<BaselineState>("populated");
 
   // Transfer Modal state
   const [transferFrom, setTransferFrom] = useState("");
@@ -107,6 +114,8 @@ export default function OverviewPage() {
         description={`${activeProfile.name} · ${activeProfile.reference}`}
       />
 
+      <StateSwitcher section="13.9" states={BASELINE_STATES} value={pageState} onChange={setPageState} />
+
       {/* Quick Actions Bar — Mercury / Wise Usability Pattern */}
       <section className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -132,7 +141,7 @@ export default function OverviewPage() {
               }}
             >
               <ArrowLeftRight size={15} strokeWidth={1.9} aria-hidden="true" />
-              <span>Transfer</span>
+              <span>Transfer Between Accounts</span>
             </Button>
 
             <Button
@@ -255,7 +264,7 @@ export default function OverviewPage() {
                     </span>
                   </span>
                   <span className="shrink-0 text-[13px] text-foreground tabular">
-                    {formatMoney(item.amount, item.currency)}
+                    <RevealingAmount amount={item.amount} currency={item.currency} />
                   </span>
                   <ArrowUpRight size={15} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
                 </Link>
@@ -286,7 +295,7 @@ export default function OverviewPage() {
                     <span className="mt-0.5 text-[12px] text-muted-foreground tabular">{acc.number}</span>
                   </span>
                   <span className="shrink-0 text-[13px] text-foreground tabular">
-                    {formatMoney(acc.balance, acc.currency)}
+                    <RevealingAmount amount={acc.balance} currency={acc.currency} />
                   </span>
                 </Link>
               </li>
@@ -319,9 +328,11 @@ export default function OverviewPage() {
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
                     <span className="text-[13px] text-foreground tabular">
-                      {c.type === "Prepaid" && c.balance !== null
-                        ? formatMoney(c.balance, c.currency)
-                        : "Debit Card"}
+                      {(c.type === "Prepaid" || c.type === "Virtual") && c.balance !== null ? (
+                        <RevealingAmount amount={c.balance} currency={c.currency} />
+                      ) : (
+                        "Debit Card"
+                      )}
                     </span>
                     <ChevronRight size={15} strokeWidth={1.8} className="text-muted-foreground" />
                   </div>
@@ -351,7 +362,7 @@ export default function OverviewPage() {
                   </span>
                   <span className="shrink-0 text-[13px] text-foreground tabular">
                     {t.direction === "debit" ? "−" : "+"}
-                    {formatMoney(t.amount, t.currency)}
+                    <RevealingAmount amount={t.amount} currency={t.currency} />
                   </span>
                   <TransactionStatusBadge state={t.state} />
                 </Link>

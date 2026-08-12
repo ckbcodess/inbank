@@ -9,12 +9,24 @@
  * indicators.
  */
 
+import { useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Ship } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Badge } from "@/components/ui/badge";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
 import { formatMoney } from "@/lib/mock-data";
+
+const LIST_STATES: readonly ListState[] = [
+  "loading",
+  "empty",
+  "filtered-empty",
+  "populated",
+  "partial-load",
+  "error",
+] as const;
 
 const QUEUE = [
   { id: "trade-0417", ref: "TRD-2026-00417", customer: "Adinkra Textiles Ltd", desc: "Documentary collection — cotton import", amount: 128000, flag: "Document mismatch", tone: "warning" as const },
@@ -23,11 +35,20 @@ const QUEUE = [
 ];
 
 export default function TradeMonitoringPage() {
+  const [state, setState] = useState<ListState>("populated");
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
         title="Trade monitoring"
         description="Internal operational queue for trade transactions."
+      />
+
+      <StateSwitcher
+        section="13.1"
+        states={LIST_STATES}
+        value={state}
+        onChange={setState}
+        labels={LIST_STATE_LABEL}
       />
 
       <StubNotice section="section 6 / sitemap 12.5" />

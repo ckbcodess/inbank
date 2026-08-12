@@ -13,12 +13,17 @@ import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import type { BaselineState } from "@/lib/states";
 import { findAccount, formatMoney, transactionsForAccount, formatDate } from "@/lib/mock-data";
+
+const BASELINE_STATES: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 
 export default function StatementConfigurationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const account = findAccount(id);
   const [showPreview, setShowPreview] = useState(false);
+  const [pageState, setPageState] = useState<BaselineState>("populated");
 
   const [from, setFrom] = useState("2026-08-01");
   const [to, setTo] = useState("2026-08-11");
@@ -44,6 +49,8 @@ export default function StatementConfigurationPage({ params }: { params: Promise
         description={`${account.name} · ${account.number}`}
         backTo={{ href: `/accounts/${account.id}`, label: "Account details" }}
       />
+
+      <StateSwitcher section="13.9" states={BASELINE_STATES} value={pageState} onChange={setPageState} />
 
       <section className="rounded-2xl border border-border bg-card p-5">
         <h2 className="text-[15px] text-foreground">Configure</h2>

@@ -614,31 +614,79 @@ export const TRADE_APPROVAL_DEFAULT_STATE: TradeApprovalState = "awaiting-decisi
 /* ── Cards — FR-33 (fund prepaid card), FR-34 (block / unblock) ─────────────── */
 
 export type CardStatus = "Active" | "Blocked" | "Expired";
+export type CardType = "Prepaid" | "Debit" | "Virtual";
 
 export interface PaymentCard {
   id: string;
   name: string;
-  /** Only the last four digits are ever held or rendered. */
+  /** Only the last four digits are rendered by default. */
   maskedNumber: string;
-  type: "Prepaid" | "Debit";
+  fullNumber?: string;
+  cvv?: string;
+  type: CardType;
   scheme: "Visa" | "Mastercard";
   currency: string;
-  /** Prepaid cards carry their own balance; debit cards draw on the linked account. */
+  /** Prepaid/Virtual cards carry their own balance; debit cards draw on the linked account. */
   balance: number | null;
+  spendLimit?: number | null;
   linkedAccountId: string;
   holder: string;
   expiry: string;
   status: CardStatus;
-  /** FR-33 applies only to eligible prepaid cards. */
+  /** FR-33 applies only to eligible prepaid/virtual cards. */
   fundable: boolean;
+  isVirtual?: boolean;
+  singleUse?: boolean;
   profileKind?: "RETAIL" | "CORPORATE";
 }
 
 export const CARDS: PaymentCard[] = [
   {
+    id: "card-v01",
+    name: "AWS & SaaS Virtual Card",
+    maskedNumber: "•••• 9102",
+    fullNumber: "4532 8910 4421 9102",
+    cvv: "814",
+    type: "Virtual",
+    scheme: "Visa",
+    currency: "USD",
+    balance: 5_000.0,
+    spendLimit: 10_000.0,
+    linkedAccountId: "acc-003",
+    holder: "Kwame Boateng",
+    expiry: "12/28",
+    status: "Active",
+    fundable: true,
+    isVirtual: true,
+    singleUse: false,
+    profileKind: "CORPORATE",
+  },
+  {
+    id: "card-v02",
+    name: "Google Ads Marketing Virtual Card",
+    maskedNumber: "•••• 3194",
+    fullNumber: "5412 7719 3320 3194",
+    cvv: "492",
+    type: "Virtual",
+    scheme: "Mastercard",
+    currency: "GHS",
+    balance: 2_500.0,
+    spendLimit: 5_000.0,
+    linkedAccountId: "acc-001",
+    holder: "Kwame Boateng",
+    expiry: "06/27",
+    status: "Active",
+    fundable: true,
+    isVirtual: true,
+    singleUse: false,
+    profileKind: "CORPORATE",
+  },
+  {
     id: "card-001",
     name: "Corporate Prepaid — Travel",
     maskedNumber: "•••• 4412",
+    fullNumber: "4532 1100 8820 4412",
+    cvv: "219",
     type: "Prepaid",
     scheme: "Visa",
     currency: "GHS",
@@ -654,6 +702,8 @@ export const CARDS: PaymentCard[] = [
     id: "card-002",
     name: "Corporate Prepaid — Procurement",
     maskedNumber: "•••• 8830",
+    fullNumber: "5412 6601 2290 8830",
+    cvv: "614",
     type: "Prepaid",
     scheme: "Mastercard",
     currency: "USD",

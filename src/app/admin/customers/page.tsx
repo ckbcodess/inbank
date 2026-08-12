@@ -6,12 +6,24 @@
  * destination reached from this list (12.5).
  */
 
+import { useState } from "react";
 import Link from "next/link";
 import { Building2, ChevronRight, Search } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
+
+const LIST_STATES: readonly ListState[] = [
+  "loading",
+  "empty",
+  "filtered-empty",
+  "populated",
+  "partial-load",
+  "error",
+] as const;
 
 const CUSTOMERS = [
   { id: "cust-1", name: "Adinkra Textiles Ltd", ref: "CORP-90114", segment: "Corporate", users: 12, status: "Active" },
@@ -21,9 +33,19 @@ const CUSTOMERS = [
 ];
 
 export default function CustomerManagementPage() {
+  const [state, setState] = useState<ListState>("populated");
+
   return (
     <div className="flex flex-col gap-5">
       <PageHeader title="Customers" description="Internal customer directory." />
+
+      <StateSwitcher
+        section="13.1"
+        states={LIST_STATES}
+        value={state}
+        onChange={setState}
+        labels={LIST_STATE_LABEL}
+      />
 
       <StubNotice section="section 7 / sitemap 12.5" states="13.1 list" />
 

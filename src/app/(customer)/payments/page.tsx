@@ -35,6 +35,8 @@ import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
 import {
   BENEFICIARIES,
   BILLERS,
@@ -45,6 +47,16 @@ import {
   transactionsForProfile,
 } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
+import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
+
+const LIST_STATES: readonly ListState[] = [
+  "loading",
+  "empty",
+  "filtered-empty",
+  "populated",
+  "partial-load",
+  "error",
+] as const;
 
 type Mode = "single" | "bulk" | "bill" | "standing";
 
@@ -56,9 +68,10 @@ const MODES: { key: Mode; label: string; icon: React.ElementType }[] = [
 ];
 
 export default function PaymentsHubPage() {
+  useAmountVisibility();
   const activeProfile = useSession((s) => s.activeProfile);
 
-  // Inline mode selection — not a screen of its own.
+  const [state, setState] = useState<ListState>("populated");
   const [mode, setMode] = useState<Mode>("single");
 
   const transactions = transactionsForProfile(activeProfile?.kind);
@@ -69,6 +82,14 @@ export default function PaymentsHubPage() {
       <PageHeader
         title="Payments"
         description="Send a single payment, upload a batch, pay a bill, or manage a recurring instruction."
+      />
+
+      <StateSwitcher
+        section="13.1"
+        states={LIST_STATES}
+        value={state}
+        onChange={setState}
+        labels={LIST_STATE_LABEL}
       />
 
       {/* Inline mode selection */}
@@ -228,7 +249,7 @@ export default function PaymentsHubPage() {
 
                   <span className="flex shrink-0 flex-col items-end">
                     <span className="text-[13px] text-foreground tabular">
-                      {formatMoney(si.amount, si.currency)}
+                      <RevealingAmount amount={si.amount} currency={si.currency} />
                     </span>
                     <span className="mt-0.5 text-[12px] text-muted-foreground tabular">
                       {si.status === "Paused" ? "Not scheduled" : `Next ${formatDate(si.nextRun)}`}
@@ -263,7 +284,7 @@ export default function PaymentsHubPage() {
                   </span>
                 </span>
                 <span className="shrink-0 text-[13px] text-foreground tabular">
-                  {formatMoney(t.amount, t.currency)}
+                  <RevealingAmount amount={t.amount} currency={t.currency} />
                 </span>
                 <TransactionStatusBadge state={t.state} />
               </Link>

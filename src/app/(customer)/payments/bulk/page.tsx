@@ -9,6 +9,7 @@
  * re-upload.
  */
 
+import { useState } from "react";
 import Link from "next/link";
 import { AlertCircle, CheckCircle2, FileSpreadsheet, Upload } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
@@ -16,7 +17,17 @@ import StubNotice from "@/components/StubNotice";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SummaryCard } from "@/components/SummaryCard";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import type { BulkUploadState } from "@/lib/states";
 import { formatMoney } from "@/lib/mock-data";
+
+const BULK_STATES: readonly BulkUploadState[] = [
+  "uploading",
+  "upload-failed",
+  "validating",
+  "mixed",
+  "revalidating",
+] as const;
 
 const RECORDS = [
   { row: 35, name: "Ama Darko", account: "0119 2234 7712", amount: 3800, valid: true },
@@ -27,6 +38,7 @@ const RECORDS = [
 ];
 
 export default function BulkUploadPage() {
+  const [state, setState] = useState<BulkUploadState>("mixed");
   const validCount = 138;
   const invalidCount = 2;
 
@@ -37,6 +49,8 @@ export default function BulkUploadPage() {
         description="Upload a payment file, then correct any records that fail validation."
         backTo={{ href: "/payments", label: "Payments" }}
       />
+
+      <StateSwitcher section="13.8" states={BULK_STATES} value={state} onChange={setState} />
 
       <StubNotice section="section 3" states="13.8" />
 

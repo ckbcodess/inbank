@@ -7,6 +7,7 @@
  * else (12.3). User Details is an object destination reached from this list.
  */
 
+import { useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Plus, Search, UserCog } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
@@ -14,6 +15,17 @@ import StubNotice from "@/components/StubNotice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
+
+const LIST_STATES: readonly ListState[] = [
+  "loading",
+  "empty",
+  "filtered-empty",
+  "populated",
+  "partial-load",
+  "error",
+] as const;
 
 const USERS = [
   { id: "user-1", name: "Kwame Boateng", email: "kwame.boateng@example.com", role: "Maker", status: "Active", access: "Payments, Trade" },
@@ -23,6 +35,8 @@ const USERS = [
 ];
 
 export default function UserManagementPage() {
+  const [state, setState] = useState<ListState>("populated");
+
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
@@ -34,6 +48,14 @@ export default function UserManagementPage() {
             Add user
           </Button>
         }
+      />
+
+      <StateSwitcher
+        section="13.1"
+        states={LIST_STATES}
+        value={state}
+        onChange={setState}
+        labels={LIST_STATE_LABEL}
       />
 
       <StubNotice section="section 5 / sitemap 12.4" states="13.1 list, 13.7 wizard" />

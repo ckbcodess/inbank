@@ -8,12 +8,23 @@
  * list, never from nav (12.4).
  */
 
-import { use } from "react";
+import { useState, use } from "react";
 import { Check, Circle, FileText, History } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Badge } from "@/components/ui/badge";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import type { TradeState } from "@/lib/states";
 import { TRADE_DOCUMENTS, TRADE_VERSIONS, formatMoney } from "@/lib/mock-data";
+
+const TRADE_STATES: readonly TradeState[] = [
+  "draft",
+  "submitted-in-review",
+  "under-bank-review",
+  "approved-active",
+  "returned-for-correction",
+  "completed-closed",
+] as const;
 
 const LIFECYCLE = [
   { label: "Draft", done: true },
@@ -25,6 +36,7 @@ const LIFECYCLE = [
 
 export default function TradeDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const [state, setState] = useState<TradeState>("under-bank-review");
 
   return (
     <div className="flex flex-col gap-5">
@@ -33,6 +45,8 @@ export default function TradeDetailsPage({ params }: { params: Promise<{ id: str
         description={`${id.toUpperCase()} · Shenzhen Textile Group`}
         backTo={{ href: "/trade", label: "Trade" }}
       />
+
+      <StateSwitcher section="13.6" states={TRADE_STATES} value={state} onChange={setState} />
 
       <StubNotice section="section 6" states="13.6" />
 

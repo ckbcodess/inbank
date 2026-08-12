@@ -8,14 +8,24 @@
  * fixed standalone on the transaction screen.
  */
 
-import { use } from "react";
+import { useState, use } from "react";
 import Link from "next/link";
 import { AlertCircle } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import type { BulkUploadState } from "@/lib/states";
 import { formatMoney } from "@/lib/mock-data";
+
+const BULK_STATES: readonly BulkUploadState[] = [
+  "uploading",
+  "upload-failed",
+  "validating",
+  "mixed",
+  "revalidating",
+] as const;
 
 const FAILED_RECORDS = [
   { row: 37, name: "Kwesi Amoah", account: "0119 2234 7781", amount: 4200, error: "Beneficiary account closed" },
@@ -23,6 +33,7 @@ const FAILED_RECORDS = [
 
 export default function BatchCorrectionPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const [state, setState] = useState<BulkUploadState>("mixed");
 
   return (
     <div className="flex flex-col gap-5">
@@ -31,6 +42,8 @@ export default function BatchCorrectionPage({ params }: { params: Promise<{ id: 
         description={`Batch ${id} · payroll-august-2026.csv`}
         backTo={{ href: "/transactions", label: "Transactions" }}
       />
+
+      <StateSwitcher section="13.8" states={BULK_STATES} value={state} onChange={setState} />
 
       <StubNotice section="section 3 failure recovery" states="13.8" />
 

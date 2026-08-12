@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useAmountVisibility, maskCurrencyString } from "@/components/providers/AmountVisibilityProvider";
+import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 
 /** Compact metric tile used on the overview and operational dashboards. */
 export function SummaryCard({
@@ -15,8 +15,7 @@ export function SummaryCard({
   icon?: ReactNode;
   tone?: "default" | "warning" | "destructive";
 }) {
-  const { showAmounts } = useAmountVisibility();
-  const displayValue = !showAmounts ? maskCurrencyString(value) : value;
+  useAmountVisibility();
 
   const toneClass =
     tone === "warning"
@@ -31,7 +30,9 @@ export function SummaryCard({
         <span className="text-[12px] text-muted-foreground">{label}</span>
         {icon && <span className="text-muted-foreground" aria-hidden="true">{icon}</span>}
       </div>
-      <p className={`mt-2 text-[22px] leading-tight tracking-[-0.01em] tabular ${toneClass}`}>{displayValue}</p>
+      <div className={`mt-2 text-[22px] leading-tight tracking-[-0.01em] tabular ${toneClass}`}>
+        <RevealingAmount value={value} />
+      </div>
       {hint && <p className="mt-1 text-[12px] text-muted-foreground">{hint}</p>}
     </div>
   );

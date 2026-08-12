@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 
 export interface BreadcrumbItem {
   label: string;
@@ -37,14 +38,14 @@ export default function PageHeader({ title, badge, description, actions, backTo,
 
   return (
     <div className="mb-4">
-      {/* Standard Breadcrumb Format: [Page 1] / [Current Page] */}
+      {/* Standard Breadcrumb Format: [Page 1] > [Current Page] */}
       {showBreadcrumbs && (
         <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
           {items.map((item, idx) => {
             const isLast = idx === items.length - 1;
             return (
               <div key={idx} className="flex items-center gap-1.5">
-                {idx > 0 && <span className="text-muted-foreground/40 font-normal">/</span>}
+                {idx > 0 && <ChevronRight size={12} className="text-muted-foreground/50 shrink-0" />}
                 {item.href && !isLast ? (
                   <Link
                     href={item.href}

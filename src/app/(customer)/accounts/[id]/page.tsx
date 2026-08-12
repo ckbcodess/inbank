@@ -11,7 +11,7 @@
 
 import { use, useState } from "react";
 import Link from "next/link";
-import { AlertCircle, Copy, FileText, Send } from "lucide-react";
+import { AlertCircle, ChevronRight, Copy, CreditCard, FileText, Send } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,13 +19,18 @@ import TransactionList from "@/components/TransactionList";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { ListSkeleton } from "@/components/states/ListStates";
 import type { BaselineState } from "@/lib/states";
-import { findAccount, formatMoney, transactionsForAccount } from "@/lib/mock-data";
+import { cardsForProfile, findAccount, formatMoney, transactionsForAccount } from "@/lib/mock-data";
+import { useSession } from "@/lib/session-store";
+import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
+import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 
 const BASELINE: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 
 export default function AccountDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  useAmountVisibility();
   const { id } = use(params);
   const account = findAccount(id);
+  const activeProfile = useSession((s) => s.activeProfile);
   const [state, setState] = useState<BaselineState>("populated");
 
   if (!account) {
@@ -39,6 +44,8 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
     );
   }
 
+  const profileCards = cardsForProfile(activeProfile?.kind);
+  const linkedCards = profileCards.filter((c) => c.linkedAccountId === account.id || account.id === "acc-001");
   const transactions = transactionsForAccount(account.id);
 
   return (
@@ -100,6 +107,44 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
         <>
           <AccountIdentity account={account} />
 
+          {linkedCards.length > 0 && (
+            <div className="rounded-2xl border border-border bg-card">
+              <div className="flex items-center justify-between border-b border-border px-5 py-4">
+                <div className="flex items-center gap-2">
+                  <CreditCard size={16} strokeWidth={1.8} className="text-muted-foreground" />
+                  <h2 className="text-[15px] text-foreground">Linked payment cards</h2>
+                </div>
+                <Link href="/cards" className="text-[12px] text-primary underline-offset-4 hover:underline">
+                  Manage cards
+                </Link>
+              </div>
+              <ul className="divide-y divide-border">
+                {linkedCards.map((c) => (
+                  <li key={c.id}>
+                    <Link
+                      href={`/cards/${c.id}`}
+                      className="flex items-center justify-between gap-3 px-5 py-3.5 transition-colors hover:bg-muted/50"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <MiniCardThumbnail card={c} />
+                        <div className="flex flex-col min-w-0">
+                          <span className="truncate text-[13px] font-medium text-foreground">{c.name}</span>
+                          <span className="mt-0.5 text-[11px] text-muted-foreground tabular">
+                            {c.scheme} {c.type} · {c.maskedNumber}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <Badge variant={c.status === "Active" ? "success" : "destructive"}>{c.status}</Badge>
+                        <ChevronRight size={15} strokeWidth={1.8} className="text-muted-foreground" />
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           <div>
             <h2 className="mb-3 text-[15px] text-foreground">Activity</h2>
             {/* Reusable Transaction List, scoped to this account (section 2) */}
@@ -127,10 +172,10 @@ function AccountIdentity({ account }: { account: ReturnType<typeof findAccount> 
             {account.status === "Dormant" && <Badge variant="warning">Dormant</Badge>}
           </div>
           <p className="mt-1.5 text-[28px] leading-none tracking-[-0.02em] text-foreground tabular">
-            {formatMoney(account.available, account.currency)}
+            <RevealingAmount amount={account.available} currency={account.currency} />
           </p>
           <p className="mt-2 text-[12.5px] text-muted-foreground tabular">
-            Ledger balance {formatMoney(account.balance, account.currency)}
+            Ledger balance <RevealingAmount amount={account.balance} currency={account.currency} />
           </p>
         </div>
 

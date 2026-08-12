@@ -8,14 +8,27 @@
  * operations-view Transaction Details, where the exception lives as a state.
  */
 
+import { useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, ChevronRight } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
 import { TRANSACTIONS, formatDate, formatMoney } from "@/lib/mock-data";
 
+const LIST_STATES: readonly ListState[] = [
+  "loading",
+  "empty",
+  "filtered-empty",
+  "populated",
+  "partial-load",
+  "error",
+] as const;
+
 export default function ExceptionsPage() {
+  const [state, setState] = useState<ListState>("populated");
   // Same source as Transaction Monitoring, narrowed to exception states.
   const exceptions = TRANSACTIONS.filter(
     (t) => t.state === "failed-single" || t.state === "failed-bulk" || t.state === "disputed" || t.state === "failed-trade",
@@ -26,6 +39,14 @@ export default function ExceptionsPage() {
       <PageHeader
         title="Exceptions"
         description="A filtered view of transaction monitoring — items needing investigation."
+      />
+
+      <StateSwitcher
+        section="13.1"
+        states={LIST_STATES}
+        value={state}
+        onChange={setState}
+        labels={LIST_STATE_LABEL}
       />
 
       <StubNotice section="sitemap 12.5" states="13.1 list" />

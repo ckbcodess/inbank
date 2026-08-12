@@ -11,12 +11,18 @@
  */
 
 import { use, useState } from "react";
-import { Building2, ShieldAlert, UserCog } from "lucide-react";
+import { Building2, CreditCard, ShieldAlert, UserCog } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import SuspensionDialog from "@/components/SuspensionDialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import type { BaselineState } from "@/lib/states";
+import { cardsForProfile, formatMoney } from "@/lib/mock-data";
+import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
+
+const BASELINE_STATES: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 
 const CUSTOMER_USERS = [
   { id: "u1", name: "Kwame Boateng", role: "Maker", status: "Active" },
@@ -27,8 +33,11 @@ const CUSTOMER_USERS = [
 
 export default function CustomerDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const [state, setState] = useState<BaselineState>("populated");
   const [suspendOpen, setSuspendOpen] = useState(false);
   const [suspended, setSuspended] = useState(false);
+
+  const customerCards = cardsForProfile("CORPORATE");
 
   return (
     <div className="flex flex-col gap-5">
@@ -43,6 +52,8 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
           </Button>
         }
       />
+
+      <StateSwitcher section="13.9" states={BASELINE_STATES} value={state} onChange={setState} />
 
       <StubNotice section="section 7 / sitemap 12.5" />
 
@@ -65,6 +76,35 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
           <Fact label="Accounts" value="4" />
           <Fact label="Users" value={String(CUSTOMER_USERS.length)} />
         </dl>
+      </section>
+
+      {/* Issued Payment Cards */}
+      <section className="rounded-2xl border border-border bg-card">
+        <h2 className="flex items-center gap-2 border-b border-border px-5 py-4 text-[15px] text-foreground">
+          <CreditCard size={16} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
+          Issued payment cards
+        </h2>
+        <ul className="divide-y divide-border">
+          {customerCards.map((c) => (
+            <li key={c.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
+              <div className="flex items-center gap-3 min-w-0">
+                <MiniCardThumbnail card={c} />
+                <div className="flex flex-col min-w-0">
+                  <span className="truncate text-[13px] font-medium text-foreground">{c.name}</span>
+                  <span className="mt-0.5 text-[11.5px] text-muted-foreground tabular">
+                    {c.scheme} {c.type} · {c.maskedNumber} · {c.holder}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-[13px] text-foreground tabular">
+                  {c.type === "Prepaid" && c.balance !== null ? formatMoney(c.balance, c.currency) : "Debit"}
+                </span>
+                <Badge variant={c.status === "Active" ? "success" : "destructive"}>{c.status}</Badge>
+              </div>
+            </li>
+          ))}
+        </ul>
       </section>
 
       {/* User Access — a section within Customer Details, not its own screen */}

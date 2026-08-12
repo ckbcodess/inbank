@@ -8,20 +8,41 @@
  * object screen, view-only with no execution (12.5).
  */
 
+import { useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Search } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Input } from "@/components/ui/input";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
 import { TRANSACTIONS, formatDate, formatMoney } from "@/lib/mock-data";
 
+const LIST_STATES: readonly ListState[] = [
+  "loading",
+  "empty",
+  "filtered-empty",
+  "populated",
+  "partial-load",
+  "error",
+] as const;
+
 export default function TransactionMonitoringPage() {
+  const [state, setState] = useState<ListState>("populated");
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
         title="Transaction monitoring"
         description="Operational queue across all customers. View-only — no execution from this portal."
+      />
+
+      <StateSwitcher
+        section="13.1"
+        states={LIST_STATES}
+        value={state}
+        onChange={setState}
+        labels={LIST_STATE_LABEL}
       />
 
       <StubNotice section="section 7 / sitemap 12.5" states="13.1 list, 13.2 ops variant" />
