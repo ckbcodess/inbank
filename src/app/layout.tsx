@@ -6,6 +6,8 @@ import { AmountVisibilityProvider } from "@/components/providers/AmountVisibilit
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 
+import { DevStateProvider } from "@/components/providers/DevStateProvider";
+
 const geist = Geist({ variable: "--font-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
@@ -20,8 +22,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="antialiased">
         <ThemeProvider>
           <AmountVisibilityProvider>
-            <Toaster position="top-right" richColors />
-            {children}
+            <DevStateProvider>
+              <Toaster position="top-right" richColors />
+              {children}
+            </DevStateProvider>
           </AmountVisibilityProvider>
         </ThemeProvider>
       </body>

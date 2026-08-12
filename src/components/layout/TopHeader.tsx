@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Eye, EyeOff, LogOut, Menu, Moon, Sun } from "lucide-react";
+import { Bell, Check, Eye, EyeOff, Layers, LogOut, Menu, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
+import { useDevState } from "@/components/providers/DevStateProvider";
 import { NOTIFICATIONS } from "@/lib/mock-data";
 import {
   DropdownMenu,
@@ -36,6 +37,7 @@ export default function TopHeader({
 }: TopHeaderProps) {
   const { resolvedTheme, setTheme } = useTheme();
   const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
+  const { devState } = useDevState();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -60,9 +62,42 @@ export default function TopHeader({
         )}
       </div>
 
-      <div className="flex items-center gap-1.5">
-        {/* FR-22 — notifications. Customer shell only: internal staff work from
-            the Admin Portal's own queues, not a customer notification feed. */}
+      <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Dev Mode Dropdown Menu */}
+        {devState && (
+          <DropdownMenu>
+            <DropdownMenuTrigger className="h-8 gap-1.5 rounded-lg border border-dashed border-amber-500/50 bg-amber-500/10 px-2.5 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 hover:text-amber-800 dark:hover:text-amber-200 text-[12px] font-medium transition-colors flex items-center outline-none cursor-pointer">
+              <Layers size={13} strokeWidth={2} />
+              <span className="hidden sm:inline">Dev Mode</span>
+              {devState.section && (
+                <span className="rounded bg-amber-500/20 px-1 py-0.5 text-[10px] font-mono">
+                  {devState.section}
+                </span>
+              )}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                <span>Dev Mode States</span>
+                {devState.section && <span className="font-mono">{devState.section}</span>}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {devState.states.map((st) => (
+                <DropdownMenuItem
+                  key={st.id}
+                  onClick={() => devState.onChange(st.id)}
+                  className="flex items-center justify-between text-[13px] cursor-pointer"
+                >
+                  <span>{st.label}</span>
+                  {devState.value === st.id && (
+                    <Check size={14} strokeWidth={2} className="text-primary" />
+                  )}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+
+        {/* FR-22 — notifications */}
         {actor.shell === "customer" && (
           <Button
             nativeButton={false}

@@ -5,14 +5,20 @@
  * reused across transaction contexts (account activity, global transactions,
  * operations monitoring). State model is 13.1.
  *
- * Rows link to Transaction Details, which is an object destination reached from
- * this list rather than from navigation (12.4).
+ * Enhanced with shadcn Select filters for channels and transaction types.
  */
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeftRight, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import {
@@ -35,6 +41,9 @@ const LIST_STATES: readonly ListState[] = [
   "error",
 ] as const;
 
+type ChannelFilter = "all" | "cards" | "mobile" | "transfer" | "bulk";
+type DirectionFilter = "all" | "debit" | "credit";
+
 interface TransactionListProps {
   transactions: Transaction[];
   /** Route prefix for the detail destination. */
@@ -55,20 +64,50 @@ export default function TransactionList({
   useAmountVisibility();
   const [state, setState] = useState<ListState>("populated");
   const [query, setQuery] = useState("");
+  const [channelFilter, setChannelFilter] = useState<ChannelFilter>("all");
+  const [directionFilter, setDirectionFilter] = useState<DirectionFilter>("all");
 
   const results = useMemo(() => {
-    if (!query.trim()) return transactions;
-    const q = query.toLowerCase();
-    return transactions.filter(
-      (t) =>
-        t.description.toLowerCase().includes(q) ||
-        t.counterparty.toLowerCase().includes(q) ||
-        t.reference.toLowerCase().includes(q),
-    );
-  }, [transactions, query]);
+    return transactions.filter((t) => {
+      // 1. Text Search Query
+      if (query.trim()) {
+        const q = query.toLowerCase();
+        const match =
+          t.description.toLowerCase().includes(q) ||
+          t.counterparty.toLowerCase().includes(q) ||
+          t.reference.toLowerCase().includes(q) ||
+          t.channel.toLowerCase().includes(q);
+        if (!match) return false;
+      }
+
+      // 2. Channel Filter
+      if (channelFilter !== "all") {
+        const ch = t.channel.toLowerCase();
+        if (channelFilter === "cards" && !ch.includes("card")) return false;
+        if (channelFilter === "mobile" && !ch.includes("mobile")) return false;
+        if (
+          channelFilter === "transfer" &&
+          !ch.includes("internet") &&
+          !ch.includes("rtgs") &&
+          !ch.includes("ach")
+        )
+          return false;
+        if (channelFilter === "bulk" && !ch.includes("bulk")) return false;
+      }
+
+      // 3. Direction Filter
+      if (directionFilter !== "all") {
+        if (t.direction !== directionFilter) return false;
+      }
+
+      return true;
+    });
+  }, [transactions, query, channelFilter, directionFilter]);
+
+  const hasActiveFilters = query.trim() !== "" || channelFilter !== "all" || directionFilter !== "all";
 
   const effective: ListState =
-    state === "populated" && query.trim() && results.length === 0 ? "filtered-empty" : state;
+    state === "populated" && hasActiveFilters && results.length === 0 ? "filtered-empty" : state;
 
   const rows = effective === "partial-load" ? transactions : results;
 
@@ -85,8 +124,9 @@ export default function TransactionList({
       )}
 
       <div className="rounded-2xl border border-border bg-card">
-        <div className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-3">
-          <div className="relative min-w-[200px] flex-1">
+        {/* Search & Filter Toolbar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
+          <div className="relative min-w-[220px] flex-1">
             <Search
               size={15}
               strokeWidth={1.9}
@@ -95,10 +135,38 @@ export default function TransactionList({
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search description, counterparty or reference"
+              placeholder="Search description, counterparty or reference..."
               className="pl-9"
               aria-label="Search transactions"
             />
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* shadcn Select for Channels */}
+            <Select value={channelFilter} onValueChange={(val) => setChannelFilter(val as ChannelFilter)}>
+              <SelectTrigger className="w-[170px] h-9">
+                <SelectValue placeholder="All Channels" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                <SelectItem value="all">All Channels</SelectItem>
+                <SelectItem value="cards">Cards</SelectItem>
+                <SelectItem value="mobile">Mobile Banking</SelectItem>
+                <SelectItem value="transfer">Bank Transfer</SelectItem>
+                <SelectItem value="bulk">Bulk Payments</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* shadcn Select for Direction / Types */}
+            <Select value={directionFilter} onValueChange={(val) => setDirectionFilter(val as DirectionFilter)}>
+              <SelectTrigger className="w-[140px] h-9">
+                <SelectValue placeholder="All Types" />
+              </SelectTrigger>
+              <SelectContent align="end">
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="debit">Debits</SelectItem>
+                <SelectItem value="credit">Credits</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -118,9 +186,11 @@ export default function TransactionList({
           <FilteredEmptyState
             onReset={() => {
               setQuery("");
+              setChannelFilter("all");
+              setDirectionFilter("all");
               setState("populated");
             }}
-            description="No transactions match your search. Clear it to see all activity."
+            description="No transactions match your search filters. Reset filters to view all transactions."
           />
         )}
 
@@ -155,7 +225,7 @@ export default function TransactionList({
                       {formatMoney(t.amount, t.currency)}
                     </span>
 
-                    <span className="w-[132px] shrink-0 text-right">
+                    <span className="w-[120px] shrink-0 text-right">
                       <TransactionStatusBadge state={t.state} />
                     </span>
                   </Link>

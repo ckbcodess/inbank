@@ -14,24 +14,15 @@ import {
   ArrowLeftRight,
   ArrowRight,
   ArrowUpRight,
-  Check,
   CheckCircle2,
+  ChevronRight,
   Clock,
-  Copy,
-  Download,
   FileSpreadsheet,
-  FileText,
-  FileUp,
-  Plus,
-  QrCode,
   Receipt,
-  RefreshCw,
   Send,
   SlidersHorizontal,
-  Sparkles,
   Users,
   Wallet,
-  Zap,
 } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { SummaryCard } from "@/components/SummaryCard";
@@ -39,7 +30,6 @@ import { TransactionStatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -50,7 +40,8 @@ import {
 } from "@/components/ui/dialog";
 import { useSession } from "@/lib/session-store";
 import { isApprover, isCorporateAdmin } from "@/lib/roles";
-import { accountsForProfile, transactionsForProfile, APPROVAL_QUEUE, BILLERS, formatMoney, formatDate } from "@/lib/mock-data";
+import { accountsForProfile, cardsForProfile, transactionsForProfile, APPROVAL_QUEUE, BILLERS, formatMoney, formatDate } from "@/lib/mock-data";
+import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
 
 type QuickModalType = "transfer" | "pay-bill" | "customize" | null;
 
@@ -76,6 +67,7 @@ export default function OverviewPage() {
   if (!actor || !activeProfile) return null;
 
   const accounts = accountsForProfile(activeProfile.kind);
+  const cards = cardsForProfile(activeProfile.kind);
   const transactions = transactionsForProfile(activeProfile.kind);
 
   const totalBalance = accounts.filter((a) => a.currency === "GHS").reduce((sum, a) => sum + a.balance, 0);
@@ -113,12 +105,6 @@ export default function OverviewPage() {
       <PageHeader
         title={`Good day, ${actor.name.split(" ")[0]}`}
         description={`${activeProfile.name} · ${activeProfile.reference}`}
-        actions={
-          <Button nativeButton={false} render={<Link href="/payments" />}>
-            <Send size={15} strokeWidth={1.9} aria-hidden="true" />
-            Make a payment
-          </Button>
-        }
       />
 
       {/* Quick Actions Bar — Mercury / Wise Usability Pattern */}
@@ -279,8 +265,8 @@ export default function OverviewPage() {
         </section>
       )}
 
-      {/* Accounts + recent activity */}
-      <section className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+      {/* Accounts + Available cards + recent activity */}
+      <section className="grid grid-cols-1 gap-5 lg:grid-cols-3">
         <div className="rounded-2xl border border-border bg-card">
           <div className="flex items-center justify-between border-b border-border px-5 py-4">
             <h2 className="text-[15px] text-foreground">Accounts</h2>
@@ -302,6 +288,43 @@ export default function OverviewPage() {
                   <span className="shrink-0 text-[13px] text-foreground tabular">
                     {formatMoney(acc.balance, acc.currency)}
                   </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card">
+          <div className="flex items-center justify-between border-b border-border px-5 py-4">
+            <h2 className="text-[15px] text-foreground">Available cards</h2>
+            <Link href="/cards" className="text-[12px] text-primary underline-offset-4 hover:underline">
+              View all cards
+            </Link>
+          </div>
+          <ul className="divide-y divide-border">
+            {cards.slice(0, 4).map((c) => (
+              <li key={c.id}>
+                <Link
+                  href={`/cards/${c.id}`}
+                  className="flex items-center justify-between gap-3 px-5 py-3.5 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <MiniCardThumbnail card={c} />
+                    <div className="flex flex-col min-w-0">
+                      <span className="truncate text-[13px] font-medium text-foreground">{c.name}</span>
+                      <span className="mt-0.5 text-[11px] text-muted-foreground tabular">
+                        {c.scheme} {c.type}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="text-[13px] text-foreground tabular">
+                      {c.type === "Prepaid" && c.balance !== null
+                        ? formatMoney(c.balance, c.currency)
+                        : "Debit Card"}
+                    </span>
+                    <ChevronRight size={15} strokeWidth={1.8} className="text-muted-foreground" />
+                  </div>
                 </Link>
               </li>
             ))}

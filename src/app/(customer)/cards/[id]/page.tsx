@@ -1,11 +1,9 @@
 "use client";
 
 /**
- * Card Details — BRD FR-33 (fund eligible prepaid cards) and FR-34 (block /
- * unblock eligible cards), updated to match Wise digital card usability.
- *
- * Provides instant 1-click access to PIN reveal, sensitive Card Details,
- * card freezing, spending limits, security controls, and card replacement.
+ * Card Details — Perfectly Balanced 2-Column Layout.
+ * Left Column: Hero Digital Card, Balance & Quick Actions.
+ * Right Column: Spending Limits, Controls & Management, and Recent Activity.
  */
 
 import { use, useMemo, useState } from "react";
@@ -14,13 +12,16 @@ import {
   AlertCircle,
   ArrowDownToLine,
   Check,
+  ArrowUpRight,
   ChevronRight,
   Copy,
   CreditCard,
+  ExternalLink,
   Eye,
   EyeOff,
   Grid,
   KeyRound,
+  Landmark,
   Lock,
   RefreshCw,
   Settings2,
@@ -28,7 +29,6 @@ import {
   Sliders,
   Snowflake,
   Sparkles,
-  Unlock,
   Zap,
 } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
@@ -48,8 +48,9 @@ import ComplianceActionDialog from "@/components/ComplianceActionDialog";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { ListSkeleton } from "@/components/states/ListStates";
 import type { BaselineState } from "@/lib/states";
-import { ACCOUNTS, findAccount, findCard, formatMoney, transactionsForProfile, type CardStatus } from "@/lib/mock-data";
+import { ACCOUNTS, findAccount, findCard, formatMoney, formatDate, transactionsForProfile, type CardStatus } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
+import { TransactionStatusBadge } from "@/components/StatusBadge";
 
 const BASELINE_STATES: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 
@@ -73,40 +74,41 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
 
   const [state, setState] = useState<BaselineState>("populated");
 
-  // Status & Balance Overlays
+  // Status & Balance State
   const [status, setStatus] = useState<CardStatus | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
   const [lastAction, setLastAction] = useState<string | null>(null);
   const [cardNickname, setCardNickname] = useState<string | null>(null);
 
+  // Single-Source Detail Reveal State
+  const [showDetailsInline, setShowDetailsInline] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
   // Dialog States
+  const [pinOpen, setPinOpen] = useState(false);
   const [fundOpen, setFundOpen] = useState(false);
   const [complianceOpen, setComplianceOpen] = useState(false);
-  const [pinOpen, setPinOpen] = useState(false);
-  const [detailsOpen, setDetailsOpen] = useState(false);
   const [limitsOpen, setLimitsOpen] = useState(false);
   const [controlsOpen, setControlsOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [replaceOpen, setReplaceOpen] = useState(false);
-  const [txOpen, setTxOpen] = useState(false);
 
   // Form states
   const [sourceId, setSourceId] = useState(card?.linkedAccountId ?? ACCOUNTS[0]?.id ?? "");
   const [amount, setAmount] = useState("");
-  const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  // Limit States
+  // Limits
   const [dailyLimit, setDailyLimit] = useState("5,000");
   const [monthlyLimit, setMonthlyLimit] = useState("25,000");
   const [atmLimit, setAtmLimit] = useState("1,500");
 
-  // Controls States
+  // Security Channels
   const [onlineEnabled, setOnlineEnabled] = useState(true);
   const [atmEnabled, setAtmEnabled] = useState(true);
   const [intlEnabled, setIntlEnabled] = useState(false);
   const [contactlessEnabled, setContactlessEnabled] = useState(true);
 
-  // Replacement state
+  // Replacement reason
   const [replaceReason, setReplaceReason] = useState("damaged");
 
   const effectiveStatus = status ?? card?.status ?? "Active";
@@ -121,14 +123,13 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
   const linked = useMemo(() => (card ? findAccount(card.linkedAccountId) : undefined), [card]);
   const cardTxList = useMemo(() => {
     if (!activeProfile) return [];
-    return transactionsForProfile(activeProfile.kind).slice(0, 6);
+    return transactionsForProfile(activeProfile.kind).slice(0, 5);
   }, [activeProfile]);
 
   if (!card) {
     return (
       <PageHeader
         title="Card not found"
-        description="This card is not available on the current relationship."
         backTo={{ href: "/cards", label: "Cards" }}
       />
     );
@@ -136,6 +137,7 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
 
   const isBlocked = effectiveStatus === "Blocked";
   const isExpired = effectiveStatus === "Expired";
+  const isPrepaid = card.type === "Prepaid";
 
   function handleCopy(text: string, field: string) {
     navigator.clipboard.writeText(text);
@@ -154,9 +156,7 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
   function handleStatusChange({ reason }: { reason: string }) {
     const next: CardStatus = isBlocked ? "Active" : "Blocked";
     setStatus(next);
-    setLastAction(
-      `${next === "Blocked" ? "Frozen/Blocked" : "Unfrozen/Unblocked"} this card. Reason recorded in audit log: “${reason}”`,
-    );
+    setLastAction(`${next === "Blocked" ? "Frozen" : "Unfrozen"} card. Reason: “${reason}”`);
     setComplianceOpen(false);
   }
 
@@ -166,17 +166,17 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
   }
 
   function handleSaveControls() {
-    setLastAction("Card security controls updated successfully.");
+    setLastAction("Card security channels updated.");
     setControlsOpen(false);
   }
 
   function handleSaveNickname() {
-    setLastAction("Card profile updated successfully.");
+    setLastAction("Card profile updated.");
     setEditOpen(false);
   }
 
   function handleRequestReplace() {
-    setLastAction(`Replacement card request submitted (Reason: ${replaceReason}). Standard shipping 3-5 days.`);
+    setLastAction(`Replacement request submitted (${replaceReason}).`);
     setReplaceOpen(false);
   }
 
@@ -184,7 +184,21 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
     <div className="flex flex-col gap-5">
       <PageHeader
         title={cardNickname ?? card.name}
-        description={`•••• ${card.maskedNumber.slice(-4)} · ${card.scheme} ${card.type}`}
+        badge={<Badge variant={STATUS_VARIANT[effectiveStatus]}>{effectiveStatus}</Badge>}
+        actions={
+          linked ? (
+            <Button
+              variant="outline"
+              size="sm"
+              nativeButton={false}
+              render={<Link href={`/accounts/${linked.id}`} />}
+              className="group h-8.5 rounded-xl border-border bg-card px-3 text-[12.5px] font-medium text-foreground hover:bg-muted/80 hover:text-foreground transition-all shadow-xs"
+            >
+              <span>View Linked Account</span>
+              <ArrowUpRight size={14} className="text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 shrink-0" />
+            </Button>
+          ) : null
+        }
         backTo={{ href: "/cards", label: "Cards" }}
       />
 
@@ -197,297 +211,307 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
       />
 
       {state === "loading" && (
-        <div className="rounded-2xl border border-border bg-card">
+        <div className="rounded-2xl border border-border bg-card p-6">
           <ListSkeleton rows={5} columns={3} />
         </div>
       )}
 
       {state === "error" && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card px-6 py-16 text-center">
-          <div className="mb-4 flex size-11 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-            <AlertCircle size={20} strokeWidth={1.7} aria-hidden="true" />
-          </div>
-          <p className="text-[15px] text-foreground">Couldn&apos;t load this card</p>
-          <p className="mt-1.5 max-w-sm text-[13px] leading-relaxed text-muted-foreground">
-            The card status shown may be out of date. Try again.
-          </p>
-          <Button variant="outline" size="sm" className="mt-5" onClick={() => setState("populated")}>
-            <RefreshCw size={14} strokeWidth={1.8} aria-hidden="true" />
-            Retry
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card px-6 py-12 text-center">
+          <AlertCircle size={20} className="text-destructive mb-2" />
+          <p className="text-[14px] font-medium text-foreground">Couldn&apos;t load card details</p>
+          <Button variant="outline" size="sm" className="mt-3" onClick={() => setState("populated")}>
+            <RefreshCw size={14} /> Retry
           </Button>
         </div>
       )}
 
       {state === "empty" && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card px-6 py-16 text-center">
-          <div className="mb-4 flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground">
-            <CreditCard size={20} strokeWidth={1.7} aria-hidden="true" />
-          </div>
-          <p className="text-[15px] text-foreground">No card data available</p>
-          <p className="mt-1.5 max-w-sm text-[13px] leading-relaxed text-muted-foreground">
-            This card exists but has no activity or balance information to display yet.
-          </p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card px-6 py-12 text-center">
+          <CreditCard size={24} className="text-muted-foreground mb-2" />
+          <p className="text-[14px] font-medium text-foreground">No card activity found</p>
         </div>
       )}
 
       {state === "populated" && (
         <>
-          {/* Audit / Last Action Banner */}
+          {/* Audit Banner */}
           {lastAction && (
-            <div className="flex items-start gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3">
-              <ShieldCheck size={16} strokeWidth={1.8} aria-hidden="true" className="mt-0.5 shrink-0 text-emerald-500" />
-              <p className="text-[13px] leading-relaxed text-foreground">{lastAction}</p>
+            <div className="flex items-center gap-2.5 rounded-xl border border-border bg-muted/40 px-4 py-2 text-[13px] text-foreground">
+              <ShieldCheck size={16} className="text-emerald-500 shrink-0" />
+              <span>{lastAction}</span>
             </div>
           )}
 
-          {/* ── WISE-STYLE TOP SECTION: Visual Card + 3 Circle Quick Actions ── */}
-          <section className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card p-6 md:p-8">
-            <div className="flex flex-col md:flex-row items-center gap-8 w-full max-w-2xl justify-center">
-              {/* Photorealistic Digital Card */}
-              <div className="relative aspect-[1.586/1] w-full max-w-[340px] rounded-2xl bg-gradient-to-tr from-amber-400 via-yellow-400 to-amber-300 p-5 text-zinc-900 shadow-xl overflow-hidden flex flex-col justify-between select-none">
-                {/* Subtle pattern background overlay */}
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/30 via-transparent to-black/10 pointer-events-none" />
-
-                {/* Card Top Row */}
-                <div className="relative z-10 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-[16px] tracking-wider uppercase opacity-90">InBank</span>
+          {/* BALANCED 2-COLUMN GRID */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-start">
+            
+            {/* LEFT COLUMN: Digital Card & Quick Actions (col-span-5) */}
+            <div className="lg:col-span-5 flex flex-col gap-5">
+              <section className="flex flex-col items-center rounded-2xl border border-border bg-card p-6 text-center shadow-xs">
+                {/* Digital Card Preview */}
+                <div className="relative aspect-[1.586/1] w-full max-w-[320px] rounded-2xl bg-gradient-to-br from-slate-900 via-zinc-900 to-black p-5 text-white shadow-xl overflow-hidden flex flex-col justify-between select-none border border-white/10">
+                  <div className="flex items-center justify-between z-10">
+                    <span className="font-mono text-[14px] font-bold tracking-widest uppercase opacity-90">InBank</span>
+                    <button
+                      type="button"
+                      onClick={() => setShowDetailsInline(!showDetailsInline)}
+                      className="flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white/90 backdrop-blur-md hover:bg-white/20 transition-colors cursor-pointer"
+                    >
+                      {showDetailsInline ? <EyeOff size={11} /> : <Eye size={11} />}
+                      <span>{showDetailsInline ? "Hide" : "Reveal"}</span>
+                    </button>
                   </div>
-                  {isBlocked && (
-                    <Badge variant="destructive" className="gap-1 bg-red-600 text-white shadow-sm">
-                      <Lock size={12} /> Frozen
-                    </Badge>
+
+                  <div className="flex items-center justify-between my-1 z-10">
+                    <div className="size-8 rounded bg-amber-400/80 border border-amber-300/50 flex items-center justify-center">
+                      <div className="size-5 border border-amber-700/60 rounded-xs bg-amber-700/30" />
+                    </div>
+                    <Zap size={16} className="text-white/80 rotate-90" />
+                  </div>
+
+                  <div className="mt-auto z-10">
+                    <div className="flex items-center justify-between">
+                      <p className="font-mono text-[15px] tracking-[0.14em] tabular">
+                        {showDetailsInline
+                          ? `4532 8901 2345 ${card.maskedNumber.slice(-4)}`
+                          : `•••• •••• •••• ${card.maskedNumber.slice(-4)}`}
+                      </p>
+                      {showDetailsInline && (
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(`453289012345${card.maskedNumber.slice(-4)}`, "inline-cn")}
+                          className="text-white/80 hover:text-white"
+                          title="Copy Card Number"
+                        >
+                          {copiedField === "inline-cn" ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
+                        </button>
+                      )}
+                    </div>
+                    <div className="mt-2 flex items-end justify-between text-[10px] uppercase text-white/80">
+                      <div>
+                        <p className="opacity-60 text-[8px]">Cardholder</p>
+                        <p className="font-medium tracking-wider">{card.holder}</p>
+                      </div>
+                      <div>
+                        <p className="opacity-60 text-[8px]">Expires</p>
+                        <p className="font-medium tabular tracking-wider">{card.expiry}</p>
+                      </div>
+                      {showDetailsInline && (
+                        <div>
+                          <p className="opacity-60 text-[8px]">CVV</p>
+                          <p className="font-medium tabular tracking-wider text-emerald-300">842</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Balance Display under Card */}
+                <div className="mt-4 flex flex-col items-center gap-0.5">
+                  <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+                    {isPrepaid ? "Prepaid Balance" : "Linked Account Balance"}
+                  </span>
+                  <div className="text-2xl font-semibold tracking-tight text-foreground tabular">
+                    {isPrepaid
+                      ? formatMoney(effectiveBalance ?? card.balance ?? 0, card.currency)
+                      : linked
+                      ? formatMoney(linked.available, linked.currency)
+                      : "Debit Card"}
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="mt-5 flex flex-wrap items-center justify-center gap-2.5 w-full">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPinOpen(true)}
+                    className="gap-1.5 rounded-full flex-1 min-w-[100px]"
+                  >
+                    <Grid size={14} />
+                    <span>Show PIN</span>
+                  </Button>
+
+                  <Button
+                    variant={isBlocked ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setComplianceOpen(true)}
+                    className={`gap-1.5 rounded-full flex-1 min-w-[100px] ${
+                      isBlocked ? "bg-amber-600 hover:bg-amber-700 text-white" : ""
+                    }`}
+                  >
+                    <Snowflake size={14} />
+                    <span>{isBlocked ? "Unfreeze" : "Freeze"}</span>
+                  </Button>
+
+                  {isPrepaid && card.fundable && (
+                    <Button
+                      size="sm"
+                      onClick={() => setFundOpen(true)}
+                      disabled={isBlocked || isExpired}
+                      className="gap-1.5 rounded-full bg-primary text-primary-foreground flex-1 min-w-[100px]"
+                    >
+                      <ArrowDownToLine size={14} />
+                      <span>Fund Card</span>
+                    </Button>
                   )}
                 </div>
+              </section>
 
-                {/* Chip & Contactless */}
-                <div className="relative z-10 flex items-center justify-between my-2">
-                  <div className="size-9 rounded-md bg-amber-200/80 border border-amber-500/40 flex items-center justify-center">
-                    <div className="size-6 border border-amber-600/60 rounded-xs grid grid-cols-2 gap-0.5 p-0.5">
-                      <div className="bg-amber-600/40 rounded-xs" />
-                      <div className="bg-amber-600/40 rounded-xs" />
-                    </div>
-                  </div>
-                  <div className="opacity-80 rotate-90">
-                    <Zap size={20} strokeWidth={2.2} />
-                  </div>
+              {/* Controls & Management */}
+              <section className="rounded-2xl border border-border bg-card overflow-hidden">
+                <div className="border-b border-border px-5 py-3">
+                  <h2 className="text-[13.5px] font-medium text-foreground">Card Controls</h2>
                 </div>
 
-                {/* Card Number & Details */}
-                <div className="relative z-10 mt-auto">
-                  <p className="font-mono text-[17px] tracking-[0.14em] tabular">
-                    •••• •••• •••• {card.maskedNumber.slice(-4)}
-                  </p>
-                  <div className="mt-3 flex items-end justify-between text-[12px] uppercase">
-                    <div>
-                      <p className="text-[9px] opacity-70">Cardholder</p>
-                      <p className="tracking-wider">{card.holder}</p>
-                    </div>
-                    <div>
-                      <p className="text-[9px] opacity-70">Expires</p>
-                      <p className="tabular tracking-wider">{card.expiry}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                <ul className="divide-y divide-border text-[13px]">
+                  <li>
+                    <button
+                      type="button"
+                      onClick={() => setControlsOpen(true)}
+                      className="flex w-full items-center justify-between px-5 py-3 text-left transition-colors hover:bg-muted/40 cursor-pointer"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Settings2 size={15} className="text-muted-foreground shrink-0" />
+                        <span className="text-foreground font-medium">Security channels</span>
+                      </div>
+                      <ChevronRight size={15} className="text-muted-foreground" />
+                    </button>
+                  </li>
 
-              {/* 3 Prominent Circle Quick Action Buttons (Wise Style) */}
-              <div className="flex items-center justify-center gap-6 md:gap-8">
-                {/* 1. Show PIN */}
-                <div className="flex flex-col items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setPinOpen(true)}
-                    className="flex size-14 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md transition-all hover:bg-emerald-600 hover:scale-105 active:scale-95 cursor-pointer"
-                    title="Show PIN"
-                  >
-                    <Grid size={22} strokeWidth={2.2} />
-                  </button>
-                  <span className="text-[12.5px] text-foreground">Show PIN</span>
-                </div>
+                  <li>
+                    <button
+                      type="button"
+                      onClick={() => setEditOpen(true)}
+                      className="flex w-full items-center justify-between px-5 py-3 text-left transition-colors hover:bg-muted/40 cursor-pointer"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Sparkles size={15} className="text-muted-foreground shrink-0" />
+                        <span className="text-foreground font-medium">Edit card profile</span>
+                      </div>
+                      <ChevronRight size={15} className="text-muted-foreground" />
+                    </button>
+                  </li>
 
-                {/* 2. Card Details */}
-                <div className="flex flex-col items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setDetailsOpen(true)}
-                    className="flex size-14 items-center justify-center rounded-full bg-emerald-500 text-white shadow-md transition-all hover:bg-emerald-600 hover:scale-105 active:scale-95 cursor-pointer"
-                    title="Card details"
-                  >
-                    <CreditCard size={22} strokeWidth={2.2} />
-                  </button>
-                  <span className="text-[12.5px] text-foreground">Card details</span>
-                </div>
-
-                {/* 3. Freeze Card */}
-                <div className="flex flex-col items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setComplianceOpen(true)}
-                    className={`flex size-14 items-center justify-center rounded-full text-white shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer ${
-                      isBlocked ? "bg-amber-500 hover:bg-amber-600" : "bg-emerald-500 hover:bg-emerald-600"
-                    }`}
-                    title={isBlocked ? "Unfreeze card" : "Freeze card"}
-                  >
-                    <Snowflake size={22} strokeWidth={2.2} />
-                  </button>
-                  <span className="text-[12.5px] text-foreground">
-                    {isBlocked ? "Unfreeze card" : "Freeze card"}
-                  </span>
-                </div>
-              </div>
+                  <li>
+                    <button
+                      type="button"
+                      onClick={() => setReplaceOpen(true)}
+                      className="flex w-full items-center justify-between px-5 py-3 text-left transition-colors hover:bg-muted/40 cursor-pointer text-destructive hover:text-destructive"
+                    >
+                      <div className="flex items-center gap-3">
+                        <CreditCard size={15} className="text-destructive shrink-0" />
+                        <span className="font-medium">Request replacement</span>
+                      </div>
+                      <ChevronRight size={15} className="text-muted-foreground" />
+                    </button>
+                  </li>
+                </ul>
+              </section>
             </div>
 
-            {/* Quick Balance & Fund Pill Bar */}
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-4 w-full border-t border-border pt-4 px-2">
-              <div className="flex items-center gap-3">
-                <span className="text-[13px] text-muted-foreground">Available balance:</span>
-                <span className="text-[16px] text-foreground tabular">
-                  {effectiveBalance === null
-                    ? linked
-                      ? formatMoney(linked.available, linked.currency)
-                      : "—"
-                    : formatMoney(effectiveBalance, card.currency)}
-                </span>
-                <Badge variant={STATUS_VARIANT[effectiveStatus]}>{effectiveStatus}</Badge>
-              </div>
+            {/* RIGHT COLUMN: Spending Limits & Recent Activity (col-span-7) */}
+            <div className="lg:col-span-7 flex flex-col gap-5">
+              
+              {/* Spending Limits Block */}
+              <section className="rounded-2xl border border-border bg-card p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Sliders size={16} className="text-primary" />
+                    <h2 className="text-[14px] font-medium text-foreground">Spending Limits</h2>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setLimitsOpen(true)}
+                    className="h-7 text-[12px] text-primary hover:text-primary hover:bg-primary/10"
+                  >
+                    Edit
+                  </Button>
+                </div>
 
-              {card.fundable && (
-                <Button
-                  size="sm"
-                  onClick={() => setFundOpen(true)}
-                  disabled={isBlocked || isExpired}
-                  className="gap-1.5"
-                >
-                  <ArrowDownToLine size={14} strokeWidth={1.9} />
-                  Fund prepaid card
-                </Button>
-              )}
+                <div className="flex flex-col gap-4 text-[13px]">
+                  {/* Daily Limit */}
+                  <div>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-muted-foreground text-[12px]">Daily Limit</span>
+                      <span className="font-medium text-foreground tabular">
+                        GHS 1,240 / GHS {dailyLimit}
+                      </span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                      <div className="h-full bg-primary rounded-full transition-all duration-300 w-[25%]" />
+                    </div>
+                  </div>
+
+                  {/* Monthly Limit */}
+                  <div>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-muted-foreground text-[12px]">Monthly Limit</span>
+                      <span className="font-medium text-foreground tabular">
+                        GHS 8,300 / GHS {monthlyLimit}
+                      </span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                      <div className="h-full bg-emerald-500 rounded-full transition-all duration-300 w-[33%]" />
+                    </div>
+                  </div>
+
+                  {/* ATM Limit */}
+                  <div className="flex justify-between items-center pt-1 text-[12px]">
+                    <span className="text-muted-foreground">ATM Cash Withdrawal</span>
+                    <span className="font-medium text-foreground tabular">GHS {atmLimit} / day</span>
+                  </div>
+                </div>
+              </section>
+
+              {/* Recent Activity Section */}
+              <section className="rounded-2xl border border-border bg-card overflow-hidden">
+                <div className="flex items-center justify-between border-b border-border px-5 py-3">
+                  <h2 className="text-[14px] font-medium text-foreground">Recent Activity</h2>
+                  <Link href="/transactions" className="text-[12px] text-primary hover:underline">
+                    View all
+                  </Link>
+                </div>
+
+                <ul className="divide-y divide-border">
+                  {cardTxList.map((t) => (
+                    <li key={t.id}>
+                      <Link
+                        href={`/transactions/${t.id}`}
+                        className="flex items-center justify-between gap-3 px-5 py-3 transition-colors hover:bg-muted/40"
+                      >
+                        <div className="flex flex-col min-w-0">
+                          <span className="truncate text-[13px] text-foreground font-medium">{t.description}</span>
+                          <span className="text-[11px] text-muted-foreground tabular">{formatDate(t.date)}</span>
+                        </div>
+                        <div className="flex items-center gap-2.5 shrink-0">
+                          <span className="text-[13px] text-foreground tabular font-medium">
+                            {t.direction === "debit" ? "−" : "+"}
+                            {formatMoney(t.amount, t.currency)}
+                          </span>
+                          <TransactionStatusBadge state={t.state} />
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
             </div>
-          </section>
-
-          {/* ── WISE-STYLE MANAGE CARD LIST MENU SECTION ── */}
-          <section className="rounded-2xl border border-border bg-card overflow-hidden">
-            <div className="border-b border-border px-5 py-4">
-              <h2 className="text-[15px] text-foreground">Manage card</h2>
-            </div>
-
-            <ul className="divide-y divide-border text-[14px]">
-              {/* 1. View recent card transactions */}
-              <li>
-                <button
-                  type="button"
-                  onClick={() => setTxOpen(true)}
-                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-muted/50 active:bg-muted"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                      <Grid size={17} strokeWidth={1.8} />
-                    </span>
-                    <span className="text-foreground">View recent card transactions</span>
-                  </div>
-                  <ChevronRight size={18} strokeWidth={1.8} className="text-muted-foreground" />
-                </button>
-              </li>
-
-              {/* 2. Set limits for this card */}
-              <li>
-                <button
-                  type="button"
-                  onClick={() => setLimitsOpen(true)}
-                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-muted/50 active:bg-muted"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                      <Sliders size={17} strokeWidth={1.8} />
-                    </span>
-                    <span className="text-foreground">Set limits for this card</span>
-                  </div>
-                  <ChevronRight size={18} strokeWidth={1.8} className="text-muted-foreground" />
-                </button>
-              </li>
-
-              {/* 3. Card controls */}
-              <li>
-                <button
-                  type="button"
-                  onClick={() => setControlsOpen(true)}
-                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-muted/50 active:bg-muted"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                      <Settings2 size={17} strokeWidth={1.8} />
-                    </span>
-                    <span className="text-foreground">Card controls</span>
-                  </div>
-                  <ChevronRight size={18} strokeWidth={1.8} className="text-muted-foreground" />
-                </button>
-              </li>
-
-              {/* 4. Unblock PIN */}
-              <li>
-                <button
-                  type="button"
-                  onClick={() => setPinOpen(true)}
-                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-muted/50 active:bg-muted"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                      <KeyRound size={17} strokeWidth={1.8} />
-                    </span>
-                    <span className="text-foreground">Unblock / Reset PIN</span>
-                  </div>
-                  <ChevronRight size={18} strokeWidth={1.8} className="text-muted-foreground" />
-                </button>
-              </li>
-
-              {/* 5. Edit card */}
-              <li>
-                <button
-                  type="button"
-                  onClick={() => setEditOpen(true)}
-                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-muted/50 active:bg-muted"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                      <Sparkles size={17} strokeWidth={1.8} />
-                    </span>
-                    <span className="text-foreground">Edit card nickname & account</span>
-                  </div>
-                  <ChevronRight size={18} strokeWidth={1.8} className="text-muted-foreground" />
-                </button>
-              </li>
-
-              {/* 6. Replace card */}
-              <li>
-                <button
-                  type="button"
-                  onClick={() => setReplaceOpen(true)}
-                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors hover:bg-muted/50 active:bg-muted"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                      <CreditCard size={17} strokeWidth={1.8} />
-                    </span>
-                    <span className="text-foreground">Replace card</span>
-                  </div>
-                  <ChevronRight size={18} strokeWidth={1.8} className="text-muted-foreground" />
-                </button>
-              </li>
-            </ul>
-          </section>
+          </div>
         </>
       )}
 
-      {/* ── INTERACTIVE MODALS & DIALOGS ── */}
+      {/* ── MODALS ── */}
 
       {/* 1. Show PIN Dialog */}
       <Dialog open={pinOpen} onOpenChange={setPinOpen}>
-        <DialogContent className="sm:max-w-[400px]">
+        <DialogContent className="sm:max-w-[380px]">
           <DialogHeader>
             <DialogTitle>Card PIN Code</DialogTitle>
             <DialogDescription>
-              This PIN code is private. Keep it secure and hidden from onlookers.
+              Keep this PIN secret and hidden from onlookers.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center justify-center gap-3 py-6">
@@ -495,13 +519,13 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
               {["4", "8", "1", "9"].map((digit, idx) => (
                 <div
                   key={idx}
-                  className="flex size-14 items-center justify-center rounded-2xl border-2 border-emerald-500/40 bg-emerald-500/10 text-[26px] tabular text-foreground font-mono shadow-inner"
+                  className="flex size-14 items-center justify-center rounded-2xl border-2 border-emerald-500/40 bg-emerald-500/10 text-[26px] tabular text-foreground font-mono font-bold shadow-inner"
                 >
                   {digit}
                 </div>
               ))}
             </div>
-            <p className="text-[12px] text-muted-foreground mt-2">Auto-hiding in 15 seconds for your protection</p>
+            <p className="text-[12px] text-muted-foreground mt-2">Auto-hiding in 15 seconds</p>
           </div>
           <DialogFooter>
             <Button onClick={() => setPinOpen(false)}>Done</Button>
@@ -509,76 +533,9 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
         </DialogContent>
       </Dialog>
 
-      {/* 2. Card Details Dialog */}
-      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <DialogContent className="sm:max-w-[460px]">
-          <DialogHeader>
-            <DialogTitle>Digital Card Details</DialogTitle>
-            <DialogDescription>
-              Use these card details for online purchases and digital payments.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-4 py-2 text-[13.5px]">
-            <div className="rounded-xl border border-border bg-muted/30 p-4 flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[12px] text-muted-foreground uppercase tracking-wider">Card Number</p>
-                  <p className="text-[16px] text-foreground tabular font-mono mt-0.5">4532 8901 2345 {card.maskedNumber.slice(-4)}</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleCopy(`453289012345${card.maskedNumber.slice(-4)}`, "cn")}
-                >
-                  {copiedField === "cn" ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
-                </Button>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 border-t border-border pt-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-[12px] text-muted-foreground uppercase tracking-wider">Expiry</p>
-                    <p className="text-[14px] text-foreground tabular font-mono mt-0.5">{card.expiry}</p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleCopy(card.expiry, "exp")}
-                  >
-                    {copiedField === "exp" ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
-                  </Button>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-[12px] text-muted-foreground uppercase tracking-wider">CVV / CVC</p>
-                    <p className="text-[14px] text-foreground tabular font-mono mt-0.5">842</p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleCopy("842", "cvv")}
-                  >
-                    {copiedField === "cvv" ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-border p-3 flex flex-col gap-1 bg-card">
-              <span className="text-[12px] text-muted-foreground">Billing Address:</span>
-              <span className="text-foreground">Adinkra House, Independence Ave, Accra, Ghana</span>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button onClick={() => setDetailsOpen(false)}>Done</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* 3. Spending Limits Dialog */}
+      {/* 2. Spending Limits Dialog */}
       <Dialog open={limitsOpen} onOpenChange={setLimitsOpen}>
-        <DialogContent className="sm:max-w-[460px]">
+        <DialogContent className="sm:max-w-[440px]">
           <DialogHeader>
             <DialogTitle>Card Spending Limits</DialogTitle>
             <DialogDescription>
@@ -623,20 +580,20 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
         </DialogContent>
       </Dialog>
 
-      {/* 4. Card Controls Dialog */}
+      {/* 3. Security Channels Dialog */}
       <Dialog open={controlsOpen} onOpenChange={setControlsOpen}>
-        <DialogContent className="sm:max-w-[460px]">
+        <DialogContent className="sm:max-w-[440px]">
           <DialogHeader>
-            <DialogTitle>Card Security Controls</DialogTitle>
+            <DialogTitle>Card Security Channels</DialogTitle>
             <DialogDescription>
-              Enable or disable payment channels instantly.
+              Enable or disable payment channels.
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-3 py-2 text-[13.5px]">
             <label className="flex items-center justify-between rounded-xl border border-border p-3.5 cursor-pointer hover:bg-muted/40">
               <div>
-                <p className="text-foreground">Online Shopping & E-Commerce</p>
-                <p className="text-[12px] text-muted-foreground">Allow card use for website and app checkout</p>
+                <p className="text-foreground font-medium">Online Shopping & E-Commerce</p>
+                <p className="text-[12px] text-muted-foreground">Allow card use for website checkout</p>
               </div>
               <input
                 type="checkbox"
@@ -648,8 +605,8 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
 
             <label className="flex items-center justify-between rounded-xl border border-border p-3.5 cursor-pointer hover:bg-muted/40">
               <div>
-                <p className="text-foreground">ATM Cash Withdrawals</p>
-                <p className="text-[12px] text-muted-foreground">Allow cash withdrawals at physical ATMs</p>
+                <p className="text-foreground font-medium">ATM Cash Withdrawals</p>
+                <p className="text-[12px] text-muted-foreground">Allow cash withdrawals at ATMs</p>
               </div>
               <input
                 type="checkbox"
@@ -661,8 +618,8 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
 
             <label className="flex items-center justify-between rounded-xl border border-border p-3.5 cursor-pointer hover:bg-muted/40">
               <div>
-                <p className="text-foreground">International Usage</p>
-                <p className="text-[12px] text-muted-foreground">Allow transactions outside home country</p>
+                <p className="text-foreground font-medium">International Usage</p>
+                <p className="text-[12px] text-muted-foreground">Allow foreign transactions</p>
               </div>
               <input
                 type="checkbox"
@@ -674,8 +631,8 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
 
             <label className="flex items-center justify-between rounded-xl border border-border p-3.5 cursor-pointer hover:bg-muted/40">
               <div>
-                <p className="text-foreground">Contactless Payments (NFC)</p>
-                <p className="text-[12px] text-muted-foreground">Tap-to-pay at point of sale terminals</p>
+                <p className="text-foreground font-medium">Contactless Payments (NFC)</p>
+                <p className="text-[12px] text-muted-foreground">Tap-to-pay at terminals</p>
               </div>
               <input
                 type="checkbox"
@@ -689,19 +646,16 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
             <Button variant="outline" onClick={() => setControlsOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSaveControls}>Save Controls</Button>
+            <Button onClick={handleSaveControls}>Save Settings</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* 5. Edit Card Dialog */}
+      {/* 4. Edit Card Profile Dialog */}
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent className="sm:max-w-[420px]">
           <DialogHeader>
             <DialogTitle>Edit Card Profile</DialogTitle>
-            <DialogDescription>
-              Customize nickname and default linked account.
-            </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-4 py-2">
             <div className="flex flex-col gap-2">
@@ -714,7 +668,7 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
             </div>
             <div className="flex flex-col gap-2">
               <Label>Primary Linked Account</Label>
-              <select className="flex h-10 w-full rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground focus:outline-none focus:ring-2 focus:ring-ring">
+              <select className="flex h-10 w-full rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground focus:outline-none">
                 {ACCOUNTS.map((acc) => (
                   <option key={acc.id} value={acc.id}>
                     {acc.name} ({acc.number})
@@ -727,12 +681,12 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
             <Button variant="outline" onClick={() => setEditOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSaveNickname}>Save Changes</Button>
+            <Button onClick={handleSaveNickname}>Save Profile</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* 6. Replace Card Dialog */}
+      {/* 5. Replace Card Dialog */}
       <Dialog open={replaceOpen} onOpenChange={setReplaceOpen}>
         <DialogContent className="sm:max-w-[440px]">
           <DialogHeader>
@@ -747,16 +701,13 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
               <select
                 value={replaceReason}
                 onChange={(e) => setReplaceReason(e.target.value)}
-                className="flex h-10 w-full rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                className="flex h-10 w-full rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground focus:outline-none"
               >
                 <option value="damaged">Damaged / Chip Not Working</option>
                 <option value="stolen">Lost or Stolen Card</option>
                 <option value="expired">Near Expiration Date</option>
                 <option value="compromised">Suspicious Activity / Compromised</option>
               </select>
-            </div>
-            <div className="rounded-xl border border-border bg-muted/40 p-3 text-[12.5px] text-muted-foreground">
-              Delivery to registered business address. Express delivery options available.
             </div>
           </div>
           <DialogFooter>
@@ -770,45 +721,8 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
         </DialogContent>
       </Dialog>
 
-      {/* 7. Card Transactions Modal */}
-      <Dialog open={txOpen} onOpenChange={setTxOpen}>
-        <DialogContent className="sm:max-w-[540px]">
-          <DialogHeader>
-            <DialogTitle>Card Transactions</DialogTitle>
-            <DialogDescription>
-              Recent activity settled on card •••• {card.maskedNumber.slice(-4)}.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex flex-col gap-2 py-2 max-h-[360px] overflow-y-auto">
-            <ul className="divide-y divide-border">
-              {cardTxList.map((t) => (
-                <li key={t.id} className="flex items-center justify-between gap-3 py-3 px-1 text-[13px]">
-                  <div className="flex flex-col min-w-0">
-                    <span className="truncate text-foreground">{t.description}</span>
-                    <span className="text-[12px] text-muted-foreground tabular">{t.date}</span>
-                  </div>
-                  <span className="shrink-0 text-foreground tabular">
-                    {t.direction === "debit" ? "−" : "+"}
-                    {formatMoney(t.amount, t.currency)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <DialogFooter>
-            <Button onClick={() => setTxOpen(false)}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* FR-33 Funding Dialog */}
-      <Dialog
-        open={fundOpen}
-        onOpenChange={(next) => {
-          if (!next) setAmount("");
-          setFundOpen(next);
-        }}
-      >
+      {/* 6. Fund Prepaid Card Dialog */}
+      <Dialog open={fundOpen} onOpenChange={setFundOpen}>
         <DialogContent className="sm:max-w-[460px]">
           <DialogHeader>
             <DialogTitle>Fund {card.name}</DialogTitle>
@@ -816,34 +730,21 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
               Move funds from a linked account onto this prepaid card.
             </DialogDescription>
           </DialogHeader>
-
           <div className="flex flex-col gap-4 py-1">
             <div className="flex flex-col gap-2">
               <Label>Source account</Label>
-              <div className="flex flex-col gap-1.5">
+              <select
+                value={sourceId}
+                onChange={(e) => setSourceId(e.target.value)}
+                className="flex h-10 w-full rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground"
+              >
                 {ACCOUNTS.filter((a) => a.currency === card.currency).map((acc) => (
-                  <button
-                    key={acc.id}
-                    type="button"
-                    onClick={() => setSourceId(acc.id)}
-                    className={`flex items-center justify-between rounded-xl border px-3 py-2.5 text-left transition-colors ${
-                      sourceId === acc.id
-                        ? "border-[var(--active-border)] bg-[var(--active-bg)]"
-                        : "border-border hover:bg-muted/50"
-                    }`}
-                  >
-                    <span className="flex min-w-0 flex-col">
-                      <span className="truncate text-[13px] text-foreground">{acc.name}</span>
-                      <span className="text-[12px] text-muted-foreground tabular">{acc.number}</span>
-                    </span>
-                    <span className="shrink-0 text-[13px] text-muted-foreground tabular">
-                      {formatMoney(acc.available, acc.currency)}
-                    </span>
-                  </button>
+                  <option key={acc.id} value={acc.id}>
+                    {acc.name} ({formatMoney(acc.available, acc.currency)})
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
-
             <div className="flex flex-col gap-2">
               <Label htmlFor="fund-amount">Amount ({card.currency})</Label>
               <Input
@@ -853,18 +754,9 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
                 className="tabular"
-                aria-invalid={exceedsSource || undefined}
               />
-              {exceedsSource && (
-                <p className="text-[12px] text-destructive">
-                  {formatMoney(amountValue, card.currency)} is more than the{" "}
-                  {formatMoney(source?.available ?? 0, source?.currency ?? card.currency)} available on{" "}
-                  {source?.name}.
-                </p>
-              )}
             </div>
           </div>
-
           <DialogFooter>
             <Button variant="outline" onClick={() => setFundOpen(false)}>
               Cancel
@@ -876,7 +768,7 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
         </DialogContent>
       </Dialog>
 
-      {/* FR-34 Compliance Block/Unblock Dialog */}
+      {/* 7. Compliance Action Freeze/Unfreeze Dialog */}
       <ComplianceActionDialog
         open={complianceOpen}
         onOpenChange={setComplianceOpen}
@@ -885,15 +777,12 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
         description={
           isBlocked
             ? "The card becomes usable again immediately. Written to the immutable audit log."
-            : "All transactions on this card are declined from the moment you confirm. Written to the immutable audit log."
+            : "All transactions on this card will be declined from the moment you confirm. Written to the immutable audit log."
         }
         confirmLabel={isBlocked ? "Unfreeze card" : "Freeze card"}
-        reasonPlaceholder={
-          isBlocked ? "Why is this card being unfrozen?" : "Why is this card being frozen?"
-        }
+        reasonPlaceholder={isBlocked ? "Why is this card being unfrozen?" : "Why is this card being frozen?"}
         destructive={!isBlocked}
       />
     </div>
   );
 }
-

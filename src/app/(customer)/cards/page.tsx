@@ -1,23 +1,28 @@
 "use client";
 
 /**
- * Cards (list) — BRD FR-33 / FR-34.
+ * Cards (list) — BRD FR-33 / FR-34 & New Card Creation Flow.
  *
- * Not named as a surface in Screen Consolidation v2, which stops at the ~30
- * MVP surfaces; the BRD carries Card Services as its own requirement area. It
- * is therefore built on the doc's existing patterns rather than as a new
- * pattern: 13.1 for this list, 13.9 baseline + action states for Card Details,
- * and section 8's compliance interaction for block/unblock.
- *
- * Card Details is reached from a row here, never from navigation (12.4).
+ * Allows viewing all linked prepaid/debit cards for the active relationship,
+ * plus instant digital issuance of new Visa and Mastercard payment cards.
  */
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, CreditCard, Search } from "lucide-react";
+import { CheckCircle2, ChevronRight, CreditCard, Plus, Search } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import {
   FilteredEmptyState,
@@ -27,8 +32,16 @@ import {
   TrueEmptyState,
 } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
-import { cardsForProfile, formatMoney, type CardStatus } from "@/lib/mock-data";
+import {
+  accountsForProfile,
+  addCard,
+  cardsForProfile,
+  formatMoney,
+  type CardStatus,
+  type PaymentCard,
+} from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
+import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
 
 const LIST_STATES: readonly ListState[] = [
   "loading",
@@ -46,11 +59,33 @@ const STATUS_VARIANT: Record<CardStatus, "success" | "destructive" | "secondary"
 };
 
 export default function CardsPage() {
+  const actor = useSession((s) => s.actor);
   const activeProfile = useSession((s) => s.activeProfile);
-  const cards = cardsForProfile(activeProfile?.kind);
 
   const [state, setState] = useState<ListState>("populated");
   const [query, setQuery] = useState("");
+  const [notice, setNotice] = useState<string | null>(null);
+
+  // Card Creation Modal States
+  const [createOpen, setCreateOpen] = useState(false);
+  const [cardName, setCardName] = useState("");
+  const [cardType, setCardType] = useState<"Prepaid" | "Debit">("Prepaid");
+  const [cardScheme, setCardScheme] = useState<"Visa" | "Mastercard">("Visa");
+  const [linkedAccId, setLinkedAccId] = useState("");
+  const [initialFund, setInitialFund] = useState("500");
+
+  // Trigger state refresh on creation
+  const [refreshCount, setRefreshCount] = useState(0);
+
+  const availableAccounts = useMemo(
+    () => (activeProfile ? accountsForProfile(activeProfile.kind) : []),
+    [activeProfile],
+  );
+
+  const cards = useMemo(() => {
+    // Reading cards from mock-data
+    return cardsForProfile(activeProfile?.kind);
+  }, [activeProfile, refreshCount]);
 
   const results = useMemo(() => {
     if (!query.trim()) return cards;
@@ -68,12 +103,66 @@ export default function CardsPage() {
 
   const rows = effective === "partial-load" ? cards : results;
 
+  function handleCreateCard() {
+    if (!cardName.trim()) return;
+
+    const account = availableAccounts.find((a) => a.id === linkedAccId) ?? availableAccounts[0];
+    const lastFour = String(Math.floor(1000 + Math.random() * 9000));
+    const isPrepaid = cardType === "Prepaid";
+    const fundAmount = isPrepaid ? Number(initialFund.replace(/,/g, "")) || 0 : null;
+
+    const newCard: PaymentCard = {
+      id: `card-new-${Date.now()}`,
+      name: cardName.trim(),
+      maskedNumber: `•••• ${lastFour}`,
+      type: cardType,
+      scheme: cardScheme,
+      currency: account?.currency ?? "GHS",
+      balance: fundAmount,
+      linkedAccountId: account?.id ?? "acc-001",
+      holder: actor?.name ?? "Cardholder",
+      expiry: "08/30",
+      status: "Active",
+      fundable: isPrepaid,
+      profileKind: activeProfile?.kind ?? "CORPORATE",
+    };
+
+    addCard(newCard);
+    setRefreshCount((c) => c + 1);
+    setNotice(`New digital ${cardScheme} ${cardType} card "${cardName}" created successfully.`);
+    setTimeout(() => setNotice(null), 5000);
+
+    // Reset Form
+    setCardName("");
+    setInitialFund("500");
+    setCreateOpen(false);
+  }
+
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
         title="Cards"
-        description="Prepaid and debit cards linked to this relationship. Fund eligible prepaid cards, or block a card you no longer control."
+        description="Prepaid and debit cards linked to this relationship. Issue new cards instantly, fund eligible prepaid cards, or block cards."
+        actions={
+          <Button
+            onClick={() => {
+              setLinkedAccId(availableAccounts[0]?.id ?? "");
+              setCreateOpen(true);
+            }}
+            className="gap-1.5 bg-primary text-primary-foreground shadow-xs"
+          >
+            <Plus size={15} />
+            <span>Create Card</span>
+          </Button>
+        }
       />
+
+      {notice && (
+        <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3 text-[13px] text-foreground">
+          <CheckCircle2 size={16} className="shrink-0 text-emerald-500" />
+          <span>{notice}</span>
+        </div>
+      )}
 
       <StateSwitcher
         section="13.1"
@@ -138,34 +227,28 @@ export default function CardsPage() {
                     href={`/cards/${card.id}`}
                     className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
                   >
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                      <CreditCard size={17} strokeWidth={1.8} aria-hidden="true" />
-                    </span>
+                    <MiniCardThumbnail card={card} />
 
-                    <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="flex flex-wrap items-center gap-2">
-                        <span className="truncate text-[14px] text-foreground">{card.name}</span>
-                        <Badge variant={STATUS_VARIANT[card.status]}>{card.status}</Badge>
-                      </span>
+                    <div className="flex min-w-0 flex-1 flex-col">
+                      <div className="flex items-center gap-2">
+                        <span className="truncate text-[13.5px] font-medium text-foreground">{card.name}</span>
+                        {card.status !== "Active" && (
+                          <Badge variant={STATUS_VARIANT[card.status]}>{card.status}</Badge>
+                        )}
+                      </div>
                       <span className="mt-0.5 text-[12px] text-muted-foreground tabular">
-                        {card.scheme} {card.type} · {card.maskedNumber} · {card.holder}
+                        {card.scheme} {card.type} · {card.maskedNumber}
                       </span>
-                    </span>
+                    </div>
 
-                    <span className="flex shrink-0 flex-col items-end">
-                      {card.balance === null ? (
-                        <span className="text-[13px] text-muted-foreground">Draws on account</span>
-                      ) : (
-                        <span className="text-[14px] text-foreground tabular">
-                          {formatMoney(card.balance, card.currency)}
-                        </span>
-                      )}
-                      <span className="mt-0.5 text-[12px] text-muted-foreground tabular">
-                        Expires {card.expiry}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-[13.5px] text-foreground tabular font-medium">
+                        {card.type === "Prepaid" && card.balance !== null
+                          ? formatMoney(card.balance, card.currency)
+                          : "Debit Card"}
                       </span>
-                    </span>
-
-                    <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                      <ChevronRight size={16} strokeWidth={1.8} className="text-muted-foreground" />
+                    </div>
                   </Link>
                 </li>
               ))}
@@ -175,6 +258,93 @@ export default function CardsPage() {
           </>
         )}
       </div>
+
+      {/* CREATE NEW CARD MODAL DIALOG */}
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <DialogContent className="sm:max-w-[460px]">
+          <DialogHeader>
+            <DialogTitle>Issue New Digital Card</DialogTitle>
+            <DialogDescription>
+              Create a new payment card instantly linked to your account.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex flex-col gap-4 py-2">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="c-name">Card Name / Nickname</Label>
+              <Input
+                id="c-name"
+                placeholder="e.g. Marketing Expense Card"
+                value={cardName}
+                onChange={(e) => setCardName(e.target.value)}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-2">
+                <Label>Card Type</Label>
+                <select
+                  value={cardType}
+                  onChange={(e) => setCardType(e.target.value as "Prepaid" | "Debit")}
+                  className="flex h-10 w-full rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground focus:outline-none"
+                >
+                  <option value="Prepaid">Prepaid Card</option>
+                  <option value="Debit">Debit Card</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label>Network Scheme</Label>
+                <select
+                  value={cardScheme}
+                  onChange={(e) => setCardScheme(e.target.value as "Visa" | "Mastercard")}
+                  className="flex h-10 w-full rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground focus:outline-none"
+                >
+                  <option value="Visa">Visa</option>
+                  <option value="Mastercard">Mastercard</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label>Linked Account</Label>
+              <select
+                value={linkedAccId}
+                onChange={(e) => setLinkedAccId(e.target.value)}
+                className="flex h-10 w-full rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground focus:outline-none"
+              >
+                {availableAccounts.map((acc) => (
+                  <option key={acc.id} value={acc.id}>
+                    {acc.name} ({acc.number}) — {formatMoney(acc.available, acc.currency)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {cardType === "Prepaid" && (
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="c-fund">Initial Funding Amount</Label>
+                <Input
+                  id="c-fund"
+                  value={initialFund}
+                  onChange={(e) => setInitialFund(e.target.value)}
+                  placeholder="500.00"
+                  className="tabular"
+                />
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreateOpen(false)}>
+              Cancel
+            </Button>
+            <Button disabled={!cardName.trim()} onClick={handleCreateCard}>
+              Issue Card
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
