@@ -20,7 +20,7 @@
  * "progressive disclosure based on payment type".
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -60,9 +60,9 @@ const LIST_STATES: readonly ListState[] = [
 
 type Mode = "single" | "bulk" | "bill" | "standing";
 
-const MODES: { key: Mode; label: string; icon: React.ElementType }[] = [
+const MODES: { key: Mode; label: string; icon: React.ElementType; corporateOnly?: boolean }[] = [
   { key: "single", label: "Single payment", icon: User },
-  { key: "bulk", label: "Bulk payment", icon: FileSpreadsheet },
+  { key: "bulk", label: "Bulk payment", icon: FileSpreadsheet, corporateOnly: true },
   { key: "bill", label: "Pay a bill", icon: Receipt },
   { key: "standing", label: "Standing instructions", icon: CalendarClock },
 ];
@@ -74,6 +74,23 @@ export default function PaymentsHubPage() {
   const [state, setState] = useState<ListState>("populated");
   const [mode, setMode] = useState<Mode>("single");
 
+  // Deep link, e.g. the dashboard's "Quick pay" tile → ?mode=standing. Read
+  // from window.location in an effect rather than via `useSearchParams`, which
+  // would force this page under a Suspense boundary — same approach, and same
+  // reason, as `useCaptureMode`.
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("mode");
+    if (requested && MODES.some((m) => m.key === requested)) {
+      setMode(requested as Mode);
+    }
+  }, []);
+
+  // Bulk upload is a corporate capability; a personal relationship never sees
+  // the tab, and the shell guards the route itself.
+  const isCorporate = activeProfile?.kind === "CORPORATE";
+  const modes = MODES.filter((m) => !m.corporateOnly || isCorporate);
+  const activeMode = modes.some((m) => m.key === mode) ? mode : "single";
+
   const transactions = transactionsForProfile(activeProfile?.kind);
   const recentPayments = transactions.filter((t) => t.direction === "debit").slice(0, 4);
 
@@ -81,7 +98,11 @@ export default function PaymentsHubPage() {
     <div className="flex flex-col gap-5">
       <PageHeader
         title="Payments"
-        description="Send a single payment, upload a batch, pay a bill, or manage a recurring instruction."
+        description={
+          isCorporate
+            ? "Send a single payment, upload a batch, pay a bill, or manage a recurring instruction."
+            : "Send a single payment, pay a bill, or manage a recurring instruction."
+        }
       />
 
       <StateSwitcher
@@ -94,14 +115,14 @@ export default function PaymentsHubPage() {
 
       {/* Inline mode selection */}
       <div className="inline-flex w-fit flex-wrap rounded-xl bg-muted p-1">
-        {MODES.map(({ key, label, icon: Icon }) => (
+        {modes.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
             type="button"
             onClick={() => setMode(key)}
-            aria-pressed={mode === key}
+            aria-pressed={activeMode === key}
             className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all ${
-              mode === key
+              activeMode === key
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
             }`}
@@ -112,7 +133,7 @@ export default function PaymentsHubPage() {
         ))}
       </div>
 
-      {mode === "single" && (
+      {activeMode === "single" && (
         <section className="rounded-2xl border border-border bg-card p-6">
           <h2 className="text-[16px] text-foreground">Pay one beneficiary</h2>
           <p className="mt-1.5 max-w-lg text-[13px] leading-relaxed text-muted-foreground">
@@ -157,7 +178,7 @@ export default function PaymentsHubPage() {
         </section>
       )}
 
-      {mode === "bulk" && (
+      {activeMode === "bulk" && (
         <section className="rounded-2xl border border-border bg-card p-6">
           <h2 className="text-[16px] text-foreground">Pay many at once</h2>
           <p className="mt-1.5 max-w-lg text-[13px] leading-relaxed text-muted-foreground">
@@ -176,7 +197,7 @@ export default function PaymentsHubPage() {
 
       {/* FR-05 — bill payments. Biller selection is inline, same principle as
           beneficiary selection: no intermediate screen. */}
-      {mode === "bill" && (
+      {activeMode === "bill" && (
         <section className="rounded-2xl border border-border bg-card p-6">
           <h2 className="text-[16px] text-foreground">Pay a bill</h2>
           <p className="mt-1.5 max-w-lg text-[13px] leading-relaxed text-muted-foreground">
@@ -213,7 +234,7 @@ export default function PaymentsHubPage() {
       {/* FR-05 — standing instructions. Recurring payments are listed with the
           next run date so a paused instruction is never mistaken for an active
           one. */}
-      {mode === "standing" && (
+      {activeMode === "standing" && (
         <section className="rounded-2xl border border-border bg-card">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-6 py-5">
             <div>

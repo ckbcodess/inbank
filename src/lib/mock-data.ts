@@ -183,8 +183,16 @@ export const ACCOUNTS: Account[] = [
   },
 ];
 
+/**
+ * Foreign-currency accounts are out of scope — the BRD covers local-currency
+ * accounts only, so they never surface in account lists, balances or pickers.
+ * `acc-003` stays in ACCOUNTS purely so trade records and USD cards that
+ * reference it still resolve through `findAccount`.
+ */
 export function accountsForProfile(kind: "RETAIL" | "CORPORATE" = "CORPORATE"): Account[] {
-  return ACCOUNTS.filter((a) => (a.profileKind ?? "CORPORATE") === kind);
+  return ACCOUNTS.filter(
+    (a) => (a.profileKind ?? "CORPORATE") === kind && a.type !== "Foreign Currency",
+  );
 }
 
 export function findAccount(id: string): Account | undefined {
@@ -192,6 +200,37 @@ export function findAccount(id: string): Account | undefined {
 }
 
 /* ── Transactions ──────────────────────────────────────────────────────────── */
+
+/**
+ * Spend categories are profile-specific — a corporate ledger has no "Groceries"
+ * line and a personal one has no "Payroll" line. Both lists are capped at eight
+ * so the dashboard breakdown never has to invent a colour; see `insights.ts`.
+ */
+export const CORPORATE_CATEGORIES = [
+  "Payroll",
+  "Suppliers",
+  "Trade & imports",
+  "Rent & facilities",
+  "Utilities",
+  "Travel",
+  "Taxes & levies",
+  "Bank charges",
+] as const;
+
+export const RETAIL_CATEGORIES = [
+  "Groceries",
+  "Transport",
+  "Shopping",
+  "Utilities",
+  "Dining",
+  "Cash & MoMo",
+  "Airtime & data",
+  "Health",
+] as const;
+
+export type SpendCategory =
+  | (typeof CORPORATE_CATEGORIES)[number]
+  | (typeof RETAIL_CATEGORIES)[number];
 
 export interface Transaction {
   id: string;
@@ -209,6 +248,8 @@ export interface Transaction {
   state: TransactionState;
   channel: string;
   profileKind?: "RETAIL" | "CORPORATE";
+  /** Spend classification — debits only; credits are income, not a spend line. */
+  category?: SpendCategory;
   /** Populated for failed states — drives the recovery path. */
   failureReason?: string;
   /** For failed-bulk: the batch this record belongs to. */
@@ -237,6 +278,7 @@ export const TRANSACTIONS: Transaction[] = [
     state: "completed",
     channel: "Internet Banking",
     fee: 12.5,
+    category: "Suppliers",
     profileKind: "CORPORATE",
   },
   {
@@ -255,6 +297,7 @@ export const TRANSACTIONS: Transaction[] = [
     state: "pending",
     channel: "Bulk Upload",
     batchId: "batch-0091",
+    category: "Payroll",
     profileKind: "CORPORATE",
   },
   {
@@ -274,6 +317,7 @@ export const TRANSACTIONS: Transaction[] = [
     channel: "Internet Banking",
     failureReason:
       "Beneficiary account name does not match the account number at the receiving bank (FR-32).",
+    category: "Suppliers",
     profileKind: "CORPORATE",
   },
   {
@@ -293,6 +337,7 @@ export const TRANSACTIONS: Transaction[] = [
     channel: "Bulk Upload",
     batchId: "batch-0090",
     failureReason: "Record 37 of 140 — beneficiary account closed.",
+    category: "Payroll",
     profileKind: "CORPORATE",
   },
   {
@@ -313,6 +358,7 @@ export const TRANSACTIONS: Transaction[] = [
     tradeId: "trade-0417",
     failureReason:
       "Returned by bank operations — commercial invoice does not match the bill of lading quantity.",
+    category: "Trade & imports",
     profileKind: "CORPORATE",
   },
   {
@@ -347,6 +393,7 @@ export const TRANSACTIONS: Transaction[] = [
     kind: "single",
     state: "completed",
     channel: "POS Card",
+    category: "Travel",
     profileKind: "CORPORATE",
   },
   {
@@ -364,6 +411,7 @@ export const TRANSACTIONS: Transaction[] = [
     kind: "single",
     state: "completed",
     channel: "Mobile Banking",
+    category: "Utilities",
     profileKind: "CORPORATE",
   },
   {
@@ -381,6 +429,7 @@ export const TRANSACTIONS: Transaction[] = [
     kind: "single",
     state: "completed",
     channel: "POS Card",
+    category: "Groceries",
     profileKind: "RETAIL",
   },
   {
@@ -432,6 +481,7 @@ export const TRANSACTIONS: Transaction[] = [
     kind: "single",
     state: "completed",
     channel: "POS Card",
+    category: "Shopping",
     profileKind: "RETAIL",
   },
   {
@@ -449,6 +499,7 @@ export const TRANSACTIONS: Transaction[] = [
     kind: "single",
     state: "completed",
     channel: "Mobile Banking",
+    category: "Cash & MoMo",
     profileKind: "RETAIL",
   },
 ];
@@ -804,6 +855,25 @@ export function addCard(card: PaymentCard): void {
   CARDS.unshift(card);
 }
 
+/**
+ * FR-34 — block/unblock a card. Mutates in place, like `addCard`, so the change
+ * survives navigation within the session; callers bump their own state to
+ * re-render.
+ */
+export function setCardStatus(id: string, status: CardStatus): void {
+  const card = CARDS.find((c) => c.id === id);
+  if (card) card.status = status;
+}
+
+/** FR-33 — prepaid/virtual card funding. Debit cards draw on their linked
+ *  account and carry no balance of their own, so they are not fundable. */
+export function fundCard(id: string, amount: number): boolean {
+  const card = CARDS.find((c) => c.id === id);
+  if (!card || !card.fundable || card.balance === null || amount <= 0) return false;
+  card.balance = Math.round((card.balance + amount) * 100) / 100;
+  return true;
+}
+
 /* ── FX rates — FR-30 (Bank's published daily rates) ────────────────────────── */
 
 export interface FxRate {
@@ -818,8 +888,11 @@ export interface FxRate {
 }
 
 /**
- * FR-30 is explicitly a *published rates* board — read-only reference data, not
- * a dealing screen. There is no conversion or booking action here.
+ * FR-30 is a *published rates* board — reference data, not a dealing screen.
+ * Converting an amount against a published rate is still reference use: it is
+ * indicative, it books nothing, and it holds no quote. What stays out is any
+ * action that commits the customer to a rate; the actual deal happens in the
+ * transaction flow (S14).
  */
 export const FX_PUBLISHED_AT = "2026-08-11T08:30:00Z";
 
@@ -832,6 +905,26 @@ export const FX_RATES: FxRate[] = [
   { pair: "NGN/GHS", base: "NGN", quote: "GHS", buy: 0.0071, sell: 0.0079, mid: 0.0075, changePct: -1.05 },
   { pair: "CNY/GHS", base: "CNY", quote: "GHS", buy: 1.58, sell: 1.66, mid: 1.62, changePct: 0.22 },
 ];
+
+export function findFxRate(currency: string): FxRate | undefined {
+  return FX_RATES.find((r) => r.base === currency.toUpperCase());
+}
+
+/**
+ * Local-currency equivalent of a foreign balance, at the published mid rate.
+ *
+ * Any figure shown in a currency the customer does not think in is a figure
+ * they have to convert in their head. Wherever a non-GHS amount appears, the
+ * GHS equivalent belongs beside it. Returns null for GHS (nothing to convert)
+ * and for currencies with no published rate — better to show nothing than a
+ * number the bank has not published.
+ */
+export function toLocalEquivalent(amount: number, currency: string): number | null {
+  if (currency.toUpperCase() === "GHS") return null;
+  const rate = findFxRate(currency);
+  if (!rate) return null;
+  return Math.round(amount * rate.mid * 100) / 100;
+}
 
 /* ── Billers & standing instructions — FR-05 ────────────────────────────────── */
 

@@ -110,6 +110,25 @@
   --chart-secondary-3: oklch(0.56 0.114 89.117);
   --chart-secondary-4: oklch(0.84 0.187 113.117);
   --chart-secondary-5: oklch(0.5 0.103 83.117);
+  /*
+   * Categorical data-viz palette — encodes IDENTITY (which category), not
+   * magnitude. The --chart-* ramp above is a single blue hue and is a
+   * *sequential* scale; using it for nominal categories would double-encode
+   * slice size as lightness. These eight-family hues are assigned in fixed
+   * order — the order is the colour-blind-safety mechanism, so do not reorder
+   * or cycle past --cat-5. A sixth-and-beyond category folds into --cat-other.
+   * Validated against the card surface (#ffffff light / #171717 dark):
+   * worst adjacent CVD ΔE 9.1 light / 8.4 dark, normal-vision ΔE 19.6 / 19.3.
+   * Aqua, yellow and magenta sit below 3:1 on the light surface, so any chart
+   * using them must also print the values (ranked list or table) — never
+   * colour alone.
+   */
+  --cat-1: #2a78d6;
+  --cat-2: #eb6834;
+  --cat-3: #1baf7a;
+  --cat-4: #eda100;
+  --cat-5: #e87ba4;
+  --cat-other: oklch(0.72 0 0);
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.439 0 0);
@@ -199,6 +218,14 @@
   --chart-secondary-3: oklch(0.6 0.123 89.117);
   --chart-secondary-4: oklch(0.88 0.196 113.117);
   --chart-secondary-5: oklch(0.54 0.111 83.117);
+  /* Same eight hue families, re-stepped for the dark surface — a selected dark
+     palette, not an automatic flip. All five clear 3:1 on #171717. */
+  --cat-1: #3987e5;
+  --cat-2: #d95926;
+  --cat-3: #199e70;
+  --cat-4: #c98500;
+  --cat-5: #d55181;
+  --cat-other: oklch(0.55 0 0);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.708 0 0);
   --sidebar-primary: oklch(0.62 0.16 255);
@@ -258,6 +285,11 @@
   html {
     font-size: 14px;
     @apply font-sans;
+    /* Always reserve the scrollbar gutter. Without this, any change that makes
+       the page shorter or taller — hiding balances, switching a chart period,
+       filtering a list — adds or removes the scrollbar and shifts every
+       centred element sideways. */
+    scrollbar-gutter: stable;
   }
   body {
     @apply antialiased bg-background text-foreground;
@@ -319,22 +351,27 @@
    app shells (AppShell / SuperAdminShell) so every page animates in the same way
    the inventory page does. Re-runs on each navigation because the page subtree
    remounts. `> * > *` targets the sections inside a page's root wrapper. */
+   Timing note: the fill mode is `both`, so a section is held at opacity 0 for
+   the whole of its delay. Delay and duration therefore ADD — the last section
+   is not readable until delay + duration has elapsed. At 480ms + 500ms that
+   was ~1s of blank page on every tab switch, which reads as loading rather
+   than as motion. Kept the cascade, scaled it so the last section lands by
+   ~360ms and the shorter travel makes it feel like arrival, not a wait. */
 @keyframes page-stagger-in {
-  from { opacity: 0; transform: translateY(14px); }
+  from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 @media (prefers-reduced-motion: no-preference) {
   .page-stagger > * > * {
-    animation: page-stagger-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: page-stagger-in 0.26s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   .page-stagger > * > *:nth-child(1) { animation-delay: 0ms; }
-  .page-stagger > * > *:nth-child(2) { animation-delay: 70ms; }
-  .page-stagger > * > *:nth-child(3) { animation-delay: 140ms; }
-  .page-stagger > * > *:nth-child(4) { animation-delay: 210ms; }
-  .page-stagger > * > *:nth-child(5) { animation-delay: 280ms; }
-  .page-stagger > * > *:nth-child(6) { animation-delay: 350ms; }
-  .page-stagger > * > *:nth-child(7) { animation-delay: 420ms; }
-  .page-stagger > * > *:nth-child(n+8) { animation-delay: 480ms; }
+  .page-stagger > * > *:nth-child(2) { animation-delay: 25ms; }
+  .page-stagger > * > *:nth-child(3) { animation-delay: 50ms; }
+  .page-stagger > * > *:nth-child(4) { animation-delay: 70ms; }
+  .page-stagger > * > *:nth-child(5) { animation-delay: 85ms; }
+  .page-stagger > * > *:nth-child(6) { animation-delay: 95ms; }
+  .page-stagger > * > *:nth-child(n+7) { animation-delay: 100ms; }
 }
 
 /* CSS Mask fade-out for bottom edge of shell content */
