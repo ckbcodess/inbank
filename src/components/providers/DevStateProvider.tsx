@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import React, { createContext, useContext, useMemo, useState, useCallback, ReactNode } from "react";
 
 export interface DevStateOption {
   id: string;
@@ -37,11 +37,14 @@ export function DevStateProvider({ children }: { children: ReactNode }) {
     setDevState(null);
   }, []);
 
-  return (
-    <DevStateContext.Provider value={{ devState, registerState, unregisterState }}>
-      {children}
-    </DevStateContext.Provider>
+  // Memoised for the same reason as the amount-visibility provider: an inline
+  // object re-renders every consumer on each provider render.
+  const value = useMemo(
+    () => ({ devState, registerState, unregisterState }),
+    [devState, registerState, unregisterState],
   );
+
+  return <DevStateContext.Provider value={value}>{children}</DevStateContext.Provider>;
 }
 
 export function useDevState() {

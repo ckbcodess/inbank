@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
 import { Calligraph } from "calligraph";
 
 const STORAGE_KEY = "nibs-show-amounts";
@@ -170,16 +170,22 @@ export function AmountVisibilityProvider({ children }: { children: React.ReactNo
     [showAmounts]
   );
 
+  // Memoised: an inline object here is a new value on every provider render,
+  // which re-renders every consumer in the tree whether or not the flag
+  // actually changed.
+  const value = useMemo(
+    () => ({
+      showAmounts,
+      toggleAmountVisibility,
+      setShowAmounts,
+      formatAmount,
+      formatMoney: formatAmount,
+    }),
+    [showAmounts, toggleAmountVisibility, setShowAmounts, formatAmount],
+  );
+
   return (
-    <AmountVisibilityContext.Provider
-      value={{
-        showAmounts,
-        toggleAmountVisibility,
-        setShowAmounts,
-        formatAmount,
-        formatMoney: formatAmount,
-      }}
-    >
+    <AmountVisibilityContext.Provider value={value}>
       {children}
     </AmountVisibilityContext.Provider>
   );

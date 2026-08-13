@@ -15,7 +15,6 @@ import TopHeader from "./TopHeader";
 import { SurfaceProvider } from "@/lib/surface-context";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
 import { getNavigation } from "@/lib/navigation";
-import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import type { Profile } from "@/lib/roles";
 
 const COLLAPSE_KEY = "nibs-sidebar-collapsed";
@@ -24,7 +23,10 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
   const router = useRouter();
   const pathname = usePathname();
   const { actor, activeProfile, mfaVerified, selectProfile, signOut } = useSession();
-  useAmountVisibility();
+  // NOTE: the shell deliberately does NOT subscribe to amount visibility. It
+  // renders no amounts, and subscribing re-rendered the whole shell — sidebar
+  // and header included — on every toggle of the hide-amounts button. TopHeader
+  // subscribes on its own for the eye icon.
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const hydrated = useSessionHydrated();
@@ -48,7 +50,10 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
       const isCorporateRoute =
         pathname.startsWith("/approvals") ||
         pathname.startsWith("/administration") ||
-        pathname.startsWith("/trade");
+        pathname.startsWith("/trade") ||
+        // Bulk payment files are a corporate capability — a personal
+        // relationship has no batch to upload.
+        pathname.startsWith("/payments/bulk");
       if (isCorporateRoute) {
         router.replace("/overview");
       }
