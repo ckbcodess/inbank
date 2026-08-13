@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { useDevState } from "@/components/providers/DevStateProvider";
+import { useCaptureMode } from "@/lib/capture-mode";
 import { NOTIFICATIONS } from "@/lib/mock-data";
 import {
   DropdownMenu,
@@ -38,6 +39,7 @@ export default function TopHeader({
   const { resolvedTheme, setTheme } = useTheme();
   const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
   const { devState } = useDevState();
+  const captureMode = useCaptureMode();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -63,8 +65,8 @@ export default function TopHeader({
       </div>
 
       <div className="flex items-center gap-1.5 sm:gap-2">
-        {/* Dev Mode Dropdown Menu */}
-        {devState && (
+        {/* Dev Mode Dropdown Menu — hidden in capture mode so it stays out of Figma captures */}
+        {devState && !captureMode && (
           <DropdownMenu>
             <DropdownMenuTrigger className="h-8 gap-1.5 rounded-lg border border-dashed border-amber-500/50 bg-amber-500/10 px-2.5 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 hover:text-amber-800 dark:hover:text-amber-200 text-[12px] font-medium transition-colors flex items-center outline-none cursor-pointer">
               <Layers size={13} strokeWidth={2} />
