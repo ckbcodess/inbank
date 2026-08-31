@@ -1,0 +1,265 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400&display=swap">
+  <style>
+    body { margin: 0; font-family: Geist, system-ui, sans-serif; font-weight: 400; background: oklch(1 0 0); }
+    * { box-sizing: border-box; font-weight: 400; }
+    a { color: oklch(0.55 0.17 255); text-decoration: none; }
+    a:hover { color: oklch(0.48 0.16 255); }
+    .t { font-variant-numeric: tabular-nums; }
+    .sec { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: oklch(0.556 0 0); }
+  </style>
+</helmet>
+
+<div style="padding: 28px 32px 36px; background: oklch(1 0 0); color: oklch(0.145 0 0); font-size: 14px;">
+
+  <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 22px;">
+    <div style="font-size: 15px; color: oklch(0.556 0 0);">Good morning, Ama</div>
+    <div class="t" style="font-size: 12.5px; color: oklch(0.556 0 0);">Last login: 27 August 2026, 8:43 am</div>
+  </div>
+
+  <!-- ══ THE ANSWER ══ one sentence, one number, one picture -->
+  <div style="border: 1px solid oklch(0.922 0 0); border-radius: 18px; background: oklch(1 0 0); padding: 26px 28px; display: grid; grid-template-columns: 348px 1fr; gap: 36px;">
+
+    <div>
+      <div style="font-size: 13px; color: oklch(0.556 0 0);">Safe to spend</div>
+      <!-- hero figure: proportional figures, same sans, exactly one on the page -->
+      <div style="font-size: 52px; line-height: 1.02; letter-spacing: -0.03em; margin-top: 6px;">GHS 16,500</div>
+      <div style="font-size: 13.5px; line-height: 1.6; color: oklch(0.556 0 0); margin-top: 12px; max-width: 30ch;">
+        What&apos;s left in Current after everything already committed, up to your salary on 10 September.
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 10px; border-radius: 12px; background: color-mix(in oklch, oklch(0.62 0.15 150) 10%, transparent); padding: 12px 14px; margin-top: 20px;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="oklch(0.50 0.13 150)" stroke-width="1.9"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>
+        <span style="font-size: 13.5px; color: oklch(0.30 0.06 150);">You&apos;re covered — nothing runs you short.</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; margin-top: 20px; padding-top: 18px; border-top: 1px solid oklch(0.94 0 0);">
+        <div style="display: flex; align-items: baseline; gap: 10px; padding: 5px 0;">
+          <span style="flex-grow: 1; font-size: 13px; color: oklch(0.556 0 0);">In Current now</span>
+          <span class="t" style="font-size: 13.5px;">GHS 18,070.50</span>
+        </div>
+        <div style="display: flex; align-items: baseline; gap: 10px; padding: 5px 0;">
+          <span style="flex-grow: 1; font-size: 13px; color: oklch(0.556 0 0);">Committed before 10 Sept</span>
+          <span class="t" style="font-size: 13.5px;">− GHS 1,570.00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- the runway: one line, actual behind today, projected ahead -->
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+        <div style="font-size: 14px;">Your Current account, with everything already scheduled</div>
+        <a href="#" style="font-size: 13px;">Full calendar</a>
+      </div>
+      <div style="font-size: 12px; color: oklch(0.556 0 0);">Projection past today — planned payments only, not day-to-day spending.</div>
+
+      <svg viewBox="0 0 660 210" width="100%" style="margin-top: 10px; overflow: visible;" role="img" aria-label="Current account balance from 20 August to 16 September. Falls from GHS 21,200 to a low of GHS 16,500 on 2 September, then rises with salary on 10 September and a term deposit maturity on 14 September.">
+        <!-- recessive solid hairline grid -->
+        <line x1="30" y1="25.7" x2="620" y2="25.7" stroke="oklch(0.94 0 0)" stroke-width="1"/>
+        <line x1="30" y1="93.5" x2="620" y2="93.5" stroke="oklch(0.94 0 0)" stroke-width="1"/>
+        <line x1="30" y1="150" x2="620" y2="150" stroke="oklch(0.90 0 0)" stroke-width="1"/>
+
+        <!-- today -->
+        <line x1="183" y1="14" x2="183" y2="150" stroke="oklch(0.80 0 0)" stroke-width="1"/>
+        <text x="183" y="9" text-anchor="middle" font-size="10.5" fill="oklch(0.45 0 0)" letter-spacing="0.06em">TODAY</text>
+
+        <!-- actual: solid -->
+        <path d="M30,115 L95.6,122.6 L139.3,128 L183,132.6" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+
+        <!-- projected: same hue, dashed = same entity, lower certainty -->
+        <path d="M183,132.6 H204.8 V133.5 H292.2 V140.5 H314.1 V141.5 H488.9 V93.5 H576.3 V25.7 H620"
+              fill="none" stroke="#2a78d6" stroke-width="2" stroke-dasharray="5 4" stroke-linejoin="round" stroke-linecap="round" opacity="0.75"/>
+
+        <!-- event marks, each with a visible label (never colour alone) -->
+        <circle cx="204.8" cy="133.5" r="4.5" fill="oklch(1 0 0)" stroke="#2a78d6" stroke-width="2"/>
+        <circle cx="292.2" cy="140.5" r="3.5" fill="oklch(0.72 0 0)"/>
+        <circle cx="314.1" cy="141.5" r="3.5" fill="oklch(0.72 0 0)"/>
+        <circle cx="488.9" cy="93.5" r="5" fill="#1baf7a" stroke="oklch(1 0 0)" stroke-width="2"/>
+        <circle cx="576.3" cy="25.7" r="5" fill="oklch(1 0 0)" stroke="#2a78d6" stroke-width="2"/>
+
+        <!-- selective direct labels: the extreme and the two step-ups -->
+        <text x="314.1" y="161" text-anchor="middle" font-size="11.5" fill="oklch(0.145 0 0)">Lowest · GHS 16,500</text>
+        <text x="314.1" y="174" text-anchor="middle" font-size="10.5" fill="oklch(0.556 0 0)">2 Sept</text>
+
+        <text x="488.9" y="82" text-anchor="middle" font-size="11.5" fill="oklch(0.145 0 0)">Salary + GHS 8,500</text>
+        <text x="576.3" y="15" text-anchor="middle" font-size="11.5" fill="oklch(0.145 0 0)">Deposit matures</text>
+
+        <!-- x axis -->
+        <text x="30" y="168" font-size="10.5" fill="oklch(0.556 0 0)">20 Aug</text>
+        <text x="401" y="168" text-anchor="middle" font-size="10.5" fill="oklch(0.556 0 0)">6 Sept</text>
+        <text x="620" y="168" text-anchor="end" font-size="10.5" fill="oklch(0.556 0 0)">16 Sept</text>
+
+        <!-- designed hover state, shown in place -->
+        <g>
+          <rect x="217" y="88" width="150" height="52" rx="10" fill="oklch(1 0 0)" stroke="oklch(0.90 0 0)"/>
+          <text x="229" y="105" font-size="11" fill="oklch(0.556 0 0)">1 Sept · Personal loan</text>
+          <text x="229" y="121" font-size="13" fill="oklch(0.145 0 0)">− GHS 1,240.00</text>
+          <text x="229" y="134" font-size="10.5" fill="oklch(0.556 0 0)">Automatic, from Current</text>
+        </g>
+      </svg>
+
+      <!-- what the marks mean, in words -->
+      <div style="display: flex; gap: 20px; margin-top: 8px; font-size: 12px; color: oklch(0.556 0 0);">
+        <span style="display: flex; align-items: center; gap: 7px;"><span style="width: 9px; height: 9px; border-radius: 50%; background: #1baf7a;"></span>Money arriving</span>
+        <span style="display: flex; align-items: center; gap: 7px;"><span style="width: 9px; height: 9px; border-radius: 50%; background: oklch(0.72 0 0);"></span>Runs automatically</span>
+        <span style="display: flex; align-items: center; gap: 7px;"><span style="width: 9px; height: 9px; border-radius: 50%; border: 2px solid #2a78d6;"></span>Needs a decision from you</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ THE TWO THINGS THAT NEED HER ══ pulled off the line, stated as choices -->
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin-top: 20px;">
+    <div style="display: flex; align-items: center; gap: 14px; border: 1px solid oklch(0.922 0 0); border-radius: 14px; padding: 16px 18px;">
+      <span style="display: flex; width: 36px; height: 36px; align-items: center; justify-content: center; border-radius: 10px; background: var(--active-bg, color-mix(in oklch, #2a78d6 8%, transparent));">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2a78d6" stroke-width="1.8"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V18h8v-3.3A7 7 0 0 0 12 2Z"/></svg>
+      </span>
+      <span style="flex-grow: 1;">
+        <span style="display: block; font-size: 14px;">ECG credit runs out around 28 Aug</span>
+        <span style="display: block; font-size: 12.5px; color: oklch(0.556 0 0); margin-top: 2px;">Meter P-8839210 · about 3 days left</span>
+      </span>
+      <a href="#" style="font-size: 13px;">Buy credit →</a>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 14px; border: 1px solid oklch(0.922 0 0); border-radius: 14px; padding: 16px 18px;">
+      <span style="display: flex; width: 36px; height: 36px; align-items: center; justify-content: center; border-radius: 10px; background: color-mix(in oklch, #2a78d6 8%, transparent);">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2a78d6" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      </span>
+      <span style="flex-grow: 1;">
+        <span style="display: block; font-size: 14px;">Term deposit matures 14 Sept</span>
+        <span style="display: block; font-size: 12.5px; color: oklch(0.556 0 0); margin-top: 2px;">Rolls into a new 91-day term unless you say otherwise</span>
+      </span>
+      <a href="#" style="font-size: 13px;">Choose →</a>
+    </div>
+  </div>
+
+  <!-- ══ THE VERB ══ -->
+  <div style="display: flex; align-items: center; gap: 26px; margin-top: 26px; padding-bottom: 22px; border-bottom: 1px solid oklch(0.94 0 0);">
+    <div class="sec" style="width: 92px; flex-shrink: 0;">Pay again</div>
+    <div style="display: flex; gap: 22px; flex-grow: 1;">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <span style="display: flex; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 50%; background: oklch(0.94 0 0); font-size: 14px; color: oklch(0.40 0 0);">AM</span>
+        <span style="font-size: 12px;">Ama</span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <span style="display: flex; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 50%; background: oklch(0.94 0 0); font-size: 14px; color: oklch(0.40 0 0);">KB</span>
+        <span style="font-size: 12px;">Kwame</span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <span style="display: flex; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 50%; background: oklch(0.94 0 0); font-size: 14px; color: oklch(0.40 0 0);">YO</span>
+        <span style="font-size: 12px;">Yaa</span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <span style="display: flex; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 50%; background: oklch(0.94 0 0); font-size: 14px; color: oklch(0.40 0 0);">AF</span>
+        <span style="font-size: 12px;">Fabrics</span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <span style="display: flex; width: 44px; height: 44px; align-items: center; justify-content: center; border-radius: 50%; border: 1px dashed oklch(0.85 0 0);">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="oklch(0.556 0 0)" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
+        </span>
+        <span style="font-size: 12px; color: oklch(0.556 0 0);">New</span>
+      </div>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <span style="display: flex; align-items: center; gap: 7px; border: 1px solid oklch(0.922 0 0); border-radius: 10px; padding: 9px 14px; font-size: 13px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(0.556 0 0)" stroke-width="1.8"><path d="M4 3h13l3 3v15l-3-2-3 2-3-2-3 2-3-2Z"/></svg>Pay a bill
+      </span>
+      <span style="display: flex; align-items: center; gap: 7px; border: 1px solid oklch(0.922 0 0); border-radius: 10px; padding: 9px 14px; font-size: 13px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="oklch(0.556 0 0)" stroke-width="1.8"><path d="M3 12h18M12 3v18"/></svg>Between my accounts
+      </span>
+    </div>
+  </div>
+
+  <!-- ══ SUPPORTING ══ no boxes: labels, rows, whitespace -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 26px;">
+
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: baseline;">
+        <div class="sec">Set aside</div>
+        <a href="#" style="font-size: 12.5px;">All accounts</a>
+      </div>
+      <div style="font-size: 12.5px; color: oklch(0.556 0 0); margin-top: 5px;">Money deliberately kept out of the number above</div>
+      <div style="display: flex; flex-direction: column; margin-top: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid oklch(0.94 0 0);">
+          <span style="flex-grow: 1; font-size: 14px;">Savings</span>
+          <span class="t" style="font-size: 14px;">GHS 50,963.09</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid oklch(0.94 0 0);">
+          <span style="flex-grow: 1;">
+            <span style="display: block; font-size: 14px;">Investments</span>
+            <span style="display: block; font-size: 12px; color: oklch(0.556 0 0); margin-top: 2px;">2 holdings · one matures 14 Sept</span>
+          </span>
+          <span class="t" style="font-size: 14px;">GHS 42,500.00</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid oklch(0.94 0 0);">
+          <span style="flex-grow: 1;">
+            <span style="display: block; font-size: 14px;">Personal loan</span>
+            <span style="display: block; font-size: 12px; color: oklch(0.556 0 0); margin-top: 2px;">14 of 36 paid</span>
+          </span>
+          <span class="t" style="font-size: 14px; color: oklch(0.556 0 0);">GHS 18,400.00 left</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid oklch(0.94 0 0);">
+          <span style="flex-grow: 1; font-size: 14px; color: oklch(0.556 0 0);">Insurance</span>
+          <a href="#" style="font-size: 13px;">See a quote →</a>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: baseline;">
+        <div class="sec">Recent</div>
+        <a href="#" style="font-size: 12.5px;">All transactions</a>
+      </div>
+      <div style="font-size: 12.5px; color: oklch(0.556 0 0); margin-top: 5px;">Current account</div>
+      <div style="display: flex; flex-direction: column; margin-top: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid oklch(0.94 0 0);">
+          <span style="flex-grow: 1; font-size: 14px;">Melcom Stores</span>
+          <span class="t" style="font-size: 12.5px; color: oklch(0.556 0 0);">11 Aug</span>
+          <span class="t" style="width: 118px; text-align: right; font-size: 14px;">− GHS 450.00</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid oklch(0.94 0 0);">
+          <span style="flex-grow: 1; font-size: 14px;">Employer Ltd</span>
+          <span class="t" style="font-size: 12.5px; color: oklch(0.556 0 0);">10 Aug</span>
+          <span class="t" style="width: 118px; text-align: right; font-size: 14px; color: oklch(0.44 0.12 150);">+ GHS 8,500.00</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid oklch(0.94 0 0);">
+          <span style="flex-grow: 1; font-size: 14px;">Transfer to Savings</span>
+          <span class="t" style="font-size: 12.5px; color: oklch(0.556 0 0);">08 Aug</span>
+          <span class="t" style="width: 118px; text-align: right; font-size: 14px;">− GHS 2,000.00</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid oklch(0.94 0 0);">
+          <span style="flex-grow: 1; font-size: 14px;">ECG prepaid</span>
+          <span class="t" style="font-size: 12.5px; color: oklch(0.556 0 0);">06 Aug</span>
+          <span class="t" style="width: 118px; text-align: right; font-size: 14px;">− GHS 150.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- cards, reduced to what a dashboard owes them: the freeze -->
+  <div style="display: flex; align-items: center; gap: 26px; margin-top: 30px; padding-top: 22px; border-top: 1px solid oklch(0.94 0 0);">
+    <div class="sec" style="width: 92px; flex-shrink: 0;">Cards</div>
+    <div style="display: flex; align-items: center; gap: 12px; flex-grow: 1;">
+      <span style="width: 40px; height: 26px; border-radius: 5px; background: oklch(0.52 0.10 175);"></span>
+      <span style="font-size: 13.5px;">Debit <span class="t" style="color: oklch(0.556 0 0);">•••• 9102</span></span>
+      <span style="margin-left: 14px; width: 40px; height: 26px; border-radius: 5px; background: oklch(0.20 0.01 260);"></span>
+      <span style="font-size: 13.5px;">Virtual <span class="t" style="color: oklch(0.556 0 0);">•••• 4471</span></span>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <span style="display: flex; align-items: center; gap: 6px; border: 1px solid oklch(0.922 0 0); border-radius: 10px; padding: 8px 13px; font-size: 12.5px; color: oklch(0.556 0 0);">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Freeze a card
+      </span>
+      <a href="#" style="display: flex; align-items: center; padding: 8px 4px; font-size: 12.5px;">Manage all</a>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

@@ -1,0 +1,24 @@
+# NIBS Cursor Rules & AI Context Protocol
+
+Before starting any task in this codebase:
+
+1. Interface & Design Tokens (.ai/INTERFACE.md):
+- Follow strict semantic design tokens (bg-card, bg-muted, text-foreground, text-muted-foreground, border-border, bg-primary, var(--active-bg), var(--active-border)). No raw hex/Tailwind colors.
+- Zero-bold rule: globals.css caps font-weight. Headings use size and letter-spacing (tracking-[-0.01em]), never font-bold or font-semibold.
+- Always apply the .tabular class to money, dates, account numbers, percentages, and rates.
+- Icons: Lucide only with size={15} to size={18} and strokeWidth={1.7} to strokeWidth={1.9}.
+- Containers: Panels rounded-2xl, insets rounded-xl, controls/tiles rounded-lg.
+- Page skeleton: flex flex-col gap-5 with PageHeader and StateSwitcher.
+- List states: Always handle ListSkeleton, TrueEmptyState, FilteredEmptyState, ListErrorState, PartialLoadFooter from @/components/states/ListStates.
+
+2. Architecture & Learnings (.ai/LEARNINGS.md):
+- Dual-shell isolation: (customer) and admin share ONLY /login and /mfa. Never cross-import components between them.
+- Session hydration: Use useSessionHydrated() from @/lib/session-store to avoid premature redirects to /login.
+- Currency math: Always use roundMoney(), sumMoney(), multiplyMoney() from @/lib/money.
+- Navigation: Derive links from actor role in src/lib/navigation.ts. Never hardcode sidebar links.
+- Link buttons: Use <Button nativeButton={false} render={<Link href="..." />}>.
+
+3. Task & Decision Tracking (.ai/EXECUTION.md):
+- Read .ai/EXECUTION.md to understand the current milestone and active tasks.
+- Keep .ai/EXECUTION.md updated with completed checklist items, recent decisions, and next steps.
+- Append newly discovered framework quirks, gotchas, or rules to .ai/LEARNINGS.md.

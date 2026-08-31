@@ -42,7 +42,7 @@ function recovery(txn: Transaction): { href: string; label: string; icon: React.
         icon: RefreshCw,
       };
     default:
-      return { href: `/payments/new?duplicate=${txn.id}`, label: "Edit & retry", icon: Copy };
+      return { href: `/payments/send?duplicate=${txn.id}`, label: "Edit & retry", icon: Copy };
   }
 }
 

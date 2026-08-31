@@ -1,0 +1,237 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    .rd-root {
+      --bg: oklch(1 0 0);
+      --fg: oklch(0.145 0 0);
+      --card: oklch(1 0 0);
+      --surface: oklch(0.985 0 0);
+      --muted: oklch(0.97 0 0);
+      --muted-fg: oklch(0.556 0 0);
+      --border: oklch(0.922 0 0);
+      --primary: oklch(0.55 0.17 255);
+      --primary-fg: oklch(1 0 0);
+      --primary-tint: oklch(0.55 0.17 255 / 10%);
+      --success: oklch(0.62 0.15 150);
+      --destructive: oklch(0.577 0.245 27.325);
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-weight: 400;
+    }
+    .rd-root h1, .rd-root h2, .rd-root p, .rd-root span, .rd-root a { font-weight: inherit; margin: 0; }
+    .rd-root a { color: inherit; text-decoration: none; }
+    .tab { font-variant-numeric: tabular-nums; }
+    .navitem { display:flex; align-items:center; gap:10px; height:40px; padding:0 12px; border-radius:12px; font-size:13px; color:var(--muted-fg); }
+    .chip { display:flex; align-items:center; gap:8px; border:1px solid var(--border); border-radius:9999px; padding:10px 16px; flex-shrink:0; }
+  </style>
+</helmet>
+
+<div class="rd-root" style="width: 1450px; background: var(--surface); color: var(--fg); display:flex;">
+
+  <!-- Sidebar -->
+  <div style="width:260px; flex-shrink:0; display:flex; flex-direction:column;">
+    <div style="height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 16px; border-bottom:1px solid var(--border);">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
+        <span style="font-size:14px;">NIBS</span>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted-fg);"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><path d="m14 9-3 3 3 3"/></svg>
+    </div>
+    <nav style="flex:1; padding:12px;">
+      <div style="display:flex; flex-direction:column; gap:2px;">
+        <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:oklch(from var(--muted-fg) l c h / 70%); padding:0 10px; margin-bottom:8px;">Banking</span>
+        <div class="navitem" style="background:var(--primary); color:var(--primary-fg);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+          <span>Overview</span>
+        </div>
+        <div class="navitem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2Z"/><path d="M16 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2"/></svg><span>Accounts</span></div>
+        <div class="navitem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg><span>Transactions</span></div>
+        <div class="navitem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Cards</span></div>
+
+        <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:oklch(from var(--muted-fg) l c h / 70%); padding:0 10px; margin:14px 0 8px;">Move money</span>
+        <div class="navitem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg><span>Payments</span></div>
+
+        <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:oklch(from var(--muted-fg) l c h / 70%); padding:0 10px; margin:14px 0 8px;">Reference</span>
+        <div class="navitem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg><span>Reports</span></div>
+        <div class="navitem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11 13 15 21 7"/><path d="M15 7h6v6"/></svg><span>FX rates</span></div>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Floating card region -->
+  <div style="flex:1; min-width:0; padding:12px;">
+    <div style="border:1px solid var(--border); border-radius:16px; background:var(--card); box-shadow:0 8px 30px oklch(from var(--fg) l c h / 5%); overflow:hidden;">
+
+      <div style="display:flex; align-items:baseline; justify-content:space-between; padding:10px 24px; background:var(--muted); border-bottom:1px solid var(--border);">
+        <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted-fg);">Concept 11 · Skrill-Inspired — Total + Account Rail</span>
+        <span style="font-size:12px; color:var(--muted-fg);">The panel shows one aggregate spendable number, like Skrill's wallet — a scrollable chip rail underneath is where all four accounts live.</span>
+      </div>
+
+      <div style="height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 24px; border-bottom:1px solid var(--border);">
+        <div style="display:flex; align-items:center; gap:8px; border:1px solid var(--border); border-radius:9999px; padding:5px 12px 5px 6px;">
+          <span style="width:24px; height:24px; border-radius:50%; background:var(--muted); display:flex; align-items:center; justify-content:center; font-size:10px;">AS</span>
+          <span style="font-size:12.5px;">Ama Serwaa (Retail)</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted-fg);"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px; color:var(--muted-fg);">
+          <span style="position:relative; display:inline-flex;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 12 6 8Z"/><path d="M9.5 17a2.5 2.5 0 0 0 5 0"/></svg>
+            <span style="position:absolute; top:-2px; right:-2px; width:6px; height:6px; border-radius:50%; background:var(--destructive); border:1.5px solid var(--card);"></span>
+          </span>
+          <span style="width:28px; height:28px; border-radius:50%; background:var(--primary); color:var(--primary-fg); display:flex; align-items:center; justify-content:center; font-size:11px;">AS</span>
+        </div>
+      </div>
+
+      <div style="padding: 32px 32px 44px; display:flex; justify-content:center;">
+        <div style="width:100%; max-width:900px;">
+
+          <!-- Aggregate balance panel -->
+          <div style="background:var(--muted); border-radius:16px; padding:26px 28px 24px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:13px; color:var(--muted-fg);">Balance</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted-fg);"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+              </div>
+              <div style="margin-top:14px;">
+                <span class="tab" style="font-size:40px; letter-spacing:-0.02em;">GHS 18,450<span style="font-size:22px; color:var(--muted-fg);">.00</span></span>
+              </div>
+              <p style="margin-top:6px; font-size:12.5px; color:var(--muted-fg);">Across your current and savings accounts · cleared and ready</p>
+            </div>
+            <div style="display:flex; gap:16px;">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <div style="width:56px; height:56px; border-radius:16px; background:var(--primary); color:var(--primary-fg); display:flex; align-items:center; justify-content:center;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </div>
+                <span style="font-size:12px;">Add</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <div style="width:56px; height:56px; border-radius:16px; background:var(--primary); color:var(--primary-fg); display:flex; align-items:center; justify-content:center;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                </div>
+                <span style="font-size:12px;">Transfer</span>
+              </div>
+              <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <div style="width:56px; height:56px; border-radius:16px; background:var(--primary); color:var(--primary-fg); display:flex; align-items:center; justify-content:center;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+                </div>
+                <span style="font-size:12px;">Pay bill</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account rail -->
+          <div style="margin-top:16px; display:flex; gap:10px; overflow-x:auto;">
+            <div class="chip" style="background:var(--fg); color:var(--card); border-color:var(--fg);">
+              <span style="font-size:13px;">All accounts</span>
+            </div>
+            <div class="chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted-fg);"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
+              <span style="font-size:13px;">Current</span>
+              <span class="tab" style="font-size:13px; color:var(--muted-fg);">GHS 12,340.00</span>
+            </div>
+            <div class="chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted-fg);"><path d="M20 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2Z"/><path d="M16 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2"/></svg>
+              <span style="font-size:13px;">Savings</span>
+              <span class="tab" style="font-size:13px; color:var(--muted-fg);">GHS 6,110.00</span>
+            </div>
+            <div class="chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted-fg);"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span style="font-size:13px;">Term Deposit</span>
+              <span class="tab" style="font-size:13px; color:var(--muted-fg);">GHS 25,000.00</span>
+            </div>
+            <div class="chip">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--destructive);"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+              <span style="font-size:13px;">Loan</span>
+              <span class="tab" style="font-size:13px; color:var(--destructive);">-GHS 8,400.00</span>
+            </div>
+          </div>
+
+          <!-- Analytics -->
+          <div style="margin-top:28px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+              <h2 style="font-size:15px;">Analytics</h2>
+              <a href="#" style="font-size:12px; color:var(--primary);">View more</a>
+            </div>
+            <div style="border:1px solid var(--border); border-radius:16px; padding:18px 20px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+                <span style="font-size:13px; color:var(--muted-fg);">All accounts · last 30 days</span>
+                <div style="display:flex; gap:8px;">
+                  <span style="font-size:12px; color:var(--muted-fg); padding:6px 14px; border-radius:9999px; border:1px solid var(--border);">1w</span>
+                  <span style="font-size:12px; padding:6px 14px; border-radius:9999px; background:var(--fg); color:var(--card);">1m</span>
+                  <span style="font-size:12px; color:var(--muted-fg); padding:6px 14px; border-radius:9999px; border:1px solid var(--border);">3m</span>
+                  <span style="font-size:12px; color:var(--muted-fg); padding:6px 14px; border-radius:9999px; border:1px solid var(--border);">6m</span>
+                  <span style="font-size:12px; color:var(--muted-fg); padding:6px 14px; border-radius:9999px; border:1px solid var(--border);">1y</span>
+                </div>
+              </div>
+              <div style="margin-top:18px; display:flex; align-items:flex-end; gap:4px; height:56px;">
+                <div style="flex:1; height:30%; background:var(--primary-tint); border-radius:3px;"></div>
+                <div style="flex:1; height:48%; background:var(--primary-tint); border-radius:3px;"></div>
+                <div style="flex:1; height:24%; background:var(--primary-tint); border-radius:3px;"></div>
+                <div style="flex:1; height:60%; background:var(--primary-tint); border-radius:3px;"></div>
+                <div style="flex:1; height:38%; background:var(--primary-tint); border-radius:3px;"></div>
+                <div style="flex:1; height:70%; background:var(--primary-tint); border-radius:3px;"></div>
+                <div style="flex:1; height:44%; background:var(--primary-tint); border-radius:3px;"></div>
+                <div style="flex:1; height:52%; background:var(--primary-tint); border-radius:3px;"></div>
+                <div style="flex:1; height:80%; background:var(--primary-tint); border-radius:3px;"></div>
+                <div style="flex:1; height:56%; background:var(--primary-tint); border-radius:3px;"></div>
+                <div style="flex:1; height:64%; background:var(--primary-tint); border-radius:3px;"></div>
+                <div style="flex:1; height:100%; background:var(--primary); border-radius:3px;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Transactions -->
+          <div style="margin-top:28px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+              <h2 style="font-size:15px;">Transactions</h2>
+              <a href="#" style="font-size:12px; color:var(--primary);">See all</a>
+            </div>
+            <div style="display:flex; flex-direction:column;">
+              <div style="display:flex; align-items:center; gap:14px; padding:14px 0; border-bottom:1px solid var(--border);">
+                <span style="width:36px; height:36px; border-radius:50%; background:oklch(from var(--success) l c h / 12%); color:var(--success); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17"/><path d="M17 17H7V7"/></svg>
+                </span>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:13.5px;">Salary Direct Deposit</div>
+                  <div style="font-size:12px; color:var(--muted-fg); margin-top:2px;">Personal Current · Today, 09:15</div>
+                </div>
+                <span class="tab" style="font-size:13.5px; color:var(--success);">+GHS 12,500.00</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:14px; padding:14px 0; border-bottom:1px solid var(--border);">
+                <span style="width:36px; height:36px; border-radius:50%; background:var(--muted); color:var(--muted-fg); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                </span>
+                <div style="flex:1; min-width:0;">
+                  <div style="font-size:13.5px;">Personal Loan Repayment</div>
+                  <div style="font-size:12px; color:var(--muted-fg); margin-top:2px;">Loan ····7742 · 1 Aug</div>
+                </div>
+                <span class="tab" style="font-size:13.5px;">-GHS 420.00</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

@@ -1,30 +1,22 @@
 "use client";
 
 /**
- * FR-05 / FR-33 — the High-Velocity Action Bar.
+ * FR-05 / FR-33 — secondary actions and the action modals.
  *
- * Fitts's Law: the three actions a customer performs most often get large,
- * unambiguous targets at the top of the dashboard, not small icon buttons in a
- * toolbar. Time-to-target falls with size and rises with distance, so the
- * highest-frequency actions are both the biggest and the closest to where the
- * eye lands.
- *
- * Send money · Top up a card · Quick pay (standing instructions). Bulk pay
- * joins them for a corporate relationship, where it genuinely is high
- * frequency. Lower-frequency actions stay as secondary buttons underneath —
- * present, but not competing for the same attention.
+ * The three highest-frequency actions (send, top up, quick pay) render as
+ * large primary targets on LiquidityRail, right beside the balance they act
+ * on. What's left here is genuinely lower-frequency — transfer between your
+ * own accounts, pay a bill, customize the shortcuts — plus every dialog,
+ * since a modal only needs to exist once regardless of which control opens
+ * it (LiquidityRail's "Top up" tile reuses the same top-up dialog via
+ * `topUpCardId`, the same way the cards panel already does).
  */
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import {
   ArrowLeftRight,
-  CalendarClock,
   CheckCircle2,
-  CreditCard,
-  FileSpreadsheet,
   Receipt,
-  Send,
   SlidersHorizontal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,58 +40,6 @@ import {
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 
 type ModalType = "transfer" | "pay-bill" | "top-up" | "customize" | null;
-
-interface PrimaryAction {
-  key: string;
-  label: string;
-  hint: string;
-  icon: React.ElementType;
-  href?: string;
-  onClick?: () => void;
-  disabled?: boolean;
-}
-
-/** Large target: icon block + label + one line of context. */
-function PrimaryActionTile({ action }: { action: PrimaryAction }) {
-  const { icon: Icon, label, hint, href, onClick, disabled } = action;
-
-  const body = (
-    <>
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-        <Icon size={18} strokeWidth={1.9} aria-hidden="true" />
-      </span>
-      <span className="flex min-w-0 flex-col text-left">
-        <span className="truncate text-[13.5px] text-foreground">{label}</span>
-        <span className="truncate text-[12px] text-muted-foreground">{hint}</span>
-      </span>
-    </>
-  );
-
-  const base =
-    "flex w-full items-center gap-3 rounded-xl border border-border bg-background px-4 py-3.5 transition-colors";
-  const interactive =
-    "hover:border-primary/40 hover:bg-muted/40 active:scale-[0.99] transition-transform";
-
-  if (disabled) {
-    // Still visible and still labelled — the hint says why it is unavailable,
-    // which is more useful than removing the tile and leaving a gap.
-    return (
-      <div className={`${base} cursor-not-allowed opacity-55`} aria-disabled="true">
-        {body}
-      </div>
-    );
-  }
-
-  return href ? (
-    <Link href={href} className={`${base} ${interactive}`}>
-      {body}
-    </Link>
-  ) : (
-    <button type="button" onClick={onClick} className={`${base} ${interactive}`}>
-      {body}
-    </button>
-  );
-}
 
 export function QuickActionBar({
   accounts,
@@ -185,65 +125,14 @@ export function QuickActionBar({
     setTopUpAmount("");
   }
 
-  const primary: PrimaryAction[] = [
-    {
-      key: "send",
-      label: "Send money",
-      hint: "Transfer to a beneficiary",
-      icon: Send,
-      href: "/payments/new",
-    },
-    {
-      key: "top-up",
-      label: "Top up a card",
-      hint: fundableCards.length > 0 ? "Fund a prepaid or virtual card" : "No fundable cards yet",
-      icon: CreditCard,
-      disabled: fundableCards.length === 0,
-      onClick: () => {
-        setTopUpCardId(fundableCards[0].id);
-        setTopUpFrom(accounts[0]?.id ?? "");
-        setTopUpAmount("");
-        setActiveModal("top-up");
-      },
-    },
-    {
-      key: "quick-pay",
-      label: "Quick pay",
-      hint: "Recurring standing instructions",
-      icon: CalendarClock,
-      href: "/payments?mode=standing",
-    },
-    ...(isCorporate
-      ? [
-          {
-            key: "bulk",
-            label: "Bulk pay",
-            hint: "Upload a payment file",
-            icon: FileSpreadsheet,
-            href: "/payments/bulk",
-          },
-        ]
-      : []),
-  ];
-
   const selectClass =
-    "flex h-10 w-full rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground focus:outline-none focus:ring-2 focus:ring-ring";
+    "flex h-10 w-full rounded-xl border border-border bg-background pl-3 pr-10 py-2 text-[13px] text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer";
 
   return (
     <>
-      <section className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4">
-        <div
-          className={`grid grid-cols-1 gap-2.5 sm:grid-cols-2 ${
-            primary.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"
-          }`}
-        >
-          {primary.map((action) => (
-            <PrimaryActionTile key={action.key} action={action} />
-          ))}
-        </div>
-
+      <section className="flex flex-col rounded-2xl border border-border bg-card p-4">
         {/* Secondary — real actions, lower frequency, deliberately quieter. */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
             <Button
               variant="outline"

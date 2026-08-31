@@ -1,0 +1,307 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    .rd-root {
+      --bg: oklch(1 0 0);
+      --fg: oklch(0.145 0 0);
+      --card: oklch(1 0 0);
+      --surface: oklch(0.985 0 0);
+      --muted: oklch(0.97 0 0);
+      --muted-fg: oklch(0.556 0 0);
+      --border: oklch(0.922 0 0);
+      --primary: oklch(0.55 0.17 255);
+      --primary-fg: oklch(1 0 0);
+      --primary-tint: oklch(0.55 0.17 255 / 10%);
+      --active-bg: oklch(0.55 0.17 255 / 8%);
+      --success: oklch(0.62 0.15 150);
+      --destructive: oklch(0.577 0.245 27.325);
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-weight: 400;
+    }
+    .rd-root h1, .rd-root h2, .rd-root p, .rd-root span, .rd-root a { font-weight: inherit; margin: 0; }
+    .rd-root a { color: inherit; text-decoration: none; }
+    .tab { font-variant-numeric: tabular-nums; }
+    .navitem { display:flex; align-items:center; gap:10px; height:40px; padding:0 12px; border-radius:12px; font-size:13px; color:var(--muted-fg); }
+    .chip { display:flex; align-items:center; gap:8px; border-radius:9999px; padding:9px 16px; flex-shrink:0; font-size:13px; }
+    .chip-off { border:1px solid var(--border); color:var(--muted-fg); }
+    .chip-on { border:1px solid var(--active-bg); background:var(--active-bg); color:var(--fg); }
+    .secbtn { display:flex; align-items:center; gap:8px; border:1px solid var(--border); border-radius:8px; padding:8px 12px; font-size:13px; color:var(--fg); }
+  </style>
+</helmet>
+
+<div class="rd-root" style="width: 1450px; background: var(--surface); color: var(--fg); display:flex;">
+
+  <!-- Sidebar (real: CustomerShell + Sidebar.tsx + navigation.ts) -->
+  <div style="width:260px; flex-shrink:0; display:flex; flex-direction:column;">
+    <div style="height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 16px; border-bottom:1px solid var(--border);">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
+        <span style="font-size:14px;">NIBS</span>
+      </div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted-fg);"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><path d="m14 9-3 3 3 3"/></svg>
+    </div>
+    <nav style="flex:1; padding:12px;">
+      <div style="display:flex; flex-direction:column; gap:2px;">
+        <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:oklch(from var(--muted-fg) l c h / 70%); padding:0 10px; margin-bottom:8px;">Banking</span>
+        <div class="navitem" style="background:var(--primary); color:var(--primary-fg);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+          <span>Overview</span>
+        </div>
+        <div class="navitem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2Z"/><path d="M16 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2"/></svg><span>Accounts</span></div>
+        <div class="navitem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg><span>Transactions</span></div>
+        <div class="navitem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Cards</span></div>
+
+        <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:oklch(from var(--muted-fg) l c h / 70%); padding:0 10px; margin:14px 0 8px;">Move money</span>
+        <div class="navitem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg><span>Payments</span></div>
+
+        <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:oklch(from var(--muted-fg) l c h / 70%); padding:0 10px; margin:14px 0 8px;">Reference</span>
+        <div class="navitem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg><span>Reports</span></div>
+        <div class="navitem"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11 13 15 21 7"/><path d="M15 7h6v6"/></svg><span>FX rates</span></div>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Floating card region -->
+  <div style="flex:1; min-width:0; padding:12px;">
+    <div style="border:1px solid var(--border); border-radius:16px; background:var(--card); box-shadow:0 8px 30px oklch(from var(--fg) l c h / 5%); overflow:hidden;">
+
+      <div style="display:flex; align-items:baseline; justify-content:space-between; padding:10px 24px; background:var(--muted); border-bottom:1px solid var(--border);">
+        <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted-fg);">As Built · /overview, Retail Profile</span>
+        <span style="font-size:12px; color:var(--muted-fg);">Real code, real data, real shell — not a mockup. The rail shows Current and Savings only; Loan and Term Deposit aren't in the Account model, so there's nothing to render.</span>
+      </div>
+
+      <div style="height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 24px; border-bottom:1px solid var(--border);">
+        <div style="display:flex; align-items:center; gap:8px; border:1px solid var(--border); border-radius:9999px; padding:5px 12px 5px 6px;">
+          <span style="width:24px; height:24px; border-radius:50%; background:var(--muted); display:flex; align-items:center; justify-content:center; font-size:10px;">AS</span>
+          <span style="font-size:12.5px;">Personal Banking</span>
+          <span style="font-size:10px; color:var(--muted-fg); border:1px solid var(--border); border-radius:9999px; padding:1px 7px;">Personal</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px; color:var(--muted-fg);">
+          <span style="position:relative; display:inline-flex;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 12 6 8Z"/><path d="M9.5 17a2.5 2.5 0 0 0 5 0"/></svg>
+            <span style="position:absolute; top:-2px; right:-2px; width:6px; height:6px; border-radius:50%; background:var(--destructive); border:1.5px solid var(--card);"></span>
+          </span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          <span style="width:28px; height:28px; border-radius:50%; background:var(--primary); color:var(--primary-fg); display:flex; align-items:center; justify-content:center; font-size:11px;">AS</span>
+        </div>
+      </div>
+
+      <div style="padding: 28px 32px 40px;">
+
+        <div>
+          <h1 style="font-size:22px; letter-spacing:-0.01em;">Good day, Ama</h1>
+          <p style="margin-top:4px; font-size:12px; color:var(--muted-fg);">Personal Banking · •••• 4821</p>
+        </div>
+
+        <!-- Balance panel — LiquidityRail -->
+        <div style="margin-top:24px; background:var(--muted); border-radius:16px; padding:26px 28px 24px; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+          <div>
+            <span style="font-size:12px; color:var(--muted-fg);">Total spendable cash</span>
+            <div class="tab" style="margin-top:6px; font-size:40px; letter-spacing:-0.02em;">GH₵18,070.50</div>
+            <p style="margin-top:6px; font-size:12px; color:var(--muted-fg);">Across 2 accounts · cleared and ready</p>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+              <div style="width:56px; height:56px; border-radius:12px; background:var(--primary); color:var(--primary-fg); display:flex; align-items:center; justify-content:center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+              </div>
+              <span style="font-size:12px;">Send money</span>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+              <div style="width:56px; height:56px; border-radius:12px; background:var(--primary); color:var(--primary-fg); display:flex; align-items:center; justify-content:center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              </div>
+              <span style="font-size:12px;">Top up</span>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:6px;">
+              <div style="width:56px; height:56px; border-radius:12px; background:var(--primary); color:var(--primary-fg); display:flex; align-items:center; justify-content:center;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <span style="font-size:12px;">Quick pay</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account rail — only Current + Savings exist in the model -->
+        <div style="margin-top:14px; display:flex; flex-wrap:wrap; gap:8px;">
+          <span class="chip chip-on">All accounts</span>
+          <span class="chip chip-off">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2Z"/><path d="M16 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2"/></svg>
+            Savings <span class="tab">GH₵14,250.00</span>
+          </span>
+          <span class="chip chip-off">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
+            Current <span class="tab">GH₵3,820.50</span>
+          </span>
+          <span style="align-self:center; margin-left:4px; font-size:11px; color:var(--muted-fg);">— that's the full account model. No Loan or Term Deposit chip exists to add.</span>
+        </div>
+
+        <!-- Secondary actions — trimmed QuickActionBar -->
+        <div style="margin-top:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid var(--border); border-radius:16px; padding:14px 16px; flex-wrap:wrap;">
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <span class="secbtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+              Transfer between accounts
+            </span>
+            <span class="secbtn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6Z"/><path d="M15 2v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+              Pay bills
+            </span>
+          </div>
+          <span style="font-size:12px; color:var(--muted-fg); display:flex; align-items:center; gap:6px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="7" r="3"/><path d="M2 21v-2a4 4 0 0 1 4-4h0"/><circle cx="15" cy="6" r="2"/><path d="M22 21v-1a3 3 0 0 0-3-3h-1"/><path d="M14 21v-2a3 3 0 0 0-3-3H9a3 3 0 0 0-3 3v2"/></svg>
+            Customize
+          </span>
+        </div>
+
+        <!-- Cards + Analytics -->
+        <div style="margin-top:24px; display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;">
+          <div style="border:1px solid var(--border); border-radius:16px; padding:20px;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <h2 style="font-size:15px;">Cards</h2>
+              <a href="#" style="font-size:12px; color:var(--primary);">Manage all →</a>
+            </div>
+            <div style="position:relative; margin-top:16px; height:186px;">
+              <div style="position:absolute; left:16px; right:16px; top:24px; height:128px; border-radius:12px; background:var(--primary); color:var(--primary-fg); padding:14px; transform:rotate(-2.2deg);">
+                <div style="display:flex; align-items:center; justify-content:space-between; font-size:10.5px; opacity:0.9;">
+                  <span>Mastercard Virtual Prepaid</span>
+                  <span style="font-size:8.5px; padding:2px 8px; border-radius:9999px; background:oklch(from var(--primary-fg) l c h / 20%); text-transform:uppercase;">Virtual</span>
+                </div>
+              </div>
+              <div style="position:absolute; left:0; right:0; top:40px; height:132px; border-radius:12px; background:var(--fg); color:var(--card); padding:16px; display:flex; flex-direction:column; justify-content:space-between;">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                  <span style="width:26px; height:19px; border-radius:5px; background:oklch(from var(--card) l c h / 20%);"></span>
+                  <span style="font-size:9px; padding:3px 9px; border-radius:9999px; background:oklch(from var(--success) l c h / 24%); color:var(--success);">Active</span>
+                </div>
+                <div class="tab" style="font-size:14.5px; letter-spacing:0.08em;">•••• •••• •••• 9102</div>
+                <div style="display:flex; align-items:flex-end; justify-content:space-between;">
+                  <div>
+                    <div style="font-size:7.5px; opacity:0.55; text-transform:uppercase;">Card holder</div>
+                    <div style="margin-top:2px; font-size:10.5px;">AMA SERWAA</div>
+                  </div>
+                  <div>
+                    <div style="font-size:7.5px; opacity:0.55; text-transform:uppercase;">Expires</div>
+                    <div class="tab" style="margin-top:2px; font-size:10.5px;">12/28</div>
+                  </div>
+                  <div style="font-size:13px; font-style:italic;">Visa</div>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top:14px; border:1px solid var(--border); border-radius:12px; overflow:hidden;">
+              <div style="display:flex; align-items:center; gap:10px; padding:11px 14px;">
+                <span style="width:30px; height:30px; border-radius:7px; background:var(--muted); display:flex; align-items:center; justify-content:center; color:var(--muted-fg);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                </span>
+                <span style="flex:1; font-size:12.5px;">Visa Personal Debit</span>
+                <span class="tab" style="font-size:11px; color:var(--muted-fg);">•••• 9102 · Exp 12/28</span>
+                <span style="font-size:10px; color:var(--success); padding:2px 8px; border-radius:9999px; background:oklch(from var(--success) l c h / 12%);">Active</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px; padding:11px 14px; border-top:1px solid var(--border);">
+                <span style="width:30px; height:30px; border-radius:7px; background:var(--muted); display:flex; align-items:center; justify-content:center; color:var(--muted-fg);">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                </span>
+                <span style="flex:1; font-size:12.5px;">Mastercard Virtual Prepaid</span>
+                <span class="tab" style="font-size:11px; color:var(--muted-fg);">•••• 5521 · Exp 08/29</span>
+                <span style="font-size:10px; color:var(--success); padding:2px 8px; border-radius:9999px; background:oklch(from var(--success) l c h / 12%);">Active</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="border:1px solid var(--border); border-radius:16px; padding:20px;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <h2 style="font-size:15px;">Analytics</h2>
+              <a href="#" style="font-size:12px; color:var(--primary);">View more →</a>
+            </div>
+            <div style="margin-top:12px; display:flex; gap:24px;">
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <span style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted-fg);"><span style="width:8px; height:8px; border-radius:2px; background:var(--primary);"></span>Money in</span>
+                <span class="tab" style="font-size:15px;">GH₵103,126.83</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:4px;">
+                <span style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted-fg);"><span style="width:8px; height:8px; border-radius:2px; background:oklch(0.7 0.15 55);"></span>Money out</span>
+                <span class="tab" style="font-size:15px;">GH₵69,528.70</span>
+              </div>
+            </div>
+            <div style="margin-top:16px; display:flex; align-items:flex-end; gap:5px; height:100px;">
+              <div style="flex:1; display:flex; gap:2px; align-items:flex-end;"><span style="flex:1; height:55%; background:var(--primary); border-radius:2px;"></span><span style="flex:1; height:40%; background:oklch(0.7 0.15 55); border-radius:2px;"></span></div>
+              <div style="flex:1; display:flex; gap:2px; align-items:flex-end;"><span style="flex:1; height:70%; background:var(--primary); border-radius:2px;"></span><span style="flex:1; height:45%; background:oklch(0.7 0.15 55); border-radius:2px;"></span></div>
+              <div style="flex:1; display:flex; gap:2px; align-items:flex-end;"><span style="flex:1; height:60%; background:var(--primary); border-radius:2px;"></span><span style="flex:1; height:38%; background:oklch(0.7 0.15 55); border-radius:2px;"></span></div>
+              <div style="flex:1; display:flex; gap:2px; align-items:flex-end;"><span style="flex:1; height:80%; background:var(--primary); border-radius:2px;"></span><span style="flex:1; height:50%; background:oklch(0.7 0.15 55); border-radius:2px;"></span></div>
+              <div style="flex:1; display:flex; gap:2px; align-items:flex-end;"><span style="flex:1; height:65%; background:var(--primary); border-radius:2px;"></span><span style="flex:1; height:42%; background:oklch(0.7 0.15 55); border-radius:2px;"></span></div>
+              <div style="flex:1; display:flex; gap:2px; align-items:flex-end;"><span style="flex:1; height:72%; background:var(--primary); border-radius:2px;"></span><span style="flex:1; height:48%; background:oklch(0.7 0.15 55); border-radius:2px;"></span></div>
+              <div style="flex:1; display:flex; gap:2px; align-items:flex-end;"><span style="flex:1; height:58%; background:var(--primary); border-radius:2px;"></span><span style="flex:1; height:36%; background:oklch(0.7 0.15 55); border-radius:2px;"></span></div>
+              <div style="flex:1; display:flex; gap:2px; align-items:flex-end;"><span style="flex:1; height:76%; background:var(--primary); border-radius:2px;"></span><span style="flex:1; height:52%; background:oklch(0.7 0.15 55); border-radius:2px;"></span></div>
+              <div style="flex:1; display:flex; gap:2px; align-items:flex-end;"><span style="flex:1; height:68%; background:var(--primary); border-radius:2px;"></span><span style="flex:1; height:44%; background:oklch(0.7 0.15 55); border-radius:2px;"></span></div>
+              <div style="flex:1; display:flex; gap:2px; align-items:flex-end;"><span style="flex:1; height:82%; background:var(--primary); border-radius:2px;"></span><span style="flex:1; height:54%; background:oklch(0.7 0.15 55); border-radius:2px;"></span></div>
+              <div style="flex:1; display:flex; gap:2px; align-items:flex-end;"><span style="flex:1; height:74%; background:var(--primary); border-radius:2px;"></span><span style="flex:1; height:46%; background:oklch(0.7 0.15 55); border-radius:2px;"></span></div>
+              <div style="flex:1; display:flex; gap:2px; align-items:flex-end;"><span style="flex:1; height:100%; background:var(--primary); border-radius:2px;"></span><span style="flex:1; height:60%; background:oklch(0.7 0.15 55); border-radius:2px;"></span></div>
+            </div>
+            <div style="margin-top:6px; display:flex; justify-content:space-between; font-size:10px; color:var(--muted-fg);">
+              <span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent activity -->
+        <div style="margin-top:24px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <div>
+              <h2 style="font-size:15px;">Recent activity</h2>
+              <p style="margin-top:2px; font-size:12px; color:var(--muted-fg);">Your last 5 transactions, with anything that needs fixing shown here</p>
+            </div>
+            <a href="#" style="font-size:12px; color:var(--primary);">View all transactions</a>
+          </div>
+          <div style="border:1px solid var(--border); border-radius:16px; overflow:hidden;">
+            <div style="display:flex; align-items:center; gap:14px; padding:14px 20px;">
+              <div style="flex:1; min-width:0;">
+                <div style="font-size:13px;">Supermarket Purchase — Melcom</div>
+                <div style="margin-top:2px; font-size:12px; color:var(--muted-fg)">11 Aug 2026 · Melcom Stores</div>
+              </div>
+              <span class="tab" style="font-size:13px;">-GH₵450.00</span>
+              <span style="font-size:10px; color:var(--success); padding:2px 9px; border-radius:9999px; background:oklch(from var(--success) l c h / 12%);">Completed</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:14px; padding:14px 20px; border-top:1px solid var(--border);">
+              <div style="flex:1; min-width:0;">
+                <div style="font-size:13px;">Monthly Salary Credit</div>
+                <div style="margin-top:2px; font-size:12px; color:var(--muted-fg)">10 Aug 2026 · Employer Ltd</div>
+              </div>
+              <span class="tab" style="font-size:13px; color:var(--success);">+GH₵8,500.00</span>
+              <span style="font-size:10px; color:var(--success); padding:2px 9px; border-radius:9999px; background:oklch(from var(--success) l c h / 12%);">Completed</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:14px; padding:14px 20px; border-top:1px solid var(--border);">
+              <div style="flex:1; min-width:0;">
+                <div style="font-size:13px;">Transfer to Savings</div>
+                <div style="margin-top:2px; font-size:12px; color:var(--muted-fg)">08 Aug 2026 · Personal Savings Account</div>
+              </div>
+              <span class="tab" style="font-size:13px; color:var(--success);">+GH₵2,000.00</span>
+              <span style="font-size:10px; color:var(--success); padding:2px 9px; border-radius:9999px; background:oklch(from var(--success) l c h / 12%);">Completed</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

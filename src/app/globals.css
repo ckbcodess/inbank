@@ -410,3 +410,8 @@
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }
+
+/* Global right padding for native dropdowns so text & arrows never crowd the edge */
+select {
+  padding-right: 2.5rem !important;
+}

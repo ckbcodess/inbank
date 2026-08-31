@@ -1,0 +1,201 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    .rd-root {
+      --bg: oklch(1 0 0);
+      --fg: oklch(0.145 0 0);
+      --card: oklch(1 0 0);
+      --muted: oklch(0.97 0 0);
+      --muted-fg: oklch(0.556 0 0);
+      --border: oklch(0.922 0 0);
+      --primary: oklch(0.55 0.17 255);
+      --primary-fg: oklch(1 0 0);
+      --primary-tint: oklch(0.55 0.17 255 / 8%);
+      --cat-1: oklch(0.55 0.17 255);
+      --cat-2: oklch(0.65 0.14 195);
+      --cat-3: oklch(0.75 0.15 80);
+      --success: oklch(0.62 0.15 150);
+      --destructive: oklch(0.577 0.245 27.325);
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-weight: 400;
+    }
+    .rd-root h1, .rd-root h2, .rd-root p, .rd-root span, .rd-root a { font-weight: inherit; margin: 0; }
+    .rd-root a { color: inherit; text-decoration: none; }
+    .tab { font-variant-numeric: tabular-nums; }
+  </style>
+</helmet>
+
+<div class="rd-root" style="width: 1160px; background: var(--bg); color: var(--fg);">
+
+  <div style="display:flex; align-items:baseline; justify-content:space-between; padding:12px 40px; background:var(--muted); border-bottom:1px solid var(--border);">
+    <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted-fg);">Concept 3 · Forecast First</span>
+    <span style="font-size:12px; color:var(--muted-fg);">Leads with a forward-looking sentence, not a ledger balance. Coaching, not reporting.</span>
+  </div>
+
+  <div style="padding: 32px 40px 48px;">
+
+    <!-- Header -->
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="width:30px; height:30px; border-radius:8px; background:var(--primary); color:var(--primary-fg); display:flex; align-items:center; justify-content:center; font-size:13px;">N</span>
+        <span style="font-size:14px;">NIBS</span>
+        <span style="font-size:11px; color:var(--muted-fg); padding:3px 9px; border:1px solid var(--border); border-radius:9999px;">Retail</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:16px;">
+        <span style="position:relative; display:inline-flex; color:var(--muted-fg);">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 12 6 8Z"/><path d="M9.5 17a2.5 2.5 0 0 0 5 0"/></svg>
+          <span style="position:absolute; top:-2px; right:-2px; width:7px; height:7px; border-radius:50%; background:var(--destructive); border:1.5px solid var(--bg);"></span>
+        </span>
+        <span style="width:30px; height:30px; border-radius:50%; background:var(--muted); display:flex; align-items:center; justify-content:center; font-size:12px;">AS</span>
+      </div>
+    </div>
+
+    <!-- Greeting -->
+    <div style="margin-top:28px;">
+      <h1 style="font-size:22px; letter-spacing:-0.01em; line-height:1.2;">Good day, Ama</h1>
+      <p style="margin-top:4px; font-size:12px; color:var(--muted-fg);">Ama Serwaa · GCB-ACC-4821</p>
+    </div>
+
+    <!-- Forecast hero -->
+    <div style="margin-top:32px; display:flex; align-items:flex-start; justify-content:space-between; gap:32px;">
+      <div style="max-width:660px;">
+        <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted-fg);">On pace for August</span>
+        <div style="margin-top:10px; font-size:30px; line-height:1.3; letter-spacing:-0.01em;">
+          You're on track to end the month with <span class="tab" style="color:var(--primary);">GHS 14,240</span> left over.
+        </div>
+        <p style="margin-top:10px; font-size:12px; color:var(--muted-fg);">Based on your spending over the last 30 days.</p>
+      </div>
+      <div style="text-align:right; flex-shrink:0;">
+        <span style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted-fg);">Balance</span>
+        <div class="tab" style="margin-top:6px; font-size:20px;">GHS 18,450.00</div>
+      </div>
+    </div>
+
+    <!-- Spend trend -->
+    <div style="margin-top:28px; display:flex; align-items:flex-end; gap:4px; height:44px;">
+      <div style="flex:1; height:34%; background:var(--primary-tint); border-radius:3px;"></div>
+      <div style="flex:1; height:52%; background:var(--primary-tint); border-radius:3px;"></div>
+      <div style="flex:1; height:28%; background:var(--primary-tint); border-radius:3px;"></div>
+      <div style="flex:1; height:44%; background:var(--primary-tint); border-radius:3px;"></div>
+      <div style="flex:1; height:38%; background:var(--primary-tint); border-radius:3px;"></div>
+      <div style="flex:1; height:60%; background:var(--primary-tint); border-radius:3px;"></div>
+      <div style="flex:1; height:46%; background:var(--primary-tint); border-radius:3px;"></div>
+      <div style="flex:1; height:30%; background:var(--primary-tint); border-radius:3px;"></div>
+      <div style="flex:1; height:54%; background:var(--primary-tint); border-radius:3px;"></div>
+      <div style="flex:1; height:40%; background:var(--primary-tint); border-radius:3px;"></div>
+      <div style="flex:1; height:66%; background:var(--primary-tint); border-radius:3px;"></div>
+      <div style="flex:1; height:48%; background:var(--primary-tint); border-radius:3px;"></div>
+      <div style="flex:1; height:36%; background:var(--primary-tint); border-radius:3px;"></div>
+      <div style="flex:1; height:58%; background:var(--primary-tint); border-radius:3px;"></div>
+      <div style="flex:1; height:100%; background:var(--primary); border-radius:3px;"></div>
+    </div>
+
+    <!-- Nudge -->
+    <div style="margin-top:28px; border-radius:16px; background:var(--primary-tint); padding:18px 22px; display:flex; align-items:center; justify-content:space-between; gap:20px;">
+      <div style="display:flex; align-items:center; gap:14px; min-width:0;">
+        <span style="width:36px; height:36px; border-radius:50%; background:var(--card); color:var(--primary); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg>
+        </span>
+        <div style="min-width:0;">
+          <div style="font-size:13.5px;">Dining ran GHS 120 lower than usual this month</div>
+          <div style="font-size:12px; color:var(--muted-fg); margin-top:2px;">Move the difference into Reserve Savings — you can change this anytime.</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:16px; flex-shrink:0;">
+        <span style="font-size:12px; color:var(--muted-fg);">Not now</span>
+        <span style="font-size:12.5px; background:var(--primary); color:var(--primary-fg); padding:9px 16px; border-radius:9999px;">Move GHS 120</span>
+      </div>
+    </div>
+
+    <!-- Where it went -->
+    <div style="margin-top:32px;">
+      <h2 style="font-size:15px; margin-bottom:12px;">Where it went this month</h2>
+      <div style="border:1px solid var(--border); border-radius:16px; overflow:hidden;">
+        <div style="display:flex; align-items:center; gap:12px; padding:14px 20px;">
+          <span style="width:8px; height:8px; border-radius:50%; background:var(--cat-1); flex-shrink:0;"></span>
+          <span style="flex:1; font-size:13px;">Groceries &amp; dining</span>
+          <span class="tab" style="font-size:13px;">GHS 1,480.00</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:14px 20px; border-top:1px solid var(--border);">
+          <span style="width:8px; height:8px; border-radius:50%; background:var(--cat-2); flex-shrink:0;"></span>
+          <span style="flex:1; font-size:13px;">Utilities &amp; bills</span>
+          <span class="tab" style="font-size:13px;">GHS 950.00</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:14px 20px; border-top:1px solid var(--border);">
+          <span style="width:8px; height:8px; border-radius:50%; background:var(--cat-3); flex-shrink:0;"></span>
+          <span style="flex:1; font-size:13px;">Transport</span>
+          <span class="tab" style="font-size:13px;">GHS 640.00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiet quick actions -->
+    <div style="margin-top:28px; display:flex; gap:28px;">
+      <div style="display:flex; align-items:center; gap:8px; color:var(--muted-fg);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+        <span style="font-size:12.5px;">Transfer</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; color:var(--muted-fg);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6Z"/><path d="M15 2v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+        <span style="font-size:12.5px;">Pay bill</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px; color:var(--muted-fg);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        <span style="font-size:12.5px;">Top up card</span>
+      </div>
+    </div>
+
+    <!-- Activity -->
+    <div style="margin-top:32px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+        <h2 style="font-size:15px;">Recent activity</h2>
+        <a href="#" style="font-size:12px; color:var(--muted-fg);">View all</a>
+      </div>
+      <div style="border:1px solid var(--border); border-radius:16px; overflow:hidden;">
+        <div style="display:flex; align-items:center; gap:12px; padding:14px 20px;">
+          <span style="width:32px; height:32px; border-radius:50%; background:oklch(0.62 0.15 150 / 12%); color:var(--success); display:flex; align-items:center; justify-content:center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17"/><path d="M17 17H7V7"/></svg>
+          </span>
+          <div style="flex:1;"><div style="font-size:14px;">Salary Direct Deposit</div><div style="font-size:12px; color:var(--muted-fg); margin-top:2px;">Stanbic Bank Ghana · Today, 09:15</div></div>
+          <span class="tab" style="font-size:14px; color:var(--success);">+GHS 12,500.00</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:14px 20px; border-top:1px solid var(--border);">
+          <span style="width:32px; height:32px; border-radius:50%; background:var(--muted); color:var(--muted-fg); display:flex; align-items:center; justify-content:center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+          </span>
+          <div style="flex:1;"><div style="font-size:14px;">ECG Prepaid Electricity</div><div style="font-size:12px; color:var(--muted-fg); margin-top:2px;">Electricity Co. of Ghana · Yesterday, 14:20</div></div>
+          <span class="tab" style="font-size:14px;">-GHS 250.00</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; padding:14px 20px; border-top:1px solid var(--border);">
+          <span style="width:32px; height:32px; border-radius:50%; background:var(--muted); color:var(--muted-fg); display:flex; align-items:center; justify-content:center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+          </span>
+          <div style="flex:1;"><div style="font-size:14px;">Groceries &amp; Provisions</div><div style="font-size:12px; color:var(--muted-fg); margin-top:2px;">Shoprite Accra Mall · 14 Aug</div></div>
+          <span class="tab" style="font-size:14px;">-GHS 480.50</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

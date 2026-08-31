@@ -153,7 +153,7 @@ export function FxPulse() {
             size="sm"
             className="w-full gap-2"
             nativeButton={false}
-            render={<Link href="/payments/new" />}
+            render={<Link href="/payments/send?rail=papss" />}
           >
             Continue to transfer
             <ArrowRight size={14} strokeWidth={1.9} aria-hidden="true" />

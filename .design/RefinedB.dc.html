@@ -1,0 +1,256 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400&display=swap">
+  <style>
+    body { margin: 0; font-family: Geist, system-ui, sans-serif; font-weight: 400; background: oklch(1 0 0); }
+    * { box-sizing: border-box; font-weight: 400; }
+    a { color: oklch(0.55 0.17 255); text-decoration: none; }
+    a:hover { color: oklch(0.48 0.16 255); }
+    .t { font-variant-numeric: tabular-nums; }
+  </style>
+</helmet>
+
+<div style="padding: 28px 32px 36px; background: oklch(1 0 0); color: oklch(0.145 0 0); font-size: 14px;">
+
+  <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px;">
+    <div style="font-size: 24px; letter-spacing: -0.02em;">Good morning, Ama</div>
+    <div class="t" style="font-size: 12.5px; color: oklch(0.556 0 0);">Last login: 26 August 2026, 8:43 am</div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 540px 608px; gap: 32px;">
+
+    <!-- LEFT — what you have -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+
+      <!-- flattened: no panel inside a panel -->
+      <div style="border-radius: 18px; background: oklch(0.97 0 0); padding: 22px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: oklch(0.556 0 0);">
+            Total balance
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="oklch(0.556 0 0)" stroke-width="1.8"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <a href="#" style="font-size: 13px;">All accounts</a>
+        </div>
+        <div class="t" style="font-size: 36px; letter-spacing: -0.02em; margin-top: 6px;">GHS 69,033.59</div>
+
+        <div style="display: flex; flex-direction: column; margin-top: 20px;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-top: 1px solid oklch(0.90 0 0);">
+            <span style="flex-grow: 1; font-size: 14px;">Savings</span>
+            <span class="t" style="font-size: 14px;">GHS 50,963.09</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(0.556 0 0)" stroke-width="1.8"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 13px 0; border-top: 1px solid oklch(0.90 0 0);">
+            <span style="flex-grow: 1; font-size: 14px;">Current</span>
+            <span class="t" style="font-size: 14px;">GHS 18,070.50</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="oklch(0.556 0 0)" stroke-width="1.8"><path d="m9 18 6-6-6-6"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div style="border: 1px solid oklch(0.922 0 0); border-radius: 18px; background: oklch(1 0 0); padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div style="font-size: 15px;">Cards</div>
+          <a href="#" style="font-size: 13px;">Manage all</a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <span style="width: 66px; height: 43px; border-radius: 7px; background: oklch(0.45 0.09 190); display: flex; padding: 7px;">
+              <span style="width: 13px; height: 10px; border-radius: 2px; background: oklch(0.82 0.15 85);"></span>
+            </span>
+            <span style="flex-grow: 1; font-size: 14px;">Debit <span class="t" style="color: oklch(0.556 0 0);">•••• 9102</span></span>
+            <span style="display: flex; align-items: center; gap: 5px; border: 1px solid oklch(0.922 0 0); border-radius: 8px; padding: 5px 10px; font-size: 12px; color: oklch(0.556 0 0);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Freeze
+            </span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px; border-top: 1px solid oklch(0.922 0 0); padding-top: 14px;">
+            <span style="width: 66px; height: 43px; border-radius: 7px; background: oklch(0.22 0.01 260); display: flex; padding: 7px;">
+              <span style="width: 13px; height: 10px; border-radius: 2px; background: oklch(0.82 0.15 85);"></span>
+            </span>
+            <span style="flex-grow: 1; font-size: 14px;">Virtual <span class="t" style="color: oklch(0.556 0 0);">•••• 4471</span></span>
+            <span style="display: flex; align-items: center; gap: 5px; border: 1px solid oklch(0.922 0 0); border-radius: 8px; padding: 5px 10px; font-size: 12px; color: oklch(0.556 0 0);">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Freeze
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div style="border: 1px solid oklch(0.922 0 0); border-radius: 18px; background: oklch(1 0 0); padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div style="font-size: 15px;">Recent activity</div>
+          <a href="#" style="font-size: 13px;">All transactions</a>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+          <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0;">
+            <span style="flex-grow: 1; font-size: 13.5px;">Melcom Stores</span>
+            <span class="t" style="font-size: 12.5px; color: oklch(0.556 0 0);">11 Aug</span>
+            <span class="t" style="width: 116px; text-align: right; font-size: 13.5px;">−GHS 450.00</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid oklch(0.922 0 0);">
+            <span style="flex-grow: 1; font-size: 13.5px;">Employer Ltd</span>
+            <span class="t" style="font-size: 12.5px; color: oklch(0.556 0 0);">10 Aug</span>
+            <span class="t" style="width: 116px; text-align: right; font-size: 13.5px; color: oklch(0.62 0.15 150);">+GHS 8,500.00</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid oklch(0.922 0 0);">
+            <span style="flex-grow: 1; font-size: 13.5px;">Transfer to Savings</span>
+            <span class="t" style="font-size: 12.5px; color: oklch(0.556 0 0);">08 Aug</span>
+            <span class="t" style="width: 116px; text-align: right; font-size: 13.5px;">−GHS 2,000.00</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="border: 1px solid oklch(0.922 0 0); border-radius: 18px; background: oklch(1 0 0); padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div style="font-size: 15px;">Where your money went</div>
+          <a href="#" style="font-size: 13px;">View more</a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 24px;">
+          <svg width="100" height="100" viewBox="0 0 42 42">
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="oklch(0.94 0 0)" stroke-width="6"/>
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#2a78d6" stroke-width="6" stroke-dasharray="34 66" stroke-dashoffset="25"/>
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#eb6834" stroke-width="6" stroke-dasharray="24 76" stroke-dashoffset="-9"/>
+            <circle cx="21" cy="21" r="15.9" fill="none" stroke="#1baf7a" stroke-width="6" stroke-dasharray="18 82" stroke-dashoffset="-33"/>
+          </svg>
+          <div style="display: flex; flex-direction: column; gap: 11px; flex-grow: 1;">
+            <div style="display: flex; align-items: center; gap: 9px;">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #2a78d6;"></span>
+              <span style="flex-grow: 1; font-size: 13px;">Groceries</span>
+              <span class="t" style="font-size: 13px;">GHS 1,350</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 9px;">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #eb6834;"></span>
+              <span style="flex-grow: 1; font-size: 13px;">Utilities</span>
+              <span class="t" style="font-size: 13px;">GHS 940</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 9px;">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #1baf7a;"></span>
+              <span style="flex-grow: 1; font-size: 13px;">Transport</span>
+              <span class="t" style="font-size: 13px;">GHS 720</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT — what's next -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+
+      <div style="border: 1px solid oklch(0.922 0 0); border-radius: 18px; background: oklch(1 0 0); padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+          <div style="font-size: 15px;">Your shortcuts</div>
+          <a href="#" style="font-size: 13px;">Edit</a>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px;">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 9px;">
+            <span style="display: flex; width: 48px; height: 48px; align-items: center; justify-content: center; border-radius: 50%; background: oklch(0.72 0.16 75);">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="oklch(0.145 0 0)" stroke-width="1.8"><path d="m22 2-7 20-4-9-9-4Z"/></svg>
+            </span>
+            <span style="font-size: 12.5px; text-align: center;">Send to wallet</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 9px;">
+            <span style="display: flex; width: 48px; height: 48px; align-items: center; justify-content: center; border-radius: 50%; background: oklch(0.72 0.16 75);">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="oklch(0.145 0 0)" stroke-width="1.8"><path d="M4 3h13l3 3v15l-3-2-3 2-3-2-3 2-3-2Z"/><path d="M8 8h8M8 12h6"/></svg>
+            </span>
+            <span style="font-size: 12.5px; text-align: center;">Pay bills</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 9px;">
+            <span style="display: flex; width: 48px; height: 48px; align-items: center; justify-content: center; border-radius: 50%; background: oklch(0.72 0.16 75);">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="oklch(0.145 0 0)" stroke-width="1.8"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            </span>
+            <span style="font-size: 12.5px; text-align: center;">Card top-up</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 9px;">
+            <span style="display: flex; width: 48px; height: 48px; align-items: center; justify-content: center; border-radius: 50%; background: oklch(0.72 0.16 75);">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="oklch(0.145 0 0)" stroke-width="1.8"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V18h8v-3.3A7 7 0 0 0 12 2Z"/></svg>
+            </span>
+            <span style="font-size: 12.5px; text-align: center;">ECG prepaid</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- the stream: near horizon in full, beyond that only what needs a decision -->
+      <div style="border: 1px solid oklch(0.922 0 0); border-radius: 18px; background: oklch(1 0 0); padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="font-size: 15px;">What&apos;s coming</div>
+          <a href="#" style="font-size: 13px;">Full calendar</a>
+        </div>
+        <div style="font-size: 12.5px; color: oklch(0.556 0 0); margin-top: 4px;">Marked items need you. Everything else runs on its own.</div>
+
+        <div style="font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: oklch(0.556 0 0); margin: 20px 0 6px;">Next 7 days</div>
+
+        <div style="display: flex; align-items: center; gap: 14px; padding: 13px 0;">
+          <span style="display: flex; flex-direction: column; align-items: center; width: 42px;">
+            <span class="t" style="font-size: 15px;">28</span>
+            <span style="font-size: 10.5px; color: oklch(0.556 0 0); letter-spacing: 0.04em;">AUG</span>
+          </span>
+          <span style="flex-grow: 1; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 13.5px;">ECG credit running low</span>
+            <span style="border-radius: 6px; border: 1px solid oklch(0.55 0.17 255); padding: 1px 7px; font-size: 10.5px; color: oklch(0.55 0.17 255);">Needs you</span>
+          </span>
+          <a href="#" style="font-size: 13px;">Buy credit →</a>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 14px; padding: 13px 0; border-top: 1px solid oklch(0.922 0 0);">
+          <span style="display: flex; flex-direction: column; align-items: center; width: 42px;">
+            <span class="t" style="font-size: 15px;">1</span>
+            <span style="font-size: 10.5px; color: oklch(0.556 0 0); letter-spacing: 0.04em;">SEP</span>
+          </span>
+          <span style="flex-grow: 1; font-size: 13.5px;">Personal loan repayment</span>
+          <span class="t" style="font-size: 13.5px;">GHS 1,240.00</span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 14px; padding: 13px 0; border-top: 1px solid oklch(0.922 0 0);">
+          <span style="display: flex; flex-direction: column; align-items: center; width: 42px;">
+            <span class="t" style="font-size: 15px;">2</span>
+            <span style="font-size: 10.5px; color: oklch(0.556 0 0); letter-spacing: 0.04em;">SEP</span>
+          </span>
+          <span style="flex-grow: 1; font-size: 13.5px;">Ghana Water</span>
+          <span class="t" style="font-size: 13.5px;">GHS 180.00</span>
+        </div>
+
+        <div style="font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: oklch(0.556 0 0); margin: 18px 0 6px;">Later</div>
+
+        <div style="display: flex; align-items: center; gap: 14px; padding: 13px 0;">
+          <span style="display: flex; flex-direction: column; align-items: center; width: 42px;">
+            <span class="t" style="font-size: 15px;">14</span>
+            <span style="font-size: 10.5px; color: oklch(0.556 0 0); letter-spacing: 0.04em;">SEP</span>
+          </span>
+          <span style="flex-grow: 1;">
+            <span style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 13.5px;">Term deposit matures</span>
+              <span style="border-radius: 6px; border: 1px solid oklch(0.55 0.17 255); padding: 1px 7px; font-size: 10.5px; color: oklch(0.55 0.17 255);">Needs you</span>
+            </span>
+            <span style="display: block; font-size: 12px; color: oklch(0.556 0 0); margin-top: 3px;">Rolls into a new 91-day term unless you say otherwise</span>
+          </span>
+          <span class="t" style="font-size: 13.5px;">GHS 12,000.00</span>
+        </div>
+      </div>
+
+      <div style="border: 1px solid oklch(0.922 0 0); border-radius: 18px; background: oklch(1 0 0); overflow: hidden;">
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: oklch(0.922 0 0);">
+          <a href="#" style="display: block; background: oklch(1 0 0); padding: 16px 18px; color: inherit;">
+            <span style="display: block; font-size: 12.5px; color: oklch(0.556 0 0);">Investments</span>
+            <span class="t" style="display: block; font-size: 18px; letter-spacing: -0.01em; margin-top: 6px;">GHS 42,500.00</span>
+          </a>
+          <a href="#" style="display: block; background: oklch(1 0 0); padding: 16px 18px; color: inherit;">
+            <span style="display: block; font-size: 12.5px; color: oklch(0.556 0 0);">Loan left to pay</span>
+            <span class="t" style="display: block; font-size: 18px; letter-spacing: -0.01em; margin-top: 6px;">GHS 18,400.00</span>
+          </a>
+          <a href="#" style="display: block; background: oklch(1 0 0); padding: 16px 18px; color: inherit;">
+            <span style="display: block; font-size: 12.5px; color: oklch(0.556 0 0);">Insurance</span>
+            <span style="display: block; font-size: 14px; color: oklch(0.55 0.17 255); margin-top: 8px;">See a quote →</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+</body>
+</html>

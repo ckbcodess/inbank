@@ -1,0 +1,497 @@
+<title>Overview Redesign, Fixed</title>
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.55 0.17 255);
+    --primary-foreground: oklch(1 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(1 0 0);
+    --success: oklch(0.62 0.15 150);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --surface: oklch(0.985 0 0);
+    --surface-raised: oklch(1 0 0);
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.439 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --active-bg: color-mix(in oklch, var(--primary) 8%, transparent);
+    --active-border: var(--primary);
+    --amber: oklch(0.72 0.15 75);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --background: oklch(0.145 0 0);
+      --foreground: oklch(0.985 0 0);
+      --card: oklch(0.205 0 0);
+      --card-foreground: oklch(0.985 0 0);
+      --primary: oklch(0.62 0.16 255);
+      --primary-foreground: oklch(1 0 0);
+      --muted: oklch(0.269 0 0);
+      --muted-foreground: oklch(0.708 0 0);
+      --destructive: oklch(0.637 0.237 25.331);
+      --destructive-foreground: oklch(1 0 0);
+      --success: oklch(0.68 0.15 150);
+      --border: oklch(0.269 0 0);
+      --input: oklch(0.269 0 0);
+      --surface: oklch(0.113 0 0);
+      --surface-raised: oklch(0.187 0 0);
+      --sidebar: oklch(0.205 0 0);
+      --sidebar-foreground: oklch(0.708 0 0);
+      --sidebar-border: oklch(0.269 0 0);
+      --active-bg: color-mix(in oklch, var(--primary) 12%, transparent);
+      --active-border: var(--primary);
+      --amber: oklch(0.75 0.15 80);
+    }
+  }
+  :root[data-theme="dark"] {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.62 0.16 255);
+    --primary-foreground: oklch(1 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --destructive: oklch(0.637 0.237 25.331);
+    --destructive-foreground: oklch(1 0 0);
+    --success: oklch(0.68 0.15 150);
+    --border: oklch(0.269 0 0);
+    --input: oklch(0.269 0 0);
+    --surface: oklch(0.113 0 0);
+    --surface-raised: oklch(0.187 0 0);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.708 0 0);
+    --sidebar-border: oklch(0.269 0 0);
+    --active-bg: color-mix(in oklch, var(--primary) 12%, transparent);
+    --active-border: var(--primary);
+    --amber: oklch(0.75 0.15 80);
+  }
+
+  body {
+    margin: 0;
+    background: var(--surface);
+    color: var(--foreground);
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-weight: 400;
+  }
+  h1, h2, h3, p, span, a, button, li { font-weight: inherit; margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; padding: 0; }
+  ul { list-style: none; padding: 0; }
+  .tab { font-variant-numeric: tabular-nums; }
+
+  .wrap { max-width: 1600px; margin: 0 auto; padding: 32px 24px 64px; display: flex; flex-direction: column; gap: 22px; }
+
+  /* --- Fix summary panel --- */
+  .fixnote { border: 1px solid var(--border); border-radius: 16px; background: var(--card); padding: 22px 26px; }
+  .fixnote h1 { font-size: 17px; letter-spacing: -0.01em; }
+  .fixnote p.lede { margin-top: 5px; font-size: 12.5px; color: var(--muted-foreground); max-width: 68ch; }
+  .fixgrid { margin-top: 16px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 24px; }
+  .fixitem { display: flex; gap: 9px; align-items: flex-start; font-size: 12.5px; line-height: 1.5; }
+  .fixitem svg { flex-shrink: 0; margin-top: 2px; color: var(--success); }
+  .fixitem b { font-weight: inherit; color: var(--foreground); }
+  .fixitem span.detail { color: var(--muted-foreground); }
+
+  /* --- App shell mock --- */
+  .shell { display: flex; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--surface); box-shadow: 0 8px 30px oklch(from var(--foreground) l c h / 5%); }
+  .side { width: 232px; flex-shrink: 0; background: var(--sidebar); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; }
+  .side .brand { height: 56px; display: flex; align-items: center; gap: 8px; padding: 0 16px; color: var(--foreground); font-size: 14px; border-bottom: 1px solid var(--sidebar-border); }
+  .side nav { padding: 12px; display: flex; flex-direction: column; gap: 2px; }
+  .navlabel { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: oklch(from var(--sidebar-foreground) l c h / 70%); padding: 0 10px; margin: 12px 0 8px; }
+  .navlabel:first-child { margin-top: 0; }
+  .navitem { display: flex; align-items: center; gap: 10px; height: 38px; padding: 0 12px; border-radius: 10px; font-size: 13px; color: var(--sidebar-foreground); }
+  .navitem.active { background: var(--primary); color: var(--primary-foreground); }
+
+  .main { flex: 1; min-width: 0; background: var(--card); }
+  .topbar { height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; border-bottom: 1px solid var(--border); }
+  .profilechip { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 9999px; padding: 5px 12px 5px 6px; }
+  .profilechip .av { width: 24px; height: 24px; border-radius: 50%; background: var(--muted); display: flex; align-items: center; justify-content: center; font-size: 10px; }
+  .icons { display: flex; align-items: center; gap: 14px; color: var(--muted-foreground); }
+  .icons .av { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: var(--primary-foreground); display: flex; align-items: center; justify-content: center; font-size: 11px; }
+
+  .content { padding: 28px 32px 40px; display: flex; flex-direction: column; gap: 22px; }
+
+  /* Unified balance + accounts card */
+  .balancecard { border-radius: 16px; background: var(--muted); overflow: hidden; }
+  .balancetop { padding: 26px 28px 22px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  .balnum { margin-top: 6px; font-size: 38px; letter-spacing: -0.02em; }
+  .sq { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .sqbtn { width: 54px; height: 54px; border-radius: 12px; background: var(--primary); color: var(--primary-foreground); display: flex; align-items: center; justify-content: center; }
+  .sqbtn.ghost { background: transparent; border: 1.5px dashed var(--border); color: var(--muted-foreground); }
+  .sq span.lbl { font-size: 11.5px; color: var(--foreground); }
+  .sq.corp span.lbl { color: var(--muted-foreground); }
+  .sqrow { display: flex; gap: 10px; }
+
+  .acctdivider { height: 1px; background: var(--border); }
+  .acctheader { padding: 14px 28px 4px; display: flex; align-items: center; justify-content: space-between; }
+  .acctheader h2 { font-size: 12.5px; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 0.06em; }
+  .acctheader a { font-size: 12px; color: var(--primary); }
+  .acctlist { padding: 6px 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+  .acctrow { width: 100%; display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-radius: 10px; border: 1px solid transparent; text-align: left; }
+  .acctrow.selected { background: var(--active-bg); border-color: var(--active-border); }
+  .acctrow .icn { width: 32px; height: 32px; border-radius: 9px; background: var(--card); display: flex; align-items: center; justify-content: center; color: var(--muted-foreground); flex-shrink: 0; }
+  .acctrow.selected .icn { color: var(--active-border); }
+  .acctrow .who { flex: 1; min-width: 0; }
+  .acctrow .who .name { font-size: 13px; }
+  .acctrow .who .sub { margin-top: 1px; font-size: 11.5px; color: var(--muted-foreground); }
+  .acctrow .amt { font-size: 13.5px; }
+
+  /* Corporate reserved slot */
+  .reserved { border: 1.5px dashed var(--border); border-radius: 16px; padding: 16px 20px; display: flex; align-items: center; gap: 12px; opacity: 0.62; }
+  .reserved .icn { width: 34px; height: 34px; border-radius: 10px; background: var(--muted); display: flex; align-items: center; justify-content: center; color: var(--muted-foreground); flex-shrink: 0; }
+  .reserved .txt h3 { font-size: 13px; }
+  .reserved .txt p { margin-top: 2px; font-size: 11.5px; color: var(--muted-foreground); }
+  .reserved .tag { margin-left: auto; font-size: 10px; color: var(--muted-foreground); border: 1px solid var(--border); border-radius: 9999px; padding: 3px 9px; flex-shrink: 0; white-space: nowrap; }
+
+  /* Secondary actions */
+  .secrow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; }
+  .secbtn { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 12.5px; }
+  .secbtn.corp { border-style: dashed; color: var(--muted-foreground); }
+  .secbtn.corp .tag { font-size: 9.5px; border: 1px solid var(--border); border-radius: 9999px; padding: 1px 6px; margin-left: 2px; }
+
+  /* Cards + analytics grid */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  .panel { border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+  .panel .phead { display: flex; align-items: center; justify-content: space-between; }
+  .panel .phead h2 { font-size: 15px; }
+  .panel .phead a { font-size: 12px; color: var(--primary); }
+  .panel .phead .ctx { font-size: 11px; color: var(--muted-foreground); margin-top: 1px; }
+
+  .badge { font-size: 9px; padding: 3px 9px; border-radius: 9999px; }
+  .badge.success { background: oklch(from var(--success) l c h / 12%); color: var(--success); }
+  .badge.card-success { background: oklch(from var(--success) l c h / 24%); color: var(--success); }
+
+  .cardstack { position: relative; margin-top: 16px; height: 178px; }
+  .cardstack .back { position: absolute; left: 16px; right: 16px; top: 20px; height: 122px; border-radius: 12px; background: var(--primary); color: var(--primary-foreground); padding: 14px; transform: rotate(-2.2deg); }
+  .cardstack .back .toprow { display: flex; align-items: center; justify-content: space-between; font-size: 10px; opacity: 0.9; }
+  .cardstack .back .vbadge { font-size: 8px; padding: 2px 8px; border-radius: 9999px; background: oklch(from var(--primary-foreground) l c h / 20%); text-transform: uppercase; }
+  .cardstack .front { position: absolute; left: 0; right: 0; top: 36px; height: 126px; border-radius: 12px; background: var(--foreground); color: var(--card); padding: 15px; display: flex; flex-direction: column; justify-content: space-between; }
+  .cardstack .front .toprow { display: flex; align-items: center; justify-content: space-between; }
+  .cardstack .front .chip { width: 25px; height: 18px; border-radius: 5px; background: oklch(from var(--card) l c h / 20%); }
+  .cardstack .front .num { font-size: 14px; letter-spacing: 0.08em; }
+  .cardstack .front .botrow { display: flex; align-items: flex-end; justify-content: space-between; }
+  .cardstack .front .fine { font-size: 7.5px; opacity: 0.55; text-transform: uppercase; }
+  .cardstack .front .val { margin-top: 2px; font-size: 10.5px; }
+  .cardstack .front .scheme { font-size: 12.5px; font-style: italic; }
+
+  .cardlist { margin-top: 14px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .cardrow { display: flex; align-items: center; gap: 10px; padding: 11px 14px; }
+  .cardrow + .cardrow { border-top: 1px solid var(--border); }
+  .cardrow .icn { width: 30px; height: 30px; border-radius: 7px; background: var(--muted); display: flex; align-items: center; justify-content: center; color: var(--muted-foreground); flex-shrink: 0; }
+  .cardrow .nm { flex: 1; font-size: 12.5px; }
+  .cardrow .meta { font-size: 11px; color: var(--muted-foreground); }
+
+  .statrow { margin-top: 12px; display: flex; gap: 20px; flex-wrap: wrap; }
+  .stat { display: flex; flex-direction: column; gap: 4px; }
+  .stat .lbl { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted-foreground); }
+  .stat .dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+  .stat .val { font-size: 15px; }
+
+  .bars { margin-top: 16px; display: flex; align-items: flex-end; gap: 5px; height: 88px; }
+  .barcol { flex: 1; display: flex; gap: 2px; align-items: flex-end; }
+  .barcol span { flex: 1; border-radius: 2px; }
+  .barmonths { margin-top: 6px; display: flex; justify-content: space-between; font-size: 9.5px; color: var(--muted-foreground); }
+
+  .activity { border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .txrow { display: flex; align-items: center; gap: 14px; padding: 14px 20px; }
+  .txrow + .txrow { border-top: 1px solid var(--border); }
+  .txrow .who { flex: 1; min-width: 0; }
+  .txrow .who .nm { font-size: 13px; }
+  .txrow .who .sub { margin-top: 2px; font-size: 12px; color: var(--muted-foreground); }
+
+  @media (max-width: 980px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .fixgrid { grid-template-columns: 1fr; }
+    .side { display: none; }
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="fixnote">
+    <h1>Overview redesign — Figma frame, with fixes applied</h1>
+    <p class="lede">Starts from the list-row account pattern in the shared Figma frame (node 391:12378) — genuinely better than a pill rail once an account list has to scale to corporate — and corrects what the critique flagged, rather than replacing the direction.</p>
+    <div class="fixgrid">
+      <div class="fixitem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span><b>Balance and accounts are one card.</b> <span class="detail">No separate boxed "Accounts" panel — rows live directly under the balance, so the total and its breakdown aren't torn apart by a heading and a border.</span></span>
+      </div>
+      <div class="fixitem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span><b>Rows filter, they don't navigate away.</b> <span class="detail">Tapping Savings or Current narrows the balance and the activity feed below, matching how the shipped rail behaves. "View all accounts" is a separate link for drilling into the Accounts page.</span></span>
+      </div>
+      <div class="fixitem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span><b>Each account shows its own balance.</b> <span class="detail">Fixed the duplicated "GH₵ GH₵18,070.50" on both rows — Savings and Current now total correctly.</span></span>
+      </div>
+      <div class="fixitem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span><b>Dropped the US flag on a GH₵ account.</b> <span class="detail">Analytics now reads the same selection as the account rows above it, instead of carrying a mismatched currency icon.</span></span>
+      </div>
+      <div class="fixitem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span><b>Analytics numbers are real money.</b> <span class="detail">"416 / 600 / -184" → GH₵ with thousands separators, matching every other number on the page. Kept the frame's "net cashflow" stat — it was a good addition, just unformatted.</span></span>
+      </div>
+      <div class="fixitem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span><b>Cut the 5-tab time-range switcher from the home glance.</b> <span class="detail">That's exploration, not a status check — it now belongs on Reports. Cards and Analytics sit side-by-side to cut scroll depth instead of stacking full-width.</span></span>
+      </div>
+      <div class="fixitem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span><b>Cards stack shows 2, not 3.</b> <span class="detail">Dropped the leftover third card — the relationship only has a Visa debit and a Mastercard virtual.</span></span>
+      </div>
+      <div class="fixitem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span><b>Corporate slots are reserved, not assumed.</b> <span class="detail">Approvals band placeholder shown at low opacity below; a 4th "Bulk pay" square action demonstrates the action row can flex to four without a redesign.</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="shell">
+    <div class="side">
+      <div class="brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
+        <span>NIBS</span>
+      </div>
+      <nav>
+        <span class="navlabel">Banking</span>
+        <div class="navitem active">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+          <span>Overview</span>
+        </div>
+        <div class="navitem"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2Z"/><path d="M16 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2"/></svg><span>Accounts</span></div>
+        <div class="navitem"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg><span>Transactions</span></div>
+        <div class="navitem"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><span>Cards</span></div>
+        <span class="navlabel">Move money</span>
+        <div class="navitem"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg><span>Payments</span></div>
+        <span class="navlabel">Reference</span>
+        <div class="navitem"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg><span>Reports</span></div>
+        <div class="navitem"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11 13 15 21 7"/><path d="M15 7h6v6"/></svg><span>FX rates</span></div>
+      </nav>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="profilechip">
+          <span class="av">AS</span>
+          <span style="font-size:12.5px;">Personal Banking</span>
+          <span style="font-size:10px; color:var(--muted-foreground); border:1px solid var(--border); border-radius:9999px; padding:1px 7px;">Personal</span>
+        </div>
+        <div class="icons">
+          <span style="position:relative; display:inline-flex;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 12 6 8Z"/><path d="M9.5 17a2.5 2.5 0 0 0 5 0"/></svg>
+            <span style="position:absolute; top:-2px; right:-2px; width:6px; height:6px; border-radius:50%; background:var(--destructive); border:1.5px solid var(--card);"></span>
+          </span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          <span class="av">AS</span>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <div>
+          <h1 style="font-size:22px; letter-spacing:-0.01em;">Good day, Ama</h1>
+          <p style="margin-top:4px; font-size:12px; color:var(--muted-foreground);">Personal Banking · •••• 4821</p>
+        </div>
+
+        <!-- Unified balance + accounts -->
+        <div class="balancecard">
+          <div class="balancetop">
+            <div>
+              <span style="font-size:12px; color:var(--muted-foreground);">Total Balance</span>
+              <div class="tab balnum">GH₵18,070.50</div>
+              <p style="margin-top:6px; font-size:12px; color:var(--muted-foreground);">All accounts selected</p>
+            </div>
+            <div class="sqrow">
+              <div class="sq">
+                <div class="sqbtn"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></div>
+                <span class="lbl">Send money</span>
+              </div>
+              <div class="sq">
+                <div class="sqbtn"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+                <span class="lbl">Card Top up</span>
+              </div>
+              <div class="sq">
+                <div class="sqbtn"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h9l5 5v15H6Z"/><path d="M15 2v5h5"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg></div>
+                <span class="lbl">Pay Bills</span>
+              </div>
+              <div class="sq corp">
+                <div class="sqbtn ghost"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 15h2"/><path d="M8 19h2"/><path d="M14 15h2"/><path d="M14 19h2"/></svg></div>
+                <span class="lbl">Bulk pay</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="acctdivider"></div>
+
+          <div class="acctheader">
+            <h2>Accounts</h2>
+            <a href="#">View all accounts →</a>
+          </div>
+          <div class="acctlist">
+            <button class="acctrow selected">
+              <span class="icn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg></span>
+              <span class="who"><span class="name">All accounts</span><span class="sub">Savings + Current</span></span>
+              <span class="tab amt">GH₵18,070.50</span>
+            </button>
+            <button class="acctrow">
+              <span class="icn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2Z"/><path d="M16 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2"/></svg></span>
+              <span class="who"><span class="name">Savings Account</span><span class="sub tab">4001 9922 1100</span></span>
+              <span class="tab amt">GH₵14,250.00</span>
+            </button>
+            <button class="acctrow">
+              <span class="icn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg></span>
+              <span class="who"><span class="name">Current Account</span><span class="sub tab">4001 9922 3344</span></span>
+              <span class="tab amt">GH₵3,820.50</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Reserved corporate slot -->
+        <div class="reserved">
+          <span class="icn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+          <div class="txt">
+            <h3>Requires your attention</h3>
+            <p>Reserved slot — renders only for the Approver role on corporate profiles. Same position it holds in the shipped page, so reusing this layout for corporate needs no rearranging.</p>
+          </div>
+          <span class="tag">Corporate · Approver only</span>
+        </div>
+
+        <!-- Secondary actions -->
+        <div class="secrow">
+          <span class="secbtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg>
+            Transfer between accounts
+          </span>
+          <span class="secbtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="7" r="3"/><path d="M2 21v-2a4 4 0 0 1 4-4h0"/><circle cx="15" cy="6" r="2"/><path d="M22 21v-1a3 3 0 0 0-3-3h-1"/><path d="M14 21v-2a3 3 0 0 0-3-3H9a3 3 0 0 0-3 3v2"/></svg>
+            Customize
+          </span>
+        </div>
+
+        <!-- Cards + Analytics -->
+        <div class="grid2">
+          <div class="panel">
+            <div class="phead">
+              <div>
+                <h2>Cards</h2>
+              </div>
+              <a href="#">Manage all →</a>
+            </div>
+            <div class="cardstack">
+              <div class="back">
+                <div class="toprow">
+                  <span>Mastercard Virtual Prepaid</span>
+                  <span class="vbadge">Virtual</span>
+                </div>
+              </div>
+              <div class="front">
+                <div class="toprow">
+                  <span class="chip"></span>
+                  <span class="badge card-success">Active</span>
+                </div>
+                <div class="tab num">•••• •••• •••• 9102</div>
+                <div class="botrow">
+                  <div><div class="fine">Card holder</div><div class="val">AMA SERWAA</div></div>
+                  <div><div class="fine">Expires</div><div class="tab val">12/28</div></div>
+                  <div class="scheme">Visa</div>
+                </div>
+              </div>
+            </div>
+            <div class="cardlist">
+              <div class="cardrow">
+                <span class="icn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></span>
+                <span class="nm">Visa Personal Debit</span>
+                <span class="tab meta">•••• 9102 · Exp 12/28</span>
+                <span class="badge success">Active</span>
+              </div>
+              <div class="cardrow">
+                <span class="icn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></span>
+                <span class="nm">Mastercard Virtual Prepaid</span>
+                <span class="tab meta">•••• 5521 · Exp 08/29</span>
+                <span class="badge success">Active</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="phead">
+              <div>
+                <h2>Analytics</h2>
+                <div class="ctx">Scoped to: All accounts</div>
+              </div>
+              <a href="#">View more →</a>
+            </div>
+            <div class="statrow">
+              <div class="stat">
+                <span class="lbl"><span class="dot" style="background:var(--primary);"></span>Money in</span>
+                <span class="tab val">GH₵103,126.83</span>
+              </div>
+              <div class="stat">
+                <span class="lbl"><span class="dot" style="background:oklch(0.7 0.15 55);"></span>Money out</span>
+                <span class="tab val">GH₵69,528.70</span>
+              </div>
+              <div class="stat">
+                <span class="lbl"><span class="dot" style="background:var(--success);"></span>Net cashflow</span>
+                <span class="tab val">GH₵33,598.13</span>
+              </div>
+            </div>
+            <div class="bars">
+              <div class="barcol"><span style="height:55%; background:var(--primary);"></span><span style="height:40%; background:oklch(0.7 0.15 55);"></span></div>
+              <div class="barcol"><span style="height:70%; background:var(--primary);"></span><span style="height:45%; background:oklch(0.7 0.15 55);"></span></div>
+              <div class="barcol"><span style="height:60%; background:var(--primary);"></span><span style="height:38%; background:oklch(0.7 0.15 55);"></span></div>
+              <div class="barcol"><span style="height:80%; background:var(--primary);"></span><span style="height:50%; background:oklch(0.7 0.15 55);"></span></div>
+              <div class="barcol"><span style="height:65%; background:var(--primary);"></span><span style="height:42%; background:oklch(0.7 0.15 55);"></span></div>
+              <div class="barcol"><span style="height:72%; background:var(--primary);"></span><span style="height:48%; background:oklch(0.7 0.15 55);"></span></div>
+              <div class="barcol"><span style="height:58%; background:var(--primary);"></span><span style="height:36%; background:oklch(0.7 0.15 55);"></span></div>
+              <div class="barcol"><span style="height:76%; background:var(--primary);"></span><span style="height:52%; background:oklch(0.7 0.15 55);"></span></div>
+              <div class="barcol"><span style="height:68%; background:var(--primary);"></span><span style="height:44%; background:oklch(0.7 0.15 55);"></span></div>
+              <div class="barcol"><span style="height:82%; background:var(--primary);"></span><span style="height:54%; background:oklch(0.7 0.15 55);"></span></div>
+              <div class="barcol"><span style="height:74%; background:var(--primary);"></span><span style="height:46%; background:oklch(0.7 0.15 55);"></span></div>
+              <div class="barcol"><span style="height:100%; background:var(--primary);"></span><span style="height:60%; background:oklch(0.7 0.15 55);"></span></div>
+            </div>
+            <div class="barmonths">
+              <span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent activity -->
+        <div>
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <div>
+              <h2 style="font-size:15px;">Recent activity</h2>
+              <p style="margin-top:2px; font-size:12px; color:var(--muted-foreground);">Filters to match the account selected above</p>
+            </div>
+            <a href="#" style="font-size:12px; color:var(--primary);">View all transactions</a>
+          </div>
+          <div class="activity">
+            <div class="txrow">
+              <div class="who"><div class="nm">Supermarket Purchase — Melcom</div><div class="sub">11 Aug 2026 · Melcom Stores</div></div>
+              <span class="tab" style="font-size:13px;">-GH₵450.00</span>
+              <span class="badge success">Completed</span>
+            </div>
+            <div class="txrow">
+              <div class="who"><div class="nm">Monthly Salary Credit</div><div class="sub">10 Aug 2026 · Employer Ltd</div></div>
+              <span class="tab" style="font-size:13px; color:var(--success);">+GH₵8,500.00</span>
+              <span class="badge success">Completed</span>
+            </div>
+            <div class="txrow">
+              <div class="who"><div class="nm">Transfer to Savings</div><div class="sub">08 Aug 2026 · Personal Savings Account</div></div>
+              <span class="tab" style="font-size:13px; color:var(--success);">+GH₵2,000.00</span>
+              <span class="badge success">Completed</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

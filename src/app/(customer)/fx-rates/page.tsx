@@ -212,7 +212,7 @@ export default function FxRatesPage() {
                   id="fx-pair"
                   value={pair}
                   onChange={(e) => setPair(e.target.value)}
-                  className="h-10 rounded-lg border border-border bg-background px-3 text-[13px] text-foreground outline-none transition-colors focus-visible:border-ring"
+                  className="h-10 rounded-lg border border-border bg-background pl-3 pr-10 text-[13px] text-foreground outline-none transition-colors focus-visible:border-ring cursor-pointer"
                 >
                   {FX_RATES.map((r) => (
                     <option key={r.pair} value={r.pair}>

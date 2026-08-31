@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 export interface BreadcrumbItem {
   label: string;
@@ -13,69 +13,31 @@ interface PageHeaderProps {
   description?: string;
   actions?: ReactNode;
   /**
-   * Object detail screens carry parent link info which maps to breadcrumb parent
+   * Object detail screens carry parent link info which renders a back navigation button
    */
   backTo?: { href: string; label: string };
-  /** Explicit breadcrumbs override, e.g. [{ label: "Cards", href: "/cards" }, { label: "Details" }] */
+  /** Explicit breadcrumbs override (optional) */
   breadcrumbs?: BreadcrumbItem[];
 }
 
-export default function PageHeader({ title, badge, description, actions, backTo, breadcrumbs }: PageHeaderProps) {
-  // Construct breadcrumb items: [Page 1] / [Current Page]
-  let items: BreadcrumbItem[] = [];
-
-  if (breadcrumbs && breadcrumbs.length > 0) {
-    items = breadcrumbs;
-  } else if (backTo) {
-    items = [
-      { label: backTo.label, href: backTo.href },
-      { label: title },
-    ];
-  }
-
-  // Only render breadcrumbs when two levels or more deep
-  const showBreadcrumbs = items.length >= 2;
-
+export default function PageHeader({ title, badge, actions, backTo }: PageHeaderProps) {
   return (
-    <div className="mb-4">
-      {/* Standard Breadcrumb Format: [Page 1] > [Current Page] */}
-      {showBreadcrumbs && (
-        <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
-          {items.map((item, idx) => {
-            const isLast = idx === items.length - 1;
-            return (
-              <div key={idx} className="flex items-center gap-1.5">
-                {idx > 0 && <ChevronRight size={12} className="text-muted-foreground/50 shrink-0" />}
-                {item.href && !isLast ? (
-                  <Link
-                    href={item.href}
-                    className="transition-colors hover:text-foreground hover:underline underline-offset-4"
-                  >
-                    {item.label}
-                  </Link>
-                ) : (
-                  <span className={isLast ? "font-medium text-foreground" : "text-muted-foreground"}>
-                    {item.label}
-                  </span>
-                )}
-              </div>
-            );
-          })}
-        </nav>
-      )}
-
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-[22px] leading-tight tracking-[-0.01em] text-foreground">{title}</h1>
-            {badge && <div className="shrink-0">{badge}</div>}
-          </div>
-          {description && (
-            <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-muted-foreground">{description}</p>
-          )}
-        </div>
-        {actions && <div className="flex shrink-0 items-center gap-2 pt-0.5">{actions}</div>}
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center gap-3 min-w-0">
+        {backTo && (
+          <Link
+            href={backTo.href}
+            className="group flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/40 text-muted-foreground transition-all hover:bg-muted hover:text-foreground active:scale-95"
+            title={`Back to ${backTo.label}`}
+            aria-label={`Back to ${backTo.label}`}
+          >
+            <ChevronLeft size={16} strokeWidth={2} className="transition-transform group-hover:-translate-x-0.5" />
+          </Link>
+        )}
+        <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground truncate">{title}</h1>
+        {badge && <div className="shrink-0">{badge}</div>}
       </div>
+      {actions && <div className="flex shrink-0 items-center gap-3">{actions}</div>}
     </div>
   );
 }

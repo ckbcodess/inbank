@@ -34,18 +34,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PASSWORD_RULES } from "@/lib/activation";
 
 type Stage = "identify" | "verify" | "reset" | "done";
 
-/** Mirrors the strength rules the Bank enforces server-side. */
+/**
+ * Rules live in one place with activation — a reset that enforces a different
+ * standard from enrolment is how the two quietly drift apart.
+ */
 function passwordIssues(pw: string): string[] {
-  const issues: string[] = [];
-  if (pw.length < 12) issues.push("at least 12 characters");
-  if (!/[A-Z]/.test(pw)) issues.push("an uppercase letter");
-  if (!/[a-z]/.test(pw)) issues.push("a lowercase letter");
-  if (!/\d/.test(pw)) issues.push("a number");
-  if (!/[^A-Za-z0-9]/.test(pw)) issues.push("a symbol");
-  return issues;
+  return PASSWORD_RULES.filter((r) => !r.test(pw)).map((r) => r.label.toLowerCase());
 }
 
 export default function ForgotPasswordPage() {

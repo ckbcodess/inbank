@@ -314,7 +314,7 @@ export default function CardsPage() {
                 <select
                   value={cardType}
                   onChange={(e) => setCardType(e.target.value as "Virtual" | "Prepaid" | "Debit")}
-                  className="flex h-10 w-full rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground focus:outline-none"
+                  className="flex h-10 w-full rounded-xl border border-border bg-background pl-3 pr-10 py-2 text-[13px] text-foreground focus:outline-none cursor-pointer"
                 >
                   <option value="Virtual">Virtual Card (Instant Digital)</option>
                   <option value="Prepaid">Prepaid Card</option>
@@ -327,7 +327,7 @@ export default function CardsPage() {
                 <select
                   value={cardScheme}
                   onChange={(e) => setCardScheme(e.target.value as "Visa" | "Mastercard")}
-                  className="flex h-10 w-full rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground focus:outline-none"
+                  className="flex h-10 w-full rounded-xl border border-border bg-background pl-3 pr-10 py-2 text-[13px] text-foreground focus:outline-none cursor-pointer"
                 >
                   <option value="Visa">Visa</option>
                   <option value="Mastercard">Mastercard</option>
@@ -340,7 +340,7 @@ export default function CardsPage() {
               <select
                 value={linkedAccId}
                 onChange={(e) => setLinkedAccId(e.target.value)}
-                className="flex h-10 w-full rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground focus:outline-none"
+                className="flex h-10 w-full rounded-xl border border-border bg-background pl-3 pr-10 py-2 text-[13px] text-foreground focus:outline-none cursor-pointer"
               >
                 {availableAccounts.map((acc) => (
                   <option key={acc.id} value={acc.id}>
@@ -367,7 +367,7 @@ export default function CardsPage() {
                   <select
                     value={isSingleUse ? "single" : "recurring"}
                     onChange={(e) => setIsSingleUse(e.target.value === "single")}
-                    className="flex h-10 w-full rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground focus:outline-none"
+                    className="flex h-10 w-full rounded-xl border border-border bg-background pl-3 pr-10 py-2 text-[13px] text-foreground focus:outline-none cursor-pointer"
                   >
                     <option value="recurring">Recurring / Subscription</option>
                     <option value="single">Single Use (Burner)</option>

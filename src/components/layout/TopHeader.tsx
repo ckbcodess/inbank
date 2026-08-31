@@ -17,8 +17,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import ProfileSwitcher from "./ProfileSwitcher";
 import { ROLE_LABEL, type Actor, type Profile } from "@/lib/roles";
+import HeaderBreadcrumbs from "./HeaderBreadcrumbs";
 
 interface TopHeaderProps {
   actor: Actor;
@@ -57,11 +57,7 @@ export default function TopHeader({
         <Button variant="ghost" size="icon-sm" onClick={onMenuToggle} className="lg:hidden" aria-label="Open menu">
           <Menu size={17} strokeWidth={1.9} />
         </Button>
-
-        {/* Profile Switcher renders only in the customer shell */}
-        {activeProfile && onSelectProfile && (
-          <ProfileSwitcher profiles={actor.profiles} active={activeProfile} onSelect={onSelectProfile} />
-        )}
+        <HeaderBreadcrumbs />
       </div>
 
       <div className="flex items-center gap-1.5 sm:gap-2">
@@ -78,7 +74,7 @@ export default function TopHeader({
               )}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+              <DropdownMenuLabel className="flex items-center justify-between text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                 <span>Dev Mode States</span>
                 {devState.section && <span className="font-mono">{devState.section}</span>}
               </DropdownMenuLabel>

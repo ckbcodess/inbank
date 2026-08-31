@@ -1,28 +1,8 @@
 "use client";
 
-/**
- * S05 Banking Overview — section 1.
- *
- * Role-aware home. The page is a composition, not an implementation: each block
- * below owns its own behaviour and its own rationale, and this file's job is
- * the reading order.
- *
- * That order answers four questions in the sequence a customer asks them:
- *
- *   1. What can I spend?          → LiquidityCore (FR-04)
- *   2. What do I want to do?      → QuickActionBar (FR-05, FR-33)
- *   3. What needs me right now?   → approvals band, then accounts / cards / FX
- *   4. What has been happening?   → insights, then the activity feed
- *
- * The "requires attention" band renders only for an Approver and the
- * administration shortcut only for a Corporate Admin, matching the nav matrix
- * (section 12.3).
- */
-
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Users } from "lucide-react";
-import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import type { BaselineState } from "@/lib/states";
@@ -30,18 +10,19 @@ import { useSession } from "@/lib/session-store";
 import { isApprover, isCorporateAdmin } from "@/lib/roles";
 import {
   accountsForProfile,
-  cardsForProfile,
   transactionsForProfile,
   APPROVAL_QUEUE,
 } from "@/lib/mock-data";
 import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
-import { LiquidityCore } from "@/components/dashboard/LiquidityCore";
-import { QuickActionBar } from "@/components/dashboard/QuickActionBar";
-import { AccountsPanel } from "@/components/dashboard/AccountsPanel";
-import { CardsPanel } from "@/components/dashboard/CardsPanel";
-import { FxPulse } from "@/components/dashboard/FxPulse";
-import { ActivityFeed } from "@/components/dashboard/ActivityFeed";
-import { InsightsSection } from "@/components/insights/InsightsSection";
+
+import { TotalBalanceCard } from "@/components/dashboard/TotalBalanceCard";
+import { SuggestedForYouCard } from "@/components/dashboard/SuggestedForYouCard";
+import { DashboardCardsWidget } from "@/components/dashboard/DashboardCardsWidget";
+import { ActionRequiredWidget } from "@/components/dashboard/ActionRequiredWidget";
+import { RecentActivityWidget } from "@/components/dashboard/RecentActivityWidget";
+import { DashboardAnalyticsWidget } from "@/components/dashboard/DashboardAnalyticsWidget";
+import { FxRatesWidget } from "@/components/dashboard/FxRatesWidget";
+import { MobilePromoBanner } from "@/components/dashboard/MobilePromoBanner";
 
 const BASELINE_STATES: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 
@@ -51,54 +32,36 @@ export default function OverviewPage() {
   useAmountVisibility();
 
   const [pageState, setPageState] = useState<BaselineState>("populated");
-  // Card status and balances live in a module-level array that is mutated in
-  // place, so blocking or funding a card needs an explicit nudge to re-read.
-  const [cardsRevision, setCardsRevision] = useState(0);
-  const refreshCards = useCallback(() => setCardsRevision((n) => n + 1), []);
-  const [topUpRequest, setTopUpRequest] = useState<string | null>(null);
+  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
 
   if (!actor || !activeProfile) return null;
 
   const accounts = accountsForProfile(activeProfile.kind);
-  void cardsRevision;
-  const cards = cardsForProfile(activeProfile.kind);
-  const transactions = transactionsForProfile(activeProfile.kind);
-
-  const pendingCount = transactions.filter(
-    (t) => t.state === "pending" || t.state === "awaiting-approval",
-  ).length;
+  const allTransactions = transactionsForProfile(activeProfile.kind);
+  const transactions = selectedAccountId
+    ? allTransactions.filter((t) => t.accountId === selectedAccountId)
+    : allTransactions;
 
   const isCorporate = activeProfile.kind === "CORPORATE";
   const showApprovals = isCorporate && isApprover(actor.role);
   const showAdmin = isCorporate && isCorporateAdmin(actor.role);
 
   return (
-    <div className="flex flex-col gap-5">
-      <PageHeader
-        title={`Good day, ${actor.name.split(" ")[0]}`}
-        description={`${activeProfile.name} · ${activeProfile.reference}`}
-      />
-
+    <div className="flex flex-col gap-6 w-full">
+      {/* State Switcher for prototype testing */}
       <StateSwitcher section="13.9" states={BASELINE_STATES} value={pageState} onChange={setPageState} />
 
-      {/* 1 — What can I spend? */}
-      <LiquidityCore
-        accounts={accounts}
-        pendingCount={pendingCount}
-        approvalCount={showApprovals ? APPROVAL_QUEUE.length : null}
-      />
+      {/* Greeting & Last Login Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <h1 className="text-[24px] font-medium tracking-tight text-foreground sm:text-[26px]">
+          Good morning, {actor.name.split(" ")[0]} 🎉
+        </h1>
+        <span className="text-[13px] text-muted-foreground">
+          Last login: 21 August, 2026 8:43 am
+        </span>
+      </div>
 
-      {/* 2 — What do I want to do? */}
-      <QuickActionBar
-        accounts={accounts}
-        cards={cards}
-        isCorporate={isCorporate}
-        onCardFunded={refreshCards}
-        topUpCardId={topUpRequest}
-        onTopUpHandled={() => setTopUpRequest(null)}
-      />
-
-      {/* 3 — What needs me right now? Approver only (section 12.3). */}
+      {/* Corporate Approvals Band (if applicable) */}
       {showApprovals && (
         <section className="rounded-2xl border border-border bg-card">
           <div className="flex items-center justify-between border-b border-border px-5 py-4">
@@ -140,20 +103,35 @@ export default function OverviewPage() {
         </section>
       )}
 
-      {/* Holdings and market context, side by side — card management sits
-          directly beside the account list rather than behind a settings menu. */}
-      <section className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-        <AccountsPanel accounts={accounts} />
-        <CardsPanel cards={cards} onTopUp={setTopUpRequest} onChanged={refreshCards} />
-        <FxPulse />
-      </section>
+      {/* Row 1: Total Balance Card + Suggested For You Card */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <TotalBalanceCard
+          accounts={accounts}
+          selectedAccountId={selectedAccountId}
+          onSelectAccount={setSelectedAccountId}
+        />
+        <SuggestedForYouCard />
+      </div>
 
-      {/* 4 — What has been happening? */}
-      <InsightsSection profileKind={activeProfile.kind} />
+      {/* Row 2: Cards Widget + Action Required Widget */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <DashboardCardsWidget />
+        <ActionRequiredWidget />
+      </div>
 
-      <ActivityFeed transactions={transactions} />
+      {/* Row 3: Recent Activity + Analytics Widget */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <RecentActivityWidget transactions={transactions} />
+        <DashboardAnalyticsWidget />
+      </div>
 
-      {/* Corporate Admin only (section 12.3) */}
+      {/* Row 4: FX Rates Widget + Mobile App Promo Banner */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <FxRatesWidget />
+        <MobilePromoBanner />
+      </div>
+
+      {/* Corporate Admin shortcut (if applicable) */}
       {showAdmin && (
         <section className="flex items-center justify-between rounded-2xl border border-border bg-card px-5 py-4">
           <div className="flex items-center gap-3">

@@ -1,0 +1,64 @@
+{
+  "pages": [
+    { "id": "page-1", "name": "Runway" },
+    { "id": "page-2", "name": "Rejected rounds" }
+  ],
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1180, "h": 1180, "title": "Runway", "page": "page-1" },
+    { "file": "Brief.dc.html", "x": 1300, "y": 0, "w": 760, "h": 700, "title": "Alternate · the brief", "page": "page-1" },
+
+    { "file": "Baseline.dc.html", "x": 0, "y": 0, "w": 1180, "h": 1560, "title": "Your layout", "page": "page-2" },
+    { "file": "V1.dc.html", "x": 1300, "y": 0, "w": 690, "h": 1300, "title": "V1", "page": "page-2" },
+    { "file": "V2.dc.html", "x": 2090, "y": 0, "w": 690, "h": 1220, "title": "V2", "page": "page-2" },
+    { "file": "V3.dc.html", "x": 2880, "y": 0, "w": 690, "h": 1280, "title": "V3", "page": "page-2" },
+    { "file": "V5.dc.html", "x": 3670, "y": 0, "w": 1180, "h": 1180, "title": "V5", "page": "page-2" },
+    { "file": "RefinedB.dc.html", "x": 0, "y": 1760, "w": 1180, "h": 1130, "title": "Refined B", "page": "page-2" },
+    { "file": "QuietWeek.dc.html", "x": 1300, "y": 1760, "w": 690, "h": 400, "title": "Quiet week", "page": "page-2" },
+    { "file": "DirectionA.dc.html", "x": 2090, "y": 1760, "w": 1180, "h": 1500, "title": "A", "page": "page-2" },
+    { "file": "DirectionB.dc.html", "x": 3390, "y": 1760, "w": 1180, "h": 1500, "title": "B", "page": "page-2" },
+    { "file": "DirectionC.dc.html", "x": 4690, "y": 1760, "w": 1180, "h": 1500, "title": "C", "page": "page-2" }
+  ],
+  "annotations": [
+    {
+      "id": "the-idea",
+      "x": 0,
+      "y": -420,
+      "w": 560,
+      "page": "page-1",
+      "text": "WHAT WAS WRONG WITH ALL EIGHT\nEvery version so far — yours and mine — was the same thing: a yard of boxes, one per product. Accounts, Cards, Activity, Analytics, Beneficiaries, Actions. That is the bank's org chart drawn as UI, and every round just moved which box sat where. No amount of rearranging fixes it, which is why none of them landed.\n\nA dashboard has one job: answer \"am I OK?\" in about two seconds. A grid of boxes never answers it — it hands over the raw material and makes the person do the arithmetic themselves.\n\nTHE IDEA\nStop showing what she HAS. Show what she can SAFELY SPEND, and what stands between her and it.\n\nGHS 69,033.59 is not the useful number. It bundles in savings she won't touch and ignores the GHS 1,240 loan repayment due in five days. GHS 16,500 — what's left in Current once everything already committed has gone, up to the day her salary lands — is the number she actually makes decisions against."
+    },
+    {
+      "id": "the-runway",
+      "x": 620,
+      "y": -420,
+      "w": 560,
+      "page": "page-1",
+      "text": "WHY A TIMELINE, AND WHY IT EARNS THE WIDTH\nMoney is temporal — it arrived, it's here, it's leaving. Every previous layout chopped that continuum into product boxes. One horizontal line puts it back, and a desktop is exactly the shape for it.\n\nThe line is her Current account. Solid behind today, dashed ahead — same colour, because it's the same account, just less certain. Events sit on it as marks: salary steps up, commitments step down, the term deposit steps up.\n\nWhat this quietly solves, without a single new card:\n· \"What's coming\" stops being a list and becomes the REASON the number is what it is.\n· Loans and investments need no home of their own. A repayment is a step down; a maturity is a step up. They were never products on this screen — they were events.\n· The low point is the answer to \"will I be alright\", and it's called out by name.\n\nChart discipline: one hero figure, proportional figures on it and tabular only in the columns; solid hairline grid, never dashed (dashes are reserved for the projection, where they mean something); labels only on the extreme and the two step-ups, never every point; marks always carry words, never colour alone."
+    },
+    {
+      "id": "honest-costs",
+      "x": 1240,
+      "y": -420,
+      "w": 560,
+      "page": "page-1",
+      "text": "WHAT IT COSTS, HONESTLY\n\n· It is a PROJECTION, and projections are wrong. It plots scheduled payments only — not her day-to-day spending — and the caption says so in those words. Quietly folding in predicted card spend would make the line prettier and the promise false.\n· It needs real data the current mock doesn't have: a reliable next-pay date, and commitments that are actually linked to the account. Wrong on either and the hero number is worse than no hero number.\n· Someone with GHS 69k is not living to payday, so \"safe to spend\" is less urgent for Ama than for a customer running tight. It still answers \"what's leaving and when\", which is the question either way.\n· One hero figure means Total Balance loses the crown. That is the point, but it is a real change to how the bank talks about itself, and worth a decision rather than a slide-past.\n\nSTILL OPEN\nYellow. I have used it nowhere here — the marks are blue for the account, green for money arriving, grey for automatic. If yellow is the brand accent it needs a job on this page; if it isn't, --primary stays blue and the earlier mockups were the outlier."
+    },
+    {
+      "id": "brief-note",
+      "x": 1300,
+      "y": 780,
+      "w": 560,
+      "page": "page-1",
+      "text": "THE ALTERNATE · same idea, opposite extreme\nIf the timeline is too much machinery, this is the other end: no chart at all. The dashboard says the answer in a sentence, offers the two decisions as buttons, and puts everything else one line each below.\n\nIt is genuinely faster to read and much cheaper to build. What it gives up is shape — you can't see the dip coming, only be told about it — and it leans entirely on the copy being right every single day, including the days when the situation is complicated."
+    },
+    {
+      "id": "rejected",
+      "x": 0,
+      "y": -140,
+      "w": 520,
+      "page": "page-2",
+      "text": "The eight earlier attempts, kept only for reference. All of them variations on the same box grid."
+    }
+  ],
+  "launch": { "view": "canvas", "page": "page-1" }
+}

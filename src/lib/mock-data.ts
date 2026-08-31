@@ -943,7 +943,7 @@ export const BILLERS: Biller[] = [
   { id: "bil-005", name: "SIC Insurance", category: "Insurance", reference: "Policy number" },
 ];
 
-export type InstructionFrequency = "Weekly" | "Monthly" | "Quarterly";
+export type InstructionFrequency = "Daily" | "Weekly" | "Monthly" | "Quarterly" | "Yearly";
 
 export interface StandingInstruction {
   id: string;
@@ -988,6 +988,35 @@ export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
     status: "Paused",
   },
 ];
+
+let standingSeq = STANDING_INSTRUCTIONS.length;
+
+/** Pause or resume a standing instruction (mutates in place, like fundCard). */
+export function setStandingStatus(id: string, status: "Active" | "Paused"): void {
+  const si = STANDING_INSTRUCTIONS.find((s) => s.id === id);
+  if (si) si.status = status;
+}
+
+/** Permanently cancel (remove) a standing instruction. */
+export function cancelStandingInstruction(id: string): void {
+  const i = STANDING_INSTRUCTIONS.findIndex((s) => s.id === id);
+  if (i >= 0) STANDING_INSTRUCTIONS.splice(i, 1);
+}
+
+/** Create a new instruction, or update an existing one when `id` is supplied. */
+export function saveStandingInstruction(input: Omit<StandingInstruction, "id"> & { id?: string }): StandingInstruction {
+  if (input.id) {
+    const si = STANDING_INSTRUCTIONS.find((s) => s.id === input.id);
+    if (si) {
+      Object.assign(si, input);
+      return si;
+    }
+  }
+  standingSeq += 1;
+  const created: StandingInstruction = { ...input, id: `si-${String(standingSeq).padStart(3, "0")}` };
+  STANDING_INSTRUCTIONS.unshift(created);
+  return created;
+}
 
 /* ── Notifications — FR-22 ──────────────────────────────────────────────────── */
 

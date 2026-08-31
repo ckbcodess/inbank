@@ -152,7 +152,7 @@ function StateBand({ state, txn }: { state: TransactionState; txn: NonNullable<R
             and resubmit.
           </p>
           <div className="mt-4">
-            <Button size="sm" nativeButton={false} render={<Link href={`/payments/new?duplicate=${txn.id}`} />}>
+            <Button size="sm" nativeButton={false} render={<Link href={`/payments/send?duplicate=${txn.id}`} />}>
               <Copy size={14} strokeWidth={1.9} aria-hidden="true" />
               Duplicate &amp; Edit
             </Button>

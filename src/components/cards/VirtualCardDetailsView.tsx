@@ -120,7 +120,7 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
       {/* Toast Feedback Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 rounded-xl bg-slate-900 text-white px-4 py-3 shadow-2xl text-[13px] border border-slate-700 animate-in fade-in slide-in-from-bottom-3 duration-200">
-          <div className="flex size-5 items-center justify-center rounded-full bg-emerald-500 text-slate-950 font-bold text-[10px]">
+          <div className="flex size-5 items-center justify-center rounded-full bg-emerald-500 text-slate-950 font-medium text-[10px]">
             ✓
           </div>
           <span>{toastMessage}</span>
@@ -143,7 +143,7 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
                 ? "bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200/80 dark:border-amber-800"
                 : "bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 border-slate-200/90 dark:border-slate-800"
             }`}>
-              <span className={`flex size-3 items-center justify-center rounded-full text-white text-[8px] font-bold ${
+              <span className={`flex size-3 items-center justify-center rounded-full text-white text-[8px] font-medium ${
                 isFrozen ? "bg-amber-500" : "bg-[#22c55e]"
               }`}>
                 {isFrozen ? "!" : "✓"}
@@ -619,7 +619,7 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
               {["4", "8", "2", "1"].map((digit, idx) => (
                 <div
                   key={idx}
-                  className="size-12 rounded-xl bg-muted border border-border flex items-center justify-center text-[22px] font-bold font-mono text-foreground shadow-inner"
+                  className="size-12 rounded-xl bg-muted border border-border flex items-center justify-center text-[22px] font-medium font-mono text-foreground shadow-inner"
                 >
                   {digit}
                 </div>

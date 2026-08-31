@@ -10,10 +10,22 @@ const nextConfig: NextConfig = {
   // barrel instead rewrites `{ Tick02Icon } from "@hugeicons/core-free-icons"`
   // to the single-icon subpath, so a compile touches one file, not the barrel.
   experimental: {
-    optimizePackageImports: ["@hugeicons/core-free-icons", "@hugeicons/react"],
+    optimizePackageImports: [
+      "lucide-react",
+      "@hugeicons/core-free-icons",
+      "@hugeicons/react",
+      "recharts",
+      "date-fns",
+      "framer-motion",
+      "motion",
+      "@base-ui/react",
+      "sonner",
+      "clsx",
+      "tailwind-merge",
+      "calligraph",
+      "zustand",
+    ],
   },
-  // The dev overlay badge sits on top of every screen and would land in each
-  // Figma capture. Nothing else in the prototype depends on it.
   devIndicators: false,
 };
 

@@ -26,6 +26,7 @@ import {
   type ProfileKind,
 } from "@/lib/insights";
 import { accountsForProfile } from "@/lib/mock-data";
+import dynamic from "next/dynamic";
 import {
   Select,
   SelectContent,
@@ -34,9 +35,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
-import { CashflowChart, CASHFLOW_CONFIG } from "./CashflowChart";
-import { SpendByCategory } from "./SpendByCategory";
+import { CASHFLOW_CONFIG } from "./CashflowChart";
 import { exactMoney, formatSignedPercent } from "./chart-format";
+
+const CashflowChart = dynamic(
+  () => import("./CashflowChart").then((m) => m.CashflowChart),
+  {
+    ssr: false,
+    loading: () => <div className="h-[260px] w-full animate-pulse rounded-xl bg-muted/30" />,
+  }
+);
+
+const SpendByCategory = dynamic(
+  () => import("./SpendByCategory").then((m) => m.SpendByCategory),
+  {
+    ssr: false,
+    loading: () => <div className="h-[260px] w-full animate-pulse rounded-xl bg-muted/30" />,
+  }
+);
 
 const GRAINS: readonly Grain[] = ["daily", "weekly", "monthly"] as const;
 

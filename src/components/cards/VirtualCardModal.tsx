@@ -111,7 +111,7 @@ export function VirtualCardView({
       {/* Header */}
       {showTitleHeader && (
         <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800/80">
-          <h2 className="text-[17px] font-semibold text-slate-900 dark:text-white tracking-tight">
+          <h2 className="text-[17px] font-medium text-slate-900 dark:text-white tracking-tight">
             Virtual Card
           </h2>
           {onClose && (
@@ -167,7 +167,7 @@ export function VirtualCardView({
                 ? "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-300"
                 : "border-slate-200/90 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200"
             }`}>
-              <span className={`flex size-3.5 items-center justify-center rounded-full text-white text-[8px] font-bold ${isFrozen ? "bg-amber-500" : "bg-[#22c55e]"}`}>
+              <span className={`flex size-3.5 items-center justify-center rounded-full text-white text-[8px] font-medium ${isFrozen ? "bg-amber-500" : "bg-[#22c55e]"}`}>
                 {isFrozen ? "!" : "✓"}
               </span>
               <span>{isFrozen ? "Frozen" : "Active"}</span>
@@ -187,7 +187,7 @@ export function VirtualCardView({
             <span className="text-[13.5px] font-normal text-slate-500 dark:text-slate-400">
               {activeCard.name ?? "Savings Card"}
             </span>
-            <span className="mt-0.5 text-[28px] font-bold tracking-tight text-slate-900 dark:text-white tabular">
+            <span className="mt-0.5 text-[28px] font-medium tracking-tight text-slate-900 dark:text-white tabular">
               {formatMoney(activeCard.balance ?? 16058.94, activeCard.currency ?? "USD")}
             </span>
           </div>

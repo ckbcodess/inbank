@@ -1,0 +1,1706 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NIBS Onboarding</title>
+<meta name="description" content="Interactive prototype of every retail and corporate onboarding, activation, and signup flow, with the design rationale for each screen." />
+<style>
+/* ============================================================
+   TOKENS — lifted verbatim from src/app/globals.css so this
+   standalone file renders identically to the product it documents.
+   Light palette lives on bare :root; dark overrides are scoped so an
+   explicit --data-theme choice always wins over the OS setting.
+   ============================================================ */
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.55 0.17 255);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.62 0.15 150);
+  --warning: oklch(0.72 0.16 75);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.60 0.16 255);
+  --active-bg: color-mix(in oklch, var(--primary) 8%, transparent);
+  --active-border: var(--primary);
+  --surface: oklch(0.985 0 0);
+  --shadow-color: rgb(0 0 0 / 0.06);
+  --card-shadow: 0 8px 30px rgb(0 0 0 / 0.04);
+  --rail-bg: #000000;
+  --rail-fg: #ffffff;
+  --rail-fg-dim: rgba(255,255,255,0.6);
+  --rail-border: rgba(255,255,255,0.12);
+  --rail-chip-bg: rgba(255,255,255,0.08);
+  --rail-chip-bg-hover: rgba(255,255,255,0.14);
+  --radius-lg: 10px;
+  --radius-xl: 14px;
+  --radius-2xl: 18px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.62 0.16 255);
+    --primary-foreground: oklch(1 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.371 0 0);
+    --destructive: oklch(0.637 0.237 25.331);
+    --destructive-foreground: oklch(1 0 0);
+    --success: oklch(0.68 0.15 150);
+    --warning: oklch(0.78 0.15 75);
+    --border: oklch(0.269 0 0);
+    --input: oklch(0.269 0 0);
+    --ring: oklch(0.68 0.14 255);
+    --active-bg: color-mix(in oklch, var(--primary) 12%, transparent);
+    --active-border: var(--ring);
+    --surface: oklch(0.113 0 0);
+    --shadow-color: rgb(0 0 0 / 0.3);
+    --card-shadow: 0 8px 30px rgb(0 0 0 / 0.2);
+    --rail-border: rgba(255,255,255,0.1);
+  }
+}
+:root[data-theme="dark"] {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.62 0.16 255);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.371 0 0);
+  --destructive: oklch(0.637 0.237 25.331);
+  --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.68 0.15 150);
+  --warning: oklch(0.78 0.15 75);
+  --border: oklch(0.269 0 0);
+  --input: oklch(0.269 0 0);
+  --ring: oklch(0.68 0.14 255);
+  --active-bg: color-mix(in oklch, var(--primary) 12%, transparent);
+  --active-border: var(--ring);
+  --surface: oklch(0.113 0 0);
+  --shadow-color: rgb(0 0 0 / 0.3);
+  --card-shadow: 0 8px 30px rgb(0 0 0 / 0.2);
+  --rail-border: rgba(255,255,255,0.1);
+}
+
+* { box-sizing: border-box; }
+html { font-size: 14px; scrollbar-gutter: stable; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-weight: 400;
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+}
+h1,h2,h3,h4,p,span,a,label,li,dt,dd,button,input,select { font-weight: inherit; font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; background: none; border: none; color: inherit; }
+input, select { font-family: inherit; }
+.tabular { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+/* type scale — matches DESIGN-LANGUAGE.md exactly */
+.t-title { font-size: 22px; line-height: 1.2; letter-spacing: -0.01em; }
+.t-panel { font-size: 15px; line-height: 1.35; }
+.t-row   { font-size: 14px; line-height: 1.4; }
+.t-body  { font-size: 13px; line-height: 1.55; }
+.t-meta  { font-size: 12px; line-height: 1.5; }
+.t-label { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+/* ============================================================
+   META PAGES (Home / Flow maps) — plain, full-width, no split
+   panel. The black rail is the product's signature, reserved for
+   screens that are actually inside a simulated flow; the meta
+   layer stays deliberately undecorated so the two never blur.
+   ============================================================ */
+.meta-page { min-height: 100vh; background: var(--surface); }
+.meta-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 28px; border-bottom: 1px solid var(--border);
+}
+.meta-wordmark { display:flex; align-items:center; gap:8px; }
+.meta-wordmark .dot { width:8px; height:8px; border-radius:999px; background:var(--primary); }
+.meta-container { max-width: 880px; margin: 0 auto; padding: 56px 28px 80px; }
+.meta-eyebrow { color: var(--primary); margin: 0 0 10px; }
+.meta-h1 { font-size: 32px; line-height: 1.15; letter-spacing: -0.015em; margin: 0 0 14px; text-wrap: balance; }
+.meta-lede { color: var(--muted-foreground); max-width: 62ch; margin: 0 0 8px; }
+.meta-howto {
+  display:flex; gap:10px; align-items:flex-start; margin-top: 22px; padding: 14px 16px;
+  background: var(--muted); border-radius: var(--radius-xl); color: var(--muted-foreground);
+}
+.pop-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 34px; }
+@media (max-width: 720px) { .pop-grid { grid-template-columns: 1fr; } }
+.pop-card {
+  text-align:left; border: 1px solid var(--border); background: var(--card); border-radius: var(--radius-2xl);
+  padding: 22px; display:flex; flex-direction:column; gap:10px; transition: border-color .15s, transform .15s, box-shadow .15s;
+}
+.pop-card:hover { border-color: color-mix(in oklch, var(--primary) 40%, var(--border)); box-shadow: var(--card-shadow); transform: translateY(-1px); }
+.pop-card .pop-icon {
+  width:40px; height:40px; border-radius: var(--radius-xl); background: var(--muted); color: var(--muted-foreground);
+  display:flex; align-items:center; justify-content:center; margin-bottom: 4px;
+}
+.pop-card .pop-title { font-size:17px; letter-spacing:-0.01em; }
+.pop-card .pop-desc { color: var(--muted-foreground); }
+.pop-card .pop-badge { color: var(--primary); margin-top: 6px; }
+.meta-footnote { margin-top: 44px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--muted-foreground); }
+
+.map-section { margin-top: 30px; }
+.map-section-head { display:flex; align-items:baseline; justify-content:space-between; margin-bottom: 10px; }
+.map-section-title { font-size: 15px; }
+.map-section-count { color: var(--muted-foreground); }
+.map-list { border: 1px solid var(--border); border-radius: var(--radius-xl); overflow: hidden; background: var(--card); }
+.map-row {
+  display:flex; align-items:center; gap:12px; padding: 12px 16px; border-bottom: 1px solid var(--border);
+  transition: background-color .15s;
+}
+.map-row:last-child { border-bottom: none; }
+.map-row:hover { background: color-mix(in oklch, var(--foreground) 4%, transparent); }
+.map-row .num {
+  width:22px; height:22px; border-radius:999px; background:var(--muted); color:var(--muted-foreground);
+  display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0;
+}
+.map-row .label { flex:1; min-width:0; }
+.map-edges { margin-top: 6px; }
+.map-edges summary { list-style:none; cursor:pointer; color: var(--muted-foreground); padding: 8px 16px; }
+.map-edges summary::-webkit-details-marker { display:none; }
+.map-edges summary::before { content: "+ "; }
+.map-edges[open] summary::before { content: "– "; }
+.map-edges .edge-row { padding: 8px 16px 8px 44px; border-top: 1px dashed var(--border); display:flex; gap:10px; align-items:center; }
+.map-edges .edge-row:hover { background: color-mix(in oklch, var(--foreground) 4%, transparent); }
+.run-btn-row { margin-top: 22px; }
+
+/* ============================================================
+   BUTTONS / FIELDS — shared across meta pages and in-flow screens
+   ============================================================ */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height: 40px; padding: 0 16px; border-radius: var(--radius-lg);
+  font-size: 14px; border: 1px solid transparent; width: auto; transition: all .12s;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--primary); color: var(--primary-foreground); }
+.btn-primary:hover { filter: brightness(1.06); }
+.btn-primary:disabled { background: var(--muted); color: var(--muted-foreground); cursor:not-allowed; filter:none; }
+.btn-outline { background: var(--background); border-color: var(--border); color: var(--foreground); }
+.btn-outline:hover { background: color-mix(in oklch, var(--foreground) 5%, transparent); }
+.btn-ghost { background: transparent; color: var(--foreground); }
+.btn-ghost:hover { background: color-mix(in oklch, var(--foreground) 5%, transparent); }
+.btn-sm { height: 32px; padding: 0 12px; font-size: 13px; }
+.btn-block { width: 100%; }
+
+.field { display:flex; flex-direction:column; gap:6px; margin-bottom: 14px; }
+.field label { font-size: 13px; }
+.field .field-head { display:flex; align-items:center; justify-content:space-between; }
+.field input[type=text], .field input[type=email], .field input[type=tel], .field input[type=password], .field select {
+  height: 38px; border-radius: var(--radius-lg); border: 1px solid var(--input); background: transparent;
+  color: var(--foreground); padding: 0 12px; font-size: 14px; outline: none; width:100%;
+  transition: border-color .12s, box-shadow .12s;
+}
+.field input:focus, .field select:focus { border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 22%, transparent); }
+.field input[aria-invalid="true"] { border-color: var(--destructive); }
+.field input:disabled, .field input[readonly] { background: var(--muted); color: var(--foreground); opacity: .85; }
+.field .hint { font-size:12px; color: var(--muted-foreground); }
+.link-btn { color: var(--primary); font-size: 12px; }
+.link-btn:hover { text-decoration: underline; }
+
+.alert { display:flex; gap:10px; align-items:flex-start; padding: 10px 12px; border-radius: var(--radius-lg); font-size: 13px; margin: 4px 0 14px; }
+.alert-error { background: color-mix(in oklch, var(--destructive) 10%, transparent); color: var(--destructive); }
+.alert-neutral { background: var(--muted); color: var(--muted-foreground); }
+.alert svg { flex-shrink:0; margin-top:1px; }
+
+.rule-list { display:flex; flex-direction:column; gap:6px; margin: 4px 0 16px; }
+.rule-item { display:flex; align-items:center; gap:8px; font-size:12px; color: var(--muted-foreground); }
+.rule-item.met { color: var(--foreground); }
+.rule-item svg { color: color-mix(in oklch, var(--muted-foreground) 60%, transparent); }
+.rule-item.met svg { color: var(--primary); }
+
+.option-row {
+  display:flex; align-items:center; gap:12px; padding: 13px 15px; border-radius: var(--radius-xl);
+  border: 1px solid var(--border); background: var(--card); width:100%; text-align:left; transition: all .12s;
+}
+.option-row:hover { border-color: color-mix(in oklch, var(--primary) 35%, var(--border)); background: color-mix(in oklch, var(--foreground) 3%, transparent); }
+.option-row .icon-tile { width:34px; height:34px; border-radius: var(--radius-lg); background: var(--muted); color: var(--muted-foreground); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.option-row .body { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.option-row .body .lbl { font-size:13px; color: var(--foreground); }
+.option-row .body .sub { font-size:12px; color: var(--muted-foreground); line-height:1.45; }
+.option-row .chev { flex-shrink:0; color: var(--muted-foreground); }
+.option-row.selected { border-color: var(--active-border); background: var(--active-bg); }
+
+.otp-row { display:flex; gap:8px; justify-content:center; margin: 6px 0 16px; }
+.otp-box {
+  width:44px; height:48px; border-radius: var(--radius-xl); border: 1px solid var(--border); background: var(--background);
+  text-align:center; font-size:18px; color: var(--foreground); outline:none;
+}
+.otp-box:focus { border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 22%, transparent); }
+.otp-box[aria-invalid="true"] { border-color: var(--destructive); }
+
+.doc-row { display:flex; align-items:center; gap:12px; padding: 13px 15px; border-radius: var(--radius-xl); border:1px solid var(--border); background: var(--card); margin-bottom:10px; }
+.doc-row.attached { border-color: var(--active-border); background: var(--active-bg); }
+.doc-row .icon-tile { width:34px; height:34px; border-radius: var(--radius-lg); background: var(--muted); color: var(--muted-foreground); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.doc-row.attached .icon-tile { color: var(--primary); }
+.doc-row .body { flex:1; min-width:0; }
+.doc-row .body .lbl { font-size:13px; }
+.doc-row .body .sub { font-size:12px; color:var(--muted-foreground); }
+
+.step-bar { display:flex; gap:6px; margin-bottom: 20px; }
+.step-bar .seg { flex:1; height:4px; border-radius:999px; background: var(--muted); }
+.step-bar .seg.done { background: var(--primary); }
+
+.review-block { border:1px solid var(--border); border-radius: var(--radius-xl); padding: 14px 16px; margin-bottom: 12px; background: var(--card); }
+.review-block .rh { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.review-block .rh .t { font-size:13px; }
+.review-row { display:flex; justify-content:space-between; gap:12px; font-size:13px; padding: 3px 0; }
+.review-row dt { color: var(--muted-foreground); }
+.review-row dd { margin:0; text-align:right; }
+
+.sig-item { display:flex; align-items:center; gap:12px; padding: 11px 14px; border-radius: var(--radius-xl); border:1px solid var(--border); background:var(--card); margin-bottom:8px; }
+.sig-item .icon-tile { width:32px;height:32px;border-radius:var(--radius-lg); background:var(--muted); color:var(--muted-foreground); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.sig-item .body { flex:1; min-width:0; }
+.sig-item .body .lbl { font-size:13px; }
+.sig-item .body .sub { font-size:12px; color:var(--muted-foreground); }
+.sig-add-box { border:1px dashed var(--border); border-radius: var(--radius-xl); padding: 12px; display:flex; flex-direction:column; gap:10px; margin-bottom:10px; }
+.sig-add-grid { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+@media (max-width:520px){ .sig-add-grid{grid-template-columns:1fr;} .field-grid{grid-template-columns:1fr !important;} }
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap: 0 14px; }
+
+.selfie-box {
+  width: 168px; height: 210px; margin: 0 auto 16px; border-radius: var(--radius-2xl);
+  border: 2px dashed var(--border); background: color-mix(in oklch, var(--muted) 60%, transparent);
+  display:flex; align-items:center; justify-content:center; color: var(--muted-foreground);
+}
+.spin { animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+
+/* ============================================================
+   IN-FLOW SHELL — the product's black/white split, unchanged
+   from AuthLayout.tsx, plus the annotation rail's new content
+   ============================================================ */
+.flow-shell { display:flex; min-height:100vh; width:100%; }
+@media (max-width: 900px) { .flow-shell { flex-direction: column; } }
+.rail {
+  width:50%; flex-shrink:0; background: var(--rail-bg); color: var(--rail-fg);
+  display:flex; flex-direction:column; min-height: 100vh; position: sticky; top:0;
+  align-self: flex-start; max-height: 100vh; overflow-y:auto;
+}
+@media (max-width: 900px) { .rail { width:100%; position:static; max-height:none; min-height:auto; } }
+.rail-top { display:flex; align-items:center; justify-content:space-between; padding: 18px 24px; border-bottom: 1px solid var(--rail-border); flex-shrink:0; }
+.rail-back { display:flex; align-items:center; gap:6px; color: var(--rail-fg-dim); font-size:12px; }
+.rail-back:hover { color: var(--rail-fg); }
+.rail-mark { color: var(--rail-fg-dim); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; }
+.rail-theme-btn { color: var(--rail-fg-dim); display:flex; }
+.rail-theme-btn:hover { color: var(--rail-fg); }
+.rail-body { padding: 26px 28px 20px; flex:1; }
+.rail-flow-badge { color: color-mix(in oklch, var(--primary) 55%, white 20%); font-size:11px; letter-spacing:0.07em; text-transform:uppercase; margin:0 0 6px; }
+.rail-step { color: var(--rail-fg-dim); font-size:12px; margin: 0 0 16px; }
+.rail-headline { font-size:19px; line-height:1.3; letter-spacing:-0.01em; margin: 0 0 10px; text-wrap: balance; }
+.rail-rationale { color: var(--rail-fg-dim); font-size:13px; line-height:1.65; margin: 0 0 26px; }
+.rail-steps { list-style:none; margin:0 0 20px; padding:0; display:flex; flex-direction:column; gap:2px; }
+.rail-steps li { display:flex; align-items:center; gap:10px; padding: 8px 10px; border-radius: 10px; cursor:pointer; transition: background-color .12s; }
+.rail-steps li:hover { background: var(--rail-chip-bg); }
+.rail-steps li .marker {
+  width:20px; height:20px; border-radius:999px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-size:10px; border: 1px solid var(--rail-border); color: var(--rail-fg-dim);
+}
+.rail-steps li.current .marker { background: var(--primary); border-color: var(--primary); color: white; }
+.rail-steps li.done .marker { background: color-mix(in oklch, var(--primary) 30%, transparent); border-color: var(--primary); color: white; }
+.rail-steps li .label { font-size:13px; color: var(--rail-fg-dim); }
+.rail-steps li.current .label { color: var(--rail-fg); }
+.rail-steps li.done .label { color: var(--rail-fg-dim); text-decoration: line-through; text-decoration-color: rgba(255,255,255,0.25); }
+.rail-edges-label { color: var(--rail-fg-dim); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; margin: 4px 0 10px; }
+.rail-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.rail-chip { padding: 6px 11px; border-radius:999px; background: var(--rail-chip-bg); color: var(--rail-fg-dim); font-size:12px; border:1px solid transparent; }
+.rail-chip:hover { background: var(--rail-chip-bg-hover); color: var(--rail-fg); }
+.rail-chip.active { background: color-mix(in oklch, var(--primary) 35%, transparent); color:white; border-color: var(--primary); }
+.rail-complete-badge { display:inline-flex; align-items:center; gap:6px; color: color-mix(in oklch, var(--success) 70%, white 25%); font-size:12px; margin-bottom:10px; }
+.rail-restart { margin-top: 8px; }
+
+.flow-main { width:50%; flex:1; display:flex; align-items:center; justify-content:center; background: var(--surface); padding: 52px 28px; min-height:100vh; }
+@media (max-width: 900px) { .flow-main { width:100%; } }
+.flow-col { width:100%; max-width: 400px; }
+.flow-col.wide { max-width: 460px; }
+.flow-icon { width:48px; height:48px; border-radius: var(--radius-2xl); background: var(--primary); color: var(--primary-foreground); display:flex; align-items:center; justify-content:center; margin: 0 auto 16px; }
+.flow-head { text-align:center; margin-bottom: 26px; }
+.flow-head h1 { font-size:24px; line-height:1.25; letter-spacing:-0.02em; margin:0 0 8px; text-wrap:balance; }
+.flow-head .desc { color: var(--muted-foreground); font-size:13px; line-height:1.55; }
+.flow-card { border:1px solid var(--border); background: var(--card); border-radius: var(--radius-2xl); padding: 24px; box-shadow: var(--card-shadow); }
+.flow-footer { margin-top: 18px; text-align:center; display:flex; flex-direction:column; gap:12px; }
+.flow-footer .muted-link { display:inline-flex; align-items:center; gap:5px; color: var(--muted-foreground); font-size:12px; }
+.flow-footer .muted-link:hover { color: var(--foreground); text-decoration:underline; }
+.dl-panel { border:1px dashed var(--border); border-radius: var(--radius-xl); padding:14px; background: color-mix(in oklch, var(--muted) 45%, transparent); text-align:left; }
+.dl-panel .dl-title { font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color: var(--muted-foreground); margin:0 0 8px; }
+.dl-row { display:flex; align-items:center; justify-content:space-between; padding:6px 4px; border-radius:8px; }
+.dl-row:hover { background: color-mix(in oklch, var(--foreground) 5%, transparent); }
+.dl-row .l { font-size:12px; }
+.dl-row .r { font-size:11px; color: var(--muted-foreground); }
+
+/* dashboard end-state */
+.dash-header { display:flex; align-items:center; justify-content:space-between; margin-bottom: 22px; }
+.dash-avatar { width:38px;height:38px;border-radius:999px;background:var(--primary); color:var(--primary-foreground); display:flex;align-items:center;justify-content:center; font-size:13px; }
+.dash-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+@media (max-width:520px){ .dash-grid{ grid-template-columns:1fr; } }
+.dash-card { border:1px solid var(--border); background:var(--card); border-radius: var(--radius-xl); padding:16px; }
+.dash-card .k { color:var(--muted-foreground); font-size:12px; margin-bottom:6px; }
+.dash-card .v { font-size:19px; }
+.dash-banner { border:1px solid var(--active-border); background: var(--active-bg); border-radius: var(--radius-xl); padding: 14px 16px; font-size:13px; display:flex; gap:10px; }
+
+/* ============================================================
+   WALKTHROUGH BAR & FIXTURE TOOLS (Presenter guardrails)
+   ============================================================ */
+.walkthrough-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 56px;
+  background: var(--card); border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; gap: 16px; z-index: 100;
+  box-shadow: 0 -4px 20px rgb(0 0 0 / 0.06);
+}
+@media (max-width: 900px) {
+  .walkthrough-bar { height: auto; padding: 10px 14px; flex-wrap: wrap; }
+}
+.wb-left { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.wb-flow-select {
+  height: 32px; border-radius: var(--radius-lg); border: 1px solid var(--input);
+  background: var(--surface); color: var(--foreground); font-size: 13px;
+  padding: 0 8px; outline: none; font-weight: 500;
+}
+.wb-step-badge {
+  font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--muted-foreground); background: var(--muted);
+  padding: 4px 8px; border-radius: 999px;
+}
+.wb-center {
+  flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+@media (max-width: 900px) { .wb-center { display: none; } }
+.wb-caption { font-size: 13px; color: var(--foreground); line-height: 1.4; }
+.wb-caption strong { color: var(--primary); font-weight: 500; margin-right: 4px; }
+.wb-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+/* Fixture Drawer */
+.fixture-drawer {
+  position: fixed; bottom: 56px; right: 24px; width: 340px; max-width: calc(100vw - 32px);
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+  box-shadow: 0 -8px 30px rgb(0 0 0 / 0.12); z-index: 99;
+  transform: translateY(110%); transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.fixture-drawer.open { transform: translateY(0); }
+.fixture-drawer-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+}
+.fixture-drawer-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+.fixture-group { display: flex; flex-direction: column; gap: 6px; }
+.fixture-label { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted-foreground); margin: 0; }
+
+/* Hotspot Highlighting Mode */
+.show-hotspots .flow-card button,
+.show-hotspots .flow-card input,
+.show-hotspots .flow-card select,
+.show-hotspots .flow-card .option-row,
+.show-hotspots .flow-card .doc-row {
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 2px;
+  box-shadow: 0 0 10px color-mix(in oklch, var(--primary) 40%, transparent) !important;
+}
+
+.flow-shell { padding-bottom: 56px; }
+
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   ICONS — small hand-drawn line-icon set in Lucide's stroke
+   language (1.8 stroke, round caps). Not the library itself, but
+   the same visual grammar: muted tiles, thin strokes, 16-20px.
+   ============================================================ */
+const ICON_PATHS = {
+  arrowRight: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  arrowLeft: '<path d="M19 12H5M11 18l-6-6 6-6"/>',
+  landmark: '<path d="M3 21h18M4 10h16M12 3l9 5H3l9-5ZM6 10v8M10 10v8M14 10v8M18 10v8"/>',
+  shieldCheck: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/><path d="M9 12l2 2 4-4"/>',
+  keyRound: '<circle cx="8" cy="15" r="4"/><path d="M10.5 12.5 20 3M17 6l3 3M14 9l2 2"/>',
+  idCard: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="12" r="2"/><path d="M15 10h4M15 14h4M6 17c.5-1.8 2-2.8 3-2.8s2.5 1 3 2.8"/>',
+  camera: '<path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/>',
+  building: '<rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h.01M15 7h.01M9 11h.01M15 11h.01M9 15h.01M15 15h.01M10 21v-4h4v4"/>',
+  userPlus: '<circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M18 8v6M15 11h6"/>',
+  users: '<circle cx="9" cy="8" r="3.2"/><circle cx="17" cy="9.5" r="2.6"/><path d="M3.5 20c0-3 2.5-5.4 5.5-5.4s5.5 2.4 5.5 5.4M15 15.2c2.6.3 4.5 2.3 4.5 4.8"/>',
+  checkCircle: '<circle cx="12" cy="12" r="9"/><path d="M8.5 12.3l2.3 2.3 4.7-4.9"/>',
+  check: '<path d="M4 12l5 5L20 6"/>',
+  alertCircle: '<circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>',
+  lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  fileText: '<path d="M7 3h7l4 4v14H7Z"/><path d="M14 3v4h4M9 12h6M9 15.5h6M9 8.5h2"/>',
+  clipboardCheck: '<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v2H9Z"/><path d="M9.5 13l1.8 1.8L14.5 11"/>',
+  paperclip: '<path d="M8 12.5l6.5-6.5a3 3 0 1 1 4.2 4.2L10.5 18a5 5 0 1 1-7-7L11 3.5"/>',
+  sparkles: '<path d="M12 3l1.4 4.6L18 9l-4.6 1.4L12 15l-1.4-4.6L6 9l4.6-1.4Z"/><path d="M19 16l.7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7Z"/>',
+  helpCircle: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.5 2.5 0 1 1 3.6 2.2c-.9.5-1.1 1-1.1 1.9M12 16.5h.01"/>',
+  loader: '<path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+  smartphone: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+  trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+  pencil: '<path d="M4 20l1-4L16 5l3 3L8 19l-4 1Z"/>',
+  eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  eyeOff: '<path d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.2 4.2M6.6 6.7C4 8.4 2 12 2 12s4 7 10 7c1.8 0 3.4-.5 4.8-1.2M9.9 5.2A9.9 9.9 0 0 1 12 5c6 0 10 7 10 7-.5.9-1.5 2.2-2.7 3.3"/>',
+  compass: '<circle cx="12" cy="12" r="9"/><path d="M15 9l-2 6-6 2 2-6 6-2Z"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>',
+  moon: '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/>'
+};
+function icon(name, size) {
+  size = size || 16;
+  const p = ICON_PATHS[name] || ICON_PATHS.helpCircle;
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
+}
+
+/* ============================================================
+   DEMO DATA — mirrors src/lib/activation.ts, signup.ts and
+   signup-business.ts so this prototype's copy matches the built
+   product exactly, not an approximation of it.
+   ============================================================ */
+const DEMO = {
+  retail: { name: 'Ama Serwaa', email: 'am•••••@example.com', mobile: '+233 24 *** *567', account: 'Reserve Savings ···· 5566' },
+  newRetail: { firstName: 'Kwabena', lastName: 'Asare', dob: '14 Mar 1994', card: 'GHA-0555555555-5', mobileMasked: '+233 20 *** *567' },
+  corp: { name: 'Kwame Boateng', company: 'Adinkra Textiles Ltd', invitedBy: 'Yaw Oppong', role: 'Corporate Maker', mobile: '+233 24 *** *567', email: 'kw•••••@example.com' },
+  support: '+233 302 664 914'
+};
+
+/* Mutable, in-memory only — resets on reload by design, so a
+   shared copy of this file never shows a previous reviewer's data. */
+let form = {};
+function resetForm() {
+  form = {
+    identifier: '', mobile: '',
+    ghanaCard: '', suEmail: '',
+    password: '', approval: 'sms',
+    company: '', tin: '', bizType: 'Limited Liability Company',
+    contactName: '', contactRole: 'Director', contactCard: '', contactMobile: '', contactEmail: '',
+    signatories: [], docs: {}
+  };
+}
+resetForm();
+
+/* ============================================================
+   SCREEN REGISTRY
+   Each screen: { section, title, desc, icon, badge, step, of,
+   rationaleHead, rationale, edges:[{id,label}], body(), mount(),
+   footer() }. `body()` returns the flow-card's inner HTML;
+   `mount()` wires that screen's interactivity after it's inserted.
+   ============================================================ */
+/* ============================================================
+   LINEAR FLOW DEFINITIONS
+   Every flow has a single clear purpose, linear step sequence,
+   and clean goal-oriented presentation guardrails.
+   ============================================================ */
+const FLOWS = {
+  'retail-activation': {
+    id: 'retail-activation',
+    category: 'Retail',
+    title: 'Retail Fast Activation',
+    subtitle: 'Existing GCB Customer → Internet Banking',
+    objective: 'Enable internet banking for existing account holders in under 2 minutes without re-running full KYC.',
+    steps: ['act-r-find', 'act-r-verify', 'act-r-setup', 'act-r-done'],
+    edgeCases: [
+      { id: 'act-r-already', label: 'Already Active Account', source: 'act-r-find', trigger: function(){ render('act-r-find', 'already'); } },
+      { id: 'act-r-notfound', label: 'Account Not Found', source: 'act-r-find', trigger: function(){ render('act-r-find', 'notfound'); } },
+      { id: 'act-r-code-error', label: 'OTP Code Rejection', source: 'act-r-verify', trigger: function(){ render('act-r-verify', 'error'); } },
+      { id: 'act-r-code-locked', label: 'Security Lockout', source: 'act-r-verify', trigger: function(){ render('act-r-verify', 'locked'); } }
+    ]
+  },
+  'retail-signup': {
+    id: 'retail-signup',
+    category: 'Retail',
+    title: 'New Retail Account',
+    subtitle: 'New Individual Customer → KYC & Account Open',
+    objective: 'Onboard new personal depositors in ~5 minutes using automated Ghana Card lookup and biometric liveness verification.',
+    steps: ['su-start', 'su-identity', 'su-confirm', 'su-selfie', 'su-verify', 'su-setup', 'su-done'],
+    edgeCases: [
+      { id: 'su-identity-existing', label: 'Existing Customer Found', source: 'su-identity', trigger: function(){ render('su-identity', 'existing'); } },
+      { id: 'su-identity-notfound', label: 'Card Not In Registry', source: 'su-identity', trigger: function(){ render('su-identity', 'notfound'); } },
+      { id: 'su-selfie-mismatch', label: 'Biometric Mismatch', source: 'su-selfie', trigger: function(){ render('su-selfie', 'mismatch'); } },
+      { id: 'su-verify-locked', label: 'OTP Lockout', source: 'su-verify', trigger: function(){ render('su-verify', 'locked'); } }
+    ]
+  },
+  'corporate-activation': {
+    id: 'corporate-activation',
+    category: 'Corporate',
+    title: 'Corporate Team Activation',
+    subtitle: 'Invited Team Member → Corporate Workspace',
+    objective: 'Activate corporate makers and approvers securely using pre-configured admin invites and mobile verification.',
+    steps: ['act-c-invite', 'act-c-verify', 'act-c-setup', 'act-c-done'],
+    edgeCases: [
+      { id: 'act-c-invite-expired', label: 'Expired Invitation', source: 'act-c-invite', trigger: function(){ render('act-c-invite', 'expired'); } },
+      { id: 'act-c-verify-error', label: 'OTP Rejection', source: 'act-c-verify', trigger: function(){ render('act-c-verify', 'error'); } }
+    ]
+  },
+  'corporate-signup': {
+    id: 'corporate-signup',
+    category: 'Corporate',
+    title: 'Business Account Application',
+    subtitle: 'New Business → KYB & Mandate Submission',
+    objective: 'Streamline corporate onboarding with TIN validation, multi-signatory scaling, and statutory document verification.',
+    steps: ['bs-company', 'bs-contact', 'bs-signatories', 'bs-documents', 'bs-review', 'bs-submitted'],
+    edgeCases: [
+      { id: 'bs-company-existing', label: 'Company Already Registered', source: 'bs-company', trigger: function(){ render('bs-company', 'existing'); } }
+    ]
+  },
+  'password-recovery': {
+    id: 'password-recovery',
+    category: 'Security',
+    title: 'Password Reset & Recovery',
+    subtitle: 'Self-Service Credential Recovery',
+    objective: 'Allow enrolled customers to safely reset credentials via SMS verification without branch visits.',
+    steps: ['pwd-reset-start', 'pwd-reset-otp', 'pwd-reset-new', 'pwd-reset-done'],
+    edgeCases: []
+  },
+  'signin': {
+    id: 'signin',
+    category: 'Authentication',
+    title: 'Returning Sign-In & Entry Gate',
+    subtitle: 'Direct Authentication & User Routing',
+    objective: 'Provide immediate sign-in for existing users with unambiguous forks into activation and account opening.',
+    steps: ['login', 'gs-relationship', 'gs-type'],
+    edgeCases: []
+  }
+};
+
+const SECTIONS = {
+  'signin':      { journey:'retail',    label:'Sign In',                          screens:['login'] },
+  'gate':        { journey:'shared',    label:'Get Started',                      screens:['gs-relationship','gs-type'] },
+  'r-activate':  { journey:'retail',    label:'Activate · Switch On Internet Banking', screens:['act-r-find','act-r-verify','act-r-setup','act-r-done'] },
+  'r-signup':    { journey:'retail',    label:'Open An Account',                  screens:['su-start','su-identity','su-confirm','su-selfie','su-verify','su-setup','su-done'] },
+  'c-activate':  { journey:'corporate', label:'Activate · Corporate Invitation',  screens:['act-c-invite','act-c-verify','act-c-setup','act-c-done'] },
+  'c-signup':    { journey:'corporate', label:'Open A Business Account',          screens:['bs-company','bs-contact','bs-signatories','bs-documents','bs-review','bs-submitted'] },
+  'recovery':    { journey:'shared',    label:'Password Recovery',                screens:['pwd-reset-start','pwd-reset-otp','pwd-reset-new','pwd-reset-done'] }
+};
+
+const SCREENS = {};
+
+/* ---------- shared: Sign In ---------- */
+SCREENS['login'] = {
+  flowId: 'signin', section:'signin', icon:'landmark',
+  title:'Sign in to NIBS', desc:'Internet banking for retail, corporate and internal users.',
+  rationaleHead: 'Zero-Friction Return Path',
+  rationale: 'Returning users authenticate immediately without clutter. Account recovery and onboarding are segregated into secondary paths to eliminate upfront decision fatigue.',
+  body: function () {
+    return field('email','Email or user ID','text','you@example.com') +
+      '<div class="field"><div class="field-head"><label for="password">Password</label><a class="link-btn" href="#" data-go="pwd-reset-start">Forgot password?</a></div>' +
+      '<input id="password" type="password" placeholder="••••••••" value="Password123!" /></div>' +
+      '<button class="btn btn-primary btn-block" data-go="dashboard:retail" style="margin-top:4px;">' + icon('arrowRight',15) + ' Sign in</button>' +
+      '<p class="t-meta" style="text-align:center;margin-top:14px;display:flex;gap:6px;justify-content:center;align-items:center;color:var(--muted-foreground);">' + icon('lock',12) + ' Protected by Bank-grade multi-factor authentication</p>';
+  },
+  footer: function () {
+    return '<p class="t-meta" style="color:var(--muted-foreground);">New here, or don\'t have internet banking yet? <a class="link-btn" href="#" data-go="gs-relationship" style="font-size:12px;">Get started</a></p>';
+  }
+};
+
+/* ---------- shared: Get Started gate ---------- */
+SCREENS['gs-relationship'] = {
+  flowId: 'signin', section:'gate', icon:'helpCircle',
+  title:'Do you already bank with GCB?', desc:'One tap gets you to the right place.',
+  rationaleHead: 'Customer-Centric Routing',
+  rationale: 'Routes users based on relationship status rather than banking jargon. Existing depositors activate instantly; new users proceed directly to account opening.',
+  body: function () {
+    return optionRow('landmark','Yes — I have a GCB account','We’ll get your internet banking switched on in 2 minutes.', "data-go='act-r-find'") +
+      optionRow('sparkles','No — I’m new to GCB','Open a personal or business account online.', "data-go='gs-type'");
+  },
+  footer: function () { return backToSignIn(); }
+};
+SCREENS['gs-type'] = {
+  flowId: 'signin', section:'gate', icon:'sparkles',
+  title:'Opening for yourself or a business?', desc:'Select the appropriate onboarding track.',
+  rationaleHead: 'Intent Separation',
+  rationale: 'Separates individual KYC from multi-entity KYB requirements early to establish accurate document and verification expectations.',
+  body: function () {
+    return optionRow('userPlus','For myself','Personal account — Ghana Card and a quick selfie, about 5 minutes.', "data-go='su-start'") +
+      optionRow('building','For a business','Company account — corporate review within 2 business days.', "data-go='bs-company'") +
+      '<button class="btn btn-ghost btn-block t-meta" data-go="gs-relationship" style="margin-top:6px;color:var(--muted-foreground);justify-content:center;">' + icon('arrowLeft',12) + ' Not sure — go back</button>';
+  },
+  footer: function () { return backToSignIn(); }
+};
+
+/* ---------- Retail Activation ---------- */
+SCREENS['act-r-find'] = {
+  flowId: 'retail-activation', section:'r-activate', icon:'compass',
+  title:'Let’s find your account', desc:'Enter your details on file to switch on internet banking.',
+  rationaleHead: 'Possession Verification',
+  rationale: 'Leverages existing branch KYC records. Verifying registered account and mobile numbers eliminates redundant ID scanning for existing customers.',
+  edges: [{id:'act-r-notfound', label:'No match found'}, {id:'act-r-already', label:'Already active'}],
+  body: function (variant) {
+    const isAlready = variant === 'already';
+    const nf = variant === 'notfound';
+
+    if (isAlready) {
+      return alertBox('neutral', 'Internet banking is already switched on for <span class="tabular">' + (form.identifier || 'Personal Current ···· 4821') + '</span>.') +
+        '<p class="t-body" style="margin-bottom:16px;">You already have active digital credentials. You can sign in immediately or reset your password if forgotten.</p>' +
+        '<button class="btn btn-primary btn-block" data-go="login" style="margin-bottom:10px;">' + icon('arrowRight',15) + ' Sign in with password</button>' +
+        '<button class="btn btn-outline btn-block" data-go="pwd-reset-start" style="margin-bottom:10px;">' + icon('keyRound',14) + ' Reset my password</button>' +
+        '<button class="btn btn-ghost btn-block t-meta" data-action="resetFind">' + icon('arrowLeft',12) + ' Try a different account number</button>';
+    }
+
+    let html = field('identifier','Ghana Card or account number','text', form.identifier || 'GHA-0123456789-0', nf) +
+      field('mobile','Registered mobile number','tel', form.mobile || '+233 24 123 4567', nf) +
+      '<p class="hint" style="margin-top:-8px;margin-bottom:14px;">The phone number registered on your account. We will send a one-time verification code.</p>';
+    if (nf) {
+      html += alertBox('error', 'Those details do not match an active GCB account. Check for typos or choose an alternative action below.') +
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">' +
+        '<button class="btn btn-outline btn-sm" data-go="su-start">' + icon('sparkles',13) + ' Open a new GCB account instead</button>' +
+        '<a class="btn btn-ghost btn-sm" href="tel:+233302664914" style="color:var(--primary);">' + icon('helpCircle',13) + ' Call Support on ' + DEMO.support + '</a>' +
+        '</div>';
+    }
+    html += '<button class="btn btn-primary btn-block" data-action="findAccount">' + icon('arrowRight',15) + ' Find my account</button>';
+    return html;
+  },
+  mount: function (root, variant) {
+    const btn = root.querySelector('[data-action="findAccount"]');
+    if (btn) btn.addEventListener('click', function () {
+      const id = (root.querySelector('#identifier').value || '').trim().toUpperCase();
+      form.identifier = id || 'GHA-0123456789-0';
+      form.mobile = root.querySelector('#mobile').value || '+233 24 123 4567';
+      if (id === '3300 1122 5566' || id === 'ALREADY') { render('act-r-find', 'already'); }
+      else if (id === 'INVALID' || variant === 'notfound') { render('act-r-find', 'notfound'); }
+      else { render('act-r-verify'); }
+    });
+    const resetBtn = root.querySelector('[data-action="resetFind"]');
+    if (resetBtn) resetBtn.addEventListener('click', function(){ form.identifier = ''; render('act-r-find'); });
+  },
+  footer: function () { return demoPanel([['GHA-0123456789-0','Not yet activated (Advances flow)'],['3300 1122 5566','Already active (Triggers edge)'],['INVALID','Account not found (Triggers error)']]) + backToSignIn(); }
+};
+SCREENS['act-r-already'] = SCREENS['act-r-find'];
+
+SCREENS['act-r-verify'] = {
+  flowId: 'retail-activation', section:'r-activate', icon:'shieldCheck',
+  title:'Enter the code we sent', desc:'6-digit code sent to <span class="tabular">' + DEMO.retail.mobile + '</span> (expires in 5m).',
+  rationaleHead: 'Physical Device Proof',
+  rationale: 'Confirms live possession of the authorized mobile device on file before opening credential provisioning.',
+  edges: [{id:'act-r-code-error', label:'Invalid Code'}, {id:'act-r-code-locked', label:'Security Lockout'}],
+  body: function (variant) { return otpScreen(variant, 'act-r-setup', 'act-r-verify'); },
+  mount: function (root, variant) { mountOtp(root, 'act-r-setup', 'act-r-verify'); },
+  footer: function () { return backToSignIn(); }
+};
+SCREENS['act-r-code-locked'] = SCREENS['act-r-verify'];
+
+SCREENS['act-r-setup'] = {
+  flowId: 'retail-activation', section:'r-activate', icon:'keyRound',
+  title:'Set up your sign-in & approvals', desc:'Choose a secure password and your preferred payment authorization method.',
+  rationaleHead: 'Unified Security Setup',
+  rationale: 'Configures authentication and transaction authorization in a single milestone, pre-selecting the verified channel as default.',
+  wide: true,
+  body: function () { return setupScreen('act-r-done'); },
+  mount: function (root) { mountSetup(root, 'act-r-done'); },
+  footer: function () { return backToSignIn(); }
+};
+SCREENS['act-r-done'] = {
+  flowId: 'retail-activation', section:'r-activate', icon:'checkCircle', isTerminal:true, dashboardName: function(){return DEMO.retail.name;}, dashboardKind:'retail',
+  title:'Activation complete', desc:'Your internet banking account is ready.',
+  rationaleHead: 'Direct Flow Completion',
+  rationale: 'Transitions the user straight into their live account view with zero extraneous upsells or roadblocks.',
+  body: function () {
+    return '<p class="t-body" style="margin-bottom:16px;">Confirmation sent to <span>' + DEMO.retail.email + '</span>. A security audit log entry has been registered for this device.</p>' +
+      '<button class="btn btn-primary btn-block" data-go="dashboard:retail">' + icon('arrowRight',15) + ' Go to my accounts</button>';
+  }
+};
+
+/* ---------- Retail Signup ---------- */
+SCREENS['su-start'] = {
+  flowId: 'retail-signup', section:'r-signup', icon:'sparkles',
+  title:'Open a GCB account', desc:'Complete your digital application in ~5 minutes.',
+  rationaleHead: 'Upfront Expectation Setting',
+  rationale: 'Clarifies required credentials (Ghana Card + selfie camera) before prompting for permissions, minimizing mid-funnel abandonment.',
+  body: function () {
+    return '<ul style="list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:12px;">' +
+      checklistItem('idCard','Your valid Ghana Card') + checklistItem('camera','Working camera for biometric verification') + checklistItem('clock','About five minutes to complete') +
+      '</ul><button class="btn btn-primary btn-block" data-go="su-identity">' + icon('arrowRight',15) + ' Get started</button>';
+  },
+  footer: function () { return backToSignIn(); }
+};
+SCREENS['su-identity'] = {
+  flowId: 'retail-signup', section:'r-signup', icon:'idCard',
+  title:'Verify your Ghana Card', desc:'Enter your national ID to pull verified registry data.',
+  rationaleHead: 'Automated Registry Lookup',
+  rationale: 'Direct national ID validation pulls verified demographic data, sparing the applicant from tedious manual form filling.',
+  edges: [{id:'su-identity-existing', label:'Existing Customer Found'}, {id:'su-identity-notfound', label:'Card Not Found'}],
+  body: function (variant) {
+    const isExisting = variant === 'existing';
+    const nf = variant === 'notfound';
+
+    if (isExisting) {
+      return alertBox('neutral', 'Ghana Card <span class="tabular">' + (form.ghanaCard || 'GHA-0123456789-0') + '</span> is already registered with GCB (Ama Serwaa · Account ···· 5566).') +
+        '<p class="t-body" style="margin-bottom:16px;">You already have an existing relationship with GCB. Rather than opening a duplicate account, you can activate internet banking in ~2 minutes.</p>' +
+        '<button class="btn btn-primary btn-block" data-action="activateExisting" style="margin-bottom:10px;">' + icon('sparkles',15) + ' Switch on Internet Banking (2 mins)</button>' +
+        '<button class="btn btn-outline btn-block" data-go="login" style="margin-bottom:10px;">' + icon('arrowRight',14) + ' Sign in with existing password</button>' +
+        '<button class="btn btn-ghost btn-block t-meta" data-action="retryNewCard">' + icon('arrowLeft',12) + ' Enter a different Ghana Card</button>';
+    }
+
+    let html = field('ghanaCard','Ghana Card number','text', form.ghanaCard || 'GHA-0555555555-5', nf) +
+      field('suMobile','Mobile number','tel', form.suMobile || '+233 20 123 4567', false) +
+      '<p class="hint" style="margin-top:-8px;margin-bottom:14px;">We will send a verification code to this phone number.</p>';
+    if (nf) html += alertBox('error','Ghana Card not found in the national registry. Check for typos or contact support on <span class="tabular">' + DEMO.support + '</span>.');
+    html += '<button class="btn btn-primary btn-block" data-action="checkCard">' + icon('arrowRight',15) + ' Continue</button>';
+    return html;
+  },
+  mount: function (root, variant) {
+    const btn = root.querySelector('[data-action="checkCard"]');
+    if (btn) btn.addEventListener('click', function () {
+      const v = (root.querySelector('#ghanaCard').value || '').trim().toUpperCase();
+      form.ghanaCard = v || 'GHA-0555555555-5';
+      form.suMobile = root.querySelector('#suMobile').value || '+233 20 123 4567';
+      if (v === 'GHA-0123456789-0' || v === 'EXISTING') { render('su-identity', 'existing'); }
+      else if (v === 'INVALID') { render('su-identity', 'notfound'); }
+      else { render('su-confirm'); }
+    });
+
+    const actBtn = root.querySelector('[data-action="activateExisting"]');
+    if (actBtn) actBtn.addEventListener('click', function(){
+      form.identifier = form.ghanaCard || 'GHA-0123456789-0';
+      form.mobile = DEMO.retail.mobile;
+      render('act-r-verify');
+    });
+
+    const retryBtn = root.querySelector('[data-action="retryNewCard"]');
+    if (retryBtn) retryBtn.addEventListener('click', function(){
+      form.ghanaCard = '';
+      render('su-identity');
+    });
+  },
+  footer: function () { return demoPanel([['GHA-0555555555-5','New applicant (Proceeds to KYC)'],['GHA-0123456789-0','Existing depositor (Reroutes to Activate)']]) + backToSignIn(); }
+};
+SCREENS['su-identity-existing'] = SCREENS['su-identity'];
+
+SCREENS['su-confirm'] = {
+  flowId: 'retail-signup', section:'r-signup', icon:'compass',
+  title:'Confirm your details', desc:'Official registry data. Add your contact email to continue.',
+  rationaleHead: 'Verified Identity Confirmation',
+  rationale: 'Displays legally-sourced immutable identity data for customer confirmation while collecting only the required email contact.',
+  body: function () {
+    return '<dl style="margin:0 0 16px;font-size:13px;">' +
+      reviewRow('Full Name', DEMO.newRetail.firstName + ' ' + DEMO.newRetail.lastName) +
+      reviewRow('Date of birth', DEMO.newRetail.dob, true) +
+      reviewRow('National ID', form.ghanaCard || DEMO.newRetail.card, true) +
+      reviewRow('Mobile', form.suMobile || DEMO.newRetail.mobileMasked, true) +
+      '</dl>' +
+      '<p class="t-meta" style="margin:0 0 16px;color:var(--muted-foreground);">Demographic details are sourced directly from the National Identification Authority.</p>' +
+      field('suEmail','Email address','email', form.suEmail || 'kwabena.asare@example.com') +
+      '<button class="btn btn-primary btn-block" data-action="confirmDetails">' + icon('arrowRight',15) + ' Confirm & take selfie</button>';
+  },
+  mount: function (root) {
+    root.querySelector('[data-action="confirmDetails"]').addEventListener('click', function () {
+      form.suEmail = root.querySelector('#suEmail').value || 'kwabena.asare@example.com';
+      render('su-selfie');
+    });
+  },
+  footer: function () { return backToSignIn(); }
+};
+SCREENS['su-selfie'] = {
+  flowId: 'retail-signup', section:'r-signup', icon:'camera',
+  title:'Biometric selfie match', desc:'Compare your live photo with your Ghana Card registry image.',
+  rationaleHead: 'Biometric Liveness Verification',
+  rationale: 'Executes rapid facial biometric matching against the national ID photo with immediate, actionable framing feedback.',
+  edges: [{id:'su-selfie-mismatch', label:'Selfie Mismatch'}],
+  body: function (variant) {
+    const mm = variant === 'mismatch';
+    return '<div class="selfie-box" style="position:relative;overflow:hidden;">' +
+      (mm ? '<div style="color:var(--destructive);display:flex;flex-direction:column;align-items:center;gap:8px;">' + icon('alertCircle',36) + '<span style="font-size:12px;">Face not aligned / Low lighting</span></div>'
+          : '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;">' + icon('camera',36) + '<span style="font-size:12px;">Center face in frame</span></div>') +
+      '</div>' +
+      '<p class="t-body" style="text-align:center;margin-bottom:16px;">Good lighting and direct camera angle ensure instant verification.</p>' +
+      (mm ? alertBox('error','Photo match score (42%) is below the required 85% confidence threshold. Please adjust lighting and face the camera directly.') : '') +
+      '<button class="btn btn-primary btn-block" data-action="takeSelfie">' + icon('camera',15) + (mm ? ' Retake photo (Simulate Success)' : ' Take photo & verify') + '</button>';
+  },
+  mount: function (root, variant) {
+    root.querySelector('[data-action="takeSelfie"]').addEventListener('click', function (e) {
+      const btn = e.target.closest('button');
+      btn.innerHTML = icon('loader',15) + ' Verifying biometric match…';
+      btn.disabled = true;
+      setTimeout(function () {
+        render('su-verify');
+      }, 800);
+    });
+  },
+  footer: function () { return backToSignIn(); }
+};
+SCREENS['su-verify'] = {
+  flowId: 'retail-signup', section:'r-signup', icon:'shieldCheck',
+  title:'Verify your mobile number', desc:'6-digit code sent to <span class="tabular">' + (form.suMobile || DEMO.newRetail.mobileMasked) + '</span> (expires in 5m).',
+  rationaleHead: 'Two-Factor Channel Binding',
+  rationale: 'Binds the verified identity to the customer’s live mobile device for ongoing multi-factor transaction security.',
+  edges: [{id:'su-verify-error', label:'Invalid Code'}, {id:'su-verify-locked', label:'Attempts Locked'}],
+  body: function (variant) { return otpScreen(variant, 'su-setup', 'su-verify'); },
+  mount: function (root, variant) { mountOtp(root, 'su-setup', 'su-verify'); },
+  footer: function () { return backToSignIn(); }
+};
+SCREENS['su-verify-locked'] = SCREENS['su-verify'];
+
+SCREENS['su-setup'] = {
+  flowId: 'retail-signup', section:'r-signup', icon:'keyRound',
+  title:'Create your password', desc:'Set your password and choose your payment approval method.',
+  rationaleHead: 'Consistent Security Patterns',
+  rationale: 'Utilizes standard credential requirements and transaction approval mechanisms across all customer types.',
+  wide: true,
+  body: function () { return setupScreen('su-done'); },
+  mount: function (root) { mountSetup(root, 'su-done'); },
+  footer: function () { return backToSignIn(); }
+};
+SCREENS['su-done'] = {
+  flowId: 'retail-signup', section:'r-signup', icon:'sparkles', isTerminal:true, dashboardName: function(){return DEMO.newRetail.firstName + ' ' + DEMO.newRetail.lastName;}, dashboardKind:'retail-new',
+  title:'Welcome to GCB', desc:'Your account is open and internet banking is active.',
+  rationaleHead: 'Immediate Activation Milestone',
+  rationale: 'Grants instant account dashboard access; optional account funding can be completed at the customer’s convenience.',
+  body: function () {
+    return '<p class="t-body" style="margin-bottom:16px;">Account details and internet banking credentials sent to <span>' + (form.suEmail || 'kwabena.asare@example.com') + '</span>.</p>' +
+      '<button class="btn btn-primary btn-block" data-go="dashboard:retail-new">' + icon('arrowRight',15) + ' Explore my accounts</button>';
+  }
+};
+
+/* ---------- Corporate Activation (invite) ---------- */
+SCREENS['act-c-invite'] = {
+  flowId: 'corporate-activation', section:'c-activate', icon:'building',
+  title:'Corporate invitation', desc:'Join your company’s banking portal with assigned permissions.',
+  rationaleHead: 'Pre-Configured Role Activation',
+  rationale: 'Organizational roles, approval tiers, and account limits were preset by the Corporate Admin; the user simply verifies their device.',
+  edges: [{id:'act-c-invite-expired', label:'Expired Invitation'}],
+  body: function (variant) {
+    const ex = variant === 'expired';
+    if (ex) return alertBox('error','This invitation link for Kwame Boateng expired after 7 days.') +
+      '<p class="t-body" style="margin-bottom:16px;">For security, invitation links expire after 7 days. You can request a fresh link directly from your Corporate Admin (' + DEMO.corp.invitedBy + ').</p>' +
+      '<button class="btn btn-primary btn-block" data-action="resendInvite" style="margin-bottom:10px;">' + icon('sparkles',14) + ' Simulate Admin Resending Invite</button>' +
+      '<button class="btn btn-outline btn-block" data-go="login">Back to sign in</button>';
+    return '<dl style="margin:0 0 16px;font-size:13px;">' +
+      reviewRow('Company', DEMO.corp.company) + reviewRow('Assigned Role', DEMO.corp.role) + reviewRow('Invited By', DEMO.corp.invitedBy) + reviewRow('Validity', 'Expires in 6 days', true) +
+      '</dl>' +
+      '<p class="t-meta" style="margin:0 0 16px;color:var(--muted-foreground);">Signing limits and account permissions were pre-authorized by ' + DEMO.corp.invitedBy + '.</p>' +
+      '<button class="btn btn-primary btn-block" data-go="act-c-verify">' + icon('arrowRight',15) + ' Send code to ' + DEMO.corp.mobile + '</button>';
+  },
+  mount: function(root, variant) {
+    const resendBtn = root.querySelector('[data-action="resendInvite"]');
+    if (resendBtn) resendBtn.addEventListener('click', function(e){
+      e.target.innerHTML = icon('loader',14) + ' Dispatching new invite…';
+      setTimeout(function(){ render('act-c-invite'); }, 600);
+    });
+  },
+  footer: function () { return backToSignIn(); }
+};
+SCREENS['act-c-invite-expired'] = SCREENS['act-c-invite'];
+
+SCREENS['act-c-verify'] = {
+  flowId: 'corporate-activation', section:'c-activate', icon:'shieldCheck',
+  title:'Enter verification code', desc:'6-digit code sent to <span class="tabular">' + DEMO.corp.mobile + '</span>.',
+  rationaleHead: 'Out-of-Band Channel Verification',
+  rationale: 'Ties the invitation link strictly to the recipient’s registered mobile hardware to prevent unauthorized email forwarding.',
+  edges: [{id:'act-c-verify-error', label:'Invalid Code'}],
+  body: function (variant) { return otpScreen(variant, 'act-c-setup', 'act-c-verify'); },
+  mount: function (root, variant) { mountOtp(root, 'act-c-setup', 'act-c-verify'); },
+  footer: function () { return backToSignIn(); }
+};
+SCREENS['act-c-setup'] = {
+  flowId: 'corporate-activation', section:'c-activate', icon:'keyRound',
+  title:'Set your corporate password', desc:'Create strong credentials and select an authorization token type.',
+  rationaleHead: 'Enterprise Authentication',
+  rationale: 'Applies enterprise password policies with support for physical, soft token, or SMS authorization.',
+  wide: true,
+  body: function () { return setupScreen('act-c-done'); },
+  mount: function (root) { mountSetup(root, 'act-c-done'); },
+  footer: function () { return backToSignIn(); }
+};
+SCREENS['act-c-done'] = {
+  flowId: 'corporate-activation', section:'c-activate', icon:'checkCircle', isTerminal:true, dashboardName: function(){return DEMO.corp.name;}, dashboardKind:'corporate',
+  title:'Corporate access active', desc:'You are signed in to ' + DEMO.corp.company + '.',
+  rationaleHead: 'Direct Workspace Transition',
+  rationale: 'Lands the team member straight into their assigned company dashboard with complete regulatory audit logging.',
+  body: function () {
+    return '<p class="t-body" style="margin-bottom:16px;">Confirmation sent to <span>' + DEMO.corp.email + '</span>. Corporate access logged in organizational audit trail.</p>' +
+      '<button class="btn btn-primary btn-block" data-go="dashboard:corporate">' + icon('arrowRight',15) + ' Open Corporate Workspace</button>';
+  }
+};
+
+/* ---------- Corporate (Business) Signup ---------- */
+SCREENS['bs-company'] = {
+  flowId: 'corporate-signup', section:'c-signup', icon:'building', progress: 1,
+  title:'Business Information', desc:'Enter registered company name and Tax ID (TIN).',
+  rationaleHead: 'Entity Validation',
+  rationale: 'Validates statutory business details early to prevent duplicate registrations and determine appropriate KYC requirements.',
+  edges: [{id:'bs-company-existing', label:'Company Already Registered'}],
+  body: function (variant) {
+    const ex = variant === 'existing';
+    if (ex) {
+      return alertBox('neutral', (form.company || DEMO.corp.company) + ' (TIN: ' + (form.tin || 'C0012345678') + ') is already a registered corporate banking client.') +
+        '<p class="t-body" style="margin-bottom:16px;">Corporate portal access for existing companies is managed by your assigned Corporate Administrator (' + DEMO.corp.invitedBy + ').</p>' +
+        '<button class="btn btn-primary btn-block" data-action="requestCorpInvite" style="margin-bottom:10px;">' + icon('sparkles',14) + ' Request User Invitation from Admin</button>' +
+        '<button class="btn btn-outline btn-block" data-action="retryCompany" style="margin-bottom:10px;">' + icon('arrowLeft',14) + ' Apply for a different business</button>' +
+        '<button class="btn btn-ghost btn-block t-meta" data-go="login">Back to sign in</button>';
+    }
+    return field('company','Registered business name','text', form.company || 'Adinkra Fabrics Ltd') +
+      field('tin','Taxpayer Identification Number (TIN)','text', form.tin || 'C0099887766') +
+      selectField('bizType','Entity Structure', ['Limited Liability Company','Sole Proprietorship','Partnership','NGO / Non-profit']) +
+      '<p class="hint" style="margin:-6px 0 16px;">These details will be matched against your Registrar General incorporation certificate.</p>' +
+      '<button class="btn btn-primary btn-block" data-action="checkTin">' + icon('arrowRight',15) + ' Continue</button>';
+  },
+  mount: function (root) {
+    const btn = root.querySelector('[data-action="checkTin"]');
+    if (btn) btn.addEventListener('click', function () {
+      form.company = root.querySelector('#company').value || 'Adinkra Fabrics Ltd';
+      form.tin = (root.querySelector('#tin').value || 'C0099887766').toUpperCase();
+      form.bizType = root.querySelector('#bizType').value;
+      if (form.tin === 'C0012345678' || form.tin === 'EXISTING') { render('bs-company','existing'); }
+      else if (form.returnToReview) { form.returnToReview = false; render('bs-review'); }
+      else { render('bs-contact'); }
+    });
+    const reqBtn = root.querySelector('[data-action="requestCorpInvite"]');
+    if (reqBtn) reqBtn.addEventListener('click', function(e){
+      e.target.innerHTML = icon('checkCircle',14) + ' Request Dispatched to Admin!';
+      e.target.disabled = true;
+      setTimeout(function(){ render('act-c-invite'); }, 1000);
+    });
+    const retryBtn = root.querySelector('[data-action="retryCompany"]');
+    if (retryBtn) retryBtn.addEventListener('click', function(){
+      form.tin = '';
+      render('bs-company');
+    });
+  },
+  footer: function () { return demoPanel([['C0099887766','New company (Proceeds to KYB)'],['C0012345678','Existing company (Triggers duplicate edge)']]) + backToSignIn(); }
+};
+SCREENS['bs-company-existing'] = SCREENS['bs-company'];
+
+SCREENS['bs-contact'] = {
+  flowId: 'corporate-signup', section:'c-signup', icon:'userPlus', progress: 2,
+  title:'Primary Applicant', desc:'The designated corporate administrator for this account.',
+  rationaleHead: 'Admin Designation',
+  rationale: 'Identifies the primary liaison who will become the initial authorized Corporate Admin upon account approval.',
+  body: function () {
+    return '<p class="t-meta" style="margin:0 0 14px;color:var(--muted-foreground);">This contact will receive the primary account activation link and approval notifications.</p>' +
+      '<div class="field-grid">' + field('contactName','Full legal name','text', form.contactName || 'Abena Owusu-Mensah') + selectField('contactRole','Corporate Title',['Director','Company Secretary','Finance Manager','Managing Partner','Authorized Officer']) + '</div>' +
+      field('contactCard','Ghana Card number','text', form.contactCard || 'GHA-0777888999-1') +
+      '<div class="field-grid">' + field('contactMobile','Mobile number','tel', form.contactMobile || '+233 24 111 2233') + field('contactEmail','Corporate email','email', form.contactEmail || 'abena@adinkrafabrics.com') + '</div>' +
+      '<button class="btn btn-primary btn-block" data-action="saveContact">' + icon('arrowRight',15) + ' Continue</button>';
+  },
+  mount: function (root) {
+    root.querySelector('[data-action="saveContact"]').addEventListener('click', function () {
+      form.contactName = root.querySelector('#contactName').value || 'Abena Owusu-Mensah';
+      form.contactRole = root.querySelector('#contactRole').value;
+      form.contactCard = root.querySelector('#contactCard').value || 'GHA-0777888999-1';
+      form.contactMobile = root.querySelector('#contactMobile').value || '+233 24 111 2233';
+      form.contactEmail = root.querySelector('#contactEmail').value || 'abena@adinkrafabrics.com';
+      if (form.returnToReview) { form.returnToReview = false; render('bs-review'); }
+      else { render('bs-signatories'); }
+    });
+  },
+  footer: function () { return backToSignIn(); }
+};
+
+SCREENS['bs-signatories'] = {
+  flowId: 'corporate-signup', section:'c-signup', icon:'users', progress: 3,
+  title:'Authorized Signatories', desc:'Specify individuals authorized to execute banking transactions.',
+  rationaleHead: 'Dynamic Governance Mandate',
+  rationale: 'Enables flexible signatory configuration with zero re-entry of primary applicant details.',
+  body: function () {
+    let html = '<p class="t-meta" style="margin:0 0 14px;color:var(--muted-foreground);">Add all officers authorized on the bank mandate. Additional signatories can be managed later in Admin.</p>';
+    html += '<div class="sig-item"><span class="icon-tile">' + icon('userPlus',16) + '</span><span class="body"><span class="lbl">' + (form.contactName || 'Abena Owusu-Mensah') + ' — ' + (form.contactRole || 'Director') + '</span><span class="sub">Primary Applicant (Included automatically)</span></span></div>';
+    form.signatories.forEach(function (s, i) {
+      html += '<div class="sig-item"><span class="icon-tile">' + icon('users',16) + '</span><span class="body"><span class="lbl">' + s.name + '</span><span class="sub">' + s.role + ' · ' + s.mobile + '</span></span><button class="btn btn-ghost btn-sm" data-remove-sig="' + i + '" title="Remove">' + icon('trash',14) + '</button></div>';
+    });
+    html += '<div class="sig-add-box"><p class="t-label" style="color:var(--muted-foreground);margin:0;">Add Additional Signatory</p><div class="sig-add-grid"><input id="sigName" placeholder="Full name" /><select id="sigRole">' +
+      ['Director','Company Secretary','Finance Manager','Managing Partner','Other Officer'].map(function (r) { return '<option>' + r + '</option>'; }).join('') +
+      '</select></div><input id="sigMobile" placeholder="Mobile number (+233...)" /><div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm" data-action="addSig">' + icon('userPlus',13) + ' Add to mandate</button></div></div>';
+    html += '<button class="btn btn-primary btn-block" data-action="finishSignatories">' + icon('arrowRight',15) + ' Continue to documents</button>';
+    return html;
+  },
+  mount: function (root) {
+    root.querySelectorAll('[data-remove-sig]').forEach(function (b) {
+      b.addEventListener('click', function () { form.signatories.splice(+b.dataset.removeSig, 1); render('bs-signatories'); });
+    });
+    root.querySelector('[data-action="addSig"]').addEventListener('click', function () {
+      const n = root.querySelector('#sigName').value, m = root.querySelector('#sigMobile').value;
+      if (!n || !m) { alert('Please enter both name and mobile number.'); return; }
+      form.signatories.push({ name: n, role: root.querySelector('#sigRole').value, mobile: m });
+      render('bs-signatories');
+    });
+    root.querySelector('[data-action="finishSignatories"]').addEventListener('click', function(){
+      if (form.returnToReview) { form.returnToReview = false; render('bs-review'); }
+      else { render('bs-documents'); }
+    });
+  },
+  footer: function () { return backToSignIn(); }
+};
+
+const REQUIRED_DOCS = [
+  { id:'incorporation', label:'Certificate of Incorporation', hint:'Registrar General’s Department' },
+  { id:'registration', label:'Certificate to Commence Business', hint:'RGD Form 3 / Registration' },
+  { id:'tin', label:'TIN / Tax Clearance Certificate', hint:'Ghana Revenue Authority' },
+  { id:'contact-id', label:'Primary Contact’s Ghana Card', hint:'High-resolution scan of front and back' }
+];
+
+SCREENS['bs-documents'] = {
+  flowId: 'corporate-signup', section:'c-signup', icon:'fileText', progress: 4,
+  title:'Upload Required Documents', desc:'Statutory documentation required by the Bank of Ghana.',
+  rationaleHead: 'Statutory Compliance Gate',
+  rationale: 'Ensures all regulatory KYC/KYB documents are collected upfront, preventing delayed application processing.',
+  body: function () {
+    let html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><p class="t-meta" style="margin:0;color:var(--muted-foreground);">PDF or clear images up to 10MB each.</p><button class="btn btn-ghost btn-sm t-meta" data-action="attachAll" style="color:var(--primary);padding:0;">' + icon('sparkles',12) + ' Fast-fill all 4 files</button></div>';
+    REQUIRED_DOCS.forEach(function (d) {
+      const on = !!form.docs[d.id];
+      html += '<div class="doc-row' + (on ? ' attached' : '') + '"><span class="icon-tile">' + icon(on ? 'check' : 'fileText', 16) + '</span><span class="body"><span class="lbl">' + d.label + '</span><span class="sub">' + (on ? form.docs[d.id] : d.hint) + '</span></span>' +
+        '<input type="file" style="display:none;" id="file-' + d.id + '" data-doc="' + d.id + '" />' +
+        '<button class="btn btn-outline btn-sm" data-attach="' + d.id + '">' + icon('paperclip',13) + ' ' + (on ? 'Replace' : 'Attach') + '</button></div>';
+    });
+    const allOn = REQUIRED_DOCS.every(function (d) { return form.docs[d.id]; });
+    html += '<button class="btn btn-primary btn-block" data-action="finishDocs"' + (allOn ? '' : ' disabled') + '>' + icon('arrowRight',15) + ' Continue to review</button>';
+    if (!allOn) html += '<p class="t-meta" style="text-align:center;color:var(--muted-foreground);margin-top:10px;">All 4 documents are required before application submission.</p>';
+    return html;
+  },
+  mount: function (root) {
+    root.querySelectorAll('[data-attach]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const docId = btn.dataset.attach;
+        form.docs[docId] = docId + '-certified.pdf';
+        render('bs-documents');
+      });
+    });
+    const attachAllBtn = root.querySelector('[data-action="attachAll"]');
+    if (attachAllBtn) attachAllBtn.addEventListener('click', function(){
+      REQUIRED_DOCS.forEach(function(d){ form.docs[d.id] = d.id + '-certified.pdf'; });
+      render('bs-documents');
+    });
+    const finishDocsBtn = root.querySelector('[data-action="finishDocs"]');
+    if (finishDocsBtn) finishDocsBtn.addEventListener('click', function(){
+      render('bs-review');
+    });
+  },
+  footer: function () { return backToSignIn(); }
+};
+
+SCREENS['bs-review'] = {
+  flowId: 'corporate-signup', section:'c-signup', icon:'clipboardCheck', progress: 5,
+  title:'Review Application', desc:'Verify your corporate details before submission.',
+  rationaleHead: 'In-Place Section Editing',
+  rationale: 'Allows applicants to review and edit any application section in place without restarting the submission flow.',
+  body: function () {
+    let html = '';
+    html += reviewBlock('Company Information','bs-company', reviewRow('Company Name', form.company || 'Adinkra Fabrics Ltd') + reviewRow('TIN', form.tin || 'C0099887766', true) + reviewRow('Structure', form.bizType));
+    html += reviewBlock('Primary Applicant','bs-contact', reviewRow('Name', form.contactName || 'Abena Owusu-Mensah') + reviewRow('Role', form.contactRole) + reviewRow('Mobile', form.contactMobile || '+233 24 111 2233', true) + reviewRow('Email', form.contactEmail || 'abena@adinkrafabrics.com'));
+    const sigCount = 1 + form.signatories.length;
+    let sigList = '<div class="review-row"><dd style="text-align:left;">' + (form.contactName || 'Abena Owusu-Mensah') + ' · ' + (form.contactRole || 'Director') + '</dd></div>';
+    form.signatories.forEach(function (s) { sigList += '<div class="review-row"><dd style="text-align:left;">' + s.name + ' · ' + s.role + '</dd></div>'; });
+    html += reviewBlock('Authorized Mandate (' + sigCount + ')', 'bs-signatories', sigList);
+    let docList = '';
+    REQUIRED_DOCS.forEach(function (d) {
+      const on = !!form.docs[d.id];
+      docList += '<div class="review-row"><dd style="text-align:left;display:flex;gap:6px;align-items:center;' + (on ? '' : 'color:var(--muted-foreground);') + '">' + icon(on ? 'check' : 'fileText', 13) + ' ' + d.label + (on ? ' (Attached)' : ' — Pending') + '</dd></div>';
+    });
+    html += reviewBlock('Statutory Documents', 'bs-documents', docList);
+    html += alertBox('neutral','Submitting queues this application for compliance review. Feedback is provided within 2 business days.');
+    html += '<button class="btn btn-primary btn-block" data-action="submitApp">' + icon('checkCircle',15) + ' Submit business application</button>';
+    return html;
+  },
+  mount: function (root) {
+    root.querySelectorAll('[data-edit]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        form.returnToReview = true;
+        render(b.dataset.edit);
+      });
+    });
+    root.querySelector('[data-action="submitApp"]').addEventListener('click', function (e) {
+      const btn = e.target.closest('button');
+      btn.innerHTML = icon('loader',15) + ' Transmitting application…';
+      btn.disabled = true;
+      setTimeout(function () { render('bs-submitted'); }, 900);
+    });
+  },
+  footer: function () { return backToSignIn(); }
+};
+
+SCREENS['bs-submitted'] = {
+  flowId: 'corporate-signup', section:'c-signup', icon:'checkCircle', isTerminal:true, isSubmission:true, progress: 6,
+  title:'Application Submitted', desc:'Your corporate application is under compliance review.',
+  rationaleHead: 'Asynchronous Onboarding SLA',
+  rationale: 'Provides explicit reference numbers and SLAs (2 business days) with transparent next steps for the designated administrator.',
+  body: function () {
+    const ref = 'GCB-CORP-' + new Date().getFullYear() + '-' + String(4800 + Math.floor(Math.random()*90)).padStart(6,'0');
+    return '<div style="border:1px solid var(--border);border-radius:var(--radius-xl);padding:14px;text-align:center;background:var(--muted);margin-bottom:18px;"><p class="t-label" style="color:var(--muted-foreground);margin:0 0 4px;">Tracking Reference</p><p class="t-title tabular" style="margin:0;">' + ref + '</p></div>' +
+      '<p class="t-body" style="margin-bottom:18px;">Applications are reviewed within <span>2 business days</span>. Updates will be emailed to <span>' + (form.contactEmail || 'abena@adinkrafabrics.com') + '</span>. Upon approval, <span>' + (form.contactName || 'Abena Owusu-Mensah') + '</span> will receive an invitation to activate the corporate portal.</p>' +
+      '<button class="btn btn-primary btn-block" data-go="login">' + icon('arrowLeft',14) + ' Return to sign in</button>';
+  }
+};
+
+/* ---------- Self-Service Password Recovery Flow ---------- */
+SCREENS['pwd-reset-start'] = {
+  flowId: 'password-recovery', section:'recovery', icon:'keyRound',
+  title:'Reset your password', desc:'Enter your Ghana Card or registered account number.',
+  rationaleHead: 'Self-Service Recovery Initiation',
+  rationale: 'Initiates secure account recovery using verified possession tokens without requiring in-branch visits.',
+  body: function() {
+    return field('pwdId', 'Ghana Card or account number', 'text', form.identifier || 'GHA-0123456789-0') +
+      '<p class="hint" style="margin-top:-8px;margin-bottom:14px;">We will send a password reset code to your registered mobile number (' + DEMO.retail.mobile + ').</p>' +
+      '<button class="btn btn-primary btn-block" data-go="pwd-reset-otp">' + icon('arrowRight',15) + ' Send recovery code</button>';
+  },
+  footer: function() { return backToSignIn(); }
+};
+SCREENS['pwd-reset-otp'] = {
+  flowId: 'password-recovery', section:'recovery', icon:'shieldCheck',
+  title:'Enter recovery code', desc:'6-digit code sent to <span class="tabular">' + DEMO.retail.mobile + '</span>.',
+  rationaleHead: 'Out-of-Band Channel Proof',
+  rationale: 'Verifies the account recovery request against the registered mobile hardware.',
+  body: function(variant) { return otpScreen(variant, 'pwd-reset-new', 'pwd-reset-otp'); },
+  mount: function(root, variant) { mountOtp(root, 'pwd-reset-new', 'pwd-reset-otp'); },
+  footer: function() { return backToSignIn(); }
+};
+SCREENS['pwd-reset-new'] = {
+  flowId: 'password-recovery', section:'recovery', icon:'keyRound',
+  title:'Create new password', desc:'Set a strong new password for your account.',
+  rationaleHead: 'Credential Update',
+  rationale: 'Immediate password update with real-time complexity validation.',
+  body: function() {
+    return field('setupPassword','New Password','password','NewPassword123!#') +
+      '<ul class="rule-list" id="ruleList">' +
+      ['At least 12 characters','Upper and lower case letters','At least one number','Special symbol'].map(function (r) { return '<li class="rule-item met" data-rule>' + icon('check',13) + ' ' + r + '</li>'; }).join('') +
+      '</ul>' +
+      '<button class="btn btn-primary btn-block" style="margin-top:16px;" data-go="pwd-reset-done">' + icon('checkCircle',15) + ' Save new password & sign in</button>';
+  },
+  footer: function() { return backToSignIn(); }
+};
+SCREENS['pwd-reset-done'] = {
+  flowId: 'password-recovery', section:'recovery', icon:'checkCircle', isTerminal:true,
+  title:'Password updated', desc:'Your new password is now active.',
+  rationaleHead: 'Secure Re-Authentication',
+  rationale: 'Confirmation notification dispatched with direct route back to sign in.',
+  body: function() {
+    return alertBox('neutral', 'Your password has been successfully updated. An SMS and email notification have been sent.') +
+      '<button class="btn btn-primary btn-block" data-go="login" style="margin-top:12px;">' + icon('arrowRight',15) + ' Sign in with new password</button>';
+  }
+};
+
+/* ============================================================
+   REUSABLE UI BUILDERS
+   ============================================================ */
+function field(id, label, type, placeholder, invalid) {
+  return '<div class="field"><label for="' + id + '">' + label + '</label><input id="' + id + '" type="' + type + '" value="' + (placeholder||'') + '" placeholder="' + (placeholder||'') + '"' + (invalid ? ' aria-invalid="true"' : '') + ' /></div>';
+}
+function selectField(id, label, opts) {
+  return '<div class="field"><label for="' + id + '">' + label + '</label><select id="' + id + '">' + opts.map(function (o) { return '<option>' + o + '</option>'; }).join('') + '</select></div>';
+}
+function optionRow(iconName, label, sub, attrs) {
+  return '<button class="option-row" style="margin-bottom:8px;" ' + attrs + '><span class="icon-tile">' + icon(iconName,17) + '</span><span class="body"><span class="lbl">' + label + '</span><span class="sub">' + sub + '</span></span><span class="chev">' + icon('arrowRight',15) + '</span></button>';
+}
+function checklistItem(iconName, text) {
+  return '<li style="display:flex;align-items:center;gap:10px;font-size:13px;"><span class="icon-tile" style="width:30px;height:30px;">' + icon(iconName,14) + '</span>' + text + '</li>';
+}
+function alertBox(kind, html) {
+  return '<div class="alert alert-' + kind + '">' + icon(kind === 'error' ? 'alertCircle' : 'clipboardCheck', 15) + '<span>' + html + '</span></div>';
+}
+function reviewRow(label, value, tab) {
+  return '<div class="review-row"><dt>' + label + '</dt><dd' + (tab ? ' class="tabular"' : '') + '>' + (value || '—') + '</dd></div>';
+}
+function reviewBlock(title, editTo, innerHtml) {
+  return '<div class="review-block"><div class="rh"><span class="t">' + title + '</span><button class="btn btn-ghost btn-sm t-meta" data-edit="' + editTo + '" style="color:var(--primary);padding:0 4px;height:auto;">' + icon('pencil',12) + ' Edit</button></div>' + innerHtml + '</div>';
+}
+function backToSignIn() {
+  return '<a href="#" class="muted-link" data-go="login">' + icon('arrowLeft',13) + ' Back to sign in</a>';
+}
+function demoPanel(rows) {
+  let html = '<div class="dl-panel" style="margin-bottom:14px;"><p class="dl-title">Test Values &amp; Behavior</p>';
+  rows.forEach(function (r) { html += '<div class="dl-row"><span class="l tabular">' + r[0] + '</span><span class="r">' + r[1] + '</span></div>'; });
+  return html + '</div>';
+}
+
+const OTP_TARGETS = {};
+function otpScreen(variant, nextId, screenId) {
+  const err = variant === 'error', locked = variant === 'locked';
+  if (locked) {
+    return alertBox('error','Three consecutive incorrect codes. Security pause active for 15 minutes.') +
+      '<p class="t-body" style="margin-bottom:16px;">Your account and funds remain secure. You can retry with a new code or contact 24/7 support.</p>' +
+      '<button class="btn btn-primary btn-block" data-action="resetOtpLock" style="margin-bottom:10px;">' + icon('sparkles',14) + ' Simulate Lockout Expiry & Retry</button>' +
+      '<button class="btn btn-outline btn-block" data-go="login">Back to sign in</button>';
+  }
+  let html = '<div class="otp-row">';
+  for (let i=0;i<6;i++) html += '<input class="otp-box" inputmode="numeric" maxlength="1" data-otp="' + i + '"' + (err?' aria-invalid="true"':'') + ' value="' + (err?'0':(i+1)) + '" />';
+  html += '</div>';
+  if (err) html += alertBox('error','Code is incorrect or expired (2 attempts remaining). Enter any 6 valid digits, or 000000 to test error.');
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0 10px;">' +
+    '<span class="t-meta" style="color:var(--muted-foreground);">Resend code in <span class="tabular">0:28</span></span>' +
+    '<button class="btn btn-ghost btn-sm t-meta" data-action="resendOtp" style="color:var(--primary);padding:0;">' + icon('sparkles',12) + ' Resend SMS</button>' +
+    '</div>';
+  html += '<button class="btn btn-primary btn-block" data-action="submitOtp">' + icon('arrowRight',15) + ' Verify and proceed</button>';
+  return html;
+}
+function mountOtp(root, nextId, screenId) {
+  const boxes = Array.prototype.slice.call(root.querySelectorAll('[data-otp]'));
+  const submitBtn = root.querySelector('[data-action="submitOtp"]');
+  const resendBtn = root.querySelector('[data-action="resendOtp"]');
+  const resetLockBtn = root.querySelector('[data-action="resetOtpLock"]');
+
+  if (resetLockBtn) {
+    resetLockBtn.addEventListener('click', function(){
+      OTP_TARGETS[screenId] = 0;
+      render(screenId);
+    });
+  }
+
+  if (resendBtn) {
+    resendBtn.addEventListener('click', function(e){
+      e.target.innerHTML = icon('check',12) + ' Code Dispatched!';
+      setTimeout(function(){ render(screenId); }, 600);
+    });
+  }
+
+  function currentCode() { return boxes.map(function (b) { return b.value; }).join(''); }
+  function attemptVerify(code) {
+    if (code === '000000') {
+      OTP_TARGETS[screenId] = (OTP_TARGETS[screenId] || 0) + 1;
+      if (OTP_TARGETS[screenId] >= 3) { render(screenId, 'locked'); }
+      else { render(screenId, 'error'); }
+    } else {
+      OTP_TARGETS[screenId] = 0;
+      render(nextId);
+    }
+  }
+  if (submitBtn) {
+    submitBtn.addEventListener('click', function() {
+      attemptVerify(currentCode() || '123456');
+    });
+  }
+  boxes.forEach(function (b, i) {
+    b.addEventListener('input', function () {
+      b.value = b.value.replace(/[^0-9]/g,'').slice(0,1);
+      if (b.value && boxes[i+1]) boxes[i+1].focus();
+    });
+    b.addEventListener('keydown', function (e) {
+      if (e.key === 'Backspace' && !b.value && boxes[i-1]) boxes[i-1].focus();
+      if (e.key === 'Enter') attemptVerify(currentCode());
+    });
+  });
+}
+function setupScreen(nextId) {
+  return field('setupPassword','Create Password','password','Password123!#') +
+    '<ul class="rule-list" id="ruleList">' +
+    ['At least 12 characters','Upper and lower case letters','At least one number','Special symbol (@, #, $)'].map(function (r) { return '<li class="rule-item met" data-rule>' + icon('check',13) + ' ' + r + '</li>'; }).join('') +
+    '</ul>' +
+    '<div style="border-top:1px solid var(--border);padding-top:16px;margin-top:4px;">' +
+    '<p class="t-panel" style="margin:0 0 4px;">Transaction Authorization Method</p>' +
+    '<p class="t-meta" style="margin:0 0 12px;color:var(--muted-foreground);">Select how payments and high-value actions will be authorized:</p>' +
+    approvalOption('sms','SMS One-Time Passcode','Recommended — verified registered phone.', true) +
+    approvalOption('email','Email Passcode','Recommended when roaming internationally.', false) +
+    approvalOption('token','Digital Soft Token App','Offline mobile authenticator without network dependency.', false) +
+    '</div>' +
+    '<button class="btn btn-primary btn-block" style="margin-top:16px;" data-action="finishSetup">' + icon('keyRound',15) + ' Complete Setup & Sign In</button>';
+}
+function approvalOption(id, label, sub, checked) {
+  return '<label class="option-row" style="margin-bottom:8px;cursor:pointer;' + (checked ? 'border-color:var(--active-border);background:var(--active-bg);' : '') + '"><input type="radio" name="approval" value="' + id + '" ' + (checked?'checked':'') + ' style="margin-top:2px;accent-color:var(--primary);" />' +
+    '<span class="body" style="margin-left:2px;"><span class="lbl">' + label + '</span><span class="sub">' + sub + '</span></span></label>';
+}
+function mountSetup(root, nextId) {
+  const pw = root.querySelector('#setupPassword');
+  const rules = root.querySelectorAll('[data-rule]');
+  const btn = root.querySelector('[data-action="finishSetup"]');
+  function check() {
+    const v = pw.value || '';
+    const tests = [v.length>=8, /[A-Za-z]/.test(v), /\d/.test(v), /[^A-Za-z0-9]/.test(v)];
+    rules.forEach(function (li, i) { li.classList.toggle('met', tests[i]); });
+    if (btn) btn.disabled = false;
+  }
+  if (pw) pw.addEventListener('input', check);
+  if (btn) btn.addEventListener('click', function () {
+    form.password = (pw && pw.value) || 'Password123!#';
+    const sel = root.querySelector('input[name="approval"]:checked');
+    form.approval = sel ? sel.value : 'sms';
+    render(nextId);
+  });
+}
+
+/* ============================================================
+   DASHBOARD TERMINAL STATE
+   ============================================================ */
+function dashboardHtml(kind) {
+  const isCorp = kind === 'corporate';
+  const isNewRetail = kind === 'retail-new';
+  const name = isCorp ? DEMO.corp.name : (isNewRetail ? (DEMO.newRetail.firstName + ' ' + DEMO.newRetail.lastName) : DEMO.retail.name);
+  const sub = isCorp ? DEMO.corp.company + ' · Corporate Banking' : 'Personal Internet Banking · Retail';
+  const initials = name.split(' ').map(function (p) { return p[0]; }).slice(0,2).join('');
+  return '<div class="meta-page">' +
+    '<div class="meta-topbar"><a class="meta-wordmark" href="#" data-go-home="1"><span class="dot"></span><span class="t-label" style="color:var(--muted-foreground);">NIBS · Interactive Walkthrough</span></a>' +
+    '<button class="btn btn-ghost btn-sm" data-go-home="1">' + icon('arrowLeft',13) + ' All Flows</button></div>' +
+    '<div class="meta-container" style="max-width:760px;">' +
+    '<div class="dash-header"><div><p class="t-title" style="margin:0;">Good day, ' + name.split(' ')[0] + '</p><p class="t-meta" style="color:var(--muted-foreground);margin:4px 0 0;">' + sub + '</p></div>' +
+    '<div class="dash-avatar">' + initials + '</div></div>' +
+    '<div class="dash-banner" style="margin-bottom:20px;">' + icon('sparkles',16) + '<span>You reached the live account dashboard — the successful terminal state for this onboarding journey.</span></div>' +
+    '<div class="dash-grid">' +
+    '<div class="dash-card"><p class="k">' + (isCorp ? 'Corporate Current Account' : 'Personal Current Account') + '</p><p class="v tabular">GHS ' + (isCorp ? '1,284,530.44' : '12,340.00') + '</p></div>' +
+    '<div class="dash-card"><p class="k">' + (isCorp ? 'Payroll Account' : 'Reserve Savings') + '</p><p class="v tabular">GHS ' + (isCorp ? '342,118.90' : '4,500.00') + '</p></div>' +
+    '</div>' +
+    '<div class="map-section"><div class="map-section-head"><span class="map-section-title">Milestone Complete</span></div>' +
+    '<div class="map-list"><div class="map-row"><span class="num">✓</span><span class="label t-row">Authentication active · Audit trail established · Zero friction onboarding</span></div></div></div>' +
+    '<div class="run-btn-row" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px;">' +
+    '<button class="btn btn-primary" data-go-home="1">' + icon('arrowLeft',14) + ' Test Another Flow</button>' +
+    '<button class="btn btn-outline" data-go="login">Sign out</button>' +
+    '</div></div></div>';
+}
+
+/* ============================================================
+   PROTOTYPE SHELL & PRESENTATION ENGINE
+   ============================================================ */
+const app = document.getElementById('app');
+let currentScreen = null, currentVariant = null;
+let showHotspots = false;
+let fixtureDrawerOpen = false;
+
+function getCurrentFlow() {
+  const scr = SCREENS[currentScreen];
+  if (!scr) return FLOWS['retail-activation'];
+  return FLOWS[scr.flowId] || FLOWS['retail-activation'];
+}
+
+function render(screenId, variant) {
+  // Normalize IDs & variants
+  if (screenId === 'su-identity-existing') { screenId = 'su-identity'; variant = 'existing'; }
+  if (screenId === 'act-r-already') { screenId = 'act-r-find'; variant = 'already'; }
+  if (screenId === 'act-r-code-locked') { screenId = 'act-r-verify'; variant = 'locked'; }
+  if (screenId === 'act-r-code-error') { screenId = 'act-r-verify'; variant = 'error'; }
+  if (screenId === 'su-verify-locked') { screenId = 'su-verify'; variant = 'locked'; }
+  if (screenId === 'su-verify-error') { screenId = 'su-verify'; variant = 'error'; }
+  if (screenId === 'act-c-invite-expired') { screenId = 'act-c-invite'; variant = 'expired'; }
+  if (screenId === 'act-c-verify-error') { screenId = 'act-c-verify'; variant = 'error'; }
+  if (screenId === 'bs-company-existing') { screenId = 'bs-company'; variant = 'existing'; }
+
+  currentScreen = screenId; currentVariant = variant || null;
+  location.hash = 'screen/' + screenId + (variant ? '/' + variant : '');
+  paint();
+  window.scrollTo(0,0);
+}
+
+function paint() {
+  const screen = SCREENS[currentScreen];
+  if (!screen) { renderHome(); return; }
+
+  const flow = getCurrentFlow();
+  const flowSteps = flow.steps.filter(function(id){ return SCREENS[id] && !SCREENS[id].isEdgeOnly; });
+  const stepIdx = flowSteps.indexOf(currentScreen);
+  const isTerminal = screen.isTerminal;
+  const isEdgeView = !!currentVariant || !!screen.isEdgeOnly;
+
+  // Compute Prev / Next navigation for linear walkthrough
+  let prevStepId = null, nextStepId = null;
+  if (stepIdx > 0) prevStepId = flowSteps[stepIdx - 1];
+  if (stepIdx >= 0 && stepIdx < flowSteps.length - 1) nextStepId = flowSteps[stepIdx + 1];
+
+  // Rail Step List
+  let railStepsHtml = '';
+  flowSteps.forEach(function (id, i) {
+    const s = SCREENS[id];
+    const isCurrent = id === currentScreen;
+    const isDone = stepIdx > i;
+    const cls = isCurrent ? 'current' : (isDone ? 'done' : '');
+    railStepsHtml += '<li class="' + cls + '" data-go="' + id + '"><span class="marker">' + (isDone ? icon('check',10) : (i+1)) + '</span><span class="label">' + stepShortLabel(s) + '</span></li>';
+  });
+
+  // Edge case quick switcher chips
+  let edgesHtml = '';
+  const currentEdges = (screen.edges || []).concat(
+    flow.edgeCases ? flow.edgeCases.filter(function(e){ return e.source === currentScreen; }) : []
+  );
+  // deduplicate
+  const seenEdges = {};
+  const uniqueEdges = [];
+  currentEdges.forEach(function(e){
+    if (!seenEdges[e.id]) { seenEdges[e.id] = true; uniqueEdges.push(e); }
+  });
+
+  if (uniqueEdges.length || isEdgeView) {
+    edgesHtml = '<div style="margin-top:16px;"><p class="rail-edges-label">Simulate Scenarios &amp; Edge Cases</p><div class="rail-chips">';
+    edgesHtml += '<button class="rail-chip' + (!isEdgeView ? ' active' : '') + '" data-go="' + currentScreen + '">Standard (Happy)</button>';
+    uniqueEdges.forEach(function (e) {
+      const active = (currentVariant && e.id.indexOf(currentVariant) !== -1) || currentScreen === e.id;
+      edgesHtml += '<button class="rail-chip' + (active ? ' active' : '') + '" data-edge="' + e.id + '">' + e.label + '</button>';
+    });
+    edgesHtml += '</div></div>';
+  }
+
+  const railTop = '<div class="rail-top"><a href="#" class="rail-back" data-go-home="1">' + icon('arrowLeft',13) + ' All Flows</a>' +
+    '<div style="display:flex;align-items:center;gap:10px;">' +
+    '<button class="btn btn-ghost btn-sm" data-toggle-hotspots="1" style="font-size:11px;padding:2px 8px;height:26px;color:' + (showHotspots?'var(--primary)':'var(--rail-fg-dim)') + ';" title="Highlight Clickable Elements">' + icon('sparkles',12) + ' ' + (showHotspots?'Hotspots ON':'Hotspots') + '</button>' +
+    '<button class="rail-theme-btn" data-toggle-theme="1" title="Toggle theme">' + icon('sun',14) + '</button>' +
+    '</div></div>';
+
+  const railBody = '<div class="rail-body">' +
+    '<p class="rail-flow-badge">' + flow.category.toUpperCase() + ' · ' + flow.title + '</p>' +
+    (isTerminal ? '<p class="rail-complete-badge">' + icon('checkCircle',14) + ' MILESTONE REACHED</p>'
+      : ('<p class="rail-step">Step ' + Math.max(stepIdx+1, 1) + ' of ' + flowSteps.length + (isEdgeView ? ' (Edge Scenario)' : '') + '</p>')) +
+    '<h2 class="rail-headline">' + screen.rationaleHead + '</h2>' +
+    '<p class="rail-rationale">' + screen.rationale + '</p>' +
+    (isTerminal ? '' : ('<ol class="rail-steps">' + railStepsHtml + '</ol>')) +
+    edgesHtml +
+    (isTerminal ? '<button class="btn btn-outline btn-sm rail-restart" data-go="' + flowSteps[0] + '" style="border-color:var(--rail-border);color:var(--rail-fg-dim);margin-top:20px;">' + icon('arrowLeft',13) + ' Restart This Flow</button>' : '') +
+    '</div>';
+
+  const iconBox = '<div class="flow-icon">' + icon(screen.icon, 22) + '</div>';
+  const head = '<div class="flow-head">' + iconBox + '<h1>' + screen.title + '</h1><p class="desc">' + screen.desc + '</p></div>';
+  const progressBar = screen.progress ? renderProgressBar(screen.progress) : '';
+  const cardBody = screen.body(currentVariant);
+  const footerHtml = screen.footer ? '<div class="flow-footer">' + screen.footer() + '</div>' : '';
+
+  // Bottom Contextual Presentation Bar (Slack/Firefox Linear Walkthrough Bar)
+  const bottomBar = '<div class="walkthrough-bar">' +
+    '<div class="wb-left">' +
+    '<select class="wb-flow-select" data-switch-flow="1">' +
+    Object.keys(FLOWS).map(function(k){
+      return '<option value="' + FLOWS[k].steps[0] + '" ' + (flow.id === k ? 'selected' : '') + '>' + FLOWS[k].title + '</option>';
+    }).join('') +
+    '</select>' +
+    '<span class="wb-step-badge">Step ' + (stepIdx >= 0 ? (stepIdx + 1) : '-') + '/' + flowSteps.length + '</span>' +
+    '</div>' +
+    '<div class="wb-center"><span class="wb-caption"><strong>Goal:</strong> ' + screen.rationale + '</span></div>' +
+    '<div class="wb-right">' +
+    '<button class="btn btn-ghost btn-sm" data-toggle-fixtures="1" style="font-size:12px;color:var(--primary);">' + icon('compass',13) + ' Fixture Tools</button>' +
+    '<button class="btn btn-outline btn-sm" ' + (prevStepId ? ('data-go="' + prevStepId + '"') : 'disabled') + '>' + icon('arrowLeft',12) + ' Prev</button>' +
+    '<button class="btn btn-primary btn-sm" ' + (nextStepId ? ('data-go="' + nextStepId + '"') : 'disabled') + '>Next ' + icon('arrowRight',12) + '</button>' +
+    '</div>' +
+    '</div>';
+
+  // Ramp-style Live Fixture Drawer
+  const fixtureDrawer = '<div class="fixture-drawer' + (fixtureDrawerOpen ? ' open' : '') + '">' +
+    '<div class="fixture-drawer-head">' +
+    '<span class="t-panel" style="display:flex;gap:6px;align-items:center;">' + icon('compass',15) + ' Developer Fixture &amp; Data Tools</span>' +
+    '<button class="btn btn-ghost btn-sm" data-toggle-fixtures="1">✕ Close</button>' +
+    '</div>' +
+    '<div class="fixture-drawer-body">' +
+    '<div class="fixture-group">' +
+    '<p class="fixture-label">Simulate Entity Scaling (Business Mandate)</p>' +
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+    '<button class="btn btn-outline btn-sm" data-set-sigs="0">1 Signatory (Solo)</button>' +
+    '<button class="btn btn-outline btn-sm" data-set-sigs="2">3 Signatories (Standard)</button>' +
+    '<button class="btn btn-outline btn-sm" data-set-sigs="6">7 Signatories (Enterprise)</button>' +
+    '</div>' +
+    '</div>' +
+    '<div class="fixture-group">' +
+    '<p class="fixture-label">Simulate KYB Document Checklist</p>' +
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+    '<button class="btn btn-outline btn-sm" data-set-docs="0">0 Attached (Blocked)</button>' +
+    '<button class="btn btn-outline btn-sm" data-set-docs="2">2 Attached (Partial)</button>' +
+    '<button class="btn btn-outline btn-sm" data-set-docs="4">4 Attached (Ready)</button>' +
+    '</div>' +
+    '</div>' +
+    '<div class="fixture-group">' +
+    '<p class="fixture-label">Interactive Hotspot Highlighting</p>' +
+    '<button class="btn btn-outline btn-sm" data-toggle-hotspots="1">' + (showHotspots ? 'Disable Hotspots' : 'Highlight Interactive Elements') + '</button>' +
+    '</div>' +
+    '</div>' +
+    '</div>';
+
+  app.innerHTML = '<div class="flow-shell' + (showHotspots ? ' show-hotspots' : '') + '">' +
+    '<aside class="rail">' + railTop + railBody + '</aside>' +
+    '<main class="flow-main"><div class="flow-col' + (screen.wide ? ' wide' : '') + '">' + head +
+    '<div class="flow-card">' + progressBar + cardBody + '</div>' + footerHtml + '</div></main>' +
+    '</div>' + bottomBar + fixtureDrawer;
+
+  wireGlobalActions(app);
+  if (screen.mount) screen.mount(app, currentVariant);
+}
+
+function renderProgressBar(step) {
+  const total = 5;
+  let html = '<div class="step-bar">';
+  for (let i=1;i<=total;i++) html += '<span class="seg' + (i<=step?' done':'') + '"></span>';
+  return html + '</div>';
+}
+function stepShortLabel(screen) {
+  return screen.title.replace(/<[^>]+>/g,'').split(' — ')[0].slice(0,32);
+}
+
+function wireGlobalActions(root) {
+  root.querySelectorAll('[data-go]').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = el.getAttribute('data-go');
+      if (target.indexOf('dashboard:') === 0) { renderDashboard(target.split(':')[1]); return; }
+      render(target);
+    });
+  });
+  root.querySelectorAll('[data-edge]').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+      const edgeId = el.getAttribute('data-edge');
+      if (edgeId.indexOf('already') !== -1) render(currentScreen, 'already');
+      else if (edgeId.indexOf('notfound') !== -1) render(currentScreen, 'notfound');
+      else if (edgeId.indexOf('locked') !== -1) render(currentScreen, 'locked');
+      else if (edgeId.indexOf('mismatch') !== -1) render(currentScreen, 'mismatch');
+      else if (edgeId.indexOf('expired') !== -1) render(currentScreen, 'expired');
+      else if (edgeId.indexOf('error') !== -1) render(currentScreen, 'error');
+      else if (edgeId.indexOf('existing') !== -1) render(currentScreen, 'existing');
+      else if (SCREENS[edgeId]) render(edgeId);
+    });
+  });
+  root.querySelectorAll('[data-go-home]').forEach(function (el) {
+    el.addEventListener('click', function (e) { e.preventDefault(); renderHome(); });
+  });
+  root.querySelectorAll('[data-toggle-theme]').forEach(function (el) {
+    el.addEventListener('click', toggleTheme);
+  });
+  root.querySelectorAll('[data-toggle-hotspots]').forEach(function (el) {
+    el.addEventListener('click', function(e){
+      e.preventDefault();
+      showHotspots = !showHotspots;
+      paint();
+    });
+  });
+  root.querySelectorAll('[data-toggle-fixtures]').forEach(function (el) {
+    el.addEventListener('click', function(e){
+      e.preventDefault();
+      fixtureDrawerOpen = !fixtureDrawerOpen;
+      const dr = app.querySelector('.fixture-drawer');
+      if (dr) dr.classList.toggle('open', fixtureDrawerOpen);
+    });
+  });
+  const flowSelect = root.querySelector('[data-switch-flow]');
+  if (flowSelect) {
+    flowSelect.addEventListener('change', function(){
+      render(flowSelect.value);
+    });
+  }
+  // Fixture helpers
+  root.querySelectorAll('[data-set-sigs]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const count = +btn.dataset.setSigs;
+      form.signatories = [];
+      const sampleNames = ['Kofi Mensah', 'Ama Darko', 'Yaw Appiah', 'Esi Boateng', 'Kwesi Arthur', 'Akosua Frimpong'];
+      for (let i = 0; i < count; i++) {
+        form.signatories.push({ name: sampleNames[i] || ('Signatory ' + (i+1)), role: 'Director', mobile: '+233 24 555 010' + i });
+      }
+      fixtureDrawerOpen = false;
+      render(currentScreen === 'bs-signatories' || currentScreen === 'bs-review' ? currentScreen : 'bs-signatories');
+    });
+  });
+  root.querySelectorAll('[data-set-docs]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const count = +btn.dataset.setDocs;
+      form.docs = {};
+      REQUIRED_DOCS.slice(0, count).forEach(function(d){ form.docs[d.id] = d.id + '-certified.pdf'; });
+      fixtureDrawerOpen = false;
+      render(currentScreen === 'bs-documents' || currentScreen === 'bs-review' ? currentScreen : 'bs-documents');
+    });
+  });
+}
+
+function renderDashboard(kind) {
+  currentScreen = null;
+  location.hash = 'dashboard/' + kind;
+  app.innerHTML = dashboardHtml(kind);
+  wireGlobalActions(app);
+  window.scrollTo(0,0);
+}
+
+/* ---------- Streamlined Flow Index (Home) ---------- */
+function renderHome() {
+  location.hash = 'home';
+  app.innerHTML = '<div class="meta-page">' + topbar() +
+    '<div class="meta-container">' +
+    '<p class="meta-eyebrow t-label">LINEAR PRESENTATION PROTOTYPE</p>' +
+    '<h1 class="meta-h1">NIBS Onboarding &amp; Activation Flows</h1>' +
+    '<p class="meta-lede t-body">Structured, guardrailed walkthroughs of every customer journey into internet banking. Each flow is strictly linear and focused on a single customer objective with live fixture tools for scenario testing.</p>' +
+    '<div class="meta-howto t-body">' + icon('compass',16) + '<span>Select a focused journey below. During any flow, use the bottom walkthrough bar to advance sequentially, inspect the user goal, or use <strong>Fixture Tools</strong> to test scale and edge cases.</span></div>' +
+    '<div class="pop-grid" style="grid-template-columns:1fr;gap:14px;margin-top:28px;">' +
+    flowCard('retail-activation', 'userPlus', '1. Retail: Instant Account Activation', 'Existing GCB depositors switch on web banking in < 2 mins using registered credentials with zero redundant KYC.', '4 linear steps · 4 edge scenarios') +
+    flowCard('retail-signup', 'sparkles', '2. Retail: New Account Opening', 'New personal customers open an account in ~5 mins with Ghana Card registry lookup and biometric selfie matching.', '7 linear steps · 4 edge scenarios') +
+    flowCard('corporate-activation', 'building', '3. Corporate: Team Member Activation', 'Invited corporate makers and approvers onboard securely with pre-configured permissions from their company admin.', '4 linear steps · 2 edge scenarios') +
+    flowCard('corporate-signup', 'fileText', '4. Corporate: Business Account Application', 'Companies apply for commercial accounts with TIN verification, dynamic mandate signatories, and document upload.', '6 linear steps · 2 edge scenarios') +
+    flowCard('signin', 'landmark', '5. Direct Sign-In &amp; Entry Gate', 'Returning customers log in immediately, with straightforward recovery and routing gates.', '3 steps') +
+    '</div>' +
+    '<p class="meta-footnote t-meta">GCB Bank PLC · NIBS Prototype · All data is simulated in-memory for review purposes.</p>' +
+    '</div></div>';
+  wireGlobalActions(app);
+}
+
+function flowCard(flowKey, iconName, title, desc, meta) {
+  const f = FLOWS[flowKey];
+  const startScreen = f ? f.steps[0] : 'login';
+  return '<button class="pop-card" data-go="' + startScreen + '" style="text-align:left;">' +
+    '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">' +
+    '<div style="display:flex;gap:14px;align-items:flex-start;">' +
+    '<span class="pop-icon" style="margin-bottom:0;">' + icon(iconName,20) + '</span>' +
+    '<div><span class="pop-title" style="font-size:16px;display:block;">' + title + '</span><span class="pop-desc t-body" style="display:block;margin-top:4px;">' + desc + '</span></div>' +
+    '</div>' +
+    '<span class="btn btn-outline btn-sm" style="flex-shrink:0;margin-top:2px;">Launch Flow ' + icon('arrowRight',12) + '</span>' +
+    '</div>' +
+    '<span class="t-meta" style="color:var(--primary);margin-top:10px;display:block;">' + meta + '</span>' +
+    '</button>';
+}
+
+function topbar() {
+  return '<div class="meta-topbar"><a class="meta-wordmark" href="#" data-go-home="1"><span class="dot"></span><span class="t-label" style="color:var(--muted-foreground);">NIBS · Presentation Prototype</span></a>' +
+    '<button class="btn btn-ghost btn-sm" data-toggle-theme="1">' + icon('sun',14) + ' Theme</button></div>';
+}
+
+/* ---------- Theme toggle ---------- */
+function toggleTheme() {
+  const root = document.documentElement;
+  const current = root.getAttribute('data-theme');
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const effectivelyDark = current ? current === 'dark' : prefersDark;
+  root.setAttribute('data-theme', effectivelyDark ? 'light' : 'dark');
+}
+
+/* ---------- Router ---------- */
+function routeFromHash() {
+  const h = location.hash.replace(/^#/, '');
+  if (!h || h === 'home') { renderHome(); return; }
+  if (h.indexOf('dashboard/') === 0) { renderDashboard(h.split('/')[1]); return; }
+  if (h.indexOf('screen/') === 0) {
+    const parts = h.split('/');
+    let id = parts[1], variant = parts[2];
+    if (id === 'su-identity-existing') { id = 'su-identity'; variant = 'existing'; }
+    if (id === 'act-r-already') { id = 'act-r-find'; variant = 'already'; }
+    if (id === 'act-r-code-locked') { id = 'act-r-verify'; variant = 'locked'; }
+    if (id === 'act-r-code-error') { id = 'act-r-verify'; variant = 'error'; }
+    if (id === 'su-verify-locked') { id = 'su-verify'; variant = 'locked'; }
+    if (id === 'su-verify-error') { id = 'su-verify'; variant = 'error'; }
+    if (id === 'act-c-invite-expired') { id = 'act-c-invite'; variant = 'expired'; }
+    if (id === 'act-c-verify-error') { id = 'act-c-verify'; variant = 'error'; }
+    if (id === 'bs-company-existing') { id = 'bs-company'; variant = 'existing'; }
+    if (SCREENS[id]) { currentScreen = id; currentVariant = variant || null; paint(); return; }
+  }
+  renderHome();
+}
+window.addEventListener('hashchange', routeFromHash);
+document.addEventListener('DOMContentLoaded', routeFromHash);
+if (document.readyState !== 'loading') routeFromHash();
+
+/* Keyboard navigation: Left/Right arrows advance walkthrough */
+document.addEventListener('keydown', function (e) {
+  const tag = (document.activeElement && document.activeElement.tagName) || '';
+  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+  if (e.key === 'Escape') {
+    if (fixtureDrawerOpen) { fixtureDrawerOpen = false; const dr = app.querySelector('.fixture-drawer'); if (dr) dr.classList.remove('open'); return; }
+    renderHome();
+  }
+  else if (e.key === 'ArrowLeft') {
+    const prevBtn = app.querySelector('.walkthrough-bar .btn-outline:not([disabled])');
+    if (prevBtn) prevBtn.click();
+    else history.back();
+  }
+  else if (e.key === 'ArrowRight' || e.key === ' ') {
+    const nextBtn = app.querySelector('.walkthrough-bar .btn-primary:not([disabled])');
+    if (nextBtn) nextBtn.click();
+  }
+});
+
+</script>
+</body>
+</html>

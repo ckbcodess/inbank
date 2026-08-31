@@ -29,6 +29,20 @@ Reference screens — read one before writing anything:
    Never the default stroke weight — it reads too heavy against this type.
 5. **Radius is `rounded-2xl` for panels, `rounded-xl` for inset blocks,
    `rounded-lg` for controls and icon tiles.** Never `rounded-md` on a panel.
+6. **Strict minimalism by default (Anti-Fluff).** Always take the most minimal,
+   clean, and direct approach to design thinking and UI execution. Never add
+   redundant helper descriptions under self-explanatory card titles, secondary
+   subtitles on section headers, or excessive decorative clutter. Keep cards,
+   action hubs, and lists punchy, direct, and uncluttered.
+7. **Zero redundant selectors & duplicate controls (Distillation Protocol).**
+   If a choice or parameter was chosen on a preceding screen (e.g. choosing a
+   payment rail on a selection hub), **NEVER** re-render a dropdown or selector
+   to re-choose that parameter on the subsequent form. Trust the initial choice
+   and provide only a clean `< Back` link.
+8. **Automatic resolution over manual input.** Never prompt users to manually
+   type what the banking directory or system can resolve automatically (e.g.,
+   recipient names are auto-fetched from account/mobile numbers). Never show
+   competing manual inputs alongside auto-verified badges.
 
 ## Page skeleton — start every screen with this
 
@@ -60,6 +74,22 @@ Reference screens — read one before writing anything:
 - Section heading inside a panel: `text-[15px] text-foreground`
 - Supporting line under it: `mt-1 text-[13px] leading-relaxed text-muted-foreground`
 - Divider before a footer/summary row: `border-t border-border pt-5`
+
+## Action Hub & Mobile-Aligned Cards (Send & Pay / Rail Hubs)
+
+When implementing action hubs that align with the mobile app design language:
+- Grid: 2-column grid (`grid grid-cols-1 gap-4 sm:grid-cols-2`).
+- Card container: `rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626]`
+- Dedicated Fills (`surface/on-card`):
+  - Light mode: `bg-[#f6f6f5]` (distinct warm soft surface), hover: `hover:bg-[#eeeeed]`, border: `border-[#ebebe9]`
+  - Dark mode: `dark:bg-[#1e1e1e]` (elevated dark surface), hover: `dark:hover:bg-[#262626]`, border: `dark:border-[#292928]`
+- Icon Container inside card:
+  - `rounded-[12px] size-[38.5px]`
+  - Light mode: `bg-white border border-black/[0.04] text-amber-500 shadow-[0_1px_2px_rgba(0,0,0,0.03)]`
+  - Dark mode: `dark:bg-[#252525] dark:border-white/[0.06] dark:text-[#fdc307] dark:shadow-none`
+- Typography: `text-[16px] font-medium tracking-[-0.01em] text-foreground`
+- Chevron: `size={20} strokeWidth={1.8}` in `text-[#737373] dark:text-[#999999]` with `group-hover:translate-x-0.5`
+
 
 ## Toolbars (search + filters)
 
