@@ -40,7 +40,7 @@ export default function ProfileSelectionPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--surface)] px-5 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--surface)] px-6 py-16 sm:px-10 sm:py-20">
       <div className="w-full max-w-[520px]">
         <div className="mb-8 text-center">
           <h1 className="text-[24px] leading-tight tracking-[-0.02em] text-foreground">

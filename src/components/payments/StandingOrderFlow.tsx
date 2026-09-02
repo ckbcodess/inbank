@@ -32,6 +32,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   accountsForProfile,
   findAccount,
   formatDate,
@@ -176,19 +183,53 @@ function detectNetworkFromPhone(phone: string): { airtimeNet: string; walletNet:
   return null;
 }
 
+const GHANAIAN_NAMES = [
+  "Ama Serwaa Mensah",
+  "Kwame Boateng",
+  "Kofi Osei Asante",
+  "Akua Mansah",
+  "Efua Addo Mensah",
+  "Nana Yaw Osei",
+  "Tsotsoo Mills Naa",
+  "Abena Danso",
+  "Esi Sutherland",
+  "Kwadwo Appiah",
+  "Yaw Frempong",
+  "Adwoa Sarfo",
+  "Kweku Baako",
+  "Accra Fabrics Ltd",
+];
+
+const ACCOUNT_RESOLUTIONS: Record<string, string> = {
+  "023144558890": "Accra Fabrics Ltd",
+  "0231 4455 8890": "Accra Fabrics Ltd",
+  "01234567890": "Akua Mansah",
+  "1234567890": "Akua Mansah",
+  "0123456789012": "Tsotsoo Mills Naa",
+  "0244123456": "Ama Serwaa Mensah",
+  "0244 123 456": "Ama Serwaa Mensah",
+  "0201987654": "Kwame Boateng",
+  "0201 987 654": "Kwame Boateng",
+  "0559220118": "Yaa Asantewaa",
+  "0559 220 118": "Yaa Asantewaa",
+  "0271445900": "Efua Mensah",
+  "0271 445 900": "Efua Mensah",
+  "1023445566": "Kofi Osei",
+  "1023 4455 66": "Kofi Osei",
+};
+
 function resolveName(dest: string, type: TransactionType): string {
-  const clean = dest.replace(/\s+/g, "").toLowerCase();
+  const clean = dest.replace(/[\s-]/g, "").toLowerCase();
   if (!clean || clean.length < 5) return "";
-  if (clean.includes("0231")) return "Kwame Boateng";
-  if (clean.includes("0244")) return "Ama Serwaa Mensah";
-  if (clean.includes("8839")) return "Lester Electricity Ghana";
+  if (ACCOUNT_RESOLUTIONS[clean]) return ACCOUNT_RESOLUTIONS[clean];
   if (clean.startsWith("@")) return `${clean.replace("@", "").toUpperCase()} Direct Alias`;
-  if (type === "proxy") return "Kwame Boateng (Ghana Card Verified)";
-  if (type === "group") return "Family Contribution Circle (5 Members)";
-  if (type === "bank") return "Kwame Boateng";
-  if (type === "wallet") return "Ama Serwaa Mensah";
-  if (type === "data" || type === "airtime") return "Verified Mobile Subscriber";
-  return "Verified Beneficiary";
+  if (type === "group") return "";
+
+  let hash = 0;
+  for (let i = 0; i < clean.length; i++) {
+    hash = (hash * 31 + clean.charCodeAt(i)) % GHANAIAN_NAMES.length;
+  }
+  return GHANAIAN_NAMES[Math.abs(hash)] || "Ama Serwaa Mensah";
 }
 
 export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
@@ -209,16 +250,16 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   // Form State
   const [f, setF] = useState({
     destination: "",
-    bank: "GCB Bank (Internal)",
-    network: "MTN Ghana",
-    walletNetwork: "MTN Mobile Money",
+    bank: "",
+    network: "",
+    walletNetwork: "",
     proxyId: "",
-    groupName: "Family Contribution Circle",
-    dataPackageId: "mtn-2",
+    groupName: "",
+    dataPackageId: "",
     accountId: accounts[0]?.id ?? "",
     amount: "",
-    category: "bills",
-    nickname: "Monthly Susu",
+    category: "",
+    nickname: "",
     frequency: "Monthly" as InstructionFrequency,
     firstRun: new Date().toISOString().slice(0, 10),
     endCondition: "indefinite" as "indefinite" | "date",
@@ -234,13 +275,13 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const currentDest = rail === "proxy" ? f.proxyId : f.destination;
 
   useEffect(() => {
-    if (!rail) return;
-    if (rail === "group") {
-      setResolvedName(f.groupName);
+    if (!rail || rail === "group") {
+      setResolvedName("");
       setResolving(false);
       return;
     }
-    if (!currentDest.trim() || currentDest.trim().length < 5) {
+    const clean = currentDest.replace(/[\s-]/g, "");
+    if (!clean || clean.length < 5) {
       setResolvedName("");
       setResolving(false);
       return;
@@ -251,7 +292,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       setResolving(false);
     }, 250);
     return () => clearTimeout(t);
-  }, [currentDest, rail, f.groupName]);
+  }, [currentDest, rail]);
 
   const account = findAccount(f.accountId) ?? accounts[0];
   const railConfig = STANDING_ORDER_OPTIONS.find((t) => t.id === rail) ?? STANDING_ORDER_OPTIONS[0];
@@ -316,7 +357,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   };
 
   // Stage validation
-  const stage1Valid = Boolean(resolvedName.trim());
+  const stage1Valid = rail === "group" ? Boolean(f.groupName) : Boolean(resolvedName.trim());
   const stage2Valid = Number(f.amount.replace(/,/g, "")) > 0 && Boolean(f.accountId);
   const stage3Valid = Boolean(f.frequency) && Boolean(f.firstRun);
   const stage4Valid = Boolean(f.nickname.trim());
@@ -339,7 +380,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     const newId = `so-${Date.now()}`;
     saveStandingInstruction({
       id: newId,
-      beneficiary: f.nickname || resolvedName || "Standing Order",
+      beneficiary: f.nickname || (rail === "group" ? f.groupName : resolvedName) || "Standing Order",
       accountId: f.accountId,
       amount: Number(f.amount.replace(/,/g, "")) || 0,
       currency: "GHS",
@@ -502,12 +543,12 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
    * ========================================================================= */
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 py-4 animate-in fade-in duration-200 ease-out">
-      {/* Header with back button */}
-      <div className="flex items-center gap-4">
+      {/* Header with back button sitting outside the text */}
+      <div className="relative flex items-center">
         <button
           type="button"
           onClick={() => setRail(null)}
-          className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+          className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
           aria-label="Back to Select a standing order"
         >
           <ChevronLeft size={22} strokeWidth={1.8} />
@@ -552,14 +593,19 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {/* BANK / WALLET-TO-BANK */}
               {(rail === "bank" || rail === "wallet-to-bank") && (
                 <>
-                  <label className="flex flex-col gap-1.5">
+                  <div className="flex flex-col gap-1.5">
                     <span className={labelCls}>Destination Bank</span>
-                    <select className={selectCls} value={f.bank} onChange={(e) => set("bank", e.target.value)}>
-                      {BANKS.map((b) => (
-                        <option key={b} value={b}>{b}</option>
-                      ))}
-                    </select>
-                  </label>
+                    <Select value={f.bank} onValueChange={(val) => val && set("bank", val)}>
+                      <SelectTrigger className="h-11 w-full">
+                        <SelectValue placeholder="Select bank" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BANKS.map((b) => (
+                          <SelectItem key={b} value={b}>{b}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
                   <label className="flex flex-col gap-1.5">
                     <span className={labelCls}>Account Number</span>
@@ -589,18 +635,22 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   </label>
 
                   {f.destination.replace(/[^0-9]/g, "").length >= 3 && (
-                    <label className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
+                    <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
                       <span className={labelCls}>Wallet Provider</span>
-                      <select
-                        className={selectCls}
+                      <Select
                         value={f.walletNetwork}
-                        onChange={(e) => set("walletNetwork", e.target.value)}
+                        onValueChange={(val) => val && set("walletNetwork", val)}
                       >
-                        {WALLET_NETWORKS.map((n) => (
-                          <option key={n} value={n}>{n}</option>
-                        ))}
-                      </select>
-                    </label>
+                        <SelectTrigger className="h-11 w-full">
+                          <SelectValue placeholder="Select wallet provider" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {WALLET_NETWORKS.map((n) => (
+                            <SelectItem key={n} value={n}>{n}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   )}
                 </>
               )}
@@ -621,14 +671,19 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
               {/* GROUP */}
               {rail === "group" && (
-                <label className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1.5">
                   <span className={labelCls}>Target Group</span>
-                  <select className={selectCls} value={f.groupName} onChange={(e) => set("groupName", e.target.value)}>
-                    <option value="Family Contribution Circle">Family Contribution Circle (5 Members)</option>
-                    <option value="Colleagues Susu Circle">Colleagues Susu Circle (10 Members)</option>
-                    <option value="Welfare Fund">Welfare Fund (12 Members)</option>
-                  </select>
-                </label>
+                  <Select value={f.groupName} onValueChange={(val) => val && set("groupName", val)}>
+                    <SelectTrigger className="h-11 w-full">
+                      <SelectValue placeholder="Select contribution circle" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Family Contribution Circle">Family Contribution Circle (5 Members)</SelectItem>
+                      <SelectItem value="Colleagues Susu Circle">Colleagues Susu Circle (10 Members)</SelectItem>
+                      <SelectItem value="Welfare Fund">Welfare Fund (12 Members)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               )}
 
               {/* AIRTIME */}
@@ -646,14 +701,19 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   </label>
 
                   {f.destination.replace(/[^0-9]/g, "").length >= 3 && (
-                    <label className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
+                    <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
                       <span className={labelCls}>Network Operator</span>
-                      <select className={selectCls} value={f.network} onChange={(e) => set("network", e.target.value)}>
-                        {AIRTIME_NETWORKS.map((n) => (
-                          <option key={n} value={n}>{n}</option>
-                        ))}
-                      </select>
-                    </label>
+                      <Select value={f.network} onValueChange={(val) => val && set("network", val)}>
+                        <SelectTrigger className="h-11 w-full">
+                          <SelectValue placeholder="Select network" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {AIRTIME_NETWORKS.map((n) => (
+                            <SelectItem key={n} value={n}>{n}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   )}
                 </>
               )}
@@ -673,13 +733,12 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   </label>
 
                   {f.destination.replace(/[^0-9]/g, "").length >= 3 && (
-                    <label className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
+                    <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
                       <span className={labelCls}>Network Operator</span>
-                      <select
-                        className={selectCls}
+                      <Select
                         value={f.network}
-                        onChange={(e) => {
-                          const newNet = e.target.value;
+                        onValueChange={(newNet) => {
+                          if (!newNet) return;
                           set("network", newNet);
                           const pkgs = NETWORK_DATA_PACKAGES[newNet] || [];
                           if (pkgs.length > 0) {
@@ -689,51 +748,78 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                           }
                         }}
                       >
-                        {AIRTIME_NETWORKS.map((n) => (
-                          <option key={n} value={n}>{n}</option>
-                        ))}
-                      </select>
-                    </label>
+                        <SelectTrigger className="h-11 w-full">
+                          <SelectValue placeholder="Select network" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {AIRTIME_NETWORKS.map((n) => (
+                            <SelectItem key={n} value={n}>{n}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   )}
                 </>
               )}
 
               {/* Auto-resolved account holder name badge */}
-              {resolving && (
+              {rail !== "group" && resolving && (
                 <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 p-2.5 text-[12.5px] text-muted-foreground animate-pulse">
                   <Loader2 size={13} className="animate-spin text-primary shrink-0" />
-                  <span>Verifying account holder...</span>
+                  <span>
+                    {rail === "wallet" || rail === "data" || rail === "airtime"
+                      ? "Verifying subscriber name..."
+                      : rail === "proxy"
+                      ? "Verifying proxy ID..."
+                      : "Verifying account holder with GhIPSS..."}
+                  </span>
                 </div>
               )}
 
-              {!resolving && resolvedName && (
+              {rail !== "group" && !resolving && resolvedName && (
                 <div className="flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-2.5 text-[12.5px] text-foreground dark:bg-emerald-500/10 animate-in fade-in duration-150 ease-out">
-                  <span className="font-medium text-foreground">{resolvedName}</span>
-                  <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">✓ Verified Account Holder</span>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+                      <Check size={11} strokeWidth={2.5} />
+                    </span>
+                    <span className="font-medium text-foreground truncate">{resolvedName}</span>
+                  </div>
+                  <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium shrink-0 ml-2">
+                    {rail === "wallet" || rail === "data" || rail === "airtime"
+                      ? "✓ Subscriber Verified"
+                      : rail === "proxy"
+                      ? "✓ Proxy Verified"
+                      : "✓ Account Verified"}
+                  </span>
                 </div>
               )}
 
               {/* DATA PACKAGE SELECTOR: Progressively disclosed ONLY after name is verified */}
               {rail === "data" && !resolving && resolvedName && (
-                <label className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
+                <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
                   <span className={labelCls}>Select {f.network.split(" ")[0]} Data Package</span>
-                  <select
-                    className={selectCls}
+                  <Select
                     value={f.dataPackageId}
-                    onChange={(e) => {
-                      const dp = currentPackages.find((d) => d.id === e.target.value);
-                      set("dataPackageId", e.target.value);
+                    onValueChange={(val) => {
+                      if (!val) return;
+                      const dp = currentPackages.find((d) => d.id === val);
+                      set("dataPackageId", val);
                       if (dp) {
                         set("amount", dp.price);
                         set("nickname", `Monthly ${f.network.split(" ")[0]} ${dp.name.split(" ")[0]} Data`);
                       }
                     }}
                   >
-                    {currentPackages.map((dp) => (
-                      <option key={dp.id} value={dp.id}>{dp.name}</option>
-                    ))}
-                  </select>
-                </label>
+                    <SelectTrigger className="h-11 w-full">
+                      <SelectValue placeholder="Select data package" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {currentPackages.map((dp) => (
+                        <SelectItem key={dp.id} value={dp.id}>{dp.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               )}
 
               {/* Quick Payees filtered strictly for the active rail */}
@@ -821,36 +907,33 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                 {/* Sending From Account Selector Card */}
                 <div className="flex flex-col gap-1.5">
                   <span className={labelCls}>Sending from</span>
-                  <div className="group relative flex h-[68px] items-center justify-between rounded-xl border border-border bg-card px-4 transition-colors hover:border-primary/50">
-                    <div className="flex items-center gap-3.5 min-w-0">
-                      <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                        <Landmark size={16} strokeWidth={1.8} />
-                      </span>
-                      <div className="flex flex-col min-w-0 text-left">
-                        <span className="text-[15px] text-foreground font-normal truncate">
-                          {account?.name} ••{account?.number?.slice(-4) || "7658"}
+                  <Select
+                    value={f.accountId}
+                    onValueChange={(val) => val && set("accountId", val)}
+                  >
+                    <SelectTrigger className="h-auto min-h-[68px] py-3.5 px-4 w-full rounded-2xl border border-border bg-card dark:bg-[#181818] hover:border-primary/50 text-left cursor-pointer transition-colors">
+                      <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/80 text-foreground dark:bg-[#252525]">
+                          <Landmark size={18} strokeWidth={1.8} />
                         </span>
-                        <span className="text-[12px] text-muted-foreground truncate tabular">
-                          {formatMoney(account?.available ?? 1320201, "GHS", true)}
-                        </span>
+                        <div className="flex flex-col min-w-0 text-left gap-1">
+                          <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
+                            {account?.name} ••{account?.number?.slice(-4) || "7658"}
+                          </span>
+                          <span className="text-[13px] text-muted-foreground font-normal truncate tabular leading-tight">
+                            {formatMoney(account?.available ?? 1320201, account?.currency || "GHS", true)}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-
-                    <ChevronDown size={16} className="text-muted-foreground shrink-0 transition-transform group-hover:translate-y-0.5" />
-
-                    {/* Native invisible select for seamless switching */}
-                    <select
-                      className="absolute inset-0 size-full opacity-0 cursor-pointer"
-                      value={f.accountId}
-                      onChange={(e) => set("accountId", e.target.value)}
-                    >
+                    </SelectTrigger>
+                    <SelectContent>
                       {accounts.map((a) => (
-                        <option key={a.id} value={a.id}>
+                        <SelectItem key={a.id} value={a.id}>
                           {a.name} ({a.number}) — {formatMoney(a.available, a.currency, true)}
-                        </option>
+                        </SelectItem>
                       ))}
-                    </select>
-                  </div>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <Button
@@ -898,18 +981,22 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               /* Active Editable Form - Clean Arranged Layout */
               <div className="flex flex-col gap-4 pt-1">
                 {/* Frequency Select */}
-                <label className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1.5">
                   <span className={labelCls}>Frequency</span>
-                  <select
-                    className={selectCls}
+                  <Select
                     value={f.frequency}
-                    onChange={(e) => set("frequency", e.target.value as InstructionFrequency)}
+                    onValueChange={(val) => val && set("frequency", val as InstructionFrequency)}
                   >
-                    {FREQUENCIES.map((freq) => (
-                      <option key={freq} value={freq}>{freq}</option>
-                    ))}
-                  </select>
-                </label>
+                    <SelectTrigger className="h-11 w-full">
+                      <SelectValue placeholder="Select frequency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FREQUENCIES.map((freq) => (
+                        <SelectItem key={freq} value={freq}>{freq}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
                 {/* Start Date and End Date Side-by-Side */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -923,17 +1010,21 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     />
                   </label>
 
-                  <label className="flex flex-col gap-1.5">
+                  <div className="flex flex-col gap-1.5">
                     <span className={labelCls}>End Date</span>
-                    <select
-                      className={selectCls}
+                    <Select
                       value={f.endCondition}
-                      onChange={(e) => set("endCondition", e.target.value as "indefinite" | "date")}
+                      onValueChange={(val) => val && set("endCondition", val as "indefinite" | "date")}
                     >
-                      <option value="indefinite">Until I cancel</option>
-                      <option value="date">Specific date</option>
-                    </select>
-                  </label>
+                      <SelectTrigger className="h-11 w-full">
+                        <SelectValue placeholder="Select end condition" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="indefinite">Until I cancel</SelectItem>
+                        <SelectItem value="date">Specific date</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 {/* Specific Final Date (Conditional) */}
@@ -977,7 +1068,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   </span>
                   <div className="flex flex-col min-w-0 text-left">
                     <span className="text-[16px] text-foreground font-normal tracking-[-0.08px] truncate">{f.nickname}</span>
-                    <span className="text-[12px] text-muted-foreground truncate">{selectedCat.label}</span>
+                    <span className="text-[12px] text-muted-foreground truncate">{selectedCat?.label || "General"}</span>
                   </div>
                 </div>
                 <button
@@ -992,22 +1083,27 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               /* Active Editable Form */
               <div className="flex flex-col gap-3.5 pt-1">
                 <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-                  <label className="flex flex-col gap-1.5">
+                  <div className="flex flex-col gap-1.5">
                     <span className={labelCls}>Category</span>
-                    <select
-                      className={selectCls}
+                    <Select
                       value={f.category}
-                      onChange={(e) => {
-                        const cat = CATEGORIES.find((c) => c.id === e.target.value);
-                        set("category", e.target.value);
+                      onValueChange={(val) => {
+                        if (!val) return;
+                        const cat = CATEGORIES.find((c) => c.id === val);
+                        set("category", val);
                         if (cat) set("nickname", cat.defaultName);
                       }}
                     >
-                      {CATEGORIES.map((c) => (
-                        <option key={c.id} value={c.id}>{c.label}</option>
-                      ))}
-                    </select>
-                  </label>
+                      <SelectTrigger className="h-11 w-full">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CATEGORIES.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
                   <label className="flex flex-col gap-1.5">
                     <span className={labelCls}>Standing Order Nickname</span>
@@ -1058,6 +1154,10 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             {/* Authorisation Panel */}
             <AuthorisePanel
               summary={null}
+              method={auth.method}
+              onMethodChange={auth.setMethod}
+              pin={auth.pin}
+              onPinChange={auth.setPin}
               otp={auth.otp}
               onOtpChange={auth.setOtp}
               state={auth.state}

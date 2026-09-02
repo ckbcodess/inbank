@@ -18,6 +18,13 @@ const RETAIL_PROFILE: Profile = {
   reference: "•••• 4821",
 };
 
+const JOINT_PROFILE: Profile = {
+  id: "prof-joint",
+  kind: "RETAIL",
+  name: "Kwame & Efua Mensah (Joint)",
+  reference: "JOINT-8844",
+};
+
 const CORPORATE_PROFILE: Profile = {
   id: "prof-corp",
   kind: "CORPORATE",
@@ -40,12 +47,56 @@ export const ACTORS: Actor[] = [
     tradeEligible: false,
   },
   {
+    id: "u-joint",
+    name: "Kwame Mensah",
+    email: "kwame.joint@example.com",
+    role: "RETAIL_CUSTOMER",
+    shell: "customer",
+    profiles: [RETAIL_PROFILE, JOINT_PROFILE],
+    tradeEligible: false,
+  },
+  {
+    id: "u-joint-either",
+    name: "Kojo Appiah",
+    email: "kojo.appiah@example.com",
+    role: "RETAIL_CUSTOMER",
+    shell: "customer",
+    profiles: [RETAIL_PROFILE],
+    tradeEligible: false,
+  },
+  {
+    id: "u-abena",
+    name: "Abena Osei (Mobile App)",
+    email: "abena.osei@example.com",
+    role: "RETAIL_CUSTOMER",
+    shell: "customer",
+    profiles: [RETAIL_PROFILE],
+    tradeEligible: false,
+  },
+  {
+    id: "u-kofi",
+    name: "Kofi Mensah (COOS)",
+    email: "kofi.mensah@example.com",
+    role: "RETAIL_CUSTOMER",
+    shell: "customer",
+    profiles: [RETAIL_PROFILE],
+    tradeEligible: false,
+  },
+  {
+    id: "u-yaw",
+    name: "Yaw Oppong (New Device)",
+    email: "yaw.oppong@example.com",
+    role: "RETAIL_CUSTOMER",
+    shell: "customer",
+    profiles: [RETAIL_PROFILE, CORPORATE_PROFILE],
+    tradeEligible: true,
+  },
+  {
     id: "u-dual",
     name: "Kwame Boateng",
     email: "kwame.boateng@example.com",
     role: "CORPORATE_MAKER",
     shell: "customer",
-    // Holds two relationships → Profile Selection (S03) is shown at login.
     profiles: [RETAIL_PROFILE, CORPORATE_PROFILE],
     tradeEligible: true,
   },
@@ -60,8 +111,8 @@ export const ACTORS: Actor[] = [
   },
   {
     id: "u-corpadmin",
-    name: "Yaw Oppong",
-    email: "yaw.oppong@example.com",
+    name: "Yaw Oppong (Corporate Admin)",
+    email: "yaw.corp@example.com",
     role: "CORPORATE_ADMIN",
     shell: "customer",
     profiles: [CORPORATE_PROFILE],
@@ -97,7 +148,11 @@ export const ACTORS: Actor[] = [
 ];
 
 export function findActorByEmail(email: string): Actor | undefined {
-  return ACTORS.find((a) => a.email.toLowerCase() === email.trim().toLowerCase());
+  const norm = email.trim().toLowerCase();
+  if (norm === "kwame.mensah@example.com" || norm === "kwame.joint@example.com") {
+    return ACTORS.find((a) => a.id === "u-joint");
+  }
+  return ACTORS.find((a) => a.email.toLowerCase() === norm);
 }
 
 /* ── Accounts ──────────────────────────────────────────────────────────────── */
@@ -112,9 +167,52 @@ export interface Account {
   available: number;
   status: "Active" | "Dormant";
   profileKind?: "RETAIL" | "CORPORATE";
+  isJoint?: boolean;
+  jointHolders?: string[];
+  mandate?: "Either to sign" | "Both to sign";
 }
 
 export const ACCOUNTS: Account[] = [
+  {
+    id: "acc-personal",
+    name: "Personal Current Account",
+    number: "1001 4821 9901",
+    type: "Current",
+    currency: "GHS",
+    balance: 42_300.0,
+    available: 42_300.0,
+    status: "Active",
+    profileKind: "RETAIL",
+    isJoint: false,
+  },
+  {
+    id: "acc-joint",
+    name: "Joint Premier Savings",
+    number: "3300 8844 9922",
+    type: "Savings",
+    currency: "GHS",
+    balance: 245_800.0,
+    available: 245_800.0,
+    status: "Active",
+    profileKind: "RETAIL",
+    isJoint: true,
+    jointHolders: ["Kwame Mensah", "Efua Mensah"],
+    mandate: "Both to sign",
+  },
+  {
+    id: "acc-joint-either",
+    name: "Joint Family Savings",
+    number: "3300 7711 2233",
+    type: "Savings",
+    currency: "GHS",
+    balance: 150_000.0,
+    available: 150_000.0,
+    status: "Active",
+    profileKind: "RETAIL",
+    isJoint: true,
+    jointHolders: ["Kojo Appiah", "Akosua Appiah"],
+    mandate: "Either to sign",
+  },
   {
     id: "acc-001",
     name: "Corporate Current Account",

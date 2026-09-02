@@ -31,6 +31,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   BILLERS,
   formatMoney,
   fundCard,
@@ -197,31 +204,39 @@ export function QuickActionBar({
           <div className="flex flex-col gap-4 py-2">
             <div className="flex flex-col gap-2">
               <Label>Card</Label>
-              <select
+              <Select
                 value={topUpCardId}
-                onChange={(e) => setTopUpCardId(e.target.value)}
-                className={selectClass}
+                onValueChange={(val) => val && setTopUpCardId(val)}
               >
-                {fundableCards.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name} ({formatMoney(c.balance ?? 0, c.currency, showAmounts)})
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="h-10 w-full">
+                  <SelectValue placeholder="Select card" />
+                </SelectTrigger>
+                <SelectContent>
+                  {fundableCards.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.name} ({formatMoney(c.balance ?? 0, c.currency, showAmounts)})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex flex-col gap-2">
               <Label>Fund from</Label>
-              <select
+              <Select
                 value={topUpFrom}
-                onChange={(e) => setTopUpFrom(e.target.value)}
-                className={selectClass}
+                onValueChange={(val) => val && setTopUpFrom(val)}
               >
-                {accounts.map((acc) => (
-                  <option key={acc.id} value={acc.id}>
-                    {acc.name} ({formatMoney(acc.available, acc.currency, showAmounts)})
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="h-10 w-full">
+                  <SelectValue placeholder="Select funding account" />
+                </SelectTrigger>
+                <SelectContent>
+                  {accounts.map((acc) => (
+                    <SelectItem key={acc.id} value={acc.id}>
+                      {acc.name} ({formatMoney(acc.available, acc.currency, showAmounts)})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="topup-amount">Amount</Label>
@@ -239,7 +254,7 @@ export function QuickActionBar({
               Cancel
             </Button>
             <Button disabled={!topUpAmount} onClick={handleExecuteTopUp}>
-              Fund card
+              Top up now
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -257,31 +272,39 @@ export function QuickActionBar({
           <div className="flex flex-col gap-4 py-2">
             <div className="flex flex-col gap-2">
               <Label>From account</Label>
-              <select
+              <Select
                 value={transferFrom}
-                onChange={(e) => setTransferFrom(e.target.value)}
-                className={selectClass}
+                onValueChange={(val) => val && setTransferFrom(val)}
               >
-                {accounts.map((acc) => (
-                  <option key={acc.id} value={acc.id}>
-                    {acc.name} ({formatMoney(acc.available, acc.currency, showAmounts)})
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="h-10 w-full">
+                  <SelectValue placeholder="Select source account" />
+                </SelectTrigger>
+                <SelectContent>
+                  {accounts.map((acc) => (
+                    <SelectItem key={acc.id} value={acc.id}>
+                      {acc.name} ({formatMoney(acc.available, acc.currency, showAmounts)})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex flex-col gap-2">
               <Label>To account</Label>
-              <select
+              <Select
                 value={transferTo}
-                onChange={(e) => setTransferTo(e.target.value)}
-                className={selectClass}
+                onValueChange={(val) => val && setTransferTo(val)}
               >
-                {accounts.map((acc) => (
-                  <option key={acc.id} value={acc.id}>
-                    {acc.name} ({acc.number})
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="h-10 w-full">
+                  <SelectValue placeholder="Select destination account" />
+                </SelectTrigger>
+                <SelectContent>
+                  {accounts.map((acc) => (
+                    <SelectItem key={acc.id} value={acc.id}>
+                      {acc.name} ({acc.number})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="t-amount">Amount</Label>
@@ -326,32 +349,40 @@ export function QuickActionBar({
           <div className="flex flex-col gap-4 py-2">
             <div className="flex flex-col gap-2">
               <Label>Biller</Label>
-              <select
+              <Select
                 value={selectedBillerId}
-                onChange={(e) => setSelectedBillerId(e.target.value)}
-                className={selectClass}
+                onValueChange={(val) => val && setSelectedBillerId(val)}
               >
-                {BILLERS.map((b) => (
-                  <option key={b.id} value={b.id}>
-                    {b.name} ({b.category})
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="h-10 w-full">
+                  <SelectValue placeholder="Select biller" />
+                </SelectTrigger>
+                <SelectContent>
+                  {BILLERS.map((b) => (
+                    <SelectItem key={b.id} value={b.id}>
+                      {b.name} ({b.category})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex flex-col gap-2">
               <Label>Pay from account</Label>
-              <select
+              <Select
                 value={payBillAccount}
-                onChange={(e) => setPayBillAccount(e.target.value)}
-                className={selectClass}
+                onValueChange={(val) => val && setPayBillAccount(val)}
               >
-                {accounts.map((acc) => (
-                  <option key={acc.id} value={acc.id}>
-                    {acc.name} ({formatMoney(acc.available, acc.currency, showAmounts)})
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="h-10 w-full">
+                  <SelectValue placeholder="Select account" />
+                </SelectTrigger>
+                <SelectContent>
+                  {accounts.map((acc) => (
+                    <SelectItem key={acc.id} value={acc.id}>
+                      {acc.name} ({formatMoney(acc.available, acc.currency, showAmounts)})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex flex-col gap-2">

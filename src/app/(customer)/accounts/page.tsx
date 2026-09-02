@@ -9,8 +9,9 @@
  * Account Details is reached from a row here, never from navigation (12.4).
  */
 
-import { useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { ChevronRight, Plus, Search, Wallet } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -25,9 +26,10 @@ import {
   TrueEmptyState,
 } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
-import { accountsForProfile, formatMoney } from "@/lib/mock-data";
+import { accountsForProfile } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
 import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
+import LinkSourceAccountModal from "@/components/dashboard/LinkSourceAccountModal";
 
 const LIST_STATES: readonly ListState[] = [
   "loading",
@@ -38,13 +40,21 @@ const LIST_STATES: readonly ListState[] = [
   "error",
 ] as const;
 
-export default function AccountsPage() {
+function AccountsContent() {
   useAmountVisibility();
+  const searchParams = useSearchParams();
   const activeProfile = useSession((s) => s.activeProfile);
   const accounts = accountsForProfile(activeProfile?.kind);
 
   const [state, setState] = useState<ListState>("populated");
   const [query, setQuery] = useState("");
+  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("link_source") === "true") {
+      setIsLinkModalOpen(true);
+    }
+  }, [searchParams]);
 
   const results = useMemo(() => {
     if (!query.trim()) return accounts;
@@ -65,6 +75,16 @@ export default function AccountsPage() {
       <PageHeader
         title="Accounts"
         description="Balances and activity across your banking relationship."
+        actions={
+          <Button
+            type="button"
+            onClick={() => setIsLinkModalOpen(true)}
+            className="rounded-xl bg-[#F2B200] text-[13px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-sm shadow-[#F2B200]/20 cursor-pointer"
+          >
+            <Plus size={14} strokeWidth={2} />
+            Link Account
+          </Button>
+        }
       />
 
       <StateSwitcher
@@ -93,6 +113,16 @@ export default function AccountsPage() {
               aria-label="Search accounts"
             />
           </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setIsLinkModalOpen(true)}
+            className="cursor-pointer"
+          >
+            <Plus size={14} strokeWidth={1.9} aria-hidden="true" />
+            Link an account
+          </Button>
           <Button variant="outline" size="sm">
             <Plus size={14} strokeWidth={1.9} aria-hidden="true" />
             Open an account
@@ -113,12 +143,22 @@ export default function AccountsPage() {
           <TrueEmptyState
             icon={<Wallet size={20} strokeWidth={1.7} aria-hidden="true" />}
             title="No accounts yet"
-            description="Once an account is opened under this relationship it will appear here with its balance and activity."
+            description="Once an account is opened or linked under this relationship it will appear here with its balance and activity."
             action={
-              <Button size="sm">
-                <Plus size={14} strokeWidth={1.9} aria-hidden="true" />
-                Open an account
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  size="sm"
+                  onClick={() => setIsLinkModalOpen(true)}
+                  className="bg-[#F2B200] text-black hover:bg-[#E0A300] cursor-pointer"
+                >
+                  <Plus size={14} strokeWidth={1.9} aria-hidden="true" />
+                  Link an account
+                </Button>
+                <Button size="sm" variant="outline">
+                  <Plus size={14} strokeWidth={1.9} aria-hidden="true" />
+                  Open an account
+                </Button>
+              </div>
             }
           />
         )}
@@ -147,12 +187,22 @@ export default function AccountsPage() {
                     </span>
 
                     <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="flex items-center gap-2">
-                        <span className="truncate text-[14px] text-foreground">{acc.name}</span>
+                      <span className="flex items-center gap-2 flex-wrap">
+                        <span className="truncate text-[14px] font-medium text-foreground">{acc.name}</span>
+                        {acc.isJoint ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-[#FEF3D6] px-2 py-0.5 text-[11px] font-semibold text-[#B27B00] dark:bg-amber-500/20 dark:text-amber-300">
+                            Joint · {acc.mandate || "Both to sign"}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+                            Individual
+                          </span>
+                        )}
                         {acc.status === "Dormant" && <Badge variant="warning">Dormant</Badge>}
                       </span>
                       <span className="mt-0.5 text-[12px] text-muted-foreground tabular">
                         {acc.type} · {acc.number}
+                        {acc.isJoint && acc.jointHolders && ` · with ${acc.jointHolders.find(h => !h.includes("Kwame")) || "Efua Mensah"}`}
                       </span>
                     </span>
 
@@ -176,6 +226,20 @@ export default function AccountsPage() {
           </>
         )}
       </div>
+
+      {/* Link Source Account Modal */}
+      <LinkSourceAccountModal
+        isOpen={isLinkModalOpen}
+        onClose={() => setIsLinkModalOpen(false)}
+      />
     </div>
+  );
+}
+
+export default function AccountsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-[400px] animate-pulse bg-muted/20 rounded-2xl" />}>
+      <AccountsContent />
+    </Suspense>
   );
 }

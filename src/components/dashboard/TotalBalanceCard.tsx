@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, EyeOff, Landmark, PiggyBank } from "lucide-react";
+import { Eye, EyeOff, Landmark, PiggyBank, ChevronRight } from "lucide-react";
 import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import type { Account } from "@/lib/mock-data";
 
@@ -23,99 +23,100 @@ export function TotalBalanceCard({ accounts }: TotalBalanceCardProps) {
   const fractionalPart = (totalBalance % 1).toFixed(2).substring(1); // e.g. ".59"
 
   return (
-    <div className="relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-all">
-      {/* Background wave decoration */}
-      <div className="pointer-events-none absolute -top-16 -right-10 h-[220px] w-[360px] opacity-40 dark:opacity-25">
-        <Image
-          src="/images/dashboard/balance-wave.svg"
-          alt=""
-          width={360}
-          height={220}
-          className="h-full w-full object-contain"
-        />
-      </div>
+    <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card shadow-xs transition-all">
+      {/* Top Banner (Yellow Header with Eagle Graphic) */}
+      <div className="relative overflow-hidden bg-[#f6bf36] px-6 pt-9 pb-6 text-[#121212]">
+        {/* Background Eagle Graphic Watermark */}
+        <div className="pointer-events-none absolute -top-8 -right-4 h-[200px] w-[280px] select-none opacity-25 mix-blend-color-burn">
+          <Image
+            src="/images/dashboard/balance-wave.svg"
+            alt=""
+            width={795}
+            height={637}
+            className="h-full w-full object-contain"
+          />
+        </div>
 
-      {/* Top section: Title & Balance */}
-      <div className="relative z-10 flex flex-col gap-4">
-        <div className="flex items-center justify-between">
+        {/* Content */}
+        <div className="relative z-10 flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-[15px] font-medium text-foreground">Total Balance</span>
+            <span className="text-[16px] font-medium text-[#111]">Total Balance</span>
             <button
               type="button"
               onClick={toggleAmountVisibility}
-              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+              className="flex size-7 items-center justify-center rounded-lg text-[#111]/80 transition-colors hover:bg-black/10 hover:text-[#111] cursor-pointer"
               aria-label={showAmounts ? "Hide balances" : "Show balances"}
             >
-              {showAmounts ? <Eye size={16} strokeWidth={1.8} /> : <EyeOff size={16} strokeWidth={1.8} />}
+              {showAmounts ? <Eye size={17} strokeWidth={1.8} /> : <EyeOff size={17} strokeWidth={1.8} />}
             </button>
           </div>
-        </div>
 
-        {/* Large Currency Display */}
-        <div className="flex items-baseline gap-1 text-foreground">
-          {showAmounts ? (
-            <>
-              <span className="text-[32px] font-medium tracking-tight sm:text-[36px]">
-                GHS {formattedInt}
+          {/* Large Balance Display */}
+          <div className="flex items-baseline text-[#111]">
+            {showAmounts ? (
+              <>
+                <span className="text-[34px] font-normal tracking-tight sm:text-[36px]">
+                  GHS {formattedInt}
+                </span>
+                <span className="text-[20px] font-normal ml-0.5">
+                  {fractionalPart}
+                </span>
+              </>
+            ) : (
+              <span className="text-[34px] font-normal tracking-tight sm:text-[36px]">
+                GHS ••••••
               </span>
-              <span className="text-[18px] font-normal text-muted-foreground sm:text-[20px]">
-                {fractionalPart}
-              </span>
-            </>
-          ) : (
-            <span className="text-[32px] font-medium tracking-tight sm:text-[36px]">
-              GHS ••••••
-            </span>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
       {/* Embedded Accounts Preview List */}
-      <div className="relative z-10 mt-6 flex flex-col gap-1 rounded-xl bg-muted/40 p-3.5 dark:bg-muted/20">
-        {/* Savings Account */}
-        <Link
-          href="/accounts"
-          className="flex items-center justify-between rounded-lg p-2 transition-colors hover:bg-muted/60"
-        >
-          <div className="flex items-center gap-3">
-            <div className="flex size-8 items-center justify-center rounded-full bg-background/80 text-primary shadow-xs border border-border/50">
-              <PiggyBank size={15} strokeWidth={1.8} />
+      <div className="flex flex-col bg-card px-6 py-3 divide-y divide-border/60">
+        {accounts.slice(0, 3).map((acc) => (
+          <Link
+            key={acc.id}
+            href={`/accounts/${acc.id}`}
+            className="group flex items-center justify-between py-2.5 transition-colors hover:bg-muted/40 rounded-lg px-2 -mx-2 first:pt-1"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted text-foreground border border-border/50">
+                {acc.type === "Savings" ? (
+                  <PiggyBank size={15} strokeWidth={1.8} />
+                ) : (
+                  <Landmark size={15} strokeWidth={1.8} />
+                )}
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[14px] font-medium text-foreground">{acc.name}</span>
+                  {acc.isJoint && (
+                    <span className="rounded bg-[#FEF3D6] px-1.5 py-0.5 text-[10px] font-semibold text-[#B27B00] dark:bg-amber-500/20 dark:text-amber-300">
+                      Joint
+                    </span>
+                  )}
+                </div>
+                <span className="text-[11px] text-muted-foreground tabular">{acc.number}</span>
+              </div>
             </div>
-            <span className="text-[13px] font-normal text-foreground">Savings Account</span>
-          </div>
-          <div className="text-right text-[14px] font-medium text-foreground">
-            <RevealingAmount amount={accounts.find((a) => a.type === "Savings")?.balance ?? 69033.59} currency="GHS" />
-          </div>
-        </Link>
-
-        {/* Current Account */}
-        <Link
-          href="/accounts"
-          className="flex items-center justify-between rounded-lg p-2 transition-colors hover:bg-muted/60"
-        >
-          <div className="flex items-center gap-3">
-            <div className="flex size-8 items-center justify-center rounded-full bg-background/80 text-foreground shadow-xs border border-border/50">
-              <Landmark size={15} strokeWidth={1.8} />
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="text-right text-[14px] font-medium text-foreground">
+                <RevealingAmount amount={acc.balance} currency={acc.currency} />
+              </div>
+              <ChevronRight size={16} className="text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
             </div>
-            <span className="text-[13px] font-normal text-foreground">Current Account</span>
-          </div>
-          <div className="text-right text-[14px] font-medium text-foreground">
-            <RevealingAmount amount={accounts.find((a) => a.type === "Current")?.balance ?? 1459.59} currency="GHS" />
-          </div>
-        </Link>
+          </Link>
+        ))}
 
         {/* View all accounts link */}
-        <Link
-          href="/accounts"
-          className="flex items-center justify-between rounded-lg p-2 text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
-        >
-          <div className="flex items-center gap-3">
-            <div className="flex size-8 items-center justify-center rounded-full bg-muted text-[12px] font-medium text-foreground">
-              +{Math.max(1, accounts.length - 2)}
-            </div>
-            <span className="text-[13px] font-normal">View all accounts</span>
-          </div>
-        </Link>
+        <div className="pt-2.5 pb-1 text-center">
+          <Link
+            href="/accounts"
+            className="text-[13px] font-medium text-foreground hover:underline transition-colors"
+          >
+            View all accounts →
+          </Link>
+        </div>
       </div>
     </div>
   );

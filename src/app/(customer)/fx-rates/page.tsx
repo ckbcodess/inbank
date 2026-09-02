@@ -18,6 +18,13 @@ import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { ListSkeleton } from "@/components/states/ListStates";
 import type { BaselineState } from "@/lib/states";
@@ -208,18 +215,21 @@ export default function FxRatesPage() {
 
               <div className="flex flex-col gap-2">
                 <Label htmlFor="fx-pair">Currency pair</Label>
-                <select
-                  id="fx-pair"
+                <Select
                   value={pair}
-                  onChange={(e) => setPair(e.target.value)}
-                  className="h-10 rounded-lg border border-border bg-background pl-3 pr-10 text-[13px] text-foreground outline-none transition-colors focus-visible:border-ring cursor-pointer"
+                  onValueChange={(val) => val && setPair(val)}
                 >
-                  {FX_RATES.map((r) => (
-                    <option key={r.pair} value={r.pair}>
-                      {r.pair}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger id="fx-pair" className="h-10 w-full">
+                    <SelectValue placeholder="Select pair" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {FX_RATES.map((r) => (
+                      <SelectItem key={r.pair} value={r.pair}>
+                        {r.pair}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

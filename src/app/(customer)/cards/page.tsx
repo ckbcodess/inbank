@@ -25,6 +25,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import {
   FilteredEmptyState,
@@ -311,43 +318,55 @@ export default function CardsPage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-2">
                 <Label>Card Type</Label>
-                <select
+                <Select
                   value={cardType}
-                  onChange={(e) => setCardType(e.target.value as "Virtual" | "Prepaid" | "Debit")}
-                  className="flex h-10 w-full rounded-xl border border-border bg-background pl-3 pr-10 py-2 text-[13px] text-foreground focus:outline-none cursor-pointer"
+                  onValueChange={(val) => val && setCardType(val as "Virtual" | "Prepaid" | "Debit")}
                 >
-                  <option value="Virtual">Virtual Card (Instant Digital)</option>
-                  <option value="Prepaid">Prepaid Card</option>
-                  <option value="Debit">Debit Card</option>
-                </select>
+                  <SelectTrigger className="h-10 w-full">
+                    <SelectValue placeholder="Select card type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Virtual">Virtual Card (Instant Digital)</SelectItem>
+                    <SelectItem value="Prepaid">Prepaid Card</SelectItem>
+                    <SelectItem value="Debit">Debit Card</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="flex flex-col gap-2">
                 <Label>Network Scheme</Label>
-                <select
+                <Select
                   value={cardScheme}
-                  onChange={(e) => setCardScheme(e.target.value as "Visa" | "Mastercard")}
-                  className="flex h-10 w-full rounded-xl border border-border bg-background pl-3 pr-10 py-2 text-[13px] text-foreground focus:outline-none cursor-pointer"
+                  onValueChange={(val) => val && setCardScheme(val as "Visa" | "Mastercard")}
                 >
-                  <option value="Visa">Visa</option>
-                  <option value="Mastercard">Mastercard</option>
-                </select>
+                  <SelectTrigger className="h-10 w-full">
+                    <SelectValue placeholder="Select scheme" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Visa">Visa</SelectItem>
+                    <SelectItem value="Mastercard">Mastercard</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
               <Label>Linked Account</Label>
-              <select
+              <Select
                 value={linkedAccId}
-                onChange={(e) => setLinkedAccId(e.target.value)}
-                className="flex h-10 w-full rounded-xl border border-border bg-background pl-3 pr-10 py-2 text-[13px] text-foreground focus:outline-none cursor-pointer"
+                onValueChange={(val) => val && setLinkedAccId(val)}
               >
-                {availableAccounts.map((acc) => (
-                  <option key={acc.id} value={acc.id}>
-                    {acc.name} ({acc.number}) — {formatMoney(acc.available, acc.currency)}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="h-10 w-full">
+                  <SelectValue placeholder="Select linked account" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableAccounts.map((acc) => (
+                    <SelectItem key={acc.id} value={acc.id}>
+                      {acc.name} ({acc.number}) — {formatMoney(acc.available, acc.currency)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {cardType === "Virtual" && (
@@ -364,14 +383,18 @@ export default function CardsPage() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <Label>Usage Mode</Label>
-                  <select
+                  <Select
                     value={isSingleUse ? "single" : "recurring"}
-                    onChange={(e) => setIsSingleUse(e.target.value === "single")}
-                    className="flex h-10 w-full rounded-xl border border-border bg-background pl-3 pr-10 py-2 text-[13px] text-foreground focus:outline-none cursor-pointer"
+                    onValueChange={(val) => setIsSingleUse(val === "single")}
                   >
-                    <option value="recurring">Recurring / Subscription</option>
-                    <option value="single">Single Use (Burner)</option>
-                  </select>
+                    <SelectTrigger className="h-10 w-full">
+                      <SelectValue placeholder="Select mode" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="recurring">Recurring / Subscription</SelectItem>
+                      <SelectItem value="single">Single Use (Burner)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             )}

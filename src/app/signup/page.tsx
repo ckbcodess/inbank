@@ -1,773 +1,570 @@
 "use client";
 
-/**
- * Signup — a brand-new individual opening a GCB account on the web.
- *
- * The reasoning for what's kept and what's cut from the mobile onboarding
- * flow lives in `src/lib/signup.ts`. Short version: this is the one retail
- * flow where Ghana Card + selfie genuinely earns its place, because there is
- * no existing account to lean on the way activation can.
- *
- * Every reachable instance is addressable from the Dev Mode switcher
- * (bottom-right).
- */
-
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   AlertCircle,
   ArrowLeft,
   Camera,
   Check,
   CheckCircle2,
-  Clock,
   Eye,
   EyeOff,
-  IdCard,
-  KeyRound,
   Loader2,
-  Lock,
-  RotateCcw,
-  ShieldCheck,
-  Sparkles,
-  UserSearch,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
-import { StateSwitcher } from "@/components/states/StateSwitcher";
-import DevStatePanel from "@/components/states/DevStatePanel";
 import { useSession } from "@/lib/session-store";
-import { APPROVAL_OPTIONS, PASSWORD_RULES, maskEmail, maskMobile, passwordMeetsRules } from "@/lib/auth-shared";
-import type { ApprovalMethod } from "@/lib/auth-shared";
-import {
-  DEMO_EXISTING_CARD,
-  DEMO_NEW_CARD,
-  DEMO_SIGNUP_MOBILE,
-  SIGNUP_SCENARIO_IDS,
-  SIGNUP_SCENARIO_LABELS,
-  buildNewRetailActor,
-  findSignupScenario,
-  lookupGhanaCard,
-  signupScenarioIdFor,
-  type NiaRecord,
-  type SignupStep,
-  type SignupVariant,
-} from "@/lib/signup";
+import { ACTORS } from "@/lib/mock-data";
+
+type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "pin";
 
 const RESEND_SECONDS = 30;
-const MAX_CODE_ATTEMPTS = 3;
-const SUPPORT_LINE = "+233 302 664 914";
 
-const DEMO_RECORD: NiaRecord = {
-  cardNumber: DEMO_NEW_CARD,
-  firstName: "Kwabena",
-  lastName: "Asare",
-  dateOfBirth: "14 Mar 1994",
-};
-
-export default function SignupPage() {
+function SignupContent() {
   const router = useRouter();
-  const { signIn, verifyMfa } = useSession();
+  const searchParams = useSearchParams();
+  const flow = searchParams.get("flow") || "wallet_card";
+  const { signIn, selectProfile, verifyMfa } = useSession();
 
-  const [step, setStep] = useState<SignupStep>("start");
-  const [variant, setVariant] = useState<SignupVariant>("default");
+  const [step, setStep] = useState<Step>("ghana_card");
+  const [ghanaCard, setGhanaCard] = useState("GHA-7890123456-1");
+  const [selfieTaken, setSelfieTaken] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const [cardNumber, setCardNumber] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [record, setRecord] = useState<NiaRecord | null>(null);
-  const [email, setEmail] = useState("");
+  // OTP State
   const [digits, setDigits] = useState<string[]>(() => Array<string>(OTP_LENGTH).fill(""));
-  const [attempts, setAttempts] = useState(0);
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
-  const [resent, setResent] = useState(false);
+  const [otpTarget, setOtpTarget] = useState<"sms" | "email">("sms");
+
+  // Password & PIN State
   const [password, setPassword] = useState("");
-  const [revealed, setRevealed] = useState(false);
-  const [approval, setApproval] = useState<ApprovalMethod>("sms");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    if (step !== "verify" || countdown <= 0) return;
+    if (step !== "otp" || countdown <= 0) return;
     const t = window.setTimeout(() => setCountdown((c) => c - 1), 1000);
     return () => window.clearTimeout(t);
   }, [step, countdown]);
 
-  const maskedMobile = mobile ? maskMobile(mobile) : maskMobile(DEMO_SIGNUP_MOBILE);
-  const maskedEmail = email ? maskEmail(email) : undefined;
+  const hasMinLength = password.length >= 12;
+  const hasCase = /[a-z]/.test(password) && /[A-Z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  const hasSymbol = /[^A-Za-z0-9]/.test(password);
+  const passwordValid = hasMinLength && hasCase && hasNumber && hasSymbol;
 
-  const applyScenario = useCallback((id: string) => {
-    const target = findSignupScenario(id);
-    if (!target) return;
+  const stepNumberMap: Record<Step, number> = {
+    ghana_card: 3,
+    selfie: 4,
+    review_details: 5,
+    otp: 6,
+    password: 7,
+    pin: 8,
+  };
 
-    setStep(target.step);
-    setVariant(target.variant);
-    setBusy(false);
-    setResent(false);
-    setAttempts(target.variant === "codeLocked" ? MAX_CODE_ATTEMPTS : 0);
-    setCountdown(target.step === "verify" ? RESEND_SECONDS : 0);
-    setDigits(Array<string>(OTP_LENGTH).fill(""));
-    setPassword("");
-    setRevealed(false);
-    setApproval("sms");
-
-    const needsIdentity = target.step !== "start" && target.step !== "identity";
-    if (needsIdentity || target.variant === "notFound" || target.variant === "existingCustomer") {
-      if (target.variant === "existingCustomer") {
-        setCardNumber(DEMO_EXISTING_CARD);
-        setRecord(null);
-      } else if (target.variant === "notFound") {
-        setCardNumber("GHA-0000000000-0");
-        setRecord(null);
-      } else {
-        setCardNumber(DEMO_NEW_CARD);
-        setRecord(DEMO_RECORD);
-      }
-      setMobile(DEMO_SIGNUP_MOBILE);
-      setEmail(target.step === "confirm" ? "" : "kwabena.asare@example.com");
-    } else {
-      setCardNumber("");
-      setMobile("");
-      setRecord(null);
-      setEmail("");
+  function handleGhanaCardSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!ghanaCard.trim()) {
+      setErrorMsg("Please enter your Ghana Card number");
+      return;
     }
-  }, []);
-
-  function advance(next: SignupStep, nextVariant: SignupVariant = "default") {
+    setErrorMsg("");
     setBusy(true);
-    window.setTimeout(() => {
+    setTimeout(() => {
       setBusy(false);
-      setStep(next);
-      setVariant(nextVariant);
-      if (next === "verify") setCountdown(RESEND_SECONDS);
+      setStep("selfie");
     }, 600);
   }
 
-  function handleIdentity(e: React.FormEvent) {
-    e.preventDefault();
+  function handleCaptureSelfie() {
     setBusy(true);
-    window.setTimeout(() => {
+    setTimeout(() => {
+      setSelfieTaken(true);
       setBusy(false);
-      const result = lookupGhanaCard(cardNumber);
-      if (result.kind === "existingCustomer") {
-        setVariant("existingCustomer");
-        return;
-      }
-      if (result.kind === "notFound") {
-        setVariant("notFound");
-        return;
-      }
-      setRecord(result.record);
-      setStep("confirm");
-      setVariant("default");
+      setTimeout(() => {
+        setStep("review_details");
+      }, 500);
+    }, 1200);
+  }
+
+  function handleVerifyDetails() {
+    setBusy(true);
+    setTimeout(() => {
+      setBusy(false);
+      setStep("otp");
+      setCountdown(RESEND_SECONDS);
+    }, 600);
+  }
+
+  function handleOtpSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const code = digits.join("");
+    if (code.length < OTP_LENGTH) {
+      setErrorMsg("Please enter the complete 6-digit code");
+      return;
+    }
+    setErrorMsg("");
+    setBusy(true);
+    setTimeout(() => {
+      setBusy(false);
+      setStep("password");
     }, 700);
   }
 
-  function handleSelfie() {
+  function handlePasswordSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!passwordValid) {
+      setErrorMsg("Password must satisfy all requirements");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setErrorMsg("Passwords do not match");
+      return;
+    }
+    setErrorMsg("");
+    setStep("pin");
+  }
+
+  function handlePinSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const pin = pinDigits.join("");
+    if (pin.length < 4) {
+      setErrorMsg("Please enter a 4-digit PIN");
+      return;
+    }
+    setErrorMsg("");
     setBusy(true);
-    window.setTimeout(() => {
-      setBusy(false);
-      // A single fixed card number demonstrates the mismatch path, same
-      // convention as the OTP screens using 000000.
-      if (cardNumber.trim().toUpperCase() === "GHA-0000000009-9") {
-        setVariant("selfieMismatch");
-        return;
+
+    // Finalize registration and redirect to Accounts with linking modal trigger!
+    setTimeout(() => {
+      const actor = ACTORS[0]; // Log in as registered user
+      signIn(actor);
+      if (actor.profiles.length > 0) {
+        selectProfile(actor.profiles[0]);
       }
-      advance("verify");
-    }, 1100);
+      verifyMfa();
+      router.push("/accounts?link_source=true");
+    }, 800);
   }
-
-  function handleCode(code: string) {
-    if (busy) return;
-    if (code === "000000") {
-      const used = attempts + 1;
-      setAttempts(used);
-      setDigits(Array<string>(OTP_LENGTH).fill(""));
-      setVariant(used >= MAX_CODE_ATTEMPTS ? "codeLocked" : "codeError");
-      return;
-    }
-    setAttempts(0);
-    advance("setup");
-  }
-
-  function completeSignup() {
-    if (!record) {
-      router.push("/login");
-      return;
-    }
-    const actor = buildNewRetailActor(record, email);
-    signIn(actor);
-    verifyMfa();
-    router.push("/overview");
-  }
-
-  const headings = resolveHeadings(step, variant, record, maskedMobile);
-  const canFinish = passwordMeetsRules(password);
 
   return (
-    <>
-      <StateSwitcher
-        section="12.1"
-        states={SIGNUP_SCENARIO_IDS}
-        value={signupScenarioIdFor(step, variant)}
-        onChange={applyScenario}
-        labels={SIGNUP_SCENARIO_LABELS}
-      />
-      <DevStatePanel />
-
-      <AuthLayout
-        icon={headings.icon}
-        title={headings.title}
-        description={headings.description}
-        width={step === "setup" ? "wide" : "default"}
-        footer={
-          step === "done" ? null : (
-            <>
-              {step === "identity" && variant !== "existingCustomer" && (
-                <div className="mt-6 rounded-xl border border-dashed border-border bg-muted/30 p-4">
-                  <p className="mb-2.5 text-[11px] uppercase tracking-wider text-muted-foreground">
-                    Demo Ghana Card numbers
-                  </p>
-                  <div className="flex flex-col gap-1">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCardNumber(DEMO_NEW_CARD);
-                        setMobile(DEMO_SIGNUP_MOBILE);
-                        setVariant("default");
-                      }}
-                      className="flex items-center justify-between gap-3 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-muted"
-                    >
-                      <span className="text-[12px] text-foreground tabular">{DEMO_NEW_CARD}</span>
-                      <span className="text-[11px] text-muted-foreground">New — proceeds to signup</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCardNumber(DEMO_EXISTING_CARD);
-                        setMobile(DEMO_SIGNUP_MOBILE);
-                        setVariant("default");
-                      }}
-                      className="flex items-center justify-between gap-3 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-muted"
-                    >
-                      <span className="text-[12px] text-foreground tabular">{DEMO_EXISTING_CARD}</span>
-                      <span className="text-[11px] text-muted-foreground">Already a customer</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {!cardOffersExit(variant) && (
-                <div className="mt-5 text-center">
-                  <Link
-                    href="/login"
-                    className="inline-flex items-center gap-1 text-[12px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-                  >
-                    <ArrowLeft size={13} strokeWidth={1.9} aria-hidden="true" />
-                    Back to sign in
-                  </Link>
-                </div>
-              )}
-            </>
-          )
-        }
-      >
-        {/* ── Start ────────────────────────────────────────────────────────── */}
-        {step === "start" && (
-          <div className="flex flex-col gap-5">
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
-              Opening an account here means proving it&apos;s really you, the same as we would in a
-              branch. Have these ready:
-            </p>
-            <ul className="flex flex-col gap-3">
-              {[
-                { icon: IdCard, text: "Your Ghana Card" },
-                { icon: Camera, text: "A working camera, for a quick selfie" },
-                { icon: Clock, text: "About five minutes" },
-              ].map(({ icon: Icon, text }) => (
-                <li key={text} className="flex items-center gap-3 text-[13px] text-foreground">
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                    <Icon size={15} strokeWidth={1.8} aria-hidden="true" />
-                  </span>
-                  {text}
-                </li>
-              ))}
-            </ul>
-            <Button onClick={() => advance("identity")} className="w-full">
-              Let&apos;s begin
-            </Button>
-          </div>
-        )}
-
-        {/* ── Identity ─────────────────────────────────────────────────────── */}
-        {step === "identity" && variant !== "existingCustomer" && (
-          <form onSubmit={handleIdentity} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="cardNumber">Ghana Card number</Label>
-              <Input
-                id="cardNumber"
-                value={cardNumber}
-                onChange={(e) => {
-                  setCardNumber(e.target.value);
-                  if (variant === "notFound") setVariant("default");
-                }}
-                placeholder="GHA-0123456789-0"
-                className="tabular"
-                aria-invalid={variant === "notFound" || undefined}
-                required
-              />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="mobile">Mobile number</Label>
-              <Input
-                id="mobile"
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel"
-                value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
-                placeholder="+233 20 123 4567"
-                className="tabular"
-                required
-              />
-              <p className="text-[12px] text-muted-foreground">
-                We&apos;ll text a code here once we&apos;ve confirmed it&apos;s you.
-              </p>
-            </div>
-
-            {variant === "notFound" && (
-              <div
-                role="alert"
-                className="flex items-start gap-2.5 rounded-lg bg-destructive/10 px-3 py-2.5 text-[13px] text-destructive"
-              >
-                <AlertCircle size={15} strokeWidth={1.9} aria-hidden="true" className="mt-px shrink-0" />
-                <span>
-                  We couldn&apos;t find that Ghana Card number. Check for typos, or call us on{" "}
-                  <span className="tabular">{SUPPORT_LINE}</span> if it keeps failing.
-                </span>
-              </div>
-            )}
-
-            <Button
-              type="submit"
-              disabled={busy || cardNumber.trim() === "" || mobile.trim() === ""}
-              className="mt-1 w-full"
-            >
-              {busy ? (
-                <>
-                  <Loader2 size={15} strokeWidth={2} className="animate-spin" aria-hidden="true" />
-                  Checking your Ghana Card…
-                </>
-              ) : (
-                <>
-                  <UserSearch size={15} strokeWidth={1.9} aria-hidden="true" />
-                  Continue
-                </>
-              )}
-            </Button>
-          </form>
-        )}
-
-        {step === "identity" && variant === "existingCustomer" && (
-          <div className="flex flex-col gap-4">
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
-              That Ghana Card is already linked to a GCB account, so there&apos;s no need to open a
-              new one. If you just need internet banking switched on, activation takes about two
-              minutes.
-            </p>
-            <Button nativeButton={false} render={<Link href="/activate" />} className="w-full">
-              Activate internet banking
-            </Button>
-            <Button nativeButton={false} render={<Link href="/login" />} variant="outline" className="w-full">
-              Back to sign in
-            </Button>
-          </div>
-        )}
-
-        {/* ── Confirm ──────────────────────────────────────────────────────── */}
-        {step === "confirm" && record && (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              advance("selfie");
-            }}
-            className="flex flex-col gap-4"
+    <AuthLayout
+      title={
+        step === "ghana_card" || step === "selfie"
+          ? "Let’s find your account"
+          : step === "review_details"
+          ? "Please verify your details"
+          : step === "otp"
+          ? "Enter the code we sent"
+          : step === "password"
+          ? "Set up how you sign in"
+          : "Create transaction PIN"
+      }
+      description={
+        step === "ghana_card" || step === "selfie"
+          ? "To keep things simple and secure, we’ll quickly verify your identity with your Ghana Card."
+          : step === "review_details"
+          ? "Please review your information to make sure everything is accurate before you continue."
+          : step === "otp"
+          ? otpTarget === "sms"
+            ? "6-digit code sent to +233 24 *** *567. It expires in 5 minutes."
+            : "6-digit code sent to am•••••@example.com. It expires in 5 minutes."
+          : step === "password"
+          ? "Create a secure password to access your account."
+          : "Create a secure PIN to authorize your transactions."
+      }
+      stepProgress={{
+        current: stepNumberMap[step],
+        total: 8,
+      }}
+      width={step === "review_details" ? "default" : "compact"}
+      footer={
+        <div className="flex justify-center">
+          <Link
+            href="/get-started"
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
-            <dl className="grid grid-cols-1 gap-y-3 text-[13px]">
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-muted-foreground">Name</dt>
-                <dd className="text-foreground">
-                  {record.firstName} {record.lastName}
-                </dd>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-muted-foreground">Date of birth</dt>
-                <dd className="text-foreground tabular">{record.dateOfBirth}</dd>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-muted-foreground">Mobile</dt>
-                <dd className="text-foreground tabular">{mobile || DEMO_SIGNUP_MOBILE}</dd>
-              </div>
-            </dl>
-            <p className="text-[12px] text-muted-foreground">
-              Name and date of birth come straight from your Ghana Card, so they can&apos;t be
-              edited here.
-            </p>
-
-            <div className="flex flex-col gap-2 border-t border-border pt-4">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-
-            <Button type="submit" disabled={busy || email.trim() === ""} className="mt-1 w-full">
-              {busy ? (
-                <>
-                  <Loader2 size={15} strokeWidth={2} className="animate-spin" aria-hidden="true" />
-                  Continuing…
-                </>
-              ) : (
-                "Looks right — continue"
-              )}
-            </Button>
-          </form>
-        )}
-
-        {/* ── Selfie ───────────────────────────────────────────────────────── */}
-        {step === "selfie" && (
-          <div className="flex flex-col gap-5">
-            <div className="mx-auto flex aspect-[3/4] w-48 items-center justify-center rounded-2xl border-2 border-dashed border-border bg-muted/30">
-              {busy ? (
-                <Loader2 size={28} strokeWidth={1.6} className="animate-spin text-muted-foreground" aria-hidden="true" />
-              ) : (
-                <Camera size={28} strokeWidth={1.6} className="text-muted-foreground" aria-hidden="true" />
-              )}
-            </div>
-            <p className="text-center text-[13px] text-muted-foreground">
-              {busy ? "Matching your selfie to your Ghana Card…" : "Keep your face centred in the frame."}
-            </p>
-
-            {variant === "selfieMismatch" && (
-              <div
-                role="alert"
-                className="flex items-start gap-2.5 rounded-lg bg-destructive/10 px-3 py-2.5 text-[13px] text-destructive"
-              >
-                <AlertCircle size={15} strokeWidth={1.9} aria-hidden="true" className="mt-px shrink-0" />
-                <span>
-                  That selfie doesn&apos;t match your Ghana Card photo closely enough. Try again in
-                  better light, facing the camera directly.
-                </span>
-              </div>
-            )}
-
-            <Button onClick={handleSelfie} disabled={busy} className="w-full">
-              {busy ? (
-                "Matching…"
-              ) : variant === "selfieMismatch" ? (
-                <>
-                  <RotateCcw size={15} strokeWidth={1.9} aria-hidden="true" />
-                  Retake photo
-                </>
-              ) : (
-                <>
-                  <Camera size={15} strokeWidth={1.9} aria-hidden="true" />
-                  Take photo
-                </>
-              )}
-            </Button>
-          </div>
-        )}
-
-        {/* ── Verify ───────────────────────────────────────────────────────── */}
-        {step === "verify" && variant !== "codeLocked" && (
-          <div className="flex flex-col gap-5">
-            <OtpInput
-              value={digits}
-              onChange={(next) => {
-                setDigits(next);
-                if (variant === "codeError") setVariant("default");
-                if (resent) setResent(false);
-              }}
-              onComplete={handleCode}
-              disabled={busy}
-              invalid={variant === "codeError"}
+            <ArrowLeft size={15} strokeWidth={2} />
+            Back to previous step
+          </Link>
+        </div>
+      }
+    >
+      {/* STEP 1: Enter Ghana Card */}
+      {step === "ghana_card" && (
+        <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="ghanaCard" className="text-[13px] font-medium text-foreground">
+              Enter Ghana Card Number
+            </Label>
+            <Input
+              id="ghanaCard"
+              type="text"
+              placeholder="e.g GHA-0123456789-0"
+              value={ghanaCard}
+              onChange={(e) => setGhanaCard(e.target.value.toUpperCase())}
+              className="h-11 rounded-xl border-border bg-background px-3.5 text-[14px] uppercase tracking-wider focus-visible:border-[#F2B200] focus-visible:ring-[#F2B200]/20"
+              required
             />
+          </div>
 
-            {variant === "codeError" && (
-              <div
-                role="alert"
-                className="flex items-start gap-2.5 rounded-lg bg-destructive/10 px-3 py-2.5 text-[13px] text-destructive"
-              >
-                <AlertCircle size={15} strokeWidth={1.9} aria-hidden="true" className="mt-px shrink-0" />
-                <span>
-                  That code isn&apos;t right or has expired.{" "}
-                  {MAX_CODE_ATTEMPTS - attempts === 1
-                    ? "One more attempt before we pause this."
-                    : `${MAX_CODE_ATTEMPTS - attempts} attempts left.`}
-                </span>
+          {errorMsg && (
+            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
+              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            disabled={busy}
+            className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+          >
+            {busy ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Verifying Card with NIA…
+              </>
+            ) : (
+              "Proceed"
+            )}
+          </Button>
+        </form>
+      )}
+
+      {/* STEP 2: Selfie / Photo Capture */}
+      {step === "selfie" && (
+        <div className="flex flex-col items-center gap-5">
+          <div className="relative flex size-44 sm:size-48 items-center justify-center overflow-hidden rounded-full border-4 border-[#F2B200]/30 bg-muted/30 shadow-inner">
+            {selfieTaken ? (
+              <div className="flex flex-col items-center gap-2 text-center text-primary">
+                <CheckCircle2 size={48} className="text-[#E5A500] dark:text-[#F2B200]" />
+                <span className="text-[13px] font-medium text-foreground">Selfie Verified</span>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-2 text-center text-muted-foreground">
+                <Camera size={36} strokeWidth={1.7} />
+                <span className="text-[12px]">Position face in circle</span>
               </div>
             )}
+          </div>
 
-            {resent && (
-              <p className="rounded-lg bg-muted px-3 py-2.5 text-center text-[13px] text-muted-foreground">
-                A new code is on its way.
-              </p>
+          <Button
+            type="button"
+            onClick={handleCaptureSelfie}
+            disabled={busy || selfieTaken}
+            className="h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+          >
+            {busy ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Verifying Biometric Liveness…
+              </>
+            ) : selfieTaken ? (
+              "Verified ✓"
+            ) : (
+              "Take photo"
             )}
+          </Button>
+        </div>
+      )}
 
-            {busy && (
-              <p className="flex items-center justify-center gap-2 text-[13px] text-muted-foreground">
-                <Loader2 size={15} strokeWidth={2} className="animate-spin" aria-hidden="true" />
-                Checking your code…
-              </p>
+      {/* STEP 3: Review Details */}
+      {step === "review_details" && (
+        <div className="flex flex-col gap-4">
+          <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 divide-y divide-border/60">
+            <div className="flex items-center justify-between pb-3">
+              <span className="text-[12.5px] text-muted-foreground">Name</span>
+              <span className="text-[13.5px] font-semibold text-foreground">Tsotsoo Mills</span>
+            </div>
+            <div className="flex items-center justify-between py-3">
+              <span className="text-[12.5px] text-muted-foreground">National ID</span>
+              <span className="text-[13.5px] font-semibold text-foreground">{ghanaCard}</span>
+            </div>
+            <div className="flex items-center justify-between py-3">
+              <span className="text-[12.5px] text-muted-foreground">Mobile</span>
+              <span className="text-[13.5px] font-semibold text-foreground">+233 24 *** *567</span>
+            </div>
+            <div className="flex items-center justify-between pt-3">
+              <span className="text-[12.5px] text-muted-foreground">Email</span>
+              <span className="text-[13.5px] font-semibold text-foreground">ts•••••@example.com</span>
+            </div>
+          </div>
+
+          <p className="text-center text-[12px] leading-relaxed text-muted-foreground">
+            We&apos;ve verified your identity against national records. Proceed to verify your phone.
+          </p>
+
+          <Button
+            type="button"
+            onClick={handleVerifyDetails}
+            disabled={busy}
+            className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+          >
+            {busy ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Sending verification code…
+              </>
+            ) : (
+              "Proceed"
             )}
+          </Button>
+        </div>
+      )}
 
-            <div className="flex flex-col items-center gap-2 border-t border-border pt-4">
+      {/* STEP 4: OTP Verification */}
+      {step === "otp" && (
+        <form onSubmit={handleOtpSubmit} className="flex flex-col gap-4">
+          <div className="my-2 flex justify-center">
+            <OtpInput value={digits} onChange={setDigits} />
+          </div>
+
+          {errorMsg && (
+            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
+              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          <div className="flex flex-col items-center gap-1.5 text-[12.5px]">
+            {countdown > 0 ? (
+              <span className="text-muted-foreground">
+                Resend code in <strong className="text-foreground">{countdown}s</strong>
+              </span>
+            ) : (
               <button
                 type="button"
-                disabled={countdown > 0}
                 onClick={() => {
                   setCountdown(RESEND_SECONDS);
-                  setResent(true);
+                  setErrorMsg("");
                 }}
-                className="text-[13px] text-primary underline-offset-4 hover:underline disabled:text-muted-foreground disabled:no-underline"
+                className="font-medium text-[#B27B00] dark:text-[#F2B200] hover:underline cursor-pointer"
               >
-                {countdown > 0 ? (
-                  <>
-                    Resend code in <span className="tabular">{countdown}s</span>
-                  </>
-                ) : (
-                  "Resend code"
-                )}
+                Resend code now
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={() => {
+                setOtpTarget(otpTarget === "sms" ? "email" : "sms");
+                setCountdown(RESEND_SECONDS);
+              }}
+              className="text-muted-foreground hover:text-foreground underline underline-offset-4 cursor-pointer"
+            >
+              {otpTarget === "sms"
+                ? "Send it to ts•••••@example.com instead"
+                : "Send it to +233 24 *** *567 instead"}
+            </button>
+          </div>
+
+          <Button
+            type="submit"
+            disabled={busy}
+            className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+          >
+            {busy ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Validating Code…
+              </>
+            ) : (
+              "Proceed"
+            )}
+          </Button>
+        </form>
+      )}
+
+      {/* STEP 5: Set up Password */}
+      {step === "password" && (
+        <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="pass" className="text-[13px] font-medium text-foreground">
+              Create Password
+            </Label>
+            <div className="relative">
+              <Input
+                id="pass"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••••••"
+                className="h-11 rounded-xl border-border bg-background pr-10 pl-3.5 text-[14px] focus-visible:border-[#F2B200] focus-visible:ring-[#F2B200]/20"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+              >
+                {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
               </button>
             </div>
           </div>
-        )}
 
-        {step === "verify" && variant === "codeLocked" && (
-          <div className="flex flex-col gap-4">
-            <div
-              role="alert"
-              className="flex items-start gap-2.5 rounded-lg bg-destructive/10 px-3 py-2.5 text-[13px] text-destructive"
-            >
-              <Lock size={15} strokeWidth={1.9} aria-hidden="true" className="mt-px shrink-0" />
-              <span>Three codes in a row didn&apos;t match, so we&apos;ve paused this for 15 minutes.</span>
-            </div>
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
-              Nothing has been created yet — no account, no charge. If the code never arrived, call
-              us on <span className="tabular text-foreground">{SUPPORT_LINE}</span> and we&apos;ll
-              check the number with you.
-            </p>
-            <Button nativeButton={false} render={<Link href="/login" />} variant="outline" className="w-full">
-              Back to sign in
-            </Button>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="confirmPass" className="text-[13px] font-medium text-foreground">
+              Confirm Password
+            </Label>
+            <Input
+              id="confirmPass"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="••••••••••••"
+              className="h-11 rounded-xl border-border bg-background px-3.5 text-[14px] focus-visible:border-[#F2B200] focus-visible:ring-[#F2B200]/20"
+              required
+            />
           </div>
-        )}
 
-        {/* ── Set up sign-in ───────────────────────────────────────────────── */}
-        {step === "setup" && (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (canFinish) advance("done");
-            }}
-            className="flex flex-col gap-5"
-          >
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={revealed ? "text" : "password"}
-                  autoComplete="new-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="pr-9"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setRevealed((r) => !r)}
-                  aria-label={revealed ? "Hide password" : "Show password"}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+          {/* Password Requirements Checklist */}
+          <div className="rounded-2xl border border-border/80 bg-muted/20 p-3.5">
+            <p className="mb-2 text-[11.5px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Password Requirements
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12px]">
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
+                    hasMinLength ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
+                  }`}
                 >
-                  {revealed ? <EyeOff size={15} strokeWidth={1.9} /> : <Eye size={15} strokeWidth={1.9} />}
-                </button>
+                  <Check size={11} strokeWidth={3} />
+                </span>
+                <span className={hasMinLength ? "text-foreground font-medium" : "text-muted-foreground"}>
+                  At least 12 characters
+                </span>
               </div>
-
-              <ul className="mt-1 flex flex-col gap-1.5">
-                {PASSWORD_RULES.map((rule) => {
-                  const met = rule.test(password);
-                  return (
-                    <li
-                      key={rule.id}
-                      className={`flex items-center gap-2 text-[12px] ${
-                        met ? "text-foreground" : "text-muted-foreground"
-                      }`}
-                    >
-                      <Check
-                        size={14}
-                        strokeWidth={1.9}
-                        aria-hidden="true"
-                        className={met ? "text-primary" : "text-muted-foreground/40"}
-                      />
-                      {rule.label}
-                    </li>
-                  );
-                })}
-              </ul>
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
+                    hasCase ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  <Check size={11} strokeWidth={3} />
+                </span>
+                <span className={hasCase ? "text-foreground font-medium" : "text-muted-foreground"}>
+                  Upper and lower case
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
+                    hasNumber ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  <Check size={11} strokeWidth={3} />
+                </span>
+                <span className={hasNumber ? "text-foreground font-medium" : "text-muted-foreground"}>
+                  A number
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
+                    hasSymbol ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  <Check size={11} strokeWidth={3} />
+                </span>
+                <span className={hasSymbol ? "text-foreground font-medium" : "text-muted-foreground"}>
+                  A symbol
+                </span>
+              </div>
             </div>
-
-            <fieldset className="flex flex-col gap-2 border-t border-border pt-5">
-              <legend className="sr-only">How we check it&apos;s you when you make a payment</legend>
-              <p className="text-[15px] text-foreground">Approving payments</p>
-              <p className="mb-1 text-[13px] leading-relaxed text-muted-foreground">
-                Signing in uses your password. Payments get a second check — pick the one that suits
-                how you work.
-              </p>
-
-              {APPROVAL_OPTIONS.map((option) => {
-                const selected = approval === option.id;
-                return (
-                  <label
-                    key={option.id}
-                    className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 transition-colors ${
-                      selected
-                        ? "border-[var(--active-border)] bg-[var(--active-bg)]"
-                        : "border-border bg-card hover:bg-muted/50"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="approval"
-                      value={option.id}
-                      checked={selected}
-                      onChange={() => setApproval(option.id)}
-                      className="mt-0.5 size-4 shrink-0 accent-[var(--primary)]"
-                    />
-                    <span className="flex min-w-0 flex-col">
-                      <span className="text-[13px] text-foreground tabular">
-                        {option.label({ maskedMobile, maskedEmail: maskedEmail ?? "" })}
-                      </span>
-                      <span className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground">
-                        {option.description}
-                      </span>
-                    </span>
-                  </label>
-                );
-              })}
-
-              <p className="mt-1 text-[12px] text-muted-foreground">
-                You can change this at any time in Settings.
-              </p>
-            </fieldset>
-
-            <Button type="submit" disabled={busy || !canFinish} className="w-full">
-              {busy ? (
-                <>
-                  <Loader2 size={15} strokeWidth={2} className="animate-spin" aria-hidden="true" />
-                  Opening your account…
-                </>
-              ) : (
-                <>
-                  <KeyRound size={15} strokeWidth={1.9} aria-hidden="true" />
-                  Open my account
-                </>
-              )}
-            </Button>
-          </form>
-        )}
-
-        {/* ── Done ─────────────────────────────────────────────────────────── */}
-        {step === "done" && (
-          <div className="flex flex-col gap-4">
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
-              Your account is open and internet banking is active. We&apos;ve emailed a confirmation
-              to <span className="text-foreground">{maskedEmail}</span>.
-            </p>
-            <Button onClick={completeSignup} className="w-full">
-              Go to my accounts
-            </Button>
-            <p className="text-center text-[12px] leading-relaxed text-muted-foreground">
-              Adding money — a transfer, a mobile money top-up, a linked card — is one tap away
-              whenever you&apos;re ready. Nothing is required today.
-            </p>
           </div>
-        )}
-      </AuthLayout>
-    </>
+
+          {errorMsg && (
+            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
+              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+          >
+            Proceed
+          </Button>
+        </form>
+      )}
+
+      {/* STEP 6: Create Transaction PIN */}
+      {step === "pin" && (
+        <form onSubmit={handlePinSubmit} className="flex flex-col items-center gap-5">
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-[13px] text-muted-foreground text-center">
+              Enter a 4-digit PIN for completing transfers and payments.
+            </p>
+            <div className="mt-3 flex gap-3">
+              {[0, 1, 2, 3].map((idx) => (
+                <input
+                  key={idx}
+                  id={`pin-${idx}`}
+                  type="password"
+                  maxLength={1}
+                  inputMode="numeric"
+                  value={pinDigits[idx]}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, "");
+                    const newPins = [...pinDigits];
+                    newPins[idx] = val;
+                    setPinDigits(newPins);
+                    if (val && idx < 3) {
+                      document.getElementById(`pin-${idx + 1}`)?.focus();
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Backspace" && !pinDigits[idx] && idx > 0) {
+                      document.getElementById(`pin-${idx - 1}`)?.focus();
+                    }
+                  }}
+                  className="size-13 rounded-2xl border border-border bg-background text-center text-[22px] font-bold tracking-widest text-foreground shadow-sm focus:border-[#F2B200] focus:ring-2 focus:ring-[#F2B200]/20 focus:outline-hidden"
+                />
+              ))}
+            </div>
+          </div>
+
+          {errorMsg && (
+            <div className="w-full flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
+              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            disabled={busy}
+            className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+          >
+            {busy ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                Setting up your account…
+              </>
+            ) : (
+              "Proceed"
+            )}
+          </Button>
+        </form>
+      )}
+    </AuthLayout>
   );
 }
 
-function cardOffersExit(variant: SignupVariant): boolean {
-  return variant === "existingCustomer" || variant === "codeLocked";
-}
-
-/* ── Headings ──────────────────────────────────────────────────────────────── */
-
-function resolveHeadings(
-  step: SignupStep,
-  variant: SignupVariant,
-  record: NiaRecord | null,
-  maskedMobile: string,
-) {
-  if (step === "done") {
-    return { icon: Sparkles, title: "Welcome to GCB", description: "Your account is ready." };
-  }
-  if (step === "setup") {
-    return {
-      icon: KeyRound,
-      title: "Set up how you sign in",
-      description: "One password to get in, and one way to approve payments.",
-    };
-  }
-  if (step === "verify") {
-    if (variant === "codeLocked") {
-      return { icon: Lock, title: "Paused for now", description: "Nothing has been created yet." };
-    }
-    return {
-      icon: ShieldCheck,
-      title: "Enter the code we sent",
-      description: (
-        <>
-          6-digit code sent to <span className="tabular">{maskedMobile}</span>. It expires in 5
-          minutes.
-        </>
-      ),
-    };
-  }
-  if (step === "selfie") {
-    return {
-      icon: Camera,
-      title: "Let's match your selfie",
-      description: "We compare it with the photo on your Ghana Card — it takes a second.",
-    };
-  }
-  if (step === "confirm" && record) {
-    return {
-      icon: UserSearch,
-      title: "Confirm your details",
-      description: "Straight from your Ghana Card. Add an email and we're ready to continue.",
-    };
-  }
-  if (step === "identity") {
-    return variant === "existingCustomer"
-      ? { icon: CheckCircle2, title: "You already bank with us", description: "No need to open a new account." }
-      : { icon: IdCard, title: "Verify your Ghana Card", description: "This is how we confirm it's really you." };
-  }
-  return {
-    icon: Sparkles,
-    title: "Open a GCB account",
-    description: "A few minutes, done entirely online.",
-  };
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <SignupContent />
+    </Suspense>
+  );
 }

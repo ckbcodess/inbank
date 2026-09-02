@@ -17,7 +17,9 @@ export const OTP_LENGTH = 6;
 interface OtpInputProps {
   value: string[];
   onChange: (next: string[]) => void;
-  /** Fires once all six boxes are filled, so the customer never hunts for a button. */
+  length?: number;
+  mask?: boolean;
+  /** Fires once all boxes are filled, so the customer never hunts for a button. */
   onComplete?: (code: string) => void;
   disabled?: boolean;
   invalid?: boolean;
@@ -27,6 +29,8 @@ interface OtpInputProps {
 export default function OtpInput({
   value,
   onChange,
+  length = OTP_LENGTH,
+  mask = false,
   onComplete,
   disabled = false,
   invalid = false,
@@ -38,7 +42,7 @@ export default function OtpInput({
     onChange(next);
     inputsRef.current[focusIndex]?.focus();
     const code = next.join("");
-    if (code.length === OTP_LENGTH && next.every(Boolean)) onComplete?.(code);
+    if (code.length === length && next.every(Boolean)) onComplete?.(code);
   }
 
   function setDigit(index: number, raw: string) {
@@ -51,10 +55,10 @@ export default function OtpInput({
       return;
     }
 
-    for (let i = 0; i < incoming.length && index + i < OTP_LENGTH; i++) {
+    for (let i = 0; i < incoming.length && index + i < length; i++) {
       next[index + i] = incoming[i];
     }
-    commit(next, Math.min(index + incoming.length, OTP_LENGTH - 1));
+    commit(next, Math.min(index + incoming.length, length - 1));
   }
 
   function handleKeyDown(index: number, e: React.KeyboardEvent<HTMLInputElement>) {
@@ -65,32 +69,33 @@ export default function OtpInput({
 
   function handlePaste(e: React.ClipboardEvent<HTMLDivElement>) {
     e.preventDefault();
-    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, OTP_LENGTH);
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, length);
     if (!pasted) return;
-    const next = Array<string>(OTP_LENGTH).fill("");
+    const next = Array<string>(length).fill("");
     pasted.split("").forEach((c, i) => (next[i] = c));
-    commit(next, Math.min(pasted.length, OTP_LENGTH - 1));
+    commit(next, Math.min(pasted.length, length - 1));
   }
 
   return (
-    <div className="flex justify-center gap-2" onPaste={handlePaste}>
-      {Array.from({ length: OTP_LENGTH }, (_, i) => (
+    <div className="flex justify-center gap-2.5" onPaste={handlePaste}>
+      {Array.from({ length }, (_, i) => (
         <input
           key={i}
           ref={(el) => {
             inputsRef.current[i] = el;
           }}
+          type={mask ? "password" : "text"}
           inputMode="numeric"
-          autoComplete="one-time-code"
+          autoComplete={mask ? "current-password" : "one-time-code"}
           value={value[i] ?? ""}
           autoFocus={autoFocus && i === 0}
           disabled={disabled}
           onChange={(e) => setDigit(i, e.target.value)}
           onKeyDown={(e) => handleKeyDown(i, e)}
-          aria-label={`Digit ${i + 1}`}
+          aria-label={mask ? `PIN Digit ${i + 1}` : `Digit ${i + 1}`}
           aria-invalid={invalid || undefined}
-          className={`size-12 rounded-xl border bg-background text-center text-[18px] text-foreground outline-none transition-all tabular focus:border-ring focus:ring-3 focus:ring-ring/40 disabled:opacity-60 ${
-            invalid ? "border-destructive" : "border-border"
+          className={`size-12 md:size-13 rounded-xl border bg-background text-center text-[20px] font-semibold text-foreground outline-none transition-all tabular focus:border-ring focus:ring-3 focus:ring-ring/40 disabled:opacity-60 ${
+            invalid ? "border-destructive bg-destructive/5" : "border-border"
           }`}
         />
       ))}

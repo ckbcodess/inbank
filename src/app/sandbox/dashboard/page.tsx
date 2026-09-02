@@ -58,6 +58,13 @@ import {
   Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
@@ -244,7 +251,7 @@ export default function FigmaDesignFidelityDashboard() {
         </header>
 
         {/* Content Container (Node 315:53444) */}
-        <main className="max-w-5xl w-full mx-auto px-6 lg:px-12 py-10 space-y-10">
+        <main className="max-w-6xl w-full mx-auto px-8 lg:px-16 py-14 space-y-12">
           
           {/* Greeting Section (Node 315:53445) */}
           <div className="space-y-0.5">
@@ -575,15 +582,19 @@ export default function FigmaDesignFidelityDashboard() {
                 
                 <div>
                   <label className="text-xs font-bold text-[#71717a] block mb-1">Currency</label>
-                  <select 
+                  <Select 
                     value={fxCurrency} 
-                    onChange={(e) => setFxCurrency(e.target.value)}
-                    className="w-full h-9 px-3 rounded-lg border border-[#e8ecef] text-xs font-mono font-bold"
+                    onValueChange={(val) => val && setFxCurrency(val)}
                   >
-                    <option value="USD">USD - US Dollar</option>
-                    <option value="EUR">EUR - Euro</option>
-                    <option value="GBP">GBP - British Pound</option>
-                  </select>
+                    <SelectTrigger className="w-full h-9 px-3 rounded-lg border border-[#e8ecef] dark:border-border text-xs font-mono font-bold">
+                      <SelectValue placeholder="Currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USD">USD - US Dollar</SelectItem>
+                      <SelectItem value="EUR">EUR - Euro</SelectItem>
+                      <SelectItem value="GBP">GBP - British Pound</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div>

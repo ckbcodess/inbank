@@ -52,7 +52,7 @@ export default function TopHeader({
   const unreadCount = NOTIFICATIONS.filter((n) => !n.read).length;
 
   return (
-    <header className="flex h-14 flex-shrink-0 items-center justify-between gap-3 border-b border-border px-4 sm:px-6">
+    <header className="flex h-14 flex-shrink-0 items-center justify-between gap-3 border-b border-border px-6 sm:px-10 lg:px-14 xl:px-16">
       <div className="flex min-w-0 items-center gap-3">
         <Button variant="ghost" size="icon-sm" onClick={onMenuToggle} className="lg:hidden" aria-label="Open menu">
           <Menu size={17} strokeWidth={1.9} />

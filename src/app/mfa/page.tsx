@@ -1,20 +1,8 @@
 "use client";
 
-/**
- * S02 MFA Verification — the last shared surface (section 12.1).
- *
- * On success the credential type decides the destination:
- *   internal staff  -> Admin Portal, no Profile Selection (section 12.5)
- *   customer, 2+    -> Profile Selection (S03)
- *   customer, 1     -> straight to Banking Overview (section 12.4)
- *
- * Design direction (section 1): clearly communicate method, progress and
- * recovery.
- */
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { AlertCircle, Loader2, ShieldCheck, Smartphone } from "lucide-react";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AlertCircle, Laptop, Loader2, MapPin, ShieldAlert, ShieldCheck, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
@@ -25,12 +13,16 @@ type MfaState = "entry" | "verifying" | "error" | "resent";
 const CODE_LENGTH = OTP_LENGTH;
 const RESEND_SECONDS = 30;
 
-export default function MfaPage() {
+function MfaContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isNewDevice = searchParams.get("device") === "new";
+
   const { actor, verifyMfa } = useSession();
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(""));
   const [state, setState] = useState<MfaState>("entry");
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
+  const [trustDevice, setTrustDevice] = useState(true);
   const hydrated = useSessionHydrated();
 
   useEffect(() => {
@@ -85,14 +77,17 @@ export default function MfaPage() {
 
   return (
     <AuthLayout
-      icon={ShieldCheck}
-      title="Verify it's you"
-      /* Method + destination stated explicitly */
+      icon={isNewDevice ? ShieldAlert : ShieldCheck}
+      title={isNewDevice ? "New device authorization" : "Verify your identity"}
       description={
-        <span className="flex items-center justify-center gap-1.5">
-          <Smartphone size={14} strokeWidth={1.9} aria-hidden="true" />
-          Code sent to {maskedDestination}
-        </span>
+        isNewDevice ? (
+          "We detected a sign-in from an unrecognized browser or device. Enter the code sent to your phone."
+        ) : (
+          <span className="flex items-center justify-center gap-1.5">
+            <Smartphone size={14} strokeWidth={1.9} aria-hidden="true" />
+            Code sent to {maskedDestination}
+          </span>
+        )
       }
       footer={
         <p className="mt-5 text-center text-[12px] text-muted-foreground">
@@ -100,6 +95,20 @@ export default function MfaPage() {
         </p>
       }
     >
+      {/* New Device Information Card (if applicable) */}
+      {isNewDevice && (
+        <div className="mb-5 rounded-2xl border border-amber-500/30 bg-[#FFFBF0] dark:bg-amber-500/10 p-3.5 text-left space-y-2">
+          <div className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
+            <Laptop size={16} className="text-[#B27B00] dark:text-[#F2B200]" />
+            <span>Windows PC · Google Chrome</span>
+          </div>
+          <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
+            <MapPin size={14} />
+            <span>Accra, Greater Accra · IP 154.160.22.84</span>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={handleVerify} className="flex flex-col gap-5">
         <OtpInput
           value={digits}
@@ -111,35 +120,52 @@ export default function MfaPage() {
           invalid={state === "error"}
         />
 
+        {/* Trust Device Checkbox */}
+        {isNewDevice && (
+          <label className="flex items-center gap-2.5 px-1 text-[13px] text-foreground cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={trustDevice}
+              onChange={(e) => setTrustDevice(e.target.checked)}
+              className="size-4 rounded border-border text-[#F2B200] accent-[#F2B200] focus:ring-[#F2B200]"
+            />
+            <span>Trust this browser for 30 days</span>
+          </label>
+        )}
+
         {state === "error" && (
           <div
             role="alert"
-            className="flex items-start gap-2.5 rounded-lg bg-destructive/10 px-3 py-2.5 text-[13px] text-destructive"
+            className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-3.5 py-3 text-[13px] text-destructive"
           >
-            <AlertCircle size={15} strokeWidth={1.9} aria-hidden="true" className="mt-px shrink-0" />
-            <span>That code isn&apos;t right or has expired. Request a new one below.</span>
+            <AlertCircle size={15} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
+            <span>The code entered is incorrect or has expired. Request a new code below.</span>
           </div>
         )}
 
         {state === "resent" && (
-          <p className="rounded-lg bg-muted px-3 py-2.5 text-center text-[13px] text-muted-foreground">
-            A new code is on its way.
+          <p className="rounded-xl bg-muted px-3 py-2.5 text-center text-[13px] text-muted-foreground">
+            A new verification code has been sent to your phone.
           </p>
         )}
 
-        <Button type="submit" disabled={!complete || state === "verifying"} className="w-full">
+        <Button
+          type="submit"
+          disabled={!complete || state === "verifying"}
+          className="h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+        >
           {state === "verifying" ? (
             <>
-              <Loader2 size={15} className="animate-spin" aria-hidden="true" />
-              Verifying…
+              <Loader2 size={16} className="mr-2 animate-spin" aria-hidden="true" />
+              Verifying code...
             </>
           ) : (
-            "Verify"
+            "Authorize device"
           )}
         </Button>
       </form>
 
-      {/* Recovery path stated clearly */}
+      {/* Recovery path */}
       <div className="mt-5 flex flex-col items-center gap-2 border-t border-border pt-4">
         <button
           type="button"
@@ -148,7 +174,7 @@ export default function MfaPage() {
             setCountdown(RESEND_SECONDS);
             setState("resent");
           }}
-          className="text-[13px] text-primary underline-offset-4 hover:underline disabled:text-muted-foreground disabled:no-underline"
+          className="text-[13px] text-foreground underline-offset-4 hover:underline disabled:text-muted-foreground disabled:no-underline cursor-pointer"
         >
           {countdown > 0 ? (
             <>
@@ -158,10 +184,15 @@ export default function MfaPage() {
             "Resend code"
           )}
         </button>
-        <button type="button" className="text-[12px] text-muted-foreground underline-offset-4 hover:underline">
-          Use a different verification method
-        </button>
       </div>
     </AuthLayout>
+  );
+}
+
+export default function MfaPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background animate-pulse" />}>
+      <MfaContent />
+    </Suspense>
   );
 }

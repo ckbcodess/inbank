@@ -1,841 +1,651 @@
 "use client";
 
-/**
- * Activation — first-time enrolment into internet banking.
- *
- * Three screens for retail, two for corporate. The reasoning for what was cut
- * out of the mobile onboarding flow lives in `src/lib/activation.ts`; this file
- * is only the surface.
- *
- * Every reachable instance is addressable from the Dev Mode switcher
- * (bottom-right) so the whole flow — including the failure branches — can be
- * walked without typing through it.
- */
-
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   AlertCircle,
   ArrowLeft,
-  Building2,
+  Camera,
   Check,
   CheckCircle2,
   Eye,
   EyeOff,
-  KeyRound,
   Loader2,
-  Lock,
-  MailCheck,
-  ShieldCheck,
-  UserSearch,
+  Smartphone,
+  Sparkles,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
-import { StateSwitcher } from "@/components/states/StateSwitcher";
-import DevStatePanel from "@/components/states/DevStatePanel";
 import { useSession } from "@/lib/session-store";
-import {
-  ACTIVATION_SCENARIO_IDS,
-  ACTIVATION_SCENARIO_LABELS,
-  APPROVAL_OPTIONS,
-  DEMO_IDENTIFIERS,
-  DEMO_MOBILE,
-  PASSWORD_RULES,
-  demoIdentifierFor,
-  findScenario,
-  getCorporateInvite,
-  matchIdentity,
-  passwordMeetsRules,
-  scenarioIdFor,
-  type ActivationMatch,
-  type ActivationMode,
-  type ActivationStep,
-  type ActivationVariant,
-  type ApprovalMethod,
-} from "@/lib/activation";
+import { ACTORS } from "@/lib/mock-data";
+
+type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "pin";
 
 const RESEND_SECONDS = 30;
-const MAX_CODE_ATTEMPTS = 3;
-const SUPPORT_LINE = "+233 302 664 914";
 
-export default function ActivatePage() {
+function ActivateContent() {
   const router = useRouter();
-  const { signIn, verifyMfa, selectProfile } = useSession();
+  const searchParams = useSearchParams();
+  const personaParam = searchParams.get("persona"); // "joint" | "mobile_sync" | null
+  const isJoint = personaParam === "joint";
+  const isMobileSync = personaParam === "mobile_sync";
 
-  const [mode, setMode] = useState<ActivationMode>("retail");
-  const [step, setStep] = useState<ActivationStep>("identify");
-  const [variant, setVariant] = useState<ActivationVariant>("default");
+  const { signIn, selectProfile, verifyMfa } = useSession();
+
+  const [step, setStep] = useState<Step>("ghana_card");
+  const [ghanaCard, setGhanaCard] = useState(
+    isJoint ? "GHA-001234567-9" : isMobileSync ? "GHA-554433221-0" : "GHA-0123456789-0"
+  );
+  const [selfieTaken, setSelfieTaken] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  const [identifier, setIdentifier] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [match, setMatch] = useState<ActivationMatch | null>(null);
+  // OTP State
   const [digits, setDigits] = useState<string[]>(() => Array<string>(OTP_LENGTH).fill(""));
-  const [attempts, setAttempts] = useState(0);
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
-  const [resent, setResent] = useState(false);
+  const [otpTarget, setOtpTarget] = useState<"sms" | "email">("sms");
+
+  // Password & PIN State
   const [password, setPassword] = useState("");
-  const [revealed, setRevealed] = useState(false);
-  const [approval, setApproval] = useState<ApprovalMethod>("sms");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const invite = useMemo(() => getCorporateInvite(), []);
-
-  /**
-   * An invitation link puts the flow in corporate mode. Read from the location
-   * rather than `useSearchParams`, which would force this page under a Suspense
-   * boundary for a value that never changes after mount.
-   */
+  // OTP Countdown
   useEffect(() => {
-    if (new URLSearchParams(window.location.search).has("invite")) setMode("corporate");
-  }, []);
-
-  useEffect(() => {
-    if (step !== "verify" || countdown <= 0) return;
+    if (step !== "otp" || countdown <= 0) return;
     const t = window.setTimeout(() => setCountdown((c) => c - 1), 1000);
     return () => window.clearTimeout(t);
   }, [step, countdown]);
 
-  const destination = mode === "corporate" ? invite?.maskedMobile : match?.maskedMobile;
-  const maskedEmail = mode === "corporate" ? invite?.maskedEmail : match?.maskedEmail;
+  // Password Checklist validation
+  const hasMinLength = password.length >= 12;
+  const hasCase = /[a-z]/.test(password) && /[A-Z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  const hasSymbol = /[^A-Za-z0-9]/.test(password);
+  const passwordValid = hasMinLength && hasCase && hasNumber && hasSymbol;
 
-  /** Jump straight to any instance of the flow, seeding whatever it needs to render. */
-  const applyScenario = useCallback((id: string) => {
-    const target = findScenario(id);
-    if (!target) return;
+  // Step Progress Index (out of 8)
+  const stepNumberMap: Record<Step, number> = {
+    ghana_card: 3,
+    selfie: 4,
+    review_details: 5,
+    otp: 6,
+    password: 7,
+    pin: 8,
+  };
 
-    setMode(target.mode);
-    setStep(target.step);
-    setVariant(target.variant);
-    setBusy(false);
-    setResent(false);
-    setAttempts(target.variant === "codeLocked" ? MAX_CODE_ATTEMPTS : 0);
-    setCountdown(target.step === "verify" ? RESEND_SECONDS : 0);
-    setDigits(Array<string>(OTP_LENGTH).fill(""));
-    setPassword("");
-    setRevealed(false);
-    setApproval("sms");
-
-    // Later steps read a matched identity, so seed one when the switcher skips
-    // over the step that would normally have produced it. "Already active" is
-    // seeded from the enrolled identifier so the screen shows real details.
-    const needsMatch =
-      (target.mode === "retail" && target.step !== "identify") ||
-      target.variant === "matched" ||
-      target.variant === "alreadyActive";
-
-    if (needsMatch) {
-      const seed = demoIdentifierFor(target.variant === "alreadyActive");
-      setIdentifier(seed);
-      setMobile(DEMO_MOBILE);
-      setMatch(matchIdentity(seed, DEMO_MOBILE));
-    } else if (target.step === "identify") {
-      setIdentifier("");
-      setMobile("");
-      setMatch(null);
-    }
-  }, []);
-
-  function advance(next: ActivationStep, nextVariant: ActivationVariant = "default") {
-    setBusy(true);
-    window.setTimeout(() => {
-      setBusy(false);
-      setStep(next);
-      setVariant(nextVariant);
-      if (next === "verify") setCountdown(RESEND_SECONDS);
-    }, 600);
-  }
-
-  /**
-   * Three outcomes, not two: no match, a match we can activate, and a match
-   * that is already activated — the last one is a wrong-door, not an error.
-   */
-  function handleIdentify(e: React.FormEvent) {
+  function handleGhanaCardSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!ghanaCard.trim()) {
+      setErrorMsg("Please enter your Ghana Card number");
+      return;
+    }
+    setErrorMsg("");
     setBusy(true);
-    window.setTimeout(() => {
+    setTimeout(() => {
       setBusy(false);
-      const found = matchIdentity(identifier, mobile);
-      setMatch(found);
-      if (!found) setVariant("notFound");
-      else setVariant(found.alreadyEnrolled ? "alreadyActive" : "matched");
+      setStep("selfie");
     }, 600);
   }
 
-  function handleCode(code: string) {
-    if (busy) return;
-    // 000000 exercises the rejection path; three rejections exercise the lock.
-    if (code === "000000") {
-      const used = attempts + 1;
-      setAttempts(used);
-      setDigits(Array<string>(OTP_LENGTH).fill(""));
-      setVariant(used >= MAX_CODE_ATTEMPTS ? "codeLocked" : "codeError");
-      return;
-    }
-    setAttempts(0);
-    advance("setup");
+  function handleCaptureSelfie() {
+    setBusy(true);
+    setTimeout(() => {
+      setSelfieTaken(true);
+      setBusy(false);
+      setTimeout(() => {
+        setStep("review_details");
+      }, 500);
+    }, 1000);
   }
 
-  /**
-   * Signing in here rather than bouncing through /mfa is deliberate: the code
-   * they just entered *was* the second factor. Asking for another one in the
-   * same sitting reads as the system not trusting a step it just ran.
-   */
-  function completeActivation() {
-    const actor = mode === "corporate" ? invite?.actor : match?.actor;
-    if (!actor) {
-      router.push("/login");
-      return;
-    }
-    signIn(actor);
-    verifyMfa();
-    const corporate = actor.profiles.find((p) => p.kind === "CORPORATE");
-    if (mode === "corporate" && corporate) selectProfile(corporate);
-    router.push("/overview");
+  function handleVerifyDetails() {
+    setBusy(true);
+    setTimeout(() => {
+      setBusy(false);
+      setStep("otp");
+      setCountdown(RESEND_SECONDS);
+    }, 600);
   }
 
-  const headings = resolveHeadings(mode, step, variant, destination);
-  const canFinish = passwordMeetsRules(password);
-  /** Terminal branches end in their own button, so the footer link would double up. */
-  const cardOffersExit =
-    variant === "alreadyActive" || variant === "inviteExpired" || variant === "codeLocked";
+  function handleOtpSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const code = digits.join("");
+    if (code.length < OTP_LENGTH) {
+      setErrorMsg("Please enter the complete 6-digit code");
+      return;
+    }
+    setErrorMsg("");
+    setBusy(true);
+    setTimeout(() => {
+      setBusy(false);
+      setStep("password");
+    }, 600);
+  }
+
+  function handlePasswordSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!passwordValid) {
+      setErrorMsg("Password must satisfy all requirements");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setErrorMsg("Passwords do not match");
+      return;
+    }
+    setErrorMsg("");
+    setStep("pin");
+  }
+
+  function handlePinSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const pin = pinDigits.join("");
+    if (pin.length < 4) {
+      setErrorMsg("Please enter a 4-digit PIN");
+      return;
+    }
+    setErrorMsg("");
+    setBusy(true);
+
+    // Finalize onboarding and log user into appropriate dashboard profile
+    setTimeout(() => {
+      const targetActorId = isJoint ? "u-joint" : isMobileSync ? "u-abena" : "u-retail";
+      const actor = ACTORS.find((a) => a.id === targetActorId) || ACTORS[0];
+      signIn(actor);
+      if (actor.profiles.length > 0) {
+        selectProfile(actor.profiles[0]);
+      }
+      verifyMfa();
+      router.push("/overview");
+    }, 800);
+  }
 
   return (
-    <>
-      <StateSwitcher
-        section="12.1"
-        states={ACTIVATION_SCENARIO_IDS}
-        value={scenarioIdFor(mode, step, variant)}
-        onChange={applyScenario}
-        labels={ACTIVATION_SCENARIO_LABELS}
-      />
-      <DevStatePanel />
-
-      <AuthLayout
-        icon={headings.icon}
-        title={headings.title}
-        description={headings.description}
-        width={step === "setup" ? "wide" : "default"}
-        footer={
-          step === "done" ? null : (
-            <>
-              {mode === "retail" &&
-                step === "identify" &&
-                (variant === "default" || variant === "notFound") && (
-                <div className="mt-6 rounded-xl border border-dashed border-border bg-muted/30 p-4">
-                  <p className="mb-2.5 text-[11px] uppercase tracking-wider text-muted-foreground">
-                    Demo details · mobile {DEMO_MOBILE}
-                  </p>
-                  <div className="flex flex-col gap-1">
-                    {DEMO_IDENTIFIERS.map((demo) => (
-                      <button
-                        key={demo.value}
-                        type="button"
-                        onClick={() => {
-                          setIdentifier(demo.value);
-                          setMobile(DEMO_MOBILE);
-                          setVariant("default");
-                        }}
-                        className="flex items-center justify-between gap-3 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-muted"
-                      >
-                        <span className="text-[12px] text-foreground tabular">{demo.value}</span>
-                        <span className="text-[11px] text-muted-foreground">{demo.outcome}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Suppressed where the card already carries its own way out —
-                  two "back to sign in" exits on one screen reads as indecision. */}
-              {!cardOffersExit && (
-                <div className="mt-5 text-center">
-                  <Link
-                    href="/login"
-                    className="inline-flex items-center gap-1 text-[12px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-                  >
-                    <ArrowLeft size={13} strokeWidth={1.9} aria-hidden="true" />
-                    Back to sign in
-                  </Link>
-                </div>
-              )}
-
-              {/* Only while they're still looking — pointless once we've matched them.
-                  Now that /signup exists, this can point at it directly rather than
-                  shrugging the customer off to a branch. */}
-              {mode === "retail" &&
-                step === "identify" &&
-                (variant === "default" || variant === "notFound") && (
-                  <p className="mt-6 text-center text-[11px] leading-relaxed text-muted-foreground">
-                    Don&apos;t bank with GCB yet?{" "}
-                    <Link href="/signup" className="text-primary underline-offset-4 hover:underline">
-                      Open an account
-                    </Link>{" "}
-                    — it takes about five minutes.
-                  </p>
-                )}
-            </>
-          )
-        }
-      >
-        {/* ── Identify ─────────────────────────────────────────────────────── */}
-        {step === "identify" && mode === "retail" && variant !== "matched" && variant !== "alreadyActive" && (
-          <form onSubmit={handleIdentify} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="identifier">Ghana Card or account number</Label>
-              <Input
-                id="identifier"
-                value={identifier}
-                onChange={(e) => {
-                  setIdentifier(e.target.value);
-                  if (variant === "notFound") setVariant("default");
-                }}
-                placeholder="GHA-0123456789-0"
-                className="tabular"
-                aria-invalid={variant === "notFound" || undefined}
-                required
-              />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="mobile">Registered mobile number</Label>
-              <Input
-                id="mobile"
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel"
-                value={mobile}
-                onChange={(e) => {
-                  setMobile(e.target.value);
-                  if (variant === "notFound") setVariant("default");
-                }}
-                placeholder="+233 24 123 4567"
-                className="tabular"
-                aria-invalid={variant === "notFound" || undefined}
-                required
-              />
-              <p className="text-[12px] text-muted-foreground">
-                The number the Bank already holds for this account. We&apos;ll text a code to it.
-              </p>
-            </div>
-
-            {variant === "notFound" && (
-              <>
-                <div
-                  role="alert"
-                  className="flex items-start gap-2.5 rounded-lg bg-destructive/10 px-3 py-2.5 text-[13px] text-destructive"
-                >
-                  <AlertCircle size={15} strokeWidth={1.9} aria-hidden="true" className="mt-px shrink-0" />
-                  <span>
-                    Those two details don&apos;t match an account we can activate. Check both numbers,
-                    or call us on <span className="tabular">{SUPPORT_LINE}</span> and we&apos;ll sort
-                    it out with you.
-                  </span>
-                </div>
-
-                {/* This screen only checks the retail identifiers, so a corporate
-                    invitee who lost their email would otherwise read "no match"
-                    and have nowhere to go — access there is invite-only by design
-                    (section 12.2), so the fix is a resend, not a form field here. */}
-                <p className="text-center text-[12px] leading-relaxed text-muted-foreground">
-                  Invited by your company instead? Ask your Corporate Admin to resend the link.
-                </p>
-              </>
-            )}
-
-            <Button
-              type="submit"
-              disabled={busy || identifier.trim() === "" || mobile.trim() === ""}
-              className="mt-1 w-full"
-            >
-              {busy ? (
-                <>
-                  <Loader2 size={15} strokeWidth={2} className="animate-spin" aria-hidden="true" />
-                  Checking…
-                </>
-              ) : (
-                <>
-                  <UserSearch size={15} strokeWidth={1.9} aria-hidden="true" />
-                  Find my account
-                </>
-              )}
-            </Button>
-          </form>
-        )}
-
-        {step === "identify" && mode === "retail" && variant === "matched" && match && (
-          <div className="flex flex-col gap-4">
-            <dl className="grid grid-cols-1 gap-y-3 text-[13px]">
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-muted-foreground">Name</dt>
-                <dd className="text-foreground">{match.actor.name}</dd>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-muted-foreground">Account</dt>
-                <dd className="text-foreground tabular">{match.accountLabel}</dd>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-muted-foreground">Mobile</dt>
-                <dd className="text-foreground tabular">{match.maskedMobile}</dd>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-muted-foreground">Email</dt>
-                <dd className="truncate text-foreground">{match.maskedEmail}</dd>
-              </div>
-            </dl>
-
-            <p className="border-t border-border pt-4 text-[12px] leading-relaxed text-muted-foreground">
-              We&apos;ve hidden part of each detail for your security. Nothing is sent until you tap
-              below.
+    <AuthLayout
+      title={
+        step === "ghana_card"
+          ? "Enter your Ghana Card details"
+          : step === "selfie"
+          ? "Let's take a photo of you"
+          : step === "review_details"
+          ? isJoint
+            ? "Verify joint account details"
+            : "Review and verify your details"
+          : step === "otp"
+          ? "Enter the verification code"
+          : step === "password"
+          ? "Create a secure password"
+          : "Create your transaction PIN"
+      }
+      description={
+        step === "ghana_card"
+          ? "We will verify your identity using the National Identification Authority register."
+          : step === "selfie"
+          ? "Hold your phone at eye level. Make sure you are in a well-lit area."
+          : step === "review_details"
+          ? isJoint
+            ? "We matched your details with an active GCB Joint Account mandate."
+            : isMobileSync
+            ? "Existing GCB Mobile App profile matched. Verify your details below."
+            : "Confirm that these details match your existing GCB account."
+          : step === "otp"
+          ? isJoint
+            ? `Code sent to primary number +233 24 *** *192. Co-signatory notification sent to +233 20 *** *410.`
+            : `Code sent via ${otpTarget === "sms" ? "SMS to +233 24 *** *567" : "Email to am•••••@example.com"}`
+          : step === "password"
+          ? "Your password must be at least 12 characters and include upper, lower, numbers and symbols."
+          : "You will use this 4-digit PIN to authorize transfers, bill payments, and card top-ups."
+      }
+      stepProgress={{
+        current: stepNumberMap[step],
+        total: 8,
+      }}
+      width={step === "review_details" ? "wide" : "compact"}
+      footer={
+        <div className="flex justify-center">
+          <Link
+            href="/get-started"
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-[0.96]"
+          >
+            <ArrowLeft size={15} strokeWidth={2} />
+            Back to previous step
+          </Link>
+        </div>
+      }
+    >
+      {/* Mobile App Sync Banner (if applicable) */}
+      {isMobileSync && step === "ghana_card" && (
+        <div className="mb-4 flex items-start gap-3 rounded-2xl border border-amber-500/20 bg-[#FFFBF0] dark:bg-amber-500/10 p-3.5 text-left">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-[#B27B00] dark:text-amber-300">
+            <Smartphone size={16} />
+          </div>
+          <div>
+            <span className="text-[13px] font-semibold text-foreground">
+              Mobile App User Detected
+            </span>
+            <p className="text-[12px] text-muted-foreground">
+              We found your GCB Mobile App account (Abena Osei). Enter your Ghana Card to link your web banking.
             </p>
+          </div>
+        </div>
+      )}
 
-            <Button onClick={() => advance("verify")} disabled={busy} className="w-full">
-              {busy ? (
-                <>
-                  <Loader2 size={15} strokeWidth={2} className="animate-spin" aria-hidden="true" />
-                  Sending code…
-                </>
+      {/* Joint Account Banner (if applicable) */}
+      {isJoint && step === "ghana_card" && (
+        <div className="mb-4 flex items-start gap-3 rounded-2xl border border-amber-500/20 bg-[#FFFBF0] dark:bg-amber-500/10 p-3.5 text-left">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-[#B27B00] dark:text-amber-300">
+            <Users size={16} />
+          </div>
+          <div>
+            <span className="text-[13px] font-semibold text-foreground">
+              Joint Account Onboarding
+            </span>
+            <p className="text-[12px] text-muted-foreground">
+              Activating Internet Banking for Kwame &amp; Efua Mensah (Joint Premier Savings).
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 1: Ghana Card Input */}
+      {step === "ghana_card" && (
+        <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="ghana-card" className="text-[13px] font-medium">
+              Ghana Card Number (PIN)
+            </Label>
+            <Input
+              id="ghana-card"
+              value={ghanaCard}
+              onChange={(e) => setGhanaCard(e.target.value)}
+              placeholder="e.g. GHA-0123456789-0"
+              className="h-12 rounded-xl border-border bg-background px-4 font-mono text-[14px] uppercase tracking-wider focus-visible:ring-[#F2B200]"
+              autoFocus
+            />
+            <p className="text-[12px] text-muted-foreground">
+              Format: GHA-XXXXXXXXX-X as shown on your physical card.
+            </p>
+          </div>
+
+          {errorMsg && (
+            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
+              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            disabled={busy}
+            className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+          >
+            {busy ? (
+              <>
+                <Loader2 size={16} className="mr-2 animate-spin" />
+                Verifying card details...
+              </>
+            ) : (
+              "Continue"
+            )}
+          </Button>
+        </form>
+      )}
+
+      {/* STEP 2: Selfie / Photo Capture */}
+      {step === "selfie" && (
+        <div className="flex flex-col items-center gap-5">
+          <div className="relative flex size-44 sm:size-48 items-center justify-center overflow-hidden rounded-full border-4 border-[#F2B200]/30 bg-muted/30 shadow-inner">
+            {selfieTaken ? (
+              <div className="flex flex-col items-center gap-2 text-center text-primary">
+                <CheckCircle2 size={48} className="text-[#E5A500] dark:text-[#F2B200]" />
+                <span className="text-[13px] font-medium text-foreground">Photo captured</span>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-2 text-center text-muted-foreground">
+                <Camera size={36} strokeWidth={1.7} />
+                <span className="text-[12px]">Position face in frame</span>
+              </div>
+            )}
+          </div>
+
+          <Button
+            type="button"
+            onClick={handleCaptureSelfie}
+            disabled={busy || selfieTaken}
+            className="h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+          >
+            {busy ? (
+              <>
+                <Loader2 size={16} className="mr-2 animate-spin" />
+                Verifying facial biometrics...
+              </>
+            ) : selfieTaken ? (
+              "Verified ✓"
+            ) : (
+              "Capture photo"
+            )}
+          </Button>
+        </div>
+      )}
+
+      {/* STEP 3: Review Details */}
+      {step === "review_details" && (
+        <div className="flex flex-col gap-4">
+          {isJoint ? (
+            /* Joint Account Details Card */
+            <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 divide-y divide-border/60">
+              <div className="flex items-center justify-between pb-3">
+                <span className="text-[12.5px] text-muted-foreground">Account Holders</span>
+                <span className="text-[13.5px] font-semibold text-foreground">
+                  Kwame Mensah &amp; Efua Mensah
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-3">
+                <span className="text-[12.5px] text-muted-foreground">Account Type</span>
+                <span className="text-[13.5px] font-semibold text-foreground">
+                  Joint Premier Savings ···· 8844
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-3">
+                <span className="text-[12.5px] text-muted-foreground">Signing Mandate</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#FEF3D6] px-2 py-0.5 text-[11px] font-semibold text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200]">
+                  <Users size={12} />
+                  Both Signatures Required
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-3">
+                <span className="text-[12.5px] text-muted-foreground">Primary Phone (Kwame)</span>
+                <span className="text-[13.5px] font-semibold text-foreground">+233 24 *** *192</span>
+              </div>
+              <div className="flex items-center justify-between pt-3">
+                <span className="text-[12.5px] text-muted-foreground">Co-Signatory (Efua)</span>
+                <span className="text-[13.5px] font-semibold text-foreground">+233 20 *** *410</span>
+              </div>
+            </div>
+          ) : isMobileSync ? (
+            /* Mobile App Sync Details Card */
+            <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 divide-y divide-border/60">
+              <div className="flex items-center justify-between pb-3">
+                <span className="text-[12.5px] text-muted-foreground">Account Holder</span>
+                <span className="text-[13.5px] font-semibold text-foreground">Abena Osei</span>
+              </div>
+              <div className="flex items-center justify-between py-3">
+                <span className="text-[12.5px] text-muted-foreground">Account</span>
+                <span className="text-[13.5px] font-semibold text-foreground">Personal Current ···· 4821</span>
+              </div>
+              <div className="flex items-center justify-between py-3">
+                <span className="text-[12.5px] text-muted-foreground">Mobile App Status</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                  <Check size={12} />
+                  Linked on iOS &amp; Android
+                </span>
+              </div>
+              <div className="flex items-center justify-between pt-3">
+                <span className="text-[12.5px] text-muted-foreground">Mobile Phone</span>
+                <span className="text-[13.5px] font-semibold text-foreground">+233 24 *** *234</span>
+              </div>
+            </div>
+          ) : (
+            /* Standard Individual Account Details Card */
+            <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 divide-y divide-border/60">
+              <div className="flex items-center justify-between pb-3">
+                <span className="text-[12.5px] text-muted-foreground">Name</span>
+                <span className="text-[13.5px] font-semibold text-foreground">Ama Serwaa</span>
+              </div>
+              <div className="flex items-center justify-between py-3">
+                <span className="text-[12.5px] text-muted-foreground">Account</span>
+                <span className="text-[13.5px] font-semibold text-foreground">Reserve Savings ···· 5566</span>
+              </div>
+              <div className="flex items-center justify-between py-3">
+                <span className="text-[12.5px] text-muted-foreground">Mobile</span>
+                <span className="text-[13.5px] font-semibold text-foreground">+233 24 *** *567</span>
+              </div>
+              <div className="flex items-center justify-between pt-3">
+                <span className="text-[12.5px] text-muted-foreground">Email</span>
+                <span className="text-[13.5px] font-semibold text-foreground">am•••••@example.com</span>
+              </div>
+            </div>
+          )}
+
+          <p className="text-center text-[12px] leading-relaxed text-muted-foreground">
+            {isJoint
+              ? "Both account holders will receive security confirmation notices upon completing activation."
+              : "We have partially masked your contact details for privacy and security."}
+          </p>
+
+          <Button
+            type="button"
+            onClick={handleVerifyDetails}
+            disabled={busy}
+            className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+          >
+            {busy ? (
+              <>
+                <Loader2 size={16} className="mr-2 animate-spin" />
+                Sending verification code...
+              </>
+            ) : (
+              "Confirm and send code"
+            )}
+          </Button>
+
+          <button
+            type="button"
+            onClick={() => setStep("ghana_card")}
+            className="text-center text-[12.5px] text-muted-foreground hover:text-foreground underline underline-offset-4 active:scale-[0.96] cursor-pointer"
+          >
+            Use a different Ghana Card
+          </button>
+        </div>
+      )}
+
+      {/* STEP 4: OTP Verification */}
+      {step === "otp" && (
+        <form onSubmit={handleOtpSubmit} className="flex flex-col items-center gap-4">
+          <div className="w-full">
+            <OtpInput value={digits} onChange={setDigits} disabled={busy} autoFocus />
+          </div>
+
+          {errorMsg && (
+            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
+              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          {isJoint && (
+            <div className="w-full rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3 text-[12px] text-muted-foreground">
+              <span className="font-semibold text-foreground">Joint mandate notice:</span> An alert has also been sent to co-holder Efua (+233 20 *** *410) confirming this activation request.
+            </div>
+          )}
+
+          <div className="flex items-center justify-between w-full text-[12.5px] text-muted-foreground px-1">
+            <span>
+              {countdown > 0 ? (
+                `Resend code in ${countdown}s`
               ) : (
-                <>
-                  <MailCheck size={15} strokeWidth={1.9} aria-hidden="true" />
-                  Send code to {match.maskedMobile}
-                </>
+                <button
+                  type="button"
+                  onClick={() => setCountdown(RESEND_SECONDS)}
+                  className="font-medium text-[#B27B00] dark:text-[#F2B200] hover:underline cursor-pointer"
+                >
+                  Resend code
+                </button>
               )}
-            </Button>
+            </span>
 
             <button
               type="button"
-              onClick={() => {
-                setVariant("default");
-                setMatch(null);
-                setIdentifier("");
-                setMobile("");
-              }}
-              className="text-[12px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+              onClick={() => setOtpTarget(otpTarget === "sms" ? "email" : "sms")}
+              className="text-foreground hover:underline cursor-pointer"
             >
-              Not you? Use different details
+              Send to {otpTarget === "sms" ? "email instead" : "SMS instead"}
             </button>
           </div>
-        )}
 
-        {step === "identify" && mode === "retail" && variant === "alreadyActive" && (
-          <div className="flex flex-col gap-4">
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
-              Internet banking is already switched on{" "}
-              {match ? (
-                <>
-                  for <span className="text-foreground tabular">{match.accountLabel}</span>
-                </>
-              ) : (
-                "for this account"
-              )}
-              , so there&apos;s nothing to activate. Sign in with your password — or reset it if you
-              can&apos;t remember it.
-            </p>
-            <Button nativeButton={false} render={<Link href="/login" />} className="w-full">
-              Sign in
-            </Button>
-            <Button
-              nativeButton={false}
-              render={<Link href="/forgot-password" />}
-              variant="outline"
-              className="w-full"
-            >
-              Reset my password
-            </Button>
-          </div>
-        )}
-
-        {step === "identify" && mode === "corporate" && variant !== "inviteExpired" && invite && (
-          <div className="flex flex-col gap-4">
-            <dl className="grid grid-cols-1 gap-y-3 text-[13px]">
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-muted-foreground">Company</dt>
-                <dd className="text-foreground">{invite.company}</dd>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-muted-foreground">Your role</dt>
-                <dd className="text-foreground">{invite.roleLabel}</dd>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-muted-foreground">Invited by</dt>
-                <dd className="text-foreground">{invite.invitedBy}</dd>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-muted-foreground">Invitation expires</dt>
-                <dd className="text-foreground tabular">in {invite.expiresIn}</dd>
-              </div>
-            </dl>
-
-            <p className="border-t border-border pt-4 text-[12px] leading-relaxed text-muted-foreground">
-              Your role and what you can approve were set by {invite.invitedBy}. You only need to
-              confirm it&apos;s you and choose a password.
-            </p>
-
-            <Button onClick={() => advance("verify")} disabled={busy} className="w-full">
-              {busy ? (
-                <>
-                  <Loader2 size={15} strokeWidth={2} className="animate-spin" aria-hidden="true" />
-                  Sending code…
-                </>
-              ) : (
-                <>
-                  <MailCheck size={15} strokeWidth={1.9} aria-hidden="true" />
-                  Send code to {invite.maskedMobile}
-                </>
-              )}
-            </Button>
-
-            <p className="text-center text-[12px] leading-relaxed text-muted-foreground">
-              Not you, or not this company? Call us on{" "}
-              <span className="tabular text-foreground">{SUPPORT_LINE}</span> before continuing.
-            </p>
-          </div>
-        )}
-
-        {step === "identify" && mode === "corporate" && variant === "inviteExpired" && invite && (
-          <div className="flex flex-col gap-4">
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
-              Invitations last 7 days so an unused link can&apos;t sit around. Ask{" "}
-              {invite.invitedBy} to send a new one from Administration — it arrives in a couple of
-              minutes. Nothing about your access has changed.
-            </p>
-            <Button nativeButton={false} render={<Link href="/login" />} className="w-full">
-              Back to sign in
-            </Button>
-            <p className="text-center text-[12px] text-muted-foreground">
-              Or call us on <span className="tabular text-foreground">{SUPPORT_LINE}</span>.
-            </p>
-          </div>
-        )}
-
-        {/* ── Verify ───────────────────────────────────────────────────────── */}
-        {step === "verify" && variant !== "codeLocked" && (
-          <div className="flex flex-col gap-5">
-            <OtpInput
-              value={digits}
-              onChange={(next) => {
-                setDigits(next);
-                if (variant === "codeError") setVariant("default");
-                if (resent) setResent(false);
-              }}
-              onComplete={handleCode}
-              disabled={busy}
-              invalid={variant === "codeError"}
-            />
-
-            {variant === "codeError" && (
-              <div
-                role="alert"
-                className="flex items-start gap-2.5 rounded-lg bg-destructive/10 px-3 py-2.5 text-[13px] text-destructive"
-              >
-                <AlertCircle size={15} strokeWidth={1.9} aria-hidden="true" className="mt-px shrink-0" />
-                <span>
-                  That code isn&apos;t right or has expired.{" "}
-                  {MAX_CODE_ATTEMPTS - attempts === 1
-                    ? "One more attempt before we pause this."
-                    : `${MAX_CODE_ATTEMPTS - attempts} attempts left.`}
-                </span>
-              </div>
-            )}
-
-            {resent && (
-              <p className="rounded-lg bg-muted px-3 py-2.5 text-center text-[13px] text-muted-foreground">
-                A new code is on its way.
-              </p>
-            )}
-
-            {busy && (
-              <p className="flex items-center justify-center gap-2 text-[13px] text-muted-foreground">
-                <Loader2 size={15} strokeWidth={2} className="animate-spin" aria-hidden="true" />
-                Checking your code…
-              </p>
-            )}
-
-            <div className="flex flex-col items-center gap-2 border-t border-border pt-4">
-              <button
-                type="button"
-                disabled={countdown > 0}
-                onClick={() => {
-                  setCountdown(RESEND_SECONDS);
-                  setResent(true);
-                }}
-                className="text-[13px] text-primary underline-offset-4 hover:underline disabled:text-muted-foreground disabled:no-underline"
-              >
-                {countdown > 0 ? (
-                  <>
-                    Resend code in <span className="tabular">{countdown}s</span>
-                  </>
-                ) : (
-                  "Resend code"
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={() => setResent(true)}
-                className="text-[12px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-              >
-                Send it to {maskedEmail} instead
-              </button>
-            </div>
-          </div>
-        )}
-
-        {step === "verify" && variant === "codeLocked" && (
-          <div className="flex flex-col gap-4">
-            <div
-              role="alert"
-              className="flex items-start gap-2.5 rounded-lg bg-destructive/10 px-3 py-2.5 text-[13px] text-destructive"
-            >
-              <Lock size={15} strokeWidth={1.9} aria-hidden="true" className="mt-px shrink-0" />
-              <span>
-                Three codes in a row didn&apos;t match, so we&apos;ve paused activation for 15
-                minutes.
-              </span>
-            </div>
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
-              Your account and your money are untouched — this only pauses activation. If the code
-              never arrived, your registered number may be out of date, and we can check that with
-              you on <span className="tabular text-foreground">{SUPPORT_LINE}</span>.
-            </p>
-            <Button nativeButton={false} render={<Link href="/login" />} variant="outline" className="w-full">
-              Back to sign in
-            </Button>
-          </div>
-        )}
-
-        {/* ── Set up sign-in ───────────────────────────────────────────────── */}
-        {step === "setup" && (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (canFinish) advance("done");
-            }}
-            className="flex flex-col gap-5"
+          <Button
+            type="submit"
+            disabled={busy || digits.join("").length < OTP_LENGTH}
+            className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
           >
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={revealed ? "text" : "password"}
-                  autoComplete="new-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="pr-9"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setRevealed((r) => !r)}
-                  aria-label={revealed ? "Hide password" : "Show password"}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  {revealed ? (
-                    <EyeOff size={15} strokeWidth={1.9} />
-                  ) : (
-                    <Eye size={15} strokeWidth={1.9} />
-                  )}
-                </button>
-              </div>
-
-              {/* Unmet rules stay muted rather than red — nothing has failed yet
-                  while the customer is still typing their first password. */}
-              <ul className="mt-1 flex flex-col gap-1.5">
-                {PASSWORD_RULES.map((rule) => {
-                  const met = rule.test(password);
-                  return (
-                    <li
-                      key={rule.id}
-                      className={`flex items-center gap-2 text-[12px] ${
-                        met ? "text-foreground" : "text-muted-foreground"
-                      }`}
-                    >
-                      <Check
-                        size={14}
-                        strokeWidth={1.9}
-                        aria-hidden="true"
-                        className={met ? "text-primary" : "text-muted-foreground/40"}
-                      />
-                      {rule.label}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-
-            <fieldset className="flex flex-col gap-2 border-t border-border pt-5">
-              <legend className="sr-only">How we check it&apos;s you when you make a payment</legend>
-              <p className="text-[15px] text-foreground">Approving payments</p>
-              <p className="mb-1 text-[13px] leading-relaxed text-muted-foreground">
-                Signing in uses your password. Payments get a second check — pick the one that suits
-                how you work.
-              </p>
-
-              {APPROVAL_OPTIONS.map((option) => {
-                const selected = approval === option.id;
-                return (
-                  <label
-                    key={option.id}
-                    className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 transition-colors ${
-                      selected
-                        ? "border-[var(--active-border)] bg-[var(--active-bg)]"
-                        : "border-border bg-card hover:bg-muted/50"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="approval"
-                      value={option.id}
-                      checked={selected}
-                      onChange={() => setApproval(option.id)}
-                      className="mt-0.5 size-4 shrink-0 accent-[var(--primary)]"
-                    />
-                    <span className="flex min-w-0 flex-col">
-                      <span className="text-[13px] text-foreground tabular">
-                        {option.label({
-                          maskedMobile: destination ?? "",
-                          maskedEmail: maskedEmail ?? "",
-                        })}
-                      </span>
-                      <span className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground">
-                        {option.description}
-                      </span>
-                    </span>
-                  </label>
-                );
-              })}
-
-              <p className="mt-1 text-[12px] text-muted-foreground">
-                You can change this at any time in Settings.
-              </p>
-            </fieldset>
-
-            <Button type="submit" disabled={busy || !canFinish} className="w-full">
-              {busy ? (
-                <>
-                  <Loader2 size={15} strokeWidth={2} className="animate-spin" aria-hidden="true" />
-                  Setting up…
-                </>
-              ) : (
-                <>
-                  <KeyRound size={15} strokeWidth={1.9} aria-hidden="true" />
-                  Finish and sign in
-                </>
-              )}
-            </Button>
-
-            {!canFinish && password.length > 0 && (
-              <p className="text-center text-[12px] text-muted-foreground">
-                A few requirements above still to meet.
-              </p>
+            {busy ? (
+              <>
+                <Loader2 size={16} className="mr-2 animate-spin" />
+                Verifying code...
+              </>
+            ) : (
+              "Verify code"
             )}
-          </form>
-        )}
+          </Button>
+        </form>
+      )}
 
-        {/* ── Done ─────────────────────────────────────────────────────────── */}
-        {step === "done" && (
-          <div className="flex flex-col gap-4">
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
-              We&apos;ve emailed a confirmation to{" "}
-              <span className="text-foreground">{maskedEmail}</span>. This activation is recorded in
-              the audit log with the time and the device used.
-            </p>
-            <Button onClick={completeActivation} className="w-full">
-              Go to my accounts
-            </Button>
-            <p className="text-center text-[12px] leading-relaxed text-muted-foreground">
-              Choosing a default account and statement alerts takes about two minutes — we&apos;ll
-              offer that on your overview, whenever you want it.
-            </p>
+      {/* STEP 5: Password Creation */}
+      {step === "password" && (
+        <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="create-pass" className="text-[13px] font-medium">
+              Create password
+            </Label>
+            <div className="relative">
+              <Input
+                id="create-pass"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Choose a strong password"
+                className="h-12 rounded-xl border-border bg-background pr-10 text-[14px] focus-visible:ring-[#F2B200]"
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
           </div>
-        )}
-      </AuthLayout>
-    </>
+
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="confirm-pass" className="text-[13px] font-medium">
+              Confirm password
+            </Label>
+            <Input
+              id="confirm-pass"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Re-enter password"
+              className="h-12 rounded-xl border-border bg-background text-[14px] focus-visible:ring-[#F2B200]"
+            />
+          </div>
+
+          {/* Password Checklist */}
+          <div className="rounded-2xl border border-border/80 bg-muted/20 p-3.5 space-y-2">
+            <span className="text-[12px] font-semibold text-foreground">
+              Password requirements:
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12px]">
+              <div className={`flex items-center gap-1.5 ${hasMinLength ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
+                <Check size={14} className={hasMinLength ? "opacity-100" : "opacity-30"} />
+                <span>At least 12 characters</span>
+              </div>
+              <div className={`flex items-center gap-1.5 ${hasCase ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
+                <Check size={14} className={hasCase ? "opacity-100" : "opacity-30"} />
+                <span>Upper and lower case</span>
+              </div>
+              <div className={`flex items-center gap-1.5 ${hasNumber ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
+                <Check size={14} className={hasNumber ? "opacity-100" : "opacity-30"} />
+                <span>At least 1 number</span>
+              </div>
+              <div className={`flex items-center gap-1.5 ${hasSymbol ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
+                <Check size={14} className={hasSymbol ? "opacity-100" : "opacity-30"} />
+                <span>At least 1 special character</span>
+              </div>
+            </div>
+          </div>
+
+          {errorMsg && (
+            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
+              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+          >
+            Save password and continue
+          </Button>
+        </form>
+      )}
+
+      {/* STEP 6: 4-digit PIN */}
+      {step === "pin" && (
+        <form onSubmit={handlePinSubmit} className="flex flex-col items-center gap-5">
+          <div className="flex items-center justify-center gap-3">
+            {pinDigits.map((digit, idx) => (
+              <Input
+                key={idx}
+                id={`pin-${idx}`}
+                type="password"
+                maxLength={1}
+                value={digit}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "");
+                  const newPin = [...pinDigits];
+                  newPin[idx] = val;
+                  setPinDigits(newPin);
+                  if (val && idx < 3) {
+                    const nextInput = document.getElementById(`pin-${idx + 1}`);
+                    nextInput?.focus();
+                  }
+                }}
+                className="size-13 rounded-2xl border-2 border-border/80 text-center font-mono text-[22px] font-bold shadow-sm focus-visible:border-[#F2B200] focus-visible:ring-[#F2B200]"
+                autoFocus={idx === 0}
+              />
+            ))}
+          </div>
+
+          {errorMsg && (
+            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
+              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            disabled={busy || pinDigits.join("").length < 4}
+            className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+          >
+            {busy ? (
+              <>
+                <Loader2 size={16} className="mr-2 animate-spin" />
+                Completing activation...
+              </>
+            ) : (
+              "Finish activation"
+            )}
+          </Button>
+        </form>
+      )}
+    </AuthLayout>
   );
 }
 
-/* ── Headings ──────────────────────────────────────────────────────────────── */
-
-function resolveHeadings(
-  mode: ActivationMode,
-  step: ActivationStep,
-  variant: ActivationVariant,
-  destination?: string,
-) {
-  if (step === "done") {
-    return {
-      icon: CheckCircle2,
-      title: "You're in",
-      description: "Your accounts are ready.",
-    };
-  }
-
-  if (step === "setup") {
-    return {
-      icon: KeyRound,
-      title: "Set up how you sign in",
-      description: "One password to get in, and one way to approve payments.",
-    };
-  }
-
-  if (step === "verify") {
-    if (variant === "codeLocked") {
-      return {
-        icon: Lock,
-        title: "Activation paused",
-        description: "Nothing has changed on your account.",
-      };
-    }
-    return {
-      icon: ShieldCheck,
-      title: "Enter the code we sent",
-      description: (
-        <>
-          6-digit code sent to <span className="tabular">{destination}</span>. It expires in 5
-          minutes.
-        </>
-      ),
-    };
-  }
-
-  if (mode === "corporate") {
-    return variant === "inviteExpired"
-      ? {
-          icon: Building2,
-          title: "This invitation has expired",
-          description: "It only takes a moment to get a new one.",
-        }
-      : {
-          icon: Building2,
-          title: "You've been invited to NIBS",
-          description: "Confirm it's you, and you're in.",
-        };
-  }
-
-  if (variant === "alreadyActive") {
-    return {
-      icon: CheckCircle2,
-      title: "You're already set up",
-      description: "This account has internet banking switched on.",
-    };
-  }
-
-  if (variant === "matched") {
-    return {
-      icon: UserSearch,
-      title: "We found you",
-      description: "Check these are yours before we send a code.",
-    };
-  }
-
-  return {
-    icon: UserSearch,
-    title: "Let's find your account",
-    description: "Two numbers we already hold — then a code, then you're in.",
-  };
+export default function ActivatePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background animate-pulse" />}>
+      <ActivateContent />
+    </Suspense>
+  );
 }
