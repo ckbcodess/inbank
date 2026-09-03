@@ -42,7 +42,7 @@ import { useGroupsStore, type PaymentGroup } from "@/lib/groups-store";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 
 type PayeeType = "person" | "biller" | "number";
-type SegmentType = "all" | PayeeType | "group";
+type SegmentType = PayeeType | "group";
 type Payee = { id: string; name: string; type: PayeeType; detail: string; verified: boolean };
 
 const TYPE_META: Record<PayeeType, { label: string; icon: React.ElementType; detailLabel: string; detailHint: string }> = {
@@ -86,7 +86,6 @@ function seedPayees(): Payee[] {
 }
 
 const SEGMENTS: { key: SegmentType; label: string }[] = [
-  { key: "all", label: "All" },
   { key: "person", label: "People" },
   { key: "biller", label: "Billers" },
   { key: "number", label: "Numbers" },
@@ -102,7 +101,7 @@ export default function BeneficiariesPage() {
   const { groups, deleteGroup } = useGroupsStore();
 
   const [payees, setPayees] = useState<Payee[]>(seedPayees);
-  const [segment, setSegment] = useState<SegmentType>("all");
+  const [segment, setSegment] = useState<SegmentType>("person");
   const [query, setQuery] = useState("");
 
   // Payee Dialog state
@@ -125,7 +124,6 @@ export default function BeneficiariesPage() {
 
   const counts = useMemo(
     () => ({
-      all: payees.length + groups.length,
       person: payees.filter((p) => p.type === "person").length,
       biller: payees.filter((p) => p.type === "biller").length,
       number: payees.filter((p) => p.type === "number").length,
@@ -138,7 +136,7 @@ export default function BeneficiariesPage() {
 
   const filteredPayees = useMemo(() => {
     return payees
-      .filter((p) => segment === "all" || p.type === segment)
+      .filter((p) => p.type === segment)
       .filter((p) => !q || p.name.toLowerCase().includes(q) || p.detail.toLowerCase().includes(q))
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [payees, segment, q]);
@@ -159,7 +157,7 @@ export default function BeneficiariesPage() {
   const canSave = form.name.trim() !== "" && form.detail.trim() !== "";
 
   function openNew() {
-    setForm({ name: "", type: segment === "all" || segment === "group" ? "person" : segment, detail: "" });
+    setForm({ name: "", type: segment === "group" ? "person" : segment, detail: "" });
     setFormOpen(true);
   }
   function openEdit(p: Payee) {
@@ -393,92 +391,26 @@ export default function BeneficiariesPage() {
             </ul>
           )
         ) : (
-          /* INDIVIDUAL PAYEES & ALL TAB */
-          <>
-            {segment === "all" && filteredGroups.length > 0 && (
-              <div className="border-b border-border bg-muted/20 p-3 px-4 flex items-center justify-between">
-                <span className="text-[12px] uppercase tracking-wider text-muted-foreground font-medium">
-                  Payment Groups ({filteredGroups.length})
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setSegment("group")}
-                  className="text-[12px] text-primary hover:underline font-medium cursor-pointer"
-                >
-                  View all groups →
-                </button>
-              </div>
-            )}
-
-            {segment === "all" && filteredGroups.length > 0 && (
-              <ul className="divide-y divide-border border-b border-border">
-                {filteredGroups.slice(0, 2).map((g) => (
-                  <li key={g.id} className="flex items-center justify-between gap-4 p-4 transition-colors hover:bg-muted/40">
-                    <span className="flex min-w-0 flex-1 items-center gap-3">
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                        <Users size={18} strokeWidth={1.8} />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="flex items-center gap-2">
-                          <span className="truncate text-[14px] font-medium text-foreground">{g.name}</span>
-                          <span className="text-[11px] font-medium bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
-                            {g.members.length} members
-                          </span>
-                        </span>
-                        <span className="mt-0.5 truncate text-[12px] text-muted-foreground">
-                          {g.splitType === "equal" ? `Equal split · GHS ${g.defaultPerMemberAmount} each` : "Custom split"}
-                        </span>
-                      </span>
-                    </span>
-
-                    <span className="flex shrink-0 items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        nativeButton={false}
-                        render={
-                          <Link
-                            href={`/payments/send?rail=group&group=${encodeURIComponent(g.name)}`}
-                          />
-                        }
-                        aria-label={`Send to ${g.name}`}
-                      >
-                        <Send size={15} strokeWidth={1.8} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        onClick={() => {
-                          setEditingGroup(g);
-                          setGroupModalOpen(true);
-                        }}
-                        aria-label={`Edit ${g.name}`}
-                      >
-                        <Pencil size={15} strokeWidth={1.8} />
-                      </Button>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            {filteredPayees.length === 0 && (segment !== "all" || filteredGroups.length === 0) ? (
-              <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
-                <p className="text-[14px] font-medium text-foreground">
-                  {query ? "No beneficiaries match that search" : "No beneficiaries in this tab"}
-                </p>
-                <p className="text-[12.5px] text-muted-foreground">
-                  {query ? "Try a different name or number." : "Add one to save time on your next transfer."}
-                </p>
-                {!query && (
-                  <Button variant="outline" size="sm" onClick={openNew} className="mt-2">
-                    <Plus size={14} /> Add beneficiary
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <ul className="divide-y divide-border">
-                {filteredPayees.map((p) => {
+          /* INDIVIDUAL PAYEES (PEOPLE / BILLERS / NUMBERS) */
+          filteredPayees.length === 0 ? (
+            <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
+              <p className="text-[14px] font-medium text-foreground">
+                {query
+                  ? "No beneficiaries match that search"
+                  : `No ${segment === "person" ? "contacts" : segment === "biller" ? "billers" : "numbers"} saved yet`}
+              </p>
+              <p className="text-[12.5px] text-muted-foreground">
+                {query ? "Try a different name or number." : "Add one to save time on your next transfer."}
+              </p>
+              {!query && (
+                <Button variant="outline" size="sm" onClick={openNew} className="mt-2">
+                  <Plus size={14} /> Add beneficiary
+                </Button>
+              )}
+            </div>
+          ) : (
+            <ul className="divide-y divide-border">
+              {filteredPayees.map((p) => {
                   const Icon = TYPE_META[p.type].icon;
                   return (
                     <li key={p.id} className="flex items-center justify-between gap-4 p-4 transition-colors hover:bg-muted/40">
@@ -539,9 +471,8 @@ export default function BeneficiariesPage() {
                   );
                 })}
               </ul>
-            )}
-          </>
-        )}
+            )
+          )}
       </section>
 
       {/* Add / Edit Individual Payee Dialog */}
