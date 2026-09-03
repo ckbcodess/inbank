@@ -43,10 +43,10 @@ function TooltipContent({
         <TooltipPrimitive.Popup
           data-slot="tooltip-content"
           className={cn(
-            "relative z-50 max-w-xs origin-(--transform-origin) rounded-md px-3 py-1.5 text-xs text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none",
-            "bg-popover/70 before:pointer-events-none before:absolute before:inset-0 before:-z-1 before:rounded-[inherit] before:backdrop-blur-2xl before:backdrop-saturate-150",
-            "duration-100 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
-            "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2",
+            "relative z-50 max-w-xs origin-(--transform-origin) rounded-lg px-2.5 py-1.5 text-[11.5px] font-medium text-foreground tracking-tight shadow-md border border-border/80 dark:border-[#333] outline-none select-none pointer-events-none",
+            "bg-popover/90 dark:bg-[#1a1a1a]/95 backdrop-blur-md",
+            "duration-150 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+            "data-[side=bottom]:slide-in-from-top-1.5 data-[side=top]:slide-in-from-bottom-1.5 data-[side=left]:slide-in-from-right-1.5 data-[side=right]:slide-in-from-left-1.5",
             className
           )}
           {...props}
@@ -58,4 +58,29 @@ function TooltipContent({
   )
 }
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+function SimpleTooltip({
+  content,
+  children,
+  side = "top",
+  align = "center",
+  sideOffset = 6,
+}: {
+  content: React.ReactNode;
+  children: React.ReactElement;
+  side?: "top" | "bottom" | "left" | "right";
+  align?: "center" | "start" | "end";
+  sideOffset?: number;
+}) {
+  if (!content) return children;
+  return (
+    <Tooltip>
+      <TooltipTrigger render={children} />
+      <TooltipContent side={side} align={align} sideOffset={sideOffset}>
+        {content}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, SimpleTooltip }
+

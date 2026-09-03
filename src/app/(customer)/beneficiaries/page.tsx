@@ -27,6 +27,7 @@ import {
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SimpleTooltip } from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -339,15 +340,16 @@ export default function BeneficiariesPage() {
               )}
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => setIsSearchOpen(true)}
-              className="flex size-9 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/70 active:scale-95 transition-all cursor-pointer"
-              aria-label="Search beneficiaries"
-              title="Search"
-            >
-              <Search size={18} strokeWidth={1.8} />
-            </button>
+            <SimpleTooltip content="Search beneficiaries" side="left">
+              <button
+                type="button"
+                onClick={() => setIsSearchOpen(true)}
+                className="flex size-9 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/70 active:scale-95 transition-all cursor-pointer"
+                aria-label="Search beneficiaries"
+              >
+                <Search size={18} strokeWidth={1.8} />
+              </button>
+            </SimpleTooltip>
           )}
         </div>
       </div>
@@ -429,39 +431,45 @@ export default function BeneficiariesPage() {
                         </span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          nativeButton={false}
-                          render={
-                            <Link
-                              href={`/payments/send?rail=group&group=${encodeURIComponent(g.name)}`}
-                            />
-                          }
-                          aria-label={`Send to ${g.name}`}
-                        >
-                          <Send size={15} strokeWidth={1.8} />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          onClick={() => {
-                            setEditingGroup(g);
-                            setGroupModalOpen(true);
-                          }}
-                          aria-label={`Edit ${g.name}`}
-                        >
-                          <Pencil size={15} strokeWidth={1.8} />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          onClick={() => setRemoveGroupId(g.id)}
-                          aria-label={`Delete ${g.name}`}
-                          className="text-muted-foreground hover:text-destructive"
-                        >
-                          <Trash2 size={15} strokeWidth={1.8} />
-                        </Button>
+                        <SimpleTooltip content={`Send to ${g.name}`}>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            nativeButton={false}
+                            render={
+                              <Link
+                                href={`/payments/send?rail=group&group=${encodeURIComponent(g.name)}`}
+                              />
+                            }
+                            aria-label={`Send to ${g.name}`}
+                          >
+                            <Send size={15} strokeWidth={1.8} />
+                          </Button>
+                        </SimpleTooltip>
+                        <SimpleTooltip content={`Edit ${g.name}`}>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            onClick={() => {
+                              setEditingGroup(g);
+                              setGroupModalOpen(true);
+                            }}
+                            aria-label={`Edit ${g.name}`}
+                          >
+                            <Pencil size={15} strokeWidth={1.8} />
+                          </Button>
+                        </SimpleTooltip>
+                        <SimpleTooltip content={`Delete ${g.name}`}>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            onClick={() => setRemoveGroupId(g.id)}
+                            aria-label={`Delete ${g.name}`}
+                            className="text-muted-foreground hover:text-destructive"
+                          >
+                            <Trash2 size={15} strokeWidth={1.8} />
+                          </Button>
+                        </SimpleTooltip>
                       </div>
                     </div>
                   </li>
@@ -520,31 +528,37 @@ export default function BeneficiariesPage() {
                       </span>
 
                       <span className="flex shrink-0 items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          nativeButton={false}
-                          render={
-                            <Link
-                              href={`/payments/send?rail=${p.type === "number" ? "wallet" : p.type === "biller" ? "bill" : "bank"}&recipient=${encodeURIComponent(p.name)}`}
-                            />
-                          }
-                          aria-label={`Send to ${p.name}`}
-                        >
-                          <Send size={15} strokeWidth={1.8} />
-                        </Button>
-                        <Button variant="ghost" size="icon-sm" onClick={() => openEdit(p)} aria-label={`Edit ${p.name}`}>
-                          <Pencil size={15} strokeWidth={1.8} />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          onClick={() => setRemoveId(p.id)}
-                          aria-label={`Remove ${p.name}`}
-                          className="text-muted-foreground hover:text-destructive"
-                        >
-                          <Trash2 size={15} strokeWidth={1.8} />
-                        </Button>
+                        <SimpleTooltip content={`Send money to ${p.name}`}>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            nativeButton={false}
+                            render={
+                              <Link
+                                href={`/payments/send?rail=${p.type === "number" ? "wallet" : p.type === "biller" ? "bill" : "bank"}&recipient=${encodeURIComponent(p.name)}`}
+                              />
+                            }
+                            aria-label={`Send to ${p.name}`}
+                          >
+                            <Send size={15} strokeWidth={1.8} />
+                          </Button>
+                        </SimpleTooltip>
+                        <SimpleTooltip content={`Edit ${p.name}`}>
+                          <Button variant="ghost" size="icon-sm" onClick={() => openEdit(p)} aria-label={`Edit ${p.name}`}>
+                            <Pencil size={15} strokeWidth={1.8} />
+                          </Button>
+                        </SimpleTooltip>
+                        <SimpleTooltip content={`Remove ${p.name}`}>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            onClick={() => setRemoveId(p.id)}
+                            aria-label={`Remove ${p.name}`}
+                            className="text-muted-foreground hover:text-destructive"
+                          >
+                            <Trash2 size={15} strokeWidth={1.8} />
+                          </Button>
+                        </SimpleTooltip>
                       </span>
                     </li>
                   );

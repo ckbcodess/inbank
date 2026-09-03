@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 import { DevStateProvider } from "@/components/providers/DevStateProvider";
 import PersonaFlowSwitcher from "@/components/dev/PersonaFlowSwitcher";
 
+import { TooltipProvider } from "@/components/ui/tooltip";
+
 const geist = Geist({ variable: "--font-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
@@ -22,13 +24,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning className={cn(geist.variable, geistMono.variable, "font-sans")}>
       <body className="antialiased">
         <ThemeProvider>
-          <AmountVisibilityProvider>
-            <DevStateProvider>
-              <Toaster position="top-right" richColors />
-              {children}
-              <PersonaFlowSwitcher />
-            </DevStateProvider>
-          </AmountVisibilityProvider>
+          <TooltipProvider delay={200}>
+            <AmountVisibilityProvider>
+              <DevStateProvider>
+                <Toaster position="top-right" richColors />
+                {children}
+                <PersonaFlowSwitcher />
+              </DevStateProvider>
+            </AmountVisibilityProvider>
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -18,6 +18,7 @@ import {
 import PageHeader from "@/components/layout/PageHeader";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SimpleTooltip } from "@/components/ui/tooltip";
 import {
   Dialog,
   DialogContent,
@@ -196,15 +197,17 @@ export default function StandingOrdersPage() {
                           </>
                         )}
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setCancelId(si.id)}
-                        className="size-8 p-0 text-muted-foreground hover:text-destructive"
-                        aria-label="Cancel standing order"
-                      >
-                        <Trash2 size={13} strokeWidth={1.8} />
-                      </Button>
+                      <SimpleTooltip content="Cancel standing order">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setCancelId(si.id)}
+                          className="size-8 p-0 text-muted-foreground hover:text-destructive cursor-pointer"
+                          aria-label="Cancel standing order"
+                        >
+                          <Trash2 size={13} strokeWidth={1.8} />
+                        </Button>
+                      </SimpleTooltip>
                     </div>
                   </div>
                 </div>

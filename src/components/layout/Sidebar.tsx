@@ -32,6 +32,7 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SimpleTooltip } from "@/components/ui/tooltip";
 import type { NavItem } from "@/lib/navigation";
 import type { Shell } from "@/lib/roles";
 
@@ -138,20 +139,22 @@ export default function Sidebar({
         }`}
       >
         {collapsed ? (
-          <button
-            onClick={onToggleCollapse}
-            className="group/logo relative hidden size-7 flex-shrink-0 items-center justify-center lg:flex"
-            aria-label="Expand sidebar"
-          >
-            <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-150 group-hover/logo:opacity-0">
-              <BrandIcon size={16} strokeWidth={2.1} className="text-foreground" />
-            </span>
-            <PanelLeftOpen
-              size={16}
-              strokeWidth={1.7}
-              className="relative text-foreground opacity-0 transition-opacity duration-150 group-hover/logo:opacity-100"
-            />
-          </button>
+          <SimpleTooltip content="Expand sidebar" side="right" sideOffset={12}>
+            <button
+              onClick={onToggleCollapse}
+              className="group/logo relative hidden size-7 flex-shrink-0 items-center justify-center lg:flex cursor-pointer"
+              aria-label="Expand sidebar"
+            >
+              <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-150 group-hover/logo:opacity-0">
+                <BrandIcon size={16} strokeWidth={2.1} className="text-foreground" />
+              </span>
+              <PanelLeftOpen
+                size={16}
+                strokeWidth={1.7}
+                className="relative text-foreground opacity-0 transition-opacity duration-150 group-hover/logo:opacity-100"
+              />
+            </button>
+          </SimpleTooltip>
         ) : (
           <>
             <div className="flex min-w-0 items-center gap-2">
@@ -160,15 +163,17 @@ export default function Sidebar({
                 {brandLabel}
               </span>
             </div>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={onToggleCollapse}
-              className="hidden lg:flex"
-              aria-label="Collapse sidebar"
-            >
-              <PanelLeftClose size={16} strokeWidth={1.9} />
-            </Button>
+            <SimpleTooltip content="Collapse sidebar" side="bottom">
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                onClick={onToggleCollapse}
+                className="hidden lg:flex"
+                aria-label="Collapse sidebar"
+              >
+                <PanelLeftClose size={16} strokeWidth={1.9} />
+              </Button>
+            </SimpleTooltip>
           </>
         )}
 
@@ -200,10 +205,11 @@ export default function Sidebar({
 
                 if (collapsed) {
                   return (
-                    <div key={item.key} className="group relative">
+                    <SimpleTooltip key={item.key} content={item.label} side="right" sideOffset={12}>
                       <Link
                         href={item.path}
                         onClick={onClose}
+                        aria-label={item.label}
                         className={`relative flex h-9 w-full items-center justify-center rounded-md transition-all duration-150 ${
                           active
                             ? "bg-[var(--active-bg)] text-[var(--active-border)]"
@@ -215,10 +221,7 @@ export default function Sidebar({
                         )}
                         <Icon size={18} strokeWidth={1.7} />
                       </Link>
-                      <div className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-foreground px-2.5 py-1.5 text-[12px] text-background opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100">
-                        {item.label}
-                      </div>
-                    </div>
+                    </SimpleTooltip>
                   );
                 }
 

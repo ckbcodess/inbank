@@ -20,6 +20,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SimpleTooltip } from "@/components/ui/tooltip";
 import type { PaymentCard } from "@/lib/mock-data";
 import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 
@@ -181,15 +182,16 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
                 <div className="size-[23px] rounded-full bg-[#ff5f00] opacity-90" />
               </div>
 
-              <button
-                type="button"
-                onClick={toggleAmountVisibility}
-                aria-label={showAmounts ? "Hide balance" : "Show balance"}
-                title={showAmounts ? "Hide balance" : "Show balance"}
-                className="size-7 rounded-full bg-slate-900/10 hover:bg-slate-900/20 text-slate-700 dark:text-slate-200 flex items-center justify-center transition-colors cursor-pointer"
-              >
-                {showAmounts ? <Eye size={14} strokeWidth={2} /> : <EyeOff size={14} strokeWidth={2} />}
-              </button>
+              <SimpleTooltip content={showAmounts ? "Hide balance" : "Show balance"}>
+                <button
+                  type="button"
+                  onClick={toggleAmountVisibility}
+                  aria-label={showAmounts ? "Hide balance" : "Show balance"}
+                  className="size-7 rounded-full bg-slate-900/10 hover:bg-slate-900/20 text-slate-700 dark:text-slate-200 flex items-center justify-center transition-colors cursor-pointer"
+                >
+                  {showAmounts ? <Eye size={14} strokeWidth={2} /> : <EyeOff size={14} strokeWidth={2} />}
+                </button>
+              </SimpleTooltip>
             </div>
 
             {/* Bottom Content: Subtitle & Balance */}
@@ -210,14 +212,16 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
           <div className="flex items-center justify-center gap-8 py-1">
             {/* Action 1: Card Details */}
             <div className="flex flex-col items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setActiveModal("details")}
-                className="size-[49px] rounded-full bg-[#f1f1f1] hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-[#0a0a0a] dark:text-white flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95"
-                title="View Card Details"
-              >
-                <Eye size={22} strokeWidth={1.75} />
-              </button>
+              <SimpleTooltip content="View card credentials & numbers">
+                <button
+                  type="button"
+                  onClick={() => setActiveModal("details")}
+                  className="size-[49px] rounded-full bg-[#f1f1f1] hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-[#0a0a0a] dark:text-white flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95"
+                  aria-label="View Card Details"
+                >
+                  <Eye size={22} strokeWidth={1.75} />
+                </button>
+              </SimpleTooltip>
               <span className="text-[12.5px] font-normal text-foreground whitespace-nowrap">
                 Card Details
               </span>
@@ -225,14 +229,16 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
 
             {/* Action 2: Show PIN */}
             <div className="flex flex-col items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setActiveModal("pin")}
-                className="size-[49px] rounded-full bg-[#f1f1f1] hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-[#0a0a0a] dark:text-white flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95"
-                title="Show Card PIN"
-              >
-                <Grid size={21} strokeWidth={1.75} />
-              </button>
+              <SimpleTooltip content="View card PIN">
+                <button
+                  type="button"
+                  onClick={() => setActiveModal("pin")}
+                  className="size-[49px] rounded-full bg-[#f1f1f1] hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-[#0a0a0a] dark:text-white flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95"
+                  aria-label="Show Card PIN"
+                >
+                  <Grid size={21} strokeWidth={1.75} />
+                </button>
+              </SimpleTooltip>
               <span className="text-[12.5px] font-normal text-foreground whitespace-nowrap">
                 Show PIN
               </span>
@@ -240,18 +246,20 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
 
             {/* Action 3: Freeze Card */}
             <div className="flex flex-col items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setActiveModal("freeze")}
-                className={`size-[49px] rounded-full flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 ${
-                  isFrozen
-                    ? "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 hover:bg-amber-200"
-                    : "bg-[#f1f1f1] hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-[#0a0a0a] dark:text-white"
-                }`}
-                title={isFrozen ? "Unfreeze card" : "Freeze card"}
-              >
-                <Snowflake size={21} strokeWidth={1.75} />
-              </button>
+              <SimpleTooltip content={isFrozen ? "Unfreeze card transactions" : "Freeze card transactions"}>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal("freeze")}
+                  className={`size-[49px] rounded-full flex items-center justify-center transition-all cursor-pointer shadow-2xs hover:scale-105 active:scale-95 ${
+                    isFrozen
+                      ? "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 hover:bg-amber-200"
+                      : "bg-[#f1f1f1] hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700/80 text-[#0a0a0a] dark:text-white"
+                  }`}
+                  aria-label={isFrozen ? "Unfreeze card" : "Freeze card"}
+                >
+                  <Snowflake size={21} strokeWidth={1.75} />
+                </button>
+              </SimpleTooltip>
               <span className="text-[12.5px] font-normal text-foreground whitespace-nowrap">
                 {isFrozen ? "Unfreeze card" : "Freeze card"}
               </span>
@@ -550,14 +558,17 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
                   {displayFullNumber}
                 </span>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleCopy(displayFullNumber.replace(/\s/g, ""), "Card Number")}
-                className="size-8 p-0"
-              >
-                <Copy size={15} />
-              </Button>
+              <SimpleTooltip content="Copy card number">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleCopy(displayFullNumber.replace(/\s/g, ""), "Card Number")}
+                  className="size-8 p-0 cursor-pointer"
+                  aria-label="Copy card number"
+                >
+                  <Copy size={15} />
+                </Button>
+              </SimpleTooltip>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -568,14 +579,17 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
                     {displayExpiry}
                   </span>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleCopy(displayExpiry, "Expiry Date")}
-                  className="size-8 p-0"
-                >
-                  <Copy size={14} />
-                </Button>
+                <SimpleTooltip content="Copy expiry date">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleCopy(displayExpiry, "Expiry Date")}
+                    className="size-8 p-0 cursor-pointer"
+                    aria-label="Copy expiry date"
+                  >
+                    <Copy size={14} />
+                  </Button>
+                </SimpleTooltip>
               </div>
 
               <div className="flex items-center justify-between p-3 rounded-xl bg-muted/60 border border-border">
@@ -585,14 +599,17 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
                     {displayCvv}
                   </span>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleCopy(displayCvv, "CVC")}
-                  className="size-8 p-0"
-                >
-                  <Copy size={14} />
-                </Button>
+                <SimpleTooltip content="Copy CVV security code">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleCopy(displayCvv, "CVC")}
+                    className="size-8 p-0 cursor-pointer"
+                    aria-label="Copy CVV"
+                  >
+                    <Copy size={14} />
+                  </Button>
+                </SimpleTooltip>
               </div>
             </div>
 

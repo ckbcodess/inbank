@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { formatMoney, toLocalEquivalent, type Account } from "@/lib/mock-data";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
+import { SimpleTooltip } from "@/components/ui/tooltip";
 
 interface LiquidityDeckProps {
   accounts: Account[];
@@ -81,14 +82,16 @@ export function LiquidityDeck({
             <span className="text-[12.5px] font-medium text-muted-foreground uppercase tracking-wider">
               Total Spendable Liquidity
             </span>
-            <button
-              type="button"
-              onClick={toggleAmountVisibility}
-              className="flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-              title={showAmounts ? "Hide balances" : "Show balances"}
-            >
-              {showAmounts ? <Eye size={13} /> : <EyeOff size={13} />}
-            </button>
+            <SimpleTooltip content={showAmounts ? "Hide balances" : "Show balances"}>
+              <button
+                type="button"
+                onClick={toggleAmountVisibility}
+                className="flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+                aria-label={showAmounts ? "Hide balances" : "Show balances"}
+              >
+                {showAmounts ? <Eye size={13} /> : <EyeOff size={13} />}
+              </button>
+            </SimpleTooltip>
           </div>
 
           {/* Currency Pill Switcher */}

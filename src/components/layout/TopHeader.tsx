@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ROLE_LABEL, type Actor, type Profile } from "@/lib/roles";
+import { SimpleTooltip } from "@/components/ui/tooltip";
 import HeaderBreadcrumbs from "./HeaderBreadcrumbs";
 
 interface TopHeaderProps {
@@ -97,53 +98,67 @@ export default function TopHeader({
 
         {/* FR-22 — notifications */}
         {actor.shell === "customer" && (
-          <Button
-            nativeButton={false}
-            render={<Link href="/notifications" />}
-            variant="ghost"
-            size="icon-sm"
-            className="relative"
-            aria-label={
-              unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"
-            }
+          <SimpleTooltip
+            content={unreadCount > 0 ? `${unreadCount} unread notification${unreadCount > 1 ? "s" : ""}` : "Notifications"}
+            side="bottom"
           >
-            <Bell size={16} strokeWidth={1.9} />
-            {unreadCount > 0 && (
-              <span
-                className="absolute right-1 top-1 size-2 rounded-full bg-destructive ring-2 ring-card"
-                aria-hidden
-              />
-            )}
-          </Button>
+            <Button
+              nativeButton={false}
+              render={<Link href="/notifications" />}
+              variant="ghost"
+              size="icon-sm"
+              className="relative"
+              aria-label={
+                unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"
+              }
+            >
+              <Bell size={16} strokeWidth={1.9} />
+              {unreadCount > 0 && (
+                <span
+                  className="absolute right-1 top-1 size-2 rounded-full bg-destructive ring-2 ring-card"
+                  aria-hidden
+                />
+              )}
+            </Button>
+          </SimpleTooltip>
         )}
 
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={toggleAmountVisibility}
-          aria-label={showAmounts ? "Hide cash amounts" : "Show cash amounts"}
-          title={showAmounts ? "Hide cash amounts" : "Show cash amounts"}
-          className="relative text-muted-foreground hover:text-foreground"
+        <SimpleTooltip
+          content={showAmounts ? "Hide cash amounts" : "Show cash amounts"}
+          side="bottom"
         >
-          {mounted && showAmounts ? (
-            <Eye size={16} strokeWidth={1.9} />
-          ) : (
-            <EyeOff size={16} strokeWidth={1.9} className="text-amber-600 dark:text-amber-400" />
-          )}
-        </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={toggleAmountVisibility}
+            aria-label={showAmounts ? "Hide cash amounts" : "Show cash amounts"}
+            className="relative text-muted-foreground hover:text-foreground"
+          >
+            {mounted && showAmounts ? (
+              <Eye size={16} strokeWidth={1.9} />
+            ) : (
+              <EyeOff size={16} strokeWidth={1.9} className="text-amber-600 dark:text-amber-400" />
+            )}
+          </Button>
+        </SimpleTooltip>
 
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-          aria-label="Toggle theme"
+        <SimpleTooltip
+          content={resolvedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          side="bottom"
         >
-          {mounted && resolvedTheme === "dark" ? (
-            <Sun size={16} strokeWidth={1.9} />
-          ) : (
-            <Moon size={16} strokeWidth={1.9} />
-          )}
-        </Button>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            aria-label="Toggle theme"
+          >
+            {mounted && resolvedTheme === "dark" ? (
+              <Sun size={16} strokeWidth={1.9} />
+            ) : (
+              <Moon size={16} strokeWidth={1.9} />
+            )}
+          </Button>
+        </SimpleTooltip>
 
         <DropdownMenu>
           <DropdownMenuTrigger

@@ -21,6 +21,7 @@ import Link from "next/link";
 import {
   AlertCircle,
   ArrowRight,
+  Check,
   Clock,
   Copy,
   FileWarning,
@@ -32,6 +33,7 @@ import {
 } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
+import { SimpleTooltip } from "@/components/ui/tooltip";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { TRANSACTION_STATE_LABEL, type TransactionState } from "@/lib/states";
@@ -316,19 +318,38 @@ function Fact({
   mono?: boolean;
   copyable?: boolean;
 }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // fallback
+    }
+  };
+
   return (
     <div>
       <dt className="text-[12px] text-muted-foreground">{label}</dt>
       <dd className={`mt-0.5 flex items-center gap-1.5 text-[13px] text-foreground ${mono ? "tabular" : ""}`}>
         {value}
         {copyable && (
-          <button
-            type="button"
-            aria-label={`Copy ${label.toLowerCase()}`}
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <Copy size={13} strokeWidth={1.8} />
-          </button>
+          <SimpleTooltip content={copied ? "Copied!" : `Copy ${label.toLowerCase()}`}>
+            <button
+              type="button"
+              onClick={handleCopy}
+              aria-label={`Copy ${label.toLowerCase()}`}
+              className="text-muted-foreground transition-colors hover:text-foreground cursor-pointer p-0.5 rounded"
+            >
+              {copied ? (
+                <Check size={13} strokeWidth={2.2} className="text-emerald-600 dark:text-emerald-400" />
+              ) : (
+                <Copy size={13} strokeWidth={1.8} />
+              )}
+            </button>
+          </SimpleTooltip>
         )}
       </dd>
     </div>

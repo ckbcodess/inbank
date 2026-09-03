@@ -7,12 +7,38 @@
  * The two primary/secondary accounts sit side-by-side (left/right) on desktop.
  */
 
+import { useState } from "react";
 import Link from "next/link";
-import { Building2, ChevronRight, Send } from "lucide-react";
+import { Building2, Check, ChevronRight, Copy, Send } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SimpleTooltip } from "@/components/ui/tooltip";
 import { formatMoney, toLocalEquivalent, type Account } from "@/lib/mock-data";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
+
+function CopyAccountNumberButton({ number }: { number: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <SimpleTooltip content={copied ? "Copied!" : "Copy account number"}>
+      <button
+        type="button"
+        onClick={() => {
+          navigator.clipboard.writeText(number);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1800);
+        }}
+        className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer p-0.5 rounded"
+        aria-label="Copy account number"
+      >
+        {copied ? (
+          <Check size={11} strokeWidth={2.2} className="text-emerald-600 dark:text-emerald-400" />
+        ) : (
+          <Copy size={11} strokeWidth={1.8} />
+        )}
+      </button>
+    </SimpleTooltip>
+  );
+}
 
 export function AccountsPanel({ accounts }: { accounts: Account[] }) {
   const { showAmounts } = useAmountVisibility();
@@ -51,8 +77,9 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
                       </span>
                       <div className="min-w-0">
                         <p className="truncate text-[13px] font-medium text-foreground">{acc.name}</p>
-                        <p className="text-[11.5px] font-mono text-muted-foreground">
-                          {acc.type} · {acc.number}
+                        <p className="flex items-center gap-1.5 text-[11.5px] font-mono text-muted-foreground">
+                          <span>{acc.type} · {acc.number}</span>
+                          <CopyAccountNumberButton number={acc.number} />
                         </p>
                       </div>
                     </div>
