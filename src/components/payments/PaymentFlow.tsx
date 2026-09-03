@@ -1222,7 +1222,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           if (matchedAvatar.category) setBillCategory(matchedAvatar.category);
           setF((p) => ({
             ...p,
-            billerId: matchedAvatar.billerId || (matchedBiller?.id ?? BILLERS[0].id),
+            billerId: matchedAvatar.billerId || (matchedBiller?.id ?? ""),
             billRef: matchedAvatar.acct,
             benName: matchedAvatar.name,
           }));
@@ -2830,10 +2830,19 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                           <span className={labelCls}>Select Service Provider</span>
                           <Select
                             value={f.billerId}
-                            onValueChange={(val) => val && set("billerId", val)}
+                            onValueChange={(val) => {
+                              if (!val) return;
+                              setF((prev) => ({
+                                ...prev,
+                                billerId: val,
+                                billRef: prev.billerId === val ? prev.billRef : "",
+                              }));
+                            }}
                           >
                             <SelectTrigger className="h-11 w-full">
-                              <SelectValue placeholder={`Select ${billCategory || "biller"}`} />
+                              <SelectValue placeholder={`Select ${billCategory ? `${billCategory} provider` : "service provider"}`}>
+                                {biller?.name}
+                              </SelectValue>
                             </SelectTrigger>
                             <SelectContent>
                               {availableBillers.map((b) => (
@@ -2845,42 +2854,46 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                           </Select>
                         </div>
 
-                        <label className="flex flex-col gap-1.5">
-                          <span className={labelCls}>
-                            {biller ? `${biller.reference} (${biller.name})` : "Customer / Account / Reference Number"}
-                          </span>
-                          <input
-                            className={inputCls + " tabular"}
-                            value={f.billRef}
-                            onChange={(e) => handleLookup("billRef", e.target.value, 4)}
-                            placeholder={
-                              biller?.id === "bil-001"
-                                ? "e.g. P-8839210 (Meter number)"
-                                : biller?.id === "bil-002"
-                                ? "e.g. GW-440291 (Account number)"
-                                : biller?.id === "bil-006"
-                                ? "e.g. 1029384812 (Smartcard number)"
-                                : biller?.id === "bil-004"
-                                ? "e.g. TIN-9088214-G (TIN)"
-                                : biller?.id === "bil-008"
-                                ? "e.g. UG-10928341 (Student ID)"
-                                : "e.g. Account or Reference Number"
-                            }
-                            autoFocus
-                          />
-                        </label>
+                        {Boolean(f.billerId && biller) && (
+                          <div className="flex flex-col gap-3.5 animate-in fade-in duration-150">
+                            <label className="flex flex-col gap-1.5">
+                              <span className={labelCls}>
+                                {biller ? `${biller.reference} (${biller.name})` : "Customer / Account / Reference Number"}
+                              </span>
+                              <input
+                                className={inputCls + " tabular"}
+                                value={f.billRef}
+                                onChange={(e) => handleLookup("billRef", e.target.value, 4)}
+                                placeholder={
+                                  biller?.id === "bil-001"
+                                    ? "e.g. P-8839210 (Meter number)"
+                                    : biller?.id === "bil-002"
+                                    ? "e.g. GW-440291 (Account number)"
+                                    : biller?.id === "bil-006"
+                                    ? "e.g. 1029384812 (Smartcard number)"
+                                    : biller?.id === "bil-004"
+                                    ? "e.g. TIN-9088214-G (TIN)"
+                                    : biller?.id === "bil-008"
+                                    ? "e.g. UG-10928341 (Student ID)"
+                                    : "e.g. Account or Reference Number"
+                                }
+                                autoFocus
+                              />
+                            </label>
 
-                        <label className="flex items-center gap-2 pt-1 cursor-pointer select-none">
-                          <input
-                            type="checkbox"
-                            checked={saveBillAsBeneficiary}
-                            onChange={(e) => setSaveBillAsBeneficiary(e.target.checked)}
-                            className="size-4 rounded border-border text-primary focus:ring-primary/30"
-                          />
-                          <span className="text-[13px] text-muted-foreground">
-                            Save this biller as a beneficiary for future one-tap payments
-                          </span>
-                        </label>
+                            <label className="flex items-center gap-2 pt-1 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={saveBillAsBeneficiary}
+                                onChange={(e) => setSaveBillAsBeneficiary(e.target.checked)}
+                                className="size-4 rounded border-border text-primary focus:ring-primary/30"
+                              />
+                              <span className="text-[13px] text-muted-foreground">
+                                Save this biller as a beneficiary for future one-tap payments
+                              </span>
+                            </label>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -2905,16 +2918,18 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                         </Select>
                       </div>
 
-                      <label className="flex flex-col gap-1.5">
-                        <span className={labelCls}>Ghana.gov Invoice / Reference Code</span>
-                        <input
-                          className={inputCls}
-                          value={f.govRef}
-                          onChange={(e) => handleLookup("govRef", e.target.value, 4)}
-                          placeholder="e.g. GHA-2026-88213"
-                          autoFocus
-                        />
-                      </label>
+                      {Boolean(f.govService) && (
+                        <label className="flex flex-col gap-1.5 animate-in fade-in duration-150">
+                          <span className={labelCls}>Ghana.gov Invoice / Reference Code</span>
+                          <input
+                            className={inputCls}
+                            value={f.govRef}
+                            onChange={(e) => handleLookup("govRef", e.target.value, 4)}
+                            placeholder="e.g. GHA-2026-88213"
+                            autoFocus
+                          />
+                        </label>
+                      )}
                     </>
                   )}
 
