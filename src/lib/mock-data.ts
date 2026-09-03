@@ -1026,19 +1026,63 @@ export function toLocalEquivalent(amount: number, currency: string): number | nu
 
 /* ── Billers & standing instructions — FR-05 ────────────────────────────────── */
 
+export type BillerCategory =
+  | "Education"
+  | "Government"
+  | "Health"
+  | "Religious & Donations"
+  | "TV & Entertainment"
+  | "Utilities"
+  | "Others";
+
 export interface Biller {
   id: string;
   name: string;
-  category: "Utilities" | "Telecom" | "Government" | "Insurance";
+  category: BillerCategory;
   reference: string;
 }
 
 export const BILLERS: Biller[] = [
+  // Utilities
   { id: "bil-001", name: "ECG — Electricity", category: "Utilities", reference: "Meter number" },
-  { id: "bil-002", name: "Ghana Water", category: "Utilities", reference: "Account number" },
-  { id: "bil-003", name: "MTN Ghana", category: "Telecom", reference: "Mobile number" },
+  { id: "bil-002", name: "Ghana Water (GWCL)", category: "Utilities", reference: "Account number" },
+  { id: "bil-002b", name: "NEDCo Power Ghana", category: "Utilities", reference: "Meter number" },
+
+  // TV & Entertainment
+  { id: "bil-006", name: "DSTV / MultiChoice", category: "TV & Entertainment", reference: "Smartcard number" },
+  { id: "bil-007", name: "StarTimes Ghana", category: "TV & Entertainment", reference: "Smartcard number" },
+  { id: "bil-007b", name: "GOtv Ghana", category: "TV & Entertainment", reference: "IUC number" },
+  { id: "bil-007c", name: "Showmax Ghana", category: "TV & Entertainment", reference: "Mobile number" },
+
+  // Education
+  { id: "bil-008", name: "University of Ghana (Legon)", category: "Education", reference: "Student ID / Index No." },
+  { id: "bil-008b", name: "KNUST Tuition & Fees", category: "Education", reference: "Student ID" },
+  { id: "bil-008c", name: "WAEC Exams Portal", category: "Education", reference: "Index number" },
+  { id: "bil-008d", name: "UCC Cape Coast", category: "Education", reference: "Registration number" },
+
+  // Government
   { id: "bil-004", name: "GRA — Tax Payment", category: "Government", reference: "TIN" },
-  { id: "bil-005", name: "SIC Insurance", category: "Insurance", reference: "Policy number" },
+  { id: "bil-004b", name: "Ghana.gov Platform", category: "Government", reference: "Invoice / Ref Code" },
+  { id: "bil-004c", name: "DVLA — Driver Licence", category: "Government", reference: "Licence / Reg No." },
+  { id: "bil-004d", name: "Passports Office Ghana", category: "Government", reference: "Application ID" },
+
+  // Health
+  { id: "bil-009", name: "National Health Insurance (NHIS)", category: "Health", reference: "Membership ID" },
+  { id: "bil-009b", name: "Korle Bu Teaching Hospital", category: "Health", reference: "Hospital Folder / Patient ID" },
+  { id: "bil-009c", name: "37 Military Hospital", category: "Health", reference: "Patient ID" },
+
+  // Religious & Donations
+  { id: "bil-010", name: "ICGC Christ Temple", category: "Religious & Donations", reference: "Member ID / Phone" },
+  { id: "bil-010b", name: "Action Chapel International", category: "Religious & Donations", reference: "Member ID / Pledge Code" },
+  { id: "bil-010c", name: "Catholic Archdiocese of Accra", category: "Religious & Donations", reference: "Parish / Donor ID" },
+  { id: "bil-010d", name: "Ghana Red Cross Society", category: "Religious & Donations", reference: "Donor ID" },
+
+  // Others
+  { id: "bil-003", name: "MTN Ghana Broadband", category: "Others", reference: "Mobile / Account number" },
+  { id: "bil-003b", name: "Telecel Fixed Broadband", category: "Others", reference: "Broadband account ID" },
+  { id: "bil-005", name: "SIC Insurance", category: "Others", reference: "Policy number" },
+  { id: "bil-005b", name: "Enterprise Life Insurance", category: "Others", reference: "Policy number" },
+  { id: "bil-005c", name: "Ghana Post / Courier EMS", category: "Others", reference: "Tracking / Account ID" },
 ];
 
 export type InstructionFrequency = "Daily" | "Weekly" | "Monthly" | "Quarterly" | "Yearly";

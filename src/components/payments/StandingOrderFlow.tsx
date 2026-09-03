@@ -18,12 +18,12 @@ import {
   ArrowLeftRight,
   Check,
   CheckCircle2,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Landmark,
   Loader2,
   PhoneCall,
+  Plus,
   User,
   Users,
   Wallet,
@@ -46,6 +46,8 @@ import {
   saveStandingInstruction,
   type InstructionFrequency,
 } from "@/lib/mock-data";
+import { useGroupsStore } from "@/lib/groups-store";
+import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import { useSession } from "@/lib/session-store";
 import { AuthorisePanel } from "./AuthorisePanel";
 import { useAuthorisation } from "./useAuthorisation";
@@ -153,10 +155,7 @@ const FREQUENCIES: InstructionFrequency[] = ["Daily", "Weekly", "Monthly", "Quar
 
 const inputCls =
   "h-11 w-full rounded-xl border border-border bg-background px-3.5 text-[14px] text-foreground outline-none transition-all duration-150 ease-out focus:border-ring focus:ring-3 focus:ring-ring/30";
-const selectCls =
-  "h-11 w-full rounded-xl border border-border bg-background pl-3.5 pr-10 text-[14px] text-foreground outline-none transition-all duration-150 ease-out focus:border-ring focus:ring-3 focus:ring-ring/30 cursor-pointer";
 const labelCls = "text-[12.5px] font-medium text-foreground";
-const hintCls = "text-[11.5px] text-muted-foreground";
 
 function detectNetworkFromPhone(phone: string): { airtimeNet: string; walletNet: string } | null {
   const clean = phone.replace(/[^0-9]/g, "");
@@ -242,6 +241,8 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const [rail, setRail] = useState<TransactionType | null>(null);
   const [screen, setScreen] = useState<"form" | "success">("form");
   const [createdId, setCreatedId] = useState("");
+  const { groups } = useGroupsStore();
+  const [createGroupOpen, setCreateGroupOpen] = useState(false);
 
   // Stage Control: Exactly one active stage at a time
   const [activeStage, setActiveStage] = useState<number>(1);
@@ -306,13 +307,30 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   // Filter beneficiaries strictly by the active transaction rail
   const relevantRecipients = useMemo(() => {
     if (!rail) return [];
+    if (rail === "group") {
+      return groups.map((g) => ({
+        id: g.id,
+        name: g.name,
+        dest: `${g.members.length} members`,
+        type: "group" as const,
+        provider: g.splitType === "equal" ? `GHS ${g.defaultPerMemberAmount} each` : "Custom split",
+      }));
+    }
     if (rail === "wallet-to-bank") {
       return RECENT_RECIPIENTS.filter((r) => r.type === "bank" || r.type === "wallet-to-bank");
     }
     return RECENT_RECIPIENTS.filter((r) => r.type === rail);
-  }, [rail]);
+  }, [rail, groups]);
 
   const selectRecentPayee = (r: BeneficiaryItem) => {
+    if (rail === "group") {
+      set("groupName", r.name);
+      const matched = groups.find((g) => g.name === r.name);
+      if (matched?.defaultPerMemberAmount) {
+        set("amount", String(matched.defaultPerMemberAmount));
+      }
+      return;
+    }
     if (rail === "proxy") {
       set("proxyId", r.dest);
     } else {
@@ -559,6 +577,33 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       </div>
 
       <div className="flex flex-col gap-8">
+        {/* Top-Level Quick Beneficiaries Strip (Above Section 1) */}
+        {relevantRecipients.length > 0 && activeStage === 1 && (
+          <div className="flex flex-col gap-6 -mb-1 animate-in fade-in duration-150">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+              {relevantRecipients.map((r) => (
+                <button
+                  key={r.dest}
+                  type="button"
+                  onClick={() => selectRecentPayee(r)}
+                  className="flex items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-1.5 text-[12px] hover:bg-muted text-foreground cursor-pointer shrink-0 transition-all hover:border-primary/40 shadow-xs"
+                >
+                  <span className="font-medium">{r.name}</span>
+                  <span className="text-[11px] text-muted-foreground">({r.dest})</span>
+                </button>
+              ))}
+            </div>
+            <div className="relative flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border/60" />
+              </div>
+              <span className="relative bg-background px-3 text-[12px] font-medium text-muted-foreground">
+                Or enter new details
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* ===================================================================
          * STAGE 1: Recipient
          * =================================================================== */}
@@ -671,18 +716,66 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
               {/* GROUP */}
               {rail === "group" && (
-                <div className="flex flex-col gap-1.5">
-                  <span className={labelCls}>Target Group</span>
-                  <Select value={f.groupName} onValueChange={(val) => val && set("groupName", val)}>
-                    <SelectTrigger className="h-11 w-full">
-                      <SelectValue placeholder="Select contribution circle" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Family Contribution Circle">Family Contribution Circle (5 Members)</SelectItem>
-                      <SelectItem value="Colleagues Susu Circle">Colleagues Susu Circle (10 Members)</SelectItem>
-                      <SelectItem value="Welfare Fund">Welfare Fund (12 Members)</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className={labelCls}>Target Group</span>
+                      <button
+                        type="button"
+                        onClick={() => setCreateGroupOpen(true)}
+                        className="text-[12.5px] text-primary hover:underline font-medium cursor-pointer flex items-center gap-1"
+                      >
+                        <Plus size={13} />
+                        Create new group
+                      </button>
+                    </div>
+                    <Select
+                      value={f.groupName}
+                      onValueChange={(val) => {
+                        if (!val) return;
+                        if (val === "__create_new__") {
+                          setCreateGroupOpen(true);
+                          return;
+                        }
+                        const selectedGrp = groups.find((g) => g.name === val);
+                        if (selectedGrp) {
+                          set("groupName", selectedGrp.name);
+                          if (selectedGrp.defaultPerMemberAmount) {
+                            set("amount", String(selectedGrp.defaultPerMemberAmount));
+                          }
+                        } else {
+                          set("groupName", val);
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="h-11 w-full">
+                        <SelectValue placeholder="Select contribution circle" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {groups.map((g) => (
+                          <SelectItem key={g.id} value={g.name}>
+                            {g.name} ({g.members.length} Members) — {g.splitType === "equal" ? `GHS ${g.defaultPerMemberAmount} each` : "Custom"}
+                          </SelectItem>
+                        ))}
+                        <SelectItem value="__create_new__" className="text-primary font-medium focus:text-primary">
+                          + Create new group...
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {f.groupName && (
+                    <div className="rounded-xl border border-border/80 bg-muted/30 p-3.5 flex flex-col gap-2 animate-in fade-in duration-150">
+                      <div className="flex items-center justify-between text-[13px]">
+                        <span className="font-medium text-foreground">{f.groupName}</span>
+                        {groups.find((g) => g.name === f.groupName) && (
+                          <span className="text-muted-foreground text-[12px] bg-muted px-2 py-0.5 rounded-full font-medium">
+                            {groups.find((g) => g.name === f.groupName)?.members.length} members
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -822,25 +915,6 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                 </div>
               )}
 
-              {/* Quick Payees filtered strictly for the active rail */}
-              {!resolvedName && relevantRecipients.length > 0 && (
-                <div className="flex flex-col gap-1.5 pt-1">
-                  <span className={hintCls}>Or pick recent beneficiary:</span>
-                  <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                    {relevantRecipients.map((r) => (
-                      <button
-                        key={r.dest}
-                        type="button"
-                        onClick={() => selectRecentPayee(r)}
-                        className="flex items-center gap-1.5 rounded-lg border border-border bg-muted/40 px-2.5 py-1 text-[11.5px] hover:bg-muted text-foreground cursor-pointer shrink-0"
-                      >
-                        <span className="font-medium">{r.name}</span>
-                        <span className="text-[10px] text-muted-foreground">({r.dest})</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               <Button
                 className="mt-2 w-full h-11 rounded-xl text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98]"
@@ -1174,6 +1248,17 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             </Button>
           </div>
         )}
+
+        <CreateGroupModal
+          open={createGroupOpen}
+          onOpenChange={setCreateGroupOpen}
+          onSuccess={(newGroup) => {
+            set("groupName", newGroup.name);
+            if (newGroup.defaultPerMemberAmount) {
+              set("amount", String(newGroup.defaultPerMemberAmount));
+            }
+          }}
+        />
       </div>
     </div>
   );

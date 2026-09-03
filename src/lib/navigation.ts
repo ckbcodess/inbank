@@ -39,6 +39,7 @@ function customerNav(actor: Actor, activeProfile?: Profile | null): NavItem[] {
     { key: "transactions", label: "Transactions", path: "/transactions", icon: "ArrowLeftRight", group: "BANKING" },
     { key: "cards", label: "Cards", path: "/cards", icon: "CreditCard", group: "BANKING" },
     { key: "payments", label: "Send & Pay", path: "/payments", icon: "Send", group: "MOVE MONEY" },
+    { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "MOVE MONEY" },
   ];
 
   // Trade — hidden if not eligible or if retail profile (section 12.4).

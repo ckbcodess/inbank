@@ -209,3 +209,26 @@ Always import from `@/components/states/ListStates`:
 - ❌ No generic, shared empty state for both true empty and filtered empty.
 - ❌ No un-formatted numbers/currencies (missing `.tabular`).
 - ❌ No theme-specific conditional CSS (`dark:bg-...` workarounds when tokens suffice).
+
+---
+
+## 8. Holistic Product Design & Dual-Journey UX Rules
+
+### A. Contextual In-Flow Creation vs. Dedicated Management Hub
+When designing any feature that consumes saved or configured entities (e.g., Beneficiaries, Payment Groups, Scheduled Orders, Categories):
+1. **Administrative Hub (Primary Nav Destination)**:
+   - Provide a first-class, standalone page (e.g. `/beneficiaries`) equipped with persistent search, segmentation filters, item counts, edit, and deletion capabilities.
+   - Users visit this surface to organize, review, audit, and prepare their data ahead of time.
+2. **Contextual In-Flow Creation (In-The-Moment Empowerment)**:
+   - When a user is in the middle of an active workflow (e.g. `Send & Pay → To Group` or `Buy Airtime`), **never force them to abort the flow** to visit the administrative hub just to create an entity.
+   - Embed a prominent `+ Create new [entity]` option directly within the selector, or provide a checkbox (`[x] Save for future use`).
+   - Completing in-flow creation must **auto-select the newly created item and advance the user forward immediately**.
+3. **Anti-Phantom Rule**:
+   - Never present a hardcoded dropdown of items without a corresponding management surface and creation mechanism. If an entity exists in a dropdown, the user must own and be able to create their own.
+
+### B. Cognitive Separation: Recognition (Quick-Pick) vs. Recall (Manual Entry)
+- **Place Quick-Pick Avatars Above Manual Steps**:
+  - Quick-pick items (saved contacts, meters, group circles) must live in a top hero strip above the first step header, not buried inside form inputs.
+  - Use a subtle hairline divider or a muted `"Or enter new details"` label to bridge into the manual input form.
+- **Automatic Collapse on Selection**:
+  - Tapping a saved avatar or group must immediately populate all known parameters and collapse the step into a calm, verified badge (`<Check /> Recipient Name [Change]`), advancing focus directly to Amount or Confirmation.

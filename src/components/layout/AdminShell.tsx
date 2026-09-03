@@ -93,7 +93,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               className="custom-scrollbar shell-fade-bottom flex-1 overflow-y-auto"
               style={{ scrollbarGutter: "stable" }}
             >
-              <div className="page-stagger mx-auto w-full max-w-[1360px] px-6 pb-16 pt-8 sm:px-10 sm:pt-10 sm:pb-20 lg:px-14 lg:pt-12 lg:pb-24 xl:px-16 xl:pt-14">{children}</div>
+              <div className="page-stagger mx-auto w-full max-w-[1360px] px-8 pb-16 pt-10 sm:px-12 sm:pt-12 sm:pb-20 lg:px-16 lg:pt-16 lg:pb-24 xl:px-20 xl:pt-18">{children}</div>
             </main>
           </div>
         </div>

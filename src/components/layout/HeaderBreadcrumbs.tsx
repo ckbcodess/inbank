@@ -13,6 +13,7 @@ const ROUTE_LABELS: Record<string, string> = {
   standing: "Standing Orders",
   new: "New",
   payees: "Beneficiaries",
+  beneficiaries: "Beneficiaries",
   bulk: "Bulk Payments",
   cards: "Cards",
   transactions: "Transactions",

@@ -21,7 +21,6 @@ import {
   Repeat,
   Smartphone,
   User,
-  UserPlus,
   Users,
   Wallet,
   Wifi,
@@ -151,13 +150,6 @@ export default function SendAndPayPage() {
         title="Send & Pay"
         actions={
           <div className="flex items-center gap-3">
-            <Link
-              href="/payments/payees"
-              className="inline-flex h-8 items-center gap-1.5 rounded-[8px] bg-[#ebebe9] px-3 text-[13px] font-medium text-foreground transition-colors hover:bg-[#e0e0de] dark:bg-[#232323] dark:hover:bg-[#2c2c2c]"
-            >
-              <UserPlus size={15} strokeWidth={1.8} aria-hidden="true" />
-              Manage Beneficiaries
-            </Link>
             <Link
               href="/payments/standing"
               className="inline-flex h-8 items-center gap-1.5 rounded-[8px] bg-[#ebebe9] px-3 text-[13px] font-medium text-foreground transition-colors hover:bg-[#e0e0de] dark:bg-[#232323] dark:hover:bg-[#2c2c2c]"

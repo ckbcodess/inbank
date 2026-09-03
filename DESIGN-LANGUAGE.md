@@ -43,6 +43,16 @@ Reference screens — read one before writing anything:
    type what the banking directory or system can resolve automatically (e.g.,
    recipient names are auto-fetched from account/mobile numbers). Never show
    competing manual inputs alongside auto-verified badges.
+9. **Dual-journey architecture (Administrative vs. In-Flow Creation).** Always
+   support two complementary user states without duplication of effort:
+   (a) *Administrative preparation* (a dedicated top-level hub like `/beneficiaries`
+   to curate, search, edit, and audit saved entities), and (b) *Contextual action*
+   (e.g., `+ Create new group` inside the send dropdown or `[x] Save as beneficiary`).
+   Never force a user out of an active payment flow to perform setup on another screen.
+10. **Recognition over recall (Elevated Quick Pick).** Saved entities, avatar chips,
+    and frequent circles sit in a top hero strip *above* the manual entry form,
+    bridged by a subtle `"Or enter new details"` divider. When a quick option is
+    tapped, immediately collapse the manual entry step into a calm, verified badge.
 
 ## Page skeleton — start every screen with this
 

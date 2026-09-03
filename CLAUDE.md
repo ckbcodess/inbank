@@ -52,3 +52,16 @@ Before making changes or implementing new screens, load and follow our persisten
 - Check [`.ai/EXECUTION.md`](file:///.ai/EXECUTION.md) at the beginning of each session to align on the current milestone and open tasks.
 - Keep [`.ai/EXECUTION.md`](file:///.ai/EXECUTION.md) updated with completed checklist items, architectural decisions, and next steps before concluding any work session.
 - Append any new framework quirks, API constraints, or gotchas discovered during development directly into [`.ai/LEARNINGS.md`](file:///.ai/LEARNINGS.md).
+
+### 4. Holistic Product & Journey Thinking (Non-Negotiable UX Philosophy)
+- **Holistic System Architecture (Anti-Isolation)**: Never design a screen or feature in isolation. When touching any domain object (e.g., Beneficiaries, Payment Groups, Standing Orders, Cards), trace its complete product lifecycle: Creation, Curation/Management, and In-Flow Consumption.
+- **Contextual In-Flow Creation vs. Administrative Management**:
+  - Always support two distinct user mindsets without duplication of effort:
+    1. **Administrative / Preparation Journey (30%)**: A dedicated top-level hub (e.g., `/beneficiaries` with People, Billers, Numbers, and Groups) for managing, reviewing, editing, and deleting records.
+    2. **Immediate Action / In-the-Moment Journey (70%)**: Frictionless in-flow creation (e.g., `+ Create new group` directly within the Send to Group dropdown, or `[x] Save as beneficiary` inside the transfer form).
+  - **No Phantom Lists or Dead-End Selectors**: Never provide a selector or dropdown populated only by hardcoded mock records without providing a direct, seamless way for the user to create and manage their own entities.
+  - **In-Place Shortcut, Shared Store**: In-flow creation must share the exact same underlying modal/store as the administrative hub so logic is never duplicated and newly created items are instantly selected in-flow and permanently saved.
+- **Hierarchy of Recognition over Recall (Top-Level Quick Pick)**:
+  - Position quick-pick elements (e.g., saved beneficiary avatars, frequent circles) **above** manual form entry sections, separated by clear visual boundaries (`Or enter new details`).
+  - Never squeeze circular quick-pick avatars into the middle of form inputs where they compete for visual weight.
+  - On selection, collapse manual steps into verified summary badges to keep the screen quiet, focused, and calm.

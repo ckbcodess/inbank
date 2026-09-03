@@ -82,3 +82,15 @@
     2. `npx eslint . --max-warnings=0`
     3. `npx next build`
   - Verify that the screen renders seamlessly in both **Light** and **Dark** themes without any inline hex colors or raw tailwind color overrides.
+
+---
+
+## 6. Product Design & Holistic System Invariants
+
+- **Dual-Journey Architecture (No Dead-End Selectors)**:
+  - A banking application serves two concurrent user states: deliberate administrative preparation (visiting `/beneficiaries` to curate contacts and groups) and high-intent execution (sending money right now).
+  - Never force an in-the-moment user out of a payment or transaction flow to perform setup. Always provide contextual creation (`+ Create new group`, `[x] Save as beneficiary`) that shares the underlying store with the primary management screen.
+- **Holistic Feature Tracing**:
+  - When introducing or refining any payment capability (e.g. Group disbursements, Airtime beneficiaries, Meter lookups), audit the entire application for parity. If one rail supports one-tap saved payees or in-flow creation, all applicable rails must offer equivalent affordances.
+- **Zero Phantom Collections**:
+  - Any multi-entity collection (e.g. Susu groups, split lists, batch payees) referenced in selection components must have full CRUD parity within the user's primary domain management space. Mock data must reflect real user entities rather than disconnected dummy options.
