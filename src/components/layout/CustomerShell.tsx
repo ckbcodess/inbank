@@ -109,7 +109,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
           onToggleCollapse={toggleCollapse}
         />
 
-        <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[var(--surface)] p-2 sm:p-3 lg:p-3.5">
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[var(--surface)] p-3 sm:p-4 lg:p-5">
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:bg-card dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
             <TopHeader
               actor={actor}
@@ -124,7 +124,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
               className="custom-scrollbar shell-fade-bottom animate-in fade-in flex-1 overflow-y-auto duration-200"
               style={{ scrollbarGutter: "stable" }}
             >
-              <div className="page-stagger mx-auto w-full max-w-[1360px] px-6 pb-14 pt-7 sm:px-8 sm:pt-9 sm:pb-16 lg:px-12 lg:pt-11 lg:pb-20 xl:px-14 xl:pt-12">{children}</div>
+              <div className="page-stagger mx-auto w-full max-w-[1360px] px-8 pb-16 pt-10 sm:px-12 sm:pt-12 sm:pb-20 lg:px-16 lg:pt-16 lg:pb-24 xl:px-20 xl:pt-18">{children}</div>
             </main>
           </div>
         </div>
