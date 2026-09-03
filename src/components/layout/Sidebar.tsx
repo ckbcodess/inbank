@@ -127,15 +127,15 @@ export default function Sidebar({
        opacity and layout properties, so any incidental style recalculation on a
        parent re-render read as a flicker. */
     <aside
-      className={`fixed inset-y-0 left-0 z-40 flex flex-col bg-[var(--surface)] transition-[width,transform] duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)] lg:relative lg:z-20 lg:translate-x-0 ${
+      className={`fixed inset-y-0 left-0 z-40 flex shrink-0 flex-col bg-[var(--surface)] transition-[width,transform] duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)] lg:relative lg:z-20 lg:translate-x-0 ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       }`}
-      style={{ width: collapsed ? 68 : 260 }}
+      style={{ width: collapsed ? 56 : 224 }}
     >
       {/* Header */}
       <div
         className={`flex h-14 flex-shrink-0 items-center border-b border-border ${
-          collapsed ? "justify-center px-0" : "justify-between px-4"
+          collapsed ? "justify-center px-0" : "justify-between px-3.5"
         }`}
       >
         {collapsed ? (
@@ -159,7 +159,7 @@ export default function Sidebar({
           <>
             <div className="flex min-w-0 items-center gap-2">
               <BrandIcon size={18} strokeWidth={2.1} className="flex-shrink-0 text-foreground" />
-              <span className="truncate text-[14px] leading-tight tracking-tight text-foreground">
+              <span className="truncate text-[14px] font-semibold leading-tight tracking-tight text-foreground">
                 {brandLabel}
               </span>
             </div>
@@ -183,16 +183,16 @@ export default function Sidebar({
       </div>
 
       {/* Navigation */}
-      <nav className={`flex-1 overflow-y-auto overflow-x-hidden py-3 ${collapsed ? "px-2" : "px-3"}`}>
+      <nav className={`flex-1 overflow-y-auto overflow-x-hidden py-2.5 ${collapsed ? "px-1.5" : "px-2.5"}`}>
         <div className="flex flex-col gap-0.5">
           {groups.map((grp, gi) => (
             <div key={grp.name ?? `g-${gi}`} className="flex flex-col gap-0.5">
               {collapsed
-                ? gi > 0 && <div className="mx-2 my-2 h-px bg-border" aria-hidden />
+                ? gi > 0 && <div className="mx-1.5 my-2 h-px bg-border" aria-hidden />
                 : grp.name && (
                     <span
-                      className={`mb-2 px-2.5 text-[11px] uppercase tracking-wider text-muted-foreground/70 ${
-                        gi > 0 ? "mt-3" : ""
+                      className={`mb-1.5 px-2 text-[10.5px] font-medium uppercase tracking-wider text-muted-foreground/70 ${
+                        gi > 0 ? "mt-2.5" : ""
                       }`}
                     >
                       {grp.name}
@@ -211,21 +211,21 @@ export default function Sidebar({
                       side="right"
                       sideOffset={12}
                     >
-                      <div className="w-full">
+                      <div className="w-full flex justify-center">
                         <Link
                           href={item.path}
                           onClick={onClose}
                           aria-label={item.label}
-                          className={`relative flex h-9 w-full items-center justify-center rounded-md transition-all duration-150 ${
+                          className={`relative flex size-9 items-center justify-center rounded-lg transition-all duration-150 ${
                             active
                               ? "bg-[var(--active-bg)] text-[var(--active-border)]"
                               : "surface-interactive text-muted-foreground hover:text-foreground"
                           }`}
                         >
                           {active && (
-                            <span className="absolute bottom-1.5 left-0 top-1.5 w-[2px] rounded-r-full bg-[var(--active-border)]" />
+                            <span className="absolute bottom-1 left-0 top-1 w-[2.5px] rounded-r-full bg-[var(--active-border)]" />
                           )}
-                          <Icon size={18} strokeWidth={1.7} />
+                          <Icon size={17} strokeWidth={active ? 2.1 : 1.8} />
                         </Link>
                       </div>
                     </SimpleTooltip>
@@ -237,14 +237,14 @@ export default function Sidebar({
                     key={item.key}
                     href={item.path}
                     onClick={onClose}
-                    className={`relative flex h-10 items-center gap-3 rounded-xl px-3 text-[13px] transition-all duration-200 ${
+                    className={`relative flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium transition-all duration-150 ${
                       active
-                        ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                        ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
                         : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                     }`}
                   >
-                    <Icon size={18} strokeWidth={active ? 2.2 : 1.9} />
-                    <span className="leading-none">{item.label}</span>
+                    <Icon size={17} strokeWidth={active ? 2.1 : 1.8} className="shrink-0" />
+                    <span className="leading-none whitespace-nowrap truncate">{item.label}</span>
                   </Link>
                 );
               })}
