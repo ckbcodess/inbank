@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { CurrencyLogo, CurrencyPairLogos } from "@/components/ui/currency-logo";
 import { FX_PUBLISHED_AT, FX_RATES, formatDateTime } from "@/lib/mock-data";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 
@@ -85,12 +86,18 @@ export function FxPulse() {
             </Label>
             <Select value={base} onValueChange={(value) => setBase(value ?? base)}>
               <SelectTrigger id="fx-pair" className="h-9 w-full">
-                <SelectValue />
+                <div className="flex items-center gap-2 truncate">
+                  <CurrencyPairLogos base={base} quote="GHS" size={18} />
+                  <SelectValue />
+                </div>
               </SelectTrigger>
               <SelectContent>
                 {FX_RATES.map((r) => (
                   <SelectItem key={r.base} value={r.base}>
-                    {r.pair}
+                    <div className="flex items-center gap-2">
+                      <CurrencyPairLogos base={r.base} quote={r.quote} size={18} />
+                      <span className="font-medium tabular">{r.pair}</span>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -100,7 +107,7 @@ export function FxPulse() {
           <Button
             variant="outline"
             size="icon-sm"
-            className="mb-0.5 size-9 shrink-0"
+            className="mb-0.5 size-9 shrink-0 cursor-pointer"
             onClick={() => setDirection((d) => (d === "to-ghs" ? "from-ghs" : "to-ghs"))}
             aria-label={
               direction === "to-ghs"
@@ -114,8 +121,9 @@ export function FxPulse() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="fx-amount" className="text-[12px] text-muted-foreground">
-            Amount in {fromCurrency}
+          <Label htmlFor="fx-amount" className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+            <CurrencyLogo currency={fromCurrency} size={14} />
+            <span>Amount in {fromCurrency}</span>
           </Label>
           <Input
             id="fx-amount"
@@ -129,12 +137,15 @@ export function FxPulse() {
 
         <div className="rounded-xl border border-border bg-muted/40 px-4 py-3">
           <p className="text-[12px] text-muted-foreground">You get approximately</p>
-          <p className="mt-1 text-[19px] leading-tight text-foreground tabular">
-            {valid ? format(result, toCurrency, showAmounts) : "—"}
-          </p>
+          <div className="mt-1 flex items-center gap-2">
+            <CurrencyLogo currency={toCurrency} size={22} />
+            <p className="text-[19px] font-semibold leading-tight text-foreground tabular">
+              {valid ? format(result, toCurrency, showAmounts) : "—"}
+            </p>
+          </div>
           <p className="mt-1.5 text-[11.5px] text-muted-foreground tabular">
             {direction === "to-ghs" ? "Bank buys" : "Bank sells"} at {appliedRate.toFixed(4)} ·{" "}
-            <span className={rate.changePct >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-destructive"}>
+            <span className={rate.changePct >= 0 ? "text-emerald-600 dark:text-emerald-400 font-medium" : "text-destructive font-medium"}>
               <RateTrend size={11} strokeWidth={2} aria-hidden="true" className="inline align-[-1px]" />{" "}
               {rate.changePct >= 0 ? "+" : "−"}
               {Math.abs(rate.changePct).toFixed(2)}%

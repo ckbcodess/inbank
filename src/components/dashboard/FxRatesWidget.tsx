@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ArrowUpDown, ChevronDown, RefreshCw } from "lucide-react";
+import { CurrencyLogo } from "@/components/ui/currency-logo";
 
 const CURRENCIES = [
   { code: "GHS", name: "Ghanaian Cedi", symbol: "GH₵", flag: "🇬🇭" },
@@ -130,16 +131,16 @@ export function FxRatesWidget() {
                   setShowFromMenu(!showFromMenu);
                   setShowToMenu(false);
                 }}
-                className="flex items-center gap-1.5 rounded-lg bg-card px-2.5 py-1 text-[14px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted cursor-pointer"
+                className="flex items-center gap-2 rounded-lg bg-card px-2.5 py-1 text-[14px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted cursor-pointer"
               >
-                <span>{CURRENCIES.find((c) => c.code === fromCurrency)?.flag}</span>
+                <CurrencyLogo currency={fromCurrency} size={18} />
                 <span>{fromCurrency}</span>
                 <ChevronDown size={14} className="text-muted-foreground" />
               </button>
             </div>
 
             {showFromMenu && (
-              <div className="absolute right-0 top-full z-40 mt-1 max-h-48 w-44 overflow-auto rounded-xl border border-border bg-card py-1 shadow-xl animate-in fade-in zoom-in-95 duration-100">
+              <div className="absolute right-0 top-full z-40 mt-1 max-h-48 w-48 overflow-auto rounded-xl border border-border bg-card py-1 shadow-xl animate-in fade-in zoom-in-95 duration-100">
                 {CURRENCIES.map((c) => (
                   <button
                     key={c.code}
@@ -148,11 +149,11 @@ export function FxRatesWidget() {
                       setFromCurrency(c.code);
                       setShowFromMenu(false);
                     }}
-                    className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-[12px] transition-colors cursor-pointer ${
+                    className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] transition-colors cursor-pointer ${
                       fromCurrency === c.code ? "bg-muted font-medium" : "hover:bg-muted/50"
                     }`}
                   >
-                    <span>{c.flag}</span>
+                    <CurrencyLogo currency={c.code} size={18} />
                     <span className="font-medium">{c.code}</span>
                     <span className="truncate text-muted-foreground text-[11px]">{c.name}</span>
                   </button>
@@ -183,16 +184,16 @@ export function FxRatesWidget() {
                   setShowToMenu(!showToMenu);
                   setShowFromMenu(false);
                 }}
-                className="flex items-center gap-1.5 rounded-lg bg-card px-2.5 py-1 text-[14px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted cursor-pointer"
+                className="flex items-center gap-2 rounded-lg bg-card px-2.5 py-1 text-[14px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted cursor-pointer"
               >
-                <span>{CURRENCIES.find((c) => c.code === toCurrency)?.flag}</span>
+                <CurrencyLogo currency={toCurrency} size={18} />
                 <span>{toCurrency}</span>
                 <ChevronDown size={14} className="text-muted-foreground" />
               </button>
             </div>
 
             {showToMenu && (
-              <div className="absolute right-0 top-full z-40 mt-1 max-h-48 w-44 overflow-auto rounded-xl border border-border bg-card py-1 shadow-xl animate-in fade-in zoom-in-95 duration-100">
+              <div className="absolute right-0 top-full z-40 mt-1 max-h-48 w-48 overflow-auto rounded-xl border border-border bg-card py-1 shadow-xl animate-in fade-in zoom-in-95 duration-100">
                 {CURRENCIES.map((c) => (
                   <button
                     key={c.code}
@@ -201,11 +202,11 @@ export function FxRatesWidget() {
                       setToCurrency(c.code);
                       setShowToMenu(false);
                     }}
-                    className={`flex w-full items-center gap-2 px-3 py-1.5 text-left text-[12px] transition-colors cursor-pointer ${
+                    className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] transition-colors cursor-pointer ${
                       toCurrency === c.code ? "bg-muted font-medium" : "hover:bg-muted/50"
                     }`}
                   >
-                    <span>{c.flag}</span>
+                    <CurrencyLogo currency={c.code} size={18} />
                     <span className="font-medium">{c.code}</span>
                     <span className="truncate text-muted-foreground text-[11px]">{c.name}</span>
                   </button>

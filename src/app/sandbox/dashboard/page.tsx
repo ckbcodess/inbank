@@ -66,6 +66,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { CurrencyLogo, CurrencyPairLogos } from "@/components/ui/currency-logo";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export default function FigmaDesignFidelityDashboard() {
@@ -587,18 +588,39 @@ export default function FigmaDesignFidelityDashboard() {
                     onValueChange={(val) => val && setFxCurrency(val)}
                   >
                     <SelectTrigger className="w-full h-9 px-3 rounded-lg border border-[#e8ecef] dark:border-border text-xs font-mono font-bold">
-                      <SelectValue placeholder="Currency" />
+                      <div className="flex items-center gap-1.5">
+                        <CurrencyPairLogos base={fxCurrency} quote="GHS" size={16} />
+                        <SelectValue placeholder="Currency" />
+                      </div>
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="USD">USD - US Dollar</SelectItem>
-                      <SelectItem value="EUR">EUR - Euro</SelectItem>
-                      <SelectItem value="GBP">GBP - British Pound</SelectItem>
+                      <SelectItem value="USD">
+                        <div className="flex items-center gap-1.5">
+                          <CurrencyLogo currency="USD" size={16} />
+                          <span>USD - US Dollar</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="EUR">
+                        <div className="flex items-center gap-1.5">
+                          <CurrencyLogo currency="EUR" size={16} />
+                          <span>EUR - Euro</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="GBP">
+                        <div className="flex items-center gap-1.5">
+                          <CurrencyLogo currency="GBP" size={16} />
+                          <span>GBP - British Pound</span>
+                        </div>
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-[#71717a] block mb-1">Amount in {fxCurrency}</label>
+                  <label className="text-xs font-bold text-[#71717a] flex items-center gap-1 mb-1">
+                    <CurrencyLogo currency={fxCurrency} size={13} />
+                    <span>Amount in {fxCurrency}</span>
+                  </label>
                   <input
                     type="number"
                     value={fxAmount}
@@ -621,8 +643,11 @@ export default function FigmaDesignFidelityDashboard() {
               {/* Conversion Result Box */}
               <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e8ecef] space-y-1">
                 <span className="text-xs text-[#71717a]">You get approximately</span>
-                <div className="text-2xl font-bold font-mono text-[#18181b] tabular">
-                  {showAmounts ? `GH₵ ${(Number(fxAmount || 0) * 15.385).toLocaleString("en-US", { minimumFractionDigits: 2 })}` : "GH₵ ••••••"}
+                <div className="flex items-center gap-2">
+                  <CurrencyLogo currency="GHS" size={24} />
+                  <div className="text-2xl font-bold font-mono text-[#18181b] tabular">
+                    {showAmounts ? `GH₵ ${(Number(fxAmount || 0) * 15.385).toLocaleString("en-US", { minimumFractionDigits: 2 })}` : "GH₵ ••••••"}
+                  </div>
                 </div>
                 <p className="text-xs text-[#71717a] pt-1">
                   Bank buys at 15.3850 · <span className="text-emerald-700 font-bold">+0.34%</span> today · Indicative only.

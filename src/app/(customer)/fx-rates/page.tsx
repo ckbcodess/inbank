@@ -19,6 +19,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  CurrencyLogo,
+  CurrencyPairLogos,
+  getCurrencyMeta,
+} from "@/components/ui/currency-logo";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -140,15 +145,26 @@ export default function FxRatesPage() {
                 <tbody className="divide-y divide-border">
                   {FX_RATES.map((rate) => {
                     const up = rate.changePct >= 0;
+                    const meta = getCurrencyMeta(rate.base);
                     return (
                       <tr key={rate.pair} className="transition-colors hover:bg-muted/50">
                         <td className="px-4 py-3.5">
-                          <span className="text-foreground tabular">{rate.pair}</span>
+                          <div className="flex items-center gap-3">
+                            <CurrencyPairLogos base={rate.base} quote={rate.quote} size={28} />
+                            <div className="flex flex-col">
+                              <span className="font-medium text-foreground tabular">
+                                {rate.pair}
+                              </span>
+                              <span className="text-[11.5px] text-muted-foreground">
+                                {meta.name} · {meta.country}
+                              </span>
+                            </div>
+                          </div>
                         </td>
-                        <td className="px-4 py-3.5 text-right text-foreground tabular">
+                        <td className="px-4 py-3.5 text-right text-foreground tabular font-medium">
                           {formatRate(rate.buy)}
                         </td>
-                        <td className="px-4 py-3.5 text-right text-foreground tabular">
+                        <td className="px-4 py-3.5 text-right text-foreground tabular font-medium">
                           {formatRate(rate.sell)}
                         </td>
                         <td className="px-4 py-3.5 text-right text-muted-foreground tabular">
@@ -156,7 +172,7 @@ export default function FxRatesPage() {
                         </td>
                         <td className="px-4 py-3.5 text-right">
                           <span
-                            className={`inline-flex items-center justify-end gap-1 tabular ${
+                            className={`inline-flex items-center justify-end gap-1 tabular font-medium ${
                               up ? "text-[var(--pay-cash,#17c858)]" : "text-destructive"
                             }`}
                           >
@@ -197,8 +213,9 @@ export default function FxRatesPage() {
                     className="tabular"
                     placeholder="0.00"
                   />
-                  <span className="flex min-w-[62px] items-center justify-center rounded-lg border border-border bg-muted px-3 text-[13px] text-muted-foreground tabular">
-                    {fromCcy ?? "—"}
+                  <span className="flex min-w-[78px] items-center justify-center gap-1.5 rounded-lg border border-border bg-muted px-2.5 text-[13px] text-foreground tabular">
+                    {fromCcy && <CurrencyLogo currency={fromCcy} size={16} />}
+                    <span className="font-medium">{fromCcy ?? "—"}</span>
                   </span>
                 </div>
               </div>
@@ -208,7 +225,7 @@ export default function FxRatesPage() {
                 size="icon"
                 onClick={() => setInverted((v) => !v)}
                 aria-label="Swap direction"
-                className="mb-0.5 hidden sm:flex"
+                className="mb-0.5 hidden sm:flex cursor-pointer"
               >
                 <ArrowUpDown size={15} strokeWidth={1.9} aria-hidden="true" />
               </Button>
@@ -220,14 +237,28 @@ export default function FxRatesPage() {
                   onValueChange={(val) => val && setPair(val)}
                 >
                   <SelectTrigger id="fx-pair" className="h-10 w-full">
-                    <SelectValue placeholder="Select pair" />
+                    <div className="flex items-center gap-2 truncate">
+                      {selected && (
+                        <CurrencyPairLogos base={selected.base} quote={selected.quote} size={20} />
+                      )}
+                      <SelectValue placeholder="Select pair" />
+                    </div>
                   </SelectTrigger>
                   <SelectContent>
-                    {FX_RATES.map((r) => (
-                      <SelectItem key={r.pair} value={r.pair}>
-                        {r.pair}
-                      </SelectItem>
-                    ))}
+                    {FX_RATES.map((r) => {
+                      const m = getCurrencyMeta(r.base);
+                      return (
+                        <SelectItem key={r.pair} value={r.pair}>
+                          <div className="flex items-center gap-2">
+                            <CurrencyPairLogos base={r.base} quote={r.quote} size={18} />
+                            <span className="font-medium tabular">{r.pair}</span>
+                            <span className="text-[11.5px] text-muted-foreground hidden sm:inline">
+                              · {m.name}
+                            </span>
+                          </div>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
@@ -237,13 +268,13 @@ export default function FxRatesPage() {
               variant="outline"
               size="sm"
               onClick={() => setInverted((v) => !v)}
-              className="mt-3 sm:hidden"
+              className="mt-3 sm:hidden cursor-pointer"
             >
               <ArrowUpDown size={14} strokeWidth={1.9} aria-hidden="true" />
               Swap direction
             </Button>
 
-            <div className="mt-5 flex flex-wrap items-baseline justify-between gap-2 border-t border-border pt-5">
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5">
               <span className="text-[13px] text-muted-foreground">
                 {amountValid && selected
                   ? `${amountValue.toLocaleString("en-GH")} ${fromCcy} at ${formatRate(
@@ -251,14 +282,17 @@ export default function FxRatesPage() {
                     )}`
                   : "Enter an amount to convert"}
               </span>
-              <span className="text-[22px] leading-tight text-foreground tabular">
-                {converted === null
-                  ? "—"
-                  : `${converted.toLocaleString("en-GH", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })} ${toCcy}`}
-              </span>
+              <div className="flex items-center gap-2.5">
+                {toCcy && <CurrencyLogo currency={toCcy} size={24} />}
+                <span className="text-[22px] font-semibold leading-tight text-foreground tabular">
+                  {converted === null
+                    ? "—"
+                    : `${converted.toLocaleString("en-GH", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })} ${toCcy}`}
+                </span>
+              </div>
             </div>
           </section>
         </>
