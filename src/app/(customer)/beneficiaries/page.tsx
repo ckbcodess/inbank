@@ -8,7 +8,7 @@
  * Full parity for both individual payees and multi-recipient payment groups.
  */
 
-import { useMemo, useReducer, useState } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -22,6 +22,7 @@ import {
   Trash2,
   User,
   Users,
+  X,
 } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -103,6 +104,39 @@ export default function BeneficiariesPage() {
   const [payees, setPayees] = useState<Payee[]>(seedPayees);
   const [segment, setSegment] = useState<SegmentType>("person");
   const [query, setQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const searchContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // Close search on click outside if query is empty
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent | TouchEvent) {
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(e.target as Node)
+      ) {
+        if (!query.trim()) {
+          setIsSearchOpen(false);
+        }
+      }
+    }
+
+    if (isSearchOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [isSearchOpen, query]);
+
+  // Auto-focus input when search expands
+  useEffect(() => {
+    if (isSearchOpen) {
+      searchInputRef.current?.focus();
+    }
+  }, [isSearchOpen]);
 
   // Payee Dialog state
   const [formOpen, setFormOpen] = useState(false);
@@ -244,33 +278,78 @@ export default function BeneficiariesPage() {
         </div>
       )}
 
-      {/* search */}
-      <div className="relative">
-        <Search size={16} strokeWidth={1.8} aria-hidden="true" className="pointer-events-none absolute left-3.5 top-3 text-muted-foreground" />
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search beneficiaries, billers, numbers & groups"
-          className="h-11 w-full rounded-xl border border-border bg-background pl-10 pr-3.5 text-[13.5px] text-foreground outline-none focus:border-ring focus:ring-3 focus:ring-ring/30"
-        />
-      </div>
+      {/* segments bar with inline expandable search */}
+      <div className="flex items-center justify-between gap-3">
+        {/* segments */}
+        <div className="inline-flex w-fit flex-wrap rounded-xl bg-muted p-1">
+          {SEGMENTS.map(({ key, label }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setSegment(key)}
+              aria-pressed={segment === key}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
+                segment === key ? "bg-background text-foreground shadow-sm font-medium" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {label}
+              <span className="tabular text-[11px] text-muted-foreground">{counts[key]}</span>
+            </button>
+          ))}
+        </div>
 
-      {/* segments */}
-      <div className="inline-flex w-fit flex-wrap rounded-xl bg-muted p-1">
-        {SEGMENTS.map(({ key, label }) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setSegment(key)}
-            aria-pressed={segment === key}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
-              segment === key ? "bg-background text-foreground shadow-sm font-medium" : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {label}
-            <span className="tabular text-[11px] text-muted-foreground">{counts[key]}</span>
-          </button>
-        ))}
+        {/* inline expandable search */}
+        <div ref={searchContainerRef} className="relative flex items-center justify-end">
+          {isSearchOpen || query ? (
+            <div className="relative flex items-center animate-in fade-in slide-in-from-right-3 duration-200">
+              <Search
+                size={15}
+                strokeWidth={1.8}
+                aria-hidden="true"
+                className="pointer-events-none absolute left-3 text-muted-foreground"
+              />
+              <input
+                ref={searchInputRef}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    if (!query.trim()) {
+                      setIsSearchOpen(false);
+                    } else {
+                      setQuery("");
+                    }
+                  }
+                }}
+                placeholder={`Search ${segment === "person" ? "people" : segment === "biller" ? "billers" : segment === "number" ? "numbers" : "groups"}...`}
+                className="h-9 w-56 sm:w-72 rounded-xl border border-border bg-background pl-9 pr-8 text-[13px] text-foreground shadow-sm outline-none transition-all placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/20"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuery("");
+                    searchInputRef.current?.focus();
+                  }}
+                  className="absolute right-2.5 flex size-5 items-center justify-center rounded-md text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  aria-label="Clear search"
+                >
+                  <X size={13} strokeWidth={2} />
+                </button>
+              )}
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsSearchOpen(true)}
+              className="flex size-9 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/70 active:scale-95 transition-all cursor-pointer"
+              aria-label="Search beneficiaries"
+              title="Search"
+            >
+              <Search size={18} strokeWidth={1.8} />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* list */}
