@@ -13,10 +13,10 @@
  */
 
 import { useMemo, useState } from "react";
-import { Percent, Plus, Search } from "lucide-react";
+import { Percent, Plus } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { Badge } from "@/components/ui/badge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import {
@@ -83,22 +83,17 @@ export default function FeeConcessionsPage() {
       />
 
       <div className="rounded-2xl border border-border bg-card">
-        <div className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-3">
-          <div className="relative min-w-[220px] flex-1">
-            <Search
-              size={15}
-              strokeWidth={1.9}
-              aria-hidden="true"
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by customer or fee type"
-              className="pl-9"
-              aria-label="Search fee concessions"
-            />
-          </div>
+        <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
+          <span className="text-[13px] font-medium text-foreground">
+            Concessions ({results.length})
+          </span>
+          <ExpandableSearch
+            value={query}
+            onChange={setQuery}
+            placeholder="Search by customer or fee type..."
+            tooltip="Search fee concessions"
+            inputWidthClassName="w-64 sm:w-80"
+          />
         </div>
 
         {effective === "loading" && <ListSkeleton rows={4} columns={5} />}

@@ -6,12 +6,12 @@
  * destination reached from this list (12.5).
  */
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Building2, ChevronRight, Search } from "lucide-react";
+import { Building2, ChevronRight } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
-import { Input } from "@/components/ui/input";
+import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { Badge } from "@/components/ui/badge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
@@ -34,6 +34,18 @@ const CUSTOMERS = [
 
 export default function CustomerManagementPage() {
   const [state, setState] = useState<ListState>("populated");
+  const [query, setQuery] = useState("");
+
+  const filtered = useMemo(() => {
+    if (!query.trim()) return CUSTOMERS;
+    const q = query.toLowerCase();
+    return CUSTOMERS.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        c.ref.toLowerCase().includes(q) ||
+        c.segment.toLowerCase().includes(q)
+    );
+  }, [query]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -50,20 +62,25 @@ export default function CustomerManagementPage() {
       <StubNotice section="section 7 / sitemap 12.5" states="13.1 list" />
 
       <section className="rounded-2xl border border-border bg-card">
-        <div className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-3">
-          <div className="relative min-w-[200px] flex-1">
-            <Search
-              size={15}
-              strokeWidth={1.9}
-              aria-hidden="true"
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <Input placeholder="Search by name or customer reference" className="pl-9" aria-label="Search customers" />
-          </div>
+        <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
+          <span className="text-[13px] font-medium text-foreground">
+            Customers ({filtered.length})
+          </span>
+          <ExpandableSearch
+            value={query}
+            onChange={setQuery}
+            placeholder="Search by name or customer reference..."
+            tooltip="Search customers"
+          />
         </div>
 
-        <ul className="divide-y divide-border">
-          {CUSTOMERS.map((c) => (
+        {filtered.length === 0 ? (
+          <div className="py-12 text-center text-[13px] text-muted-foreground">
+            No customers match &ldquo;{query}&rdquo;
+          </div>
+        ) : (
+          <ul className="divide-y divide-border">
+            {filtered.map((c) => (
             <li key={c.id}>
               <Link
                 href={`/admin/customers/${c.id}`}
@@ -85,7 +102,8 @@ export default function CustomerManagementPage() {
             </li>
           ))}
         </ul>
-      </section>
+      )}
+    </section>
     </div>
   );
 }

@@ -12,10 +12,10 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ChevronRight, Plus, Search, Wallet } from "lucide-react";
+import { ChevronRight, Plus, Wallet } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { Badge } from "@/components/ui/badge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import {
@@ -97,36 +97,30 @@ function AccountsContent() {
 
       <div className="rounded-2xl border border-border bg-card">
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-3">
-          <div className="relative min-w-[200px] flex-1">
-            <Search
-              size={15}
-              strokeWidth={1.9}
-              aria-hidden="true"
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by name or account number"
-              className="pl-9"
-              aria-label="Search accounts"
-            />
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setIsLinkModalOpen(true)}
+              className="cursor-pointer"
+            >
+              <Plus size={14} strokeWidth={1.9} aria-hidden="true" />
+              Link an account
+            </Button>
+            <Button variant="outline" size="sm">
+              <Plus size={14} strokeWidth={1.9} aria-hidden="true" />
+              Open an account
+            </Button>
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setIsLinkModalOpen(true)}
-            className="cursor-pointer"
-          >
-            <Plus size={14} strokeWidth={1.9} aria-hidden="true" />
-            Link an account
-          </Button>
-          <Button variant="outline" size="sm">
-            <Plus size={14} strokeWidth={1.9} aria-hidden="true" />
-            Open an account
-          </Button>
+
+          <ExpandableSearch
+            value={query}
+            onChange={setQuery}
+            placeholder="Search by name or account number..."
+            tooltip="Search accounts"
+          />
         </div>
 
         {/* States */}

@@ -8,12 +8,12 @@
  * object screen, view-only with no execution (12.5).
  */
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Search } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
-import { Input } from "@/components/ui/input";
+import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
@@ -30,6 +30,20 @@ const LIST_STATES: readonly ListState[] = [
 
 export default function TransactionMonitoringPage() {
   const [state, setState] = useState<ListState>("populated");
+  const [query, setQuery] = useState("");
+
+  const filtered = useMemo(() => {
+    if (!query.trim()) return TRANSACTIONS;
+    const q = query.toLowerCase();
+    return TRANSACTIONS.filter(
+      (t) =>
+        t.description.toLowerCase().includes(q) ||
+        t.reference.toLowerCase().includes(q) ||
+        t.counterparty.toLowerCase().includes(q) ||
+        t.channel.toLowerCase().includes(q)
+    );
+  }, [query]);
+
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
@@ -48,24 +62,26 @@ export default function TransactionMonitoringPage() {
       <StubNotice section="section 7 / sitemap 12.5" states="13.1 list, 13.2 ops variant" />
 
       <section className="rounded-2xl border border-border bg-card">
-        <div className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-3">
-          <div className="relative min-w-[200px] flex-1">
-            <Search
-              size={15}
-              strokeWidth={1.9}
-              aria-hidden="true"
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <Input
-              placeholder="Search reference, customer or counterparty"
-              className="pl-9"
-              aria-label="Search transactions"
-            />
-          </div>
+        <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
+          <span className="text-[13px] font-medium text-foreground">
+            Transactions ({filtered.length})
+          </span>
+          <ExpandableSearch
+            value={query}
+            onChange={setQuery}
+            placeholder="Search reference, customer or counterparty..."
+            tooltip="Search transactions"
+            inputWidthClassName="w-64 sm:w-80"
+          />
         </div>
 
-        <ul className="divide-y divide-border">
-          {TRANSACTIONS.map((t) => (
+        {filtered.length === 0 ? (
+          <div className="py-12 text-center text-[13px] text-muted-foreground">
+            No transactions match &ldquo;{query}&rdquo;
+          </div>
+        ) : (
+          <ul className="divide-y divide-border">
+            {filtered.map((t) => (
             <li key={t.id}>
               <Link
                 href={`/admin/transactions/${t.id}`}
@@ -86,7 +102,8 @@ export default function TransactionMonitoringPage() {
             </li>
           ))}
         </ul>
-      </section>
+      )}
+    </section>
     </div>
   );
 }

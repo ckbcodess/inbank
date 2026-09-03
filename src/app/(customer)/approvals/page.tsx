@@ -17,9 +17,9 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, ChevronRight, FileText, Search, Send } from "lucide-react";
+import { CheckCircle2, ChevronRight, FileText, Send } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
-import { Input } from "@/components/ui/input";
+import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { Badge } from "@/components/ui/badge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import {
@@ -91,23 +91,7 @@ export default function ApprovalQueuePage() {
       />
 
       <div className="rounded-2xl border border-border bg-card">
-        <div className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-3">
-          <div className="relative min-w-[200px] flex-1">
-            <Search
-              size={15}
-              strokeWidth={1.9}
-              aria-hidden="true"
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search reference, description or counterparty"
-              className="pl-9"
-              aria-label="Search approvals"
-            />
-          </div>
-
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
           <div className="inline-flex rounded-lg bg-muted p-0.5">
             {(["all", "payment", "trade"] as const).map((t) => (
               <button
@@ -115,9 +99,9 @@ export default function ApprovalQueuePage() {
                 type="button"
                 onClick={() => setTypeFilter(t)}
                 aria-pressed={typeFilter === t}
-                className={`rounded-md px-3 py-1.5 text-[12.5px] capitalize transition-all ${
+                className={`rounded-md px-3 py-1.5 text-[12.5px] capitalize transition-all cursor-pointer ${
                   typeFilter === t
-                    ? "bg-background text-foreground shadow-sm"
+                    ? "bg-background text-foreground shadow-sm font-medium"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -125,6 +109,14 @@ export default function ApprovalQueuePage() {
               </button>
             ))}
           </div>
+
+          <ExpandableSearch
+            value={query}
+            onChange={setQuery}
+            placeholder="Search reference, description or counterparty..."
+            tooltip="Search approvals"
+            inputWidthClassName="w-60 sm:w-80"
+          />
         </div>
 
         {effective === "loading" && <ListSkeleton rows={4} columns={5} />}

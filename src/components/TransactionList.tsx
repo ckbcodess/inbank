@@ -10,8 +10,8 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowLeftRight, Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { ArrowLeftRight } from "lucide-react";
+import { ExpandableSearch } from "@/components/ui/expandable-search";
 import {
   Select,
   SelectContent,
@@ -128,28 +128,13 @@ export default function TransactionList({
       <div className="rounded-2xl border border-border bg-card">
         {/* Search & Filter Toolbar */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
-          <div className="relative min-w-[220px] flex-1">
-            <Search
-              size={15}
-              strokeWidth={1.9}
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search description, counterparty or reference..."
-              className="pl-9"
-              aria-label="Search transactions"
-            />
-          </div>
-
           <div className="flex items-center gap-2">
             {/* shadcn Select for Channels */}
             <Select value={channelFilter} onValueChange={(val) => setChannelFilter(val as ChannelFilter)}>
-              <SelectTrigger className="w-[170px] h-9">
+              <SelectTrigger className="w-[150px] sm:w-[170px] h-9">
                 <SelectValue placeholder="All Channels" />
               </SelectTrigger>
-              <SelectContent align="end">
+              <SelectContent align="start">
                 <SelectItem value="all">All Channels</SelectItem>
                 <SelectItem value="cards">Cards</SelectItem>
                 <SelectItem value="mobile">Mobile Banking</SelectItem>
@@ -160,16 +145,24 @@ export default function TransactionList({
 
             {/* shadcn Select for Direction / Types */}
             <Select value={directionFilter} onValueChange={(val) => setDirectionFilter(val as DirectionFilter)}>
-              <SelectTrigger className="w-[140px] h-9">
+              <SelectTrigger className="w-[125px] sm:w-[140px] h-9">
                 <SelectValue placeholder="All Types" />
               </SelectTrigger>
-              <SelectContent align="end">
+              <SelectContent align="start">
                 <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="debit">Debits</SelectItem>
                 <SelectItem value="credit">Credits</SelectItem>
               </SelectContent>
             </Select>
           </div>
+
+          <ExpandableSearch
+            value={query}
+            onChange={setQuery}
+            placeholder="Search description, counterparty or reference..."
+            tooltip="Search transactions"
+            inputWidthClassName="w-64 sm:w-80"
+          />
         </div>
 
         {effective === "loading" && <ListSkeleton rows={6} columns={5} />}

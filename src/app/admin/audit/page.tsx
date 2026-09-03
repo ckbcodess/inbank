@@ -15,9 +15,9 @@
  */
 
 import { useMemo, useState } from "react";
-import { Lock, Search, ShieldCheck } from "lucide-react";
+import { Lock, ShieldCheck } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
-import { Input } from "@/components/ui/input";
+import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
@@ -95,23 +95,7 @@ export default function AuditLogPage() {
       />
 
       <div className="rounded-2xl border border-border bg-card">
-        <div className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-3">
-          <div className="relative min-w-[220px] flex-1">
-            <Search
-              size={15}
-              strokeWidth={1.9}
-              aria-hidden="true"
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by actor, role, action or target"
-              className="pl-9"
-              aria-label="Search audit log"
-            />
-          </div>
-
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
           <div className="flex items-center gap-1">
             {CHANNELS.map((c) => (
               <Button
@@ -124,6 +108,14 @@ export default function AuditLogPage() {
               </Button>
             ))}
           </div>
+
+          <ExpandableSearch
+            value={query}
+            onChange={setQuery}
+            placeholder="Search by actor, role, action or target..."
+            tooltip="Search audit log"
+            inputWidthClassName="w-64 sm:w-80"
+          />
         </div>
 
         {effective === "loading" && <ListSkeleton rows={6} columns={4} />}

@@ -7,13 +7,13 @@
  * else (12.3). User Details is an object destination reached from this list.
  */
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Plus, Search, UserCog } from "lucide-react";
+import { ChevronRight, Plus, UserCog } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { Badge } from "@/components/ui/badge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
@@ -36,6 +36,19 @@ const USERS = [
 
 export default function UserManagementPage() {
   const [state, setState] = useState<ListState>("populated");
+  const [query, setQuery] = useState("");
+
+  const filteredUsers = useMemo(() => {
+    if (!query.trim()) return USERS;
+    const q = query.toLowerCase();
+    return USERS.filter(
+      (u) =>
+        u.name.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q) ||
+        u.role.toLowerCase().includes(q) ||
+        u.access.toLowerCase().includes(q)
+    );
+  }, [query]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -61,20 +74,25 @@ export default function UserManagementPage() {
       <StubNotice section="section 5 / sitemap 12.4" states="13.1 list, 13.7 wizard" />
 
       <section className="rounded-2xl border border-border bg-card">
-        <div className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-3">
-          <div className="relative min-w-[200px] flex-1">
-            <Search
-              size={15}
-              strokeWidth={1.9}
-              aria-hidden="true"
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <Input placeholder="Search users by name, email or role" className="pl-9" aria-label="Search users" />
-          </div>
+        <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
+          <span className="text-[13px] font-medium text-foreground">
+            Users ({filteredUsers.length})
+          </span>
+          <ExpandableSearch
+            value={query}
+            onChange={setQuery}
+            placeholder="Search users by name, email or role..."
+            tooltip="Search users"
+          />
         </div>
 
-        <ul className="divide-y divide-border">
-          {USERS.map((u) => (
+        {filteredUsers.length === 0 ? (
+          <div className="py-12 text-center text-[13px] text-muted-foreground">
+            No users match &ldquo;{query}&rdquo;
+          </div>
+        ) : (
+          <ul className="divide-y divide-border">
+            {filteredUsers.map((u) => (
             <li key={u.id}>
               <Link
                 href={`/administration/${u.id}`}
@@ -97,6 +115,7 @@ export default function UserManagementPage() {
             </li>
           ))}
         </ul>
+        )}
       </section>
     </div>
   );
