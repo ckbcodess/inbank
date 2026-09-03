@@ -139,7 +139,7 @@ export default function Sidebar({
         }`}
       >
         {collapsed ? (
-          <SimpleTooltip content="Expand sidebar" side="right" sideOffset={12}>
+          <SimpleTooltip content="Expand sidebar" side="right" sideOffset={12} delay={50}>
             <button
               onClick={onToggleCollapse}
               className="group/logo relative hidden size-7 flex-shrink-0 items-center justify-center lg:flex cursor-pointer"
@@ -205,22 +205,30 @@ export default function Sidebar({
 
                 if (collapsed) {
                   return (
-                    <SimpleTooltip key={item.key} content={item.label} side="right" sideOffset={12}>
-                      <Link
-                        href={item.path}
-                        onClick={onClose}
-                        aria-label={item.label}
-                        className={`relative flex h-9 w-full items-center justify-center rounded-md transition-all duration-150 ${
-                          active
-                            ? "bg-[var(--active-bg)] text-[var(--active-border)]"
-                            : "surface-interactive text-muted-foreground hover:text-foreground"
-                        }`}
-                      >
-                        {active && (
-                          <span className="absolute bottom-1.5 left-0 top-1.5 w-[2px] rounded-r-full bg-[var(--active-border)]" />
-                        )}
-                        <Icon size={18} strokeWidth={1.7} />
-                      </Link>
+                    <SimpleTooltip
+                      key={item.key}
+                      content={item.label}
+                      side="right"
+                      sideOffset={12}
+                      delay={50}
+                    >
+                      <div className="w-full">
+                        <Link
+                          href={item.path}
+                          onClick={onClose}
+                          aria-label={item.label}
+                          className={`relative flex h-9 w-full items-center justify-center rounded-md transition-all duration-150 ${
+                            active
+                              ? "bg-[var(--active-bg)] text-[var(--active-border)]"
+                              : "surface-interactive text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          {active && (
+                            <span className="absolute bottom-1.5 left-0 top-1.5 w-[2px] rounded-r-full bg-[var(--active-border)]" />
+                          )}
+                          <Icon size={18} strokeWidth={1.7} />
+                        </Link>
+                      </div>
                     </SimpleTooltip>
                   );
                 }

@@ -38,13 +38,13 @@ function TooltipContent({
         sideOffset={sideOffset}
         align={align}
         alignOffset={alignOffset}
-        className="isolate z-50"
+        className="isolate z-[100]"
       >
         <TooltipPrimitive.Popup
           data-slot="tooltip-content"
           className={cn(
-            "relative z-50 max-w-xs origin-(--transform-origin) rounded-lg px-2.5 py-1.5 text-[11.5px] font-medium text-foreground tracking-tight shadow-md border border-border/80 dark:border-[#333] outline-none select-none pointer-events-none",
-            "bg-popover/90 dark:bg-[#1a1a1a]/95 backdrop-blur-md",
+            "relative z-[100] max-w-xs origin-(--transform-origin) rounded-lg px-2.5 py-1.5 text-[11.5px] font-medium text-foreground tracking-tight shadow-lg border border-border/80 dark:border-[#333] outline-none select-none pointer-events-none whitespace-nowrap",
+            "bg-popover/95 dark:bg-[#18181b] backdrop-blur-md",
             "duration-150 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
             "data-[side=bottom]:slide-in-from-top-1.5 data-[side=top]:slide-in-from-bottom-1.5 data-[side=left]:slide-in-from-right-1.5 data-[side=right]:slide-in-from-left-1.5",
             className
@@ -64,17 +64,29 @@ function SimpleTooltip({
   side = "top",
   align = "center",
   sideOffset = 6,
+  delay,
 }: {
   content: React.ReactNode;
   children: React.ReactElement;
   side?: "top" | "bottom" | "left" | "right";
   align?: "center" | "start" | "end";
   sideOffset?: number;
+  delay?: number;
 }) {
   if (!content) return children;
+
+  // Ensure Base UI binds event handlers and refs to a native DOM node rather than
+  // a React Component wrapper (such as Next.js Link)
+  const trigger =
+    typeof children.type === "string" ? (
+      children
+    ) : (
+      <span className="inline-flex w-full">{children}</span>
+    );
+
   return (
     <Tooltip>
-      <TooltipTrigger render={children} />
+      <TooltipTrigger delay={delay} render={trigger} />
       <TooltipContent side={side} align={align} sideOffset={sideOffset}>
         {content}
       </TooltipContent>
