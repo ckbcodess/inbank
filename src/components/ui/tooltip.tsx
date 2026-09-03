@@ -90,7 +90,7 @@ function SimpleTooltip({
     typeof children.type === "string" ? (
       children
     ) : (
-      <span className="inline-flex w-full">{children}</span>
+      <span className="inline-flex">{children}</span>
     );
 
   const tooltipElement = (
