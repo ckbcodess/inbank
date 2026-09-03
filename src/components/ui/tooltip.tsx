@@ -8,10 +8,19 @@ import { cn } from "@/lib/utils"
 const TooltipTrigger = TooltipPrimitive.Trigger
 
 function TooltipProvider({
-  delay = 200,
+  delay = 350,
+  closeDelay = 100,
+  timeout = 300,
   ...props
 }: TooltipPrimitive.Provider.Props) {
-  return <TooltipPrimitive.Provider delay={delay} {...props} />
+  return (
+    <TooltipPrimitive.Provider
+      delay={delay}
+      closeDelay={closeDelay}
+      timeout={timeout}
+      {...props}
+    />
+  );
 }
 
 function Tooltip(props: TooltipPrimitive.Root.Props) {
@@ -84,14 +93,24 @@ function SimpleTooltip({
       <span className="inline-flex w-full">{children}</span>
     );
 
-  return (
+  const tooltipElement = (
     <Tooltip>
-      <TooltipTrigger delay={delay} render={trigger} />
+      <TooltipTrigger render={trigger} />
       <TooltipContent side={side} align={align} sideOffset={sideOffset}>
         {content}
       </TooltipContent>
     </Tooltip>
   );
+
+  if (delay !== undefined) {
+    return (
+      <TooltipPrimitive.Provider delay={delay}>
+        {tooltipElement}
+      </TooltipPrimitive.Provider>
+    );
+  }
+
+  return tooltipElement;
 }
 
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider, SimpleTooltip }

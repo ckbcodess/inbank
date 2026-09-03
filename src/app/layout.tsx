@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning className={cn(geist.variable, geistMono.variable, "font-sans")}>
       <body className="antialiased">
         <ThemeProvider>
-          <TooltipProvider delay={200}>
+          <TooltipProvider delay={350} closeDelay={100} timeout={300}>
             <AmountVisibilityProvider>
               <DevStateProvider>
                 <Toaster position="top-right" richColors />

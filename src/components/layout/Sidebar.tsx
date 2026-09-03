@@ -139,7 +139,7 @@ export default function Sidebar({
         }`}
       >
         {collapsed ? (
-          <SimpleTooltip content="Expand sidebar" side="right" sideOffset={12} delay={50}>
+          <SimpleTooltip content="Expand sidebar" side="right" sideOffset={12}>
             <button
               onClick={onToggleCollapse}
               className="group/logo relative hidden size-7 flex-shrink-0 items-center justify-center lg:flex cursor-pointer"
@@ -210,7 +210,6 @@ export default function Sidebar({
                       content={item.label}
                       side="right"
                       sideOffset={12}
-                      delay={50}
                     >
                       <div className="w-full">
                         <Link
