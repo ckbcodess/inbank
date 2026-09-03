@@ -45,7 +45,10 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
     if (!actor) router.replace("/login");
     else if (!mfaVerified) router.replace("/mfa");
     else if (actor.shell === "admin") router.replace("/admin");
-    else if (!activeProfile) router.replace("/profile-selection");
+    else if (!activeProfile) {
+      if (actor.profiles.length > 0) selectProfile(actor.profiles[0]);
+      else router.replace("/login");
+    }
     else if (activeProfile.kind === "RETAIL") {
       const isCorporateRoute =
         pathname.startsWith("/approvals") ||
@@ -58,7 +61,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
         router.replace("/overview");
       }
     }
-  }, [hydrated, actor, mfaVerified, activeProfile, pathname, router]);
+  }, [hydrated, actor, mfaVerified, activeProfile, pathname, router, selectProfile]);
 
   const toggleCollapse = useCallback(() => {
     setCollapsed((prev) => {

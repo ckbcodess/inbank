@@ -55,8 +55,6 @@ function MfaContent() {
 
       if (actor.shell === "admin") {
         router.push("/admin");
-      } else if (actor.profiles.length > 1) {
-        router.push("/profile-selection");
       } else {
         router.push("/overview");
       }

@@ -37,9 +37,7 @@ export const useSession = create<SessionState>()(
       verifyMfa: () =>
         set((s) => ({
           mfaVerified: true,
-          // Section 12.4: Profile Selection is only shown for 2+ relationships;
-          // a single-relationship identity resolves immediately.
-          activeProfile: s.actor?.profiles.length === 1 ? s.actor.profiles[0] : s.activeProfile,
+          activeProfile: s.activeProfile ?? s.actor?.profiles[0] ?? null,
         })),
       selectProfile: (profile) => set({ activeProfile: profile }),
       signOut: () => set({ actor: null, activeProfile: null, mfaVerified: false }),

@@ -39,7 +39,7 @@ export function ActionRequiredWidget() {
         title: "KYC Verification",
         subtitle: "Proof of address verification complete",
         icon: ShieldAlert,
-        href: "/profile-selection",
+        href: "/settings",
         resolved: false,
       },
       {
