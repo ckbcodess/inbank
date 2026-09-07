@@ -113,64 +113,53 @@ export function MobileWalletFlow({
             onChange={() => setCollapsed(false)}
           />
         ) : (
-          <div className="flex flex-col gap-3.5">
+          <div className="flex flex-col gap-3">
             {isSelf ? (
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[13px] font-medium text-foreground">Registered Mobile Wallet</label>
-                <div className="flex h-13 items-center justify-between rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
-                  <span className="tabular">{state.wPhone || REGISTERED_PHONE}</span>
-                  <span className="text-[12px] text-primary font-normal">Registered Mobile</span>
-                </div>
+              <div className="flex h-13 items-center justify-between rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
+                <span className="tabular">{state.wPhone || REGISTERED_PHONE}</span>
+                <span className="text-[12px] text-primary font-normal">Registered Mobile</span>
               </div>
             ) : (
               <>
-                {/* Field 1: Recipient Phone Number */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">Recipient Phone Number</label>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    value={state.wPhone}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      onChange("wPhone", val);
-                      const detected = detectTelcoNetwork(val);
-                      if (detected) {
-                        onChange("wNetwork", detected.walletName);
-                      }
-                      const resolved = resolveAccountName(val, "");
-                      if (resolved) {
-                        onChange("wName", resolved);
-                      }
-                      const clean = val.replace(/[\s-]/g, "");
-                      if (clean.length === 10) {
-                        setCollapsed(true);
-                      }
-                    }}
-                    placeholder="Enter mobile number (e.g. 024 123 4567)"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-                  />
-                </div>
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  value={state.wPhone}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onChange("wPhone", val);
+                    const detected = detectTelcoNetwork(val);
+                    if (detected) {
+                      onChange("wNetwork", detected.walletName);
+                    }
+                    const resolved = resolveAccountName(val, "");
+                    if (resolved) {
+                      onChange("wName", resolved);
+                    }
+                    const clean = val.replace(/[\s-]/g, "");
+                    if (clean.length === 10) {
+                      setCollapsed(true);
+                    }
+                  }}
+                  placeholder="Enter mobile number (e.g. 024 123 4567)"
+                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                />
 
-                {/* Field 2: Wallet Provider */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">Wallet Provider</label>
-                  <Select
-                    value={state.wNetwork || ""}
-                    onValueChange={(val) => val && onChange("wNetwork", val)}
-                  >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                      <SelectValue placeholder="Select Wallet Provider" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {NETWORKS.map((n) => (
-                        <SelectItem key={n} value={n}>
-                          {n}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Select
+                  value={state.wNetwork || ""}
+                  onValueChange={(val) => val && onChange("wNetwork", val)}
+                >
+                  <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                    <SelectValue placeholder="Select Wallet Provider" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {NETWORKS.map((n) => (
+                      <SelectItem key={n} value={n}>
+                        {n}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </>
             )}
 

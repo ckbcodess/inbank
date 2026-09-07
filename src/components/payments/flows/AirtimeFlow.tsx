@@ -101,54 +101,46 @@ export function AirtimeFlow({
             onChange={() => setCollapsed(false)}
           />
         ) : (
-          <div className="flex flex-col gap-3.5">
-            {/* Field 1: Recipient Phone Number */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-foreground">Recipient Phone Number</label>
-              <input
-                type="tel"
-                inputMode="numeric"
-                value={state.aPhone}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  onChange("aPhone", val);
-                  const detected = detectTelcoNetwork(val);
-                  if (detected) {
-                    onChange("wNetwork", detected.telcoName);
-                  }
-                  const resolved = resolveAccountName(val, "");
-                  if (resolved) {
-                    onChange("benName", resolved);
-                  }
-                  const clean = val.replace(/[\s-]/g, "");
-                  if (clean.length === 10) {
-                    setCollapsed(true);
-                  }
-                }}
-                placeholder="Enter phone number (e.g. 024 123 4567)"
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-              />
-            </div>
+          <div className="flex flex-col gap-3">
+            <input
+              type="tel"
+              inputMode="numeric"
+              value={state.aPhone}
+              onChange={(e) => {
+                const val = e.target.value;
+                onChange("aPhone", val);
+                const detected = detectTelcoNetwork(val);
+                if (detected) {
+                  onChange("wNetwork", detected.telcoName);
+                }
+                const resolved = resolveAccountName(val, "");
+                if (resolved) {
+                  onChange("benName", resolved);
+                }
+                const clean = val.replace(/[\s-]/g, "");
+                if (clean.length === 10) {
+                  setCollapsed(true);
+                }
+              }}
+              placeholder="Enter phone number (e.g. 024 123 4567)"
+              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+            />
 
-            {/* Field 2: Mobile Network */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-foreground">Mobile Network</label>
-              <Select
-                value={state.wNetwork ? normalizeNetworkName(state.wNetwork) : ""}
-                onValueChange={(val) => val && onChange("wNetwork", val)}
-              >
-                <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                  <SelectValue placeholder="Select Network" />
-                </SelectTrigger>
-                <SelectContent>
-                  {TELCO_NETWORKS.map((n) => (
-                    <SelectItem key={n} value={n}>
-                      {n}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <Select
+              value={state.wNetwork ? normalizeNetworkName(state.wNetwork) : ""}
+              onValueChange={(val) => val && onChange("wNetwork", val)}
+            >
+              <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                <SelectValue placeholder="Select Network" />
+              </SelectTrigger>
+              <SelectContent>
+                {TELCO_NETWORKS.map((n) => (
+                  <SelectItem key={n} value={n}>
+                    {n}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
           </div>
