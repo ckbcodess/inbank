@@ -259,34 +259,86 @@ export function getDetailedFeeBreakdown({
 }
 
 export const NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money", "GCB Wallet"];
+export const TELCO_NETWORKS = ["MTN Ghana", "Telecel Ghana", "AT Ghana"] as const;
+
+export function normalizeGhanaPhone(phone: string): string {
+  let clean = phone.replace(/[\s-]/g, "");
+  if (clean.startsWith("+233")) {
+    clean = "0" + clean.slice(4);
+  } else if (clean.startsWith("233") && clean.length > 9) {
+    clean = "0" + clean.slice(3);
+  }
+  return clean;
+}
+
+export function detectTelcoNetwork(phone: string): { telcoName: string; walletName: string } | null {
+  const clean = normalizeGhanaPhone(phone);
+  if (/^0(24|54|55|59|25)/.test(clean)) {
+    return { telcoName: "MTN Ghana", walletName: "MTN Mobile Money" };
+  }
+  if (/^0(20|50)/.test(clean)) {
+    return { telcoName: "Telecel Ghana", walletName: "Telecel Cash" };
+  }
+  if (/^0(27|57|26|56)/.test(clean)) {
+    return { telcoName: "AT Ghana", walletName: "AT Money" };
+  }
+  return null;
+}
+
+export function normalizeNetworkName(name?: string): string {
+  if (!name) return "MTN Ghana";
+  const lower = name.toLowerCase();
+  if (lower.includes("mtn")) return "MTN Ghana";
+  if (lower.includes("telecel") || lower.includes("vodafone")) return "Telecel Ghana";
+  if (lower.includes("at") || lower.includes("airteltigo")) return "AT Ghana";
+  return name;
+}
 
 export type BundleItem = { id: string; name: string; val: string; price: number; network: string };
 
+const MTN_BUNDLES: BundleItem[] = [
+  { id: "m-1", name: "MTN 1GB Daily", val: "1 GB", price: 6, network: "MTN Ghana" },
+  { id: "m-2", name: "MTN 2.5GB 3-Day", val: "2.5 GB", price: 15, network: "MTN Ghana" },
+  { id: "m-3", name: "MTN 5GB Weekly", val: "5 GB", price: 30, network: "MTN Ghana" },
+  { id: "m-4", name: "MTN 15GB Monthly", val: "15 GB", price: 80, network: "MTN Ghana" },
+  { id: "m-5", name: "MTN 30GB Monthly", val: "30 GB", price: 150, network: "MTN Ghana" },
+  { id: "m-6", name: "MTN 100GB Jumbo", val: "100 GB", price: 350, network: "MTN Ghana" },
+];
+
+const TELECEL_BUNDLES: BundleItem[] = [
+  { id: "t-1", name: "Telecel 1.2GB Daily", val: "1.2 GB", price: 6, network: "Telecel Ghana" },
+  { id: "t-2", name: "Telecel 6GB Weekly", val: "6 GB", price: 30, network: "Telecel Ghana" },
+  { id: "t-3", name: "Telecel 20GB Monthly", val: "20 GB", price: 90, network: "Telecel Ghana" },
+  { id: "t-4", name: "Telecel 50GB Monthly", val: "50 GB", price: 200, network: "Telecel Ghana" },
+];
+
+const AT_BUNDLES: BundleItem[] = [
+  { id: "a-1", name: "AT Big Time 2GB", val: "2 GB", price: 10, network: "AT Ghana" },
+  { id: "a-2", name: "AT Big Time 8GB", val: "8 GB", price: 35, network: "AT Ghana" },
+  { id: "a-3", name: "AT Sika Kokoo 25GB", val: "25 GB", price: 100, network: "AT Ghana" },
+];
+
+const GCB_BUNDLES: BundleItem[] = [
+  { id: "g-1", name: "GCB Data Pass 3GB", val: "3 GB", price: 15, network: "GCB Wallet" },
+  { id: "g-2", name: "GCB Data Pass 10GB", val: "10 GB", price: 45, network: "GCB Wallet" },
+];
+
 export const BUNDLES_BY_NETWORK: Record<string, BundleItem[]> = {
-  "MTN Mobile Money": [
-    { id: "m-1", name: "MTN 1GB Daily", val: "1 GB", price: 6, network: "MTN Mobile Money" },
-    { id: "m-2", name: "MTN 2.5GB 3-Day", val: "2.5 GB", price: 15, network: "MTN Mobile Money" },
-    { id: "m-3", name: "MTN 5GB Weekly", val: "5 GB", price: 30, network: "MTN Mobile Money" },
-    { id: "m-4", name: "MTN 15GB Monthly", val: "15 GB", price: 80, network: "MTN Mobile Money" },
-    { id: "m-5", name: "MTN 30GB Monthly", val: "30 GB", price: 150, network: "MTN Mobile Money" },
-    { id: "m-6", name: "MTN 100GB Jumbo", val: "100 GB", price: 350, network: "MTN Mobile Money" },
-  ],
-  "Telecel Cash": [
-    { id: "t-1", name: "Telecel 1.2GB Daily", val: "1.2 GB", price: 6, network: "Telecel Cash" },
-    { id: "t-2", name: "Telecel 6GB Weekly", val: "6 GB", price: 30, network: "Telecel Cash" },
-    { id: "t-3", name: "Telecel 20GB Monthly", val: "20 GB", price: 90, network: "Telecel Cash" },
-    { id: "t-4", name: "Telecel 50GB Monthly", val: "50 GB", price: 200, network: "Telecel Cash" },
-  ],
-  "AT Money": [
-    { id: "a-1", name: "AT Big Time 2GB", val: "2 GB", price: 10, network: "AT Money" },
-    { id: "a-2", name: "AT Big Time 8GB", val: "8 GB", price: 35, network: "AT Money" },
-    { id: "a-3", name: "AT Sika Kokoo 25GB", val: "25 GB", price: 100, network: "AT Money" },
-  ],
-  "GCB Wallet": [
-    { id: "g-1", name: "GCB Data Pass 3GB", val: "3 GB", price: 15, network: "GCB Wallet" },
-    { id: "g-2", name: "GCB Data Pass 10GB", val: "10 GB", price: 45, network: "GCB Wallet" },
-  ],
+  "MTN Ghana": MTN_BUNDLES,
+  "MTN Mobile Money": MTN_BUNDLES,
+  "Telecel Ghana": TELECEL_BUNDLES,
+  "Telecel Cash": TELECEL_BUNDLES,
+  "AT Ghana": AT_BUNDLES,
+  "AT Money": AT_BUNDLES,
+  "GCB Wallet": GCB_BUNDLES,
 };
+
+export function getBundlesForNetwork(networkName?: string): BundleItem[] {
+  if (!networkName) return MTN_BUNDLES;
+  if (BUNDLES_BY_NETWORK[networkName]) return BUNDLES_BY_NETWORK[networkName];
+  const normalized = normalizeNetworkName(networkName);
+  return BUNDLES_BY_NETWORK[normalized] || MTN_BUNDLES;
+}
 
 export const GHANAIAN_NAMES = [
   "Ama Serwaa Mensah",
@@ -342,11 +394,8 @@ export function resolveAccountName(number: string, fallback: string = ""): strin
 }
 
 export function detectNetwork(phone: string): string {
-  const c = phone.replace(/[\s-]/g, "");
-  if (/^0(24|54|55|59|25)/.test(c)) return "MTN Mobile Money";
-  if (/^0(20|50)/.test(c)) return "Telecel Cash";
-  if (/^0(27|57|26)/.test(c)) return "AT Money";
-  return "MTN Mobile Money";
+  const detected = detectTelcoNetwork(phone);
+  return detected ? detected.walletName : "MTN Mobile Money";
 }
 
 export const RATES: Record<string, number> = {

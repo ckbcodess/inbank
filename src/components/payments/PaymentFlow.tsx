@@ -70,7 +70,15 @@ import { BillsPaymentFlow } from "./flows/BillsPaymentFlow";
 import { InternationalWireFlow } from "./flows/InternationalWireFlow";
 import { GroupPaymentFlow } from "./flows/GroupPaymentFlow";
 import { ProxyPayFlow } from "./flows/ProxyPayFlow";
-import { PAYMENT_METHODS, getPaymentMethodName, getDetailedFeeBreakdown, ScheduleFrequency } from "./flows/shared";
+import {
+  PAYMENT_METHODS,
+  getPaymentMethodName,
+  getDetailedFeeBreakdown,
+  ScheduleFrequency,
+  detectTelcoNetwork,
+  normalizeNetworkName,
+  getBundlesForNetwork,
+} from "./flows/shared";
 import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
 
 export type FlowGroup = "send" | "bills";
@@ -1107,7 +1115,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
     if (item.rail === "airtime") {
       setRail("airtime");
-      const net = item.bank || detectNetwork(item.acct);
+      const detected = detectTelcoNetwork(item.acct);
+      const net = detected?.telcoName || normalizeNetworkName(item.bank) || "MTN Ghana";
       setF((p) => ({
         ...p,
         aPhone: item.acct,
@@ -1122,8 +1131,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
     if (item.rail === "data") {
       setRail("data");
-      const net = item.bank || detectNetwork(item.acct);
-      const firstBundle = BUNDLES_BY_NETWORK[net]?.[0]?.id;
+      const detected = detectTelcoNetwork(item.acct);
+      const net = detected?.telcoName || normalizeNetworkName(item.bank) || "MTN Ghana";
+      const bundles = getBundlesForNetwork(net);
+      const firstBundle = bundles[0]?.id;
       setF((p) => ({
         ...p,
         aPhone: item.acct,
@@ -1339,7 +1350,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           selectBeneficiary(matched);
         } else {
           handlePhoneLookup("aPhone", decoded);
-          const net = detectNetwork(decoded);
+          const detected = detectTelcoNetwork(decoded);
+          const net = detected?.telcoName || "MTN Ghana";
           setF((p) => ({ ...p, aPhone: decoded, wNetwork: net }));
           setStage1Collapsed(true);
         }
@@ -1349,8 +1361,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           selectBeneficiary(matched);
         } else {
           handlePhoneLookup("aPhone", decoded);
-          const net = detectNetwork(decoded);
-          const firstBundle = BUNDLES_BY_NETWORK[net]?.[0]?.id;
+          const detected = detectTelcoNetwork(decoded);
+          const net = detected?.telcoName || "MTN Ghana";
+          const bundles = getBundlesForNetwork(net);
+          const firstBundle = bundles[0]?.id;
           setF((p) => ({ ...p, aPhone: decoded, wNetwork: net, bundleId: firstBundle || p.bundleId }));
           setStage1Collapsed(true);
         }
@@ -1392,7 +1406,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const toOwnAccount = accounts.find((a) => a.id === f.toOwnAccountId);
 
   const availableBundles = useMemo(() => {
-    return BUNDLES_BY_NETWORK[f.wNetwork] ?? BUNDLES_BY_NETWORK["MTN Mobile Money"] ?? [];
+    return getBundlesForNetwork(f.wNetwork);
   }, [f.wNetwork]);
 
   const bundle = useMemo(() => {

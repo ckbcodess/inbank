@@ -135,7 +135,10 @@ const FREQUENCIES: InstructionFrequency[] = [
 ];
 
 function detectNetworkFromPhone(phone: string): { airtimeNet: string; walletNet: string } | null {
-  const clean = phone.replace(/[^0-9]/g, "");
+  let clean = phone.replace(/[^0-9]/g, "");
+  if (clean.startsWith("233") && clean.length > 9) {
+    clean = "0" + clean.slice(3);
+  }
   if (
     clean.startsWith("024") ||
     clean.startsWith("054") ||
@@ -362,6 +365,10 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       } else if (rail === "wallet") {
         set("walletNetwork", detected.walletNet);
       }
+    }
+    const clean = val.replace(/[^0-9]/g, "");
+    if (clean.length === 10) {
+      setDetailsCollapsed(true);
     }
   };
 
@@ -819,27 +826,30 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {/* TO BANK / WALLET TO BANK */}
               {(rail === "bank" || rail === "wallet-to-bank") && (
                 <>
-                  <Select
-                    value={f.bank}
-                    onValueChange={(val) => {
-                      if (val) {
-                        set("bank", val);
-                        if (val.includes("GCB")) set("paymentMethod", "");
-                        else if (!f.paymentMethod) set("paymentMethod", "gip");
-                      }
-                    }}
-                  >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                      <SelectValue placeholder="Select Bank" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {BANKS.map((b) => (
-                        <SelectItem key={b} value={b}>
-                          {b}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[13px] font-medium text-foreground">Destination Bank</label>
+                    <Select
+                      value={f.bank}
+                      onValueChange={(val) => {
+                        if (val) {
+                          set("bank", val);
+                          if (val.includes("GCB")) set("paymentMethod", "");
+                          else if (!f.paymentMethod) set("paymentMethod", "gip");
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                        <SelectValue placeholder="Select Bank" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BANKS.map((b) => (
+                          <SelectItem key={b} value={b}>
+                            {b}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
                   {/* Payment Method for Other Local Banks */}
                   {!f.bank.includes("GCB") && (
@@ -866,56 +876,68 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     </div>
                   )}
 
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={f.destination}
-                    onChange={(e) => set("destination", e.target.value)}
-                    placeholder="Enter account number"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-                  />
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[13px] font-medium text-foreground">Account Number</label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={f.destination}
+                      onChange={(e) => set("destination", e.target.value)}
+                      placeholder="Enter account number"
+                      className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                    />
+                  </div>
                 </>
               )}
 
               {/* TO MOBILE WALLET */}
               {rail === "wallet" && (
                 <>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    value={f.destination}
-                    onChange={(e) => handlePhoneChange(e.target.value)}
-                    placeholder="Enter mobile / wallet number"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-                  />
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[13px] font-medium text-foreground">Recipient Phone Number</label>
+                    <input
+                      type="tel"
+                      inputMode="numeric"
+                      value={f.destination}
+                      onChange={(e) => handlePhoneChange(e.target.value)}
+                      placeholder="Enter mobile / wallet number (e.g. 024 123 4567)"
+                      className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                    />
+                  </div>
 
-                  <Select
-                    value={f.walletNetwork}
-                    onValueChange={(val) => val && set("walletNetwork", val)}
-                  >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                      <SelectValue placeholder="Select Wallet Provider" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {WALLET_NETWORKS.map((n) => (
-                        <SelectItem key={n} value={n}>
-                          {n}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[13px] font-medium text-foreground">Wallet Provider</label>
+                    <Select
+                      value={f.walletNetwork}
+                      onValueChange={(val) => val && set("walletNetwork", val)}
+                    >
+                      <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                        <SelectValue placeholder="Select Wallet Provider" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {WALLET_NETWORKS.map((n) => (
+                          <SelectItem key={n} value={n}>
+                            {n}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </>
               )}
 
               {/* TO PROXY */}
               {rail === "proxy" && (
-                <input
-                  type="text"
-                  value={f.proxyId}
-                  onChange={(e) => set("proxyId", e.target.value)}
-                  placeholder="Enter proxy ID (e.g. @kwame.b or GHA-12345678-9)"
-                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-                />
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[13px] font-medium text-foreground">Proxy ID</label>
+                  <input
+                    type="text"
+                    value={f.proxyId}
+                    onChange={(e) => set("proxyId", e.target.value)}
+                    placeholder="Enter proxy ID (e.g. @kwame.b or GHA-12345678-9)"
+                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                  />
+                </div>
               )}
 
               {/* TO GROUP */}
@@ -967,41 +989,47 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {/* DATA BUNDLE */}
               {rail === "data" && (
                 <>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    value={f.destination}
-                    onChange={(e) => handlePhoneChange(e.target.value)}
-                    placeholder="Enter recipient mobile number"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-                  />
-
-                  <Select
-                    value={f.network}
-                    onValueChange={(newNet) => {
-                      if (!newNet) return;
-                      set("network", newNet);
-                      const pkgs = NETWORK_DATA_PACKAGES[newNet] || [];
-                      if (pkgs.length > 0) {
-                        set("dataPackageId", pkgs[0].id);
-                        set("amount", pkgs[0].price);
-                      }
-                    }}
-                  >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                      <SelectValue placeholder="Select network operator" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {AIRTIME_NETWORKS.map((n) => (
-                        <SelectItem key={n} value={n}>
-                          {n}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[13px] font-medium text-foreground">Recipient Phone Number</label>
+                    <input
+                      type="tel"
+                      inputMode="numeric"
+                      value={f.destination}
+                      onChange={(e) => handlePhoneChange(e.target.value)}
+                      placeholder="Enter phone number (e.g. 024 123 4567)"
+                      className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                    />
+                  </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <span className="text-[13px] font-medium text-muted-foreground">Select Data Package</span>
+                    <label className="text-[13px] font-medium text-foreground">Mobile Network</label>
+                    <Select
+                      value={f.network}
+                      onValueChange={(newNet) => {
+                        if (!newNet) return;
+                        set("network", newNet);
+                        const pkgs = NETWORK_DATA_PACKAGES[newNet] || [];
+                        if (pkgs.length > 0) {
+                          set("dataPackageId", pkgs[0].id);
+                          set("amount", pkgs[0].price);
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                        <SelectValue placeholder="Select network operator" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {AIRTIME_NETWORKS.map((n) => (
+                          <SelectItem key={n} value={n}>
+                            {n}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[13px] font-medium text-foreground">Select Data Package</label>
                     <Select
                       value={f.dataPackageId}
                       onValueChange={(val) => {
@@ -1009,6 +1037,10 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                         set("dataPackageId", val);
                         const dp = currentPackages.find((d) => d.id === val);
                         if (dp) set("amount", dp.price);
+                        if (isDestinationValid) setDetailsCollapsed(true);
+                      }}
+                      onOpenChange={(open) => {
+                        if (open && isDestinationValid) setDetailsCollapsed(true);
                       }}
                     >
                       <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
@@ -1029,30 +1061,36 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {/* AIRTIME */}
               {rail === "airtime" && (
                 <>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    value={f.destination}
-                    onChange={(e) => handlePhoneChange(e.target.value)}
-                    placeholder="Enter phone number to recharge"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-                  />
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[13px] font-medium text-foreground">Recipient Phone Number</label>
+                    <input
+                      type="tel"
+                      inputMode="numeric"
+                      value={f.destination}
+                      onChange={(e) => handlePhoneChange(e.target.value)}
+                      placeholder="Enter phone number (e.g. 024 123 4567)"
+                      className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                    />
+                  </div>
 
-                  <Select
-                    value={f.network}
-                    onValueChange={(val) => val && set("network", val)}
-                  >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                      <SelectValue placeholder="Select network" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {AIRTIME_NETWORKS.map((n) => (
-                        <SelectItem key={n} value={n}>
-                          {n}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[13px] font-medium text-foreground">Mobile Network</label>
+                    <Select
+                      value={f.network}
+                      onValueChange={(val) => val && set("network", val)}
+                    >
+                      <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                        <SelectValue placeholder="Select network" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {AIRTIME_NETWORKS.map((n) => (
+                          <SelectItem key={n} value={n}>
+                            {n}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </>
               )}
 
