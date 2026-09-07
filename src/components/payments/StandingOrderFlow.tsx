@@ -1,22 +1,24 @@
 "use client";
 
 /**
- * Send & Pay — Secure Progressive Disclosure Standing Order Flow
+ * Send & Pay — Standing Order Unified Progressive Disclosure Flow
  *
- * Implements strict state-integrity rules:
- *   1. Lead Screen (Figma Node 896:21624): "Select a standing order"
- *   2. Only ONE active stage is editable at any given time.
- *   3. Completed stages collapse into read-only confirmed summary badges (with ✓).
- *   4. To edit an earlier stage, the user must explicitly click "Change", which safely
- *      rolls back and resets downstream dependent state to prevent invalid/broken flows.
- *   5. Data Bundle & Airtime automatically detect the network provider from the phone number prefix.
+ * Implements modern banking standards:
+ *   1. Lead Screen: "Select a standing order" with iconic GCB amber highlights.
+ *   2. Responsive Horizontal Scroll Beneficiary Avatar Strip with initials and bank cues.
+ *   3. Dynamic collapsing: selecting a beneficiary or focusing amount automatically collapses
+ *      beneficiary details into CollapsedDetailsBadge.
+ *   4. Clean FromAccountSelector card at top with available liquidity.
+ *   5. Real-time name resolution with GhIPSS / Network verification badge.
+ *   6. High vertical-padding AmountInput with balance guard.
+ *   7. Dedicated recurring schedule options (Frequency, First Run, End Condition).
+ *   8. Review summary with fee breakdown and Transaction PIN modal authorization.
  */
 
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeftRight,
-  Check,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
@@ -30,7 +32,6 @@ import {
   Wifi,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -40,7 +41,6 @@ import {
 } from "@/components/ui/select";
 import {
   accountsForProfile,
-  findAccount,
   formatDate,
   formatMoney,
   saveStandingInstruction,
@@ -51,8 +51,28 @@ import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import { useSession } from "@/lib/session-store";
 import TransactionPinModal from "./TransactionPinModal";
 import { useAuthorisation } from "./useAuthorisation";
+import {
+  FromAccountSelector,
+  AmountInput,
+  CategorySelect,
+  InsufficientFundsAlert,
+  ProceedButton,
+  VerifiedAccountBadge,
+  CollapsedDetailsBadge,
+  SaveBeneficiaryCheckbox,
+  BANKS,
+  PAYMENT_METHODS,
+  getPaymentMethodName,
+  resolveAccountName,
+} from "./flows/shared";
+import {
+  RailBeneficiaryStrip,
+  RECENT_AVATARS,
+  type RecentPayeeAvatar,
+} from "./flows/beneficiaries";
+import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
 
-type TransactionType =
+export type TransactionType =
   | "bank"
   | "wallet"
   | "proxy"
@@ -69,17 +89,6 @@ const STANDING_ORDER_OPTIONS = [
   { id: "wallet-to-bank" as TransactionType, title: "Wallet to Bank", icon: ArrowLeftRight },
   { id: "data" as TransactionType, title: "Data Bundle", icon: Wifi },
   { id: "airtime" as TransactionType, title: "Airtime", icon: PhoneCall },
-];
-
-const BANKS = [
-  "GCB Bank (Internal)",
-  "Standard Bank Ghana",
-  "Ecobank Ghana",
-  "Absa Bank Ghana",
-  "Fidelity Bank Ghana",
-  "CalBank",
-  "Zenith Bank Ghana",
-  "Stanbic Bank Ghana",
 ];
 
 const WALLET_NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money"];
@@ -117,45 +126,13 @@ const CATEGORIES = [
   { id: "savings", label: "Savings & Investments", defaultName: "Monthly Savings" },
 ];
 
-interface BeneficiaryItem {
-  name: string;
-  dest: string;
-  type: TransactionType;
-  provider?: string;
-}
-
-const RECENT_RECIPIENTS: BeneficiaryItem[] = [
-  // Bank Payees
-  { name: "Kwame Boateng", dest: "0231 4455 8890", type: "bank", provider: "GCB Bank (Internal)" },
-  { name: "Lester ECG", dest: "P-8839210", type: "bank", provider: "GCB Bank (Internal)" },
-  { name: "Abena Osei", dest: "1089 3322 1100", type: "bank", provider: "Stanbic Bank Ghana" },
-
-  // Mobile Wallet Payees
-  { name: "Ama Serwaa Mensah", dest: "0244 123 456", type: "wallet", provider: "MTN Mobile Money" },
-  { name: "Yaw Mensah", dest: "0201 987 654", type: "wallet", provider: "Telecel Cash" },
-  { name: "Kofi Boateng", dest: "0277 456 789", type: "wallet", provider: "AT Money" },
-
-  // Proxy Payees
-  { name: "Kwame Boateng", dest: "@kwame.b", type: "proxy" },
-  { name: "Ama Serwaa", dest: "@ama.serwaa", type: "proxy" },
-  { name: "Kofi Appiah", dest: "GHA-71829304-1", type: "proxy" },
-
-  // Airtime Payees
-  { name: "Ama Serwaa", dest: "0244 123 456", type: "airtime", provider: "MTN Ghana" },
-  { name: "Kofi Appiah", dest: "0201 987 654", type: "airtime", provider: "Telecel Ghana" },
-  { name: "Yaw Mensah", dest: "0277 456 789", type: "airtime", provider: "AT Ghana" },
-
-  // Data Bundle Numbers
-  { name: "Personal iPhone", dest: "0244 123 456", type: "data", provider: "MTN Ghana" },
-  { name: "Home Router", dest: "0201 987 654", type: "data", provider: "Telecel Ghana" },
-  { name: "iPad Pro", dest: "0277 456 789", type: "data", provider: "AT Ghana" },
+const FREQUENCIES: InstructionFrequency[] = [
+  "Daily",
+  "Weekly",
+  "Monthly",
+  "Quarterly",
+  "Yearly",
 ];
-
-const FREQUENCIES: InstructionFrequency[] = ["Daily", "Weekly", "Monthly", "Quarterly", "Yearly"];
-
-const inputCls =
-  "h-11 w-full rounded-xl border border-border bg-background px-3.5 text-[14px] text-foreground outline-none transition-all duration-150 ease-out focus:border-ring focus:ring-3 focus:ring-ring/30";
-const labelCls = "text-[12.5px] font-medium text-foreground";
 
 function detectNetworkFromPhone(phone: string): { airtimeNet: string; walletNet: string } | null {
   const clean = phone.replace(/[^0-9]/g, "");
@@ -182,93 +159,44 @@ function detectNetworkFromPhone(phone: string): { airtimeNet: string; walletNet:
   return null;
 }
 
-const GHANAIAN_NAMES = [
-  "Ama Serwaa Mensah",
-  "Kwame Boateng",
-  "Kofi Osei Asante",
-  "Akua Mansah",
-  "Efua Addo Mensah",
-  "Nana Yaw Osei",
-  "Tsotsoo Mills Naa",
-  "Abena Danso",
-  "Esi Sutherland",
-  "Kwadwo Appiah",
-  "Yaw Frempong",
-  "Adwoa Sarfo",
-  "Kweku Baako",
-  "Accra Fabrics Ltd",
-];
-
-const ACCOUNT_RESOLUTIONS: Record<string, string> = {
-  "023144558890": "Accra Fabrics Ltd",
-  "0231 4455 8890": "Accra Fabrics Ltd",
-  "01234567890": "Akua Mansah",
-  "1234567890": "Akua Mansah",
-  "0123456789012": "Tsotsoo Mills Naa",
-  "0244123456": "Ama Serwaa Mensah",
-  "0244 123 456": "Ama Serwaa Mensah",
-  "0201987654": "Kwame Boateng",
-  "0201 987 654": "Kwame Boateng",
-  "0559220118": "Yaa Asantewaa",
-  "0559 220 118": "Yaa Asantewaa",
-  "0271445900": "Efua Mensah",
-  "0271 445 900": "Efua Mensah",
-  "1023445566": "Kofi Osei",
-  "1023 4455 66": "Kofi Osei",
-};
-
-function resolveName(dest: string, type: TransactionType): string {
-  const clean = dest.replace(/[\s-]/g, "").toLowerCase();
-  if (!clean || clean.length < 5) return "";
-  if (ACCOUNT_RESOLUTIONS[clean]) return ACCOUNT_RESOLUTIONS[clean];
-  if (clean.startsWith("@")) return `${clean.replace("@", "").toUpperCase()} Direct Alias`;
-  if (type === "group") return "";
-
-  let hash = 0;
-  for (let i = 0; i < clean.length; i++) {
-    hash = (hash * 31 + clean.charCodeAt(i)) % GHANAIAN_NAMES.length;
-  }
-  return GHANAIAN_NAMES[Math.abs(hash)] || "Ama Serwaa Mensah";
-}
-
 export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const router = useRouter();
   const activeProfile = useSession((s) => s.activeProfile);
   const accounts = useMemo(() => accountsForProfile(activeProfile?.kind), [activeProfile?.kind]);
-
   const auth = useAuthorisation();
+  const { groups } = useGroupsStore();
+  const savedBeneficiaries = useBeneficiariesStore((s) => s.beneficiaries);
 
   const [rail, setRail] = useState<TransactionType | null>(null);
-  const [screen, setScreen] = useState<"form" | "success">("form");
+  const [screen, setScreen] = useState<"form" | "review" | "success">("form");
   const [createdId, setCreatedId] = useState("");
-  const { groups } = useGroupsStore();
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
   const [pinModalOpen, setPinModalOpen] = useState(false);
-
-  // Stage Control: Exactly one active stage at a time
-  const [activeStage, setActiveStage] = useState<number>(1);
-  const [maxRevealedStage, setMaxRevealedStage] = useState<number>(1);
+  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
 
   // Form State
   const [f, setF] = useState({
+    fromId: accounts[0]?.id ?? "",
     destination: "",
-    bank: "",
-    network: "",
-    walletNetwork: "",
+    bank: "GCB Bank",
+    paymentMethod: "gip",
+    network: "MTN Ghana",
+    walletNetwork: "MTN Mobile Money",
     proxyId: "",
     groupName: "",
-    dataPackageId: "",
-    accountId: accounts[0]?.id ?? "",
+    dataPackageId: "mtn-2",
     amount: "",
-    category: "",
+    category: "bills",
     nickname: "",
     frequency: "Monthly" as InstructionFrequency,
-    firstRun: new Date().toISOString().slice(0, 10),
+    firstRun: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
     endCondition: "indefinite" as "indefinite" | "date",
     endDate: "",
+    saveBeneficiary: false,
+    beneficiaryNickname: "",
   });
 
-  const set = (k: keyof typeof f, v: typeof f[keyof typeof f]) => setF((p) => ({ ...p, [k]: v }));
+  const set = (k: keyof typeof f, v: unknown) => setF((p) => ({ ...p, [k]: v }));
 
   // Live automatic name resolution
   const [resolving, setResolving] = useState(false);
@@ -290,71 +218,133 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     }
     setResolving(true);
     const t = setTimeout(() => {
-      setResolvedName(resolveName(currentDest, rail));
+      setResolvedName(resolveAccountName(currentDest, ""));
       setResolving(false);
     }, 250);
     return () => clearTimeout(t);
   }, [currentDest, rail]);
 
-  const account = findAccount(f.accountId) ?? accounts[0];
+  const fromAccount = useMemo(() => {
+    return accounts.find((a) => a.id === f.fromId) ?? accounts[0];
+  }, [accounts, f.fromId]);
+
   const railConfig = STANDING_ORDER_OPTIONS.find((t) => t.id === rail) ?? STANDING_ORDER_OPTIONS[0];
   const selectedCat = CATEGORIES.find((c) => c.id === f.category) ?? CATEGORIES[0];
 
-  // Dynamic packages for current network in Data Bundle mode
   const currentPackages = useMemo(() => {
     return NETWORK_DATA_PACKAGES[f.network] || NETWORK_DATA_PACKAGES["MTN Ghana"];
   }, [f.network]);
 
-  // Filter beneficiaries strictly by the active transaction rail
-  const relevantRecipients = useMemo(() => {
+  // Beneficiaries Avatar Strip filtered by current rail + merging saved beneficiaries
+  const activeRailBeneficiaries = useMemo(() => {
     if (!rail) return [];
+
     if (rail === "group") {
       return groups.map((g) => ({
         id: g.id,
         name: g.name,
-        dest: `${g.members.length} members`,
-        type: "group" as const,
-        provider: g.splitType === "equal" ? `GHS ${g.defaultPerMemberAmount} each` : "Custom split",
+        bank: `${g.members.length} members`,
+        acct: g.splitType === "equal" ? `GHS ${g.defaultPerMemberAmount} each` : "Custom split",
+        initials:
+          g.name
+            .replace(/[^a-zA-Z ]/g, "")
+            .split(" ")
+            .filter(Boolean)
+            .map((w) => w[0])
+            .join("")
+            .slice(0, 2)
+            .toUpperCase() || "GP",
+        rail: "group",
+        colorBg: "#fef3c7",
       }));
     }
-    if (rail === "wallet-to-bank") {
-      return RECENT_RECIPIENTS.filter((r) => r.type === "bank" || r.type === "wallet-to-bank");
-    }
-    return RECENT_RECIPIENTS.filter((r) => r.type === rail);
-  }, [rail, groups]);
 
-  const selectRecentPayee = (r: BeneficiaryItem) => {
+    // Pull from static avatar list
+    let list: RecentPayeeAvatar[] = [];
+    if (rail === "wallet-to-bank") {
+      list = RECENT_AVATARS.filter((r) => r.rail === "bank" || r.rail === "wallet-to-bank");
+    } else {
+      list = RECENT_AVATARS.filter((r) => r.rail === rail);
+    }
+
+    // Merge in any custom saved beneficiaries from user store matching the rail
+    const storeMatching = savedBeneficiaries
+      .filter((sb) => sb.transactionType === rail)
+      .map((sb) => ({
+        id: sb.id,
+        name: sb.name,
+        bank: sb.bankName || sb.network || "GCB Bank",
+        acct: sb.accountNumber || sb.phoneNumber || sb.proxyId || "",
+        initials:
+          sb.name
+            .replace(/[^a-zA-Z ]/g, "")
+            .split(" ")
+            .filter(Boolean)
+            .map((w) => w[0])
+            .join("")
+            .slice(0, 2)
+            .toUpperCase() || "BN",
+        rail: rail as string,
+        colorBg: "#e0eedd",
+      }));
+
+    // Deduplicate by account/phone number
+    const seen = new Set<string>();
+    const merged: RecentPayeeAvatar[] = [];
+    for (const item of [...storeMatching, ...list]) {
+      const key = `${item.acct}-${item.name}`.toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        merged.push(item);
+      }
+    }
+    return merged;
+  }, [rail, groups, savedBeneficiaries]);
+
+  /**
+   * Selecting a beneficiary immediately fills details AND sets detailsCollapsed to TRUE.
+   */
+  const handleSelectBeneficiary = (item: RecentPayeeAvatar) => {
     if (rail === "group") {
-      set("groupName", r.name);
-      const matched = groups.find((g) => g.name === r.name);
+      set("groupName", item.name);
+      const matched = groups.find((g) => g.name === item.name || g.id === item.id);
       if (matched?.defaultPerMemberAmount) {
         set("amount", String(matched.defaultPerMemberAmount));
       }
+      setDetailsCollapsed(true);
       return;
     }
+
     if (rail === "proxy") {
-      set("proxyId", r.dest);
+      set("proxyId", item.acct);
+      setResolvedName(item.name);
     } else {
-      set("destination", r.dest);
+      set("destination", item.acct);
+      setResolvedName(item.name);
     }
-    if (r.provider) {
+
+    if (item.bank) {
       if (rail === "bank" || rail === "wallet-to-bank") {
-        set("bank", r.provider);
+        set("bank", item.bank);
       } else if (rail === "wallet") {
-        set("walletNetwork", r.provider);
+        set("walletNetwork", item.bank);
       } else if (rail === "data" || rail === "airtime") {
-        set("network", r.provider);
+        set("network", item.bank);
         if (rail === "data") {
-          const pkgs = NETWORK_DATA_PACKAGES[r.provider] || [];
+          const pkgs = NETWORK_DATA_PACKAGES[item.bank] || [];
           if (pkgs.length > 0) {
             set("dataPackageId", pkgs[0].id);
             set("amount", pkgs[0].price);
-            set("nickname", `Monthly ${r.provider.split(" ")[0]} Data`);
+            set("nickname", `Monthly ${item.bank.split(" ")[0]} Data`);
           }
         }
       }
     }
+
+    // Set field to collapsed state immediately upon clicking a beneficiary
+    setDetailsCollapsed(true);
   };
+
   const handlePhoneChange = (val: string) => {
     set("destination", val);
     const detected = detectNetworkFromPhone(val);
@@ -375,37 +365,81 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     }
   };
 
-  // Stage validation
-  const stage1Valid = rail === "group" ? Boolean(f.groupName) : Boolean(resolvedName.trim());
-  const stage2Valid = Number(f.amount.replace(/,/g, "")) > 0 && Boolean(f.accountId);
-  const stage3Valid = Boolean(f.frequency) && Boolean(f.firstRun);
-  const stage4Valid = Boolean(f.nickname.trim());
+  // Validation
+  const numAmount = Number(f.amount.replace(/[^0-9.]/g, "")) || 0;
+  const overBalance = numAmount > (fromAccount?.available ?? 0);
 
-  const proceedToStage = (nextStage: number) => {
-    setActiveStage(nextStage);
-    setMaxRevealedStage(nextStage);
-  };
+  const isDestinationValid = useMemo(() => {
+    if (rail === "group") return Boolean(f.groupName);
+    if (rail === "proxy") return f.proxyId.trim().length >= 4;
+    return f.destination.replace(/[\s-]/g, "").length >= 8;
+  }, [rail, f.groupName, f.proxyId, f.destination]);
 
-  // Controlled Rollback: safely resets downstream state when changing an earlier step
-  const editStage = (targetStage: number) => {
-    setActiveStage(targetStage);
-    setMaxRevealedStage(targetStage);
-    auth.reset();
-  };
+  const isFormValid = useMemo(() => {
+    return (
+      Boolean(f.fromId) &&
+      isDestinationValid &&
+      numAmount > 0 &&
+      !overBalance &&
+      Boolean(f.frequency) &&
+      Boolean(f.firstRun)
+    );
+  }, [f.fromId, isDestinationValid, numAmount, overBalance, f.frequency, f.firstRun]);
 
-  const handleActivate = () => {
+  // Fee Calculation
+  const feeAmount = useMemo(() => {
+    if (rail === "bank") {
+      if (f.bank.includes("GCB")) return 0;
+      const pm = PAYMENT_METHODS.find((m) => m.id === f.paymentMethod);
+      return pm ? pm.fee : 5.0;
+    }
+    if (rail === "wallet" || rail === "airtime" || rail === "data") return 0;
+    return 0.5;
+  }, [rail, f.bank, f.paymentMethod]);
+
+  const totalPerCycle = numAmount + feeAmount;
+
+  const handleAuthorize = () => {
     if (!auth.verify()) return;
-    const newId = `so-${Date.now()}`;
+    const newId = `SO-${Date.now().toString().slice(-6)}`;
     saveStandingInstruction({
       id: newId,
       beneficiary: f.nickname || (rail === "group" ? f.groupName : resolvedName) || "Standing Order",
-      accountId: f.accountId,
-      amount: Number(f.amount.replace(/,/g, "")) || 0,
+      accountId: f.fromId,
+      amount: numAmount,
       currency: "GHS",
       frequency: f.frequency,
       nextRun: f.firstRun,
       status: "Active",
     });
+
+    // Save beneficiary if requested
+    if (f.saveBeneficiary && (resolvedName || f.destination)) {
+      const bTxType =
+        rail === "wallet-to-bank"
+          ? "bank"
+          : rail === "data"
+          ? "airtime"
+          : rail === "group"
+          ? "bank"
+          : rail === "bank" || rail === "wallet" || rail === "proxy" || rail === "airtime"
+          ? rail
+          : "bank";
+
+      useBeneficiariesStore.getState().addBeneficiary({
+        name: f.beneficiaryNickname || resolvedName || f.destination,
+        transactionType: bTxType,
+        category: "person",
+        detail: `${f.bank || f.network} · ${f.destination || f.proxyId}`,
+        verified: true,
+        bankName: f.bank,
+        accountNumber: f.destination,
+        network: f.network || f.walletNetwork,
+        phoneNumber: f.destination,
+        proxyId: f.proxyId,
+      });
+    }
+
     setCreatedId(newId);
     setScreen("success");
   };
@@ -414,30 +448,32 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     auth.reset();
     setRail(null);
     setScreen("form");
-    setActiveStage(1);
-    setMaxRevealedStage(1);
+    setDetailsCollapsed(false);
     setF({
+      fromId: accounts[0]?.id ?? "",
       destination: "",
-      bank: "GCB Bank (Internal)",
+      bank: "GCB Bank",
+      paymentMethod: "gip",
       network: "MTN Ghana",
       walletNetwork: "MTN Mobile Money",
       proxyId: "",
-      groupName: "Family Contribution Circle",
+      groupName: "",
       dataPackageId: "mtn-2",
-      accountId: accounts[0]?.id ?? "",
       amount: "",
       category: "bills",
-      nickname: "Monthly Susu",
+      nickname: "",
       frequency: "Monthly",
-      firstRun: new Date().toISOString().slice(0, 10),
+      firstRun: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
       endCondition: "indefinite",
       endDate: "",
+      saveBeneficiary: false,
+      beneficiaryNickname: "",
     });
     setResolvedName("");
   };
 
   /* =========================================================================
-   * SCREEN 1: Lead Screen — "Select a standing order" (Figma Node 896:21624)
+   * SCREEN 1: Lead Screen — "Select a standing order"
    * ========================================================================= */
   if (!rail) {
     return (
@@ -468,22 +504,23 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                 type="button"
                 onClick={() => {
                   setRail(opt.id);
-                  setActiveStage(1);
-                  setMaxRevealedStage(1);
+                  setDetailsCollapsed(false);
                   setScreen("form");
                   if (opt.id === "data") {
                     set("network", "MTN Ghana");
                     set("dataPackageId", "mtn-2");
                     set("amount", "100");
-                    set("nickname", "Monthly MTN Data Bundle");
+                    set("nickname", "Monthly MTN Data");
                     set("category", "bills");
                   } else if (opt.id === "airtime") {
                     set("network", "MTN Ghana");
-                    set("nickname", "Monthly Airtime Recharge");
+                    set("nickname", "Monthly Airtime");
                     set("category", "bills");
+                  } else {
+                    set("nickname", opt.title + " Recurring");
                   }
                 }}
-                className="group flex h-[68px] w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] px-4 transition-all duration-150 ease-out hover:bg-[#eeeeed] active:scale-[0.98] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer"
+                className="group flex h-[68px] w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] px-4 transition-all duration-150 ease-out hover:bg-[#eeeeed] active:scale-[0.98] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
               >
                 <div className="flex items-center gap-3.5">
                   <span className="flex size-[38px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-amber-500 shadow-sm dark:border-white/[0.06] dark:bg-[#252525] dark:text-[#fdc307]">
@@ -491,7 +528,10 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   </span>
                   <span className="text-[15.5px] font-medium text-foreground">{opt.title}</span>
                 </div>
-                <ChevronRight size={19} className="text-muted-foreground transition-transform duration-150 ease-out group-hover:translate-x-0.5" />
+                <ChevronRight
+                  size={19}
+                  className="text-muted-foreground transition-transform duration-150 ease-out group-hover:translate-x-0.5 group-hover:text-foreground"
+                />
               </button>
             );
           })}
@@ -506,44 +546,57 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   if (screen === "success") {
     return (
       <div className="mx-auto flex max-w-[480px] flex-col items-center gap-6 py-6 text-center animate-in fade-in zoom-in-95 duration-200 ease-out">
-        <span className="flex size-13 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-          <CheckCircle2 size={28} strokeWidth={2} />
+        <span className="flex size-14 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+          <CheckCircle2 size={30} strokeWidth={2.1} />
         </span>
 
         <div className="flex flex-col gap-1">
-          <h1 className="text-[20px] font-medium text-foreground tracking-[-0.02em]">
+          <h1 className="text-[22px] font-semibold text-foreground tracking-tight">
             Standing Order Scheduled
           </h1>
-          <p className="text-[13px] text-muted-foreground">
-            &ldquo;{f.nickname}&rdquo; will run {f.frequency.toLowerCase()} for {formatMoney(Number(f.amount) || 0, "GHS", true)}.
+          <p className="text-[13.5px] text-muted-foreground">
+            &ldquo;{f.nickname}&rdquo; will execute {f.frequency.toLowerCase()} for{" "}
+            <strong className="text-foreground">{formatMoney(numAmount, "GHS", true)}</strong>.
           </p>
         </div>
 
-        <div className="flex w-full flex-col divide-y divide-border rounded-2xl border border-border bg-card p-4.5 text-[13px] text-left">
+        <div className="flex w-full flex-col divide-y divide-border/80 rounded-2xl border border-border/80 bg-card p-4.5 text-[13.5px] text-left shadow-xs">
           <div className="flex items-center justify-between pb-2.5">
-            <span className="text-muted-foreground">Reference</span>
-            <span className="tabular font-mono text-foreground">{createdId}</span>
+            <span className="text-muted-foreground">Reference ID</span>
+            <span className="tabular font-mono text-foreground font-medium">{createdId}</span>
           </div>
           <div className="flex items-center justify-between py-2.5">
             <span className="text-muted-foreground">Beneficiary</span>
-            <span className="font-medium text-foreground">{resolvedName}</span>
+            <span className="font-medium text-foreground">
+              {resolvedName || f.destination || f.proxyId || f.groupName}
+            </span>
           </div>
           <div className="flex items-center justify-between py-2.5">
-            <span className="text-muted-foreground">Schedule</span>
-            <span className="text-foreground">{f.frequency} · First run <span className="tabular">{formatDate(f.firstRun)}</span></span>
+            <span className="text-muted-foreground">Schedule Frequency</span>
+            <span className="text-foreground font-medium">
+              {f.frequency} · First run <span className="tabular">{formatDate(f.firstRun)}</span>
+            </span>
+          </div>
+          <div className="flex items-center justify-between py-2.5">
+            <span className="text-muted-foreground">Debit Account</span>
+            <span className="text-foreground font-medium">
+              {fromAccount?.name} (•••{fromAccount?.number.slice(-4)})
+            </span>
           </div>
           <div className="flex items-center justify-between pt-2.5">
-            <span className="text-muted-foreground">Source Account</span>
-            <span className="text-foreground">{account?.name}</span>
+            <span className="text-muted-foreground">Total per Execution</span>
+            <span className="text-foreground font-semibold tabular">
+              {formatMoney(totalPerCycle, "GHS", true)}
+            </span>
           </div>
         </div>
 
         <div className="flex w-full gap-3">
-          <Button variant="outline" className="flex-1 active:scale-[0.97]" onClick={resetAll}>
-            Create another
+          <Button variant="outline" className="flex-1 h-12 rounded-xl" onClick={resetAll}>
+            Create Another
           </Button>
           <Button
-            className="flex-1 active:scale-[0.97]"
+            className="flex-1 h-12 rounded-xl bg-primary text-primary-foreground font-medium"
             onClick={() => {
               if (onDone) onDone();
               else router.push("/payments/standing");
@@ -557,11 +610,137 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   }
 
   /* =========================================================================
-   * SCREEN 2: Pure Controlled Progressive Disclosure Flow (Figma Node 944:10217)
+   * SCREEN 3: Review Stage
+   * ========================================================================= */
+  if (screen === "review") {
+    return (
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 py-4 animate-in fade-in duration-200 ease-out">
+        {/* Header with back button */}
+        <div className="relative flex items-center">
+          <button
+            type="button"
+            onClick={() => setScreen("form")}
+            className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            aria-label="Back to form"
+          >
+            <ChevronLeft size={22} strokeWidth={1.8} />
+          </button>
+          <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+            Review Standing Order
+          </h1>
+        </div>
+
+        <div className="flex flex-col gap-5">
+          {/* Main Review Card */}
+          <div className="flex flex-col divide-y divide-border/80 rounded-2xl border border-border/80 bg-card p-5 text-[14px]">
+            <div className="flex items-center justify-between pb-3.5">
+              <span className="text-muted-foreground">Order Type</span>
+              <span className="font-medium text-foreground">{railConfig.title} Standing Order</span>
+            </div>
+            <div className="flex items-center justify-between py-3.5">
+              <span className="text-muted-foreground">Beneficiary</span>
+              <div className="flex flex-col text-right">
+                <span className="font-semibold text-foreground">
+                  {resolvedName || f.destination || f.proxyId || f.groupName}
+                </span>
+                <span className="text-[12.5px] text-muted-foreground">
+                  {rail === "bank" || rail === "wallet-to-bank"
+                    ? `${f.bank} · ${f.destination}`
+                    : rail === "wallet"
+                    ? `${f.walletNetwork} · ${f.destination}`
+                    : rail === "proxy"
+                    ? `Proxy: ${f.proxyId}`
+                    : rail === "group"
+                    ? f.groupName
+                    : `${f.network} · ${f.destination}`}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between py-3.5">
+              <span className="text-muted-foreground">Sending From</span>
+              <div className="flex flex-col text-right">
+                <span className="font-medium text-foreground">{fromAccount?.name}</span>
+                <span className="text-[12.5px] text-muted-foreground tabular">{fromAccount?.number}</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between py-3.5">
+              <span className="text-muted-foreground">Frequency &amp; Start</span>
+              <div className="flex flex-col text-right">
+                <span className="font-medium text-foreground">{f.frequency}</span>
+                <span className="text-[12.5px] text-muted-foreground tabular">
+                  First run {formatDate(f.firstRun)}{" "}
+                  {f.endCondition === "date" && f.endDate ? `· Ends ${formatDate(f.endDate)}` : "· Until cancelled"}
+                </span>
+              </div>
+            </div>
+            {rail === "bank" && !f.bank.includes("GCB") && (
+              <div className="flex items-center justify-between py-3.5">
+                <span className="text-muted-foreground">Payment Method</span>
+                <span className="font-medium text-foreground">{getPaymentMethodName(f.paymentMethod)}</span>
+              </div>
+            )}
+            <div className="flex items-center justify-between py-3.5">
+              <span className="text-muted-foreground">Category</span>
+              <span className="font-medium text-foreground">{selectedCat.label}</span>
+            </div>
+            <div className="flex items-center justify-between py-3.5">
+              <span className="text-muted-foreground">Transfer Amount</span>
+              <span className="font-semibold text-foreground tabular">
+                {formatMoney(numAmount, "GHS", true)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between py-3.5">
+              <span className="text-muted-foreground">Clearing Fee</span>
+              <span className="text-muted-foreground tabular">
+                {feeAmount === 0 ? "GH₵0.00 (Free)" : formatMoney(feeAmount, "GHS", true)}
+              </span>
+            </div>
+            <div className="flex items-center justify-between pt-3.5">
+              <span className="text-foreground font-semibold">Total Debit per Cycle</span>
+              <span className="text-[18px] font-bold text-foreground tabular">
+                {formatMoney(totalPerCycle, "GHS", true)}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1 h-13 rounded-2xl text-[15px]"
+              onClick={() => setScreen("form")}
+            >
+              Back to Edit
+            </Button>
+            <Button
+              type="button"
+              className="flex-1 h-13 rounded-2xl text-[16px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+              onClick={() => setPinModalOpen(true)}
+            >
+              Authorize &amp; Schedule
+            </Button>
+          </div>
+        </div>
+
+        {/* Transaction PIN Modal */}
+        <TransactionPinModal
+          open={pinModalOpen}
+          onOpenChange={setPinModalOpen}
+          onSuccess={() => {
+            setPinModalOpen(false);
+            handleAuthorize();
+          }}
+        />
+      </div>
+    );
+  }
+
+  /* =========================================================================
+   * SCREEN 4: Form Screen (The New Unified Layout)
    * ========================================================================= */
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 py-4 animate-in fade-in duration-200 ease-out">
-      {/* Header with back button sitting outside the text */}
+      {/* Header with back button */}
       <div className="relative flex items-center">
         <button
           type="button"
@@ -576,671 +755,460 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
         </h1>
       </div>
 
-      <div className="flex flex-col gap-8">
-        {/* Top-Level Quick Beneficiaries Strip (Above Section 1) */}
-        {relevantRecipients.length > 0 && activeStage === 1 && (
-          <div className="flex flex-col gap-6 -mb-1 animate-in fade-in duration-150">
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-              {relevantRecipients.map((r) => (
-                <button
-                  key={r.dest}
-                  type="button"
-                  onClick={() => selectRecentPayee(r)}
-                  className="flex items-center gap-1.5 rounded-xl border border-border bg-card px-3 py-1.5 text-[12px] hover:bg-muted text-foreground cursor-pointer shrink-0 transition-all hover:border-primary/40 shadow-xs"
-                >
-                  <span className="font-medium">{r.name}</span>
-                  <span className="text-[11px] text-muted-foreground">({r.dest})</span>
-                </button>
-              ))}
-            </div>
+      <div className="flex flex-col gap-6">
+        {/* 1. Beneficiaries Avatars Strip */}
+        {activeRailBeneficiaries.length > 0 && (
+          <div className="flex flex-col gap-5 -mb-1 animate-in fade-in duration-150">
+            <RailBeneficiaryStrip
+              items={activeRailBeneficiaries}
+              onSelect={handleSelectBeneficiary}
+            />
             <div className="relative flex items-center justify-center">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-border/60" />
               </div>
-              <span className="relative bg-background px-3 text-[12px] font-medium text-muted-foreground">
+              <button
+                type="button"
+                onClick={() => {
+                  setDetailsCollapsed(false);
+                  set("destination", "");
+                  set("proxyId", "");
+                  set("groupName", "");
+                  setResolvedName("");
+                }}
+                className="relative bg-background px-3 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              >
                 Or enter new details
-              </span>
+              </button>
             </div>
           </div>
         )}
 
-        {/* ===================================================================
-         * STAGE 1: Recipient
-         * =================================================================== */}
-        <div className="flex flex-col gap-2">
-          <div className="text-[16px] text-foreground tracking-[-0.01em]">1. Recipient</div>
+        {/* 2. From Account Selector Card */}
+        <FromAccountSelector
+          accounts={accounts}
+          value={f.fromId}
+          onChange={(id) => set("fromId", id)}
+        />
 
-          {activeStage > 1 ? (
-            /* Confirmed Read-Only Summary */
-            <div className="flex h-[68px] items-center justify-between rounded-xl border border-border bg-muted/40 dark:bg-muted/20 px-4 py-2 transition-all">
-              <div className="flex items-center gap-4 min-w-0">
-                <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-                  <Check size={14} strokeWidth={2.5} />
-                </span>
-                <div className="flex flex-col min-w-0 text-left">
-                  <span className="text-[16px] text-foreground font-normal tracking-[-0.08px] truncate">{resolvedName}</span>
-                  <span className="text-[12px] text-muted-foreground truncate">
-                    {rail === "bank" || rail === "wallet-to-bank" ? f.bank : f.network} • {f.destination || f.proxyId}
-                  </span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => editStage(1)}
-                className="text-[14px] text-foreground hover:underline cursor-pointer ml-3 shrink-0"
-              >
-                Change
-              </button>
-            </div>
+        {/* 3. Beneficiary Details Card */}
+        <div className="flex flex-col gap-2">
+          <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
+
+          {isDestinationValid && detailsCollapsed ? (
+            <CollapsedDetailsBadge
+              title={
+                resolvedName ||
+                (rail === "group" ? f.groupName : `Recipient ${f.destination || f.proxyId}`)
+              }
+              subtitle={
+                rail === "bank" || rail === "wallet-to-bank"
+                  ? `${f.bank} · ${f.destination}`
+                  : rail === "wallet"
+                  ? `${f.walletNetwork} · ${f.destination}`
+                  : rail === "proxy"
+                  ? `Proxy ID: ${f.proxyId}`
+                  : rail === "group"
+                  ? `Group: ${f.groupName}`
+                  : `${f.network} · ${f.destination}`
+              }
+              onChange={() => setDetailsCollapsed(false)}
+            />
           ) : (
-            /* Active Editable Form */
-            <div className="flex flex-col gap-3.5 pt-1 animate-in fade-in duration-150 ease-out">
-              {/* BANK / WALLET-TO-BANK */}
+            <div className="flex flex-col gap-3.5">
+              {/* TO BANK / WALLET TO BANK */}
               {(rail === "bank" || rail === "wallet-to-bank") && (
                 <>
-                  <div className="flex flex-col gap-1.5">
-                    <span className={labelCls}>Destination Bank</span>
-                    <Select value={f.bank} onValueChange={(val) => val && set("bank", val)}>
-                      <SelectTrigger className="h-11 w-full">
-                        <SelectValue placeholder="Select bank" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {BANKS.map((b) => (
-                          <SelectItem key={b} value={b}>{b}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <Select
+                    value={f.bank}
+                    onValueChange={(val) => {
+                      if (val) {
+                        set("bank", val);
+                        if (val.includes("GCB")) set("paymentMethod", "");
+                        else if (!f.paymentMethod) set("paymentMethod", "gip");
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                      <SelectValue placeholder="Select Bank" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {BANKS.map((b) => (
+                        <SelectItem key={b} value={b}>
+                          {b}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-                  <label className="flex flex-col gap-1.5">
-                    <span className={labelCls}>Account Number</span>
-                    <Input
-                      className="tabular"
-                      value={f.destination}
-                      onChange={(e) => set("destination", e.target.value)}
-                      placeholder="Enter account number..."
-                      autoFocus
-                    />
-                  </label>
+                  {/* Payment Method for Other Local Banks */}
+                  {!f.bank.includes("GCB") && (
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[14px] font-medium text-foreground">Payment Method</label>
+                      <Select
+                        value={f.paymentMethod || "gip"}
+                        onValueChange={(val) => val && set("paymentMethod", val)}
+                      >
+                        <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                          <SelectValue placeholder="Select Payment Method" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {PAYMENT_METHODS.map((method) => (
+                            <SelectItem key={method.id} value={method.id}>
+                              <div className="flex items-center justify-between w-full gap-4">
+                                <span className="font-medium">{method.name}</span>
+                                <span className="text-[12px] text-muted-foreground">{method.speed}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={f.destination}
+                    onChange={(e) => set("destination", e.target.value)}
+                    placeholder="Enter account number"
+                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                  />
                 </>
               )}
 
-              {/* MOBILE WALLET */}
+              {/* TO MOBILE WALLET */}
               {rail === "wallet" && (
                 <>
-                  <label className="flex flex-col gap-1.5">
-                    <span className={labelCls}>Mobile / Wallet Number</span>
-                    <Input
-                      className="tabular"
-                      value={f.destination}
-                      onChange={(e) => handlePhoneChange(e.target.value)}
-                      placeholder="e.g. 0244 123 456"
-                      autoFocus
-                    />
-                  </label>
-
-                  {f.destination.replace(/[^0-9]/g, "").length >= 3 && (
-                    <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
-                      <span className={labelCls}>Wallet Provider</span>
-                      <Select
-                        value={f.walletNetwork}
-                        onValueChange={(val) => val && set("walletNetwork", val)}
-                      >
-                        <SelectTrigger className="h-11 w-full">
-                          <SelectValue placeholder="Select wallet provider" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {WALLET_NETWORKS.map((n) => (
-                            <SelectItem key={n} value={n}>{n}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                </>
-              )}
-
-              {/* PROXY */}
-              {rail === "proxy" && (
-                <label className="flex flex-col gap-1.5">
-                  <span className={labelCls}>Proxy ID (Alias / Ghana Card)</span>
-                  <Input
-                    className="tabular"
-                    value={f.proxyId}
-                    onChange={(e) => set("proxyId", e.target.value)}
-                    placeholder="e.g. @kwame.b or GHA-12345678-9"
-                    autoFocus
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={f.destination}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    placeholder="Enter mobile / wallet number"
+                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
                   />
-                </label>
-              )}
 
-              {/* GROUP */}
-              {rail === "group" && (
-                <div className="flex flex-col gap-3">
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className={labelCls}>Target Group</span>
-                      <button
-                        type="button"
-                        onClick={() => setCreateGroupOpen(true)}
-                        className="text-[12.5px] text-primary hover:underline font-medium cursor-pointer flex items-center gap-1"
-                      >
-                        <Plus size={13} />
-                        Create new group
-                      </button>
-                    </div>
-                    <Select
-                      value={f.groupName}
-                      onValueChange={(val) => {
-                        if (!val) return;
-                        if (val === "__create_new__") {
-                          setCreateGroupOpen(true);
-                          return;
-                        }
-                        const selectedGrp = groups.find((g) => g.name === val);
-                        if (selectedGrp) {
-                          set("groupName", selectedGrp.name);
-                          if (selectedGrp.defaultPerMemberAmount) {
-                            set("amount", String(selectedGrp.defaultPerMemberAmount));
-                          }
-                        } else {
-                          set("groupName", val);
-                        }
-                      }}
-                    >
-                      <SelectTrigger className="h-11 w-full">
-                        <SelectValue placeholder="Select contribution circle" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {groups.map((g) => (
-                          <SelectItem key={g.id} value={g.name}>
-                            {g.name} ({g.members.length} Members) — {g.splitType === "equal" ? `GHS ${g.defaultPerMemberAmount} each` : "Custom"}
-                          </SelectItem>
-                        ))}
-                        <SelectItem value="__create_new__" className="text-primary font-medium focus:text-primary">
-                          + Create new group...
+                  <Select
+                    value={f.walletNetwork}
+                    onValueChange={(val) => val && set("walletNetwork", val)}
+                  >
+                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                      <SelectValue placeholder="Select Wallet Provider" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {WALLET_NETWORKS.map((n) => (
+                        <SelectItem key={n} value={n}>
+                          {n}
                         </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {f.groupName && (
-                    <div className="rounded-xl border border-border/80 bg-muted/30 p-3.5 flex flex-col gap-2 animate-in fade-in duration-150">
-                      <div className="flex items-center justify-between text-[13px]">
-                        <span className="font-medium text-foreground">{f.groupName}</span>
-                        {groups.find((g) => g.name === f.groupName) && (
-                          <span className="text-muted-foreground text-[12px] bg-muted px-2 py-0.5 rounded-full font-medium">
-                            {groups.find((g) => g.name === f.groupName)?.members.length} members
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </>
               )}
 
-              {/* AIRTIME */}
-              {rail === "airtime" && (
-                <>
-                  <label className="flex flex-col gap-1.5">
-                    <span className={labelCls}>Mobile Phone Number</span>
-                    <Input
-                      className="tabular"
-                      value={f.destination}
-                      onChange={(e) => handlePhoneChange(e.target.value)}
-                      placeholder="e.g. 0244 123 456"
-                      autoFocus
-                    />
-                  </label>
+              {/* TO PROXY */}
+              {rail === "proxy" && (
+                <input
+                  type="text"
+                  value={f.proxyId}
+                  onChange={(e) => set("proxyId", e.target.value)}
+                  placeholder="Enter proxy ID (e.g. @kwame.b or GHA-12345678-9)"
+                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                />
+              )}
 
-                  {f.destination.replace(/[^0-9]/g, "").length >= 3 && (
-                    <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
-                      <span className={labelCls}>Network Operator</span>
-                      <Select value={f.network} onValueChange={(val) => val && set("network", val)}>
-                        <SelectTrigger className="h-11 w-full">
-                          <SelectValue placeholder="Select network" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {AIRTIME_NETWORKS.map((n) => (
-                            <SelectItem key={n} value={n}>{n}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                </>
+              {/* TO GROUP */}
+              {rail === "group" && (
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] text-muted-foreground">Select Contribution Circle</span>
+                    <button
+                      type="button"
+                      onClick={() => setCreateGroupOpen(true)}
+                      className="text-[13px] text-primary hover:underline font-medium cursor-pointer flex items-center gap-1"
+                    >
+                      <Plus size={13} />
+                      Create new group
+                    </button>
+                  </div>
+                  <Select
+                    value={f.groupName}
+                    onValueChange={(val) => {
+                      if (!val) return;
+                      if (val === "__create_new__") {
+                        setCreateGroupOpen(true);
+                        return;
+                      }
+                      const grp = groups.find((g) => g.name === val);
+                      set("groupName", val);
+                      if (grp?.defaultPerMemberAmount) {
+                        set("amount", String(grp.defaultPerMemberAmount));
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                      <SelectValue placeholder="Select group" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {groups.map((g) => (
+                        <SelectItem key={g.id} value={g.name}>
+                          {g.name} ({g.members.length} Members)
+                        </SelectItem>
+                      ))}
+                      <SelectItem value="__create_new__" className="text-primary font-medium">
+                        + Create new group...
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               )}
 
               {/* DATA BUNDLE */}
               {rail === "data" && (
                 <>
-                  <label className="flex flex-col gap-1.5">
-                    <span className={labelCls}>Mobile Phone Number</span>
-                    <Input
-                      className="tabular"
-                      value={f.destination}
-                      onChange={(e) => handlePhoneChange(e.target.value)}
-                      placeholder="e.g. 0244 123 456"
-                      autoFocus
-                    />
-                  </label>
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={f.destination}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    placeholder="Enter recipient mobile number"
+                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                  />
 
-                  {f.destination.replace(/[^0-9]/g, "").length >= 3 && (
-                    <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
-                      <span className={labelCls}>Network Operator</span>
-                      <Select
-                        value={f.network}
-                        onValueChange={(newNet) => {
-                          if (!newNet) return;
-                          set("network", newNet);
-                          const pkgs = NETWORK_DATA_PACKAGES[newNet] || [];
-                          if (pkgs.length > 0) {
-                            set("dataPackageId", pkgs[0].id);
-                            set("amount", pkgs[0].price);
-                            set("nickname", `Monthly ${newNet.split(" ")[0]} Data`);
-                          }
-                        }}
-                      >
-                        <SelectTrigger className="h-11 w-full">
-                          <SelectValue placeholder="Select network" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {AIRTIME_NETWORKS.map((n) => (
-                            <SelectItem key={n} value={n}>{n}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                </>
-              )}
-
-              {/* Auto-resolved account holder name badge */}
-              {rail !== "group" && resolving && (
-                <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 p-2.5 text-[12.5px] text-muted-foreground animate-pulse">
-                  <Loader2 size={13} className="animate-spin text-primary shrink-0" />
-                  <span>
-                    {rail === "wallet" || rail === "data" || rail === "airtime"
-                      ? "Verifying subscriber name..."
-                      : rail === "proxy"
-                      ? "Verifying proxy ID..."
-                      : "Verifying account holder with GhIPSS..."}
-                  </span>
-                </div>
-              )}
-
-              {rail !== "group" && !resolving && resolvedName && (
-                <div className="flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-2.5 text-[12.5px] text-foreground dark:bg-emerald-500/10 animate-in fade-in duration-150 ease-out">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
-                      <Check size={11} strokeWidth={2.5} />
-                    </span>
-                    <span className="font-medium text-foreground truncate">{resolvedName}</span>
-                  </div>
-                  <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium shrink-0 ml-2">
-                    {rail === "wallet" || rail === "data" || rail === "airtime"
-                      ? "✓ Subscriber Verified"
-                      : rail === "proxy"
-                      ? "✓ Proxy Verified"
-                      : "✓ Account Verified"}
-                  </span>
-                </div>
-              )}
-
-              {/* DATA PACKAGE SELECTOR: Progressively disclosed ONLY after name is verified */}
-              {rail === "data" && !resolving && resolvedName && (
-                <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
-                  <span className={labelCls}>Select {f.network.split(" ")[0]} Data Package</span>
                   <Select
-                    value={f.dataPackageId}
-                    onValueChange={(val) => {
-                      if (!val) return;
-                      const dp = currentPackages.find((d) => d.id === val);
-                      set("dataPackageId", val);
-                      if (dp) {
-                        set("amount", dp.price);
-                        set("nickname", `Monthly ${f.network.split(" ")[0]} ${dp.name.split(" ")[0]} Data`);
+                    value={f.network}
+                    onValueChange={(newNet) => {
+                      if (!newNet) return;
+                      set("network", newNet);
+                      const pkgs = NETWORK_DATA_PACKAGES[newNet] || [];
+                      if (pkgs.length > 0) {
+                        set("dataPackageId", pkgs[0].id);
+                        set("amount", pkgs[0].price);
                       }
                     }}
                   >
-                    <SelectTrigger className="h-11 w-full">
-                      <SelectValue placeholder="Select data package" />
+                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                      <SelectValue placeholder="Select network operator" />
                     </SelectTrigger>
                     <SelectContent>
-                      {currentPackages.map((dp) => (
-                        <SelectItem key={dp.id} value={dp.id}>{dp.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-
-
-              <Button
-                className="mt-2 w-full h-11 rounded-xl text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98]"
-                disabled={!stage1Valid}
-                onClick={() => proceedToStage(2)}
-              >
-                Continue to Amount
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {/* ===================================================================
-         * STAGE 2: Amount & Debit Account (Figma Node 944:10308 / 952:26806)
-         * =================================================================== */}
-        {maxRevealedStage >= 2 && (
-          <div className={`flex flex-col gap-2 ${activeStage === 2 ? "border-t border-border/70 pt-6" : ""} animate-in fade-in slide-in-from-top-2 duration-200 ease-out`}>
-            <div className="text-[16px] text-foreground tracking-[-0.01em]">2. Amount</div>
-
-            {activeStage > 2 ? (
-              /* Confirmed Read-Only Summary */
-              <div className="flex h-[68px] items-center justify-between rounded-xl border border-border bg-muted/40 dark:bg-muted/20 px-4 py-2 transition-all">
-                <div className="flex items-center gap-4 min-w-0">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-                    <Check size={14} strokeWidth={2.5} />
-                  </span>
-                  <div className="flex flex-col min-w-0 text-left">
-                    <span className="text-[16px] text-foreground font-normal tracking-[-0.08px] truncate tabular">
-                      {formatMoney(Number(f.amount) || 0, "GHS", true)}
-                    </span>
-                    <span className="text-[12px] text-muted-foreground truncate">
-                      From {account?.name} •••{account?.number.slice(-4)}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => editStage(2)}
-                  className="text-[14px] text-foreground hover:underline cursor-pointer ml-3 shrink-0"
-                >
-                  Change
-                </button>
-              </div>
-            ) : activeStage === 2 ? (
-              /* Active Editable Form - 1:1 Figma 944:10308 */
-              <div className="flex flex-col gap-4 pt-1">
-                {/* Enter Amount */}
-                <label className="flex flex-col gap-1.5">
-                  <span className={labelCls}>Enter Amount</span>
-                  <Input
-                    className="h-11 rounded-xl border-border bg-background text-[15px] tabular"
-                    value={f.amount}
-                    onChange={(e) => set("amount", e.target.value)}
-                    placeholder="GHS 0.00"
-                    readOnly={rail === "data"}
-                    autoFocus
-                    required
-                  />
-                  {rail === "data" && (
-                    <span className="text-[11.5px] text-muted-foreground">Fixed by selected data package</span>
-                  )}
-                </label>
-
-                {/* Sending From Account Selector Card */}
-                <div className="flex flex-col gap-1.5">
-                  <span className={labelCls}>Sending from</span>
-                  <Select
-                    value={f.accountId}
-                    onValueChange={(val) => val && set("accountId", val)}
-                  >
-                    <SelectTrigger className="h-[68px] min-h-[68px] px-4 w-full rounded-2xl border border-border bg-card dark:bg-[#181818] hover:border-primary/50 text-left cursor-pointer transition-colors shadow-none flex items-center">
-                      <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
-                        <div className="flex items-center gap-3.5 min-w-0">
-                          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/80 text-foreground dark:bg-[#252525]">
-                            <Landmark size={18} strokeWidth={1.8} />
-                          </span>
-                          <div className="flex flex-col min-w-0 text-left gap-0.5">
-                            <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
-                              {account?.name || "Select Account"}
-                            </span>
-                            <span className="text-[13px] text-muted-foreground font-normal truncate tabular leading-tight">
-                              {account?.number || ""}
-                            </span>
-                          </div>
-                        </div>
-                        {account && (
-                          <div className="text-right shrink-0">
-                            <span className="text-[15px] text-foreground font-medium tabular tracking-tight">
-                              {formatMoney(account.available ?? 0, account.currency || "GHS", true)}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {accounts.map((a) => (
-                        <SelectItem key={a.id} value={a.id}>
-                          {a.name} ({a.number}) — {formatMoney(a.available, a.currency, true)}
+                      {AIRTIME_NETWORKS.map((n) => (
+                        <SelectItem key={n} value={n}>
+                          {n}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-
-                <Button
-                  className="mt-2 w-full h-11 rounded-xl text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98]"
-                  disabled={!stage2Valid}
-                  onClick={() => proceedToStage(3)}
-                >
-                  Continue to Frequency &amp; Schedule
-                </Button>
-              </div>
-            ) : null}
-          </div>
-        )}
-
-        {/* ===================================================================
-         * STAGE 3: Frequency & Schedule (Figma Node 944:10372)
-         * =================================================================== */}
-        {maxRevealedStage >= 3 && (
-          <div className={`flex flex-col gap-2 ${activeStage === 3 ? "border-t border-border/70 pt-6" : ""} animate-in fade-in slide-in-from-top-2 duration-200 ease-out`}>
-            <div className="text-[16px] text-foreground tracking-[-0.01em]">3. Frequency &amp; Schedule</div>
-
-            {activeStage > 3 ? (
-              /* Confirmed Read-Only Summary */
-              <div className="flex h-[68px] items-center justify-between rounded-xl border border-border bg-muted/40 dark:bg-muted/20 px-4 py-2 transition-all">
-                <div className="flex items-center gap-4 min-w-0">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-                    <Check size={14} strokeWidth={2.5} />
-                  </span>
-                  <div className="flex flex-col min-w-0 text-left">
-                    <span className="text-[16px] text-foreground font-normal tracking-[-0.08px] truncate">{f.frequency}</span>
-                    <span className="text-[12px] text-muted-foreground truncate tabular">
-                      First run {formatDate(f.firstRun)} {f.endCondition === "date" && f.endDate ? `• Ends ${formatDate(f.endDate)}` : "• Until I cancel"}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => editStage(3)}
-                  className="text-[14px] text-foreground hover:underline cursor-pointer ml-3 shrink-0"
-                >
-                  Change
-                </button>
-              </div>
-            ) : activeStage === 3 ? (
-              /* Active Editable Form - Clean Arranged Layout */
-              <div className="flex flex-col gap-4 pt-1">
-                {/* Frequency Select */}
-                <div className="flex flex-col gap-1.5">
-                  <span className={labelCls}>Frequency</span>
-                  <Select
-                    value={f.frequency}
-                    onValueChange={(val) => val && set("frequency", val as InstructionFrequency)}
-                  >
-                    <SelectTrigger className="h-11 w-full">
-                      <SelectValue placeholder="Select frequency" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {FREQUENCIES.map((freq) => (
-                        <SelectItem key={freq} value={freq}>{freq}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Start Date and End Date Side-by-Side */}
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <label className="flex flex-col gap-1.5">
-                    <span className={labelCls}>Start Date</span>
-                    <input
-                      type="date"
-                      className={inputCls + " tabular"}
-                      value={f.firstRun}
-                      onChange={(e) => set("firstRun", e.target.value)}
-                    />
-                  </label>
 
                   <div className="flex flex-col gap-1.5">
-                    <span className={labelCls}>End Date</span>
+                    <span className="text-[13px] font-medium text-muted-foreground">Select Data Package</span>
                     <Select
-                      value={f.endCondition}
-                      onValueChange={(val) => val && set("endCondition", val as "indefinite" | "date")}
-                    >
-                      <SelectTrigger className="h-11 w-full">
-                        <SelectValue placeholder="Select end condition" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="indefinite">Until I cancel</SelectItem>
-                        <SelectItem value="date">Specific date</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* Specific Final Date (Conditional) */}
-                {f.endCondition === "date" && (
-                  <label className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
-                    <span className={labelCls}>Final Date</span>
-                    <input
-                      type="date"
-                      className={inputCls + " tabular"}
-                      value={f.endDate}
-                      onChange={(e) => set("endDate", e.target.value)}
-                    />
-                  </label>
-                )}
-
-                <Button
-                  className="mt-2 w-full h-11 rounded-xl text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98]"
-                  disabled={!stage3Valid}
-                  onClick={() => proceedToStage(4)}
-                >
-                  Continue to Purpose &amp; Nickname
-                </Button>
-              </div>
-            ) : null}
-          </div>
-        )}
-
-        {/* ===================================================================
-         * STAGE 4: Category & Nickname
-         * =================================================================== */}
-        {maxRevealedStage >= 4 && (
-          <div className={`flex flex-col gap-2 ${activeStage === 4 ? "border-t border-border/70 pt-6" : ""} animate-in fade-in slide-in-from-top-2 duration-200 ease-out`}>
-            <div className="text-[16px] text-foreground tracking-[-0.01em]">4. Purpose &amp; Nickname</div>
-
-            {activeStage > 4 ? (
-              /* Confirmed Read-Only Summary */
-              <div className="flex h-[68px] items-center justify-between rounded-xl border border-border bg-muted/40 dark:bg-muted/20 px-4 py-2 transition-all">
-                <div className="flex items-center gap-4 min-w-0">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-                    <Check size={14} strokeWidth={2.5} />
-                  </span>
-                  <div className="flex flex-col min-w-0 text-left">
-                    <span className="text-[16px] text-foreground font-normal tracking-[-0.08px] truncate">{f.nickname}</span>
-                    <span className="text-[12px] text-muted-foreground truncate">{selectedCat?.label || "General"}</span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => editStage(4)}
-                  className="text-[14px] text-foreground hover:underline cursor-pointer ml-3 shrink-0"
-                >
-                  Change
-                </button>
-              </div>
-            ) : activeStage === 4 ? (
-              /* Active Editable Form */
-              <div className="flex flex-col gap-3.5 pt-1">
-                <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-                  <div className="flex flex-col gap-1.5">
-                    <span className={labelCls}>Category</span>
-                    <Select
-                      value={f.category}
+                      value={f.dataPackageId}
                       onValueChange={(val) => {
                         if (!val) return;
-                        const cat = CATEGORIES.find((c) => c.id === val);
-                        set("category", val);
-                        if (cat) set("nickname", cat.defaultName);
+                        set("dataPackageId", val);
+                        const dp = currentPackages.find((d) => d.id === val);
+                        if (dp) set("amount", dp.price);
                       }}
                     >
-                      <SelectTrigger className="h-11 w-full">
-                        <SelectValue placeholder="Select category" />
+                      <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                        <SelectValue placeholder="Select monthly bundle" />
                       </SelectTrigger>
                       <SelectContent>
-                        {CATEGORIES.map((c) => (
-                          <SelectItem key={c.id} value={c.id}>{c.label}</SelectItem>
+                        {currentPackages.map((dp) => (
+                          <SelectItem key={dp.id} value={dp.id}>
+                            {dp.name}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
+                </>
+              )}
 
-                  <label className="flex flex-col gap-1.5">
-                    <span className={labelCls}>Standing Order Nickname</span>
-                    <Input
-                      value={f.nickname}
-                      onChange={(e) => set("nickname", e.target.value)}
-                      placeholder="e.g. Monthly Rent"
-                      autoFocus
-                      required
-                    />
-                  </label>
+              {/* AIRTIME */}
+              {rail === "airtime" && (
+                <>
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={f.destination}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    placeholder="Enter phone number to recharge"
+                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                  />
+
+                  <Select
+                    value={f.network}
+                    onValueChange={(val) => val && set("network", val)}
+                  >
+                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                      <SelectValue placeholder="Select network" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {AIRTIME_NETWORKS.map((n) => (
+                        <SelectItem key={n} value={n}>
+                          {n}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </>
+              )}
+
+              {/* Live Resolving State / Verification Badge */}
+              {rail !== "group" && resolving && (
+                <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 p-2.5 text-[12.5px] text-muted-foreground animate-pulse">
+                  <Loader2 size={13} className="animate-spin text-primary shrink-0" />
+                  <span>Resolving account holder details...</span>
                 </div>
+              )}
 
-                <Button
-                  className="mt-2 w-full h-11 rounded-xl text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
-                  disabled={!stage4Valid}
-                  onClick={() => {
-                    setPinModalOpen(true);
-                  }}
-                >
-                  Authorize &amp; Schedule
-                </Button>
-              </div>
-            ) : null}
-          </div>
+              {rail !== "group" && !resolving && resolvedName && (
+                <VerifiedAccountBadge name={resolvedName} />
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* 4. Amount Input */}
+        <AmountInput
+          value={f.amount}
+          onChange={(val) => set("amount", val)}
+          onFocus={() => {
+            if (isDestinationValid) setDetailsCollapsed(true);
+          }}
+        />
+
+        {overBalance && (
+          <InsufficientFundsAlert available={fromAccount?.available ?? 0} currency="GHS" />
         )}
 
-        {/* Universal Transaction PIN Modal matching Figma Node 1277:23601 */}
-        <TransactionPinModal
-          open={pinModalOpen || (maxRevealedStage >= 5 && activeStage === 5)}
-          onOpenChange={(isOpen) => {
-            setPinModalOpen(isOpen);
-            if (!isOpen && activeStage === 5) {
-              setActiveStage(4);
-              setMaxRevealedStage(4);
-            }
-          }}
-          onSuccess={() => {
-            setPinModalOpen(false);
-            handleActivate();
-          }}
+        {/* 5. Schedule & Frequency Section */}
+        <div className="flex flex-col gap-4 rounded-2xl border border-border/80 bg-card p-4.5">
+          <label className="text-[14px] font-medium text-foreground">Schedule &amp; Frequency</label>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[13px] font-medium text-muted-foreground">Frequency</span>
+              <Select
+                value={f.frequency}
+                onValueChange={(val) => val && set("frequency", val as InstructionFrequency)}
+              >
+                <SelectTrigger className="h-12 w-full rounded-xl border border-border/80 bg-background text-[14px]">
+                  <SelectValue placeholder="Select frequency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {FREQUENCIES.map((freq) => (
+                    <SelectItem key={freq} value={freq}>
+                      {freq}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[13px] font-medium text-muted-foreground">First Run Date</span>
+              <input
+                type="date"
+                value={f.firstRun}
+                min={new Date().toISOString().slice(0, 10)}
+                onChange={(e) => set("firstRun", e.target.value)}
+                className="h-12 w-full rounded-xl border border-border/80 bg-background px-3 text-[14px] text-foreground outline-none focus:border-ring tabular"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[13px] font-medium text-muted-foreground">End Condition</span>
+              <Select
+                value={f.endCondition}
+                onValueChange={(val) => val && set("endCondition", val as "indefinite" | "date")}
+              >
+                <SelectTrigger className="h-12 w-full rounded-xl border border-border/80 bg-background text-[14px]">
+                  <SelectValue placeholder="Select end condition" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="indefinite">Until I cancel</SelectItem>
+                  <SelectItem value="date">Specific end date</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {f.endCondition === "date" ? (
+              <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+                <span className="text-[13px] font-medium text-muted-foreground">Final Date</span>
+                <input
+                  type="date"
+                  value={f.endDate}
+                  min={f.firstRun}
+                  onChange={(e) => set("endDate", e.target.value)}
+                  className="h-12 w-full rounded-xl border border-border/80 bg-background px-3 text-[14px] text-foreground outline-none focus:border-ring tabular"
+                />
+              </div>
+            ) : (
+              <div className="flex items-center text-[12.5px] text-muted-foreground pt-5">
+                <span>Runs continuously until you pause or cancel it.</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 6. Purpose / Nickname & Category */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <div className="flex flex-col gap-2">
+            <label className="text-[14px] font-medium text-foreground">Standing Order Nickname</label>
+            <input
+              type="text"
+              value={f.nickname}
+              onChange={(e) => set("nickname", e.target.value)}
+              placeholder="e.g. Monthly Rent, Susu"
+              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+            />
+          </div>
+
+          <CategorySelect
+            value={f.category}
+            onChange={(val) => {
+              set("category", val);
+              const cat = CATEGORIES.find((c) => c.id === val);
+              if (cat && !f.nickname) set("nickname", cat.defaultName);
+            }}
+          />
+        </div>
+
+        {/* 7. Save Beneficiary Checkbox */}
+        <SaveBeneficiaryCheckbox
+          checked={f.saveBeneficiary}
+          onChange={(checked) => set("saveBeneficiary", checked)}
+          nickname={f.beneficiaryNickname}
+          onNicknameChange={(val) => set("beneficiaryNickname", val)}
         />
 
-        <CreateGroupModal
-          open={createGroupOpen}
-          onOpenChange={setCreateGroupOpen}
-          onSuccess={(newGroup) => {
-            set("groupName", newGroup.name);
-            if (newGroup.defaultPerMemberAmount) {
-              set("amount", String(newGroup.defaultPerMemberAmount));
-            }
+        {/* 8. Action Button */}
+        <ProceedButton
+          disabled={!isFormValid}
+          onClick={() => {
+            setDetailsCollapsed(true);
+            setScreen("review");
           }}
+          label="Continue to Review"
         />
       </div>
+
+      <CreateGroupModal
+        open={createGroupOpen}
+        onOpenChange={setCreateGroupOpen}
+        onSuccess={(newGroup) => {
+          set("groupName", newGroup.name);
+          if (newGroup.defaultPerMemberAmount) {
+            set("amount", String(newGroup.defaultPerMemberAmount));
+          }
+          setDetailsCollapsed(true);
+        }}
+      />
     </div>
   );
 }
