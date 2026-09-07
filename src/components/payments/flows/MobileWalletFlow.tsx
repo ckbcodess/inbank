@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Account } from "@/lib/mock-data";
 import {
   Select,
@@ -22,8 +22,7 @@ import {
   detectNetwork,
   resolveAccountName,
 } from "./shared";
-
-const REGISTERED_PHONE = "024 412 3456";
+import { REGISTERED_PHONE } from "../useAuthorisation";
 
 export interface MobileWalletFormState {
   fromId: string;
@@ -50,14 +49,19 @@ export function MobileWalletFlow({
   onChange,
   onProceed,
 }: MobileWalletFlowProps) {
-  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  const isSelf = walletCategory === "self";
+  const [detailsCollapsed, setDetailsCollapsed] = useState(isSelf);
+
+  useEffect(() => {
+    if (walletCategory === "self") {
+      setDetailsCollapsed(true);
+    }
+  }, [walletCategory]);
 
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
     [accounts, state.fromId]
   );
-
-  const isSelf = walletCategory === "self";
 
   const verifiedName = useMemo(() => {
     if (isSelf) return "Own Wallet (Verified)";
@@ -83,8 +87,8 @@ export function MobileWalletFlow({
         <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
         {isPhoneValid && detailsCollapsed ? (
           <CollapsedDetailsBadge
-            title={verifiedName || (isSelf ? "My Registered Phone" : `Wallet ${state.wPhone}`)}
-            subtitle={`${state.wNetwork || "Mobile Money"} · ${isSelf ? REGISTERED_PHONE : state.wPhone}`}
+            title={isSelf ? (state.wName || "My Own Wallet (Self)") : (verifiedName || `Wallet ${state.wPhone}`)}
+            subtitle={`${state.wNetwork || "MTN Mobile Money"} · ${isSelf ? (state.wPhone || REGISTERED_PHONE) : state.wPhone}`}
             onChange={() => setDetailsCollapsed(false)}
           />
         ) : (
@@ -114,7 +118,7 @@ export function MobileWalletFlow({
               </label>
               {isSelf ? (
                 <div className="flex h-13 items-center justify-between rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
-                  <span className="tabular">{REGISTERED_PHONE}</span>
+                  <span className="tabular">{state.wPhone || REGISTERED_PHONE}</span>
                   <span className="text-[12px] text-primary font-normal">Registered Mobile</span>
                 </div>
               ) : (

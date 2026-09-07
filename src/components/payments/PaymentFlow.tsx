@@ -2506,6 +2506,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             {/* Flow 4: Mobile Wallet (Self & Other) */}
             {(rail === "wallet" || rail === "momo") && (
               <MobileWalletFlow
+                key={walletCategory || "other"}
                 accounts={accounts}
                 walletCategory={walletCategory || "other"}
                 state={{
