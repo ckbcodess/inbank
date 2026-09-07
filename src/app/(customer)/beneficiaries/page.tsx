@@ -1,18 +1,21 @@
 "use client";
 
 /**
- * Beneficiaries standalone directory — primary Level-1 / Level-2 navigation destination.
+ * Beneficiaries Standalone Directory.
  *
- * Scales past the flat favorites list by pairing persistent SEARCH with
- * SEGMENTED tabs (People / Billers / Numbers / Groups).
- * Full parity for both individual payees and multi-recipient payment groups.
+ * Minimal, clean design aligned with NIBS design tokens:
+ * - Dropdown filters for Transaction Type and Grouping instead of bulky segmented controls.
+ * - Single standard panel container (`rounded-2xl border border-border bg-card`).
+ * - Transaction type level management (add, send, edit) directly in section headers and rows.
+ * - Zero bold rule, semantic tokens only, tabular numbers.
  */
 
-import { useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
-  AlertTriangle,
   CheckCircle2,
+  Globe,
+  Landmark,
   Pencil,
   Plus,
   Receipt,
@@ -21,6 +24,7 @@ import {
   Trash2,
   User,
   Users,
+  Wallet,
 } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -30,6 +34,13 @@ import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -37,154 +48,316 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { BENEFICIARIES, BILLERS } from "@/lib/mock-data";
-import { useSession } from "@/lib/session-store";
+import {
+  FilteredEmptyState,
+  TrueEmptyState,
+} from "@/components/states/ListStates";
+import {
+  useBeneficiariesStore,
+  type BeneficiaryRecord,
+  type TransactionType,
+} from "@/lib/beneficiaries-store";
 import { useGroupsStore, type PaymentGroup } from "@/lib/groups-store";
+import { useSession } from "@/lib/session-store";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 
-type PayeeType = "person" | "biller" | "number";
-type SegmentType = PayeeType | "group";
-type Payee = { id: string; name: string; type: PayeeType; detail: string; verified: boolean };
+type TypeFilter = "all" | TransactionType | "group";
+type GroupByOption = "type" | "none" | "category";
 
-const TYPE_META: Record<PayeeType, { label: string; icon: React.ElementType; detailLabel: string; detailHint: string }> = {
-  person: { label: "Person", icon: User, detailLabel: "Bank & account, or wallet", detailHint: "e.g. Standard Bank · 0231 4455 8890" },
-  biller: { label: "Biller", icon: Receipt, detailLabel: "Biller reference", detailHint: "e.g. Prepaid meter · P-8839210" },
-  number: { label: "Number", icon: Smartphone, detailLabel: "Network & number", detailHint: "e.g. MTN · 0244 123 456" },
-};
-
-const initials = (name: string) =>
-  name.replace(/[^a-zA-Z ]/g, "").split(" ").filter(Boolean).map((w) => w[0]).join("").slice(0, 2).toUpperCase() || "#";
-
-/** Seed the directory from real beneficiaries/billers plus representative wallets & numbers. */
-function seedPayees(): Payee[] {
-  const people: Payee[] = BENEFICIARIES.map((b) => ({
-    id: `p-${b.id}`,
-    name: b.name,
-    type: "person",
-    detail: `${b.bank} · ${b.accountNumber}`,
-    verified: true,
-  }));
-  const wallets: Payee[] = [
-    { id: "p-ama", name: "Ama Serwaa Mensah", type: "person", detail: "MTN Mobile Money · 0244 123 456", verified: true },
-    { id: "p-kwame", name: "Kwame Boateng", type: "person", detail: "Telecel Cash · 0201 987 654", verified: true },
-    { id: "p-yaa", name: "Yaa Asantewaa", type: "person", detail: "MTN Mobile Money · 0559 220 118", verified: true },
-    { id: "p-efua", name: "Efua Mensah", type: "person", detail: "AT Money · 0271 445 900", verified: true },
-    { id: "p-kofi", name: "Kofi Osei", type: "person", detail: "GCB Bank · 1023 4455 66", verified: true },
-  ];
-  const billers: Payee[] = BILLERS.map((b) => ({
-    id: `b-${b.id}`,
-    name: b.name,
-    type: "biller",
-    detail: `${b.category} · needs ${b.reference}`,
-    verified: true,
-  }));
-  const numbers: Payee[] = [
-    { id: "n-1", name: "0244 123 456", type: "number", detail: "MTN · airtime & data", verified: true },
-    { id: "n-2", name: "0271 556 220", type: "number", detail: "AT · field team line", verified: true },
-    { id: "n-3", name: "0201 448 900", type: "number", detail: "Telecel · site office", verified: true },
-  ];
-  return [...people, ...wallets, ...billers, ...numbers];
+interface TypeMeta {
+  label: string;
+  plural: string;
+  rail: string;
+  icon: React.ElementType;
 }
 
-const SEGMENTS: { key: SegmentType; label: string }[] = [
-  { key: "person", label: "People" },
-  { key: "biller", label: "Billers" },
-  { key: "number", label: "Numbers" },
-  { key: "group", label: "Groups" },
+const TYPE_CONFIG: Record<TransactionType | "group", TypeMeta> = {
+  bank: { label: "Bank Transfer", plural: "Bank Transfers", rail: "bank", icon: Landmark },
+  wallet: { label: "Mobile Wallet", plural: "Mobile Wallets", rail: "wallet", icon: Wallet },
+  proxy: { label: "Proxy Pay", plural: "Proxy Pay", rail: "proxy", icon: User },
+  bill: { label: "Bills & Utilities", plural: "Bills & Utilities", rail: "bill", icon: Receipt },
+  airtime: { label: "Airtime & Data", plural: "Airtime & Data", rail: "airtime", icon: Smartphone },
+  papss: { label: "PAPSS Cross-Border", plural: "PAPSS Cross-Border", rail: "papss", icon: Globe },
+  group: { label: "Payment Group", plural: "Payment Groups", rail: "group", icon: Users },
+};
+
+const ORDERED_TYPES: (TransactionType | "group")[] = [
+  "bank",
+  "wallet",
+  "proxy",
+  "bill",
+  "airtime",
+  "papss",
+  "group",
 ];
 
-type FormState = { id?: string; name: string; type: PayeeType; detail: string };
+const GHANA_BANKS = [
+  "GCB Bank",
+  "Standard Bank Ghana",
+  "Ecobank Ghana",
+  "Absa Ghana",
+  "Fidelity Bank",
+  "Stanbic Bank Ghana",
+  "CalBank",
+  "CBG (Consolidated Bank Ghana)",
+  "Access Bank",
+  "Zenith Bank Ghana",
+];
+
+const WALLET_NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money", "GCB Wallet"];
+const AIRTIME_NETWORKS = ["MTN Ghana", "Telecel Ghana", "AT Ghana"];
+
+const PAPSS_COUNTRIES = [
+  { name: "Nigeria", currency: "NGN" },
+  { name: "Kenya", currency: "KES" },
+  { name: "Côte d'Ivoire", currency: "XOF" },
+  { name: "South Africa", currency: "ZAR" },
+  { name: "Egypt", currency: "EGP" },
+  { name: "Rwanda", currency: "RWF" },
+];
+
+interface FormState {
+  id?: string;
+  name: string;
+  transactionType: TransactionType;
+  bankName: string;
+  accountNumber: string;
+  currency: string;
+  network: string;
+  phoneNumber: string;
+  proxyId: string;
+  billerName: string;
+  billerReference: string;
+  country: string;
+}
+
+const INITIAL_FORM: FormState = {
+  name: "",
+  transactionType: "bank",
+  bankName: "GCB Bank",
+  accountNumber: "",
+  currency: "GHS",
+  network: "MTN Mobile Money",
+  phoneNumber: "",
+  proxyId: "",
+  billerName: "ECG Prepaid",
+  billerReference: "",
+  country: "Nigeria",
+};
+
+function initials(name: string) {
+  return (
+    name
+      .replace(/[^a-zA-Z ]/g, "")
+      .split(" ")
+      .filter(Boolean)
+      .map((w) => w[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "#"
+  );
+}
+
+function detectNetworkFromPhone(phone: string): string {
+  const clean = phone.replace(/[^0-9]/g, "");
+  if (clean.startsWith("024") || clean.startsWith("054") || clean.startsWith("055") || clean.startsWith("059")) {
+    return "MTN Mobile Money";
+  }
+  if (clean.startsWith("020") || clean.startsWith("050")) {
+    return "Telecel Cash";
+  }
+  if (clean.startsWith("027") || clean.startsWith("057") || clean.startsWith("026")) {
+    return "AT Money";
+  }
+  return "MTN Mobile Money";
+}
 
 export default function BeneficiariesPage() {
   const activeProfile = useSession((s) => s.activeProfile);
   const isCorporate = activeProfile?.kind === "CORPORATE";
 
+  const {
+    beneficiaries,
+    addBeneficiary,
+    updateBeneficiary,
+    removeBeneficiary,
+  } = useBeneficiariesStore();
+
   const { groups, deleteGroup } = useGroupsStore();
 
-  const [payees, setPayees] = useState<Payee[]>(seedPayees);
-  const [segment, setSegment] = useState<SegmentType>("person");
+  // Dropdown filter states
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
+  const [groupBy, setGroupBy] = useState<GroupByOption>("type");
   const [query, setQuery] = useState("");
 
-  // Payee Dialog state
+  // Modal states
   const [formOpen, setFormOpen] = useState(false);
-  const [form, setForm] = useState<FormState>({ name: "", type: "person", detail: "" });
+  const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [removeId, setRemoveId] = useState<string | null>(null);
 
-  // Group Modal state
   const [groupModalOpen, setGroupModalOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<PaymentGroup | null>(null);
   const [removeGroupId, setRemoveGroupId] = useState<string | null>(null);
 
   const [notice, setNotice] = useState<string | null>(null);
-  const [, force] = useReducer((x: number) => x + 1, 0);
 
   function flash(msg: string) {
     setNotice(msg);
-    window.setTimeout(() => setNotice(null), 4000);
+    window.setTimeout(() => setNotice(null), 3500);
   }
 
-  const counts = useMemo(
-    () => ({
-      person: payees.filter((p) => p.type === "person").length,
-      biller: payees.filter((p) => p.type === "biller").length,
-      number: payees.filter((p) => p.type === "number").length,
+  // Counts by Transaction Type
+  const counts = useMemo(() => {
+    return {
+      all: beneficiaries.length + groups.length,
+      bank: beneficiaries.filter((b) => b.transactionType === "bank").length,
+      wallet: beneficiaries.filter((b) => b.transactionType === "wallet").length,
+      proxy: beneficiaries.filter((b) => b.transactionType === "proxy").length,
+      bill: beneficiaries.filter((b) => b.transactionType === "bill").length,
+      airtime: beneficiaries.filter((b) => b.transactionType === "airtime").length,
+      papss: beneficiaries.filter((b) => b.transactionType === "papss").length,
       group: groups.length,
-    }),
-    [payees, groups],
-  );
+    };
+  }, [beneficiaries, groups]);
 
   const q = query.trim().toLowerCase();
 
-  const filteredPayees = useMemo(() => {
-    return payees
-      .filter((p) => p.type === segment)
-      .filter((p) => !q || p.name.toLowerCase().includes(q) || p.detail.toLowerCase().includes(q))
+  // Filtered beneficiaries
+  const filteredBeneficiaries = useMemo(() => {
+    return beneficiaries
+      .filter((b) => {
+        if (typeFilter !== "all" && b.transactionType !== typeFilter) return false;
+        if (!q) return true;
+        return (
+          b.name.toLowerCase().includes(q) ||
+          b.detail.toLowerCase().includes(q) ||
+          (b.bankName && b.bankName.toLowerCase().includes(q)) ||
+          (b.accountNumber && b.accountNumber.toLowerCase().includes(q)) ||
+          (b.network && b.network.toLowerCase().includes(q)) ||
+          (b.phoneNumber && b.phoneNumber.toLowerCase().includes(q)) ||
+          (b.proxyId && b.proxyId.toLowerCase().includes(q)) ||
+          (b.billerName && b.billerName.toLowerCase().includes(q)) ||
+          (b.country && b.country.toLowerCase().includes(q))
+        );
+      })
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [payees, segment, q]);
+  }, [beneficiaries, typeFilter, q]);
 
+  // Filtered groups
   const filteredGroups = useMemo(() => {
+    if (typeFilter !== "all" && typeFilter !== "group") return [];
     return groups
-      .filter(
-        (g) =>
-          !q ||
+      .filter((g) => {
+        if (!q) return true;
+        return (
           g.name.toLowerCase().includes(q) ||
           (g.description && g.description.toLowerCase().includes(q)) ||
-          g.members.some((m) => m.name.toLowerCase().includes(q))
-      )
+          g.members.some((m) => m.name.toLowerCase().includes(q) || m.destination.toLowerCase().includes(q))
+        );
+      })
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [groups, q]);
+  }, [groups, typeFilter, q]);
 
-  const editing = Boolean(form.id);
-  const canSave = form.name.trim() !== "" && form.detail.trim() !== "";
+  const totalFilteredCount = filteredBeneficiaries.length + filteredGroups.length;
 
-  function openNew() {
-    setForm({ name: "", type: segment === "group" ? "person" : segment, detail: "" });
+  function openAddForType(type: TransactionType) {
+    setForm({
+      ...INITIAL_FORM,
+      transactionType: type,
+    });
     setFormOpen(true);
   }
-  function openEdit(p: Payee) {
-    setForm({ id: p.id, name: p.name, type: p.type, detail: p.detail });
+
+  function openEdit(b: BeneficiaryRecord) {
+    setForm({
+      id: b.id,
+      name: b.name,
+      transactionType: b.transactionType,
+      bankName: b.bankName || "GCB Bank",
+      accountNumber: b.accountNumber || "",
+      currency: b.currency || "GHS",
+      network: b.network || "MTN Mobile Money",
+      phoneNumber: b.phoneNumber || "",
+      proxyId: b.proxyId || "",
+      billerName: b.billerName || "ECG Prepaid",
+      billerReference: b.billerReference || "",
+      country: b.country || "Nigeria",
+    });
     setFormOpen(true);
   }
-  function handleSave() {
-    if (!canSave) return;
+
+  function handleSaveBeneficiary() {
+    if (!form.name.trim()) return;
+
+    let detail = "";
+    switch (form.transactionType) {
+      case "bank":
+        detail = `${form.bankName} · ${form.accountNumber || "Account"} · ${form.currency}`;
+        break;
+      case "wallet":
+        detail = `${form.network} · ${form.phoneNumber || "Wallet"}`;
+        break;
+      case "proxy":
+        detail = `Proxy · ${form.proxyId || "@handle"}`;
+        break;
+      case "bill":
+        detail = `${form.billerName} · ${form.billerReference || "Account"}`;
+        break;
+      case "airtime":
+        detail = `${form.network} · ${form.phoneNumber || "Number"}`;
+        break;
+      case "papss":
+        const curr = PAPSS_COUNTRIES.find((c) => c.name === form.country)?.currency || "USD";
+        detail = `${form.bankName || "Foreign Bank"} · ${curr} · ${form.accountNumber || "Account"}`;
+        break;
+    }
+
     if (form.id) {
-      setPayees((list) => list.map((p) => (p.id === form.id ? { ...p, name: form.name.trim(), type: form.type, detail: form.detail.trim() } : p)));
-      flash("Beneficiary updated.");
+      updateBeneficiary(form.id, {
+        name: form.name.trim(),
+        transactionType: form.transactionType,
+        detail,
+        bankName: form.bankName,
+        accountNumber: form.accountNumber,
+        currency: form.currency,
+        network: form.network,
+        phoneNumber: form.phoneNumber,
+        proxyId: form.proxyId,
+        billerName: form.billerName,
+        billerReference: form.billerReference,
+        country: form.country,
+      });
+      flash(`Beneficiary updated.`);
     } else {
       const verified = !isCorporate;
-      const created: Payee = { id: `new-${Date.now()}`, name: form.name.trim(), type: form.type, detail: form.detail.trim(), verified };
-      setPayees((list) => [created, ...list]);
-      flash(verified ? "Beneficiary added." : "Beneficiary submitted for approval — it'll be usable once an approver clears it.");
+      addBeneficiary({
+        name: form.name.trim(),
+        transactionType: form.transactionType,
+        category: form.transactionType === "bill" ? "biller" : form.transactionType === "airtime" ? "number" : "person",
+        detail,
+        verified,
+        bankName: form.bankName,
+        accountNumber: form.accountNumber,
+        currency: form.currency,
+        network: form.network,
+        phoneNumber: form.phoneNumber,
+        proxyId: form.proxyId,
+        billerName: form.billerName,
+        billerReference: form.billerReference,
+        country: form.country,
+      });
+      flash(verified ? "Beneficiary saved." : "Beneficiary submitted for approval.");
     }
+
     setFormOpen(false);
   }
-  function handleRemove() {
+
+  function handleRemoveBeneficiary() {
     if (!removeId) return;
-    const p = payees.find((x) => x.id === removeId);
-    setPayees((list) => list.filter((x) => x.id !== removeId));
+    const item = beneficiaries.find((b) => b.id === removeId);
+    removeBeneficiary(removeId);
     setRemoveId(null);
-    flash(`Removed${p ? ` — ${p.name}` : ""}.`);
-    force();
+    flash(`Removed${item ? ` — ${item.name}` : ""}.`);
   }
 
   function handleRemoveGroup() {
@@ -195,363 +368,604 @@ export default function BeneficiariesPage() {
     flash(`Removed group${g ? ` — ${g.name}` : ""}.`);
   }
 
-  const toRemove = removeId ? payees.find((p) => p.id === removeId) : undefined;
+  const toRemove = removeId ? beneficiaries.find((p) => p.id === removeId) : undefined;
   const toRemoveGroup = removeGroupId ? groups.find((g) => g.id === removeGroupId) : undefined;
-  const formMeta = TYPE_META[form.type];
+
+  // Render a beneficiary list item
+  function renderBeneficiaryRow(b: BeneficiaryRecord) {
+    const config = TYPE_CONFIG[b.transactionType];
+    const Icon = config.icon;
+
+    let sendHref = `/payments/send?rail=${config.rail}&recipient=${encodeURIComponent(b.name)}`;
+    if (b.accountNumber) sendHref += `&account=${encodeURIComponent(b.accountNumber)}`;
+    else if (b.phoneNumber) sendHref += `&account=${encodeURIComponent(b.phoneNumber)}`;
+    else if (b.proxyId) sendHref += `&proxy=${encodeURIComponent(b.proxyId)}`;
+    else if (b.billerReference) sendHref += `&ref=${encodeURIComponent(b.billerReference)}`;
+
+    return (
+      <li
+        key={b.id}
+        className="flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-muted/40"
+      >
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+            {b.transactionType === "bank" ? (
+              <span className="text-[12px] font-normal tabular">{initials(b.name)}</span>
+            ) : (
+              <Icon size={16} strokeWidth={1.8} />
+            )}
+          </span>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="truncate text-[14px] text-foreground">{b.name}</span>
+              {b.verified ? (
+                <CheckCircle2
+                  size={13}
+                  strokeWidth={2}
+                  className="shrink-0 text-emerald-600 dark:text-emerald-400"
+                  aria-label="Verified"
+                />
+              ) : (
+                <Badge variant="warning">Pending</Badge>
+              )}
+            </div>
+            <div className="mt-0.5 flex items-center gap-2 text-[12px] text-muted-foreground tabular flex-wrap">
+              <span>{b.detail}</span>
+              {groupBy === "none" && (
+                <span className="rounded bg-muted px-1.5 py-0.2 text-[11px] text-muted-foreground">
+                  {config.label}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-1">
+          <SimpleTooltip content={`Send money to ${b.name}`}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              nativeButton={false}
+              render={<Link href={sendHref} />}
+              aria-label={`Send to ${b.name}`}
+            >
+              <Send size={15} strokeWidth={1.8} />
+            </Button>
+          </SimpleTooltip>
+
+          <SimpleTooltip content={`Edit ${b.name}`}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => openEdit(b)}
+              aria-label={`Edit ${b.name}`}
+            >
+              <Pencil size={15} strokeWidth={1.8} />
+            </Button>
+          </SimpleTooltip>
+
+          <SimpleTooltip content={`Remove ${b.name}`}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setRemoveId(b.id)}
+              aria-label={`Remove ${b.name}`}
+              className="text-muted-foreground hover:text-destructive"
+            >
+              <Trash2 size={15} strokeWidth={1.8} />
+            </Button>
+          </SimpleTooltip>
+        </div>
+      </li>
+    );
+  }
+
+  // Render a group list item
+  function renderGroupRow(g: PaymentGroup) {
+    const totalAmt =
+      g.splitType === "equal"
+        ? g.members.length * g.defaultPerMemberAmount
+        : g.members.reduce((sum, m) => sum + (m.defaultAmount || 0), 0);
+
+    return (
+      <li
+        key={g.id}
+        className="flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-muted/40"
+      >
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+            <Users size={16} strokeWidth={1.8} />
+          </span>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="truncate text-[14px] text-foreground">{g.name}</span>
+              <span className="rounded bg-muted px-1.5 py-0.2 text-[11px] text-muted-foreground tabular">
+                {g.members.length} members
+              </span>
+            </div>
+            <div className="mt-0.5 flex items-center gap-2 text-[12px] text-muted-foreground tabular flex-wrap">
+              <span>
+                {g.splitType === "equal" ? `GHS ${g.defaultPerMemberAmount} each` : "Custom split"} · Total GHS{" "}
+                {totalAmt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-1">
+          <SimpleTooltip content={`Send to ${g.name}`}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              nativeButton={false}
+              render={<Link href={`/payments/send?rail=group&group=${encodeURIComponent(g.name)}`} />}
+              aria-label={`Send to ${g.name}`}
+            >
+              <Send size={15} strokeWidth={1.8} />
+            </Button>
+          </SimpleTooltip>
+
+          <SimpleTooltip content={`Edit ${g.name}`}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => {
+                setEditingGroup(g);
+                setGroupModalOpen(true);
+              }}
+              aria-label={`Edit ${g.name}`}
+            >
+              <Pencil size={15} strokeWidth={1.8} />
+            </Button>
+          </SimpleTooltip>
+
+          <SimpleTooltip content={`Delete ${g.name}`}>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setRemoveGroupId(g.id)}
+              aria-label={`Delete ${g.name}`}
+              className="text-muted-foreground hover:text-destructive"
+            >
+              <Trash2 size={15} strokeWidth={1.8} />
+            </Button>
+          </SimpleTooltip>
+        </div>
+      </li>
+    );
+  }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       <PageHeader
         title="Beneficiaries"
-        description="Manage your saved contacts, bank accounts, mobile wallets, billers, and payment groups in one place."
+        description="Manage your saved counterparties, bank accounts, mobile wallets, and payment groups."
         actions={
           <div className="flex items-center gap-2">
-            {segment === "group" ? (
-              <Button
-                onClick={() => {
-                  setEditingGroup(null);
-                  setGroupModalOpen(true);
-                }}
-              >
-                <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-                Create group
-              </Button>
-            ) : (
-              <>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setEditingGroup(null);
-                    setGroupModalOpen(true);
-                  }}
-                >
-                  <Users size={14} className="mr-1.5" />
-                  New group
-                </Button>
-                <Button onClick={openNew}>
-                  <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-                  Add beneficiary
-                </Button>
-              </>
-            )}
+            <Button
+              variant="outline"
+              onClick={() => {
+                setEditingGroup(null);
+                setGroupModalOpen(true);
+              }}
+            >
+              <Users size={14} className="mr-1.5" />
+              New group
+            </Button>
+            <Button
+              onClick={() => {
+                setForm({
+                  ...INITIAL_FORM,
+                  transactionType: typeFilter !== "all" && typeFilter !== "group" ? typeFilter : "bank",
+                });
+                setFormOpen(true);
+              }}
+            >
+              <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
+              Add beneficiary
+            </Button>
           </div>
         }
       />
 
       {notice && (
-        <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/60 px-4 py-3 text-[13px] text-foreground">
-          <CheckCircle2 size={16} strokeWidth={1.8} className="shrink-0 text-emerald-500" aria-hidden="true" />
-          <span className="flex-1">{notice}</span>
+        <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/60 px-4 py-2.5 text-[13px] text-foreground">
+          <CheckCircle2 size={15} strokeWidth={1.8} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <span>{notice}</span>
         </div>
       )}
 
-      {/* segments bar with inline expandable search */}
-      <div className="flex items-center justify-between gap-3">
-        {/* segments */}
-        <div className="inline-flex w-fit flex-wrap rounded-xl bg-muted p-1">
-          {SEGMENTS.map(({ key, label }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setSegment(key)}
-              aria-pressed={segment === key}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
-                segment === key ? "bg-background text-foreground shadow-sm font-medium" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {label}
-              <span className="tabular text-[11px] text-muted-foreground">{counts[key]}</span>
-            </button>
-          ))}
+      {/* Main Container */}
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        {/* Simple Toolbar with Dropdown Filters */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            {/* Filter by Transaction Type */}
+            <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as TypeFilter)}>
+              <SelectTrigger className="w-[180px] h-9 text-[13px]" aria-label="Filter by transaction type">
+                <SelectValue placeholder="All types" />
+              </SelectTrigger>
+              <SelectContent align="start">
+                <SelectItem value="all">All Types ({counts.all})</SelectItem>
+                <SelectItem value="bank">Bank Transfers ({counts.bank})</SelectItem>
+                <SelectItem value="wallet">Mobile Wallets ({counts.wallet})</SelectItem>
+                <SelectItem value="proxy">Proxy Pay ({counts.proxy})</SelectItem>
+                <SelectItem value="bill">Bills & Utilities ({counts.bill})</SelectItem>
+                <SelectItem value="airtime">Airtime & Data ({counts.airtime})</SelectItem>
+                <SelectItem value="papss">PAPSS International ({counts.papss})</SelectItem>
+                <SelectItem value="group">Payment Groups ({counts.group})</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Group By Dropdown */}
+            <Select value={groupBy} onValueChange={(v) => setGroupBy(v as GroupByOption)}>
+              <SelectTrigger className="w-[170px] h-9 text-[13px]" aria-label="Group list by">
+                <SelectValue placeholder="Group by" />
+              </SelectTrigger>
+              <SelectContent align="start">
+                <SelectItem value="type">Group: Transaction Type</SelectItem>
+                <SelectItem value="none">Group: Flat List</SelectItem>
+                <SelectItem value="category">Group: Category</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <ExpandableSearch
+            value={query}
+            onChange={setQuery}
+            placeholder="Search by name, account, network..."
+            tooltip="Search beneficiaries"
+          />
         </div>
 
-        {/* inline expandable search */}
-        <ExpandableSearch
-          value={query}
-          onChange={setQuery}
-          placeholder={`Search ${segment === "person" ? "people" : segment === "biller" ? "billers" : segment === "number" ? "numbers" : "groups"}...`}
-          tooltip="Search beneficiaries"
-        />
-      </div>
-
-      {/* list */}
-      <section className="rounded-2xl border border-border bg-card overflow-hidden">
-        {segment === "group" ? (
-          /* GROUPS ONLY TAB */
-          filteredGroups.length === 0 ? (
-            <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
-              <Users size={28} className="text-muted-foreground/60 mb-1" />
-              <p className="text-[14px] font-medium text-foreground">
-                {query ? "No payment groups match that search" : "No payment groups created yet"}
-              </p>
-              <p className="text-[12.5px] text-muted-foreground">
-                {query ? "Try a different name or member." : "Create a group to send money to family, Susu, or colleagues in one tap."}
-              </p>
-              {!query && (
+        {/* Content List */}
+        {totalFilteredCount === 0 ? (
+          query || typeFilter !== "all" ? (
+            <FilteredEmptyState
+              onReset={() => {
+                setQuery("");
+                setTypeFilter("all");
+              }}
+              description="No beneficiaries match your active search or type filter."
+            />
+          ) : (
+            <TrueEmptyState
+              title="No beneficiaries saved yet"
+              description="Save frequent payees and billers to speed up your transfers."
+              action={
                 <Button
-                  variant="outline"
                   size="sm"
                   onClick={() => {
-                    setEditingGroup(null);
-                    setGroupModalOpen(true);
+                    setForm(INITIAL_FORM);
+                    setFormOpen(true);
                   }}
-                  className="mt-2"
                 >
-                  <Plus size={14} /> Create first group
+                  <Plus size={14} className="mr-1.5" /> Add beneficiary
                 </Button>
-              )}
-            </div>
-          ) : (
-            <ul className="divide-y divide-border">
-              {filteredGroups.map((g) => {
-                const totalAmt =
-                  g.splitType === "equal"
-                    ? g.members.length * g.defaultPerMemberAmount
-                    : g.members.reduce((sum, m) => sum + (m.defaultAmount || 0), 0);
+              }
+            />
+          )
+        ) : groupBy === "type" && typeFilter === "all" ? (
+          /* ── Grouped by Transaction Type ─────────────────────────────── */
+          <div className="divide-y divide-border">
+            {ORDERED_TYPES.map((typeKey) => {
+              const isGroup = typeKey === "group";
+              const items = isGroup
+                ? []
+                : filteredBeneficiaries.filter((b) => b.transactionType === typeKey);
+              const grpItems = isGroup ? filteredGroups : [];
+              const groupCount = isGroup ? grpItems.length : items.length;
 
-                return (
-                  <li key={g.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 transition-colors hover:bg-muted/40">
-                    <span className="flex min-w-0 flex-1 items-start gap-3.5">
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                        <Users size={18} strokeWidth={1.8} />
-                      </span>
-                      <div className="flex flex-col min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="truncate text-[14.5px] font-medium text-foreground">{g.name}</span>
-                          <span className="text-[11px] font-medium bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
-                            {g.members.length} members
-                          </span>
-                          <span className="text-[11px] text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-md font-medium">
-                            {g.splitType === "equal" ? `GHS ${g.defaultPerMemberAmount} each` : "Custom split"}
-                          </span>
-                        </div>
-                        {g.description && (
-                          <span className="text-[12px] text-muted-foreground mt-0.5 line-clamp-1">{g.description}</span>
-                        )}
-                        <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                          {g.members.slice(0, 5).map((m) => (
-                            <span key={m.destination} className="inline-flex items-center gap-1 text-[11px] bg-muted/70 px-2 py-0.5 rounded text-foreground">
-                              {m.name.split(" ")[0]}
-                            </span>
-                          ))}
-                          {g.members.length > 5 && (
-                            <span className="text-[11px] text-muted-foreground font-medium">
-                              +{g.members.length - 5} more
-                            </span>
-                          )}
-                        </div>
-                      </div>
+              if (groupCount === 0) return null;
+
+              const config = TYPE_CONFIG[typeKey];
+              const Icon = config.icon;
+
+              return (
+                <div key={typeKey}>
+                  {/* Quiet Group Level Header with Management Actions */}
+                  <div className="flex items-center justify-between bg-muted/40 px-4 py-2 text-[12px] text-muted-foreground">
+                    <span className="flex items-center gap-2">
+                      <Icon size={14} strokeWidth={1.8} className="text-muted-foreground" />
+                      <span className="text-foreground">{config.plural}</span>
+                      <span className="tabular text-[11px]">({groupCount})</span>
                     </span>
 
-                    <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/50">
-                      <div className="flex flex-col text-right hidden sm:flex">
-                        <span className="text-[10.5px] text-muted-foreground uppercase tracking-wider font-medium">Total Outflow</span>
-                        <span className="text-[13.5px] font-semibold text-foreground tabular">
-                          GHS {totalAmt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <SimpleTooltip content={`Send to ${g.name}`}>
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            nativeButton={false}
-                            render={
-                              <Link
-                                href={`/payments/send?rail=group&group=${encodeURIComponent(g.name)}`}
-                              />
-                            }
-                            aria-label={`Send to ${g.name}`}
-                          >
-                            <Send size={15} strokeWidth={1.8} />
-                          </Button>
-                        </SimpleTooltip>
-                        <SimpleTooltip content={`Edit ${g.name}`}>
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            onClick={() => {
-                              setEditingGroup(g);
-                              setGroupModalOpen(true);
-                            }}
-                            aria-label={`Edit ${g.name}`}
-                          >
-                            <Pencil size={15} strokeWidth={1.8} />
-                          </Button>
-                        </SimpleTooltip>
-                        <SimpleTooltip content={`Delete ${g.name}`}>
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            onClick={() => setRemoveGroupId(g.id)}
-                            aria-label={`Delete ${g.name}`}
-                            className="text-muted-foreground hover:text-destructive"
-                          >
-                            <Trash2 size={15} strokeWidth={1.8} />
-                          </Button>
-                        </SimpleTooltip>
-                      </div>
+                    <div className="flex items-center gap-3">
+                      {isGroup ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setEditingGroup(null);
+                            setGroupModalOpen(true);
+                          }}
+                          className="text-[12px] text-primary hover:underline cursor-pointer"
+                        >
+                          + New group
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => openAddForType(typeKey)}
+                          className="text-[12px] text-primary hover:underline cursor-pointer"
+                        >
+                          + Add {config.label.toLowerCase()}
+                        </button>
+                      )}
+                      <Link
+                        href={`/payments/send?rail=${config.rail}`}
+                        className="text-[12px] text-muted-foreground hover:text-foreground"
+                      >
+                        Send →
+                      </Link>
                     </div>
-                  </li>
-                );
-              })}
-            </ul>
-          )
+                  </div>
+
+                  <ul className="divide-y divide-border">
+                    {isGroup ? grpItems.map(renderGroupRow) : items.map(renderBeneficiaryRow)}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        ) : groupBy === "category" ? (
+          /* ── Grouped by Category ────────────────────────────────────── */
+          <div className="divide-y divide-border">
+            {(["person", "biller", "number", "group"] as const).map((cat) => {
+              const isGroup = cat === "group";
+              const items = isGroup ? [] : filteredBeneficiaries.filter((b) => b.category === cat);
+              const grpItems = isGroup ? filteredGroups : [];
+              const groupCount = isGroup ? grpItems.length : items.length;
+
+              if (groupCount === 0) return null;
+
+              const catTitle =
+                cat === "person" ? "People & Accounts" : cat === "biller" ? "Billers" : cat === "number" ? "Phone Numbers" : "Payment Groups";
+
+              return (
+                <div key={cat}>
+                  <div className="flex items-center justify-between bg-muted/40 px-4 py-2 text-[12px] text-muted-foreground">
+                    <span className="text-foreground">
+                      {catTitle} <span className="tabular text-[11px] text-muted-foreground">({groupCount})</span>
+                    </span>
+                  </div>
+                  <ul className="divide-y divide-border">
+                    {isGroup ? grpItems.map(renderGroupRow) : items.map(renderBeneficiaryRow)}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
         ) : (
-          /* INDIVIDUAL PAYEES (PEOPLE / BILLERS / NUMBERS) */
-          filteredPayees.length === 0 ? (
-            <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
-              <p className="text-[14px] font-medium text-foreground">
-                {query
-                  ? "No beneficiaries match that search"
-                  : `No ${segment === "person" ? "contacts" : segment === "biller" ? "billers" : "numbers"} saved yet`}
-              </p>
-              <p className="text-[12.5px] text-muted-foreground">
-                {query ? "Try a different name or number." : "Add one to save time on your next transfer."}
-              </p>
-              {!query && (
-                <Button variant="outline" size="sm" onClick={openNew} className="mt-2">
-                  <Plus size={14} /> Add beneficiary
-                </Button>
-              )}
-            </div>
-          ) : (
-            <ul className="divide-y divide-border">
-              {filteredPayees.map((p) => {
-                  const Icon = TYPE_META[p.type].icon;
-                  return (
-                    <li key={p.id} className="flex items-center justify-between gap-4 p-4 transition-colors hover:bg-muted/40">
-                      <span className="flex min-w-0 flex-1 items-center gap-3">
-                        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
-                          {p.type === "person" ? (
-                            <span className="text-[12px] font-medium tracking-tight">{initials(p.name)}</span>
-                          ) : (
-                            <Icon size={18} strokeWidth={1.8} className="text-muted-foreground" />
-                          )}
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="flex items-center gap-2">
-                            <span className="truncate text-[14px] font-medium text-foreground">{p.name}</span>
-                            {p.verified ? (
-                              <CheckCircle2
-                                size={13}
-                                strokeWidth={2}
-                                className="shrink-0 text-emerald-600 dark:text-emerald-400"
-                                aria-label="Verified"
-                              />
-                            ) : (
-                              <Badge variant="warning">Pending approval</Badge>
-                            )}
-                          </span>
-                          <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">{p.detail}</span>
-                        </span>
-                      </span>
+          /* ── Flat List ──────────────────────────────────────────────── */
+          <ul className="divide-y divide-border">
+            {filteredBeneficiaries.map(renderBeneficiaryRow)}
+            {filteredGroups.map(renderGroupRow)}
+          </ul>
+        )}
+      </div>
 
-                      <span className="flex shrink-0 items-center gap-1">
-                        <SimpleTooltip content={`Send money to ${p.name}`}>
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            nativeButton={false}
-                            render={
-                              <Link
-                                href={`/payments/send?rail=${p.type === "number" ? "wallet" : p.type === "biller" ? "bill" : "bank"}&recipient=${encodeURIComponent(p.name)}`}
-                              />
-                            }
-                            aria-label={`Send to ${p.name}`}
-                          >
-                            <Send size={15} strokeWidth={1.8} />
-                          </Button>
-                        </SimpleTooltip>
-                        <SimpleTooltip content={`Edit ${p.name}`}>
-                          <Button variant="ghost" size="icon-sm" onClick={() => openEdit(p)} aria-label={`Edit ${p.name}`}>
-                            <Pencil size={15} strokeWidth={1.8} />
-                          </Button>
-                        </SimpleTooltip>
-                        <SimpleTooltip content={`Remove ${p.name}`}>
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            onClick={() => setRemoveId(p.id)}
-                            aria-label={`Remove ${p.name}`}
-                            className="text-muted-foreground hover:text-destructive"
-                          >
-                            <Trash2 size={15} strokeWidth={1.8} />
-                          </Button>
-                        </SimpleTooltip>
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            )
-          )}
-      </section>
-
-      {/* Add / Edit Individual Payee Dialog */}
+      {/* ── Streamlined Add / Edit Beneficiary Dialog ─────────────────── */}
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="sm:max-w-[460px]">
+        <DialogContent className="sm:max-w-[420px]">
           <DialogHeader>
-            <DialogTitle>{editing ? "Edit beneficiary" : "Add a beneficiary"}</DialogTitle>
+            <DialogTitle>{form.id ? "Edit Beneficiary" : "Add Beneficiary"}</DialogTitle>
             <DialogDescription>
-              {isCorporate && !editing
-                ? "New corporate beneficiaries are reviewed by an approver before they can be paid."
-                : "Save someone you pay so they're one tap away next time."}
+              {isCorporate && !form.id
+                ? "Corporate beneficiaries require checker approval before payment."
+                : "Save recipient details for quick transfers."}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="flex flex-col gap-4 py-2">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="py-name">Name</Label>
+          <div className="flex flex-col gap-3.5 py-1">
+            {/* Transaction Type Dropdown */}
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="ben-type">Transaction Type</Label>
+              <Select
+                value={form.transactionType}
+                onValueChange={(val) => val && setForm((p) => ({ ...p, transactionType: val as TransactionType }))}
+              >
+                <SelectTrigger id="ben-type" className="h-9 w-full text-[13px]">
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ORDERED_TYPES.filter((t) => t !== "group").map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {TYPE_CONFIG[t].label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Recipient Name */}
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="ben-name">Name</Label>
               <Input
-                id="py-name"
+                id="ben-name"
                 value={form.name}
                 onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                 placeholder="e.g. Kwame Boateng"
+                className="h-9 text-[13px]"
                 autoFocus
               />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label>Type</Label>
-              <div className="grid grid-cols-3 gap-2">
-                {(["person", "biller", "number"] as const).map((t) => {
-                  const active = form.type === t;
-                  const Icon = TYPE_META[t].icon;
-                  return (
-                    <button
-                      key={t}
-                      type="button"
-                      onClick={() => setForm((p) => ({ ...p, type: t }))}
-                      className={`flex flex-col items-center gap-1.5 rounded-xl border p-3 text-[12px] transition-all cursor-pointer ${
-                        active
-                          ? "border-primary bg-primary/10 font-medium text-foreground"
-                          : "border-border text-muted-foreground hover:border-border/80 hover:text-foreground"
-                      }`}
-                    >
-                      <Icon size={16} strokeWidth={1.8} />
-                      {TYPE_META[t].label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+            {/* Dynamic Inputs based on Transaction Type */}
+            {form.transactionType === "bank" && (
+              <>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="ben-bank">Bank Name</Label>
+                  <Select
+                    value={form.bankName}
+                    onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
+                  >
+                    <SelectTrigger id="ben-bank" className="h-9 w-full text-[13px]">
+                      <SelectValue placeholder="Select bank" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {GHANA_BANKS.map((b) => (
+                        <SelectItem key={b} value={b}>
+                          {b}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="ben-acct">Account Number</Label>
+                  <Input
+                    id="ben-acct"
+                    value={form.accountNumber}
+                    onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
+                    placeholder="e.g. 0231 4455 8890"
+                    className="h-9 text-[13px]"
+                  />
+                </div>
+              </>
+            )}
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="py-detail">{formMeta.detailLabel}</Label>
-              <Input
-                id="py-detail"
-                value={form.detail}
-                onChange={(e) => setForm((p) => ({ ...p, detail: e.target.value }))}
-                placeholder={formMeta.detailHint}
-              />
-            </div>
+            {form.transactionType === "wallet" && (
+              <>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="ben-network">Wallet Provider</Label>
+                  <Select
+                    value={form.network}
+                    onValueChange={(val) => val && setForm((p) => ({ ...p, network: val }))}
+                  >
+                    <SelectTrigger id="ben-network" className="h-9 w-full text-[13px]">
+                      <SelectValue placeholder="Select provider" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {WALLET_NETWORKS.map((n) => (
+                        <SelectItem key={n} value={n}>
+                          {n}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="ben-phone">Mobile Number</Label>
+                  <Input
+                    id="ben-phone"
+                    value={form.phoneNumber}
+                    onChange={(e) => {
+                      const ph = e.target.value;
+                      const detected = detectNetworkFromPhone(ph);
+                      setForm((p) => ({ ...p, phoneNumber: ph, network: detected }));
+                    }}
+                    placeholder="e.g. 0244 123 456"
+                    className="h-9 text-[13px]"
+                  />
+                </div>
+              </>
+            )}
 
-            {isCorporate && !editing && (
-              <div className="flex items-start gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-[12px] text-amber-700 dark:text-amber-400">
-                <AlertTriangle size={15} className="mt-0.5 shrink-0" />
-                <span>Dual control: an approver must clear this beneficiary before it can be used for corporate disbursements.</span>
+            {form.transactionType === "proxy" && (
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="ben-proxy">Proxy ID or Handle</Label>
+                <Input
+                  id="ben-proxy"
+                  value={form.proxyId}
+                  onChange={(e) => setForm((p) => ({ ...p, proxyId: e.target.value }))}
+                  placeholder="e.g. @kwame.b or GHA-71829304-1"
+                  className="h-9 text-[13px]"
+                />
               </div>
+            )}
+
+            {form.transactionType === "bill" && (
+              <>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="ben-biller">Biller Provider</Label>
+                  <Input
+                    id="ben-biller"
+                    value={form.billerName}
+                    onChange={(e) => setForm((p) => ({ ...p, billerName: e.target.value }))}
+                    placeholder="e.g. ECG Prepaid, Ghana Water"
+                    className="h-9 text-[13px]"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="ben-ref">Meter / Account Reference</Label>
+                  <Input
+                    id="ben-ref"
+                    value={form.billerReference}
+                    onChange={(e) => setForm((p) => ({ ...p, billerReference: e.target.value }))}
+                    placeholder="e.g. P-8839210"
+                    className="h-9 text-[13px]"
+                  />
+                </div>
+              </>
+            )}
+
+            {form.transactionType === "airtime" && (
+              <>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="ben-airnet">Network</Label>
+                  <Select
+                    value={form.network}
+                    onValueChange={(val) => val && setForm((p) => ({ ...p, network: val }))}
+                  >
+                    <SelectTrigger id="ben-airnet" className="h-9 w-full text-[13px]">
+                      <SelectValue placeholder="Select network" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {AIRTIME_NETWORKS.map((n) => (
+                        <SelectItem key={n} value={n}>
+                          {n}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="ben-airphone">Phone Number</Label>
+                  <Input
+                    id="ben-airphone"
+                    value={form.phoneNumber}
+                    onChange={(e) => setForm((p) => ({ ...p, phoneNumber: e.target.value }))}
+                    placeholder="e.g. 0244 123 821"
+                    className="h-9 text-[13px]"
+                  />
+                </div>
+              </>
+            )}
+
+            {form.transactionType === "papss" && (
+              <>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="ben-country">Country</Label>
+                  <Select
+                    value={form.country}
+                    onValueChange={(val) => val && setForm((p) => ({ ...p, country: val }))}
+                  >
+                    <SelectTrigger id="ben-country" className="h-9 w-full text-[13px]">
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PAPSS_COUNTRIES.map((c) => (
+                        <SelectItem key={c.name} value={c.name}>
+                          {c.name} ({c.currency})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="ben-papssacct">Account / IBAN</Label>
+                  <Input
+                    id="ben-papssacct"
+                    value={form.accountNumber}
+                    onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
+                    placeholder="e.g. NG-8891-40023-77"
+                    className="h-9 text-[13px]"
+                  />
+                </div>
+              </>
             )}
           </div>
 
@@ -559,8 +973,8 @@ export default function BeneficiariesPage() {
             <Button variant="outline" onClick={() => setFormOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleSave} disabled={!canSave}>
-              {editing ? "Save changes" : isCorporate ? "Submit for approval" : "Save beneficiary"}
+            <Button onClick={handleSaveBeneficiary} disabled={!form.name.trim()}>
+              {form.id ? "Save changes" : "Save beneficiary"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -572,24 +986,24 @@ export default function BeneficiariesPage() {
         onOpenChange={setGroupModalOpen}
         groupToEdit={editingGroup}
         onSuccess={(grp) => {
-          flash(editingGroup ? `Group "${grp.name}" updated.` : `Group "${grp.name}" created with ${grp.members.length} members.`);
+          flash(editingGroup ? `Group "${grp.name}" updated.` : `Group "${grp.name}" created.`);
         }}
       />
 
       {/* Remove Payee Confirmation Dialog */}
       <Dialog open={Boolean(removeId)} onOpenChange={(open) => !open && setRemoveId(null)}>
-        <DialogContent className="sm:max-w-[420px]">
+        <DialogContent className="sm:max-w-[380px]">
           <DialogHeader>
             <DialogTitle>Remove beneficiary?</DialogTitle>
             <DialogDescription>
-              {toRemove ? `"${toRemove.name}"` : "This beneficiary"} will be removed from your saved list. You can still pay them by typing their details manually.
+              {toRemove ? `"${toRemove.name}"` : "This beneficiary"} will be removed from your saved list.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setRemoveId(null)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleRemove}>
+            <Button variant="destructive" onClick={handleRemoveBeneficiary}>
               Remove
             </Button>
           </DialogFooter>
@@ -598,11 +1012,11 @@ export default function BeneficiariesPage() {
 
       {/* Remove Group Confirmation Dialog */}
       <Dialog open={Boolean(removeGroupId)} onOpenChange={(open) => !open && setRemoveGroupId(null)}>
-        <DialogContent className="sm:max-w-[420px]">
+        <DialogContent className="sm:max-w-[380px]">
           <DialogHeader>
             <DialogTitle>Delete payment group?</DialogTitle>
             <DialogDescription>
-              {toRemoveGroup ? `"${toRemoveGroup.name}"` : "This group"} will be removed. Its members will still remain in your saved beneficiaries.
+              {toRemoveGroup ? `"${toRemoveGroup.name}"` : "This group"} will be removed.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -610,7 +1024,7 @@ export default function BeneficiariesPage() {
               Cancel
             </Button>
             <Button variant="destructive" onClick={handleRemoveGroup}>
-              Delete Group
+              Delete
             </Button>
           </DialogFooter>
         </DialogContent>

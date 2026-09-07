@@ -55,18 +55,7 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="flex flex-col gap-6 w-full">
-      {/* 1. Breadcrumbs Header matching Figma 5383:9306 */}
-      <div className="flex items-center gap-2 text-[13px]">
-        <Link href="/cards" className="text-[#737373] hover:text-foreground transition-colors font-normal">
-          Cards
-        </Link>
-        <ChevronRight size={12} className="text-[#737373]" />
-        <span className="text-[#111111] dark:text-foreground font-normal">
-          Virtual Card ••• {maskedDigits}
-        </span>
-      </div>
-
-      {/* 2. Prototype Baseline State Switcher */}
+      {/* Prototype Baseline State Switcher */}
       <StateSwitcher
         section="13.9"
         states={BASELINE_STATES}

@@ -78,7 +78,7 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
                       <div className="min-w-0">
                         <p className="truncate text-[13px] font-medium text-foreground">{acc.name}</p>
                         <p className="flex items-center gap-1.5 text-[11.5px] font-mono text-muted-foreground">
-                          <span>{acc.type} · {acc.number}</span>
+                          <span>{acc.name.toLowerCase().includes(acc.type.toLowerCase()) ? acc.number : `${acc.type} · ${acc.number}`}</span>
                           <CopyAccountNumberButton number={acc.number} />
                         </p>
                       </div>

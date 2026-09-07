@@ -9,7 +9,7 @@
 import { useEffect, useState } from "react";
 import { OTP_LENGTH } from "@/components/auth/OtpInput";
 
-export const PIN_LENGTH = 4;
+export const PIN_LENGTH = 6;
 export const RESEND_SECONDS = 30;
 export const REGISTERED_PHONE = "0244 ••• 821";
 
@@ -69,14 +69,32 @@ export function useAuthorisation() {
     setState("resent");
   };
 
-  const verify = (): boolean => {
-    if (!complete) return false;
-    if (method === "pin" && pin.join("") === "0000") {
+  const verify = (override?: string | string[]): boolean => {
+    let pinStr = pin.join("");
+    let otpStr = otp.join("");
+    if (override) {
+      if (typeof override === "string") {
+        if (method === "pin") pinStr = override;
+        else otpStr = override;
+      } else if (Array.isArray(override)) {
+        if (method === "pin") pinStr = override.join("");
+        else otpStr = override.join("");
+      }
+    }
+
+    const isComplete =
+      method === "pin"
+        ? pinStr.length === PIN_LENGTH
+        : otpStr.length === OTP_LENGTH;
+
+    if (!isComplete) return false;
+
+    if (method === "pin" && (pinStr === "000000" || pinStr === "0000")) {
       setState("error");
       setPinState(blankPin());
       return false;
     }
-    if (method === "otp" && otp.join("") === "000000") {
+    if (method === "otp" && otpStr === "000000") {
       setState("error");
       setOtpState(blankOtp());
       return false;

@@ -20,8 +20,10 @@ import {
   Building2,
   Check,
   CheckCircle2,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
   Church,
   Globe,
   GraduationCap,
@@ -52,8 +54,18 @@ import { useGroupsStore } from "@/lib/groups-store";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import { useSession } from "@/lib/session-store";
 import { roundMoney, sumMoney } from "@/lib/money";
-import { AuthorisePanel } from "./AuthorisePanel";
+import TransactionPinModal from "./TransactionPinModal";
 import { REGISTERED_PHONE, useAuthorisation } from "./useAuthorisation";
+import { OwnAccountFlow } from "./flows/OwnAccountFlow";
+import { OtherGcbFlow } from "./flows/OtherGcbFlow";
+import { OtherBankFlow } from "./flows/OtherBankFlow";
+import { MobileWalletFlow } from "./flows/MobileWalletFlow";
+import { WalletToBankFlow } from "./flows/WalletToBankFlow";
+import { AirtimeDataFlow } from "./flows/AirtimeDataFlow";
+import { BillsPaymentFlow } from "./flows/BillsPaymentFlow";
+import { InternationalWireFlow } from "./flows/InternationalWireFlow";
+import { GroupPaymentFlow } from "./flows/GroupPaymentFlow";
+import { ProxyPayFlow } from "./flows/ProxyPayFlow";
 
 export type FlowGroup = "send" | "bills";
 
@@ -945,11 +957,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const [receipt, setReceipt] = useState<ReceiptData | null>(null);
   const { groups } = useGroupsStore();
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
+  const [pinModalOpen, setPinModalOpen] = useState(false);
 
   // Progressive Disclosure Stage Control (1..4)
   const [stage, setStage] = useState<number>(1);
   const [maxRevealedStage, setMaxRevealedStage] = useState<number>(1);
   const [stage1Collapsed, setStage1Collapsed] = useState(false);
+  const [showFeeBreakdown, setShowFeeBreakdown] = useState(false);
   const [resolvingAcct, setResolvingAcct] = useState(false);
   const [f, setF] = useState({
     fromId: accounts[0]?.id ?? "",
@@ -959,6 +973,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     bank: "",
     bankAmount: "",
     bankRef: "",
+    category: "",
     wPhone: "",
     wName: "",
     wNetwork: "",
@@ -1052,7 +1067,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       return;
     }
 
-    if (item.rail === "wallet" || item.rail === "momo" || item.rail === "wallet-to-bank") {
+    if (item.rail === "wallet-to-bank") {
+      setRail("wallet-to-bank");
+      setF((p) => ({ ...p, benName: item.name, benAcct: item.acct, bank: item.bank || "GCB Bank" }));
+      setStage(1);
+      setStage1Collapsed(true);
+      setMaxRevealedStage(1);
+      return;
+    }
+
+    if (item.rail === "wallet" || item.rail === "momo") {
       setRail("wallet");
       setF((p) => ({ ...p, wName: item.name, wPhone: item.acct, wNetwork: item.bank }));
       setWalletCategory("other");
@@ -1175,20 +1199,26 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       setRail("bank");
     }
 
-    if (categoryParam === "own" || categoryParam === "between-accounts") {
+    if (r === "wallet-to-bank") {
+      setRail("wallet-to-bank");
+      setF((p) => ({ ...p, bank: p.bank || "GCB Bank" }));
+      setStage(1);
+    } else if (categoryParam === "own" || categoryParam === "between-accounts") {
       setBankCategory("own");
       setF((p) => ({ ...p, toOwnAccountId: "", bank: "GCB Bank" }));
     } else if (categoryParam === "gcb" || categoryParam === "other-gcb") {
       setBankCategory("gcb");
     } else if (categoryParam === "other") {
-      if (r === "wallet" || r === "momo" || r === "wallet-to-bank") {
+      if (r === "wallet" || r === "momo") {
         setWalletCategory("other");
+        setStage1Collapsed(false);
       } else {
         setBankCategory("other");
       }
     } else if (categoryParam === "self") {
       setWalletCategory("self");
-      setF((p) => ({ ...p, wPhone: "0244123821", wName: "My Registered Wallet", wNetwork: "MTN Mobile Money" }));
+      setStage1Collapsed(true);
+      setF((p) => ({ ...p, wPhone: "0244123821", wName: "Ama Serwaa Mensah", wNetwork: "MTN Mobile Money" }));
     } else if (categoryParam === "international" || r === "papss") {
       setBankCategory("international");
     } else if (r === "ach") {
@@ -1252,7 +1282,18 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       }
     } else if (recipientParam) {
       const decoded = decodeURIComponent(recipientParam);
-      if (r === "wallet" || r === "momo" || r === "wallet-to-bank") {
+      if (r === "wallet-to-bank") {
+        const matched = RECENT_AVATARS.find(
+          (a) => (a.rail === "wallet-to-bank" || a.rail === "bank") &&
+                 (a.name.toLowerCase().includes(decoded.toLowerCase()) || a.acct.includes(decoded))
+        );
+        if (matched) {
+          selectBeneficiary(matched);
+        } else {
+          setF((p) => ({ ...p, benAcct: decoded, bank: p.bank || "GCB Bank" }));
+          handlePhoneLookup("benAcct", decoded);
+        }
+      } else if (r === "wallet" || r === "momo") {
         setWalletCategory("other");
         const matched = RECENT_AVATARS.find((a) => a.rail === "wallet" && (a.name.toLowerCase().includes(decoded.toLowerCase()) || a.acct.includes(decoded)));
         if (matched) {
@@ -1371,6 +1412,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       }
       return RECENT_AVATARS.filter((i) => i.rail === "bank" && !i.bank.includes("GCB"));
     }
+    if (rail === "wallet-to-bank") {
+      return RECENT_AVATARS.filter((i) => i.rail === "bank" || i.rail === "wallet-to-bank");
+    }
     return RECENT_AVATARS.filter((i) => i.rail === rail);
   }, [rail, bankCategory, walletCategory, categoryBeneficiaries, groups]);
 
@@ -1381,10 +1425,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     switch (rail) {
       case "bank":
       case "ach":
-        return num(f.bankAmount);
+      case "wallet-to-bank":
+        return num(f.bankAmount || f.wAmount);
       case "wallet":
       case "momo":
-      case "wallet-to-bank":
         return num(f.wAmount);
       case "proxy":
         return num(f.pxAmount);
@@ -1439,15 +1483,15 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const rate = RATES[f.wCurrency] ?? 1;
   const papssGhs = roundMoney(num(f.wForeign) * rate);
   const totalDebit = rail === "papss" ? sumMoney([papssGhs, fee]) : sumMoney([currentAmount, fee]);
-  const overBalance = totalDebit > (account?.available ?? 0);
+  const overBalance = rail === "wallet-to-bank" ? totalDebit > 1450 : totalDebit > (account?.available ?? 0);
 
   // Live external name enquiry / account verification result
   const verifiedAccountName = useMemo(() => {
-    if (rail === "bank" || rail === "ach") {
-      if (bankCategory === "own") return ""; // Internal account transfers don't use external name enquiry
+    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") {
+      if (bankCategory === "own" && rail !== "wallet-to-bank") return ""; // Internal account transfers don't use external name enquiry
       return resolveAccountName(f.benAcct, f.benName);
     }
-    if (rail === "wallet" || rail === "momo" || rail === "wallet-to-bank") {
+    if (rail === "wallet" || rail === "momo") {
       return resolveAccountName(f.wPhone, f.wName);
     }
     if (rail === "proxy") {
@@ -1506,13 +1550,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   // Overall display name of recipient for Stage 2/3 and receipts
   const recipientDisplayName = useMemo(() => {
-    if (rail === "bank" || rail === "ach") {
-      if (bankCategory === "own") {
+    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") {
+      if (bankCategory === "own" && rail !== "wallet-to-bank") {
         return toOwnAccount ? `${toOwnAccount.name} (••${toOwnAccount.number.slice(-4)})` : "My GCB Account";
       }
       return verifiedAccountName || f.benName || (f.benAcct ? `Account ${f.benAcct}` : "Beneficiary");
     }
-    if (rail === "wallet" || rail === "momo" || rail === "wallet-to-bank") {
+    if (rail === "wallet" || rail === "momo") {
       if (walletCategory === "self") return "My Own Wallet (Self)";
       return verifiedAccountName || f.wName || (f.wPhone ? `Wallet ${f.wPhone}` : "Recipient");
     }
@@ -1558,13 +1602,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   // Subtitle description of recipient for collapsed summary badge
   const recipientSubtitle = useMemo(() => {
-    if (rail === "bank" || rail === "ach") {
-      if (bankCategory === "own") {
+    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") {
+      if (bankCategory === "own" && rail !== "wallet-to-bank") {
         return `GCB Bank • Own Account (••${toOwnAccount?.number?.slice(-4) || "4891"})`;
       }
-      return `${f.bank} • ${f.benAcct}`;
+      return `${f.bank || "GCB Bank"} • ${f.benAcct}`;
     }
-    if (rail === "wallet" || rail === "momo" || rail === "wallet-to-bank") {
+    if (rail === "wallet" || rail === "momo") {
       if (walletCategory === "self") return "MTN Mobile Money • 0244 123 821";
       return `${f.wNetwork || "Mobile Money"} • ${f.wPhone}`;
     }
@@ -1581,6 +1625,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   }, [
     rail,
     bankCategory,
+    walletCategory,
     toOwnAccount,
     f.bank,
     f.benAcct,
@@ -1602,19 +1647,65 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   // Backwards compatibility alias for components expecting resolvedName
   const resolvedName = recipientDisplayName;
 
+  const reviewAccountLabel = useMemo(() => {
+    if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") {
+      return "Phone Number";
+    }
+    if (rail === "ecg") return "Meter Number";
+    if (rail === "bill") return biller?.reference || "Account / Reference";
+    if (rail === "ghanagov") return "Invoice / Reference";
+    if (rail === "proxy") return "Proxy ID";
+    if (rail === "group") return "Split Type";
+    return "Account";
+  }, [rail, biller?.reference]);
+
+  const reviewAccountValue = useMemo(() => {
+    if (bankCategory === "own" && rail !== "wallet-to-bank") return toOwnAccount?.number ? `••••${toOwnAccount.number.slice(-4)}` : "Own Account";
+    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") return f.benAcct;
+    if (rail === "wallet" || rail === "momo") return f.wPhone;
+    if (rail === "airtime" || rail === "data") return f.aPhone;
+    if (rail === "ecg") return f.ecgMeter;
+    if (rail === "bill") return f.billRef;
+    if (rail === "ghanagov") return f.govRef;
+    if (rail === "proxy") return f.pxId;
+    if (rail === "group") return selectedGroupObj ? `${selectedGroupObj.members.length} members (${selectedGroupObj.splitType === "equal" ? `GHS ${selectedGroupObj.defaultPerMemberAmount} each` : "Custom"})` : "Group";
+    return f.benAcct;
+  }, [bankCategory, toOwnAccount?.number, rail, f.benAcct, f.wPhone, f.aPhone, f.ecgMeter, f.billRef, f.govRef, f.pxId, selectedGroupObj]);
+
+  const reviewInstitutionLabel = useMemo(() => {
+    if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") {
+      return "Network Provider";
+    }
+    if (rail === "bill" || rail === "ecg") return "Service Provider";
+    if (rail === "ghanagov") return "Agency / Service";
+    return "Bank";
+  }, [rail]);
+
+  const reviewInstitutionValue = useMemo(() => {
+    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") return f.bank || "GCB Bank";
+    if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") return f.wNetwork || "Mobile Money";
+    if (rail === "bill") return biller?.name || "Biller";
+    if (rail === "ecg") return "Electricity Company of Ghana";
+    if (rail === "ghanagov") return f.govService || "Ghana.gov";
+    return "";
+  }, [rail, f.bank, f.wNetwork, biller?.name, f.govService]);
+
   // Stage 1 Validation
   const isStage1Valid = useMemo(() => {
     if (resolvingAcct) return false;
     switch (rail) {
       case "bank":
       case "ach":
+      case "wallet-to-bank":
+        if (rail === "wallet-to-bank") {
+          return f.benAcct.replace(/\s/g, "").length >= 8 && Boolean(verifiedAccountName);
+        }
         if (bankCategory === "own") {
           return Boolean(f.toOwnAccountId) && f.toOwnAccountId !== f.fromId;
         }
         return f.benAcct.replace(/\s/g, "").length >= 8 && Boolean(verifiedAccountName);
       case "wallet":
       case "momo":
-      case "wallet-to-bank":
         if (walletCategory === "self") return true;
         return f.wPhone.replace(/\s/g, "").length >= 9 && Boolean(verifiedAccountName);
       case "proxy":
@@ -1697,8 +1788,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     handleLookup(key, val, 8);
   };
 
-  const confirm = () => {
-    if (!auth.verify() || phase === "submitting") return;
+  const confirm = (codeOverride?: string | string[]) => {
+    if (!auth.verify(codeOverride) || phase === "submitting") return;
     setPhase("submitting");
     window.setTimeout(() => {
       const trn = "TRN-" + Math.floor(10000000 + Math.random() * 90000000);
@@ -1774,9 +1865,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   const getPageTitle = () => {
     if (stage === 2) {
-      if (rail === "airtime" || rail === "data") return "Review Purchase";
-      if (rail === "bill" || rail === "ecg" || rail === "ghanagov") return "Review Payment";
-      return "Review Transfer";
+      return "Review";
+    }
+    if (stage === 3) {
+      return "Authorization";
     }
     if (rail === "bill") {
       return billCategory || "GCB Pay";
@@ -1787,7 +1879,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       if (bankCategory === "other") return "Other Local Bank Transfer";
       return "Bank Transfer";
     }
-    if (rail === "wallet" || rail === "momo" || rail === "wallet-to-bank") {
+    if (rail === "wallet-to-bank") {
+      return "Wallet to Bank Transfer";
+    }
+    if (rail === "wallet" || rail === "momo") {
       if (walletCategory === "self") return "Send to My Wallet";
       if (walletCategory === "other") return "Send to Other Wallets";
       return "Mobile Money Transfer";
@@ -2062,7 +2157,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   }
 
   // Intermediary Screen: "Which wallet do you want to send to?"
-  if ((rail === "wallet" || rail === "momo" || rail === "wallet-to-bank") && !walletCategory) {
+  if ((rail === "wallet" || rail === "momo") && !walletCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 py-4 animate-in fade-in duration-200 ease-out">
         <div className="relative flex items-center">
@@ -2116,13 +2211,14 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setF((p) => ({
                 ...p,
                 wPhone: "0244123821",
-                wName: "My Registered Wallet",
+                wName: "Ama Serwaa Mensah",
                 wNetwork: "MTN Mobile Money",
                 wAmount: "",
                 wRef: "",
               }));
               setStage(1);
               setMaxRevealedStage(1);
+              setStage1Collapsed(true);
             }}
             className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
           >
@@ -2157,6 +2253,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               }));
               setStage(1);
               setMaxRevealedStage(1);
+              setStage1Collapsed(false);
             }}
             className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
           >
@@ -2267,40 +2364,54 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 py-4 animate-in fade-in duration-200 ease-out">
       {/* Header with back button sitting outside the text */}
-      <div className="relative flex items-center">
-        <button
-          type="button"
-          onClick={() => {
-            if (stage === 2) {
-              setStage(1);
-            } else if (rail === "bank" && bankCategory) {
-              setBankCategory(null);
-            } else if ((rail === "wallet" || rail === "momo" || rail === "wallet-to-bank") && walletCategory) {
-              setWalletCategory(null);
-            } else if (rail === "bill" && billCategory) {
-              setBillCategory(null);
-            } else {
-              router.push("/payments");
-            }
-          }}
-          className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-          aria-label="Back to previous screen"
-        >
-          <ChevronLeft size={22} strokeWidth={1.8} />
-        </button>
-        <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
-          {getPageTitle()}
-        </h1>
+      <div className="relative flex items-center justify-between">
+        <div className="flex items-center">
+          <button
+            type="button"
+            onClick={() => {
+              if (stage === 3) {
+                setStage(2);
+              } else if (stage === 2) {
+                setStage(1);
+              } else if (rail === "bank" && bankCategory) {
+                setBankCategory(null);
+              } else if ((rail === "wallet" || rail === "momo" || rail === "wallet-to-bank") && walletCategory) {
+                setWalletCategory(null);
+              } else if (rail === "bill" && billCategory) {
+                setBillCategory(null);
+              } else {
+                router.push("/payments");
+              }
+            }}
+            className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            aria-label="Back to previous screen"
+          >
+            <ChevronLeft size={22} strokeWidth={1.8} />
+          </button>
+          <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+            {getPageTitle()}
+          </h1>
+        </div>
+
+        {rail === "bank" && bankCategory === "own" && (
+          <button
+            type="button"
+            aria-label="Help & Information"
+            className="flex size-7 items-center justify-center rounded-full bg-[#f2b200] text-black font-semibold text-[13px] shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
+          >
+            ?
+          </button>
+        )}
       </div>
 
       <div className="flex flex-col gap-8">
         {/* ===================================================================
-         * STAGE 1: Payment Details (Recipient + Auto-Disclosed Amount & Live Summary)
+         * STAGE 1: Payment Details (Modularized Subcomponents)
          * =================================================================== */}
         {stage === 1 && (
-          <div className="flex flex-col gap-8 animate-in fade-in duration-200 ease-out">
-            {/* Top-Level Quick Beneficiaries Strip (Above Section 1) */}
-            {activeRailBeneficiaries.length > 0 && !stage1Collapsed && (
+          <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+            {/* Top-Level Quick Beneficiaries Strip */}
+            {activeRailBeneficiaries.length > 0 && bankCategory !== "own" && walletCategory !== "self" && (
               <div className="flex flex-col gap-6 -mb-1 animate-in fade-in duration-150">
                 <RailBeneficiaryStrip
                   items={activeRailBeneficiaries}
@@ -2317,1016 +2428,439 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               </div>
             )}
 
-            {/* 1. Recipient Section */}
-            <div className="flex flex-col gap-2">
-              <div className="text-[16px] font-medium text-foreground tracking-[-0.01em]">
-                1. {bankCategory === "own" ? "Destination Account" : rail === "bill" || rail === "ecg" || rail === "ghanagov" ? "Biller & Account" : "Recipient"}
-              </div>
-
-              {isStage1Valid && stage1Collapsed ? (
-                /* Confirmed Read-Only Summary Badge (Collapsed after user clicks amount) */
-                <div className="flex h-[68px] items-center justify-between rounded-xl border border-border bg-muted/40 dark:bg-muted/20 px-4 py-2 transition-all animate-in fade-in duration-150 ease-out">
-                  <div className="flex items-center gap-4 min-w-0">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-                      <Check size={14} strokeWidth={2.5} />
-                    </span>
-                    <div className="flex flex-col min-w-0 text-left">
-                      <span className="text-[16px] text-foreground font-medium tracking-[-0.08px] truncate">
-                        {recipientDisplayName}
-                      </span>
-                      <span className="text-[12px] text-muted-foreground truncate">
-                        {recipientSubtitle}
-                      </span>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setStage1Collapsed(false)}
-                    className="text-[14px] text-foreground hover:underline cursor-pointer ml-3 shrink-0"
-                  >
-                    Change
-                  </button>
-                </div>
-              ) : (
-                /* Active Editable Form */
-                <div className="flex flex-col gap-3.5 pt-1 animate-in fade-in duration-150 ease-out">
-                  {(rail === "bank" || rail === "ach") && (
-                    <>
-                      {bankCategory === "own" ? (
-                        <div className="flex flex-col gap-3.5">
-                          <div className="flex flex-col gap-1.5">
-                            <span className={labelCls}>Transfer To (My Destination Account)</span>
-                            <Select
-                              value={f.toOwnAccountId}
-                              onValueChange={(val) => val && set("toOwnAccountId", val)}
-                            >
-                              <SelectTrigger className="h-auto min-h-[68px] py-3.5 px-4 w-full rounded-2xl border border-border bg-card dark:bg-[#181818] hover:border-primary/50 text-left cursor-pointer transition-colors">
-                                <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/80 text-foreground dark:bg-[#252525]">
-                                    <Landmark size={18} strokeWidth={1.8} />
-                                  </span>
-                                  <div className="flex flex-col min-w-0 text-left gap-0.5">
-                                    {toOwnAccount ? (
-                                      <>
-                                        <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
-                                          {toOwnAccount.name} ••{toOwnAccount.number?.slice(-4)}
-                                        </span>
-                                        <span className="text-[13px] text-muted-foreground font-normal truncate tabular leading-tight">
-                                          {formatMoney(toOwnAccount.available ?? 0, toOwnAccount.currency ?? "GHS", true)}
-                                        </span>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <span className="text-[15px] text-muted-foreground font-medium tracking-[-0.01em] truncate leading-tight">
-                                          Select destination account
-                                        </span>
-                                        <span className="text-[12.5px] text-muted-foreground/70 font-normal truncate leading-tight">
-                                          Choose from your GCB accounts
-                                        </span>
-                                      </>
-                                    )}
-                                  </div>
-                                </div>
-                              </SelectTrigger>
-                              <SelectContent>
-                                {accounts.map((a) => (
-                                  <SelectItem key={a.id} value={a.id} disabled={a.id === f.fromId}>
-                                    {a.name} ({a.number}) — {formatMoney(a.available, a.currency, true)} {a.id === f.fromId ? "(Sending Account)" : ""}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-
-                          {f.toOwnAccountId && f.toOwnAccountId === f.fromId && (
-                            <div className="flex items-center gap-2 rounded-xl border border-destructive/30 bg-destructive/10 p-2.5 text-[12.5px] text-destructive">
-                              <AlertCircle size={14} className="shrink-0" />
-                              <span>Destination account must be different from source account.</span>
-                            </div>
-                          )}
-
-                          {toOwnAccount && f.toOwnAccountId !== f.fromId && (
-                            <div className="flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-2.5 text-[12.5px] text-foreground dark:bg-emerald-500/10">
-                              <span className="font-medium text-foreground">
-                                {toOwnAccount.name} ({toOwnAccount.number})
-                              </span>
-                              <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">
-                                ✓ Own Account Verified
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      ) : bankCategory === "gcb" ? (
-                        <>
-                          <div className="flex flex-col gap-1.5">
-                            <span className={labelCls}>Destination Bank</span>
-                            <div className="flex h-11 items-center rounded-xl border border-border bg-muted/30 px-3.5 text-[15px] font-medium text-foreground">
-                              GCB Bank PLC
-                            </div>
-                          </div>
-
-                          <label className="flex flex-col gap-1.5">
-                            <span className={labelCls}>GCB Account Number</span>
-                            <input
-                              className={inputCls + " tabular"}
-                              value={f.benAcct}
-                              onChange={(e) => handlePhoneLookup("benAcct", e.target.value)}
-                              placeholder="Enter 10-13 digit GCB account number..."
-                              autoFocus
-                            />
-                          </label>
-                        </>
-                      ) : (
-                        <>
-                          <div className="flex flex-col gap-1.5">
-                            <span className={labelCls}>Destination Bank</span>
-                            <Select
-                              value={f.bank}
-                              onValueChange={(val) => val && set("bank", val)}
-                            >
-                              <SelectTrigger className="h-11 w-full">
-                                <SelectValue placeholder="Select destination bank" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {BANKS.filter((b) => !b.includes("GCB")).map((b) => (
-                                  <SelectItem key={b} value={b}>{b}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-
-                          <label className="flex flex-col gap-1.5">
-                            <span className={labelCls}>Account Number</span>
-                            <input
-                              className={inputCls + " tabular"}
-                              value={f.benAcct}
-                              onChange={(e) => handlePhoneLookup("benAcct", e.target.value)}
-                              placeholder="Enter 10-13 digit account number..."
-                              autoFocus
-                            />
-                          </label>
-                        </>
-                      )}
-                    </>
-                  )}
-
-                  {(rail === "wallet" || rail === "momo" || rail === "wallet-to-bank") && (
-                    <>
-                      {walletCategory === "self" ? (
-                        <div className="flex flex-col gap-3.5">
-                          <div className="flex flex-col gap-1.5">
-                            <span className={labelCls}>My Registered Mobile Wallet</span>
-                            <div className="flex h-11 items-center justify-between rounded-xl border border-border bg-muted/30 px-3.5 text-[15px] font-medium text-foreground tabular">
-                              <span>0244 123 821</span>
-                              <span className="text-[12.5px] text-muted-foreground font-normal">MTN Mobile Money</span>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-2.5 text-[12.5px] text-foreground dark:bg-emerald-500/10">
-                            <span className="font-medium text-foreground">Registered Self Wallet (0244 123 821)</span>
-                            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">✓ Verified</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <>
-                          <label className="flex flex-col gap-1.5">
-                            <span className={labelCls}>Recipient Phone Number</span>
-                            <input
-                              className={inputCls + " tabular"}
-                              value={f.wPhone}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                handlePhoneLookup("wPhone", val);
-                                if (val.replace(/\s/g, "").length >= 3) {
-                                  set("wNetwork", detectNetwork(val));
-                                }
-                              }}
-                              placeholder="0244 000 000"
-                              autoFocus
-                            />
-                          </label>
-
-                          <div className="flex flex-col gap-1.5">
-                            <span className={labelCls}>Network Provider</span>
-                            <Select
-                              value={f.wNetwork}
-                              onValueChange={(val) => val && set("wNetwork", val)}
-                            >
-                              <SelectTrigger className="h-11 w-full">
-                                <SelectValue placeholder="Select network" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {NETWORKS.map((n) => (
-                                  <SelectItem key={n} value={n}>{n}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </>
-                      )}
-                    </>
-                  )}
-
-                  {rail === "proxy" && (
-                    <label className="flex flex-col gap-1.5">
-                      <span className={labelCls}>Proxy ID (Phone, @Alias, or Ghana Card)</span>
-                      <input
-                        className={inputCls}
-                        value={f.pxId}
-                        onChange={(e) => handleLookup("pxId", e.target.value, 4)}
-                        placeholder="e.g. @kwame.b or GHA-000000000-0"
-                        autoFocus
-                      />
-                    </label>
-                  )}
-
-                  {rail === "group" && (
-                    <div className="flex flex-col gap-3">
-                      <div className="flex flex-col gap-1.5">
-                        <div className="flex items-center justify-between">
-                          <span className={labelCls}>Select Group</span>
-                          <button
-                            type="button"
-                            onClick={() => setCreateGroupOpen(true)}
-                            className="text-[12.5px] text-primary hover:underline font-medium cursor-pointer flex items-center gap-1"
-                          >
-                            <Plus size={13} />
-                            Create new group
-                          </button>
-                        </div>
-                        <Select
-                          value={f.groupName}
-                          onValueChange={(val) => {
-                            if (!val) return;
-                            if (val === "__create_new__") {
-                              setCreateGroupOpen(true);
-                              return;
-                            }
-                            const selectedGrp = groups.find((g) => g.name === val);
-                            if (selectedGrp) {
-                              setF((prev) => ({
-                                ...prev,
-                                groupName: selectedGrp.name,
-                                grpAmount: String(selectedGrp.defaultPerMemberAmount || prev.grpAmount || 200),
-                              }));
-                            } else {
-                              set("groupName", val);
-                            }
-                          }}
-                        >
-                          <SelectTrigger className="h-11 w-full">
-                            <SelectValue placeholder="Select contribution circle" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {groups.map((g) => (
-                              <SelectItem key={g.id} value={g.name}>
-                                {g.name} ({g.members.length} Members) — {g.splitType === "equal" ? `GHS ${g.defaultPerMemberAmount} each` : "Custom"}
-                              </SelectItem>
-                            ))}
-                            <SelectItem value="__create_new__" className="text-primary font-medium focus:text-primary">
-                              + Create new group...
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {selectedGroupObj && (
-                        <div className="rounded-xl border border-border/80 bg-muted/30 p-3.5 flex flex-col gap-2 animate-in fade-in duration-150">
-                          <div className="flex items-center justify-between text-[13px]">
-                            <span className="font-medium text-foreground">{selectedGroupObj.name}</span>
-                            <span className="text-muted-foreground text-[12px] bg-muted px-2 py-0.5 rounded-full font-medium">
-                              {selectedGroupObj.members.length} members
-                            </span>
-                          </div>
-                          {selectedGroupObj.description && (
-                            <span className="text-[12px] text-muted-foreground line-clamp-1">{selectedGroupObj.description}</span>
-                          )}
-                          <div className="flex flex-wrap gap-1.5 pt-1 max-h-24 overflow-y-auto">
-                            {selectedGroupObj.members.map((m) => (
-                              <span
-                                key={m.destination}
-                                className="text-[11.5px] bg-background border border-border px-2 py-0.5 rounded-md text-foreground inline-flex items-center gap-1"
-                              >
-                                <span>{m.name}</span>
-                                <span className="text-[10.5px] text-muted-foreground tabular">({m.destination.slice(-4)})</span>
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {rail === "papss" && (
-                    <>
-                      <div className="flex flex-col gap-1.5">
-                        <span className={labelCls}>Destination Country & Currency</span>
-                        <Select
-                          value={f.wCountry}
-                          onValueChange={(country) => {
-                            if (!country) return;
-                            const curr = country === "Nigeria" ? "NGN" : country === "Kenya" ? "KES" : country === "South Africa" ? "ZAR" : "XOF";
-                            set("wCountry", country);
-                            set("wCurrency", curr);
-                          }}
-                        >
-                          <SelectTrigger className="h-11 w-full">
-                            <SelectValue placeholder="Select country & currency" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Nigeria">Nigeria (NGN - Nigerian Naira)</SelectItem>
-                            <SelectItem value="Côte d'Ivoire">Côte d&apos;Ivoire (XOF - West African CFA)</SelectItem>
-                            <SelectItem value="Kenya">Kenya (KES - Kenyan Shilling)</SelectItem>
-                            <SelectItem value="South Africa">South Africa (ZAR - South African Rand)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <label className="flex flex-col gap-1.5">
-                        <span className={labelCls}>Beneficiary Full Name</span>
-                        <input
-                          className={inputCls}
-                          value={f.wBenName}
-                          onChange={(e) => set("wBenName", e.target.value)}
-                          placeholder="e.g. Lagos Textile Mills"
-                          autoFocus
-                        />
-                      </label>
-
-                      <label className="flex flex-col gap-1.5">
-                        <span className={labelCls}>Destination Bank Name</span>
-                        <input
-                          className={inputCls}
-                          value={f.wBank}
-                          onChange={(e) => set("wBank", e.target.value)}
-                          placeholder="e.g. Access Bank Nigeria"
-                        />
-                      </label>
-
-                      <label className="flex flex-col gap-1.5">
-                        <span className={labelCls}>Account / IBAN Number</span>
-                        <input
-                          className={inputCls + " tabular"}
-                          value={f.wIban}
-                          onChange={(e) => set("wIban", e.target.value)}
-                          placeholder="e.g. NG-8891-40023-77"
-                        />
-                      </label>
-                    </>
-                  )}
-
-                  {rail === "data" && (
-                    <>
-                      <label className="flex flex-col gap-1.5">
-                        <span className={labelCls}>Phone Number</span>
-                        <input
-                          className={inputCls + " tabular"}
-                          value={f.aPhone}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            handlePhoneLookup("aPhone", val);
-                            if (val.replace(/\s/g, "").length >= 3) {
-                              const net = detectNetwork(val);
-                              set("wNetwork", net);
-                              const firstBundle = BUNDLES_BY_NETWORK[net]?.[0]?.id;
-                              if (firstBundle) set("bundleId", firstBundle);
-                            }
-                          }}
-                          placeholder="0244 000 000"
-                          autoFocus
-                        />
-                      </label>
-
-                      {f.aPhone.replace(/\s/g, "").length >= 3 && (
-                        <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
-                          <span className={labelCls}>Network Provider</span>
-                          <Select
-                            value={f.wNetwork}
-                            onValueChange={(net) => {
-                              if (!net) return;
-                              set("wNetwork", net);
-                              const firstBundle = BUNDLES_BY_NETWORK[net]?.[0]?.id;
-                              if (firstBundle) set("bundleId", firstBundle);
-                            }}
-                          >
-                            <SelectTrigger className="h-11 w-full">
-                              <SelectValue placeholder="Select network" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {Object.keys(BUNDLES_BY_NETWORK).map((n) => (
-                                <SelectItem key={n} value={n}>{n}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      )}
-
-                      <label className="flex items-center gap-2 pt-1 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          checked={saveBeneficiary}
-                          onChange={(e) => setSaveBeneficiary(e.target.checked)}
-                          className="size-4 rounded border-border text-primary focus:ring-primary/30"
-                        />
-                        <span className="text-[13px] text-muted-foreground">
-                          Save as beneficiary for future one-tap data purchases
-                        </span>
-                      </label>
-                    </>
-                  )}
-
-                  {rail === "airtime" && (
-                    <>
-                      <label className="flex flex-col gap-1.5">
-                        <span className={labelCls}>Phone Number</span>
-                        <input
-                          className={inputCls + " tabular"}
-                          value={f.aPhone}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            handlePhoneLookup("aPhone", val);
-                            if (val.replace(/\s/g, "").length >= 3) {
-                              const net = detectNetwork(val);
-                              set("wNetwork", net);
-                            }
-                          }}
-                          placeholder="0244 000 000"
-                          autoFocus
-                        />
-                      </label>
-
-                      {f.aPhone.replace(/\s/g, "").length >= 3 && (
-                        <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150 ease-out">
-                          <span className={labelCls}>Network Provider</span>
-                          <Select
-                            value={f.wNetwork}
-                            onValueChange={(net) => {
-                              if (!net) return;
-                              set("wNetwork", net);
-                            }}
-                          >
-                            <SelectTrigger className="h-11 w-full">
-                              <SelectValue placeholder="Select network" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {NETWORKS.map((n) => (
-                                <SelectItem key={n} value={n}>{n}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      )}
-
-                      <label className="flex items-center gap-2 pt-1 cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          checked={saveBeneficiary}
-                          onChange={(e) => setSaveBeneficiary(e.target.checked)}
-                          className="size-4 rounded border-border text-primary focus:ring-primary/30"
-                        />
-                        <span className="text-[13px] text-muted-foreground">
-                          Save as beneficiary for future one-tap airtime top-ups
-                        </span>
-                      </label>
-                    </>
-                  )}
-
-                  {rail === "card-topup" && (
-                    <div className="flex flex-col gap-1.5">
-                      <span className={labelCls}>Select Card to Fund</span>
-                      <Select
-                        value={f.cardId}
-                        onValueChange={(val) => val && set("cardId", val)}
-                      >
-                        <SelectTrigger className="h-11 w-full">
-                          <SelectValue placeholder="Select card" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="card-v1">GCB Virtual Card (••4101) — Balance: GHS 1,420.00</SelectItem>
-                          <SelectItem value="card-p1">GCB Prepaid Travel Card (••8892) — Balance: USD 350.00</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-
-                  {rail === "ecg" && (
-                    <label className="flex flex-col gap-1.5">
-                      <span className={labelCls}>ECG Meter Number</span>
-                      <input
-                        className={inputCls + " tabular"}
-                        value={f.ecgMeter}
-                        onChange={(e) => handleLookup("ecgMeter", e.target.value, 5)}
-                        placeholder="e.g. P-8839210"
-                        autoFocus
-                      />
-                    </label>
-                  )}
-
-                  {rail === "bill" && (
-                    <div className="flex flex-col gap-4">
-                      {/* Custom / Direct Biller Entry within Category */}
-                      <div className="flex flex-col gap-3.5 pt-1">
-                        <div className="flex flex-col gap-1.5">
-                          <span className={labelCls}>Select Service Provider</span>
-                          <Select
-                            value={f.billerId}
-                            onValueChange={(val) => {
-                              if (!val) return;
-                              setF((prev) => ({
-                                ...prev,
-                                billerId: val,
-                                billRef: prev.billerId === val ? prev.billRef : "",
-                              }));
-                            }}
-                          >
-                            <SelectTrigger className="h-11 w-full">
-                              <SelectValue placeholder={`Select ${billCategory ? `${billCategory} provider` : "service provider"}`}>
-                                {biller?.name}
-                              </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                              {availableBillers.map((b) => (
-                                <SelectItem key={b.id} value={b.id}>
-                                  {b.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-
-                        {Boolean(f.billerId && biller) && (
-                          <div className="flex flex-col gap-3.5 animate-in fade-in duration-150">
-                            <label className="flex flex-col gap-1.5">
-                              <span className={labelCls}>
-                                {biller ? `${biller.reference} (${biller.name})` : "Customer / Account / Reference Number"}
-                              </span>
-                              <input
-                                className={inputCls + " tabular"}
-                                value={f.billRef}
-                                onChange={(e) => handleLookup("billRef", e.target.value, 4)}
-                                placeholder={
-                                  biller?.id === "bil-001"
-                                    ? "e.g. P-8839210 (Meter number)"
-                                    : biller?.id === "bil-002"
-                                    ? "e.g. GW-440291 (Account number)"
-                                    : biller?.id === "bil-006"
-                                    ? "e.g. 1029384812 (Smartcard number)"
-                                    : biller?.id === "bil-004"
-                                    ? "e.g. TIN-9088214-G (TIN)"
-                                    : biller?.id === "bil-008"
-                                    ? "e.g. UG-10928341 (Student ID)"
-                                    : "e.g. Account or Reference Number"
-                                }
-                                autoFocus
-                              />
-                            </label>
-
-                            <label className="flex items-center gap-2 pt-1 cursor-pointer select-none">
-                              <input
-                                type="checkbox"
-                                checked={saveBillAsBeneficiary}
-                                onChange={(e) => setSaveBillAsBeneficiary(e.target.checked)}
-                                className="size-4 rounded border-border text-primary focus:ring-primary/30"
-                              />
-                              <span className="text-[13px] text-muted-foreground">
-                                Save this biller as a beneficiary for future one-tap payments
-                              </span>
-                            </label>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {rail === "ghanagov" && (
-                    <>
-                      <div className="flex flex-col gap-1.5">
-                        <span className={labelCls}>Government Agency & Service</span>
-                        <Select
-                          value={f.govService}
-                          onValueChange={(val) => val && set("govService", val)}
-                        >
-                          <SelectTrigger className="h-11 w-full">
-                            <SelectValue placeholder="Select service" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="DVLA — Driver licence renewal">DVLA — Driver licence renewal</SelectItem>
-                            <SelectItem value="GRA — Domestic Tax Assessment">GRA — Domestic Tax Assessment</SelectItem>
-                            <SelectItem value="Passports Office — Standard 32-Page">Passports Office — Standard 32-Page</SelectItem>
-                            <SelectItem value="Lands Commission — Search & Validation">Lands Commission — Search & Validation</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {Boolean(f.govService) && (
-                        <label className="flex flex-col gap-1.5 animate-in fade-in duration-150">
-                          <span className={labelCls}>Ghana.gov Invoice / Reference Code</span>
-                          <input
-                            className={inputCls}
-                            value={f.govRef}
-                            onChange={(e) => handleLookup("govRef", e.target.value, 4)}
-                            placeholder="e.g. GHA-2026-88213"
-                            autoFocus
-                          />
-                        </label>
-                      )}
-                    </>
-                  )}
-
-                  {rail === "qr" && (
-                    <label className="flex flex-col gap-1.5">
-                      <span className={labelCls}>Merchant Terminal</span>
-                      <input
-                        className={inputCls}
-                        value={f.qrMerchant}
-                        onChange={(e) => set("qrMerchant", e.target.value)}
-                        placeholder="Merchant name or terminal ID"
-                        autoFocus
-                      />
-                    </label>
-                  )}
-
-                  {bankCategory !== "own" && rail !== "group" && rail !== "card-topup" && rail !== "papss" && rail !== "qr" && (
-                    <>
-                      {resolvingAcct && (
-                        <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 p-2.5 text-[12.5px] text-muted-foreground animate-pulse">
-                          <Loader2 size={13} className="animate-spin text-primary shrink-0" />
-                          <span>Verifying...</span>
-                        </div>
-                      )}
-
-                      {!resolvingAcct && verifiedAccountName && (
-                        <div className="flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-2.5 text-[12.5px] text-foreground dark:bg-emerald-500/10 animate-in fade-in duration-150 ease-out">
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
-                              <Check size={11} strokeWidth={2.5} />
-                            </span>
-                            <span className="font-medium text-foreground truncate">{verifiedAccountName}</span>
-                          </div>
-                          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium shrink-0 ml-2">✓ Verified</span>
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* 2. Amount & Source Account Section (Automatically revealed once recipient is verified) */}
-            {isStage1Valid && (
-              <div
-                onClickCapture={() => {
-                  if (isStage1Valid && !stage1Collapsed) setStage1Collapsed(true);
+            {/* Flow 1: Between My Accounts */}
+            {rail === "bank" && bankCategory === "own" && (
+              <OwnAccountFlow
+                accounts={accounts}
+                state={{
+                  fromId: f.fromId,
+                  toOwnAccountId: f.toOwnAccountId,
+                  amount: f.bankAmount,
+                  narration: f.bankRef,
+                  category: f.category,
                 }}
-                className="flex flex-col gap-2 border-t border-border/70 pt-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out"
-              >
-                <div className="text-[16px] font-medium text-foreground tracking-[-0.01em]">
-                  2. {rail === "data" ? "Bundle & Source" : "Amount & Source"}
-                </div>
+                onChange={(key, val) => {
+                  if (key === "amount") set("bankAmount", val);
+                  else if (key === "narration") set("bankRef", val);
+                  else set(key, val);
+                }}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
+            )}
 
-                <div className="flex flex-col gap-4 pt-1">
-                  {rail === "data" ? (
-                    <div className="flex flex-col gap-1.5">
-                      <span className={labelCls}>Choose Data Package ({f.wNetwork})</span>
-                      <Select
-                        value={bundle?.id ?? f.bundleId}
-                        onValueChange={(val) => {
-                          if (val) set("bundleId", val);
-                          if (!stage1Collapsed) setStage1Collapsed(true);
-                        }}
-                        onOpenChange={(open) => {
-                          if (open && !stage1Collapsed) setStage1Collapsed(true);
-                        }}
-                      >
-                        <SelectTrigger
-                          className="h-11 w-full"
-                          onClick={() => {
-                            if (!stage1Collapsed) setStage1Collapsed(true);
-                          }}
-                        >
-                          <SelectValue placeholder="Select data package" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableBundles.map((b) => (
-                            <SelectItem key={b.id} value={b.id}>
-                              {b.name} ({b.val}) — GHS {b.price}.00
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  ) : rail === "papss" ? (
-                    <div className="flex flex-col gap-3">
-                      <label className="flex flex-col gap-1.5">
-                        <span className={labelCls}>Amount in {f.wCurrency}</span>
-                        <input
-                          className={inputCls + " tabular"}
-                          value={f.wForeign}
-                          onFocus={() => {
-                            if (!stage1Collapsed) setStage1Collapsed(true);
-                          }}
-                          onClick={() => {
-                            if (!stage1Collapsed) setStage1Collapsed(true);
-                          }}
-                          onChange={(e) => set("wForeign", e.target.value)}
-                          placeholder="0.00"
-                          required
-                        />
-                      </label>
-                      <div className="rounded-xl border border-border bg-muted/40 p-3 text-[12.5px] flex items-center justify-between text-muted-foreground">
-                        <span>Indicative GHS equivalent:</span>
-                        <span className="font-medium text-foreground tabular">
-                          ≈ {formatMoney(papssGhs, "GHS", true)} (Rate: 1 {f.wCurrency} = {rate} GHS)
-                        </span>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-2">
-                      <label className="flex flex-col gap-1.5">
-                        <span className={labelCls}>Enter Amount (GHS)</span>
-                        <input
-                          className="h-11 w-full rounded-xl border border-border bg-background px-3.5 text-[15px] text-foreground outline-none focus:border-ring focus:ring-3 focus:ring-ring/30 transition-all tabular"
-                          onFocus={() => {
-                            if (!stage1Collapsed) setStage1Collapsed(true);
-                          }}
-                          onClick={() => {
-                            if (!stage1Collapsed) setStage1Collapsed(true);
-                          }}
-                          value={
-                            rail === "bank" || rail === "ach"
-                              ? f.bankAmount
-                              : rail === "wallet" || rail === "momo" || rail === "wallet-to-bank"
-                              ? f.wAmount
-                              : rail === "proxy"
-                              ? f.pxAmount
-                              : rail === "group"
-                              ? f.grpAmount
-                              : rail === "airtime"
-                              ? f.airtimeAmount
-                              : rail === "card-topup"
-                              ? f.cardAmount
-                              : rail === "ecg"
-                              ? f.ecgAmount
-                              : rail === "bill"
-                              ? f.billAmount
-                              : rail === "ghanagov"
-                              ? f.govAmount
-                              : f.qrAmount
-                          }
-                          onChange={(e) => {
-                            const val = e.target.value.replace(/[^\d.]/g, "");
-                            if (rail === "bank" || rail === "ach") set("bankAmount", val);
-                            else if (rail === "wallet" || rail === "momo" || rail === "wallet-to-bank") set("wAmount", val);
-                            else if (rail === "proxy") set("pxAmount", val);
-                            else if (rail === "group") set("grpAmount", val);
-                            else if (rail === "airtime") set("airtimeAmount", val);
-                            else if (rail === "card-topup") set("cardAmount", val);
-                            else if (rail === "ecg") set("ecgAmount", val);
-                            else if (rail === "bill") set("billAmount", val);
-                            else if (rail === "ghanagov") set("govAmount", val);
-                            else set("qrAmount", val);
-                          }}
-                          placeholder="GHS 0.00"
-                          required
-                        />
-                      </label>
+            {/* Flow 2: Other GCB Accounts */}
+            {rail === "bank" && bankCategory === "gcb" && (
+              <OtherGcbFlow
+                accounts={accounts}
+                state={{
+                  fromId: f.fromId,
+                  benAcct: f.benAcct,
+                  benName: f.benName,
+                  amount: f.bankAmount,
+                  narration: f.bankRef,
+                  category: f.category,
+                }}
+                onChange={(key, val) => {
+                  if (key === "amount") set("bankAmount", val);
+                  else if (key === "narration") set("bankRef", val);
+                  else set(key, val);
+                }}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
+            )}
 
-                      {rail === "airtime" && (
-                        <div className="flex items-center gap-2 pt-1">
-                          {["10", "20", "50", "100", "200"].map((preset) => (
-                            <button
-                              key={preset}
-                              type="button"
-                              onClick={() => {
-                                set("airtimeAmount", preset);
-                                if (!stage1Collapsed) setStage1Collapsed(true);
-                              }}
-                              className="flex-1 rounded-lg border border-border bg-muted/30 py-1.5 text-[12px] font-medium hover:bg-muted text-foreground cursor-pointer tabular"
-                            >
-                              GHS {preset}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
+            {/* Flow 3: Other Local Banks */}
+            {((rail === "bank" && (bankCategory === "other" || (!bankCategory && rail === "bank"))) || rail === "ach") && (
+              <OtherBankFlow
+                accounts={accounts}
+                state={{
+                  fromId: f.fromId,
+                  bank: f.bank || "Standard Bank Ghana",
+                  benAcct: f.benAcct,
+                  benName: f.benName,
+                  amount: f.bankAmount,
+                  narration: f.bankRef,
+                  category: f.category,
+                }}
+                onChange={(key, val) => {
+                  if (key === "amount") set("bankAmount", val);
+                  else if (key === "narration") set("bankRef", val);
+                  else set(key, val);
+                }}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
+            )}
 
-                  <div className="flex flex-col gap-1.5">
-                    <span className={labelCls}>Sending from</span>
-                    <Select
-                      value={f.fromId}
-                      onValueChange={(val) => {
-                        if (val) set("fromId", val);
-                        if (!stage1Collapsed) setStage1Collapsed(true);
-                      }}
-                    >
-                      <SelectTrigger
-                        className="h-auto min-h-[68px] py-3.5 px-4 w-full rounded-2xl border border-border bg-card dark:bg-[#181818] hover:border-primary/50 text-left cursor-pointer transition-colors"
-                        onClick={() => {
-                          if (!stage1Collapsed) setStage1Collapsed(true);
-                        }}
-                      >
-                        <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/80 text-foreground dark:bg-[#252525]">
-                            <Landmark size={18} strokeWidth={1.8} />
-                          </span>
-                          <div className="flex flex-col min-w-0 text-left gap-1">
-                            <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
-                              {account?.name} ••{account?.number?.slice(-4) || "7658"}
-                            </span>
-                            <span className="text-[13px] text-muted-foreground font-normal truncate tabular leading-tight">
-                              {formatMoney(account?.available ?? 1320201, account?.currency || "GHS", true)}
-                            </span>
-                          </div>
-                        </div>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {accounts.map((a) => (
-                          <SelectItem key={a.id} value={a.id}>
-                            {a.name} ({a.number}) — {formatMoney(a.available, a.currency, true)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+            {/* Flow 4: Mobile Wallet (Self & Other) */}
+            {(rail === "wallet" || rail === "momo") && (
+              <MobileWalletFlow
+                accounts={accounts}
+                walletCategory={walletCategory || "other"}
+                state={{
+                  fromId: f.fromId,
+                  wNetwork: f.wNetwork || "MTN Mobile Money",
+                  wPhone: f.wPhone,
+                  wName: f.wName,
+                  amount: f.wAmount,
+                  narration: f.wRef,
+                  category: f.category,
+                }}
+                onChange={(key, val) => {
+                  if (key === "amount") set("wAmount", val);
+                  else if (key === "narration") set("wRef", val);
+                  else set(key, val);
+                }}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
+            )}
 
-                  {overBalance && (
-                    <div className="flex items-start gap-2.5 rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-[12.5px] text-destructive animate-in fade-in duration-150 ease-out">
-                      <AlertCircle size={15} className="mt-0.5 shrink-0 text-destructive" />
-                      <div>
-                        <span className="font-semibold">Insufficient funds.</span> Total debit exceeds your available balance.
-                      </div>
-                    </div>
-                  )}
+            {/* Flow 5: Mobile Wallet to Bank */}
+            {rail === "wallet-to-bank" && (
+              <WalletToBankFlow
+                state={{
+                  bank: f.bank || "GCB Bank",
+                  benAcct: f.benAcct,
+                  benName: f.benName,
+                  amount: f.bankAmount || f.wAmount,
+                  narration: f.bankRef || f.wRef,
+                  category: f.category,
+                }}
+                onChange={(key, val) => {
+                  if (key === "amount") {
+                    set("bankAmount", val);
+                    set("wAmount", val);
+                  } else if (key === "narration") {
+                    set("bankRef", val);
+                    set("wRef", val);
+                  } else set(key, val);
+                }}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
+            )}
 
-                  {rail !== "data" && rail !== "airtime" && (
-                    <label className="flex flex-col gap-1.5">
-                      <span className={labelCls}>Reference / Note (optional)</span>
-                      <input
-                        className={inputCls}
-                        value={f.bankRef || f.wRef || f.pxRef || f.grpRef || ""}
-                        onFocus={() => {
-                          if (!stage1Collapsed) setStage1Collapsed(true);
-                        }}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          set("bankRef", val);
-                          set("wRef", val);
-                          set("pxRef", val);
-                          set("grpRef", val);
-                        }}
-                        placeholder="e.g. Invoice payment, groceries"
-                      />
-                    </label>
-                  )}
+            {/* Flow 6: Airtime & Data Bundles */}
+            {(rail === "airtime" || rail === "data") && (
+              <AirtimeDataFlow
+                accounts={accounts}
+                state={{
+                  fromId: f.fromId,
+                  product: rail === "data" ? "data" : (f.product || "airtime"),
+                  wNetwork: f.wNetwork || "MTN Mobile Money",
+                  aPhone: f.aPhone,
+                  benName: f.benName,
+                  airtimeAmount: f.airtimeAmount,
+                  bundleId: f.bundleId,
+                  narration: f.wRef || f.bankRef,
+                  category: f.category,
+                }}
+                onChange={(key, val) => {
+                  if (key === "product") {
+                    setRail(val as Rail);
+                    set("product", val as "airtime" | "data");
+                  } else if (key === "narration") {
+                    set("wRef", val);
+                    set("bankRef", val);
+                  } else set(key, val);
+                }}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
+            )}
 
-                  <Button
-                    className="mt-4 w-full h-11 rounded-xl text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98]"
-                    disabled={!isStage2Valid}
-                    onClick={() => {
-                      auth.reset();
-                      setStage1Collapsed(true);
-                      setStage(2);
-                    }}
-                  >
-                    {rail === "airtime" || rail === "data" ? "Review Purchase" : rail === "bill" || rail === "ecg" || rail === "ghanagov" ? "Review Payment" : "Review Transfer"}
-                  </Button>
-                </div>
-              </div>
+            {/* Flow 7: Bills, ECG, Ghana.gov */}
+            {(rail === "bill" || rail === "ecg" || rail === "ghanagov") && (
+              <BillsPaymentFlow
+                accounts={accounts}
+                state={{
+                  fromId: f.fromId,
+                  subType: rail === "ecg" ? "ecg" : rail === "ghanagov" ? "ghanagov" : "bill",
+                  billerId: f.billerId,
+                  billRef: f.billRef,
+                  ecgMeter: f.ecgMeter,
+                  govService: f.govService,
+                  govRef: f.govRef,
+                  benName: f.benName,
+                  amount: rail === "ecg" ? f.ecgAmount : rail === "ghanagov" ? f.govAmount : f.billAmount,
+                  narration: f.bankRef || f.wRef,
+                  category: f.category,
+                }}
+                onChange={(key, val) => {
+                  if (key === "amount") {
+                    if (rail === "ecg") set("ecgAmount", val);
+                    else if (rail === "ghanagov") set("govAmount", val);
+                    else set("billAmount", val);
+                  } else if (key === "narration") {
+                    set("bankRef", val);
+                    set("wRef", val);
+                  } else if (key !== "subType") {
+                    set(key, val);
+                  }
+                }}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
+            )}
+
+            {/* Flow 8: International Wire (PAPSS) */}
+            {rail === "papss" && (
+              <InternationalWireFlow
+                accounts={accounts}
+                state={{
+                  fromId: f.fromId,
+                  wCountry: f.wCountry || "Nigeria",
+                  wCurrency: f.wCurrency || "NGN",
+                  wBank: f.wBank,
+                  wIban: f.wIban,
+                  wBenName: f.wBenName,
+                  wForeign: f.wForeign,
+                  wPurpose: f.wPurpose || "Goods purchased",
+                  category: f.category,
+                }}
+                onChange={(key, val) => set(key, val)}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
+            )}
+
+            {/* Flow 9: Group Payments */}
+            {rail === "group" && (
+              <GroupPaymentFlow
+                accounts={accounts}
+                groups={groups}
+                state={{
+                  fromId: f.fromId,
+                  groupName: f.groupName,
+                  grpAmount: f.grpAmount,
+                  narration: f.grpRef,
+                  category: f.category,
+                }}
+                onChange={(key, val) => {
+                  if (key === "narration") set("grpRef", val);
+                  else set(key, val);
+                }}
+                onOpenCreateGroup={() => setCreateGroupOpen(true)}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
+            )}
+
+            {/* Flow 10: Proxy Pay */}
+            {rail === "proxy" && (
+              <ProxyPayFlow
+                accounts={accounts}
+                state={{
+                  fromId: f.fromId,
+                  pxId: f.pxId,
+                  benName: f.benName,
+                  amount: f.pxAmount,
+                  narration: f.pxRef,
+                  category: f.category,
+                }}
+                onChange={(key, val) => {
+                  if (key === "amount") set("pxAmount", val);
+                  else if (key === "narration") set("pxRef", val);
+                  else set(key, val);
+                }}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
             )}
           </div>
         )}
 
         {/* ===================================================================
-         * STAGE 2: Dedicated Review & Authorisation Page
+         * STAGE 2: Dedicated Review Screen (Figma Nodes 1253:14800 & 1253:15001)
          * =================================================================== */}
         {stage === 2 && (
           <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-            {/* Hero Amount Display */}
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card dark:bg-[#181818] p-6 text-center shadow-xs">
-              <span className="text-[13px] font-medium uppercase tracking-wider text-muted-foreground">Total Amount</span>
-              <span className="mt-1 text-[32px] font-semibold tracking-[-0.02em] text-foreground tabular">
-                {formatMoney(currentAmount, rail === "papss" ? f.wCurrency : "GHS", true)}
-              </span>
-              <div className="mt-2 flex items-center gap-2 rounded-full bg-muted px-3 py-1 text-[12px] text-muted-foreground">
-                <span className="size-1.5 rounded-full bg-emerald-500" />
-                <span>{fee === 0 ? "Zero Transfer Fee" : `Fee: ${formatMoney(fee, "GHS", true)}`}</span>
-                <span>•</span>
-                <span>{RAIL_FACTS[rail]?.arrives ?? "Instant Transfer"}</span>
+            <div className="flex flex-col gap-3 items-center justify-center w-full">
+              {/* Card 1: Transaction Details */}
+              <div className="flex flex-col w-full rounded-[15.75px] border border-border bg-card overflow-hidden divide-y divide-border/60 shadow-xs">
+                {/* From Row */}
+                <div className="flex items-center justify-between px-4 py-3 w-full">
+                  <span className="text-[13.5px] text-muted-foreground">From</span>
+                  <span className="text-[13.5px] font-normal text-foreground">
+                    {rail === "wallet-to-bank" ? "MTN Mobile Money (•••3821)" : `${account?.name} (•••${account?.number.slice(-4)})`}
+                  </span>
+                </div>
+
+                {/* To Row */}
+                <div className="flex items-center justify-between px-4 py-3 w-full">
+                  <span className="text-[13.5px] text-muted-foreground">To</span>
+                  <span className="text-[13.5px] font-normal text-foreground">
+                    {recipientDisplayName}
+                  </span>
+                </div>
+
+                {/* Destination Account / Number Row */}
+                {reviewAccountValue && (
+                  <div className="flex items-center justify-between px-4 py-3 w-full">
+                    <span className="text-[13.5px] text-muted-foreground">{reviewAccountLabel}</span>
+                    <span className="text-[13.5px] font-normal text-foreground tabular">
+                      {reviewAccountValue}
+                    </span>
+                  </div>
+                )}
+
+                {/* Bank / Provider Row */}
+                {reviewInstitutionValue && (
+                  <div className="flex items-center justify-between px-4 py-3 w-full">
+                    <span className="text-[13.5px] text-muted-foreground">{reviewInstitutionLabel}</span>
+                    <span className="text-[13.5px] font-normal text-foreground">
+                      {reviewInstitutionValue}
+                    </span>
+                  </div>
+                )}
+
+                {/* Reference Row */}
+                {(f.bankRef || f.wRef || f.pxRef || f.grpRef || (rail === "data" ? bundle?.name : "")) && (
+                  <div className="flex items-center justify-between px-4 py-3 w-full">
+                    <span className="text-[13.5px] text-muted-foreground">Reference</span>
+                    <span className="text-[13.5px] font-normal text-foreground truncate max-w-[220px]">
+                      {f.bankRef || f.wRef || f.pxRef || f.grpRef || (rail === "data" ? bundle?.name : "")}
+                    </span>
+                  </div>
+                )}
+
+                {/* Arrives Row */}
+                <div className="flex items-center justify-between px-4 py-3 w-full">
+                  <span className="text-[13.5px] text-muted-foreground">Arrives</span>
+                  <span className="text-[13.5px] font-normal text-foreground">
+                    {RAIL_FACTS[rail]?.arrives || "Same day"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Divider Line */}
+              <div className="w-full border-t border-border/70 my-1" />
+
+              {/* Card 2: Fee Breakdown Container (Collapsible) */}
+              <div className="flex flex-col w-full rounded-[15.75px] border border-border bg-card overflow-hidden shadow-xs">
+                {/* Toggle Header */}
+                <button
+                  type="button"
+                  onClick={() => setShowFeeBreakdown((prev) => !prev)}
+                  className="flex items-center justify-between px-4 py-3 w-full hover:bg-muted/30 transition-colors cursor-pointer text-left"
+                >
+                  <span className="text-[13.5px] text-foreground font-normal">
+                    {showFeeBreakdown ? "Hide Fee Breakdown" : "Show Fee Breakdown"}
+                  </span>
+                  {showFeeBreakdown ? (
+                    <ChevronUp size={16} className="text-muted-foreground" />
+                  ) : (
+                    <ChevronDown size={16} className="text-muted-foreground" />
+                  )}
+                </button>
+
+                {/* Collapsible Content */}
+                {showFeeBreakdown && (
+                  <div className="flex flex-col w-full border-t border-border/60 divide-y divide-border/60 animate-in fade-in duration-150">
+                    <div className="flex items-center justify-between px-4 py-3 w-full">
+                      <span className="text-[13.5px] text-muted-foreground">Amount</span>
+                      <span className="text-[13.5px] text-foreground tabular">
+                        {formatMoney(currentAmount, rail === "papss" ? f.wCurrency : "GHS", true)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between px-4 py-3 w-full">
+                      <span className="text-[13.5px] text-muted-foreground">Fee</span>
+                      <span className="text-[13.5px] text-foreground tabular">
+                        {fee === 0 ? "GH₵0.00" : formatMoney(fee, "GHS", true)}
+                      </span>
+                    </div>
+                    {rail === "papss" && (
+                      <div className="flex items-center justify-between px-4 py-3 w-full">
+                        <span className="text-[13.5px] text-muted-foreground">Exchange Rate</span>
+                        <span className="text-[13.5px] text-foreground tabular">1 {f.wCurrency} = {rate} GHS</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Total Row (Always displayed!) */}
+                <div className="flex items-center justify-between px-4 py-3.5 w-full bg-muted/40 dark:bg-muted/20 border-t border-border/70">
+                  <span className="text-[13.5px] text-foreground font-normal">Total</span>
+                  <span className="text-[26px] sm:text-[28px] font-semibold text-foreground tracking-[-0.03em] tabular">
+                    {formatMoney(totalDebit, "GHS", true)}
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Transfer Breakdown Card */}
-            <div className="flex flex-col divide-y divide-border/70 rounded-2xl border border-border bg-card dark:bg-[#181818] text-[14px] shadow-xs">
-              {/* Recipient Row */}
-              <div className="flex items-center justify-between p-4">
-                <div className="flex flex-col min-w-0 pr-3">
-                  <span className="text-[12.5px] text-muted-foreground">
-                    {bankCategory === "own" ? "Destination Account" : rail === "bill" || rail === "ecg" || rail === "ghanagov" ? "Biller & Account" : "Recipient"}
-                  </span>
-                  <span className="font-medium text-foreground truncate mt-0.5">{recipientDisplayName}</span>
-                  <span className="text-[12.5px] text-muted-foreground truncate">{recipientSubtitle}</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStage(1);
-                    setStage1Collapsed(false);
-                  }}
-                  className="text-[13px] font-medium text-primary hover:underline cursor-pointer shrink-0"
-                >
-                  Change
-                </button>
-              </div>
+            {/* Disclaimer */}
+            <p className="text-[12px] text-muted-foreground text-center px-4 -mt-1">
+              Clicking “Proceed to Pay” authorizes GCB Bank PLC to initiate the transaction.
+            </p>
 
-              {/* Source Account Row */}
-              <div className="flex items-center justify-between p-4">
-                <div className="flex flex-col min-w-0 pr-3">
-                  <span className="text-[12.5px] text-muted-foreground">Sending from</span>
-                  <span className="font-medium text-foreground truncate mt-0.5">
-                    {account?.name} ••{account?.number.slice(-4)}
-                  </span>
-                  <span className="text-[12.5px] text-muted-foreground truncate tabular">
-                    Balance: {formatMoney(account?.available ?? 0, account?.currency || "GHS", true)}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStage(1);
-                    setStage1Collapsed(true);
-                  }}
-                  className="text-[13px] font-medium text-primary hover:underline cursor-pointer shrink-0"
-                >
-                  Change
-                </button>
-              </div>
-
-              {/* Transfer Details Rows */}
-              <div className="flex items-center justify-between p-4 text-[13.5px]">
-                <span className="text-muted-foreground">Transfer Fee</span>
-                <span className="font-medium text-foreground">
-                  {fee === 0 ? "Free" : formatMoney(fee, "GHS", true)}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between p-4 text-[13.5px]">
-                <span className="text-muted-foreground">Delivery Speed</span>
-                <span className="text-foreground font-medium">{RAIL_FACTS[rail]?.arrives ?? "Instantly"}</span>
-              </div>
-
-              {rail === "papss" && (
-                <div className="flex items-center justify-between p-4 text-[13.5px]">
-                  <span className="text-muted-foreground">Applied FX Rate</span>
-                  <span className="text-foreground font-medium tabular">1 {f.wCurrency} = {rate} GHS</span>
-                </div>
-              )}
-
-              {(f.bankRef || f.wRef || f.pxRef || f.grpRef) && (
-                <div className="flex items-center justify-between p-4 text-[13.5px]">
-                  <span className="text-muted-foreground">Reference / Note</span>
-                  <span className="text-foreground font-medium truncate max-w-[200px]">
-                    {f.bankRef || f.wRef || f.pxRef || f.grpRef}
-                  </span>
-                </div>
-              )}
-
-              {/* Total Debit */}
-              <div className="flex items-center justify-between p-4 text-[15px] bg-muted/30 dark:bg-muted/15 rounded-b-2xl">
-                <span className="font-medium text-foreground">Total Debit</span>
-                <span className="font-semibold text-foreground tabular text-[16px]">
-                  {formatMoney(totalDebit, "GHS", true)}
-                </span>
-              </div>
-            </div>
-
-            {/* Dedicated Authentication Card */}
-            <div className="flex flex-col rounded-2xl border border-border bg-card dark:bg-[#181818] p-5 shadow-xs">
-              <AuthorisePanel
-                summary={null}
-                method={auth.method}
-                onMethodChange={auth.setMethod}
-                pin={auth.pin}
-                onPinChange={auth.setPin}
-                otp={auth.otp}
-                onOtpChange={auth.setOtp}
-                state={auth.state}
-                resend={auth.resend}
-                onResend={auth.requestResend}
-              />
-
+            {/* Action Buttons */}
+            <div className="flex gap-4 items-center w-full pt-1">
               <Button
-                className="mt-6 w-full h-11 rounded-xl text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm transition-transform duration-100 active:scale-[0.98]"
-                disabled={!auth.complete}
-                onClick={confirm}
+                type="button"
+                variant="outline"
+                onClick={() => setStage(1)}
+                className="flex-1 h-11 rounded-lg text-[14px] font-medium border-border"
               >
-                {rail === "airtime" || rail === "data"
-                  ? `Authorise Purchase of ${formatMoney(totalDebit, "GHS", true)}`
-                  : `Authorise & Send ${formatMoney(totalDebit, "GHS", true)}`}
+                Back
+              </Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  setPinModalOpen(true);
+                }}
+                className="flex-1 h-11 rounded-lg text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+              >
+                Proceed to Pay
               </Button>
             </div>
           </div>
         )}
+
+        {/* Transaction PIN Modal across board matching Figma node 1277:23601 */}
+        <TransactionPinModal
+          open={pinModalOpen || stage === 3}
+          onOpenChange={(isOpen) => {
+            setPinModalOpen(isOpen);
+            if (!isOpen && stage === 3) setStage(2);
+          }}
+          onSuccess={(code) => {
+            setPinModalOpen(false);
+            confirm(code);
+          }}
+        />
 
         <CreateGroupModal
           open={createGroupOpen}

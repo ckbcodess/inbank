@@ -22,7 +22,6 @@ const nextConfig: NextConfig = {
       "sonner",
       "clsx",
       "tailwind-merge",
-      "calligraph",
       "zustand",
     ],
   },

@@ -58,7 +58,7 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
                   {front.status}
                 </Badge>
               </div>
-              <div className="tabular text-[14.5px] tracking-[0.08em]">
+              <div className="font-mono tabular text-[14.5px] tracking-[0.08em]">
                 •••• •••• •••• {front.maskedNumber.replace(/\D/g, "")}
               </div>
               <div className="flex items-end justify-between">

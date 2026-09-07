@@ -1,7 +1,8 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
-import { Calligraph } from "calligraph";
+import { RollingText } from "@kitlangton/rolling-number/react";
+import "@kitlangton/rolling-number/styles.css";
 
 const STORAGE_KEY = "nibs-show-amounts";
 
@@ -54,9 +55,11 @@ export function splitCurrencyAndAmount(
   showAmounts = true
 ): { prefix: string; numericText: string } {
   if (amount !== undefined) {
-    const currUpper = currency.toUpperCase();
+    const currUpper = (currency || "").toUpperCase();
     const symbol =
-      currUpper === "USD"
+      !currency
+        ? ""
+        : currUpper === "USD"
         ? "USD "
         : currUpper === "EUR"
         ? "€"
@@ -263,15 +266,12 @@ export function RevealingAmount({
   return (
     <span className={`inline-flex items-center select-none ${className}`}>
       {prefix && <span className="shrink-0 select-none font-normal">{prefix}</span>}
-      <Calligraph
-        variant="text"
-        animation="snappy"
-        trend={1}
-        drift={{ x: 0, y: 24 }}
-        autoSize
-      >
-        {numericText}
-      </Calligraph>
+      <RollingText
+        text={numericText}
+        transition="direct"
+        duration={350}
+        motionBlur
+      />
     </span>
   );
 }

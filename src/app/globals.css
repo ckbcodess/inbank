@@ -48,8 +48,8 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
   /* Sidebar transition */
-  --sidebar-width: 260px;
-  --sidebar-width-collapsed: 68px;
+  --sidebar-width: 224px;
+  --sidebar-width-collapsed: 56px;
 
   /* Fluid Functionalism Elevated Surface theme mappings */
   --color-surface-1: var(--surface-1);
@@ -374,10 +374,10 @@
   .page-stagger > * > *:nth-child(n+7) { animation-delay: 100ms; }
 }
 
-/* CSS Mask fade-out for bottom edge of shell content */
+/* CSS Mask fade-out for bottom edge of shell content — disabled to prevent masking notifications and interactive bottom controls */
 .shell-fade-bottom {
-  mask-image: linear-gradient(to bottom, black 0%, black calc(100% - 40px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black calc(100% - 40px), transparent 100%);
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
 }
 
 /* Scrollbar styling — thin, subtle, reserves gutter space */
@@ -415,3 +415,14 @@
 select {
   padding-right: 2.5rem !important;
 }
+
+/* PIN error shake animation */
+@keyframes pin-shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+.animate-pin-shake {
+  animation: pin-shake 0.35s ease-in-out;
+}

@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Account Details UX Prototypes — 10 Design Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: ['class', '[data-theme="dark"]'],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
+        serif: ['"Newsreader"', 'serif'],
+      },
+      colors: {
+        amber: {
+          400: '#f9c632',
+          500: '#f2b200',
+          600: '#d99b00',
+        }
+      }
+    }
+  }
+}
+</script>
+<style>
+  :root {
+    --bg-page: #fbfbfa;
+    --bg-surface: #ffffff;
+    --bg-tile: #f6f6f5;
+    --border-color: #ebebe9;
+    --text-primary: #121212;
+    --text-secondary: #747472;
+    --accent-amber: #f2b200;
+  }
+  [data-theme="dark"] {
+    --bg-page: #0d0d0e;
+    --bg-surface: #151516;
+    --bg-tile: #1c1c1e;
+    --border-color: #262629;
+    --text-primary: #f5f5f6;
+    --text-secondary: #929298;
+    --accent-amber: #f2b200;
+  }
+  body {
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .tabular { font-variant-numeric: tabular-nums; }
+  .custom-scrollbar::-webkit-scrollbar { height: 6px; width: 6px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(150,150,150,0.25); border-radius: 999px; }
+  .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .toast {
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .active-tab-glow {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 0 0 1px rgba(0,0,0,0.04);
+  }
+  [data-theme="dark"] .active-tab-glow {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08);
+  }
+</style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-amber-400/30 selection:text-amber-900 dark:selection:text-amber-200">
+
+  <!-- ================= TOP MASTER CONTROLLER BAR ================= -->
+  <header class="sticky top-0 z-50 border-b border-[var(--border-color)] bg-[var(--bg-surface)]/95 backdrop-blur-md px-4 py-3 sm:px-6">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <!-- Title & Info -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="size-8 rounded-lg bg-amber-500 text-black flex items-center justify-center font-bold text-sm shadow-sm shadow-amber-500/20">
+            UI
+          </div>
+          <div>
+            <h1 class="text-sm font-semibold tracking-tight text-[var(--text-primary)]">Account Details Archetype Lab</h1>
+            <p class="text-xs text-[var(--text-secondary)]">10 Production Fintech Patterns · Local Interactive Prototype</p>
+          </div>
+        </div>
+
+        <!-- Mobile controls -->
+        <div class="flex items-center gap-2 md:hidden">
+          <button onclick="toggleMask()" id="mask-btn-mobile" class="p-1.5 rounded-lg border border-[var(--border-color)] hover:bg-[var(--bg-tile)] text-xs text-[var(--text-secondary)]" title="Toggle Balance Privacy">
+            👁️
+          </button>
+          <button onclick="toggleTheme()" class="p-1.5 rounded-lg border border-[var(--border-color)] hover:bg-[var(--bg-tile)] text-xs" title="Toggle Dark/Light Mode">
+            🌓
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Archetype Select Pills (Scrollable) -->
+      <div class="flex items-center gap-1.5 overflow-x-auto custom-scrollbar py-0.5 max-w-full">
+        <button onclick="setVariation(1)" id="btn-var-1" class="var-btn shrink-0 text-xs px-3 py-1.5 rounded-lg font-medium transition-all bg-amber-500 text-black shadow-xs">
+          1. Dual-Card Minimal
+        </button>
+        <button onclick="setVariation(2)" id="btn-var-2" class="var-btn shrink-0 text-xs px-3 py-1.5 rounded-lg font-medium transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tile)]">
+          2. Unified Banner
+        </button>
+        <button onclick="setVariation(3)" id="btn-var-3" class="var-btn shrink-0 text-xs px-3 py-1.5 rounded-lg font-medium transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tile)]">
+          3. Split Ledger
+        </button>
+        <button onclick="setVariation(4)" id="btn-var-4" class="var-btn shrink-0 text-xs px-3 py-1.5 rounded-lg font-medium transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tile)]">
+          4. Tabbed Hub
+        </button>
+        <button onclick="setVariation(5)" id="btn-var-5" class="var-btn shrink-0 text-xs px-3 py-1.5 rounded-lg font-medium transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tile)]">
+          5. Card Wallet
+        </button>
+        <button onclick="setVariation(6)" id="btn-var-6" class="var-btn shrink-0 text-xs px-3 py-1.5 rounded-lg font-medium transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tile)]">
+          6. High-Density Treasury
+        </button>
+        <button onclick="setVariation(7)" id="btn-var-7" class="var-btn shrink-0 text-xs px-3 py-1.5 rounded-lg font-medium transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tile)]">
+          7. Editorial Wealth
+        </button>
+        <button onclick="setVariation(8)" id="btn-var-8" class="var-btn shrink-0 text-xs px-3 py-1.5 rounded-lg font-medium transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tile)]">
+          8. Action Dock
+        </button>
+        <button onclick="setVariation(9)" id="btn-var-9" class="var-btn shrink-0 text-xs px-3 py-1.5 rounded-lg font-medium transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tile)]">
+          9. Cashflow Insights
+        </button>
+        <button onclick="setVariation(10)" id="btn-var-10" class="var-btn shrink-0 text-xs px-3 py-1.5 rounded-lg font-medium transition-all text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tile)]">
+          10. Wire & Routing Hub
+        </button>
+      </div>
+
+      <!-- Desktop global tools -->
+      <div class="hidden md:flex items-center gap-2 shrink-0">
+        <button onclick="toggleMask()" id="mask-btn-desktop" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[var(--border-color)] hover:bg-[var(--bg-tile)] text-xs text-[var(--text-secondary)] transition-colors">
+          <span id="mask-icon">👁️</span>
+          <span id="mask-label">Hide Balance</span>
+        </button>
+        <button onclick="toggleTheme()" class="px-2.5 py-1.5 rounded-lg border border-[var(--border-color)] hover:bg-[var(--bg-tile)] text-xs text-[var(--text-secondary)] transition-colors" title="Toggle Dark/Light Mode">
+          <span id="theme-icon">🌓</span> Theme
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= PATTERN RATIONALE BANNER ================= -->
+  <aside class="border-b border-[var(--border-color)] bg-[var(--bg-tile)]/50 px-4 py-2.5 sm:px-6">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs">
+      <div class="flex items-center gap-2">
+        <span class="font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400" id="badge-pattern-id">PATTERN 1</span>
+        <span class="text-[var(--text-secondary)]">·</span>
+        <span class="font-medium text-[var(--text-primary)]" id="badge-pattern-name">The Modern Dual-Card Minimalist</span>
+      </div>
+      <p class="text-[var(--text-secondary)] text-[11.5px] max-w-2xl leading-relaxed" id="badge-pattern-desc">
+        Optimized for visual calm: Separates money management (left) from routing / account credentials (right) in two harmonious cards, followed by a restrained transaction journal.
+      </p>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN CONTENT CANVASES ================= -->
+  <main class="flex-1 p-4 sm:p-6 md:p-8 flex justify-center">
+
+    <!-- VARIATION 1: DUAL-CARD MINIMALIST (FIGMA REFINED) -->
+    <section id="variation-1" class="var-screen w-full max-w-[920px] flex flex-col gap-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <button class="size-8 rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] text-[var(--text-secondary)] flex items-center justify-center hover:text-[var(--text-primary)] shadow-xs">
+            ←
+          </button>
+          <h2 class="text-2xl font-medium tracking-tight">Current Account</h2>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-700 dark:text-amber-300">Joint</span>
+        </div>
+        <button onclick="triggerToast('Opening official statement generator...')" class="h-8 px-3 rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] text-xs font-medium hover:bg-[var(--bg-tile)] flex items-center gap-1.5 shadow-xs">
+          📄 Statement
+        </button>
+      </div>
+
+      <!-- 2-Card Hero -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-stretch">
+        <!-- Left: Balance & Quick Actions -->
+        <div class="md:col-span-7 flex flex-col justify-between rounded-2xl border border-[var(--border-color)] bg-[var(--bg-tile)] p-6 min-h-[220px]">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <span class="text-xs text-[var(--text-secondary)]">Available balance</span>
+              <div class="mt-2 text-3xl sm:text-4xl font-normal tracking-tight balance-text" data-amount="GH₵ 42,300.00">
+                GH₵ 42,300.00
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="triggerToast('Opening payments flow...')" class="h-8 px-3 rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] text-xs font-medium hover:bg-neutral-100 dark:hover:bg-neutral-800 shadow-xs">
+                Pay
+              </button>
+              <button onclick="triggerToast('Opening Fund Account modal...')" class="h-8 px-3.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-xs font-medium shadow-xs">
+                Fund Account
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center gap-8 pt-5 border-t border-[var(--border-color)]/60 text-xs">
+            <div><span class="text-[var(--text-secondary)] block text-[11px]">Type</span><span class="font-medium">Current</span></div>
+            <div><span class="text-[var(--text-secondary)] block text-[11px]">Currency</span><span class="font-medium">GHS</span></div>
+            <div><span class="text-[var(--text-secondary)] block text-[11px]">Status</span><span class="font-medium text-emerald-600 dark:text-emerald-400">Active</span></div>
+            <div><span class="text-[var(--text-secondary)] block text-[11px]">Mandate</span><span class="font-medium">Either to sign</span></div>
+          </div>
+        </div>
+
+        <!-- Right: Routing & Wire Identity -->
+        <div class="md:col-span-5 flex flex-col justify-between rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 min-h-[220px]">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-[var(--text-secondary)]">Account number</span>
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs font-medium acct-num">4001 9922 1100</span>
+              <button onclick="copyText('400199221100')" class="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-1 rounded">📋</button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-[var(--text-secondary)]">Account holder</span>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-medium uppercase truncate max-w-[160px]">AMA SERWAA</span>
+              <button onclick="copyText('AMA SERWAA')" class="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-1 rounded">📋</button>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-[var(--text-secondary)]">SWIFT Code</span>
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs font-medium">GHCBGHAC</span>
+              <button onclick="copyText('GHCBGHAC')" class="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] p-1 rounded">📋</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Linked Cards Grid -->
+      <div class="flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-medium">Linked Cards</h3>
+          <button onclick="triggerToast('Navigating to Cards manager...')" class="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Manage cards →</button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-3.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] flex items-center justify-between shadow-xs">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-7 rounded bg-gradient-to-tr from-amber-500 to-amber-300 p-1 flex flex-col justify-between text-[6px] font-black text-black">
+                <span>CHIP</span><span class="self-end">VISA</span>
+              </div>
+              <div>
+                <div class="text-xs font-medium">Everyday Debit Card</div>
+                <div class="font-mono text-[11px] text-[var(--text-secondary)]">Visa Debit · •••• 4821</div>
+              </div>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 font-medium">Active</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity Section -->
+      <div class="flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-medium">Activity</h3>
+          <button onclick="triggerToast('Viewing all transactions...')" class="text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)]">View all</button>
+        </div>
+        <div class="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] divide-y divide-[var(--border-color)] overflow-hidden shadow-xs">
+          <div class="px-5 py-3.5 flex items-center justify-between hover:bg-[var(--bg-tile)]/50 transition-colors">
+            <div>
+              <div class="text-xs font-medium">Transfer to Savings</div>
+              <div class="text-[11px] text-[var(--text-secondary)] mt-0.5">NIB-2026-901126 · 08 Aug 2026</div>
+            </div>
+            <div class="flex items-center gap-5">
+              <span class="text-xs font-medium balance-text" data-amount="+GH₵ 2,000.00">+GH₵ 2,000.00</span>
+              <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 font-medium">Completed</span>
+            </div>
+          </div>
+          <div class="px-5 py-3.5 flex items-center justify-between hover:bg-[var(--bg-tile)]/50 transition-colors">
+            <div>
+              <div class="text-xs font-medium">Supermarket POS Settlement</div>
+              <div class="text-[11px] text-[var(--text-secondary)] mt-0.5">NIB-2026-881902 · 07 Aug 2026</div>
+            </div>
+            <div class="flex items-center gap-5">
+              <span class="text-xs font-medium balance-text" data-amount="−GH₵ 420.50">−GH₵ 420.50</span>
+              <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 font-medium">Completed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VARIATION 2: UNIFIED BANNER (MERCURY / BREX STYLE) -->
+    <section id="variation-2" class="var-screen hidden w-full max-w-[960px] flex flex-col gap-6">
+      <!-- Unified Banner Header -->
+      <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-7 sm:p-8 shadow-sm flex flex-col gap-6">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+              <span>Primary Operating</span>
+              <span>·</span>
+              <span class="font-mono">Account #4001 9922 1100</span>
+              <button onclick="copyText('400199221100')" class="hover:text-[var(--text-primary)]">📋</button>
+            </div>
+            <h2 class="text-3xl font-semibold tracking-tight mt-1">Personal Current Account</h2>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="triggerToast('Opening Send Money modal...')" class="h-9 px-4 rounded-xl bg-[var(--text-primary)] text-[var(--bg-surface)] text-xs font-medium shadow-xs hover:opacity-90">
+              Send Money
+            </button>
+            <button onclick="triggerToast('Opening Deposit options...')" class="h-9 px-4 rounded-xl border border-[var(--border-color)] hover:bg-[var(--bg-tile)] text-xs font-medium shadow-xs">
+              Deposit
+            </button>
+            <button onclick="triggerToast('Exporting CSV...')" class="h-9 w-9 rounded-xl border border-[var(--border-color)] hover:bg-[var(--bg-tile)] flex items-center justify-center text-xs">
+              ···
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-[var(--border-color)]">
+          <div>
+            <div class="text-xs text-[var(--text-secondary)]">Available Balance</div>
+            <div class="text-2xl font-semibold mt-1 balance-text" data-amount="GH₵ 42,300.00">GH₵ 42,300.00</div>
+          </div>
+          <div>
+            <div class="text-xs text-[var(--text-secondary)]">Money In (This Month)</div>
+            <div class="text-2xl font-semibold mt-1 text-emerald-600 dark:text-emerald-400 balance-text" data-amount="+GH₵ 18,500.00">+GH₵ 18,500.00</div>
+          </div>
+          <div>
+            <div class="text-xs text-[var(--text-secondary)]">Money Out (This Month)</div>
+            <div class="text-2xl font-semibold mt-1 text-neutral-500 balance-text" data-amount="−GH₵ 7,240.00">−GH₵ 7,240.00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Segmented Navigation inside page -->
+      <div class="flex items-center gap-6 border-b border-[var(--border-color)] text-sm px-2">
+        <button class="pb-3 border-b-2 border-amber-500 font-semibold text-[var(--text-primary)]">Transactions</button>
+        <button class="pb-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Scheduled & Recurring</button>
+        <button class="pb-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Account Limits & Rules</button>
+        <button class="pb-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Routing & Wire Details</button>
+      </div>
+
+      <!-- Transaction Ledger with Instant Search Filter -->
+      <div class="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-4 shadow-xs">
+        <div class="flex items-center justify-between gap-3 mb-4">
+          <input type="text" placeholder="Search transactions..." class="w-72 text-xs px-3 py-2 rounded-xl bg-[var(--bg-tile)] border border-transparent focus:border-amber-500 outline-none" />
+          <div class="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+            <span class="px-2.5 py-1 rounded-lg bg-[var(--bg-tile)] cursor-pointer">All Types</span>
+            <span class="px-2.5 py-1 rounded-lg bg-[var(--bg-tile)] cursor-pointer">Last 30 Days</span>
+          </div>
+        </div>
+        <div class="divide-y divide-[var(--border-color)]">
+          <div class="py-3 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-3">
+              <div class="size-8 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold">↓</div>
+              <div><div class="font-medium">Salary Deposit — Apex Holdings</div><div class="text-[11px] text-[var(--text-secondary)]">Direct Deposit · Today, 09:12 AM</div></div>
+            </div>
+            <div class="text-right"><div class="font-semibold text-emerald-600 balance-text" data-amount="+GH₵ 12,000.00">+GH₵ 12,000.00</div><div class="text-[10px] text-[var(--text-secondary)]">Completed</div></div>
+          </div>
+          <div class="py-3 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-3">
+              <div class="size-8 rounded-full bg-neutral-500/10 text-neutral-600 dark:text-neutral-300 flex items-center justify-center font-bold">↑</div>
+              <div><div class="font-medium">Amazon Web Services Cloud</div><div class="text-[11px] text-[var(--text-secondary)]">Debit Card · Yesterday</div></div>
+            </div>
+            <div class="text-right"><div class="font-semibold balance-text" data-amount="−GH₵ 840.00">−GH₵ 840.00</div><div class="text-[10px] text-[var(--text-secondary)]">Completed</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VARIATION 3: SPLIT MASTER-DETAIL LEDGER (LINEAR / STRIPE STYLE) -->
+    <section id="variation-3" class="var-screen hidden w-full max-w-[1120px] grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <!-- Left 7 cols: Interactive Journal -->
+      <div class="lg:col-span-7 flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-semibold">Activity Journal</h2>
+            <p class="text-xs text-[var(--text-secondary)]">42 transactions reconciled this period</p>
+          </div>
+          <div class="flex items-center gap-1.5 bg-[var(--bg-tile)] p-1 rounded-xl text-xs">
+            <button class="px-2.5 py-1 rounded-lg bg-[var(--bg-surface)] font-medium shadow-xs">All</button>
+            <button class="px-2.5 py-1 rounded-lg text-[var(--text-secondary)]">Debits</button>
+            <button class="px-2.5 py-1 rounded-lg text-[var(--text-secondary)]">Credits</button>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] overflow-hidden shadow-xs divide-y divide-[var(--border-color)]">
+          <div class="p-4 flex items-center justify-between hover:bg-[var(--bg-tile)]/50 cursor-pointer">
+            <div class="flex items-center gap-3 text-xs">
+              <div class="size-2 rounded-full bg-emerald-500"></div>
+              <div>
+                <div class="font-medium">Supplier Wire — Tema Logistics</div>
+                <div class="text-[11px] text-[var(--text-secondary)] font-mono">REF-2026-9901 · 14:22</div>
+              </div>
+            </div>
+            <div class="text-right text-xs">
+              <div class="font-mono font-medium balance-text" data-amount="−GH₵ 4,200.00">−GH₵ 4,200.00</div>
+              <span class="text-[10px] text-[var(--text-secondary)]">Settled</span>
+            </div>
+          </div>
+          <div class="p-4 flex items-center justify-between hover:bg-[var(--bg-tile)]/50 cursor-pointer">
+            <div class="flex items-center gap-3 text-xs">
+              <div class="size-2 rounded-full bg-emerald-500"></div>
+              <div>
+                <div class="font-medium">Client Retainer — Accra Design Studio</div>
+                <div class="text-[11px] text-[var(--text-secondary)] font-mono">REF-2026-9892 · Yesterday</div>
+              </div>
+            </div>
+            <div class="text-right text-xs">
+              <div class="font-mono font-medium text-emerald-600 balance-text" data-amount="+GH₵ 8,500.00">+GH₵ 8,500.00</div>
+              <span class="text-[10px] text-[var(--text-secondary)]">Settled</span>
+            </div>
+          </div>
+          <div class="p-4 flex items-center justify-between hover:bg-[var(--bg-tile)]/50 cursor-pointer">
+            <div class="flex items-center gap-3 text-xs">
+              <div class="size-2 rounded-full bg-amber-500"></div>
+              <div>
+                <div class="font-medium">POS Terminal Auth — Shell Fuel Accra</div>
+                <div class="text-[11px] text-[var(--text-secondary)] font-mono">CARD-••••-4821 · 05 Aug</div>
+              </div>
+            </div>
+            <div class="text-right text-xs">
+              <div class="font-mono font-medium balance-text" data-amount="−GH₵ 350.00">−GH₵ 350.00</div>
+              <span class="text-[10px] text-amber-600 dark:text-amber-400">Pending</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right 5 cols: Sticky Account Identity Inspector -->
+      <div class="lg:col-span-5 flex flex-col gap-5 sticky top-24">
+        <div class="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 shadow-sm flex flex-col gap-5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs uppercase tracking-wider text-[var(--text-secondary)] font-semibold">Account Inspector</span>
+            <span class="size-2.5 rounded-full bg-emerald-500" title="Account Status: Healthy"></span>
+          </div>
+
+          <div>
+            <span class="text-xs text-[var(--text-secondary)]">Liquid Available</span>
+            <div class="text-3xl font-semibold tracking-tight mt-1 balance-text" data-amount="GH₵ 42,300.00">GH₵ 42,300.00</div>
+          </div>
+
+          <div class="flex gap-2">
+            <button onclick="triggerToast('Opening wire transfer...')" class="flex-1 py-2 rounded-xl bg-amber-500 text-black text-xs font-medium shadow-xs">Transfer</button>
+            <button onclick="triggerToast('Generating bank slip...')" class="flex-1 py-2 rounded-xl border border-[var(--border-color)] hover:bg-[var(--bg-tile)] text-xs font-medium shadow-xs">Statement</button>
+          </div>
+
+          <div class="pt-4 border-t border-[var(--border-color)] space-y-3 text-xs">
+            <div class="flex justify-between"><span class="text-[var(--text-secondary)]">Account ID</span><span class="font-mono">4001 9922 1100</span></div>
+            <div class="flex justify-between"><span class="text-[var(--text-secondary)]">Holder</span><span class="font-medium">Ama Serwaa</span></div>
+            <div class="flex justify-between"><span class="text-[var(--text-secondary)]">SWIFT / BIC</span><span class="font-mono">GHCBGHAC</span></div>
+            <div class="flex justify-between"><span class="text-[var(--text-secondary)]">Clearing Code</span><span class="font-mono">040102</span></div>
+            <div class="flex justify-between"><span class="text-[var(--text-secondary)]">Interest Rate</span><span>2.4% p.a.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VARIATION 4: TABBED EXECUTIVE HUB (REVOLUT / N26 PRO STYLE) -->
+    <section id="variation-4" class="var-screen hidden w-full max-w-[880px] flex flex-col gap-6">
+      <div class="text-center flex flex-col items-center gap-2 py-4">
+        <span class="text-xs text-[var(--text-secondary)]">Personal Checking Account · •••• 1100</span>
+        <div class="text-4xl font-normal tracking-tight balance-text" data-amount="GH₵ 42,300.00">GH₵ 42,300.00</div>
+        <!-- Action Pills Bar -->
+        <div class="flex items-center gap-3 mt-4">
+          <button onclick="triggerToast('Send Flow')" class="flex flex-col items-center gap-1">
+            <div class="size-11 rounded-full bg-neutral-900 text-white dark:bg-white dark:text-black flex items-center justify-center text-sm shadow-sm">↑</div>
+            <span class="text-[11px] font-medium">Send</span>
+          </button>
+          <button onclick="triggerToast('Add Money')" class="flex flex-col items-center gap-1">
+            <div class="size-11 rounded-full bg-amber-500 text-black flex items-center justify-center text-sm shadow-sm font-bold">+</div>
+            <span class="text-[11px] font-medium">Add Money</span>
+          </button>
+          <button onclick="triggerToast('Exchange Currency')" class="flex flex-col items-center gap-1">
+            <div class="size-11 rounded-full border border-[var(--border-color)] bg-[var(--bg-surface)] flex items-center justify-center text-sm shadow-xs">⇄</div>
+            <span class="text-[11px] font-medium">Exchange</span>
+          </button>
+          <button onclick="triggerToast('Account Details')" class="flex flex-col items-center gap-1">
+            <div class="size-11 rounded-full border border-[var(--border-color)] bg-[var(--bg-surface)] flex items-center justify-center text-sm shadow-xs">ℹ️</div>
+            <span class="text-[11px] font-medium">Details</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Segmented Tab Bar -->
+      <div class="bg-[var(--bg-tile)] p-1 rounded-2xl flex items-center gap-1 text-xs">
+        <button class="flex-1 py-2 rounded-xl bg-[var(--bg-surface)] font-semibold shadow-xs">Transactions</button>
+        <button class="flex-1 py-2 rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Analytics & Budgets</button>
+        <button class="flex-1 py-2 rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Cards (1)</button>
+        <button class="flex-1 py-2 rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)]">Settings</button>
+      </div>
+
+      <div class="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-5 divide-y divide-[var(--border-color)] shadow-xs">
+        <div class="pb-3 text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">August 2026</div>
+        <div class="py-3.5 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-3">
+            <div class="size-9 rounded-full bg-amber-400/20 text-amber-700 flex items-center justify-center font-bold">🛒</div>
+            <div><div class="font-medium">Shoprite Mall Accra</div><div class="text-[11px] text-[var(--text-secondary)]">08 Aug · Groceries</div></div>
+          </div>
+          <div class="font-medium balance-text" data-amount="−GH₵ 340.00">−GH₵ 340.00</div>
+        </div>
+        <div class="py-3.5 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-3">
+            <div class="size-9 rounded-full bg-blue-500/15 text-blue-700 flex items-center justify-center font-bold">⚡</div>
+            <div><div class="font-medium">Electricity Co of Ghana ECG</div><div class="text-[11px] text-[var(--text-secondary)]">06 Aug · Utilities</div></div>
+          </div>
+          <div class="font-medium balance-text" data-amount="−GH₵ 180.00">−GH₵ 180.00</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VARIATION 5: CARD-CENTRIC WALLET (APPLE WALLET / MONZO STYLE) -->
+    <section id="variation-5" class="var-screen hidden w-full max-w-[820px] flex flex-col gap-7 items-center">
+      <!-- Physical Card Render -->
+      <div class="w-full max-w-sm aspect-[1.586/1] rounded-2xl bg-gradient-to-tr from-neutral-900 via-neutral-800 to-neutral-950 text-white p-6 shadow-xl flex flex-col justify-between border border-neutral-700/40 relative overflow-hidden">
+        <div class="absolute -right-12 -top-12 size-40 rounded-full bg-amber-400/10 blur-2xl"></div>
+        <div class="flex items-center justify-between relative z-10">
+          <span class="text-xs tracking-widest font-mono text-neutral-400">GCB PREMIER CURRENT</span>
+          <span class="text-sm font-bold tracking-wider italic text-amber-400">VISA</span>
+        </div>
+        <div class="space-y-1 relative z-10">
+          <div class="text-[11px] text-neutral-400 uppercase tracking-widest">Available Balance</div>
+          <div class="text-3xl font-semibold tracking-tight balance-text" data-amount="GH₵ 42,300.00">GH₵ 42,300.00</div>
+        </div>
+        <div class="flex items-center justify-between text-xs font-mono tracking-widest text-neutral-300 relative z-10">
+          <span>•••• 1100</span>
+          <span>EXP 08/29</span>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-4 w-full max-w-sm justify-center">
+        <button onclick="triggerToast('Pay with QR or Contactless...')" class="flex-1 py-2.5 rounded-xl bg-amber-500 text-black font-semibold text-xs shadow-xs hover:bg-amber-400">Pay</button>
+        <button onclick="triggerToast('Card Settings & Security...')" class="flex-1 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] font-medium text-xs shadow-xs hover:bg-[var(--bg-tile)]">Card Controls</button>
+        <button onclick="triggerToast('Account Wire Info...')" class="px-3 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] text-xs shadow-xs">Details</button>
+      </div>
+
+      <!-- Recent Transactions List -->
+      <div class="w-full max-w-xl rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] divide-y divide-[var(--border-color)] shadow-xs">
+        <div class="p-4 flex items-center justify-between text-xs font-semibold text-[var(--text-secondary)]">
+          <span>Latest Transactions</span>
+          <span class="cursor-pointer hover:text-[var(--text-primary)]">Search 🔍</span>
+        </div>
+        <div class="p-4 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-3">
+            <div class="size-8 rounded-lg bg-black text-white flex items-center justify-center font-black text-xs">A</div>
+            <div><div class="font-medium">Apple Services Subscriptions</div><div class="text-[11px] text-[var(--text-secondary)]">iCloud & Music · Yesterday</div></div>
+          </div>
+          <div class="font-mono font-medium balance-text" data-amount="−GH₵ 49.00">−GH₵ 49.00</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VARIATION 6: HIGH-DENSITY CORPORATE TREASURY -->
+    <section id="variation-6" class="var-screen hidden w-full max-w-[1180px] flex flex-col gap-4 font-sans text-xs">
+      <!-- Top Metrics Bar -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)]">
+          <span class="text-[var(--text-secondary)] uppercase text-[10.5px] font-mono">Available Funds</span>
+          <div class="text-xl font-bold mt-1 font-mono balance-text" data-amount="GHS 42,300.00">GHS 42,300.00</div>
+        </div>
+        <div class="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)]">
+          <span class="text-[var(--text-secondary)] uppercase text-[10.5px] font-mono">Book / Ledger</span>
+          <div class="text-xl font-bold mt-1 font-mono balance-text" data-amount="GHS 42,300.00">GHS 42,300.00</div>
+        </div>
+        <div class="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)]">
+          <span class="text-[var(--text-secondary)] uppercase text-[10.5px] font-mono">Unclear Float</span>
+          <div class="text-xl font-bold mt-1 font-mono text-neutral-400">GHS 0.00</div>
+        </div>
+        <div class="p-4 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)]">
+          <span class="text-[var(--text-secondary)] uppercase text-[10.5px] font-mono">Overdraft Limit</span>
+          <div class="text-xl font-bold mt-1 font-mono text-emerald-600">GHS 100,000.00</div>
+        </div>
+      </div>
+
+      <!-- Action & Filter Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)]">
+        <div class="flex items-center gap-2">
+          <button class="px-3 py-1.5 rounded-lg bg-amber-500 text-black font-semibold">Initiate Payment</button>
+          <button class="px-3 py-1.5 rounded-lg border border-[var(--border-color)] hover:bg-[var(--bg-tile)]">Batch Upload</button>
+          <button class="px-3 py-1.5 rounded-lg border border-[var(--border-color)] hover:bg-[var(--bg-tile)]">Export MT940 / CAMT.053</button>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-[var(--text-secondary)]">Relationship: Commercial Retail</span>
+          <span class="font-mono">STATUS: ACTIVE</span>
+        </div>
+      </div>
+
+      <!-- Dense Table -->
+      <div class="rounded-xl border border-[var(--border-color)] bg-[var(--bg-surface)] overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left font-mono text-[11.5px]">
+          <thead class="bg-[var(--bg-tile)] border-b border-[var(--border-color)] text-[var(--text-secondary)]">
+            <tr>
+              <th class="p-3">VALUE DATE</th>
+              <th class="p-3">TXN REFERENCE</th>
+              <th class="p-3">COUNTERPARTY</th>
+              <th class="p-3">CHANNEL</th>
+              <th class="p-3 text-right">AMOUNT (GHS)</th>
+              <th class="p-3 text-center">STATUS</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--border-color)]">
+            <tr class="hover:bg-[var(--bg-tile)]/50">
+              <td class="p-3">2026-08-08</td>
+              <td class="p-3 text-amber-600">NIB-2026-901126</td>
+              <td class="p-3 font-sans">Transfer to Savings</td>
+              <td class="p-3">INTERNAL_TRANSFER</td>
+              <td class="p-3 text-right font-bold text-emerald-600 balance-text" data-amount="+2,000.00">+2,000.00</td>
+              <td class="p-3 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 text-[10px]">SETTLED</span></td>
+            </tr>
+            <tr class="hover:bg-[var(--bg-tile)]/50">
+              <td class="p-3">2026-08-07</td>
+              <td class="p-3 text-amber-600">NIB-2026-901125</td>
+              <td class="p-3 font-sans">Volta Machinery Ghana Ltd</td>
+              <td class="p-3">ACH_DIRECT_DEBIT</td>
+              <td class="p-3 text-right font-bold balance-text" data-amount="−8,400.00">−8,400.00</td>
+              <td class="p-3 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 text-[10px]">SETTLED</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- VARIATION 7: EDITORIAL WEALTH (MONOCLE / WEALTHFRONT STYLE) -->
+    <section id="variation-7" class="var-screen hidden w-full max-w-[760px] flex flex-col gap-10 py-6">
+      <div class="border-b border-[var(--border-color)] pb-8 flex flex-col gap-3">
+        <div class="text-xs uppercase tracking-widest text-[var(--text-secondary)]">Personal Banking & Private Reserves</div>
+        <h2 class="font-serif text-4xl sm:text-5xl italic font-normal">Current Reserve Account</h2>
+        <p class="text-sm text-[var(--text-secondary)] font-serif italic max-w-lg leading-relaxed">
+          Primary transactional account held under the personal mandate of Ama Serwaa. Fully liquid with instant domestic clearing.
+        </p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4">
+        <div>
+          <span class="text-xs text-[var(--text-secondary)] uppercase tracking-wider block">Available Balance</span>
+          <div class="text-4xl font-serif mt-1 balance-text" data-amount="GH₵ 42,300.00">GH₵ 42,300.00</div>
+        </div>
+        <div class="flex items-center gap-6 text-xs uppercase tracking-wider">
+          <button onclick="triggerToast('Transfer requested')" class="border-b border-black dark:border-white pb-0.5 hover:text-amber-500">Make Transfer</button>
+          <button onclick="triggerToast('Statement requested')" class="border-b border-black dark:border-white pb-0.5 hover:text-amber-500">Official Letter</button>
+        </div>
+      </div>
+
+      <div class="space-y-6 pt-6 border-t border-[var(--border-color)]">
+        <div class="text-xs uppercase tracking-widest text-[var(--text-secondary)] font-semibold">Ledger & History</div>
+        <div class="space-y-4">
+          <div class="flex items-baseline justify-between pb-4 border-b border-[var(--border-color)]/60 text-sm">
+            <div>
+              <div class="font-serif italic text-base">Transfer to Personal Savings</div>
+              <div class="text-xs text-[var(--text-secondary)]">August 8th, 2026 · Wire Reference 901126</div>
+            </div>
+            <div class="font-serif text-base balance-text" data-amount="+GH₵ 2,000.00">+GH₵ 2,000.00</div>
+          </div>
+          <div class="flex items-baseline justify-between pb-4 border-b border-[var(--border-color)]/60 text-sm">
+            <div>
+              <div class="font-serif italic text-base">Settlement of Retail Invoices</div>
+              <div class="text-xs text-[var(--text-secondary)]">August 5th, 2026 · Card Settlement</div>
+            </div>
+            <div class="font-serif text-base balance-text" data-amount="−GH₵ 850.00">−GH₵ 850.00</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VARIATION 8: ACTION DOCK (MOBILE-FIRST FLOATING DOCK) -->
+    <section id="variation-8" class="var-screen hidden w-full max-w-[640px] flex flex-col gap-6 relative pb-24">
+      <div class="flex items-center justify-between">
+        <button class="text-xs font-semibold text-[var(--text-secondary)]">← Accounts</button>
+        <div class="text-xs font-mono text-[var(--text-secondary)]">ACCT ···1100</div>
+      </div>
+
+      <div class="rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-8 text-center flex flex-col items-center gap-2 shadow-sm">
+        <span class="text-xs text-[var(--text-secondary)]">Total Available</span>
+        <div class="text-4xl sm:text-5xl font-semibold tracking-tight balance-text" data-amount="GH₵ 42,300.00">GH₵ 42,300.00</div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--bg-tile)] text-xs text-[var(--text-secondary)] mt-2">
+          <span>GCB Current</span><span>·</span><span class="text-emerald-500 font-medium">Active</span>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-5 space-y-4 shadow-xs">
+        <div class="flex justify-between items-center text-xs font-semibold">
+          <span>Account Credentials</span>
+          <button onclick="copyText('400199221100')" class="text-amber-600">Copy Details</button>
+        </div>
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between py-1.5 border-b border-[var(--border-color)]/60"><span class="text-[var(--text-secondary)]">Account No.</span><span class="font-mono">4001 9922 1100</span></div>
+          <div class="flex justify-between py-1.5 border-b border-[var(--border-color)]/60"><span class="text-[var(--text-secondary)]">Branch</span><span>Accra High Street</span></div>
+          <div class="flex justify-between py-1.5"><span class="text-[var(--text-secondary)]">SWIFT</span><span class="font-mono">GHCBGHAC</span></div>
+        </div>
+      </div>
+
+      <!-- Floating Action Dock -->
+      <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[var(--bg-surface)]/90 backdrop-blur-xl border border-[var(--border-color)] rounded-full px-5 py-3 shadow-2xl flex items-center gap-4">
+        <button onclick="triggerToast('Pay / Transfer')" class="flex items-center gap-1.5 text-xs font-semibold bg-amber-500 text-black px-4 py-2 rounded-full shadow-xs">
+          <span>💸</span> Pay
+        </button>
+        <button onclick="triggerToast('Fund Account')" class="flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-full hover:bg-[var(--bg-tile)]">
+          <span>📥</span> Deposit
+        </button>
+        <button onclick="triggerToast('Export Statement')" class="flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-full hover:bg-[var(--bg-tile)]">
+          <span>📄</span> Statement
+        </button>
+      </div>
+    </section>
+
+    <!-- VARIATION 9: CASHFLOW & INSIGHTS ENGINE -->
+    <section id="variation-9" class="var-screen hidden w-full max-w-[940px] flex flex-col gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+        <!-- Balance + Forecast Pill -->
+        <div class="md:col-span-8 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 sm:p-7 shadow-xs flex flex-col justify-between gap-5">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-xs text-[var(--text-secondary)]">Current Balance</span>
+              <div class="text-3xl sm:text-4xl font-semibold mt-1 balance-text" data-amount="GH₵ 42,300.00">GH₵ 42,300.00</div>
+            </div>
+            <span class="text-xs font-medium px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">
+              💡 Forecast: GH₵ 38,100 at month-end
+            </span>
+          </div>
+
+          <!-- Mini Sparkline / Bar simulation -->
+          <div>
+            <div class="flex justify-between text-xs text-[var(--text-secondary)] mb-2">
+              <span>Monthly Inflow: +GH₵18.5k</span>
+              <span>Outflow: −GH₵7.2k</span>
+            </div>
+            <div class="w-full h-3 bg-[var(--bg-tile)] rounded-full overflow-hidden flex">
+              <div class="h-full bg-emerald-500 rounded-full" style="width: 70%"></div>
+              <div class="h-full bg-amber-500 rounded-full ml-1" style="width: 28%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming Bills & Subscriptions -->
+        <div class="md:col-span-4 rounded-3xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 shadow-xs flex flex-col justify-between gap-4">
+          <div class="flex items-center justify-between text-xs font-semibold">
+            <span>Upcoming Recurring</span>
+            <span class="text-[var(--text-secondary)]">2 due</span>
+          </div>
+          <div class="space-y-2 text-xs">
+            <div class="flex justify-between items-center py-1">
+              <span>Netflix & Cloud</span>
+              <span class="font-mono text-neutral-400">GH₵ 210.00</span>
+            </div>
+            <div class="flex justify-between items-center py-1">
+              <span>Gym Membership</span>
+              <span class="font-mono text-neutral-400">GH₵ 350.00</span>
+            </div>
+          </div>
+          <button class="w-full py-2 rounded-xl bg-[var(--bg-tile)] text-xs font-medium hover:bg-[var(--bg-tile)]/80">Manage Scheduled</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VARIATION 10: WIRE & ROUTING CREDENTIAL HUB (WISE / PAYONEER STYLE) -->
+    <section id="variation-10" class="var-screen hidden w-full max-w-[920px] flex flex-col gap-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-semibold tracking-tight">Receiving & Wire Hub</h2>
+          <p class="text-xs text-[var(--text-secondary)]">Share these credentials to receive local and international payments.</p>
+        </div>
+        <button onclick="copyText('Account: 4001 9922 1100\nBank: GCB Bank Ghana\nSWIFT: GHCBGHAC\nHolder: Ama Serwaa')" class="h-9 px-4 rounded-xl bg-amber-500 text-black text-xs font-semibold shadow-xs">
+          📋 Copy All Details
+        </button>
+      </div>
+
+      <!-- Credential Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- Domestic GHANA Details -->
+        <div class="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 shadow-xs flex flex-col justify-between gap-5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-amber-600">Domestic GHS Details</span>
+            <span class="text-xs bg-amber-500/10 text-amber-700 px-2 py-0.5 rounded-full font-medium">Local Clearing</span>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div class="flex justify-between items-center py-2 border-b border-[var(--border-color)]">
+              <span class="text-[var(--text-secondary)]">Account Number</span>
+              <div class="flex items-center gap-2 font-mono font-semibold"><span>4001 9922 1100</span><button onclick="copyText('400199221100')">📋</button></div>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-[var(--border-color)]">
+              <span class="text-[var(--text-secondary)]">Bank Name</span>
+              <span class="font-medium">GCB Bank PLC</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-[var(--border-color)]">
+              <span class="text-[var(--text-secondary)]">Branch Code</span>
+              <span class="font-mono">040102</span>
+            </div>
+            <div class="flex justify-between items-center py-2">
+              <span class="text-[var(--text-secondary)]">Beneficiary Name</span>
+              <span class="font-medium uppercase">AMA SERWAA</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- International SWIFT Details -->
+        <div class="rounded-2xl border border-[var(--border-color)] bg-[var(--bg-surface)] p-6 shadow-xs flex flex-col justify-between gap-5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold uppercase tracking-wider text-blue-600">International Wire (SWIFT)</span>
+            <span class="text-xs bg-blue-500/10 text-blue-700 px-2 py-0.5 rounded-full font-medium">Cross-Border</span>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div class="flex justify-between items-center py-2 border-b border-[var(--border-color)]">
+              <span class="text-[var(--text-secondary)]">SWIFT / BIC Code</span>
+              <div class="flex items-center gap-2 font-mono font-semibold"><span>GHCBGHAC</span><button onclick="copyText('GHCBGHAC')">📋</button></div>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-[var(--border-color)]">
+              <span class="text-[var(--text-secondary)]">Intermediary Bank</span>
+              <span>Standard Chartered NY</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-[var(--border-color)]">
+              <span class="text-[var(--text-secondary)]">Currency Accepted</span>
+              <span>USD, EUR, GBP, GHS</span>
+            </div>
+            <div class="flex justify-between items-center py-2">
+              <span class="text-[var(--text-secondary)]">Bank Address</span>
+              <span class="text-right truncate max-w-[180px]">Thorpe Road, High St, Accra</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FLOATING NOTIFICATION TOAST ================= -->
+  <div id="toast" class="toast fixed bottom-5 right-5 z-50 transform translate-y-16 opacity-0 pointer-events-none flex items-center gap-2.5 px-4 py-3 rounded-xl bg-neutral-900 text-white dark:bg-white dark:text-neutral-900 shadow-2xl text-xs font-medium">
+    <span id="toast-icon">✓</span>
+    <span id="toast-msg">Copied to clipboard!</span>
+  </div>
+
+  <!-- ================= INTERACTIVE SCRIPT ================= -->
+  <script>
+    const VARIATIONS_META = {
+      1: {
+        id: "PATTERN 1",
+        name: "The Modern Dual-Card Minimalist",
+        desc: "Optimized for visual calm: Separates money management (left) from routing/account credentials (right) in two harmonious cards, followed by a restrained transaction journal."
+      },
+      2: {
+        id: "PATTERN 2",
+        name: "The Unified Banner (Mercury / Brex Style)",
+        desc: "High-conviction single hero card with monthly inflows/outflows cash summary and segmented sub-tabs for transactions, limits, and rules."
+      },
+      3: {
+        id: "PATTERN 3",
+        name: "The Split Master-Detail Ledger (Linear / Stripe Style)",
+        desc: "Asymmetric split view: 60% dynamic real-time transaction ledger on the left with a sticky account inspector and quick wire card on the right."
+      },
+      4: {
+        id: "PATTERN 4",
+        name: "The Tabbed Executive Hub (Revolut / N26 Pro Style)",
+        desc: "Centered, app-like hero with circular action badges and dedicated tabs (Transactions, Budgets, Cards, Settings) to prevent information overload."
+      },
+      5: {
+        id: "PATTERN 5",
+        name: "The Card-Centric Wallet (Apple Wallet / Monzo Style)",
+        desc: "Visual skeuomorphic card element front-and-center, turning the plastic/virtual card into the primary navigation anchor with inline CVV / lock controls."
+      },
+      6: {
+        id: "PATTERN 6",
+        name: "The High-Density Corporate Treasury (Bloomberg Style)",
+        desc: "Designed for corporate controllers: Multi-metric KPI row, MT940 / CAMT.053 exports, and dense financial tables with reference IDs."
+      },
+      7: {
+        id: "PATTERN 7",
+        name: "The Editorial / Calm Wealth (Monocle / Wealthfront Style)",
+        desc: "High whitespace, refined serif typography, zero boxiness, and natural language descriptions creating an exclusive private banking feel."
+      },
+      8: {
+        id: "PATTERN 8",
+        name: "The Action Dock (Mobile-First Floating Island)",
+        desc: "Compact hero card complemented by a persistent floating glassmorphic action pill dock at the bottom of the viewport for effortless one-tap actions."
+      },
+      9: {
+        id: "PATTERN 9",
+        name: "The Cashflow & Insights Engine (Copilot / Emma Style)",
+        desc: "Pairs current balance with automated month-end cashflow projections and an upcoming recurring bills tracker."
+      },
+      10: {
+        id: "PATTERN 10",
+        name: "The Wire & Routing Credential Hub (Wise Style)",
+        desc: "Prioritizes inbound funding and account sharing with dedicated domestic vs. international SWIFT credential cards and 1-click copy."
+      }
+    };
+
+    let activeVar = 1;
+    let isMasked = false;
+
+    function setVariation(num) {
+      activeVar = num;
+      // Hide all variations
+      document.querySelectorAll('.var-screen').forEach(el => el.classList.add('hidden'));
+      // Show selected variation
+      const target = document.getElementById(`variation-${num}`);
+      if (target) target.classList.remove('hidden');
+
+      // Update pills
+      document.querySelectorAll('.var-btn').forEach(btn => {
+        btn.classList.remove('bg-amber-500', 'text-black', 'shadow-xs');
+        btn.classList.add('text-[var(--text-secondary)]');
+      });
+      const activeBtn = document.getElementById(`btn-var-${num}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-[var(--text-secondary)]');
+        activeBtn.classList.add('bg-amber-500', 'text-black', 'shadow-xs');
+      }
+
+      // Update metadata banner
+      const meta = VARIATIONS_META[num];
+      if (meta) {
+        document.getElementById('badge-pattern-id').innerText = meta.id;
+        document.getElementById('badge-pattern-name').innerText = meta.name;
+        document.getElementById('badge-pattern-desc').innerText = meta.desc;
+      }
+    }
+
+    function toggleMask() {
+      isMasked = !isMasked;
+      const maskIcon = document.getElementById('mask-icon');
+      const maskLabel = document.getElementById('mask-label');
+      if (isMasked) {
+        maskIcon.innerText = '🙈';
+        maskLabel.innerText = 'Show Balance';
+      } else {
+        maskIcon.innerText = '👁️';
+        maskLabel.innerText = 'Hide Balance';
+      }
+
+      // Update all balance texts
+      document.querySelectorAll('.balance-text').forEach(el => {
+        const raw = el.getAttribute('data-amount') || el.innerText;
+        if (isMasked) {
+          el.innerText = raw.replace(/[\d,]+(\.\d+)?/g, '••••••');
+        } else {
+          el.innerText = raw;
+        }
+      });
+      triggerToast(isMasked ? 'Balances hidden' : 'Balances visible');
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text);
+      triggerToast(`Copied: ${text}`);
+    }
+
+    let toastTimer = null;
+    function triggerToast(msg) {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-msg');
+      msgEl.innerText = msg;
+      toast.classList.remove('translate-y-16', 'opacity-0', 'pointer-events-none');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-16', 'opacity-0', 'pointer-events-none');
+      }, 2200);
+    }
+
+    // Keyboard navigation: Press 1-9 or 0 for variation 10, or ArrowLeft/ArrowRight
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key >= '1' && e.key <= '9') {
+        setVariation(parseInt(e.key));
+      } else if (e.key === '0') {
+        setVariation(10);
+      } else if (e.key === 'ArrowRight' || e.key === ']') {
+        const next = activeVar === 10 ? 1 : activeVar + 1;
+        setVariation(next);
+      } else if (e.key === 'ArrowLeft' || e.key === '[') {
+        const prev = activeVar === 1 ? 10 : activeVar - 1;
+        setVariation(prev);
+      }
+    });
+
+    // Initialize
+    setVariation(1);
+  </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+"use client";
+
+import { useMemo } from "react";
+import { Account, BILLERS } from "@/lib/mock-data";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  FromAccountSelector,
+  AmountInput,
+  NarrationInput,
+  CategorySelect,
+  InsufficientFundsAlert,
+  ProceedButton,
+  VerifiedAccountBadge,
+} from "./shared";
+
+const GHANA_GOV_SERVICES = [
+  "GRA — Domestic Tax",
+  "GRA — Customs & Ports",
+  "Passport Office",
+  "DVLA — License & Road Worthy",
+  "Registrar General's Dept (RGD)",
+  "Lands Commission",
+  "Ghana Police Service — Traffic Fines",
+];
+
+export interface BillsPaymentFormState {
+  fromId: string;
+  subType: "bill" | "ecg" | "ghanagov";
+  billerId: string;
+  billRef: string;
+  ecgMeter: string;
+  govService: string;
+  govRef: string;
+  benName: string;
+  amount: string;
+  narration: string;
+  category: string;
+}
+
+interface BillsPaymentFlowProps {
+  accounts: Account[];
+  state: BillsPaymentFormState;
+  onChange: (key: keyof BillsPaymentFormState, value: string) => void;
+  onProceed: () => void;
+}
+
+export function BillsPaymentFlow({
+  accounts,
+  state,
+  onChange,
+  onProceed,
+}: BillsPaymentFlowProps) {
+  const fromAccount = useMemo(
+    () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
+    [accounts, state.fromId]
+  );
+
+  const selectedBiller = useMemo(() => {
+    return BILLERS.find((b) => b.id === state.billerId) ?? BILLERS[0];
+  }, [state.billerId]);
+
+  const verifiedName = useMemo(() => {
+    if (state.subType === "ecg") {
+      if (state.ecgMeter.trim().length >= 5) {
+        return `ECG Prepaid · Meter ${state.ecgMeter.trim()}`;
+      }
+      return "";
+    }
+    if (state.subType === "ghanagov") {
+      if (state.govRef.trim().length >= 4) {
+        return `${state.govService || "Ghana.gov"} · Ref ${state.govRef.trim()}`;
+      }
+      return "";
+    }
+    if (state.billRef.trim().length >= 4) {
+      return `${selectedBiller?.name || "Biller"} · ${state.billRef.trim()}`;
+    }
+    return "";
+  }, [state.subType, state.ecgMeter, state.govService, state.govRef, state.billRef, selectedBiller?.name]);
+
+  const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
+  const overBalance = numAmount > (fromAccount?.available ?? 0);
+
+  const isDestinationValid = useMemo(() => {
+    if (state.subType === "ecg") return state.ecgMeter.trim().length >= 5;
+    if (state.subType === "ghanagov") return Boolean(state.govService) && state.govRef.trim().length >= 4;
+    return Boolean(state.billerId) && state.billRef.trim().length >= 4;
+  }, [state.subType, state.ecgMeter, state.govService, state.govRef, state.billerId, state.billRef]);
+
+  const isValid = Boolean(state.fromId) && isDestinationValid && numAmount > 0 && !overBalance;
+
+  return (
+    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+      {/* 1. From Account */}
+      <FromAccountSelector
+        accounts={accounts}
+        value={state.fromId}
+        onChange={(id) => onChange("fromId", id)}
+      />
+
+      {/* 2. Biller & Reference / Account */}
+      <div className="flex flex-col gap-3">
+        {state.subType === "ecg" ? (
+          <>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[14px] font-medium text-foreground">Service Provider</label>
+              <div className="flex h-13 items-center rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
+                Electricity Company of Ghana (ECG)
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[14px] font-medium text-foreground">Meter Number</label>
+              <input
+                type="text"
+                value={state.ecgMeter}
+                onChange={(e) => onChange("ecgMeter", e.target.value)}
+                placeholder="Enter 5-11 digit prepaid meter number"
+                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+              />
+            </div>
+          </>
+        ) : state.subType === "ghanagov" ? (
+          <>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[14px] font-medium text-foreground">Government Agency / Service</label>
+              <Select
+                value={state.govService || GHANA_GOV_SERVICES[0]}
+                onValueChange={(val) => val && onChange("govService", val)}
+              >
+                <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                  <SelectValue placeholder="Select government agency" />
+                </SelectTrigger>
+                <SelectContent>
+                  {GHANA_GOV_SERVICES.map((s) => (
+                    <SelectItem key={s} value={s}>
+                      {s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[14px] font-medium text-foreground">Invoice / PRN Reference</label>
+              <input
+                type="text"
+                value={state.govRef}
+                onChange={(e) => onChange("govRef", e.target.value)}
+                placeholder="Enter Ghana.gov PRN or Invoice Number"
+                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[14px] font-medium text-foreground">Select Biller</label>
+              <Select
+                value={state.billerId || BILLERS[0]?.id}
+                onValueChange={(val) => val && onChange("billerId", val)}
+              >
+                <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                  <SelectValue placeholder="Select biller" />
+                </SelectTrigger>
+                <SelectContent>
+                  {BILLERS.map((b) => (
+                    <SelectItem key={b.id} value={b.id}>
+                      {b.name} ({b.category})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[14px] font-medium text-foreground">
+                {selectedBiller?.reference || "Account / Reference Number"}
+              </label>
+              <input
+                type="text"
+                value={state.billRef}
+                onChange={(e) => onChange("billRef", e.target.value)}
+                placeholder={`Enter ${selectedBiller?.reference?.toLowerCase() || "account number"}`}
+                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+              />
+            </div>
+          </>
+        )}
+
+        {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+      </div>
+
+      {/* 3. Amount */}
+      <AmountInput
+        value={state.amount}
+        onChange={(val) => onChange("amount", val)}
+      />
+
+      {/* 4. Narration */}
+      <NarrationInput
+        value={state.narration}
+        onChange={(val) => onChange("narration", val)}
+        placeholder="Bill payment"
+      />
+
+      {/* 5. Transaction Category (Optional) */}
+      <CategorySelect
+        value={state.category}
+        onChange={(val) => onChange("category", val)}
+      />
+
+      {overBalance && (
+        <InsufficientFundsAlert
+          available={fromAccount?.available ?? 0}
+          currency={fromAccount?.currency || "GHS"}
+        />
+      )}
+
+      {/* 6. Proceed CTA */}
+      <ProceedButton
+        disabled={!isValid}
+        onClick={onProceed}
+        label="Proceed"
+      />
+    </div>
+  );
+}

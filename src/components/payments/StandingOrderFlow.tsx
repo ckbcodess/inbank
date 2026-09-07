@@ -49,7 +49,7 @@ import {
 import { useGroupsStore } from "@/lib/groups-store";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import { useSession } from "@/lib/session-store";
-import { AuthorisePanel } from "./AuthorisePanel";
+import TransactionPinModal from "./TransactionPinModal";
 import { useAuthorisation } from "./useAuthorisation";
 
 type TransactionType =
@@ -243,6 +243,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const [createdId, setCreatedId] = useState("");
   const { groups } = useGroupsStore();
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
+  const [pinModalOpen, setPinModalOpen] = useState(false);
 
   // Stage Control: Exactly one active stage at a time
   const [activeStage, setActiveStage] = useState<number>(1);
@@ -379,7 +380,6 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const stage2Valid = Number(f.amount.replace(/,/g, "")) > 0 && Boolean(f.accountId);
   const stage3Valid = Boolean(f.frequency) && Boolean(f.firstRun);
   const stage4Valid = Boolean(f.nickname.trim());
-  const canActivate = stage4Valid && auth.complete;
 
   const proceedToStage = (nextStage: number) => {
     setActiveStage(nextStage);
@@ -1192,62 +1192,34 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                 </div>
 
                 <Button
-                  className="mt-2 w-full h-11 rounded-xl text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98]"
+                  className="mt-2 w-full h-11 rounded-xl text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
                   disabled={!stage4Valid}
                   onClick={() => {
-                    auth.reset();
-                    proceedToStage(5);
+                    setPinModalOpen(true);
                   }}
                 >
-                  Continue to Authorisation
+                  Authorize &amp; Schedule
                 </Button>
               </div>
             ) : null}
           </div>
         )}
 
-        {/* ===================================================================
-         * STAGE 5: Authorisation Panel
-         * =================================================================== */}
-        {maxRevealedStage >= 5 && activeStage === 5 && (
-          <div className="flex flex-col gap-4 border-t border-border/70 pt-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-            <div className="text-[16px] text-foreground tracking-[-0.01em]">5. Authorise &amp; Schedule</div>
-
-            {/* Compact Order Summary Pill */}
-            <div className="rounded-xl border border-border bg-muted/40 p-4 text-[13.5px] flex flex-col gap-2">
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Order Summary</span>
-                <span className="font-medium text-foreground tabular">{formatMoney(Number(f.amount) || 0, "GHS", true)} ({f.frequency})</span>
-              </div>
-              <div className="flex items-center justify-between text-[12.5px] text-muted-foreground">
-                <span>To {resolvedName}</span>
-                <span>From {account?.name}</span>
-              </div>
-            </div>
-
-            {/* Authorisation Panel */}
-            <AuthorisePanel
-              summary={null}
-              method={auth.method}
-              onMethodChange={auth.setMethod}
-              pin={auth.pin}
-              onPinChange={auth.setPin}
-              otp={auth.otp}
-              onOtpChange={auth.setOtp}
-              state={auth.state}
-              resend={auth.resend}
-              onResend={auth.requestResend}
-            />
-
-            <Button
-              className="mt-2 w-full h-11 rounded-xl text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm transition-transform duration-100 active:scale-[0.98]"
-              disabled={!canActivate}
-              onClick={handleActivate}
-            >
-              Authorize &amp; Schedule
-            </Button>
-          </div>
-        )}
+        {/* Universal Transaction PIN Modal matching Figma Node 1277:23601 */}
+        <TransactionPinModal
+          open={pinModalOpen || (maxRevealedStage >= 5 && activeStage === 5)}
+          onOpenChange={(isOpen) => {
+            setPinModalOpen(isOpen);
+            if (!isOpen && activeStage === 5) {
+              setActiveStage(4);
+              setMaxRevealedStage(4);
+            }
+          }}
+          onSuccess={() => {
+            setPinModalOpen(false);
+            handleActivate();
+          }}
+        />
 
         <CreateGroupModal
           open={createGroupOpen}
