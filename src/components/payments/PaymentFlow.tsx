@@ -48,6 +48,8 @@ import {
   accountsForProfile,
   BillerCategory,
   BILLERS,
+  CARDS,
+  fundCard,
   formatMoney,
 } from "@/lib/mock-data";
 import { useGroupsStore } from "@/lib/groups-store";
@@ -61,7 +63,9 @@ import { OtherGcbFlow } from "./flows/OtherGcbFlow";
 import { OtherBankFlow } from "./flows/OtherBankFlow";
 import { MobileWalletFlow } from "./flows/MobileWalletFlow";
 import { WalletToBankFlow } from "./flows/WalletToBankFlow";
-import { AirtimeDataFlow } from "./flows/AirtimeDataFlow";
+import { AirtimeFlow } from "./flows/AirtimeFlow";
+import { DataBundleFlow } from "./flows/DataBundleFlow";
+import { CardTopUpFlow } from "./flows/CardTopUpFlow";
 import { BillsPaymentFlow } from "./flows/BillsPaymentFlow";
 import { InternationalWireFlow } from "./flows/InternationalWireFlow";
 import { GroupPaymentFlow } from "./flows/GroupPaymentFlow";
@@ -1563,8 +1567,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "proxy") return verifiedAccountName || f.pxId || "Proxy Recipient";
     if (rail === "papss") return f.wBenName || "International Beneficiary";
     if (rail === "group") return f.groupName || "Group Contribution";
-    if (rail === "data" || rail === "airtime") return verifiedAccountName || (f.aPhone ? `Mobile ${f.aPhone}` : "Recipient");
-    if (rail === "card-topup") return f.cardId ? (f.cardId === "card-p1" ? "GCB Prepaid Travel Card (••8892)" : "GCB Virtual Card (••4101)") : "Select Card";
+    if (rail === "data") return verifiedAccountName || (f.aPhone ? `Data Bundle (${f.aPhone})` : "Recipient");
+    if (rail === "airtime") return verifiedAccountName || (f.aPhone ? `Airtime (${f.aPhone})` : "Recipient");
+    if (rail === "card-topup") {
+      const card = CARDS.find((c) => c.id === f.cardId);
+      return card ? `${card.name} (${card.maskedNumber})` : "Card Top up";
+    }
     if (rail === "bill") {
       const matchedRecent = RECENT_AVATARS.find(
         (x) => x.rail === "bill" && (x.billerId === f.billerId || x.acct === f.billRef)
@@ -1614,9 +1622,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     }
     if (rail === "proxy") return `Proxy • ${f.pxId}`;
     if (rail === "papss") return `${f.wBank} (${f.wCountry}) • ${f.wIban}`;
-    if (rail === "data") return `${f.wNetwork} • ${f.aPhone}`;
-    if (rail === "airtime") return `${f.wNetwork || "Mobile"} • ${f.aPhone}`;
-    if (rail === "card-topup") return f.cardId === "card-p1" ? "USD 350.00 Balance" : "GHS 1,420.00 Balance";
+    if (rail === "data") return `${f.wNetwork || "Mobile Network"} • ${f.aPhone}`;
+    if (rail === "airtime") return `${f.wNetwork || "Mobile Network"} • ${f.aPhone}`;
+    if (rail === "card-topup") {
+      const card = CARDS.find((c) => c.id === f.cardId);
+      return card ? `${card.scheme} ${card.type} • Balance: ${formatMoney(card.balance ?? 0, card.currency, true)}` : "Prepaid / Virtual Card";
+    }
     if (rail === "bill") return `${biller?.name || "Biller"} • ${f.billRef}`;
     if (rail === "ecg") return `Meter: ${f.ecgMeter}`;
     if (rail === "ghanagov") return `Invoice: ${f.govRef}`;
@@ -1648,6 +1659,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const resolvedName = recipientDisplayName;
 
   const reviewAccountLabel = useMemo(() => {
+    if (rail === "card-topup") return "Destination Card";
     if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") {
       return "Phone Number";
     }
@@ -1661,6 +1673,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   const reviewAccountValue = useMemo(() => {
     if (bankCategory === "own" && rail !== "wallet-to-bank") return toOwnAccount?.number ? `••••${toOwnAccount.number.slice(-4)}` : "Own Account";
+    if (rail === "card-topup") {
+      const card = CARDS.find((c) => c.id === f.cardId);
+      return card ? `${card.maskedNumber}` : "Card";
+    }
     if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") return f.benAcct;
     if (rail === "wallet" || rail === "momo") return f.wPhone;
     if (rail === "airtime" || rail === "data") return f.aPhone;
@@ -1670,9 +1686,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "proxy") return f.pxId;
     if (rail === "group") return selectedGroupObj ? `${selectedGroupObj.members.length} members (${selectedGroupObj.splitType === "equal" ? `GHS ${selectedGroupObj.defaultPerMemberAmount} each` : "Custom"})` : "Group";
     return f.benAcct;
-  }, [bankCategory, toOwnAccount?.number, rail, f.benAcct, f.wPhone, f.aPhone, f.ecgMeter, f.billRef, f.govRef, f.pxId, selectedGroupObj]);
+  }, [bankCategory, toOwnAccount?.number, rail, f.benAcct, f.wPhone, f.aPhone, f.ecgMeter, f.billRef, f.govRef, f.pxId, f.cardId, selectedGroupObj]);
 
   const reviewInstitutionLabel = useMemo(() => {
+    if (rail === "card-topup") return "Card Details";
     if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") {
       return "Network Provider";
     }
@@ -1682,13 +1699,17 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   }, [rail]);
 
   const reviewInstitutionValue = useMemo(() => {
+    if (rail === "card-topup") {
+      const card = CARDS.find((c) => c.id === f.cardId);
+      return card ? `${card.scheme} ${card.type} (${card.currency})` : "Prepaid Card";
+    }
     if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") return f.bank || "GCB Bank";
     if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") return f.wNetwork || "Mobile Money";
     if (rail === "bill") return biller?.name || "Biller";
     if (rail === "ecg") return "Electricity Company of Ghana";
     if (rail === "ghanagov") return f.govService || "Ghana.gov";
     return "";
-  }, [rail, f.bank, f.wNetwork, biller?.name, f.govService]);
+  }, [rail, f.bank, f.wNetwork, biller?.name, f.govService, f.cardId]);
 
   // Stage 1 Validation
   const isStage1Valid = useMemo(() => {
@@ -1796,6 +1817,11 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       const d = new Date();
       const isOwnTransfer = rail === "bank" && bankCategory === "own";
       const isDualMandate = account?.isJoint && account?.mandate === "Both to sign";
+      const cardObj = rail === "card-topup" ? CARDS.find((c) => c.id === f.cardId) : null;
+
+      if (rail === "card-topup" && f.cardId && currentAmount > 0) {
+        fundCard(f.cardId, currentAmount);
+      }
 
       setReceipt({
         pending: Boolean(isDualMandate),
@@ -1803,19 +1829,25 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           ? "Payment Queued — Awaiting Co-Signatory Approval"
           : isOwnTransfer
           ? "Transfer Between Accounts Successful"
+          : rail === "card-topup"
+          ? "Card Top-Up Successful"
           : "Transfer Successful",
         msg: isDualMandate
           ? `Your transfer of ${formatMoney(currentAmount, "GHS", true)} from ${account?.name} has been authorized with your PIN. An alert was sent to co-holder Efua Mensah to approve.`
           : isOwnTransfer
           ? `Transferred ${formatMoney(currentAmount, "GHS", true)} to your ${toOwnAccount?.name || "Account"}`
+          : rail === "card-topup"
+          ? `Topped up ${cardObj?.name || "card"} with ${formatMoney(currentAmount, cardObj?.currency || "GHS", true)}`
           : `Sent ${formatMoney(currentAmount, rail === "papss" ? f.wCurrency : "GHS", true)} to ${resolvedName || "recipient"}`,
         trn,
         date: d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }),
         time: d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }),
-        recipient: isOwnTransfer ? (toOwnAccount?.name || "My Account") : (resolvedName || "Recipient"),
+        recipient: isOwnTransfer ? (toOwnAccount?.name || "My Account") : rail === "card-topup" ? (cardObj?.name || "Card") : (resolvedName || "Recipient"),
         account:
           isOwnTransfer
             ? (toOwnAccount?.number || "")
+            : rail === "card-topup"
+            ? (cardObj?.maskedNumber || "")
             : rail === "bank"
             ? f.benAcct
             : rail === "wallet" || rail === "data" || rail === "airtime"
@@ -1830,7 +1862,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             ? f.govRef
             : f.benAcct,
         bank:
-          rail === "bank"
+          rail === "card-topup"
+            ? `${cardObj?.scheme || "Visa"} ${cardObj?.type || "Prepaid"}`
+            : rail === "bank"
             ? f.bank
             : rail === "wallet" || rail === "data" || rail === "airtime"
             ? f.wNetwork
@@ -1840,7 +1874,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         amount: currentAmount,
         fee,
         total: totalDebit,
-        narration: f.bankRef || f.wRef || f.pxRef || (rail === "data" ? (bundle?.name || "Data Bundle") : "Online Payment"),
+        narration: f.bankRef || f.wRef || f.pxRef || (rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Data Bundle") : "Online Payment"),
         rows: [
           ...(isDualMandate
             ? ([
@@ -2559,28 +2593,77 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               />
             )}
 
-            {/* Flow 6: Airtime & Data Bundles */}
-            {(rail === "airtime" || rail === "data") && (
-              <AirtimeDataFlow
+            {/* Flow 6A: Airtime Top-up */}
+            {rail === "airtime" && (
+              <AirtimeFlow
                 accounts={accounts}
                 state={{
                   fromId: f.fromId,
-                  product: rail === "data" ? "data" : (f.product || "airtime"),
                   wNetwork: f.wNetwork || "MTN Mobile Money",
                   aPhone: f.aPhone,
                   benName: f.benName,
-                  airtimeAmount: f.airtimeAmount,
-                  bundleId: f.bundleId,
-                  narration: f.wRef || f.bankRef,
+                  amount: f.airtimeAmount,
+                  narration: f.bankRef || f.wRef,
                   category: f.category,
                 }}
                 onChange={(key, val) => {
-                  if (key === "product") {
-                    setRail(val as Rail);
-                    set("product", val as "airtime" | "data");
-                  } else if (key === "narration") {
-                    set("wRef", val);
+                  if (key === "amount") set("airtimeAmount", val);
+                  else if (key === "narration") {
                     set("bankRef", val);
+                    set("wRef", val);
+                  } else set(key, val);
+                }}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
+            )}
+
+            {/* Flow 6B: Internet Data Bundle */}
+            {rail === "data" && (
+              <DataBundleFlow
+                accounts={accounts}
+                state={{
+                  fromId: f.fromId,
+                  wNetwork: f.wNetwork || "MTN Mobile Money",
+                  aPhone: f.aPhone,
+                  benName: f.benName,
+                  bundleId: f.bundleId,
+                  narration: f.bankRef || f.wRef,
+                  category: f.category,
+                }}
+                onChange={(key, val) => {
+                  if (key === "narration") {
+                    set("bankRef", val);
+                    set("wRef", val);
+                  } else set(key, val);
+                }}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
+            )}
+
+            {/* Flow 6C: Card Top up */}
+            {rail === "card-topup" && (
+              <CardTopUpFlow
+                accounts={accounts}
+                state={{
+                  fromId: f.fromId,
+                  cardId: f.cardId,
+                  amount: f.cardAmount,
+                  narration: f.bankRef || f.wRef,
+                  category: f.category,
+                }}
+                onChange={(key, val) => {
+                  if (key === "amount") set("cardAmount", val);
+                  else if (key === "narration") {
+                    set("bankRef", val);
+                    set("wRef", val);
                   } else set(key, val);
                 }}
                 onProceed={() => {
