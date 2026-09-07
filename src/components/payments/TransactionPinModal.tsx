@@ -7,9 +7,9 @@
  * - Header: "Authorization" with top-right close button.
  * - Body:
  *   • Centered Lock Icon
- *   • Heading: "Enter your 6-digit PIN to authorise"
- *   • 6 Circular PIN dot indicators (gap-6, size-6, filled vs empty)
- *   • Real keyboard & mobile numeric input support with auto-submit on 6th digit
+ *   • Heading: "Enter your 4-digit PIN to authorise"
+ *   • 4 Circular PIN dot indicators (gap-7, size-6, filled vs empty)
+ *   • Real keyboard & mobile numeric input support with auto-submit on 4th digit
  *   • Error shake animation and friendly warning
  *   • Secondary action: "Request OTP via SMS instead"
  *   • Seamless fallback to 6-digit SMS OTP with resend timer
@@ -142,19 +142,19 @@ export default function TransactionPinModal({
 
               {/* Heading */}
               <h2 className="mt-5 text-[22px] font-medium tracking-[-0.02em] text-foreground">
-                Enter your 6-digit PIN to authorise
+                Enter your 4-digit PIN to authorise
               </h2>
 
-              {/* 6 Circular PIN Dot Indicators */}
+              {/* 4 Circular PIN Dot Indicators */}
               <div
                 role="button"
                 tabIndex={0}
                 onClick={handleContainerClick}
                 className={cn(
-                  "relative mt-8 sm:mt-10 flex items-center justify-center gap-5 sm:gap-7 cursor-pointer select-none py-2 focus:outline-none",
+                  "relative mt-8 sm:mt-10 flex items-center justify-center gap-6 sm:gap-8 cursor-pointer select-none py-2 focus:outline-none",
                   auth.state === "error" && "animate-pin-shake"
                 )}
-                aria-label="Enter 6-digit PIN indicator"
+                aria-label="Enter 4-digit PIN indicator"
               >
                 {/* Hidden numeric input */}
                 <input
@@ -168,7 +168,7 @@ export default function TransactionPinModal({
                   autoComplete="one-time-code"
                   disabled={submitting}
                   className="absolute inset-0 size-full opacity-0 cursor-pointer pointer-events-auto"
-                  aria-label="Enter 6-digit transaction PIN"
+                  aria-label="Enter 4-digit transaction PIN"
                 />
 
                 {Array.from({ length: PIN_LENGTH }, (_, i) => {
@@ -281,7 +281,7 @@ export default function TransactionPinModal({
                   className="mt-1 flex items-center justify-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                   <KeyRound size={13} strokeWidth={1.8} />
-                  <span>Use 6-digit Transaction PIN instead</span>
+                  <span>Use 4-digit Transaction PIN instead</span>
                 </button>
               </div>
             </>

@@ -30,6 +30,7 @@ import { SimpleTooltip } from "@/components/ui/tooltip";
 import { accountsForProfile, type PaymentCard } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
+import TransactionPinModal from "@/components/payments/TransactionPinModal";
 import { toast } from "sonner";
 
 export interface VirtualCardDetailsViewProps {
@@ -76,22 +77,17 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
   const [tempNickname, setTempNickname] = useState(cardNickname);
 
   // PIN Verification & Security PIN Countdown State
-  const [pinStep, setPinStep] = useState<"auth" | "revealed">("auth");
-  const [transactionPinInput, setTransactionPinInput] = useState("");
-  const [pinError, setPinError] = useState<string | null>(null);
+  const [pinAuthOpen, setPinAuthOpen] = useState(false);
   const [pinCountdown, setPinCountdown] = useState(15);
 
   useEffect(() => {
-    if (activeModal !== "pin" || pinStep !== "revealed") return;
+    if (activeModal !== "pin") return;
 
     const interval = setInterval(() => {
       setPinCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(interval);
           setActiveModal(null);
-          setPinStep("auth");
-          setTransactionPinInput("");
-          setPinError(null);
           toast.info("PIN window closed automatically for security.");
           return 15;
         }
@@ -100,25 +96,16 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [activeModal, pinStep]);
+  }, [activeModal]);
 
   const handleOpenPinModal = () => {
-    setPinStep("auth");
-    setTransactionPinInput("");
-    setPinError(null);
-    setPinCountdown(15);
-    setActiveModal("pin");
+    setPinAuthOpen(true);
   };
 
-  const handleVerifyTransactionPin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (transactionPinInput.length !== 4) {
-      setPinError("Please enter your 4-digit transaction PIN.");
-      return;
-    }
-    setPinError(null);
-    setPinStep("revealed");
+  const handlePinAuthSuccess = () => {
+    setPinAuthOpen(false);
     setPinCountdown(15);
+    setActiveModal("pin");
     triggerToast("Identity verified. Card PIN revealed.");
   };
 
@@ -705,122 +692,69 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
         </DialogContent>
       </Dialog>
 
-      {/* 2. Show PIN Modal */}
+      {/* 2. Show PIN (Revealed) Modal */}
       <Dialog
         open={activeModal === "pin"}
         onOpenChange={(open) => {
           if (!open) {
             setActiveModal(null);
-            setPinStep("auth");
-            setTransactionPinInput("");
-            setPinError(null);
             setPinCountdown(15);
           }
         }}
       >
         <DialogContent className="max-w-sm rounded-2xl p-6">
-          {pinStep === "auth" ? (
-            <div>
-              <DialogHeader className="text-center sm:text-center">
-                <div className="mx-auto mb-2 size-11 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                  <ShieldCheck size={24} />
-                </div>
-                <DialogTitle className="text-[17px] text-center">Verify Transaction PIN</DialogTitle>
-                <DialogDescription className="text-[13px] text-center">
-                  Enter your 4-digit transaction PIN to authorize viewing your card&apos;s security PIN.
-                </DialogDescription>
-              </DialogHeader>
+          <div className="text-center">
+            <DialogHeader className="text-center sm:text-center">
+              <DialogTitle className="text-[17px] text-center">Security PIN</DialogTitle>
+              <DialogDescription className="text-[13px] text-center">
+                Your 4-digit card PIN for ATM &amp; point-of-sale verification.
+              </DialogDescription>
+            </DialogHeader>
 
-              <form onSubmit={handleVerifyTransactionPin} className="space-y-4 pt-4">
-                <div className="space-y-2">
-                  <div className="flex justify-center">
-                    <Input
-                      type="password"
-                      inputMode="numeric"
-                      maxLength={4}
-                      placeholder="••••"
-                      autoFocus
-                      value={transactionPinInput}
-                      onChange={(e) => {
-                        const val = e.target.value.replace(/\D/g, "").slice(0, 4);
-                        setTransactionPinInput(val);
-                        if (pinError) setPinError(null);
-                      }}
-                      className="w-36 text-center tracking-[0.5em] text-[22px] font-mono h-12 rounded-xl"
-                    />
+            <div className="py-5 flex flex-col items-center justify-center gap-3">
+              <div className="flex gap-3 justify-center">
+                {["4", "8", "2", "1"].map((digit, idx) => (
+                  <div
+                    key={idx}
+                    className="size-12 rounded-xl bg-muted border border-border flex items-center justify-center text-[22px] font-medium font-mono text-foreground shadow-inner"
+                  >
+                    {digit}
                   </div>
-                  {pinError && (
-                    <p className="text-xs text-destructive text-center font-medium">{pinError}</p>
-                  )}
-                </div>
-
-                <div className="flex gap-2 pt-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex-1 cursor-pointer"
-                    onClick={() => setActiveModal(null)}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={transactionPinInput.length !== 4}
-                    className="flex-1 cursor-pointer"
-                  >
-                    Verify & Reveal
-                  </Button>
-                </div>
-              </form>
-            </div>
-          ) : (
-            <div className="text-center">
-              <DialogHeader className="text-center sm:text-center">
-                <DialogTitle className="text-[17px] text-center">Security PIN</DialogTitle>
-                <DialogDescription className="text-[13px] text-center">
-                  Your 4-digit card PIN for ATM & point-of-sale verification.
-                </DialogDescription>
-              </DialogHeader>
-
-              <div className="py-5 flex flex-col items-center justify-center gap-3">
-                <div className="flex gap-3 justify-center">
-                  {["4", "8", "2", "1"].map((digit, idx) => (
-                    <div
-                      key={idx}
-                      className="size-12 rounded-xl bg-muted border border-border flex items-center justify-center text-[22px] font-medium font-mono text-foreground shadow-inner"
-                    >
-                      {digit}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full font-medium mt-2">
-                  <Clock size={13} className="animate-pulse" />
-                  <span>Closing in {pinCountdown}s</span>
-                </div>
-
-                <p className="text-[11.5px] text-muted-foreground mt-1">
-                  This window will close automatically for your security. Do not share your PIN.
-                </p>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setActiveModal(null);
-                    setPinStep("auth");
-                    setTransactionPinInput("");
-                  }}
-                  className="mt-3 w-full cursor-pointer text-xs"
-                >
-                  Done
-                </Button>
+                ))}
               </div>
+
+              <div className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full font-medium mt-2">
+                <Clock size={13} className="animate-pulse" />
+                <span>Closing in {pinCountdown}s</span>
+              </div>
+
+              <p className="text-[11.5px] text-muted-foreground mt-1">
+                This window will close automatically for your security. Do not share your PIN.
+              </p>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setActiveModal(null);
+                  setPinCountdown(15);
+                }}
+                className="mt-3 w-full cursor-pointer text-xs"
+              >
+                Done
+              </Button>
             </div>
-          )}
+          </div>
         </DialogContent>
       </Dialog>
+
+      {/* Universal Transaction PIN Modal matching Payment Flow */}
+      <TransactionPinModal
+        open={pinAuthOpen}
+        onOpenChange={setPinAuthOpen}
+        onSuccess={handlePinAuthSuccess}
+      />
 
       {/* 3. Freeze Card Confirmation Modal */}
       <Dialog open={activeModal === "freeze"} onOpenChange={(open) => !open && setActiveModal(null)}>

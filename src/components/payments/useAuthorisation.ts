@@ -9,7 +9,7 @@
 import { useEffect, useState } from "react";
 import { OTP_LENGTH } from "@/components/auth/OtpInput";
 
-export const PIN_LENGTH = 6;
+export const PIN_LENGTH = 4;
 export const RESEND_SECONDS = 30;
 export const REGISTERED_PHONE = "0244 ••• 821";
 

@@ -113,7 +113,7 @@ export function AuthorisePanel({
           </span>
           <span className="text-[13px] text-muted-foreground">
             {isPin
-              ? "Enter your 6-digit transaction PIN created during onboarding"
+              ? "Enter your 4-digit transaction PIN created during onboarding"
               : `A 6-digit one-time code was sent to ${REGISTERED_PHONE}`}
           </span>
         </div>
@@ -123,7 +123,7 @@ export function AuthorisePanel({
             key="pin-input-compact"
             value={pin}
             onChange={onPinChange || onOtpChange}
-            length={6}
+            length={PIN_LENGTH}
             mask={true}
             invalid={state === "error"}
             autoFocus={autoFocus}
@@ -245,7 +245,7 @@ export function AuthorisePanel({
 
           {/* Heading */}
           <h2 className="mt-6 text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
-            Enter your 6-digit PIN to authorise
+            Enter your 4-digit PIN to authorise
           </h2>
 
           {/* 4 Circular PIN Indicators */}
@@ -419,7 +419,7 @@ export function AuthorisePanel({
                 className="mt-2 flex items-center justify-center gap-2 text-[13.5px] text-[#747472] hover:text-foreground dark:text-[#999999] dark:hover:text-white transition-colors cursor-pointer"
               >
                 <KeyRound size={14} strokeWidth={1.8} />
-                <span>Use 6-digit Transaction PIN instead</span>
+                <span>Use 4-digit Transaction PIN instead</span>
               </button>
             )}
           </div>
