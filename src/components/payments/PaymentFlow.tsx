@@ -70,6 +70,7 @@ import { BillsPaymentFlow } from "./flows/BillsPaymentFlow";
 import { InternationalWireFlow } from "./flows/InternationalWireFlow";
 import { GroupPaymentFlow } from "./flows/GroupPaymentFlow";
 import { ProxyPayFlow } from "./flows/ProxyPayFlow";
+import { PAYMENT_METHODS, getPaymentMethodName } from "./flows/shared";
 
 export type FlowGroup = "send" | "bills";
 
@@ -975,6 +976,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     benName: "",
     benAcct: "",
     bank: "",
+    paymentMethod: "",
     bankAmount: "",
     bankRef: "",
     category: "",
@@ -1063,7 +1065,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
     if (item.rail === "bank" || item.rail === "ach") {
       setRail("bank");
-      setF((p) => ({ ...p, benName: item.name, benAcct: item.acct, bank: item.bank }));
+      setF((p) => ({
+        ...p,
+        benName: item.name,
+        benAcct: item.acct,
+        bank: item.bank,
+        paymentMethod: item.bank.includes("GCB") ? "" : (p.paymentMethod || "gip"),
+      }));
       setBankCategory(item.bank.includes("GCB") ? "gcb" : "other");
       setStage(1);
       setStage1Collapsed(true);
@@ -1494,8 +1502,18 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       ? roundMoney(RAIL_FACTS.group.fee * (selectedGroupObj?.members.length ?? 5))
       : rail === "bank" && (bankCategory === "own" || bankCategory === "gcb")
       ? 0
+      : (rail === "bank" && bankCategory === "other") || rail === "ach"
+      ? (PAYMENT_METHODS.find((m) => m.id === f.paymentMethod)?.fee ?? 5.0)
       : RAIL_FACTS[rail]?.fee ?? 0
     : 0;
+
+  const deliverySpeed = useMemo(() => {
+    if ((rail === "bank" && bankCategory === "other") || rail === "ach") {
+      const pm = PAYMENT_METHODS.find((m) => m.id === f.paymentMethod);
+      if (pm) return pm.speed;
+    }
+    return RAIL_FACTS[rail]?.arrives || "Same day";
+  }, [rail, bankCategory, f.paymentMethod]);
 
   const rate = RATES[f.wCurrency] ?? 1;
   const papssGhs = roundMoney(num(f.wForeign) * rate);
@@ -1899,8 +1917,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 ["Signing Mandate", "Either to Sign (Single Authority - Executed)"],
               ] as [string, string][])
             : []),
-          ["Payment Method", isOwnTransfer ? "OWN ACCOUNT TRANSFER" : rail.toUpperCase()],
-          ["Delivery Speed", isDualMandate ? "Upon Co-Signatory Approval" : (RAIL_FACTS[rail]?.arrives ?? "Instantly")],
+          ["Payment Method", isOwnTransfer ? "OWN ACCOUNT TRANSFER" : ((rail === "bank" && bankCategory === "other") || rail === "ach") && f.paymentMethod ? getPaymentMethodName(f.paymentMethod) : rail.toUpperCase()],
+          ["Delivery Speed", isDualMandate ? "Upon Co-Signatory Approval" : deliverySpeed],
           ["From Account", `${account?.name} (••${account?.number.slice(-4)})`],
           ...(isOwnTransfer ? ([["To Account", `${toOwnAccount?.name} (••${toOwnAccount?.number.slice(-4)})`]] as [string, string][]) : []),
           ["Reference / Ref Code", trn],
@@ -2151,7 +2169,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             type="button"
             onClick={() => {
               setBankCategory("other");
-              setF((p) => ({ ...p, bank: "", benAcct: "", benName: "", bankAmount: "", bankRef: "" }));
+              setF((p) => ({ ...p, bank: "", benAcct: "", benName: "", paymentMethod: "", bankAmount: "", bankRef: "" }));
               setStage(1);
               setStage1Collapsed(false);
               setMaxRevealedStage(1);
@@ -2557,6 +2575,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   bank: f.bank,
                   benAcct: f.benAcct,
                   benName: f.benName,
+                  paymentMethod: f.paymentMethod,
                   amount: f.bankAmount,
                   narration: f.bankRef,
                   category: f.category,
@@ -2888,6 +2907,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   </div>
                 )}
 
+                {/* Payment Method Row */}
+                {((rail === "bank" && bankCategory === "other") || rail === "ach") && f.paymentMethod && (
+                  <div className="flex items-center justify-between px-4 py-3 w-full">
+                    <span className="text-[13.5px] text-muted-foreground">Payment Method</span>
+                    <span className="text-[13.5px] font-normal text-foreground">
+                      {getPaymentMethodName(f.paymentMethod)}
+                    </span>
+                  </div>
+                )}
+
                 {/* Reference Row */}
                 {(f.bankRef || f.wRef || f.pxRef || f.grpRef || (rail === "data" ? bundle?.name : "")) && (
                   <div className="flex items-center justify-between px-4 py-3 w-full">
@@ -2902,7 +2931,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 <div className="flex items-center justify-between px-4 py-3 w-full">
                   <span className="text-[13.5px] text-muted-foreground">Arrives</span>
                   <span className="text-[13.5px] font-normal text-foreground">
-                    {RAIL_FACTS[rail]?.arrives || "Same day"}
+                    {deliverySpeed}
                   </span>
                 </div>
               </div>

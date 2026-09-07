@@ -27,6 +27,61 @@ export const BANKS = [
 
 export const OTHER_BANKS = BANKS.filter((b) => !b.includes("GCB"));
 
+export interface PaymentMethodOption {
+  id: string;
+  name: string;
+  shortName: string;
+  description: string;
+  speed: string;
+  fee: number;
+  feeText: string;
+}
+
+export const PAYMENT_METHODS: PaymentMethodOption[] = [
+  {
+    id: "gip",
+    name: "GhIPSS Instant Pay (GIP)",
+    shortName: "GIP",
+    description: "Instant (24/7) · Real-time interbank settlement",
+    speed: "Instant",
+    fee: 5.0,
+    feeText: "GH₵5.00",
+  },
+  {
+    id: "ach",
+    name: "ACH Direct Credit",
+    shortName: "ACH",
+    description: "Standard clearing · Same day or next clearing cycle",
+    speed: "Same day",
+    fee: 12.5,
+    feeText: "GH₵12.50",
+  },
+  {
+    id: "ach-nrt",
+    name: "ACH Near Real Time (NRT)",
+    shortName: "ACH NRT",
+    description: "Express clearing · Clears within 15–30 minutes",
+    speed: "15–30 mins",
+    fee: 8.0,
+    feeText: "GH₵8.00",
+  },
+  {
+    id: "rtgs",
+    name: "RTGS (High Value Transfer)",
+    shortName: "RTGS",
+    description: "Real-time gross settlement · Bank hours only",
+    speed: "1–2 hours",
+    fee: 25.0,
+    feeText: "GH₵25.00",
+  },
+];
+
+export function getPaymentMethodName(id?: string): string {
+  if (!id) return "GhIPSS Instant Pay (GIP)";
+  const found = PAYMENT_METHODS.find((m) => m.id === id);
+  return found?.name || id;
+}
+
 export const NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money", "GCB Wallet"];
 
 export type BundleItem = { id: string; name: string; val: string; price: number; network: string };
