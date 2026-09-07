@@ -37,6 +37,8 @@ interface OtherBankFlowProps {
   state: OtherBankFormState;
   onChange: (key: keyof OtherBankFormState, value: string) => void;
   onProceed: () => void;
+  detailsCollapsed?: boolean;
+  onToggleCollapsed?: (collapsed: boolean) => void;
 }
 
 export function OtherBankFlow({
@@ -44,8 +46,16 @@ export function OtherBankFlow({
   state,
   onChange,
   onProceed,
+  detailsCollapsed,
+  onToggleCollapsed,
 }: OtherBankFlowProps) {
-  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
+  const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
+
+  const setCollapsed = (val: boolean) => {
+    setInternalCollapsed(val);
+    onToggleCollapsed?.(val);
+  };
 
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
@@ -75,11 +85,11 @@ export function OtherBankFlow({
       {/* 2. Destination Bank & Account Number */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
-        {isDetailsValid && detailsCollapsed ? (
+        {isDetailsValid && isCollapsed ? (
           <CollapsedDetailsBadge
-            title={verifiedName || `Account ${state.benAcct}`}
+            title={verifiedName || state.benName || `Account ${state.benAcct}`}
             subtitle={`${state.bank || "Other Bank"} · ${state.benAcct}`}
-            onChange={() => setDetailsCollapsed(false)}
+            onChange={() => setCollapsed(false)}
           />
         ) : (
           <div className="flex flex-col gap-3">
@@ -131,7 +141,7 @@ export function OtherBankFlow({
         value={state.amount}
         onChange={(val) => onChange("amount", val)}
         onFocus={() => {
-          if (isDetailsValid) setDetailsCollapsed(true);
+          if (isDetailsValid) setCollapsed(true);
         }}
       />
 

@@ -28,6 +28,8 @@ interface OtherGcbFlowProps {
   state: OtherGcbFormState;
   onChange: (key: keyof OtherGcbFormState, value: string) => void;
   onProceed: () => void;
+  detailsCollapsed?: boolean;
+  onToggleCollapsed?: (collapsed: boolean) => void;
 }
 
 export function OtherGcbFlow({
@@ -35,8 +37,16 @@ export function OtherGcbFlow({
   state,
   onChange,
   onProceed,
+  detailsCollapsed,
+  onToggleCollapsed,
 }: OtherGcbFlowProps) {
-  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
+  const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
+
+  const setCollapsed = (val: boolean) => {
+    setInternalCollapsed(val);
+    onToggleCollapsed?.(val);
+  };
 
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
@@ -64,11 +74,11 @@ export function OtherGcbFlow({
       {/* 2. Destination (GCB Account) */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
-        {isAcctValid && detailsCollapsed ? (
+        {isAcctValid && isCollapsed ? (
           <CollapsedDetailsBadge
-            title={verifiedName || `GCB Account ${state.benAcct}`}
+            title={verifiedName || state.benName || `GCB Account ${state.benAcct}`}
             subtitle={`GCB Bank PLC · ${state.benAcct}`}
-            onChange={() => setDetailsCollapsed(false)}
+            onChange={() => setCollapsed(false)}
           />
         ) : (
           <div className="flex flex-col gap-3">
@@ -108,7 +118,7 @@ export function OtherGcbFlow({
         value={state.amount}
         onChange={(val) => onChange("amount", val)}
         onFocus={() => {
-          if (isAcctValid) setDetailsCollapsed(true);
+          if (isAcctValid) setCollapsed(true);
         }}
       />
 

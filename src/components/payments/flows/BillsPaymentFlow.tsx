@@ -49,6 +49,8 @@ interface BillsPaymentFlowProps {
   state: BillsPaymentFormState;
   onChange: (key: keyof BillsPaymentFormState, value: string) => void;
   onProceed: () => void;
+  detailsCollapsed?: boolean;
+  onToggleCollapsed?: (collapsed: boolean) => void;
 }
 
 export function BillsPaymentFlow({
@@ -56,8 +58,16 @@ export function BillsPaymentFlow({
   state,
   onChange,
   onProceed,
+  detailsCollapsed,
+  onToggleCollapsed,
 }: BillsPaymentFlowProps) {
-  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
+  const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
+
+  const setCollapsed = (val: boolean) => {
+    setInternalCollapsed(val);
+    onToggleCollapsed?.(val);
+  };
 
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
@@ -110,10 +120,11 @@ export function BillsPaymentFlow({
       {/* 2. Biller & Reference / Account */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Biller & Account Details</label>
-        {isDestinationValid && detailsCollapsed ? (
+        {isDestinationValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={
               verifiedName ||
+              state.benName ||
               (state.subType === "ecg"
                 ? `Meter ${state.ecgMeter}`
                 : state.subType === "ghanagov"
@@ -127,7 +138,7 @@ export function BillsPaymentFlow({
                 ? `${state.govService || "Ghana.gov"} · Ref ${state.govRef}`
                 : `${selectedBiller?.name || "Biller"} · ${state.billRef}`
             }
-            onChange={() => setDetailsCollapsed(false)}
+            onChange={() => setCollapsed(false)}
           />
         ) : (
           <div className="flex flex-col gap-3">
@@ -229,7 +240,7 @@ export function BillsPaymentFlow({
         value={state.amount}
         onChange={(val) => onChange("amount", val)}
         onFocus={() => {
-          if (isDestinationValid) setDetailsCollapsed(true);
+          if (isDestinationValid) setCollapsed(true);
         }}
       />
 

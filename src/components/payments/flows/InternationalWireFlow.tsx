@@ -45,6 +45,8 @@ interface InternationalWireFlowProps {
   state: InternationalWireFormState;
   onChange: (key: keyof InternationalWireFormState, value: string) => void;
   onProceed: () => void;
+  detailsCollapsed?: boolean;
+  onToggleCollapsed?: (collapsed: boolean) => void;
 }
 
 export function InternationalWireFlow({
@@ -52,8 +54,16 @@ export function InternationalWireFlow({
   state,
   onChange,
   onProceed,
+  detailsCollapsed,
+  onToggleCollapsed,
 }: InternationalWireFlowProps) {
-  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
+  const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
+
+  const setCollapsed = (val: boolean) => {
+    setInternalCollapsed(val);
+    onToggleCollapsed?.(val);
+  };
 
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
@@ -87,11 +97,11 @@ export function InternationalWireFlow({
       {/* 2. Recipient & Destination Details */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Recipient & Destination Details</label>
-        {isDestinationValid && detailsCollapsed ? (
+        {isDestinationValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={state.wBenName}
             subtitle={`${state.wBank || "Bank"} · ${state.wIban} (${state.wCountry || "International"})`}
-            onChange={() => setDetailsCollapsed(false)}
+            onChange={() => setCollapsed(false)}
           />
         ) : (
           <div className="flex flex-col gap-3">
@@ -166,7 +176,7 @@ export function InternationalWireFlow({
           currency={state.wCurrency || "NGN"}
           label={`Amount (${state.wCurrency || "NGN"})`}
           onFocus={() => {
-            if (isDestinationValid) setDetailsCollapsed(true);
+            if (isDestinationValid) setCollapsed(true);
           }}
         />
         {numForeign > 0 && (

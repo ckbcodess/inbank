@@ -35,6 +35,8 @@ interface GroupPaymentFlowProps {
   onChange: (key: keyof GroupPaymentFormState, value: string) => void;
   onOpenCreateGroup: () => void;
   onProceed: () => void;
+  detailsCollapsed?: boolean;
+  onToggleCollapsed?: (collapsed: boolean) => void;
 }
 
 export function GroupPaymentFlow({
@@ -44,8 +46,16 @@ export function GroupPaymentFlow({
   onChange,
   onOpenCreateGroup,
   onProceed,
+  detailsCollapsed,
+  onToggleCollapsed,
 }: GroupPaymentFlowProps) {
-  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
+  const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
+
+  const setCollapsed = (val: boolean) => {
+    setInternalCollapsed(val);
+    onToggleCollapsed?.(val);
+  };
 
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
@@ -85,11 +95,11 @@ export function GroupPaymentFlow({
           </button>
         </div>
 
-        {selectedGroup && detailsCollapsed ? (
+        {selectedGroup && isCollapsed ? (
           <CollapsedDetailsBadge
             title={selectedGroup.name}
             subtitle={`${selectedGroup.members.length} members · ${selectedGroup.splitType === "equal" ? "Equal split" : "Custom split"}`}
-            onChange={() => setDetailsCollapsed(false)}
+            onChange={() => setCollapsed(false)}
           />
         ) : groups.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-6 rounded-2xl border border-dashed border-border/80 text-center gap-3">
@@ -167,7 +177,7 @@ export function GroupPaymentFlow({
           onChange={(val) => onChange("grpAmount", val)}
           label={selectedGroup?.splitType === "equal" ? "Amount per Member" : "Total Amount"}
           onFocus={() => {
-            if (selectedGroup) setDetailsCollapsed(true);
+            if (selectedGroup) setCollapsed(true);
           }}
         />
         {selectedGroup && selectedGroup.splitType === "equal" && numAmount > 0 && (

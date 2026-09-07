@@ -38,6 +38,8 @@ interface AirtimeFlowProps {
   state: AirtimeFormState;
   onChange: (key: keyof AirtimeFormState, value: string) => void;
   onProceed: () => void;
+  detailsCollapsed?: boolean;
+  onToggleCollapsed?: (collapsed: boolean) => void;
 }
 
 export function AirtimeFlow({
@@ -45,8 +47,16 @@ export function AirtimeFlow({
   state,
   onChange,
   onProceed,
+  detailsCollapsed,
+  onToggleCollapsed,
 }: AirtimeFlowProps) {
-  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
+  const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
+
+  const setCollapsed = (val: boolean) => {
+    setInternalCollapsed(val);
+    onToggleCollapsed?.(val);
+  };
 
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
@@ -74,11 +84,11 @@ export function AirtimeFlow({
       {/* 2. Destination: Network & Phone Number */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
-        {isPhoneValid && detailsCollapsed ? (
+        {isPhoneValid && isCollapsed ? (
           <CollapsedDetailsBadge
-            title={verifiedName || `Phone ${state.aPhone}`}
-            subtitle={`${state.wNetwork || "Mobile Network"} ? ${state.aPhone}`}
-            onChange={() => setDetailsCollapsed(false)}
+            title={verifiedName || state.benName || `Phone ${state.aPhone}`}
+            subtitle={`${state.wNetwork || "Mobile Network"} · ${state.aPhone}`}
+            onChange={() => setCollapsed(false)}
           />
         ) : (
           <div className="flex flex-col gap-3">
@@ -134,7 +144,7 @@ export function AirtimeFlow({
         value={state.amount}
         onChange={(val) => onChange("amount", val)}
         onFocus={() => {
-          if (isPhoneValid) setDetailsCollapsed(true);
+          if (isPhoneValid) setCollapsed(true);
         }}
       />
 

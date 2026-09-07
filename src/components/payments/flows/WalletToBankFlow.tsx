@@ -34,14 +34,24 @@ interface WalletToBankFlowProps {
   state: WalletToBankFormState;
   onChange: (key: keyof WalletToBankFormState, value: string) => void;
   onProceed: () => void;
+  detailsCollapsed?: boolean;
+  onToggleCollapsed?: (collapsed: boolean) => void;
 }
 
 export function WalletToBankFlow({
   state,
   onChange,
   onProceed,
+  detailsCollapsed,
+  onToggleCollapsed,
 }: WalletToBankFlowProps) {
-  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
+  const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
+
+  const setCollapsed = (val: boolean) => {
+    setInternalCollapsed(val);
+    onToggleCollapsed?.(val);
+  };
   const walletBalance = 1450.0; // Registered wallet available limit
 
   const verifiedName = useMemo(() => {
@@ -84,11 +94,11 @@ export function WalletToBankFlow({
       {/* 2. Destination Bank Account */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Destination Bank Account</label>
-        {isDetailsValid && detailsCollapsed ? (
+        {isDetailsValid && isCollapsed ? (
           <CollapsedDetailsBadge
-            title={verifiedName || `Account ${state.benAcct}`}
+            title={verifiedName || state.benName || `Account ${state.benAcct}`}
             subtitle={`${state.bank || "Bank"} · ${state.benAcct}`}
-            onChange={() => setDetailsCollapsed(false)}
+            onChange={() => setCollapsed(false)}
           />
         ) : (
           <div className="flex flex-col gap-3">
@@ -140,7 +150,7 @@ export function WalletToBankFlow({
         value={state.amount}
         onChange={(val) => onChange("amount", val)}
         onFocus={() => {
-          if (isDetailsValid) setDetailsCollapsed(true);
+          if (isDetailsValid) setCollapsed(true);
         }}
       />
 

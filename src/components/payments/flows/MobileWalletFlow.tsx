@@ -40,6 +40,8 @@ interface MobileWalletFlowProps {
   state: MobileWalletFormState;
   onChange: (key: keyof MobileWalletFormState, value: string) => void;
   onProceed: () => void;
+  detailsCollapsed?: boolean;
+  onToggleCollapsed?: (collapsed: boolean) => void;
 }
 
 export function MobileWalletFlow({
@@ -48,13 +50,23 @@ export function MobileWalletFlow({
   state,
   onChange,
   onProceed,
+  detailsCollapsed,
+  onToggleCollapsed,
 }: MobileWalletFlowProps) {
   const isSelf = walletCategory === "self";
-  const [detailsCollapsed, setDetailsCollapsed] = useState(isSelf);
+  const [internalCollapsed, setInternalCollapsed] = useState(
+    detailsCollapsed !== undefined ? detailsCollapsed : isSelf
+  );
+  const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
+
+  const setCollapsed = (val: boolean) => {
+    setInternalCollapsed(val);
+    onToggleCollapsed?.(val);
+  };
 
   useEffect(() => {
     if (walletCategory === "self") {
-      setDetailsCollapsed(true);
+      setCollapsed(true);
     }
   }, [walletCategory]);
 
@@ -85,11 +97,11 @@ export function MobileWalletFlow({
       {/* 2. Destination (Mobile Wallet) */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
-        {isPhoneValid && detailsCollapsed ? (
+        {isPhoneValid && isCollapsed ? (
           <CollapsedDetailsBadge
-            title={isSelf ? (state.wName || "My Own Wallet (Self)") : (verifiedName || `Wallet ${state.wPhone}`)}
+            title={isSelf ? (state.wName || "My Own Wallet (Self)") : (verifiedName || state.wName || `Wallet ${state.wPhone}`)}
             subtitle={`${state.wNetwork || "MTN Mobile Money"} · ${isSelf ? (state.wPhone || REGISTERED_PHONE) : state.wPhone}`}
-            onChange={() => setDetailsCollapsed(false)}
+            onChange={() => setCollapsed(false)}
           />
         ) : (
           <div className="flex flex-col gap-3">
@@ -154,7 +166,7 @@ export function MobileWalletFlow({
         value={state.amount}
         onChange={(val) => onChange("amount", val)}
         onFocus={() => {
-          if (isPhoneValid) setDetailsCollapsed(true);
+          if (isPhoneValid) setCollapsed(true);
         }}
       />
 

@@ -28,6 +28,8 @@ interface ProxyPayFlowProps {
   state: ProxyPayFormState;
   onChange: (key: keyof ProxyPayFormState, value: string) => void;
   onProceed: () => void;
+  detailsCollapsed?: boolean;
+  onToggleCollapsed?: (collapsed: boolean) => void;
 }
 
 export function ProxyPayFlow({
@@ -35,8 +37,16 @@ export function ProxyPayFlow({
   state,
   onChange,
   onProceed,
+  detailsCollapsed,
+  onToggleCollapsed,
 }: ProxyPayFlowProps) {
-  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
+  const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
+
+  const setCollapsed = (val: boolean) => {
+    setInternalCollapsed(val);
+    onToggleCollapsed?.(val);
+  };
 
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
@@ -64,11 +74,11 @@ export function ProxyPayFlow({
       {/* 2. Destination: Proxy ID */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Proxy ID (Phone, @Alias, or Ghana Card)</label>
-        {isPxValid && detailsCollapsed ? (
+        {isPxValid && isCollapsed ? (
           <CollapsedDetailsBadge
-            title={verifiedName || state.pxId}
+            title={verifiedName || state.benName || state.pxId}
             subtitle={`Proxy Recipient · ${state.pxId}`}
-            onChange={() => setDetailsCollapsed(false)}
+            onChange={() => setCollapsed(false)}
           />
         ) : (
           <div className="flex flex-col gap-3">
@@ -96,7 +106,7 @@ export function ProxyPayFlow({
         value={state.amount}
         onChange={(val) => onChange("amount", val)}
         onFocus={() => {
-          if (isPxValid) setDetailsCollapsed(true);
+          if (isPxValid) setCollapsed(true);
         }}
       />
 

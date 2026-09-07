@@ -38,6 +38,8 @@ interface DataBundleFlowProps {
   state: DataBundleFormState;
   onChange: (key: keyof DataBundleFormState, value: string) => void;
   onProceed: () => void;
+  detailsCollapsed?: boolean;
+  onToggleCollapsed?: (collapsed: boolean) => void;
 }
 
 export function DataBundleFlow({
@@ -45,8 +47,16 @@ export function DataBundleFlow({
   state,
   onChange,
   onProceed,
+  detailsCollapsed,
+  onToggleCollapsed,
 }: DataBundleFlowProps) {
-  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
+  const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
+
+  const setCollapsed = (val: boolean) => {
+    setInternalCollapsed(val);
+    onToggleCollapsed?.(val);
+  };
 
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
@@ -82,11 +92,11 @@ export function DataBundleFlow({
       {/* 2. Destination: Network & Phone Number */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
-        {isPhoneValid && detailsCollapsed ? (
+        {isPhoneValid && isCollapsed ? (
           <CollapsedDetailsBadge
-            title={verifiedName || `Data (${state.aPhone})`}
-            subtitle={`${state.wNetwork || "Mobile Network"} ? ${state.aPhone}`}
-            onChange={() => setDetailsCollapsed(false)}
+            title={verifiedName || state.benName || `Data (${state.aPhone})`}
+            subtitle={`${state.wNetwork || "Mobile Network"} · ${state.aPhone}`}
+            onChange={() => setCollapsed(false)}
           />
         ) : (
           <div className="flex flex-col gap-3">
@@ -153,11 +163,11 @@ export function DataBundleFlow({
           onValueChange={(val) => {
             if (val) {
               onChange("bundleId", val);
-              if (isPhoneValid) setDetailsCollapsed(true);
+              if (isPhoneValid) setCollapsed(true);
             }
           }}
           onOpenChange={(open) => {
-            if (open && isPhoneValid) setDetailsCollapsed(true);
+            if (open && isPhoneValid) setCollapsed(true);
           }}
         >
           <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-left shadow-none">
@@ -182,7 +192,7 @@ export function DataBundleFlow({
           <SelectContent>
             {bundles.map((b) => (
               <SelectItem key={b.id} value={b.id}>
-                {b.name} ({b.val}) ? {formatMoney(b.price, "GHS", true)}
+                {b.name} ({b.val}) · {formatMoney(b.price, "GHS", true)}
               </SelectItem>
             ))}
           </SelectContent>

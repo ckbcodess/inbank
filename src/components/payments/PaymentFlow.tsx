@@ -1179,6 +1179,19 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       setMaxRevealedStage(1);
       return;
     }
+
+    if (item.rail === "card-topup") {
+      setRail("card-topup");
+      setF((p) => ({
+        ...p,
+        cardId: item.acct,
+        benName: item.name,
+      }));
+      setStage(1);
+      setStage1Collapsed(true);
+      setMaxRevealedStage(1);
+      return;
+    }
   };
 
   useEffect(() => {
@@ -2084,6 +2097,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 bankRef: "",
               }));
               setStage(1);
+              setStage1Collapsed(false);
               setMaxRevealedStage(1);
             }}
             className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
@@ -2111,6 +2125,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setBankCategory("gcb");
               setF((p) => ({ ...p, bank: "GCB Bank", benAcct: "", benName: "", bankAmount: "", bankRef: "" }));
               setStage(1);
+              setStage1Collapsed(false);
               setMaxRevealedStage(1);
             }}
             className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
@@ -2138,6 +2153,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setBankCategory("other");
               setF((p) => ({ ...p, bank: "", benAcct: "", benName: "", bankAmount: "", bankRef: "" }));
               setStage(1);
+              setStage1Collapsed(false);
               setMaxRevealedStage(1);
             }}
             className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
@@ -2166,6 +2182,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setRail("papss");
               setF((p) => ({ ...p, wCountry: "", wCurrency: "NGN", wBenName: "", wIban: "", wBank: "", wForeign: "", wireRef: "" }));
               setStage(1);
+              setStage1Collapsed(false);
               setMaxRevealedStage(1);
             }}
             className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
@@ -2455,9 +2472,25 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   <div className="absolute inset-0 flex items-center">
                     <span className="w-full border-t border-border/60" />
                   </div>
-                  <span className="relative bg-card px-3 text-[12px] font-medium text-muted-foreground">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStage1Collapsed(false);
+                      setF((p) => ({
+                        ...p,
+                        benAcct: "",
+                        benName: "",
+                        wPhone: "",
+                        wName: "",
+                        aPhone: "",
+                        pxId: "",
+                        billRef: "",
+                      }));
+                    }}
+                    className="relative bg-card px-3 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  >
                     Or enter new details
-                  </span>
+                  </button>
                 </div>
               </div>
             )}
@@ -2478,6 +2511,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   else if (key === "narration") set("bankRef", val);
                   else set(key, val);
                 }}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
                 onProceed={() => {
                   auth.reset();
                   setStage1Collapsed(true);
@@ -2503,6 +2538,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   else if (key === "narration") set("bankRef", val);
                   else set(key, val);
                 }}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
                 onProceed={() => {
                   auth.reset();
                   setStage1Collapsed(true);
@@ -2529,6 +2566,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   else if (key === "narration") set("bankRef", val);
                   else set(key, val);
                 }}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
                 onProceed={() => {
                   auth.reset();
                   setStage1Collapsed(true);
@@ -2557,6 +2596,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   else if (key === "narration") set("wRef", val);
                   else set(key, val);
                 }}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
                 onProceed={() => {
                   auth.reset();
                   setStage1Collapsed(true);
@@ -2585,6 +2626,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                     set("wRef", val);
                   } else set(key, val);
                 }}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
                 onProceed={() => {
                   auth.reset();
                   setStage1Collapsed(true);
@@ -2613,6 +2656,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                     set("wRef", val);
                   } else set(key, val);
                 }}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
                 onProceed={() => {
                   auth.reset();
                   setStage1Collapsed(true);
@@ -2640,6 +2685,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                     set("wRef", val);
                   } else set(key, val);
                 }}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
                 onProceed={() => {
                   auth.reset();
                   setStage1Collapsed(true);
@@ -2666,6 +2713,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                     set("wRef", val);
                   } else set(key, val);
                 }}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
                 onProceed={() => {
                   auth.reset();
                   setStage1Collapsed(true);
@@ -2703,6 +2752,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                     set(key, val);
                   }
                 }}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
                 onProceed={() => {
                   auth.reset();
                   setStage1Collapsed(true);
@@ -2727,6 +2778,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   category: f.category,
                 }}
                 onChange={(key, val) => set(key, val)}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
                 onProceed={() => {
                   auth.reset();
                   setStage1Collapsed(true);
@@ -2751,6 +2804,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   if (key === "narration") set("grpRef", val);
                   else set(key, val);
                 }}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
                 onOpenCreateGroup={() => setCreateGroupOpen(true)}
                 onProceed={() => {
                   auth.reset();
@@ -2777,6 +2832,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   else if (key === "narration") set("pxRef", val);
                   else set(key, val);
                 }}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
                 onProceed={() => {
                   auth.reset();
                   setStage1Collapsed(true);

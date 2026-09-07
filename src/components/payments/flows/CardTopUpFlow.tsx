@@ -32,6 +32,8 @@ interface CardTopUpFlowProps {
   state: CardTopUpFormState;
   onChange: (key: keyof CardTopUpFormState, value: string) => void;
   onProceed: () => void;
+  detailsCollapsed?: boolean;
+  onToggleCollapsed?: (collapsed: boolean) => void;
 }
 
 export function CardTopUpFlow({
@@ -39,8 +41,16 @@ export function CardTopUpFlow({
   state,
   onChange,
   onProceed,
+  detailsCollapsed,
+  onToggleCollapsed,
 }: CardTopUpFlowProps) {
-  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
+  const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
+
+  const setCollapsed = (val: boolean) => {
+    setInternalCollapsed(val);
+    onToggleCollapsed?.(val);
+  };
 
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
@@ -78,11 +88,11 @@ export function CardTopUpFlow({
       {/* 2. Destination Card */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Destination Card</label>
-        {selectedCard && detailsCollapsed ? (
+        {selectedCard && isCollapsed ? (
           <CollapsedDetailsBadge
             title={selectedCard.name}
             subtitle={`${selectedCard.scheme} ${selectedCard.type} (${selectedCard.maskedNumber}) · Current: ${formatMoney(selectedCard.balance ?? 0, selectedCard.currency, true)}`}
-            onChange={() => setDetailsCollapsed(false)}
+            onChange={() => setCollapsed(false)}
           />
         ) : (
           <Select
@@ -145,7 +155,7 @@ export function CardTopUpFlow({
         currency={selectedCard?.currency || "GHS"}
         label={`Top up Amount (${selectedCard?.currency || "GHS"})`}
         onFocus={() => {
-          if (selectedCard) setDetailsCollapsed(true);
+          if (selectedCard) setCollapsed(true);
         }}
       />
 
