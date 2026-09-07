@@ -29,7 +29,7 @@ export function MobilePromoBanner() {
               <div className="size-[120px] sm:size-[140px] overflow-hidden rounded-xl bg-white p-2 shadow-md">
                 <Image
                   src="/images/dashboard/qr-code-1.png"
-                  alt="QR Code to download NIBS Mobile App"
+                  alt="QR Code to download GCB Mobile App"
                   width={140}
                   height={140}
                   className="h-full w-full object-contain"
@@ -42,7 +42,7 @@ export function MobilePromoBanner() {
           <div className="pointer-events-none absolute -bottom-4 -right-2 h-[260px] w-[210px] sm:h-[290px] sm:w-[250px]">
             <Image
               src="/images/dashboard/phone-app-mockup.png"
-              alt="NIBS Mobile App Preview"
+              alt="GCB Mobile App Preview"
               width={260}
               height={300}
               className="h-full w-full object-contain drop-shadow-2xl"

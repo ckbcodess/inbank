@@ -83,9 +83,9 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  /* NIBS accent — restrained banking blue (Apple system-blue family) */
-  --primary: oklch(0.55 0.17 255);
-  --primary-foreground: oklch(1 0 0);
+  /* GCB Bank PLC brand accent — iconic Amber / Gold (#fdc307) */
+  --primary: oklch(0.846 0.172 86.7);
+  --primary-foreground: oklch(0.145 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -98,12 +98,12 @@
   --warning: oklch(0.72 0.16 75);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.60 0.16 255);
-  --chart-1: oklch(0.80 0.09 255);
-  --chart-2: oklch(0.70 0.13 255);
-  --chart-3: oklch(0.62 0.16 255);
-  --chart-4: oklch(0.55 0.17 255);
-  --chart-5: oklch(0.48 0.16 255);
+  --ring: oklch(0.78 0.15 86.7);
+  --chart-1: oklch(0.846 0.172 86.7);
+  --chart-2: oklch(0.75 0.16 80);
+  --chart-3: oklch(0.65 0.15 72);
+  --chart-4: oklch(0.55 0.13 65);
+  --chart-5: oklch(0.45 0.11 58);
   /* Secondary chart palette (complementary warm hue) */
   --chart-secondary-1: oklch(0.66 0.136 97.117);
   --chart-secondary-2: oklch(0.76 0.163 107.117);
@@ -132,16 +132,15 @@
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.439 0 0);
-  --sidebar-primary: oklch(0.55 0.17 255);
-  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-primary: oklch(0.846 0.172 86.7);
+  --sidebar-primary-foreground: oklch(0.145 0 0);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.60 0.16 255);
-  /* Brand gradient: deep top → brighter glow at bottom (indigo fallback; overridden
-     per-tenant by injected accent). Same-hue sheen, mode-independent. */
-  --primary-gradient-from: oklch(0.485 0.204 271);
-  --primary-gradient-to: oklch(0.665 0.179 277);
+  --sidebar-ring: oklch(0.78 0.15 86.7);
+  /* Brand gradient: deep amber → brighter golden glow at bottom */
+  --primary-gradient-from: #fdc307;
+  --primary-gradient-to: #f59e0b;
   /* Uniform interaction tokens — derived from --primary so they follow the brand color */
   --hover: oklch(0 0 0 / 4%);
   /* ── Single source for button/trigger/menu hover intensity ──
@@ -153,8 +152,8 @@
   --hover-overlay: 5%;
   --hover-fill: 90%;
   --hover-mix-color: #000;
-  --active-bg: color-mix(in oklch, var(--primary) 8%, transparent);
-  --active-border: var(--primary);
+  --active-bg: color-mix(in oklch, var(--primary) 15%, transparent);
+  --active-border: oklch(0.65 0.16 75);
   --surface: oklch(0.985 0 0);
   --surface-raised: oklch(1 0 0);
   --glass-bg: oklch(1 0 0 / 70%);
@@ -193,8 +192,8 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.269 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.62 0.16 255);
-  --primary-foreground: oklch(1 0 0);
+  --primary: oklch(0.846 0.172 86.7);
+  --primary-foreground: oklch(0.145 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -207,12 +206,12 @@
   --warning: oklch(0.78 0.15 75);
   --border: oklch(0.269 0 0);
   --input: oklch(0.269 0 0);
-  --ring: oklch(0.68 0.14 255);
-  --chart-1: oklch(0.80 0.09 255);
-  --chart-2: oklch(0.70 0.13 255);
-  --chart-3: oklch(0.62 0.16 255);
-  --chart-4: oklch(0.55 0.17 255);
-  --chart-5: oklch(0.48 0.16 255);
+  --ring: oklch(0.78 0.15 86.7);
+  --chart-1: oklch(0.846 0.172 86.7);
+  --chart-2: oklch(0.75 0.16 80);
+  --chart-3: oklch(0.65 0.15 72);
+  --chart-4: oklch(0.55 0.13 65);
+  --chart-5: oklch(0.45 0.11 58);
   --chart-secondary-1: oklch(0.7 0.144 97.117);
   --chart-secondary-2: oklch(0.8 0.172 107.117);
   --chart-secondary-3: oklch(0.6 0.123 89.117);
@@ -228,23 +227,22 @@
   --cat-other: oklch(0.55 0 0);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.708 0 0);
-  --sidebar-primary: oklch(0.62 0.16 255);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.846 0.172 86.7);
+  --sidebar-primary-foreground: oklch(0.145 0 0);
   --sidebar-accent: oklch(0.371 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.68 0.14 255);
-  --primary-gradient-from: oklch(0.485 0.204 271);
-  --primary-gradient-to: oklch(0.665 0.179 277);
+  --sidebar-ring: oklch(0.78 0.15 86.7);
+  --primary-gradient-from: #fdc307;
+  --primary-gradient-to: #d97706;
   /* Uniform interaction tokens — derived from --primary so they follow the brand color */
   --hover: oklch(1 0 0 / 5%);
-  /* Dark-mode hover intensity — stronger overlay, and brand buttons lighten
-     (mix toward white) instead of darken. */
+  /* Dark-mode hover intensity */
   --hover-overlay: 8%;
-  --hover-fill: 80%;
+  --hover-fill: 85%;
   --hover-mix-color: #000;
-  --active-bg: color-mix(in oklch, var(--primary) 12%, transparent);
-  --active-border: var(--ring);
+  --active-bg: color-mix(in oklch, var(--primary) 18%, transparent);
+  --active-border: oklch(0.78 0.15 86.7);
   --surface: oklch(0.113 0 0);
   --surface-raised: oklch(0.187 0 0);
   --glass-bg: oklch(0.187 0 0 / 60%);

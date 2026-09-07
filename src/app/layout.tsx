@@ -15,8 +15,8 @@ const geist = Geist({ variable: "--font-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "NIBS — New Internet Banking Solution",
-  description: "Retail, corporate and internal banking operations",
+  title: "GCB Bank — Internet Banking",
+  description: "GCB Bank PLC Internet Banking — Personal, Corporate and SME Banking",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

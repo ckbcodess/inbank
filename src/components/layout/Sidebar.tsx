@@ -17,7 +17,6 @@ import {
   CheckCircle2,
   CreditCard,
   LayoutDashboard,
-  Landmark,
   PanelLeftClose,
   PanelLeftOpen,
   Percent,
@@ -33,6 +32,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SimpleTooltip } from "@/components/ui/tooltip";
+import { GCBLogo } from "@/components/ui/GCBLogo";
 import type { NavItem } from "@/lib/navigation";
 import type { Shell } from "@/lib/roles";
 
@@ -117,10 +117,8 @@ export default function Sidebar({
     }
   }, [isOpen]);
 
-  // Admin Portal carries its own mark so the two shells are never mistaken for
-  // one another (section 12.1).
-  const BrandIcon = shell === "admin" ? ShieldCheck : Landmark;
-  const brandLabel = shell === "admin" ? "NIBS Admin" : "NIBS";
+  // Admin Portal carries its own mark (section 12.1), customer portal renders official GCB logo mark.
+  const brandLabel = shell === "admin" ? "GCB Admin" : "GCB Bank";
 
   return (
     /* Only width and transform animate. `transition-all` also animated colour,
@@ -141,11 +139,15 @@ export default function Sidebar({
         {collapsed ? (
           <button
             onClick={onToggleCollapse}
-            className="group/logo relative hidden size-7 flex-shrink-0 items-center justify-center lg:flex cursor-pointer"
+            className="group/logo relative hidden size-8 flex-shrink-0 items-center justify-center lg:flex cursor-pointer"
             aria-label="Expand sidebar"
           >
             <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-150 group-hover/logo:opacity-0">
-              <BrandIcon size={16} strokeWidth={2.1} className="text-foreground" />
+              {shell === "admin" ? (
+                <ShieldCheck size={18} strokeWidth={2.1} className="text-primary" />
+              ) : (
+                <GCBLogo className="h-6 w-auto shrink-0" showWordmark={false} />
+              )}
             </span>
             <PanelLeftOpen
               size={16}
@@ -155,9 +157,13 @@ export default function Sidebar({
           </button>
         ) : (
           <>
-            <div className="flex min-w-0 items-center gap-2">
-              <BrandIcon size={18} strokeWidth={2.1} className="flex-shrink-0 text-foreground" />
-              <span className="truncate text-[14px] font-semibold leading-tight tracking-tight text-foreground">
+            <div className="flex min-w-0 items-center gap-2.5">
+              {shell === "admin" ? (
+                <ShieldCheck size={20} strokeWidth={2.1} className="flex-shrink-0 text-primary" />
+              ) : (
+                <GCBLogo className="h-7 w-auto shrink-0" />
+              )}
+              <span className="truncate text-[15px] font-bold leading-tight tracking-tight text-foreground">
                 {brandLabel}
               </span>
             </div>
@@ -214,13 +220,10 @@ export default function Sidebar({
                           aria-label={item.label}
                           className={`relative flex size-9 items-center justify-center rounded-lg transition-all duration-150 ${
                             active
-                              ? "bg-[var(--active-bg)] text-[var(--active-border)]"
+                              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
                               : "surface-interactive text-muted-foreground hover:text-foreground"
                           }`}
                         >
-                          {active && (
-                            <span className="absolute bottom-1 left-0 top-1 w-[2.5px] rounded-r-full bg-[var(--active-border)]" />
-                          )}
                           <Icon size={17} strokeWidth={active ? 2.1 : 1.8} />
                         </Link>
                       </div>
