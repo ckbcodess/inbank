@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo } from "react";
 import { Landmark, AlertCircle } from "lucide-react";
@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Account, formatMoney } from "@/lib/mock-data";
+import { AmountInput } from "./shared";
 
 export interface OwnAccountFormState {
   fromId: string;
@@ -144,23 +145,10 @@ export function OwnAccountFlow({
       </div>
 
       {/* 3. Amount */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Amount</label>
-        <div className="relative flex items-center justify-center rounded-2xl border border-border/80 bg-card py-4 px-4">
-          <span className="text-[17px] font-medium text-muted-foreground mr-2">GHS</span>
-          <input
-            type="text"
-            inputMode="decimal"
-            value={state.amount}
-            onChange={(e) => {
-              const val = e.target.value.replace(/[^\d.]/g, "");
-              onChange("amount", val);
-            }}
-            placeholder="0"
-            className="bg-transparent text-[28px] font-semibold text-foreground tracking-tight outline-none w-48 text-left tabular"
-          />
-        </div>
-      </div>
+      <AmountInput
+        value={state.amount}
+        onChange={(val) => onChange("amount", val)}
+      />
 
       {/* 4. Narration */}
       <div className="flex flex-col gap-2">

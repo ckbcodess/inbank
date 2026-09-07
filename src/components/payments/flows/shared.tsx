@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import { Landmark, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -193,22 +193,43 @@ export function AmountInput({
   currency?: string;
   label?: string;
 }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   return (
     <div className="flex flex-col gap-2">
       <label className="text-[14px] font-medium text-foreground">{label}</label>
-      <div className="relative flex items-center justify-center rounded-2xl border border-border/80 bg-card py-4 px-4">
-        <span className="text-[17px] font-medium text-muted-foreground mr-2">{currency}</span>
-        <input
-          type="text"
-          inputMode="decimal"
-          value={value}
-          onChange={(e) => {
-            const val = e.target.value.replace(/[^\d.]/g, "");
-            onChange(val);
-          }}
-          placeholder="0"
-          className="bg-transparent text-[28px] font-semibold text-foreground tracking-tight outline-none w-48 text-left tabular"
-        />
+      <div
+        onClick={() => inputRef.current?.focus()}
+        className="relative flex h-14 w-full items-center justify-center rounded-2xl border border-border/80 bg-card hover:bg-muted/10 transition-colors cursor-text px-4 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30"
+      >
+        <div className="inline-flex items-center justify-center gap-2">
+          <span className="text-[17px] font-medium text-muted-foreground select-none">
+            {currency}
+          </span>
+          <div className="relative inline-flex items-center">
+            {/* Ghost text that perfectly sets the width of the input */}
+            <span
+              aria-hidden="true"
+              className="text-[24px] font-semibold tracking-tight tabular opacity-0 pointer-events-none px-0.5 whitespace-pre"
+            >
+              {value || "0"}
+            </span>
+            <input
+              ref={inputRef}
+              type="text"
+              inputMode="decimal"
+              value={value}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^\d.]/g, "");
+                const parts = val.split(".");
+                if (parts.length > 2) return;
+                onChange(val);
+              }}
+              placeholder="0"
+              className="absolute inset-0 w-full h-full bg-transparent text-[24px] font-semibold text-foreground tracking-tight outline-none text-left tabular p-0 m-0 border-none"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
