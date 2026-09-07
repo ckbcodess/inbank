@@ -76,14 +76,14 @@ export function MobileWalletFlow({
       />
 
       {/* 2. Destination (Mobile Wallet) */}
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1.5">
           <label className="text-[14px] font-medium text-foreground">Mobile Network</label>
           <Select
             value={state.wNetwork || "MTN Mobile Money"}
             onValueChange={(val) => val && onChange("wNetwork", val)}
           >
-            <SelectTrigger className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+            <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
               <SelectValue placeholder="Select network" />
             </SelectTrigger>
             <SelectContent>
@@ -96,12 +96,12 @@ export function MobileWalletFlow({
           </Select>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5">
           <label className="text-[14px] font-medium text-foreground">
             {isSelf ? "My Registered Phone" : "Recipient Phone Number"}
           </label>
           {isSelf ? (
-            <div className="flex h-[68px] min-h-[68px] items-center justify-between rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
+            <div className="flex h-13 items-center justify-between rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
               <span className="tabular">{REGISTERED_PHONE}</span>
               <span className="text-[12px] text-primary font-normal">Registered Mobile</span>
             </div>
@@ -123,7 +123,7 @@ export function MobileWalletFlow({
                 }
               }}
               placeholder="e.g. 024 412 3456"
-              className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
             />
           )}
         </div>

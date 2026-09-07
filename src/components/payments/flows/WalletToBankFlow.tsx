@@ -79,14 +79,14 @@ export function WalletToBankFlow({
       </div>
 
       {/* 2. Destination Bank Account */}
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1.5">
           <label className="text-[14px] font-medium text-foreground">Destination Bank</label>
           <Select
             value={state.bank || "GCB Bank"}
             onValueChange={(val) => val && onChange("bank", val)}
           >
-            <SelectTrigger className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+            <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
               <SelectValue placeholder="Select destination bank" />
             </SelectTrigger>
             <SelectContent>
@@ -99,7 +99,7 @@ export function WalletToBankFlow({
           </Select>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5">
           <label className="text-[14px] font-medium text-foreground">Destination Account Number</label>
           <input
             type="text"
@@ -114,7 +114,7 @@ export function WalletToBankFlow({
               }
             }}
             placeholder="Enter 10-13 digit account number"
-            className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+            className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
           />
         </div>
 

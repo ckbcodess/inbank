@@ -299,7 +299,7 @@ export function NarrationInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+        className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
       />
     </div>
   );
@@ -321,7 +321,7 @@ export function CategorySelect({
     <div className="flex flex-col gap-2">
       <label className="text-[14px] font-medium text-foreground">{label}</label>
       <Select value={value} onValueChange={(val) => onChange(val || "")}>
-        <SelectTrigger className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+        <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
           <SelectValue placeholder="Select category" />
         </SelectTrigger>
         <SelectContent>

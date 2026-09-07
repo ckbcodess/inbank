@@ -105,36 +105,36 @@ export function BillsPaymentFlow({
       />
 
       {/* 2. Biller & Reference / Account */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         {state.subType === "ecg" ? (
           <>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               <label className="text-[14px] font-medium text-foreground">Service Provider</label>
-              <div className="flex h-[68px] min-h-[68px] items-center rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
+              <div className="flex h-13 items-center rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
                 Electricity Company of Ghana (ECG)
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               <label className="text-[14px] font-medium text-foreground">Meter Number</label>
               <input
                 type="text"
                 value={state.ecgMeter}
                 onChange={(e) => onChange("ecgMeter", e.target.value)}
                 placeholder="Enter 5-11 digit prepaid meter number"
-                className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
               />
             </div>
           </>
         ) : state.subType === "ghanagov" ? (
           <>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               <label className="text-[14px] font-medium text-foreground">Government Agency / Service</label>
               <Select
                 value={state.govService || GHANA_GOV_SERVICES[0]}
                 onValueChange={(val) => val && onChange("govService", val)}
               >
-                <SelectTrigger className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
                   <SelectValue placeholder="Select government agency" />
                 </SelectTrigger>
                 <SelectContent>
@@ -147,26 +147,26 @@ export function BillsPaymentFlow({
               </Select>
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               <label className="text-[14px] font-medium text-foreground">Invoice / PRN Reference</label>
               <input
                 type="text"
                 value={state.govRef}
                 onChange={(e) => onChange("govRef", e.target.value)}
                 placeholder="Enter Ghana.gov PRN or Invoice Number"
-                className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
               />
             </div>
           </>
         ) : (
           <>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               <label className="text-[14px] font-medium text-foreground">Select Biller</label>
               <Select
                 value={state.billerId || BILLERS[0]?.id}
                 onValueChange={(val) => val && onChange("billerId", val)}
               >
-                <SelectTrigger className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
                   <SelectValue placeholder="Select biller" />
                 </SelectTrigger>
                 <SelectContent>
@@ -179,7 +179,7 @@ export function BillsPaymentFlow({
               </Select>
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               <label className="text-[14px] font-medium text-foreground">
                 {selectedBiller?.reference || "Account / Reference Number"}
               </label>
@@ -188,7 +188,7 @@ export function BillsPaymentFlow({
                 value={state.billRef}
                 onChange={(e) => onChange("billRef", e.target.value)}
                 placeholder={`Enter ${selectedBiller?.reference?.toLowerCase() || "account number"}`}
-                className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
               />
             </div>
           </>

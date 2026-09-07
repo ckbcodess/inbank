@@ -82,9 +82,9 @@ export function InternationalWireFlow({
       />
 
       {/* 2. Recipient & Destination Details */}
-      <div className="flex flex-col gap-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-1.5">
             <label className="text-[14px] font-medium text-foreground">Destination Country</label>
             <Select
               value={state.wCountry || "Nigeria"}
@@ -96,7 +96,7 @@ export function InternationalWireFlow({
                 }
               }}
             >
-              <SelectTrigger className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+              <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
                 <SelectValue placeholder="Country" />
               </SelectTrigger>
               <SelectContent>
@@ -109,37 +109,37 @@ export function InternationalWireFlow({
             </Select>
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-1.5">
             <label className="text-[14px] font-medium text-foreground">Recipient Bank</label>
             <input
               type="text"
               value={state.wBank}
               onChange={(e) => onChange("wBank", e.target.value)}
               placeholder="e.g. Zenith Bank Nigeria"
-              className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
             />
           </div>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5">
           <label className="text-[14px] font-medium text-foreground">Recipient Full Name</label>
           <input
             type="text"
             value={state.wBenName}
             onChange={(e) => onChange("wBenName", e.target.value)}
             placeholder="Legal name of beneficiary or business"
-            className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+            className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
           />
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5">
           <label className="text-[14px] font-medium text-foreground">Account Number / IBAN</label>
           <input
             type="text"
             value={state.wIban}
             onChange={(e) => onChange("wIban", e.target.value)}
             placeholder="Account number or international IBAN"
-            className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+            className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
           />
         </div>
       </div>
