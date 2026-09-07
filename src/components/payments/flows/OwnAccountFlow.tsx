@@ -17,6 +17,8 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
+  SchedulePaymentSection,
+  ScheduleFrequency,
 } from "./shared";
 
 export interface OwnAccountFormState {
@@ -25,12 +27,16 @@ export interface OwnAccountFormState {
   amount: string;
   narration: string;
   category: string;
+  isScheduled?: boolean;
+  scheduleDate?: string;
+  scheduleFrequency?: ScheduleFrequency;
+  scheduleEndDate?: string;
 }
 
 interface OwnAccountFlowProps {
   accounts: Account[];
   state: OwnAccountFormState;
-  onChange: (key: keyof OwnAccountFormState, value: string) => void;
+  onChange: (key: keyof OwnAccountFormState, value: string | boolean | ScheduleFrequency | undefined) => void;
   onProceed: () => void;
   detailsCollapsed?: boolean;
   onToggleCollapsed?: (collapsed: boolean) => void;
@@ -147,6 +153,22 @@ export function OwnAccountFlow({
       <CategorySelect
         value={state.category}
         onChange={(val) => onChange("category", val)}
+      />
+
+      {/* 6. Schedule Payment */}
+      <SchedulePaymentSection
+        state={{
+          enabled: state.isScheduled ?? false,
+          startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
+          frequency: state.scheduleFrequency || "once",
+          endDate: state.scheduleEndDate || "",
+        }}
+        onChange={(updates) => {
+          if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
+          if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
+          if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
+          if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
+        }}
       />
 
       {overBalance && (

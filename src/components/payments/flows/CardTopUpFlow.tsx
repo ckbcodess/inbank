@@ -17,6 +17,8 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   CollapsedDetailsBadge,
+  SchedulePaymentSection,
+  ScheduleFrequency,
 } from "./shared";
 
 export interface CardTopUpFormState {
@@ -25,12 +27,16 @@ export interface CardTopUpFormState {
   amount: string;
   narration: string;
   category: string;
+  isScheduled?: boolean;
+  scheduleDate?: string;
+  scheduleFrequency?: ScheduleFrequency;
+  scheduleEndDate?: string;
 }
 
 interface CardTopUpFlowProps {
   accounts: Account[];
   state: CardTopUpFormState;
-  onChange: (key: keyof CardTopUpFormState, value: string) => void;
+  onChange: (key: keyof CardTopUpFormState, value: string | boolean | ScheduleFrequency | undefined) => void;
   onProceed: () => void;
   detailsCollapsed?: boolean;
   onToggleCollapsed?: (collapsed: boolean) => void;
@@ -170,6 +176,22 @@ export function CardTopUpFlow({
       <CategorySelect
         value={state.category}
         onChange={(val) => onChange("category", val)}
+      />
+
+      {/* 6. Schedule Payment */}
+      <SchedulePaymentSection
+        state={{
+          enabled: state.isScheduled ?? false,
+          startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
+          frequency: state.scheduleFrequency || "once",
+          endDate: state.scheduleEndDate || "",
+        }}
+        onChange={(updates) => {
+          if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
+          if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
+          if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
+          if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
+        }}
       />
 
       {overBalance && (

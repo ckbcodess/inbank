@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Account } from "@/lib/mock-data";
 import {
   Select,
@@ -19,6 +19,9 @@ import {
   VerifiedAccountBadge,
   CollapsedDetailsBadge,
   NETWORKS,
+  SaveBeneficiaryCheckbox,
+  SchedulePaymentSection,
+  ScheduleFrequency,
   detectNetwork,
   resolveAccountName,
 } from "./shared";
@@ -32,13 +35,19 @@ export interface MobileWalletFormState {
   amount: string;
   narration: string;
   category: string;
+  saveBeneficiary?: boolean;
+  beneficiaryNickname?: string;
+  isScheduled?: boolean;
+  scheduleDate?: string;
+  scheduleFrequency?: ScheduleFrequency;
+  scheduleEndDate?: string;
 }
 
 interface MobileWalletFlowProps {
   accounts: Account[];
   walletCategory: "self" | "other";
   state: MobileWalletFormState;
-  onChange: (key: keyof MobileWalletFormState, value: string) => void;
+  onChange: (key: keyof MobileWalletFormState, value: string | boolean | ScheduleFrequency | undefined) => void;
   onProceed: () => void;
   detailsCollapsed?: boolean;
   onToggleCollapsed?: (collapsed: boolean) => void;
@@ -59,16 +68,16 @@ export function MobileWalletFlow({
   );
   const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
 
-  const setCollapsed = (val: boolean) => {
+  const setCollapsed = useCallback((val: boolean) => {
     setInternalCollapsed(val);
     onToggleCollapsed?.(val);
-  };
+  }, [onToggleCollapsed]);
 
   useEffect(() => {
     if (walletCategory === "self") {
       setCollapsed(true);
     }
-  }, [walletCategory]);
+  }, [walletCategory, setCollapsed]);
 
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
@@ -172,6 +181,32 @@ export function MobileWalletFlow({
       <CategorySelect
         value={state.category}
         onChange={(val) => onChange("category", val)}
+      />
+
+      {/* 6. Save Beneficiary (for other wallets) */}
+      {!isSelf && (
+        <SaveBeneficiaryCheckbox
+          checked={state.saveBeneficiary ?? false}
+          onChange={(val) => onChange("saveBeneficiary", val)}
+          nickname={state.beneficiaryNickname}
+          onNicknameChange={(val) => onChange("beneficiaryNickname", val)}
+        />
+      )}
+
+      {/* 7. Schedule Payment */}
+      <SchedulePaymentSection
+        state={{
+          enabled: state.isScheduled ?? false,
+          startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
+          frequency: state.scheduleFrequency || "once",
+          endDate: state.scheduleEndDate || "",
+        }}
+        onChange={(updates) => {
+          if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
+          if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
+          if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
+          if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
+        }}
       />
 
       {overBalance && (

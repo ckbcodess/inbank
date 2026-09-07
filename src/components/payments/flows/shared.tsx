@@ -82,6 +82,182 @@ export function getPaymentMethodName(id?: string): string {
   return found?.name || id;
 }
 
+export interface DetailedFeeBreakdown {
+  feeName: string;
+  feeShortName: string;
+  feeAmount: number;
+  eLevyText: string;
+  commissionText: string;
+}
+
+export function getDetailedFeeBreakdown({
+  rail,
+  bankCategory,
+  paymentMethod,
+  membersCount = 5,
+}: {
+  rail: string;
+  bankCategory: string | null;
+  paymentMethod?: string;
+  membersCount?: number;
+}): DetailedFeeBreakdown {
+  if (rail === "bank") {
+    if (bankCategory === "own") {
+      return {
+        feeName: "Internal Transfer Fee (Between My Accounts)",
+        feeShortName: "GCB Internal",
+        feeAmount: 0,
+        eLevyText: "GH₵0.00 (Exempt)",
+        commissionText: "GH₵0.00 (Waived)",
+      };
+    }
+    if (bankCategory === "gcb") {
+      return {
+        feeName: "GCB Intra-bank Transfer Fee",
+        feeShortName: "GCB Intra-bank",
+        feeAmount: 0,
+        eLevyText: "GH₵0.00 (Exempt)",
+        commissionText: "GH₵0.00 (Waived)",
+      };
+    }
+    const pm = PAYMENT_METHODS.find((m) => m.id === paymentMethod);
+    if (pm) {
+      return {
+        feeName: `${pm.name} Fee`,
+        feeShortName: pm.shortName,
+        feeAmount: pm.fee,
+        eLevyText: "GH₵0.00 (Exempt)",
+        commissionText: "GH₵0.00 (Waived)",
+      };
+    }
+    return {
+      feeName: "GhIPSS Instant Pay (GIP) Fee",
+      feeShortName: "GIP",
+      feeAmount: 5.0,
+      eLevyText: "GH₵0.00 (Exempt)",
+      commissionText: "GH₵0.00 (Waived)",
+    };
+  }
+
+  if (rail === "ach") {
+    const pm = PAYMENT_METHODS.find((m) => m.id === paymentMethod);
+    if (pm) {
+      return {
+        feeName: `${pm.name} Fee`,
+        feeShortName: pm.shortName,
+        feeAmount: pm.fee,
+        eLevyText: "GH₵0.00 (Exempt)",
+        commissionText: "GH₵0.00 (Waived)",
+      };
+    }
+    return {
+      feeName: "ACH Direct Credit Clearing Fee",
+      feeShortName: "ACH",
+      feeAmount: 12.5,
+      eLevyText: "GH₵0.00 (Exempt)",
+      commissionText: "GH₵0.00 (Waived)",
+    };
+  }
+
+  if (rail === "wallet" || rail === "momo") {
+    return {
+      feeName: "Mobile Money Network Processing Fee",
+      feeShortName: "Mobile Money",
+      feeAmount: 0.5,
+      eLevyText: "GH₵0.00 (Exempt)",
+      commissionText: "GH₵0.00 (Waived)",
+    };
+  }
+
+  if (rail === "wallet-to-bank") {
+    return {
+      feeName: "Wallet-to-Bank Interoperability Fee",
+      feeShortName: "Interoperability",
+      feeAmount: 0.5,
+      eLevyText: "GH₵0.00 (Exempt)",
+      commissionText: "GH₵0.00 (Waived)",
+    };
+  }
+
+  if (rail === "proxy") {
+    return {
+      feeName: "Proxy Pay Routing Fee",
+      feeShortName: "Proxy Pay",
+      feeAmount: 0.5,
+      eLevyText: "GH₵0.00 (Exempt)",
+      commissionText: "GH₵0.00 (Waived)",
+    };
+  }
+
+  if (rail === "group") {
+    return {
+      feeName: `Group Batch Transfer Fee (${membersCount} members × GH₵0.50)`,
+      feeShortName: "Group Batch",
+      feeAmount: 0.5 * membersCount,
+      eLevyText: "GH₵0.00 (Exempt)",
+      commissionText: "GH₵0.00 (Waived)",
+    };
+  }
+
+  if (rail === "papss") {
+    return {
+      feeName: "PAPSS Cross-Border Settlement Fee",
+      feeShortName: "PAPSS",
+      feeAmount: 25.0,
+      eLevyText: "GH₵0.00 (Exempt)",
+      commissionText: "GH₵0.00 (Waived)",
+    };
+  }
+
+  if (rail === "card-topup") {
+    return {
+      feeName: "Card Funding Convenience Fee",
+      feeShortName: "Card Funding",
+      feeAmount: 0,
+      eLevyText: "GH₵0.00 (Exempt)",
+      commissionText: "GH₵0.00 (Waived)",
+    };
+  }
+
+  if (rail === "cardless") {
+    return {
+      feeName: "Cardless Token Generation Fee",
+      feeShortName: "Cardless",
+      feeAmount: 1.0,
+      eLevyText: "GH₵0.00 (Exempt)",
+      commissionText: "GH₵0.00 (Waived)",
+    };
+  }
+
+  if (rail === "airtime" || rail === "data") {
+    return {
+      feeName: "Telco Airtime / Data Service Fee",
+      feeShortName: "Telco Service",
+      feeAmount: 0,
+      eLevyText: "GH₵0.00 (Exempt)",
+      commissionText: "GH₵0.00 (Waived)",
+    };
+  }
+
+  if (rail === "bill" || rail === "ecg" || rail === "ghanagov") {
+    return {
+      feeName: "Biller Platform Convenience Fee",
+      feeShortName: "Biller Platform",
+      feeAmount: 0,
+      eLevyText: "GH₵0.00 (Exempt)",
+      commissionText: "GH₵0.00 (Waived)",
+    };
+  }
+
+  return {
+    feeName: "Payment Processing Fee",
+    feeShortName: "Processing",
+    feeAmount: 0,
+    eLevyText: "GH₵0.00 (Exempt)",
+    commissionText: "GH₵0.00 (Waived)",
+  };
+}
+
 export const NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money", "GCB Wallet"];
 
 export type BundleItem = { id: string; name: string; val: string; price: number; network: string };
@@ -501,6 +677,126 @@ export function CollapsedDetailsBadge({
       >
         Change
       </button>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Subcomponent 9: Save Beneficiary Checkbox                                  */
+/* -------------------------------------------------------------------------- */
+export function SaveBeneficiaryCheckbox({
+  checked,
+  onChange,
+  nickname,
+  onNicknameChange,
+  label = "Save as beneficiary",
+}: {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  nickname?: string;
+  onNicknameChange?: (val: string) => void;
+  label?: string;
+}) {
+  return (
+    <div className="flex flex-col gap-2 pt-1">
+      <label className="flex items-center gap-2.5 cursor-pointer select-none">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+          className="size-4.5 rounded-[5px] border-border text-primary focus:ring-primary/30 accent-primary cursor-pointer"
+        />
+        <span className="text-[14px] font-medium text-foreground">
+          {label}
+        </span>
+      </label>
+      {checked && onNicknameChange && (
+        <div className="pl-7 animate-in fade-in slide-in-from-top-1 duration-150">
+          <input
+            type="text"
+            value={nickname || ""}
+            onChange={(e) => onNicknameChange(e.target.value)}
+            placeholder="Beneficiary nickname (optional)"
+            className="h-11 w-full rounded-xl border border-border/80 bg-card px-3.5 text-[14px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Subcomponent 10: Schedule Payment Section                                  */
+/* -------------------------------------------------------------------------- */
+export type ScheduleFrequency = "once" | "daily" | "weekly" | "monthly";
+
+export interface ScheduleState {
+  enabled: boolean;
+  startDate: string; // YYYY-MM-DD
+  frequency: ScheduleFrequency;
+  endDate?: string;
+}
+
+export function SchedulePaymentSection({
+  state,
+  onChange,
+}: {
+  state: ScheduleState;
+  onChange: (updates: Partial<ScheduleState>) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-3 rounded-2xl border border-border/80 bg-card p-4 transition-all">
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col">
+          <span className="text-[14px] font-medium text-foreground">Schedule Payment</span>
+          <span className="text-[12.5px] text-muted-foreground">
+            Set up a future date or recurring transfer
+          </span>
+        </div>
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            checked={state.enabled}
+            onChange={(e) => onChange({ enabled: e.target.checked })}
+            className="sr-only peer"
+          />
+          <div className="w-11 h-6 bg-muted-foreground/25 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary dark:border-gray-600"></div>
+        </label>
+      </div>
+
+      {state.enabled && (
+        <div className="flex flex-col gap-3 pt-2 border-t border-border/60 animate-in fade-in slide-in-from-top-1 duration-150">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[13px] font-medium text-muted-foreground">Execution Date</label>
+              <input
+                type="date"
+                value={state.startDate}
+                min={new Date().toISOString().split("T")[0]}
+                onChange={(e) => onChange({ startDate: e.target.value })}
+                className="h-11 w-full rounded-xl border border-border/80 bg-background px-3 text-[14px] text-foreground outline-none focus:border-ring tabular"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[13px] font-medium text-muted-foreground">Frequency</label>
+              <Select
+                value={state.frequency}
+                onValueChange={(val) => onChange({ frequency: (val || "once") as ScheduleFrequency })}
+              >
+                <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 bg-background text-[14px]">
+                  <SelectValue placeholder="Select frequency" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="once">One-off (Single Run)</SelectItem>
+                  <SelectItem value="daily">Daily</SelectItem>
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -70,7 +70,8 @@ import { BillsPaymentFlow } from "./flows/BillsPaymentFlow";
 import { InternationalWireFlow } from "./flows/InternationalWireFlow";
 import { GroupPaymentFlow } from "./flows/GroupPaymentFlow";
 import { ProxyPayFlow } from "./flows/ProxyPayFlow";
-import { PAYMENT_METHODS, getPaymentMethodName } from "./flows/shared";
+import { PAYMENT_METHODS, getPaymentMethodName, getDetailedFeeBreakdown, ScheduleFrequency } from "./flows/shared";
+import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
 
 export type FlowGroup = "send" | "bills";
 
@@ -980,6 +981,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     bankAmount: "",
     bankRef: "",
     category: "",
+    saveBeneficiary: false,
+    beneficiaryNickname: "",
+    isScheduled: false,
+    scheduleDate: "2026-09-08",
+    scheduleFrequency: "once" as ScheduleFrequency,
+    scheduleEndDate: "",
     wPhone: "",
     wName: "",
     wNetwork: "",
@@ -1379,7 +1386,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     }
   }, [searchParams, group, accounts]);
 
-  const set = (k: keyof typeof f, v: string) => setF((prev) => ({ ...prev, [k]: v }));
+  const set = (k: string, v: unknown) => setF((prev) => ({ ...prev, [k]: v } as typeof prev));
 
   const account = accounts.find((a) => a.id === f.fromId) ?? accounts[0];
   const toOwnAccount = accounts.find((a) => a.id === f.toOwnAccountId);
@@ -1497,15 +1504,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     selectedGroupObj,
   ]);
 
-  const fee = rail
-    ? rail === "group"
-      ? roundMoney(RAIL_FACTS.group.fee * (selectedGroupObj?.members.length ?? 5))
-      : rail === "bank" && (bankCategory === "own" || bankCategory === "gcb")
-      ? 0
-      : (rail === "bank" && bankCategory === "other") || rail === "ach"
-      ? (PAYMENT_METHODS.find((m) => m.id === f.paymentMethod)?.fee ?? 5.0)
-      : RAIL_FACTS[rail]?.fee ?? 0
-    : 0;
+  const feeDetails = useMemo(() => {
+    return getDetailedFeeBreakdown({
+      rail,
+      bankCategory,
+      paymentMethod: f.paymentMethod,
+      membersCount: selectedGroupObj?.members.length ?? 5,
+    });
+  }, [rail, bankCategory, f.paymentMethod, selectedGroupObj]);
+
+  const fee = feeDetails.feeAmount;
 
   const deliverySpeed = useMemo(() => {
     if ((rail === "bank" && bankCategory === "other") || rail === "ach") {
@@ -1854,10 +1862,82 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         fundCard(f.cardId, currentAmount);
       }
 
+      if (f.saveBeneficiary) {
+        const benDisplayName = f.beneficiaryNickname?.trim() || resolvedName || f.benName || f.wName || "New Payee";
+        let txType: "bank" | "wallet" | "proxy" | "bill" | "airtime" | "papss" = "bank";
+        let benCat: "person" | "biller" | "number" = "person";
+        let detail = "";
+        let bankName = f.bank || "GCB Bank";
+        let accountNumber = f.benAcct;
+        let phoneNumber = f.wPhone;
+        let network = f.wNetwork;
+        let billerName = biller?.name;
+        let billerReference = f.billRef;
+
+        if (rail === "wallet" || rail === "momo") {
+          txType = "wallet";
+          benCat = "person";
+          network = f.wNetwork || "MTN Mobile Money";
+          phoneNumber = f.wPhone;
+          detail = `${network} · ${phoneNumber}`;
+        } else if (rail === "airtime") {
+          txType = "airtime";
+          benCat = "number";
+          network = f.wNetwork || "MTN";
+          phoneNumber = f.aPhone;
+          detail = `${network} · ${phoneNumber}`;
+        } else if (rail === "data") {
+          txType = "wallet";
+          benCat = "number";
+          network = f.wNetwork || "MTN";
+          phoneNumber = f.aPhone;
+          detail = `${network} · ${phoneNumber} · ${bundle?.name || "Data Bundle"}`;
+        } else if (rail === "proxy") {
+          txType = "proxy";
+          benCat = "person";
+          detail = `Proxy · ${f.pxId}`;
+        } else if (rail === "papss") {
+          txType = "papss";
+          benCat = "person";
+          bankName = f.wBank || "International Bank";
+          accountNumber = f.wIban;
+          detail = `${bankName} · ${f.wCurrency} · ${f.wIban}`;
+        } else if (rail === "bill" || rail === "ecg" || rail === "ghanagov") {
+          txType = "bill";
+          benCat = "biller";
+          billerName = rail === "ecg" ? "ECG Prepaid" : rail === "ghanagov" ? (f.govService || "Ghana.gov") : (biller?.name || "Utility Biller");
+          billerReference = rail === "ecg" ? f.ecgMeter : rail === "ghanagov" ? f.govRef : f.billRef;
+          detail = `${billerName} · ${billerReference}`;
+        } else {
+          txType = "bank";
+          benCat = "person";
+          bankName = bankCategory === "gcb" ? "GCB Bank" : (f.bank || "Commercial Bank");
+          accountNumber = f.benAcct;
+          detail = `${bankName} · ${accountNumber}`;
+        }
+
+        useBeneficiariesStore.getState().addBeneficiary({
+          name: benDisplayName,
+          transactionType: txType,
+          category: benCat,
+          detail,
+          verified: true,
+          bankName,
+          accountNumber,
+          network,
+          phoneNumber,
+          billerName,
+          billerReference,
+          label: f.beneficiaryNickname?.trim() || undefined,
+        });
+      }
+
       setReceipt({
         pending: Boolean(isDualMandate),
         title: isDualMandate
           ? "Payment Queued — Awaiting Co-Signatory Approval"
+          : f.isScheduled
+          ? "Payment Successfully Scheduled"
           : isOwnTransfer
           ? "Transfer Between Accounts Successful"
           : rail === "card-topup"
@@ -1865,6 +1945,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           : "Transfer Successful",
         msg: isDualMandate
           ? `Your transfer of ${formatMoney(currentAmount, "GHS", true)} from ${account?.name} has been authorized with your PIN. An alert was sent to co-holder Efua Mensah to approve.`
+          : f.isScheduled
+          ? `Your payment order of ${formatMoney(currentAmount, rail === "papss" ? f.wCurrency : "GHS", true)} to ${resolvedName || "recipient"} is scheduled for execution on ${f.scheduleDate} (${f.scheduleFrequency === "once" ? "One-off" : f.scheduleFrequency}).`
           : isOwnTransfer
           ? `Transferred ${formatMoney(currentAmount, "GHS", true)} to your ${toOwnAccount?.name || "Account"}`
           : rail === "card-topup"
@@ -1918,7 +2000,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               ] as [string, string][])
             : []),
           ["Payment Method", isOwnTransfer ? "OWN ACCOUNT TRANSFER" : ((rail === "bank" && bankCategory === "other") || rail === "ach") && f.paymentMethod ? getPaymentMethodName(f.paymentMethod) : rail.toUpperCase()],
-          ["Delivery Speed", isDualMandate ? "Upon Co-Signatory Approval" : deliverySpeed],
+          ["Delivery Speed", isDualMandate ? "Upon Co-Signatory Approval" : (f.isScheduled ? `Scheduled for ${f.scheduleDate}` : deliverySpeed)],
+          ["Payment Timing", f.isScheduled ? `Scheduled · ${f.scheduleFrequency === "once" ? "One-off" : f.scheduleFrequency.charAt(0).toUpperCase() + f.scheduleFrequency.slice(1)} (${f.scheduleDate})` : "Immediate Transfer"],
+          ["Fee", `${feeDetails.feeName}: ${feeDetails.feeAmount === 0 ? "Free (GH₵0.00)" : formatMoney(feeDetails.feeAmount, "GHS", true)}`],
+          ...(f.saveBeneficiary ? ([["Beneficiary Saved", `Yes — ${f.beneficiaryNickname || resolvedName || "Saved to Payees"}`]] as [string, string][]) : []),
           ["From Account", `${account?.name} (••${account?.number.slice(-4)})`],
           ...(isOwnTransfer ? ([["To Account", `${toOwnAccount?.name} (••${toOwnAccount?.number.slice(-4)})`]] as [string, string][]) : []),
           ["Reference / Ref Code", trn],
@@ -2523,6 +2608,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   amount: f.bankAmount,
                   narration: f.bankRef,
                   category: f.category,
+                  isScheduled: f.isScheduled,
+                  scheduleDate: f.scheduleDate,
+                  scheduleFrequency: f.scheduleFrequency,
+                  scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
                   if (key === "amount") set("bankAmount", val);
@@ -2550,6 +2639,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   amount: f.bankAmount,
                   narration: f.bankRef,
                   category: f.category,
+                  saveBeneficiary: f.saveBeneficiary,
+                  beneficiaryNickname: f.beneficiaryNickname,
+                  isScheduled: f.isScheduled,
+                  scheduleDate: f.scheduleDate,
+                  scheduleFrequency: f.scheduleFrequency,
+                  scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
                   if (key === "amount") set("bankAmount", val);
@@ -2579,6 +2674,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   amount: f.bankAmount,
                   narration: f.bankRef,
                   category: f.category,
+                  saveBeneficiary: f.saveBeneficiary,
+                  beneficiaryNickname: f.beneficiaryNickname,
+                  isScheduled: f.isScheduled,
+                  scheduleDate: f.scheduleDate,
+                  scheduleFrequency: f.scheduleFrequency,
+                  scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
                   if (key === "amount") set("bankAmount", val);
@@ -2609,6 +2710,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   amount: f.wAmount,
                   narration: f.wRef,
                   category: f.category,
+                  saveBeneficiary: f.saveBeneficiary,
+                  beneficiaryNickname: f.beneficiaryNickname,
+                  isScheduled: f.isScheduled,
+                  scheduleDate: f.scheduleDate,
+                  scheduleFrequency: f.scheduleFrequency,
+                  scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
                   if (key === "amount") set("wAmount", val);
@@ -2635,6 +2742,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   amount: f.bankAmount || f.wAmount,
                   narration: f.bankRef || f.wRef,
                   category: f.category,
+                  saveBeneficiary: f.saveBeneficiary,
+                  beneficiaryNickname: f.beneficiaryNickname,
+                  isScheduled: f.isScheduled,
+                  scheduleDate: f.scheduleDate,
+                  scheduleFrequency: f.scheduleFrequency,
+                  scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
                   if (key === "amount") {
@@ -2667,6 +2780,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   amount: f.airtimeAmount,
                   narration: f.bankRef || f.wRef,
                   category: f.category,
+                  saveBeneficiary: f.saveBeneficiary,
+                  beneficiaryNickname: f.beneficiaryNickname,
+                  isScheduled: f.isScheduled,
+                  scheduleDate: f.scheduleDate,
+                  scheduleFrequency: f.scheduleFrequency,
+                  scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
                   if (key === "amount") set("airtimeAmount", val);
@@ -2697,6 +2816,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   bundleId: f.bundleId,
                   narration: f.bankRef || f.wRef,
                   category: f.category,
+                  saveBeneficiary: f.saveBeneficiary,
+                  beneficiaryNickname: f.beneficiaryNickname,
+                  isScheduled: f.isScheduled,
+                  scheduleDate: f.scheduleDate,
+                  scheduleFrequency: f.scheduleFrequency,
+                  scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
                   if (key === "narration") {
@@ -2724,6 +2849,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   amount: f.cardAmount,
                   narration: f.bankRef || f.wRef,
                   category: f.category,
+                  isScheduled: f.isScheduled,
+                  scheduleDate: f.scheduleDate,
+                  scheduleFrequency: f.scheduleFrequency,
+                  scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
                   if (key === "amount") set("cardAmount", val);
@@ -2758,6 +2887,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   amount: rail === "ecg" ? f.ecgAmount : rail === "ghanagov" ? f.govAmount : f.billAmount,
                   narration: f.bankRef || f.wRef,
                   category: f.category,
+                  saveBeneficiary: f.saveBeneficiary,
+                  beneficiaryNickname: f.beneficiaryNickname,
+                  isScheduled: f.isScheduled,
+                  scheduleDate: f.scheduleDate,
+                  scheduleFrequency: f.scheduleFrequency,
+                  scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
                   if (key === "amount") {
@@ -2795,6 +2930,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   wForeign: f.wForeign,
                   wPurpose: f.wPurpose || "Goods purchased",
                   category: f.category,
+                  saveBeneficiary: f.saveBeneficiary,
+                  beneficiaryNickname: f.beneficiaryNickname,
+                  isScheduled: f.isScheduled,
+                  scheduleDate: f.scheduleDate,
+                  scheduleFrequency: f.scheduleFrequency,
+                  scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => set(key, val)}
                 detailsCollapsed={stage1Collapsed}
@@ -2845,6 +2986,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   amount: f.pxAmount,
                   narration: f.pxRef,
                   category: f.category,
+                  saveBeneficiary: f.saveBeneficiary,
+                  beneficiaryNickname: f.beneficiaryNickname,
+                  isScheduled: f.isScheduled,
+                  scheduleDate: f.scheduleDate,
+                  scheduleFrequency: f.scheduleFrequency,
+                  scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
                   if (key === "amount") set("pxAmount", val);
@@ -2927,11 +3074,40 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   </div>
                 )}
 
+                {/* Transfer Fee Row */}
+                <div className="flex items-center justify-between px-4 py-3 w-full">
+                  <span className="text-[13.5px] text-muted-foreground">Transfer Fee</span>
+                  <span className="text-[13.5px] font-normal text-foreground">
+                    {feeDetails.feeAmount === 0 ? "Free (GH₵0.00)" : `${feeDetails.feeName} · ${formatMoney(feeDetails.feeAmount, "GHS", true)}`}
+                  </span>
+                </div>
+
+                {/* Payment Timing / Schedule Row */}
+                <div className="flex items-center justify-between px-4 py-3 w-full">
+                  <span className="text-[13.5px] text-muted-foreground">Payment Timing</span>
+                  <span className="text-[13.5px] font-normal text-foreground">
+                    {f.isScheduled
+                      ? `Scheduled · ${f.scheduleFrequency === "once" ? "One-off" : f.scheduleFrequency.charAt(0).toUpperCase() + f.scheduleFrequency.slice(1)} (${f.scheduleDate})`
+                      : "Immediate Transfer"}
+                  </span>
+                </div>
+
+                {/* Save Beneficiary Row */}
+                {f.saveBeneficiary && (
+                  <div className="flex items-center justify-between px-4 py-3 w-full">
+                    <span className="text-[13.5px] text-muted-foreground">Save Beneficiary</span>
+                    <span className="text-[13.5px] font-normal text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                      <CheckCircle2 size={14} />
+                      <span>Yes {f.beneficiaryNickname ? `(“${f.beneficiaryNickname}”)` : ""}</span>
+                    </span>
+                  </div>
+                )}
+
                 {/* Arrives Row */}
                 <div className="flex items-center justify-between px-4 py-3 w-full">
                   <span className="text-[13.5px] text-muted-foreground">Arrives</span>
                   <span className="text-[13.5px] font-normal text-foreground">
-                    {deliverySpeed}
+                    {f.isScheduled ? `Executes on ${f.scheduleDate}` : deliverySpeed}
                   </span>
                 </div>
               </div>
@@ -2961,15 +3137,30 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 {showFeeBreakdown && (
                   <div className="flex flex-col w-full border-t border-border/60 divide-y divide-border/60 animate-in fade-in duration-150">
                     <div className="flex items-center justify-between px-4 py-3 w-full">
-                      <span className="text-[13.5px] text-muted-foreground">Amount</span>
+                      <span className="text-[13.5px] text-muted-foreground">Transfer Amount</span>
                       <span className="text-[13.5px] text-foreground tabular">
                         {formatMoney(currentAmount, rail === "papss" ? f.wCurrency : "GHS", true)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between px-4 py-3 w-full">
-                      <span className="text-[13.5px] text-muted-foreground">Fee</span>
+                      <div className="flex flex-col">
+                        <span className="text-[13.5px] text-foreground font-medium">{feeDetails.feeName}</span>
+                        <span className="text-[11.5px] text-muted-foreground">Standard clearing tariff</span>
+                      </div>
                       <span className="text-[13.5px] text-foreground tabular">
-                        {fee === 0 ? "GH₵0.00" : formatMoney(fee, "GHS", true)}
+                        {feeDetails.feeAmount === 0 ? "Free (GH₵0.00)" : formatMoney(feeDetails.feeAmount, "GHS", true)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between px-4 py-3 w-full">
+                      <span className="text-[13.5px] text-muted-foreground">Bank Service Commission</span>
+                      <span className="text-[13.5px] text-foreground tabular">
+                        {feeDetails.commissionText}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between px-4 py-3 w-full">
+                      <span className="text-[13.5px] text-muted-foreground">Government E-Levy</span>
+                      <span className="text-[13.5px] text-foreground tabular">
+                        {feeDetails.eLevyText}
                       </span>
                     </div>
                     {rail === "papss" && (
@@ -2983,7 +3174,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
                 {/* Total Row (Always displayed!) */}
                 <div className="flex items-center justify-between px-4 py-3.5 w-full bg-muted/40 dark:bg-muted/20 border-t border-border/70">
-                  <span className="text-[13.5px] text-foreground font-normal">Total</span>
+                  <span className="text-[13.5px] text-foreground font-normal">Total Debit</span>
                   <span className="text-[26px] sm:text-[28px] font-semibold text-foreground tracking-[-0.03em] tabular">
                     {formatMoney(totalDebit, "GHS", true)}
                   </span>
@@ -2993,7 +3184,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
             {/* Disclaimer */}
             <p className="text-[12px] text-muted-foreground text-center px-4 -mt-1">
-              Clicking “Proceed to Pay” authorizes GCB Bank PLC to initiate the transaction.
+              {f.isScheduled
+                ? "Clicking “Proceed & Schedule” authorizes GCB Bank PLC to schedule the payment order."
+                : "Clicking “Proceed to Pay” authorizes GCB Bank PLC to initiate the transaction."}
             </p>
 
             {/* Action Buttons */}
@@ -3013,7 +3206,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 }}
                 className="flex-1 h-11 rounded-lg text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
               >
-                Proceed to Pay
+                {f.isScheduled ? "Proceed & Schedule" : "Proceed to Pay"}
               </Button>
             </div>
           </div>

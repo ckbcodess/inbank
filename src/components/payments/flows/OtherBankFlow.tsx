@@ -20,6 +20,9 @@ import {
   CollapsedDetailsBadge,
   OTHER_BANKS,
   PAYMENT_METHODS,
+  SaveBeneficiaryCheckbox,
+  SchedulePaymentSection,
+  ScheduleFrequency,
   resolveAccountName,
 } from "./shared";
 
@@ -32,12 +35,18 @@ export interface OtherBankFormState {
   amount: string;
   narration: string;
   category: string;
+  saveBeneficiary?: boolean;
+  beneficiaryNickname?: string;
+  isScheduled?: boolean;
+  scheduleDate?: string;
+  scheduleFrequency?: ScheduleFrequency;
+  scheduleEndDate?: string;
 }
 
 interface OtherBankFlowProps {
   accounts: Account[];
   state: OtherBankFormState;
-  onChange: (key: keyof OtherBankFormState, value: string) => void;
+  onChange: (key: keyof OtherBankFormState, value: string | boolean | ScheduleFrequency | undefined) => void;
   onProceed: () => void;
   detailsCollapsed?: boolean;
   onToggleCollapsed?: (collapsed: boolean) => void;
@@ -193,6 +202,30 @@ export function OtherBankFlow({
       <CategorySelect
         value={state.category}
         onChange={(val) => onChange("category", val)}
+      />
+
+      {/* 6. Save Beneficiary */}
+      <SaveBeneficiaryCheckbox
+        checked={state.saveBeneficiary ?? false}
+        onChange={(val) => onChange("saveBeneficiary", val)}
+        nickname={state.beneficiaryNickname}
+        onNicknameChange={(val) => onChange("beneficiaryNickname", val)}
+      />
+
+      {/* 7. Schedule Payment */}
+      <SchedulePaymentSection
+        state={{
+          enabled: state.isScheduled ?? false,
+          startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
+          frequency: state.scheduleFrequency || "once",
+          endDate: state.scheduleEndDate || "",
+        }}
+        onChange={(updates) => {
+          if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
+          if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
+          if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
+          if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
+        }}
       />
 
       {overBalance && (
