@@ -127,21 +127,70 @@ export const RATES: Record<string, number> = {
 };
 
 /* -------------------------------------------------------------------------- */
-/* Subcomponent 1: From Account Selector                                      */
+/* Subcomponent 1: Account Select Trigger Content                             */
 /* -------------------------------------------------------------------------- */
+export function AccountSelectTriggerContent({
+  account,
+  placeholder = "Select account",
+}: {
+  account?: Account | null;
+  placeholder?: string;
+}) {
+  if (!account) {
+    return (
+      <div className="flex items-center gap-3.5 min-w-0 flex-1">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+          <Landmark size={19} strokeWidth={1.8} />
+        </span>
+        <span className="text-[15px] text-muted-foreground font-normal truncate">
+          {placeholder}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
+      {/* Left: Icon + Account Name + Account Number */}
+      <div className="flex items-center gap-3.5 min-w-0">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+          <Landmark size={19} strokeWidth={1.8} />
+        </span>
+        <div className="flex flex-col min-w-0 text-left gap-0.5">
+          <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
+            {account.name}
+          </span>
+          <span className="text-[13px] text-muted-foreground font-normal truncate tabular leading-tight">
+            {account.number}
+          </span>
+        </div>
+      </div>
+
+      {/* Right: Balance */}
+      <div className="text-right shrink-0">
+        <span className="text-[15px] text-foreground font-medium tabular tracking-tight">
+          {formatMoney(account.available ?? 0, account.currency || "GHS", true)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export function FromAccountSelector({
   accounts,
   value,
   onChange,
   label = "From Account",
+  placeholder = "Select account",
 }: {
   accounts: Account[];
   value: string;
   onChange: (id: string) => void;
   label?: string;
+  placeholder?: string;
 }) {
   const selected = useMemo(
-    () => accounts.find((a) => a.id === value) ?? accounts[0],
+    () => accounts.find((a) => a.id === value),
     [accounts, value]
   );
 
@@ -149,28 +198,21 @@ export function FromAccountSelector({
     <div className="flex flex-col gap-2">
       <label className="text-[14px] font-medium text-foreground">{label}</label>
       <Select value={value} onValueChange={(val) => val && onChange(val)}>
-        <SelectTrigger className="h-auto min-h-[72px] py-3.5 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none">
-          <div className="flex items-center gap-3.5 min-w-0 flex-1">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-              <Landmark size={19} strokeWidth={1.8} />
-            </span>
-            <div className="flex flex-col min-w-0 text-left gap-0.5">
-              <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
-                {selected?.name || "Select Account"}
-              </span>
-              <span className="text-[13px] text-muted-foreground font-normal truncate tabular leading-tight">
-                {selected?.number || ""}
-              </span>
-              <span className="text-[12.5px] text-muted-foreground font-normal truncate tabular leading-tight mt-0.5">
-                Balance: {formatMoney(selected?.available ?? 0, selected?.currency || "GHS", true)}
-              </span>
-            </div>
-          </div>
+        <SelectTrigger className="h-auto min-h-[68px] py-3 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none">
+          <AccountSelectTriggerContent
+            account={selected}
+            placeholder={placeholder}
+          />
         </SelectTrigger>
         <SelectContent>
           {accounts.map((a) => (
             <SelectItem key={a.id} value={a.id}>
-              {a.name} ({a.number}) — {formatMoney(a.available, a.currency, true)}
+              <div className="flex items-center justify-between w-full gap-4">
+                <span>{a.name} ({a.number})</span>
+                <span className="font-medium text-muted-foreground tabular">
+                  {formatMoney(a.available, a.currency, true)}
+                </span>
+              </div>
             </SelectItem>
           ))}
         </SelectContent>
@@ -280,7 +322,7 @@ export function CategorySelect({
       <label className="text-[14px] font-medium text-foreground">{label}</label>
       <Select value={value} onValueChange={(val) => onChange(val || "")}>
         <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-          <SelectValue placeholder="" />
+          <SelectValue placeholder="Select category" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="General">General</SelectItem>

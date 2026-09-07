@@ -107,20 +107,38 @@ export function GroupPaymentFlow({
               }
             }}
           >
-            <SelectTrigger className="h-auto min-h-[64px] py-3 px-4 w-full rounded-2xl border border-border/80 bg-card text-left shadow-none">
-              <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Users size={18} strokeWidth={1.8} />
-                </span>
-                <div className="flex flex-col min-w-0 text-left gap-0.5">
-                  <span className="text-[15px] text-foreground font-medium truncate leading-tight">
-                    {selectedGroup?.name || "Select Group"}
+            <SelectTrigger className="h-auto min-h-[68px] py-3 px-4 w-full rounded-2xl border border-border/80 bg-card text-left shadow-none">
+              {!selectedGroup ? (
+                <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <Users size={18} strokeWidth={1.8} />
                   </span>
-                  <span className="text-[13px] text-muted-foreground font-normal truncate leading-tight">
-                    {selectedGroup ? `${selectedGroup.members.length} members · ${selectedGroup.splitType === "equal" ? "Equal split" : "Custom split"}` : "Choose group"}
+                  <span className="text-[15px] text-muted-foreground font-normal truncate">
+                    Select group
                   </span>
                 </div>
-              </div>
+              ) : (
+                <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <Users size={18} strokeWidth={1.8} />
+                    </span>
+                    <div className="flex flex-col min-w-0 text-left gap-0.5">
+                      <span className="text-[15px] text-foreground font-medium truncate leading-tight">
+                        {selectedGroup.name}
+                      </span>
+                      <span className="text-[13px] text-muted-foreground font-normal truncate leading-tight">
+                        {selectedGroup.splitType === "equal" ? "Equal split" : "Custom split"}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className="text-[14px] text-muted-foreground font-medium tabular">
+                      {selectedGroup.members.length} members
+                    </span>
+                  </div>
+                </div>
+              )}
             </SelectTrigger>
             <SelectContent>
               {groups.map((g) => (

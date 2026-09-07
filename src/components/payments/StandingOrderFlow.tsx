@@ -985,19 +985,28 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     value={f.accountId}
                     onValueChange={(val) => val && set("accountId", val)}
                   >
-                    <SelectTrigger className="h-auto min-h-[68px] py-3.5 px-4 w-full rounded-2xl border border-border bg-card dark:bg-[#181818] hover:border-primary/50 text-left cursor-pointer transition-colors">
-                      <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/80 text-foreground dark:bg-[#252525]">
-                          <Landmark size={18} strokeWidth={1.8} />
-                        </span>
-                        <div className="flex flex-col min-w-0 text-left gap-1">
-                          <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
-                            {account?.name} ••{account?.number?.slice(-4) || "7658"}
+                    <SelectTrigger className="h-auto min-h-[68px] py-3 px-4 w-full rounded-2xl border border-border bg-card dark:bg-[#181818] hover:border-primary/50 text-left cursor-pointer transition-colors shadow-none">
+                      <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
+                        <div className="flex items-center gap-3.5 min-w-0">
+                          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/80 text-foreground dark:bg-[#252525]">
+                            <Landmark size={18} strokeWidth={1.8} />
                           </span>
-                          <span className="text-[13px] text-muted-foreground font-normal truncate tabular leading-tight">
-                            {formatMoney(account?.available ?? 1320201, account?.currency || "GHS", true)}
-                          </span>
+                          <div className="flex flex-col min-w-0 text-left gap-0.5">
+                            <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
+                              {account?.name || "Select Account"}
+                            </span>
+                            <span className="text-[13px] text-muted-foreground font-normal truncate tabular leading-tight">
+                              {account?.number || ""}
+                            </span>
+                          </div>
                         </div>
+                        {account && (
+                          <div className="text-right shrink-0">
+                            <span className="text-[15px] text-foreground font-medium tabular tracking-tight">
+                              {formatMoney(account.available ?? 0, account.currency || "GHS", true)}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </SelectTrigger>
                     <SelectContent>

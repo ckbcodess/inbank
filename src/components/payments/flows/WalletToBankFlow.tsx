@@ -56,19 +56,23 @@ export function WalletToBankFlow({
       {/* 1. Source Mobile Wallet */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Source Mobile Wallet</label>
-        <div className="flex items-center gap-3.5 min-h-[72px] py-3.5 px-4 w-full rounded-2xl border border-border/80 bg-card">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
-            <Smartphone size={19} strokeWidth={1.8} />
-          </span>
-          <div className="flex flex-col min-w-0 text-left gap-0.5">
-            <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
-              MTN Mobile Money
+        <div className="flex items-center justify-between min-h-[68px] py-3 px-4 w-full rounded-2xl border border-border/80 bg-card gap-3">
+          <div className="flex items-center gap-3.5 min-w-0">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
+              <Smartphone size={19} strokeWidth={1.8} />
             </span>
-            <span className="text-[13px] text-muted-foreground font-normal truncate tabular leading-tight">
-              024 412 3456
-            </span>
-            <span className="text-[12.5px] text-muted-foreground font-normal truncate tabular leading-tight mt-0.5">
-              Available Limit: GHS 1,450.00
+            <div className="flex flex-col min-w-0 text-left gap-0.5">
+              <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
+                MTN Mobile Money
+              </span>
+              <span className="text-[13px] text-muted-foreground font-normal truncate tabular leading-tight">
+                024 412 3456
+              </span>
+            </div>
+          </div>
+          <div className="text-right shrink-0">
+            <span className="text-[15px] text-foreground font-medium tabular tracking-tight">
+              GHS 1,450.00
             </span>
           </div>
         </div>

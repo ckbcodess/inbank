@@ -178,18 +178,24 @@ export function AirtimeDataFlow({
             value={selectedBundle?.id || bundles[0]?.id}
             onValueChange={(val) => val && onChange("bundleId", val)}
           >
-            <SelectTrigger className="h-auto min-h-[64px] py-3 px-4 w-full rounded-2xl border border-border/80 bg-card text-left shadow-none">
-              <div className="flex items-center justify-between w-full">
-                <div className="flex flex-col">
-                  <span className="text-[15px] font-medium text-foreground">
-                    {selectedBundle?.name}
-                  </span>
-                  <span className="text-[13px] text-muted-foreground">{selectedBundle?.val}</span>
-                </div>
-                <span className="text-[16px] font-semibold text-foreground tabular">
-                  {formatMoney(selectedBundle?.price ?? 0, "GHS", true)}
+            <SelectTrigger className="h-auto min-h-[68px] py-3 px-4 w-full rounded-2xl border border-border/80 bg-card text-left shadow-none">
+              {!selectedBundle ? (
+                <span className="text-[15px] text-muted-foreground font-normal">
+                  Select data bundle
                 </span>
-              </div>
+              ) : (
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex flex-col">
+                    <span className="text-[15px] font-medium text-foreground">
+                      {selectedBundle.name}
+                    </span>
+                    <span className="text-[13px] text-muted-foreground">{selectedBundle.val}</span>
+                  </div>
+                  <span className="text-[15px] font-medium text-foreground tabular">
+                    {formatMoney(selectedBundle.price, "GHS", true)}
+                  </span>
+                </div>
+              )}
             </SelectTrigger>
             <SelectContent>
               {bundles.map((b) => (

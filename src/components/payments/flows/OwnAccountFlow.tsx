@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Account, formatMoney } from "@/lib/mock-data";
-import { AmountInput } from "./shared";
+import { AmountInput, FromAccountSelector, AccountSelectTriggerContent } from "./shared";
 
 export interface OwnAccountFormState {
   fromId: string;
@@ -56,46 +56,16 @@ export function OwnAccountFlow({
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
       {/* 1. From Account */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">From Account</label>
-        <Select
-          value={state.fromId}
-          onValueChange={(val) => {
-            if (val) {
-              onChange("fromId", val);
-              if (state.toOwnAccountId === val) {
-                onChange("toOwnAccountId", "");
-              }
-            }
-          }}
-        >
-          <SelectTrigger className="h-auto min-h-[72px] py-3.5 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none">
-            <div className="flex items-center gap-3.5 min-w-0 flex-1">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                <Landmark size={19} strokeWidth={1.8} />
-              </span>
-              <div className="flex flex-col min-w-0 text-left gap-0.5">
-                <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
-                  {fromAccount?.name || "Select Account"}
-                </span>
-                <span className="text-[13px] text-muted-foreground font-normal truncate tabular leading-tight">
-                  {fromAccount?.number || ""}
-                </span>
-                <span className="text-[12.5px] text-muted-foreground font-normal truncate tabular leading-tight mt-0.5">
-                  Balance: {formatMoney(fromAccount?.available ?? 0, fromAccount?.currency || "GHS", true)}
-                </span>
-              </div>
-            </div>
-          </SelectTrigger>
-          <SelectContent>
-            {accounts.map((a) => (
-              <SelectItem key={a.id} value={a.id}>
-                {a.name} ({a.number}) — {formatMoney(a.available, a.currency, true)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <FromAccountSelector
+        accounts={accounts}
+        value={state.fromId}
+        onChange={(val) => {
+          onChange("fromId", val);
+          if (state.toOwnAccountId === val) {
+            onChange("toOwnAccountId", "");
+          }
+        }}
+      />
 
       {/* 2. To Account */}
       <div className="flex flex-col gap-2">
@@ -104,40 +74,23 @@ export function OwnAccountFlow({
           value={state.toOwnAccountId}
           onValueChange={(val) => val && onChange("toOwnAccountId", val)}
         >
-          <SelectTrigger className="h-auto min-h-[72px] py-3.5 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none">
-            <div className="flex items-center gap-3.5 min-w-0 flex-1">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                <Landmark size={19} strokeWidth={1.8} />
-              </span>
-              <div className="flex flex-col min-w-0 text-left gap-0.5">
-                {toAccount ? (
-                  <>
-                    <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
-                      {toAccount.name}
-                    </span>
-                    <span className="text-[13px] text-muted-foreground font-normal truncate tabular leading-tight">
-                      {toAccount.number}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-[15px] text-muted-foreground font-medium tracking-[-0.01em] truncate leading-tight">
-                      Select destination account
-                    </span>
-                    <span className="text-[12.5px] text-muted-foreground/70 font-normal truncate leading-tight">
-                      Choose from your accounts
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
+          <SelectTrigger className="h-auto min-h-[68px] py-3 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none">
+            <AccountSelectTriggerContent
+              account={toAccount}
+              placeholder="Select destination account"
+            />
           </SelectTrigger>
           <SelectContent>
             {accounts
               .filter((a) => a.id !== state.fromId)
               .map((a) => (
                 <SelectItem key={a.id} value={a.id}>
-                  {a.name} ({a.number}) — {formatMoney(a.available, a.currency, true)}
+                  <div className="flex items-center justify-between w-full gap-4">
+                    <span>{a.name} ({a.number})</span>
+                    <span className="font-medium text-muted-foreground tabular">
+                      {formatMoney(a.available, a.currency, true)}
+                    </span>
+                  </div>
                 </SelectItem>
               ))}
           </SelectContent>
