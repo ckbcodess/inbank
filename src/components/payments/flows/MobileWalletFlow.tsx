@@ -92,7 +92,8 @@ export function MobileWalletFlow({
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
   const isPhoneValid = isSelf || state.wPhone.replace(/\s/g, "").length >= 9;
-  const isValid = Boolean(state.fromId) && isPhoneValid && numAmount > 0 && !overBalance;
+  const isNetworkValid = isSelf || Boolean(state.wNetwork);
+  const isValid = Boolean(state.fromId) && isNetworkValid && isPhoneValid && numAmount > 0 && !overBalance;
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
@@ -121,30 +122,6 @@ export function MobileWalletFlow({
               </div>
             ) : (
               <>
-                <input
-                  type="tel"
-                  inputMode="numeric"
-                  value={state.wPhone}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    onChange("wPhone", val);
-                    const detected = detectTelcoNetwork(val);
-                    if (detected) {
-                      onChange("wNetwork", detected.walletName);
-                    }
-                    const resolved = resolveAccountName(val, "");
-                    if (resolved) {
-                      onChange("wName", resolved);
-                    }
-                    const clean = val.replace(/[\s-]/g, "");
-                    if (clean.length === 10) {
-                      setCollapsed(true);
-                    }
-                  }}
-                  placeholder="Enter mobile number (e.g. 024 123 4567)"
-                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-                />
-
                 <Select
                   value={state.wNetwork || ""}
                   onValueChange={(val) => val && onChange("wNetwork", val)}
@@ -160,6 +137,30 @@ export function MobileWalletFlow({
                     ))}
                   </SelectContent>
                 </Select>
+
+                <input
+                  type="tel"
+                  inputMode="numeric"
+                  value={state.wPhone}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onChange("wPhone", val);
+                    const detected = detectTelcoNetwork(val);
+                    if (detected && !state.wNetwork) {
+                      onChange("wNetwork", detected.walletName);
+                    }
+                    const resolved = resolveAccountName(val, "");
+                    if (resolved) {
+                      onChange("wName", resolved);
+                    }
+                    const clean = val.replace(/[\s-]/g, "");
+                    if (clean.length === 10) {
+                      setCollapsed(true);
+                    }
+                  }}
+                  placeholder="Enter mobile number (e.g. 024 123 4567)"
+                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                />
               </>
             )}
 
@@ -173,7 +174,7 @@ export function MobileWalletFlow({
         value={state.amount}
         onChange={(val) => onChange("amount", val)}
         onFocus={() => {
-          if (isPhoneValid) setCollapsed(true);
+          if (isPhoneValid && isNetworkValid) setCollapsed(true);
         }}
       />
 

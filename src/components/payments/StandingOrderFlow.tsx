@@ -353,17 +353,21 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     const detected = detectNetworkFromPhone(val);
     if (detected) {
       if (rail === "data" || rail === "airtime") {
-        set("network", detected.airtimeNet);
-        if (rail === "data") {
-          const pkgs = NETWORK_DATA_PACKAGES[detected.airtimeNet] || [];
-          if (pkgs.length > 0) {
-            set("dataPackageId", pkgs[0].id);
-            set("amount", pkgs[0].price);
-            set("nickname", `Monthly ${detected.airtimeNet.split(" ")[0]} Data`);
+        if (!f.network) {
+          set("network", detected.airtimeNet);
+          if (rail === "data") {
+            const pkgs = NETWORK_DATA_PACKAGES[detected.airtimeNet] || [];
+            if (pkgs.length > 0) {
+              set("dataPackageId", pkgs[0].id);
+              set("amount", pkgs[0].price);
+              set("nickname", `Monthly ${detected.airtimeNet.split(" ")[0]} Data`);
+            }
           }
         }
       } else if (rail === "wallet") {
-        set("walletNetwork", detected.walletNet);
+        if (!f.walletNetwork) {
+          set("walletNetwork", detected.walletNet);
+        }
       }
     }
     const clean = val.replace(/[^0-9]/g, "");
@@ -884,15 +888,6 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {/* TO MOBILE WALLET */}
               {rail === "wallet" && (
                 <>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    value={f.destination}
-                    onChange={(e) => handlePhoneChange(e.target.value)}
-                    placeholder="Enter mobile / wallet number (e.g. 024 123 4567)"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-                  />
-
                   <Select
                     value={f.walletNetwork}
                     onValueChange={(val) => val && set("walletNetwork", val)}
@@ -908,6 +903,15 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       ))}
                     </SelectContent>
                   </Select>
+
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={f.destination}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    placeholder="Enter mobile / wallet number (e.g. 024 123 4567)"
+                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                  />
                 </>
               )}
 
@@ -971,15 +975,6 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {/* DATA BUNDLE */}
               {rail === "data" && (
                 <>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    value={f.destination}
-                    onChange={(e) => handlePhoneChange(e.target.value)}
-                    placeholder="Enter phone number (e.g. 024 123 4567)"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-                  />
-
                   <Select
                     value={f.network}
                     onValueChange={(newNet) => {
@@ -1003,6 +998,15 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       ))}
                     </SelectContent>
                   </Select>
+
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={f.destination}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    placeholder="Enter phone number (e.g. 024 123 4567)"
+                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                  />
 
                   <Select
                     value={f.dataPackageId}
@@ -1034,15 +1038,6 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {/* AIRTIME */}
               {rail === "airtime" && (
                 <>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    value={f.destination}
-                    onChange={(e) => handlePhoneChange(e.target.value)}
-                    placeholder="Enter phone number (e.g. 024 123 4567)"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-                  />
-
                   <Select
                     value={f.network}
                     onValueChange={(val) => val && set("network", val)}
@@ -1058,6 +1053,15 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       ))}
                     </SelectContent>
                   </Select>
+
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    value={f.destination}
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    placeholder="Enter phone number (e.g. 024 123 4567)"
+                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                  />
                 </>
               )}
 
