@@ -2554,7 +2554,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 accounts={accounts}
                 state={{
                   fromId: f.fromId,
-                  bank: f.bank || "Standard Bank Ghana",
+                  bank: f.bank,
                   benAcct: f.benAcct,
                   benName: f.benName,
                   amount: f.bankAmount,
@@ -2584,7 +2584,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 walletCategory={walletCategory || "other"}
                 state={{
                   fromId: f.fromId,
-                  wNetwork: f.wNetwork || "MTN Mobile Money",
+                  wNetwork: walletCategory === "self" ? (f.wNetwork || "MTN Mobile Money") : f.wNetwork,
                   wPhone: f.wPhone,
                   wName: f.wName,
                   amount: f.wAmount,
@@ -2610,7 +2610,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             {rail === "wallet-to-bank" && (
               <WalletToBankFlow
                 state={{
-                  bank: f.bank || "GCB Bank",
+                  bank: f.bank,
                   benAcct: f.benAcct,
                   benName: f.benName,
                   amount: f.bankAmount || f.wAmount,
@@ -2642,7 +2642,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 accounts={accounts}
                 state={{
                   fromId: f.fromId,
-                  wNetwork: f.wNetwork || "MTN Mobile Money",
+                  wNetwork: f.wNetwork,
                   aPhone: f.aPhone,
                   benName: f.benName,
                   amount: f.airtimeAmount,
@@ -2672,7 +2672,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 accounts={accounts}
                 state={{
                   fromId: f.fromId,
-                  wNetwork: f.wNetwork || "MTN Mobile Money",
+                  wNetwork: f.wNetwork,
                   aPhone: f.aPhone,
                   benName: f.benName,
                   bundleId: f.bundleId,

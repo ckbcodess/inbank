@@ -96,7 +96,7 @@ export function InternationalWireFlow({
 
       {/* 2. Recipient & Destination Details */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Recipient & Destination Details</label>
+        <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
         {isDestinationValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={state.wBenName}
@@ -106,64 +106,52 @@ export function InternationalWireFlow({
         ) : (
           <div className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[14px] font-medium text-foreground">Destination Country</label>
-                <Select
-                  value={state.wCountry || "Nigeria"}
-                  onValueChange={(val) => {
-                    const found = PAPSS_COUNTRIES.find((c) => c.name === val);
-                    if (found) {
-                      onChange("wCountry", found.name);
-                      onChange("wCurrency", found.currency);
-                    }
-                  }}
-                >
-                  <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                    <SelectValue placeholder="Country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {PAPSS_COUNTRIES.map((c) => (
-                      <SelectItem key={c.name} value={c.name}>
-                        {c.name} ({c.currency})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <Select
+                value={state.wCountry || ""}
+                onValueChange={(val) => {
+                  const found = PAPSS_COUNTRIES.find((c) => c.name === val);
+                  if (found) {
+                    onChange("wCountry", found.name);
+                    onChange("wCurrency", found.currency);
+                  }
+                }}
+              >
+                <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                  <SelectValue placeholder="Select country" />
+                </SelectTrigger>
+                <SelectContent>
+                  {PAPSS_COUNTRIES.map((c) => (
+                    <SelectItem key={c.name} value={c.name}>
+                      {c.name} ({c.currency})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[14px] font-medium text-foreground">Recipient Bank</label>
-                <input
-                  type="text"
-                  value={state.wBank}
-                  onChange={(e) => onChange("wBank", e.target.value)}
-                  placeholder="e.g. Zenith Bank Nigeria"
-                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
-                />
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[14px] font-medium text-foreground">Recipient Full Name</label>
               <input
                 type="text"
-                value={state.wBenName}
-                onChange={(e) => onChange("wBenName", e.target.value)}
-                placeholder="Legal name of beneficiary or business"
+                value={state.wBank}
+                onChange={(e) => onChange("wBank", e.target.value)}
+                placeholder="Enter recipient bank"
                 className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
               />
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[14px] font-medium text-foreground">Account Number / IBAN</label>
-              <input
-                type="text"
-                value={state.wIban}
-                onChange={(e) => onChange("wIban", e.target.value)}
-                placeholder="Account number or international IBAN"
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-              />
-            </div>
+            <input
+              type="text"
+              value={state.wBenName}
+              onChange={(e) => onChange("wBenName", e.target.value)}
+              placeholder="Enter legal name of recipient"
+              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+            />
+
+            <input
+              type="text"
+              value={state.wIban}
+              onChange={(e) => onChange("wIban", e.target.value)}
+              placeholder="Enter account number or IBAN"
+              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+            />
           </div>
         )}
       </div>

@@ -73,7 +73,7 @@ export function ProxyPayFlow({
 
       {/* 2. Destination: Proxy ID */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Proxy ID (Phone, @Alias, or Ghana Card)</label>
+        <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
         {isPxValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || state.pxId}
@@ -93,7 +93,7 @@ export function ProxyPayFlow({
                   onChange("benName", resolved);
                 }
               }}
-              placeholder="e.g. @kwame.b or 0244123456"
+              placeholder="Enter phone number, @alias, or Ghana Card ID"
               className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
             />
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}

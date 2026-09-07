@@ -73,7 +73,7 @@ export function OtherGcbFlow({
 
       {/* 2. Destination (GCB Account) */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
+        <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
         {isAcctValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `GCB Account ${state.benAcct}`}
@@ -82,31 +82,26 @@ export function OtherGcbFlow({
           />
         ) : (
           <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[14px] font-medium text-foreground">Destination Bank</label>
-              <div className="flex h-13 items-center rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
-                GCB Bank PLC
-              </div>
+            <div className="flex h-13 items-center justify-between rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
+              <span>GCB Bank PLC</span>
+              <span className="text-[12px] text-primary font-normal">Internal Transfer</span>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[14px] font-medium text-foreground">GCB Account Number</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                value={state.benAcct}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  onChange("benAcct", val);
-                  const resolved = resolveAccountName(val, "");
-                  if (resolved) {
-                    onChange("benName", resolved);
-                  }
-                }}
-                placeholder="Enter 10-13 digit GCB account number"
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-              />
-            </div>
+            <input
+              type="text"
+              inputMode="numeric"
+              value={state.benAcct}
+              onChange={(e) => {
+                const val = e.target.value;
+                onChange("benAcct", val);
+                const resolved = resolveAccountName(val, "");
+                if (resolved) {
+                  onChange("benName", resolved);
+                }
+              }}
+              placeholder="Enter account number"
+              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+            />
 
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
           </div>

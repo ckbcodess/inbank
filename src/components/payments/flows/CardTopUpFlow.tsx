@@ -96,7 +96,7 @@ export function CardTopUpFlow({
           />
         ) : (
           <Select
-            value={selectedCard?.id || fundableCards[0]?.id}
+            value={state.cardId || ""}
             onValueChange={(val) => {
               if (val) {
                 onChange("cardId", val);

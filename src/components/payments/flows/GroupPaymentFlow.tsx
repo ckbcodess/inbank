@@ -84,7 +84,7 @@ export function GroupPaymentFlow({
       {/* 2. Destination Group */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <label className="text-[14px] font-medium text-foreground">Select Contribution Group</label>
+          <label className="text-[14px] font-medium text-foreground">Contribution Group</label>
           <button
             type="button"
             onClick={onOpenCreateGroup}
@@ -115,7 +115,7 @@ export function GroupPaymentFlow({
           </div>
         ) : (
           <Select
-            value={state.groupName || groups[0]?.name}
+            value={state.groupName || ""}
             onValueChange={(val) => {
               if (val) {
                 onChange("groupName", val);
@@ -133,7 +133,7 @@ export function GroupPaymentFlow({
                     <Users size={18} strokeWidth={1.8} />
                   </span>
                   <span className="text-[15px] text-muted-foreground font-normal truncate">
-                    Select group
+                    Select contribution group
                   </span>
                 </div>
               ) : (

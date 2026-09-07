@@ -91,7 +91,7 @@ export function DataBundleFlow({
 
       {/* 2. Destination: Network & Phone Number */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
+        <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
         {isPhoneValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `Data (${state.aPhone})`}
@@ -100,55 +100,49 @@ export function DataBundleFlow({
           />
         ) : (
           <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[14px] font-medium text-foreground">Mobile Network</label>
-              <Select
-                value={state.wNetwork || "MTN Mobile Money"}
-                onValueChange={(val) => {
-                  if (val) {
-                    onChange("wNetwork", val);
-                    const newBundles = BUNDLES_BY_NETWORK[val];
-                    if (newBundles && newBundles.length > 0) {
-                      onChange("bundleId", newBundles[0].id);
-                    }
+            <Select
+              value={state.wNetwork || ""}
+              onValueChange={(val) => {
+                if (val) {
+                  onChange("wNetwork", val);
+                  const newBundles = BUNDLES_BY_NETWORK[val];
+                  if (newBundles && newBundles.length > 0) {
+                    onChange("bundleId", newBundles[0].id);
                   }
-                }}
-              >
-                <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                  <SelectValue placeholder="Select network" />
-                </SelectTrigger>
-                <SelectContent>
-                  {NETWORKS.map((n) => (
-                    <SelectItem key={n} value={n}>
-                      {n}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                }
+              }}
+            >
+              <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                <SelectValue placeholder="Select Network" />
+              </SelectTrigger>
+              <SelectContent>
+                {NETWORKS.map((n) => (
+                  <SelectItem key={n} value={n}>
+                    {n}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[14px] font-medium text-foreground">Recipient Phone Number</label>
-              <input
-                type="tel"
-                inputMode="numeric"
-                value={state.aPhone}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  onChange("aPhone", val);
-                  const detected = detectNetwork(val);
-                  if (detected) {
-                    onChange("wNetwork", detected);
-                  }
-                  const resolved = resolveAccountName(val, "");
-                  if (resolved) {
-                    onChange("benName", resolved);
-                  }
-                }}
-                placeholder="e.g. 024 412 3456"
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-              />
-            </div>
+            <input
+              type="tel"
+              inputMode="numeric"
+              value={state.aPhone}
+              onChange={(e) => {
+                const val = e.target.value;
+                onChange("aPhone", val);
+                const detected = detectNetwork(val);
+                if (detected) {
+                  onChange("wNetwork", detected);
+                }
+                const resolved = resolveAccountName(val, "");
+                if (resolved) {
+                  onChange("benName", resolved);
+                }
+              }}
+              placeholder="Enter phone number"
+              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+            />
 
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
           </div>
@@ -157,7 +151,7 @@ export function DataBundleFlow({
 
       {/* 3. Bundle Selection */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Select Data Bundle</label>
+        <label className="text-[14px] font-medium text-foreground">Data Bundle</label>
         <Select
           value={selectedBundle?.id || bundles[0]?.id}
           onValueChange={(val) => {

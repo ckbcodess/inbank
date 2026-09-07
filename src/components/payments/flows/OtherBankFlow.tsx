@@ -84,7 +84,7 @@ export function OtherBankFlow({
 
       {/* 2. Destination Bank & Account Number */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
+        <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
         {isDetailsValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `Account ${state.benAcct}`}
@@ -93,43 +93,37 @@ export function OtherBankFlow({
           />
         ) : (
           <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[14px] font-medium text-foreground">Destination Bank</label>
-              <Select
-                value={state.bank || OTHER_BANKS[0]}
-                onValueChange={(val) => val && onChange("bank", val)}
-              >
-                <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                  <SelectValue placeholder="Select destination bank" />
-                </SelectTrigger>
-                <SelectContent>
-                  {OTHER_BANKS.map((b) => (
-                    <SelectItem key={b} value={b}>
-                      {b}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <Select
+              value={state.bank || ""}
+              onValueChange={(val) => val && onChange("bank", val)}
+            >
+              <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                <SelectValue placeholder="Select Bank" />
+              </SelectTrigger>
+              <SelectContent>
+                {OTHER_BANKS.map((b) => (
+                  <SelectItem key={b} value={b}>
+                    {b}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[14px] font-medium text-foreground">Account Number</label>
-              <input
-                type="text"
-                inputMode="numeric"
-                value={state.benAcct}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  onChange("benAcct", val);
-                  const resolved = resolveAccountName(val, "");
-                  if (resolved) {
-                    onChange("benName", resolved);
-                  }
-                }}
-                placeholder="Enter 10-13 digit account number"
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-              />
-            </div>
+            <input
+              type="text"
+              inputMode="numeric"
+              value={state.benAcct}
+              onChange={(e) => {
+                const val = e.target.value;
+                onChange("benAcct", val);
+                const resolved = resolveAccountName(val, "");
+                if (resolved) {
+                  onChange("benName", resolved);
+                }
+              }}
+              placeholder="Enter account number"
+              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+            />
 
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
           </div>

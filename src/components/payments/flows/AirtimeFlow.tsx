@@ -83,7 +83,7 @@ export function AirtimeFlow({
 
       {/* 2. Destination: Network & Phone Number */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
+        <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
         {isPhoneValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `Phone ${state.aPhone}`}
@@ -92,47 +92,41 @@ export function AirtimeFlow({
           />
         ) : (
           <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[14px] font-medium text-foreground">Mobile Network</label>
-              <Select
-                value={state.wNetwork || "MTN Mobile Money"}
-                onValueChange={(val) => val && onChange("wNetwork", val)}
-              >
-                <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                  <SelectValue placeholder="Select network" />
-                </SelectTrigger>
-                <SelectContent>
-                  {NETWORKS.map((n) => (
-                    <SelectItem key={n} value={n}>
-                      {n}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <Select
+              value={state.wNetwork || ""}
+              onValueChange={(val) => val && onChange("wNetwork", val)}
+            >
+              <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                <SelectValue placeholder="Select Network" />
+              </SelectTrigger>
+              <SelectContent>
+                {NETWORKS.map((n) => (
+                  <SelectItem key={n} value={n}>
+                    {n}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[14px] font-medium text-foreground">Recipient Phone Number</label>
-              <input
-                type="tel"
-                inputMode="numeric"
-                value={state.aPhone}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  onChange("aPhone", val);
-                  const detected = detectNetwork(val);
-                  if (detected) {
-                    onChange("wNetwork", detected);
-                  }
-                  const resolved = resolveAccountName(val, "");
-                  if (resolved) {
-                    onChange("benName", resolved);
-                  }
-                }}
-                placeholder="e.g. 024 412 3456"
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-              />
-            </div>
+            <input
+              type="tel"
+              inputMode="numeric"
+              value={state.aPhone}
+              onChange={(e) => {
+                const val = e.target.value;
+                onChange("aPhone", val);
+                const detected = detectNetwork(val);
+                if (detected) {
+                  onChange("wNetwork", detected);
+                }
+                const resolved = resolveAccountName(val, "");
+                if (resolved) {
+                  onChange("benName", resolved);
+                }
+              }}
+              placeholder="Enter phone number"
+              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+            />
 
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
           </div>

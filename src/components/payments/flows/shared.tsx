@@ -293,7 +293,7 @@ export function NarrationInput({
   value,
   onChange,
   label = "Narration",
-  placeholder = "",
+  placeholder = "Enter narration",
 }: {
   value: string;
   onChange: (val: string) => void;

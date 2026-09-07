@@ -119,7 +119,7 @@ export function BillsPaymentFlow({
 
       {/* 2. Biller & Reference / Account */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Biller & Account Details</label>
+        <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
         {isDestinationValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={
@@ -144,89 +144,69 @@ export function BillsPaymentFlow({
           <div className="flex flex-col gap-3">
             {state.subType === "ecg" ? (
               <>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[14px] font-medium text-foreground">Service Provider</label>
-                  <div className="flex h-13 items-center rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
-                    Electricity Company of Ghana (ECG)
-                  </div>
+                <div className="flex h-13 items-center rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
+                  Electricity Company of Ghana (ECG)
                 </div>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[14px] font-medium text-foreground">Meter Number</label>
-                  <input
-                    type="text"
-                    value={state.ecgMeter}
-                    onChange={(e) => onChange("ecgMeter", e.target.value)}
-                    placeholder="Enter 5-11 digit prepaid meter number"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-                  />
-                </div>
+                <input
+                  type="text"
+                  value={state.ecgMeter}
+                  onChange={(e) => onChange("ecgMeter", e.target.value)}
+                  placeholder="Enter meter number"
+                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                />
               </>
             ) : state.subType === "ghanagov" ? (
               <>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[14px] font-medium text-foreground">Government Agency / Service</label>
-                  <Select
-                    value={state.govService || GHANA_GOV_SERVICES[0]}
-                    onValueChange={(val) => val && onChange("govService", val)}
-                  >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                      <SelectValue placeholder="Select government agency" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {GHANA_GOV_SERVICES.map((s) => (
-                        <SelectItem key={s} value={s}>
-                          {s}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Select
+                  value={state.govService || ""}
+                  onValueChange={(val) => val && onChange("govService", val)}
+                >
+                  <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                    <SelectValue placeholder="Select government agency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {GHANA_GOV_SERVICES.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[14px] font-medium text-foreground">Invoice / PRN Reference</label>
-                  <input
-                    type="text"
-                    value={state.govRef}
-                    onChange={(e) => onChange("govRef", e.target.value)}
-                    placeholder="Enter Ghana.gov PRN or Invoice Number"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-                  />
-                </div>
+                <input
+                  type="text"
+                  value={state.govRef}
+                  onChange={(e) => onChange("govRef", e.target.value)}
+                  placeholder="Enter PRN or invoice number"
+                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                />
               </>
             ) : (
               <>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[14px] font-medium text-foreground">Select Biller</label>
-                  <Select
-                    value={state.billerId || BILLERS[0]?.id}
-                    onValueChange={(val) => val && onChange("billerId", val)}
-                  >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                      <SelectValue placeholder="Select biller" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {BILLERS.map((b) => (
-                        <SelectItem key={b.id} value={b.id}>
-                          {b.name} ({b.category})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Select
+                  value={state.billerId || ""}
+                  onValueChange={(val) => val && onChange("billerId", val)}
+                >
+                  <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                    <SelectValue placeholder="Select Biller" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BILLERS.map((b) => (
+                      <SelectItem key={b.id} value={b.id}>
+                        {b.name} ({b.category})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[14px] font-medium text-foreground">
-                    {selectedBiller?.reference || "Account / Reference Number"}
-                  </label>
-                  <input
-                    type="text"
-                    value={state.billRef}
-                    onChange={(e) => onChange("billRef", e.target.value)}
-                    placeholder={`Enter ${selectedBiller?.reference?.toLowerCase() || "account number"}`}
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-                  />
-                </div>
+                <input
+                  type="text"
+                  value={state.billRef}
+                  onChange={(e) => onChange("billRef", e.target.value)}
+                  placeholder={selectedBiller ? `Enter ${selectedBiller.reference.toLowerCase()}` : "Enter account or reference number"}
+                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                />
               </>
             )}
 
