@@ -73,7 +73,7 @@ export function ProxyPayFlow({
             }
           }}
           placeholder="e.g. @kwame.b or 0244123456"
-          className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+          className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
         />
         {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
       </div>

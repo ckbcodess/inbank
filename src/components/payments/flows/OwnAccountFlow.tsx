@@ -1,17 +1,22 @@
 "use client";
 
 import { useMemo } from "react";
-import { Landmark, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Account, formatMoney } from "@/lib/mock-data";
-import { AmountInput, FromAccountSelector, AccountSelectTriggerContent } from "./shared";
+import {
+  AmountInput,
+  FromAccountSelector,
+  AccountSelectTriggerContent,
+  NarrationInput,
+  CategorySelect,
+  InsufficientFundsAlert,
+  ProceedButton,
+} from "./shared";
 
 export interface OwnAccountFormState {
   fromId: string;
@@ -74,7 +79,7 @@ export function OwnAccountFlow({
           value={state.toOwnAccountId}
           onValueChange={(val) => val && onChange("toOwnAccountId", val)}
         >
-          <SelectTrigger className="h-auto min-h-[68px] py-3 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none">
+          <SelectTrigger className="h-[68px] min-h-[68px] px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
             <AccountSelectTriggerContent
               account={toAccount}
               placeholder="Select destination account"
@@ -104,60 +109,29 @@ export function OwnAccountFlow({
       />
 
       {/* 4. Narration */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Narration</label>
-        <input
-          type="text"
-          value={state.narration}
-          onChange={(e) => onChange("narration", e.target.value)}
-          placeholder=""
-          className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
-        />
-      </div>
+      <NarrationInput
+        value={state.narration}
+        onChange={(val) => onChange("narration", val)}
+      />
 
       {/* 5. Transaction Category (Optional) */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Transaction Category (Optional)</label>
-        <Select
-          value={state.category}
-          onValueChange={(val) => onChange("category", val || "")}
-        >
-          <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-            <SelectValue placeholder="" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="General">General</SelectItem>
-            <SelectItem value="Savings">Savings</SelectItem>
-            <SelectItem value="Family & Friends">Family & Friends</SelectItem>
-            <SelectItem value="Living Expenses">Living Expenses</SelectItem>
-            <SelectItem value="Business">Business</SelectItem>
-            <SelectItem value="Utilities">Utilities</SelectItem>
-            <SelectItem value="Rent">Rent</SelectItem>
-            <SelectItem value="Other">Other</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <CategorySelect
+        value={state.category}
+        onChange={(val) => onChange("category", val)}
+      />
 
       {overBalance && (
-        <div className="flex items-start gap-2.5 rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-[12.5px] text-destructive animate-in fade-in duration-150 ease-out">
-          <AlertCircle size={15} className="mt-0.5 shrink-0 text-destructive" />
-          <div>
-            <span className="font-semibold">Insufficient funds.</span> Transfer amount exceeds your available balance ({formatMoney(fromAccount?.available ?? 0, fromAccount?.currency || "GHS", true)}).
-          </div>
-        </div>
+        <InsufficientFundsAlert
+          available={fromAccount?.available ?? 0}
+          currency={fromAccount?.currency || "GHS"}
+        />
       )}
 
       {/* 6. Proceed CTA */}
-      <div className="pt-2">
-        <Button
-          type="button"
-          className="w-full h-13 rounded-2xl text-[16px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
-          disabled={!isValid}
-          onClick={onProceed}
-        >
-          Proceed
-        </Button>
-      </div>
+      <ProceedButton
+        disabled={!isValid}
+        onClick={onProceed}
+      />
     </div>
   );
 }

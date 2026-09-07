@@ -198,7 +198,7 @@ export function FromAccountSelector({
     <div className="flex flex-col gap-2">
       <label className="text-[14px] font-medium text-foreground">{label}</label>
       <Select value={value} onValueChange={(val) => val && onChange(val)}>
-        <SelectTrigger className="h-auto min-h-[68px] py-3 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none">
+        <SelectTrigger className="h-[68px] min-h-[68px] px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
           <AccountSelectTriggerContent
             account={selected}
             placeholder={placeholder}
@@ -242,7 +242,7 @@ export function AmountInput({
       <label className="text-[14px] font-medium text-foreground">{label}</label>
       <div
         onClick={() => inputRef.current?.focus()}
-        className="relative flex h-14 w-full items-center justify-center rounded-2xl border border-border/80 bg-card hover:bg-muted/10 transition-colors cursor-text px-4 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30"
+        className="relative flex h-[68px] min-h-[68px] w-full items-center justify-center rounded-2xl border border-border/80 bg-card hover:bg-muted/10 transition-colors cursor-text px-4 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30"
       >
         <div className="inline-flex items-center justify-center gap-2">
           <span className="text-[17px] font-medium text-muted-foreground select-none">
@@ -299,7 +299,7 @@ export function NarrationInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+        className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
       />
     </div>
   );
@@ -321,7 +321,7 @@ export function CategorySelect({
     <div className="flex flex-col gap-2">
       <label className="text-[14px] font-medium text-foreground">{label}</label>
       <Select value={value} onValueChange={(val) => onChange(val || "")}>
-        <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+        <SelectTrigger className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
           <SelectValue placeholder="Select category" />
         </SelectTrigger>
         <SelectContent>

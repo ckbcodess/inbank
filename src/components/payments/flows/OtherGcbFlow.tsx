@@ -59,15 +59,15 @@ export function OtherGcbFlow({
       />
 
       {/* 2. Destination (GCB Account) */}
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           <label className="text-[14px] font-medium text-foreground">Destination Bank</label>
-          <div className="flex h-13 items-center rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
+          <div className="flex h-[68px] min-h-[68px] items-center rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
             GCB Bank PLC
           </div>
         </div>
 
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <label className="text-[14px] font-medium text-foreground">GCB Account Number</label>
           <input
             type="text"
@@ -82,7 +82,7 @@ export function OtherGcbFlow({
               }
             }}
             placeholder="Enter 10-13 digit GCB account number"
-            className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+            className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
           />
         </div>
 

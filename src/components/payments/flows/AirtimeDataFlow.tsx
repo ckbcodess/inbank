@@ -116,8 +116,8 @@ export function AirtimeDataFlow({
       />
 
       {/* 2. Destination: Network & Phone Number */}
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           <label className="text-[14px] font-medium text-foreground">Mobile Network</label>
           <Select
             value={state.wNetwork || "MTN Mobile Money"}
@@ -131,7 +131,7 @@ export function AirtimeDataFlow({
               }
             }}
           >
-            <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+            <SelectTrigger className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
               <SelectValue placeholder="Select network" />
             </SelectTrigger>
             <SelectContent>
@@ -144,7 +144,7 @@ export function AirtimeDataFlow({
           </Select>
         </div>
 
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <label className="text-[14px] font-medium text-foreground">Recipient Phone Number</label>
           <input
             type="tel"
@@ -163,7 +163,7 @@ export function AirtimeDataFlow({
               }
             }}
             placeholder="e.g. 024 412 3456"
-            className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+            className="h-[68px] min-h-[68px] w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
           />
         </div>
 
@@ -178,7 +178,7 @@ export function AirtimeDataFlow({
             value={selectedBundle?.id || bundles[0]?.id}
             onValueChange={(val) => val && onChange("bundleId", val)}
           >
-            <SelectTrigger className="h-auto min-h-[68px] py-3 px-4 w-full rounded-2xl border border-border/80 bg-card text-left shadow-none">
+            <SelectTrigger className="h-[68px] min-h-[68px] px-4 w-full rounded-2xl border border-border/80 bg-card text-left shadow-none flex items-center">
               {!selectedBundle ? (
                 <span className="text-[15px] text-muted-foreground font-normal">
                   Select data bundle

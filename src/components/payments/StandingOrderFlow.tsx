@@ -985,7 +985,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     value={f.accountId}
                     onValueChange={(val) => val && set("accountId", val)}
                   >
-                    <SelectTrigger className="h-auto min-h-[68px] py-3 px-4 w-full rounded-2xl border border-border bg-card dark:bg-[#181818] hover:border-primary/50 text-left cursor-pointer transition-colors shadow-none">
+                    <SelectTrigger className="h-[68px] min-h-[68px] px-4 w-full rounded-2xl border border-border bg-card dark:bg-[#181818] hover:border-primary/50 text-left cursor-pointer transition-colors shadow-none flex items-center">
                       <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
                         <div className="flex items-center gap-3.5 min-w-0">
                           <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/80 text-foreground dark:bg-[#252525]">
