@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Users, Plus } from "lucide-react";
 import { Account, formatMoney } from "@/lib/mock-data";
 import { PaymentGroup } from "@/lib/groups-store";
@@ -17,6 +17,7 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
+  CollapsedDetailsBadge,
 } from "./shared";
 
 export interface GroupPaymentFormState {
@@ -44,6 +45,8 @@ export function GroupPaymentFlow({
   onOpenCreateGroup,
   onProceed,
 }: GroupPaymentFlowProps) {
+  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
     [accounts, state.fromId]
@@ -82,7 +85,13 @@ export function GroupPaymentFlow({
           </button>
         </div>
 
-        {groups.length === 0 ? (
+        {selectedGroup && detailsCollapsed ? (
+          <CollapsedDetailsBadge
+            title={selectedGroup.name}
+            subtitle={`${selectedGroup.members.length} members · ${selectedGroup.splitType === "equal" ? "Equal split" : "Custom split"}`}
+            onChange={() => setDetailsCollapsed(false)}
+          />
+        ) : groups.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-6 rounded-2xl border border-dashed border-border/80 text-center gap-3">
             <Users size={28} className="text-muted-foreground" />
             <p className="text-[14px] text-muted-foreground">No groups created yet.</p>
@@ -157,6 +166,9 @@ export function GroupPaymentFlow({
           value={state.grpAmount}
           onChange={(val) => onChange("grpAmount", val)}
           label={selectedGroup?.splitType === "equal" ? "Amount per Member" : "Total Amount"}
+          onFocus={() => {
+            if (selectedGroup) setDetailsCollapsed(true);
+          }}
         />
         {selectedGroup && selectedGroup.splitType === "equal" && numAmount > 0 && (
           <div className="flex items-center justify-between px-2 text-[13px] text-muted-foreground">

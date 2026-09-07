@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useRef } from "react";
-import { Landmark, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Landmark, AlertCircle, CheckCircle2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -227,21 +227,28 @@ export function FromAccountSelector({
 export function AmountInput({
   value,
   onChange,
+  onFocus,
   currency = "GHS",
   label = "Amount",
 }: {
   value: string;
   onChange: (val: string) => void;
+  onFocus?: () => void;
   currency?: string;
   label?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const handleClick = () => {
+    inputRef.current?.focus();
+    onFocus?.();
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <label className="text-[14px] font-medium text-foreground">{label}</label>
       <div
-        onClick={() => inputRef.current?.focus()}
+        onClick={handleClick}
         className="relative flex h-[68px] min-h-[68px] w-full items-center justify-center rounded-2xl border border-border/80 bg-card hover:bg-muted/10 transition-colors cursor-text px-4 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30"
       >
         <div className="inline-flex items-center justify-center gap-2">
@@ -261,11 +268,13 @@ export function AmountInput({
               type="text"
               inputMode="decimal"
               value={value}
+              onFocus={onFocus}
               onChange={(e) => {
                 const val = e.target.value.replace(/[^\d.]/g, "");
                 const parts = val.split(".");
                 if (parts.length > 2) return;
                 onChange(val);
+                onFocus?.();
               }}
               placeholder="0"
               className="absolute inset-0 w-full h-full bg-transparent text-[24px] font-semibold text-foreground tracking-tight outline-none text-left tabular p-0 m-0 border-none"
@@ -397,6 +406,46 @@ export function VerifiedAccountBadge({ name }: { name: string }) {
       <span className="text-[11.5px] text-emerald-600 dark:text-emerald-400 ml-auto font-medium">
         Verified
       </span>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Subcomponent 8: Collapsed Details Badge                                    */
+/* -------------------------------------------------------------------------- */
+export function CollapsedDetailsBadge({
+  title,
+  subtitle,
+  onChange,
+}: {
+  title: string;
+  subtitle?: string;
+  onChange: () => void;
+}) {
+  return (
+    <div className="flex h-[68px] min-h-[68px] items-center justify-between rounded-2xl border border-border/80 bg-muted/40 dark:bg-muted/20 px-4 py-2 transition-all animate-in fade-in duration-150 ease-out">
+      <div className="flex items-center gap-3.5 min-w-0">
+        <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+          <Check size={15} strokeWidth={2.5} />
+        </span>
+        <div className="flex flex-col min-w-0 text-left gap-0.5">
+          <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
+            {title}
+          </span>
+          {subtitle && (
+            <span className="text-[13px] text-muted-foreground truncate leading-tight">
+              {subtitle}
+            </span>
+          )}
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={onChange}
+        className="text-[14px] font-medium text-primary hover:underline cursor-pointer ml-3 shrink-0"
+      >
+        Change
+      </button>
     </div>
   );
 }

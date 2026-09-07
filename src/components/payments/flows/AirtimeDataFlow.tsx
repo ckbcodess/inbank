@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Account, formatMoney } from "@/lib/mock-data";
 import {
   Select,
@@ -17,6 +17,7 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   VerifiedAccountBadge,
+  CollapsedDetailsBadge,
   NETWORKS,
   BUNDLES_BY_NETWORK,
   detectNetwork,
@@ -48,6 +49,8 @@ export function AirtimeDataFlow({
   onChange,
   onProceed,
 }: AirtimeDataFlowProps) {
+  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
     [accounts, state.fromId]
@@ -116,58 +119,69 @@ export function AirtimeDataFlow({
       />
 
       {/* 2. Destination: Network & Phone Number */}
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[14px] font-medium text-foreground">Mobile Network</label>
-          <Select
-            value={state.wNetwork || "MTN Mobile Money"}
-            onValueChange={(val) => {
-              if (val) {
-                onChange("wNetwork", val);
-                const newBundles = BUNDLES_BY_NETWORK[val];
-                if (newBundles && newBundles.length > 0) {
-                  onChange("bundleId", newBundles[0].id);
-                }
-              }
-            }}
-          >
-            <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-              <SelectValue placeholder="Select network" />
-            </SelectTrigger>
-            <SelectContent>
-              {NETWORKS.map((n) => (
-                <SelectItem key={n} value={n}>
-                  {n}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[14px] font-medium text-foreground">Recipient Phone Number</label>
-          <input
-            type="tel"
-            inputMode="numeric"
-            value={state.aPhone}
-            onChange={(e) => {
-              const val = e.target.value;
-              onChange("aPhone", val);
-              const detected = detectNetwork(val);
-              if (detected) {
-                onChange("wNetwork", detected);
-              }
-              const resolved = resolveAccountName(val, "");
-              if (resolved) {
-                onChange("benName", resolved);
-              }
-            }}
-            placeholder="e.g. 024 412 3456"
-            className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+      <div className="flex flex-col gap-2">
+        <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
+        {isPhoneValid && detailsCollapsed ? (
+          <CollapsedDetailsBadge
+            title={verifiedName || `Phone ${state.aPhone}`}
+            subtitle={`${state.wNetwork || "Mobile Network"} · ${state.aPhone}`}
+            onChange={() => setDetailsCollapsed(false)}
           />
-        </div>
+        ) : (
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[14px] font-medium text-foreground">Mobile Network</label>
+              <Select
+                value={state.wNetwork || "MTN Mobile Money"}
+                onValueChange={(val) => {
+                  if (val) {
+                    onChange("wNetwork", val);
+                    const newBundles = BUNDLES_BY_NETWORK[val];
+                    if (newBundles && newBundles.length > 0) {
+                      onChange("bundleId", newBundles[0].id);
+                    }
+                  }
+                }}
+              >
+                <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                  <SelectValue placeholder="Select network" />
+                </SelectTrigger>
+                <SelectContent>
+                  {NETWORKS.map((n) => (
+                    <SelectItem key={n} value={n}>
+                      {n}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-        {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[14px] font-medium text-foreground">Recipient Phone Number</label>
+              <input
+                type="tel"
+                inputMode="numeric"
+                value={state.aPhone}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  onChange("aPhone", val);
+                  const detected = detectNetwork(val);
+                  if (detected) {
+                    onChange("wNetwork", detected);
+                  }
+                  const resolved = resolveAccountName(val, "");
+                  if (resolved) {
+                    onChange("benName", resolved);
+                  }
+                }}
+                placeholder="e.g. 024 412 3456"
+                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+              />
+            </div>
+
+            {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+          </div>
+        )}
       </div>
 
       {/* 3. Amount or Bundle Selection */}
@@ -176,7 +190,15 @@ export function AirtimeDataFlow({
           <label className="text-[14px] font-medium text-foreground">Select Data Bundle</label>
           <Select
             value={selectedBundle?.id || bundles[0]?.id}
-            onValueChange={(val) => val && onChange("bundleId", val)}
+            onValueChange={(val) => {
+              if (val) {
+                onChange("bundleId", val);
+                if (isPhoneValid) setDetailsCollapsed(true);
+              }
+            }}
+            onOpenChange={(open) => {
+              if (open && isPhoneValid) setDetailsCollapsed(true);
+            }}
           >
             <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-left shadow-none">
               {!selectedBundle ? (
@@ -210,6 +232,9 @@ export function AirtimeDataFlow({
         <AmountInput
           value={state.airtimeAmount}
           onChange={(val) => onChange("airtimeAmount", val)}
+          onFocus={() => {
+            if (isPhoneValid) setDetailsCollapsed(true);
+          }}
         />
       )}
 

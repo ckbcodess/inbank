@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Smartphone } from "lucide-react";
 import {
   Select,
@@ -16,6 +16,7 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   VerifiedAccountBadge,
+  CollapsedDetailsBadge,
   BANKS,
   resolveAccountName,
 } from "./shared";
@@ -40,6 +41,7 @@ export function WalletToBankFlow({
   onChange,
   onProceed,
 }: WalletToBankFlowProps) {
+  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
   const walletBalance = 1450.0; // Registered wallet available limit
 
   const verifiedName = useMemo(() => {
@@ -49,7 +51,8 @@ export function WalletToBankFlow({
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > walletBalance;
   const isAcctValid = state.benAcct.replace(/\s/g, "").length >= 8;
-  const isValid = Boolean(state.bank) && isAcctValid && numAmount > 0 && !overBalance;
+  const isDetailsValid = Boolean(state.bank) && isAcctValid;
+  const isValid = isDetailsValid && numAmount > 0 && !overBalance;
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
@@ -79,52 +82,66 @@ export function WalletToBankFlow({
       </div>
 
       {/* 2. Destination Bank Account */}
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[14px] font-medium text-foreground">Destination Bank</label>
-          <Select
-            value={state.bank || "GCB Bank"}
-            onValueChange={(val) => val && onChange("bank", val)}
-          >
-            <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-              <SelectValue placeholder="Select destination bank" />
-            </SelectTrigger>
-            <SelectContent>
-              {BANKS.map((b) => (
-                <SelectItem key={b} value={b}>
-                  {b}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[14px] font-medium text-foreground">Destination Account Number</label>
-          <input
-            type="text"
-            inputMode="numeric"
-            value={state.benAcct}
-            onChange={(e) => {
-              const val = e.target.value;
-              onChange("benAcct", val);
-              const resolved = resolveAccountName(val, "");
-              if (resolved) {
-                onChange("benName", resolved);
-              }
-            }}
-            placeholder="Enter 10-13 digit account number"
-            className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+      <div className="flex flex-col gap-2">
+        <label className="text-[14px] font-medium text-foreground">Destination Bank Account</label>
+        {isDetailsValid && detailsCollapsed ? (
+          <CollapsedDetailsBadge
+            title={verifiedName || `Account ${state.benAcct}`}
+            subtitle={`${state.bank || "Bank"} · ${state.benAcct}`}
+            onChange={() => setDetailsCollapsed(false)}
           />
-        </div>
+        ) : (
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[14px] font-medium text-foreground">Destination Bank</label>
+              <Select
+                value={state.bank || "GCB Bank"}
+                onValueChange={(val) => val && onChange("bank", val)}
+              >
+                <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                  <SelectValue placeholder="Select destination bank" />
+                </SelectTrigger>
+                <SelectContent>
+                  {BANKS.map((b) => (
+                    <SelectItem key={b} value={b}>
+                      {b}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-        {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[14px] font-medium text-foreground">Destination Account Number</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={state.benAcct}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  onChange("benAcct", val);
+                  const resolved = resolveAccountName(val, "");
+                  if (resolved) {
+                    onChange("benName", resolved);
+                  }
+                }}
+                placeholder="Enter 10-13 digit account number"
+                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+              />
+            </div>
+
+            {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+          </div>
+        )}
       </div>
 
       {/* 3. Amount */}
       <AmountInput
         value={state.amount}
         onChange={(val) => onChange("amount", val)}
+        onFocus={() => {
+          if (isDetailsValid) setDetailsCollapsed(true);
+        }}
       />
 
       {/* 4. Narration */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Account } from "@/lib/mock-data";
 import {
   FromAccountSelector,
@@ -10,6 +10,7 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   VerifiedAccountBadge,
+  CollapsedDetailsBadge,
   resolveAccountName,
 } from "./shared";
 
@@ -35,6 +36,8 @@ export function OtherGcbFlow({
   onChange,
   onProceed,
 }: OtherGcbFlowProps) {
+  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
     [accounts, state.fromId]
@@ -59,40 +62,54 @@ export function OtherGcbFlow({
       />
 
       {/* 2. Destination (GCB Account) */}
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[14px] font-medium text-foreground">Destination Bank</label>
-          <div className="flex h-13 items-center rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
-            GCB Bank PLC
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <label className="text-[14px] font-medium text-foreground">GCB Account Number</label>
-          <input
-            type="text"
-            inputMode="numeric"
-            value={state.benAcct}
-            onChange={(e) => {
-              const val = e.target.value;
-              onChange("benAcct", val);
-              const resolved = resolveAccountName(val, "");
-              if (resolved) {
-                onChange("benName", resolved);
-              }
-            }}
-            placeholder="Enter 10-13 digit GCB account number"
-            className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+      <div className="flex flex-col gap-2">
+        <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
+        {isAcctValid && detailsCollapsed ? (
+          <CollapsedDetailsBadge
+            title={verifiedName || `GCB Account ${state.benAcct}`}
+            subtitle={`GCB Bank PLC · ${state.benAcct}`}
+            onChange={() => setDetailsCollapsed(false)}
           />
-        </div>
+        ) : (
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[14px] font-medium text-foreground">Destination Bank</label>
+              <div className="flex h-13 items-center rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
+                GCB Bank PLC
+              </div>
+            </div>
 
-        {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[14px] font-medium text-foreground">GCB Account Number</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={state.benAcct}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  onChange("benAcct", val);
+                  const resolved = resolveAccountName(val, "");
+                  if (resolved) {
+                    onChange("benName", resolved);
+                  }
+                }}
+                placeholder="Enter 10-13 digit GCB account number"
+                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+              />
+            </div>
+
+            {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+          </div>
+        )}
       </div>
 
       {/* 3. Amount */}
       <AmountInput
         value={state.amount}
         onChange={(val) => onChange("amount", val)}
+        onFocus={() => {
+          if (isAcctValid) setDetailsCollapsed(true);
+        }}
       />
 
       {/* 4. Narration */}

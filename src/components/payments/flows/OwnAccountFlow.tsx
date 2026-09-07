@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   Select,
   SelectContent,
@@ -12,6 +12,7 @@ import {
   AmountInput,
   FromAccountSelector,
   AccountSelectTriggerContent,
+  CollapsedDetailsBadge,
   NarrationInput,
   CategorySelect,
   InsufficientFundsAlert,
@@ -39,6 +40,8 @@ export function OwnAccountFlow({
   onChange,
   onProceed,
 }: OwnAccountFlowProps) {
+  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
     [accounts, state.fromId]
@@ -51,10 +54,14 @@ export function OwnAccountFlow({
 
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
+  const isDetailsValid =
+    Boolean(state.toOwnAccountId) &&
+    state.toOwnAccountId !== state.fromId &&
+    Boolean(toAccount);
+
   const isValid =
     Boolean(state.fromId) &&
-    Boolean(state.toOwnAccountId) &&
-    state.fromId !== state.toOwnAccountId &&
+    isDetailsValid &&
     numAmount > 0 &&
     !overBalance;
 
@@ -68,6 +75,7 @@ export function OwnAccountFlow({
           onChange("fromId", val);
           if (state.toOwnAccountId === val) {
             onChange("toOwnAccountId", "");
+            setDetailsCollapsed(false);
           }
         }}
       />
@@ -75,37 +83,48 @@ export function OwnAccountFlow({
       {/* 2. To Account */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">To Account</label>
-        <Select
-          value={state.toOwnAccountId}
-          onValueChange={(val) => val && onChange("toOwnAccountId", val)}
-        >
-          <SelectTrigger className="h-[68px] min-h-[68px] px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
-            <AccountSelectTriggerContent
-              account={toAccount}
-              placeholder="Select destination account"
-            />
-          </SelectTrigger>
-          <SelectContent>
-            {accounts
-              .filter((a) => a.id !== state.fromId)
-              .map((a) => (
-                <SelectItem key={a.id} value={a.id}>
-                  <div className="flex items-center justify-between w-full gap-4">
-                    <span>{a.name} ({a.number})</span>
-                    <span className="font-medium text-muted-foreground tabular">
-                      {formatMoney(a.available, a.currency, true)}
-                    </span>
-                  </div>
-                </SelectItem>
-              ))}
-          </SelectContent>
-        </Select>
+        {isDetailsValid && detailsCollapsed && toAccount ? (
+          <CollapsedDetailsBadge
+            title={toAccount.name}
+            subtitle={`Account ••${toAccount.number.slice(-4)} · ${formatMoney(toAccount.available, toAccount.currency, true)}`}
+            onChange={() => setDetailsCollapsed(false)}
+          />
+        ) : (
+          <Select
+            value={state.toOwnAccountId}
+            onValueChange={(val) => val && onChange("toOwnAccountId", val)}
+          >
+            <SelectTrigger className="h-[68px] min-h-[68px] px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+              <AccountSelectTriggerContent
+                account={toAccount}
+                placeholder="Select destination account"
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {accounts
+                .filter((a) => a.id !== state.fromId)
+                .map((a) => (
+                  <SelectItem key={a.id} value={a.id}>
+                    <div className="flex items-center justify-between w-full gap-4">
+                      <span>{a.name} ({a.number})</span>
+                      <span className="font-medium text-muted-foreground tabular">
+                        {formatMoney(a.available, a.currency, true)}
+                      </span>
+                    </div>
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
 
       {/* 3. Amount */}
       <AmountInput
         value={state.amount}
         onChange={(val) => onChange("amount", val)}
+        onFocus={() => {
+          if (isDetailsValid) setDetailsCollapsed(true);
+        }}
       />
 
       {/* 4. Narration */}

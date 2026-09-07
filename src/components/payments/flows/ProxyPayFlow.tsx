@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Account } from "@/lib/mock-data";
 import {
   FromAccountSelector,
@@ -10,6 +10,7 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   VerifiedAccountBadge,
+  CollapsedDetailsBadge,
   resolveAccountName,
 } from "./shared";
 
@@ -35,6 +36,8 @@ export function ProxyPayFlow({
   onChange,
   onProceed,
 }: ProxyPayFlowProps) {
+  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
     [accounts, state.fromId]
@@ -61,27 +64,40 @@ export function ProxyPayFlow({
       {/* 2. Destination: Proxy ID */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Proxy ID (Phone, @Alias, or Ghana Card)</label>
-        <input
-          type="text"
-          value={state.pxId}
-          onChange={(e) => {
-            const val = e.target.value;
-            onChange("pxId", val);
-            const resolved = resolveAccountName(val, "");
-            if (resolved) {
-              onChange("benName", resolved);
-            }
-          }}
-          placeholder="e.g. @kwame.b or 0244123456"
-          className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
-        />
-        {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+        {isPxValid && detailsCollapsed ? (
+          <CollapsedDetailsBadge
+            title={verifiedName || state.pxId}
+            subtitle={`Proxy Recipient · ${state.pxId}`}
+            onChange={() => setDetailsCollapsed(false)}
+          />
+        ) : (
+          <div className="flex flex-col gap-3">
+            <input
+              type="text"
+              value={state.pxId}
+              onChange={(e) => {
+                const val = e.target.value;
+                onChange("pxId", val);
+                const resolved = resolveAccountName(val, "");
+                if (resolved) {
+                  onChange("benName", resolved);
+                }
+              }}
+              placeholder="e.g. @kwame.b or 0244123456"
+              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+            />
+            {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+          </div>
+        )}
       </div>
 
       {/* 3. Amount */}
       <AmountInput
         value={state.amount}
         onChange={(val) => onChange("amount", val)}
+        onFocus={() => {
+          if (isPxValid) setDetailsCollapsed(true);
+        }}
       />
 
       {/* 4. Narration */}
