@@ -93,7 +93,7 @@ export function FxPulse() {
               </SelectTrigger>
               <SelectContent>
                 {FX_RATES.map((r) => (
-                  <SelectItem key={r.base} value={r.base}>
+                  <SelectItem key={r.base} value={r.base} label={r.pair}>
                     <div className="flex items-center gap-2">
                       <CurrencyPairLogos base={r.base} quote={r.quote} size={18} />
                       <span className="font-medium tabular">{r.pair}</span>

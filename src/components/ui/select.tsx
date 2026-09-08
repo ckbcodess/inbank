@@ -8,7 +8,45 @@ import { ChevronDown } from "lucide-react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Tick02Icon, ArrowUp01Icon, ArrowDown01Icon } from "@hugeicons/core-free-icons"
 
-const Select = SelectPrimitive.Root
+function extractSelectItems(
+  children: React.ReactNode,
+  map: Record<string, React.ReactNode> = {}
+): Record<string, React.ReactNode> {
+  React.Children.forEach(children, (child) => {
+    if (!React.isValidElement(child)) return;
+    const props = child.props as Record<string, unknown>;
+    if (props) {
+      if (props.value !== undefined) {
+        map[String(props.value)] = (props.label !== undefined ? props.label : props.children) as React.ReactNode;
+      }
+      if (props.children) {
+        extractSelectItems(props.children as React.ReactNode, map);
+      }
+    }
+  });
+  return map;
+}
+
+function Select<Value = unknown, Multiple extends boolean | undefined = false>({
+  children,
+  items,
+  ...props
+}: SelectPrimitive.Root.Props<Value, Multiple>) {
+  const extractedItems = React.useMemo(() => {
+    const autoMap = extractSelectItems(children);
+    if (items) {
+      if (Array.isArray(items)) return items;
+      return { ...autoMap, ...items };
+    }
+    return autoMap;
+  }, [items, children]);
+
+  return (
+    <SelectPrimitive.Root items={extractedItems} {...props}>
+      {children}
+    </SelectPrimitive.Root>
+  );
+}
 
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (
@@ -132,10 +170,10 @@ function SelectItem({
       </SelectPrimitive.ItemText>
       <SelectPrimitive.ItemIndicator
         render={
-          <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center text-primary" />
+          <span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center text-foreground" />
         }
       >
-        <HugeiconsIcon icon={Tick02Icon} strokeWidth={2.2} className="pointer-events-none size-4 text-primary" />
+        <HugeiconsIcon icon={Tick02Icon} strokeWidth={2.2} className="pointer-events-none size-4 text-foreground" />
       </SelectPrimitive.ItemIndicator>
     </SelectPrimitive.Item>
   )

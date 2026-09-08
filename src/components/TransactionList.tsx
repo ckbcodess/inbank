@@ -29,7 +29,7 @@ import {
   TrueEmptyState,
 } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
-import { formatDate, formatMoney, type Transaction } from "@/lib/mock-data";
+import { formatDate, type Transaction } from "@/lib/mock-data";
 import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 
 const LIST_STATES: readonly ListState[] = [
@@ -41,8 +41,9 @@ const LIST_STATES: readonly ListState[] = [
   "error",
 ] as const;
 
-type ChannelFilter = "all" | "cards" | "mobile" | "transfer" | "bulk";
+type ChannelFilter = "all" | "cards" | "mobile" | "transfer" | "bulk" | "trade";
 type DirectionFilter = "all" | "debit" | "credit";
+type StatusFilter = "all" | "completed" | "pending" | "failed";
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -53,8 +54,6 @@ interface TransactionListProps {
   emptyTitle?: string;
   emptyDescription?: string;
 }
-
-
 
 export default function TransactionList({
   transactions,
@@ -68,6 +67,7 @@ export default function TransactionList({
   const [query, setQuery] = useState("");
   const [channelFilter, setChannelFilter] = useState<ChannelFilter>("all");
   const [directionFilter, setDirectionFilter] = useState<DirectionFilter>("all");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
   const results = useMemo(() => {
     return transactions.filter((t) => {
@@ -95,6 +95,7 @@ export default function TransactionList({
         )
           return false;
         if (channelFilter === "bulk" && !ch.includes("bulk")) return false;
+        if (channelFilter === "trade" && !ch.includes("trade")) return false;
       }
 
       // 3. Direction Filter
@@ -102,11 +103,33 @@ export default function TransactionList({
         if (t.direction !== directionFilter) return false;
       }
 
+      // 4. Status Filter
+      if (statusFilter !== "all") {
+        if (statusFilter === "completed" && t.state !== "completed") return false;
+        if (
+          statusFilter === "pending" &&
+          t.state !== "pending" &&
+          t.state !== "awaiting-approval"
+        )
+          return false;
+        if (
+          statusFilter === "failed" &&
+          !t.state.startsWith("failed") &&
+          t.state !== "reversed" &&
+          t.state !== "disputed"
+        )
+          return false;
+      }
+
       return true;
     });
-  }, [transactions, query, channelFilter, directionFilter]);
+  }, [transactions, query, channelFilter, directionFilter, statusFilter]);
 
-  const hasActiveFilters = query.trim() !== "" || channelFilter !== "all" || directionFilter !== "all";
+  const hasActiveFilters =
+    query.trim() !== "" ||
+    channelFilter !== "all" ||
+    directionFilter !== "all" ||
+    statusFilter !== "all";
 
   const effective: ListState =
     state === "populated" && hasActiveFilters && results.length === 0 ? "filtered-empty" : state;
@@ -128,30 +151,44 @@ export default function TransactionList({
       <div className="rounded-2xl border border-border bg-card">
         {/* Search & Filter Toolbar */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {/* shadcn Select for Channels */}
             <Select value={channelFilter} onValueChange={(val) => setChannelFilter(val as ChannelFilter)}>
-              <SelectTrigger className="w-[150px] sm:w-[170px] h-9">
+              <SelectTrigger className="w-[150px] sm:w-[165px] h-9">
                 <SelectValue placeholder="All Channels" />
               </SelectTrigger>
               <SelectContent align="start">
                 <SelectItem value="all">All Channels</SelectItem>
-                <SelectItem value="cards">Cards</SelectItem>
+                <SelectItem value="cards">Cards & POS</SelectItem>
                 <SelectItem value="mobile">Mobile Banking</SelectItem>
-                <SelectItem value="transfer">Bank Transfer</SelectItem>
+                <SelectItem value="transfer">Bank Transfers</SelectItem>
                 <SelectItem value="bulk">Bulk Payments</SelectItem>
+                <SelectItem value="trade">Trade Portal</SelectItem>
               </SelectContent>
             </Select>
 
-            {/* shadcn Select for Direction / Types */}
+            {/* shadcn Select for Direction / Flow */}
             <Select value={directionFilter} onValueChange={(val) => setDirectionFilter(val as DirectionFilter)}>
-              <SelectTrigger className="w-[125px] sm:w-[140px] h-9">
-                <SelectValue placeholder="All Types" />
+              <SelectTrigger className="w-[140px] sm:w-[155px] h-9">
+                <SelectValue placeholder="All Flows" />
               </SelectTrigger>
               <SelectContent align="start">
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="debit">Debits</SelectItem>
-                <SelectItem value="credit">Credits</SelectItem>
+                <SelectItem value="all">All Flows</SelectItem>
+                <SelectItem value="debit">Debits (Money Out)</SelectItem>
+                <SelectItem value="credit">Credits (Money In)</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* shadcn Select for Status */}
+            <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val as StatusFilter)}>
+              <SelectTrigger className="w-[135px] sm:w-[150px] h-9">
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent align="start">
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="failed">Failed / Exceptions</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -183,6 +220,7 @@ export default function TransactionList({
               setQuery("");
               setChannelFilter("all");
               setDirectionFilter("all");
+              setStatusFilter("all");
               setState("populated");
             }}
             description="No transactions match your search filters. Reset filters to view all transactions."

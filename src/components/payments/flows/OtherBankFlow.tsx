@@ -166,7 +166,7 @@ export function OtherBankFlow({
           </SelectTrigger>
           <SelectContent>
             {PAYMENT_METHODS.map((m) => (
-              <SelectItem key={m.id} value={m.id}>
+              <SelectItem key={m.id} value={m.id} label={m.name}>
                 <div className="flex items-center justify-between w-full gap-4 py-0.5">
                   <div className="flex flex-col text-left">
                     <span className="font-medium text-foreground">{m.name}</span>

@@ -248,7 +248,7 @@ export default function FxRatesPage() {
                     {FX_RATES.map((r) => {
                       const m = getCurrencyMeta(r.base);
                       return (
-                        <SelectItem key={r.pair} value={r.pair}>
+                        <SelectItem key={r.pair} value={r.pair} label={r.pair}>
                           <div className="flex items-center gap-2">
                             <CurrencyPairLogos base={r.base} quote={r.quote} size={18} />
                             <span className="font-medium tabular">{r.pair}</span>

@@ -863,7 +863,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       </SelectTrigger>
                       <SelectContent>
                         {PAYMENT_METHODS.map((method) => (
-                          <SelectItem key={method.id} value={method.id}>
+                          <SelectItem key={method.id} value={method.id} label={method.name}>
                             <div className="flex items-center justify-between w-full gap-4">
                               <span className="font-medium">{method.name}</span>
                               <span className="text-[12px] text-muted-foreground">{method.speed}</span>
