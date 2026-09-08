@@ -23,25 +23,21 @@ import {
   RATES,
 } from "./shared";
 
-const SWIFT_COUNTRIES = [
-  { name: "United States", currency: "USD" },
-  { name: "United Kingdom", currency: "GBP" },
-  { name: "Germany (Eurozone)", currency: "EUR" },
-  { name: "France (Eurozone)", currency: "EUR" },
-  { name: "Canada", currency: "CAD" },
-  { name: "China", currency: "CNY" },
-  { name: "United Arab Emirates", currency: "AED" },
-  { name: "Australia", currency: "AUD" },
-  { name: "Japan", currency: "JPY" },
+const PAPSS_COUNTRIES = [
+  { name: "Nigeria", currency: "NGN" },
+  { name: "Kenya", currency: "KES" },
   { name: "South Africa", currency: "ZAR" },
+  { name: "Côte d'Ivoire", currency: "XOF" },
+  { name: "Egypt", currency: "EGP" },
+  { name: "Rwanda", currency: "RWF" },
+  { name: "Zambia", currency: "ZMW" },
 ];
 
-export interface InternationalWireFormState {
+export interface PapssPaymentFormState {
   fromId: string;
   wCountry: string;
   wCurrency: string;
   wBank: string;
-  wSwift: string;
   wIban: string;
   wBenName: string;
   wForeign: string;
@@ -55,23 +51,23 @@ export interface InternationalWireFormState {
   scheduleEndDate?: string;
 }
 
-interface InternationalWireFlowProps {
+interface PapssPaymentFlowProps {
   accounts: Account[];
-  state: InternationalWireFormState;
-  onChange: (key: keyof InternationalWireFormState, value: string | boolean | ScheduleFrequency | undefined) => void;
+  state: PapssPaymentFormState;
+  onChange: (key: keyof PapssPaymentFormState, value: string | boolean | ScheduleFrequency | undefined) => void;
   onProceed: () => void;
   detailsCollapsed?: boolean;
   onToggleCollapsed?: (collapsed: boolean) => void;
 }
 
-export function InternationalWireFlow({
+export function PapssPaymentFlow({
   accounts,
   state,
   onChange,
   onProceed,
   detailsCollapsed,
   onToggleCollapsed,
-}: InternationalWireFlowProps) {
+}: PapssPaymentFlowProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
   const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
 
@@ -85,10 +81,10 @@ export function InternationalWireFlow({
     [accounts, state.fromId]
   );
 
-  const rate = RATES[state.wCurrency] ?? 15.4;
+  const rate = RATES[state.wCurrency] ?? 0.0098;
   const numForeign = Number(state.wForeign.replace(/[^0-9.]/g, "")) || 0;
   const ghsEquivalent = Math.round(numForeign * rate * 100) / 100;
-  const fee = 50.0; // SWIFT Wire standard fee
+  const fee = 25.0; // PAPSS standard fee
   const totalGhs = ghsEquivalent + fee;
   const overBalance = totalGhs > (fromAccount?.available ?? 0);
 
@@ -111,20 +107,20 @@ export function InternationalWireFlow({
 
       {/* 2. Recipient & Destination Details */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">SWIFT Beneficiary Details</label>
+        <label className="text-[14px] font-medium text-foreground">PAPSS Beneficiary Details</label>
         {isDestinationValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={state.wBenName}
-            subtitle={`${state.wBank || "Bank"} · SWIFT: ${state.wSwift || "BIC"} · ${state.wIban}`}
+            subtitle={`${state.wBank || "Bank"} · ${state.wIban} (${state.wCountry || "Africa"})`}
             onChange={() => setCollapsed(false)}
           />
         ) : (
           <div className="flex flex-col gap-3">
             <div className="grid grid-cols-2 gap-3">
               <Select
-                value={state.wCountry || "United States"}
+                value={state.wCountry || "Nigeria"}
                 onValueChange={(val) => {
-                  const found = SWIFT_COUNTRIES.find((c) => c.name === val);
+                  const found = PAPSS_COUNTRIES.find((c) => c.name === val);
                   if (found) {
                     onChange("wCountry", found.name);
                     onChange("wCurrency", found.currency);
@@ -132,10 +128,10 @@ export function InternationalWireFlow({
                 }}
               >
                 <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                  <SelectValue placeholder="Select country" />
+                  <SelectValue placeholder="Select African country" />
                 </SelectTrigger>
                 <SelectContent>
-                  {SWIFT_COUNTRIES.map((c) => (
+                  {PAPSS_COUNTRIES.map((c) => (
                     <SelectItem key={c.name} value={c.name}>
                       {c.name} ({c.currency})
                     </SelectItem>
@@ -145,28 +141,10 @@ export function InternationalWireFlow({
 
               <input
                 type="text"
-                value={state.wSwift}
-                onChange={(e) => onChange("wSwift", e.target.value.toUpperCase())}
-                placeholder="SWIFT / BIC Code (e.g. CHASUS33)"
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all uppercase tracking-wider"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <input
-                type="text"
                 value={state.wBank}
                 onChange={(e) => onChange("wBank", e.target.value)}
                 placeholder="Enter recipient bank"
                 className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
-              />
-
-              <input
-                type="text"
-                value={state.wIban}
-                onChange={(e) => onChange("wIban", e.target.value)}
-                placeholder="Account number or IBAN"
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
               />
             </div>
 
@@ -177,6 +155,14 @@ export function InternationalWireFlow({
               placeholder="Enter legal name of recipient"
               className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
             />
+
+            <input
+              type="text"
+              value={state.wIban}
+              onChange={(e) => onChange("wIban", e.target.value)}
+              placeholder="Enter account number or IBAN"
+              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+            />
           </div>
         )}
       </div>
@@ -186,8 +172,8 @@ export function InternationalWireFlow({
         <AmountInput
           value={state.wForeign}
           onChange={(val) => onChange("wForeign", val)}
-          currency={state.wCurrency || "USD"}
-          label={`Amount (${state.wCurrency || "USD"})`}
+          currency={state.wCurrency || "NGN"}
+          label={`Amount (${state.wCurrency || "NGN"})`}
           onFocus={() => {
             if (isDestinationValid) setCollapsed(true);
           }}
@@ -207,7 +193,7 @@ export function InternationalWireFlow({
         value={state.wPurpose}
         onChange={(val) => onChange("wPurpose", val)}
         label="Purpose of Payment"
-        placeholder="e.g. Commercial invoice, tuition fee, investment"
+        placeholder="e.g. Trade settlement, family remittance"
       />
 
       {/* 5. Transaction Category */}

@@ -68,6 +68,7 @@ import { DataBundleFlow } from "./flows/DataBundleFlow";
 import { CardTopUpFlow } from "./flows/CardTopUpFlow";
 import { BillsPaymentFlow } from "./flows/BillsPaymentFlow";
 import { InternationalWireFlow } from "./flows/InternationalWireFlow";
+import { PapssPaymentFlow } from "./flows/PapssPaymentFlow";
 import { GroupPaymentFlow } from "./flows/GroupPaymentFlow";
 import { ProxyPayFlow } from "./flows/ProxyPayFlow";
 import {
@@ -91,6 +92,7 @@ export type Rail =
   | "group"
   | "momo"
   | "papss"
+  | "swift"
   | "wallet-to-bank"
   | "airtime"
   | "data"
@@ -101,7 +103,23 @@ export type Rail =
   | "qr"
   | "cardless";
 
-const RATES: Record<string, number> = { NGN: 0.0085, XOF: 0.021, KES: 0.096, ZAR: 0.68, EGP: 0.26 };
+const RATES: Record<string, number> = {
+  USD: 15.4,
+  GBP: 19.8,
+  EUR: 16.7,
+  CAD: 11.2,
+  CNY: 2.15,
+  AED: 4.19,
+  AUD: 10.1,
+  JPY: 0.10,
+  NGN: 0.0098,
+  XOF: 0.025,
+  KES: 0.119,
+  ZAR: 0.85,
+  EGP: 0.32,
+  RWF: 0.011,
+  ZMW: 0.58,
+};
 
 const BANKS = [
   "GCB Bank",
@@ -154,6 +172,7 @@ const RAIL_FACTS: Record<Rail, { fee: number; arrives: string; instant: boolean 
   group: { fee: 0.5, arrives: "Instantly", instant: true },
   momo: { fee: 0.5, arrives: "Instantly", instant: true },
   papss: { fee: 25, arrives: "Same day", instant: false },
+  swift: { fee: 50, arrives: "1–3 Business Days", instant: false },
   "wallet-to-bank": { fee: 0.5, arrives: "Instantly", instant: true },
   airtime: { fee: 0, arrives: "Instantly", instant: true },
   data: { fee: 0, arrives: "Instantly", instant: true },
@@ -173,6 +192,7 @@ const RAIL_LABEL: Record<Rail, string> = {
   group: "To Group",
   momo: "Mobile Money",
   papss: "PAPSS Payment",
+  swift: "SWIFT Wire Transfer",
   "wallet-to-bank": "Wallet to Bank",
   airtime: "Airtime Top-up",
   data: "Data Bundle",
@@ -1262,8 +1282,11 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       setWalletCategory("self");
       setStage1Collapsed(true);
       setF((p) => ({ ...p, wPhone: "0244123821", wName: "Ama Serwaa Mensah", wNetwork: "MTN Mobile Money" }));
-    } else if (categoryParam === "international" || r === "papss") {
+    } else if (categoryParam === "international" || r === "swift") {
       setBankCategory("international");
+      setRail("swift");
+    } else if (r === "papss") {
+      setRail("papss");
     } else if (r === "ach") {
       setRail("ach");
     }
@@ -2296,8 +2319,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             type="button"
             onClick={() => {
               setBankCategory("international");
-              setRail("papss");
-              setF((p) => ({ ...p, wCountry: "", wCurrency: "NGN", wBenName: "", wIban: "", wBank: "", wForeign: "", wireRef: "" }));
+              setRail("swift");
+              setF((p) => ({ ...p, wCountry: "United States", wCurrency: "USD", wBenName: "", wIban: "", wBank: "", wSwift: "", wForeign: "", wireRef: "" }));
               setStage(1);
               setStage1Collapsed(false);
               setMaxRevealedStage(1);
@@ -2309,8 +2332,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 <Globe size={20} strokeWidth={1.8} />
               </span>
               <div className="flex flex-col">
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">International (PAPSS / Swift)</span>
-                <span className="text-[12.5px] text-muted-foreground">Cross-border transfers across Africa and abroad</span>
+                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">International (SWIFT)</span>
+                <span className="text-[12.5px] text-muted-foreground">Cross-border wire transfers worldwide via SWIFT</span>
               </div>
             </div>
             <ChevronRight
@@ -2930,9 +2953,42 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               />
             )}
 
-            {/* Flow 8: International Wire (PAPSS) */}
-            {rail === "papss" && (
+            {/* Flow 8: SWIFT International Wire */}
+            {(rail === "swift" || (bankCategory === "international" && rail !== "papss")) && (
               <InternationalWireFlow
+                accounts={accounts}
+                state={{
+                  fromId: f.fromId,
+                  wCountry: f.wCountry || "United States",
+                  wCurrency: f.wCurrency || "USD",
+                  wBank: f.wBank,
+                  wSwift: f.wSwift,
+                  wIban: f.wIban,
+                  wBenName: f.wBenName,
+                  wForeign: f.wForeign,
+                  wPurpose: f.wPurpose || "Commercial invoice",
+                  category: f.category,
+                  saveBeneficiary: f.saveBeneficiary,
+                  beneficiaryNickname: f.beneficiaryNickname,
+                  isScheduled: f.isScheduled,
+                  scheduleDate: f.scheduleDate,
+                  scheduleFrequency: f.scheduleFrequency,
+                  scheduleEndDate: f.scheduleEndDate,
+                }}
+                onChange={(key, val) => set(key, val)}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
+            )}
+
+            {/* Flow 8b: PAPSS Payments (Standalone Rail) */}
+            {rail === "papss" && (
+              <PapssPaymentFlow
                 accounts={accounts}
                 state={{
                   fromId: f.fromId,
@@ -2942,7 +2998,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   wIban: f.wIban,
                   wBenName: f.wBenName,
                   wForeign: f.wForeign,
-                  wPurpose: f.wPurpose || "Goods purchased",
+                  wPurpose: f.wPurpose || "Trade settlement",
                   category: f.category,
                   saveBeneficiary: f.saveBeneficiary,
                   beneficiaryNickname: f.beneficiaryNickname,

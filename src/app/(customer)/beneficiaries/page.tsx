@@ -78,6 +78,7 @@ const TYPE_CONFIG: Record<TransactionType | "group", TypeMeta> = {
   bill: { label: "Bills & Utilities", plural: "Bills & Utilities", rail: "bill", icon: Receipt },
   airtime: { label: "Airtime & Data", plural: "Airtime & Data", rail: "airtime", icon: Smartphone },
   papss: { label: "PAPSS Cross-Border", plural: "PAPSS Cross-Border", rail: "papss", icon: Globe },
+  swift: { label: "SWIFT International Wire", plural: "SWIFT Wire Transfers", rail: "swift", icon: Globe },
   group: { label: "Payment Group", plural: "Payment Groups", rail: "group", icon: Users },
 };
 
@@ -88,6 +89,7 @@ const ORDERED_TYPES: (TransactionType | "group")[] = [
   "bill",
   "airtime",
   "papss",
+  "swift",
   "group",
 ];
 

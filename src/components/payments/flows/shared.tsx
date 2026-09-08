@@ -209,6 +209,16 @@ export function getDetailedFeeBreakdown({
     };
   }
 
+  if (rail === "swift" || bankCategory === "international") {
+    return {
+      feeName: "SWIFT International Wire Processing Fee",
+      feeShortName: "SWIFT Wire",
+      feeAmount: 50.0,
+      eLevyText: "GH₵0.00 (Exempt)",
+      commissionText: "GH₵0.00 (Waived)",
+    };
+  }
+
   if (rail === "card-topup") {
     return {
       feeName: "Card Funding Convenience Fee",
@@ -399,11 +409,21 @@ export function detectNetwork(phone: string): string {
 }
 
 export const RATES: Record<string, number> = {
-  NGN: 0.0085,
-  XOF: 0.021,
-  KES: 0.096,
-  ZAR: 0.68,
-  EGP: 0.26,
+  USD: 15.4,
+  GBP: 19.8,
+  EUR: 16.7,
+  CAD: 11.2,
+  CNY: 2.15,
+  AED: 4.19,
+  AUD: 10.1,
+  JPY: 0.10,
+  NGN: 0.0098,
+  XOF: 0.025,
+  KES: 0.119,
+  ZAR: 0.85,
+  EGP: 0.32,
+  RWF: 0.011,
+  ZMW: 0.58,
 };
 
 /* -------------------------------------------------------------------------- */
@@ -849,3 +869,5 @@ export function SchedulePaymentSection({
     </div>
   );
 }
+
+

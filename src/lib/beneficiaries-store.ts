@@ -9,7 +9,8 @@ export type TransactionType =
   | "proxy"
   | "bill"
   | "airtime"
-  | "papss";
+  | "papss"
+  | "swift";
 
 export type BeneficiaryCategory = "person" | "biller" | "number";
 
