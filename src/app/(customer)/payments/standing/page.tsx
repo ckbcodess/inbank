@@ -153,11 +153,11 @@ export default function StandingOrdersPage() {
               return (
                 <div
                   key={si.id}
-                  className="group flex flex-col justify-between gap-4 rounded-2xl border border-border bg-card p-5 transition-all duration-150 hover:border-primary/40 hover:bg-muted/20"
+                  className="group flex flex-col justify-between gap-4 rounded-2xl border border-border bg-card p-5 transition-all duration-150 hover:border-foreground/20 hover:bg-muted/20"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3.5 min-w-0">
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--active-bg)] text-primary">
+                      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
                         <Repeat size={19} strokeWidth={1.8} aria-hidden="true" />
                       </span>
                       <div className="flex flex-col min-w-0">

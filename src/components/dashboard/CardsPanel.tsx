@@ -43,7 +43,7 @@ export function CardsPanel({
     <div className="flex h-full flex-col rounded-2xl border border-border bg-card">
       <div className="flex items-center justify-between border-b border-border px-5 py-4">
         <h2 className="text-[15px] text-foreground">Your cards</h2>
-        <Link href="/cards" className="text-[12px] text-primary underline-offset-4 hover:underline">
+        <Link href="/cards" className="text-[12px] text-foreground underline-offset-4 hover:underline">
           View all cards
         </Link>
       </div>

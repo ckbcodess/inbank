@@ -76,7 +76,7 @@ export function LiquidityDeck({
         {/* Top Header: Eyebrow + Currency Switcher + Eye Toggle */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <span className="flex size-7 items-center justify-center rounded-lg bg-muted text-foreground">
               <Wallet size={15} strokeWidth={2} />
             </span>
             <span className="text-[12.5px] font-medium text-muted-foreground uppercase tracking-wider">
@@ -189,7 +189,7 @@ export function LiquidityDeck({
             onClick={onOpenBillPay}
             className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group cursor-pointer"
           >
-            <span className="flex size-9 items-center justify-center rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 transition-transform group-hover:scale-110">
+            <span className="flex size-9 items-center justify-center rounded-full bg-muted text-foreground transition-transform group-hover:scale-110">
               <Receipt size={16} strokeWidth={2} />
             </span>
             <span className="text-[12px] font-medium text-foreground">Pay Bills</span>

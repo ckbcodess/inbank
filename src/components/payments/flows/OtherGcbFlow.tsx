@@ -93,7 +93,7 @@ export function OtherGcbFlow({
           <div className="flex flex-col gap-3">
             <div className="flex h-13 items-center justify-between rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
               <span>GCB Bank PLC</span>
-              <span className="text-[12px] text-primary font-normal">Internal Transfer</span>
+              <span className="text-[12px] text-muted-foreground font-normal">Internal Transfer</span>
             </div>
 
             <input

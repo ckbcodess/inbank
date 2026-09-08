@@ -2058,7 +2058,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if (phase === "submitting") {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col items-center justify-center gap-4 py-24 text-center">
-        <Loader2 size={36} className="animate-spin text-primary" />
+        <Loader2 size={36} className="animate-spin text-muted-foreground" />
         <h2 className="text-[20px] font-medium text-foreground">Authorising payment...</h2>
         <p className="text-[13.5px] text-muted-foreground">Please wait while your transaction is securely processed.</p>
       </div>
@@ -2220,7 +2220,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
           >
             <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-amber-500 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-[#fdc307] dark:shadow-none">
+              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                 <ArrowLeftRight size={20} strokeWidth={1.8} />
               </span>
               <div className="flex flex-col">
@@ -2248,7 +2248,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
           >
             <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-amber-500 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-[#fdc307] dark:shadow-none font-medium text-[13px]">
+              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none font-medium text-[13px]">
                 GCB
               </span>
               <div className="flex flex-col">
@@ -2276,7 +2276,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
           >
             <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-amber-500 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-[#fdc307] dark:shadow-none">
+              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                 <Landmark size={20} strokeWidth={1.8} />
               </span>
               <div className="flex flex-col">
@@ -2305,7 +2305,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
           >
             <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-amber-500 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-[#fdc307] dark:shadow-none">
+              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                 <Globe size={20} strokeWidth={1.8} />
               </span>
               <div className="flex flex-col">
@@ -2391,7 +2391,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
           >
             <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-amber-500 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-[#fdc307] dark:shadow-none">
+              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                 <Smartphone size={20} strokeWidth={1.8} />
               </span>
               <div className="flex flex-col">
@@ -2426,7 +2426,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
           >
             <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-amber-500 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-[#fdc307] dark:shadow-none">
+              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                 <Users size={20} strokeWidth={1.8} />
               </span>
               <div className="flex flex-col">
@@ -2508,7 +2508,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
               >
                 <div className="flex items-center gap-4">
-                  <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-amber-500 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-[#fdc307] dark:shadow-none">
+                  <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                     <Icon size={20} strokeWidth={1.8} />
                   </span>
                   <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">

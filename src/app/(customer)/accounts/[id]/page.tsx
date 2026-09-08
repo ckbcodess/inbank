@@ -236,7 +236,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
                     <div className="flex items-center gap-3.5 min-w-0">
                       <MiniCardThumbnail card={c} />
                       <div className="flex flex-col min-w-0">
-                        <span className="truncate text-[13.5px] font-medium text-foreground group-hover:text-primary transition-colors">
+                        <span className="truncate text-[13.5px] font-medium text-foreground">
                           {c.name}
                         </span>
                         <span className="text-[11.5px] text-muted-foreground font-mono tabular mt-0.5">

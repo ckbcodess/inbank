@@ -118,7 +118,7 @@ export function MobileWalletFlow({
             {isSelf ? (
               <div className="flex h-13 items-center justify-between rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
                 <span className="tabular">{state.wPhone || REGISTERED_PHONE}</span>
-                <span className="text-[12px] text-primary font-normal">Registered Mobile</span>
+                <span className="text-[12px] text-muted-foreground font-normal">Registered Mobile</span>
               </div>
             ) : (
               <>

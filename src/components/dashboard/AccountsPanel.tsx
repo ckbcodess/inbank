@@ -49,7 +49,7 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
         <div>
           <h2 className="text-[15px] font-medium text-foreground">Your Accounts</h2>
         </div>
-        <Link href="/accounts" className="text-[12px] text-primary underline-offset-4 hover:underline">
+        <Link href="/accounts" className="text-[12px] text-foreground underline-offset-4 hover:underline">
           View all accounts →
         </Link>
       </div>

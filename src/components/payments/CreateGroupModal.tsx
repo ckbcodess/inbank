@@ -193,7 +193,7 @@ export default function CreateGroupModal({
       <DialogContent className="sm:max-w-[540px] max-h-[90vh] flex flex-col p-0 overflow-hidden">
         <DialogHeader className="p-6 pb-2">
           <DialogTitle className="text-[18px] font-medium flex items-center gap-2">
-            <Users size={18} className="text-primary" />
+            <Users size={18} className="text-foreground" />
             {groupToEdit ? "Edit Payment Group" : "Create Payment Group"}
           </DialogTitle>
           <DialogDescription className="text-[13px]">
@@ -283,7 +283,7 @@ export default function CreateGroupModal({
               <button
                 type="button"
                 onClick={() => setShowAddCustom(!showAddCustom)}
-                className="text-[12px] font-medium text-primary hover:underline cursor-pointer flex items-center gap-1"
+                className="text-[12px] font-medium text-foreground hover:underline cursor-pointer flex items-center gap-1"
               >
                 <Plus size={13} />
                 {showAddCustom ? "Cancel manual entry" : "Add new number/account"}
@@ -292,7 +292,7 @@ export default function CreateGroupModal({
 
             {/* Manual member entry card */}
             {showAddCustom && (
-              <div className="rounded-xl border border-primary/30 bg-primary/5 p-3.5 flex flex-col gap-3 animate-in fade-in duration-150">
+              <div className="rounded-xl border border-border bg-muted/40 p-3.5 flex flex-col gap-3 animate-in fade-in duration-150">
                 <div className="grid grid-cols-2 gap-2.5">
                   <Input
                     placeholder="Full Name"
@@ -316,7 +316,7 @@ export default function CreateGroupModal({
                         setCustomProvider("MTN Mobile Money");
                       }}
                       className={`px-2.5 py-1 rounded-md text-[11px] font-medium cursor-pointer border ${
-                        customType === "wallet" ? "bg-background border-primary text-primary" : "border-transparent text-muted-foreground"
+                        customType === "wallet" ? "bg-background border-foreground/30 text-foreground shadow-xs" : "border-transparent text-muted-foreground"
                       }`}
                     >
                       Mobile Wallet
@@ -328,7 +328,7 @@ export default function CreateGroupModal({
                         setCustomProvider("GCB Bank");
                       }}
                       className={`px-2.5 py-1 rounded-md text-[11px] font-medium cursor-pointer border ${
-                        customType === "bank" ? "bg-background border-primary text-primary" : "border-transparent text-muted-foreground"
+                        customType === "bank" ? "bg-background border-foreground/30 text-foreground shadow-xs" : "border-transparent text-muted-foreground"
                       }`}
                     >
                       Bank Account
@@ -414,9 +414,9 @@ export default function CreateGroupModal({
                     key={c.destination}
                     type="button"
                     onClick={() => toggleMemberFromPreset(c)}
-                    className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[12px] hover:border-primary/50 text-foreground cursor-pointer transition-all"
+                    className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[12px] hover:border-foreground/30 text-foreground cursor-pointer transition-all"
                   >
-                    <Plus size={12} className="text-primary" />
+                    <Plus size={12} className="text-muted-foreground" />
                     <span className="font-medium">{c.name}</span>
                     <span className="text-[10.5px] text-muted-foreground tabular">({c.destination.slice(-4)})</span>
                   </button>

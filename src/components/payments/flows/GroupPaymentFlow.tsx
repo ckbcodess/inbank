@@ -88,7 +88,7 @@ export function GroupPaymentFlow({
           <button
             type="button"
             onClick={onOpenCreateGroup}
-            className="flex items-center gap-1 text-[13px] font-medium text-primary hover:underline cursor-pointer"
+            className="flex items-center gap-1 text-[13px] font-medium text-foreground hover:underline cursor-pointer"
           >
             <Plus size={14} />
             <span>Create new group</span>
@@ -108,7 +108,7 @@ export function GroupPaymentFlow({
             <button
               type="button"
               onClick={onOpenCreateGroup}
-              className="text-[14px] font-medium text-primary hover:underline"
+              className="text-[14px] font-medium text-foreground hover:underline cursor-pointer"
             >
               Create your first group
             </button>
@@ -129,7 +129,7 @@ export function GroupPaymentFlow({
             <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-left shadow-none flex items-center">
               {!selectedGroup ? (
                 <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
                     <Users size={18} strokeWidth={1.8} />
                   </span>
                   <span className="text-[15px] text-muted-foreground font-normal truncate">
@@ -139,7 +139,7 @@ export function GroupPaymentFlow({
               ) : (
                 <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
                   <div className="flex items-center gap-3.5 min-w-0">
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
                       <Users size={18} strokeWidth={1.8} />
                     </span>
                     <div className="flex flex-col min-w-0 text-left gap-0.5">

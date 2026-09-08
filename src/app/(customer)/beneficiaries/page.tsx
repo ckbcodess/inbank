@@ -681,7 +681,7 @@ export default function BeneficiariesPage() {
                             setEditingGroup(null);
                             setGroupModalOpen(true);
                           }}
-                          className="text-[12px] text-primary hover:underline cursor-pointer"
+                          className="text-[12px] text-foreground hover:underline cursor-pointer"
                         >
                           + New group
                         </button>
@@ -689,7 +689,7 @@ export default function BeneficiariesPage() {
                         <button
                           type="button"
                           onClick={() => openAddForType(typeKey)}
-                          className="text-[12px] text-primary hover:underline cursor-pointer"
+                          className="text-[12px] text-foreground hover:underline cursor-pointer"
                         >
                           + Add {config.label.toLowerCase()}
                         </button>

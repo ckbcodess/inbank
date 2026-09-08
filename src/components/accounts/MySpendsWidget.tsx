@@ -381,7 +381,7 @@ export function MySpendsWidget({
                 <button
                   type="button"
                   onClick={() => setSelectedItemName(null)}
-                  className="text-[12px] text-primary hover:underline font-medium cursor-pointer"
+                  className="text-[12px] text-foreground hover:underline font-medium cursor-pointer"
                 >
                   Clear filter
                 </button>

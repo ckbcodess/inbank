@@ -119,7 +119,7 @@ export function DashboardCardsWidget() {
                 {/* Card Details */}
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
-                    <span className="text-[14px] font-medium text-foreground group-hover:text-primary transition-colors">{card.type}</span>
+                    <span className="text-[14px] font-medium text-foreground">{card.type}</span>
                     <span className="text-[12px] text-muted-foreground">{card.maskedNumber}</span>
                   </div>
                   {card.frozen ? (
@@ -269,7 +269,7 @@ export function DashboardCardsWidget() {
             <div className="mt-6 flex justify-between items-center gap-2">
               <Link
                 href="/cards"
-                className="text-[13px] font-medium text-primary hover:underline"
+                className="text-[13px] font-medium text-foreground hover:underline"
               >
                 Open Full Card Hub →
               </Link>

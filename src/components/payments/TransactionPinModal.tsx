@@ -264,7 +264,7 @@ export default function TransactionPinModal({
                   type="button"
                   disabled={auth.resend > 0}
                   onClick={auth.requestResend}
-                  className="text-[13px] text-primary hover:underline disabled:text-muted-foreground disabled:no-underline cursor-pointer"
+                  className="text-[13px] text-foreground hover:underline disabled:text-muted-foreground disabled:no-underline cursor-pointer"
                 >
                   {auth.resend > 0 ? (
                     <>

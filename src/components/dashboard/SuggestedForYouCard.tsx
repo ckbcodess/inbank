@@ -103,7 +103,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                 <div className="flex size-[54px] sm:size-[56px] items-center justify-center rounded-full border border-border bg-card text-foreground shadow-xs transition-all duration-200 group-hover:scale-105 group-hover:bg-muted group-hover:border-border/80 group-active:scale-95">
                   <Icon size={20} strokeWidth={1.8} className="transition-transform group-hover:scale-110" />
                 </div>
-                <span className="text-[12px] font-normal leading-tight text-foreground transition-colors group-hover:text-primary">
+                <span className="text-[12px] font-normal leading-tight text-foreground">
                   {action.label}
                 </span>
               </Link>
@@ -182,9 +182,9 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                     key={preset}
                     type="button"
                     onClick={() => setPayAmount(preset)}
-                    className={`flex-1 rounded-lg border py-1.5 text-[12px] font-medium transition-colors cursor-pointer ${
+                    className={`flex-1 rounded-lg border py-1.5 text-[12px] transition-colors cursor-pointer ${
                       payAmount === preset
-                        ? "border-primary bg-primary/10 text-primary"
+                        ? "border-foreground bg-muted font-semibold text-foreground shadow-xs"
                         : "border-border bg-muted/50 text-foreground hover:bg-muted"
                     }`}
                   >
@@ -209,7 +209,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="flex items-center gap-2 rounded-xl bg-[#f6bf36] px-5 py-2 text-[14px] font-medium text-neutral-950 hover:bg-[#eab025] disabled:opacity-50 cursor-pointer shadow-xs"
+                  className="flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2 text-[14px] font-medium hover:bg-primary/90 disabled:opacity-50 cursor-pointer shadow-xs"
                 >
                   {isProcessing ? "Processing..." : "Confirm & Send"}
                   <ArrowRight size={15} />

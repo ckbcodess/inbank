@@ -121,7 +121,7 @@ function ActionSection({
               className="group flex items-center justify-between gap-4 rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626]"
             >
               <div className="flex min-w-0 items-center gap-4">
-                <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12.25px] border border-black/[0.04] bg-white text-amber-500 shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-[#fdc307] dark:shadow-none">
+                <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12.25px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                   <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
                 </span>
                 <span className="truncate text-[16px] font-medium tracking-[-0.01em] text-foreground">

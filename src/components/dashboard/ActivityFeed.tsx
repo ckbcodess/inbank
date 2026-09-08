@@ -94,7 +94,7 @@ export function ActivityFeed({ transactions }: { transactions: Transaction[] }) 
             Your last {recent.length} transactions, with anything that needs fixing shown here
           </p>
         </div>
-        <Link href="/transactions" className="text-[12px] text-primary underline-offset-4 hover:underline">
+        <Link href="/transactions" className="text-[12px] text-foreground underline-offset-4 hover:underline">
           View all transactions
         </Link>
       </div>

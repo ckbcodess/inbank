@@ -177,7 +177,7 @@ export function AuthorisePanel({
               type="button"
               disabled={resend > 0}
               onClick={onResend}
-              className="text-[13px] text-primary font-medium hover:underline disabled:text-muted-foreground disabled:no-underline cursor-pointer"
+              className="text-[13px] text-foreground font-medium hover:underline disabled:text-muted-foreground disabled:no-underline cursor-pointer"
             >
               {resend > 0 ? (
                 <>
@@ -193,7 +193,7 @@ export function AuthorisePanel({
             <button
               type="button"
               onClick={() => onMethodChange(isPin ? "otp" : "pin")}
-              className="flex items-center gap-1.5 text-[13px] text-primary hover:underline font-medium cursor-pointer"
+              className="flex items-center gap-1.5 text-[13px] text-foreground hover:underline font-medium cursor-pointer"
             >
               {isPin ? (
                 <>
@@ -401,7 +401,7 @@ export function AuthorisePanel({
               type="button"
               disabled={resend > 0}
               onClick={onResend}
-              className="text-[13.5px] text-primary font-medium hover:underline disabled:text-muted-foreground disabled:no-underline cursor-pointer"
+              className="text-[13.5px] text-foreground font-medium hover:underline disabled:text-muted-foreground disabled:no-underline cursor-pointer"
             >
               {resend > 0 ? (
                 <>

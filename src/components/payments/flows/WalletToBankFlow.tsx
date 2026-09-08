@@ -80,7 +80,7 @@ export function WalletToBankFlow({
         <label className="text-[14px] font-medium text-foreground">Source Mobile Wallet</label>
         <div className="flex items-center justify-between h-[68px] min-h-[68px] px-4 w-full rounded-2xl border border-border/80 bg-card gap-3">
           <div className="flex items-center gap-3.5 min-w-0">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
               <Smartphone size={19} strokeWidth={1.8} />
             </span>
             <div className="flex flex-col min-w-0 text-left gap-0.5">

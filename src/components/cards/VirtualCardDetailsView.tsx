@@ -610,7 +610,7 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
         <DialogContent className="max-w-md rounded-2xl p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-[17px]">
-              <PlusCircle size={18} className="text-primary" />
+              <PlusCircle size={18} className="text-foreground" />
               <span>Top up {currentCard.name}</span>
             </DialogTitle>
             <DialogDescription className="text-[13px]">
@@ -761,7 +761,7 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
         <DialogContent className="max-w-sm rounded-2xl p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-[17px]">
-              <Snowflake size={18} className="text-amber-500" />
+              <Snowflake size={18} className="text-foreground" />
               <span>{isFrozen ? "Unfreeze Card?" : "Freeze Card?"}</span>
             </DialogTitle>
             <DialogDescription className="text-[13px]">
@@ -791,7 +791,7 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
         <DialogContent className="max-w-md rounded-2xl p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-[17px]">
-              <SlidersHorizontal size={18} className="text-primary" />
+              <SlidersHorizontal size={18} className="text-foreground" />
               <span>Adjust Spending Limits</span>
             </DialogTitle>
             <DialogDescription className="text-[13px]">
@@ -853,7 +853,7 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
         <DialogContent className="max-w-md rounded-2xl p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-[17px]">
-              <Settings2 size={18} className="text-primary" />
+              <Settings2 size={18} className="text-foreground" />
               <span>Card Controls & Channels</span>
             </DialogTitle>
             <DialogDescription className="text-[13px]">
@@ -927,7 +927,7 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
         <DialogContent className="max-w-md rounded-2xl p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-[17px]">
-              <Key size={18} className="text-primary" />
+              <Key size={18} className="text-foreground" />
               <span>Reset Card PIN</span>
             </DialogTitle>
             <DialogDescription className="text-[13px]">
@@ -969,7 +969,7 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
         <DialogContent className="max-w-md rounded-2xl p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-[17px]">
-              <Sparkles size={18} className="text-primary" />
+              <Sparkles size={18} className="text-foreground" />
               <span>Edit Card Details</span>
             </DialogTitle>
             <DialogDescription className="text-[13px]">

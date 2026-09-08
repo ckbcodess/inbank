@@ -534,7 +534,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                 className="group flex h-[68px] w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] px-4 transition-all duration-150 ease-out hover:bg-[#eeeeed] active:scale-[0.98] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
               >
                 <div className="flex items-center gap-3.5">
-                  <span className="flex size-[38px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-amber-500 shadow-sm dark:border-white/[0.06] dark:bg-[#252525] dark:text-[#fdc307]">
+                  <span className="flex size-[38px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-sm dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground">
                     <Icon size={19} strokeWidth={1.8} />
                   </span>
                   <span className="text-[15.5px] font-medium text-foreground">{opt.title}</span>
@@ -934,7 +934,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     <button
                       type="button"
                       onClick={() => setCreateGroupOpen(true)}
-                      className="text-[13px] text-primary hover:underline font-medium cursor-pointer flex items-center gap-1"
+                      className="text-[13px] text-foreground hover:underline font-medium cursor-pointer flex items-center gap-1"
                     >
                       <Plus size={13} />
                       Create new group
@@ -964,7 +964,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                           {g.name} ({g.members.length} Members)
                         </SelectItem>
                       ))}
-                      <SelectItem value="__create_new__" className="text-primary font-medium">
+                      <SelectItem value="__create_new__" className="text-foreground font-medium">
                         + Create new group...
                       </SelectItem>
                     </SelectContent>
@@ -1068,7 +1068,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {/* Live Resolving State / Verification Badge */}
               {rail !== "group" && resolving && (
                 <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 p-2.5 text-[12.5px] text-muted-foreground animate-pulse">
-                  <Loader2 size={13} className="animate-spin text-primary shrink-0" />
+                  <Loader2 size={13} className="animate-spin text-muted-foreground shrink-0" />
                   <span>Resolving account holder details...</span>
                 </div>
               )}

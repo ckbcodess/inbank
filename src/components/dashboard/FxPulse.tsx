@@ -73,7 +73,7 @@ export function FxPulse() {
             Published {formatDateTime(FX_PUBLISHED_AT)}
           </p>
         </div>
-        <Link href="/fx-rates" className="text-[12px] text-primary underline-offset-4 hover:underline">
+        <Link href="/fx-rates" className="text-[12px] text-foreground underline-offset-4 hover:underline">
           All rates
         </Link>
       </div>

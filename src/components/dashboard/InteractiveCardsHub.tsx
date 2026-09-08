@@ -32,7 +32,7 @@ export function InteractiveCardsHub({
       <div className="flex h-full flex-col rounded-3xl border border-border bg-card p-5">
         <div className="flex items-center justify-between border-b border-border pb-3">
           <h2 className="text-[15px] font-medium text-foreground">Cards</h2>
-          <Link href="/cards" className="text-[12px] text-primary hover:underline">
+          <Link href="/cards" className="text-[12px] text-foreground hover:underline">
             Manage
           </Link>
         </div>
@@ -80,11 +80,11 @@ export function InteractiveCardsHub({
       <div className="flex items-center justify-between pb-3 border-b border-border/60">
         <div className="flex items-center gap-2">
           <h2 className="text-[15px] font-medium text-foreground">Cards &amp; Wallets</h2>
-          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary font-mono">
+          <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-foreground font-mono">
             {cards.length}
           </span>
         </div>
-        <Link href="/cards" className="text-[12px] text-primary hover:underline flex items-center gap-0.5">
+        <Link href="/cards" className="text-[12px] text-foreground hover:underline flex items-center gap-0.5">
           View all <ChevronRight size={13} />
         </Link>
       </div>

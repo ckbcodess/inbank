@@ -23,7 +23,7 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
     <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-5">
       <div className="flex items-center justify-between">
         <h2 className="text-[15px] text-foreground">Cards</h2>
-        <Link href="/cards" className="text-[12px] text-primary underline-offset-4 hover:underline">
+        <Link href="/cards" className="text-[12px] text-foreground underline-offset-4 hover:underline">
           Manage all →
         </Link>
       </div>

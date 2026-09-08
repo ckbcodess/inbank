@@ -722,7 +722,7 @@ export function CollapsedDetailsBadge({
       <button
         type="button"
         onClick={onChange}
-        className="text-[14px] font-medium text-primary hover:underline cursor-pointer ml-3 shrink-0"
+        className="text-[14px] font-medium text-foreground hover:underline cursor-pointer ml-3 shrink-0"
       >
         Change
       </button>
@@ -753,7 +753,7 @@ export function SaveBeneficiaryCheckbox({
           type="checkbox"
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}
-          className="size-4.5 rounded-[5px] border-border text-primary focus:ring-primary/30 accent-primary cursor-pointer"
+          className="size-4.5 rounded-[5px] border-border text-foreground focus:ring-ring/30 accent-foreground cursor-pointer"
         />
         <span className="text-[14px] font-medium text-foreground">
           {label}
@@ -809,7 +809,7 @@ export function SchedulePaymentSection({
             onChange={(e) => onChange({ enabled: e.target.checked })}
             className="sr-only peer"
           />
-          <div className="w-11 h-6 bg-muted-foreground/25 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary dark:border-gray-600"></div>
+          <div className="w-11 h-6 bg-muted-foreground/25 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-foreground dark:border-gray-600"></div>
         </label>
       </div>
 
