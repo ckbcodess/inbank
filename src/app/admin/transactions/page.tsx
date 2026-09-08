@@ -33,7 +33,6 @@ import {
   TRANSACTION_CATEGORIES,
   TRANSACTION_PAYMENT_METHODS,
 } from "@/lib/mock-data";
-import { cn } from "@/lib/utils";
 
 const LIST_STATES: readonly ListState[] = [
   "loading",
@@ -376,13 +375,31 @@ export default function TransactionMonitoringPage() {
           <div className="flex flex-wrap items-center gap-2.5 pt-1">
             {/* 1. Date Preset Filter */}
             <Select value={datePreset} onValueChange={(val) => setDatePreset((val as DatePreset) ?? "all")}>
-              <SelectTrigger className="w-[140px] sm:w-[155px] h-9 text-[13px]">
+              <SelectTrigger
+                size="sm"
+                isActive={datePreset !== "all"}
+                onClear={
+                  datePreset !== "all"
+                    ? () => {
+                        setDatePreset("all");
+                        setDateFrom("");
+                        setDateTo("");
+                      }
+                    : undefined
+                }
+                clearLabel="Clear date filter"
+                className="w-[140px] sm:w-[155px] h-9 text-[13px]"
+              >
                 <div className="flex items-center gap-1.5 truncate">
-                  <Calendar size={13} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
+                  {datePreset !== "all" ? (
+                    <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
+                  ) : (
+                    <Calendar size={13} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
+                  )}
                   <SelectValue placeholder="All Dates" />
                 </div>
               </SelectTrigger>
-              <SelectContent align="start">
+              <SelectContent align="start" className="min-w-[190px] max-h-72">
                 <SelectItem value="all">All Dates</SelectItem>
                 <SelectItem value="today">Today</SelectItem>
                 <SelectItem value="7d">Last 7 Days</SelectItem>
@@ -402,18 +419,26 @@ export default function TransactionMonitoringPage() {
               }
             >
               <SelectTrigger
-                className={cn(
-                  "w-[155px] sm:w-[170px] h-9 text-[13px]",
-                  categoryFilters.length > 0 && "border-foreground/30 font-medium"
-                )}
+                size="sm"
+                isActive={categoryFilters.length > 0}
+                onClear={categoryFilters.length > 0 ? () => setCategoryFilters([]) : undefined}
+                clearLabel="Clear category filter"
+                className="w-[155px] sm:w-[170px] h-9 text-[13px]"
               >
-                <SelectValue placeholder="All Categories">
-                  {(val: string[]) =>
-                    formatMultiFilterValue(val, "All Categories", CATEGORY_MAP, "Categories")
-                  }
-                </SelectValue>
+                <div className="flex items-center gap-1.5 truncate">
+                  <SelectValue placeholder="All Categories">
+                    {(val: string[]) =>
+                      formatMultiFilterValue(val, "All Categories", CATEGORY_MAP, "Categories")
+                    }
+                  </SelectValue>
+                  {categoryFilters.length > 0 && (
+                    <span className="flex size-4 items-center justify-center rounded-full bg-foreground text-background text-[10px] font-semibold tabular shrink-0 leading-none">
+                      {categoryFilters.length}
+                    </span>
+                  )}
+                </div>
               </SelectTrigger>
-              <SelectContent align="start">
+              <SelectContent align="start" className="min-w-[250px] max-h-72">
                 <SelectItem value="all">All Categories</SelectItem>
                 <SelectSeparator />
                 {TRANSACTION_CATEGORIES.map((cat) => (
@@ -433,18 +458,26 @@ export default function TransactionMonitoringPage() {
               }
             >
               <SelectTrigger
-                className={cn(
-                  "w-[160px] sm:w-[175px] h-9 text-[13px]",
-                  methodFilters.length > 0 && "border-foreground/30 font-medium"
-                )}
+                size="sm"
+                isActive={methodFilters.length > 0}
+                onClear={methodFilters.length > 0 ? () => setMethodFilters([]) : undefined}
+                clearLabel="Clear payment method filter"
+                className="w-[160px] sm:w-[175px] h-9 text-[13px]"
               >
-                <SelectValue placeholder="All Methods">
-                  {(val: string[]) =>
-                    formatMultiFilterValue(val, "All Methods", METHOD_MAP, "Methods")
-                  }
-                </SelectValue>
+                <div className="flex items-center gap-1.5 truncate">
+                  <SelectValue placeholder="All Methods">
+                    {(val: string[]) =>
+                      formatMultiFilterValue(val, "All Methods", METHOD_MAP, "Methods")
+                    }
+                  </SelectValue>
+                  {methodFilters.length > 0 && (
+                    <span className="flex size-4 items-center justify-center rounded-full bg-foreground text-background text-[10px] font-semibold tabular shrink-0 leading-none">
+                      {methodFilters.length}
+                    </span>
+                  )}
+                </div>
               </SelectTrigger>
-              <SelectContent align="start">
+              <SelectContent align="start" className="min-w-[260px] max-h-72">
                 <SelectItem value="all">All Methods</SelectItem>
                 <SelectSeparator />
                 {TRANSACTION_PAYMENT_METHODS.map((method) => (
@@ -466,18 +499,26 @@ export default function TransactionMonitoringPage() {
               }
             >
               <SelectTrigger
-                className={cn(
-                  "w-[145px] sm:w-[160px] h-9 text-[13px]",
-                  channelFilters.length > 0 && "border-foreground/30 font-medium"
-                )}
+                size="sm"
+                isActive={channelFilters.length > 0}
+                onClear={channelFilters.length > 0 ? () => setChannelFilters([]) : undefined}
+                clearLabel="Clear channel filter"
+                className="w-[145px] sm:w-[160px] h-9 text-[13px]"
               >
-                <SelectValue placeholder="All Channels">
-                  {(val: string[]) =>
-                    formatMultiFilterValue(val, "All Channels", CHANNEL_MAP, "Channels")
-                  }
-                </SelectValue>
+                <div className="flex items-center gap-1.5 truncate">
+                  <SelectValue placeholder="All Channels">
+                    {(val: string[]) =>
+                      formatMultiFilterValue(val, "All Channels", CHANNEL_MAP, "Channels")
+                    }
+                  </SelectValue>
+                  {channelFilters.length > 0 && (
+                    <span className="flex size-4 items-center justify-center rounded-full bg-foreground text-background text-[10px] font-semibold tabular shrink-0 leading-none">
+                      {channelFilters.length}
+                    </span>
+                  )}
+                </div>
               </SelectTrigger>
-              <SelectContent align="start">
+              <SelectContent align="start" className="min-w-[200px] max-h-72">
                 <SelectItem value="all">All Channels</SelectItem>
                 <SelectSeparator />
                 {CHANNEL_OPTIONS.map((ch) => (
@@ -491,14 +532,20 @@ export default function TransactionMonitoringPage() {
             {/* 5. Flow / Direction Filter (single-select) */}
             <Select value={directionFilter} onValueChange={(val) => setDirectionFilter((val as DirectionFilter) ?? "all")}>
               <SelectTrigger
-                className={cn(
-                  "w-[135px] sm:w-[150px] h-9 text-[13px]",
-                  directionFilter !== "all" && "border-foreground/30 font-medium"
-                )}
+                size="sm"
+                isActive={directionFilter !== "all"}
+                onClear={directionFilter !== "all" ? () => setDirectionFilter("all") : undefined}
+                clearLabel="Clear direction filter"
+                className="w-[135px] sm:w-[150px] h-9 text-[13px]"
               >
-                <SelectValue placeholder="All Flows" />
+                <div className="flex items-center gap-1.5 truncate">
+                  {directionFilter !== "all" && (
+                    <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
+                  )}
+                  <SelectValue placeholder="All Flows" />
+                </div>
               </SelectTrigger>
-              <SelectContent align="start">
+              <SelectContent align="start" className="min-w-[190px] max-h-72">
                 <SelectItem value="all">All Flows</SelectItem>
                 <SelectItem value="debit">Debits (Money Out)</SelectItem>
                 <SelectItem value="credit">Credits (Money In)</SelectItem>
@@ -516,18 +563,26 @@ export default function TransactionMonitoringPage() {
               }
             >
               <SelectTrigger
-                className={cn(
-                  "w-[130px] sm:w-[145px] h-9 text-[13px]",
-                  statusFilters.length > 0 && "border-foreground/30 font-medium"
-                )}
+                size="sm"
+                isActive={statusFilters.length > 0}
+                onClear={statusFilters.length > 0 ? () => setStatusFilters([]) : undefined}
+                clearLabel="Clear status filter"
+                className="w-[130px] sm:w-[145px] h-9 text-[13px]"
               >
-                <SelectValue placeholder="All Statuses">
-                  {(val: string[]) =>
-                    formatMultiFilterValue(val, "All Statuses", STATUS_MAP, "Statuses")
-                  }
-                </SelectValue>
+                <div className="flex items-center gap-1.5 truncate">
+                  <SelectValue placeholder="All Statuses">
+                    {(val: string[]) =>
+                      formatMultiFilterValue(val, "All Statuses", STATUS_MAP, "Statuses")
+                    }
+                  </SelectValue>
+                  {statusFilters.length > 0 && (
+                    <span className="flex size-4 items-center justify-center rounded-full bg-foreground text-background text-[10px] font-semibold tabular shrink-0 leading-none">
+                      {statusFilters.length}
+                    </span>
+                  )}
+                </div>
               </SelectTrigger>
-              <SelectContent align="start">
+              <SelectContent align="start" className="min-w-[190px] max-h-72">
                 <SelectItem value="all">All Statuses</SelectItem>
                 <SelectSeparator />
                 {STATUS_OPTIONS.map((st) => (

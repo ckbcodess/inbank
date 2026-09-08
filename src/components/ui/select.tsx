@@ -4,7 +4,7 @@ import * as React from "react"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 
 import { cn } from "@/lib/utils"
-import { ChevronDown } from "lucide-react"
+import { ChevronDown, X } from "lucide-react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Tick02Icon, ArrowUp01Icon, ArrowDown01Icon } from "@hugeicons/core-free-icons"
 
@@ -68,30 +68,76 @@ function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
   )
 }
 
+export interface SelectTriggerProps extends SelectPrimitive.Trigger.Props {
+  size?: "sm" | "default";
+  isActive?: boolean;
+  onClear?: () => void;
+  clearLabel?: string;
+  hideChevron?: boolean;
+}
+
 function SelectTrigger({
   className,
   size = "default",
+  isActive,
+  onClear,
+  clearLabel = "Clear filter",
+  hideChevron = false,
   children,
   ...props
-}: SelectPrimitive.Trigger.Props & {
-  size?: "sm" | "default"
-}) {
+}: SelectTriggerProps) {
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
       data-size={size}
+      data-active={isActive ? "true" : undefined}
       className={cn(
-        "flex w-full items-center justify-between gap-2 rounded-xl border border-input bg-background px-3.5 py-2 text-[14.5px] text-foreground transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:min-h-11 data-[size=sm]:min-h-8 data-[size=sm]:rounded-lg *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-card/70 dark:border-border dark:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 cursor-pointer",
+        "flex w-full items-center justify-between gap-2 rounded-xl border border-input bg-background px-3.5 py-2 text-[14.5px] text-foreground transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:min-h-11 data-[size=sm]:min-h-8 data-[size=sm]:rounded-lg *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-card/70 dark:border-border dark:text-foreground cursor-pointer",
+        isActive &&
+          "border-foreground/35 bg-muted/65 text-foreground font-medium dark:border-white/30 dark:bg-muted/40 shadow-xs",
         className
       )}
       {...props}
     >
       {children}
-      <SelectPrimitive.Icon
-        render={
-          <ChevronDown className="pointer-events-none size-4 text-muted-foreground shrink-0 stroke-[1.75]" />
-        }
-      />
+      <div className="flex items-center gap-1 shrink-0 ml-1">
+        {onClear && (
+          <span
+            role="button"
+            tabIndex={0}
+            aria-label={clearLabel}
+            title={clearLabel}
+            onPointerDown={(e) => e.stopPropagation()}
+            onPointerUp={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            onMouseUp={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              onClear();
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.stopPropagation();
+                e.preventDefault();
+                onClear();
+              }
+            }}
+            className="pointer-events-auto flex size-4 items-center justify-center rounded-full text-muted-foreground/75 hover:bg-foreground/15 hover:text-foreground active:scale-[0.92] transition-colors cursor-pointer"
+          >
+            <X size={12} strokeWidth={2.2} />
+          </span>
+        )}
+        {!hideChevron && (
+          <SelectPrimitive.Icon
+            render={
+              <ChevronDown className="pointer-events-none size-3.5 text-muted-foreground shrink-0 stroke-[1.75]" />
+            }
+          />
+        )}
+      </div>
     </SelectPrimitive.Trigger>
   )
 }
@@ -101,7 +147,7 @@ function SelectContent({
   children,
   side = "bottom",
   sideOffset = 4,
-  align = "center",
+  align = "start",
   alignOffset = 0,
   alignItemWithTrigger = false,
   ...props
@@ -124,7 +170,7 @@ function SelectContent({
           data-slot="select-content"
           data-align-trigger={alignItemWithTrigger}
           className={cn(
-            "isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-xl p-1 text-popover-foreground shadow-2xl border border-border dark:border-[#333] duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 relative bg-popover dark:bg-[#1a1a1a] dark:text-[#f3f3f3] **:data-[slot$=-item]:focus:bg-accent dark:**:data-[slot$=-item]:focus:bg-[#282828] **:data-[slot$=-item]:data-highlighted:bg-accent dark:**:data-[slot$=-item]:data-highlighted:bg-[#282828] **:data-[slot$=-separator]:bg-foreground/5",
+            "isolate z-50 max-h-[min(var(--available-height,22rem),22rem)] min-w-(--anchor-width) w-max max-w-[min(calc(100vw-2rem),26rem)] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-xl p-1.5 text-popover-foreground shadow-2xl border border-border dark:border-[#333] duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 relative bg-popover dark:bg-[#1a1a1a] dark:text-[#f3f3f3] **:data-[slot$=-item]:focus:bg-accent dark:**:data-[slot$=-item]:focus:bg-[#282828] **:data-[slot$=-item]:data-highlighted:bg-accent dark:**:data-[slot$=-item]:data-highlighted:bg-[#282828] **:data-[slot$=-separator]:bg-foreground/5",
             className
           )}
           {...props}
@@ -160,7 +206,7 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-pointer items-center gap-2 rounded-lg py-2 pr-8 pl-2.5 text-[14px] text-foreground outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-highlighted:bg-accent data-highlighted:text-accent-foreground dark:text-[#f0f0f0] dark:hover:bg-[#282828] dark:focus:bg-[#282828] dark:data-highlighted:bg-[#282828] data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "relative flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg py-2 pr-8 pl-2.5 text-[13.5px] text-foreground outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-highlighted:bg-accent data-highlighted:text-accent-foreground dark:text-[#f0f0f0] dark:hover:bg-[#282828] dark:focus:bg-[#282828] dark:data-highlighted:bg-[#282828] data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}

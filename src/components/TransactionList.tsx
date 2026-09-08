@@ -597,169 +597,233 @@ export default function TransactionList({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2.5">
           {/* 1. Account Filter */}
-          <Select
-            value={accountFilter}
-            onValueChange={(val) => setAccountFilter((val as string) ?? "all")}
-          >
-            <SelectTrigger
-              size="sm"
-              className={cn(
-                "h-9 w-auto min-w-[145px] text-[13px] rounded-lg border-border/80 bg-background/60",
-                accountFilter !== "all" && "border-foreground/30 font-medium"
-              )}
-            >
-              <div className="flex items-center gap-1.5 truncate">
-                <Landmark size={13} className="shrink-0 text-muted-foreground" />
-                <SelectValue placeholder="All Accounts">
-                  {(val: string) =>
-                    !val || val === "all" ? "All Accounts" : formatAccountDisplay(val)
-                  }
-                </SelectValue>
-              </div>
-            </SelectTrigger>
-            <SelectContent align="start">
-              <SelectItem value="all">All Accounts</SelectItem>
-              <SelectSeparator />
-              {availableAccounts.map((acc) => (
-                <SelectItem key={acc.id} value={acc.id}>
-                  {formatAccountDisplay(acc.id)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {(() => {
+            const isAccountActive = accountFilter !== "all";
+            return (
+              <Select
+                value={accountFilter}
+                onValueChange={(val) => setAccountFilter((val as string) ?? "all")}
+              >
+                <SelectTrigger
+                  size="sm"
+                  isActive={isAccountActive}
+                  onClear={isAccountActive ? () => setAccountFilter("all") : undefined}
+                  clearLabel="Clear account filter"
+                  className="h-9 w-auto min-w-[145px] text-[13px] rounded-lg border-border/80 bg-background/60"
+                >
+                  <div className="flex items-center gap-1.5 truncate">
+                    {isAccountActive ? (
+                      <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
+                    ) : (
+                      <Landmark size={13} className="shrink-0 text-muted-foreground" />
+                    )}
+                    <SelectValue placeholder="All Accounts">
+                      {(val: string) =>
+                        !val || val === "all" ? "All Accounts" : formatAccountDisplay(val)
+                      }
+                    </SelectValue>
+                  </div>
+                </SelectTrigger>
+                <SelectContent align="start" className="min-w-[260px] max-h-72">
+                  <SelectItem value="all">All Accounts</SelectItem>
+                  <SelectSeparator />
+                  {availableAccounts.map((acc) => (
+                    <SelectItem key={acc.id} value={acc.id}>
+                      {formatAccountDisplay(acc.id)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            );
+          })()}
 
           {/* 2. Date Preset Filter */}
-          <Select
-            value={datePreset}
-            onValueChange={(val) => setDatePreset((val as DatePreset) ?? "all")}
-          >
-            <SelectTrigger
-              size="sm"
-              className={cn(
-                "h-9 w-auto min-w-[115px] text-[13px] rounded-lg border-border/80 bg-background/60",
-                datePreset !== "all" && "border-foreground/30 font-medium"
-              )}
-            >
-              <SelectValue placeholder="All Dates">
-                {(val: string) => {
-                  if (val === "today") return "Today";
-                  if (val === "7d") return "Last 7 Days";
-                  if (val === "30d") return "Last 30 Days";
-                  if (val === "this-month") return "This Month";
-                  if (val === "last-month") return "Last Month";
-                  if (val === "custom") return "Custom Range...";
-                  return "All Dates";
-                }}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent align="start">
-              <SelectItem value="all">All Dates</SelectItem>
-              <SelectItem value="today">Today</SelectItem>
-              <SelectItem value="7d">Last 7 Days</SelectItem>
-              <SelectItem value="30d">Last 30 Days</SelectItem>
-              <SelectItem value="this-month">This Month</SelectItem>
-              <SelectItem value="last-month">Last Month</SelectItem>
-              <SelectItem value="custom">Custom Range...</SelectItem>
-            </SelectContent>
-          </Select>
+          {(() => {
+            const isDateActive = datePreset !== "all";
+            return (
+              <Select
+                value={datePreset}
+                onValueChange={(val) => setDatePreset((val as DatePreset) ?? "all")}
+              >
+                <SelectTrigger
+                  size="sm"
+                  isActive={isDateActive}
+                  onClear={
+                    isDateActive
+                      ? () => {
+                          setDatePreset("all");
+                          setDateFrom("");
+                          setDateTo("");
+                        }
+                      : undefined
+                  }
+                  clearLabel="Clear date filter"
+                  className="h-9 w-auto min-w-[115px] text-[13px] rounded-lg border-border/80 bg-background/60"
+                >
+                  <div className="flex items-center gap-1.5 truncate">
+                    {isDateActive && (
+                      <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
+                    )}
+                    <SelectValue placeholder="All Dates">
+                      {(val: string) => {
+                        if (val === "today") return "Today";
+                        if (val === "7d") return "Last 7 Days";
+                        if (val === "30d") return "Last 30 Days";
+                        if (val === "this-month") return "This Month";
+                        if (val === "last-month") return "Last Month";
+                        if (val === "custom")
+                          return dateFrom ? `${dateFrom} – ${dateTo || "..."}` : "Custom Range";
+                        return "All Dates";
+                      }}
+                    </SelectValue>
+                  </div>
+                </SelectTrigger>
+                <SelectContent align="start" className="min-w-[190px] max-h-72">
+                  <SelectItem value="all">All Dates</SelectItem>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="7d">Last 7 Days</SelectItem>
+                  <SelectItem value="30d">Last 30 Days</SelectItem>
+                  <SelectItem value="this-month">This Month</SelectItem>
+                  <SelectItem value="last-month">Last Month</SelectItem>
+                  <SelectItem value="custom">Custom Range...</SelectItem>
+                </SelectContent>
+              </Select>
+            );
+          })()}
 
           {/* 3. Payment Method Filter (multi-select) */}
-          <Select
-            multiple
-            value={effectiveMethod}
-            onValueChange={(val) =>
-              setMethodFilters(handleMultiFilterChange(val as string[], effectiveMethod))
-            }
-          >
-            <SelectTrigger
-              size="sm"
-              className={cn(
-                "h-9 w-auto min-w-[125px] text-[13px] rounded-lg border-border/80 bg-background/60",
-                methodFilters.length > 0 && "border-foreground/30 font-medium"
-              )}
-            >
-              <SelectValue placeholder="All Methods">
-                {(val: string[]) =>
-                  formatMultiFilterValue(val, "All Methods", METHOD_MAP, "Methods")
+          {(() => {
+            const isMethodActive = methodFilters.length > 0;
+            return (
+              <Select
+                multiple
+                value={effectiveMethod}
+                onValueChange={(val) =>
+                  setMethodFilters(handleMultiFilterChange(val as string[], effectiveMethod))
                 }
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent align="start">
-              <SelectItem value="all">All Methods</SelectItem>
-              <SelectSeparator />
-              {TRANSACTION_PAYMENT_METHODS.filter((m) => m.id !== "all").map((method) => (
-                <SelectItem key={method.id} value={method.id}>
-                  {method.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+              >
+                <SelectTrigger
+                  size="sm"
+                  isActive={isMethodActive}
+                  onClear={isMethodActive ? () => setMethodFilters([]) : undefined}
+                  clearLabel="Clear payment method filter"
+                  className="h-9 w-auto min-w-[125px] text-[13px] rounded-lg border-border/80 bg-background/60"
+                >
+                  <div className="flex items-center gap-1.5 truncate">
+                    <SelectValue placeholder="All Methods">
+                      {(val: string[]) =>
+                        formatMultiFilterValue(val, "All Methods", METHOD_MAP, "Methods")
+                      }
+                    </SelectValue>
+                    {isMethodActive && (
+                      <span className="flex size-4 items-center justify-center rounded-full bg-foreground text-background text-[10px] font-semibold tabular shrink-0 leading-none">
+                        {methodFilters.length}
+                      </span>
+                    )}
+                  </div>
+                </SelectTrigger>
+                <SelectContent align="start" className="min-w-[260px] max-h-72">
+                  <SelectItem value="all">All Methods</SelectItem>
+                  <SelectSeparator />
+                  {TRANSACTION_PAYMENT_METHODS.filter((m) => m.id !== "all").map((method) => (
+                    <SelectItem key={method.id} value={method.id}>
+                      {method.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            );
+          })()}
 
           {/* 4. Category Filter (multi-select) */}
-          <Select
-            multiple
-            value={effectiveCategory}
-            onValueChange={(val) =>
-              setCategoryFilters(handleMultiFilterChange(val as string[], effectiveCategory))
-            }
-          >
-            <SelectTrigger
-              size="sm"
-              className={cn(
-                "h-9 w-auto min-w-[130px] text-[13px] rounded-lg border-border/80 bg-background/60",
-                categoryFilters.length > 0 && "border-foreground/30 font-medium"
-              )}
-            >
-              <SelectValue placeholder="All Categories">
-                {(val: string[]) =>
-                  formatMultiFilterValue(val, "All Categories", CATEGORY_MAP, "Categories")
+          {(() => {
+            const isCategoryActive = categoryFilters.length > 0;
+            return (
+              <Select
+                multiple
+                value={effectiveCategory}
+                onValueChange={(val) =>
+                  setCategoryFilters(handleMultiFilterChange(val as string[], effectiveCategory))
                 }
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent align="start">
-              <SelectItem value="all">All Categories</SelectItem>
-              <SelectSeparator />
-              {TRANSACTION_CATEGORIES.filter((c) => c.id !== "all").map((cat) => (
-                <SelectItem key={cat.id} value={cat.id}>
-                  {cat.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+              >
+                <SelectTrigger
+                  size="sm"
+                  isActive={isCategoryActive}
+                  onClear={isCategoryActive ? () => setCategoryFilters([]) : undefined}
+                  clearLabel="Clear category filter"
+                  className="h-9 w-auto min-w-[130px] text-[13px] rounded-lg border-border/80 bg-background/60"
+                >
+                  <div className="flex items-center gap-1.5 truncate">
+                    <SelectValue placeholder="All Categories">
+                      {(val: string[]) =>
+                        formatMultiFilterValue(val, "All Categories", CATEGORY_MAP, "Categories")
+                      }
+                    </SelectValue>
+                    {isCategoryActive && (
+                      <span className="flex size-4 items-center justify-center rounded-full bg-foreground text-background text-[10px] font-semibold tabular shrink-0 leading-none">
+                        {categoryFilters.length}
+                      </span>
+                    )}
+                  </div>
+                </SelectTrigger>
+                <SelectContent align="start" className="min-w-[250px] max-h-72">
+                  <SelectItem value="all">All Categories</SelectItem>
+                  <SelectSeparator />
+                  {TRANSACTION_CATEGORIES.filter((c) => c.id !== "all").map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            );
+          })()}
 
           {/* 5. Status Filter (multi-select) */}
-          <Select
-            multiple
-            value={effectiveStatus}
-            onValueChange={(val) =>
-              setStatusFilters(
-                handleMultiFilterChange(val as string[], effectiveStatus) as StatusFilter[]
-              )
-            }
-          >
-            <SelectTrigger
-              size="sm"
-              className={cn(
-                "h-9 w-auto min-w-[120px] text-[13px] rounded-lg border-border/80 bg-background/60",
-                statusFilters.length > 0 && "border-foreground/30 font-medium"
-              )}
-            >
-              <SelectValue placeholder="All Statuses">
-                {(val: string[]) =>
-                  formatMultiFilterValue(val, "All Statuses", STATUS_MAP, "Statuses")
+          {(() => {
+            const isStatusActive = statusFilters.length > 0;
+            return (
+              <Select
+                multiple
+                value={effectiveStatus}
+                onValueChange={(val) =>
+                  setStatusFilters(
+                    handleMultiFilterChange(val as string[], effectiveStatus) as StatusFilter[]
+                  )
                 }
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent align="start">
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectSeparator />
-              {STATUS_OPTIONS.map((st) => (
-                <SelectItem key={st.id} value={st.id}>
-                  {st.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+              >
+                <SelectTrigger
+                  size="sm"
+                  isActive={isStatusActive}
+                  onClear={isStatusActive ? () => setStatusFilters([]) : undefined}
+                  clearLabel="Clear status filter"
+                  className="h-9 w-auto min-w-[120px] text-[13px] rounded-lg border-border/80 bg-background/60"
+                >
+                  <div className="flex items-center gap-1.5 truncate">
+                    <SelectValue placeholder="All Statuses">
+                      {(val: string[]) =>
+                        formatMultiFilterValue(val, "All Statuses", STATUS_MAP, "Statuses")
+                      }
+                    </SelectValue>
+                    {isStatusActive && (
+                      <span className="flex size-4 items-center justify-center rounded-full bg-foreground text-background text-[10px] font-semibold tabular shrink-0 leading-none">
+                        {statusFilters.length}
+                      </span>
+                    )}
+                  </div>
+                </SelectTrigger>
+                <SelectContent align="start" className="min-w-[190px] max-h-72">
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectSeparator />
+                  {STATUS_OPTIONS.map((st) => (
+                    <SelectItem key={st.id} value={st.id}>
+                      {st.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            );
+          })()}
         </div>
 
         {/* Active Filter Counter & Reset */}
