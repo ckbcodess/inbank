@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Account, formatMoney } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -140,7 +141,7 @@ export function DataBundleFlow({
               inputMode="numeric"
               value={state.aPhone}
               onChange={(e) => {
-                const val = e.target.value;
+                const val = e.target.value.replace(/[^0-9]/g, "");
                 onChange("aPhone", val);
                 const detected = detectTelcoNetwork(val);
                 if (detected && !state.wNetwork) {
@@ -155,13 +156,12 @@ export function DataBundleFlow({
                 if (resolved) {
                   onChange("benName", resolved);
                 }
-                const clean = val.replace(/[\s-]/g, "");
-                if (clean.length === 10) {
+                if (val.length === 10) {
                   setCollapsed(true);
                 }
               }}
               placeholder="Enter phone number (e.g. 024 123 4567)"
-              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+              className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
             />
 
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
@@ -184,7 +184,12 @@ export function DataBundleFlow({
             if (open && isPhoneValid && isNetworkValid) setCollapsed(true);
           }}
         >
-          <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-left shadow-none">
+          <SelectTrigger className={cn(
+            "h-13 w-full rounded-2xl border bg-card px-4 text-left shadow-none transition-colors",
+            overBalance
+              ? "border-destructive/70 focus:border-destructive focus:ring-1 focus:ring-destructive/30"
+              : "border-border/80"
+          )}>
             {!selectedBundle ? (
               <span className="text-[15px] text-muted-foreground font-normal">
                 Select data bundle
@@ -197,7 +202,10 @@ export function DataBundleFlow({
                   </span>
                   <span className="text-[13px] text-muted-foreground">{selectedBundle.val}</span>
                 </div>
-                <span className="text-[15px] font-medium text-foreground tabular">
+                <span className={cn(
+                  "text-[15px] font-medium tabular",
+                  overBalance ? "text-destructive" : "text-foreground"
+                )}>
                   {formatMoney(selectedBundle.price, "GHS", true)}
                 </span>
               </div>
@@ -211,6 +219,14 @@ export function DataBundleFlow({
             ))}
           </SelectContent>
         </Select>
+        {overBalance && (
+          <div className="animate-in fade-in slide-in-from-top-1 duration-150">
+            <InsufficientFundsAlert
+              available={fromAccount?.available ?? 0}
+              currency={fromAccount?.currency || "GHS"}
+            />
+          </div>
+        )}
       </div>
 
       {/* 4. Narration */}
@@ -251,14 +267,7 @@ export function DataBundleFlow({
         }}
       />
 
-      {overBalance && (
-        <InsufficientFundsAlert
-          available={fromAccount?.available ?? 0}
-          currency={fromAccount?.currency || "GHS"}
-        />
-      )}
-
-      {/* 6. Proceed CTA */}
+      {/* 8. Proceed CTA */}
       <ProceedButton
         disabled={!isValid}
         onClick={onProceed}

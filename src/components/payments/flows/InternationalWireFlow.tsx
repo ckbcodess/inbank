@@ -191,6 +191,14 @@ export function InternationalWireFlow({
           onFocus={() => {
             if (isDestinationValid) setCollapsed(true);
           }}
+          error={
+            overBalance ? (
+              <InsufficientFundsAlert
+                available={fromAccount?.available ?? 0}
+                currency={fromAccount?.currency || "GHS"}
+              />
+            ) : undefined
+          }
         />
         {numForeign > 0 && (
           <div className="flex items-center justify-between px-2 text-[13px] text-muted-foreground">
@@ -239,13 +247,6 @@ export function InternationalWireFlow({
           if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
         }}
       />
-
-      {overBalance && (
-        <InsufficientFundsAlert
-          available={fromAccount?.available ?? 0}
-          currency={fromAccount?.currency || "GHS"}
-        />
-      )}
 
       {/* 8. Proceed CTA */}
       <ProceedButton

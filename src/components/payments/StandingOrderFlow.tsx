@@ -878,9 +878,9 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     type="text"
                     inputMode="numeric"
                     value={f.destination}
-                    onChange={(e) => set("destination", e.target.value)}
+                    onChange={(e) => set("destination", e.target.value.replace(/[^0-9]/g, ""))}
                     placeholder="Enter account number"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                    className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
                   />
                 </>
               )}
@@ -908,9 +908,9 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     type="tel"
                     inputMode="numeric"
                     value={f.destination}
-                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    onChange={(e) => handlePhoneChange(e.target.value.replace(/[^0-9]/g, ""))}
                     placeholder="Enter mobile / wallet number (e.g. 024 123 4567)"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                    className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
                   />
                 </>
               )}
@@ -1003,9 +1003,9 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     type="tel"
                     inputMode="numeric"
                     value={f.destination}
-                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    onChange={(e) => handlePhoneChange(e.target.value.replace(/[^0-9]/g, ""))}
                     placeholder="Enter phone number (e.g. 024 123 4567)"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                    className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
                   />
 
                   <Select
@@ -1058,9 +1058,9 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     type="tel"
                     inputMode="numeric"
                     value={f.destination}
-                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    onChange={(e) => handlePhoneChange(e.target.value.replace(/[^0-9]/g, ""))}
                     placeholder="Enter phone number (e.g. 024 123 4567)"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                    className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
                   />
                 </>
               )}
@@ -1087,11 +1087,12 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
           onFocus={() => {
             if (isDestinationValid) setDetailsCollapsed(true);
           }}
+          error={
+            overBalance ? (
+              <InsufficientFundsAlert available={fromAccount?.available ?? 0} currency="GHS" />
+            ) : undefined
+          }
         />
-
-        {overBalance && (
-          <InsufficientFundsAlert available={fromAccount?.available ?? 0} currency="GHS" />
-        )}
 
         {/* 5. Schedule & Frequency Section */}
         <div className="flex flex-col gap-4 rounded-2xl border border-border/80 bg-card p-4.5">

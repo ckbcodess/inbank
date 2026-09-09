@@ -423,4 +423,10 @@ select {
 
 .animate-pin-shake {
   animation: pin-shake 0.35s ease-in-out;
+}
+
+/* Numora numeric input utility for all numeric-only fields */
+.numorainput {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
 }

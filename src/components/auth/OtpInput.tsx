@@ -94,7 +94,7 @@ export default function OtpInput({
           onKeyDown={(e) => handleKeyDown(i, e)}
           aria-label={mask ? `PIN Digit ${i + 1}` : `Digit ${i + 1}`}
           aria-invalid={invalid || undefined}
-          className={`size-12 md:size-13 rounded-xl border bg-background text-center text-[20px] font-semibold text-foreground outline-none transition-all tabular focus:border-ring focus:ring-3 focus:ring-ring/40 disabled:opacity-60 ${
+          className={`numorainput size-12 md:size-13 rounded-xl border bg-background text-center text-[20px] font-semibold text-foreground outline-none transition-all tabular focus:border-ring focus:ring-3 focus:ring-ring/40 disabled:opacity-60 ${
             invalid ? "border-destructive bg-destructive/5" : "border-border"
           }`}
         />

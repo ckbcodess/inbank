@@ -124,7 +124,7 @@ export function AirtimeFlow({
               inputMode="numeric"
               value={state.aPhone}
               onChange={(e) => {
-                const val = e.target.value;
+                const val = e.target.value.replace(/[^0-9]/g, "");
                 onChange("aPhone", val);
                 const detected = detectTelcoNetwork(val);
                 if (detected && !state.wNetwork) {
@@ -134,13 +134,12 @@ export function AirtimeFlow({
                 if (resolved) {
                   onChange("benName", resolved);
                 }
-                const clean = val.replace(/[\s-]/g, "");
-                if (clean.length === 10) {
+                if (val.length === 10) {
                   setCollapsed(true);
                 }
               }}
               placeholder="Enter phone number (e.g. 024 123 4567)"
-              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+              className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
             />
 
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
@@ -155,6 +154,14 @@ export function AirtimeFlow({
         onFocus={() => {
           if (isPhoneValid && isNetworkValid) setCollapsed(true);
         }}
+        error={
+          overBalance ? (
+            <InsufficientFundsAlert
+              available={fromAccount?.available ?? 0}
+              currency={fromAccount?.currency || "GHS"}
+            />
+          ) : undefined
+        }
       />
 
       {/* 4. Narration */}
@@ -195,14 +202,7 @@ export function AirtimeFlow({
         }}
       />
 
-      {overBalance && (
-        <InsufficientFundsAlert
-          available={fromAccount?.available ?? 0}
-          currency={fromAccount?.currency || "GHS"}
-        />
-      )}
-
-      {/* 6. Proceed CTA */}
+      {/* 8. Proceed CTA */}
       <ProceedButton
         disabled={!isValid}
         onClick={onProceed}

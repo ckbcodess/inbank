@@ -163,6 +163,14 @@ export function CardTopUpFlow({
         onFocus={() => {
           if (selectedCard) setCollapsed(true);
         }}
+        error={
+          overBalance ? (
+            <InsufficientFundsAlert
+              available={fromAccount?.available ?? 0}
+              currency={fromAccount?.currency || "GHS"}
+            />
+          ) : undefined
+        }
       />
 
       {/* 4. Narration */}
@@ -194,14 +202,7 @@ export function CardTopUpFlow({
         }}
       />
 
-      {overBalance && (
-        <InsufficientFundsAlert
-          available={fromAccount?.available ?? 0}
-          currency={fromAccount?.currency || "GHS"}
-        />
-      )}
-
-      {/* 6. Proceed CTA */}
+      {/* 7. Proceed CTA */}
       <ProceedButton
         disabled={!isValid}
         onClick={onProceed}

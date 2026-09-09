@@ -231,6 +231,14 @@ export function BillsPaymentFlow({
         onFocus={() => {
           if (isDestinationValid) setCollapsed(true);
         }}
+        error={
+          overBalance ? (
+            <InsufficientFundsAlert
+              available={fromAccount?.available ?? 0}
+              currency={fromAccount?.currency || "GHS"}
+            />
+          ) : undefined
+        }
       />
 
       {/* 4. Narration */}
@@ -271,14 +279,7 @@ export function BillsPaymentFlow({
         }}
       />
 
-      {overBalance && (
-        <InsufficientFundsAlert
-          available={fromAccount?.available ?? 0}
-          currency={fromAccount?.currency || "GHS"}
-        />
-      )}
-
-      {/* 6. Proceed CTA */}
+      {/* 8. Proceed CTA */}
       <ProceedButton
         disabled={!isValid}
         onClick={onProceed}

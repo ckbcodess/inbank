@@ -113,7 +113,7 @@ export default function TransactionPinModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[500px] p-0 overflow-hidden rounded-2xl border border-border bg-card"
+        className="sm:max-w-[500px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
         showCloseButton={false}
       >
         {/* Modal Header */}
@@ -167,7 +167,7 @@ export default function TransactionPinModal({
                   onChange={handlePinChange}
                   autoComplete="one-time-code"
                   disabled={submitting}
-                  className="absolute inset-0 size-full opacity-0 cursor-pointer pointer-events-auto"
+                  className="numorainput absolute inset-0 size-full opacity-0 cursor-pointer pointer-events-auto"
                   aria-label="Enter 4-digit transaction PIN"
                 />
 

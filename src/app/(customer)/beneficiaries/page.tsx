@@ -3,36 +3,38 @@
 /**
  * Beneficiaries Standalone Directory.
  *
- * Minimal, clean design aligned with NIBS design tokens:
- * - Dropdown filters for Transaction Type and Grouping instead of bulky segmented controls.
- * - Single standard panel container (`rounded-2xl border border-border bg-card`).
- * - Transaction type level management (add, send, edit) directly in section headers and rows.
- * - Zero bold rule, semantic tokens only, tabular numbers.
+ * Fully Aligned to Figma Design (Node 1374:35826):
+ * 1. 3 Major Segmented Groups: People, Billers, and Groups.
+ * 2. Darkened scrim backdrop, increased blur, and zero border stroke on all modals.
+ * 3. Transactions-style search bar and SelectTrigger filters with active indicators and inline clear (X).
+ * 4. Collapsible Accordion rows for grouped sections and payment group members.
+ * 5. Clean, uncluttered Add Beneficiary modal with progressive disclosure.
  */
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
+  ArrowUpRight,
   CheckCircle2,
+  ChevronDown,
   Globe,
   Landmark,
   Pencil,
   Plus,
   Receipt,
+  Search,
   Send,
   Smartphone,
   Trash2,
   User,
   Users,
   Wallet,
+  X,
 } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SimpleTooltip } from "@/components/ui/tooltip";
-import { ExpandableSearch } from "@/components/ui/expandable-search";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -43,9 +45,6 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
@@ -60,9 +59,11 @@ import {
 import { useGroupsStore, type PaymentGroup } from "@/lib/groups-store";
 import { useSession } from "@/lib/session-store";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
+import { cn } from "@/lib/utils";
 
-type TypeFilter = "all" | TransactionType | "group";
-type GroupByOption = "type" | "none" | "category";
+type ActiveTab = "people" | "billers" | "groups";
+type TypeFilter = "all" | TransactionType;
+type GroupByOption = "type" | "none";
 
 interface TypeMeta {
   label: string;
@@ -71,27 +72,18 @@ interface TypeMeta {
   icon: React.ElementType;
 }
 
-const TYPE_CONFIG: Record<TransactionType | "group", TypeMeta> = {
+const TYPE_CONFIG: Record<TransactionType, TypeMeta> = {
   bank: { label: "Bank Transfer", plural: "Bank Transfers", rail: "bank", icon: Landmark },
   wallet: { label: "Mobile Wallet", plural: "Mobile Wallets", rail: "wallet", icon: Wallet },
   proxy: { label: "Proxy Pay", plural: "Proxy Pay", rail: "proxy", icon: User },
   bill: { label: "Bills & Utilities", plural: "Bills & Utilities", rail: "bill", icon: Receipt },
   airtime: { label: "Airtime & Data", plural: "Airtime & Data", rail: "airtime", icon: Smartphone },
-  papss: { label: "PAPSS Cross-Border", plural: "PAPSS Cross-Border", rail: "papss", icon: Globe },
   swift: { label: "SWIFT International Wire", plural: "SWIFT Wire Transfers", rail: "swift", icon: Globe },
-  group: { label: "Payment Group", plural: "Payment Groups", rail: "group", icon: Users },
+  papss: { label: "PAPSS Cross-Border", plural: "PAPSS Cross-Border", rail: "papss", icon: Globe },
 };
 
-const ORDERED_TYPES: (TransactionType | "group")[] = [
-  "bank",
-  "wallet",
-  "proxy",
-  "bill",
-  "airtime",
-  "papss",
-  "swift",
-  "group",
-];
+const PEOPLE_TYPES: TransactionType[] = ["bank", "wallet", "proxy", "swift", "papss"];
+const BILLER_TYPES: TransactionType[] = ["bill", "airtime"];
 
 const GHANA_BANKS = [
   "GCB Bank",
@@ -109,6 +101,19 @@ const GHANA_BANKS = [
 const WALLET_NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money", "GCB Wallet"];
 const AIRTIME_NETWORKS = ["MTN Ghana", "Telecel Ghana", "AT Ghana"];
 
+const SWIFT_COUNTRIES = [
+  { name: "United States", currency: "USD" },
+  { name: "United Kingdom", currency: "GBP" },
+  { name: "Germany (Eurozone)", currency: "EUR" },
+  { name: "France (Eurozone)", currency: "EUR" },
+  { name: "Canada", currency: "CAD" },
+  { name: "China", currency: "CNY" },
+  { name: "United Arab Emirates", currency: "AED" },
+  { name: "Australia", currency: "AUD" },
+  { name: "Japan", currency: "JPY" },
+  { name: "South Africa", currency: "ZAR" },
+];
+
 const PAPSS_COUNTRIES = [
   { name: "Nigeria", currency: "NGN" },
   { name: "Kenya", currency: "KES" },
@@ -116,6 +121,7 @@ const PAPSS_COUNTRIES = [
   { name: "South Africa", currency: "ZAR" },
   { name: "Egypt", currency: "EGP" },
   { name: "Rwanda", currency: "RWF" },
+  { name: "Zambia", currency: "ZMW" },
 ];
 
 interface FormState {
@@ -131,6 +137,7 @@ interface FormState {
   billerName: string;
   billerReference: string;
   country: string;
+  swiftCode: string;
 }
 
 const INITIAL_FORM: FormState = {
@@ -144,7 +151,8 @@ const INITIAL_FORM: FormState = {
   proxyId: "",
   billerName: "ECG Prepaid",
   billerReference: "",
-  country: "Nigeria",
+  country: "United States",
+  swiftCode: "",
 };
 
 function initials(name: string) {
@@ -187,12 +195,19 @@ export default function BeneficiariesPage() {
 
   const { groups, deleteGroup } = useGroupsStore();
 
-  // Dropdown filter states
+  // 3 Major Segmented Control Tabs (People, Billers, Groups)
+  const [activeTab, setActiveTab] = useState<ActiveTab>("people");
+
+  // Search and Filters
+  const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
   const [groupBy, setGroupBy] = useState<GroupByOption>("type");
-  const [query, setQuery] = useState("");
 
-  // Modal states
+  // Collapsible Dropdown States
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
+  const [expandedGroupIds, setExpandedGroupIds] = useState<Set<string>>(new Set());
+
+  // Modal States
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [removeId, setRemoveId] = useState<string | null>(null);
@@ -208,25 +223,38 @@ export default function BeneficiariesPage() {
     window.setTimeout(() => setNotice(null), 3500);
   }
 
-  // Counts by Transaction Type
+  // Split beneficiaries into People and Billers
+  const peopleBeneficiaries = useMemo(() => {
+    return beneficiaries.filter((b) => PEOPLE_TYPES.includes(b.transactionType));
+  }, [beneficiaries]);
+
+  const billerBeneficiaries = useMemo(() => {
+    return beneficiaries.filter((b) => BILLER_TYPES.includes(b.transactionType));
+  }, [beneficiaries]);
+
   const counts = useMemo(() => {
     return {
-      all: beneficiaries.length + groups.length,
+      people: peopleBeneficiaries.length,
+      billers: billerBeneficiaries.length,
+      groups: groups.length,
       bank: beneficiaries.filter((b) => b.transactionType === "bank").length,
       wallet: beneficiaries.filter((b) => b.transactionType === "wallet").length,
       proxy: beneficiaries.filter((b) => b.transactionType === "proxy").length,
       bill: beneficiaries.filter((b) => b.transactionType === "bill").length,
       airtime: beneficiaries.filter((b) => b.transactionType === "airtime").length,
+      swift: beneficiaries.filter((b) => b.transactionType === "swift").length,
       papss: beneficiaries.filter((b) => b.transactionType === "papss").length,
-      group: groups.length,
     };
-  }, [beneficiaries, groups]);
+  }, [beneficiaries, peopleBeneficiaries, billerBeneficiaries, groups]);
 
   const q = query.trim().toLowerCase();
 
-  // Filtered beneficiaries
-  const filteredBeneficiaries = useMemo(() => {
-    return beneficiaries
+  // Filtered dataset according to active tab
+  const filteredList = useMemo(() => {
+    if (activeTab === "groups") return [];
+    const source = activeTab === "people" ? peopleBeneficiaries : billerBeneficiaries;
+
+    return source
       .filter((b) => {
         if (typeFilter !== "all" && b.transactionType !== typeFilter) return false;
         if (!q) return true;
@@ -243,11 +271,11 @@ export default function BeneficiariesPage() {
         );
       })
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [beneficiaries, typeFilter, q]);
+  }, [activeTab, peopleBeneficiaries, billerBeneficiaries, typeFilter, q]);
 
-  // Filtered groups
+  // Filtered groups for Groups tab
   const filteredGroups = useMemo(() => {
-    if (typeFilter !== "all" && typeFilter !== "group") return [];
+    if (activeTab !== "groups") return [];
     return groups
       .filter((g) => {
         if (!q) return true;
@@ -258,9 +286,31 @@ export default function BeneficiariesPage() {
         );
       })
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [groups, typeFilter, q]);
+  }, [activeTab, groups, q]);
 
-  const totalFilteredCount = filteredBeneficiaries.length + filteredGroups.length;
+  const toggleSectionCollapse = (key: string) => {
+    setCollapsedSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+
+  const toggleGroupExpand = (groupId: string) => {
+    setExpandedGroupIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(groupId)) next.delete(groupId);
+      else next.add(groupId);
+      return next;
+    });
+  };
+
+  const expandAllSections = () => setCollapsedSections(new Set());
+  const collapseAllSections = () => {
+    const allKeys = activeTab === "people" ? PEOPLE_TYPES : BILLER_TYPES;
+    setCollapsedSections(new Set(allKeys));
+  };
 
   function openAddForType(type: TransactionType) {
     setForm({
@@ -283,7 +333,8 @@ export default function BeneficiariesPage() {
       proxyId: b.proxyId || "",
       billerName: b.billerName || "ECG Prepaid",
       billerReference: b.billerReference || "",
-      country: b.country || "Nigeria",
+      country: b.country || (b.transactionType === "swift" ? "United States" : "Nigeria"),
+      swiftCode: "",
     });
     setFormOpen(true);
   }
@@ -308,9 +359,13 @@ export default function BeneficiariesPage() {
       case "airtime":
         detail = `${form.network} · ${form.phoneNumber || "Number"}`;
         break;
+      case "swift":
+        const swiftCurr = SWIFT_COUNTRIES.find((c) => c.name === form.country)?.currency || "USD";
+        detail = `SWIFT (${form.swiftCode || "BIC"}) · ${form.bankName || "Bank"} · ${swiftCurr} · ${form.accountNumber || "IBAN"}`;
+        break;
       case "papss":
-        const curr = PAPSS_COUNTRIES.find((c) => c.name === form.country)?.currency || "USD";
-        detail = `${form.bankName || "Foreign Bank"} · ${curr} · ${form.accountNumber || "Account"}`;
+        const papssCurr = PAPSS_COUNTRIES.find((c) => c.name === form.country)?.currency || "NGN";
+        detail = `PAPSS · ${form.bankName || "Bank"} · ${papssCurr} · ${form.accountNumber || "Account"}`;
         break;
     }
 
@@ -329,7 +384,7 @@ export default function BeneficiariesPage() {
         billerReference: form.billerReference,
         country: form.country,
       });
-      flash(`Beneficiary updated.`);
+      flash("Beneficiary updated.");
     } else {
       const verified = !isCorporate;
       addBeneficiary({
@@ -373,9 +428,16 @@ export default function BeneficiariesPage() {
   const toRemove = removeId ? beneficiaries.find((p) => p.id === removeId) : undefined;
   const toRemoveGroup = removeGroupId ? groups.find((g) => g.id === removeGroupId) : undefined;
 
+  const hasActiveFilters = query.trim() !== "" || typeFilter !== "all";
+
+  const clearAllFilters = () => {
+    setQuery("");
+    setTypeFilter("all");
+  };
+
   // Render a beneficiary list item
   function renderBeneficiaryRow(b: BeneficiaryRecord) {
-    const config = TYPE_CONFIG[b.transactionType];
+    const config = TYPE_CONFIG[b.transactionType] || TYPE_CONFIG.bank;
     const Icon = config.icon;
 
     let sendHref = `/payments/send?rail=${config.rail}&recipient=${encodeURIComponent(b.name)}`;
@@ -400,7 +462,7 @@ export default function BeneficiariesPage() {
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="truncate text-[14px] text-foreground">{b.name}</span>
+              <span className="truncate text-[14px] font-medium text-foreground">{b.name}</span>
               {b.verified ? (
                 <CheckCircle2
                   size={13}
@@ -409,7 +471,7 @@ export default function BeneficiariesPage() {
                   aria-label="Verified"
                 />
               ) : (
-                <Badge variant="warning">Pending</Badge>
+                <Badge variant="warning" className="text-[10px] py-0 px-1.5">Pending</Badge>
               )}
             </div>
             <div className="mt-0.5 flex items-center gap-2 text-[12px] text-muted-foreground tabular flex-wrap">
@@ -423,39 +485,40 @@ export default function BeneficiariesPage() {
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-1">
-          <SimpleTooltip content={`Send money to ${b.name}`}>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              nativeButton={false}
-              render={<Link href={sendHref} />}
-              aria-label={`Send to ${b.name}`}
-            >
-              <Send size={15} strokeWidth={1.8} />
-            </Button>
-          </SimpleTooltip>
+        <div className="flex shrink-0 items-center gap-1.5">
+          <Button
+            variant="outline"
+            size="xs"
+            nativeButton={false}
+            render={<Link href={sendHref} />}
+            aria-label={`Send to ${b.name}`}
+            className="h-7.5 gap-1 px-2.5 text-[12px] font-medium text-foreground bg-background hover:bg-foreground hover:text-background border-border/80 shadow-xs transition-colors rounded-lg"
+          >
+            <span>Send</span>
+            <ArrowUpRight size={13} strokeWidth={2} className="shrink-0 opacity-70" />
+          </Button>
 
           <SimpleTooltip content={`Edit ${b.name}`}>
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="icon-xs"
               onClick={() => openEdit(b)}
               aria-label={`Edit ${b.name}`}
+              className="size-7.5 rounded-lg text-muted-foreground hover:text-foreground"
             >
-              <Pencil size={15} strokeWidth={1.8} />
+              <Pencil size={13} strokeWidth={1.8} />
             </Button>
           </SimpleTooltip>
 
           <SimpleTooltip content={`Remove ${b.name}`}>
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="icon-xs"
               onClick={() => setRemoveId(b.id)}
               aria-label={`Remove ${b.name}`}
-              className="text-muted-foreground hover:text-destructive"
+              className="size-7.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10"
             >
-              <Trash2 size={15} strokeWidth={1.8} />
+              <Trash2 size={13} strokeWidth={1.8} />
             </Button>
           </SimpleTooltip>
         </div>
@@ -463,110 +526,163 @@ export default function BeneficiariesPage() {
     );
   }
 
-  // Render a group list item
+  // Render a group list item with accordion disclosure for members
   function renderGroupRow(g: PaymentGroup) {
+    const isExpanded = expandedGroupIds.has(g.id);
     const totalAmt =
       g.splitType === "equal"
         ? g.members.length * g.defaultPerMemberAmount
         : g.members.reduce((sum, m) => sum + (m.defaultAmount || 0), 0);
 
     return (
-      <li
-        key={g.id}
-        className="flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-muted/40"
-      >
-        <div className="flex min-w-0 flex-1 items-center gap-3">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-            <Users size={16} strokeWidth={1.8} />
-          </span>
+      <li key={g.id} className="flex flex-col border-b border-border last:border-b-0 transition-colors">
+        <div className="flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-muted/30">
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={() => toggleGroupExpand(g.id)}
+            className="flex min-w-0 flex-1 items-center gap-3 cursor-pointer select-none"
+          >
+            <button
+              type="button"
+              className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-transform"
+              aria-label={isExpanded ? "Collapse group members" : "Expand group members"}
+            >
+              <ChevronDown
+                size={16}
+                className={cn("transition-transform duration-200", !isExpanded && "-rotate-90 text-muted-foreground/70")}
+              />
+            </button>
 
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="truncate text-[14px] text-foreground">{g.name}</span>
-              <span className="rounded bg-muted px-1.5 py-0.2 text-[11px] text-muted-foreground tabular">
-                {g.members.length} members
-              </span>
-            </div>
-            <div className="mt-0.5 flex items-center gap-2 text-[12px] text-muted-foreground tabular flex-wrap">
-              <span>
-                {g.splitType === "equal" ? `GHS ${g.defaultPerMemberAmount} each` : "Custom split"} · Total GHS{" "}
-                {totalAmt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </span>
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <Users size={16} strokeWidth={1.8} />
+            </span>
+
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="truncate text-[14px] font-medium text-foreground">{g.name}</span>
+                <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground tabular font-medium">
+                  {g.members.length} members
+                </span>
+                <span className="text-[11.5px] text-muted-foreground font-normal">
+                  {g.splitType === "equal" ? `(GHS ${g.defaultPerMemberAmount} each)` : "(Custom split)"}
+                </span>
+              </div>
+              <div className="mt-0.5 flex items-center gap-2 text-[12px] text-muted-foreground tabular flex-wrap">
+                <span className="font-medium text-foreground">
+                  Total: GHS {totalAmt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+                {g.description && <span>• {g.description}</span>}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex shrink-0 items-center gap-1">
-          <SimpleTooltip content={`Send to ${g.name}`}>
+          <div className="flex shrink-0 items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
             <Button
-              variant="ghost"
-              size="icon-sm"
+              variant="outline"
+              size="xs"
               nativeButton={false}
               render={<Link href={`/payments/send?rail=group&group=${encodeURIComponent(g.name)}`} />}
               aria-label={`Send to ${g.name}`}
+              className="h-7.5 gap-1 px-2.5 text-[12px] font-medium text-foreground bg-background hover:bg-foreground hover:text-background border-border/80 shadow-xs transition-colors rounded-lg"
             >
-              <Send size={15} strokeWidth={1.8} />
+              <span>Send</span>
+              <ArrowUpRight size={13} strokeWidth={2} className="shrink-0 opacity-70" />
             </Button>
-          </SimpleTooltip>
 
-          <SimpleTooltip content={`Edit ${g.name}`}>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => {
-                setEditingGroup(g);
-                setGroupModalOpen(true);
-              }}
-              aria-label={`Edit ${g.name}`}
-            >
-              <Pencil size={15} strokeWidth={1.8} />
-            </Button>
-          </SimpleTooltip>
+            <SimpleTooltip content={`Edit ${g.name}`}>
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                onClick={() => {
+                  setEditingGroup(g);
+                  setGroupModalOpen(true);
+                }}
+                aria-label={`Edit ${g.name}`}
+                className="size-7.5 rounded-lg text-muted-foreground hover:text-foreground"
+              >
+                <Pencil size={13} strokeWidth={1.8} />
+              </Button>
+            </SimpleTooltip>
 
-          <SimpleTooltip content={`Delete ${g.name}`}>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => setRemoveGroupId(g.id)}
-              aria-label={`Delete ${g.name}`}
-              className="text-muted-foreground hover:text-destructive"
-            >
-              <Trash2 size={15} strokeWidth={1.8} />
-            </Button>
-          </SimpleTooltip>
+            <SimpleTooltip content={`Delete ${g.name}`}>
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                onClick={() => setRemoveGroupId(g.id)}
+                aria-label={`Delete ${g.name}`}
+                className="size-7.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+              >
+                <Trash2 size={13} strokeWidth={1.8} />
+              </Button>
+            </SimpleTooltip>
+          </div>
         </div>
+
+        {/* Collapsible Members Sub-row */}
+        {isExpanded && (
+          <div className="bg-muted/15 px-6 py-3 border-t border-border/60 animate-in fade-in duration-150">
+            <div className="flex items-center justify-between pb-2 text-[11.5px] font-medium text-muted-foreground uppercase tracking-wider">
+              <span>Group Members Breakdown</span>
+              <span>Distribution Share</span>
+            </div>
+            <div className="flex flex-col divide-y divide-border/40">
+              {g.members.map((m, mIdx) => (
+                <div key={m.id || m.destination || `grp-m-${mIdx}`} className="flex items-center justify-between py-2 text-[13px]">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                      {m.type === "wallet" ? <Smartphone size={12} /> : <Landmark size={12} />}
+                    </span>
+                    <span className="font-medium text-foreground">{m.name}</span>
+                    <span className="text-[12px] text-muted-foreground tabular">
+                      ({m.networkOrBank || (m.type === "wallet" ? "Wallet" : "Bank")} · {m.destination})
+                    </span>
+                  </div>
+                  <span className="font-medium tabular text-foreground">
+                    GHS {(m.defaultAmount ?? g.defaultPerMemberAmount).toFixed(2)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </li>
     );
   }
 
+  const activeRailList = activeTab === "people" ? PEOPLE_TYPES : BILLER_TYPES;
+
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-6">
+      {/* Header matching Figma */}
       <PageHeader
         title="Beneficiaries"
         description="Manage your saved counterparties, bank accounts, mobile wallets, and payment groups."
         actions={
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
               variant="outline"
               onClick={() => {
                 setEditingGroup(null);
                 setGroupModalOpen(true);
               }}
+              className="h-9 gap-1.5 px-3.5 text-[13px] font-medium border-border/80 bg-card hover:bg-muted/50 rounded-lg shadow-xs"
             >
-              <Users size={14} className="mr-1.5" />
+              <Users size={15} strokeWidth={1.8} className="text-muted-foreground" />
               New group
             </Button>
             <Button
               onClick={() => {
                 setForm({
                   ...INITIAL_FORM,
-                  transactionType: typeFilter !== "all" && typeFilter !== "group" ? typeFilter : "bank",
+                  transactionType: activeTab === "billers" ? "bill" : "bank",
                 });
                 setFormOpen(true);
               }}
+              className="h-9 gap-1.5 px-3.5 text-[13px] font-medium rounded-lg shadow-xs"
             >
-              <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-              Add beneficiary
+              <Plus size={15} strokeWidth={2} />
+              {activeTab === "billers" ? "Add biller" : "Add beneficiary"}
             </Button>
           </div>
         }
@@ -579,456 +695,724 @@ export default function BeneficiariesPage() {
         </div>
       )}
 
-      {/* Main Container */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        {/* Simple Toolbar with Dropdown Filters */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border p-4">
-          <div className="flex items-center gap-2.5 flex-wrap">
-            {/* Filter by Transaction Type */}
-            <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as TypeFilter)}>
-              <SelectTrigger className="w-[180px] h-9 text-[13px]" aria-label="Filter by transaction type">
-                <SelectValue placeholder="All types" />
-              </SelectTrigger>
-              <SelectContent align="start">
-                <SelectItem value="all">All Types ({counts.all})</SelectItem>
-                <SelectItem value="bank">Bank Transfers ({counts.bank})</SelectItem>
-                <SelectItem value="wallet">Mobile Wallets ({counts.wallet})</SelectItem>
-                <SelectItem value="proxy">Proxy Pay ({counts.proxy})</SelectItem>
-                <SelectItem value="bill">Bills & Utilities ({counts.bill})</SelectItem>
-                <SelectItem value="airtime">Airtime & Data ({counts.airtime})</SelectItem>
-                <SelectItem value="papss">PAPSS International ({counts.papss})</SelectItem>
-                <SelectItem value="group">Payment Groups ({counts.group})</SelectItem>
-              </SelectContent>
-            </Select>
+      {/* 3 Major Segmented Tabs: People, Billers, Groups (Figma Node 1374:35963) */}
+      <div className="flex items-center justify-between border-b border-border/70 pb-3">
+        <div className="flex items-center rounded-xl bg-[#f6f6f5] dark:bg-[#1e1e1e] p-[3.5px] border border-[#ebebe9] dark:border-[#292928]">
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab("people");
+              setTypeFilter("all");
+            }}
+            className={cn(
+              "flex items-center gap-2 rounded-[8.75px] px-3.5 py-1.5 text-[13px] transition-all cursor-pointer",
+              activeTab === "people"
+                ? "bg-white dark:bg-[#282828] text-foreground font-medium shadow-[0px_1px_2px_rgba(0,0,0,0.06)]"
+                : "text-[#747472] dark:text-[#999] hover:text-foreground font-normal"
+            )}
+          >
+            <span>People</span>
+            <span className="text-[11px] text-muted-foreground font-normal tabular">
+              {counts.people}
+            </span>
+          </button>
 
-            {/* Group By Dropdown */}
-            <Select value={groupBy} onValueChange={(v) => setGroupBy(v as GroupByOption)}>
-              <SelectTrigger className="w-[170px] h-9 text-[13px]" aria-label="Group list by">
-                <SelectValue placeholder="Group by" />
-              </SelectTrigger>
-              <SelectContent align="start">
-                <SelectItem value="type">Group: Transaction Type</SelectItem>
-                <SelectItem value="none">Group: Flat List</SelectItem>
-                <SelectItem value="category">Group: Category</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab("billers");
+              setTypeFilter("all");
+            }}
+            className={cn(
+              "flex items-center gap-2 rounded-[8.75px] px-3.5 py-1.5 text-[13px] transition-all cursor-pointer",
+              activeTab === "billers"
+                ? "bg-white dark:bg-[#282828] text-foreground font-medium shadow-[0px_1px_2px_rgba(0,0,0,0.06)]"
+                : "text-[#747472] dark:text-[#999] hover:text-foreground font-normal"
+            )}
+          >
+            <span>Billers</span>
+            <span className="text-[11px] text-muted-foreground font-normal tabular">
+              {counts.billers}
+            </span>
+          </button>
 
-          <ExpandableSearch
-            value={query}
-            onChange={setQuery}
-            placeholder="Search by name, account, network..."
-            tooltip="Search beneficiaries"
-          />
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab("groups");
+              setTypeFilter("all");
+            }}
+            className={cn(
+              "flex items-center gap-2 rounded-[8.75px] px-3.5 py-1.5 text-[13px] transition-all cursor-pointer",
+              activeTab === "groups"
+                ? "bg-white dark:bg-[#282828] text-foreground font-medium shadow-[0px_1px_2px_rgba(0,0,0,0.06)]"
+                : "text-[#747472] dark:text-[#999] hover:text-foreground font-normal"
+            )}
+          >
+            <span>Groups</span>
+            <span className="text-[11px] text-muted-foreground font-normal tabular">
+              {counts.groups}
+            </span>
+          </button>
         </div>
+      </div>
 
-        {/* Content List */}
-        {totalFilteredCount === 0 ? (
-          query || typeFilter !== "all" ? (
-            <FilteredEmptyState
-              onReset={() => {
-                setQuery("");
-                setTypeFilter("all");
-              }}
-              description="No beneficiaries match your active search or type filter."
-            />
-          ) : (
-            <TrueEmptyState
-              title="No beneficiaries saved yet"
-              description="Save frequent payees and billers to speed up your transfers."
-              action={
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    setForm(INITIAL_FORM);
-                    setFormOpen(true);
-                  }}
-                >
-                  <Plus size={14} className="mr-1.5" /> Add beneficiary
-                </Button>
-              }
-            />
-          )
-        ) : groupBy === "type" && typeFilter === "all" ? (
-          /* ── Grouped by Transaction Type ─────────────────────────────── */
-          <div className="divide-y divide-border">
-            {ORDERED_TYPES.map((typeKey) => {
-              const isGroup = typeKey === "group";
-              const items = isGroup
-                ? []
-                : filteredBeneficiaries.filter((b) => b.transactionType === typeKey);
-              const grpItems = isGroup ? filteredGroups : [];
-              const groupCount = isGroup ? grpItems.length : items.length;
-
-              if (groupCount === 0) return null;
-
-              const config = TYPE_CONFIG[typeKey];
-              const Icon = config.icon;
-
-              return (
-                <div key={typeKey}>
-                  {/* Quiet Group Level Header with Management Actions */}
-                  <div className="flex items-center justify-between bg-muted/40 px-4 py-2 text-[12px] text-muted-foreground">
-                    <span className="flex items-center gap-2">
-                      <Icon size={14} strokeWidth={1.8} className="text-muted-foreground" />
-                      <span className="text-foreground">{config.plural}</span>
-                      <span className="tabular text-[11px]">({groupCount})</span>
-                    </span>
-
-                    <div className="flex items-center gap-3">
-                      {isGroup ? (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditingGroup(null);
-                            setGroupModalOpen(true);
-                          }}
-                          className="text-[12px] text-foreground hover:underline cursor-pointer"
-                        >
-                          + New group
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => openAddForType(typeKey)}
-                          className="text-[12px] text-foreground hover:underline cursor-pointer"
-                        >
-                          + Add {config.label.toLowerCase()}
-                        </button>
-                      )}
-                      <Link
-                        href={`/payments/send?rail=${config.rail}`}
-                        className="text-[12px] text-muted-foreground hover:text-foreground"
-                      >
-                        Send →
-                      </Link>
-                    </div>
-                  </div>
-
-                  <ul className="divide-y divide-border">
-                    {isGroup ? grpItems.map(renderGroupRow) : items.map(renderBeneficiaryRow)}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
-        ) : groupBy === "category" ? (
-          /* ── Grouped by Category ────────────────────────────────────── */
-          <div className="divide-y divide-border">
-            {(["person", "biller", "number", "group"] as const).map((cat) => {
-              const isGroup = cat === "group";
-              const items = isGroup ? [] : filteredBeneficiaries.filter((b) => b.category === cat);
-              const grpItems = isGroup ? filteredGroups : [];
-              const groupCount = isGroup ? grpItems.length : items.length;
-
-              if (groupCount === 0) return null;
-
-              const catTitle =
-                cat === "person" ? "People & Accounts" : cat === "biller" ? "Billers" : cat === "number" ? "Phone Numbers" : "Payment Groups";
-
-              return (
-                <div key={cat}>
-                  <div className="flex items-center justify-between bg-muted/40 px-4 py-2 text-[12px] text-muted-foreground">
-                    <span className="text-foreground">
-                      {catTitle} <span className="tabular text-[11px] text-muted-foreground">({groupCount})</span>
-                    </span>
-                  </div>
-                  <ul className="divide-y divide-border">
-                    {isGroup ? grpItems.map(renderGroupRow) : items.map(renderBeneficiaryRow)}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          /* ── Flat List ──────────────────────────────────────────────── */
-          <ul className="divide-y divide-border">
-            {filteredBeneficiaries.map(renderBeneficiaryRow)}
-            {filteredGroups.map(renderGroupRow)}
-          </ul>
+      {/* Full-width Search Bar (Figma style) */}
+      <div className="relative w-full">
+        <Search
+          size={18}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+        />
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={
+            activeTab === "people"
+              ? "Search by name, account number, phone, or proxy..."
+              : activeTab === "billers"
+              ? "Search by utility provider, meter number, or network..."
+              : "Search by group title, description, or member name..."
+          }
+          className="w-full h-12 pl-11 pr-10 rounded-xl border border-border/70 bg-card/40 text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-colors"
+        />
+        {query && (
+          <button
+            type="button"
+            onClick={() => setQuery("")}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 cursor-pointer"
+            aria-label="Clear search query"
+          >
+            <X size={15} />
+          </button>
         )}
       </div>
 
-      {/* ── Streamlined Add / Edit Beneficiary Dialog ─────────────────── */}
-      <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="sm:max-w-[420px]">
-          <DialogHeader>
-            <DialogTitle>{form.id ? "Edit Beneficiary" : "Add Beneficiary"}</DialogTitle>
-            <DialogDescription>
-              {isCorporate && !form.id
-                ? "Corporate beneficiaries require checker approval before payment."
-                : "Save recipient details for quick transfers."}
-            </DialogDescription>
-          </DialogHeader>
+      {/* Filter Toolbar (for People & Billers) */}
+      {activeTab !== "groups" && (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* 1. Method / Rail Filter */}
+            {(() => {
+              const isTypeActive = typeFilter !== "all";
+              return (
+                <Select
+                  value={typeFilter}
+                  onValueChange={(val) => setTypeFilter((val as TypeFilter) ?? "all")}
+                >
+                  <SelectTrigger
+                    size="sm"
+                    isActive={isTypeActive}
+                    onClear={isTypeActive ? () => setTypeFilter("all") : undefined}
+                    clearLabel="Clear method filter"
+                    className="h-9 w-auto min-w-[145px] text-[13px] rounded-lg border-border/80 bg-background/60"
+                  >
+                    <div className="flex items-center gap-1.5 truncate">
+                      {isTypeActive && (
+                        <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
+                      )}
+                      <SelectValue placeholder="All Methods">
+                        {(val: string) => {
+                          if (!val || val === "all") return "All Methods";
+                          return TYPE_CONFIG[val as TransactionType]?.label || val;
+                        }}
+                      </SelectValue>
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent align="start" className="min-w-[220px]">
+                    <SelectItem value="all">All Methods</SelectItem>
+                    {activeRailList.map((t) => (
+                      <SelectItem key={t} value={t}>
+                        {TYPE_CONFIG[t].plural} ({counts[t]})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              );
+            })()}
 
-          <div className="flex flex-col gap-3.5 py-1">
-            {/* Transaction Type Dropdown */}
+            {/* 2. Group By Selection */}
+            <Select value={groupBy} onValueChange={(val) => setGroupBy(val as GroupByOption)}>
+              <SelectTrigger
+                size="sm"
+                className="h-9 w-auto min-w-[145px] text-[13px] rounded-lg border-border/80 bg-background/60"
+              >
+                <SelectValue placeholder="Group by">
+                  {(val: string) => {
+                    if (val === "type") return "Group: Rail Type";
+                    return "Group: Flat List";
+                  }}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent align="start" className="min-w-[180px]">
+                <SelectItem value="type">Group: Rail Type</SelectItem>
+                <SelectItem value="none">Group: Flat List</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Clear All Active Filters */}
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={clearAllFilters}
+                className="text-[12.5px] text-muted-foreground hover:text-foreground font-medium underline underline-offset-4 cursor-pointer pl-1"
+              >
+                Reset filters
+              </button>
+            )}
+          </div>
+
+          {/* Expand / Collapse All Toggle (Visible when grouped) */}
+          {groupBy !== "none" && (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={collapsedSections.size === 0 ? collapseAllSections : expandAllSections}
+                className="text-[12px] text-muted-foreground hover:text-foreground cursor-pointer font-medium"
+              >
+                {collapsedSections.size === 0 ? "Collapse all" : "Expand all"}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Main List Container */}
+      <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-xs">
+        {/* PEOPLE & BILLERS LIST */}
+        {activeTab !== "groups" && (
+          filteredList.length === 0 ? (
+            hasActiveFilters ? (
+              <FilteredEmptyState
+                onReset={clearAllFilters}
+                description={
+                  activeTab === "people"
+                    ? "No people match your active search or filters."
+                    : "No billers match your active search or filters."
+                }
+              />
+            ) : (
+              <TrueEmptyState
+                title={activeTab === "people" ? "No people saved yet" : "No billers saved yet"}
+                description={
+                  activeTab === "people"
+                    ? "Save frequent payees and bank accounts to speed up your transfers."
+                    : "Save your frequent utilities and billers for 1-click bill payments."
+                }
+                action={
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setForm({
+                        ...INITIAL_FORM,
+                        transactionType: activeTab === "billers" ? "bill" : "bank",
+                      });
+                      setFormOpen(true);
+                    }}
+                    className="font-medium"
+                  >
+                    <Plus size={14} className="mr-1.5" />
+                    {activeTab === "billers" ? "Add biller" : "Add beneficiary"}
+                  </Button>
+                }
+              />
+            )
+          ) : groupBy === "type" ? (
+            /* ── Collapsible Grouping by Rail Type ─────────────────────────────── */
+            <div className="divide-y divide-border">
+              {activeRailList.map((typeKey) => {
+                const items = filteredList.filter((b) => b.transactionType === typeKey);
+                if (items.length === 0) return null;
+
+                const isCollapsed = collapsedSections.has(typeKey);
+                const config = TYPE_CONFIG[typeKey];
+                const Icon = config.icon;
+
+                return (
+                  <div key={typeKey} className="flex flex-col">
+                    {/* Collapsible Accordion Header */}
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => toggleSectionCollapse(typeKey)}
+                      className="flex items-center justify-between bg-muted/40 px-4 py-2.5 text-[13px] hover:bg-muted/60 transition-colors cursor-pointer select-none"
+                    >
+                      <span className="flex items-center gap-2.5 font-medium text-foreground">
+                        <ChevronDown
+                          size={16}
+                          className={cn("transition-transform duration-200 text-muted-foreground", isCollapsed && "-rotate-90 text-muted-foreground/60")}
+                        />
+                        <Icon size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+                        <span>{config.plural}</span>
+                        <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-normal tabular text-muted-foreground">
+                          {items.length}
+                        </span>
+                      </span>
+
+                      <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                        <Button
+                          variant="ghost"
+                          size="xs"
+                          onClick={() => openAddForType(typeKey)}
+                          className="h-7 gap-1 px-2.5 text-[12px] font-medium text-muted-foreground hover:text-foreground hover:bg-background/80 rounded-md transition-colors"
+                        >
+                          <Plus size={12} strokeWidth={2} />
+                          <span>Add</span>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="xs"
+                          nativeButton={false}
+                          render={<Link href={`/payments/send?rail=${config.rail}`} />}
+                          className="h-7 gap-1 px-2.5 text-[12px] font-medium bg-background text-foreground hover:bg-muted/80 rounded-md border-border/80 shadow-xs transition-colors"
+                        >
+                          <span>Send</span>
+                          <ArrowUpRight size={12} strokeWidth={2} className="text-muted-foreground shrink-0" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Collapsible Rows */}
+                    {!isCollapsed && (
+                      <ul className="divide-y divide-border">
+                        {items.map(renderBeneficiaryRow)}
+                      </ul>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            /* ── Flat List ─────────────────────────────────────────────────────── */
+            <ul className="divide-y divide-border">
+              {filteredList.map(renderBeneficiaryRow)}
+            </ul>
+          )
+        )}
+
+        {/* PAYMENT GROUPS LIST */}
+        {activeTab === "groups" && (
+          filteredGroups.length === 0 ? (
+            query ? (
+              <FilteredEmptyState
+                onReset={() => setQuery("")}
+                description="No payment groups match your search query."
+              />
+            ) : (
+              <TrueEmptyState
+                title="No payment groups created"
+                description="Create a group to distribute transfers or Susu contributions in one step."
+                action={
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setEditingGroup(null);
+                      setGroupModalOpen(true);
+                    }}
+                    className="font-medium"
+                  >
+                    <Plus size={14} className="mr-1.5" /> Create first group
+                  </Button>
+                }
+              />
+            )
+          ) : (
+            <ul className="divide-y divide-border">
+              {filteredGroups.map(renderGroupRow)}
+            </ul>
+          )
+        )}
+      </div>
+
+      {/* ── Progressive Add / Edit Beneficiary Modal (Clean & Borderless) ── */}
+      <Dialog open={formOpen} onOpenChange={setFormOpen}>
+        <DialogContent
+          className="sm:max-w-[480px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
+          showCloseButton={false}
+        >
+          {/* Header matching TransactionPinModal */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
+            <DialogTitle className="text-[17px] font-medium text-foreground tracking-[-0.01em]">
+              {form.id
+                ? "Edit Beneficiary"
+                : activeTab === "billers"
+                ? "Add Biller"
+                : "Add Beneficiary"}
+            </DialogTitle>
+            <button
+              type="button"
+              onClick={() => setFormOpen(false)}
+              className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              aria-label="Close"
+            >
+              <X size={15} strokeWidth={1.8} />
+            </button>
+          </div>
+
+          {/* Modal Content with Progressive Disclosure */}
+          <div className="max-h-[75vh] overflow-y-auto px-6 py-5 flex flex-col gap-4">
+            {/* Step 1: Destination Rail (Dropdown) */}
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="ben-type">Transaction Type</Label>
+              <label className="text-[12.5px] font-medium text-muted-foreground">
+                Payment Rail
+              </label>
               <Select
                 value={form.transactionType}
-                onValueChange={(val) => val && setForm((p) => ({ ...p, transactionType: val as TransactionType }))}
+                onValueChange={(val) => {
+                  if (!val) return;
+                  setForm((p) => ({ ...p, transactionType: val as TransactionType }));
+                }}
               >
-                <SelectTrigger id="ben-type" className="h-9 w-full text-[13px]">
-                  <SelectValue placeholder="Select type" />
+                <SelectTrigger className="h-10.5 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[13.5px] font-medium shadow-xs">
+                  <div className="flex items-center gap-2.5 truncate">
+                    {(() => {
+                      const meta = TYPE_CONFIG[form.transactionType] || TYPE_CONFIG.bank;
+                      const Icon = meta.icon;
+                      return (
+                        <>
+                          <Icon size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+                          <span className="text-foreground">{meta.label}</span>
+                        </>
+                      );
+                    })()}
+                  </div>
                 </SelectTrigger>
-                <SelectContent>
-                  {ORDERED_TYPES.filter((t) => t !== "group").map((t) => (
-                    <SelectItem key={t} value={t}>
-                      {TYPE_CONFIG[t].label}
-                    </SelectItem>
-                  ))}
+                <SelectContent className="min-w-[260px]">
+                  {(activeTab === "billers" ? BILLER_TYPES : PEOPLE_TYPES).map((t) => {
+                    const meta = TYPE_CONFIG[t];
+                    const Icon = meta.icon;
+                    return (
+                      <SelectItem key={t} value={t} className="text-[13px] py-2">
+                        <div className="flex items-center gap-2.5">
+                          <Icon size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+                          <span>{meta.label}</span>
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
 
-            {/* Recipient Name */}
+            {/* Step 2: Beneficiary Legal Name */}
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="ben-name">Name</Label>
-              <Input
-                id="ben-name"
+              <input
+                type="text"
                 value={form.name}
                 onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                placeholder="e.g. Kwame Boateng"
-                className="h-9 text-[13px]"
+                placeholder={
+                  form.transactionType === "bill"
+                    ? "Biller account nickname (e.g. Home ECG, Office Water)"
+                    : "Beneficiary legal name (e.g. Kwame Boateng)"
+                }
                 autoFocus
+                className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
               />
             </div>
 
-            {/* Dynamic Inputs based on Transaction Type */}
+            {/* Step 3: Progressive Details according to rail */}
+            {/* Bank Rail */}
             {form.transactionType === "bank" && (
-              <>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="ben-bank">Bank Name</Label>
-                  <Select
-                    value={form.bankName}
-                    onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
-                  >
-                    <SelectTrigger id="ben-bank" className="h-9 w-full text-[13px]">
-                      <SelectValue placeholder="Select bank" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {GHANA_BANKS.map((b) => (
-                        <SelectItem key={b} value={b}>
-                          {b}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="ben-acct">Account Number</Label>
-                  <Input
-                    id="ben-acct"
-                    value={form.accountNumber}
-                    onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
-                    placeholder="e.g. 0231 4455 8890"
-                    className="h-9 text-[13px]"
-                  />
-                </div>
-              </>
-            )}
+              <div className="flex flex-col gap-3">
+                <Select
+                  value={form.bankName}
+                  onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
+                >
+                  <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[13.5px]">
+                    <SelectValue placeholder="Select receiving bank" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {GHANA_BANKS.map((b) => (
+                      <SelectItem key={b} value={b}>
+                        {b}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-            {form.transactionType === "wallet" && (
-              <>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="ben-network">Wallet Provider</Label>
-                  <Select
-                    value={form.network}
-                    onValueChange={(val) => val && setForm((p) => ({ ...p, network: val }))}
-                  >
-                    <SelectTrigger id="ben-network" className="h-9 w-full text-[13px]">
-                      <SelectValue placeholder="Select provider" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {WALLET_NETWORKS.map((n) => (
-                        <SelectItem key={n} value={n}>
-                          {n}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="ben-phone">Mobile Number</Label>
-                  <Input
-                    id="ben-phone"
-                    value={form.phoneNumber}
-                    onChange={(e) => {
-                      const ph = e.target.value;
-                      const detected = detectNetworkFromPhone(ph);
-                      setForm((p) => ({ ...p, phoneNumber: ph, network: detected }));
-                    }}
-                    placeholder="e.g. 0244 123 456"
-                    className="h-9 text-[13px]"
-                  />
-                </div>
-              </>
-            )}
-
-            {form.transactionType === "proxy" && (
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="ben-proxy">Proxy ID or Handle</Label>
-                <Input
-                  id="ben-proxy"
-                  value={form.proxyId}
-                  onChange={(e) => setForm((p) => ({ ...p, proxyId: e.target.value }))}
-                  placeholder="e.g. @kwame.b or GHA-71829304-1"
-                  className="h-9 text-[13px]"
+                <input
+                  type="text"
+                  value={form.accountNumber}
+                  onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
+                  placeholder="Enter bank account number"
+                  className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                 />
               </div>
             )}
 
+            {/* Mobile Wallet Rail */}
+            {form.transactionType === "wallet" && (
+              <div className="flex flex-col gap-3">
+                <input
+                  type="text"
+                  value={form.phoneNumber}
+                  onChange={(e) => {
+                    const ph = e.target.value;
+                    const detected = detectNetworkFromPhone(ph);
+                    setForm((p) => ({ ...p, phoneNumber: ph, network: detected }));
+                  }}
+                  placeholder="Mobile money number (e.g. 0244 123 456)"
+                  className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                />
+
+                <Select
+                  value={form.network}
+                  onValueChange={(val) => val && setForm((p) => ({ ...p, network: val }))}
+                >
+                  <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[13.5px]">
+                    <SelectValue placeholder="Select network provider" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {WALLET_NETWORKS.map((n) => (
+                      <SelectItem key={n} value={n}>
+                        {n}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Proxy Pay Rail */}
+            {form.transactionType === "proxy" && (
+              <div className="flex flex-col gap-3">
+                <input
+                  type="text"
+                  value={form.proxyId}
+                  onChange={(e) => setForm((p) => ({ ...p, proxyId: e.target.value }))}
+                  placeholder="Proxy ID / Ghana Card / @alias (e.g. @kwame or GHA-...)"
+                  className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                />
+              </div>
+            )}
+
+            {/* Bills & Utilities Rail */}
             {form.transactionType === "bill" && (
-              <>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="ben-biller">Biller Provider</Label>
-                  <Input
-                    id="ben-biller"
-                    value={form.billerName}
-                    onChange={(e) => setForm((p) => ({ ...p, billerName: e.target.value }))}
-                    placeholder="e.g. ECG Prepaid, Ghana Water"
-                    className="h-9 text-[13px]"
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="ben-ref">Meter / Account Reference</Label>
-                  <Input
-                    id="ben-ref"
-                    value={form.billerReference}
-                    onChange={(e) => setForm((p) => ({ ...p, billerReference: e.target.value }))}
-                    placeholder="e.g. P-8839210"
-                    className="h-9 text-[13px]"
-                  />
-                </div>
-              </>
+              <div className="flex flex-col gap-3">
+                <input
+                  type="text"
+                  value={form.billerName}
+                  onChange={(e) => setForm((p) => ({ ...p, billerName: e.target.value }))}
+                  placeholder="Biller or utility company (e.g. ECG Prepaid, Ghana Water)"
+                  className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                />
+                <input
+                  type="text"
+                  value={form.billerReference}
+                  onChange={(e) => setForm((p) => ({ ...p, billerReference: e.target.value }))}
+                  placeholder="Meter number or account reference (e.g. P-8839210)"
+                  className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                />
+              </div>
             )}
 
+            {/* Airtime Rail */}
             {form.transactionType === "airtime" && (
-              <>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="ben-airnet">Network</Label>
-                  <Select
-                    value={form.network}
-                    onValueChange={(val) => val && setForm((p) => ({ ...p, network: val }))}
-                  >
-                    <SelectTrigger id="ben-airnet" className="h-9 w-full text-[13px]">
-                      <SelectValue placeholder="Select network" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {AIRTIME_NETWORKS.map((n) => (
-                        <SelectItem key={n} value={n}>
-                          {n}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="ben-airphone">Phone Number</Label>
-                  <Input
-                    id="ben-airphone"
-                    value={form.phoneNumber}
-                    onChange={(e) => setForm((p) => ({ ...p, phoneNumber: e.target.value }))}
-                    placeholder="e.g. 0244 123 821"
-                    className="h-9 text-[13px]"
-                  />
-                </div>
-              </>
+              <div className="flex flex-col gap-3">
+                <input
+                  type="text"
+                  value={form.phoneNumber}
+                  onChange={(e) => setForm((p) => ({ ...p, phoneNumber: e.target.value }))}
+                  placeholder="Phone number to top up (e.g. 0244 123 821)"
+                  className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                />
+                <Select
+                  value={form.network}
+                  onValueChange={(val) => val && setForm((p) => ({ ...p, network: val }))}
+                >
+                  <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[13.5px]">
+                    <SelectValue placeholder="Select network provider" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {AIRTIME_NETWORKS.map((n) => (
+                      <SelectItem key={n} value={n}>
+                        {n}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             )}
 
-            {form.transactionType === "papss" && (
-              <>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="ben-country">Country</Label>
+            {/* SWIFT International Wire */}
+            {form.transactionType === "swift" && (
+              <div className="flex flex-col gap-3">
+                <div className="grid grid-cols-2 gap-2.5">
                   <Select
                     value={form.country}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, country: val }))}
                   >
-                    <SelectTrigger id="ben-country" className="h-9 w-full text-[13px]">
-                      <SelectValue placeholder="Select country" />
+                    <SelectTrigger className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px]">
+                      <SelectValue placeholder="Country" />
                     </SelectTrigger>
-                    <SelectContent>
-                      {PAPSS_COUNTRIES.map((c) => (
+                    <SelectContent className="max-h-56">
+                      {SWIFT_COUNTRIES.map((c) => (
                         <SelectItem key={c.name} value={c.name}>
                           {c.name} ({c.currency})
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="ben-papssacct">Account / IBAN</Label>
-                  <Input
-                    id="ben-papssacct"
-                    value={form.accountNumber}
-                    onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
-                    placeholder="e.g. NG-8891-40023-77"
-                    className="h-9 text-[13px]"
+
+                  <input
+                    type="text"
+                    value={form.swiftCode}
+                    onChange={(e) => setForm((p) => ({ ...p, swiftCode: e.target.value.toUpperCase() }))}
+                    placeholder="SWIFT / BIC Code"
+                    className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px] text-foreground uppercase tracking-wider placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30"
                   />
                 </div>
-              </>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  <input
+                    type="text"
+                    value={form.bankName}
+                    onChange={(e) => setForm((p) => ({ ...p, bankName: e.target.value }))}
+                    placeholder="Receiving bank"
+                    className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30"
+                  />
+                  <input
+                    type="text"
+                    value={form.accountNumber}
+                    onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
+                    placeholder="IBAN / Account"
+                    className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* PAPSS Cross-Border Rail */}
+            {form.transactionType === "papss" && (
+              <div className="flex flex-col gap-3">
+                <Select
+                  value={form.country}
+                  onValueChange={(val) => val && setForm((p) => ({ ...p, country: val }))}
+                >
+                  <SelectTrigger className="h-11 rounded-xl border border-border/80 bg-background px-3.5 text-[13px]">
+                    <SelectValue placeholder="Select African destination" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-56">
+                    {PAPSS_COUNTRIES.map((c) => (
+                      <SelectItem key={c.name} value={c.name}>
+                        {c.name} ({c.currency})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  <input
+                    type="text"
+                    value={form.bankName}
+                    onChange={(e) => setForm((p) => ({ ...p, bankName: e.target.value }))}
+                    placeholder="African bank"
+                    className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30"
+                  />
+                  <input
+                    type="text"
+                    value={form.accountNumber}
+                    onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
+                    placeholder="Account / IBAN"
+                    className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30"
+                  />
+                </div>
+              </div>
             )}
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setFormOpen(false)}>
+          {/* Clean Footer with Amber Primary Button */}
+          <div className="flex items-center justify-end gap-2 px-6 py-3.5 border-t border-border/60 bg-muted/20">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setFormOpen(false)}
+              className="h-9 px-3.5 text-[13px]"
+            >
               Cancel
             </Button>
-            <Button onClick={handleSaveBeneficiary} disabled={!form.name.trim()}>
-              {form.id ? "Save changes" : "Save beneficiary"}
+            <Button
+              size="sm"
+              onClick={handleSaveBeneficiary}
+              disabled={!form.name.trim()}
+              className="h-9 px-4 text-[13px] font-medium"
+            >
+              {form.id ? "Save Changes" : "Save Beneficiary"}
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
 
-      {/* Shared Create / Edit Group Modal */}
+      {/* ── Create / Edit Group Modal ──────────────────────────────────── */}
       <CreateGroupModal
         open={groupModalOpen}
         onOpenChange={setGroupModalOpen}
         groupToEdit={editingGroup}
-        onSuccess={(grp) => {
-          flash(editingGroup ? `Group "${grp.name}" updated.` : `Group "${grp.name}" created.`);
+        onSuccess={(g) => {
+          flash(editingGroup ? `Group "${g.name}" updated.` : `Group "${g.name}" created.`);
         }}
       />
 
-      {/* Remove Payee Confirmation Dialog */}
-      <Dialog open={Boolean(removeId)} onOpenChange={(open) => !open && setRemoveId(null)}>
-        <DialogContent className="sm:max-w-[380px]">
-          <DialogHeader>
-            <DialogTitle>Remove beneficiary?</DialogTitle>
-            <DialogDescription>
-              {toRemove ? `"${toRemove.name}"` : "This beneficiary"} will be removed from your saved list.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setRemoveId(null)}>
+      {/* ── Delete Confirmation Dialogs (Clean & Borderless) ───────────── */}
+      <Dialog open={Boolean(removeId)} onOpenChange={(o) => !o && setRemoveId(null)}>
+        <DialogContent
+          className="sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
+          showCloseButton={false}
+        >
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
+            <DialogTitle className="text-[17px] font-medium text-foreground tracking-[-0.01em]">
+              Remove Beneficiary
+            </DialogTitle>
+            <button
+              type="button"
+              onClick={() => setRemoveId(null)}
+              className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            >
+              <X size={15} />
+            </button>
+          </div>
+          <div className="px-6 py-5 text-[13.5px] text-muted-foreground">
+            Are you sure you want to remove <span className="font-medium text-foreground">{toRemove?.name}</span>? This will not affect past transactions.
+          </div>
+          <div className="flex items-center justify-end gap-2 px-6 py-3.5 border-t border-border/60 bg-muted/20">
+            <Button variant="ghost" size="sm" onClick={() => setRemoveId(null)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleRemoveBeneficiary}>
+            <Button variant="destructive" size="sm" onClick={handleRemoveBeneficiary}>
               Remove
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
 
-      {/* Remove Group Confirmation Dialog */}
-      <Dialog open={Boolean(removeGroupId)} onOpenChange={(open) => !open && setRemoveGroupId(null)}>
-        <DialogContent className="sm:max-w-[380px]">
-          <DialogHeader>
-            <DialogTitle>Delete payment group?</DialogTitle>
-            <DialogDescription>
-              {toRemoveGroup ? `"${toRemoveGroup.name}"` : "This group"} will be removed.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setRemoveGroupId(null)}>
+      <Dialog open={Boolean(removeGroupId)} onOpenChange={(o) => !o && setRemoveGroupId(null)}>
+        <DialogContent
+          className="sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
+          showCloseButton={false}
+        >
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
+            <DialogTitle className="text-[17px] font-medium text-foreground tracking-[-0.01em]">
+              Delete Payment Group
+            </DialogTitle>
+            <button
+              type="button"
+              onClick={() => setRemoveGroupId(null)}
+              className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            >
+              <X size={15} />
+            </button>
+          </div>
+          <div className="px-6 py-5 text-[13.5px] text-muted-foreground">
+            Are you sure you want to delete <span className="font-medium text-foreground">{toRemoveGroup?.name}</span>? Group members will remain in your individual beneficiaries directory.
+          </div>
+          <div className="flex items-center justify-end gap-2 px-6 py-3.5 border-t border-border/60 bg-muted/20">
+            <Button variant="ghost" size="sm" onClick={() => setRemoveGroupId(null)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleRemoveGroup}>
-              Delete
+            <Button variant="destructive" size="sm" onClick={handleRemoveGroup}>
+              Delete Group
             </Button>
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

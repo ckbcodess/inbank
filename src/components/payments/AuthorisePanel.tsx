@@ -271,7 +271,7 @@ export function AuthorisePanel({
               onKeyDown={handlePinKeyDown}
               autoFocus={autoFocus}
               autoComplete="one-time-code"
-              className="absolute inset-0 size-full opacity-0 cursor-pointer pointer-events-auto"
+              className="numorainput absolute inset-0 size-full opacity-0 cursor-pointer pointer-events-auto"
               aria-label="Enter 4-digit transaction PIN"
             />
 

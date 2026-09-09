@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import { Landmark, AlertCircle, CheckCircle2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,6 +11,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Account, formatMoney } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
+import { formatValueForDisplay, FormatOn, ThousandStyle } from "numora";
+import { TextMorph } from "torph/react";
 
 export const BANKS = [
   "GCB Bank",
@@ -522,7 +525,7 @@ export function FromAccountSelector({
 }
 
 /* -------------------------------------------------------------------------- */
-/* Subcomponent 2: Amount Input                                               */
+/* Subcomponent 2: Animated Amount Input with Numora & Torph                  */
 /* -------------------------------------------------------------------------- */
 export function AmountInput({
   value,
@@ -530,14 +533,104 @@ export function AmountInput({
   onFocus,
   currency = "GHS",
   label = "Amount",
+  error,
 }: {
   value: string;
   onChange: (val: string) => void;
   onFocus?: () => void;
   currency?: string;
   label?: string;
+  error?: React.ReactNode;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Helper to format any raw or numeric string for display with thousand commas
+  const getFormatted = (val: string) => {
+    if (!val) return "";
+    const res = formatValueForDisplay(val, 2, {
+      formatOn: FormatOn.Change,
+      thousandSeparator: ",",
+      thousandStyle: ThousandStyle.Thousand,
+    });
+    return res.formatted;
+  };
+
+  const [displayValue, setDisplayValue] = useState(() => getFormatted(value));
+
+  // Sync when parent component updates the value externally (e.g. form reset, preset amount)
+  useEffect(() => {
+    const currentRaw = displayValue.replace(/,/g, "");
+    const nextRaw = (value || "").replace(/,/g, "");
+    if (currentRaw !== nextRaw) {
+      setDisplayValue(getFormatted(nextRaw));
+    }
+  }, [value]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputEl = e.target;
+    const originalVal = inputEl.value;
+    const originalCursor = inputEl.selectionStart ?? originalVal.length;
+
+    // Count how many raw characters (digits or dot) were before the cursor
+    const rawBeforeCursor = originalVal.slice(0, originalCursor).replace(/,/g, "").length;
+
+    const { formatted, raw } = formatValueForDisplay(originalVal, 2, {
+      formatOn: FormatOn.Change,
+      thousandSeparator: ",",
+      thousandStyle: ThousandStyle.Thousand,
+    });
+
+    // Compute exact cursor position in the formatted string
+    let newCursor = 0;
+    let rawCount = 0;
+    for (let i = 0; i < formatted.length; i++) {
+      if (rawCount === rawBeforeCursor) {
+        newCursor = i;
+        break;
+      }
+      if (formatted[i] !== ",") {
+        rawCount++;
+      }
+      newCursor = i + 1;
+    }
+
+    setDisplayValue(formatted);
+    onChange(raw);
+
+    // Restore caret position so cursor never jumps
+    requestAnimationFrame(() => {
+      if (inputRef.current) {
+        inputRef.current.setSelectionRange(newCursor, newCursor);
+      }
+    });
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace") {
+      const inputEl = inputRef.current;
+      if (!inputEl) return;
+      const start = inputEl.selectionStart ?? 0;
+      const end = inputEl.selectionEnd ?? 0;
+      // When backspacing right after a comma, delete the preceding digit as well
+      if (start === end && start > 1 && displayValue[start - 1] === ",") {
+        e.preventDefault();
+        const nextOriginal = displayValue.slice(0, start - 2) + displayValue.slice(start);
+        const { formatted, raw } = formatValueForDisplay(nextOriginal, 2, {
+          formatOn: FormatOn.Change,
+          thousandSeparator: ",",
+          thousandStyle: ThousandStyle.Thousand,
+        });
+        const targetCursor = Math.max(0, start - 2);
+        setDisplayValue(formatted);
+        onChange(raw);
+        requestAnimationFrame(() => {
+          if (inputRef.current) {
+            inputRef.current.setSelectionRange(targetCursor, targetCursor);
+          }
+        });
+      }
+    }
+  };
 
   const handleClick = () => {
     inputRef.current?.focus();
@@ -549,39 +642,71 @@ export function AmountInput({
       <label className="text-[14px] font-medium text-foreground">{label}</label>
       <div
         onClick={handleClick}
-        className="relative flex h-[68px] min-h-[68px] w-full items-center justify-center rounded-2xl border border-border/80 bg-card hover:bg-muted/10 transition-colors cursor-text px-4 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30"
+        className={cn(
+          "relative flex h-[68px] min-h-[68px] w-full items-center justify-center rounded-2xl border bg-card hover:bg-muted/10 transition-colors cursor-text px-4",
+          error
+            ? "border-destructive/70 focus-within:border-destructive focus-within:ring-1 focus-within:ring-destructive/30"
+            : "border-border/80 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30"
+        )}
       >
-        <div className="inline-flex items-center justify-center gap-2">
-          <span className="text-[17px] font-medium text-muted-foreground select-none">
+        <div className="inline-flex items-center justify-center gap-2.5">
+          <span
+            className={cn(
+              "text-[17px] font-medium select-none transition-colors",
+              error ? "text-destructive/80" : "text-muted-foreground"
+            )}
+          >
             {currency}
           </span>
-          <div className="relative inline-flex items-center">
-            {/* Ghost text that perfectly sets the width of the input */}
+          <div className="relative inline-flex items-center min-h-[36px]">
+            {/* Ghost text that dynamically drives the width of the input wrapper */}
             <span
               aria-hidden="true"
-              className="text-[24px] font-semibold tracking-tight tabular opacity-0 pointer-events-none px-0.5 whitespace-pre"
+              className="text-[26px] font-semibold tracking-tight tabular-nums opacity-0 pointer-events-none px-0.5 whitespace-pre select-none leading-none"
             >
-              {value || "0"}
+              {displayValue || "0"}
             </span>
+
+            {/* Visible animated digit-morphing layer rendered by Torph TextMorph */}
+            <span
+              aria-hidden="true"
+              className={cn(
+                "absolute inset-0 flex items-center pointer-events-none whitespace-pre text-[26px] font-semibold tracking-tight tabular-nums select-none leading-none px-0.5",
+                error
+                  ? "text-destructive"
+                  : displayValue
+                  ? "text-foreground"
+                  : "text-muted-foreground/35"
+              )}
+            >
+              <TextMorph ease={{ stiffness: 400, damping: 30 }}>
+                {displayValue || "0"}
+              </TextMorph>
+            </span>
+
+            {/* Pure React controlled input: 100% deterministic, zero duplicate keystrokes, native IME, cursor & selection */}
             <input
               ref={inputRef}
               type="text"
               inputMode="decimal"
-              value={value}
+              value={displayValue}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
               onFocus={onFocus}
-              onChange={(e) => {
-                const val = e.target.value.replace(/[^\d.]/g, "");
-                const parts = val.split(".");
-                if (parts.length > 2) return;
-                onChange(val);
-                onFocus?.();
-              }}
-              placeholder="0"
-              className="absolute inset-0 w-full h-full bg-transparent text-[24px] font-semibold text-foreground tracking-tight outline-none text-left tabular p-0 m-0 border-none"
+              aria-label={label}
+              className={cn(
+                "numorainput absolute inset-0 w-full h-full m-0 p-0 border-0 bg-transparent text-transparent placeholder-transparent outline-none focus:outline-none text-[26px] font-semibold tracking-tight tabular-nums px-0.5 leading-none selection:bg-primary/25",
+                error ? "caret-destructive" : "caret-primary"
+              )}
             />
           </div>
         </div>
       </div>
+      {error && (
+        <div className="animate-in fade-in slide-in-from-top-1 duration-150">
+          {error}
+        </div>
+      )}
     </div>
   );
 }

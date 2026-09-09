@@ -132,7 +132,7 @@ export function WalletToBankFlow({
               inputMode="numeric"
               value={state.benAcct}
               onChange={(e) => {
-                const val = e.target.value;
+                const val = e.target.value.replace(/[^0-9]/g, "");
                 onChange("benAcct", val);
                 const resolved = resolveAccountName(val, "");
                 if (resolved) {
@@ -140,7 +140,7 @@ export function WalletToBankFlow({
                 }
               }}
               placeholder="Enter account number"
-              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+              className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
             />
 
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
@@ -155,6 +155,14 @@ export function WalletToBankFlow({
         onFocus={() => {
           if (isDetailsValid) setCollapsed(true);
         }}
+        error={
+          overBalance ? (
+            <InsufficientFundsAlert
+              available={walletBalance}
+              currency="GHS"
+            />
+          ) : undefined
+        }
       />
 
       {/* 4. Narration */}
@@ -193,14 +201,7 @@ export function WalletToBankFlow({
         }}
       />
 
-      {overBalance && (
-        <InsufficientFundsAlert
-          available={walletBalance}
-          currency="GHS"
-        />
-      )}
-
-      {/* 6. Proceed CTA */}
+      {/* 8. Proceed CTA */}
       <ProceedButton
         disabled={!isValid}
         onClick={onProceed}

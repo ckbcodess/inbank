@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { AlertCircle } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -132,6 +133,12 @@ export function OwnAccountFlow({
             </SelectContent>
           </Select>
         )}
+        {Boolean(state.toOwnAccountId && state.toOwnAccountId === state.fromId) && (
+          <div className="flex items-center gap-2 text-[12.5px] text-destructive animate-in fade-in duration-150">
+            <AlertCircle size={14} className="shrink-0" />
+            <span>Destination account cannot be the same as source account.</span>
+          </div>
+        )}
       </div>
 
       {/* 3. Amount */}
@@ -141,6 +148,14 @@ export function OwnAccountFlow({
         onFocus={() => {
           if (isDetailsValid) setCollapsed(true);
         }}
+        error={
+          overBalance ? (
+            <InsufficientFundsAlert
+              available={fromAccount?.available ?? 0}
+              currency={fromAccount?.currency || "GHS"}
+            />
+          ) : undefined
+        }
       />
 
       {/* 4. Narration */}
@@ -171,14 +186,7 @@ export function OwnAccountFlow({
         }}
       />
 
-      {overBalance && (
-        <InsufficientFundsAlert
-          available={fromAccount?.available ?? 0}
-          currency={fromAccount?.currency || "GHS"}
-        />
-      )}
-
-      {/* 6. Proceed CTA */}
+      {/* 7. Proceed CTA */}
       <ProceedButton
         disabled={!isValid}
         onClick={onProceed}

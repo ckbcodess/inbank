@@ -179,6 +179,14 @@ export function GroupPaymentFlow({
           onFocus={() => {
             if (selectedGroup) setCollapsed(true);
           }}
+          error={
+            overBalance ? (
+              <InsufficientFundsAlert
+                available={fromAccount?.available ?? 0}
+                currency={fromAccount?.currency || "GHS"}
+              />
+            ) : undefined
+          }
         />
         {selectedGroup && selectedGroup.splitType === "equal" && numAmount > 0 && (
           <div className="flex items-center justify-between px-2 text-[13px] text-muted-foreground">
@@ -202,13 +210,6 @@ export function GroupPaymentFlow({
         value={state.category}
         onChange={(val) => onChange("category", val)}
       />
-
-      {overBalance && (
-        <InsufficientFundsAlert
-          available={fromAccount?.available ?? 0}
-          currency={fromAccount?.currency || "GHS"}
-        />
-      )}
 
       {/* 6. Proceed CTA */}
       <ProceedButton
