@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Search, Check, CheckCircle2, Users, MessageSquare, Receipt } from "lucide-react";
+import { ChevronLeft, Search, Check, CheckCircle2, Users, MessageSquare, ArrowDownToLine } from "lucide-react";
 import { useGroupsStore, type PaymentGroup, type GroupMember } from "@/lib/groups-store";
 import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
 import { formatMoney } from "@/lib/mock-data";
@@ -351,9 +351,9 @@ export default function CreateGroupFlow({
             },
           },
           {
-            id: "receipt",
-            label: "View Receipt",
-            icon: Receipt,
+            id: "download",
+            label: "Download Receipt",
+            icon: ArrowDownToLine,
           },
         ]}
       />

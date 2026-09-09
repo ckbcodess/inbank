@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Users, MessageSquare, Receipt } from "lucide-react";
+import { Users, MessageSquare, ArrowDownToLine } from "lucide-react";
 import { useGroupsStore } from "@/lib/groups-store";
 import { formatMoney } from "@/lib/mock-data";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
@@ -84,9 +84,9 @@ function SuccessContent() {
           },
         },
         {
-          id: "receipt",
-          label: "View Receipt",
-          icon: Receipt,
+          id: "download",
+          label: "Download Receipt",
+          icon: ArrowDownToLine,
         },
       ]}
     />

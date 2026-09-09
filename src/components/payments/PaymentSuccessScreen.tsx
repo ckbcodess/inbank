@@ -2,15 +2,17 @@
 
 import { useState } from "react";
 import {
+  ArrowDownToLine,
   Calendar,
   Check,
+  Copy,
   FileText,
   MessageSquare,
   Receipt,
-  RotateCcw,
   Share2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SimpleTooltip } from "@/components/ui/tooltip";
 
 export interface SuccessActionCard {
   id: string;
@@ -25,7 +27,7 @@ export interface PaymentSuccessScreenProps {
   title: string;
   /** Explanatory message below the title */
   message: string;
-  /** Structured rows for the receipt breakdown */
+  /** Structured rows for the transaction details breakdown */
   receiptRows?: Array<[string, React.ReactNode]>;
   /** Callback when user clicks secondary button (e.g. "Send another") */
   onSecondaryAction?: () => void;
@@ -43,7 +45,7 @@ export interface PaymentSuccessScreenProps {
   initialSaveBeneficiary?: boolean;
   /** Callback on toggle change */
   onSaveBeneficiaryChange?: (saved: boolean) => void;
-  /** Custom action cards (defaults to Share Feedback, Schedule Payment, View Receipt) */
+  /** Custom action cards */
   customActionCards?: SuccessActionCard[];
   /** Custom schedule handler if standard schedule card is used */
   onSchedulePayment?: () => void;
@@ -64,9 +66,9 @@ export function PaymentSuccessScreen({
   customActionCards,
   onSchedulePayment,
 }: PaymentSuccessScreenProps) {
-  const [showReceipt, setShowReceipt] = useState(false);
   const [saveBeneficiary, setSaveBeneficiary] = useState(initialSaveBeneficiary);
   const [feedbackSent, setFeedbackSent] = useState(false);
+  const [sharedToast, setSharedToast] = useState(false);
 
   const handleToggleBeneficiary = () => {
     const next = !saveBeneficiary;
@@ -79,7 +81,13 @@ export function PaymentSuccessScreen({
     setTimeout(() => setFeedbackSent(false), 3500);
   };
 
-  // Default Action Cards if none provided: Share Feedback, Schedule Payment, View Receipt
+  const handleDownloadReceipt = () => {
+    if (typeof window !== "undefined") {
+      window.print();
+    }
+  };
+
+  // Default Action Cards: Share Feedback, Schedule Payment, Download Receipt
   const defaultActionCards: SuccessActionCard[] = [
     {
       id: "feedback",
@@ -94,21 +102,18 @@ export function PaymentSuccessScreen({
       onClick: onSchedulePayment,
     },
     {
-      id: "receipt",
-      label: showReceipt ? "Hide Receipt" : "View Receipt",
-      icon: Receipt,
-      active: showReceipt,
-      onClick: () => setShowReceipt((prev) => !prev),
+      id: "download",
+      label: "Download Receipt",
+      icon: ArrowDownToLine,
+      onClick: handleDownloadReceipt,
     },
   ];
 
   const actionCards = (customActionCards || defaultActionCards).map((card) => {
-    if (card.id === "receipt") {
+    if (card.id === "download" && !card.onClick) {
       return {
         ...card,
-        label: card.label || (showReceipt ? "Hide Receipt" : "View Receipt"),
-        active: card.active ?? showReceipt,
-        onClick: card.onClick || (() => setShowReceipt((prev) => !prev)),
+        onClick: handleDownloadReceipt,
       };
     }
     if (card.id === "feedback" && !card.onClick) {
@@ -121,15 +126,15 @@ export function PaymentSuccessScreen({
   });
 
   return (
-    <div className="mx-auto flex w-full max-w-[500px] flex-col items-center justify-center gap-7 py-8 px-4 animate-in fade-in duration-200">
+    <div className="mx-auto flex w-full max-w-[500px] flex-col items-center justify-center gap-6 py-8 px-4 animate-in fade-in duration-200">
       {/* ── 1. Circular Success Checkmark Badge (1:1 Figma Node 1367:33678) ── */}
-      <div className="flex flex-col items-center gap-5 text-center w-full">
+      <div className="flex flex-col items-center gap-4 text-center w-full">
         <div className="flex size-[68px] items-center justify-center rounded-full bg-[#4cd964] text-white shadow-sm ring-4 ring-[#4cd964]/10">
           <Check size={32} strokeWidth={3} />
         </div>
 
         {/* ── 2. Title & Subtitle ── */}
-        <div className="flex flex-col gap-1.5 items-center w-full max-w-[400px]">
+        <div className="flex flex-col gap-1.5 items-center w-full max-w-[420px]">
           <h1 className="text-[24px] font-normal leading-[34px] tracking-[-0.2px] text-foreground text-center">
             {title}
           </h1>
@@ -146,7 +151,32 @@ export function PaymentSuccessScreen({
         </div>
       )}
 
-      {/* ── 3. Action Cards Row (1:1 Figma Node 1367:33684) ── */}
+      {/* ── 3. Transaction Details Card (Always Visible on Success Page) ── */}
+      {receiptRows.length > 0 && (
+        <div className="flex flex-col w-full divide-y divide-border/70 rounded-[16px] border border-border bg-card p-5 text-[13.5px] shadow-xs">
+          <div className="pb-3 flex items-center justify-between">
+            <span className="font-semibold text-foreground text-[14px]">Transaction Details</span>
+            <button
+              type="button"
+              onClick={handleDownloadReceipt}
+              className="text-[12.5px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <ArrowDownToLine size={14} />
+              Print / Save PDF
+            </button>
+          </div>
+          {receiptRows.map(([label, val]) => (
+            <div key={label} className="flex items-center justify-between py-2.5">
+              <span className="text-muted-foreground">{label}</span>
+              <span className="font-medium text-foreground tabular-nums numorainput text-right max-w-[65%] break-words">
+                {val}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── 4. Action Cards Row (1:1 Figma Node 1367:33684) ── */}
       {actionCards.length > 0 && (
         <div className={cn("grid gap-3 w-full", actionCards.length === 3 ? "grid-cols-3" : "grid-cols-2")}>
           {actionCards.map((card) => {
@@ -171,7 +201,7 @@ export function PaymentSuccessScreen({
         </div>
       )}
 
-      {/* ── 4. Save As Beneficiary Toggle Row (1:1 Figma Node 1367:33700) ── */}
+      {/* ── 5. Save As Beneficiary Toggle Row (1:1 Figma Node 1367:33700) ── */}
       {showSaveBeneficiary && (
         <div className="flex items-center justify-between px-4 py-3.5 rounded-[12px] border border-border bg-card w-full shadow-xs">
           <span className="text-[14px] font-normal text-foreground">{saveBeneficiaryLabel}</span>
@@ -195,33 +225,8 @@ export function PaymentSuccessScreen({
         </div>
       )}
 
-      {/* ── 5. Expandable Full Receipt Section (Toggled by "View Receipt" Action Card) ── */}
-      {showReceipt && receiptRows.length > 0 && (
-        <div className="flex flex-col w-full divide-y divide-border rounded-2xl border border-border bg-card p-5 text-[13.5px] animate-in fade-in slide-in-from-top-2 duration-200 shadow-xs">
-          <div className="pb-3 flex items-center justify-between">
-            <span className="font-semibold text-foreground text-[14px]">Transaction Receipt</span>
-            <button
-              type="button"
-              onClick={() => {
-                if (typeof window !== "undefined") window.print();
-              }}
-              className="text-[12.5px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 transition-colors cursor-pointer"
-            >
-              <FileText size={14} />
-              Print / Save PDF
-            </button>
-          </div>
-          {receiptRows.map(([label, val]) => (
-            <div key={label} className="flex items-center justify-between py-2.5">
-              <span className="text-muted-foreground">{label}</span>
-              <span className="font-medium text-foreground tabular-nums numorainput text-right">{val}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
       {/* ── 6. Two Bottom Action Buttons (1:1 Figma Node 1367:33726) ── */}
-      <div className="flex items-center gap-4 w-full pt-3">
+      <div className="flex items-center gap-4 w-full pt-2">
         {onSecondaryAction && (
           <button
             type="button"
