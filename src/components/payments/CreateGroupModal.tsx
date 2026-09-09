@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { X, Search, Check, Plus } from "lucide-react";
+import { X, Check, Plus, Landmark, Smartphone } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { useGroupsStore, type PaymentGroup, type GroupMember } from "@/lib/groups-store";
 import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
 import { formatMoney } from "@/lib/mock-data";
@@ -20,14 +19,6 @@ interface CreateGroupModalProps {
   onSuccess?: (group: PaymentGroup) => void;
 }
 
-function getInitials(name: string): string {
-  const clean = name.trim();
-  if (!clean) return "??";
-  const parts = clean.split(/\s+/);
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
-
 export default function CreateGroupModal({
   open,
   onOpenChange,
@@ -38,10 +29,17 @@ export default function CreateGroupModal({
   const beneficiaries = useBeneficiariesStore((s) => s.beneficiaries);
 
   const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [defaultAmount, setDefaultAmount] = useState("200");
   const [splitType, setSplitType] = useState<"equal" | "custom">("equal");
   const [members, setMembers] = useState<GroupMember[]>([]);
   const [search, setSearch] = useState("");
+
+  // New beneficiary inline addition
+  const [showNewBeneficiary, setShowNewBeneficiary] = useState(false);
+  const [customName, setCustomName] = useState("");
+  const [customDest, setCustomDest] = useState("");
+  const [customType, setCustomType] = useState<"wallet" | "bank">("wallet");
 
   // Map beneficiaries to available group contacts
   const availableContacts: GroupMember[] = useMemo(() => {
@@ -59,15 +57,18 @@ export default function CreateGroupModal({
   useEffect(() => {
     if (groupToEdit) {
       setName(groupToEdit.name);
+      setDescription(groupToEdit.description || "");
       setDefaultAmount(String(groupToEdit.defaultPerMemberAmount || 200));
       setSplitType(groupToEdit.splitType);
       setMembers(groupToEdit.members);
     } else {
       setName("");
+      setDescription("");
       setDefaultAmount("200");
       setSplitType("equal");
       setMembers([]);
     }
+    setShowNewBeneficiary(false);
     setSearch("");
   }, [groupToEdit, open]);
 
@@ -83,10 +84,6 @@ export default function CreateGroupModal({
     });
   };
 
-  const removeMember = (identifier: string) => {
-    setMembers((prev) => prev.filter((m) => m.id !== identifier && m.destination !== identifier));
-  };
-
   const updateMemberAmount = (identifier: string, amtStr: string) => {
     const val = Number(amtStr.replace(/[^0-9.]/g, "")) || 0;
     setMembers((prev) =>
@@ -94,22 +91,21 @@ export default function CreateGroupModal({
     );
   };
 
-  // 1-Tap Add Unlisted Recipient from Search
-  const addUnlistedMember = () => {
-    const q = search.trim();
-    if (!q) return;
-    const isPhoneOrNumber = /^[0-9+\s()-]+$/.test(q);
+  const handleAddNewBeneficiary = () => {
+    if (!customName.trim() || !customDest.trim()) return;
     const amt = Number(defaultAmount) || 0;
     const newMember: GroupMember = {
       id: `m-custom-${Date.now()}`,
-      name: isPhoneOrNumber ? `Contact ${q}` : q,
-      destination: isPhoneOrNumber ? q.replace(/\s+/g, "") : "Direct Transfer",
-      type: "wallet",
-      networkOrBank: isPhoneOrNumber ? "Mobile Wallet" : "Custom",
+      name: customName.trim(),
+      destination: customDest.trim(),
+      type: customType,
+      networkOrBank: customType === "wallet" ? "Mobile Wallet" : "Bank Account",
       defaultAmount: amt,
     };
     setMembers((prev) => [...prev, newMember]);
-    setSearch("");
+    setCustomName("");
+    setCustomDest("");
+    setShowNewBeneficiary(false);
   };
 
   const filteredContacts = useMemo(() => {
@@ -122,14 +118,6 @@ export default function CreateGroupModal({
         (c.networkOrBank && c.networkOrBank.toLowerCase().includes(q))
       );
     });
-  }, [availableContacts, search]);
-
-  const hasDirectMatch = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return true;
-    return availableContacts.some(
-      (c) => c.name.toLowerCase() === q || c.destination.toLowerCase() === q
-    );
   }, [availableContacts, search]);
 
   const canSave = name.trim().length >= 2 && members.length >= 2;
@@ -151,7 +139,7 @@ export default function CreateGroupModal({
     if (groupToEdit) {
       updateGroup(groupToEdit.id, {
         name: name.trim(),
-        description: groupToEdit.description || "",
+        description: description.trim(),
         defaultPerMemberAmount: defAmtNum,
         splitType,
         members: normalizedMembers,
@@ -159,7 +147,7 @@ export default function CreateGroupModal({
       onSuccess?.({
         ...groupToEdit,
         name: name.trim(),
-        description: groupToEdit.description || "",
+        description: description.trim(),
         defaultPerMemberAmount: defAmtNum,
         splitType,
         members: normalizedMembers,
@@ -167,7 +155,7 @@ export default function CreateGroupModal({
     } else {
       const created = addGroup({
         name: name.trim(),
-        description: "",
+        description: description.trim(),
         defaultPerMemberAmount: defAmtNum,
         splitType,
         members: normalizedMembers,
@@ -180,64 +168,88 @@ export default function CreateGroupModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[540px] p-0 gap-0 overflow-hidden rounded-[24px] border border-border/50 bg-card shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)]"
+        className="sm:max-w-[640px] p-0 gap-0 overflow-hidden rounded-[16px] border border-border/80 bg-card shadow-2xl"
         showCloseButton={false}
       >
-        {/* Apple-style Header */}
-        <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-border/40">
-          <div>
-            <DialogTitle className="text-[17px] font-semibold text-foreground tracking-[-0.01em]">
-              {groupToEdit ? "Edit Group" : "New Group"}
-            </DialogTitle>
-            <p className="text-[12.5px] text-muted-foreground mt-0.5">
-              Send money to multiple people at once.
-            </p>
-          </div>
+        {/* Figma Header: Add Beneficiary + Circular Close Button */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-border/60">
+          <DialogTitle className="text-[18px] font-medium leading-[26px] text-foreground tracking-[0.18px]">
+            {groupToEdit ? "Edit Beneficiary" : "Add Beneficiary"}
+          </DialogTitle>
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="flex size-7.5 items-center justify-center rounded-full bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted active:scale-[0.95] transition-transform duration-100 ease-out cursor-pointer"
+            className="flex size-9 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground hover:bg-muted/80 active:scale-95 transition-all cursor-pointer"
             aria-label="Close"
           >
-            <X size={15} strokeWidth={2} />
+            <X size={16} strokeWidth={2} />
           </button>
         </div>
 
-        {/* Modal Body */}
-        <div className="flex flex-col gap-5 px-6 py-5 max-h-[72vh] overflow-y-auto">
-          {/* Apple Inset Group 1: Group Details */}
-          <div className="rounded-[16px] bg-muted/30 border border-border/40 divide-y divide-border/30 overflow-hidden">
-            {/* Row 1: Name */}
-            <div className="flex items-center justify-between px-4 py-3 gap-3">
-              <span className="text-[13px] font-medium text-foreground whitespace-nowrap">
-                Group Name
-              </span>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Family, Lunch, Rent"
-                autoFocus
-                className="w-full max-w-[260px] text-right text-[13.5px] font-medium bg-transparent text-foreground placeholder:text-muted-foreground/45 outline-none"
-              />
-            </div>
+        {/* Figma Content Wrapper */}
+        <div className="flex flex-col gap-6 px-6 py-6 max-h-[75vh] overflow-y-auto">
+          {/* Section 1: Group Details */}
+          <div className="flex flex-col gap-4">
+            <label className="text-[14px] font-medium leading-[20px] text-foreground tracking-[-0.028px]">
+              Group Details
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Name e.g. Family Susu"
+              autoFocus
+              className="h-12 w-full rounded-[8px] border border-border/80 bg-muted/40 px-5 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-border transition-colors"
+            />
+            <input
+              type="text"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Description"
+              className="h-12 w-full rounded-[8px] border border-border/80 bg-muted/40 px-5 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-border transition-colors"
+            />
+          </div>
 
-            {/* Row 2: Default Amount */}
-            <div className="flex items-center justify-between px-4 py-3 gap-3">
-              <div className="flex items-center gap-2">
-                <span className="text-[13px] font-medium text-foreground">
-                  Amount per Person
-                </span>
+          {/* Section 2: Amount per Person */}
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <span className="text-[14px] font-medium leading-[20px] text-foreground">
+                Amount per Person
+              </span>
+
+              {/* Figma Tabs: Equal / Custom */}
+              <div className="h-[41px] p-[3.5px] rounded-[12px] bg-muted/40 border border-border/50 flex items-center gap-1">
                 <button
                   type="button"
-                  onClick={() => setSplitType(splitType === "equal" ? "custom" : "equal")}
-                  className="text-[11px] font-medium text-primary hover:underline cursor-pointer active:scale-[0.96] transition-transform"
+                  onClick={() => setSplitType("equal")}
+                  className={cn(
+                    "px-3.5 py-1.5 text-[12px] rounded-[8.75px] transition-all cursor-pointer",
+                    splitType === "equal"
+                      ? "bg-card text-foreground font-medium shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
                 >
-                  {splitType === "equal" ? "Custom splits" : "Equal split"}
+                  Equal
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSplitType("custom")}
+                  className={cn(
+                    "px-3.5 py-1.5 text-[12px] rounded-[8.75px] transition-all cursor-pointer",
+                    splitType === "custom"
+                      ? "bg-card text-foreground font-medium shadow-xs"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  Custom
                 </button>
               </div>
-              <div className="flex items-center gap-1.5 justify-end">
-                <span className="text-[12px] font-semibold text-muted-foreground select-none">
+            </div>
+
+            {/* Figma Big Amount Box (74px height) */}
+            <div className="h-[74px] rounded-[12px] border border-border/80 bg-muted/40 flex items-center justify-center px-6">
+              <div className="flex items-baseline justify-center gap-2 w-full">
+                <span className="text-[16px] font-medium text-muted-foreground select-none">
                   GHS
                 </span>
                 <input
@@ -245,118 +257,120 @@ export default function CreateGroupModal({
                   inputMode="decimal"
                   value={defaultAmount}
                   onChange={(e) => setDefaultAmount(e.target.value.replace(/[^0-9.]/g, ""))}
-                  placeholder="200.00"
-                  className="numorainput w-24 text-right text-[13.5px] font-semibold bg-transparent text-foreground placeholder:text-muted-foreground/45 outline-none tabular-nums"
+                  placeholder="200"
+                  className="numorainput bg-transparent text-[26px] font-medium leading-[32px] tracking-tight text-foreground text-center outline-none tabular-nums max-w-[240px]"
                 />
               </div>
             </div>
           </div>
 
-          {/* Members Section */}
-          <div className="flex flex-col gap-2.5">
-            {/* Section Bar */}
-            <div className="flex items-center justify-between px-1">
-              <div className="flex items-center gap-2">
-                <span className="text-[13px] font-semibold text-foreground tracking-[-0.01em]">
-                  Members
-                </span>
-                {members.length > 0 && (
-                  <span className="text-[11.5px] font-medium text-muted-foreground tabular-nums">
-                    ({members.length})
-                  </span>
-                )}
+          {/* Section 3: Members */}
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-[14px] font-medium text-foreground">
+                <span>Members</span>
+                <span>{members.length}</span>
               </div>
-              {members.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setMembers([])}
-                  className="text-[11.5px] font-medium text-muted-foreground hover:text-destructive active:scale-[0.96] transition-transform cursor-pointer"
-                >
-                  Clear all
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={() => setShowNewBeneficiary(!showNewBeneficiary)}
+                className="flex items-center gap-1 text-[14px] font-medium text-foreground hover:opacity-80 transition-opacity cursor-pointer"
+              >
+                <Plus size={15} strokeWidth={2.2} />
+                <span>New beneficiary</span>
+              </button>
             </div>
 
-            {/* Apple Search Input */}
+            {/* Inline Add New Beneficiary Form */}
+            {showNewBeneficiary && (
+              <div className="flex flex-col gap-3 p-3.5 rounded-[12px] border border-border/80 bg-muted/30 animate-in fade-in duration-100">
+                <div className="flex items-center justify-between">
+                  <span className="text-[13px] font-medium text-foreground">Add New Beneficiary</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowNewBeneficiary(false)}
+                    className="text-[12px] text-muted-foreground hover:text-foreground cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+                  <input
+                    type="text"
+                    value={customName}
+                    onChange={(e) => setCustomName(e.target.value)}
+                    placeholder="Full name"
+                    className="sm:col-span-5 h-9 rounded-[8px] border border-border/80 bg-background px-3 text-[13px] outline-none focus:border-border"
+                  />
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={customDest}
+                    onChange={(e) => setCustomDest(e.target.value.replace(/[^0-9]/g, ""))}
+                    placeholder="Phone or account number"
+                    className="numorainput sm:col-span-5 h-9 rounded-[8px] border border-border/80 bg-background px-3 text-[13px] outline-none focus:border-border tabular-nums"
+                  />
+                  <div className="sm:col-span-2 flex items-center justify-end">
+                    <button
+                      type="button"
+                      onClick={handleAddNewBeneficiary}
+                      disabled={!customName.trim() || !customDest.trim()}
+                      className="h-9 w-full rounded-[8px] bg-[#f9c632] hover:bg-[#eab308] text-[#451a03] font-medium text-[12.5px] disabled:opacity-50 cursor-pointer"
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 pt-0.5">
+                  <span className="text-[12px] text-muted-foreground">Type:</span>
+                  <div className="flex items-center rounded-[6px] bg-muted p-0.5 border border-border/50 text-[11.5px]">
+                    <button
+                      type="button"
+                      onClick={() => setCustomType("wallet")}
+                      className={cn(
+                        "px-2.5 py-0.5 rounded-[4px] font-medium cursor-pointer transition-colors",
+                        customType === "wallet" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"
+                      )}
+                    >
+                      Mobile Wallet
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCustomType("bank")}
+                      className={cn(
+                        "px-2.5 py-0.5 rounded-[4px] font-medium cursor-pointer transition-colors",
+                        customType === "bank" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"
+                      )}
+                    >
+                      Bank
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Search Beneficiaries Input */}
             <div className="relative w-full">
-              <Search
-                size={14}
-                strokeWidth={1.75}
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
-              />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search or type a number to add..."
-                className="h-9.5 w-full rounded-[12px] bg-muted/30 border border-border/40 pl-9 pr-8 text-[12.5px] text-foreground placeholder:text-muted-foreground/50 outline-none focus:bg-background focus:border-border/80 transition-colors"
+                placeholder="Search beneficiaries..."
+                className="h-12 w-full rounded-[8px] border border-border/80 bg-muted/40 px-5 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-border transition-colors"
               />
               {search && (
                 <button
                   type="button"
                   onClick={() => setSearch("")}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground active:scale-[0.96] transition-transform"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground active:scale-95 transition-transform"
                 >
-                  <X size={13} strokeWidth={2} />
+                  <X size={14} strokeWidth={2} />
                 </button>
               )}
             </div>
 
-            {/* Selected Member Tokens (Apple Style) */}
-            {members.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 py-1">
-                {members.map((m) => (
-                  <span
-                    key={m.id || m.destination}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-muted/60 border border-border/40 pl-2.5 pr-1.5 py-1 text-[11.5px] font-medium text-foreground active:scale-[0.97] transition-transform animate-in fade-in zoom-in-95 duration-100"
-                  >
-                    <span className="truncate max-w-[120px]">{m.name}</span>
-                    {splitType === "custom" && (
-                      <span className="text-[10.5px] text-muted-foreground tabular-nums font-mono">
-                        GHS {m.defaultAmount ?? defaultAmount}
-                      </span>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => removeMember(m.id || m.destination)}
-                      className="size-4 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-background/80 active:scale-[0.92] transition-transform cursor-pointer"
-                      aria-label={`Remove ${m.name}`}
-                    >
-                      <X size={10} strokeWidth={2.5} />
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Clean Contact Rows (Apple Inset Style) */}
-            <div className="rounded-[16px] border border-border/40 bg-muted/20 divide-y divide-border/25 overflow-hidden max-h-[250px] overflow-y-auto">
-              {/* If user typed an unlisted contact/number, offer 1-tap instant add */}
-              {search.trim().length > 0 && !hasDirectMatch && (
-                <div
-                  onClick={addUnlistedMember}
-                  className="flex items-center justify-between px-3.5 py-2.5 hover:bg-muted/40 cursor-pointer active:scale-[0.99] transition-transform duration-75"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
-                      <Plus size={15} strokeWidth={2.2} />
-                    </span>
-                    <div>
-                      <div className="text-[12.5px] font-medium text-foreground">
-                        Add &ldquo;{search.trim()}&rdquo;
-                      </div>
-                      <div className="text-[11px] text-muted-foreground">
-                        Tap to add as recipient
-                      </div>
-                    </div>
-                  </div>
-                  <span className="text-[11.5px] font-semibold text-primary">
-                    Add
-                  </span>
-                </div>
-              )}
-
-              {/* Beneficiary Contacts */}
+            {/* Beneficiaries Grid: 2 Columns Matching Figma */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[7px] max-h-[260px] overflow-y-auto pr-0.5">
               {filteredContacts.map((c) => {
                 const isSelected = members.some((m) => (m.id && c.id ? m.id === c.id : m.destination === c.destination));
                 const selectedMember = members.find((m) => (m.id && c.id ? m.id === c.id : m.destination === c.destination));
@@ -366,31 +380,29 @@ export default function CreateGroupModal({
                     key={c.id || c.destination}
                     onClick={() => toggleMember(c)}
                     className={cn(
-                      "flex items-center justify-between px-3.5 py-2.5 cursor-pointer transition-colors select-none active:bg-muted/50",
-                      isSelected && "bg-primary/[0.04]"
+                      "min-h-[55px] rounded-[12px] border border-border/80 bg-card p-[8.75px] flex items-center justify-between gap-2.5 cursor-pointer hover:bg-muted/40 transition-colors select-none",
+                      isSelected && "border-primary/60 bg-primary/[0.06]"
                     )}
                   >
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      {/* Apple Initials Avatar */}
-                      <span className={cn(
-                        "flex size-8 shrink-0 items-center justify-center rounded-full text-[11.5px] font-medium transition-colors",
-                        isSelected
-                          ? "bg-primary text-primary-foreground font-semibold"
-                          : "bg-muted/70 text-muted-foreground"
-                      )}>
-                        {getInitials(c.name)}
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      <span className="flex size-7 shrink-0 items-center justify-center rounded-[8px] text-muted-foreground">
+                        {c.type === "wallet" ? (
+                          <Smartphone size={15} strokeWidth={1.75} />
+                        ) : (
+                          <Landmark size={15} strokeWidth={1.75} />
+                        )}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <div className="text-[12.5px] font-medium text-foreground truncate">
+                        <p className="text-[14px] font-medium leading-[20px] text-foreground truncate">
                           {c.name}
-                        </div>
-                        <div className="text-[11px] text-muted-foreground tabular-nums truncate">
+                        </p>
+                        <p className="text-[12px] text-muted-foreground leading-[17px] truncate tabular-nums">
                           {c.networkOrBank} · {c.destination}
-                        </div>
+                        </p>
                       </div>
                     </div>
 
-                    {/* Right Control */}
+                    {/* Right Checkbox / Amount Input */}
                     {splitType === "custom" && isSelected ? (
                       <div
                         className="relative w-20 shrink-0"
@@ -401,61 +413,57 @@ export default function CreateGroupModal({
                           inputMode="decimal"
                           value={String(selectedMember?.defaultAmount ?? defaultAmount)}
                           onChange={(e) => updateMemberAmount(c.id || c.destination, e.target.value)}
-                          className="numorainput h-6.5 w-full rounded-[6px] border border-border/70 bg-background px-2 text-right text-[11.5px] font-medium tabular-nums outline-none focus:border-ring"
+                          className="numorainput h-7 w-full rounded-[6px] border border-border/80 bg-background px-2 text-right text-[12px] font-medium tabular-nums outline-none focus:border-ring"
                         />
                       </div>
                     ) : (
                       <span className={cn(
-                        "flex size-5 shrink-0 items-center justify-center rounded-full border transition-all duration-100",
+                        "size-[18px] rounded-full border border-border/80 flex items-center justify-center shrink-0 transition-all",
                         isSelected
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border/60 hover:border-border"
+                          ? "bg-[#f9c632] border-[#f9c632] text-[#451a03]"
+                          : "bg-transparent text-transparent"
                       )}>
-                        {isSelected && <Check size={11} strokeWidth={2.5} />}
+                        {isSelected && <Check size={11} strokeWidth={3} />}
                       </span>
                     )}
                   </div>
                 );
               })}
 
-              {filteredContacts.length === 0 && search.trim().length === 0 && (
-                <div className="py-10 text-center text-[12px] text-muted-foreground">
-                  No contacts found
+              {filteredContacts.length === 0 && (
+                <div className="col-span-2 py-12 text-center text-[13px] text-muted-foreground">
+                  No beneficiaries found matching &ldquo;{search}&rdquo;
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        {/* Apple-style Bottom Action Bar */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-border/40 bg-muted/15">
-          <div className="flex items-baseline gap-1.5">
+        {/* Figma CTA Bar: Total on left, Cancel & Create Group on right */}
+        <div className="flex items-center justify-between px-6 py-4 border-t border-border/60 bg-card">
+          <div className="flex items-baseline gap-2">
             <span className="text-[12px] text-muted-foreground">Total:</span>
-            <span className="text-[15px] font-semibold text-foreground tabular-nums">
-              {formatMoney(totalAmount, "GHS", true)}
-            </span>
-            <span className="text-[11.5px] text-muted-foreground tabular-nums">
-              · {members.length} {members.length === 1 ? "person" : "people"}
+            <span className="text-[28px] sm:text-[32px] font-normal leading-[24px] tracking-[-0.16px] text-foreground tabular-nums">
+              {totalAmount > 0 ? formatMoney(totalAmount, "GHS", true) : "GHS 0.00"}
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5">
-            <Button
-              variant="ghost"
-              size="sm"
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
               onClick={() => onOpenChange(false)}
-              className="h-9 px-3.5 text-[12.5px] font-medium rounded-full active:scale-[0.96] transition-transform duration-100"
+              className="h-9 px-4 rounded-[8px] border border-border/80 bg-card hover:bg-muted/50 text-[14px] font-medium text-foreground cursor-pointer active:scale-95 transition-all"
             >
               Cancel
-            </Button>
-            <Button
-              size="sm"
+            </button>
+            <button
+              type="button"
               onClick={handleSave}
               disabled={!canSave}
-              className="h-9 px-5 text-[12.5px] font-medium rounded-full active:scale-[0.96] transition-transform duration-100 shadow-xs"
+              className="h-9 px-4 rounded-[8px] bg-[#f9c632] hover:bg-[#eab308] text-[#451a03] text-[14px] font-medium shadow-sm cursor-pointer active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {groupToEdit ? "Save" : "Create"}
-            </Button>
+              {groupToEdit ? "Save Changes" : "Create Group"}
+            </button>
           </div>
         </div>
       </DialogContent>
