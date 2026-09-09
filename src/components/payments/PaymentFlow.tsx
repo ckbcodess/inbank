@@ -51,6 +51,7 @@ import {
   CARDS,
   fundCard,
   formatMoney,
+  recordTransaction,
 } from "@/lib/mock-data";
 import { useGroupsStore } from "@/lib/groups-store";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
@@ -2047,6 +2048,43 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           ["Reference / Ref Code", trn],
         ],
       });
+      recordTransaction({
+        id: trn,
+        reference: trn,
+        date: d.toISOString().slice(0, 10),
+        valueDate: d.toISOString().slice(0, 10),
+        description: f.bankRef || f.wRef || f.pxRef || (rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Data Bundle") : "Online Payment"),
+        counterparty: isOwnTransfer ? (toOwnAccount?.name || "My Account") : rail === "card-topup" ? (cardObj?.name || "Card") : (resolvedName || "Recipient"),
+        counterpartyAccount: isOwnTransfer
+          ? (toOwnAccount?.number || "")
+          : rail === "card-topup"
+          ? (cardObj?.maskedNumber || "")
+          : rail === "bank"
+          ? f.benAcct
+          : rail === "wallet" || rail === "data" || rail === "airtime"
+          ? f.aPhone || f.wPhone
+          : rail === "proxy"
+          ? f.pxId
+          : rail === "ecg"
+          ? f.ecgMeter
+          : rail === "bill"
+          ? f.billRef
+          : rail === "ghanagov"
+          ? f.govRef
+          : f.benAcct,
+        accountId: account?.id || "acc-ret-001",
+        currency: rail === "papss" ? f.wCurrency : "GHS",
+        amount: currentAmount,
+        fee,
+        direction: "debit",
+        kind: "single",
+        state: "completed",
+        paymentMethod: rail === "card-topup" ? "card" : rail === "airtime" ? "airtime" : rail === "data" ? "data" : rail === "wallet" ? "momo" : rail === "bill" ? "bill" : rail === "ecg" ? "bill" : rail === "ghanagov" ? "bill" : rail === "papss" ? "papss" : "gip",
+        channel: "Internet Banking",
+        profileKind: "RETAIL",
+        category: rail === "data" || rail === "airtime" ? "Airtime & data" : rail === "bill" || rail === "ecg" ? "Utilities" : "Cash & MoMo",
+      });
+
       setPhase("success");
     }, 1200);
   };
@@ -2089,13 +2127,15 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     );
   }
 
-  // Success Receipt View (Figma Node 1367:33535)
+  // Success Receipt View (Figma Node 1384:58655)
   if (phase === "success" && receipt) {
     return (
       <PaymentSuccessScreen
         title={receipt.title}
         message={receipt.msg}
+        transactionId={receipt.trn}
         receiptRows={receipt.rows}
+        onViewReceipt={() => router.push(`/transactions/${receipt.trn}`)}
         onSecondaryAction={() => {
           setPhase("form");
           setStage(1);

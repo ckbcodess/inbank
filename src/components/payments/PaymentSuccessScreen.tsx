@@ -1,18 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
-  ArrowDownToLine,
-  Calendar,
+  Bell,
   Check,
-  Copy,
-  FileText,
-  MessageSquare,
   Receipt,
-  Share2,
+  Repeat,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { SimpleTooltip } from "@/components/ui/tooltip";
 
 export interface SuccessActionCard {
   id: string;
@@ -27,7 +23,11 @@ export interface PaymentSuccessScreenProps {
   title: string;
   /** Explanatory message below the title */
   message: string;
-  /** Structured rows for the transaction details breakdown */
+  /** Transaction ID or Reference to navigate to when viewing receipt */
+  transactionId?: string;
+  /** Callback when user clicks View Receipt card */
+  onViewReceipt?: () => void;
+  /** Structured rows for the transaction details breakdown (retained for backward compatibility) */
   receiptRows?: Array<[string, React.ReactNode]>;
   /** Callback when user clicks secondary button (e.g. "Send another") */
   onSecondaryAction?: () => void;
@@ -54,6 +54,8 @@ export interface PaymentSuccessScreenProps {
 export function PaymentSuccessScreen({
   title,
   message,
+  transactionId,
+  onViewReceipt,
   receiptRows = [],
   onSecondaryAction,
   secondaryActionLabel = "Send another",
@@ -66,9 +68,9 @@ export function PaymentSuccessScreen({
   customActionCards,
   onSchedulePayment,
 }: PaymentSuccessScreenProps) {
+  const router = useRouter();
   const [saveBeneficiary, setSaveBeneficiary] = useState(initialSaveBeneficiary);
   const [feedbackSent, setFeedbackSent] = useState(false);
-  const [sharedToast, setSharedToast] = useState(false);
 
   const handleToggleBeneficiary = () => {
     const next = !saveBeneficiary;
@@ -81,39 +83,64 @@ export function PaymentSuccessScreen({
     setTimeout(() => setFeedbackSent(false), 3500);
   };
 
-  const handleDownloadReceipt = () => {
-    if (typeof window !== "undefined") {
-      window.print();
+  // Determine effective transaction ID for receipt routing
+  const effectiveTxnId = useMemo(() => {
+    if (transactionId) return transactionId;
+    const refRow = receiptRows?.find(([k]) => {
+      const lk = k.toLowerCase();
+      return lk.includes("reference") || lk.includes("transaction id") || lk.includes("trn");
+    });
+    if (refRow && typeof refRow[1] === "string") {
+      return refRow[1].trim();
+    }
+    return "txn-ret-020";
+  }, [transactionId, receiptRows]);
+
+  const handleViewReceipt = () => {
+    if (onViewReceipt) {
+      onViewReceipt();
+    } else {
+      router.push(`/transactions/${encodeURIComponent(effectiveTxnId)}`);
     }
   };
 
-  // Default Action Cards: Share Feedback, Schedule Payment, Download Receipt
+  const handleSchedule = () => {
+    if (onSchedulePayment) {
+      onSchedulePayment();
+    } else {
+      router.push("/payments/standing/new");
+    }
+  };
+
+  // Default Action Cards 1:1 Figma Node 1384:58655: Share Feedback (Bell), Schedule Payment (Repeat), View Receipt (Receipt)
   const defaultActionCards: SuccessActionCard[] = [
     {
       id: "feedback",
       label: "Share Feedback",
-      icon: MessageSquare,
+      icon: Bell,
       onClick: handleFeedbackClick,
     },
     {
       id: "schedule",
       label: "Schedule Payment",
-      icon: Calendar,
-      onClick: onSchedulePayment,
+      icon: Repeat,
+      onClick: handleSchedule,
     },
     {
-      id: "download",
-      label: "Download Receipt",
-      icon: ArrowDownToLine,
-      onClick: handleDownloadReceipt,
+      id: "receipt",
+      label: "View Receipt",
+      icon: Receipt,
+      onClick: handleViewReceipt,
     },
   ];
 
   const actionCards = (customActionCards || defaultActionCards).map((card) => {
-    if (card.id === "download" && !card.onClick) {
+    if ((card.id === "receipt" || card.id === "download") && !card.onClick) {
       return {
         ...card,
-        onClick: handleDownloadReceipt,
+        label: card.label === "Download Receipt" ? "View Receipt" : card.label,
+        icon: card.icon || Receipt,
+        onClick: handleViewReceipt,
       };
     }
     if (card.id === "feedback" && !card.onClick) {
@@ -122,18 +149,24 @@ export function PaymentSuccessScreen({
         onClick: handleFeedbackClick,
       };
     }
+    if (card.id === "schedule" && !card.onClick) {
+      return {
+        ...card,
+        onClick: handleSchedule,
+      };
+    }
     return card;
   });
 
   return (
-    <div className="mx-auto flex w-full max-w-[500px] flex-col items-center justify-center gap-6 py-8 px-4 animate-in fade-in duration-200">
-      {/* ── 1. Circular Success Checkmark Badge (1:1 Figma Node 1367:33678) ── */}
+    <div className="mx-auto flex w-full max-w-[480px] flex-col items-center justify-center gap-6 py-8 px-4 animate-in fade-in duration-200">
+      {/* ── 1. Circular Success Checkmark Badge (1:1 Figma Node 1384:58782) ── */}
       <div className="flex flex-col items-center gap-4 text-center w-full">
-        <div className="flex size-[68px] items-center justify-center rounded-full bg-[#4cd964] text-white shadow-sm ring-4 ring-[#4cd964]/10">
+        <div className="flex size-[68px] items-center justify-center rounded-full bg-[#4cd964] text-white shadow-sm">
           <Check size={32} strokeWidth={3} />
         </div>
 
-        {/* ── 2. Title & Subtitle ── */}
+        {/* ── 2. Title & Subtitle (1:1 Figma Node 1384:58785) ── */}
         <div className="flex flex-col gap-1.5 items-center w-full max-w-[420px]">
           <h1 className="text-[24px] font-normal leading-[34px] tracking-[-0.2px] text-foreground text-center">
             {title}
@@ -151,32 +184,31 @@ export function PaymentSuccessScreen({
         </div>
       )}
 
-      {/* ── 3. Transaction Details Card (Always Visible on Success Page) ── */}
-      {receiptRows.length > 0 && (
-        <div className="flex flex-col w-full divide-y divide-border/70 rounded-[16px] border border-border bg-card p-5 text-[13.5px] shadow-xs">
-          <div className="pb-3 flex items-center justify-between">
-            <span className="font-semibold text-foreground text-[14px]">Transaction Details</span>
-            <button
-              type="button"
-              onClick={handleDownloadReceipt}
-              className="text-[12.5px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 transition-colors cursor-pointer"
-            >
-              <ArrowDownToLine size={14} />
-              Print / Save PDF
-            </button>
-          </div>
-          {receiptRows.map(([label, val]) => (
-            <div key={label} className="flex items-center justify-between py-2.5">
-              <span className="text-muted-foreground">{label}</span>
-              <span className="font-medium text-foreground tabular-nums numorainput text-right max-w-[65%] break-words">
-                {val}
-              </span>
-            </div>
-          ))}
+      {/* ── 3. Save As Beneficiary Toggle Row (1:1 Figma Node 1384:58804) — Sits above Action Cards ── */}
+      {showSaveBeneficiary && (
+        <div className="flex items-center justify-between px-[17px] py-[16px] rounded-[12px] border border-[#ebebe9] dark:border-border bg-[#f6f6f5] dark:bg-card w-full shadow-xs">
+          <span className="text-[14px] font-normal text-foreground">{saveBeneficiaryLabel}</span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={saveBeneficiary}
+            onClick={handleToggleBeneficiary}
+            className={cn(
+              "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden",
+              saveBeneficiary ? "bg-[#12B76A]" : "bg-muted dark:bg-muted/60"
+            )}
+          >
+            <span
+              className={cn(
+                "pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out",
+                saveBeneficiary ? "translate-x-5" : "translate-x-0"
+              )}
+            />
+          </button>
         </div>
       )}
 
-      {/* ── 4. Action Cards Row (1:1 Figma Node 1367:33684) ── */}
+      {/* ── 4. Action Cards Row (1:1 Figma Node 1384:58805: Share Feedback, Schedule Payment, View Receipt) ── */}
       {actionCards.length > 0 && (
         <div className={cn("grid gap-3 w-full", actionCards.length === 3 ? "grid-cols-3" : "grid-cols-2")}>
           {actionCards.map((card) => {
@@ -187,12 +219,12 @@ export function PaymentSuccessScreen({
                 type="button"
                 onClick={card.onClick}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-3 rounded-[12px] border border-border bg-card p-4 hover:bg-muted/50 active:scale-[0.98] transition-all cursor-pointer group text-center shadow-xs",
+                  "flex flex-col items-center justify-center gap-3.5 rounded-[12px] border border-[#ebebe9] dark:border-border bg-[#f6f6f5] dark:bg-card py-4 px-2.5 hover:bg-muted/50 active:scale-[0.98] transition-all cursor-pointer group text-center shadow-xs",
                   card.active && "border-primary ring-1 ring-primary/40 bg-muted/25"
                 )}
               >
                 <Icon size={20} className="text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
-                <span className="text-[13.5px] font-normal text-foreground group-hover:text-foreground">
+                <span className="text-[13.5px] font-normal text-foreground group-hover:text-foreground leading-[18px]">
                   {card.label}
                 </span>
               </button>
@@ -201,37 +233,13 @@ export function PaymentSuccessScreen({
         </div>
       )}
 
-      {/* ── 5. Save As Beneficiary Toggle Row (1:1 Figma Node 1367:33700) ── */}
-      {showSaveBeneficiary && (
-        <div className="flex items-center justify-between px-4 py-3.5 rounded-[12px] border border-border bg-card w-full shadow-xs">
-          <span className="text-[14px] font-normal text-foreground">{saveBeneficiaryLabel}</span>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={saveBeneficiary}
-            onClick={handleToggleBeneficiary}
-            className={cn(
-              "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden",
-              saveBeneficiary ? "bg-[#12B76A]" : "bg-muted"
-            )}
-          >
-            <span
-              className={cn(
-                "pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out",
-                saveBeneficiary ? "translate-x-5" : "translate-x-0"
-              )}
-            />
-          </button>
-        </div>
-      )}
-
-      {/* ── 6. Two Bottom Action Buttons (1:1 Figma Node 1367:33726) ── */}
-      <div className="flex items-center gap-4 w-full pt-2">
+      {/* ── 5. Two Bottom Action Buttons (1:1 Figma Node 1384:58840) ── */}
+      <div className="flex items-center gap-4 w-full pt-1">
         {onSecondaryAction && (
           <button
             type="button"
             onClick={onSecondaryAction}
-            className="flex-1 rounded-[8px] border border-border bg-card px-5 py-3 text-[14px] font-medium text-foreground hover:bg-muted/60 active:scale-[0.99] transition-all cursor-pointer text-center shadow-xs"
+            className="flex-1 rounded-[8px] border border-[#ebebe9] dark:border-border bg-card px-5 py-3 text-[14px] font-medium text-foreground hover:bg-muted/60 active:scale-[0.99] transition-all cursor-pointer text-center shadow-xs"
           >
             {secondaryActionLabel}
           </button>

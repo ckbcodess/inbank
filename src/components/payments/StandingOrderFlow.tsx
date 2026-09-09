@@ -44,6 +44,7 @@ import {
   formatDate,
   formatMoney,
   saveStandingInstruction,
+  recordTransaction,
   type InstructionFrequency,
 } from "@/lib/mock-data";
 import { useGroupsStore } from "@/lib/groups-store";
@@ -452,6 +453,27 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       });
     }
 
+    recordTransaction({
+      id: newId,
+      reference: newId,
+      date: new Date().toISOString().slice(0, 10),
+      valueDate: new Date().toISOString().slice(0, 10),
+      description: `Standing Order — ${f.nickname || "Scheduled Transfer"}`,
+      counterparty: resolvedName || f.destination || f.proxyId || f.groupName || "Beneficiary",
+      counterpartyAccount: f.destination || f.proxyId || "",
+      accountId: fromAccount?.id || "acc-ret-001",
+      currency: "GHS",
+      amount: numAmount,
+      fee: 0,
+      direction: "debit",
+      kind: "single",
+      state: "completed",
+      paymentMethod: "ach",
+      channel: "Internet Banking",
+      profileKind: "RETAIL",
+      category: "Bills",
+    });
+
     setCreatedId(newId);
     setScreen("success");
   };
@@ -568,7 +590,9 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       <PaymentSuccessScreen
         title="Standing Order Scheduled"
         message={`“${f.nickname}” will execute ${f.frequency.toLowerCase()} for ${formatMoney(numAmount, "GHS", true)}.`}
+        transactionId={createdId}
         receiptRows={receiptRows}
+        onViewReceipt={() => router.push(`/transactions/${createdId}`)}
         onSecondaryAction={resetAll}
         secondaryActionLabel="Create another"
         onPrimaryAction={() => {

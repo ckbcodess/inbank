@@ -715,7 +715,7 @@ export default function BeneficiariesPage() {
       )}
 
       {/* 3 Major Segmented Tabs: People, Billers, Groups (Figma Node 1374:35963) */}
-      <div className="flex items-center justify-between border-b border-border/70 pb-3">
+      <div className="flex items-center justify-between">
         <div className="flex items-center rounded-xl bg-[#f6f6f5] dark:bg-[#1e1e1e] p-[3.5px] border border-[#ebebe9] dark:border-[#292928]">
           <button
             type="button"

@@ -2,9 +2,9 @@
 
 import { Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Users, MessageSquare, ArrowDownToLine } from "lucide-react";
+import { Users, Bell, Receipt } from "lucide-react";
 import { useGroupsStore } from "@/lib/groups-store";
-import { formatMoney } from "@/lib/mock-data";
+import { formatMoney, recordTransaction } from "@/lib/mock-data";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 
 function SuccessContent() {
@@ -59,7 +59,9 @@ function SuccessContent() {
     <PaymentSuccessScreen
       title="Group Created"
       message={`Group “${groupName}” with ${memberCount} members is ready for group payments.`}
+      transactionId={queryRef}
       receiptRows={receiptRows}
+      onViewReceipt={() => router.push(`/transactions/${queryRef}`)}
       onSecondaryAction={() => router.push("/payments/groups/new")}
       secondaryActionLabel="Create another"
       onPrimaryAction={() => router.push("/beneficiaries")}
@@ -71,7 +73,7 @@ function SuccessContent() {
         {
           id: "feedback",
           label: "Share Feedback",
-          icon: MessageSquare,
+          icon: Bell,
         },
         {
           id: "pay",
@@ -84,9 +86,12 @@ function SuccessContent() {
           },
         },
         {
-          id: "download",
-          label: "Download Receipt",
-          icon: ArrowDownToLine,
+          id: "receipt",
+          label: "View Receipt",
+          icon: Receipt,
+          onClick: () => {
+            router.push(`/transactions/${queryRef}`);
+          },
         },
       ]}
     />

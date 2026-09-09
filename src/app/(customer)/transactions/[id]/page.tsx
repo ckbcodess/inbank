@@ -128,6 +128,7 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
       })}`
     : sendAmountFormatted;
 
+  const isCredit = txn.direction === "credit";
   const totalDebit = isForeign
     ? txn.amount * exchangeRate + feeAmount
     : txn.amount + feeAmount;
@@ -171,272 +172,273 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 py-6 px-4 animate-in fade-in duration-200">
-      {/* Navigation Header matching Review Screen pattern (Back button next to Title) */}
-      <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={() => router.push("/transactions")}
-          className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer shrink-0"
-          aria-label="Back to transactions"
-        >
-          <ChevronLeft size={22} strokeWidth={1.8} />
-        </button>
-        <h1 className="text-[24px] sm:text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
-          Transaction Details
-        </h1>
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 py-4 animate-in fade-in duration-200">
+      {/* Top Header Navigation matching standard details view */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3 min-w-0">
+          <Link
+            href="/transactions"
+            className="group flex size-9 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96]"
+            aria-label="Back to transactions"
+          >
+            <ChevronLeft size={18} strokeWidth={2} className="transition-transform group-hover:-translate-x-0.5" />
+          </Link>
+          <div className="min-w-0">
+            <h1 className="text-[20px] sm:text-[22px] font-medium leading-tight tracking-[-0.02em] text-foreground truncate">
+              Transaction Details
+            </h1>
+            <p className="text-[12.5px] text-muted-foreground truncate">
+              {txn.reference} · {formattedDate}
+            </p>
+          </div>
+        </div>
+
+        {/* Status Pill in Header */}
+        <div className="shrink-0">
+          <span
+            className={cn(
+              "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-medium border",
+              state === "completed" && "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20",
+              state === "pending" && "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20",
+              (state.startsWith("failed") || state === "reversed" || state === "disputed") &&
+                "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20",
+              state === "awaiting-approval" && "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20"
+            )}
+          >
+            {state === "completed" && <Check size={12} strokeWidth={2.5} />}
+            {state === "pending" && <Clock size={12} strokeWidth={2.5} />}
+            {(state.startsWith("failed") || state === "reversed" || state === "disputed") && (
+              <AlertCircle size={12} strokeWidth={2.5} />
+            )}
+            {state === "awaiting-approval" && <Clock size={12} strokeWidth={2.5} />}
+            <span>{TRANSACTION_STATE_LABEL[state]}</span>
+          </span>
+        </div>
       </div>
 
       {/* Share Toast feedback */}
       {shareToast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full bg-foreground text-background px-4 py-2 text-[13px] font-medium shadow-lg animate-in fade-in slide-in-from-top-2">
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full bg-foreground text-background px-4 py-2 text-[13px] font-normal shadow-lg animate-in fade-in slide-in-from-top-2">
           Transaction reference copied to clipboard!
         </div>
       )}
 
-      {/* ── Main Receipt Card (NO overflow-hidden on outer container to ensure badge is unclipped) ── */}
-      <div className="relative flex flex-col rounded-[24px] border border-border/80 bg-card p-6 sm:p-8 shadow-sm mt-4">
-        {/* Elevated Circular Status Indicator on Top Edge */}
-        <div className="absolute left-1/2 -translate-x-1/2 -top-6 flex items-center justify-center z-10">
-          <div className="flex size-12 items-center justify-center rounded-full bg-card shadow-sm ring-1 ring-border/60 p-1">
-            {state === "completed" && (
-              <div className="flex size-10 items-center justify-center rounded-full bg-[#12B76A] text-white">
-                <Check size={20} strokeWidth={3} />
-              </div>
-            )}
-            {state === "pending" && (
-              <div className="flex size-10 items-center justify-center rounded-full bg-[#F79009] text-white">
-                <Clock size={20} strokeWidth={2.6} />
-              </div>
-            )}
-            {(state.startsWith("failed") || state === "reversed" || state === "disputed") && (
-              <div className="flex size-10 items-center justify-center rounded-full bg-[#F04438] text-white">
-                <AlertCircle size={20} strokeWidth={2.6} />
-              </div>
-            )}
-            {state === "awaiting-approval" && (
-              <div className="flex size-10 items-center justify-center rounded-full bg-blue-500 text-white">
-                <Clock size={20} strokeWidth={2.6} />
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Card Header: GCB Logo (left) */}
-        <div className="flex items-center w-full mb-1">
-          <GCBLogo className="h-8 w-auto" />
-        </div>
-
-        {/* Transaction Title */}
-        <h2 className="text-[22px] font-bold text-foreground text-center tracking-tight mt-2 mb-6">
-          {title}
-        </h2>
-
-        {/* ── Group 1: Transaction Metadata ── */}
-        <div className="flex flex-col gap-3 text-[14px]">
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Transaction ID</span>
-            <div className="flex items-center gap-1.5">
-              <span className="font-semibold text-foreground tabular-nums numorainput">
-                {txn.reference}
-              </span>
-              <SimpleTooltip content={copied ? "Copied!" : "Copy reference"}>
-                <button
-                  type="button"
-                  onClick={handleCopyReference}
-                  className="text-muted-foreground hover:text-foreground transition-colors p-0.5 cursor-pointer"
-                  aria-label="Copy reference"
-                >
-                  {copied ? (
-                    <Check size={13} className="text-emerald-600 dark:text-emerald-400" />
-                  ) : (
-                    <Copy size={13} />
-                  )}
-                </button>
-              </SimpleTooltip>
-            </div>
+      {/* ── Main Premium Receipt Card ── */}
+      <div className="relative flex flex-col rounded-2xl border border-border bg-card shadow-xs overflow-hidden">
+        {/* Card Hero Header */}
+        <div className="flex flex-col items-center justify-center p-6 sm:p-7 border-b border-border/70 bg-muted/20 text-center">
+          <div className="flex items-center justify-center size-12 rounded-2xl bg-card border border-border/70 shadow-xs mb-3.5">
+            <GCBLogo className="h-6 w-auto" />
           </div>
 
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Date</span>
-            <span className="font-semibold text-foreground tabular-nums numorainput">{formattedDate}</span>
-          </div>
+          <span className="text-[13px] text-muted-foreground font-normal">
+            {title}
+          </span>
 
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Time</span>
-            <span className="font-semibold text-foreground tabular-nums numorainput">{formattedTime}</span>
-          </div>
-
-          {state !== "completed" && (
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Status</span>
-              <span
-                className={cn(
-                  "font-semibold capitalize text-[13.5px]",
-                  state === "pending" && "text-amber-600 dark:text-amber-400",
-                  state.startsWith("failed") && "text-rose-600 dark:text-rose-400",
-                  state === "reversed" && "text-muted-foreground"
-                )}
-              >
-                {TRANSACTION_STATE_LABEL[state]}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* Dashed Horizontal Divider */}
-        <div className="border-b border-dashed border-border/80 my-4" />
-
-        {/* ── Group 2: Counterparty & Purpose ── */}
-        <div className="flex flex-col gap-3 text-[14px]">
-          <div className="flex items-start justify-between gap-4">
-            <span className="text-muted-foreground shrink-0">Recipient Name</span>
-            <span className="font-semibold text-foreground text-right">
-              {txn.counterparty || txn.description}
+          <div className="mt-1 flex items-baseline justify-center gap-1.5">
+            <span
+              className={cn(
+                "text-[32px] sm:text-[36px] font-medium tracking-[-0.03em] tabular",
+                isCredit ? "text-emerald-600 dark:text-emerald-400" : "text-foreground"
+              )}
+            >
+              {isCredit ? "+" : "-"}
+              {formatMoney(txn.amount, txn.currency, true)}
             </span>
           </div>
 
-          {txn.counterpartyAccount && (
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Recipient Account</span>
-              <span className="font-semibold text-foreground tabular-nums numorainput">
-                {txn.counterpartyAccount}
-              </span>
-            </div>
-          )}
-
-          {fromAccount && (
-            <div className="flex items-start justify-between gap-4">
-              <span className="text-muted-foreground shrink-0">From Account</span>
-              <span className="font-medium text-foreground text-right">
-                {fromAccount.name} (•••{fromAccount.number.replace(/\s+/g, "").slice(-4)})
-              </span>
-            </div>
-          )}
-
-          <div className="flex items-start justify-between gap-4">
-            <span className="text-muted-foreground shrink-0">Narration</span>
-            <span className="font-semibold text-foreground text-right">
-              {txn.description}
-            </span>
-          </div>
-
-          {txn.category && (
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Category</span>
-              <span className="font-medium text-foreground">{txn.category}</span>
-            </div>
-          )}
+          <p className="mt-1 text-[13px] text-muted-foreground max-w-sm truncate">
+            {txn.counterparty || txn.description}
+          </p>
         </div>
 
-        {/* Dashed Horizontal Divider */}
-        <div className="border-b border-dashed border-border/80 my-4" />
-
-        {/* ── Group 3: Financial Breakdown (Structured like Review Screen) ── */}
-        <div className="flex flex-col gap-3 text-[14px]">
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Send Amount</span>
-            <span className="font-semibold text-foreground tabular-nums numorainput">
-              {sendAmountFormatted}
+        {/* ── Structured Details Sections ── */}
+        <div className="p-5 sm:p-6 flex flex-col gap-6">
+          {/* Section 1: Transaction Information */}
+          <div className="flex flex-col gap-2.5">
+            <span className="text-[11.5px] uppercase tracking-wider text-muted-foreground font-medium">
+              Transaction Details
             </span>
-          </div>
 
-          {isForeign && (
-            <>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Receive Amount</span>
-                <span className="font-semibold text-foreground tabular-nums numorainput">
-                  {receiveAmountFormatted}
+            <div className="rounded-xl border border-border/70 bg-background/50 divide-y divide-border/60 text-[13.5px]">
+              <div className="flex items-center justify-between px-3.5 py-2.5">
+                <span className="text-muted-foreground">Reference</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-medium text-foreground tabular">
+                    {txn.reference}
+                  </span>
+                  <SimpleTooltip content={copied ? "Copied!" : "Copy reference"}>
+                    <button
+                      type="button"
+                      onClick={handleCopyReference}
+                      className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted active:scale-[0.96] cursor-pointer"
+                      aria-label="Copy reference"
+                    >
+                      {copied ? (
+                        <Check size={13} className="text-emerald-600 dark:text-emerald-400" />
+                      ) : (
+                        <Copy size={13} />
+                      )}
+                    </button>
+                  </SimpleTooltip>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between px-3.5 py-2.5">
+                <span className="text-muted-foreground">Date & Time</span>
+                <span className="font-medium text-foreground tabular">
+                  {formattedDate} · {formattedTime}
                 </span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Exchange Rate</span>
-                <span className="font-semibold text-foreground tabular-nums numorainput">
-                  1 {txn.currency} = GHS {exchangeRate.toFixed(2)}
+
+              <div className="flex items-center justify-between px-3.5 py-2.5">
+                <span className="text-muted-foreground">Payment Channel</span>
+                <span className="font-medium text-foreground">
+                  {txn.channel || "Internet Banking"}
                 </span>
               </div>
-            </>
+
+              {txn.category && (
+                <div className="flex items-center justify-between px-3.5 py-2.5">
+                  <span className="text-muted-foreground">Category</span>
+                  <span className="font-medium text-foreground">{txn.category}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Section 2: Parties Involved */}
+          <div className="flex flex-col gap-2.5">
+            <span className="text-[11.5px] uppercase tracking-wider text-muted-foreground font-medium">
+              Transfer Information
+            </span>
+
+            <div className="rounded-xl border border-border/70 bg-background/50 divide-y divide-border/60 text-[13.5px]">
+              <div className="flex items-start justify-between gap-4 px-3.5 py-2.5">
+                <span className="text-muted-foreground shrink-0">Recipient</span>
+                <span className="font-medium text-foreground text-right">
+                  {txn.counterparty || txn.description}
+                </span>
+              </div>
+
+              {txn.counterpartyAccount && (
+                <div className="flex items-center justify-between px-3.5 py-2.5">
+                  <span className="text-muted-foreground">Recipient Account</span>
+                  <span className="font-medium text-foreground tabular">
+                    {txn.counterpartyAccount}
+                  </span>
+                </div>
+              )}
+
+              {fromAccount && (
+                <div className="flex items-start justify-between gap-4 px-3.5 py-2.5">
+                  <span className="text-muted-foreground shrink-0">From Account</span>
+                  <span className="font-medium text-foreground text-right">
+                    {fromAccount.name} <span className="tabular text-muted-foreground">(•••{fromAccount.number.replace(/\s+/g, "").slice(-4)})</span>
+                  </span>
+                </div>
+              )}
+
+              <div className="flex items-start justify-between gap-4 px-3.5 py-2.5">
+                <span className="text-muted-foreground shrink-0">Narration</span>
+                <span className="font-medium text-foreground text-right max-w-[280px]">
+                  {txn.description}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 3: Financial Breakdown */}
+          <div className="flex flex-col gap-2.5">
+            <span className="text-[11.5px] uppercase tracking-wider text-muted-foreground font-medium">
+              Amount Breakdown
+            </span>
+
+            <div className="rounded-xl border border-border/70 bg-background/50 divide-y divide-border/60 text-[13.5px]">
+              <div className="flex items-center justify-between px-3.5 py-2.5">
+                <span className="text-muted-foreground">Transfer Amount</span>
+                <span className="font-medium text-foreground tabular">
+                  {sendAmountFormatted}
+                </span>
+              </div>
+
+              {isForeign && (
+                <>
+                  <div className="flex items-center justify-between px-3.5 py-2.5">
+                    <span className="text-muted-foreground">Receive Amount</span>
+                    <span className="font-medium text-foreground tabular">
+                      {receiveAmountFormatted}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between px-3.5 py-2.5">
+                    <span className="text-muted-foreground">Exchange Rate</span>
+                    <span className="font-medium text-foreground tabular">
+                      1 {txn.currency} = {exchangeRate.toFixed(2)} GHS
+                    </span>
+                  </div>
+                </>
+              )}
+
+              <div className="flex items-center justify-between px-3.5 py-2.5">
+                <span className="text-muted-foreground">Processing Fee</span>
+                <span className="font-medium text-foreground tabular">
+                  {feeAmount > 0 ? formatMoney(feeAmount, "GHS", true) : "GHS 0.00"}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between px-3.5 py-3 bg-muted/40 dark:bg-muted/20">
+                <span className="text-[13.5px] font-medium text-foreground">
+                  {isCredit ? "Total Credit" : "Total Debit"}
+                </span>
+                <span className="text-[17px] font-semibold text-foreground tracking-[-0.02em] tabular">
+                  {formatMoney(totalDebit, "GHS", true)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Card Actions matching Figma Action Bar pattern */}
+        <div className="flex items-center justify-between gap-3 p-4 sm:p-5 border-t border-border/70 bg-muted/20">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleShare}
+              className="h-9 gap-1.5 px-3 text-[13px] font-medium rounded-lg"
+            >
+              <Share size={14} strokeWidth={1.9} />
+              Share
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownload}
+              className="h-9 gap-1.5 px-3 text-[13px] font-medium rounded-lg"
+            >
+              <ArrowDownToLine size={14} strokeWidth={1.9} />
+              Download Receipt
+            </Button>
+          </div>
+
+          {!isCredit && (
+            <Button
+              size="sm"
+              onClick={handleRepeat}
+              className="h-9 gap-1.5 px-4 text-[13px] font-medium rounded-lg bg-primary text-primary-foreground shadow-xs active:scale-[0.96]"
+            >
+              <RefreshCw size={14} strokeWidth={1.9} />
+              Repeat Payment
+            </Button>
           )}
-
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Fee</span>
-            <span className="font-semibold text-foreground tabular-nums numorainput">
-              {feeAmount > 0 ? formatMoney(feeAmount, "GHS", true) : "GHS 0.00"}
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Total</span>
-            <span className="font-bold text-[16px] text-foreground tabular-nums numorainput">
-              {formatMoney(totalDebit, "GHS", true)}
-            </span>
-          </div>
         </div>
-
-        {/* Dashed Divider before bottom scalloped edge */}
-        <div className="border-b border-dashed border-border/80 my-4" />
-
-        {/* Ticket Scalloped Bottom Edge Container */}
-        <div className="relative -mx-6 -mb-6 sm:-mx-8 sm:-mb-8 mt-5 h-4 overflow-hidden rounded-b-[24px]">
-          <div className="flex justify-between w-[calc(100%+16px)] -ml-2">
-            {Array.from({ length: 22 }).map((_, i) => (
-              <span
-                key={i}
-                className="size-3.5 rounded-full bg-background border border-border/60 shrink-0 -mb-2 shadow-inner"
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Bottom Circular Action Buttons (Matching Screenshot) ── */}
-      <div className="flex items-center justify-center gap-14 pt-4 pb-1">
-        {/* Share Button */}
-        <button
-          type="button"
-          onClick={handleShare}
-          className="flex flex-col items-center gap-2 group cursor-pointer"
-        >
-          <span className="flex size-14 items-center justify-center rounded-full bg-muted/70 text-foreground transition-all group-hover:scale-105 group-hover:bg-muted shadow-xs">
-            <Share size={22} strokeWidth={1.9} />
-          </span>
-          <span className="text-[13px] font-medium text-muted-foreground group-hover:text-foreground">
-            Share
-          </span>
-        </button>
-
-        {/* Repeat Button */}
-        <button
-          type="button"
-          onClick={handleRepeat}
-          className="flex flex-col items-center gap-2 group cursor-pointer"
-        >
-          <span className="flex size-14 items-center justify-center rounded-full bg-muted/70 text-foreground transition-all group-hover:scale-105 group-hover:bg-muted shadow-xs">
-            <RefreshCw size={22} strokeWidth={1.9} />
-          </span>
-          <span className="text-[13px] font-medium text-muted-foreground group-hover:text-foreground">
-            Repeat
-          </span>
-        </button>
-      </div>
-
-      {/* Secondary Download Receipt Action */}
-      <div className="flex justify-center -mt-1 mb-2">
-        <button
-          type="button"
-          onClick={handleDownload}
-          className="text-[12.5px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 transition-colors cursor-pointer"
-        >
-          <ArrowDownToLine size={14} />
-          Download PDF Receipt
-        </button>
       </div>
 
       {/* ── State-specific Recovery Affordances (Preserving 13.2 Business Rules) ── */}
       <StateBand state={state} txn={txn} />
 
       {/* ── State Switcher Testing Strip ── */}
-      <div className="pt-4 border-t border-border/40">
+      <div className="pt-2 border-t border-border/40">
         <p className="text-[11px] text-muted-foreground uppercase tracking-wider text-center mb-2">
           State Simulator (Section 13.2)
         </p>

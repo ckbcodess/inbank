@@ -184,9 +184,9 @@ export default function CardsPage() {
               setLinkedAccId(availableAccounts[0]?.id ?? "");
               setCreateOpen(true);
             }}
-            className="gap-1.5 bg-[#1570d1] hover:bg-[#125db0] text-white rounded-xl h-10 px-4 text-[13.5px] font-medium shadow-xs cursor-pointer"
+            className="h-9 gap-1.5 px-3.5 text-[13px] font-medium rounded-lg shadow-xs"
           >
-            <Plus size={15} />
+            <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
             <span>Create Card</span>
           </Button>
         }

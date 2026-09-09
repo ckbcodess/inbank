@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Search, Check, CheckCircle2, Users, MessageSquare, ArrowDownToLine } from "lucide-react";
+import { ChevronLeft, Search, Check, CheckCircle2, Users, Bell, Receipt } from "lucide-react";
 import { useGroupsStore, type PaymentGroup, type GroupMember } from "@/lib/groups-store";
 import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
-import { formatMoney } from "@/lib/mock-data";
+import { formatMoney, recordTransaction } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { ProceedButton } from "@/components/payments/flows/shared";
 import TransactionPinModal from "@/components/payments/TransactionPinModal";
@@ -254,6 +254,27 @@ export default function CreateGroupFlow({
     }
 
     const refId = `GRP-${Math.floor(100000 + Math.random() * 900000)}`;
+    recordTransaction({
+      id: refId,
+      reference: refId,
+      date: new Date().toISOString().slice(0, 10),
+      valueDate: new Date().toISOString().slice(0, 10),
+      description: `Group Creation — ${savedGroup.name}`,
+      counterparty: savedGroup.name,
+      counterpartyAccount: `${savedGroup.members.length} members`,
+      accountId: "acc-ret-001",
+      currency: "GHS",
+      amount: totalAmount,
+      fee: 0,
+      direction: "debit",
+      kind: "bulk",
+      state: "completed",
+      paymentMethod: "gip",
+      channel: "Internet Banking",
+      profileKind: "RETAIL",
+      category: "Bills",
+    });
+
     setReceiptData({
       referenceId: refId,
       group: savedGroup,
@@ -321,7 +342,9 @@ export default function CreateGroupFlow({
       <PaymentSuccessScreen
         title={groupToEdit ? "Group Updated" : "Group Created"}
         message={`Group “${receiptData.group.name}” with ${receiptData.group.members.length} members is ready for group payments.`}
+        transactionId={receiptData.referenceId}
         receiptRows={receiptRows}
+        onViewReceipt={() => router.push(`/transactions/${receiptData.referenceId}`)}
         onSecondaryAction={handleResetFlow}
         secondaryActionLabel="Create another"
         onPrimaryAction={() => {
@@ -338,7 +361,7 @@ export default function CreateGroupFlow({
           {
             id: "feedback",
             label: "Share Feedback",
-            icon: MessageSquare,
+            icon: Bell,
           },
           {
             id: "pay",
@@ -351,9 +374,12 @@ export default function CreateGroupFlow({
             },
           },
           {
-            id: "download",
-            label: "Download Receipt",
-            icon: ArrowDownToLine,
+            id: "receipt",
+            label: "View Receipt",
+            icon: Receipt,
+            onClick: () => {
+              router.push(`/transactions/${receiptData.referenceId}`);
+            },
           },
         ]}
       />
@@ -438,7 +464,7 @@ export default function CreateGroupFlow({
             <span className="text-[12px] text-muted-foreground">Share</span>
           </div>
 
-          <div className="divide-y divide-border/60 max-h-[280px] overflow-y-auto">
+          <div className="custom-scrollbar divide-y divide-border/60 max-h-[280px] overflow-y-auto">
             {members.map((m) => {
               const share = m.defaultAmount ?? Number(defaultAmount) ?? 0;
               return (
@@ -743,7 +769,10 @@ export default function CreateGroupFlow({
           </div>
 
           {/* Beneficiary Grid: 2 Columns */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[340px] overflow-y-auto pr-1">
+          <div
+            className="custom-scrollbar grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[340px] overflow-y-auto pr-1"
+            style={{ scrollbarGutter: "stable" }}
+          >
             {filteredContacts.map((contact) => {
               const isSelected = members.some((m) =>
                 m.id && contact.id ? m.id === contact.id : m.destination === contact.destination
