@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 interface CreateGroupFlowProps {
   groupToEdit?: PaymentGroup | null;
   onCancel?: () => void;
+  onDone?: (group: PaymentGroup) => void;
   onSuccess?: (group: PaymentGroup) => void;
 }
 
@@ -37,6 +38,7 @@ function initials(name: string) {
 export default function CreateGroupFlow({
   groupToEdit,
   onCancel,
+  onDone,
   onSuccess,
 }: CreateGroupFlowProps) {
   const router = useRouter();
@@ -264,7 +266,6 @@ export default function CreateGroupFlow({
       }),
     });
 
-    onSuccess?.(savedGroup);
     setStage("success");
   };
 
@@ -375,19 +376,33 @@ export default function CreateGroupFlow({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-center gap-3">
           <Button
             variant="outline"
-            className="flex-1 h-11 rounded-lg text-[14px] font-medium border-border"
+            className="w-full sm:flex-1 h-11 rounded-lg text-[14px] font-medium border-border"
             onClick={handleResetFlow}
           >
             Create another
           </Button>
 
           <Button
-            className="flex-1 h-11 rounded-lg text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+            variant="outline"
+            className="w-full sm:flex-1 h-11 rounded-lg text-[14px] font-medium border-border"
             onClick={() => {
-              if (onCancel) onCancel();
+              router.push(
+                `/payments/send?rail=group&group=${encodeURIComponent(receiptData.group.name)}`
+              );
+            }}
+          >
+            Pay group
+          </Button>
+
+          <Button
+            className="w-full sm:flex-1 h-11 rounded-lg text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+            onClick={() => {
+              if (onDone) onDone(receiptData.group);
+              else if (onSuccess) onSuccess(receiptData.group);
+              else if (onCancel) onCancel();
               else router.push("/beneficiaries");
             }}
           >

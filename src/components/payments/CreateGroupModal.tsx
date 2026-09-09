@@ -33,7 +33,7 @@ export default function CreateGroupModal({
         <CreateGroupFlow
           groupToEdit={groupToEdit}
           onCancel={() => onOpenChange(false)}
-          onSuccess={(group) => {
+          onDone={(group) => {
             onSuccess?.(group);
             onOpenChange(false);
           }}

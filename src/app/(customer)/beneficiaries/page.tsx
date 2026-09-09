@@ -661,7 +661,7 @@ export default function BeneficiariesPage() {
             setGroupFlowOpen(false);
             setEditingGroup(null);
           }}
-          onSuccess={(g) => {
+          onDone={(g) => {
             flash(editingGroup ? `Group "${g.name}" updated.` : `Group "${g.name}" created.`);
             setGroupFlowOpen(false);
             setEditingGroup(null);
