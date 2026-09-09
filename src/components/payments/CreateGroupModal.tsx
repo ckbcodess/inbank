@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { X, Search, Check, Smartphone, Landmark, Plus, ChevronDown, ChevronUp } from "lucide-react";
+import { X, Search, Check, Smartphone, Landmark, Plus, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -176,88 +176,161 @@ export default function CreateGroupModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[480px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
+        className="sm:max-w-[720px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
         showCloseButton={false}
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
+        <div className="flex items-center justify-between px-7 py-4.5 border-b border-border/60">
           <div>
-            <DialogTitle className="text-[17px] font-semibold text-foreground tracking-[-0.01em]">
+            <DialogTitle className="text-[18px] font-semibold text-foreground tracking-[-0.01em]">
               {groupToEdit ? "Edit Payment Group" : "Create Payment Group"}
             </DialogTitle>
-            <p className="text-[12.5px] text-muted-foreground mt-0.5">
-              Group recipients for fast, single-click batch payouts.
+            <p className="text-[13px] text-muted-foreground mt-0.5">
+              Combine multiple recipients for fast 1-click batch transfers and contributions.
             </p>
           </div>
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="flex size-7.5 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            className="flex size-8 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             aria-label="Close"
           >
-            <X size={15} strokeWidth={1.8} />
+            <X size={16} strokeWidth={1.8} />
           </button>
         </div>
 
-        {/* Scrollable Form Body */}
-        <div className="flex flex-col gap-5 px-6 py-5 max-h-[72vh] overflow-y-auto">
-          {/* 1. Group Name */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-foreground">
-              Group Name
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Family Susu, Office Lunch, Rent Pool"
-              autoFocus
-              className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all shadow-xs"
-            />
-            {!showDescription ? (
-              <button
-                type="button"
-                onClick={() => setShowDescription(true)}
-                className="self-start text-[11.5px] text-muted-foreground hover:text-foreground transition-colors mt-0.5 cursor-pointer"
-              >
-                + Add description (optional)
-              </button>
-            ) : (
+        {/* Modal Body: Spacious & Airy */}
+        <div className="flex flex-col gap-6 px-7 py-6 max-h-[76vh] overflow-y-auto">
+          {/* Section 1: Group Name & Default Amount (2-Column Grid) */}
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
+            {/* Left: Group Name (7 cols) */}
+            <div className="sm:col-span-7 flex flex-col gap-1.5">
+              <label className="text-[13px] font-medium text-foreground">
+                Group Name
+              </label>
               <input
                 type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Optional group description or notes"
-                className="h-8.5 w-full rounded-lg border border-border/70 bg-background/50 px-3 text-[12.5px] text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-ring transition-all mt-1"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Family Susu, Office Lunch, Rent Pool"
+                autoFocus
+                className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all shadow-xs"
               />
-            )}
-          </div>
-
-          {/* 2. Select Members */}
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <label className="text-[13px] font-medium text-foreground">
-                Recipients
-              </label>
-              <span className={cn(
-                "text-[11.5px] font-medium px-2 py-0.5 rounded-full transition-colors",
-                members.length >= 2
-                  ? "bg-primary/15 text-foreground font-semibold"
-                  : "bg-muted text-muted-foreground"
-              )}>
-                {members.length} {members.length === 1 ? "selected" : "selected"} (min. 2)
-              </span>
+              {!showDescription ? (
+                <button
+                  type="button"
+                  onClick={() => setShowDescription(true)}
+                  className="self-start text-[11.5px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                >
+                  + Add description (optional)
+                </button>
+              ) : (
+                <input
+                  type="text"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Optional purpose, frequency, or notes"
+                  className="h-8.5 w-full rounded-lg border border-border/70 bg-background/50 px-3 text-[12.5px] text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-ring transition-all mt-0.5"
+                />
+              )}
             </div>
 
-            {/* Selected Chips (Horizontal wrap) */}
+            {/* Right: Amount per Member (5 cols) */}
+            <div className="sm:col-span-5 flex flex-col gap-1.5">
+              <div className="flex items-center justify-between">
+                <label className="text-[13px] font-medium text-foreground">
+                  {splitType === "equal" ? "Amount per Member" : "Default Amount"}
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setSplitType(splitType === "equal" ? "custom" : "equal")}
+                  className="text-[11.5px] font-medium text-primary hover:underline cursor-pointer transition-colors"
+                >
+                  {splitType === "equal" ? "Custom splits" : "Equal split"}
+                </button>
+              </div>
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[13px] font-semibold text-muted-foreground">
+                  GHS
+                </span>
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={defaultAmount}
+                  onChange={(e) => setDefaultAmount(e.target.value.replace(/[^0-9.]/g, ""))}
+                  placeholder="200.00"
+                  className="numorainput h-11 w-full rounded-xl border border-border/80 bg-background pl-12 pr-3.5 text-[14px] font-semibold text-foreground outline-none focus:border-ring tabular shadow-xs"
+                />
+              </div>
+              <span className="text-[11.5px] text-muted-foreground tabular">
+                Total Outflow: <span className="font-semibold text-foreground">{formatMoney(totalAmount, "GHS", true)}</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Section 2: Recipients Selection */}
+          <div className="flex flex-col gap-3">
+            {/* Toolbar: Counter on left, Search input on right */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+              <div className="flex items-center gap-2">
+                <span className="text-[13.5px] font-semibold text-foreground">
+                  Recipients
+                </span>
+                <span className={cn(
+                  "text-[11.5px] font-medium px-2 py-0.5 rounded-full transition-colors",
+                  members.length >= 2
+                    ? "bg-primary/15 text-foreground font-semibold"
+                    : "bg-muted text-muted-foreground"
+                )}>
+                  {members.length} selected (min. 2)
+                </span>
+                {members.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setMembers([])}
+                    className="text-[11.5px] text-muted-foreground hover:text-destructive transition-colors ml-1 cursor-pointer"
+                  >
+                    Clear all
+                  </button>
+                )}
+              </div>
+
+              {/* Search Bar */}
+              <div className="relative w-full sm:w-72">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search beneficiaries..."
+                  className="h-9.5 w-full rounded-xl border border-border/70 bg-background pl-8.5 pr-8 text-[12.5px] text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-ring transition-colors"
+                />
+                {search && (
+                  <button
+                    type="button"
+                    onClick={() => setSearch("")}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    <X size={13} />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Selected Chips Strip (Scrollable row) */}
             {members.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 p-2 rounded-xl bg-muted/20 border border-border/60 max-h-[85px] overflow-y-auto">
+              <div className="flex items-center gap-1.5 p-2 rounded-xl bg-muted/25 border border-border/60 overflow-x-auto">
                 {members.map((m) => (
                   <span
                     key={m.id || m.destination}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-background border border-border/80 px-2.5 py-1 text-[12px] font-medium text-foreground shadow-xs animate-in fade-in zoom-in-95 duration-100"
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-background border border-border/80 px-2.5 py-1 text-[12px] font-medium text-foreground shadow-xs animate-in fade-in zoom-in-95 duration-100"
                   >
-                    <span className="truncate max-w-[120px]">{m.name}</span>
+                    <span className="truncate max-w-[130px]">{m.name}</span>
+                    {splitType === "custom" && (
+                      <span className="text-[11px] text-muted-foreground font-mono">
+                        · GHS {m.defaultAmount ?? defaultAmount}
+                      </span>
+                    )}
                     <button
                       type="button"
                       onClick={() => removeMember(m.id || m.destination)}
@@ -271,60 +344,76 @@ export default function CreateGroupModal({
               </div>
             )}
 
-            {/* Contact Search Input */}
-            <div className="relative">
-              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search beneficiaries by name or number..."
-                className="h-10 w-full rounded-xl border border-border/70 bg-background pl-9 pr-3 text-[13px] text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-ring transition-colors"
-              />
-            </div>
+            {/* 2-Column Beneficiaries Grid (Taking Advantage of Real Estate) */}
+            <div className="rounded-xl border border-border/70 bg-muted/10 p-2.5 max-h-[260px] overflow-y-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {filteredContacts.map((c) => {
+                  const isSelected = members.some((m) => (m.id && c.id ? m.id === c.id : m.destination === c.destination));
+                  const selectedMember = members.find((m) => (m.id && c.id ? m.id === c.id : m.destination === c.destination));
 
-            {/* Contact Multi-Select List */}
-            <div className="rounded-xl border border-border/70 bg-card max-h-[170px] overflow-y-auto divide-y divide-border/40">
-              {filteredContacts.map((c) => {
-                const isSelected = members.some((m) => (m.id && c.id ? m.id === c.id : m.destination === c.destination));
-                return (
-                  <div
-                    key={c.id || c.destination}
-                    onClick={() => toggleMember(c)}
-                    className={cn(
-                      "flex items-center justify-between gap-3 px-3 py-2 text-[12.5px] cursor-pointer select-none transition-colors",
-                      isSelected ? "bg-primary/10 text-foreground font-medium" : "hover:bg-muted/40 text-foreground/80"
-                    )}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span className={cn(
-                        "flex size-7 shrink-0 items-center justify-center rounded-lg text-[11px] transition-colors",
-                        isSelected ? "bg-primary text-primary-foreground font-semibold" : "bg-muted text-muted-foreground"
-                      )}>
-                        {c.type === "wallet" ? <Smartphone size={13} /> : <Landmark size={13} />}
-                      </span>
-                      <div className="min-w-0">
-                        <div className="font-medium text-foreground truncate">{c.name}</div>
-                        <div className="text-[11px] text-muted-foreground tabular truncate">
-                          {c.networkOrBank} · {c.destination}
+                  return (
+                    <div
+                      key={c.id || c.destination}
+                      onClick={() => toggleMember(c)}
+                      className={cn(
+                        "flex items-center justify-between gap-3 p-2.5 rounded-xl border transition-all cursor-pointer select-none",
+                        isSelected
+                          ? "border-primary/50 bg-primary/10 shadow-xs"
+                          : "border-border/60 bg-card hover:bg-muted/40 hover:border-border/90"
+                      )}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                        <span className={cn(
+                          "flex size-8 shrink-0 items-center justify-center rounded-lg text-[12px] transition-colors",
+                          isSelected
+                            ? "bg-primary text-primary-foreground font-semibold"
+                            : "bg-muted text-muted-foreground"
+                        )}>
+                          {c.type === "wallet" ? <Smartphone size={14} /> : <Landmark size={14} />}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[13px] font-medium text-foreground truncate">{c.name}</div>
+                          <div className="text-[11px] text-muted-foreground tabular truncate">
+                            {c.networkOrBank} · {c.destination}
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <span className={cn(
-                      "flex size-5 shrink-0 items-center justify-center rounded-full border transition-all",
-                      isSelected
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border/80 text-transparent"
-                    )}>
-                      {isSelected && <Check size={11} strokeWidth={3} />}
-                    </span>
-                  </div>
-                );
-              })}
+                      {/* Right: Check indicator or custom amount input */}
+                      {splitType === "custom" && isSelected ? (
+                        <div
+                          className="relative w-24 shrink-0"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-muted-foreground">
+                            GHS
+                          </span>
+                          <input
+                            type="text"
+                            inputMode="decimal"
+                            value={String(selectedMember?.defaultAmount ?? defaultAmount)}
+                            onChange={(e) => updateMemberAmount(c.id || c.destination, e.target.value)}
+                            className="numorainput h-7 w-full rounded-md border border-border/80 bg-background pl-8 pr-1.5 text-right text-[11.5px] font-medium tabular outline-none focus:border-ring"
+                          />
+                        </div>
+                      ) : (
+                        <span className={cn(
+                          "flex size-5 shrink-0 items-center justify-center rounded-full border transition-all",
+                          isSelected
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border/80 text-transparent"
+                        )}>
+                          {isSelected && <Check size={11} strokeWidth={3} />}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
               {filteredContacts.length === 0 && (
-                <div className="py-6 text-center text-[12px] text-muted-foreground">
-                  No contacts found
+                <div className="py-10 text-center text-[12.5px] text-muted-foreground">
+                  No beneficiaries found matching &ldquo;{search}&rdquo;
                 </div>
               )}
             </div>
@@ -334,30 +423,30 @@ export default function CreateGroupModal({
               <button
                 type="button"
                 onClick={() => setShowManualAdd(true)}
-                className="self-start text-[12px] text-muted-foreground hover:text-foreground font-medium flex items-center gap-1 cursor-pointer transition-colors"
+                className="self-start text-[12px] text-muted-foreground hover:text-foreground font-medium flex items-center gap-1.5 cursor-pointer transition-colors py-0.5"
               >
                 <Plus size={13} strokeWidth={2.2} />
-                <span>Add unlisted number</span>
+                <span>Add recipient not in saved beneficiaries</span>
               </button>
             ) : (
-              <div className="flex flex-col gap-2 p-3 rounded-xl border border-border/70 bg-muted/20 animate-in fade-in duration-150">
+              <div className="flex flex-col gap-2.5 p-3.5 rounded-xl border border-border/70 bg-muted/20 animate-in fade-in duration-150">
                 <div className="flex items-center justify-between">
-                  <span className="text-[12px] font-medium text-foreground">Add Unlisted Recipient</span>
+                  <span className="text-[12.5px] font-semibold text-foreground">Add Unlisted Recipient</span>
                   <button
                     type="button"
                     onClick={() => setShowManualAdd(false)}
-                    className="text-[11px] text-muted-foreground hover:text-foreground"
+                    className="text-[11.5px] text-muted-foreground hover:text-foreground cursor-pointer"
                   >
                     Cancel
                   </button>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
                   <input
                     type="text"
                     value={customName}
                     onChange={(e) => setCustomName(e.target.value)}
-                    placeholder="Full name"
-                    className="h-8.5 rounded-lg border border-border/80 bg-background px-2.5 text-[12.5px] outline-none focus:border-ring"
+                    placeholder="Recipient full name"
+                    className="sm:col-span-5 h-9 rounded-lg border border-border/80 bg-background px-3 text-[12.5px] outline-none focus:border-ring"
                   />
                   <input
                     type="text"
@@ -365,16 +454,27 @@ export default function CreateGroupModal({
                     value={customDest}
                     onChange={(e) => setCustomDest(e.target.value.replace(/[^0-9]/g, ""))}
                     placeholder="Phone or account number"
-                    className="numorainput h-8.5 rounded-lg border border-border/80 bg-background px-2.5 text-[12.5px] outline-none focus:border-ring tabular"
+                    className="numorainput sm:col-span-5 h-9 rounded-lg border border-border/80 bg-background px-3 text-[12.5px] outline-none focus:border-ring tabular"
                   />
+                  <div className="sm:col-span-2 flex items-center justify-end">
+                    <Button
+                      size="sm"
+                      onClick={addManualMember}
+                      disabled={!customName.trim() || !customDest.trim()}
+                      className="h-9 w-full text-[12px] font-medium"
+                    >
+                      Add
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between pt-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-[11.5px] text-muted-foreground">Type:</span>
                   <div className="flex items-center rounded-lg bg-muted p-0.5 border border-border/50 text-[11px]">
                     <button
                       type="button"
                       onClick={() => setCustomType("wallet")}
                       className={cn(
-                        "px-2.5 py-0.5 rounded-md font-medium transition-colors",
+                        "px-2.5 py-0.5 rounded-md font-medium transition-colors cursor-pointer",
                         customType === "wallet" ? "bg-background text-foreground shadow-xs" : "text-muted-foreground"
                       )}
                     >
@@ -384,105 +484,49 @@ export default function CreateGroupModal({
                       type="button"
                       onClick={() => setCustomType("bank")}
                       className={cn(
-                        "px-2.5 py-0.5 rounded-md font-medium transition-colors",
+                        "px-2.5 py-0.5 rounded-md font-medium transition-colors cursor-pointer",
                         customType === "bank" ? "bg-background text-foreground shadow-xs" : "text-muted-foreground"
                       )}
                     >
                       Bank
                     </button>
                   </div>
-                  <Button
-                    size="xs"
-                    onClick={addManualMember}
-                    disabled={!customName.trim() || !customDest.trim()}
-                    className="h-7 text-[11.5px] px-3 font-medium"
-                  >
-                    Add
-                  </Button>
                 </div>
               </div>
             )}
           </div>
-
-          {/* 3. Payout Amount */}
-          <div className="flex flex-col gap-2 p-3.5 rounded-xl border border-border/70 bg-muted/15">
-            <div className="flex items-center justify-between">
-              <label className="text-[13px] font-medium text-foreground">
-                {splitType === "equal" ? "Amount per Member" : "Default Amount"}
-              </label>
-              <button
-                type="button"
-                onClick={() => setSplitType(splitType === "equal" ? "custom" : "equal")}
-                className="text-[11.5px] font-medium text-primary hover:underline cursor-pointer transition-colors"
-              >
-                {splitType === "equal" ? "Customize individual amounts" : "Switch to equal split"}
-              </button>
-            </div>
-
-            {splitType === "equal" ? (
-              <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[13px] font-semibold text-muted-foreground">
-                  GHS
-                </span>
-                <input
-                  type="text"
-                  inputMode="decimal"
-                  value={defaultAmount}
-                  onChange={(e) => setDefaultAmount(e.target.value.replace(/[^0-9.]/g, ""))}
-                  placeholder="200.00"
-                  className="numorainput h-10 w-full rounded-xl border border-border/80 bg-background pl-12 pr-3.5 text-[14px] font-medium text-foreground outline-none focus:border-ring tabular"
-                />
-              </div>
-            ) : (
-              <div className="flex flex-col gap-1.5 max-h-[140px] overflow-y-auto pr-1">
-                {members.map((m) => (
-                  <div key={m.id || m.destination} className="flex items-center justify-between gap-3 text-[12px]">
-                    <span className="truncate flex-1 font-medium text-foreground">{m.name}</span>
-                    <div className="relative w-28">
-                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-muted-foreground">
-                        GHS
-                      </span>
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        value={String(m.defaultAmount ?? defaultAmount)}
-                        onChange={(e) => updateMemberAmount(m.id || m.destination, e.target.value)}
-                        className="numorainput h-7.5 w-full rounded-lg border border-border/80 bg-background pl-8 pr-2 text-right text-[12.5px] font-medium tabular outline-none focus:border-ring"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Total Summary */}
-            <div className="flex items-center justify-between pt-1 border-t border-border/50 text-[12px] text-muted-foreground">
-              <span>Total Outflow ({members.length} {members.length === 1 ? "member" : "members"}):</span>
-              <span className="font-semibold text-foreground tabular text-[13px]">
-                {formatMoney(totalAmount, "GHS", true)}
-              </span>
-            </div>
-          </div>
         </div>
 
-        {/* Modal Action Bar */}
-        <div className="flex items-center justify-end gap-2.5 px-6 py-3.5 border-t border-border/60 bg-muted/10">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onOpenChange(false)}
-            className="h-10 px-4 text-[13px] font-medium"
-          >
-            Cancel
-          </Button>
-          <Button
-            size="sm"
-            onClick={handleSave}
-            disabled={!canSave}
-            className="h-10 px-5 text-[13px] font-semibold rounded-xl"
-          >
-            {groupToEdit ? "Save Changes" : `Create Group ${members.length > 0 ? `(${members.length})` : ""}`}
-          </Button>
+        {/* Modal Action Bar (Spacious & Clean) */}
+        <div className="flex items-center justify-between px-7 py-4 border-t border-border/60 bg-muted/15">
+          <div className="flex items-center gap-2">
+            <span className="text-[13px] text-muted-foreground">Total Payout:</span>
+            <span className="text-[16px] font-semibold text-foreground tabular">
+              {formatMoney(totalAmount, "GHS", true)}
+            </span>
+            <span className="text-[12px] text-muted-foreground">
+              ({members.length} {members.length === 1 ? "recipient" : "recipients"})
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2.5">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onOpenChange(false)}
+              className="h-10 px-4 text-[13px] font-medium"
+            >
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleSave}
+              disabled={!canSave}
+              className="h-10 px-6 text-[13px] font-semibold rounded-xl shadow-xs"
+            >
+              {groupToEdit ? "Save Changes" : `Create Group ${members.length > 0 ? `(${members.length})` : ""}`}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
