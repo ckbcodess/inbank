@@ -56,6 +56,7 @@ import { useGroupsStore } from "@/lib/groups-store";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import { useSession } from "@/lib/session-store";
 import { roundMoney, sumMoney } from "@/lib/money";
+import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
 import TransactionPinModal from "./TransactionPinModal";
 import { REGISTERED_PHONE, useAuthorisation } from "./useAuthorisation";
 import { OwnAccountFlow } from "./flows/OwnAccountFlow";
@@ -2088,90 +2089,72 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     );
   }
 
-  // Success Receipt View
+  // Success Receipt View (Figma Node 1367:33535)
   if (phase === "success" && receipt) {
     return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 py-4 animate-in fade-in duration-200">
-        <div className="flex flex-col items-center text-center">
-          <span className="flex size-14 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 mb-3">
-            <CheckCircle2 size={32} strokeWidth={2.2} />
-          </span>
-          <h1 className="text-[24px] font-medium text-foreground">{receipt.title}</h1>
-          <p className="mt-1 text-[14px] text-muted-foreground">{receipt.msg}</p>
-        </div>
-
-        <div className="flex flex-col divide-y divide-border rounded-2xl border border-border bg-card p-5 text-[13.5px]">
-          {receipt.rows.map(([label, val]) => (
-            <div key={label} className="flex items-center justify-between py-2.5">
-              <span className="text-muted-foreground">{label}</span>
-              <span className="font-medium text-foreground text-right">{val}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            className="flex-1"
-            onClick={() => {
-              setPhase("form");
-              setStage(1);
-              setMaxRevealedStage(1);
-              setBankCategory(null);
-              setWalletCategory(null);
-              setBillCategory(null);
-              setF((p) => ({
-                ...p,
-                toOwnAccountId: "",
-                benName: "",
-                benAcct: "",
-                bank: "",
-                bankAmount: "",
-                bankRef: "",
-                wPhone: "",
-                wName: "",
-                wNetwork: "",
-                wAmount: "",
-                wRef: "",
-                pxId: "",
-                pxAmount: "",
-                pxRef: "",
-                groupName: "",
-                grpAmount: "",
-                grpRef: "",
-                aPhone: "",
-                airtimeAmount: "",
-                bundleId: "",
-                cardId: "",
-                cardAmount: "",
-                ecgMeter: "",
-                ecgAmount: "",
-                billerId: "",
-                billRef: "",
-                billAmount: "",
-                govService: "",
-                govRef: "",
-                govAmount: "",
-                qrAmount: "",
-                qrRef: "",
-                wBenName: "",
-                wIban: "",
-                wSwift: "",
-                wBank: "",
-                wCountry: "",
-                wForeign: "",
-                wireRef: "",
-              }));
-              auth.reset();
-            }}
-          >
-            Send another
-          </Button>
-          <Button className="flex-1" onClick={() => router.push("/payments")}>
-            Done
-          </Button>
-        </div>
-      </div>
+      <PaymentSuccessScreen
+        title={receipt.title}
+        message={receipt.msg}
+        receiptRows={receipt.rows}
+        onSecondaryAction={() => {
+          setPhase("form");
+          setStage(1);
+          setMaxRevealedStage(1);
+          setBankCategory(null);
+          setWalletCategory(null);
+          setBillCategory(null);
+          setF((p) => ({
+            ...p,
+            toOwnAccountId: "",
+            benName: "",
+            benAcct: "",
+            bank: "",
+            bankAmount: "",
+            bankRef: "",
+            wPhone: "",
+            wName: "",
+            wNetwork: "",
+            wAmount: "",
+            wRef: "",
+            pxId: "",
+            pxAmount: "",
+            pxRef: "",
+            groupName: "",
+            grpAmount: "",
+            grpRef: "",
+            aPhone: "",
+            airtimeAmount: "",
+            bundleId: "",
+            cardId: "",
+            cardAmount: "",
+            ecgMeter: "",
+            ecgAmount: "",
+            billerId: "",
+            billRef: "",
+            billAmount: "",
+            govService: "",
+            govRef: "",
+            govAmount: "",
+            qrAmount: "",
+            qrRef: "",
+            wBenName: "",
+            wIban: "",
+            wSwift: "",
+            wBank: "",
+            wCountry: "",
+            wForeign: "",
+            wireRef: "",
+          }));
+          auth.reset();
+        }}
+        secondaryActionLabel="Send another"
+        onPrimaryAction={() => router.push("/payments")}
+        primaryActionLabel="Back to Overview"
+        showSaveBeneficiary={true}
+        initialSaveBeneficiary={f.saveBeneficiary}
+        onSaveBeneficiaryChange={(saved) => set("saveBeneficiary", saved)}
+        onSchedulePayment={() => router.push("/payments/standing/new")}
+      />
     );
   }
 

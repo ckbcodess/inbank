@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Search, Check, CheckCircle2 } from "lucide-react";
+import { ChevronLeft, Search, Check, CheckCircle2, Users, MessageSquare, Receipt } from "lucide-react";
 import { useGroupsStore, type PaymentGroup, type GroupMember } from "@/lib/groups-store";
 import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
 import { formatMoney } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { ProceedButton } from "@/components/payments/flows/shared";
 import TransactionPinModal from "@/components/payments/TransactionPinModal";
+import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { cn } from "@/lib/utils";
 
 interface CreateGroupFlowProps {
@@ -296,120 +297,66 @@ export default function CreateGroupFlow({
   };
 
   // ──────────────────────────────────────────────────────────────────────────
-  // STAGE 3: SUCCESS RECEIPT SCREEN (Normalized to PaymentFlow.tsx)
+  // STAGE 3: SUCCESS RECEIPT SCREEN (1:1 Figma Node 1367:33535)
   // ──────────────────────────────────────────────────────────────────────────
   if (stage === "success" && receiptData) {
+    const receiptRows: Array<[string, React.ReactNode]> = [
+      ["Reference ID", receiptData.referenceId],
+      ["Group Name", receiptData.group.name],
+      ...(receiptData.group.description ? [["Description", receiptData.group.description] as [string, React.ReactNode]] : []),
+      ["Split Type", receiptData.group.splitType === "equal" ? "Equal Split" : "Custom Split"],
+      ["Total Members", `${receiptData.group.members.length} members`],
+      [
+        "Amount per Member",
+        receiptData.group.splitType === "equal"
+          ? formatMoney(receiptData.group.defaultPerMemberAmount, "GHS", true)
+          : "Custom per member",
+      ],
+      ["Total Outflow", formatMoney(receiptData.totalAmount, "GHS", true)],
+      ["Status", "Active"],
+      ["Date & Time", receiptData.createdAt],
+    ];
+
     return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 py-4 animate-in fade-in duration-200">
-        <div className="flex flex-col items-center text-center">
-          <span className="flex size-14 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 mb-3">
-            <CheckCircle2 size={32} strokeWidth={2.2} />
-          </span>
-          <h1 className="text-[24px] font-medium text-foreground">
-            {groupToEdit ? "Group Updated Successfully" : "Group Created Successfully"}
-          </h1>
-          <p className="mt-1 text-[14px] text-muted-foreground">
-            Group “{receiptData.group.name}” is ready for group payments.
-          </p>
-        </div>
-
-        {/* Structured Receipt Card */}
-        <div className="flex flex-col divide-y divide-border rounded-2xl border border-border bg-card p-5 text-[13.5px]">
-          <div className="flex items-center justify-between py-2.5">
-            <span className="text-muted-foreground">Reference ID</span>
-            <span className="font-medium text-foreground tabular">{receiptData.referenceId}</span>
-          </div>
-
-          <div className="flex items-center justify-between py-2.5">
-            <span className="text-muted-foreground">Group Name</span>
-            <span className="font-medium text-foreground">{receiptData.group.name}</span>
-          </div>
-
-          {receiptData.group.description && (
-            <div className="flex items-center justify-between py-2.5">
-              <span className="text-muted-foreground">Description</span>
-              <span className="font-medium text-foreground text-right max-w-[280px] truncate">
-                {receiptData.group.description}
-              </span>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between py-2.5">
-            <span className="text-muted-foreground">Split Type</span>
-            <span className="font-medium text-foreground capitalize">
-              {receiptData.group.splitType === "equal" ? "Equal Split" : "Custom Split"}
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between py-2.5">
-            <span className="text-muted-foreground">Total Members</span>
-            <span className="font-medium text-foreground tabular">
-              {receiptData.group.members.length} members
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between py-2.5">
-            <span className="text-muted-foreground">Amount per Member</span>
-            <span className="font-medium text-foreground tabular">
-              {receiptData.group.splitType === "equal"
-                ? formatMoney(receiptData.group.defaultPerMemberAmount, "GHS", true)
-                : "Custom per member"}
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between py-2.5">
-            <span className="text-muted-foreground">Total Outflow</span>
-            <span className="font-semibold text-foreground tabular">
-              {formatMoney(receiptData.totalAmount, "GHS", true)}
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between py-2.5">
-            <span className="text-muted-foreground">Status</span>
-            <span className="font-medium text-emerald-600 dark:text-emerald-400">Active</span>
-          </div>
-
-          <div className="flex items-center justify-between py-2.5">
-            <span className="text-muted-foreground">Date & Time</span>
-            <span className="font-medium text-foreground tabular">{receiptData.createdAt}</span>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row items-center gap-3">
-          <Button
-            variant="outline"
-            className="w-full sm:flex-1 h-11 rounded-lg text-[14px] font-medium border-border"
-            onClick={handleResetFlow}
-          >
-            Create another
-          </Button>
-
-          <Button
-            variant="outline"
-            className="w-full sm:flex-1 h-11 rounded-lg text-[14px] font-medium border-border"
-            onClick={() => {
+      <PaymentSuccessScreen
+        title={groupToEdit ? "Group Updated" : "Group Created"}
+        message={`Group “${receiptData.group.name}” with ${receiptData.group.members.length} members is ready for group payments.`}
+        receiptRows={receiptRows}
+        onSecondaryAction={handleResetFlow}
+        secondaryActionLabel="Create another"
+        onPrimaryAction={() => {
+          if (onDone) onDone(receiptData.group);
+          else if (onSuccess) onSuccess(receiptData.group);
+          else if (onCancel) onCancel();
+          else router.push("/beneficiaries");
+        }}
+        primaryActionLabel="Back to Overview"
+        showSaveBeneficiary={true}
+        saveBeneficiaryLabel="Save as favourite group?"
+        initialSaveBeneficiary={true}
+        customActionCards={[
+          {
+            id: "feedback",
+            label: "Share Feedback",
+            icon: MessageSquare,
+          },
+          {
+            id: "pay",
+            label: "Pay Group",
+            icon: Users,
+            onClick: () => {
               router.push(
                 `/payments/send?rail=group&group=${encodeURIComponent(receiptData.group.name)}`
               );
-            }}
-          >
-            Pay group
-          </Button>
-
-          <Button
-            className="w-full sm:flex-1 h-11 rounded-lg text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
-            onClick={() => {
-              if (onDone) onDone(receiptData.group);
-              else if (onSuccess) onSuccess(receiptData.group);
-              else if (onCancel) onCancel();
-              else router.push("/beneficiaries");
-            }}
-          >
-            Done
-          </Button>
-        </div>
-      </div>
+            },
+          },
+          {
+            id: "receipt",
+            label: "View Receipt",
+            icon: Receipt,
+          },
+        ]}
+      />
     );
   }
 

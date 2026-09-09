@@ -49,6 +49,7 @@ import {
 import { useGroupsStore } from "@/lib/groups-store";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import { useSession } from "@/lib/session-store";
+import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
 import TransactionPinModal from "./TransactionPinModal";
 import { useAuthorisation } from "./useAuthorisation";
 import {
@@ -552,71 +553,31 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   }
 
   /* =========================================================================
-   * SCREEN 2: Success Confirmation Receipt
+   * SCREEN 2: Success Confirmation Receipt (1:1 Figma Node 1367:33535)
    * ========================================================================= */
   if (screen === "success") {
+    const receiptRows: Array<[string, React.ReactNode]> = [
+      ["Reference ID", createdId],
+      ["Beneficiary", resolvedName || f.destination || f.proxyId || f.groupName],
+      ["Schedule Frequency", `${f.frequency} · First run ${formatDate(f.firstRun)}`],
+      ["Debit Account", `${fromAccount?.name} (•••${fromAccount?.number.slice(-4)})`],
+      ["Total per Execution", formatMoney(totalPerCycle, "GHS", true)],
+    ];
+
     return (
-      <div className="mx-auto flex max-w-[480px] flex-col items-center gap-6 py-6 text-center animate-in fade-in zoom-in-95 duration-200 ease-out">
-        <span className="flex size-14 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-          <CheckCircle2 size={30} strokeWidth={2.1} />
-        </span>
-
-        <div className="flex flex-col gap-1">
-          <h1 className="text-[22px] font-semibold text-foreground tracking-tight">
-            Standing Order Scheduled
-          </h1>
-          <p className="text-[13.5px] text-muted-foreground">
-            &ldquo;{f.nickname}&rdquo; will execute {f.frequency.toLowerCase()} for{" "}
-            <strong className="text-foreground">{formatMoney(numAmount, "GHS", true)}</strong>.
-          </p>
-        </div>
-
-        <div className="flex w-full flex-col divide-y divide-border/80 rounded-2xl border border-border/80 bg-card p-4.5 text-[13.5px] text-left shadow-xs">
-          <div className="flex items-center justify-between pb-2.5">
-            <span className="text-muted-foreground">Reference ID</span>
-            <span className="tabular font-mono text-foreground font-medium">{createdId}</span>
-          </div>
-          <div className="flex items-center justify-between py-2.5">
-            <span className="text-muted-foreground">Beneficiary</span>
-            <span className="font-medium text-foreground">
-              {resolvedName || f.destination || f.proxyId || f.groupName}
-            </span>
-          </div>
-          <div className="flex items-center justify-between py-2.5">
-            <span className="text-muted-foreground">Schedule Frequency</span>
-            <span className="text-foreground font-medium">
-              {f.frequency} · First run <span className="tabular">{formatDate(f.firstRun)}</span>
-            </span>
-          </div>
-          <div className="flex items-center justify-between py-2.5">
-            <span className="text-muted-foreground">Debit Account</span>
-            <span className="text-foreground font-medium">
-              {fromAccount?.name} (•••{fromAccount?.number.slice(-4)})
-            </span>
-          </div>
-          <div className="flex items-center justify-between pt-2.5">
-            <span className="text-muted-foreground">Total per Execution</span>
-            <span className="text-foreground font-semibold tabular">
-              {formatMoney(totalPerCycle, "GHS", true)}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex w-full gap-3">
-          <Button variant="outline" className="flex-1 h-12 rounded-xl" onClick={resetAll}>
-            Create Another
-          </Button>
-          <Button
-            className="flex-1 h-12 rounded-xl bg-primary text-primary-foreground font-medium"
-            onClick={() => {
-              if (onDone) onDone();
-              else router.push("/payments/standing");
-            }}
-          >
-            Done
-          </Button>
-        </div>
-      </div>
+      <PaymentSuccessScreen
+        title="Standing Order Scheduled"
+        message={`“${f.nickname}” will execute ${f.frequency.toLowerCase()} for ${formatMoney(numAmount, "GHS", true)}.`}
+        receiptRows={receiptRows}
+        onSecondaryAction={resetAll}
+        secondaryActionLabel="Create another"
+        onPrimaryAction={() => {
+          if (onDone) onDone();
+          else router.push("/payments/standing");
+        }}
+        primaryActionLabel="Back to Overview"
+        showSaveBeneficiary={false}
+      />
     );
   }
 

@@ -2,10 +2,10 @@
 
 import { Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { CheckCircle2 } from "lucide-react";
+import { Users, MessageSquare, Receipt } from "lucide-react";
 import { useGroupsStore } from "@/lib/groups-store";
 import { formatMoney } from "@/lib/mock-data";
-import { Button } from "@/components/ui/button";
+import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 
 function SuccessContent() {
   const router = useRouter();
@@ -40,112 +40,56 @@ function SuccessContent() {
     minute: "2-digit",
   });
 
+  const receiptRows: Array<[string, React.ReactNode]> = [
+    ["Reference ID", queryRef],
+    ["Group Name", groupName],
+    ...(group?.description ? [["Description", group.description] as [string, React.ReactNode]] : []),
+    ["Split Type", splitType === "equal" ? "Equal Split" : "Custom Split"],
+    ["Total Members", `${memberCount} members`],
+    [
+      "Amount per Member",
+      splitType === "equal" ? formatMoney(defaultAmount, "GHS", true) : "Custom per member",
+    ],
+    ["Total Outflow", formatMoney(totalAmount, "GHS", true)],
+    ["Status", "Active"],
+    ["Date & Time", createdAt],
+  ];
+
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 py-6 animate-in fade-in duration-200">
-      <div className="flex flex-col items-center text-center">
-        <span className="flex size-14 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 mb-3">
-          <CheckCircle2 size={32} strokeWidth={2.2} />
-        </span>
-        <h1 className="text-[24px] font-medium text-foreground">
-          Group Created Successfully
-        </h1>
-        <p className="mt-1 text-[14px] text-muted-foreground">
-          Group “{groupName}” is ready for group payments.
-        </p>
-      </div>
-
-      {/* Structured Receipt Card */}
-      <div className="flex flex-col divide-y divide-border rounded-2xl border border-border bg-card p-5 text-[13.5px]">
-        <div className="flex items-center justify-between py-2.5">
-          <span className="text-muted-foreground">Reference ID</span>
-          <span className="font-medium text-foreground tabular">{queryRef}</span>
-        </div>
-
-        <div className="flex items-center justify-between py-2.5">
-          <span className="text-muted-foreground">Group Name</span>
-          <span className="font-medium text-foreground">{groupName}</span>
-        </div>
-
-        {group?.description && (
-          <div className="flex items-center justify-between py-2.5">
-            <span className="text-muted-foreground">Description</span>
-            <span className="font-medium text-foreground text-right max-w-[280px] truncate">
-              {group.description}
-            </span>
-          </div>
-        )}
-
-        <div className="flex items-center justify-between py-2.5">
-          <span className="text-muted-foreground">Split Type</span>
-          <span className="font-medium text-foreground capitalize">
-            {splitType === "equal" ? "Equal Split" : "Custom Split"}
-          </span>
-        </div>
-
-        <div className="flex items-center justify-between py-2.5">
-          <span className="text-muted-foreground">Total Members</span>
-          <span className="font-medium text-foreground tabular">
-            {memberCount} members
-          </span>
-        </div>
-
-        <div className="flex items-center justify-between py-2.5">
-          <span className="text-muted-foreground">Amount per Member</span>
-          <span className="font-medium text-foreground tabular">
-            {splitType === "equal"
-              ? formatMoney(defaultAmount, "GHS", true)
-              : "Custom per member"}
-          </span>
-        </div>
-
-        <div className="flex items-center justify-between py-2.5">
-          <span className="text-muted-foreground">Total Outflow</span>
-          <span className="font-semibold text-foreground tabular">
-            {formatMoney(totalAmount, "GHS", true)}
-          </span>
-        </div>
-
-        <div className="flex items-center justify-between py-2.5">
-          <span className="text-muted-foreground">Status</span>
-          <span className="font-medium text-emerald-600 dark:text-emerald-400">Active</span>
-        </div>
-
-        <div className="flex items-center justify-between py-2.5">
-          <span className="text-muted-foreground">Date & Time</span>
-          <span className="font-medium text-foreground tabular">{createdAt}</span>
-        </div>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row items-center gap-3">
-        <Button
-          variant="outline"
-          className="w-full sm:flex-1 h-11 rounded-lg text-[14px] font-medium border-border"
-          onClick={() => router.push("/payments/groups/new")}
-        >
-          Create another
-        </Button>
-
-        <Button
-          variant="outline"
-          className="w-full sm:flex-1 h-11 rounded-lg text-[14px] font-medium border-border"
-          onClick={() => {
+    <PaymentSuccessScreen
+      title="Group Created"
+      message={`Group “${groupName}” with ${memberCount} members is ready for group payments.`}
+      receiptRows={receiptRows}
+      onSecondaryAction={() => router.push("/payments/groups/new")}
+      secondaryActionLabel="Create another"
+      onPrimaryAction={() => router.push("/beneficiaries")}
+      primaryActionLabel="Back to Overview"
+      showSaveBeneficiary={true}
+      saveBeneficiaryLabel="Save as favourite group?"
+      initialSaveBeneficiary={true}
+      customActionCards={[
+        {
+          id: "feedback",
+          label: "Share Feedback",
+          icon: MessageSquare,
+        },
+        {
+          id: "pay",
+          label: "Pay Group",
+          icon: Users,
+          onClick: () => {
             router.push(
               `/payments/send?rail=group&group=${encodeURIComponent(groupName)}`
             );
-          }}
-        >
-          Pay group
-        </Button>
-
-        <Button
-          className="w-full sm:flex-1 h-11 rounded-lg text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
-          onClick={() => router.push("/beneficiaries")}
-        >
-          Done
-        </Button>
-      </div>
-    </div>
+          },
+        },
+        {
+          id: "receipt",
+          label: "View Receipt",
+          icon: Receipt,
+        },
+      ]}
+    />
   );
 }
 
