@@ -58,7 +58,7 @@ import {
 } from "@/lib/beneficiaries-store";
 import { useGroupsStore, type PaymentGroup } from "@/lib/groups-store";
 import { useSession } from "@/lib/session-store";
-import CreateGroupModal from "@/components/payments/CreateGroupModal";
+import CreateGroupFlow from "@/components/payments/CreateGroupFlow";
 import { cn } from "@/lib/utils";
 
 type ActiveTab = "people" | "billers" | "groups";
@@ -212,7 +212,7 @@ export default function BeneficiariesPage() {
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [removeId, setRemoveId] = useState<string | null>(null);
 
-  const [groupModalOpen, setGroupModalOpen] = useState(false);
+  const [groupFlowOpen, setGroupFlowOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<PaymentGroup | null>(null);
   const [removeGroupId, setRemoveGroupId] = useState<string | null>(null);
 
@@ -596,7 +596,7 @@ export default function BeneficiariesPage() {
                 size="icon-xs"
                 onClick={() => {
                   setEditingGroup(g);
-                  setGroupModalOpen(true);
+                  setGroupFlowOpen(true);
                 }}
                 aria-label={`Edit ${g.name}`}
                 className="size-7.5 rounded-lg text-muted-foreground hover:text-foreground"
@@ -652,6 +652,25 @@ export default function BeneficiariesPage() {
 
   const activeRailList = activeTab === "people" ? PEOPLE_TYPES : BILLER_TYPES;
 
+  if (groupFlowOpen) {
+    return (
+      <div className="py-2 animate-in fade-in duration-200">
+        <CreateGroupFlow
+          groupToEdit={editingGroup}
+          onCancel={() => {
+            setGroupFlowOpen(false);
+            setEditingGroup(null);
+          }}
+          onSuccess={(g) => {
+            flash(editingGroup ? `Group "${g.name}" updated.` : `Group "${g.name}" created.`);
+            setGroupFlowOpen(false);
+            setEditingGroup(null);
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
       {/* Header matching Figma */}
@@ -664,7 +683,7 @@ export default function BeneficiariesPage() {
               variant="outline"
               onClick={() => {
                 setEditingGroup(null);
-                setGroupModalOpen(true);
+                setGroupFlowOpen(true);
               }}
               className="h-9 gap-1.5 px-3.5 text-[13px] font-medium border-border/80 bg-card hover:bg-muted/50 rounded-lg shadow-xs"
             >
@@ -1007,7 +1026,7 @@ export default function BeneficiariesPage() {
                     size="sm"
                     onClick={() => {
                       setEditingGroup(null);
-                      setGroupModalOpen(true);
+                      setGroupFlowOpen(true);
                     }}
                     className="font-medium"
                   >
@@ -1342,16 +1361,6 @@ export default function BeneficiariesPage() {
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* ── Create / Edit Group Modal ──────────────────────────────────── */}
-      <CreateGroupModal
-        open={groupModalOpen}
-        onOpenChange={setGroupModalOpen}
-        groupToEdit={editingGroup}
-        onSuccess={(g) => {
-          flash(editingGroup ? `Group "${g.name}" updated.` : `Group "${g.name}" created.`);
-        }}
-      />
 
       {/* ── Delete Confirmation Dialogs (Clean & Borderless) ───────────── */}
       <Dialog open={Boolean(removeId)} onOpenChange={(o) => !o && setRemoveId(null)}>
