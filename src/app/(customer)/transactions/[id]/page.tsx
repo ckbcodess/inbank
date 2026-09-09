@@ -4,13 +4,14 @@
  * Transaction Details — styled like the Review / Receipt screen matching Figma & mobile specs.
  *
  * Implements:
- * - Centered receipt card layout with GCB brand logo and elevated status checkmark.
+ * - Review-style navigation header with Back button next to the title (no clipping, no bottom sheet handles).
+ * - Receipt card layout with GCB brand logo and elevated status checkmark (unclipped, relative overflow-visible).
  * - Structured key-value rows separated by dashed dividers:
  *   • Block 1: Transaction ID, Date, Time, Status.
  *   • Block 2: Recipient Name, Narration, From Account, Category.
  *   • Block 3: Send Amount, Receive Amount, Exchange Rate, Fee, Total.
- * - Scalloped perforated ticket receipt bottom edge.
- * - Circular action buttons: Share and Repeat (with Download PDF option).
+ * - Scalloped perforated ticket receipt bottom edge (self-contained overflow).
+ * - Circular action buttons: Share and Repeat (with Download PDF receipt option).
  * - Failure state bands (13.2 recovery affordances: failed-single, failed-bulk, failed-trade, reversed).
  * - StateSwitcher tool at bottom for testing all 8 states.
  */
@@ -23,7 +24,7 @@ import {
   ArrowDownToLine,
   ArrowRight,
   Check,
-  CircleX,
+  ChevronLeft,
   Clock,
   Copy,
   FileWarning,
@@ -91,7 +92,7 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
 
   if (!txn) {
     return (
-      <div className="mx-auto flex max-w-[460px] flex-col items-center justify-center gap-4 py-16 text-center">
+      <div className="mx-auto flex max-w-[480px] flex-col items-center justify-center gap-4 py-16 text-center">
         <h1 className="text-[20px] font-semibold text-foreground">Transaction not found</h1>
         <p className="text-[14px] text-muted-foreground">
           The transaction record you requested could not be located.
@@ -170,19 +171,20 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[440px] flex-col gap-6 py-4 px-2 sm:px-0 animate-in fade-in duration-200">
-      {/* Top Handle and Close Navigation Bar (matching sheet layout) */}
-      <div className="relative flex items-center justify-between px-1">
-        <div className="w-12 h-1.5 rounded-full bg-muted-foreground/30 mx-auto absolute left-1/2 -translate-x-1/2 top-0" />
-        <div />
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 py-6 px-4 animate-in fade-in duration-200">
+      {/* Navigation Header matching Review Screen pattern (Back button next to Title) */}
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => router.push("/transactions")}
-          className="text-muted-foreground/70 hover:text-foreground transition-colors cursor-pointer ml-auto"
-          aria-label="Close transaction details"
+          className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer shrink-0"
+          aria-label="Back to transactions"
         >
-          <CircleX size={26} strokeWidth={1.5} />
+          <ChevronLeft size={22} strokeWidth={1.8} />
         </button>
+        <h1 className="text-[24px] sm:text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+          Transaction Details
+        </h1>
       </div>
 
       {/* Share Toast feedback */}
@@ -192,11 +194,11 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
         </div>
       )}
 
-      {/* ── Main Receipt Card ── */}
-      <div className="relative flex flex-col rounded-[26px] border border-border/80 bg-card p-6 sm:p-7 shadow-sm overflow-hidden mt-3">
+      {/* ── Main Receipt Card (NO overflow-hidden on outer container to ensure badge is unclipped) ── */}
+      <div className="relative flex flex-col rounded-[24px] border border-border/80 bg-card p-6 sm:p-8 shadow-sm mt-4">
         {/* Elevated Circular Status Indicator on Top Edge */}
-        <div className="absolute left-1/2 -translate-x-1/2 -top-5 flex items-center justify-center">
-          <div className="flex size-12 items-center justify-center rounded-full bg-card shadow-sm ring-1 ring-border/40 p-1">
+        <div className="absolute left-1/2 -translate-x-1/2 -top-6 flex items-center justify-center z-10">
+          <div className="flex size-12 items-center justify-center rounded-full bg-card shadow-sm ring-1 ring-border/60 p-1">
             {state === "completed" && (
               <div className="flex size-10 items-center justify-center rounded-full bg-[#12B76A] text-white">
                 <Check size={20} strokeWidth={3} />
@@ -226,9 +228,9 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
         </div>
 
         {/* Transaction Title */}
-        <h1 className="text-[22px] font-bold text-foreground text-center tracking-tight mt-2 mb-6">
+        <h2 className="text-[22px] font-bold text-foreground text-center tracking-tight mt-2 mb-6">
           {title}
-        </h1>
+        </h2>
 
         {/* ── Group 1: Transaction Metadata ── */}
         <div className="flex flex-col gap-3 text-[14px]">
@@ -242,7 +244,7 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
                 <button
                   type="button"
                   onClick={handleCopyReference}
-                  className="text-muted-foreground hover:text-foreground transition-colors p-0.5"
+                  className="text-muted-foreground hover:text-foreground transition-colors p-0.5 cursor-pointer"
                   aria-label="Copy reference"
                 >
                   {copied ? (
@@ -287,9 +289,9 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
 
         {/* ── Group 2: Counterparty & Purpose ── */}
         <div className="flex flex-col gap-3 text-[14px]">
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Recipient Name</span>
-            <span className="font-semibold text-foreground text-right max-w-[220px] truncate">
+          <div className="flex items-start justify-between gap-4">
+            <span className="text-muted-foreground shrink-0">Recipient Name</span>
+            <span className="font-semibold text-foreground text-right">
               {txn.counterparty || txn.description}
             </span>
           </div>
@@ -304,17 +306,17 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
           )}
 
           {fromAccount && (
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">From Account</span>
+            <div className="flex items-start justify-between gap-4">
+              <span className="text-muted-foreground shrink-0">From Account</span>
               <span className="font-medium text-foreground text-right">
                 {fromAccount.name} (•••{fromAccount.number.replace(/\s+/g, "").slice(-4)})
               </span>
             </div>
           )}
 
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Narration</span>
-            <span className="font-semibold text-foreground text-right max-w-[240px] truncate">
+          <div className="flex items-start justify-between gap-4">
+            <span className="text-muted-foreground shrink-0">Narration</span>
+            <span className="font-semibold text-foreground text-right">
               {txn.description}
             </span>
           </div>
@@ -374,13 +376,13 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
         {/* Dashed Divider before bottom scalloped edge */}
         <div className="border-b border-dashed border-border/80 my-4" />
 
-        {/* Realistic Ticket Scalloped Bottom Edge */}
-        <div className="relative w-full h-3 overflow-hidden -mb-7">
-          <div className="flex justify-between w-[calc(100%+32px)] -ml-4">
-            {Array.from({ length: 18 }).map((_, i) => (
-              <div
+        {/* Ticket Scalloped Bottom Edge Container */}
+        <div className="relative -mx-6 -mb-6 sm:-mx-8 sm:-mb-8 mt-5 h-4 overflow-hidden rounded-b-[24px]">
+          <div className="flex justify-between w-[calc(100%+16px)] -ml-2">
+            {Array.from({ length: 22 }).map((_, i) => (
+              <span
                 key={i}
-                className="size-3.5 rounded-full bg-background border border-border/70 shrink-0 -mb-2"
+                className="size-3.5 rounded-full bg-background border border-border/60 shrink-0 -mb-2 shadow-inner"
               />
             ))}
           </div>
@@ -388,14 +390,14 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
       </div>
 
       {/* ── Bottom Circular Action Buttons (Matching Screenshot) ── */}
-      <div className="flex items-center justify-center gap-14 pt-3 pb-1">
+      <div className="flex items-center justify-center gap-14 pt-4 pb-1">
         {/* Share Button */}
         <button
           type="button"
           onClick={handleShare}
           className="flex flex-col items-center gap-2 group cursor-pointer"
         >
-          <span className="flex size-14 items-center justify-center rounded-full bg-muted/60 text-foreground transition-all group-hover:scale-105 group-hover:bg-muted shadow-xs">
+          <span className="flex size-14 items-center justify-center rounded-full bg-muted/70 text-foreground transition-all group-hover:scale-105 group-hover:bg-muted shadow-xs">
             <Share size={22} strokeWidth={1.9} />
           </span>
           <span className="text-[13px] font-medium text-muted-foreground group-hover:text-foreground">
@@ -409,7 +411,7 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
           onClick={handleRepeat}
           className="flex flex-col items-center gap-2 group cursor-pointer"
         >
-          <span className="flex size-14 items-center justify-center rounded-full bg-muted/60 text-foreground transition-all group-hover:scale-105 group-hover:bg-muted shadow-xs">
+          <span className="flex size-14 items-center justify-center rounded-full bg-muted/70 text-foreground transition-all group-hover:scale-105 group-hover:bg-muted shadow-xs">
             <RefreshCw size={22} strokeWidth={1.9} />
           </span>
           <span className="text-[13px] font-medium text-muted-foreground group-hover:text-foreground">
@@ -419,7 +421,7 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
       </div>
 
       {/* Secondary Download Receipt Action */}
-      <div className="flex justify-center -mt-2 mb-2">
+      <div className="flex justify-center -mt-1 mb-2">
         <button
           type="button"
           onClick={handleDownload}
