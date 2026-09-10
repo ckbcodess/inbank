@@ -61,7 +61,6 @@ import {
   ProceedButton,
   VerifiedAccountBadge,
   CollapsedDetailsBadge,
-  SaveBeneficiaryCheckbox,
   BANKS,
   PAYMENT_METHODS,
   getPaymentMethodName,
@@ -588,8 +587,8 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
     return (
       <PaymentSuccessScreen
-        title="Standing Order Scheduled"
-        message={`“${f.nickname}” will execute ${f.frequency.toLowerCase()} for ${formatMoney(numAmount, "GHS", true)}.`}
+        title="Standing order set up"
+        message={`We’ll automatically send ${formatMoney(numAmount, "GHS", true)} ${f.frequency.toLowerCase()} for “${f.nickname}”.`}
         transactionId={createdId}
         receiptRows={receiptRows}
         onViewReceipt={() => router.push(`/transactions/${createdId}`)}
@@ -610,7 +609,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
    * ========================================================================= */
   if (screen === "review") {
     return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 py-4 animate-in fade-in duration-200 ease-out">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
         {/* Header with back button */}
         <div className="relative flex items-center">
           <button
@@ -735,7 +734,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
    * SCREEN 4: Form Screen (The New Unified Layout)
    * ========================================================================= */
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 py-4 animate-in fade-in duration-200 ease-out">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
       {/* Header with back button */}
       <div className="relative flex items-center">
         <button
@@ -902,13 +901,21 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
               {/* TO PROXY */}
               {rail === "proxy" && (
-                <input
-                  type="text"
-                  value={f.proxyId}
-                  onChange={(e) => set("proxyId", e.target.value)}
-                  placeholder="Enter proxy ID (e.g. @kwame.b or GHA-12345678-9)"
-                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
-                />
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-[16px] font-semibold text-muted-foreground select-none pointer-events-none">
+                    @
+                  </span>
+                  <input
+                    type="text"
+                    value={f.proxyId.replace(/^@/, "")}
+                    onChange={(e) => {
+                      const cleaned = e.target.value.replace(/^@/, "").trim();
+                      set("proxyId", cleaned ? `@${cleaned}` : "");
+                    }}
+                    placeholder="kwame.b"
+                    className="h-13 w-full rounded-2xl border border-border/80 bg-card pl-9 pr-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                  />
+                </div>
               )}
 
               {/* TO GROUP */}
@@ -1173,14 +1180,6 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             }}
           />
         </div>
-
-        {/* 7. Save Beneficiary Checkbox */}
-        <SaveBeneficiaryCheckbox
-          checked={f.saveBeneficiary}
-          onChange={(checked) => set("saveBeneficiary", checked)}
-          nickname={f.beneficiaryNickname}
-          onNicknameChange={(val) => set("beneficiaryNickname", val)}
-        />
 
         {/* 8. Action Button */}
         <ProceedButton

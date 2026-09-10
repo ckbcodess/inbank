@@ -94,7 +94,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-10">
       <PageHeader
         title="Trade approval"
         description={`${item.reference} · submitted by ${item.submittedBy}`}

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Bell, Check, Eye, EyeOff, Layers, LogOut, Menu, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { useDevState } from "@/components/providers/DevStateProvider";
@@ -58,7 +58,7 @@ export default function TopHeader({
         <Button variant="ghost" size="icon-sm" onClick={onMenuToggle} className="lg:hidden shrink-0" aria-label="Open menu">
           <Menu size={17} strokeWidth={1.9} />
         </Button>
-        <HeaderBreadcrumbs />
+        <Suspense fallback={null}><HeaderBreadcrumbs /></Suspense>
       </div>
 
       <div className="flex shrink-0 items-center gap-1.5 sm:gap-2.5">

@@ -15,9 +15,7 @@ interface PageHeaderProps {
   /**
    * Object detail screens carry parent link info which renders a back navigation button
    */
-  backTo?: { href: string; label: string };
-  /** Explicit breadcrumbs override (optional) */
-  breadcrumbs?: BreadcrumbItem[];
+  backTo?: { href: string; label: string; onClick?: () => void };
 }
 
 export default function PageHeader({ title, badge, actions, backTo }: PageHeaderProps) {
@@ -25,14 +23,26 @@ export default function PageHeader({ title, badge, actions, backTo }: PageHeader
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-3 min-w-0">
         {backTo && (
-          <Link
-            href={backTo.href}
-            className="group flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/40 text-muted-foreground transition-all hover:bg-muted hover:text-foreground active:scale-95"
-            title={`Back to ${backTo.label}`}
-            aria-label={`Back to ${backTo.label}`}
-          >
-            <ChevronLeft size={16} strokeWidth={2} className="transition-transform group-hover:-translate-x-0.5" />
-          </Link>
+          backTo.onClick ? (
+            <button
+              type="button"
+              onClick={backTo.onClick}
+              className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+              title={`Back to ${backTo.label}`}
+              aria-label={`Back to ${backTo.label}`}
+            >
+              <ChevronLeft size={22} strokeWidth={1.8} />
+            </button>
+          ) : (
+            <Link
+              href={backTo.href}
+              className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+              title={`Back to ${backTo.label}`}
+              aria-label={`Back to ${backTo.label}`}
+            >
+              <ChevronLeft size={22} strokeWidth={1.8} />
+            </Link>
+          )
         )}
         <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground truncate">{title}</h1>
         {badge && <div className="shrink-0">{badge}</div>}

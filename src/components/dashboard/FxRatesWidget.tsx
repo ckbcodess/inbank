@@ -75,17 +75,17 @@ export function FxRatesWidget() {
     .join(" ");
 
   return (
-    <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-all">
+    <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-colors">
       {/* Top Header with Convert / Chart Switcher */}
       <div className="flex items-center justify-between">
-        <h2 className="text-[16px] font-medium text-foreground">FX Rates</h2>
-        <div className="flex items-center rounded-lg bg-muted/60 p-1">
+        <h2 className="text-[15px] font-medium text-foreground">FX Rates</h2>
+        <div className="flex items-center rounded-lg bg-muted/60 p-0.5 border border-border/40">
           <button
             type="button"
             onClick={() => setActiveTab("convert")}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-[13px] font-normal transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
               activeTab === "convert"
-                ? "bg-card text-foreground shadow-xs font-medium"
+                ? "bg-card text-foreground shadow-2xs font-medium"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -94,9 +94,9 @@ export function FxRatesWidget() {
           <button
             type="button"
             onClick={() => setActiveTab("chart")}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-[13px] font-normal transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
               activeTab === "chart"
-                ? "bg-card text-foreground shadow-xs font-medium"
+                ? "bg-card text-foreground shadow-2xs font-medium"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -107,22 +107,22 @@ export function FxRatesWidget() {
 
       {activeTab === "convert" ? (
         /* Converter Form */
-        <div className="mx-auto my-auto flex w-full max-w-[340px] flex-col items-center gap-3 py-2">
+        <div className="mx-auto my-auto flex w-full max-w-[360px] flex-col items-center gap-2.5 py-2">
           {/* Live Rate Label */}
-          <div className="text-center text-[14px] text-muted-foreground">
+          <div className="text-center text-[13px] text-muted-foreground tabular">
             1 {fromCurrency} = {exchangeRate >= 1 ? exchangeRate.toFixed(2) : exchangeRate.toFixed(4)} {toCurrency}
           </div>
 
           {/* From Input */}
           <div className="relative w-full">
-            <div className="flex w-full items-center justify-between rounded-xl border border-border bg-muted/40 px-5 py-3 transition-colors focus-within:border-primary">
+            <div className="flex w-full items-center justify-between rounded-xl border border-border bg-muted/40 px-4 py-2.5 transition-colors focus-within:border-primary">
               <input
                 type="number"
                 min="0"
                 step="any"
                 value={fromAmount}
                 onChange={(e) => setFromAmount(e.target.value)}
-                className="w-1/2 bg-transparent text-[22px] font-medium text-foreground outline-none tabular"
+                className="w-1/2 bg-transparent text-[20px] font-medium text-foreground outline-none tabular"
                 placeholder="0.00"
               />
               <button
@@ -131,11 +131,11 @@ export function FxRatesWidget() {
                   setShowFromMenu(!showFromMenu);
                   setShowToMenu(false);
                 }}
-                className="flex items-center gap-2 rounded-lg bg-card px-2.5 py-1 text-[14px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted cursor-pointer"
+                className="flex items-center gap-2 rounded-lg bg-card px-2.5 py-1 text-[13px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
               >
-                <CurrencyLogo currency={fromCurrency} size={18} />
+                <CurrencyLogo currency={fromCurrency} size={17} />
                 <span>{fromCurrency}</span>
-                <ChevronDown size={14} className="text-muted-foreground" />
+                <ChevronDown size={13} className="text-muted-foreground" />
               </button>
             </div>
 
@@ -153,7 +153,7 @@ export function FxRatesWidget() {
                       fromCurrency === c.code ? "bg-muted font-medium" : "hover:bg-muted/50"
                     }`}
                   >
-                    <CurrencyLogo currency={c.code} size={18} />
+                    <CurrencyLogo currency={c.code} size={17} />
                     <span className="font-medium">{c.code}</span>
                     <span className="truncate text-muted-foreground text-[11px]">{c.name}</span>
                   </button>
@@ -166,16 +166,16 @@ export function FxRatesWidget() {
           <button
             type="button"
             onClick={handleSwap}
-            className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all hover:bg-foreground hover:text-background active:scale-90 cursor-pointer shadow-xs"
+            className="flex size-7.5 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-foreground hover:text-background active:scale-[0.96] transition-transform cursor-pointer shadow-2xs"
             aria-label="Swap currencies"
           >
-            <ArrowUpDown size={15} strokeWidth={2} />
+            <ArrowUpDown size={14} strokeWidth={2} />
           </button>
 
           {/* To Input */}
           <div className="relative w-full">
-            <div className="flex w-full items-center justify-between rounded-xl border border-border bg-muted/40 px-5 py-3 transition-colors">
-              <span className="w-1/2 text-[22px] font-medium text-foreground tabular truncate">
+            <div className="flex w-full items-center justify-between rounded-xl border border-border bg-muted/40 px-4 py-2.5 transition-colors">
+              <span className="w-1/2 text-[20px] font-medium text-foreground tabular truncate">
                 {calculatedToAmount}
               </span>
               <button
@@ -184,11 +184,11 @@ export function FxRatesWidget() {
                   setShowToMenu(!showToMenu);
                   setShowFromMenu(false);
                 }}
-                className="flex items-center gap-2 rounded-lg bg-card px-2.5 py-1 text-[14px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted cursor-pointer"
+                className="flex items-center gap-2 rounded-lg bg-card px-2.5 py-1 text-[13px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
               >
-                <CurrencyLogo currency={toCurrency} size={18} />
+                <CurrencyLogo currency={toCurrency} size={17} />
                 <span>{toCurrency}</span>
-                <ChevronDown size={14} className="text-muted-foreground" />
+                <ChevronDown size={13} className="text-muted-foreground" />
               </button>
             </div>
 
@@ -206,7 +206,7 @@ export function FxRatesWidget() {
                       toCurrency === c.code ? "bg-muted font-medium" : "hover:bg-muted/50"
                     }`}
                   >
-                    <CurrencyLogo currency={c.code} size={18} />
+                    <CurrencyLogo currency={c.code} size={17} />
                     <span className="font-medium">{c.code}</span>
                     <span className="truncate text-muted-foreground text-[11px]">{c.name}</span>
                   </button>
@@ -214,20 +214,14 @@ export function FxRatesWidget() {
               </div>
             )}
           </div>
-
-          {/* Last updated footer */}
-          <div className="mt-0.5 flex items-center gap-1.5 text-center text-[12px] text-muted-foreground">
-            <RefreshCw size={11} />
-            <span>Updated 2 mins ago · Bank of Ghana mid-rate</span>
-          </div>
         </div>
       ) : (
         /* Historical Rate Chart View */
-        <div className="mx-auto my-auto flex w-full max-w-[340px] flex-col items-center gap-3 py-2">
+        <div className="mx-auto my-auto flex w-full max-w-[360px] flex-col items-center gap-3 py-2">
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">
               <span className="text-[12px] text-muted-foreground">Pair Trend</span>
-              <span className="text-[17px] font-medium text-foreground">
+              <span className="text-[16px] font-medium text-foreground tabular">
                 {fromCurrency}/{toCurrency} · {exchangeRate.toFixed(2)}
               </span>
             </div>
@@ -237,7 +231,7 @@ export function FxRatesWidget() {
                   key={r}
                   type="button"
                   onClick={() => setChartRange(r)}
-                  className={`rounded-md px-2 py-0.5 text-[11px] font-medium transition-colors cursor-pointer ${
+                  className={`rounded-md px-2 py-0.5 text-[11px] font-medium transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
                     chartRange === r ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"
                   }`}
                 >
@@ -272,12 +266,18 @@ export function FxRatesWidget() {
           </div>
 
           <div className="flex w-full items-center justify-between text-[11px] text-muted-foreground">
-            <span>Low: {minVal.toFixed(2)}</span>
-            <span className="text-emerald-600 font-medium">+1.8% in period</span>
-            <span>High: {maxVal.toFixed(2)}</span>
+            <span className="tabular">Low: {minVal.toFixed(2)}</span>
+            <span className="text-emerald-600 dark:text-emerald-400 font-medium">+1.8% in period</span>
+            <span className="tabular">High: {maxVal.toFixed(2)}</span>
           </div>
         </div>
       )}
+
+      {/* Symmetrical Footer */}
+      <div className="flex items-center justify-center gap-1.5 border-t border-border/50 pt-3 text-[12px] text-muted-foreground">
+        <RefreshCw size={12} strokeWidth={1.8} />
+        <span>Updated 2 mins ago · Bank of Ghana mid-rate</span>
+      </div>
     </div>
   );
 }

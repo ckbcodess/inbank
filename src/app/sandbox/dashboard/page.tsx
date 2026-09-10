@@ -252,7 +252,7 @@ export default function FigmaDesignFidelityDashboard() {
         </header>
 
         {/* Content Container (Node 315:53444) */}
-        <main className="max-w-6xl w-full mx-auto px-8 lg:px-16 py-14 space-y-12">
+        <main className="page-stagger max-w-6xl w-full mx-auto px-8 lg:px-16 py-14 space-y-12">
           
           {/* Greeting Section (Node 315:53445) */}
           <div className="space-y-0.5">

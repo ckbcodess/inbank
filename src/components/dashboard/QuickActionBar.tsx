@@ -132,9 +132,6 @@ export function QuickActionBar({
     setTopUpAmount("");
   }
 
-  const selectClass =
-    "flex h-10 w-full rounded-xl border border-border bg-background pl-3 pr-10 py-2 text-[13px] text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer";
-
   return (
     <>
       <section className="flex flex-col rounded-2xl border border-border bg-card p-4">
@@ -239,7 +236,7 @@ export function QuickActionBar({
               </Select>
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="topup-amount">Amount</Label>
+              <Label htmlFor="topup-amount">Enter amount</Label>
               <Input
                 id="topup-amount"
                 placeholder="0.00"
@@ -307,7 +304,7 @@ export function QuickActionBar({
               </Select>
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="t-amount">Amount</Label>
+              <Label htmlFor="t-amount">Enter amount</Label>
               <Input
                 id="t-amount"
                 placeholder="0.00"

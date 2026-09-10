@@ -1,6 +1,8 @@
+"use client";
+
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 
 export function DashboardAnalyticsWidget() {
@@ -83,21 +85,43 @@ export function DashboardAnalyticsWidget() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const totalSpend = categories.reduce((sum, c) => sum + c.amount, 0);
+  const activeItem = categories.find((c) => c.label === activeCategory);
+
+  // SVG Donut Ring Calculations
+  const radius = 64;
+  const circumference = 2 * Math.PI * radius; // ≈ 402.124
+
+  let accumulatedPercent = 0;
+  const slices = categories.map((cat) => {
+    const percent = cat.percentage;
+    const sliceLength = (percent / 100) * circumference;
+    const gap = 3;
+    const dashLength = Math.max(0, sliceLength - gap);
+    const dashGap = circumference - dashLength;
+    const strokeDashoffset = -(accumulatedPercent / 100) * circumference;
+    accumulatedPercent += percent;
+
+    return {
+      ...cat,
+      strokeDasharray: `${dashLength} ${dashGap}`,
+      strokeDashoffset,
+    };
+  });
 
   return (
-    <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-all">
+    <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-colors">
       {/* Top Header with Account Switcher & View All */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h2 className="text-[16px] font-medium text-foreground">Analytics</h2>
+        <div className="flex items-center gap-2.5">
+          <h2 className="text-[15px] font-medium text-foreground">Analytics</h2>
           <div className="relative">
             <button
               type="button"
               onClick={() => setShowAccountMenu(!showAccountMenu)}
-              className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-3.5 py-1 text-[12px] font-normal text-foreground transition-colors hover:bg-muted cursor-pointer"
+              className="flex items-center gap-1.5 rounded-full border border-border/80 bg-muted/60 px-3 py-0.5 text-[11.5px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
             >
               <span>{selectedAccount}</span>
-              <ChevronDown size={13} className="text-muted-foreground" />
+              <ChevronDown size={12} className="text-muted-foreground" />
             </button>
 
             {showAccountMenu && (
@@ -126,89 +150,129 @@ export function DashboardAnalyticsWidget() {
 
         <Link
           href="/reports"
-          className="text-[14px] text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex items-center gap-1 text-[12.5px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
         >
-          View all
+          <span>View all</span>
+          <ChevronRight size={13} strokeWidth={1.8} />
         </Link>
       </div>
 
-      {/* Main Analytics Content: Total Spend & Visual Distribution */}
-      <div className="my-auto flex flex-col gap-5 py-2">
-        {/* Total Spend Hero Metric */}
-        <div className="flex items-baseline justify-between">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-[12px] font-medium text-muted-foreground">Total Spend</span>
-            <div className="text-[26px] font-normal tracking-tight text-foreground sm:text-[28px]">
-              {showAmounts ? `GH₵ ${new Intl.NumberFormat("en-GH").format(totalSpend)}.00` : "GH₵ ••••••"}
+      {/* Main Analytics Content: Interactive Ring Donut & Category Breakdown */}
+      <div className="my-auto py-2">
+        <div className="grid grid-cols-1 sm:grid-cols-12 items-center gap-4 sm:gap-6">
+          {/* Left: Donut Ring with Center Summary */}
+          <div className="sm:col-span-5 flex items-center justify-center">
+            <div className="relative size-[165px] shrink-0">
+              <svg
+                viewBox="0 0 170 170"
+                className="size-full -rotate-90 overflow-visible"
+              >
+                {/* Background Ring Track */}
+                <circle
+                  cx="85"
+                  cy="85"
+                  r={radius}
+                  fill="none"
+                  className="stroke-muted/40"
+                  strokeWidth="15"
+                />
+                {/* Donut Slices */}
+                {slices.map((slice) => {
+                  const isHovered = activeCategory === slice.label;
+                  const isDimmed = activeCategory !== null && !isHovered;
+                  return (
+                    <circle
+                      key={slice.label}
+                      cx="85"
+                      cy="85"
+                      r={radius}
+                      fill="none"
+                      stroke={slice.color}
+                      strokeWidth={isHovered ? 19 : 15}
+                      strokeDasharray={slice.strokeDasharray}
+                      strokeDashoffset={slice.strokeDashoffset}
+                      strokeLinecap="round"
+                      className={`cursor-pointer transition-[stroke-width,opacity] duration-200 ${
+                        isDimmed ? "opacity-35" : "opacity-100"
+                      }`}
+                      onMouseEnter={() => setActiveCategory(slice.label)}
+                      onMouseLeave={() => setActiveCategory(null)}
+                      onClick={() =>
+                        setActiveCategory(activeCategory === slice.label ? null : slice.label)
+                      }
+                    />
+                  );
+                })}
+              </svg>
+
+              {/* Center Summary Label */}
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center px-2">
+                <span className="text-[11px] font-medium text-muted-foreground truncate max-w-[100px]">
+                  {activeItem ? activeItem.label : "Total Spend"}
+                </span>
+                <span className="text-[17px] sm:text-[18px] font-semibold tracking-tight text-foreground tabular leading-tight mt-0.5">
+                  {showAmounts
+                    ? `GH₵${new Intl.NumberFormat("en-GH").format(
+                        activeItem ? activeItem.amount : totalSpend
+                      )}`
+                    : "GH₵••••"}
+                </span>
+                <span className="mt-0.5 text-[10.5px] text-muted-foreground tabular">
+                  {activeItem ? `${activeItem.percentage}% of total` : activeDataset.trend}
+                </span>
+              </div>
             </div>
           </div>
-          <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-600 dark:bg-emerald-500/15 dark:text-[#49ff8d]">
-            {activeDataset.trend}
-          </span>
-        </div>
 
-        {/* Multi-segment Distribution Bar */}
-        <div className="flex flex-col gap-2">
-          <div className="flex h-3 w-full overflow-hidden rounded-full bg-muted/60 p-0.5 shadow-inner">
+          {/* Right: Category Breakdown List */}
+          <div className="flex flex-col gap-0.5 sm:col-span-7">
             {categories.map((cat) => {
               const isHovered = activeCategory === cat.label;
               const isDimmed = activeCategory !== null && !isHovered;
               return (
                 <div
                   key={cat.label}
-                  style={{
-                    width: `${cat.percentage}%`,
-                    backgroundColor: cat.color,
-                  }}
-                  className={`h-full first:rounded-l-full last:rounded-r-full transition-all duration-300 ${
-                    isDimmed ? "opacity-30" : "opacity-100"
-                  } ${isHovered ? "scale-y-110 shadow-sm" : ""}`}
                   onMouseEnter={() => setActiveCategory(cat.label)}
                   onMouseLeave={() => setActiveCategory(null)}
-                />
+                  onClick={() =>
+                    setActiveCategory(activeCategory === cat.label ? null : cat.label)
+                  }
+                  className={`flex items-center justify-between rounded-lg px-2.5 py-1.5 transition-colors cursor-pointer ${
+                    isHovered
+                      ? "bg-muted/80"
+                      : isDimmed
+                      ? "opacity-45 hover:bg-muted/40 hover:opacity-100"
+                      : "hover:bg-muted/40"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span
+                      className="size-2.5 shrink-0 rounded-full transition-transform"
+                      style={{ backgroundColor: cat.color }}
+                    />
+                    <span className="truncate text-[12.5px] font-medium text-foreground">
+                      {cat.label}
+                    </span>
+                    <span className="text-[11.5px] text-muted-foreground tabular">
+                      {cat.percentage}%
+                    </span>
+                  </div>
+                  <div className="flex items-center shrink-0 pl-2">
+                    <span className="text-[12.5px] font-medium text-foreground tabular">
+                      {showAmounts
+                        ? `GH₵${new Intl.NumberFormat("en-GH").format(cat.amount)}`
+                        : "GH₵••••"}
+                    </span>
+                  </div>
+                </div>
               );
             })}
           </div>
         </div>
-
-        {/* Category Breakdown Grid formatted exactly as specified */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2.5">
-          {categories.map((cat) => {
-            const isHovered = activeCategory === cat.label;
-            return (
-              <div
-                key={cat.label}
-                onMouseEnter={() => setActiveCategory(cat.label)}
-                onMouseLeave={() => setActiveCategory(null)}
-                className={`flex items-center justify-between rounded-lg px-2.5 py-1.5 transition-all cursor-pointer ${
-                  isHovered ? "bg-muted/60 scale-[1.01]" : "hover:bg-muted/40"
-                }`}
-              >
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <span
-                    className="size-2.5 shrink-0 rounded-full transition-transform"
-                    style={{ backgroundColor: cat.color }}
-                  />
-                  <span className="truncate text-[14px] font-medium text-foreground">
-                    {cat.label}
-                  </span>
-                  <span className="text-[14px] font-normal text-muted-foreground">
-                    {cat.percentage}%
-                  </span>
-                </div>
-                <div className="flex items-center shrink-0 pl-3">
-                  <span className="text-[14px] font-normal text-foreground tabular">
-                    {showAmounts ? `GH₵${new Intl.NumberFormat("en-GH").format(cat.amount)}` : "GH₵••••"}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
       </div>
 
       {/* Time Switcher Tabs */}
-      <div className="flex items-center gap-1.5 border-t border-border/60 pt-4">
+      <div className="flex items-center gap-1.5 border-t border-border/50 pt-3.5">
         {ranges.map((r) => {
           const isActive = selectedRange === r;
           return (
@@ -216,9 +280,9 @@ export function DashboardAnalyticsWidget() {
               key={r}
               type="button"
               onClick={() => setSelectedRange(r)}
-              className={`flex-1 rounded-full py-1 text-[12px] transition-all cursor-pointer text-center ${
+              className={`flex-1 rounded-full py-1 text-[11.5px] font-medium transition-colors cursor-pointer text-center active:scale-[0.96] transition-transform ${
                 isActive
-                  ? "bg-foreground text-background font-medium shadow-xs"
+                  ? "bg-foreground text-background shadow-2xs"
                   : "border border-border/80 bg-transparent text-muted-foreground hover:bg-muted/60 hover:text-foreground"
               }`}
             >

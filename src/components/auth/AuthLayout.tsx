@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import AuthHeader from "./AuthHeader";
 
 interface AuthLayoutProps {
@@ -38,6 +39,7 @@ export default function AuthLayout({
   stepProgress,
   showLogo = true,
 }: AuthLayoutProps) {
+  const pathname = usePathname();
   const maxWidthClass =
     width === "wide"
       ? "max-w-[560px]"
@@ -78,7 +80,7 @@ export default function AuthLayout({
       <main className="relative -mt-24 sm:-mt-32 lg:-mt-36 z-20 mx-auto w-full px-6 pb-24 sm:px-8 flex flex-col items-center">
         <div className={`w-full ${maxWidthClass} transition-all duration-300`}>
           {/* Central Card */}
-          <div className="rounded-3xl border border-black/5 bg-white/95 dark:bg-card/95 p-7 sm:p-10 lg:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl transition-all">
+          <div key={pathname} className="page-stagger rounded-3xl border border-black/5 bg-white/95 dark:bg-card/95 p-7 sm:p-10 lg:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl transition-all">
             {/* Step Progress Segments (8 segments in Figma) */}
             {stepProgress && (
               <div className="mb-6 flex items-center gap-1.5 px-2">

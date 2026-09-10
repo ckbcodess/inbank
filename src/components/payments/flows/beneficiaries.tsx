@@ -368,7 +368,7 @@ export function RailBeneficiaryStrip({
                 {item.name}
               </span>
               <span className="text-[11px] text-muted-foreground truncate w-full" title={item.subtitle || item.bank}>
-                {item.subtitle || item.bank.split(" ")[0]}
+                {item.subtitle || item.bank}
               </span>
             </div>
           </button>

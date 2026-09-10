@@ -1,12 +1,47 @@
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, X, Download, RotateCw, CheckCircle2, ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  X,
+  Download,
+  RotateCw,
+  CheckCircle2,
+  ArrowDownLeft,
+  ArrowUpRight,
+  ShoppingBag,
+  Fuel,
+  Zap,
+  Briefcase,
+  PiggyBank,
+  Globe,
+  CreditCard,
+} from "lucide-react";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import type { Transaction } from "@/lib/mock-data";
 import { toast } from "sonner";
 
 interface RecentActivityWidgetProps {
   transactions?: Transaction[];
+}
+
+function getCategoryIcon(category: string) {
+  switch (category) {
+    case "Groceries":
+      return ShoppingBag;
+    case "Transport":
+      return Fuel;
+    case "Utilities":
+      return Zap;
+    case "Income":
+      return Briefcase;
+    case "Savings":
+      return PiggyBank;
+    case "Shopping":
+      return Globe;
+    default:
+      return CreditCard;
+  }
 }
 
 export function RecentActivityWidget({ transactions = [] }: RecentActivityWidgetProps) {
@@ -100,29 +135,44 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
     },
   ];
 
+  const allItems =
+    transactions.length > 0
+      ? transactions.map((t) => ({
+          id: t.id,
+          title: t.description || t.counterparty || "Transaction",
+          subtitle: `${t.date} · ${t.counterparty || "Transfer"}`,
+          amount: Math.abs(t.amount),
+          direction: t.direction || (t.amount < 0 ? "debit" : "credit"),
+          status: "Completed",
+          account: t.accountId || selectedAccount,
+          reference: t.reference || `TX-${t.id}`,
+          category: t.category || "Utilities",
+        }))
+      : allMockItems;
+
   const filteredItems =
     selectedAccount === "All Accounts"
-      ? allMockItems.slice(0, 5)
-      : allMockItems.filter((item) => item.account === selectedAccount || selectedAccount.includes(item.account.split(" ")[0])).slice(0, 5);
+      ? allItems.slice(0, 5)
+      : allItems.filter((item) => item.account === selectedAccount || selectedAccount.includes(item.account.split(" ")[0])).slice(0, 5);
 
-  const items = filteredItems.length > 0 ? filteredItems : allMockItems.slice(0, 5);
+  const items = filteredItems.length > 0 ? filteredItems : allItems.slice(0, 5);
 
   return (
     <>
-      <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-all">
+      <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-colors">
         {/* Top Section */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h2 className="text-[16px] font-medium text-foreground">Recent activity</h2>
+          <div className="flex items-center gap-2.5">
+            <h2 className="text-[15px] font-medium text-foreground">Recent activity</h2>
             {/* Account Filter Pill Dropdown */}
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setShowFilterMenu(!showFilterMenu)}
-                className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-3.5 py-1 text-[12px] font-normal text-foreground transition-colors hover:bg-muted cursor-pointer"
+                className="flex items-center gap-1.5 rounded-full border border-border/80 bg-muted/60 px-3 py-0.5 text-[11.5px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
               >
                 <span>{selectedAccount}</span>
-                <ChevronDown size={13} className="text-muted-foreground" />
+                <ChevronDown size={12} className="text-muted-foreground" />
               </button>
 
               {showFilterMenu && (
@@ -151,44 +201,51 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
 
           <Link
             href="/accounts"
-            className="text-[14px] text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex items-center gap-1 text-[12.5px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
           >
-            View all
+            <span>View all</span>
+            <ChevronRight size={13} strokeWidth={1.8} />
           </Link>
         </div>
 
         {/* Transactions List */}
-        <div className="my-auto flex flex-col divide-y divide-border/60">
+        <div className="my-auto flex flex-col divide-y divide-border/50 py-1">
           {items.map((item) => {
             const isDebit = item.direction === "debit";
+            const CategoryIcon = getCategoryIcon(item.category);
             return (
               <div
                 key={item.id}
                 onClick={() => setSelectedTx(item)}
-                className="flex items-center justify-between py-2.5 first:pt-1 last:pb-1 cursor-pointer hover:bg-muted/40 rounded-lg px-2 -mx-2 transition-colors"
+                className="group flex items-center justify-between py-2.5 px-2.5 -mx-2.5 rounded-xl cursor-pointer hover:bg-muted/40 transition-colors first:pt-1.5 last:pb-1.5"
               >
-                {/* Left Details */}
-                <div className="flex flex-col min-w-0 pr-3">
-                  <span className="truncate text-[13px] font-normal text-foreground">
-                    {item.title}
-                  </span>
-                  <span className="truncate text-[11px] text-muted-foreground">
-                    {item.subtitle}
-                  </span>
+                {/* Left: Icon Tile + Details */}
+                <div className="flex items-center gap-3.5 min-w-0 pr-3">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground border border-border/50 transition-colors group-hover:border-border">
+                    <CategoryIcon size={16} strokeWidth={1.8} />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="truncate text-[13.5px] font-medium text-foreground">
+                      {item.title}
+                    </span>
+                    <span className="truncate text-[11.5px] text-muted-foreground">
+                      {item.subtitle}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Right: Amount & Status Badge */}
-                <div className="flex shrink-0 items-center gap-3">
+                <div className="flex shrink-0 items-center gap-2.5">
                   <span
-                    className={`text-[13px] font-medium tabular ${
-                      isDebit ? "text-foreground" : "text-[#16a34a] dark:text-[#49ff8d]"
+                    className={`text-[13.5px] font-medium tabular ${
+                      isDebit ? "text-foreground" : "text-emerald-600 dark:text-emerald-400"
                     }`}
                   >
                     {isDebit ? "-" : "+"}
                     <RevealingAmount amount={item.amount} currency="GHS" />
                   </span>
 
-                  <span className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-medium text-emerald-600 dark:bg-emerald-500/15 dark:text-[#49ff8d]">
+                  <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400">
                     {item.status}
                   </span>
                 </div>

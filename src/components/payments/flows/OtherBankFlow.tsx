@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
 import {
   Select,
@@ -17,10 +17,10 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   VerifiedAccountBadge,
+  ResolvingAccountBadge,
   CollapsedDetailsBadge,
   OTHER_BANKS,
   PAYMENT_METHODS,
-  SaveBeneficiaryCheckbox,
   SchedulePaymentSection,
   ScheduleFrequency,
   resolveAccountName,
@@ -77,17 +77,34 @@ export function OtherBankFlow({
     return resolveAccountName(state.benAcct, state.benName);
   }, [state.benAcct, state.benName]);
 
+  const cleanAcct = state.benAcct.replace(/[\s-]/g, "");
+  const isAcctValid = cleanAcct.length >= 8;
+  const isBankValid = Boolean(state.bank);
+  const isDetailsValid = isBankValid && isAcctValid;
+
+  const [resolving, setResolving] = useState(false);
+
+  useEffect(() => {
+    if (isDetailsValid) {
+      setResolving(true);
+      const timer = setTimeout(() => {
+        setResolving(false);
+      }, 250);
+      return () => clearTimeout(timer);
+    } else {
+      setResolving(false);
+    }
+  }, [isDetailsValid, state.bank, state.benAcct]);
+
+  const isVerified = isDetailsValid && !resolving && Boolean(verifiedName);
+
   const selectedPaymentMethod = useMemo(() => {
-    return PAYMENT_METHODS.find((m) => m.id === state.paymentMethod);
+    return PAYMENT_METHODS.find((m) => m.id === (state.paymentMethod || "gip"));
   }, [state.paymentMethod]);
 
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
-  const isAcctValid = state.benAcct.replace(/\s/g, "").length >= 8;
-  const isBankValid = Boolean(state.bank);
-  const isDetailsValid = isBankValid && isAcctValid;
-  const isMethodValid = Boolean(state.paymentMethod);
-  const isValid = Boolean(state.fromId) && isDetailsValid && isMethodValid && numAmount > 0 && !overBalance;
+  const isValid = Boolean(state.fromId) && isVerified && numAmount > 0 && !overBalance;
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
@@ -101,7 +118,7 @@ export function OtherBankFlow({
       {/* 2. Destination Bank & Account Number */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
-        {isDetailsValid && isCollapsed ? (
+        {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `Account ${state.benAcct}`}
             subtitle={`${state.bank || "Other Bank"} · ${state.benAcct}`}
@@ -141,106 +158,110 @@ export function OtherBankFlow({
               className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
             />
 
-            {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+            {/* Resolving indicator */}
+            {isDetailsValid && resolving && (
+              <ResolvingAccountBadge message={`Verifying account with ${state.bank}...`} />
+            )}
+
+            {/* Verified badge */}
+            {isVerified && <VerifiedAccountBadge name={verifiedName} />}
           </div>
         )}
       </div>
 
-      {/* 3. Payment Method */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Payment Method</label>
-        <Select
-          value={state.paymentMethod || ""}
-          onValueChange={(val) => val && onChange("paymentMethod", val)}
-        >
-          <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-            {selectedPaymentMethod ? (
-              <span className="truncate text-[15px] font-normal text-foreground">
-                {selectedPaymentMethod.name}
-              </span>
-            ) : (
-              <span className="truncate text-[15px] font-normal text-muted-foreground">
-                Select payment method
-              </span>
-            )}
-          </SelectTrigger>
-          <SelectContent>
-            {PAYMENT_METHODS.map((m) => (
-              <SelectItem key={m.id} value={m.id} label={m.name}>
-                <div className="flex items-center justify-between w-full gap-4 py-0.5">
-                  <div className="flex flex-col text-left">
-                    <span className="font-medium text-foreground">{m.name}</span>
-                    <span className="text-[12px] text-muted-foreground font-normal">{m.description}</span>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-[13px] font-medium text-foreground tabular block">{m.feeText}</span>
-                    <span className="text-[11.5px] text-muted-foreground font-normal">{m.speed}</span>
-                  </div>
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      {/* Progressive Disclosure: Only reveal Payment Method, Amount & onwards after details are verified */}
+      {isVerified && (
+        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+          {/* 3. Payment Method */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[14px] font-medium text-foreground">Payment Method</label>
+            <Select
+              value={state.paymentMethod || "gip"}
+              onValueChange={(val) => val && onChange("paymentMethod", val)}
+            >
+              <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                {selectedPaymentMethod ? (
+                  <span className="truncate text-[15px] font-normal text-foreground">
+                    {selectedPaymentMethod.name}
+                  </span>
+                ) : (
+                  <span className="truncate text-[15px] font-normal text-muted-foreground">
+                    Select payment method
+                  </span>
+                )}
+              </SelectTrigger>
+              <SelectContent>
+                {PAYMENT_METHODS.map((m) => (
+                  <SelectItem key={m.id} value={m.id} label={m.name}>
+                    <div className="flex items-center justify-between w-full gap-4 py-0.5">
+                      <div className="flex flex-col text-left">
+                        <span className="font-medium text-foreground">{m.name}</span>
+                        <span className="text-[12px] text-muted-foreground font-normal">{m.description}</span>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <span className="text-[13px] font-medium text-foreground tabular block">{m.feeText}</span>
+                        <span className="text-[11.5px] text-muted-foreground font-normal">{m.speed}</span>
+                      </div>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-      {/* 4. Amount */}
-      <AmountInput
-        value={state.amount}
-        onChange={(val) => onChange("amount", val)}
-        onFocus={() => {
-          if (isDetailsValid) setCollapsed(true);
-        }}
-        error={
-          overBalance ? (
-            <InsufficientFundsAlert
-              available={fromAccount?.available ?? 0}
-              currency={fromAccount?.currency || "GHS"}
-            />
-          ) : undefined
-        }
-      />
+          {/* 4. Amount */}
+          <AmountInput
+            value={state.amount}
+            onChange={(val) => onChange("amount", val)}
+            onFocus={() => {
+              if (isVerified) setCollapsed(true);
+            }}
+            error={
+              overBalance ? (
+                <InsufficientFundsAlert
+                  available={fromAccount?.available ?? 0}
+                  currency={fromAccount?.currency || "GHS"}
+                />
+              ) : undefined
+            }
+          />
 
-      {/* 4. Narration */}
-      <NarrationInput
-        value={state.narration}
-        onChange={(val) => onChange("narration", val)}
-      />
+          {/* 5. Narration */}
+          <NarrationInput
+            value={state.narration}
+            onChange={(val) => onChange("narration", val)}
+          />
 
-      {/* 5. Transaction Category (Optional) */}
-      <CategorySelect
-        value={state.category}
-        onChange={(val) => onChange("category", val)}
-      />
+          {/* 6. Transaction Category (Optional) */}
+          <CategorySelect
+            value={state.category}
+            onChange={(val) => onChange("category", val)}
+            defaultCategory="Family & Friends"
+          />
 
-      {/* 6. Save Beneficiary */}
-      <SaveBeneficiaryCheckbox
-        checked={state.saveBeneficiary ?? false}
-        onChange={(val) => onChange("saveBeneficiary", val)}
-        nickname={state.beneficiaryNickname}
-        onNicknameChange={(val) => onChange("beneficiaryNickname", val)}
-      />
+          {/* 8. Schedule Payment */}
+          <SchedulePaymentSection
+            state={{
+              enabled: state.isScheduled ?? false,
+              startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
+              frequency: state.scheduleFrequency || "once",
+              endDate: state.scheduleEndDate || "",
+            }}
+            onChange={(updates) => {
+              if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
+              if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
+              if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
+              if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
+            }}
+          />
 
-      {/* 7. Schedule Payment */}
-      <SchedulePaymentSection
-        state={{
-          enabled: state.isScheduled ?? false,
-          startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
-          frequency: state.scheduleFrequency || "once",
-          endDate: state.scheduleEndDate || "",
-        }}
-        onChange={(updates) => {
-          if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
-          if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
-          if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
-          if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
-        }}
-      />
-
-      {/* 8. Proceed CTA */}
-      <ProceedButton
-        disabled={!isValid}
-        onClick={onProceed}
-      />
+          {/* 9. Proceed CTA */}
+          <ProceedButton
+            disabled={!isValid}
+            onClick={onProceed}
+          />
+        </div>
+      )}
     </div>
   );
 }

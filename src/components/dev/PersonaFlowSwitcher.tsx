@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   CreditCard,
   ExternalLink,
@@ -28,8 +28,23 @@ interface PersonaFlow {
 
 export default function PersonaFlowSwitcher() {
   const router = useRouter();
+  const pathname = usePathname();
   const { signIn, selectProfile, verifyMfa } = useSession();
   const [isOpen, setIsOpen] = useState(false);
+
+  // The persona switcher is an onboarding flow tool and should only display on the onboarding / entry surfaces
+  const isOnboardingSide =
+    pathname === "/" ||
+    pathname?.startsWith("/signup") ||
+    pathname?.startsWith("/activate") ||
+    pathname?.startsWith("/get-started") ||
+    pathname?.startsWith("/login") ||
+    pathname?.startsWith("/mfa") ||
+    pathname?.startsWith("/forgot-password");
+
+  if (!isOnboardingSide) {
+    return null;
+  }
 
   const flows: PersonaFlow[] = [
     {

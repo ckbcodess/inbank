@@ -77,21 +77,21 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
 
   return (
     <>
-      <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-all">
+      <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-colors">
         {/* Top section: Header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-[16px] font-medium text-foreground">Suggested for you</h2>
+          <h2 className="text-[15px] font-medium text-foreground">Suggested for you</h2>
           <button
             type="button"
             onClick={() => setShowEditModal(true)}
-            className="text-[14px] text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+            className="rounded-lg px-2.5 py-1 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
           >
-            Edit
+            Customize
           </button>
         </div>
 
         {/* Row 1: 4 Quick Actions */}
-        <div className="my-auto py-2 grid grid-cols-4 gap-2">
+        <div className="my-auto py-2.5 grid grid-cols-4 gap-2">
           {quickActions.map((action) => {
             const Icon = action.icon;
             return (
@@ -100,10 +100,10 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                 href={action.href}
                 className="group flex flex-col items-center gap-2 text-center focus:outline-none"
               >
-                <div className="flex size-[54px] sm:size-[56px] items-center justify-center rounded-full border border-border bg-card text-foreground shadow-xs transition-all duration-200 group-hover:scale-105 group-hover:bg-muted group-hover:border-border/80 group-active:scale-95">
-                  <Icon size={20} strokeWidth={1.8} className="transition-transform group-hover:scale-110" />
+                <div className="flex size-[52px] sm:size-[54px] items-center justify-center rounded-2xl border border-border/80 bg-muted/40 text-foreground shadow-2xs transition-[background-color,border-color,transform] duration-150 group-hover:bg-muted group-hover:border-border group-active:scale-[0.96]">
+                  <Icon size={19} strokeWidth={1.8} className="transition-transform group-hover:scale-105" />
                 </div>
-                <span className="text-[12px] font-normal leading-tight text-foreground">
+                <span className="text-[12px] font-normal leading-tight text-foreground truncate max-w-full px-1">
                   {action.label}
                 </span>
               </Link>
@@ -112,22 +112,22 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
         </div>
 
         {/* Row 2: 4 Frequent Contacts */}
-        <div className="grid grid-cols-4 gap-2 border-t border-border/60 pt-4">
+        <div className="grid grid-cols-4 gap-2 border-t border-border/50 pt-3.5">
           {frequentBeneficiaries.map((b, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => handleBeneficiaryClick(b)}
-              className="group flex flex-col items-center gap-2 text-center cursor-pointer focus:outline-none"
+              className="group flex flex-col items-center gap-2 text-center cursor-pointer focus:outline-none active:scale-[0.96] transition-transform"
             >
               <div
-                className={`flex size-[54px] sm:size-[56px] items-center justify-center rounded-full text-[20px] font-normal transition-all duration-200 group-hover:scale-105 group-active:scale-95 ${b.bg}`}
+                className={`flex size-[52px] sm:size-[54px] items-center justify-center rounded-full text-[19px] font-medium transition-transform duration-150 group-hover:scale-105 ${b.bg}`}
               >
                 {b.initial}
               </div>
-              <div className="flex flex-col items-center">
-                <span className="text-[12px] font-normal leading-tight text-foreground">{b.name}</span>
-                <span className="text-[11px] leading-tight text-muted-foreground">{b.detail}</span>
+              <div className="flex flex-col items-center max-w-full px-0.5">
+                <span className="text-[12px] font-normal leading-tight text-foreground truncate max-w-full">{b.name}</span>
+                <span className="text-[11px] leading-tight text-muted-foreground truncate max-w-full">{b.detail}</span>
               </div>
             </button>
           ))}
@@ -159,7 +159,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
 
             <form onSubmit={handleSendPayment} className="mt-5 flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
-                <label className="text-[13px] font-medium text-foreground">Amount (GHS)</label>
+                <label className="text-[13px] font-medium text-foreground">Enter amount (GHS)</label>
                 <div className="flex items-center rounded-xl border border-border bg-muted/40 px-4 py-2.5 focus-within:border-primary">
                   <span className="text-[16px] font-medium text-muted-foreground mr-2">GHS</span>
                   <input
@@ -182,9 +182,9 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                     key={preset}
                     type="button"
                     onClick={() => setPayAmount(preset)}
-                    className={`flex-1 rounded-lg border py-1.5 text-[12px] transition-colors cursor-pointer ${
+                    className={`flex-1 rounded-lg border py-1.5 text-[12px] transition-colors cursor-pointer active:scale-[0.96] transition-transform ${
                       payAmount === preset
-                        ? "border-foreground bg-muted font-semibold text-foreground shadow-xs"
+                        ? "border-foreground bg-muted font-medium text-foreground shadow-xs"
                         : "border-border bg-muted/50 text-foreground hover:bg-muted"
                     }`}
                   >
@@ -193,7 +193,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                 ))}
               </div>
 
-              <div className="rounded-lg bg-muted/50 p-3 text-[12px] text-muted-foreground flex items-center gap-2">
+              <div className="rounded-xl bg-muted/50 p-3 text-[12px] text-muted-foreground flex items-center gap-2">
                 <ShieldCheck size={16} className="text-emerald-600 shrink-0" />
                 <span>Zero transaction fees applied for instant wallet transfers.</span>
               </div>
@@ -202,17 +202,17 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                 <button
                   type="button"
                   onClick={() => setActiveBeneficiary(null)}
-                  className="rounded-xl border border-border px-4 py-2 text-[14px] font-medium text-foreground hover:bg-muted cursor-pointer"
+                  className="rounded-xl border border-border px-4 py-2 text-[13.5px] font-medium text-foreground hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isProcessing}
-                  className="flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2 text-[14px] font-medium hover:bg-primary/90 disabled:opacity-50 cursor-pointer shadow-xs"
+                  className="flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2 text-[13.5px] font-medium hover:bg-primary/90 active:scale-[0.96] transition-transform disabled:opacity-50 cursor-pointer shadow-xs"
                 >
                   {isProcessing ? "Processing..." : "Confirm & Send"}
-                  <ArrowRight size={15} />
+                  <ArrowRight size={14} strokeWidth={1.8} />
                 </button>
               </div>
             </form>

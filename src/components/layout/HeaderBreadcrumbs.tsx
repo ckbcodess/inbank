@@ -1,8 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
+
+const RAIL_BREADCRUMB_LABELS: Record<string, string> = {
+  bill: "GCB Pay",
+  bank: "Bank Transfer",
+  ach: "Bank Transfer",
+  wallet: "Mobile Money",
+  momo: "Mobile Money",
+  "wallet-to-bank": "Wallet to Bank",
+  proxy: "To Proxy",
+  group: "To Group",
+  papss: "PAPSS Payment",
+  airtime: "Airtime Top-up",
+  data: "Data Bundle",
+  "card-topup": "Card Top up",
+  ecg: "ECG Prepaid",
+  ghanagov: "Ghana.gov",
+  swift: "SWIFT Wire Transfer",
+  qr: "QR Payment",
+  cardless: "Cardless Withdrawal",
+};
 
 const ROUTE_LABELS: Record<string, string> = {
   overview: "Dashboard",
@@ -40,20 +60,28 @@ interface Crumb {
 
 export default function HeaderBreadcrumbs() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   if (!pathname || pathname === "/") return null;
 
   const segments = pathname.split("/").filter(Boolean);
   if (segments.length === 0) return null;
+
+  const rail = searchParams.get("rail") ?? "";
 
   const crumbs: Crumb[] = [];
   let currentPath = "";
 
   segments.forEach((segment, index) => {
     currentPath += `/${segment}`;
-    const isLast = index === segments.length - 1;
+    const isLast = index === segments.length - 1 && !(segment.toLowerCase() === "accounts" && searchParams.get("tab") === "spends");
 
     // Check if known route label
     let label = ROUTE_LABELS[segment.toLowerCase()];
+
+    // Override "send" segment when a rail param is present
+    if (segment.toLowerCase() === "send" && rail && RAIL_BREADCRUMB_LABELS[rail]) {
+      label = RAIL_BREADCRUMB_LABELS[rail];
+    }
 
     // If not found in known dict, check if it's an ID segment (e.g. acc-01, card-02, tx-99)
     if (!label) {
@@ -78,6 +106,14 @@ export default function HeaderBreadcrumbs() {
       isLast,
     });
   });
+
+  if (segments[0]?.toLowerCase() === "accounts" && searchParams.get("tab") === "spends") {
+    crumbs.push({
+      label: "My Spends",
+      href: "/accounts?tab=spends",
+      isLast: true,
+    });
+  }
 
   return (
     <nav aria-label="Breadcrumbs" className="flex items-center gap-1.5 text-[13px] leading-none">

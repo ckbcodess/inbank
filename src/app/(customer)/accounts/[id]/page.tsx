@@ -53,7 +53,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
 
   if (!account) {
     return (
-      <div className="max-w-[920px] mx-auto w-full flex flex-col gap-5">
+      <div className="w-full flex flex-col gap-5">
         <div className="flex items-center gap-3">
           <Link
             href="/accounts"
@@ -82,17 +82,17 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
       : activeProfile?.name || actor?.name || "Primary Account Holder";
 
   return (
-    <div className="max-w-[920px] mx-auto w-full flex flex-col gap-6 sm:gap-7">
+    <div className="w-full flex flex-col gap-10">
       {/* Figma 1277:11187 Header: Back + Title + Standing Order + Request Dropdown */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
           <Link
             href="/accounts"
-            className="group flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-all hover:bg-muted hover:text-foreground active:scale-95"
+            className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
             title="Back to Accounts"
             aria-label="Back to Accounts"
           >
-            <ChevronLeft size={16} strokeWidth={2} className="transition-transform group-hover:-translate-x-0.5" />
+            <ChevronLeft size={22} strokeWidth={1.8} />
           </Link>
           <h1 className="text-[24px] sm:text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground truncate">
             {account.name}

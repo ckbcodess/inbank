@@ -18,7 +18,6 @@ import {
   ProceedButton,
   VerifiedAccountBadge,
   CollapsedDetailsBadge,
-  SaveBeneficiaryCheckbox,
   SchedulePaymentSection,
   ScheduleFrequency,
 } from "./shared";
@@ -36,6 +35,7 @@ const GHANA_GOV_SERVICES = [
 export interface BillsPaymentFormState {
   fromId: string;
   subType: "bill" | "ecg" | "ghanagov";
+  billCategory?: string;
   billerId: string;
   billRef: string;
   ecgMeter: string;
@@ -83,9 +83,19 @@ export function BillsPaymentFlow({
     [accounts, state.fromId]
   );
 
+  const filteredBillers = useMemo(() => {
+    if (!state.billCategory) return BILLERS;
+    const list = BILLERS.filter(
+      (b) =>
+        b.category === state.billCategory ||
+        b.category.toLowerCase().includes(state.billCategory!.toLowerCase())
+    );
+    return list.length > 0 ? list : BILLERS;
+  }, [state.billCategory]);
+
   const selectedBiller = useMemo(() => {
-    return BILLERS.find((b) => b.id === state.billerId) ?? BILLERS[0];
-  }, [state.billerId]);
+    return filteredBillers.find((b) => b.id === state.billerId) ?? filteredBillers[0];
+  }, [filteredBillers, state.billerId]);
 
   const verifiedName = useMemo(() => {
     if (state.subType === "ecg") {
@@ -194,14 +204,14 @@ export function BillsPaymentFlow({
             ) : (
               <>
                 <Select
-                  value={state.billerId || ""}
+                  value={state.billerId || selectedBiller?.id || ""}
                   onValueChange={(val) => val && onChange("billerId", val)}
                 >
                   <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
                     <SelectValue placeholder="Select Biller" />
                   </SelectTrigger>
                   <SelectContent>
-                    {BILLERS.map((b) => (
+                    {filteredBillers.map((b) => (
                       <SelectItem key={b.id} value={b.id}>
                         {b.name} ({b.category})
                       </SelectItem>
@@ -224,67 +234,74 @@ export function BillsPaymentFlow({
         )}
       </div>
 
-      {/* 3. Amount */}
-      <AmountInput
-        value={state.amount}
-        onChange={(val) => onChange("amount", val)}
-        onFocus={() => {
-          if (isDestinationValid) setCollapsed(true);
-        }}
-        error={
-          overBalance ? (
-            <InsufficientFundsAlert
-              available={fromAccount?.available ?? 0}
-              currency={fromAccount?.currency || "GHS"}
-            />
-          ) : undefined
-        }
-      />
+      {/* Progressive Disclosure: Only reveal Amount & onwards after destination details are entered */}
+      {isDestinationValid && (
+        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+          {/* 3. Amount */}
+          <AmountInput
+            value={state.amount}
+            onChange={(val) => onChange("amount", val)}
+            onFocus={() => {
+              if (isDestinationValid) setCollapsed(true);
+            }}
+            error={
+              overBalance ? (
+                <InsufficientFundsAlert
+                  available={fromAccount?.available ?? 0}
+                  currency={fromAccount?.currency || "GHS"}
+                />
+              ) : undefined
+            }
+          />
 
-      {/* 4. Narration */}
-      <NarrationInput
-        value={state.narration}
-        onChange={(val) => onChange("narration", val)}
-        placeholder="Bill payment"
-      />
+          {/* 4. Narration */}
+          <NarrationInput
+            value={state.narration}
+            onChange={(val) => onChange("narration", val)}
+            placeholder="Bill payment"
+          />
 
-      {/* 5. Transaction Category (Optional) */}
-      <CategorySelect
-        value={state.category}
-        onChange={(val) => onChange("category", val)}
-      />
+          {/* 5. Transaction Category */}
+          <CategorySelect
+            value={state.category}
+            onChange={(val) => onChange("category", val)}
+            defaultCategory={
+              selectedBiller?.category === "Education"
+                ? "Education"
+                : selectedBiller?.category === "Subscriptions"
+                ? "Entertainment"
+                : selectedBiller?.category === "Healthcare"
+                ? "Health"
+                : selectedBiller?.category === "Giving & Donations"
+                ? "Donations"
+                : "Bills"
+            }
+          />
 
-      {/* 6. Save Beneficiary */}
-      <SaveBeneficiaryCheckbox
-        checked={state.saveBeneficiary ?? false}
-        onChange={(val) => onChange("saveBeneficiary", val)}
-        nickname={state.beneficiaryNickname}
-        onNicknameChange={(val) => onChange("beneficiaryNickname", val)}
-        label="Save this biller as a beneficiary"
-      />
+          {/* 7. Schedule Payment */}
+          <SchedulePaymentSection
+            state={{
+              enabled: state.isScheduled ?? false,
+              startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
+              frequency: state.scheduleFrequency || "once",
+              endDate: state.scheduleEndDate || "",
+            }}
+            onChange={(updates) => {
+              if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
+              if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
+              if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
+              if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
+            }}
+          />
 
-      {/* 7. Schedule Payment */}
-      <SchedulePaymentSection
-        state={{
-          enabled: state.isScheduled ?? false,
-          startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
-          frequency: state.scheduleFrequency || "once",
-          endDate: state.scheduleEndDate || "",
-        }}
-        onChange={(updates) => {
-          if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
-          if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
-          if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
-          if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
-        }}
-      />
-
-      {/* 8. Proceed CTA */}
-      <ProceedButton
-        disabled={!isValid}
-        onClick={onProceed}
-        label="Proceed"
-      />
+          {/* 8. Proceed CTA */}
+          <ProceedButton
+            disabled={!isValid}
+            onClick={onProceed}
+            label="Proceed"
+          />
+        </div>
+      )}
     </div>
   );
 }

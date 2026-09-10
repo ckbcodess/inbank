@@ -319,18 +319,20 @@ export const CORPORATE_CATEGORIES = [
 ] as const;
 
 export const RETAIL_CATEGORIES = [
-  "Groceries",
-  "Transport",
   "Bills",
-  "Shopping",
-  "Utilities",
-  "Dining",
-  "Cash & MoMo",
-  "Airtime & data",
+  "Data",
+  "Education",
+  "Food",
+  "Household",
+  "Savings",
+  "Transport",
+  "Donations",
+  "Family & Friends",
+  "Entertainment",
   "Health",
-  "Bank charges",
-  "Fees",
-  "Rent & facilities",
+  "Remittances",
+  "Shopping",
+  "Other",
 ] as const;
 
 export type SpendCategory =
@@ -339,20 +341,20 @@ export type SpendCategory =
 
 export const TRANSACTION_CATEGORIES = [
   { id: "all", name: "All Categories" },
-  { id: "transport", name: "Transport" },
   { id: "bills", name: "Bills" },
-  { id: "fees", name: "Fees & Charges" },
-  { id: "suppliers", name: "Suppliers & Vendors" },
-  { id: "payroll", name: "Payroll & Salaries" },
-  { id: "utilities", name: "Utilities" },
-  { id: "groceries", name: "Groceries & Food" },
-  { id: "shopping", name: "Shopping & Retail" },
-  { id: "cash-momo", name: "Cash & MoMo" },
-  { id: "airtime-data", name: "Airtime & Data" },
-  { id: "travel", name: "Travel & Flights" },
-  { id: "trade-imports", name: "Trade & Imports" },
-  { id: "taxes-levies", name: "Taxes & Levies" },
-  { id: "rent-facilities", name: "Rent & Facilities" },
+  { id: "data", name: "Data" },
+  { id: "education", name: "Education" },
+  { id: "food", name: "Food" },
+  { id: "household", name: "Household" },
+  { id: "savings", name: "Savings" },
+  { id: "transport", name: "Transport" },
+  { id: "donations", name: "Donations" },
+  { id: "family-friends", name: "Family & Friends" },
+  { id: "entertainment", name: "Entertainment" },
+  { id: "health", name: "Health" },
+  { id: "remittances", name: "Remittances" },
+  { id: "shopping", name: "Shopping" },
+  { id: "other", name: "Other" },
 ] as const;
 
 export const TRANSACTION_PAYMENT_METHODS = [
@@ -917,7 +919,7 @@ export const TRANSACTIONS: Transaction[] = [
     state: "completed",
     channel: "POS Card",
     paymentMethod: "card",
-    category: "Groceries",
+    category: "Food",
     profileKind: "RETAIL",
   },
   {
@@ -1087,7 +1089,7 @@ export const TRANSACTIONS: Transaction[] = [
     state: "completed",
     channel: "POS Card",
     paymentMethod: "card",
-    category: "Cash & MoMo",
+    category: "Family & Friends",
     profileKind: "RETAIL",
   },
   {
@@ -1144,7 +1146,7 @@ export const TRANSACTIONS: Transaction[] = [
     state: "completed",
     channel: "POS Card",
     paymentMethod: "card",
-    category: "Dining",
+    category: "Food",
     profileKind: "RETAIL",
   },
 ];
@@ -1600,13 +1602,14 @@ export function toLocalEquivalent(amount: number, currency: string): number | nu
 /* ── Billers & standing instructions — FR-05 ────────────────────────────────── */
 
 export type BillerCategory =
+  | "Bills & Utilities"
   | "Education"
-  | "Government"
-  | "Health"
-  | "Religious & Donations"
-  | "TV & Entertainment"
-  | "Utilities"
-  | "Others";
+  | "Giving & Donations"
+  | "Government Services"
+  | "Healthcare"
+  | "Merchant Payments"
+  | "Others"
+  | "Subscriptions";
 
 export interface Biller {
   id: string;
@@ -1616,16 +1619,10 @@ export interface Biller {
 }
 
 export const BILLERS: Biller[] = [
-  // Utilities
-  { id: "bil-001", name: "ECG — Electricity", category: "Utilities", reference: "Meter number" },
-  { id: "bil-002", name: "Ghana Water (GWCL)", category: "Utilities", reference: "Account number" },
-  { id: "bil-002b", name: "NEDCo Power Ghana", category: "Utilities", reference: "Meter number" },
-
-  // TV & Entertainment
-  { id: "bil-006", name: "DSTV / MultiChoice", category: "TV & Entertainment", reference: "Smartcard number" },
-  { id: "bil-007", name: "StarTimes Ghana", category: "TV & Entertainment", reference: "Smartcard number" },
-  { id: "bil-007b", name: "GOtv Ghana", category: "TV & Entertainment", reference: "IUC number" },
-  { id: "bil-007c", name: "Showmax Ghana", category: "TV & Entertainment", reference: "Mobile number" },
+  // Bills & Utilities
+  { id: "bil-001", name: "ECG — Electricity", category: "Bills & Utilities", reference: "Meter number" },
+  { id: "bil-002", name: "Ghana Water (GWCL)", category: "Bills & Utilities", reference: "Account number" },
+  { id: "bil-002b", name: "NEDCo Power Ghana", category: "Bills & Utilities", reference: "Meter number" },
 
   // Education
   { id: "bil-008", name: "University of Ghana (Legon)", category: "Education", reference: "Student ID / Index No." },
@@ -1633,22 +1630,27 @@ export const BILLERS: Biller[] = [
   { id: "bil-008c", name: "WAEC Exams Portal", category: "Education", reference: "Index number" },
   { id: "bil-008d", name: "UCC Cape Coast", category: "Education", reference: "Registration number" },
 
-  // Government
-  { id: "bil-004", name: "GRA — Tax Payment", category: "Government", reference: "TIN" },
-  { id: "bil-004b", name: "Ghana.gov Platform", category: "Government", reference: "Invoice / Ref Code" },
-  { id: "bil-004c", name: "DVLA — Driver Licence", category: "Government", reference: "Licence / Reg No." },
-  { id: "bil-004d", name: "Passports Office Ghana", category: "Government", reference: "Application ID" },
+  // Giving & Donations
+  { id: "bil-010", name: "ICGC Christ Temple", category: "Giving & Donations", reference: "Member ID / Phone" },
+  { id: "bil-010b", name: "Action Chapel International", category: "Giving & Donations", reference: "Member ID / Pledge Code" },
+  { id: "bil-010c", name: "Catholic Archdiocese of Accra", category: "Giving & Donations", reference: "Parish / Donor ID" },
+  { id: "bil-010d", name: "Ghana Red Cross Society", category: "Giving & Donations", reference: "Donor ID" },
 
-  // Health
-  { id: "bil-009", name: "National Health Insurance (NHIS)", category: "Health", reference: "Membership ID" },
-  { id: "bil-009b", name: "Korle Bu Teaching Hospital", category: "Health", reference: "Hospital Folder / Patient ID" },
-  { id: "bil-009c", name: "37 Military Hospital", category: "Health", reference: "Patient ID" },
+  // Government Services
+  { id: "bil-004", name: "GRA — Tax Payment", category: "Government Services", reference: "TIN" },
+  { id: "bil-004b", name: "Ghana.gov Platform", category: "Government Services", reference: "Invoice / Ref Code" },
+  { id: "bil-004c", name: "DVLA — Driver Licence", category: "Government Services", reference: "Licence / Reg No." },
+  { id: "bil-004d", name: "Passports Office Ghana", category: "Government Services", reference: "Application ID" },
 
-  // Religious & Donations
-  { id: "bil-010", name: "ICGC Christ Temple", category: "Religious & Donations", reference: "Member ID / Phone" },
-  { id: "bil-010b", name: "Action Chapel International", category: "Religious & Donations", reference: "Member ID / Pledge Code" },
-  { id: "bil-010c", name: "Catholic Archdiocese of Accra", category: "Religious & Donations", reference: "Parish / Donor ID" },
-  { id: "bil-010d", name: "Ghana Red Cross Society", category: "Religious & Donations", reference: "Donor ID" },
+  // Healthcare
+  { id: "bil-009", name: "National Health Insurance (NHIS)", category: "Healthcare", reference: "Membership ID" },
+  { id: "bil-009b", name: "Korle Bu Teaching Hospital", category: "Healthcare", reference: "Hospital Folder / Patient ID" },
+  { id: "bil-009c", name: "37 Military Hospital", category: "Healthcare", reference: "Patient ID" },
+
+  // Merchant Payments
+  { id: "bil-011", name: "Melcom Ghana", category: "Merchant Payments", reference: "Till / Merchant Number" },
+  { id: "bil-011b", name: "Shoprite Ghana", category: "Merchant Payments", reference: "Invoice / Order No." },
+  { id: "bil-011c", name: "Game Stores Ghana", category: "Merchant Payments", reference: "Customer / Till ID" },
 
   // Others
   { id: "bil-003", name: "MTN Ghana Broadband", category: "Others", reference: "Mobile / Account number" },
@@ -1656,6 +1658,12 @@ export const BILLERS: Biller[] = [
   { id: "bil-005", name: "SIC Insurance", category: "Others", reference: "Policy number" },
   { id: "bil-005b", name: "Enterprise Life Insurance", category: "Others", reference: "Policy number" },
   { id: "bil-005c", name: "Ghana Post / Courier EMS", category: "Others", reference: "Tracking / Account ID" },
+
+  // Subscriptions
+  { id: "bil-006", name: "DSTV / MultiChoice", category: "Subscriptions", reference: "Smartcard number" },
+  { id: "bil-007", name: "StarTimes Ghana", category: "Subscriptions", reference: "Smartcard number" },
+  { id: "bil-007b", name: "GOtv Ghana", category: "Subscriptions", reference: "IUC number" },
+  { id: "bil-007c", name: "Showmax Ghana", category: "Subscriptions", reference: "Mobile number" },
 ];
 
 export type InstructionFrequency = "Daily" | "Weekly" | "Monthly" | "Quarterly" | "Yearly";

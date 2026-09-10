@@ -64,7 +64,7 @@ function GrainSwitch({ value, onChange }: { value: Grain; onChange: (next: Grain
     <div
       role="group"
       aria-label="Period"
-      className="inline-flex w-fit rounded-xl bg-muted p-1"
+      className="inline-flex w-fit flex-wrap rounded-xl bg-muted p-1"
     >
       {GRAINS.map((grain) => (
         <button
@@ -72,9 +72,9 @@ function GrainSwitch({ value, onChange }: { value: Grain; onChange: (next: Grain
           type="button"
           onClick={() => onChange(grain)}
           aria-pressed={value === grain}
-          className={`rounded-lg px-3 py-1.5 text-[12px] transition-all ${
+          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
             value === grain
-              ? "bg-background text-foreground shadow-sm"
+              ? "bg-background text-foreground shadow-sm font-medium"
               : "text-muted-foreground hover:text-foreground"
           }`}
         >

@@ -11,7 +11,7 @@
 
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ChevronRight, Landmark, PieChart as PieChartIcon, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,6 +42,8 @@ const LIST_STATES: readonly ListState[] = [
 function AccountsContent() {
   useAmountVisibility();
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const activeProfile = useSession((s) => s.activeProfile);
   const accounts = accountsForProfile(activeProfile?.kind);
 
@@ -49,6 +51,15 @@ function AccountsContent() {
     searchParams.get("tab") === "spends" ? "spends" : "accounts"
   );
   const [selectedSpendAccountId, setSelectedSpendAccountId] = useState<string | null>(null);
+
+  const handleSwitchTab = (tab: "accounts" | "spends") => {
+    setActiveTab(tab);
+    if (tab === "spends") {
+      router.push(`${pathname}?tab=spends`);
+    } else {
+      router.push(pathname);
+    }
+  };
 
   const [state, setState] = useState<ListState>("populated");
   const [query, setQuery] = useState("");
@@ -58,9 +69,8 @@ function AccountsContent() {
     if (searchParams.get("link_source") === "true") {
       setIsLinkModalOpen(true);
     }
-    if (searchParams.get("tab") === "spends") {
-      setActiveTab("spends");
-    }
+    const tabParam = searchParams.get("tab");
+    setActiveTab(tabParam === "spends" ? "spends" : "accounts");
   }, [searchParams]);
 
   const results = useMemo(() => {
@@ -83,7 +93,7 @@ function AccountsContent() {
         accounts={accounts}
         selectedAccountId={selectedSpendAccountId}
         onSelectAccount={setSelectedSpendAccountId}
-        onBackToAccounts={() => setActiveTab("accounts")}
+        onBackToAccounts={() => handleSwitchTab("accounts")}
       />
     );
   }
@@ -92,7 +102,7 @@ function AccountsContent() {
     <div className="flex flex-col gap-6 animate-in fade-in duration-200">
       {/* ── Header: Title & Action Buttons (1:1 Figma Node 1225:6904) ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-[26px] sm:text-[28px] font-semibold tracking-tight text-foreground">
+        <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
           Accounts
         </h1>
 
@@ -101,7 +111,7 @@ function AccountsContent() {
           <Button
             type="button"
             variant="outline"
-            onClick={() => setActiveTab("spends")}
+            onClick={() => handleSwitchTab("spends")}
             className="h-10 px-4 rounded-xl border border-border/80 bg-background/50 hover:bg-muted font-medium text-[13.5px] text-foreground flex items-center gap-2 cursor-pointer transition-all active:scale-[0.98]"
           >
             <PieChartIcon size={16} className="text-foreground" />

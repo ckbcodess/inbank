@@ -340,8 +340,8 @@ export default function CreateGroupFlow({
 
     return (
       <PaymentSuccessScreen
-        title={groupToEdit ? "Group Updated" : "Group Created"}
-        message={`Group “${receiptData.group.name}” with ${receiptData.group.members.length} members is ready for group payments.`}
+        title={groupToEdit ? "Group updated" : "Group created"}
+        message={`“${receiptData.group.name}” is all set up with ${receiptData.group.members.length} members and ready for group payments.`}
         transactionId={receiptData.referenceId}
         receiptRows={receiptRows}
         onViewReceipt={() => router.push(`/transactions/${receiptData.referenceId}`)}

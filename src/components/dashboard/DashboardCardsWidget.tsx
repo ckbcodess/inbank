@@ -1,11 +1,11 @@
 import { useState } from "react";
 import Link from "next/link";
-import { Snowflake, X, Smartphone, Globe } from "lucide-react";
+import { Snowflake, X, Smartphone, Globe, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 interface CardItem {
   id: string;
-  type: "Debit" | "Virtual";
+  type: "Debit" | "Virtual" | "Corporate";
   maskedNumber: string;
   frozen: boolean;
   network: "VISA" | "MASTERCARD";
@@ -33,7 +33,7 @@ export function DashboardCardsWidget() {
     {
       id: "card-virtual",
       type: "Virtual",
-      maskedNumber: "•••• 9102",
+      maskedNumber: "•••• 4419",
       frozen: false,
       network: "MASTERCARD",
       gradient: "linear-gradient(135deg, rgb(29, 41, 61) 0%, rgb(24, 24, 27) 50%, rgb(15, 23, 43) 100%)",
@@ -41,6 +41,18 @@ export function DashboardCardsWidget() {
       onlineEnabled: true,
       intlEnabled: false,
       contactlessEnabled: true,
+    },
+    {
+      id: "card-travel",
+      type: "Corporate",
+      maskedNumber: "•••• 8831",
+      frozen: false,
+      network: "VISA",
+      gradient: "linear-gradient(135deg, rgb(180, 83, 9) 0%, rgb(120, 53, 15) 50%, rgb(67, 20, 7) 100%)",
+      limit: 25000,
+      onlineEnabled: true,
+      intlEnabled: true,
+      contactlessEnabled: false,
     },
   ]);
 
@@ -72,45 +84,46 @@ export function DashboardCardsWidget() {
 
   return (
     <>
-      <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-all">
+      <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-colors">
         {/* Top Header */}
         <div className="flex items-center justify-between">
-          <h2 className="text-[16px] font-medium text-foreground">Cards</h2>
+          <h2 className="text-[15px] font-medium text-foreground">Cards</h2>
           <Link
             href="/cards"
-            className="text-[14px] text-muted-foreground transition-colors hover:text-foreground"
+            className="inline-flex items-center gap-1 text-[12.5px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
           >
-            View all
+            <span>View all</span>
+            <ChevronRight size={13} strokeWidth={1.8} />
           </Link>
         </div>
 
         {/* Cards List */}
-        <div className="my-auto py-2 flex flex-col divide-y divide-border/60">
+        <div className="my-auto flex flex-col divide-y divide-border/50 py-1">
           {cards.map((card) => (
             <div
               key={card.id}
-              className="flex items-center justify-between py-3.5 first:pt-1 last:pb-1"
+              className="flex items-center justify-between py-2.5 px-2.5 -mx-2.5 rounded-xl transition-colors hover:bg-muted/40 first:pt-1.5 last:pb-1.5"
             >
               {/* Left: Mini Card Graphic & Info */}
               <div
-                className="flex items-center gap-4 cursor-pointer group"
+                className="flex items-center gap-3.5 cursor-pointer group"
                 onClick={() => setManagingCard(card)}
               >
                 {/* Mini Card Graphic */}
                 <div
-                  className="relative flex h-[42px] w-[66px] flex-col justify-between overflow-hidden rounded-md p-1.5 shadow-xs transition-transform duration-200 group-hover:scale-105"
+                  className="relative flex h-[38px] w-[60px] shrink-0 flex-col justify-between overflow-hidden rounded-lg p-1 shadow-2xs border border-white/10 transition-transform duration-200 group-hover:scale-105"
                   style={{ background: card.gradient }}
                 >
                   {/* Chip */}
-                  <div className="h-2.5 w-3 rounded-xs bg-[#f9c632]/90" />
+                  <div className="h-2 w-2.5 rounded-xs bg-[#f9c632]/90" />
                   {/* Network logo */}
                   <div className="flex justify-end">
                     {card.network === "VISA" ? (
-                      <span className="text-[9px] font-bold tracking-tight text-white">VISA</span>
+                      <span className="text-[8.5px] font-bold tracking-tight text-white">VISA</span>
                     ) : (
                       <div className="flex items-center -space-x-1">
-                        <div className="size-2.5 rounded-full bg-[#eb001b]/90" />
-                        <div className="size-2.5 rounded-full bg-[#f79e1b]/90" />
+                        <div className="size-2 rounded-full bg-[#eb001b]/90" />
+                        <div className="size-2 rounded-full bg-[#f79e1b]/90" />
                       </div>
                     )}
                   </div>
@@ -119,13 +132,13 @@ export function DashboardCardsWidget() {
                 {/* Card Details */}
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
-                    <span className="text-[14px] font-medium text-foreground">{card.type}</span>
-                    <span className="text-[12px] text-muted-foreground">{card.maskedNumber}</span>
+                    <span className="text-[13.5px] font-medium text-foreground">{card.type}</span>
+                    <span className="text-[11.5px] text-muted-foreground tabular">{card.maskedNumber}</span>
                   </div>
                   {card.frozen ? (
                     <span className="text-[11px] font-medium text-destructive">Frozen</span>
                   ) : (
-                    <span className="text-[11px] text-muted-foreground">Active · GHS {card.limit.toLocaleString()} limit</span>
+                    <span className="text-[11.5px] text-muted-foreground tabular">Active · GHS {card.limit.toLocaleString()} limit</span>
                   )}
                 </div>
               </div>
@@ -135,20 +148,20 @@ export function DashboardCardsWidget() {
                 <button
                   type="button"
                   onClick={() => toggleFreeze(card.id)}
-                  className={`flex h-7 items-center gap-1.5 rounded-md border px-2.5 text-[12px] font-medium transition-colors cursor-pointer ${
+                  className={`flex h-7.5 items-center gap-1.5 rounded-lg border px-2.5 text-[12px] font-medium transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
                     card.frozen
                       ? "border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/20"
                       : "border-border bg-muted/60 text-foreground hover:bg-muted"
                   }`}
                 >
-                  <Snowflake size={13} strokeWidth={2} />
+                  <Snowflake size={13} strokeWidth={1.8} />
                   <span>{card.frozen ? "Unfreeze" : "Freeze"}</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setManagingCard(card)}
-                  className="flex h-7 items-center rounded-md border border-border bg-muted/60 px-2.5 text-[12px] font-medium text-foreground transition-colors hover:bg-muted cursor-pointer"
+                  className="flex h-7.5 items-center rounded-lg border border-border bg-muted/60 px-2.5 text-[12px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
                 >
                   Manage
                 </button>

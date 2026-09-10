@@ -126,7 +126,7 @@ export function GroupPaymentFlow({
               }
             }}
           >
-            <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-left shadow-none flex items-center">
+            <SelectTrigger className="min-h-[52px] h-auto py-2.5 w-full rounded-2xl border border-border/80 bg-card px-4 text-left shadow-none flex items-center">
               {!selectedGroup ? (
                 <div className="flex items-center gap-3.5 min-w-0 flex-1">
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
@@ -153,7 +153,7 @@ export function GroupPaymentFlow({
                   </div>
                   <div className="text-right shrink-0">
                     <span className="text-[14px] text-muted-foreground font-medium tabular">
-                      {selectedGroup.members.length} members
+                      {selectedGroup.members.length} {selectedGroup.members.length === 1 ? "member" : "members"}
                     </span>
                   </div>
                 </div>
@@ -162,7 +162,7 @@ export function GroupPaymentFlow({
             <SelectContent>
               {groups.map((g) => (
                 <SelectItem key={g.id} value={g.name}>
-                  {g.name} ({g.members.length} members)
+                  {g.name} ({g.members.length} {g.members.length === 1 ? "member" : "members"})
                 </SelectItem>
               ))}
             </SelectContent>
@@ -170,46 +170,50 @@ export function GroupPaymentFlow({
         )}
       </div>
 
-      {/* 3. Amount */}
-      <div className="flex flex-col gap-2">
-        <AmountInput
-          value={state.grpAmount}
-          onChange={(val) => onChange("grpAmount", val)}
-          label={selectedGroup?.splitType === "equal" ? "Amount per Member" : "Total Amount"}
-          onFocus={() => {
-            if (selectedGroup) setCollapsed(true);
-          }}
-          error={
-            overBalance ? (
-              <InsufficientFundsAlert
-                available={fromAccount?.available ?? 0}
-                currency={fromAccount?.currency || "GHS"}
-              />
-            ) : undefined
-          }
-        />
-        {selectedGroup && selectedGroup.splitType === "equal" && numAmount > 0 && (
-          <div className="flex items-center justify-between px-2 text-[13px] text-muted-foreground">
-            <span>Total Group Debit ({memberCount} members):</span>
-            <span className="font-semibold text-foreground tabular">
-              {formatMoney(totalDebit, "GHS", true)}
-            </span>
+      {/* Progressive Disclosure: Only reveal Amount & subsequent form fields after group is selected */}
+      {Boolean(selectedGroup) && (
+        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+          {/* 3. Amount */}
+          <div className="flex flex-col gap-2">
+            <AmountInput
+              value={state.grpAmount}
+              onChange={(val) => onChange("grpAmount", val)}
+              label={selectedGroup?.splitType === "equal" ? "Amount per Member (Preset)" : "Total Amount"}
+              disabled={Boolean(selectedGroup)}
+              error={
+                overBalance ? (
+                  <InsufficientFundsAlert
+                    available={fromAccount?.available ?? 0}
+                    currency={fromAccount?.currency || "GHS"}
+                  />
+                ) : undefined
+              }
+            />
+            {selectedGroup && selectedGroup.splitType === "equal" && numAmount > 0 && (
+              <div className="flex items-center justify-between px-2 text-[13px] text-muted-foreground">
+                <span>Total Group Debit ({memberCount} members):</span>
+                <span className="font-semibold text-foreground tabular">
+                  {formatMoney(totalDebit, "GHS", true)}
+                </span>
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
-      {/* 4. Narration */}
-      <NarrationInput
-        value={state.narration}
-        onChange={(val) => onChange("narration", val)}
-        placeholder="Group contribution reference"
-      />
+          {/* 4. Narration */}
+          <NarrationInput
+            value={state.narration}
+            onChange={(val) => onChange("narration", val)}
+            placeholder="Group contribution reference"
+          />
 
-      {/* 5. Transaction Category (Optional) */}
-      <CategorySelect
-        value={state.category}
-        onChange={(val) => onChange("category", val)}
-      />
+          {/* 5. Transaction Category (Optional) */}
+          <CategorySelect
+            value={state.category}
+            onChange={(val) => onChange("category", val)}
+            defaultCategory="Donations"
+          />
+        </div>
+      )}
 
       {/* 6. Proceed CTA */}
       <ProceedButton

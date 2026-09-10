@@ -203,7 +203,7 @@ export default function FxRatesPage() {
 
             <div className="mt-4 grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:items-end">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="fx-amount">Amount</Label>
+                <Label htmlFor="fx-amount">Enter amount</Label>
                 <div className="flex gap-2">
                   <Input
                     id="fx-amount"

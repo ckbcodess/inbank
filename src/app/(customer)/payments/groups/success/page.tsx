@@ -57,8 +57,8 @@ function SuccessContent() {
 
   return (
     <PaymentSuccessScreen
-      title="Group Created"
-      message={`Group “${groupName}” with ${memberCount} members is ready for group payments.`}
+      title="Group created"
+      message={`“${groupName}” is all set up with ${memberCount} members and ready for group payments.`}
       transactionId={queryRef}
       receiptRows={receiptRows}
       onViewReceipt={() => router.push(`/transactions/${queryRef}`)}

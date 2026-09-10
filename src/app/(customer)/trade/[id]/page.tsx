@@ -39,7 +39,7 @@ export default function TradeDetailsPage({ params }: { params: Promise<{ id: str
   const [state, setState] = useState<TradeState>("under-bank-review");
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-10">
       <PageHeader
         title="Documentary collection — cotton import"
         description={`${id.toUpperCase()} · Shenzhen Textile Group`}

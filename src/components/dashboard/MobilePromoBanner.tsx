@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Sparkles, TrendingUp, Globe, Calculator, X } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Globe, Calculator, X } from "lucide-react";
 import { toast } from "sonner";
 
 export function MobilePromoBanner() {
@@ -14,38 +14,42 @@ export function MobilePromoBanner() {
     {
       id: "mobile-app",
       title: "Banking made easier, wherever you are.",
-      theme: "from-[#f9c632] via-[#f5bc19] to-[#f0b100]",
+      containerClass:
+        "border-amber-300/50 bg-gradient-to-br from-[#fefbf2] via-[#fbf3db] to-[#f7e8bd] dark:from-[#211a0c] dark:via-[#191409] dark:to-[#130f07] dark:border-amber-500/20",
       content: (
         <>
-          <div className="relative z-10 flex flex-col justify-between h-full max-w-[55%]">
+          <div className="relative z-10 flex flex-col justify-between min-h-[175px] max-w-[62%]">
             <div>
-              <h3 className="text-[22px] font-bold leading-tight tracking-tight text-black sm:text-[26px]">
-                Banking made easier,<br />wherever you are.
+              <h3 className="text-[17px] font-medium leading-snug tracking-tight text-foreground sm:text-[19px]">
+                Banking made easier, wherever you are.
               </h3>
+              <p className="mt-1 text-[12px] text-muted-foreground leading-relaxed">
+                Scan with phone camera to install the InBank mobile app.
+              </p>
             </div>
-
-            {/* QR Code Container */}
-            <div className="mt-6 flex items-center">
-              <div className="size-[120px] sm:size-[140px] overflow-hidden rounded-xl bg-white p-2 shadow-md">
+            <div className="mt-3 flex items-center gap-3">
+              <div className="size-[72px] shrink-0 overflow-hidden rounded-lg bg-white p-1.5 shadow-2xs border border-black/10 dark:border-white/10">
                 <Image
                   src="/images/dashboard/qr-code-1.png"
-                  alt="QR Code to download GCB Mobile App"
-                  width={140}
-                  height={140}
+                  alt="QR Code"
+                  width={72}
+                  height={72}
                   className="h-full w-full object-contain"
                 />
               </div>
+              <span className="text-[11.5px] text-muted-foreground leading-tight">
+                Available on<br />
+                <span className="font-medium text-foreground">iOS & Android</span>
+              </span>
             </div>
           </div>
-
-          {/* 3D Phone / App Illustration */}
-          <div className="pointer-events-none absolute -bottom-4 -right-2 h-[260px] w-[210px] sm:h-[290px] sm:w-[250px]">
+          <div className="pointer-events-none absolute -bottom-3 -right-2 h-[190px] w-[140px] sm:h-[200px] sm:w-[155px]">
             <Image
               src="/images/dashboard/phone-app-mockup.png"
-              alt="GCB Mobile App Preview"
-              width={260}
-              height={300}
-              className="h-full w-full object-contain drop-shadow-2xl"
+              alt="InBank Mobile App Preview"
+              width={200}
+              height={240}
+              className="h-full w-full object-contain drop-shadow-md"
             />
           </div>
         </>
@@ -54,35 +58,36 @@ export function MobilePromoBanner() {
     {
       id: "fixed-deposit",
       title: "Grow your wealth with 14.5% p.a. Fixed Deposit",
-      theme: "from-[#10b981] via-[#059669] to-[#047857]",
+      containerClass:
+        "border-emerald-300/50 bg-gradient-to-br from-[#f0fbf5] via-[#e2f7ec] to-[#cbf0dc] dark:from-[#0d2118] dark:via-[#091711] dark:to-[#07110c] dark:border-emerald-500/20",
       content: (
-        <div className="relative z-10 flex flex-col justify-between h-full w-full text-white">
-          <div className="flex flex-col gap-2">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[12px] font-medium backdrop-blur-xs w-fit">
-              <Sparkles size={14} /> High Yield Savings
+        <div className="relative z-10 flex flex-col justify-between min-h-[175px] w-full">
+          <div className="flex flex-col gap-1">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-300 w-fit">
+              <Sparkles size={12} strokeWidth={1.8} /> High Yield Savings
             </div>
-            <h3 className="text-[22px] font-bold leading-tight tracking-tight text-white sm:text-[26px]">
-              Earn up to 14.5% p.a.<br />on Fixed Deposits.
+            <h3 className="mt-1 text-[17px] font-medium leading-snug tracking-tight text-foreground sm:text-[19px]">
+              Earn up to 14.5% p.a. on Fixed Deposits.
             </h3>
-            <p className="text-[13px] text-white/80 max-w-[80%]">
+            <p className="text-[12px] text-muted-foreground leading-relaxed max-w-[85%]">
               Guaranteed returns with flexible tenures from 3 to 24 months. Bank of Ghana protected.
             </p>
           </div>
-
-          <div className="mt-4 flex items-center gap-3">
+          <div className="mt-3 flex items-center gap-2.5">
             <button
               type="button"
               onClick={() => setShowCalculator(true)}
-              className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-[13px] font-medium text-emerald-900 shadow-md hover:bg-white/90 cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-700 dark:bg-emerald-600 px-3.5 py-2 text-[12.5px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform cursor-pointer"
             >
-              <Calculator size={15} />
-              Calculate Returns
+              <Calculator size={14} strokeWidth={1.8} />
+              <span>Calculate Returns</span>
             </button>
             <Link
               href="/accounts"
-              className="flex items-center gap-1.5 text-[13px] font-medium text-white hover:underline"
+              className="inline-flex items-center gap-1 text-[12.5px] font-medium text-foreground hover:underline active:scale-[0.96] transition-transform"
             >
-              Open Account <ArrowRight size={14} />
+              <span>Open Account</span>
+              <ArrowRight size={13} strokeWidth={1.8} />
             </Link>
           </div>
         </div>
@@ -91,27 +96,28 @@ export function MobilePromoBanner() {
     {
       id: "remittances",
       title: "Instant diaspora transfers at zero markup",
-      theme: "from-[#3b82f6] via-[#2563eb] to-[#1d4ed8]",
+      containerClass:
+        "border-blue-300/50 bg-gradient-to-br from-[#f0f6ff] via-[#e1eeff] to-[#cfe2fe] dark:from-[#0d1a2d] dark:via-[#091220] dark:to-[#060d17] dark:border-blue-500/20",
       content: (
-        <div className="relative z-10 flex flex-col justify-between h-full w-full text-white">
-          <div className="flex flex-col gap-2">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[12px] font-medium backdrop-blur-xs w-fit">
-              <Globe size={14} /> Global Payments
+        <div className="relative z-10 flex flex-col justify-between min-h-[175px] w-full">
+          <div className="flex flex-col gap-1">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 px-2.5 py-0.5 text-[11px] font-medium text-blue-700 dark:text-blue-300 w-fit">
+              <Globe size={12} strokeWidth={1.8} /> Global Payments
             </div>
-            <h3 className="text-[22px] font-bold leading-tight tracking-tight text-white sm:text-[26px]">
-              Zero-fee international<br />money transfers.
+            <h3 className="mt-1 text-[17px] font-medium leading-snug tracking-tight text-foreground sm:text-[19px]">
+              Zero-fee international money transfers.
             </h3>
-            <p className="text-[13px] text-white/80 max-w-[80%]">
+            <p className="text-[12px] text-muted-foreground leading-relaxed max-w-[85%]">
               Send directly to UK, USA, Europe, and 45+ African destinations instantly at live interbank rates.
             </p>
           </div>
-
-          <div className="mt-4 flex items-center gap-3">
+          <div className="mt-3 flex items-center gap-2.5">
             <Link
               href="/payments/send"
-              className="flex items-center gap-2 rounded-xl bg-white px-4 py-2 text-[13px] font-medium text-blue-900 shadow-md hover:bg-white/90"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-700 dark:bg-blue-600 px-3.5 py-2 text-[12.5px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform"
             >
-              Send Money Now <ArrowRight size={14} />
+              <span>Send Money Now</span>
+              <ArrowRight size={13} strokeWidth={1.8} />
             </Link>
           </div>
         </div>
@@ -126,30 +132,65 @@ export function MobilePromoBanner() {
 
   return (
     <>
-      <div className="flex h-full w-full flex-col items-center justify-between gap-3">
-        <div className={`relative flex flex-1 w-full flex-col justify-between overflow-hidden rounded-2xl p-7 shadow-xs min-h-[300px] bg-gradient-to-br ${slides[currentSlide].theme} transition-all duration-500`}>
-          {/* Background ambient glow effect */}
-          <div className="pointer-events-none absolute -left-12 -top-12 size-[280px] rounded-full bg-white/25 blur-2xl" />
+      <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-colors">
+        {/* Top Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-2.5 py-0.5 text-[11.5px] font-medium text-amber-700 dark:text-amber-300">
+              <Sparkles size={12} strokeWidth={1.8} />
+              Featured
+            </span>
+            <span className="text-[12px] text-muted-foreground tabular">{currentSlide + 1} of {slides.length}</span>
+          </div>
 
-          {/* Slide Content */}
-          {slides[currentSlide].content}
+          {/* Slide Controls */}
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setCurrentSlide((s) => (s === 0 ? slides.length - 1 : s - 1))}
+              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft size={16} strokeWidth={1.8} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setCurrentSlide((s) => (s === slides.length - 1 ? 0 : s + 1))}
+              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
+              aria-label="Next slide"
+            >
+              <ChevronRight size={16} strokeWidth={1.8} />
+            </button>
+          </div>
         </div>
 
-        {/* Carousel Pagination Indicator Dots */}
-        <div className="flex items-center gap-2 py-1">
-          {slides.map((_, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => setCurrentSlide(idx)}
-              aria-label={`Go to slide ${idx + 1}`}
-              className={`rounded-full transition-all cursor-pointer ${
-                currentSlide === idx
-                  ? "size-2.5 bg-foreground scale-110"
-                  : "size-2 bg-muted-foreground/40 hover:bg-muted-foreground"
-              }`}
-            />
-          ))}
+        {/* Slide Stage Container */}
+        <div className="my-auto py-2">
+          <div
+            className={`relative overflow-hidden rounded-xl border p-5 shadow-2xs transition-[background-color,border-color] duration-200 ${slides[currentSlide].containerClass}`}
+          >
+            {slides[currentSlide].content}
+          </div>
+        </div>
+
+        {/* Symmetrical Footer */}
+        <div className="flex items-center justify-between border-t border-border/50 pt-3 text-[12px] text-muted-foreground">
+          <span>Special offer · Terms apply</span>
+          <div className="flex items-center gap-1.5">
+            {slides.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setCurrentSlide(idx)}
+                aria-label={`Go to slide ${idx + 1}`}
+                className={`rounded-full transition-all duration-200 cursor-pointer ${
+                  currentSlide === idx
+                    ? "h-1.5 w-4 bg-foreground"
+                    : "size-1.5 bg-muted-foreground/35 hover:bg-muted-foreground"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
@@ -159,18 +200,18 @@ export function MobilePromoBanner() {
           <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-xl">
             <div className="flex items-center justify-between border-b border-border/60 pb-4">
               <div className="flex items-center gap-2.5">
-                <div className="flex size-9 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600">
-                  <TrendingUp size={20} />
+                <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                  <TrendingUp size={18} strokeWidth={1.8} />
                 </div>
                 <div>
-                  <h3 className="text-[16px] font-medium text-foreground">Fixed Deposit Calculator</h3>
+                  <h3 className="text-[15px] font-medium text-foreground">Fixed Deposit Calculator</h3>
                   <p className="text-[12px] text-muted-foreground">Estimated interest at 14.50% p.a.</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setShowCalculator(false)}
-                className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
+                className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -179,7 +220,7 @@ export function MobilePromoBanner() {
             <div className="mt-5 flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
                 <label className="text-[13px] font-medium text-foreground">Deposit Amount (GHS)</label>
-                <div className="flex items-center rounded-xl border border-border bg-muted/40 px-4 py-2.5">
+                <div className="flex items-center rounded-xl border border-border bg-muted/40 px-4 py-2.5 focus-within:border-primary">
                   <span className="text-[16px] font-medium text-muted-foreground mr-2">GHS</span>
                   <input
                     type="number"
@@ -200,7 +241,7 @@ export function MobilePromoBanner() {
                       key={m}
                       type="button"
                       onClick={() => setTenureMonths(m)}
-                      className={`rounded-lg border py-2 text-[13px] font-medium transition-colors cursor-pointer ${
+                      className={`rounded-lg border py-2 text-[12.5px] font-medium transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
                         tenureMonths === m
                           ? "border-primary bg-primary/10 text-primary"
                           : "border-border bg-muted/40 text-foreground hover:bg-muted"
@@ -216,13 +257,13 @@ export function MobilePromoBanner() {
               <div className="mt-2 rounded-xl bg-emerald-500/10 p-4 dark:bg-emerald-500/15 border border-emerald-500/20">
                 <div className="flex justify-between text-[13px] text-muted-foreground">
                   <span>Estimated Interest</span>
-                  <span className="font-semibold text-emerald-600 dark:text-[#49ff8d]">
+                  <span className="font-medium text-emerald-600 dark:text-emerald-400 tabular">
                     +GHS {estimatedReturn.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                 </div>
-                <div className="mt-2 flex justify-between border-t border-emerald-500/20 pt-2 text-[15px] font-medium text-foreground">
+                <div className="mt-2 flex justify-between border-t border-emerald-500/20 pt-2 text-[14px] font-medium text-foreground">
                   <span>Total at Maturity</span>
-                  <span className="font-semibold">
+                  <span className="tabular">
                     GHS {totalMaturity.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                 </div>
@@ -232,7 +273,7 @@ export function MobilePromoBanner() {
                 <button
                   type="button"
                   onClick={() => setShowCalculator(false)}
-                  className="rounded-xl border border-border px-4 py-2 text-[14px] font-medium text-foreground hover:bg-muted cursor-pointer"
+                  className="rounded-xl border border-border px-4 py-2 text-[13.5px] font-medium text-foreground hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
                 >
                   Close
                 </button>
@@ -242,7 +283,7 @@ export function MobilePromoBanner() {
                     setShowCalculator(false);
                     toast.success("Fixed Deposit application initiated.");
                   }}
-                  className="rounded-xl bg-emerald-600 px-5 py-2 text-[14px] font-medium text-white hover:bg-emerald-700 cursor-pointer shadow-xs"
+                  className="rounded-xl bg-emerald-700 dark:bg-emerald-600 px-5 py-2 text-[13.5px] font-medium text-white hover:opacity-90 active:scale-[0.96] transition-transform cursor-pointer shadow-xs"
                 >
                   Create Deposit
                 </button>

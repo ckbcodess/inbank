@@ -18,7 +18,6 @@ import {
   VerifiedAccountBadge,
   CollapsedDetailsBadge,
   BANKS,
-  SaveBeneficiaryCheckbox,
   SchedulePaymentSection,
   ScheduleFrequency,
   resolveAccountName,
@@ -175,14 +174,7 @@ export function WalletToBankFlow({
       <CategorySelect
         value={state.category}
         onChange={(val) => onChange("category", val)}
-      />
-
-      {/* 6. Save Beneficiary */}
-      <SaveBeneficiaryCheckbox
-        checked={state.saveBeneficiary ?? false}
-        onChange={(val) => onChange("saveBeneficiary", val)}
-        nickname={state.beneficiaryNickname}
-        onNicknameChange={(val) => onChange("beneficiaryNickname", val)}
+        defaultCategory="Family & Friends"
       />
 
       {/* 7. Schedule Payment */}

@@ -81,7 +81,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
   const exceeds = state === "exceeds-limit";
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-10">
       <PageHeader
         title="Payment approval"
         description={`${item.reference} · submitted by ${item.submittedBy}`}

@@ -34,8 +34,7 @@ export default function LinkSourceAccountModal({
   isOpen,
   onClose,
 }: LinkSourceAccountModalProps) {
-  const [screen, setScreen] = useState<ModalScreen>("choice");
-  const [selectedMethod, setSelectedMethod] = useState<"momo" | "card">("momo");
+  const [screen, setScreen] = useState<ModalScreen>("momo_form");
 
   // MoMo Form State
   const [momoNumber, setMomoNumber] = useState("024 123 4567");
@@ -52,14 +51,6 @@ export default function LinkSourceAccountModal({
   const [busy, setBusy] = useState(false);
 
   if (!isOpen) return null;
-
-  function handleChoiceProceed() {
-    if (selectedMethod === "momo") {
-      setScreen("momo_form");
-    } else {
-      setScreen("card_form");
-    }
-  }
 
   function handleMomoSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -142,7 +133,6 @@ export default function LinkSourceAccountModal({
               <button
                 type="button"
                 onClick={() => {
-                  setSelectedMethod("momo");
                   setScreen("momo_form");
                 }}
                 className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md hover:shadow-[#F2B200]/10 active:scale-[0.96] cursor-pointer"
@@ -170,7 +160,6 @@ export default function LinkSourceAccountModal({
               <button
                 type="button"
                 onClick={() => {
-                  setSelectedMethod("card");
                   setScreen("card_form");
                 }}
                 className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md hover:shadow-[#F2B200]/10 active:scale-[0.96] cursor-pointer"

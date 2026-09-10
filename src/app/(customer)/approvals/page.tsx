@@ -92,22 +92,25 @@ export default function ApprovalQueuePage() {
 
       <div className="rounded-2xl border border-border bg-card">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
-          <div className="inline-flex rounded-lg bg-muted p-0.5">
-            {(["all", "payment", "trade"] as const).map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setTypeFilter(t)}
-                aria-pressed={typeFilter === t}
-                className={`rounded-md px-3 py-1.5 text-[12.5px] capitalize transition-all cursor-pointer ${
-                  typeFilter === t
-                    ? "bg-background text-foreground shadow-sm font-medium"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {t}
-              </button>
-            ))}
+          <div className="inline-flex w-fit flex-wrap rounded-xl bg-muted p-1">
+            {(["all", "payment", "trade"] as const).map((t) => {
+              const isActive = typeFilter === t;
+              return (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setTypeFilter(t)}
+                  aria-pressed={isActive}
+                  className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] capitalize transition-all cursor-pointer ${
+                    isActive
+                      ? "bg-background text-foreground shadow-sm font-medium"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {t}
+                </button>
+              );
+            })}
           </div>
 
           <ExpandableSearch

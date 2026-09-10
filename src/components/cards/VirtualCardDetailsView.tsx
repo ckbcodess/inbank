@@ -183,24 +183,20 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
   const dailyPct = Math.min(100, Math.max(0, Math.round((dailySpent / (dailyLimit || 1)) * 100)));
 
   return (
-    <div className="flex flex-col gap-6 w-full">
-      {/* Figma 1243:25983 Back Button & Title Header */}
-      <div className="flex items-center gap-6">
+    <div className="flex flex-col gap-10 w-full">
+      {/* Back Button & Title Header */}
+      <div className="flex items-center gap-3 min-w-0">
         <Link
           href="/cards"
-          className="size-[48px] rounded-full bg-[#f6f6f5] dark:bg-muted/80 flex items-center justify-center p-2 text-[#121212] dark:text-foreground hover:bg-[#ececeb] dark:hover:bg-muted transition-colors cursor-pointer shrink-0 shadow-2xs"
+          className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+          title="Back to Cards"
           aria-label="Back to Cards"
         >
-          <ChevronLeft size={24} strokeWidth={2} />
+          <ChevronLeft size={22} strokeWidth={1.8} />
         </Link>
-        <div className="flex flex-col">
-          <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.52px] text-[#121212] dark:text-foreground">
-            {cardNickname || "Virtual Card"}
-          </h1>
-          <p className="text-[18px] font-normal leading-[20px] tracking-[-0.18px] text-[#747472] dark:text-muted-foreground mt-1">
-            •••• {maskedLast4}
-          </p>
-        </div>
+        <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground truncate">
+          {cardNickname || "Virtual Card"}
+        </h1>
       </div>
 
       {/* Main Container matching Figma 1243:25983 w-[905.9px] */}

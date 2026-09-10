@@ -13,6 +13,7 @@ import Link from "next/link";
 import PageHeader from "@/components/layout/PageHeader";
 import {
   ArrowLeftRight,
+  Banknote,
   ChevronRight,
   CreditCard,
   Globe,
@@ -96,6 +97,12 @@ const PAY_ACTIONS: PaymentAction[] = [
     title: "Card Top up",
     href: "/payments/send?rail=card-topup",
     icon: CreditCard,
+  },
+  {
+    id: "cardless",
+    title: "Cardless Withdrawal",
+    href: "/payments/send?rail=cardless",
+    icon: Banknote,
   },
 ];
 

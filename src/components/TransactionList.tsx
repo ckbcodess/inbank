@@ -558,7 +558,7 @@ export default function TransactionList({
 
       {/* Page Title & Export Action Header */}
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-[26px] font-semibold tracking-tight text-foreground">Transactions</h1>
+        <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">Transactions</h1>
         <Button
           variant="outline"
           onClick={() => exportTransactionsCSV(results)}

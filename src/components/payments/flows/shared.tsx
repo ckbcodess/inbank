@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useRef, useState, useEffect } from "react";
-import { Landmark, AlertCircle, CheckCircle2, Check } from "lucide-react";
+import { Landmark, AlertCircle, CheckCircle2, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -298,6 +298,15 @@ export function detectTelcoNetwork(phone: string): { telcoName: string; walletNa
   return null;
 }
 
+export function getTelcoLogo(networkName?: string): string | null {
+  if (!networkName) return null;
+  const lower = networkName.toLowerCase();
+  if (lower.includes("mtn")) return "/mtn.png";
+  if (lower.includes("at") || lower.includes("airteltigo")) return "/at.png";
+  if (lower.includes("telecel") || lower.includes("vodafone")) return "/telecel.png";
+  return null;
+}
+
 export function normalizeNetworkName(name?: string): string {
   if (!name) return "MTN Ghana";
   const lower = name.toLowerCase();
@@ -501,7 +510,7 @@ export function FromAccountSelector({
     <div className="flex flex-col gap-2">
       <label className="text-[14px] font-medium text-foreground">{label}</label>
       <Select value={value} onValueChange={(val) => val && onChange(val)}>
-        <SelectTrigger className="h-[68px] min-h-[68px] px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+        <SelectTrigger className="min-h-[68px] h-auto py-3 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
           <AccountSelectTriggerContent
             account={selected}
             placeholder={placeholder}
@@ -532,8 +541,10 @@ export function AmountInput({
   onChange,
   onFocus,
   currency = "GHS",
-  label = "Amount",
+  label = "Enter amount",
   error,
+  hasError,
+  disabled,
 }: {
   value: string;
   onChange: (val: string) => void;
@@ -541,7 +552,10 @@ export function AmountInput({
   currency?: string;
   label?: string;
   error?: React.ReactNode;
+  hasError?: boolean;
+  disabled?: boolean;
 }) {
+  const isError = Boolean(error || hasError);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Helper to format any raw or numeric string for display with thousand commas
@@ -568,7 +582,9 @@ export function AmountInput({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputEl = e.target;
-    const originalVal = inputEl.value;
+    // Strip any typed letters or invalid characters except digits and single decimal dot
+    const cleanVal = inputEl.value.replace(/[^0-9.]/g, "").replace(/(\..*?)\..*/g, "$1");
+    const originalVal = cleanVal;
     const originalCursor = inputEl.selectionStart ?? originalVal.length;
 
     // Count how many raw characters (digits or dot) were before the cursor
@@ -633,9 +649,28 @@ export function AmountInput({
   };
 
   const handleClick = () => {
+    if (disabled) return;
     inputRef.current?.focus();
     onFocus?.();
   };
+
+  // Compute dynamic font size based on character count for low-overhead auto-scaling
+  const numLength = (displayValue || "0").length;
+  let fontSizeClass = "text-[26px]";
+  let currencySizeClass = "text-[17px]";
+  if (numLength > 15) {
+    fontSizeClass = "text-[15px]";
+    currencySizeClass = "text-[13px]";
+  } else if (numLength > 12) {
+    fontSizeClass = "text-[18px]";
+    currencySizeClass = "text-[14px]";
+  } else if (numLength > 9) {
+    fontSizeClass = "text-[21px]";
+    currencySizeClass = "text-[15px]";
+  } else if (numLength > 7) {
+    fontSizeClass = "text-[23px]";
+    currencySizeClass = "text-[16px]";
+  }
 
   return (
     <div className="flex flex-col gap-2">
@@ -643,8 +678,9 @@ export function AmountInput({
       <div
         onClick={handleClick}
         className={cn(
-          "relative flex h-[68px] min-h-[68px] w-full items-center justify-center rounded-2xl border bg-card hover:bg-muted/10 transition-colors cursor-text px-4",
-          error
+          "relative flex h-[68px] min-h-[68px] w-full items-center justify-center rounded-2xl border bg-card transition-colors px-4",
+          disabled ? "bg-muted/30 cursor-not-allowed opacity-80" : "hover:bg-muted/10 cursor-text",
+          isError
             ? "border-destructive/70 focus-within:border-destructive focus-within:ring-1 focus-within:ring-destructive/30"
             : "border-border/80 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30"
         )}
@@ -652,8 +688,9 @@ export function AmountInput({
         <div className="inline-flex items-center justify-center gap-2.5">
           <span
             className={cn(
-              "text-[17px] font-medium select-none transition-colors",
-              error ? "text-destructive/80" : "text-muted-foreground"
+              "font-medium select-none transition-colors transition-[font-size] duration-150",
+              currencySizeClass,
+              isError ? "text-destructive/80" : "text-muted-foreground"
             )}
           >
             {currency}
@@ -662,7 +699,10 @@ export function AmountInput({
             {/* Ghost text that dynamically drives the width of the input wrapper */}
             <span
               aria-hidden="true"
-              className="text-[26px] font-semibold tracking-tight tabular-nums opacity-0 pointer-events-none px-0.5 whitespace-pre select-none leading-none"
+              className={cn(
+                "font-semibold tracking-tight tabular-nums opacity-0 pointer-events-none px-0.5 whitespace-pre select-none leading-none transition-[font-size] duration-150",
+                fontSizeClass
+              )}
             >
               {displayValue || "0"}
             </span>
@@ -671,8 +711,9 @@ export function AmountInput({
             <span
               aria-hidden="true"
               className={cn(
-                "absolute inset-0 flex items-center pointer-events-none whitespace-pre text-[26px] font-semibold tracking-tight tabular-nums select-none leading-none px-0.5",
-                error
+                "absolute inset-0 flex items-center pointer-events-none whitespace-pre font-semibold tracking-tight tabular-nums select-none leading-none px-0.5 transition-[font-size] duration-150",
+                fontSizeClass,
+                isError
                   ? "text-destructive"
                   : displayValue
                   ? "text-foreground"
@@ -689,14 +730,18 @@ export function AmountInput({
               ref={inputRef}
               type="text"
               inputMode="decimal"
+              disabled={disabled}
+              readOnly={disabled}
               value={displayValue}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
               onFocus={onFocus}
               aria-label={label}
               className={cn(
-                "numorainput absolute inset-0 w-full h-full m-0 p-0 border-0 bg-transparent text-transparent placeholder-transparent outline-none focus:outline-none text-[26px] font-semibold tracking-tight tabular-nums px-0.5 leading-none selection:bg-primary/25",
-                error ? "caret-destructive" : "caret-primary"
+                "numorainput absolute inset-0 w-full h-full m-0 p-0 border-0 bg-transparent text-transparent placeholder-transparent outline-none focus:outline-none font-semibold tracking-tight tabular-nums px-0.5 leading-none selection:bg-primary/25 transition-[font-size] duration-150",
+                disabled && "pointer-events-none",
+                fontSizeClass,
+                isError ? "caret-destructive" : "caret-primary"
               )}
             />
           </div>
@@ -745,27 +790,48 @@ export function NarrationInput({
 export function CategorySelect({
   value,
   onChange,
-  label = "Transaction Category (Optional)",
+  label = "Transaction Category",
+  defaultCategory,
 }: {
   value: string;
   onChange: (val: string) => void;
   label?: string;
+  defaultCategory?: string;
 }) {
+  const currentValue = value || defaultCategory || "Other";
+
+  useEffect(() => {
+    if (!value && defaultCategory) {
+      onChange(defaultCategory);
+    }
+  }, [value, defaultCategory, onChange]);
+
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[14px] font-medium text-foreground">{label}</label>
-      <Select value={value} onValueChange={(val) => onChange(val || "")}>
+      <div className="flex items-center justify-between">
+        <label className="text-[14px] font-medium text-foreground">{label}</label>
+        <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full">
+          Pre-selected for Insights
+        </span>
+      </div>
+      <Select value={currentValue} onValueChange={(val) => onChange(val || "")}>
         <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
           <SelectValue placeholder="Select category" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="General">General</SelectItem>
+          <SelectItem value="Bills">Bills</SelectItem>
+          <SelectItem value="Data">Data</SelectItem>
+          <SelectItem value="Education">Education</SelectItem>
+          <SelectItem value="Food">Food</SelectItem>
+          <SelectItem value="Household">Household</SelectItem>
           <SelectItem value="Savings">Savings</SelectItem>
+          <SelectItem value="Transport">Transport</SelectItem>
+          <SelectItem value="Donations">Donations</SelectItem>
           <SelectItem value="Family & Friends">Family & Friends</SelectItem>
-          <SelectItem value="Living Expenses">Living Expenses</SelectItem>
-          <SelectItem value="Business">Business</SelectItem>
-          <SelectItem value="Utilities">Utilities</SelectItem>
-          <SelectItem value="Rent">Rent</SelectItem>
+          <SelectItem value="Entertainment">Entertainment</SelectItem>
+          <SelectItem value="Health">Health</SelectItem>
+          <SelectItem value="Remittances">Remittances</SelectItem>
+          <SelectItem value="Shopping">Shopping</SelectItem>
           <SelectItem value="Other">Other</SelectItem>
         </SelectContent>
       </Select>
@@ -825,12 +891,25 @@ export function ProceedButton({
 export function VerifiedAccountBadge({ name }: { name: string }) {
   if (!name) return null;
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-[13px] text-foreground">
+    <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-[13px] text-foreground animate-in fade-in duration-150">
       <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
       <span className="font-medium text-foreground">{name}</span>
       <span className="text-[11.5px] text-emerald-600 dark:text-emerald-400 ml-auto font-medium">
         Verified
       </span>
+    </div>
+  );
+}
+
+export function ResolvingAccountBadge({
+  message = "Verifying account holder details...",
+}: {
+  message?: string;
+}) {
+  return (
+    <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2 text-[12.5px] text-muted-foreground animate-pulse">
+      <Loader2 size={14} className="animate-spin text-muted-foreground shrink-0" />
+      <span>{message}</span>
     </div>
   );
 }
@@ -841,18 +920,29 @@ export function VerifiedAccountBadge({ name }: { name: string }) {
 export function CollapsedDetailsBadge({
   title,
   subtitle,
+  icon,
   onChange,
 }: {
   title: string;
   subtitle?: string;
+  icon?: React.ReactNode;
   onChange: () => void;
 }) {
   return (
     <div className="flex h-[68px] min-h-[68px] items-center justify-between rounded-2xl border border-border/80 bg-muted/40 dark:bg-muted/20 px-4 py-2 transition-all animate-in fade-in duration-150 ease-out">
       <div className="flex items-center gap-3.5 min-w-0">
-        <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-          <Check size={15} strokeWidth={2.5} />
-        </span>
+        {icon ? (
+          <div className="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/60 border border-black/5 dark:border-white/10 overflow-hidden p-0">
+            {icon}
+            <span className="absolute bottom-0 right-0 flex size-4 items-center justify-center rounded-full bg-emerald-600 text-white ring-1 ring-background shadow-xs">
+              <Check size={10} strokeWidth={3} />
+            </span>
+          </div>
+        ) : (
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+            <Check size={18} strokeWidth={2.5} />
+          </span>
+        )}
         <div className="flex flex-col min-w-0 text-left gap-0.5">
           <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
             {title}
@@ -954,7 +1044,7 @@ export function SchedulePaymentSection({
             onChange={(e) => onChange({ enabled: e.target.checked })}
             className="sr-only peer"
           />
-          <div className="w-11 h-6 bg-muted-foreground/25 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-foreground dark:border-gray-600"></div>
+          <div className="w-11 h-6 bg-muted-foreground/25 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary dark:border-gray-600"></div>
         </label>
       </div>
 

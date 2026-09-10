@@ -111,7 +111,7 @@ export function OwnAccountFlow({
             value={state.toOwnAccountId}
             onValueChange={(val) => val && onChange("toOwnAccountId", val)}
           >
-            <SelectTrigger className="h-[68px] min-h-[68px] px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+            <SelectTrigger className="min-h-[68px] h-auto py-3 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
               <AccountSelectTriggerContent
                 account={toAccount}
                 placeholder="Select destination account"
@@ -141,56 +141,62 @@ export function OwnAccountFlow({
         )}
       </div>
 
-      {/* 3. Amount */}
-      <AmountInput
-        value={state.amount}
-        onChange={(val) => onChange("amount", val)}
-        onFocus={() => {
-          if (isDetailsValid) setCollapsed(true);
-        }}
-        error={
-          overBalance ? (
-            <InsufficientFundsAlert
-              available={fromAccount?.available ?? 0}
-              currency={fromAccount?.currency || "GHS"}
-            />
-          ) : undefined
-        }
-      />
+      {/* Progressive Disclosure: Only reveal Amount & subsequent sections after destination account is selected */}
+      {isDetailsValid && (
+        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+          {/* 3. Amount */}
+          <AmountInput
+            value={state.amount}
+            onChange={(val) => onChange("amount", val)}
+            onFocus={() => {
+              if (isDetailsValid) setCollapsed(true);
+            }}
+            error={
+              overBalance ? (
+                <InsufficientFundsAlert
+                  available={fromAccount?.available ?? 0}
+                  currency={fromAccount?.currency || "GHS"}
+                />
+              ) : undefined
+            }
+          />
 
-      {/* 4. Narration */}
-      <NarrationInput
-        value={state.narration}
-        onChange={(val) => onChange("narration", val)}
-      />
+          {/* 4. Narration */}
+          <NarrationInput
+            value={state.narration}
+            onChange={(val) => onChange("narration", val)}
+          />
 
-      {/* 5. Transaction Category (Optional) */}
-      <CategorySelect
-        value={state.category}
-        onChange={(val) => onChange("category", val)}
-      />
+          {/* 5. Transaction Category (Optional) */}
+          <CategorySelect
+            value={state.category}
+            onChange={(val) => onChange("category", val)}
+            defaultCategory="Savings"
+          />
 
-      {/* 6. Schedule Payment */}
-      <SchedulePaymentSection
-        state={{
-          enabled: state.isScheduled ?? false,
-          startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
-          frequency: state.scheduleFrequency || "once",
-          endDate: state.scheduleEndDate || "",
-        }}
-        onChange={(updates) => {
-          if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
-          if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
-          if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
-          if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
-        }}
-      />
+          {/* 6. Schedule Payment */}
+          <SchedulePaymentSection
+            state={{
+              enabled: state.isScheduled ?? false,
+              startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
+              frequency: state.scheduleFrequency || "once",
+              endDate: state.scheduleEndDate || "",
+            }}
+            onChange={(updates) => {
+              if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
+              if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
+              if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
+              if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
+            }}
+          />
 
-      {/* 7. Proceed CTA */}
-      <ProceedButton
-        disabled={!isValid}
-        onClick={onProceed}
-      />
+          {/* 7. Proceed CTA */}
+          <ProceedButton
+            disabled={!isValid}
+            onClick={onProceed}
+          />
+        </div>
+      )}
     </div>
   );
 }

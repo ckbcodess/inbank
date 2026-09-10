@@ -207,13 +207,13 @@ const MODELS: Record<ProfileKind, ProfileModel> = {
     // every month read as a loss.
     seed: 0x2c0f_fee0,
     categories: [
-      { category: "Groceries", perMonth: 8, min: 120, max: 330 },
+      { category: "Food", perMonth: 8, min: 120, max: 330 },
       { category: "Transport", perMonth: 12, min: 25, max: 92 },
       { category: "Shopping", perMonth: 3, min: 120, max: 480 },
-      { category: "Utilities", perMonth: 3, min: 140, max: 325 },
-      { category: "Dining", perMonth: 6, min: 45, max: 155 },
-      { category: "Cash & MoMo", perMonth: 4, min: 100, max: 300 },
-      { category: "Airtime & data", perMonth: 4, min: 20, max: 105 },
+      { category: "Bills", perMonth: 3, min: 140, max: 325 },
+      { category: "Household", perMonth: 2, min: 180, max: 550 },
+      { category: "Family & Friends", perMonth: 4, min: 100, max: 300 },
+      { category: "Data", perMonth: 4, min: 20, max: 105 },
       { category: "Health", perMonth: 1, min: 80, max: 420 },
     ],
     income: [{ perMonth: 1, min: 8_400, max: 8_800, dayOfMonth: 25 }],

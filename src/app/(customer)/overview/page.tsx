@@ -54,21 +54,21 @@ export default function OverviewPage() {
       <StateSwitcher section="13.9" states={BASELINE_STATES} value={pageState} onChange={setPageState} />
 
       {/* Greeting & Last Login Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div className="flex flex-col gap-1">
           <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="text-[24px] font-medium tracking-tight text-foreground sm:text-[26px]">
+            <h1 className="text-[22px] font-medium tracking-tight text-foreground sm:text-[25px]">
               Good morning, {actor.name.split(" ")[0]} 👋🏾
             </h1>
             {actor.id === "u-joint" && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FEF3D6] border border-amber-500/30 px-3 py-0.5 text-[12px] font-semibold text-[#B27B00] dark:bg-amber-500/20 dark:text-amber-300">
-                <Users size={13} />
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-2.5 py-0.5 text-[11.5px] font-medium text-amber-700 dark:text-amber-300">
+                <Users size={13} strokeWidth={1.8} />
                 Joint Mandate · Both to sign
               </span>
             )}
           </div>
-          <span className="text-[13.5px] text-muted-foreground">
-            Last login: 21 August, 2026 8:43 am
+          <span className="text-[13px] text-muted-foreground tabular">
+            Last login: 21 August, 2026 · 08:43 GMT
           </span>
         </div>
       </div>
@@ -103,12 +103,7 @@ export default function OverviewPage() {
       {showApprovals && (
         <section className="rounded-2xl border border-border bg-card">
           <div className="flex items-center justify-between border-b border-border px-5 py-4">
-            <div>
-              <h2 className="text-[15px] text-foreground">Requires your attention</h2>
-              <p className="mt-0.5 text-[12px] text-muted-foreground">
-                Transactions waiting on your decision
-              </p>
-            </div>
+            <h2 className="text-[15px] font-medium text-foreground">Requires your attention</h2>
             <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/approvals" />}>
               Open queue
               <ArrowRight size={14} strokeWidth={1.8} aria-hidden="true" />
@@ -176,12 +171,7 @@ export default function OverviewPage() {
             <span className="flex size-9 items-center justify-center rounded-lg bg-muted text-muted-foreground">
               <Users size={17} strokeWidth={1.8} aria-hidden="true" />
             </span>
-            <div>
-              <h2 className="text-[14px] text-foreground">User administration</h2>
-              <p className="mt-0.5 text-[12px] text-muted-foreground">
-                Manage users, roles, limits and approval matrices
-              </p>
-            </div>
+            <h2 className="text-[14px] font-medium text-foreground">User administration</h2>
           </div>
           <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/administration" />}>
             Open administration

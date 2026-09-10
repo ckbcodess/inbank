@@ -114,6 +114,81 @@ const SWIFT_COUNTRIES = [
   { name: "South Africa", currency: "ZAR" },
 ];
 
+const INTERNATIONAL_BANKS_BY_COUNTRY: Record<string, string[]> = {
+  "United States": [
+    "JPMorgan Chase Bank",
+    "Bank of America",
+    "Citibank",
+    "Wells Fargo",
+    "Goldman Sachs",
+    "Morgan Stanley",
+    "PNC Bank",
+    "U.S. Bank",
+  ],
+  "United Kingdom": [
+    "Barclays",
+    "HSBC UK",
+    "Lloyds Bank",
+    "NatWest",
+    "Royal Bank of Scotland",
+    "Standard Chartered",
+    "Santander UK",
+  ],
+  "Germany (Eurozone)": [
+    "Deutsche Bank",
+    "Commerzbank",
+    "KfW",
+    "DZ Bank",
+    "Landesbank Baden-Württemberg",
+    "HypoVereinsbank",
+  ],
+  "France (Eurozone)": [
+    "BNP Paribas",
+    "Crédit Agricole",
+    "Société Générale",
+    "BPCE",
+    "Crédit Mutuel",
+  ],
+  "Canada": [
+    "RBC Royal Bank",
+    "TD Bank",
+    "Scotiabank",
+    "BMO Bank of Montreal",
+    "CIBC",
+  ],
+  "China": [
+    "Industrial & Commercial Bank of China (ICBC)",
+    "China Construction Bank",
+    "Bank of China",
+    "Agricultural Bank of China",
+  ],
+  "United Arab Emirates": [
+    "Emirates NBD",
+    "First Abu Dhabi Bank (FAB)",
+    "Abu Dhabi Commercial Bank (ADCB)",
+    "Mashreq Bank",
+  ],
+  "Australia": [
+    "Commonwealth Bank of Australia",
+    "ANZ Bank",
+    "National Australia Bank (NAB)",
+    "Westpac",
+  ],
+  "Japan": [
+    "MUFG Bank",
+    "Sumitomo Mitsui Banking Corporation (SMBC)",
+    "Mizuho Bank",
+    "Japan Post Bank",
+  ],
+  "South Africa": [
+    "Standard Bank South Africa",
+    "FirstNational Bank (FNB)",
+    "Absa Bank South Africa",
+    "Nedbank",
+    "Capitec Bank",
+  ],
+};
+
 const PAPSS_COUNTRIES = [
   { name: "Nigeria", currency: "NGN" },
   { name: "Kenya", currency: "KES" },
@@ -123,6 +198,60 @@ const PAPSS_COUNTRIES = [
   { name: "Rwanda", currency: "RWF" },
   { name: "Zambia", currency: "ZMW" },
 ];
+
+const PAPSS_BANKS_BY_COUNTRY: Record<string, string[]> = {
+  "Nigeria": [
+    "Access Bank Nigeria",
+    "Zenith Bank",
+    "Guaranty Trust Bank (GTBank)",
+    "First Bank of Nigeria",
+    "United Bank for Africa (UBA)",
+    "Fidelity Bank Nigeria",
+  ],
+  "Kenya": [
+    "KCB Bank Kenya",
+    "Equity Bank Kenya",
+    "NCBA Bank",
+    "Co-operative Bank of Kenya",
+    "Absa Bank Kenya",
+    "Standard Chartered Kenya",
+  ],
+  "South Africa": [
+    "Standard Bank South Africa",
+    "FirstNational Bank (FNB)",
+    "Absa Bank South Africa",
+    "Nedbank",
+    "Capitec Bank",
+  ],
+  "Côte d'Ivoire": [
+    "Société Générale Côte d'Ivoire (SGCI)",
+    "Ecobank Côte d'Ivoire",
+    "NSIA Banque",
+    "Banque Atlantique",
+    "SIB (Société Ivoirienne de Banque)",
+  ],
+  "Egypt": [
+    "National Bank of Egypt",
+    "Banque Misr",
+    "Commercial International Bank (CIB)",
+    "QNB Alahli",
+    "Banque du Caire",
+  ],
+  "Rwanda": [
+    "Bank of Kigali",
+    "I&M Bank Rwanda",
+    "Equity Bank Rwanda",
+    "Cogebanque",
+    "Access Bank Rwanda",
+  ],
+  "Zambia": [
+    "Zanaco (Zambia National Commercial Bank)",
+    "Stanbic Bank Zambia",
+    "Absa Bank Zambia",
+    "Standard Chartered Zambia",
+    "Atlas Mara Zambia",
+  ],
+};
 
 interface FormState {
   id?: string;
@@ -716,19 +845,18 @@ export default function BeneficiariesPage() {
 
       {/* 3 Major Segmented Tabs: People, Billers, Groups (Figma Node 1374:35963) */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center rounded-xl bg-[#f6f6f5] dark:bg-[#1e1e1e] p-[3.5px] border border-[#ebebe9] dark:border-[#292928]">
+        <div className="inline-flex w-fit flex-wrap rounded-xl bg-muted p-1">
           <button
             type="button"
             onClick={() => {
               setActiveTab("people");
               setTypeFilter("all");
             }}
-            className={cn(
-              "flex items-center gap-2 rounded-[8.75px] px-3.5 py-1.5 text-[13px] transition-all cursor-pointer",
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
               activeTab === "people"
-                ? "bg-white dark:bg-[#282828] text-foreground font-medium shadow-[0px_1px_2px_rgba(0,0,0,0.06)]"
-                : "text-[#747472] dark:text-[#999] hover:text-foreground font-normal"
-            )}
+                ? "bg-background text-foreground shadow-sm font-medium"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
           >
             <span>People</span>
             <span className="text-[11px] text-muted-foreground font-normal tabular">
@@ -742,12 +870,11 @@ export default function BeneficiariesPage() {
               setActiveTab("billers");
               setTypeFilter("all");
             }}
-            className={cn(
-              "flex items-center gap-2 rounded-[8.75px] px-3.5 py-1.5 text-[13px] transition-all cursor-pointer",
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
               activeTab === "billers"
-                ? "bg-white dark:bg-[#282828] text-foreground font-medium shadow-[0px_1px_2px_rgba(0,0,0,0.06)]"
-                : "text-[#747472] dark:text-[#999] hover:text-foreground font-normal"
-            )}
+                ? "bg-background text-foreground shadow-sm font-medium"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
           >
             <span>Billers</span>
             <span className="text-[11px] text-muted-foreground font-normal tabular">
@@ -761,12 +888,11 @@ export default function BeneficiariesPage() {
               setActiveTab("groups");
               setTypeFilter("all");
             }}
-            className={cn(
-              "flex items-center gap-2 rounded-[8.75px] px-3.5 py-1.5 text-[13px] transition-all cursor-pointer",
+            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
               activeTab === "groups"
-                ? "bg-white dark:bg-[#282828] text-foreground font-medium shadow-[0px_1px_2px_rgba(0,0,0,0.06)]"
-                : "text-[#747472] dark:text-[#999] hover:text-foreground font-normal"
-            )}
+                ? "bg-background text-foreground shadow-sm font-medium"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
           >
             <span>Groups</span>
             <span className="text-[11px] text-muted-foreground font-normal tabular">
@@ -1195,13 +1321,21 @@ export default function BeneficiariesPage() {
             {/* Proxy Pay Rail */}
             {form.transactionType === "proxy" && (
               <div className="flex flex-col gap-3">
-                <input
-                  type="text"
-                  value={form.proxyId}
-                  onChange={(e) => setForm((p) => ({ ...p, proxyId: e.target.value }))}
-                  placeholder="Proxy ID / Ghana Card / @alias (e.g. @kwame or GHA-...)"
-                  className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
-                />
+                <div className="relative flex items-center">
+                  <span className="absolute left-3.5 text-[15px] font-semibold text-muted-foreground select-none pointer-events-none">
+                    @
+                  </span>
+                  <input
+                    type="text"
+                    value={form.proxyId.replace(/^@/, "")}
+                    onChange={(e) => {
+                      const cleaned = e.target.value.replace(/^@/, "").trim();
+                      setForm((p) => ({ ...p, proxyId: cleaned ? `@${cleaned}` : "" }));
+                    }}
+                    placeholder="kwame.b"
+                    className="h-11 w-full rounded-xl border border-border/80 bg-background pl-8 pr-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                  />
+                </div>
               </div>
             )}
 
@@ -1259,7 +1393,11 @@ export default function BeneficiariesPage() {
                 <div className="grid grid-cols-2 gap-2.5">
                   <Select
                     value={form.country}
-                    onValueChange={(val) => val && setForm((p) => ({ ...p, country: val }))}
+                    onValueChange={(val) => {
+                      if (!val) return;
+                      const defaultBank = (INTERNATIONAL_BANKS_BY_COUNTRY[val] || [])[0] || "";
+                      setForm((p) => ({ ...p, country: val, bankName: defaultBank }));
+                    }}
                   >
                     <SelectTrigger className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px]">
                       <SelectValue placeholder="Country" />
@@ -1273,22 +1411,30 @@ export default function BeneficiariesPage() {
                     </SelectContent>
                   </Select>
 
+                  <Select
+                    value={form.bankName}
+                    onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
+                  >
+                    <SelectTrigger className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px]">
+                      <SelectValue placeholder="Select bank" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-56">
+                      {(INTERNATIONAL_BANKS_BY_COUNTRY[form.country] || INTERNATIONAL_BANKS_BY_COUNTRY["United States"]).map((bank) => (
+                        <SelectItem key={bank} value={bank}>
+                          {bank}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5">
                   <input
                     type="text"
                     value={form.swiftCode}
                     onChange={(e) => setForm((p) => ({ ...p, swiftCode: e.target.value.toUpperCase() }))}
                     placeholder="SWIFT / BIC Code"
                     className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px] text-foreground uppercase tracking-wider placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-2.5">
-                  <input
-                    type="text"
-                    value={form.bankName}
-                    onChange={(e) => setForm((p) => ({ ...p, bankName: e.target.value }))}
-                    placeholder="Receiving bank"
-                    className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30"
                   />
                   <input
                     type="text"
@@ -1306,7 +1452,11 @@ export default function BeneficiariesPage() {
               <div className="flex flex-col gap-3">
                 <Select
                   value={form.country}
-                  onValueChange={(val) => val && setForm((p) => ({ ...p, country: val }))}
+                  onValueChange={(val) => {
+                    if (!val) return;
+                    const defaultBank = (PAPSS_BANKS_BY_COUNTRY[val] || [])[0] || "";
+                    setForm((p) => ({ ...p, country: val, bankName: defaultBank }));
+                  }}
                 >
                   <SelectTrigger className="h-11 rounded-xl border border-border/80 bg-background px-3.5 text-[13px]">
                     <SelectValue placeholder="Select African destination" />
@@ -1321,13 +1471,21 @@ export default function BeneficiariesPage() {
                 </Select>
 
                 <div className="grid grid-cols-2 gap-2.5">
-                  <input
-                    type="text"
+                  <Select
                     value={form.bankName}
-                    onChange={(e) => setForm((p) => ({ ...p, bankName: e.target.value }))}
-                    placeholder="African bank"
-                    className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30"
-                  />
+                    onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
+                  >
+                    <SelectTrigger className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px]">
+                      <SelectValue placeholder="Select bank" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-56">
+                      {(PAPSS_BANKS_BY_COUNTRY[form.country] || PAPSS_BANKS_BY_COUNTRY["Nigeria"]).map((bank) => (
+                        <SelectItem key={bank} value={bank}>
+                          {bank}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <input
                     type="text"
                     value={form.accountNumber}

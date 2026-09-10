@@ -172,16 +172,16 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-6 py-4 animate-in fade-in duration-200">
+    <div className="mx-auto flex w-full max-w-xl flex-col gap-10 animate-in fade-in duration-200">
       {/* Top Header Navigation matching standard details view */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
           <Link
             href="/transactions"
-            className="group flex size-9 shrink-0 items-center justify-center rounded-xl border border-border bg-card text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96]"
+            className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
             aria-label="Back to transactions"
           >
-            <ChevronLeft size={18} strokeWidth={2} className="transition-transform group-hover:-translate-x-0.5" />
+            <ChevronLeft size={22} strokeWidth={1.8} />
           </Link>
           <div className="min-w-0">
             <h1 className="text-[20px] sm:text-[22px] font-medium leading-tight tracking-[-0.02em] text-foreground truncate">
