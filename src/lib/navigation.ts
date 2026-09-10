@@ -64,7 +64,6 @@ function customerNav(actor: Actor, activeProfile?: Profile | null): NavItem[] {
   items.push(
     { key: "transactions", label: "Transactions", path: "/transactions", icon: "ArrowLeftRight", group: "More Services" },
     { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "More Services" },
-    { key: "reports", label: "Reports", path: "/reports", icon: "BarChart3", group: "More Services" },
     { key: "fx-rates", label: "FX rates", path: "/fx-rates", icon: "TrendingUp", group: "More Services" },
     { key: "lifestyle", label: "Lifestyle", path: "/lifestyle", icon: "Sparkles", group: "More Services" },
   );
