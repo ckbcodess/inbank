@@ -33,34 +33,40 @@ export interface NavItem {
 function customerNav(actor: Actor, activeProfile?: Profile | null): NavItem[] {
   const isCorporate = activeProfile ? activeProfile.kind === "CORPORATE" : true;
 
+  // Groups are separated by spacing, not section titles (the Sidebar renders no
+  // group headings) — except "More Services", which is a collapsible dropdown.
   const items: NavItem[] = [
-    { key: "overview", label: "Overview", path: "/overview", icon: "LayoutDashboard", group: "BANKING" },
-    { key: "accounts", label: "Accounts", path: "/accounts", icon: "Wallet", group: "BANKING" },
-    { key: "transactions", label: "Transactions", path: "/transactions", icon: "ArrowLeftRight", group: "BANKING" },
-    { key: "cards", label: "Cards", path: "/cards", icon: "CreditCard", group: "BANKING" },
-    { key: "payments", label: "Send & Pay", path: "/payments", icon: "Send", group: "MOVE MONEY" },
-    { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "MOVE MONEY" },
+    { key: "overview", label: "Home", path: "/overview", icon: "Home", group: "primary" },
+    { key: "accounts", label: "Accounts", path: "/accounts", icon: "Wallet", group: "primary" },
+    { key: "cards", label: "Cards", path: "/cards", icon: "CreditCard", group: "primary" },
+    { key: "payments", label: "Send & Pay", path: "/payments", icon: "Send", group: "move" },
+    { key: "insure", label: "Insure", path: "/insure", icon: "Shield", group: "move" },
+    { key: "invest", label: "Invest", path: "/invest", icon: "LineChart", group: "move" },
+    { key: "loans", label: "Loans", path: "/loans", icon: "Landmark", group: "move" },
   ];
 
   // Trade — hidden if not eligible or if retail profile (section 12.4).
   if (isCorporate && actor.tradeEligible) {
-    items.push({ key: "trade", label: "Trade", path: "/trade", icon: "Ship", group: "MOVE MONEY" });
+    items.push({ key: "trade", label: "Trade", path: "/trade", icon: "Ship", group: "move" });
   }
 
   // Approvals — hidden unless active relationship is Corporate and role = Approver (section 12.4).
   if (isCorporate && isApprover(actor.role)) {
-    items.push({ key: "approvals", label: "Approvals", path: "/approvals", icon: "CheckCircle2", group: "CONTROL" });
+    items.push({ key: "approvals", label: "Approvals", path: "/approvals", icon: "CheckCircle2", group: "control" });
   }
 
   // Administration — hidden unless active relationship is Corporate and role = Corporate Admin (section 12.4).
   if (isCorporate && isCorporateAdmin(actor.role)) {
-    items.push({ key: "administration", label: "Administration", path: "/administration", icon: "Users", group: "CONTROL" });
+    items.push({ key: "administration", label: "Administration", path: "/administration", icon: "Users", group: "control" });
   }
 
-  // Reference surfaces.
+  // More Services — a collapsible dropdown gathering the secondary surfaces.
   items.push(
-    { key: "reports", label: "Reports", path: "/reports", icon: "BarChart3", group: "REFERENCE" },
-    { key: "fx-rates", label: "FX rates", path: "/fx-rates", icon: "TrendingUp", group: "REFERENCE" },
+    { key: "transactions", label: "Transactions", path: "/transactions", icon: "ArrowLeftRight", group: "More Services" },
+    { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "More Services" },
+    { key: "reports", label: "Reports", path: "/reports", icon: "BarChart3", group: "More Services" },
+    { key: "fx-rates", label: "FX rates", path: "/fx-rates", icon: "TrendingUp", group: "More Services" },
+    { key: "lifestyle", label: "Lifestyle", path: "/lifestyle", icon: "Sparkles", group: "More Services" },
   );
 
   return items;

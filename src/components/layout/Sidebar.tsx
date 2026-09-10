@@ -8,22 +8,29 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   AlertTriangle,
   ArrowLeftRight,
   BarChart3,
   Building2,
   CheckCircle2,
+  ChevronDown,
   CreditCard,
+  Home,
+  Landmark,
   LayoutDashboard,
+  LayoutGrid,
+  LineChart,
   PanelLeftClose,
   PanelLeftOpen,
   Percent,
   Receipt,
   Send,
+  Shield,
   Ship,
   ShieldCheck,
+  Sparkles,
   TrendingUp,
   UserCheck,
   Users,
@@ -52,6 +59,20 @@ const ICON_MAP: Record<string, React.ElementType> = {
   TrendingUp,
   Percent,
   Receipt,
+  Home,
+  Shield,
+  LineChart,
+  Landmark,
+  Sparkles,
+  LayoutGrid,
+};
+
+/**
+ * Groups rendered as a collapsible dropdown (expanded sidebar only). The group's
+ * `group` name doubles as its visible header label; the icon fronts the header.
+ */
+const DROPDOWN_GROUPS: Record<string, { icon: string }> = {
+  "More Services": { icon: "LayoutGrid" },
 };
 
 interface SidebarProps {
@@ -107,6 +128,54 @@ export default function Sidebar({
 }: SidebarProps) {
   const pathname = usePathname();
   const groups = groupItems(items);
+  // Explicit open/closed overrides for dropdown groups; absent means "auto"
+  // (open when a child is active).
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+
+  // A single nav link — shared by flat groups and dropdown children.
+  const renderNavLink = (item: NavItem, indent = false) => {
+    const Icon = ICON_MAP[item.icon] ?? Wallet;
+    const active = isItemActive(item, pathname, items);
+
+    if (collapsed) {
+      return (
+        <SimpleTooltip key={item.key} content={item.label} side="right" sideOffset={12}>
+          <div className="w-full flex justify-center">
+            <Link
+              href={item.path}
+              onClick={onClose}
+              aria-label={item.label}
+              className={`relative flex size-9 items-center justify-center rounded-lg transition-all duration-150 ${
+                active
+                  ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                  : "surface-interactive text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Icon size={17} strokeWidth={active ? 2.1 : 1.8} />
+            </Link>
+          </div>
+        </SimpleTooltip>
+      );
+    }
+
+    return (
+      <Link
+        key={item.key}
+        href={item.path}
+        onClick={onClose}
+        className={`relative flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium transition-all duration-150 ${
+          indent ? "ml-2.5" : ""
+        } ${
+          active
+            ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+            : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+        }`}
+      >
+        <Icon size={17} strokeWidth={active ? 2.1 : 1.8} className="shrink-0" />
+        <span className="leading-none whitespace-nowrap truncate">{item.label}</span>
+      </Link>
+    );
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -187,68 +256,55 @@ export default function Sidebar({
       {/* Navigation */}
       <nav className={`flex-1 overflow-y-auto overflow-x-hidden py-2.5 ${collapsed ? "px-1.5" : "px-2.5"}`}>
         <div className="flex flex-col gap-0.5">
-          {groups.map((grp, gi) => (
-            <div key={grp.name ?? `g-${gi}`} className="flex flex-col gap-0.5">
-              {collapsed
-                ? gi > 0 && <div className="mx-1.5 my-2 h-px bg-border" aria-hidden />
-                : grp.name && (
-                    <span
-                      className={`mb-1.5 px-2 text-[10.5px] font-medium uppercase tracking-wider text-muted-foreground/70 ${
-                        gi > 0 ? "mt-2.5" : ""
-                      }`}
-                    >
-                      {grp.name}
-                    </span>
-                  )}
+          {groups.map((grp, gi) => {
+            const hasActiveChild = grp.items.some((i) => isItemActive(i, pathname, items));
+            const isDropdown =
+              !collapsed && grp.name != null && grp.name in DROPDOWN_GROUPS;
 
-              {grp.items.map((item) => {
-                const Icon = ICON_MAP[item.icon] ?? Wallet;
-                const active = isItemActive(item, pathname, items);
-
-                if (collapsed) {
-                  return (
-                    <SimpleTooltip
-                      key={item.key}
-                      content={item.label}
-                      side="right"
-                      sideOffset={12}
-                    >
-                      <div className="w-full flex justify-center">
-                        <Link
-                          href={item.path}
-                          onClick={onClose}
-                          aria-label={item.label}
-                          className={`relative flex size-9 items-center justify-center rounded-lg transition-all duration-150 ${
-                            active
-                              ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                              : "surface-interactive text-muted-foreground hover:text-foreground"
-                          }`}
-                        >
-                          <Icon size={17} strokeWidth={active ? 2.1 : 1.8} />
-                        </Link>
-                      </div>
-                    </SimpleTooltip>
-                  );
-                }
-
-                return (
-                  <Link
-                    key={item.key}
-                    href={item.path}
-                    onClick={onClose}
-                    className={`relative flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium transition-all duration-150 ${
-                      active
-                        ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
-                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+            // Collapsible dropdown group (expanded sidebar only).
+            if (isDropdown) {
+              const name = grp.name as string;
+              const DropIcon = ICON_MAP[DROPDOWN_GROUPS[name].icon] ?? LayoutGrid;
+              const open = openGroups[name] ?? hasActiveChild;
+              return (
+                <div key={name} className={`flex flex-col gap-0.5 ${gi > 0 ? "mt-3" : ""}`}>
+                  <button
+                    type="button"
+                    onClick={() => setOpenGroups((p) => ({ ...p, [name]: !open }))}
+                    aria-expanded={open}
+                    className={`relative flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium transition-all duration-150 cursor-pointer hover:bg-muted/50 hover:text-foreground ${
+                      hasActiveChild && !open ? "text-foreground" : "text-muted-foreground"
                     }`}
                   >
-                    <Icon size={17} strokeWidth={active ? 2.1 : 1.8} className="shrink-0" />
-                    <span className="leading-none whitespace-nowrap truncate">{item.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          ))}
+                    <DropIcon size={17} strokeWidth={1.8} className="shrink-0" />
+                    <span className="leading-none whitespace-nowrap truncate">{name}</span>
+                    <ChevronDown
+                      size={15}
+                      strokeWidth={1.9}
+                      className={`ml-auto shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+                    />
+                  </button>
+                  {open && (
+                    <div className="flex flex-col gap-0.5">
+                      {grp.items.map((item) => renderNavLink(item, true))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            // Flat group — separated from the previous group by spacing (expanded)
+            // or a divider (collapsed). No section title.
+            return (
+              <div
+                key={grp.name ?? `g-${gi}`}
+                className={`flex flex-col gap-0.5 ${!collapsed && gi > 0 ? "mt-3" : ""}`}
+              >
+                {collapsed && gi > 0 && <div className="mx-1.5 my-2 h-px bg-border" aria-hidden />}
+                {grp.items.map((item) => renderNavLink(item))}
+              </div>
+            );
+          })}
         </div>
       </nav>
     </aside>
