@@ -1981,7 +1981,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       const formattedAmount = formatMoney(currentAmount, rail === "papss" ? f.wCurrency : "GHS", true);
       const recipientDisplayName = resolvedName || f.benName || f.wName || "recipient";
 
-      let successTitle = "Payment sent";
+      let successTitle = "Payment sent!";
       let successMsg = `You’ve sent ${formattedAmount} to ${recipientDisplayName}.`;
 
       if (isDualMandate) {
@@ -1992,10 +1992,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         const freqText = f.scheduleFrequency === "once" ? "one-off" : f.scheduleFrequency.toLowerCase();
         successMsg = `We’ll automatically send ${formattedAmount} to ${recipientDisplayName} on ${f.scheduleDate} (${freqText}).`;
       } else if (isOwnTransfer) {
-        successTitle = "Transfer complete";
+        successTitle = "Transfer complete!";
         successMsg = `You’ve moved ${formattedAmount} to your ${toOwnAccount?.name || "account"}. It’s ready to use.`;
       } else if (rail === "card-topup") {
-        successTitle = "Card topped up";
+        successTitle = "Card topped up!";
         successMsg = `You’ve added ${formattedAmount} to your ${cardObj?.name || "card"}. It’s ready to spend.`;
       } else if (rail === "cardless") {
         successTitle = "ATM voucher ready";
@@ -2011,29 +2011,29 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           successMsg = `You’ve sent ${formattedAmount} to ${recipientDisplayName}. They’ll receive an SMS confirmation shortly.`;
         }
       } else if (rail === "airtime") {
-        successTitle = "Airtime sent";
+        successTitle = "Airtime sent!";
         successMsg = `You’ve recharged ${f.aPhone || recipientDisplayName} with ${formattedAmount} airtime.`;
       } else if (rail === "data") {
-        successTitle = "Bundle activated";
+        successTitle = "Bundle activated!";
         successMsg = `You’ve sent the ${bundle?.name || "data bundle"} to ${f.aPhone || recipientDisplayName}.`;
       } else if (rail === "ecg") {
-        successTitle = "Power recharged";
+        successTitle = "Power recharged!";
         successMsg = `You’ve purchased ${formattedAmount} of electricity units for meter ${f.ecgMeter}.`;
       } else if (rail === "bill") {
-        successTitle = "Bill paid";
+        successTitle = "Bill paid!";
         const billerName = biller?.name || "your biller";
         successMsg = `You’ve paid ${formattedAmount} to ${billerName}. Your payment has been received.`;
       } else if (rail === "ghanagov") {
-        successTitle = "Payment confirmed";
+        successTitle = "Payment confirmed!";
         successMsg = `You’ve paid ${formattedAmount} for ${f.govService || "Ghana.gov"} (${f.govRef}).`;
       } else if (rail === "proxy") {
-        successTitle = "Payment sent";
+        successTitle = "Payment sent!";
         successMsg = `You’ve sent ${formattedAmount} to proxy ${f.pxId}.`;
       } else if (rail === "papss" || rail === "swift") {
         successTitle = "Transfer on its way";
         successMsg = `We’ve initiated your international transfer of ${formattedAmount} to ${recipientDisplayName}.`;
       } else if (rail === "bank") {
-        successTitle = "Payment sent";
+        successTitle = "Payment sent!";
         if (bankCategory === "gcb") {
           successMsg = `You’ve sent ${formattedAmount} to ${recipientDisplayName}’s GCB account. The funds reflect immediately.`;
         } else {
@@ -2176,13 +2176,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     return RAIL_LABEL[rail] || "Send Money";
   };
 
-  // Submitting Spinner View
+  // Submitting Spinner View — a single calm line while the transaction settles.
+  // The inner wrapper keeps the spinner out of the shell's page-stagger reach
+  // (which only targets one level deep), so animate-spin isn't overridden.
   if (phase === "submitting") {
     return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col items-center justify-center gap-4 py-24 text-center">
-        <Loader2 size={36} className="animate-spin text-muted-foreground" />
-        <h2 className="text-[20px] font-medium text-foreground">Authorising payment...</h2>
-        <p className="text-[13.5px] text-muted-foreground">Please wait while your transaction is securely processed.</p>
+      <div className="mx-auto flex w-full max-w-2xl flex-col items-center justify-center py-24 text-center">
+        <div className="flex flex-col items-center gap-3.5">
+          <Loader2 size={30} strokeWidth={1.9} className="animate-spin text-muted-foreground" />
+          <p className="text-[15px] text-foreground tracking-[-0.01em]">Processing</p>
+        </div>
       </div>
     );
   }

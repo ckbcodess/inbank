@@ -348,7 +348,7 @@
 /* Page entrance — staggered fade-up of each top-level section. Applied via the
    app shells (AppShell / SuperAdminShell) so every page animates in the same way
    the inventory page does. Re-runs on each navigation because the page subtree
-   remounts. `> * > *` targets the sections inside a page's root wrapper. */
+   remounts. `> * > *` targets the sections inside a page's root wrapper.
    Timing note: the fill mode is `both`, so a section is held at opacity 0 for
    the whole of its delay. Delay and duration therefore ADD — the last section
    is not readable until delay + duration has elapsed. At 480ms + 500ms that
@@ -390,6 +390,29 @@
 
   .page-stagger > *:only-child > *:nth-child(n+9),
   .page-stagger > *:not(:only-child):nth-child(n+9) { animation-delay: 150ms; }
+}
+
+/* Opt-out: the payment success screen runs its own framer-motion entrance.
+   Cancel the shell's inherited CSS page-stagger on its sections so the two
+   don't fight (the CSS fill:both was pinning elements visible, overriding
+   framer's hidden state and making them appear before their reveal). Only
+   kills the CSS animation — framer drives via inline styles / WAAPI, untouched. */
+.success-entrance > * {
+  animation: none !important;
+}
+
+/* App shell card surface — Figma node 1481:5361. Light mode is a solid card
+   fill (surface/card #fff). Dark mode keeps the soft radial highlight from the
+   top-center: a faint lift settling to the dark card token. */
+.shell-card {
+  background: #ffffff;
+}
+.dark .shell-card {
+  background: radial-gradient(
+    90% 70% at 50% 0%,
+    color-mix(in oklch, var(--card), #ffffff 5%) 0%,
+    var(--card) 100%
+  );
 }
 
 /* CSS Mask fade-out for bottom edge of shell content — disabled to prevent masking notifications and interactive bottom controls */
@@ -443,6 +466,17 @@ select {
 
 .animate-pin-shake {
   animation: pin-shake 0.35s ease-in-out;
+}
+
+/* Slight nudge shake — amount field at its ceiling. Gentler than pin-shake:
+   a "that's the limit" tap, not an error. */
+@keyframes amount-shake {
+  0%, 100% { transform: translateX(0); }
+  25%, 75% { transform: translateX(-4px); }
+  50%      { transform: translateX(4px); }
+}
+.animate-amount-shake {
+  animation: amount-shake 0.3s ease-in-out;
 }
 
 /* Numora numeric input utility for all numeric-only fields */

@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <TooltipProvider delay={350} closeDelay={100} timeout={300}>
             <AmountVisibilityProvider>
               <DevStateProvider>
-                <Toaster position="top-right" richColors style={{ zIndex: 999999 }} />
+                <Toaster position="top-right" style={{ zIndex: 999999 }} />
                 {children}
                 <PersonaFlowSwitcher />
               </DevStateProvider>

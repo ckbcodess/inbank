@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect, useCallback } from "react";
+import { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell,
@@ -8,6 +8,7 @@ import {
   Repeat,
   Trash2,
   Sparkles,
+  RotateCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -147,8 +148,8 @@ function GcbEagleEmblem({ className, idPrefix = "gcb-eagle" }: { className?: str
             initial={{ x: -45 }}
             animate={{ x: 55 }}
             transition={{
-              delay: 0.08,
-              duration: 0.54,
+              delay: 0.15,
+              duration: 0.8,
               ease: [0.22, 1, 0.36, 1],
             }}
           />
@@ -215,6 +216,11 @@ export function PaymentSuccessScreen({
 
   // Animation Phase: "eagle" (initial brand moment) -> "checked" (final settled green check)
   const [badgePhase, setBadgePhase] = useState<"eagle" | "checked">("eagle");
+  // Gate: the rest of the content (subtitle, toggle, cards, buttons) stays hidden
+  // until the badge sequence has settled, so the entrance reads as one deliberate
+  // beat rather than everything arriving at once. The header is intentionally not
+  // gated — it rises in while the badge is still animating.
+  const [revealRest, setRevealRest] = useState(false);
 
   // Determine effective beneficiary name and rail for notification
   const effectiveBenName = useMemo(() => {
@@ -269,24 +275,46 @@ export function PaymentSuccessScreen({
     return "Send to Wallet";
   }, [beneficiaryRail, title, message, receiptRows]);
 
-  // Orchestrate Apple-grade sequence: eagle presentation -> morph into green checkmark after 800ms
-  const triggerCelebration = useCallback(() => {
+  // Orchestrate the entrance: eagle brand moment -> settles into the emerald check,
+  // then the rest of the content reveals. Runs once on mount; the only other caller
+  // is the dev-only Replay control. `initial` runs the content reveal too.
+  const triggerCelebration = useCallback((opts?: { initial?: boolean }) => {
     setBadgePhase("eagle");
     setBurstKey((k) => k + 1);
 
     const morphTimer = setTimeout(() => {
       setBadgePhase("checked");
       playDelightChime();
-    }, 800);
+    }, 1050);
 
-    return () => clearTimeout(morphTimer);
+    let revealTimer: ReturnType<typeof setTimeout> | undefined;
+    if (opts?.initial) {
+      // After the check has drawn and settled (~1050ms morph + ~350ms draw/settle).
+      revealTimer = setTimeout(() => setRevealRest(true), 1400);
+    }
+
+    return () => {
+      clearTimeout(morphTimer);
+      if (revealTimer) clearTimeout(revealTimer);
+    };
   }, []);
 
+  // Holds the pending timers from the latest run so a replay can cancel them
+  // before starting over — otherwise a stale reveal timer would fire mid-replay.
+  const celebrationCleanup = useRef<(() => void) | null>(null);
+
   useEffect(() => {
-    const cleanup = triggerCelebration();
+    celebrationCleanup.current = triggerCelebration({ initial: true });
     return () => {
-      cleanup?.();
+      celebrationCleanup.current?.();
     };
+  }, [triggerCelebration]);
+
+  // Replay the full choreography (badge + content cascade) from the top.
+  const handleReplay = useCallback(() => {
+    celebrationCleanup.current?.();
+    setRevealRest(false);
+    celebrationCleanup.current = triggerCelebration({ initial: true });
   }, [triggerCelebration]);
 
   const handleToggleBeneficiary = () => {
@@ -302,7 +330,6 @@ export function PaymentSuccessScreen({
 
   const handleFeedbackClick = () => {
     setFeedbackSent(true);
-    triggerCelebration();
     setTimeout(() => setFeedbackSent(false), 3500);
   };
 
@@ -382,9 +409,27 @@ export function PaymentSuccessScreen({
   });
 
   return (
-    <div className="relative mx-auto flex w-full max-w-[500px] min-h-[75vh] flex-col items-center justify-center gap-7 py-10 px-4 text-center overflow-visible">
-      {/* ── 1. Hero Celebration Badge with Particle Confetti & Ripple Waves ── */}
-      <div className="relative flex flex-col items-center gap-4 text-center w-full">
+    <div className="success-entrance relative mx-auto flex w-full max-w-[500px] min-h-[75vh] flex-col items-center justify-center gap-7 py-10 px-4 text-center overflow-visible">
+      {/* ── Replay control — DEV/testing only, stripped from production builds ── */}
+      {process.env.NODE_ENV !== "production" && (
+        <button
+          type="button"
+          onClick={handleReplay}
+          aria-label="Replay animation"
+          className="absolute right-1 top-1 z-30 flex items-center gap-1.5 rounded-full border border-border/70 bg-card/80 px-3 py-1.5 text-[12px] text-muted-foreground shadow-xs backdrop-blur transition-colors hover:bg-muted/60 hover:text-foreground cursor-pointer"
+        >
+          <RotateCcw size={13} strokeWidth={1.8} />
+          <span>Replay</span>
+        </button>
+      )}
+
+      {/* ── 1. Hero (eagle + message) — starts centered on screen, then the layout
+             animation slides it up as the rest of the content mounts below ── */}
+      <motion.div
+        layout="position"
+        transition={{ layout: { duration: 0.62, ease: [0.22, 1, 0.36, 1] } }}
+        className="relative flex flex-col items-center gap-4 text-center w-full"
+      >
         {/* Badge Anchor & Interactive Burst Area */}
         <div className="relative flex size-[130px] sm:size-[140px] items-center justify-center my-1 select-none">
           {/* Subtle Dual Concentric Precision Pulse Rings during Checked Phase */}
@@ -395,14 +440,14 @@ export function PaymentSuccessScreen({
                 initial={{ scale: 0.85, opacity: 0.45 }}
                 animate={{ scale: 1.55, opacity: 0 }}
                 transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-                className="pointer-events-none absolute inset-0 rounded-full border border-[#12B76A]/40"
+                className="pointer-events-none absolute inset-0 rounded-full border border-[#04C500]/40"
               />
               <motion.div
                 key={`pulse-ring-2-${burstKey}`}
                 initial={{ scale: 0.85, opacity: 0.25 }}
                 animate={{ scale: 2.0, opacity: 0 }}
                 transition={{ duration: 1.1, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-                className="pointer-events-none absolute inset-0 rounded-full border border-[#12B76A]/20"
+                className="pointer-events-none absolute inset-0 rounded-full border border-[#04C500]/20"
               />
             </>
           )}
@@ -412,7 +457,7 @@ export function PaymentSuccessScreen({
             {badgePhase === "eagle" ? (
               <motion.div
                 key="standalone-eagle-stage"
-                initial={{ scale: 0.82, opacity: 0, y: 6 }}
+                initial={{ scale: 0.5, opacity: 0, y: 6 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{
                   scale: 1.18,
@@ -422,40 +467,30 @@ export function PaymentSuccessScreen({
                   transition: { duration: 0.22, ease: [0.32, 0.72, 0, 1] },
                 }}
                 transition={{
-                  duration: 0.4,
+                  duration: 0.34,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                onClick={triggerCelebration}
                 title="GCB Bank"
-                className="relative flex items-center justify-center size-full cursor-pointer select-none"
+                className="relative flex items-center justify-center size-full select-none"
               >
                 {/* Standalone Eagle Emblem (No circle background, no light beam) */}
-                <GcbEagleEmblem className="w-[104px] sm:w-[114px] h-auto drop-shadow-[0_8px_24px_rgba(246,191,54,0.38)] relative z-10" />
+                <GcbEagleEmblem className="w-[104px] sm:w-[114px] h-auto relative z-10" />
               </motion.div>
             ) : (
-              <motion.button
+              <motion.div
                 key="emerald-check-badge"
-                type="button"
-                onClick={triggerCelebration}
-                title="Click to celebrate"
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                initial={{ scale: 0.4, opacity: 0, rotate: -8 }}
-                animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                initial={{ scale: 0.6, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
                 transition={{
                   type: "spring",
-                  stiffness: 420,
-                  damping: 24,
-                  mass: 0.8,
+                  stiffness: 280,
+                  damping: 22,
+                  mass: 0.85,
                 }}
-                className="group relative z-10 flex size-[100px] sm:size-[108px] items-center justify-center rounded-full bg-gradient-to-br from-[#12B76A] to-[#0E9355] text-white shadow-[0_14px_36px_rgba(18,183,106,0.35),0_4px_16px_rgba(0,0,0,0.08)] ring-1 ring-white/20 cursor-pointer focus:outline-hidden overflow-hidden"
+                className="group relative z-10 flex size-[100px] sm:size-[108px] items-center justify-center rounded-full bg-gradient-to-br from-[#039600] to-[#04C500] text-white shadow-[0_4px_16px_rgba(0,0,0,0.08)] ring-1 ring-white/20 select-none overflow-hidden"
               >
-                {/* Ambient Breathing Rim Glow */}
-                <motion.div
-                  animate={{ opacity: [0.2, 0.45, 0.2] }}
-                  transition={{ repeat: Infinity, duration: 2.6, ease: "easeInOut" }}
-                  className="pointer-events-none absolute inset-0 rounded-full bg-white/20"
-                />
+                {/* Static top highlight for depth — no loop, the badge settles still. */}
+                <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/25 to-transparent" />
 
                 {/* Animated SVG Path Drawing Checkmark */}
                 <svg
@@ -481,49 +516,52 @@ export function PaymentSuccessScreen({
                   />
                 </svg>
 
-                {/* ── Continuous Looping Sheen Effect across the Checkmark Badge ── */}
+                {/* ── Single sheen pass, once the check has drawn — then it rests ── */}
                 <motion.div
                   initial={{ x: "-160%", opacity: 0 }}
-                  animate={{
-                    x: ["-160%", "160%", "160%"],
-                    opacity: [0, 0.85, 0],
-                  }}
+                  animate={{ x: "160%", opacity: [0, 0.7, 0] }}
                   transition={{
-                    delay: 0.8, // begins right after the checkmark settles
-                    repeat: Infinity,
-                    repeatDelay: 2.2, // recurring periodic shimmer pass
-                    duration: 1.0,
+                    delay: 0.45, // begins right after the checkmark draws
+                    duration: 1.2,
                     ease: [0.4, 0, 0.2, 1],
                   }}
-                  className="pointer-events-none absolute inset-0 -skew-x-20 bg-gradient-to-r from-transparent via-white/50 to-transparent w-[160%] z-20"
+                  className="pointer-events-none absolute inset-0 -skew-x-20 bg-gradient-to-r from-transparent via-white/45 to-transparent w-[160%] z-20"
                 />
-              </motion.button>
+              </motion.div>
             )}
           </AnimatePresence>
         </div>
 
-        {/* ── 2. Prominent Title & Subtitle with Staggered Fade Up ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.48, delay: 0.85, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col gap-2 items-center w-full max-w-[460px] text-center"
-        >
-          <h1 className="text-[26px] sm:text-[30px] font-semibold leading-[34px] sm:leading-[38px] tracking-[-0.3px] text-foreground text-center">
+        {/* ── 2. Header rises in while the badge animates; subtitle waits for the reveal ── */}
+        <div className="flex flex-col gap-2 items-center w-full max-w-[460px] text-center">
+          <motion.h1
+            key={`title-${burstKey}`}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.44, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+            className="text-[26px] sm:text-[30px] font-medium leading-[34px] sm:leading-[38px] tracking-[-0.02em] text-foreground text-center"
+          >
             {title}
-          </h1>
-          <p className="text-[15px] sm:text-[16px] leading-[23px] sm:leading-[25px] text-muted-foreground text-center max-w-[440px]">
-            {message}
-          </p>
-        </motion.div>
-      </div>
+          </motion.h1>
+          {revealRest && (
+            <motion.p
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="text-[15px] sm:text-[16px] leading-[23px] sm:leading-[25px] text-muted-foreground text-center max-w-[440px]"
+            >
+              {message}
+            </motion.p>
+          )}
+        </div>
+      </motion.div>
 
       {/* ── Cardless Withdrawal Token Voucher (if generated) ── */}
-      {cardlessToken && (
+      {cardlessToken && revealRest && (
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.90 }}
+          transition={{ duration: 0.4, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
           className="w-full max-w-[460px] rounded-[14px] border border-amber-500/30 bg-amber-500/5 p-4 flex flex-col gap-3 shadow-xs text-left"
         >
           <div className="flex items-center justify-between border-b border-amber-500/20 pb-2">
@@ -571,11 +609,11 @@ export function PaymentSuccessScreen({
       )}
 
       {/* ── 3. Save As Beneficiary Toggle Row (Tactile Spring Flip) ── */}
-      {showSaveBeneficiary && (
+      {showSaveBeneficiary && revealRest && (
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.96, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           className="flex items-center justify-between px-[18px] py-[16px] rounded-[14px] border border-[#ebebe9] dark:border-border bg-[#f6f6f5] dark:bg-card w-full max-w-[460px] shadow-xs"
         >
           <span className="text-[14px] font-normal text-foreground">{saveBeneficiaryLabel}</span>
@@ -603,11 +641,11 @@ export function PaymentSuccessScreen({
       )}
 
       {/* ── 4. Action Cards Row ── */}
-      {actionCards.length > 0 && (
+      {actionCards.length > 0 && revealRest && (
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 1.02, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.4, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           className={cn("grid gap-3 w-full max-w-[460px]", actionCards.length === 3 ? "grid-cols-3" : "grid-cols-2")}
         >
           {actionCards.map((card) => {
@@ -637,10 +675,11 @@ export function PaymentSuccessScreen({
       )}
 
       {/* ── 5. Bottom Action Buttons ── */}
+      {revealRest && (
       <motion.div
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 1.08, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.4, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
         className="flex items-center gap-4 w-full max-w-[460px] pt-1"
       >
         {onSecondaryAction && (
@@ -657,21 +696,17 @@ export function PaymentSuccessScreen({
           onClick={onPrimaryAction}
           className="relative overflow-hidden flex-1 rounded-[8px] bg-[#f9c632] hover:bg-[#eab308] text-[#451a03] px-5 py-3 text-[14px] font-medium active:scale-[0.99] transition-all cursor-pointer text-center shadow-xs"
         >
-          {/* Subtle light shimmer sweep passing across the gold button */}
+          {/* Single light sweep as the button arrives — then it stays still */}
           <motion.div
             initial={{ x: "-100%" }}
             animate={{ x: "200%" }}
-            transition={{
-              repeat: Infinity,
-              repeatDelay: 3.2,
-              duration: 1.1,
-              ease: "easeInOut",
-            }}
-            className="pointer-events-none absolute inset-0 -skew-x-12 bg-gradient-to-r from-transparent via-white/35 to-transparent"
+            transition={{ duration: 0.9, delay: 0.4, ease: "easeInOut" }}
+            className="pointer-events-none absolute inset-0 -skew-x-12 bg-gradient-to-r from-transparent via-white/30 to-transparent"
           />
           <span className="relative z-10">{primaryActionLabel}</span>
         </button>
       </motion.div>
+      )}
     </div>
   );
 }

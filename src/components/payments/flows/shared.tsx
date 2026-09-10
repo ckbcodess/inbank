@@ -536,6 +536,9 @@ export function FromAccountSelector({
 /* -------------------------------------------------------------------------- */
 /* Subcomponent 2: Animated Amount Input with Numora & Torph                  */
 /* -------------------------------------------------------------------------- */
+/** Upper ceiling for any amount entry: 900 billion. */
+const MAX_AMOUNT = 900_000_000_000;
+
 export function AmountInput({
   value,
   onChange,
@@ -557,6 +560,10 @@ export function AmountInput({
 }) {
   const isError = Boolean(error || hasError);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Ceiling: no amount may exceed 900 billion. This is a fat-finger / paste
+  // guard, not a real transfer size — enforced at entry so the value can never
+  // cross it, with a slight shake as the only nudge.
+  const [nudge, setNudge] = useState(false);
 
   // Helper to format any raw or numeric string for display with thousand commas
   const getFormatted = (val: string) => {
@@ -595,6 +602,14 @@ export function AmountInput({
       thousandSeparator: ",",
       thousandStyle: ThousandStyle.Thousand,
     });
+
+    // Reject any edit that would push the amount past the ceiling. The
+    // controlled input reverts to the previous display value on its own; we
+    // just nudge with a slight shake so the block feels intentional.
+    if (raw && parseFloat(raw) > MAX_AMOUNT) {
+      setNudge(true);
+      return;
+    }
 
     // Compute exact cursor position in the formatted string
     let newCursor = 0;
@@ -677,8 +692,10 @@ export function AmountInput({
       <label className="text-[14px] font-medium text-foreground">{label}</label>
       <div
         onClick={handleClick}
+        onAnimationEnd={() => setNudge(false)}
         className={cn(
           "relative flex h-[68px] min-h-[68px] w-full items-center justify-center rounded-2xl border bg-card transition-colors px-4",
+          nudge && "animate-amount-shake",
           disabled ? "bg-muted/30 cursor-not-allowed opacity-80" : "hover:bg-muted/10 cursor-text",
           isError
             ? "border-destructive/70 focus-within:border-destructive focus-within:ring-1 focus-within:ring-destructive/30"

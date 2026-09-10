@@ -110,7 +110,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
         />
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[var(--surface)] p-2 sm:p-3 lg:p-3.5">
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:bg-card dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+          <div className="shell-card flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
             <TopHeader
               actor={actor}
               activeProfile={activeProfile}
