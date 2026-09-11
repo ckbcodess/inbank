@@ -25,6 +25,7 @@ export default function RootRoutingPage() {
         {/* Personal Banking Option */}
         <button
           type="button"
+          data-tour="entry-personal"
           onClick={() => selectOption("personal")}
           className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4.5 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md hover:shadow-[#F2B200]/10 active:scale-[0.96] cursor-pointer"
         >
@@ -50,6 +51,7 @@ export default function RootRoutingPage() {
         {/* Business Banking Option */}
         <button
           type="button"
+          data-tour="entry-business"
           onClick={() => selectOption("business")}
           className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4.5 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md hover:shadow-[#F2B200]/10 active:scale-[0.96] cursor-pointer"
         >

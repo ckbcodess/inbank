@@ -96,6 +96,7 @@ export default function GetStartedPage() {
             {/* Option 1: Yes - I have a GCB account -> Immediate route to /activate */}
             <button
               type="button"
+              data-tour="gs-existing"
               onClick={handleChooseExisting}
               className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md hover:shadow-[#F2B200]/10 active:scale-[0.96] cursor-pointer"
             >
@@ -121,6 +122,7 @@ export default function GetStartedPage() {
             {/* Option 2: No - I'm new to GCB -> Immediate transition to Step 2 */}
             <button
               type="button"
+              data-tour="gs-new"
               onClick={handleChooseNew}
               className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md hover:shadow-[#F2B200]/10 active:scale-[0.96] cursor-pointer"
             >
@@ -148,6 +150,7 @@ export default function GetStartedPage() {
             {/* Step 2 Option 1: Open a GCB Account -> Immediate COOS modal */}
             <button
               type="button"
+              data-tour="gs-cos"
               onClick={handleChooseCoos}
               className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md hover:shadow-[#F2B200]/10 active:scale-[0.96] cursor-pointer"
             >
@@ -179,6 +182,7 @@ export default function GetStartedPage() {
             {/* Step 2 Option 2: Start with a Wallet or Card -> Immediate route to /signup */}
             <button
               type="button"
+              data-tour="gs-walletcard"
               onClick={handleChooseWalletCard}
               className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md hover:shadow-[#F2B200]/10 active:scale-[0.96] cursor-pointer"
             >
@@ -227,6 +231,7 @@ export default function GetStartedPage() {
               <div className="mt-6 flex w-full flex-col gap-2.5">
                 <Button
                   type="button"
+                  data-tour="gs-cos-confirm"
                   onClick={executeCoosRedirect}
                   disabled={isRedirecting}
                   className="h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] shadow-md shadow-[#F2B200]/20 cursor-pointer"

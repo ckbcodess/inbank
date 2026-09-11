@@ -69,6 +69,7 @@ function LoginForm() {
             New here, or do not have a password yet?{" "}
             <Link
               href="/get-started"
+              data-tour="login-get-started"
               className="font-semibold text-[#B27B00] dark:text-[#F2B200] underline-offset-4 hover:underline active:scale-[0.96]"
             >
               Get started

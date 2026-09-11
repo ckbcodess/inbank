@@ -51,7 +51,6 @@ function ActivateContent() {
 
   // Password & PIN State
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
   const [errorMsg, setErrorMsg] = useState("");
@@ -68,7 +67,6 @@ function ActivateContent() {
   const hasCase = /[a-z]/.test(password) && /[A-Z]/.test(password);
   const hasNumber = /\d/.test(password);
   const hasSymbol = /[^A-Za-z0-9]/.test(password);
-  const passwordValid = hasMinLength && hasCase && hasNumber && hasSymbol;
 
   // Step Progress Index (out of 8)
   const stepNumberMap: Record<Step, number> = {
@@ -131,12 +129,14 @@ function ActivateContent() {
 
   function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!passwordValid) {
-      setErrorMsg("Password must satisfy all requirements");
+    // Demo: any password proceeds. Enter 00000 to see the error state (same
+    // convention as the MFA screen).
+    if (password === "00000") {
+      setErrorMsg("That password can’t be used. Choose another.");
       return;
     }
-    if (password !== confirmPassword) {
-      setErrorMsg("Passwords do not match");
+    if (!password) {
+      setErrorMsg("Please enter a password");
       return;
     }
     setErrorMsg("");
@@ -282,6 +282,7 @@ function ActivateContent() {
 
           <Button
             type="submit"
+            data-tour="activate-card"
             disabled={busy}
             className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
           >
@@ -316,6 +317,7 @@ function ActivateContent() {
 
           <Button
             type="button"
+            data-tour="activate-selfie"
             onClick={handleCaptureSelfie}
             disabled={busy || selfieTaken}
             className="h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
@@ -421,6 +423,7 @@ function ActivateContent() {
 
           <Button
             type="button"
+            data-tour="activate-review"
             onClick={handleVerifyDetails}
             disabled={busy}
             className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
@@ -491,6 +494,7 @@ function ActivateContent() {
 
           <Button
             type="submit"
+            data-tour="activate-otp"
             disabled={busy || digits.join("").length < OTP_LENGTH}
             className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
           >
@@ -533,19 +537,10 @@ function ActivateContent() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="confirm-pass" className="text-[13px] font-medium">
-              Confirm password
-            </Label>
-            <Input
-              id="confirm-pass"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Re-enter password"
-              className="h-12 rounded-xl border-border bg-background text-[14px] focus-visible:ring-[#F2B200]"
-            />
-          </div>
+          <p className="text-[12px] text-muted-foreground">
+            Demo — any password works. Enter{" "}
+            <span className="tabular font-mono text-foreground">00000</span> to see the error state.
+          </p>
 
           {/* Password Checklist */}
           <div className="rounded-2xl border border-border/80 bg-muted/20 p-3.5 space-y-2">
@@ -581,6 +576,7 @@ function ActivateContent() {
 
           <Button
             type="submit"
+            data-tour="activate-password"
             className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
           >
             Save password and continue
@@ -624,6 +620,7 @@ function ActivateContent() {
 
           <Button
             type="submit"
+            data-tour="activate-pin"
             disabled={busy || pinDigits.join("").length < 4}
             className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
           >

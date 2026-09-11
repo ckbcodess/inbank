@@ -43,7 +43,6 @@ function SignupContent() {
 
   // Password & PIN State
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
   const [errorMsg, setErrorMsg] = useState("");
@@ -58,7 +57,6 @@ function SignupContent() {
   const hasCase = /[a-z]/.test(password) && /[A-Z]/.test(password);
   const hasNumber = /\d/.test(password);
   const hasSymbol = /[^A-Za-z0-9]/.test(password);
-  const passwordValid = hasMinLength && hasCase && hasNumber && hasSymbol;
 
   const stepNumberMap: Record<Step, number> = {
     ghana_card: 3,
@@ -120,12 +118,14 @@ function SignupContent() {
 
   function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!passwordValid) {
-      setErrorMsg("Password must satisfy all requirements");
+    // Demo: any password proceeds. Enter 00000 to see the error state (same
+    // convention as the MFA screen).
+    if (password === "00000") {
+      setErrorMsg("That password can’t be used. Choose another.");
       return;
     }
-    if (password !== confirmPassword) {
-      setErrorMsg("Passwords do not match");
+    if (!password) {
+      setErrorMsg("Please enter a password");
       return;
     }
     setErrorMsg("");
@@ -224,6 +224,7 @@ function SignupContent() {
 
           <Button
             type="submit"
+            data-tour="signup-card"
             disabled={busy}
             className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
           >
@@ -258,6 +259,7 @@ function SignupContent() {
 
           <Button
             type="button"
+            data-tour="signup-selfie"
             onClick={handleCaptureSelfie}
             disabled={busy || selfieTaken}
             className="h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
@@ -304,6 +306,7 @@ function SignupContent() {
 
           <Button
             type="button"
+            data-tour="signup-review"
             onClick={handleVerifyDetails}
             disabled={busy}
             className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
@@ -368,6 +371,7 @@ function SignupContent() {
 
           <Button
             type="submit"
+            data-tour="signup-otp"
             disabled={busy}
             className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
           >
@@ -410,20 +414,10 @@ function SignupContent() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="confirmPass" className="text-[13px] font-medium text-foreground">
-              Confirm Password
-            </Label>
-            <Input
-              id="confirmPass"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="••••••••••••"
-              className="h-11 rounded-xl border-border bg-background px-3.5 text-[14px] focus-visible:border-[#F2B200] focus-visible:ring-[#F2B200]/20"
-              required
-            />
-          </div>
+          <p className="text-[12px] text-muted-foreground">
+            Demo — any password works. Enter{" "}
+            <span className="tabular font-mono text-foreground">00000</span> to see the error state.
+          </p>
 
           {/* Password Requirements Checklist */}
           <div className="rounded-2xl border border-border/80 bg-muted/20 p-3.5">
@@ -491,6 +485,7 @@ function SignupContent() {
 
           <Button
             type="submit"
+            data-tour="signup-password"
             className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
           >
             Proceed
@@ -543,6 +538,7 @@ function SignupContent() {
 
           <Button
             type="submit"
+            data-tour="signup-pin"
             disabled={busy}
             className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
           >

@@ -95,7 +95,7 @@ function MfaContent() {
     >
       {/* New Device Information Card (if applicable) */}
       {isNewDevice && (
-        <div className="mb-5 rounded-2xl border border-amber-500/30 bg-[#FFFBF0] dark:bg-amber-500/10 p-3.5 text-left space-y-2">
+        <div data-tour="mfa-device-info" className="mb-5 rounded-2xl border border-amber-500/30 bg-[#FFFBF0] dark:bg-amber-500/10 p-3.5 text-left space-y-2">
           <div className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
             <Laptop size={16} className="text-[#B27B00] dark:text-[#F2B200]" />
             <span>Windows PC · Google Chrome</span>
@@ -108,15 +108,17 @@ function MfaContent() {
       )}
 
       <form onSubmit={handleVerify} className="flex flex-col gap-5">
-        <OtpInput
-          value={digits}
-          onChange={(next) => {
-            setDigits(next);
-            if (state === "error") setState("entry");
-          }}
-          disabled={state === "verifying"}
-          invalid={state === "error"}
-        />
+        <div data-tour="mfa-otp">
+          <OtpInput
+            value={digits}
+            onChange={(next) => {
+              setDigits(next);
+              if (state === "error") setState("entry");
+            }}
+            disabled={state === "verifying"}
+            invalid={state === "error"}
+          />
+        </div>
 
         {/* Trust Device Checkbox */}
         {isNewDevice && (

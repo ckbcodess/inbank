@@ -11,7 +11,7 @@
  * 5. Clean, uncluttered Add Beneficiary modal with progressive disclosure.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -326,6 +326,12 @@ export default function BeneficiariesPage() {
 
   // 3 Major Segmented Control Tabs (People, Billers, Groups)
   const [activeTab, setActiveTab] = useState<ActiveTab>("people");
+
+  // Open a specific tab when deep-linked (e.g. "Manage groups" → ?tab=groups).
+  useEffect(() => {
+    const t = new URLSearchParams(window.location.search).get("tab");
+    if (t === "people" || t === "billers" || t === "groups") setActiveTab(t);
+  }, []);
 
   // Search and Filters
   const [query, setQuery] = useState("");
@@ -807,18 +813,18 @@ export default function BeneficiariesPage() {
         title="Beneficiaries"
         description="Manage your saved counterparties, bank accounts, mobile wallets, and payment groups."
         actions={
-          <div className="flex items-center gap-3">
+          activeTab === "groups" ? (
             <Button
-              variant="outline"
               onClick={() => {
                 setEditingGroup(null);
                 setGroupFlowOpen(true);
               }}
-              className="h-9 gap-1.5 px-3.5 text-[13px] font-medium border-border/80 bg-card hover:bg-muted/50 rounded-lg shadow-xs"
+              className="h-9 gap-1.5 px-3.5 text-[13px] font-medium rounded-lg shadow-xs"
             >
-              <Users size={15} strokeWidth={1.8} className="text-muted-foreground" />
-              New group
+              <Plus size={15} strokeWidth={2} />
+              Add new group
             </Button>
+          ) : (
             <Button
               onClick={() => {
                 setForm({
@@ -832,7 +838,7 @@ export default function BeneficiariesPage() {
               <Plus size={15} strokeWidth={2} />
               {activeTab === "billers" ? "Add biller" : "Add beneficiary"}
             </Button>
-          </div>
+          )
         }
       />
 

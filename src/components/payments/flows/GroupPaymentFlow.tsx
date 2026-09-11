@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Users, Plus } from "lucide-react";
+import { Users } from "lucide-react";
 import { Account, formatMoney } from "@/lib/mock-data";
 import { PaymentGroup } from "@/lib/groups-store";
 import {
@@ -83,17 +83,7 @@ export function GroupPaymentFlow({
 
       {/* 2. Destination Group */}
       <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <label className="text-[14px] font-medium text-foreground">Contribution Group</label>
-          <button
-            type="button"
-            onClick={onOpenCreateGroup}
-            className="flex items-center gap-1 text-[13px] font-medium text-foreground hover:underline cursor-pointer"
-          >
-            <Plus size={14} />
-            <span>Create new group</span>
-          </button>
-        </div>
+        <label className="text-[14px] font-medium text-foreground">Contribution Group</label>
 
         {selectedGroup && isCollapsed ? (
           <CollapsedDetailsBadge

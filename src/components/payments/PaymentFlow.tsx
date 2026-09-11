@@ -30,14 +30,17 @@ import {
   Heart,
   Landmark,
   Loader2,
+  Pencil,
   Plus,
   Receipt,
   Smartphone,
   Store,
+  Trash2,
   Tv,
   User,
   Users,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -57,7 +60,10 @@ import {
   SpendCategory,
 } from "@/lib/mock-data";
 import { useGroupsStore } from "@/lib/groups-store";
+import { useProxyStore, PROXY_TYPE_LABEL } from "@/lib/proxy-store";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
+import ProxyIdModal from "@/components/payments/ProxyIdModal";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useSession } from "@/lib/session-store";
 import { roundMoney, sumMoney } from "@/lib/money";
 import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
@@ -990,6 +996,15 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const [rail, setRail] = useState<Rail>("bank");
   const [bankCategory, setBankCategory] = useState<"own" | "gcb" | "other" | "international" | null>(null);
   const [walletCategory, setWalletCategory] = useState<"self" | "other" | null>(null);
+  // Airtime & data share one "who is this for?" gate before any details.
+  const [topupCategory, setTopupCategory] = useState<"self" | "other" | null>(null);
+  // Proxy & group each open on a chooser before their transfer form.
+  const [proxyCategory, setProxyCategory] = useState<"transfer" | null>(null);
+  const [proxyModalOpen, setProxyModalOpen] = useState(false);
+  const [proxyModalMode, setProxyModalMode] = useState<"create" | "edit">("edit");
+  const [proxyDeregisterOpen, setProxyDeregisterOpen] = useState(false);
+  const [groupCategory, setGroupCategory] = useState<"transfer" | null>(null);
+  const { myProxy, deregisterProxy } = useProxyStore();
   const [cardlessCategory, setCardlessCategory] = useState<"self" | "third-party" | null>(null);
   const [billCategory, setBillCategory] = useState<BillerCategory | null>(null);
   const [billMode, setBillMode] = useState<"saved" | "custom">("saved");
@@ -1096,6 +1111,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
     if (item.rail === "group") {
       setRail("group");
+      setGroupCategory("transfer");
       const matchedGrp = groups.find((g) => g.name === item.name || g.id === item.id);
       setF((p) => ({
         ...p,
@@ -1144,6 +1160,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
     if (item.rail === "airtime") {
       setRail("airtime");
+      setTopupCategory(item.id.includes("self") ? "self" : "other");
       const detected = detectTelcoNetwork(item.acct);
       const net = detected?.telcoName || normalizeNetworkName(item.bank) || "MTN Ghana";
       setF((p) => ({
@@ -1160,6 +1177,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
     if (item.rail === "data") {
       setRail("data");
+      setTopupCategory(item.id.includes("self") ? "self" : "other");
       const detected = detectTelcoNetwork(item.acct);
       const net = detected?.telcoName || normalizeNetworkName(item.bank) || "MTN Ghana";
       const bundles = getBundlesForNetwork(net);
@@ -1179,6 +1197,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
     if (item.rail === "proxy") {
       setRail("proxy");
+      setProxyCategory("transfer");
       setF((p) => ({
         ...p,
         pxId: item.acct,
@@ -1348,6 +1367,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       const gName = decodeURIComponent(searchParams.get("group") || recipientParam || "");
       const matchedG = groups.find((g) => g.name.toLowerCase().includes(gName.toLowerCase()));
       if (matchedG) {
+        setGroupCategory("transfer");
         setF((p) => ({
           ...p,
           groupName: matchedG.name,
@@ -2888,6 +2908,417 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     );
   }
 
+  // Proxy — chooser: transfer to a proxy ID, or manage your own proxy ID.
+  if (rail === "proxy" && !proxyCategory) {
+    const proxyOptionCls =
+      "group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left";
+    const proxyIconCls =
+      "flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none";
+    return (
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
+        <div className="relative flex items-center">
+          <button
+            type="button"
+            onClick={() => router.push("/payments")}
+            className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            aria-label="Back to Send & Pay"
+          >
+            <ChevronLeft size={22} strokeWidth={1.8} />
+          </button>
+          <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+            Proxy payments
+          </h1>
+        </div>
+
+        {/* Your own proxy ID status */}
+        {myProxy ? (
+          <div className="flex items-center justify-between rounded-2xl border border-border bg-muted/30 px-4 py-3">
+            <div className="flex items-center gap-3">
+              <span className="flex size-9 items-center justify-center rounded-full bg-[#FEF3D6] text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200]">
+                <User size={17} strokeWidth={1.8} />
+              </span>
+              <div className="flex flex-col">
+                <span className="text-[12px] text-muted-foreground">Your proxy ID</span>
+                <span className="text-[14px] text-foreground tabular">
+                  {myProxy.value}{" "}
+                  <span className="text-[12px] text-muted-foreground">· {PROXY_TYPE_LABEL[myProxy.type]}</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <p className="rounded-2xl border border-dashed border-border bg-muted/20 px-4 py-3 text-[12.5px] text-muted-foreground">
+            You don&apos;t have a proxy ID yet. Create one so others can pay you with your number.
+          </p>
+        )}
+
+        <div className="flex flex-col gap-3.5">
+          {/* Transfer to a proxy ID */}
+          <button
+            type="button"
+            onClick={() => {
+              setProxyCategory("transfer");
+              setF((p) => ({ ...p, pxId: "", benName: "", bankAmount: "", bankRef: "" }));
+              setStage(1);
+              setMaxRevealedStage(1);
+              setStage1Collapsed(false);
+            }}
+            className={proxyOptionCls}
+          >
+            <div className="flex items-center gap-4">
+              <span className={proxyIconCls}>
+                <ArrowLeftRight size={20} strokeWidth={1.8} />
+              </span>
+              <div className="flex flex-col">
+                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Transfer to a proxy ID</span>
+                <span className="text-[12.5px] text-muted-foreground">Pay anyone by their phone, @alias or Ghana Card</span>
+              </div>
+            </div>
+            <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
+          </button>
+
+          {myProxy ? (
+            <>
+              {/* Update proxy ID */}
+              <button
+                type="button"
+                onClick={() => {
+                  setProxyModalMode("edit");
+                  setProxyModalOpen(true);
+                }}
+                className={proxyOptionCls}
+              >
+                <div className="flex items-center gap-4">
+                  <span className={proxyIconCls}>
+                    <Pencil size={19} strokeWidth={1.8} />
+                  </span>
+                  <div className="flex flex-col">
+                    <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Update proxy ID</span>
+                    <span className="text-[12.5px] text-muted-foreground">Change your proxy details or the account it pays into</span>
+                  </div>
+                </div>
+                <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
+              </button>
+
+              {/* Deregister proxy ID */}
+              <button
+                type="button"
+                onClick={() => setProxyDeregisterOpen(true)}
+                className={proxyOptionCls}
+              >
+                <div className="flex items-center gap-4">
+                  <span className={proxyIconCls}>
+                    <Trash2 size={19} strokeWidth={1.8} className="text-destructive" />
+                  </span>
+                  <div className="flex flex-col">
+                    <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Deregister proxy ID</span>
+                    <span className="text-[12.5px] text-muted-foreground">Remove your proxy ID — people can no longer pay you this way</span>
+                  </div>
+                </div>
+                <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
+              </button>
+            </>
+          ) : (
+            /* Create proxy ID (shown once none is registered) */
+            <button
+              type="button"
+              onClick={() => {
+                setProxyModalMode("create");
+                setProxyModalOpen(true);
+              }}
+              className={proxyOptionCls}
+            >
+              <div className="flex items-center gap-4">
+                <span className={proxyIconCls}>
+                  <Plus size={20} strokeWidth={1.8} />
+                </span>
+                <div className="flex flex-col">
+                  <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Create a proxy ID</span>
+                  <span className="text-[12.5px] text-muted-foreground">Register your phone or Ghana Card to receive payments</span>
+                </div>
+              </div>
+              <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
+            </button>
+          )}
+        </div>
+
+        <ProxyIdModal
+          open={proxyModalOpen}
+          onOpenChange={setProxyModalOpen}
+          mode={proxyModalMode}
+          accounts={accounts}
+          onSaved={() =>
+            toast.success(proxyModalMode === "edit" ? "Proxy ID updated" : "Proxy ID created")
+          }
+        />
+
+        {/* Deregister confirmation */}
+        <Dialog open={proxyDeregisterOpen} onOpenChange={setProxyDeregisterOpen}>
+          <DialogContent className="sm:max-w-sm p-5 sm:p-6 rounded-[20px] border border-border/80 bg-card shadow-2xl" showCloseButton={false}>
+            <DialogTitle className="text-[16px] text-foreground tracking-[-0.01em]">
+              Deregister your proxy ID?
+            </DialogTitle>
+            <p className="mt-1.5 text-[13px] leading-snug text-muted-foreground">
+              People will no longer be able to pay you using{" "}
+              <span className="text-foreground tabular">{myProxy?.value}</span>. You can register a new
+              one at any time.
+            </p>
+            <div className="mt-5 flex items-center justify-end gap-2.5">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setProxyDeregisterOpen(false)}
+                className="h-10 rounded-xl px-4 text-[13.5px] cursor-pointer"
+              >
+                Keep it
+              </Button>
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={() => {
+                  deregisterProxy();
+                  setProxyDeregisterOpen(false);
+                  toast.success("Proxy ID deregistered");
+                }}
+                className="h-10 rounded-xl px-4 text-[13.5px] font-semibold cursor-pointer"
+              >
+                Deregister
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
+
+  // Group — chooser: transfer to a group, or manage groups.
+  if (rail === "group" && !groupCategory) {
+    const groupOptionCls =
+      "group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left";
+    const groupIconCls =
+      "flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none";
+    return (
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
+        <div className="relative flex items-center">
+          <button
+            type="button"
+            onClick={() => router.push("/payments")}
+            className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            aria-label="Back to Send & Pay"
+          >
+            <ChevronLeft size={22} strokeWidth={1.8} />
+          </button>
+          <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+            Group payments
+          </h1>
+        </div>
+
+        {/* Your groups quick pick */}
+        {groups.length > 0 && (
+          <HorizontalScrollStrip>
+            {groups.map((g) => (
+              <button
+                key={g.id}
+                type="button"
+                onClick={() =>
+                  selectBeneficiary({
+                    id: g.id,
+                    name: g.name,
+                    bank: "Group",
+                    acct: "",
+                    initials: g.name.slice(0, 2).toUpperCase(),
+                    rail: "group",
+                  })
+                }
+                className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
+              >
+                <span className="flex size-14 items-center justify-center rounded-full bg-[#fef9c3] text-[16px] font-medium text-[#111] transition-transform group-hover:scale-105">
+                  {g.name.slice(0, 2).toUpperCase()}
+                </span>
+                <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
+                  {g.name.split(" ")[0]}
+                </span>
+              </button>
+            ))}
+          </HorizontalScrollStrip>
+        )}
+
+        <div className="flex flex-col gap-3.5">
+          {/* Transfer to group */}
+          <button
+            type="button"
+            onClick={() => {
+              setGroupCategory("transfer");
+              setF((p) => ({ ...p, groupName: "", grpAmount: "", grpRef: "" }));
+              setStage(1);
+              setMaxRevealedStage(1);
+              setStage1Collapsed(false);
+            }}
+            className={groupOptionCls}
+          >
+            <div className="flex items-center gap-4">
+              <span className={groupIconCls}>
+                <Users size={20} strokeWidth={1.8} />
+              </span>
+              <div className="flex flex-col">
+                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Transfer to group</span>
+                <span className="text-[12.5px] text-muted-foreground">Split a payment across a Susu circle, family or team</span>
+              </div>
+            </div>
+            <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
+          </button>
+
+          {/* Manage group */}
+          <button
+            type="button"
+            onClick={() => router.push("/beneficiaries?tab=groups")}
+            className={groupOptionCls}
+          >
+            <div className="flex items-center gap-4">
+              <span className={groupIconCls}>
+                <Pencil size={19} strokeWidth={1.8} />
+              </span>
+              <div className="flex flex-col">
+                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Manage groups</span>
+                <span className="text-[12.5px] text-muted-foreground">Create, edit members and split amounts, or remove a group</span>
+              </div>
+            </div>
+            <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Airtime / Data — "who is this for?" gate, before any details are entered.
+  if ((rail === "airtime" || rail === "data") && !topupCategory) {
+    const isData = rail === "data";
+    return (
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
+        <div className="relative flex items-center">
+          <button
+            type="button"
+            onClick={() => router.push("/payments")}
+            className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            aria-label="Back to Send & Pay"
+          >
+            <ChevronLeft size={22} strokeWidth={1.8} />
+          </button>
+          <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+            {isData ? "Who is this data bundle for?" : "Who is this airtime for?"}
+          </h1>
+        </div>
+
+        {/* Recent recipients (excluding the Self shortcut, which is its own card) */}
+        <HorizontalScrollStrip>
+          {RECENT_AVATARS.filter((item) => item.rail === rail && !item.id.includes("self")).map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => selectBeneficiary(item)}
+              className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
+            >
+              <span
+                className="flex size-14 items-center justify-center rounded-full text-[18px] text-[#111] transition-transform group-hover:scale-105"
+                style={{ backgroundColor: item.colorBg || "#f1f8f9" }}
+              >
+                {item.initials}
+              </span>
+              <div className="flex flex-col">
+                <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
+                  {item.name.split(" ")[0]}
+                </span>
+                <span className="text-[11px] text-muted-foreground truncate max-w-[80px]">
+                  {item.subtitle || item.bank.split(" ")[0]}
+                </span>
+              </div>
+            </button>
+          ))}
+        </HorizontalScrollStrip>
+
+        {/* 2 Category Cards */}
+        <div className="flex flex-col gap-3.5">
+          {/* Card 1: Self */}
+          <button
+            type="button"
+            onClick={() => {
+              setTopupCategory("self");
+              const selfNum = "0244123821";
+              const detected = detectTelcoNetwork(selfNum);
+              const net = detected?.telcoName || "MTN Ghana";
+              setF((p) => ({
+                ...p,
+                aPhone: selfNum,
+                wNetwork: net,
+                benName: isData ? "My Device (Self)" : "My Phone (Self)",
+                airtimeAmount: "",
+                bundleId: isData ? getBundlesForNetwork(net)[0]?.id || p.bundleId : p.bundleId,
+              }));
+              setStage(1);
+              setMaxRevealedStage(1);
+              setStage1Collapsed(true);
+            }}
+            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
+          >
+            <div className="flex items-center gap-4">
+              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
+                <Smartphone size={20} strokeWidth={1.8} />
+              </span>
+              <div className="flex flex-col">
+                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">My own number (Self)</span>
+                <span className="text-[12.5px] text-muted-foreground">
+                  {isData ? "Buy a bundle for your registered number" : "Top up your registered number"} ({REGISTERED_PHONE})
+                </span>
+              </div>
+            </div>
+            <ChevronRight
+              size={20}
+              strokeWidth={1.8}
+              className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
+            />
+          </button>
+
+          {/* Card 2: Someone else */}
+          <button
+            type="button"
+            onClick={() => {
+              setTopupCategory("other");
+              setF((p) => ({
+                ...p,
+                aPhone: "",
+                wNetwork: "",
+                benName: "",
+                airtimeAmount: "",
+                bundleId: "",
+              }));
+              setStage(1);
+              setMaxRevealedStage(1);
+              setStage1Collapsed(false);
+            }}
+            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
+          >
+            <div className="flex items-center gap-4">
+              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
+                <Users size={20} strokeWidth={1.8} />
+              </span>
+              <div className="flex flex-col">
+                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Someone else</span>
+                <span className="text-[12.5px] text-muted-foreground">
+                  {isData ? "Buy a bundle for any MTN, Telecel, or AT number" : "Top up any MTN, Telecel, or AT number in Ghana"}
+                </span>
+              </div>
+            </div>
+            <ChevronRight
+              size={20}
+              strokeWidth={1.8}
+              className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
+            />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Unified Progressive Disclosure Experience across ALL Services
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
@@ -2905,6 +3336,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 setBankCategory(null);
               } else if ((rail === "wallet" || rail === "momo" || rail === "wallet-to-bank") && walletCategory) {
                 setWalletCategory(null);
+              } else if ((rail === "airtime" || rail === "data") && topupCategory) {
+                setTopupCategory(null);
+              } else if (rail === "proxy" && proxyCategory) {
+                setProxyCategory(null);
+              } else if (rail === "group" && groupCategory) {
+                setGroupCategory(null);
               } else if (rail === "cardless" && cardlessCategory) {
                 setCardlessCategory(null);
               } else if (rail === "bill" && billCategory) {
@@ -2941,7 +3378,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         {stage === 1 && (
           <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
             {/* Top-Level Quick Beneficiaries Strip */}
-            {activeRailBeneficiaries.length > 0 && bankCategory !== "own" && walletCategory !== "self" && (
+            {activeRailBeneficiaries.length > 0 && bankCategory !== "own" && walletCategory !== "self" && topupCategory !== "self" && rail !== "group" && (
               <div className="flex flex-col gap-6 -mb-1 animate-in fade-in duration-150">
                 <RailBeneficiaryStrip
                   items={activeRailBeneficiaries}
