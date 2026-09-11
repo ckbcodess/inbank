@@ -553,7 +553,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     set("nickname", opt.title + " Recurring");
                   }
                 }}
-                className="group flex h-[68px] w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] px-4 transition-all duration-150 ease-out hover:bg-[#eeeeed] active:scale-[0.98] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
+                className="group flex h-[68px] w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] px-4 transition-all duration-150 ease-out hover:bg-[var(--tile-hover)] active:scale-[0.98] cursor-pointer text-left"
               >
                 <div className="flex items-center gap-3.5">
                   <span className="flex size-[38px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-sm dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground">

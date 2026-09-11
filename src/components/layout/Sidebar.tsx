@@ -194,7 +194,7 @@ export default function Sidebar({
        opacity and layout properties, so any incidental style recalculation on a
        parent re-render read as a flicker. */
     <aside
-      className={`fixed inset-y-0 left-0 z-40 flex shrink-0 flex-col bg-[var(--surface)] transition-[width,transform] duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)] lg:relative lg:z-20 lg:translate-x-0 ${
+      className={`fixed inset-y-0 left-0 z-40 flex shrink-0 flex-col bg-[var(--surface)] dark:bg-[#09090b] transition-[width,transform] duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)] lg:relative lg:z-20 lg:translate-x-0 ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       }`}
       style={{ width: collapsed ? 56 : 224 }}

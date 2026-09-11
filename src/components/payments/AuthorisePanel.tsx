@@ -286,7 +286,7 @@ export function AuthorisePanel({
                       ? "border-2 border-destructive/70 bg-destructive/10 dark:bg-destructive/15"
                       : isFilled
                       ? "bg-foreground dark:bg-white scale-100 shadow-xs"
-                      : "bg-[#f0f0ee] border border-[#e4e4e2] dark:bg-[#1e1e1e] dark:border-transparent"
+                      : "bg-[#f0f0ee] border border-[#e4e4e2] dark:bg-[var(--tile)] dark:border-transparent"
                   )}
                 />
               );

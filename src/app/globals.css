@@ -81,6 +81,11 @@
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
+  /* On-card tile surface (action-hub tiles, selectable rows) — single source
+     for both modes so a change reflects everywhere. */
+  --tile: #f6f6f5;
+  --tile-hover: #eeeeed;
+  --tile-border: #ebebe9;
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   /* GCB Bank PLC brand accent — iconic Amber / Gold (#fdc307) */
@@ -188,8 +193,11 @@
      overridden per-tenant by injected accent CSS. */
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: #181818;
   --card-foreground: oklch(0.985 0 0);
+  --tile: #141414;
+  --tile-hover: #262626;
+  --tile-border: #292928;
   --popover: oklch(0.269 0 0);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.846 0.172 86.7);
@@ -283,11 +291,9 @@
   html {
     font-size: 14px;
     @apply font-sans;
-    /* Always reserve the scrollbar gutter. Without this, any change that makes
-       the page shorter or taller — hiding balances, switching a chart period,
-       filtering a list — adds or removes the scrollbar and shifts every
-       centred element sideways. */
-    scrollbar-gutter: stable;
+    /* No reserved document scrollbar gutter — the app shell is h-screen with its
+       own overflow, so the document never scrolls and a reserved gutter only
+       shows as an empty gap on the right. */
   }
   body {
     @apply antialiased bg-background text-foreground;
@@ -401,18 +407,14 @@
   animation: none !important;
 }
 
-/* App shell card surface — Figma node 1481:5361. Light mode is a solid card
-   fill (surface/card #fff). Dark mode keeps the soft radial highlight from the
-   top-center: a faint lift settling to the dark card token. */
+/* App shell card surface. Light mode is a solid card fill (surface/card #fff).
+   Dark mode gradients top-to-bottom #141414 -> #09090b, so the card's lower
+   edge melts into the #09090b sidebar/backdrop. */
 .shell-card {
   background: #ffffff;
 }
 .dark .shell-card {
-  background: radial-gradient(
-    90% 70% at 50% 0%,
-    color-mix(in oklch, var(--card), #ffffff 5%) 0%,
-    var(--card) 100%
-  );
+  background: linear-gradient(to bottom, #141414 0%, #09090b 100%);
 }
 
 /* CSS Mask fade-out for bottom edge of shell content — disabled to prevent masking notifications and interactive bottom controls */

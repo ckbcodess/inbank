@@ -2367,7 +2367,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage1Collapsed(false);
               setMaxRevealedStage(1);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
+            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
           >
             <div className="flex items-center gap-4">
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
@@ -2395,7 +2395,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage1Collapsed(false);
               setMaxRevealedStage(1);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
+            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
           >
             <div className="flex items-center gap-4">
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none font-medium text-[13px]">
@@ -2423,7 +2423,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage1Collapsed(false);
               setMaxRevealedStage(1);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
+            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
           >
             <div className="flex items-center gap-4">
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
@@ -2452,7 +2452,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage1Collapsed(false);
               setMaxRevealedStage(1);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
+            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
           >
             <div className="flex items-center gap-4">
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
@@ -2538,7 +2538,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setMaxRevealedStage(1);
               setStage1Collapsed(true);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
+            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
           >
             <div className="flex items-center gap-4">
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
@@ -2573,7 +2573,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setMaxRevealedStage(1);
               setStage1Collapsed(false);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
+            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
           >
             <div className="flex items-center gap-4">
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
@@ -2674,7 +2674,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setMaxRevealedStage(1);
               setStage1Collapsed(true);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
+            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
           >
             <div className="flex items-center gap-4">
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
@@ -2709,7 +2709,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setMaxRevealedStage(1);
               setStage1Collapsed(false);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4.5 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
+            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
           >
             <div className="flex items-center gap-4">
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
@@ -2865,7 +2865,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   setStage1Collapsed(false);
                   setMaxRevealedStage(1);
                 }}
-                className="group flex w-full items-center justify-between rounded-[16px] border border-[#ebebe9] bg-[#f6f6f5] p-4 transition-all duration-150 hover:bg-[#eeeeed] active:scale-[0.99] dark:border-[#292928] dark:bg-[#1e1e1e] dark:hover:bg-[#262626] cursor-pointer text-left"
+                className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
               >
                 <div className="flex items-center gap-4">
                   <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
