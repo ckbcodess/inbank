@@ -28,9 +28,9 @@ interface ProxyIdModalProps {
 }
 
 const inputCls =
-  "h-11 w-full rounded-xl border border-border bg-background px-3.5 text-[14px] text-foreground outline-none focus:border-ring focus:ring-3 focus:ring-ring/30 transition-all";
+  "h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all";
 const selectCls =
-  "h-11 w-full rounded-xl border border-border bg-background pl-3.5 pr-10 text-[14px] text-foreground";
+  "h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] pl-3.5 pr-10 text-[14px] text-foreground";
 const labelCls = "text-[12.5px] text-muted-foreground";
 
 export default function ProxyIdModal({

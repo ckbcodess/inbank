@@ -92,7 +92,7 @@ function SelectTrigger({
       data-size={size}
       data-active={isActive ? "true" : undefined}
       className={cn(
-        "flex w-full items-center justify-between gap-2 rounded-xl border border-input bg-background px-3.5 py-2 text-[14.5px] text-foreground transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:min-h-11 data-[size=sm]:min-h-8 data-[size=sm]:rounded-lg *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-card/70 dark:border-border dark:text-foreground cursor-pointer",
+        "flex w-full items-center justify-between gap-2 rounded-xl border border-input bg-background px-3.5 py-2 text-[14.5px] text-foreground transition-colors outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:min-h-11 data-[size=sm]:min-h-8 data-[size=sm]:rounded-lg *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-white/[0.07] dark:border-white/[0.12] dark:text-foreground cursor-pointer",
         isActive &&
           "border-foreground/35 bg-muted/65 text-foreground font-medium dark:border-white/30 dark:bg-muted/40 shadow-xs",
         className

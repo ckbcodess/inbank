@@ -181,13 +181,13 @@ export default function CardsPage() {
         actions={
           <Button
             onClick={() => {
-              setLinkedAccId(availableAccounts[0]?.id ?? "");
-              setCreateOpen(true);
+              setNotice("Card requests are coming soon.");
+              setTimeout(() => setNotice(null), 5000);
             }}
             className="h-9 gap-1.5 px-3.5 text-[13px] font-medium rounded-lg shadow-xs"
           >
             <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-            <span>Create Card</span>
+            <span>Request Card</span>
           </Button>
         }
       />

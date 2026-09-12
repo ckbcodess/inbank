@@ -11,6 +11,7 @@ import { ProceedButton } from "@/components/payments/flows/shared";
 import TransactionPinModal from "@/components/payments/TransactionPinModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface CreateGroupFlowProps {
   groupToEdit?: PaymentGroup | null;
@@ -20,8 +21,6 @@ interface CreateGroupFlowProps {
 }
 
 type FlowStage = "form" | "review" | "success";
-
-const QUICK_AMOUNTS = [50, 100, 200, 500, 1000];
 
 function initials(name: string) {
   return (
@@ -274,6 +273,8 @@ export default function CreateGroupFlow({
       profileKind: "RETAIL",
       category: "Bills",
     });
+
+    toast.success(groupToEdit ? `Payment group "${savedGroup.name}" updated successfully.` : `Payment group "${savedGroup.name}" created successfully.`);
 
     setReceiptData({
       referenceId: refId,
@@ -649,28 +650,6 @@ export default function CreateGroupFlow({
           {errors.amount && (
             <p className="text-[12px] text-destructive font-medium">{errors.amount}</p>
           )}
-
-          {/* Quick Presets */}
-          <div className="flex items-center gap-2 pt-1 flex-wrap">
-            {QUICK_AMOUNTS.map((amt) => (
-              <button
-                key={amt}
-                type="button"
-                onClick={() => {
-                  setDefaultAmount(String(amt));
-                  if (errors.amount) setErrors((prev) => ({ ...prev, amount: undefined }));
-                }}
-                className={cn(
-                  "h-8 px-3 rounded-xl text-[12.5px] font-medium border transition-colors cursor-pointer tabular",
-                  defaultAmount === String(amt)
-                    ? "border-primary bg-primary/10 text-primary font-semibold"
-                    : "border-border/80 bg-card text-muted-foreground hover:text-foreground hover:bg-muted/40"
-                )}
-              >
-                GH₵{amt}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Field 4: Select Members */}

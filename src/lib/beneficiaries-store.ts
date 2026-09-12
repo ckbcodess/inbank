@@ -40,6 +40,18 @@ export interface BeneficiaryRecord {
 export const SEED_BENEFICIARIES: BeneficiaryRecord[] = [
   // ── Bank Transfers ─────────────────────────────────────────────
   {
+    id: "ben-b0",
+    name: "Akua Mansah",
+    transactionType: "bank",
+    category: "person",
+    bankName: "GCB Bank",
+    accountNumber: "wqeqeeeeq",
+    currency: "GHS",
+    detail: "GCB Bank · wqeqeeeeq",
+    verified: true,
+    createdAt: "2026-06-01",
+  },
+  {
     id: "ben-b1",
     name: "Accra Fabrics Ltd",
     transactionType: "bank",

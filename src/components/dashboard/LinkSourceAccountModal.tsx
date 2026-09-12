@@ -210,8 +210,8 @@ export default function LinkSourceAccountModal({
               <Label htmlFor="momoNum" className="text-[13px] font-medium text-foreground">
                 Enter Mobile Number
               </Label>
-              <div className="flex rounded-xl border border-border bg-background focus-within:border-[#F2B200] focus-within:ring-1 focus-within:ring-[#F2B200]/20">
-                <span className="flex items-center border-r border-border px-3 text-[13.5px] font-medium text-muted-foreground">
+              <div className="flex rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] focus-within:border-[#F2B200] focus-within:ring-1 focus-within:ring-[#F2B200]/20">
+                <span className="flex items-center border-r border-border/80 dark:border-white/[0.12] px-3 text-[13.5px] font-medium text-muted-foreground">
                   +233
                 </span>
                 <input
@@ -258,7 +258,7 @@ export default function LinkSourceAccountModal({
                 step="0.01"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="h-11 rounded-xl border-border bg-background px-3.5 text-[14px] focus-visible:border-[#F2B200]"
+                className="h-11 rounded-xl border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] focus-visible:border-[#F2B200]"
                 required
               />
             </div>
@@ -388,7 +388,7 @@ export default function LinkSourceAccountModal({
                 type="text"
                 value={cardName}
                 onChange={(e) => setCardName(e.target.value)}
-                className="h-11 rounded-xl border-border bg-background px-3.5 text-[14px]"
+                className="h-11 rounded-xl border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px]"
                 required
               />
             </div>
@@ -403,7 +403,7 @@ export default function LinkSourceAccountModal({
                 value={cardNumber}
                 onChange={(e) => setCardNumber(e.target.value)}
                 placeholder="4000 1234 5678 9010"
-                className="h-11 rounded-xl border-border bg-background px-3.5 text-[14px] font-mono"
+                className="h-11 rounded-xl border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] font-mono"
                 required
               />
             </div>
@@ -419,7 +419,7 @@ export default function LinkSourceAccountModal({
                   value={cardExpiry}
                   onChange={(e) => setCardExpiry(e.target.value)}
                   placeholder="MM/YY"
-                  className="h-11 rounded-xl border-border bg-background px-3.5 text-[14px]"
+                  className="h-11 rounded-xl border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px]"
                   required
                 />
               </div>
@@ -434,7 +434,7 @@ export default function LinkSourceAccountModal({
                   value={cardCvv}
                   onChange={(e) => setCardCvv(e.target.value)}
                   placeholder="•••"
-                  className="h-11 rounded-xl border-border bg-background px-3.5 text-[14px]"
+                  className="h-11 rounded-xl border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px]"
                   required
                 />
               </div>
@@ -446,42 +446,33 @@ export default function LinkSourceAccountModal({
                 disabled={busy}
                 className="h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] cursor-pointer"
               >
-                Verify Card Details
+                {busy ? "Processing…" : "Next: 3D Secure / OTP"}
               </Button>
-              <button
-                type="button"
-                onClick={() => setScreen("choice")}
-                className="text-center text-[13px] text-muted-foreground hover:text-foreground cursor-pointer"
-              >
-                Back
-              </button>
             </div>
           </form>
         )}
 
-        {/* CARD PATH 2: 3D Secure / Verified by Visa */}
+        {/* SCREEN 3: Card 3D Secure Simulator */}
         {screen === "card_3ds" && (
-          <form onSubmit={handle3dsSubmit} className="mt-5 flex flex-col gap-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <div className="flex items-center gap-1.5">
-                <ShieldCheck size={18} className="text-blue-600 dark:text-blue-400" />
-                <span className="text-[13px] font-semibold text-foreground">Verified by Visa</span>
-              </div>
-              <span className="text-[12px] text-muted-foreground">GCB 3D-Secure</span>
+          <form onSubmit={handleCardSubmit} className="flex flex-col gap-4">
+            <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-3 text-[12.5px] text-blue-900 dark:border-blue-900/50 dark:bg-blue-950/20 dark:text-blue-200">
+              <p className="font-semibold">Simulated Verified by Visa / Mastercard ID Check</p>
+              <p className="mt-0.5 text-muted-foreground">
+                In a production build, your issuing bank’s secure authentication window opens here.
+                Enter any 6-digit test code (e.g. 123456) to verify.
+              </p>
             </div>
 
-            <div className="rounded-xl bg-muted/40 p-3 text-[12.5px] space-y-1">
-              <div className="flex justify-between text-muted-foreground">
-                <span>Merchant:</span>
-                <span className="font-medium text-foreground">GCB Internet Banking</span>
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center justify-between">
+                <Label className="text-[13px] font-medium text-foreground">Merchant</Label>
+                <span className="text-[13px] text-muted-foreground">GCB Bank Digital</span>
               </div>
-              <div className="flex justify-between text-muted-foreground">
-                <span>Amount:</span>
-                <span className="font-medium text-foreground">GHS 1.00 (Verification)</span>
-              </div>
-              <div className="flex justify-between text-muted-foreground">
-                <span>Card Number:</span>
-                <span className="font-mono text-foreground">•••• •••• •••• 9102</span>
+              <div className="flex items-center justify-between">
+                <Label className="text-[13px] font-medium text-foreground">Card Ending In</Label>
+                <span className="text-[13px] font-mono text-muted-foreground">
+                  •••• {cardNumber.replace(/\s+/g, "").slice(-4) || "0000"}
+                </span>
               </div>
             </div>
 
@@ -495,7 +486,7 @@ export default function LinkSourceAccountModal({
                 value={threeDsCode}
                 onChange={(e) => setThreeDsCode(e.target.value)}
                 placeholder="Enter password or OTP"
-                className="h-11 rounded-xl border-border bg-background px-3.5 text-[14px]"
+                className="h-11 rounded-xl border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px]"
                 required
               />
             </div>

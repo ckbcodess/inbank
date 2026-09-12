@@ -58,8 +58,10 @@ import {
 } from "@/lib/beneficiaries-store";
 import { useGroupsStore, type PaymentGroup } from "@/lib/groups-store";
 import { useSession } from "@/lib/session-store";
-import CreateGroupFlow from "@/components/payments/CreateGroupFlow";
+import CreateGroupModal from "@/components/payments/CreateGroupModal";
+import EditGroupModal from "@/components/payments/EditGroupModal";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 type ActiveTab = "people" | "billers" | "groups";
 type TypeFilter = "all" | TransactionType;
@@ -340,22 +342,19 @@ export default function BeneficiariesPage() {
 
   // Collapsible Dropdown States
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
-  const [expandedGroupIds, setExpandedGroupIds] = useState<Set<string>>(new Set());
 
   // Modal States
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [removeId, setRemoveId] = useState<string | null>(null);
 
-  const [groupFlowOpen, setGroupFlowOpen] = useState(false);
+  const [createGroupModalOpen, setCreateGroupModalOpen] = useState(false);
+  const [editGroupModalOpen, setEditGroupModalOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<PaymentGroup | null>(null);
   const [removeGroupId, setRemoveGroupId] = useState<string | null>(null);
 
-  const [notice, setNotice] = useState<string | null>(null);
-
   function flash(msg: string) {
-    setNotice(msg);
-    window.setTimeout(() => setNotice(null), 3500);
+    toast.success(msg);
   }
 
   // Split beneficiaries into People and Billers
@@ -428,15 +427,6 @@ export default function BeneficiariesPage() {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);
       else next.add(key);
-      return next;
-    });
-  };
-
-  const toggleGroupExpand = (groupId: string) => {
-    setExpandedGroupIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(groupId)) next.delete(groupId);
-      else next.add(groupId);
       return next;
     });
   };
@@ -519,7 +509,7 @@ export default function BeneficiariesPage() {
         billerReference: form.billerReference,
         country: form.country,
       });
-      flash("Beneficiary updated.");
+      toast.success(`Beneficiary "${form.name.trim()}" updated successfully.`);
     } else {
       const verified = !isCorporate;
       addBeneficiary({
@@ -538,7 +528,11 @@ export default function BeneficiariesPage() {
         billerReference: form.billerReference,
         country: form.country,
       });
-      flash(verified ? "Beneficiary saved." : "Beneficiary submitted for approval.");
+      if (verified) {
+        toast.success(`${form.name.trim()} has been saved to your beneficiaries.`);
+      } else {
+        toast.info("Beneficiary submitted for dual-authorization approval.");
+      }
     }
 
     setFormOpen(false);
@@ -549,7 +543,7 @@ export default function BeneficiariesPage() {
     const item = beneficiaries.find((b) => b.id === removeId);
     removeBeneficiary(removeId);
     setRemoveId(null);
-    flash(`Removed${item ? ` — ${item.name}` : ""}.`);
+    toast.info(`Removed ${item ? item.name : "beneficiary"} from your beneficiaries.`);
   }
 
   function handleRemoveGroup() {
@@ -557,7 +551,7 @@ export default function BeneficiariesPage() {
     const g = groups.find((x) => x.id === removeGroupId);
     deleteGroup(removeGroupId);
     setRemoveGroupId(null);
-    flash(`Removed group${g ? ` — ${g.name}` : ""}.`);
+    toast.info(`Payment group ${g ? `"${g.name}"` : ""} has been deleted.`);
   }
 
   const toRemove = removeId ? beneficiaries.find((p) => p.id === removeId) : undefined;
@@ -661,150 +655,90 @@ export default function BeneficiariesPage() {
     );
   }
 
-  // Render a group list item with accordion disclosure for members
+  // Render a clean group list row matching user design (cyan avatar, amounts, and actions)
   function renderGroupRow(g: PaymentGroup) {
-    const isExpanded = expandedGroupIds.has(g.id);
     const totalAmt =
       g.splitType === "equal"
         ? g.members.length * g.defaultPerMemberAmount
         : g.members.reduce((sum, m) => sum + (m.defaultAmount || 0), 0);
 
     return (
-      <li key={g.id} className="flex flex-col border-b border-border last:border-b-0 transition-colors">
-        <div className="flex items-center justify-between gap-3 px-4 py-3.5 hover:bg-muted/30">
-          <div
-            role="button"
-            tabIndex={0}
-            onClick={() => toggleGroupExpand(g.id)}
-            className="flex min-w-0 flex-1 items-center gap-3 cursor-pointer select-none"
-          >
-            <button
-              type="button"
-              className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-transform"
-              aria-label={isExpanded ? "Collapse group members" : "Expand group members"}
-            >
-              <ChevronDown
-                size={16}
-                className={cn("transition-transform duration-200", !isExpanded && "-rotate-90 text-muted-foreground/70")}
-              />
-            </button>
-
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-              <Users size={16} strokeWidth={1.8} />
-            </span>
-
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="truncate text-[14px] font-medium text-foreground">{g.name}</span>
-                <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground tabular font-medium">
-                  {g.members.length} members
-                </span>
-                <span className="text-[11.5px] text-muted-foreground font-normal">
-                  {g.splitType === "equal" ? `(GHS ${g.defaultPerMemberAmount} each)` : "(Custom split)"}
-                </span>
-              </div>
-              <div className="mt-0.5 flex items-center gap-2 text-[12px] text-muted-foreground tabular flex-wrap">
-                <span className="font-medium text-foreground">
-                  Total: GHS {totalAmt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </span>
-                {g.description && <span>• {g.description}</span>}
-              </div>
-            </div>
+      <li
+        key={g.id}
+        className="flex items-center justify-between gap-4 px-6 py-4 transition-colors hover:bg-muted/20 cursor-pointer"
+        onClick={() => {
+          setEditingGroup(g);
+          setEditGroupModalOpen(true);
+        }}
+      >
+        {/* Left: Pastel Cyan Circle Avatar + Group Name & Member Count */}
+        <div className="flex items-center gap-3.5 min-w-0">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#A8E6F5] dark:bg-[#0E5164] text-[#166074] dark:text-[#A8E6F5] text-[13px] font-normal select-none">
+            {initials(g.name)}
           </div>
 
-          <div className="flex shrink-0 items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-            <Button
-              variant="outline"
-              size="xs"
-              nativeButton={false}
-              render={<Link href={`/payments/send?rail=group&group=${encodeURIComponent(g.name)}`} />}
-              aria-label={`Send to ${g.name}`}
-              className="h-7.5 gap-1 px-2.5 text-[12px] font-medium text-foreground bg-background hover:bg-foreground hover:text-background border-border/80 shadow-xs transition-colors rounded-lg"
-            >
-              <span>Send</span>
-              <ArrowUpRight size={13} strokeWidth={2} className="shrink-0 opacity-70" />
-            </Button>
-
-            <SimpleTooltip content={`Edit ${g.name}`}>
-              <Button
-                variant="ghost"
-                size="icon-xs"
-                onClick={() => {
-                  setEditingGroup(g);
-                  setGroupFlowOpen(true);
-                }}
-                aria-label={`Edit ${g.name}`}
-                className="size-7.5 rounded-lg text-muted-foreground hover:text-foreground"
-              >
-                <Pencil size={13} strokeWidth={1.8} />
-              </Button>
-            </SimpleTooltip>
-
-            <SimpleTooltip content={`Delete ${g.name}`}>
-              <Button
-                variant="ghost"
-                size="icon-xs"
-                onClick={() => setRemoveGroupId(g.id)}
-                aria-label={`Delete ${g.name}`}
-                className="size-7.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-              >
-                <Trash2 size={13} strokeWidth={1.8} />
-              </Button>
-            </SimpleTooltip>
+          <div className="flex flex-col min-w-0">
+            <span className="truncate text-[14px] font-normal text-foreground leading-tight">
+              {g.name}
+            </span>
+            <span className="text-[12.5px] text-muted-foreground leading-tight mt-1">
+              {g.members.length} members
+            </span>
           </div>
         </div>
 
-        {/* Collapsible Members Sub-row */}
-        {isExpanded && (
-          <div className="bg-muted/15 px-6 py-3 border-t border-border/60 animate-in fade-in duration-150">
-            <div className="flex items-center justify-between pb-2 text-[11.5px] font-medium text-muted-foreground uppercase tracking-wider">
-              <span>Group Members Breakdown</span>
-              <span>Distribution Share</span>
-            </div>
-            <div className="flex flex-col divide-y divide-border/40">
-              {g.members.map((m, mIdx) => (
-                <div key={m.id || m.destination || `grp-m-${mIdx}`} className="flex items-center justify-between py-2 text-[13px]">
-                  <div className="flex items-center gap-2.5">
-                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                      {m.type === "wallet" ? <Smartphone size={12} /> : <Landmark size={12} />}
-                    </span>
-                    <span className="font-medium text-foreground">{m.name}</span>
-                    <span className="text-[12px] text-muted-foreground tabular">
-                      ({m.networkOrBank || (m.type === "wallet" ? "Wallet" : "Bank")} · {m.destination})
-                    </span>
-                  </div>
-                  <span className="font-medium tabular text-foreground">
-                    GHS {(m.defaultAmount ?? g.defaultPerMemberAmount).toFixed(2)}
-                  </span>
-                </div>
-              ))}
-            </div>
+        {/* Right: Total Amount + Per-member Split + Minimal Action Icons */}
+        <div className="flex items-center gap-5 sm:gap-6 shrink-0">
+          <div className="flex flex-col text-right">
+            <span className="text-[14px] font-normal text-foreground tabular leading-tight">
+              GHS {totalAmt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
+            <span className="text-[12.5px] text-muted-foreground tabular leading-tight mt-1">
+              {g.splitType === "equal"
+                ? `GHS ${g.defaultPerMemberAmount.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} each`
+                : "Custom split"}
+            </span>
           </div>
-        )}
+
+          <div className="flex items-center gap-2.5 text-muted-foreground shrink-0" onClick={(e) => e.stopPropagation()}>
+            <Link
+              href={`/payments/send?rail=group&group=${encodeURIComponent(g.name)}`}
+              className="flex size-7 items-center justify-center rounded-md hover:text-foreground hover:bg-muted/60 transition-colors"
+              aria-label={`Send to ${g.name}`}
+              title={`Send to ${g.name}`}
+            >
+              <Send size={15} strokeWidth={1.6} />
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => {
+                setEditingGroup(g);
+                setEditGroupModalOpen(true);
+              }}
+              className="flex size-7 items-center justify-center rounded-md hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
+              aria-label={`Edit members of ${g.name}`}
+              title={`Edit members of ${g.name}`}
+            >
+              <Pencil size={15} strokeWidth={1.6} />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setRemoveGroupId(g.id)}
+              className="flex size-7 items-center justify-center rounded-md hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+              aria-label={`Delete ${g.name}`}
+              title={`Delete ${g.name}`}
+            >
+              <Trash2 size={15} strokeWidth={1.6} />
+            </button>
+          </div>
+        </div>
       </li>
     );
   }
 
   const activeRailList = activeTab === "people" ? PEOPLE_TYPES : BILLER_TYPES;
-
-  if (groupFlowOpen) {
-    return (
-      <div className="py-2 animate-in fade-in duration-200">
-        <CreateGroupFlow
-          groupToEdit={editingGroup}
-          onCancel={() => {
-            setGroupFlowOpen(false);
-            setEditingGroup(null);
-          }}
-          onDone={(g) => {
-            flash(editingGroup ? `Group "${g.name}" updated.` : `Group "${g.name}" created.`);
-            setGroupFlowOpen(false);
-            setEditingGroup(null);
-          }}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -816,8 +750,7 @@ export default function BeneficiariesPage() {
           activeTab === "groups" ? (
             <Button
               onClick={() => {
-                setEditingGroup(null);
-                setGroupFlowOpen(true);
+                setCreateGroupModalOpen(true);
               }}
               className="h-9 gap-1.5 px-3.5 text-[13px] font-medium rounded-lg shadow-xs"
             >
@@ -841,13 +774,6 @@ export default function BeneficiariesPage() {
           )
         }
       />
-
-      {notice && (
-        <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/60 px-4 py-2.5 text-[13px] text-foreground">
-          <CheckCircle2 size={15} strokeWidth={1.8} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
-          <span>{notice}</span>
-        </div>
-      )}
 
       {/* 3 Major Segmented Tabs: People, Billers, Groups (Figma Node 1374:35963) */}
       <div className="flex items-center justify-between">
@@ -1157,8 +1083,7 @@ export default function BeneficiariesPage() {
                   <Button
                     size="sm"
                     onClick={() => {
-                      setEditingGroup(null);
-                      setGroupFlowOpen(true);
+                      setCreateGroupModalOpen(true);
                     }}
                     className="font-medium"
                   >
@@ -1214,7 +1139,7 @@ export default function BeneficiariesPage() {
                   setForm((p) => ({ ...p, transactionType: val as TransactionType }));
                 }}
               >
-                <SelectTrigger className="h-10.5 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[13.5px] font-medium shadow-xs">
+                <SelectTrigger className="h-10.5 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px] font-medium shadow-xs">
                   <div className="flex items-center gap-2.5 truncate">
                     {(() => {
                       const meta = TYPE_CONFIG[form.transactionType] || TYPE_CONFIG.bank;
@@ -1257,7 +1182,7 @@ export default function BeneficiariesPage() {
                     : "Beneficiary legal name (e.g. Kwame Boateng)"
                 }
                 autoFocus
-                className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
               />
             </div>
 
@@ -1269,7 +1194,7 @@ export default function BeneficiariesPage() {
                   value={form.bankName}
                   onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
                 >
-                  <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[13.5px]">
+                  <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px]">
                     <SelectValue placeholder="Select receiving bank" />
                   </SelectTrigger>
                   <SelectContent className="max-h-60">
@@ -1286,11 +1211,12 @@ export default function BeneficiariesPage() {
                   value={form.accountNumber}
                   onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
                   placeholder="Enter bank account number"
-                  className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                  className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                 />
               </div>
             )}
 
+            {/* Mobile Wallet Rail */}
             {/* Mobile Wallet Rail */}
             {form.transactionType === "wallet" && (
               <div className="flex flex-col gap-3">
@@ -1303,14 +1229,14 @@ export default function BeneficiariesPage() {
                     setForm((p) => ({ ...p, phoneNumber: ph, network: detected }));
                   }}
                   placeholder="Mobile money number (e.g. 0244 123 456)"
-                  className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                  className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                 />
 
                 <Select
                   value={form.network}
                   onValueChange={(val) => val && setForm((p) => ({ ...p, network: val }))}
                 >
-                  <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[13.5px]">
+                  <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px]">
                     <SelectValue placeholder="Select network provider" />
                   </SelectTrigger>
                   <SelectContent>
@@ -1339,7 +1265,7 @@ export default function BeneficiariesPage() {
                       setForm((p) => ({ ...p, proxyId: cleaned ? `@${cleaned}` : "" }));
                     }}
                     placeholder="kwame.b"
-                    className="h-11 w-full rounded-xl border border-border/80 bg-background pl-8 pr-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                    className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] pl-8 pr-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                   />
                 </div>
               </div>
@@ -1353,14 +1279,14 @@ export default function BeneficiariesPage() {
                   value={form.billerName}
                   onChange={(e) => setForm((p) => ({ ...p, billerName: e.target.value }))}
                   placeholder="Biller or utility company (e.g. ECG Prepaid, Ghana Water)"
-                  className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                  className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                 />
                 <input
                   type="text"
                   value={form.billerReference}
                   onChange={(e) => setForm((p) => ({ ...p, billerReference: e.target.value }))}
                   placeholder="Meter number or account reference (e.g. P-8839210)"
-                  className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                  className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                 />
               </div>
             )}
@@ -1373,13 +1299,13 @@ export default function BeneficiariesPage() {
                   value={form.phoneNumber}
                   onChange={(e) => setForm((p) => ({ ...p, phoneNumber: e.target.value }))}
                   placeholder="Phone number to top up (e.g. 0244 123 821)"
-                  className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                  className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                 />
                 <Select
                   value={form.network}
                   onValueChange={(val) => val && setForm((p) => ({ ...p, network: val }))}
                 >
-                  <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 bg-background px-3.5 text-[13.5px]">
+                  <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px]">
                     <SelectValue placeholder="Select network provider" />
                   </SelectTrigger>
                   <SelectContent>
@@ -1405,7 +1331,7 @@ export default function BeneficiariesPage() {
                       setForm((p) => ({ ...p, country: val, bankName: defaultBank }));
                     }}
                   >
-                    <SelectTrigger className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px]">
+                    <SelectTrigger className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px]">
                       <SelectValue placeholder="Country" />
                     </SelectTrigger>
                     <SelectContent className="max-h-56">
@@ -1421,7 +1347,7 @@ export default function BeneficiariesPage() {
                     value={form.bankName}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
                   >
-                    <SelectTrigger className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px]">
+                    <SelectTrigger className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px]">
                       <SelectValue placeholder="Select bank" />
                     </SelectTrigger>
                     <SelectContent className="max-h-56">
@@ -1440,14 +1366,14 @@ export default function BeneficiariesPage() {
                     value={form.swiftCode}
                     onChange={(e) => setForm((p) => ({ ...p, swiftCode: e.target.value.toUpperCase() }))}
                     placeholder="SWIFT / BIC Code"
-                    className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px] text-foreground uppercase tracking-wider placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30"
+                    className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground uppercase tracking-wider placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                   />
                   <input
                     type="text"
                     value={form.accountNumber}
                     onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
                     placeholder="IBAN / Account"
-                    className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30"
+                    className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                   />
                 </div>
               </div>
@@ -1464,7 +1390,7 @@ export default function BeneficiariesPage() {
                     setForm((p) => ({ ...p, country: val, bankName: defaultBank }));
                   }}
                 >
-                  <SelectTrigger className="h-11 rounded-xl border border-border/80 bg-background px-3.5 text-[13px]">
+                  <SelectTrigger className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13px]">
                     <SelectValue placeholder="Select African destination" />
                   </SelectTrigger>
                   <SelectContent className="max-h-56">
@@ -1481,7 +1407,7 @@ export default function BeneficiariesPage() {
                     value={form.bankName}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
                   >
-                    <SelectTrigger className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px]">
+                    <SelectTrigger className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px]">
                       <SelectValue placeholder="Select bank" />
                     </SelectTrigger>
                     <SelectContent className="max-h-56">
@@ -1497,7 +1423,7 @@ export default function BeneficiariesPage() {
                     value={form.accountNumber}
                     onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
                     placeholder="Account / IBAN"
-                    className="h-11 rounded-xl border border-border/80 bg-background px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30"
+                    className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                   />
                 </div>
               </div>
@@ -1588,6 +1514,31 @@ export default function BeneficiariesPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* ── Create Group Modal (1:1 Figma Node 1532-7653) ───────────────── */}
+      <CreateGroupModal
+        open={createGroupModalOpen}
+        onOpenChange={setCreateGroupModalOpen}
+        onSuccess={() => {
+          // Toast handled in modal
+        }}
+      />
+
+      {/* ── Edit Group Modal (Figma Styling, Group-only Members & Deletions) ─ */}
+      <EditGroupModal
+        open={editGroupModalOpen}
+        onOpenChange={(open) => {
+          setEditGroupModalOpen(open);
+          if (!open) setEditingGroup(null);
+        }}
+        group={editingGroup}
+        onSuccess={() => {
+          // Toast handled in modal
+        }}
+        onDeleted={() => {
+          setEditingGroup(null);
+        }}
+      />
     </div>
   );
 }

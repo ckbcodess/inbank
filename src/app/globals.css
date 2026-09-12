@@ -485,4 +485,29 @@ select {
 .numorainput {
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
+}
+
+/* Modal / Dialog Form Fields — elevated & lighter than the modal surface in dark mode */
+.dark [data-slot="dialog-content"] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):not([type="range"]):not(.bg-transparent),
+.dark [data-slot="dialog-content"] select,
+.dark [data-slot="dialog-content"] textarea,
+.dark [data-slot="dialog-content"] [data-slot="select-trigger"],
+.dark [role="dialog"] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):not([type="range"]):not(.bg-transparent),
+.dark [role="dialog"] select,
+.dark [role="dialog"] textarea,
+.dark [role="dialog"] [data-slot="select-trigger"] {
+  background-color: rgba(255, 255, 255, 0.075);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.dark [data-slot="dialog-content"] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):not([type="range"]):not(.bg-transparent):focus,
+.dark [data-slot="dialog-content"] select:focus,
+.dark [data-slot="dialog-content"] textarea:focus,
+.dark [data-slot="dialog-content"] [data-slot="select-trigger"]:focus-visible,
+.dark [role="dialog"] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):not([type="range"]):not(.bg-transparent):focus,
+.dark [role="dialog"] select:focus,
+.dark [role="dialog"] textarea:focus,
+.dark [role="dialog"] [data-slot="select-trigger"]:focus-visible {
+  background-color: rgba(255, 255, 255, 0.10);
+  border-color: var(--primary);
 }
