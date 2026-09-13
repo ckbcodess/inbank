@@ -118,7 +118,8 @@ export default function OverviewPage() {
                       ? `/approvals/payment/${item.id}`
                       : `/approvals/trade/${item.id}`
                   }
-                  className="flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                  className="relative overflow-hidden flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                  data-ripple="true"
                 >
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-[13px] text-foreground">{item.description}</span>

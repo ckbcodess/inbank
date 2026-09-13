@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { DevStateProvider } from "@/components/providers/DevStateProvider";
 import PersonaFlowSwitcher from "@/components/dev/PersonaFlowSwitcher";
 import TourOverlay from "@/components/dev/TourOverlay";
+import { AndroidRippleProvider } from "@/components/providers/AndroidRippleProvider";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -27,12 +28,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <TooltipProvider delay={350} closeDelay={100} timeout={300}>
             <AmountVisibilityProvider>
-              <DevStateProvider>
-                <Toaster position="top-right" style={{ zIndex: 999999 }} />
-                {children}
-                <PersonaFlowSwitcher />
-                <TourOverlay />
-              </DevStateProvider>
+              <AndroidRippleProvider>
+                <DevStateProvider>
+                  <Toaster position="top-right" style={{ zIndex: 999999 }} />
+                  {children}
+                  <PersonaFlowSwitcher />
+                  <TourOverlay />
+                </DevStateProvider>
+              </AndroidRippleProvider>
             </AmountVisibilityProvider>
           </TooltipProvider>
         </ThemeProvider>

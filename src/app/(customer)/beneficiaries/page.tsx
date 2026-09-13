@@ -13,6 +13,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowUpRight,
   CheckCircle2,
@@ -319,6 +320,7 @@ function detectNetworkFromPhone(phone: string): string {
 }
 
 export default function BeneficiariesPage() {
+  const router = useRouter();
   const activeProfile = useSession((s) => s.activeProfile);
   const isCorporate = activeProfile?.kind === "CORPORATE";
 
@@ -336,9 +338,20 @@ export default function BeneficiariesPage() {
 
   // Open a specific tab when deep-linked (e.g. "Manage groups" → ?tab=groups).
   useEffect(() => {
-    const t = new URLSearchParams(window.location.search).get("tab");
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get("tab");
     if (t === "people" || t === "billers" || t === "groups") setActiveTab(t);
-  }, []);
+
+    const editId = params.get("edit");
+    if (editId) {
+      const g = groups.find((grp) => grp.id === editId);
+      if (g) {
+        setActiveTab("groups");
+        setEditingGroup(g);
+        setEditGroupModalOpen(true);
+      }
+    }
+  }, [groups]);
 
   // Search and Filters
   const [query, setQuery] = useState("");
@@ -695,15 +708,15 @@ export default function BeneficiariesPage() {
       >
         {/* Left: Brand-tinted Group Avatar + Group Name & Member Count */}
         <div className="flex items-center gap-3.5 min-w-0">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 dark:bg-primary/20 text-primary text-[13px] font-semibold select-none">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 dark:bg-primary/20 text-primary text-[13px] select-none">
             {initials(g.name)}
           </div>
 
           <div className="flex flex-col min-w-0">
-            <span className="truncate text-[14px] font-medium text-foreground leading-snug">
+            <span className="truncate text-[14px] text-foreground leading-snug">
               {g.name}
             </span>
-            <span className="text-[12px] text-muted-foreground leading-normal mt-0.5 tabular">
+            <span className="text-[12px] text-muted-foreground leading-normal mt-0.5 tabular-nums numorainput">
               {g.members.length} {g.members.length === 1 ? "member" : "members"}
             </span>
           </div>
@@ -712,10 +725,10 @@ export default function BeneficiariesPage() {
         {/* Right: Total Amount + Per-member Split + Minimal Action Icons */}
         <div className="flex items-center gap-5 sm:gap-6 shrink-0">
           <div className="flex flex-col text-right">
-            <span className="text-[14px] font-medium text-foreground tabular leading-snug">
+            <span className="text-[14px] text-foreground tabular-nums numorainput leading-snug">
               GHS {totalAmt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
-            <span className="text-[12px] text-muted-foreground tabular leading-normal mt-0.5">
+            <span className="text-[12px] text-muted-foreground tabular-nums numorainput leading-normal mt-0.5">
               {g.splitType === "equal"
                 ? `GHS ${g.defaultPerMemberAmount.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} each`
                 : "Custom split"}
@@ -734,7 +747,7 @@ export default function BeneficiariesPage() {
               </Link>
             </SimpleTooltip>
 
-            <SimpleTooltip content={`Edit members of ${g.name}`}>
+            <SimpleTooltip content={`Edit ${g.name}`}>
               <button
                 type="button"
                 onClick={() => {
@@ -742,8 +755,8 @@ export default function BeneficiariesPage() {
                   setEditGroupModalOpen(true);
                 }}
                 className="flex size-7 items-center justify-center rounded-md hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
-                aria-label={`Edit members of ${g.name}`}
-                title={`Edit members of ${g.name}`}
+                aria-label={`Edit ${g.name}`}
+                title={`Edit ${g.name}`}
               >
                 <Pencil size={15} strokeWidth={1.6} />
               </button>
@@ -777,10 +790,9 @@ export default function BeneficiariesPage() {
         actions={
           activeTab === "groups" ? (
             <Button
-              onClick={() => {
-                setCreateGroupModalOpen(true);
-              }}
-              className="h-9 gap-1.5 px-3.5 text-[13px] font-medium rounded-lg shadow-xs"
+              nativeButton={false}
+              render={<Link href="/beneficiaries/groups/new" />}
+              className="h-9 gap-1.5 px-3.5 text-[13px] rounded-lg shadow-xs"
             >
               <Plus size={15} strokeWidth={2} />
               Add new group
@@ -1109,10 +1121,8 @@ export default function BeneficiariesPage() {
                 action={
                   <Button
                     size="sm"
-                    onClick={() => {
-                      setCreateGroupModalOpen(true);
-                    }}
-                    className="font-medium"
+                    nativeButton={false}
+                    render={<Link href="/beneficiaries/groups/new" />}
                   >
                     <Plus size={14} className="mr-1.5" /> Create first group
                   </Button>
@@ -1127,15 +1137,20 @@ export default function BeneficiariesPage() {
         )}
       </div>
 
-      {/* ── Progressive Add / Edit Beneficiary Modal (Clean & Borderless) ── */}
+      {/* ── Progressive Add / Edit Beneficiary Modal / Mobile Bottom Sheet ── */}
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
         <DialogContent
-          className="sm:max-w-[480px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
+          className="max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:border-t max-sm:border-border/80 max-sm:max-h-[92vh] sm:max-w-[480px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
           showCloseButton={false}
         >
-          {/* Header matching TransactionPinModal */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
-            <DialogTitle className="text-[17px] font-medium text-foreground tracking-[-0.01em]">
+          {/* Mobile Bottom Sheet Drag Handle */}
+          <div className="sm:hidden flex justify-center pt-2.5 pb-1 select-none">
+            <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+          </div>
+
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 sm:px-6 py-3.5 sm:py-4 border-b border-border/60">
+            <DialogTitle className="text-[17px] text-foreground tracking-[-0.01em]">
               {form.id
                 ? "Edit Beneficiary"
                 : activeTab === "billers"
@@ -1153,10 +1168,10 @@ export default function BeneficiariesPage() {
           </div>
 
           {/* Modal Content with Progressive Disclosure */}
-          <div className="max-h-[75vh] overflow-y-auto px-6 py-5 flex flex-col gap-4">
+          <div className="max-h-[calc(90vh-130px)] sm:max-h-[75vh] overflow-y-auto px-5 sm:px-6 py-5 flex flex-col gap-4">
             {/* Step 1: Destination Rail (Dropdown) */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[12.5px] font-medium text-muted-foreground">
+              <label className="text-[12.5px] text-muted-foreground">
                 Payment Rail
               </label>
               <Select
@@ -1166,7 +1181,7 @@ export default function BeneficiariesPage() {
                   setForm((p) => ({ ...p, transactionType: val as TransactionType }));
                 }}
               >
-                <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px] font-medium shadow-xs">
+                <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px] shadow-xs">
                   <div className="flex items-center gap-2.5 truncate">
                     {(() => {
                       const meta = TYPE_CONFIG[form.transactionType] || TYPE_CONFIG.bank;
@@ -1552,8 +1567,8 @@ export default function BeneficiariesPage() {
             </div>
           </div>
 
-          {/* Clean Footer with Amber Primary Button */}
-          <div className="flex items-center justify-end gap-2 px-6 py-3.5 border-t border-border/60 bg-muted/20">
+          {/* Sticky Footer with Primary Button */}
+          <div className="flex items-center justify-end gap-2 px-5 sm:px-6 py-3.5 border-t border-border/60 bg-muted/20 sticky bottom-0 z-10">
             <Button
               variant="ghost"
               size="sm"
@@ -1566,7 +1581,7 @@ export default function BeneficiariesPage() {
               size="sm"
               onClick={handleSaveBeneficiary}
               disabled={!form.name.trim()}
-              className="h-9 px-4 text-[13px] font-medium"
+              className="h-9 px-4 text-[13px]"
             >
               {form.id ? "Save Changes" : "Save Beneficiary"}
             </Button>
@@ -1574,28 +1589,32 @@ export default function BeneficiariesPage() {
         </DialogContent>
       </Dialog>
 
-      {/* ── Delete Confirmation Dialogs (Clean & Borderless) ───────────── */}
+      {/* ── Delete Confirmation Dialogs (Responsive Bottom Sheet on Mobile) ── */}
       <Dialog open={Boolean(removeId)} onOpenChange={(o) => !o && setRemoveId(null)}>
         <DialogContent
-          className="sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
+          className="max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:border-t max-sm:border-border/80 sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
           showCloseButton={false}
         >
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
-            <DialogTitle className="text-[17px] font-medium text-foreground tracking-[-0.01em]">
+          <div className="sm:hidden flex justify-center pt-2.5 pb-1 select-none">
+            <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+          </div>
+          <div className="flex items-center justify-between px-5 sm:px-6 py-3.5 sm:py-4 border-b border-border/60">
+            <DialogTitle className="text-[17px] text-foreground tracking-[-0.01em]">
               Remove Beneficiary
             </DialogTitle>
             <button
               type="button"
               onClick={() => setRemoveId(null)}
               className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              aria-label="Close"
             >
-              <X size={15} />
+              <X size={15} strokeWidth={1.8} />
             </button>
           </div>
-          <div className="px-6 py-5 text-[13.5px] text-muted-foreground">
-            Are you sure you want to remove <span className="font-medium text-foreground">{toRemove?.name}</span>? This will not affect past transactions.
+          <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground">
+            Are you sure you want to remove <span className="text-foreground">{toRemove?.name}</span>? This will not affect past transactions.
           </div>
-          <div className="flex items-center justify-end gap-2 px-6 py-3.5 border-t border-border/60 bg-muted/20">
+          <div className="flex items-center justify-end gap-2 px-5 sm:px-6 py-3.5 border-t border-border/60 bg-muted/20">
             <Button variant="ghost" size="sm" onClick={() => setRemoveId(null)}>
               Cancel
             </Button>
@@ -1608,25 +1627,29 @@ export default function BeneficiariesPage() {
 
       <Dialog open={Boolean(removeGroupId)} onOpenChange={(o) => !o && setRemoveGroupId(null)}>
         <DialogContent
-          className="sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
+          className="max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:border-t max-sm:border-border/80 sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
           showCloseButton={false}
         >
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
-            <DialogTitle className="text-[17px] font-medium text-foreground tracking-[-0.01em]">
+          <div className="sm:hidden flex justify-center pt-2.5 pb-1 select-none">
+            <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+          </div>
+          <div className="flex items-center justify-between px-5 sm:px-6 py-3.5 sm:py-4 border-b border-border/60">
+            <DialogTitle className="text-[17px] text-foreground tracking-[-0.01em]">
               Delete Payment Group
             </DialogTitle>
             <button
               type="button"
               onClick={() => setRemoveGroupId(null)}
               className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              aria-label="Close"
             >
-              <X size={15} />
+              <X size={15} strokeWidth={1.8} />
             </button>
           </div>
-          <div className="px-6 py-5 text-[13.5px] text-muted-foreground">
-            Are you sure you want to delete <span className="font-medium text-foreground">{toRemoveGroup?.name}</span>? Group members will remain in your individual beneficiaries directory.
+          <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground">
+            Are you sure you want to delete <span className="text-foreground">{toRemoveGroup?.name}</span>? Group members will remain in your individual beneficiaries directory.
           </div>
-          <div className="flex items-center justify-end gap-2 px-6 py-3.5 border-t border-border/60 bg-muted/20">
+          <div className="flex items-center justify-end gap-2 px-5 sm:px-6 py-3.5 border-t border-border/60 bg-muted/20">
             <Button variant="ghost" size="sm" onClick={() => setRemoveGroupId(null)}>
               Cancel
             </Button>

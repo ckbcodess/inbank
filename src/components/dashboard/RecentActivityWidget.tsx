@@ -216,8 +216,9 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
             return (
               <div
                 key={item.id}
+                data-ripple="true"
                 onClick={() => setSelectedTx(item)}
-                className="group flex items-center justify-between py-2.5 px-2.5 -mx-2.5 rounded-xl cursor-pointer hover:bg-muted/40 transition-colors first:pt-1.5 last:pb-1.5"
+                className="group relative overflow-hidden flex items-center justify-between py-2.5 px-2.5 -mx-2.5 rounded-xl cursor-pointer hover:bg-muted/40 transition-colors first:pt-1.5 last:pb-1.5"
               >
                 {/* Left: Icon Tile + Details */}
                 <div className="flex items-center gap-3.5 min-w-0 pr-3">

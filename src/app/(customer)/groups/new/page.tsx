@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function OldNewPaymentGroupPage() {
+export default function LegacyNewGroupPage() {
   redirect("/beneficiaries/groups/new");
 }

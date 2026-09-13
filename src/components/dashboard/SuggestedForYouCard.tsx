@@ -100,7 +100,10 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                 href={action.href}
                 className="group flex flex-col items-center gap-2 text-center focus:outline-none"
               >
-                <div className="flex size-[52px] sm:size-[54px] items-center justify-center rounded-2xl border border-border/80 bg-muted/40 text-foreground shadow-2xs transition-[background-color,border-color,transform] duration-150 group-hover:bg-muted group-hover:border-border group-active:scale-[0.96]">
+                <div
+                  data-ripple="true"
+                  className="relative flex size-[52px] sm:size-[54px] items-center justify-center overflow-hidden rounded-2xl border border-border/80 bg-muted/40 text-foreground shadow-2xs transition-[background-color,border-color] duration-150 group-hover:bg-muted group-hover:border-border"
+                >
                   <Icon size={19} strokeWidth={1.8} className="transition-transform group-hover:scale-105" />
                 </div>
                 <span className="text-[12px] font-normal leading-tight text-foreground truncate max-w-full px-1">
@@ -117,8 +120,9 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
             <button
               key={idx}
               type="button"
+              data-ripple="true"
               onClick={() => handleBeneficiaryClick(b)}
-              className="group flex flex-col items-center gap-2 text-center cursor-pointer focus:outline-none active:scale-[0.96] transition-transform"
+              className="group relative flex flex-col items-center gap-2 text-center cursor-pointer focus:outline-none overflow-hidden rounded-xl p-1"
             >
               <div
                 className={`flex size-[52px] sm:size-[54px] items-center justify-center rounded-full text-[19px] font-medium transition-transform duration-150 group-hover:scale-105 ${b.bg}`}

@@ -2,6 +2,11 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
   Dialog,
   DialogContent,
   DialogTitle,
@@ -16,6 +21,7 @@ import {
   Search,
   AlertTriangle,
   UserPlus,
+  Check,
 } from "lucide-react";
 import { useGroupsStore, type PaymentGroup, type GroupMember } from "@/lib/groups-store";
 import { useBeneficiariesStore, type BeneficiaryRecord } from "@/lib/beneficiaries-store";
@@ -87,7 +93,7 @@ export default function EditGroupModal({
     members?: string;
   }>({});
 
-  // Populate state when modal opens or group changes
+  // Populate state when sheet opens or group changes
   useEffect(() => {
     if (open && group) {
       setName(group.name || "");
@@ -160,43 +166,53 @@ export default function EditGroupModal({
       const amt = m.defaultAmount !== undefined ? m.defaultAmount : parseFloat(amountPerPerson) || 0;
       return sum + amt;
     }, 0);
-  }, [members, splitType, amountPerPerson]);
+  }, [members, amountPerPerson, splitType]);
 
-  // Handle custom amount edit for an individual member
-  const handleCustomAmountChange = (memberId: string, val: string) => {
-    const num = parseFloat(val.replace(/[^0-9.]/g, "")) || 0;
+  // Update member custom amount in custom split mode
+  const handleUpdateMemberAmount = (identifier: string, valStr: string) => {
+    const clean = valStr.replace(/[^0-9.]/g, "");
+    const val = parseFloat(clean);
     setMembers((prev) =>
-      prev.map((m) =>
-        (m.id && m.id === memberId) || m.destination === memberId
-          ? { ...m, defaultAmount: num }
-          : m
-      )
+      prev.map((m) => {
+        if (m.id === identifier || m.destination === identifier) {
+          return { ...m, defaultAmount: isNaN(val) ? 0 : val };
+        }
+        return m;
+      })
     );
   };
 
-  // Add saved beneficiary to current group
+  // Add an existing saved beneficiary into this group
   const handleAddSavedBeneficiary = (b: BeneficiaryRecord) => {
     const amt = parseFloat(amountPerPerson) || 0;
-    const isWallet = b.transactionType === "wallet";
     const newMember: GroupMember = {
-      id: `m-saved-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      id: b.id.startsWith("m-") ? b.id : `m-${b.id}`,
       name: b.name,
-      destination: b.accountNumber || b.phoneNumber || b.proxyId || "",
-      type: isWallet ? "wallet" : "bank",
-      networkOrBank: b.network || b.bankName || (isWallet ? "Mobile Wallet" : "GCB Bank"),
+      destination: b.accountNumber || b.phoneNumber || b.proxyId || b.detail || b.id,
+      type: b.transactionType === "bank" ? "bank" : "wallet",
+      networkOrBank: b.bankName || b.network || "GCB Bank",
       defaultAmount: amt,
     };
 
     setMembers((prev) => [...prev, newMember]);
+    setSavedSearch("");
+    setShowAddMember(false);
     if (errors.members) setErrors((prev) => ({ ...prev, members: undefined }));
-    toast.success(`Added ${b.name} to ${name || "group"}.`);
+    toast.success(`Added ${newMember.name} to ${name || "group"}.`);
   };
 
-  // Add custom contact to current group
-  const handleAddCustomContact = () => {
-    if (!customName.trim() || !customDest.trim()) return;
-    const amt = parseFloat(amountPerPerson) || 0;
+  // Add a brand-new custom contact
+  const handleAddCustomMember = () => {
+    if (!customName.trim()) {
+      toast.error("Please enter a contact name.");
+      return;
+    }
+    if (!customDest.trim()) {
+      toast.error("Please enter an account or phone number.");
+      return;
+    }
 
+    const amt = parseFloat(amountPerPerson) || 0;
     const newMember: GroupMember = {
       id: `m-custom-${Date.now()}`,
       name: customName.trim(),
@@ -283,82 +299,118 @@ export default function EditGroupModal({
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent
-          className="sm:max-w-[500px] w-[95vw] p-0 overflow-hidden rounded-2xl border-none bg-card text-foreground shadow-2xl flex flex-col max-h-[90vh] gap-0"
+      {/* ── Slide-up / Slide-over Side Sheet from the Right ────────── */}
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent
+          side="right"
+          className="w-full sm:max-w-lg md:max-w-xl p-0 flex flex-col gap-0 h-full overflow-hidden bg-card border-l border-border/80 text-foreground"
           showCloseButton={false}
         >
-          {/* Header matching Add Beneficiary & Create Group Modal */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border/60 shrink-0">
-            <DialogTitle className="text-[17px] font-medium text-foreground tracking-[-0.01em] truncate max-w-[380px]">
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-4.5 border-b border-border/60 shrink-0">
+            <SheetTitle className="text-[18px] font-medium text-foreground tracking-[-0.01em] truncate max-w-[380px]">
               Edit {group.name}
-            </DialogTitle>
+            </SheetTitle>
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
+              className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer shrink-0"
               aria-label="Close"
             >
-              <X size={15} strokeWidth={1.8} />
+              <X size={17} strokeWidth={1.8} />
             </button>
           </div>
 
-          {/* Modal Scrollable Body */}
-          <div className="flex-1 min-h-0 overflow-y-auto px-6 py-5 flex flex-col gap-4 overscroll-contain custom-scrollbar">
-            {/* Row 1: Group Name & Description Side-by-Side */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          {/* Scrollable Sheet Content Body */}
+          <div className="flex-1 min-h-0 overflow-y-auto px-6 py-6 flex flex-col gap-5 overscroll-contain custom-scrollbar">
+            {/* Group Name & Description */}
+            <div className="flex flex-col gap-4">
               {/* Group Name */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[12.5px] font-medium text-muted-foreground">
-                  Group Name
+              <div className="flex flex-col gap-2">
+                <label className="text-[14px] font-medium text-foreground">
+                  Group Name <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="text"
                   value={name}
+                  maxLength={50}
                   onChange={(e) => {
                     setName(e.target.value);
                     if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
                   }}
                   placeholder="e.g. Family Susu"
                   className={cn(
-                    "h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all",
+                    "h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all",
                     errors.name && "border-destructive focus:border-destructive focus:ring-destructive/30"
                   )}
                 />
                 {errors.name && (
-                  <p className="text-[11.5px] text-destructive">{errors.name}</p>
+                  <p className="text-[12px] text-destructive">{errors.name}</p>
                 )}
               </div>
 
               {/* Description */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[12.5px] font-medium text-muted-foreground">
-                  Description
+              <div className="flex flex-col gap-2">
+                <label className="text-[14px] font-medium text-foreground">
+                  Description <span className="text-muted-foreground font-normal">(optional)</span>
                 </label>
                 <input
                   type="text"
                   value={description}
+                  maxLength={120}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Optional description"
-                  className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                  placeholder="Optional description or circle purpose"
+                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                 />
               </div>
             </div>
 
-            {/* Row 2: Amount per person & Equal/Custom split toggle */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[12.5px] font-medium text-muted-foreground">
-                Amount per person
+            {/* Split Type & Amount Configuration */}
+            <div className="flex flex-col gap-3 pt-2">
+              <label className="text-[14px] font-medium text-foreground">
+                Contribution Rule
               </label>
-              <div className="flex items-center gap-2.5">
-                {/* Amount Input with GHS prefix */}
-                <div
+
+              {/* Segmented Pill Toggle: Equal / Custom */}
+              <div className="rounded-2xl bg-muted/40 p-1 border border-border/80 flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setSplitType("equal")}
                   className={cn(
-                    "flex-1 h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 flex items-center gap-1.5 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 transition-all",
-                    errors.amount && "border-destructive focus-within:border-destructive focus-within:ring-destructive/30"
+                    "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition-all cursor-pointer",
+                    splitType === "equal"
+                      ? "bg-card text-foreground shadow-xs border border-border/60"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
-                  <span className="text-[13.5px] font-medium text-muted-foreground select-none">
+                  Equal Split
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSplitType("custom")}
+                  className={cn(
+                    "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition-all cursor-pointer",
+                    splitType === "custom"
+                      ? "bg-card text-foreground shadow-xs border border-border/60"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  Custom Amounts
+                </button>
+              </div>
+
+              {/* Amount per person */}
+              <div className="flex flex-col gap-2 mt-1">
+                <label className="text-[13.5px] font-medium text-foreground">
+                  {splitType === "equal" ? "Amount per Person" : "Baseline Amount"}
+                </label>
+                <div
+                  className={cn(
+                    "h-13 w-full rounded-2xl border border-border/80 bg-card px-4 flex items-center gap-2 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 transition-all",
+                    errors.amount && "border-destructive focus-within:border-destructive"
+                  )}
+                >
+                  <span className="text-[14px] font-medium text-muted-foreground select-none">
                     GHS
                   </span>
                   <input
@@ -370,430 +422,357 @@ export default function EditGroupModal({
                       setAmountPerPerson(clean);
                       if (errors.amount) setErrors((prev) => ({ ...prev, amount: undefined }));
                     }}
-                    placeholder="200.00"
-                    className="w-full bg-transparent text-[14px] font-medium text-foreground placeholder:text-muted-foreground/60 outline-none tabular-nums"
+                    placeholder="0.00"
+                    className="w-full bg-transparent text-[15px] font-normal text-foreground placeholder:text-muted-foreground/60 outline-none tabular-nums"
                   />
                 </div>
-
-                {/* Segmented Pill Toggle: Equal / Custom */}
-                <div className="flex items-center rounded-xl bg-muted/50 dark:bg-white/[0.05] p-1 border border-border/60 dark:border-white/[0.1] gap-1 shrink-0 h-11">
-                  <button
-                    type="button"
-                    onClick={() => setSplitType("equal")}
-                    className={cn(
-                      "px-3.5 py-1.5 rounded-lg text-[13px] font-medium transition-all cursor-pointer",
-                      splitType === "equal"
-                        ? "bg-card dark:bg-white/[0.14] text-foreground shadow-xs font-semibold"
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    Equal
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSplitType("custom")}
-                    className={cn(
-                      "px-3.5 py-1.5 rounded-lg text-[13px] font-medium transition-all cursor-pointer",
-                      splitType === "custom"
-                        ? "bg-card dark:bg-white/[0.14] text-foreground shadow-xs font-semibold"
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    Custom
-                  </button>
-                </div>
-              </div>
-              {errors.amount && (
-                <p className="text-[11.5px] text-destructive">{errors.amount}</p>
-              )}
-            </div>
-
-            {/* Row 3: Members header with count and "+ Add member" action */}
-            <div className="flex items-center justify-between pt-1">
-              <span className="text-[13px] font-medium text-foreground">
-                Group Members ({members.length})
-              </span>
-              <button
-                type="button"
-                onClick={() => setShowAddMember((prev) => !prev)}
-                className="text-[12.5px] font-medium text-primary hover:text-primary/80 cursor-pointer flex items-center gap-1 transition-colors hover:underline"
-              >
-                {showAddMember ? (
-                  <>
-                    <X size={14} strokeWidth={2} />
-                    <span>Done adding</span>
-                  </>
-                ) : (
-                  <>
-                    <UserPlus size={14} strokeWidth={2} />
-                    <span>Add member</span>
-                  </>
+                {errors.amount && (
+                  <p className="text-[12px] text-destructive">{errors.amount}</p>
                 )}
-              </button>
+              </div>
             </div>
 
-            {/* Collapsible "+ Add Member" Drawer */}
-            {showAddMember && (
-              <div className="p-3.5 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/30 dark:bg-white/[0.04] flex flex-col gap-3 animate-in fade-in duration-150">
-                {/* Tabs: From Saved Beneficiaries vs New Contact */}
-                <div className="flex items-center justify-between pb-1 border-b border-border/60 dark:border-white/[0.08]">
-                  <div className="inline-flex rounded-lg bg-muted/50 dark:bg-white/[0.05] border border-border/80 dark:border-white/[0.1] p-0.5 text-[12px]">
+            {/* Members Section Header + Add Button */}
+            <div className="flex flex-col gap-3 pt-3 border-t border-border/60">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-[14px] font-medium text-foreground">
+                    Members ({members.length})
+                  </span>
+                </div>
+
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setShowAddMember((prev) => !prev)}
+                  className="h-8.5 gap-1.5 px-3 text-[12.5px] rounded-xl border-border/80 font-normal cursor-pointer"
+                >
+                  <UserPlus size={14} />
+                  <span>{showAddMember ? "Close" : "+ Add Member"}</span>
+                </Button>
+              </div>
+
+              {/* Expandable Add Member Drawer */}
+              {showAddMember && (
+                <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 flex flex-col gap-3.5 animate-in fade-in slide-in-from-top-2 duration-150 shadow-xs">
+                  {/* Mode switcher: Saved Beneficiary vs Custom Contact */}
+                  <div className="flex items-center gap-2 p-1 bg-card rounded-xl border border-border/70">
                     <button
                       type="button"
                       onClick={() => setAddMode("saved")}
                       className={cn(
-                        "px-3 py-1 rounded-md transition-all cursor-pointer font-medium",
+                        "flex-1 py-1.5 rounded-lg text-[12px] font-medium transition-all cursor-pointer",
                         addMode === "saved"
-                          ? "bg-card dark:bg-white/[0.14] text-foreground font-semibold shadow-xs"
+                          ? "bg-primary text-primary-foreground shadow-xs"
                           : "text-muted-foreground hover:text-foreground"
                       )}
                     >
-                      From Saved Beneficiaries ({availableSavedBeneficiaries.length})
+                      From Saved Beneficiaries
                     </button>
                     <button
                       type="button"
                       onClick={() => setAddMode("custom")}
                       className={cn(
-                        "px-3 py-1 rounded-md transition-all cursor-pointer font-medium",
+                        "flex-1 py-1.5 rounded-lg text-[12px] font-medium transition-all cursor-pointer",
                         addMode === "custom"
-                          ? "bg-card dark:bg-white/[0.14] text-foreground font-semibold shadow-xs"
+                          ? "bg-primary text-primary-foreground shadow-xs"
                           : "text-muted-foreground hover:text-foreground"
                       )}
                     >
-                      + New Contact
+                      New Contact
                     </button>
                   </div>
-                </div>
 
-                {/* Tab 1: Saved Beneficiaries */}
-                {addMode === "saved" ? (
-                  <div className="flex flex-col gap-2">
-                    <div className="relative w-full">
-                      <Search
-                        size={14}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
-                      />
+                  {/* Mode A: Pick from Saved Beneficiaries */}
+                  {addMode === "saved" ? (
+                    <div className="flex flex-col gap-2">
+                      <div className="relative w-full">
+                        <Search
+                          size={15}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                        />
+                        <input
+                          type="text"
+                          value={savedSearch}
+                          onChange={(e) => setSavedSearch(e.target.value)}
+                          placeholder="Search saved contacts to add..."
+                          className="h-10 w-full pl-9 pr-7 rounded-xl border border-border/80 bg-card text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                        />
+                        {savedSearch && (
+                          <button
+                            type="button"
+                            onClick={() => setSavedSearch("")}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+                            aria-label="Clear search"
+                          >
+                            <X size={13} />
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="max-h-[180px] overflow-y-auto rounded-xl border border-border/70 bg-card divide-y divide-border/50">
+                        {availableSavedBeneficiaries.length > 0 ? (
+                          availableSavedBeneficiaries.map((b) => (
+                            <div
+                              key={b.id}
+                              className="flex items-center justify-between px-3.5 py-2.5 hover:bg-muted/30 transition-colors"
+                            >
+                              <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
+                                  {b.transactionType === "bank" ? (
+                                    <Landmark size={13} />
+                                  ) : (
+                                    <Smartphone size={13} />
+                                  )}
+                                </div>
+                                <div className="flex flex-col min-w-0">
+                                  <span className="text-[13px] text-foreground font-normal truncate">
+                                    {b.name}
+                                  </span>
+                                  <span className="text-[11.5px] text-muted-foreground font-normal truncate tabular-nums numorainput">
+                                    {b.bankName || b.network} • {b.accountNumber || b.phoneNumber || b.proxyId}
+                                  </span>
+                                </div>
+                              </div>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleAddSavedBeneficiary(b)}
+                                className="h-7 px-2.5 rounded-lg text-[11.5px] border-border/80 font-normal shrink-0"
+                              >
+                                <Plus size={12} className="mr-1" /> Add
+                              </Button>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="py-6 text-center text-muted-foreground text-[12.5px]">
+                            {savedSearch
+                              ? "No saved beneficiaries match your search."
+                              : "All saved beneficiaries are already in this group."}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    /* Mode B: Add Custom Contact Inline */
+                    <div className="flex flex-col gap-2.5">
                       <input
                         type="text"
-                        value={savedSearch}
-                        onChange={(e) => setSavedSearch(e.target.value)}
-                        placeholder="Search saved contacts to add..."
-                        className="w-full h-9 pl-8 pr-7 rounded-lg border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] text-[12.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring"
+                        value={customName}
+                        onChange={(e) => setCustomName(e.target.value)}
+                        placeholder="Recipient full name"
+                        className="h-10 w-full rounded-xl border border-border/80 bg-card px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                       />
-                      {savedSearch && (
-                        <button
-                          type="button"
-                          onClick={() => setSavedSearch("")}
-                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
-                          aria-label="Clear search"
-                        >
-                          <X size={13} />
-                        </button>
-                      )}
-                    </div>
 
-                    <div className="max-h-[160px] overflow-y-auto divide-y divide-border/60 dark:divide-white/[0.06] rounded-lg border border-border/70 dark:border-white/[0.12] bg-muted/30 dark:bg-white/[0.04]">
-                      {availableSavedBeneficiaries.length === 0 ? (
-                        <div className="p-3 text-center text-[12px] text-muted-foreground">
-                          {savedSearch
-                            ? "No saved beneficiaries match your search."
-                            : "All saved beneficiaries are already in this group."}
-                        </div>
-                      ) : (
-                        availableSavedBeneficiaries.map((b) => (
-                          <div
-                            key={b.id}
-                            onClick={() => handleAddSavedBeneficiary(b)}
-                            className="flex items-center justify-between p-2 hover:bg-muted/50 dark:hover:bg-white/[0.05] cursor-pointer transition-colors"
-                          >
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground text-[10px]">
-                                {b.transactionType === "wallet" ? (
-                                  <Smartphone size={12} strokeWidth={1.8} />
-                                ) : (
-                                  <Landmark size={12} strokeWidth={1.8} />
-                                )}
-                              </span>
-                              <div className="flex flex-col min-w-0">
-                                <span className="text-[12.5px] font-medium text-foreground truncate">
-                                  {b.name}
-                                </span>
-                                <span className="text-[11px] text-muted-foreground tabular truncate">
-                                  {b.bankName || b.network || "GCB"} · {b.accountNumber || b.phoneNumber}
-                                </span>
-                              </div>
-                            </div>
-                            <Button size="xs" variant="ghost" className="h-6.5 px-2 text-[11.5px] text-primary font-medium hover:bg-primary/10">
-                              <Plus size={12} className="mr-1" /> Add
-                            </Button>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  /* Tab 2: Custom Contact */
-                  <div className="flex flex-col gap-2.5">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[11px] text-muted-foreground font-medium">
-                          Full Name
-                        </label>
+                      <div className="flex items-center gap-2">
                         <input
                           type="text"
-                          placeholder="e.g. Kofi Mensah"
-                          value={customName}
-                          onChange={(e) => setCustomName(e.target.value)}
-                          className="h-9 rounded-lg border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-2.5 text-[12.5px] text-foreground outline-none focus:border-ring"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[11px] text-muted-foreground font-medium">
-                          Account / Phone Number
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="0244 000 000"
                           value={customDest}
                           onChange={(e) => setCustomDest(e.target.value)}
-                          className="h-9 rounded-lg border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-2.5 text-[12.5px] text-foreground tabular outline-none focus:border-ring"
+                          placeholder="Account or Phone number"
+                          className="h-10 flex-1 rounded-xl border border-border/80 bg-card px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                         />
-                      </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[11px] text-muted-foreground font-medium">
-                          Type
-                        </label>
-                        <div className="flex items-center rounded-lg bg-muted/40 dark:bg-white/[0.07] border border-border/80 dark:border-white/[0.12] p-0.5 h-9">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCustomType("wallet");
-                              setCustomBankOrNet("MTN Mobile Money");
-                            }}
-                            className={cn(
-                              "flex-1 h-7.5 rounded-md text-[11.5px] font-medium transition-all cursor-pointer",
-                              customType === "wallet"
-                                ? "bg-card dark:bg-white/[0.14] text-foreground font-semibold shadow-xs"
-                                : "text-muted-foreground"
-                            )}
-                          >
-                            Mobile Wallet
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCustomType("bank");
-                              setCustomBankOrNet("GCB Bank");
-                            }}
-                            className={cn(
-                              "flex-1 h-7.5 rounded-md text-[11.5px] font-medium transition-all cursor-pointer",
-                              customType === "bank"
-                                ? "bg-card dark:bg-white/[0.14] text-foreground font-semibold shadow-xs"
-                                : "text-muted-foreground"
-                            )}
-                          >
-                            Bank Account
-                          </button>
-                        </div>
+                        <select
+                          value={customType}
+                          onChange={(e) => {
+                            const t = e.target.value as "wallet" | "bank";
+                            setCustomType(t);
+                            setCustomBankOrNet(t === "wallet" ? WALLET_NETWORKS[0] : GHANA_BANKS[0]);
+                          }}
+                          className="h-10 rounded-xl border border-border/80 bg-card px-2 text-[12px] text-foreground outline-none cursor-pointer"
+                        >
+                          <option value="wallet">Mobile Wallet</option>
+                          <option value="bank">Bank Account</option>
+                        </select>
                       </div>
 
-                      <div className="flex flex-col gap-1">
-                        <label className="text-[11px] text-muted-foreground font-medium">
-                          {customType === "wallet" ? "Network" : "Bank"}
-                        </label>
+                      <div className="flex items-center justify-between gap-2 pt-1">
                         <select
                           value={customBankOrNet}
                           onChange={(e) => setCustomBankOrNet(e.target.value)}
-                          className="h-9 rounded-lg border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-2 text-[12px] text-foreground outline-none focus:border-ring"
+                          className="h-9 flex-1 rounded-xl border border-border/80 bg-card px-2.5 text-[12px] text-foreground outline-none cursor-pointer"
                         >
-                          {customType === "wallet"
-                            ? WALLET_NETWORKS.map((w) => (
-                                <option key={w} value={w}>
-                                  {w}
-                                </option>
-                              ))
-                            : GHANA_BANKS.map((b) => (
-                                <option key={b} value={b}>
-                                  {b}
-                                </option>
-                              ))}
+                          {(customType === "wallet" ? WALLET_NETWORKS : GHANA_BANKS).map((opt) => (
+                            <option key={opt} value={opt}>
+                              {opt}
+                            </option>
+                          ))}
                         </select>
+
+                        <Button
+                          type="button"
+                          size="sm"
+                          onClick={handleAddCustomMember}
+                          className="h-9 px-4 rounded-xl text-[12.5px] bg-primary text-primary-foreground font-normal shrink-0 cursor-pointer"
+                        >
+                          Add to Group
+                        </Button>
                       </div>
                     </div>
+                  )}
+                </div>
+              )}
 
-                    <div className="flex justify-end pt-1">
-                      <Button
-                        size="xs"
-                        onClick={handleAddCustomContact}
-                        disabled={!customName.trim() || !customDest.trim()}
-                        className="h-7.5 px-3 text-[12px] font-medium"
-                      >
-                        <Plus size={13} className="mr-1" /> Add to Group
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Row 4: Search bar strictly for members in this group */}
-            {members.length > 3 && (
-              <div className="relative w-full">
-                <Search
-                  size={15}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
-                />
-                <input
-                  type="text"
-                  value={searchMember}
-                  onChange={(e) => setSearchMember(e.target.value)}
-                  placeholder="Search members in this group..."
-                  className="h-11 w-full pl-9.5 pr-8 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] text-[13.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
-                />
-                {searchMember && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchMember("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
-                    aria-label="Clear search"
-                  >
-                    <X size={14} />
-                  </button>
-                )}
-              </div>
-            )}
-
-            {/* Row 5: Current Group Members List (ONLY this group's members!) */}
-            <div className="flex flex-col divide-y divide-border/60 dark:divide-white/[0.06] max-h-[260px] overflow-y-auto custom-scrollbar pr-1">
-              {filteredMembers.map((m) => (
-                <div
-                  key={m.id || m.destination}
-                  className="group flex items-center justify-between py-2.5 px-2 hover:bg-muted/40 dark:hover:bg-white/[0.04] rounded-lg transition-colors"
-                >
-                  {/* Left: Icon and Name + Subtitle */}
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    <span className="text-muted-foreground shrink-0 flex items-center justify-center">
-                      {m.type === "wallet" ? (
-                        <Smartphone size={17} strokeWidth={1.6} />
-                      ) : (
-                        <Landmark size={17} strokeWidth={1.6} />
-                      )}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-[14px] font-medium text-foreground truncate leading-tight">
-                        {m.name}
-                      </p>
-                      <p className="text-[12px] text-muted-foreground truncate mt-0.5 tabular-nums">
-                        {m.networkOrBank || (m.type === "wallet" ? "Wallet" : "Bank")} · {m.destination}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Right: Custom Amount Input (if custom split) + Delete Member Button */}
-                  <div className="flex items-center gap-2.5 shrink-0">
-                    {splitType === "custom" && (
-                      <div className="flex items-center gap-1 bg-muted/40 dark:bg-white/[0.08] border border-border/80 dark:border-white/[0.12] rounded-lg px-2 py-1">
-                        <span className="text-[11px] text-muted-foreground font-medium">GHS</span>
-                        <input
-                          type="text"
-                          inputMode="decimal"
-                          value={m.defaultAmount ?? amountPerPerson}
-                          onChange={(e) =>
-                            handleCustomAmountChange(m.id || m.destination, e.target.value)
-                          }
-                          className="w-16 text-right text-[12px] font-medium text-foreground bg-transparent outline-none tabular-nums"
-                        />
-                      </div>
-                    )}
-
-                    {/* Delete Member Button with Trash icon */}
+              {/* Member search bar */}
+              {members.length > 3 && (
+                <div className="relative w-full">
+                  <Search
+                    size={16}
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
+                  />
+                  <input
+                    type="text"
+                    value={searchMember}
+                    onChange={(e) => setSearchMember(e.target.value)}
+                    placeholder="Search members in this group..."
+                    className="h-11 w-full pl-9.5 pr-8 rounded-xl border border-border/80 bg-card text-[13.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                  />
+                  {searchMember && (
                     <button
                       type="button"
-                      onClick={() => setMemberToDelete(m)}
-                      className="size-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 transition-colors cursor-pointer"
-                      title={`Remove ${m.name} from group`}
-                      aria-label={`Remove ${m.name} from group`}
+                      onClick={() => setSearchMember("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
+                      aria-label="Clear search"
                     >
-                      <Trash2 size={15} strokeWidth={1.8} />
+                      <X size={14} />
                     </button>
-                  </div>
+                  )}
                 </div>
-              ))}
+              )}
 
-              {filteredMembers.length === 0 && (
-                <div className="py-8 text-center text-muted-foreground text-[13px]">
-                  {searchMember
-                    ? `No members found matching “${searchMember}”.`
-                    : "No members in this group yet. Use '+ Add member' above to add someone."}
-                </div>
+              {/* Members List Container */}
+              <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/50 max-h-[360px] overflow-y-auto">
+                {filteredMembers.map((m) => (
+                  <div
+                    key={m.id || m.destination}
+                    className="flex items-center justify-between px-4 py-3 hover:bg-muted/20 transition-colors"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
+                        {m.type === "wallet" ? (
+                          <Smartphone size={16} strokeWidth={1.8} />
+                        ) : (
+                          <Landmark size={16} strokeWidth={1.8} />
+                        )}
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-[14px] text-foreground font-normal truncate">
+                          {m.name}
+                        </span>
+                        <span className="text-[12px] text-muted-foreground font-normal truncate tabular-nums numorainput">
+                          {m.networkOrBank || "GCB Bank"} • {m.destination}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 shrink-0">
+                      {splitType === "custom" && (
+                        <div className="flex items-center gap-1 shrink-0 bg-card border border-border/80 rounded-lg px-2 py-1 focus-within:border-ring">
+                          <span className="text-[11px] text-muted-foreground select-none">GHS</span>
+                          <input
+                            type="text"
+                            inputMode="decimal"
+                            value={
+                              m.defaultAmount !== undefined
+                                ? String(m.defaultAmount)
+                                : amountPerPerson
+                            }
+                            onChange={(e) =>
+                              handleUpdateMemberAmount(m.id || m.destination, e.target.value)
+                            }
+                            className="w-20 bg-transparent text-right text-[13px] font-normal tabular-nums outline-none border-none text-foreground"
+                          />
+                        </div>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => setMemberToDelete(m)}
+                        className="size-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+                        title="Remove member"
+                        aria-label={`Remove ${m.name}`}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {filteredMembers.length === 0 && (
+                  <div className="py-8 text-center text-muted-foreground text-[13px]">
+                    No members found matching “{searchMember}”.
+                  </div>
+                )}
+              </div>
+
+              {errors.members && (
+                <p className="text-[12px] text-destructive">{errors.members}</p>
               )}
             </div>
 
-            {errors.members && (
-              <p className="text-[11.5px] text-destructive text-center">{errors.members}</p>
-            )}
-
-            {/* Row 6: Summary Row */}
-            <div className="flex items-center justify-between pt-2 border-t border-border/50 dark:border-white/[0.06] select-none">
-              <span className="text-[13px] font-medium text-muted-foreground">
+            {/* Total Amount Summary Row */}
+            <div className="flex items-center justify-between pt-3 border-t border-border/60">
+              <span className="text-[14px] font-medium text-muted-foreground">
                 Total ({members.length} {members.length === 1 ? "member" : "members"}):
               </span>
-              <span className="text-[17px] font-semibold text-foreground tracking-[-0.01em] tabular-nums">
+              <span className="text-[18px] font-normal text-foreground tracking-[-0.01em] tabular-nums numorainput">
                 GHS {totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
-          </div>
 
-          {/* Row 7: Modal Footer Actions matching Add Beneficiary & Create Group Modal */}
-          <div className="px-6 py-3.5 border-t border-border/60 bg-muted/20 flex items-center justify-between gap-2.5 shrink-0">
-            {/* Left: Delete Group Button */}
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowDeleteGroupConfirm(true)}
-              className="h-9 px-3 text-[13px] text-destructive hover:bg-destructive/10 hover:text-destructive gap-1.5"
-            >
-              <Trash2 size={14} strokeWidth={1.8} />
-              <span>Delete Group</span>
-            </Button>
-
-            {/* Right: Cancel & Save Changes */}
-            <div className="flex items-center gap-2">
+            {/* Danger Zone: Pinned at bottom */}
+            <div className="mt-2 rounded-2xl border border-destructive/30 bg-destructive/5 p-4 flex items-center justify-between gap-3">
+              <div className="flex flex-col">
+                <span className="text-[13.5px] font-medium text-foreground">Delete this group</span>
+                <span className="text-[12px] text-muted-foreground">
+                  Permanently remove this circle. Counterparties remain saved.
+                </span>
+              </div>
               <Button
                 type="button"
-                variant="ghost"
+                variant="destructive"
                 size="sm"
-                onClick={() => onOpenChange(false)}
-                className="h-9 px-3.5 text-[13px]"
+                onClick={() => setShowDeleteGroupConfirm(true)}
+                className="h-9 px-3.5 text-[12.5px] shrink-0 font-normal cursor-pointer"
               >
-                Cancel
-              </Button>
-
-              <Button
-                type="button"
-                size="sm"
-                onClick={handleSaveChanges}
-                disabled={!name.trim() || members.length === 0}
-                className="h-9 px-4 text-[13px] font-medium"
-              >
-                Save Changes
+                Delete Group
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+
+          {/* Sticky Sheet Footer Actions */}
+          <div className="px-6 py-4 border-t border-border/60 bg-muted/20 flex items-center justify-end gap-3 shrink-0">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="h-11 px-5 rounded-xl border-border/80 text-[13.5px] font-normal cursor-pointer"
+            >
+              Cancel
+            </Button>
+
+            <Button
+              type="button"
+              onClick={handleSaveChanges}
+              disabled={!name.trim() || members.length === 0}
+              className="h-11 px-6 rounded-xl text-[13.5px] bg-primary hover:bg-primary/90 text-primary-foreground font-normal cursor-pointer shadow-xs disabled:opacity-50"
+            >
+              Save Changes
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* ── MODAL 1: Confirm Remove Member Dialog ─────────────────────── */}
-      <Dialog open={!!memberToDelete} onOpenChange={(open) => !open && setMemberToDelete(null)}>
+      <Dialog open={Boolean(memberToDelete)} onOpenChange={(isOpen) => !isOpen && setMemberToDelete(null)}>
         <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border-none bg-card text-foreground shadow-2xl flex flex-col gap-0" showCloseButton={false}>
           <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
             <div className="flex items-center gap-2.5">
               <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-                <AlertTriangle size={15} strokeWidth={2} />
+                <Trash2 size={15} strokeWidth={2} />
               </span>
               <DialogTitle className="text-[16px] font-medium text-foreground tracking-[-0.01em]">
                 Remove Member
@@ -809,15 +788,15 @@ export default function EditGroupModal({
           </div>
 
           <div className="px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
-            Are you sure you want to remove <span className="font-semibold text-foreground">{memberToDelete?.name}</span> from <span className="font-semibold text-foreground">{name || group.name}</span>? They will no longer receive disbursements when you send to this group.
+            Are you sure you want to remove <span className="text-foreground font-medium">{memberToDelete?.name}</span> from <span className="text-foreground font-medium">{name || group.name}</span>? They will no longer receive disbursements when you send to this group.
           </div>
 
           <div className="flex items-center justify-end gap-2.5 px-6 py-3.5 border-t border-border/60 bg-muted/20">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={() => setMemberToDelete(null)}
-              className="h-9 px-3.5 text-[13px]"
+              className="h-9 px-3.5 text-[13px] rounded-xl font-normal"
             >
               Cancel
             </Button>
@@ -825,7 +804,7 @@ export default function EditGroupModal({
               variant="destructive"
               size="sm"
               onClick={handleConfirmRemoveMember}
-              className="h-9 px-4 text-[13px] font-medium"
+              className="h-9 px-4 text-[13px] rounded-xl font-normal"
             >
               Remove Member
             </Button>
@@ -855,15 +834,15 @@ export default function EditGroupModal({
           </div>
 
           <div className="px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
-            Are you sure you want to delete <span className="font-semibold text-foreground">{group.name}</span>? This action cannot be undone. All member contact details will remain safely saved in your individual beneficiaries directory.
+            Are you sure you want to delete <span className="text-foreground font-medium">{group.name}</span>? This action cannot be undone. All member contact details will remain safely saved in your individual beneficiaries directory.
           </div>
 
           <div className="flex items-center justify-end gap-2.5 px-6 py-3.5 border-t border-border/60 bg-muted/20">
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={() => setShowDeleteGroupConfirm(false)}
-              className="h-9 px-3.5 text-[13px]"
+              className="h-9 px-3.5 text-[13px] rounded-xl font-normal"
             >
               Cancel
             </Button>
@@ -871,7 +850,7 @@ export default function EditGroupModal({
               variant="destructive"
               size="sm"
               onClick={handleConfirmDeleteGroup}
-              className="h-9 px-4 text-[13px] font-medium"
+              className="h-9 px-4 text-[13px] rounded-xl font-normal"
             >
               Delete Group
             </Button>

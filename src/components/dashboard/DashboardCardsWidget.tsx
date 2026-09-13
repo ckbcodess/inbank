@@ -106,7 +106,8 @@ export function DashboardCardsWidget() {
             >
               {/* Left: Mini Card Graphic & Info */}
               <div
-                className="flex items-center gap-3.5 cursor-pointer group"
+                data-ripple="true"
+                className="relative overflow-hidden flex items-center gap-3.5 cursor-pointer group rounded-lg p-1.5 -m-1.5 transition-colors hover:bg-muted/50"
                 onClick={() => setManagingCard(card)}
               >
                 {/* Mini Card Graphic */}

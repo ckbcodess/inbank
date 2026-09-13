@@ -77,7 +77,8 @@ export function TotalBalanceCard({ accounts }: TotalBalanceCardProps) {
           <Link
             key={acc.id}
             href={`/accounts/${acc.id}`}
-            className="group flex items-center justify-between py-2.5 px-2.5 -mx-2.5 rounded-xl transition-colors hover:bg-muted/50 active:scale-[0.98] transition-transform first:pt-1.5"
+            data-ripple="true"
+            className="group relative overflow-hidden flex items-center justify-between py-2.5 px-2.5 -mx-2.5 rounded-xl transition-colors hover:bg-muted/50 first:pt-1.5"
           >
             <div className="flex items-center gap-3">
               <div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground border border-border/50 transition-colors group-hover:border-border">

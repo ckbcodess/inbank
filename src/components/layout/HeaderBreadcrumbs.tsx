@@ -68,6 +68,67 @@ export default function HeaderBreadcrumbs() {
 
   const rail = searchParams.get("rail") ?? "";
 
+  // Dedicated handling for Groups routes under Beneficiaries: Beneficiaries > Create group / Beneficiaries > Edit group
+  const isBeneficiariesGroups =
+    (segments[0]?.toLowerCase() === "beneficiaries" && segments[1]?.toLowerCase() === "groups") ||
+    segments[0]?.toLowerCase() === "groups";
+
+  if (isBeneficiariesGroups) {
+    const isCreate = segments.includes("new");
+    const isEdit = segments.includes("edit");
+
+    const groupCrumbs: Crumb[] = [
+      {
+        label: "Beneficiaries",
+        href: "/beneficiaries?tab=groups",
+        isLast: !isCreate && !isEdit,
+      },
+    ];
+
+    if (isCreate) {
+      groupCrumbs.push({
+        label: "Create group",
+        href: "/beneficiaries/groups/new",
+        isLast: true,
+      });
+    } else if (isEdit) {
+      groupCrumbs.push({
+        label: "Edit group",
+        href: pathname,
+        isLast: true,
+      });
+    }
+
+    return (
+      <nav aria-label="Breadcrumbs" className="flex items-center gap-1.5 text-[13px] leading-none">
+        {groupCrumbs.map((crumb, idx) => (
+          <div key={crumb.label} className="flex items-center gap-1.5">
+            {idx > 0 && (
+              <ChevronRight
+                size={13}
+                strokeWidth={1.7}
+                className="text-muted-foreground/40 shrink-0"
+                aria-hidden="true"
+              />
+            )}
+            {crumb.isLast ? (
+              <span className="font-medium text-foreground truncate max-w-[200px] sm:max-w-[320px]">
+                {crumb.label}
+              </span>
+            ) : (
+              <Link
+                href={crumb.href}
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {crumb.label}
+              </Link>
+            )}
+          </div>
+        ))}
+      </nav>
+    );
+  }
+
   const crumbs: Crumb[] = [];
   let currentPath = "";
 

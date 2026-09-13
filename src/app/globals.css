@@ -148,6 +148,8 @@
   --primary-gradient-to: #f59e0b;
   /* Uniform interaction tokens — derived from --primary so they follow the brand color */
   --hover: oklch(0 0 0 / 4%);
+  --ripple-color: currentColor;
+  --ripple-opacity: 0.04;
   /* ── Single source for button/trigger/menu hover intensity ──
      --hover-overlay : neutral hover/highlight strength (ghost, outline, select,
                        dropdown items, toggles, triggers).
@@ -245,6 +247,8 @@
   --primary-gradient-to: #d97706;
   /* Uniform interaction tokens — derived from --primary so they follow the brand color */
   --hover: oklch(1 0 0 / 5%);
+  --ripple-color: currentColor;
+  --ripple-opacity: 0.06;
   /* Dark-mode hover intensity */
   --hover-overlay: 8%;
   --hover-fill: 85%;
@@ -327,13 +331,42 @@
 
 /* Uniform interactive hover — apply to any clickable surface */
 .surface-interactive {
-  transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 .surface-interactive:hover {
   background-color: var(--hover);
 }
 .surface-interactive:active {
-  transform: scale(0.98);
+  background-color: var(--hover);
+}
+
+/* Eliminate active scale-down / shrink across all clickable elements */
+[class*="active:scale-"]:active,
+[class*="group-active:scale-"]:active,
+.group:active [class*="group-active:scale-"] {
+  scale: 1 !important;
+  transform: none !important;
+}
+
+/* Android Material Visual Feedback (Ripple & State Layer) */
+button,
+a,
+[role="button"],
+.android-ripple,
+[data-ripple="true"],
+.cursor-pointer {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.android-ripple-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  overflow: hidden;
+  z-index: 10;
 }
 
 /* Unified neutral hover/open state — intensity from --hover-overlay (per mode).
