@@ -62,8 +62,8 @@ export default function TopHeader({
       </div>
 
       <div className="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
-        {/* Dev Mode Dropdown Menu — hidden in capture mode so it stays out of Figma captures */}
-        {devState && !captureMode && (
+        {/* Dev Mode Dropdown Menu — hidden in production builds and capture mode */}
+        {process.env.NODE_ENV !== "production" && devState && !captureMode && (
           <DropdownMenu>
             <DropdownMenuTrigger className="h-8 gap-1.5 rounded-lg border border-dashed border-amber-500/50 bg-amber-500/10 px-2.5 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 hover:text-amber-800 dark:hover:text-amber-200 text-[12px] font-medium transition-colors flex items-center outline-none cursor-pointer whitespace-nowrap shrink-0">
               <Layers size={13} strokeWidth={2} className="shrink-0" />
