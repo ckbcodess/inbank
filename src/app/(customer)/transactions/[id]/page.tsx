@@ -1,19 +1,16 @@
 "use client";
 
 /**
- * Transaction Details — styled like the Review / Receipt screen matching Figma & mobile specs.
+ * Transaction Details — distilled minimal view.
  *
  * Implements:
- * - Review-style navigation header with Back button next to the title (no clipping, no bottom sheet handles).
- * - Receipt card layout with GCB brand logo and elevated status checkmark (unclipped, relative overflow-visible).
- * - Structured key-value rows separated by dashed dividers:
- *   • Block 1: Transaction ID, Date, Time, Status.
- *   • Block 2: Recipient Name, Narration, From Account, Category.
- *   • Block 3: Send Amount, Receive Amount, Exchange Rate, Fee, Total.
- * - Scalloped perforated ticket receipt bottom edge (self-contained overflow).
- * - Circular action buttons: Share and Repeat (with Download PDF receipt option).
- * - Failure state bands (13.2 recovery affordances: failed-single, failed-bulk, failed-trade, reversed).
- * - StateSwitcher tool at bottom for testing all 8 states.
+ * - Unified PageHeader with back navigation, clear transaction title, metadata subtitle,
+ *   standard TransactionStatusBadge, and top action controls (Share, Receipt, Repeat).
+ * - Distilled single-surface financial card with clear amount hierarchy, tabular figures,
+ *   and inline foreign exchange conversion.
+ * - Clean structured definition list for transaction attributes without cards-inside-cards nesting.
+ * - Preserved Section 13.2 state recovery affordances and interactive StateSwitcher simulator.
+ * - Strict Zero-Bold Rule and semantic design token compliance.
  */
 
 import { use, useState, useMemo } from "react";
@@ -24,21 +21,21 @@ import {
   ArrowDownToLine,
   ArrowRight,
   Check,
-  ChevronLeft,
   Clock,
   Copy,
   FileWarning,
   History,
-  Info,
   Layers,
   RefreshCw,
   RotateCcw,
   Share,
   ShieldQuestion,
 } from "lucide-react";
+import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import { GCBLogo } from "@/components/ui/GCBLogo";
+import { TransactionStatusBadge } from "@/components/StatusBadge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { TRANSACTION_STATE_LABEL, type TransactionState } from "@/lib/states";
 import {
@@ -62,7 +59,7 @@ const ALL_STATES: readonly TransactionState[] = [
   "awaiting-approval",
 ] as const;
 
-function getTransactionTitle(t: Transaction): string {
+function getTransactionMethodLabel(t: Transaction): string {
   if (t.paymentMethod === "papss") return "PAPSS Transfer";
   if (t.paymentMethod === "airtime") return "Airtime Purchase";
   if (t.paymentMethod === "data") return "Data Bundle Purchase";
@@ -93,7 +90,7 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
   if (!txn) {
     return (
       <div className="mx-auto flex max-w-[480px] flex-col items-center justify-center gap-4 py-16 text-center">
-        <h1 className="text-[20px] font-semibold text-foreground">Transaction not found</h1>
+        <h1 className="text-[20px] text-foreground">Transaction not found</h1>
         <p className="text-[14px] text-muted-foreground">
           The transaction record you requested could not be located.
         </p>
@@ -104,7 +101,7 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
     );
   }
 
-  const title = getTransactionTitle(txn);
+  const methodLabel = getTransactionMethodLabel(txn);
 
   // Formatted date and time
   const dateObj = new Date(txn.date);
@@ -117,17 +114,6 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
   const feeAmount = txn.fee ?? 0;
   const isForeign = txn.currency !== "GHS";
   const exchangeRate = isForeign ? 10.0 : 1;
-  const sendAmountFormatted = `${txn.currency} ${txn.amount.toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
-  const receiveAmountFormatted = isForeign
-    ? `GHS ${(txn.amount * exchangeRate).toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}`
-    : sendAmountFormatted;
-
   const isCredit = txn.direction === "credit";
   const totalDebit = isForeign
     ? txn.amount * exchangeRate + feeAmount
@@ -147,7 +133,7 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
-          title: `${title} - ${txn.reference}`,
+          title: `${methodLabel} - ${txn.reference}`,
           text: `GCB Transaction ${txn.reference} for ${formatMoney(txn.amount, txn.currency)} to ${txn.counterparty || txn.description}.`,
         });
         return;
@@ -162,7 +148,11 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
   };
 
   const handleRepeat = () => {
-    router.push(`/payments/send?duplicate=${txn.id}&amount=${txn.amount}&payee=${encodeURIComponent(txn.counterparty || txn.description)}`);
+    router.push(
+      `/payments/send?duplicate=${txn.id}&amount=${txn.amount}&payee=${encodeURIComponent(
+        txn.counterparty || txn.description
+      )}`
+    );
   };
 
   const handleDownload = () => {
@@ -172,73 +162,76 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-10 animate-in fade-in duration-200">
-      {/* Top Header Navigation matching standard details view */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3 min-w-0">
-          <Link
-            href="/transactions"
-            className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-            aria-label="Back to transactions"
-          >
-            <ChevronLeft size={22} strokeWidth={1.8} />
-          </Link>
-          <div className="min-w-0">
-            <h1 className="text-[20px] sm:text-[22px] font-medium leading-tight tracking-[-0.02em] text-foreground truncate">
-              Transaction Details
-            </h1>
-            <p className="text-[12.5px] text-muted-foreground truncate">
-              {txn.reference} · {formattedDate}
-            </p>
+    <div className="w-full flex flex-col gap-8">
+      {/* Page Header with Back, Title, Status, and Action Controls */}
+      <PageHeader
+        title={txn.counterparty || txn.description}
+        description={`${formattedDate} · ${formattedTime} · ${methodLabel}`}
+        badge={<TransactionStatusBadge state={state} />}
+        actions={
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleShare}
+              className="rounded-lg h-8 px-3 text-[13px] border-border/80"
+            >
+              {copied ? (
+                <Check size={14} className="text-emerald-600 dark:text-emerald-400" />
+              ) : (
+                <Share size={14} strokeWidth={1.8} />
+              )}
+              Share
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownload}
+              className="rounded-lg h-8 px-3 text-[13px] border-border/80"
+            >
+              <ArrowDownToLine size={14} strokeWidth={1.8} />
+              Receipt
+            </Button>
+            {!isCredit && (
+              <Button
+                size="sm"
+                onClick={handleRepeat}
+                className="rounded-lg h-8 px-3 text-[13px]"
+              >
+                <RefreshCw size={14} strokeWidth={1.8} />
+                Repeat
+              </Button>
+            )}
           </div>
-        </div>
-
-        {/* Status Pill in Header */}
-        <div className="shrink-0">
-          <span
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-medium border",
-              state === "completed" && "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20",
-              state === "pending" && "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20",
-              (state.startsWith("failed") || state === "reversed" || state === "disputed") &&
-                "bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20",
-              state === "awaiting-approval" && "bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20"
-            )}
-          >
-            {state === "completed" && <Check size={12} strokeWidth={2.5} />}
-            {state === "pending" && <Clock size={12} strokeWidth={2.5} />}
-            {(state.startsWith("failed") || state === "reversed" || state === "disputed") && (
-              <AlertCircle size={12} strokeWidth={2.5} />
-            )}
-            {state === "awaiting-approval" && <Clock size={12} strokeWidth={2.5} />}
-            <span>{TRANSACTION_STATE_LABEL[state]}</span>
-          </span>
-        </div>
-      </div>
+        }
+        backTo={{ href: "/transactions", label: "Transactions" }}
+      />
 
       {/* Share Toast feedback */}
       {shareToast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full bg-foreground text-background px-4 py-2 text-[13px] font-normal shadow-lg animate-in fade-in slide-in-from-top-2">
-          Transaction reference copied to clipboard!
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full bg-foreground text-background px-4 py-2 text-[13px] shadow-lg animate-in fade-in slide-in-from-top-2">
+          Transaction reference copied to clipboard
         </div>
       )}
 
-      {/* ── Main Premium Receipt Card ── */}
-      <div className="relative flex flex-col rounded-2xl border border-border bg-card shadow-xs overflow-hidden">
-        {/* Card Hero Header */}
-        <div className="flex flex-col items-center justify-center p-6 sm:p-7 border-b border-border/70 bg-muted/20 text-center">
-          <div className="flex items-center justify-center size-12 rounded-2xl bg-card border border-border/70 shadow-xs mb-3.5">
+      {/* Centered Receipt Container */}
+      <div className="mx-auto w-full max-w-3xl flex flex-col gap-8">
+        {/* Primary Financial Card */}
+        <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
+        {/* Amount & FX Summary */}
+        <div className="flex flex-col items-center justify-center text-center pb-6 border-b border-border">
+          <div className="flex items-center justify-center size-12 rounded-2xl bg-card border border-border/80 shadow-xs mb-3.5">
             <GCBLogo className="h-6 w-auto" />
           </div>
 
-          <span className="text-[13px] text-muted-foreground font-normal">
-            {title}
+          <span className="text-[12px] text-muted-foreground uppercase tracking-wider">
+            {isCredit ? "Amount Credited" : "Amount Debited"}
           </span>
 
-          <div className="mt-1 flex items-baseline justify-center gap-1.5">
+          <div className="mt-1 flex items-baseline justify-center gap-3 flex-wrap">
             <span
               className={cn(
-                "text-[32px] sm:text-[36px] font-medium tracking-[-0.03em] tabular",
+                "text-[34px] sm:text-[40px] tracking-[-0.03em] tabular-nums numorainput",
                 isCredit ? "text-emerald-600 dark:text-emerald-400" : "text-foreground"
               )}
             >
@@ -247,197 +240,118 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
             </span>
           </div>
 
-          <p className="mt-1 text-[13px] text-muted-foreground max-w-sm truncate">
-            {txn.counterparty || txn.description}
-          </p>
-        </div>
-
-        {/* ── Structured Details Sections ── */}
-        <div className="p-5 sm:p-6 flex flex-col gap-6">
-          {/* Section 1: Transaction Information */}
-          <div className="flex flex-col gap-2.5">
-            <span className="text-[11.5px] uppercase tracking-wider text-muted-foreground font-medium">
-              Transaction Details
-            </span>
-
-            <div className="rounded-xl border border-border/70 bg-background/50 divide-y divide-border/60 text-[13.5px]">
-              <div className="flex items-center justify-between px-3.5 py-2.5">
-                <span className="text-muted-foreground">Reference</span>
-                <div className="flex items-center gap-1.5">
-                  <span className="font-medium text-foreground tabular">
-                    {txn.reference}
-                  </span>
-                  <SimpleTooltip content={copied ? "Copied!" : "Copy reference"}>
-                    <button
-                      type="button"
-                      onClick={handleCopyReference}
-                      className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted active:scale-[0.96] cursor-pointer"
-                      aria-label="Copy reference"
-                    >
-                      {copied ? (
-                        <Check size={13} className="text-emerald-600 dark:text-emerald-400" />
-                      ) : (
-                        <Copy size={13} />
-                      )}
-                    </button>
-                  </SimpleTooltip>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between px-3.5 py-2.5">
-                <span className="text-muted-foreground">Date & Time</span>
-                <span className="font-medium text-foreground tabular">
-                  {formattedDate} · {formattedTime}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between px-3.5 py-2.5">
-                <span className="text-muted-foreground">Payment Channel</span>
-                <span className="font-medium text-foreground">
-                  {txn.channel || "Internet Banking"}
-                </span>
-              </div>
-
-              {txn.category && (
-                <div className="flex items-center justify-between px-3.5 py-2.5">
-                  <span className="text-muted-foreground">Category</span>
-                  <span className="font-medium text-foreground">{txn.category}</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Section 2: Parties Involved */}
-          <div className="flex flex-col gap-2.5">
-            <span className="text-[11.5px] uppercase tracking-wider text-muted-foreground font-medium">
-              Transfer Information
-            </span>
-
-            <div className="rounded-xl border border-border/70 bg-background/50 divide-y divide-border/60 text-[13.5px]">
-              <div className="flex items-start justify-between gap-4 px-3.5 py-2.5">
-                <span className="text-muted-foreground shrink-0">Recipient</span>
-                <span className="font-medium text-foreground text-right">
-                  {txn.counterparty || txn.description}
-                </span>
-              </div>
-
-              {txn.counterpartyAccount && (
-                <div className="flex items-center justify-between px-3.5 py-2.5">
-                  <span className="text-muted-foreground">Recipient Account</span>
-                  <span className="font-medium text-foreground tabular">
-                    {txn.counterpartyAccount}
-                  </span>
-                </div>
-              )}
-
-              {fromAccount && (
-                <div className="flex items-start justify-between gap-4 px-3.5 py-2.5">
-                  <span className="text-muted-foreground shrink-0">From Account</span>
-                  <span className="font-medium text-foreground text-right">
-                    {fromAccount.name} <span className="tabular text-muted-foreground">(•••{fromAccount.number.replace(/\s+/g, "").slice(-4)})</span>
-                  </span>
-                </div>
-              )}
-
-              <div className="flex items-start justify-between gap-4 px-3.5 py-2.5">
-                <span className="text-muted-foreground shrink-0">Narration</span>
-                <span className="font-medium text-foreground text-right max-w-[280px]">
-                  {txn.description}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Section 3: Financial Breakdown */}
-          <div className="flex flex-col gap-2.5">
-            <span className="text-[11.5px] uppercase tracking-wider text-muted-foreground font-medium">
-              Amount Breakdown
-            </span>
-
-            <div className="rounded-xl border border-border/70 bg-background/50 divide-y divide-border/60 text-[13.5px]">
-              <div className="flex items-center justify-between px-3.5 py-2.5">
-                <span className="text-muted-foreground">Transfer Amount</span>
-                <span className="font-medium text-foreground tabular">
-                  {sendAmountFormatted}
-                </span>
-              </div>
-
-              {isForeign && (
-                <>
-                  <div className="flex items-center justify-between px-3.5 py-2.5">
-                    <span className="text-muted-foreground">Receive Amount</span>
-                    <span className="font-medium text-foreground tabular">
-                      {receiveAmountFormatted}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between px-3.5 py-2.5">
-                    <span className="text-muted-foreground">Exchange Rate</span>
-                    <span className="font-medium text-foreground tabular">
-                      1 {txn.currency} = {exchangeRate.toFixed(2)} GHS
-                    </span>
-                  </div>
-                </>
-              )}
-
-              <div className="flex items-center justify-between px-3.5 py-2.5">
-                <span className="text-muted-foreground">Processing Fee</span>
-                <span className="font-medium text-foreground tabular">
-                  {feeAmount > 0 ? formatMoney(feeAmount, "GHS", true) : "GHS 0.00"}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between px-3.5 py-3 bg-muted/40 dark:bg-muted/20">
-                <span className="text-[13.5px] font-medium text-foreground">
-                  {isCredit ? "Total Credit" : "Total Debit"}
-                </span>
-                <span className="text-[17px] font-semibold text-foreground tracking-[-0.02em] tabular">
-                  {formatMoney(totalDebit, "GHS", true)}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Card Actions matching Figma Action Bar pattern */}
-        <div className="flex items-center justify-between gap-3 p-4 sm:p-5 border-t border-border/70 bg-muted/20">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleShare}
-              className="h-9 gap-1.5 px-3 text-[13px] font-medium rounded-lg"
-            >
-              <Share size={14} strokeWidth={1.9} />
-              Share
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleDownload}
-              className="h-9 gap-1.5 px-3 text-[13px] font-medium rounded-lg"
-            >
-              <ArrowDownToLine size={14} strokeWidth={1.9} />
-              Download Receipt
-            </Button>
-          </div>
-
-          {!isCredit && (
-            <Button
-              size="sm"
-              onClick={handleRepeat}
-              className="h-9 gap-1.5 px-4 text-[13px] font-medium rounded-lg bg-primary text-primary-foreground shadow-xs active:scale-[0.96]"
-            >
-              <RefreshCw size={14} strokeWidth={1.9} />
-              Repeat Payment
-            </Button>
+          {isForeign && (
+            <p className="mt-1 text-[13.5px] text-muted-foreground tabular-nums numorainput">
+              ≈ {formatMoney(txn.amount * exchangeRate, "GHS", true)} (1 {txn.currency} = {exchangeRate.toFixed(2)} GHS)
+            </p>
           )}
         </div>
+
+        {/* Unified Transaction Details Grid */}
+        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 pt-6">
+          <div>
+            <dt className="text-[12px] text-muted-foreground">Reference</dt>
+            <dd className="mt-1 flex items-center gap-2 text-[14px] text-foreground tabular-nums numorainput">
+              <span>{txn.reference}</span>
+              <SimpleTooltip content={copied ? "Copied" : "Copy reference"}>
+                <button
+                  type="button"
+                  onClick={handleCopyReference}
+                  className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted cursor-pointer"
+                  aria-label="Copy reference"
+                >
+                  {copied ? (
+                    <Check size={13} className="text-emerald-600 dark:text-emerald-400" />
+                  ) : (
+                    <Copy size={13} strokeWidth={1.8} />
+                  )}
+                </button>
+              </SimpleTooltip>
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-[12px] text-muted-foreground">Date & Time</dt>
+            <dd className="mt-1 text-[14px] text-foreground tabular-nums numorainput">
+              {formattedDate} · {formattedTime}
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-[12px] text-muted-foreground">From Account</dt>
+            <dd className="mt-1 text-[14px] text-foreground">
+              {fromAccount ? (
+                <>
+                  {fromAccount.name}{" "}
+                  <span className="text-muted-foreground tabular-nums numorainput">
+                    (•••{fromAccount.number.replace(/\s+/g, "").slice(-4)})
+                  </span>
+                </>
+              ) : (
+                "Operating Account"
+              )}
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-[12px] text-muted-foreground">Recipient</dt>
+            <dd className="mt-1 text-[14px] text-foreground">
+              {txn.counterparty || txn.description}
+            </dd>
+          </div>
+
+          {txn.counterpartyAccount && (
+            <div>
+              <dt className="text-[12px] text-muted-foreground">Recipient Account</dt>
+              <dd className="mt-1 text-[14px] text-foreground tabular-nums numorainput">
+                {txn.counterpartyAccount}
+              </dd>
+            </div>
+          )}
+
+          <div>
+            <dt className="text-[12px] text-muted-foreground">Payment Channel</dt>
+            <dd className="mt-1 text-[14px] text-foreground">
+              {txn.channel || "Internet Banking"}
+            </dd>
+          </div>
+
+          {txn.category && (
+            <div>
+              <dt className="text-[12px] text-muted-foreground">Category</dt>
+              <dd className="mt-1 text-[14px] text-foreground">{txn.category}</dd>
+            </div>
+          )}
+
+          <div>
+            <dt className="text-[12px] text-muted-foreground">Narration</dt>
+            <dd className="mt-1 text-[14px] text-foreground">
+              {txn.description}
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-[12px] text-muted-foreground">Processing Fee</dt>
+            <dd className="mt-1 text-[14px] text-foreground tabular-nums numorainput">
+              {feeAmount > 0 ? formatMoney(feeAmount, "GHS", true) : "GHS 0.00"}
+            </dd>
+          </div>
+
+          <div>
+            <dt className="text-[12px] text-muted-foreground">
+              {isCredit ? "Total Credited" : "Total Debited"}
+            </dt>
+            <dd className="mt-1 text-[15px] text-foreground tabular-nums numorainput">
+              {formatMoney(totalDebit, "GHS", true)}
+            </dd>
+          </div>
+        </dl>
       </div>
 
-      {/* ── State-specific Recovery Affordances (Preserving 13.2 Business Rules) ── */}
+      {/* State-specific Recovery Affordances (Section 13.2) */}
       <StateBand state={state} txn={txn} />
 
-      {/* ── State Switcher Testing Strip ── */}
+      {/* State Simulator Strip for testing Section 13.2 */}
       <div className="pt-2 border-t border-border/40">
         <p className="text-[11px] text-muted-foreground uppercase tracking-wider text-center mb-2">
           State Simulator (Section 13.2)
@@ -451,7 +365,8 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
         />
       </div>
     </div>
-  );
+  </div>
+);
 }
 
 /**
@@ -470,7 +385,7 @@ function StateBand({
         <Band tone="warning" icon={<Clock size={17} strokeWidth={1.8} aria-hidden="true" />} title="Processing">
           <p>
             This payment has been submitted and is being processed. Funds are expected to settle by{" "}
-            <span className="font-semibold text-foreground">{formatDate(txn.valueDate)}, end of day</span>.
+            <span className="text-foreground tabular-nums numorainput">{formatDate(txn.valueDate)}, end of day</span>.
           </p>
         </Band>
       );
@@ -490,7 +405,7 @@ function StateBand({
           </p>
           <div className="mt-3">
             <Button size="sm" nativeButton={false} render={<Link href={`/payments/send?duplicate=${txn.id}`} />}>
-              <Copy size={14} strokeWidth={1.9} className="mr-1.5" />
+              <Copy size={14} strokeWidth={1.8} className="mr-1.5" />
               Duplicate &amp; Edit
             </Button>
           </div>
@@ -511,7 +426,7 @@ function StateBand({
               nativeButton={false}
               render={<Link href={`/payments/bulk/${txn.batchId ?? "batch-0090"}`} />}
             >
-              <ArrowRight size={14} strokeWidth={1.9} className="mr-1.5" />
+              <ArrowRight size={14} strokeWidth={1.8} className="mr-1.5" />
               Open batch correction
             </Button>
           </div>
@@ -522,9 +437,9 @@ function StateBand({
       return (
         <Band tone="warning" icon={<FileWarning size={17} strokeWidth={1.8} aria-hidden="true" />} title="Returned by bank operations">
           <p>{txn.failureReason ?? "This trade request was returned for correction."}</p>
-          <div className="mt-3 rounded-xl border border-border bg-background">
+          <div className="mt-3 rounded-xl border border-border bg-card">
             <p className="flex items-center gap-1.5 border-b border-border px-3 py-2 text-[12px] uppercase tracking-wider text-muted-foreground">
-              <History size={13} strokeWidth={1.9} />
+              <History size={13} strokeWidth={1.8} />
               Version history
             </p>
             <ul className="divide-y divide-border">
@@ -538,7 +453,7 @@ function StateBand({
           </div>
           <div className="mt-3 flex gap-2">
             <Button size="sm" nativeButton={false} render={<Link href={`/trade/${txn.tradeId ?? "trade-0417"}`} />}>
-              <RotateCcw size={14} className="mr-1.5" />
+              <RotateCcw size={14} strokeWidth={1.8} className="mr-1.5" />
               Resubmit as v{TRADE_VERSIONS.length + 1}
             </Button>
           </div>
@@ -550,7 +465,7 @@ function StateBand({
         <Band tone="neutral" icon={<RotateCcw size={17} strokeWidth={1.8} aria-hidden="true" />} title="Reversed">
           <p>
             This transaction completed and was later reversed with reference{" "}
-            <span className="font-semibold text-foreground tabular-nums numorainput">{txn.reversalReference ?? "—"}</span>.
+            <span className="text-foreground tabular-nums numorainput">{txn.reversalReference ?? "—"}</span>.
           </p>
         </Band>
       );
@@ -600,7 +515,7 @@ function Band({
       <div className="flex items-start gap-3">
         <span className="mt-0.5 shrink-0">{icon}</span>
         <div className="min-w-0 flex-1">
-          <p className="font-medium text-[14px]">{title}</p>
+          <p className="text-[14px]">{title}</p>
           <div className="mt-1 text-foreground/90">{children}</div>
         </div>
       </div>

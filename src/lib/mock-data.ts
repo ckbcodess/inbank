@@ -1620,7 +1620,9 @@ export interface Biller {
 
 export const BILLERS: Biller[] = [
   // Bills & Utilities
-  { id: "bil-001", name: "ECG — Electricity", category: "Bills & Utilities", reference: "Meter number" },
+  { id: "bil-001", name: "ECG Prepaid", category: "Bills & Utilities", reference: "Meter number" },
+  { id: "bil-001b", name: "ECG Postpaid", category: "Bills & Utilities", reference: "Account number" },
+  { id: "bil-001c", name: "ECG — Electricity", category: "Bills & Utilities", reference: "Meter number" },
   { id: "bil-002", name: "Ghana Water (GWCL)", category: "Bills & Utilities", reference: "Account number" },
   { id: "bil-002b", name: "NEDCo Power Ghana", category: "Bills & Utilities", reference: "Meter number" },
 

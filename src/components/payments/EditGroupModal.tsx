@@ -285,36 +285,31 @@ export default function EditGroupModal({
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
-          className="sm:max-w-[560px] w-[95vw] p-0 overflow-hidden rounded-2xl border border-border bg-card text-foreground shadow-2xl flex flex-col max-h-[92vh] gap-0"
+          className="sm:max-w-[500px] w-[95vw] p-0 overflow-hidden rounded-2xl border-none bg-card text-foreground shadow-2xl flex flex-col max-h-[90vh] gap-0"
           showCloseButton={false}
         >
-          {/* Header matching Figma */}
-          <div className="flex items-center justify-between px-6 pt-6 pb-2 shrink-0">
-            <div>
-              <DialogTitle className="text-[19px] sm:text-[20px] font-medium text-foreground tracking-[-0.01em]">
-                Edit Group
-              </DialogTitle>
-              <p className="text-[12.5px] text-muted-foreground mt-0.5">
-                Manage group settings and members for {group.name}
-              </p>
-            </div>
+          {/* Header matching Add Beneficiary & Create Group Modal */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border/60 shrink-0">
+            <DialogTitle className="text-[17px] font-medium text-foreground tracking-[-0.01em] truncate max-w-[380px]">
+              Edit {group.name}
+            </DialogTitle>
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="size-8 rounded-full bg-muted text-muted-foreground hover:text-foreground hover:bg-muted/80 flex items-center justify-center transition-colors cursor-pointer"
+              className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
               aria-label="Close"
             >
-              <X size={16} strokeWidth={2} />
+              <X size={15} strokeWidth={1.8} />
             </button>
           </div>
 
           {/* Modal Scrollable Body */}
-          <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4 flex flex-col gap-4 overscroll-contain custom-scrollbar">
+          <div className="flex-1 min-h-0 overflow-y-auto px-6 py-5 flex flex-col gap-4 overscroll-contain custom-scrollbar">
             {/* Row 1: Group Name & Description Side-by-Side */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               {/* Group Name */}
-              <div className="flex flex-col gap-2">
-                <label className="text-[13.5px] font-medium text-foreground">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[12.5px] font-medium text-muted-foreground">
                   Group Name
                 </label>
                 <input
@@ -326,7 +321,7 @@ export default function EditGroupModal({
                   }}
                   placeholder="e.g. Family Susu"
                   className={cn(
-                    "h-12 w-full rounded-xl border border-border/80 bg-muted/40 dark:bg-white/[0.07] dark:border-white/[0.12] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all",
+                    "h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all",
                     errors.name && "border-destructive focus:border-destructive focus:ring-destructive/30"
                   )}
                 />
@@ -336,34 +331,34 @@ export default function EditGroupModal({
               </div>
 
               {/* Description */}
-              <div className="flex flex-col gap-2">
-                <label className="text-[13.5px] font-medium text-foreground">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[12.5px] font-medium text-muted-foreground">
                   Description
                 </label>
                 <input
                   type="text"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="e.g. Monthly contributions"
-                  className="h-12 w-full rounded-xl border border-border/80 bg-muted/40 dark:bg-white/[0.07] dark:border-white/[0.12] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                  placeholder="Optional description"
+                  className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                 />
               </div>
             </div>
 
             {/* Row 2: Amount per person & Equal/Custom split toggle */}
-            <div className="flex flex-col gap-2">
-              <label className="text-[13.5px] font-medium text-foreground">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[12.5px] font-medium text-muted-foreground">
                 Amount per person
               </label>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5">
                 {/* Amount Input with GHS prefix */}
                 <div
                   className={cn(
-                    "flex-1 h-12 rounded-xl border border-border/80 bg-muted/40 dark:bg-white/[0.07] dark:border-white/[0.12] px-3.5 flex items-center gap-1.5 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 transition-all",
+                    "flex-1 h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 flex items-center gap-1.5 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 transition-all",
                     errors.amount && "border-destructive focus-within:border-destructive focus-within:ring-destructive/30"
                   )}
                 >
-                  <span className="text-[14px] font-medium text-muted-foreground select-none">
+                  <span className="text-[13.5px] font-medium text-muted-foreground select-none">
                     GHS
                   </span>
                   <input
@@ -381,7 +376,7 @@ export default function EditGroupModal({
                 </div>
 
                 {/* Segmented Pill Toggle: Equal / Custom */}
-                <div className="flex items-center rounded-xl bg-muted/50 dark:bg-white/[0.05] p-1 border border-border/60 dark:border-white/[0.1] gap-1 shrink-0 h-12">
+                <div className="flex items-center rounded-xl bg-muted/50 dark:bg-white/[0.05] p-1 border border-border/60 dark:border-white/[0.1] gap-1 shrink-0 h-11">
                   <button
                     type="button"
                     onClick={() => setSplitType("equal")}
@@ -415,18 +410,13 @@ export default function EditGroupModal({
 
             {/* Row 3: Members header with count and "+ Add member" action */}
             <div className="flex items-center justify-between pt-1">
-              <div className="flex items-center gap-2">
-                <span className="text-[14px] font-medium text-foreground">
-                  Group Members
-                </span>
-                <span className="rounded-full bg-muted/70 px-2.5 py-0.5 text-[11.5px] font-semibold tabular text-muted-foreground">
-                  {members.length}
-                </span>
-              </div>
+              <span className="text-[13px] font-medium text-foreground">
+                Group Members ({members.length})
+              </span>
               <button
                 type="button"
                 onClick={() => setShowAddMember((prev) => !prev)}
-                className="text-[13px] font-medium text-foreground hover:text-foreground/80 cursor-pointer flex items-center gap-1.5 transition-colors hover:underline"
+                className="text-[12.5px] font-medium text-primary hover:text-primary/80 cursor-pointer flex items-center gap-1 transition-colors hover:underline"
               >
                 {showAddMember ? (
                   <>
@@ -481,15 +471,25 @@ export default function EditGroupModal({
                     <div className="relative w-full">
                       <Search
                         size={14}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
                       />
                       <input
                         type="text"
                         value={savedSearch}
                         onChange={(e) => setSavedSearch(e.target.value)}
                         placeholder="Search saved contacts to add..."
-                        className="w-full h-8.5 pl-8 pr-3 rounded-lg border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] text-[12.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring"
+                        className="w-full h-9 pl-8 pr-7 rounded-lg border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] text-[12.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring"
                       />
+                      {savedSearch && (
+                        <button
+                          type="button"
+                          onClick={() => setSavedSearch("")}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
+                          aria-label="Clear search"
+                        >
+                          <X size={13} />
+                        </button>
+                      )}
                     </div>
 
                     <div className="max-h-[160px] overflow-y-auto divide-y divide-border/60 dark:divide-white/[0.06] rounded-lg border border-border/70 dark:border-white/[0.12] bg-muted/30 dark:bg-white/[0.04]">
@@ -544,7 +544,7 @@ export default function EditGroupModal({
                           placeholder="e.g. Kofi Mensah"
                           value={customName}
                           onChange={(e) => setCustomName(e.target.value)}
-                          className="h-8.5 rounded-md border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-2.5 text-[12.5px] text-foreground outline-none focus:border-ring"
+                          className="h-9 rounded-lg border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-2.5 text-[12.5px] text-foreground outline-none focus:border-ring"
                         />
                       </div>
                       <div className="flex flex-col gap-1">
@@ -556,7 +556,7 @@ export default function EditGroupModal({
                           placeholder="0244 000 000"
                           value={customDest}
                           onChange={(e) => setCustomDest(e.target.value)}
-                          className="h-8.5 rounded-md border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-2.5 text-[12.5px] text-foreground tabular outline-none focus:border-ring"
+                          className="h-9 rounded-lg border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-2.5 text-[12.5px] text-foreground tabular outline-none focus:border-ring"
                         />
                       </div>
                     </div>
@@ -566,7 +566,7 @@ export default function EditGroupModal({
                         <label className="text-[11px] text-muted-foreground font-medium">
                           Type
                         </label>
-                        <div className="flex items-center rounded-md bg-muted/40 dark:bg-white/[0.07] border border-border/80 dark:border-white/[0.12] p-0.5 h-8.5">
+                        <div className="flex items-center rounded-lg bg-muted/40 dark:bg-white/[0.07] border border-border/80 dark:border-white/[0.12] p-0.5 h-9">
                           <button
                             type="button"
                             onClick={() => {
@@ -574,7 +574,7 @@ export default function EditGroupModal({
                               setCustomBankOrNet("MTN Mobile Money");
                             }}
                             className={cn(
-                              "flex-1 h-7 rounded text-[11.5px] font-medium transition-all cursor-pointer",
+                              "flex-1 h-7.5 rounded-md text-[11.5px] font-medium transition-all cursor-pointer",
                               customType === "wallet"
                                 ? "bg-card dark:bg-white/[0.14] text-foreground font-semibold shadow-xs"
                                 : "text-muted-foreground"
@@ -589,7 +589,7 @@ export default function EditGroupModal({
                               setCustomBankOrNet("GCB Bank");
                             }}
                             className={cn(
-                              "flex-1 h-7 rounded text-[11.5px] font-medium transition-all cursor-pointer",
+                              "flex-1 h-7.5 rounded-md text-[11.5px] font-medium transition-all cursor-pointer",
                               customType === "bank"
                                 ? "bg-card dark:bg-white/[0.14] text-foreground font-semibold shadow-xs"
                                 : "text-muted-foreground"
@@ -607,7 +607,7 @@ export default function EditGroupModal({
                         <select
                           value={customBankOrNet}
                           onChange={(e) => setCustomBankOrNet(e.target.value)}
-                          className="h-8.5 rounded-md border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-2 text-[12px] text-foreground outline-none focus:border-ring"
+                          className="h-9 rounded-lg border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-2 text-[12px] text-foreground outline-none focus:border-ring"
                         >
                           {customType === "wallet"
                             ? WALLET_NETWORKS.map((w) => (
@@ -644,15 +644,25 @@ export default function EditGroupModal({
               <div className="relative w-full">
                 <Search
                   size={15}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
                 />
                 <input
                   type="text"
                   value={searchMember}
                   onChange={(e) => setSearchMember(e.target.value)}
                   placeholder="Search members in this group..."
-                  className="h-10 w-full pl-9 pr-3.5 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                  className="h-11 w-full pl-9.5 pr-8 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] text-[13.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                 />
+                {searchMember && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchMember("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
+                    aria-label="Clear search"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
               </div>
             )}
 
@@ -726,46 +736,52 @@ export default function EditGroupModal({
               <p className="text-[11.5px] text-destructive text-center">{errors.members}</p>
             )}
 
-            {/* Row 6: Centered Total matching Figma */}
-            <div className="text-center py-3 select-none">
-              <span className="text-[15px] font-normal text-muted-foreground">
-                Total:{" "}
+            {/* Row 6: Summary Row */}
+            <div className="flex items-center justify-between pt-2 border-t border-border/50 dark:border-white/[0.06] select-none">
+              <span className="text-[13px] font-medium text-muted-foreground">
+                Total ({members.length} {members.length === 1 ? "member" : "members"}):
               </span>
-              <span className="text-[20px] sm:text-[22px] font-semibold text-foreground tracking-[-0.01em] tabular-nums ml-1">
+              <span className="text-[17px] font-semibold text-foreground tracking-[-0.01em] tabular-nums">
                 GHS {totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
           </div>
 
-          {/* Row 7: Modal Footer Actions */}
-          <div className="px-6 py-4 border-t border-border/60 bg-muted/20 flex items-center justify-between gap-2.5 shrink-0">
+          {/* Row 7: Modal Footer Actions matching Add Beneficiary & Create Group Modal */}
+          <div className="px-6 py-3.5 border-t border-border/60 bg-muted/20 flex items-center justify-between gap-2.5 shrink-0">
             {/* Left: Delete Group Button */}
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => setShowDeleteGroupConfirm(true)}
-              className="h-9 px-3.5 rounded-lg border border-destructive/30 bg-destructive/10 dark:bg-destructive/15 text-destructive hover:bg-destructive/20 flex items-center gap-1.5 text-[13px] font-medium transition-colors cursor-pointer"
+              className="h-9 px-3 text-[13px] text-destructive hover:bg-destructive/10 hover:text-destructive gap-1.5"
             >
-              <Trash2 size={14} className="text-destructive" strokeWidth={1.8} />
+              <Trash2 size={14} strokeWidth={1.8} />
               <span>Delete Group</span>
-            </button>
+            </Button>
 
             {/* Right: Cancel & Save Changes */}
             <div className="flex items-center gap-2">
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => onOpenChange(false)}
-                className="h-9 px-4 rounded-lg border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] text-foreground hover:bg-muted/70 dark:hover:bg-white/[0.12] text-[13px] font-medium transition-colors cursor-pointer"
+                className="h-9 px-3.5 text-[13px]"
               >
                 Cancel
-              </button>
+              </Button>
 
-              <button
+              <Button
                 type="button"
+                size="sm"
                 onClick={handleSaveChanges}
-                className="h-9 px-5 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-[13px] transition-all shadow-xs active:scale-[0.98] cursor-pointer"
+                disabled={!name.trim() || members.length === 0}
+                className="h-9 px-4 text-[13px] font-medium"
               >
                 Save Changes
-              </button>
+              </Button>
             </div>
           </div>
         </DialogContent>
@@ -773,26 +789,26 @@ export default function EditGroupModal({
 
       {/* ── MODAL 1: Confirm Remove Member Dialog ─────────────────────── */}
       <Dialog open={!!memberToDelete} onOpenChange={(open) => !open && setMemberToDelete(null)}>
-        <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border border-border bg-card text-foreground shadow-2xl flex flex-col gap-0">
-          <div className="flex items-center justify-between px-6 pt-5 pb-3">
+        <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border-none bg-card text-foreground shadow-2xl flex flex-col gap-0" showCloseButton={false}>
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
             <div className="flex items-center gap-2.5">
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-                <AlertTriangle size={16} strokeWidth={2} />
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+                <AlertTriangle size={15} strokeWidth={2} />
               </span>
-              <DialogTitle className="text-[17px] font-semibold text-foreground tracking-[-0.01em]">
+              <DialogTitle className="text-[16px] font-medium text-foreground tracking-[-0.01em]">
                 Remove Member
               </DialogTitle>
             </div>
             <button
               type="button"
               onClick={() => setMemberToDelete(null)}
-              className="size-7 rounded-full bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors cursor-pointer"
+              className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
-              <X size={14} />
+              <X size={15} strokeWidth={1.8} />
             </button>
           </div>
 
-          <div className="px-6 py-4 text-[13.5px] text-muted-foreground leading-relaxed">
+          <div className="px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
             Are you sure you want to remove <span className="font-semibold text-foreground">{memberToDelete?.name}</span> from <span className="font-semibold text-foreground">{name || group.name}</span>? They will no longer receive disbursements when you send to this group.
           </div>
 
@@ -801,7 +817,7 @@ export default function EditGroupModal({
               variant="ghost"
               size="sm"
               onClick={() => setMemberToDelete(null)}
-              className="h-9 px-4 text-[13px]"
+              className="h-9 px-3.5 text-[13px]"
             >
               Cancel
             </Button>
@@ -819,26 +835,26 @@ export default function EditGroupModal({
 
       {/* ── MODAL 2: Confirm Delete Group Dialog ──────────────────────── */}
       <Dialog open={showDeleteGroupConfirm} onOpenChange={setShowDeleteGroupConfirm}>
-        <DialogContent className="sm:max-w-[440px] p-0 overflow-hidden rounded-2xl border border-border bg-card text-foreground shadow-2xl flex flex-col gap-0">
-          <div className="flex items-center justify-between px-6 pt-5 pb-3">
+        <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border-none bg-card text-foreground shadow-2xl flex flex-col gap-0" showCloseButton={false}>
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
             <div className="flex items-center gap-2.5">
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-                <Trash2 size={16} strokeWidth={2} />
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+                <Trash2 size={15} strokeWidth={2} />
               </span>
-              <DialogTitle className="text-[17px] font-semibold text-foreground tracking-[-0.01em]">
+              <DialogTitle className="text-[16px] font-medium text-foreground tracking-[-0.01em]">
                 Delete Payment Group
               </DialogTitle>
             </div>
             <button
               type="button"
               onClick={() => setShowDeleteGroupConfirm(false)}
-              className="size-7 rounded-full bg-muted text-muted-foreground hover:text-foreground flex items-center justify-center transition-colors cursor-pointer"
+              className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
-              <X size={14} />
+              <X size={15} strokeWidth={1.8} />
             </button>
           </div>
 
-          <div className="px-6 py-4 text-[13.5px] text-muted-foreground leading-relaxed">
+          <div className="px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
             Are you sure you want to delete <span className="font-semibold text-foreground">{group.name}</span>? This action cannot be undone. All member contact details will remain safely saved in your individual beneficiaries directory.
           </div>
 
@@ -847,7 +863,7 @@ export default function EditGroupModal({
               variant="ghost"
               size="sm"
               onClick={() => setShowDeleteGroupConfirm(false)}
-              className="h-9 px-4 text-[13px]"
+              className="h-9 px-3.5 text-[13px]"
             >
               Cancel
             </Button>

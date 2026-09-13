@@ -423,9 +423,11 @@
   -webkit-mask-image: none !important;
 }
 
-/* Scrollbar styling — thin, subtle, reserves gutter space */
+/* Scrollbar styling — thin, subtle, reserves gutter space to prevent layout shift */
 .custom-scrollbar {
   scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0 0 0 / 12%) transparent;
 }
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
@@ -440,6 +442,9 @@
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: oklch(0 0 0 / 20%);
+}
+.dark .custom-scrollbar {
+  scrollbar-color: oklch(1 0 0 / 12%) transparent;
 }
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: oklch(1 0 0 / 12%);

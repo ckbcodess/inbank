@@ -6,7 +6,8 @@ import {
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Landmark, Smartphone, X, Check, Trash2, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Landmark, Smartphone, X, Check, Trash2, Plus, Search } from "lucide-react";
 import { useGroupsStore, type PaymentGroup, type GroupMember } from "@/lib/groups-store";
 import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
 import { cn } from "@/lib/utils";
@@ -18,6 +19,19 @@ interface CreateGroupModalProps {
   groupToEdit?: PaymentGroup | null;
   onSuccess?: (group: PaymentGroup) => void;
   onDeleted?: (groupId: string) => void;
+}
+
+function getInitials(name: string) {
+  return (
+    name
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((w) => w[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "#"
+  );
 }
 
 export default function CreateGroupModal({
@@ -235,31 +249,31 @@ export default function CreateGroupModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[560px] w-[95vw] p-0 overflow-hidden rounded-2xl border border-border bg-card text-foreground shadow-2xl flex flex-col max-h-[92vh] gap-0"
+        className="sm:max-w-[500px] w-[95vw] p-0 overflow-hidden rounded-2xl border-none bg-card text-foreground shadow-2xl flex flex-col max-h-[90vh] gap-0"
         showCloseButton={false}
       >
-        {/* Header matching Figma */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-2 shrink-0">
-          <DialogTitle className="text-[19px] sm:text-[20px] font-medium text-foreground tracking-[-0.01em]">
-            Create Group
+        {/* Header matching Add Beneficiary Modal */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border/60 shrink-0">
+          <DialogTitle className="text-[17px] font-medium text-foreground tracking-[-0.01em] truncate max-w-[380px]">
+            {groupToEdit ? `Edit ${groupToEdit.name}` : "Create Group"}
           </DialogTitle>
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="size-8 rounded-full bg-muted text-muted-foreground hover:text-foreground hover:bg-muted/80 flex items-center justify-center transition-colors cursor-pointer"
+            className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
             aria-label="Close"
           >
-            <X size={16} strokeWidth={2} />
+            <X size={15} strokeWidth={1.8} />
           </button>
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4 flex flex-col gap-4 overscroll-contain custom-scrollbar">
+        <div className="flex-1 min-h-0 overflow-y-auto px-6 py-5 flex flex-col gap-4 overscroll-contain custom-scrollbar">
           {/* Row 1: Group Name & Description Side-by-Side */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {/* Group Name */}
-            <div className="flex flex-col gap-2">
-              <label className="text-[13.5px] font-medium text-foreground">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[12.5px] font-medium text-muted-foreground">
                 Group Name
               </label>
               <input
@@ -269,9 +283,9 @@ export default function CreateGroupModal({
                   setName(e.target.value);
                   if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
                 }}
-                placeholder="Name e.g. Family Susu"
+                placeholder="e.g. Family Susu"
                 className={cn(
-                  "h-12 w-full rounded-xl border border-border/80 bg-muted/40 dark:bg-white/[0.07] dark:border-white/[0.12] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all",
+                  "h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all",
                   errors.name && "border-destructive focus:border-destructive focus:ring-destructive/30"
                 )}
               />
@@ -281,34 +295,34 @@ export default function CreateGroupModal({
             </div>
 
             {/* Description */}
-            <div className="flex flex-col gap-2">
-              <label className="text-[13.5px] font-medium text-foreground">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[12.5px] font-medium text-muted-foreground">
                 Description
               </label>
               <input
                 type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Name e.g. Family Susu"
-                className="h-12 w-full rounded-xl border border-border/80 bg-muted/40 dark:bg-white/[0.07] dark:border-white/[0.12] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                placeholder="Optional description"
+                className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
               />
             </div>
           </div>
 
           {/* Row 2: Amount per person & Equal/Custom split toggle */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[13.5px] font-medium text-foreground">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[12.5px] font-medium text-muted-foreground">
               Amount per person
             </label>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
               {/* Amount Input with GHS prefix */}
               <div
                 className={cn(
-                  "flex-1 h-12 rounded-xl border border-border/80 bg-muted/40 dark:bg-white/[0.07] dark:border-white/[0.12] px-3.5 flex items-center gap-1.5 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 transition-all",
+                  "flex-1 h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 flex items-center gap-1.5 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 transition-all",
                   errors.amount && "border-destructive focus-within:border-destructive focus-within:ring-destructive/30"
                 )}
               >
-                <span className="text-[14px] font-medium text-muted-foreground select-none">
+                <span className="text-[13.5px] font-medium text-muted-foreground select-none">
                   GHS
                 </span>
                 <input
@@ -326,12 +340,12 @@ export default function CreateGroupModal({
               </div>
 
               {/* Segmented Pill Toggle: Equal / Custom */}
-              <div className="flex items-center rounded-xl bg-muted/50 dark:bg-white/[0.05] p-1 border border-border/60 dark:border-white/[0.1] gap-1 shrink-0 h-12">
+              <div className="flex items-center rounded-xl bg-muted/40 dark:bg-white/[0.05] p-1 border border-border/80 dark:border-white/[0.12] gap-1 shrink-0 h-11">
                 <button
                   type="button"
                   onClick={() => setSplitType("equal")}
                   className={cn(
-                    "px-3.5 py-1.5 rounded-lg text-[13px] font-medium transition-all cursor-pointer",
+                    "px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-all cursor-pointer",
                     splitType === "equal"
                       ? "bg-card dark:bg-white/[0.14] text-foreground shadow-xs font-semibold"
                       : "text-muted-foreground hover:text-foreground"
@@ -343,7 +357,7 @@ export default function CreateGroupModal({
                   type="button"
                   onClick={() => setSplitType("custom")}
                   className={cn(
-                    "px-3.5 py-1.5 rounded-lg text-[13px] font-medium transition-all cursor-pointer",
+                    "px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-all cursor-pointer",
                     splitType === "custom"
                       ? "bg-card dark:bg-white/[0.14] text-foreground shadow-xs font-semibold"
                       : "text-muted-foreground hover:text-foreground"
@@ -360,13 +374,13 @@ export default function CreateGroupModal({
 
           {/* Row 3: Members count & + New beneficiary header */}
           <div className="flex items-center justify-between pt-1">
-            <span className="text-[14px] font-medium text-foreground">
-              Members {selectedMembers.length}
+            <span className="text-[13px] font-medium text-foreground">
+              Members ({selectedMembers.length})
             </span>
             <button
               type="button"
               onClick={() => setShowNewBeneficiary((prev) => !prev)}
-              className="text-[13px] font-medium text-foreground hover:text-foreground/80 cursor-pointer flex items-center gap-1 transition-colors hover:underline"
+              className="text-[12.5px] font-medium text-primary hover:text-primary/80 cursor-pointer flex items-center gap-1 transition-colors hover:underline"
             >
               <Plus size={14} strokeWidth={2} />
               <span>New beneficiary</span>
@@ -375,26 +389,26 @@ export default function CreateGroupModal({
 
           {/* Inline Add Beneficiary Form (expands if toggled) */}
           {showNewBeneficiary && (
-            <div className="p-3.5 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/30 dark:bg-white/[0.04] flex flex-col gap-3 animate-in fade-in duration-150">
-              <span className="text-[12.5px] font-medium text-foreground">Add New Beneficiary to Group</span>
+            <div className="p-3.5 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/30 dark:bg-white/[0.04] flex flex-col gap-2.5 animate-in fade-in duration-150">
+              <span className="text-[12px] font-medium text-muted-foreground">Add New Beneficiary to Group</span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <input
                   type="text"
                   placeholder="Full Name"
                   value={newBenName}
                   onChange={(e) => setNewBenName(e.target.value)}
-                  className="h-10 rounded-lg border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring/30"
+                  className="h-10 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring/30"
                 />
                 <input
                   type="text"
                   placeholder={newBenType === "wallet" ? "Mobile Number" : "Account Number"}
                   value={newBenDest}
                   onChange={(e) => setNewBenDest(e.target.value)}
-                  className="h-10 rounded-lg border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 tabular-nums"
+                  className="h-10 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 tabular-nums"
                 />
               </div>
 
-              <div className="flex items-center justify-between gap-2 pt-1">
+              <div className="flex items-center justify-between gap-2 pt-0.5">
                 <div className="flex items-center rounded-lg bg-muted/50 dark:bg-white/[0.05] border border-border/80 dark:border-white/[0.1] p-0.5 text-[12px]">
                   <button
                     type="button"
@@ -418,31 +432,90 @@ export default function CreateGroupModal({
                   </button>
                 </div>
 
-                <button
+                <Button
                   type="button"
+                  size="sm"
                   onClick={handleAddNewBeneficiary}
                   disabled={!newBenName.trim() || !newBenDest.trim()}
-                  className="h-8 px-3.5 rounded-lg bg-primary hover:bg-primary/90 disabled:opacity-40 text-primary-foreground text-[12px] font-medium transition-colors cursor-pointer shadow-xs"
+                  className="h-8 px-3 text-[12px] font-medium"
                 >
                   Add to list
-                </button>
+                </Button>
               </div>
             </div>
           )}
 
           {/* Row 4: Search input matching Figma */}
           <div className="relative w-full">
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search beneficiaries..."
-              className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+              className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] pl-9.5 pr-8 text-[13.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
+                aria-label="Clear search"
+              >
+                <X size={14} />
+              </button>
+            )}
           </div>
 
+          {/* Dynamic Selected Members Horizontal Row / Chips (/fintech-ux) */}
+          {selectedMembers.length > 0 && (
+            <div className="flex flex-col gap-1.5 pt-0.5 animate-in fade-in slide-in-from-top-1 duration-200">
+              <div className="flex items-center justify-between text-[11.5px] font-medium text-muted-foreground px-0.5">
+                <span className="flex items-center gap-1.5">
+                  <span className="size-1.5 rounded-full bg-primary" />
+                  <span>Selected recipients ({selectedMembers.length})</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedMembers([])}
+                  className="text-[11px] text-muted-foreground hover:text-destructive hover:underline cursor-pointer transition-colors"
+                >
+                  Clear all
+                </button>
+              </div>
+
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scrollbar scroll-smooth">
+                {selectedMembers.map((m) => (
+                  <div
+                    key={m.id || m.destination}
+                    className="group inline-flex items-center gap-1.5 pl-1.5 pr-2 py-1 rounded-full border border-border/80 dark:border-white/[0.12] bg-muted/60 dark:bg-white/[0.07] hover:border-primary/40 transition-all shrink-0 select-none"
+                  >
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/15 dark:bg-primary/25 text-primary text-[10.5px] font-semibold">
+                      {getInitials(m.name)}
+                    </span>
+                    <span className="text-[12px] font-medium text-foreground max-w-[110px] truncate leading-none">
+                      {m.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleMemberSelection(m);
+                      }}
+                      className="flex size-4.5 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted dark:hover:bg-white/10 transition-colors cursor-pointer"
+                      title={`Remove ${m.name}`}
+                      aria-label={`Remove ${m.name}`}
+                    >
+                      <X size={11} strokeWidth={2.2} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Row 5: Beneficiary List matching Figma */}
-          <div className="flex flex-col divide-y divide-border/60 dark:divide-white/[0.06] max-h-[260px] overflow-y-auto custom-scrollbar pr-1">
+          <div className="flex flex-col divide-y divide-border/60 dark:divide-white/[0.06] max-h-[230px] overflow-y-auto custom-scrollbar pr-1">
             {filteredBeneficiaries.map((contact) => {
               const isSelected = selectedMembers.some((m) =>
                 m.id && contact.id ? m.id === contact.id : m.destination === contact.destination
@@ -525,36 +598,38 @@ export default function CreateGroupModal({
             <p className="text-[11.5px] text-destructive text-center">{errors.members}</p>
           )}
 
-          {/* Row 6: Centered Total matching Figma */}
-          <div className="text-center py-3 select-none">
-            <span className="text-[15px] font-normal text-muted-foreground">
-              Total:{" "}
+          {/* Row 6: Summary Row */}
+          <div className="flex items-center justify-between pt-2 border-t border-border/50 dark:border-white/[0.06] select-none">
+            <span className="text-[13px] font-medium text-muted-foreground">
+              Total ({selectedMembers.length} {selectedMembers.length === 1 ? "member" : "members"}):
             </span>
-            <span className="text-[20px] sm:text-[22px] font-semibold text-foreground tracking-[-0.01em] tabular-nums ml-1">
+            <span className="text-[17px] font-semibold text-foreground tracking-[-0.01em] tabular-nums">
               GHS {totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
         </div>
 
-        {/* Row 7: Modal Footer Actions matching Figma */}
-        <div className="px-6 py-4 border-t border-border/60 bg-muted/20 flex items-center justify-end gap-2.5 shrink-0">
-          {/* Cancel Button */}
-          <button
+        {/* Modal Footer Actions matching Add Beneficiary Modal */}
+        <div className="px-6 py-3.5 border-t border-border/60 bg-muted/20 flex items-center justify-end gap-2 shrink-0">
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => onOpenChange(false)}
-            className="h-9 px-4 rounded-lg border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] text-foreground hover:bg-muted/70 dark:hover:bg-white/[0.12] text-[13px] font-medium transition-colors cursor-pointer"
+            className="h-9 px-3.5 text-[13px]"
           >
             Cancel
-          </button>
+          </Button>
 
-          {/* Create Group Button (Golden Amber / Brand Primary) */}
-          <button
+          <Button
             type="button"
+            size="sm"
             onClick={handleSaveGroup}
-            className="h-9 px-5 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-[13px] transition-all shadow-xs active:scale-[0.98] cursor-pointer"
+            disabled={!name.trim()}
+            className="h-9 px-4 text-[13px] font-medium"
           >
-            Create Group
-          </button>
+            {groupToEdit ? "Save Changes" : "Create Group"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
