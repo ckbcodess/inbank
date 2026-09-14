@@ -239,8 +239,8 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
                         <span className="truncate text-[13.5px] font-medium text-foreground">
                           {c.name}
                         </span>
-                        <span className="text-[11.5px] text-muted-foreground font-mono tabular mt-0.5">
-                          {c.scheme} {c.type} · {c.maskedNumber}
+                        <span className="text-[11.5px] text-muted-foreground tabular mt-0.5">
+                          {c.scheme} · {c.maskedNumber} · Exp {c.expiry}
                         </span>
                       </div>
                     </div>

@@ -45,6 +45,7 @@ import {
   accountsForProfile,
   addCard,
   cardsForProfile,
+  findAccount,
   formatMoney,
   type CardStatus,
   type PaymentCard,
@@ -269,16 +270,21 @@ export default function CardsPage() {
                         )}
                       </div>
                       <span className="mt-0.5 text-[12px] text-muted-foreground tabular">
-                        {card.scheme} {card.type} · {card.maskedNumber}
+                        {card.scheme} · {card.maskedNumber} · Exp {card.expiry}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-3 shrink-0">
                       <span className="text-[13.5px] text-foreground tabular font-medium">
-                        {(card.type === "Prepaid" || card.type === "Virtual") && card.balance !== null ? (
+                        {card.balance !== null ? (
                           <RevealingAmount amount={card.balance} currency={card.currency} />
                         ) : (
-                          "Debit Card"
+                          (() => {
+                            const linked = availableAccounts.find((a) => a.id === card.linkedAccountId) ?? findAccount(card.linkedAccountId);
+                            return linked ? (
+                              <RevealingAmount amount={linked.balance} currency={linked.currency} />
+                            ) : null;
+                          })()
                         )}
                       </span>
                       <ChevronRight size={16} strokeWidth={1.8} className="text-muted-foreground" />

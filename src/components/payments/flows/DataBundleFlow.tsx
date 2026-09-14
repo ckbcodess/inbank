@@ -224,28 +224,29 @@ export function DataBundleFlow({
                 }
               }}
             >
-              <SelectTrigger className={cn(
-                "h-auto min-h-[60px] w-full rounded-2xl border bg-card px-4 py-2.5 text-left shadow-none transition-colors",
-                overBalance
-                  ? "border-destructive/70 focus:border-destructive focus:ring-1 focus:ring-destructive/30"
-                  : "border-border/80"
-              )}>
+              <SelectTrigger
+                className={cn(
+                  "h-13 min-h-[52px] w-full rounded-2xl border bg-card px-4 text-left shadow-none transition-colors",
+                  overBalance
+                    ? "border-destructive/70 focus:border-destructive focus:ring-1 focus:ring-destructive/30"
+                    : "border-border/80"
+                )}
+              >
                 {!selectedBundle ? (
                   <span className="text-[15px] text-muted-foreground font-normal">
                     Select data bundle
                   </span>
                 ) : (
-                  <div className="flex items-center justify-between w-full">
-                    <div className="flex flex-col">
-                      <span className="text-[15px] font-medium text-foreground">
-                        {selectedBundle.name}
-                      </span>
-                      <span className="text-[13px] text-muted-foreground">{selectedBundle.val}</span>
-                    </div>
-                    <span className={cn(
-                      "text-[15px] font-medium tabular",
-                      overBalance ? "text-destructive" : "text-foreground"
-                    )}>
+                  <div className="flex items-center justify-between w-full min-w-0 pr-1.5">
+                    <span className="text-[15px] font-normal text-foreground truncate">
+                      {selectedBundle.name}
+                    </span>
+                    <span
+                      className={cn(
+                        "text-[15px] font-normal tabular shrink-0 ml-3",
+                        overBalance ? "text-destructive" : "text-foreground"
+                      )}
+                    >
                       {formatMoney(selectedBundle.price, "GHS", true)}
                     </span>
                   </div>
@@ -254,7 +255,12 @@ export function DataBundleFlow({
               <SelectContent>
                 {bundles.map((b) => (
                   <SelectItem key={b.id} value={b.id}>
-                    {b.name} ({b.val}) · {formatMoney(b.price, "GHS", true)}
+                    <div className="flex items-center justify-between w-full gap-4">
+                      <span>{b.name}</span>
+                      <span className="tabular text-muted-foreground font-normal">
+                        {formatMoney(b.price, "GHS", true)}
+                      </span>
+                    </div>
                   </SelectItem>
                 ))}
               </SelectContent>

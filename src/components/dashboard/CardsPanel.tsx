@@ -18,7 +18,7 @@ import { ChevronRight, Lock, Plus, Unlock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
-import { formatMoney, setCardStatus, type PaymentCard } from "@/lib/mock-data";
+import { findAccount, formatMoney, setCardStatus, type PaymentCard } from "@/lib/mock-data";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 
 export function CardsPanel({
@@ -71,13 +71,16 @@ export function CardsPanel({
                       )}
                     </span>
                     <span className="mt-0.5 text-[11.5px] text-muted-foreground tabular">
-                      {card.scheme} {card.type} · {card.maskedNumber}
+                      {card.scheme} · {card.maskedNumber} · Exp {card.expiry}
                     </span>
                   </Link>
                   <span className="shrink-0 text-right text-[13px] text-foreground tabular">
                     {card.balance !== null
                       ? formatMoney(card.balance, card.currency, showAmounts)
-                      : "Debit"}
+                      : (() => {
+                          const linked = findAccount(card.linkedAccountId);
+                          return linked ? formatMoney(linked.balance, linked.currency, showAmounts) : "—";
+                        })()}
                   </span>
                   <ChevronRight
                     size={15}

@@ -92,7 +92,7 @@ export function CardTopUpFlow({
         {selectedCard && isCollapsed ? (
           <CollapsedDetailsBadge
             title={selectedCard.name}
-            subtitle={`${selectedCard.scheme} ${selectedCard.type} (${selectedCard.maskedNumber}) · Current: ${formatMoney(selectedCard.balance ?? 0, selectedCard.currency, true)}`}
+            subtitle={`${selectedCard.scheme} (${selectedCard.maskedNumber}) · Current: ${formatMoney(selectedCard.balance ?? 0, selectedCard.currency, true)}`}
             onChange={() => setCollapsed(false)}
           />
         ) : (
@@ -125,7 +125,7 @@ export function CardTopUpFlow({
                         {selectedCard.name}
                       </span>
                       <span className="text-[13px] text-muted-foreground font-normal truncate leading-tight">
-                        {selectedCard.scheme} {selectedCard.type} ? {selectedCard.maskedNumber}
+                        {selectedCard.scheme} · {selectedCard.maskedNumber}
                       </span>
                     </div>
                   </div>

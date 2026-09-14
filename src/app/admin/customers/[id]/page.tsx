@@ -92,7 +92,7 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
                 <div className="flex flex-col min-w-0">
                   <span className="truncate text-[13px] font-medium text-foreground">{c.name}</span>
                   <span className="mt-0.5 text-[11.5px] text-muted-foreground tabular">
-                    {c.scheme} {c.type} · {c.maskedNumber} · {c.holder}
+                    {c.scheme} · {c.maskedNumber} · {c.holder}
                   </span>
                 </div>
               </div>
