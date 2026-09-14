@@ -4,24 +4,26 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
+  AlertTriangle,
+  ArrowDownLeft,
+  ArrowUpRight,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Copy,
+  CreditCard,
   Eye,
   EyeOff,
-  Grid,
-  Snowflake,
-  SlidersHorizontal,
-  Settings2,
-  Key,
-  Sparkles,
-  CreditCard,
-  ChevronRight,
-  ChevronLeft,
-  Copy,
-  PlusCircle,
   Globe,
-  AlertTriangle,
-  Clock,
+  Grid,
+  Key,
   Landmark,
+  PlusCircle,
+  Settings2,
   ShieldCheck,
+  SlidersHorizontal,
+  Snowflake,
+  Sparkles,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -32,6 +34,7 @@ import { useSession } from "@/lib/session-store";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import TransactionPinModal from "@/components/payments/TransactionPinModal";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export interface VirtualCardDetailsViewProps {
   card: PaymentCard;
@@ -543,56 +546,110 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
           </div>
 
           {/* Activity List Container */}
-          <div className="rounded-[15.75px] border border-[#ebebe9] dark:border-border bg-card overflow-hidden divide-y divide-[#ebebe9] dark:divide-border w-full">
+          <div className="rounded-[15.75px] border border-border/80 bg-card overflow-hidden divide-y divide-border/40 w-full">
             {[
               {
-                title: "Transfer to Savings",
-                ref: "NIB-2026-901126 · 08 Aug 2026",
-                amount: 2000,
-                sign: "+",
+                id: "c-act-1",
+                title: currentCard.type === "Virtual" ? "AWS Cloud Infrastructure" : "Shell Airport Station",
+                category: currentCard.type === "Virtual" ? "Cloud Services" : "Transport",
+                date: "14 Aug 2026",
+                amount: currentCard.type === "Virtual" ? 142.5 : 450.0,
+                direction: "debit",
+                status: "completed",
               },
               {
-                title: "Transfer to Savings",
-                ref: "NIB-2026-901126 · 08 Aug 2026",
-                amount: 2000,
-                sign: "+",
+                id: "c-act-2",
+                title: currentCard.type === "Virtual" ? "Google Workspace EMEA" : "Melcom Supermarket",
+                category: currentCard.type === "Virtual" ? "Software & SaaS" : "Groceries",
+                date: "11 Aug 2026",
+                amount: currentCard.type === "Virtual" ? 36.0 : 620.0,
+                direction: "debit",
+                status: "completed",
               },
               {
-                title: "Transfer to Savings",
-                ref: "NIB-2026-901126 · 08 Aug 2026",
-                amount: 2000,
-                sign: "+",
+                id: "c-act-3",
+                title: "Card Balance Top Up",
+                category: "Between Accounts",
+                date: "08 Aug 2026",
+                amount: 2000.0,
+                direction: "credit",
+                status: "completed",
               },
               {
-                title: "Transfer to Savings",
-                ref: "NIB-2026-901126 · 08 Aug 2026",
-                amount: 2000,
-                sign: "+",
+                id: "c-act-4",
+                title: currentCard.type === "Virtual" ? "GitHub Enterprise Subscription" : "TotalEnergies Fuel",
+                category: currentCard.type === "Virtual" ? "Developer Tools" : "Transport",
+                date: "02 Aug 2026",
+                amount: currentCard.type === "Virtual" ? 84.0 : 380.0,
+                direction: "debit",
+                status: "completed",
               },
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors"
-              >
-                <div className="flex flex-col">
-                  <p className="text-[14px] font-normal leading-[20px] tracking-[-0.07px] text-[#121212] dark:text-foreground">
-                    {item.title}
-                  </p>
-                  <p className="text-[12px] font-normal leading-[20px] text-[#747472] dark:text-muted-foreground mt-0.5">
-                    {item.ref}
-                  </p>
+            ].map((item) => {
+              const isCredit = item.direction === "credit";
+              const isFailed = item.status === "failed";
+              const isPending = item.status === "pending";
+
+              return (
+                <div
+                  key={item.id}
+                  className="flex items-center gap-3.5 px-4 py-3 hover:bg-muted/30 transition-colors"
+                >
+                  {/* Direction Anchor Icon */}
+                  <div
+                    className={cn(
+                      "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
+                      isCredit
+                        ? "bg-emerald-500/10 text-[#12B76A] dark:text-emerald-400"
+                        : "bg-muted text-muted-foreground"
+                    )}
+                  >
+                    {isCredit ? (
+                      <ArrowDownLeft className="size-4 stroke-[1.8]" />
+                    ) : (
+                      <ArrowUpRight className="size-4 stroke-[1.8]" />
+                    )}
+                  </div>
+
+                  {/* Counterparty & Metadata */}
+                  <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                    <span className="font-normal text-foreground text-[14px] leading-tight truncate">
+                      {item.title}
+                    </span>
+                    <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground truncate">
+                      <span>{item.date}</span>
+                      <span>·</span>
+                      <span className="truncate">{item.category}</span>
+                    </div>
+                  </div>
+
+                  {/* Amount & State / Card Ending */}
+                  <div className="shrink-0 flex flex-col items-end gap-0.5">
+                    <span
+                      className={cn(
+                        "tabular text-[14px] font-normal",
+                        isCredit ? "text-[#12B76A] dark:text-emerald-400" : "text-foreground"
+                      )}
+                    >
+                      {isCredit ? "+ " : "− "}
+                      <RevealingAmount amount={item.amount} currency={currentCard.currency || "GHS"} />
+                    </span>
+                    {isFailed ? (
+                      <span className="text-[11.5px] text-[#F04438] dark:text-rose-400 font-normal">
+                        Failed
+                      </span>
+                    ) : isPending ? (
+                      <span className="text-[11.5px] text-[#F79009] dark:text-amber-400 font-normal">
+                        Pending
+                      </span>
+                    ) : (
+                      <span className="text-[11.5px] text-muted-foreground">
+                        {currentCard.maskedNumber || "•••• 9102"}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-7 shrink-0">
-                  <span className="text-[14px] font-normal text-[#121212] dark:text-foreground tabular tracking-[-0.07px]">
-                    {item.sign}GH₵{" "}
-                    <RevealingAmount amount={item.amount} currency="" />
-                  </span>
-                  <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-[12px] font-medium">
-                    Completed
-                  </span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

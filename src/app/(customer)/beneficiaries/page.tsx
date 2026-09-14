@@ -816,7 +816,7 @@ export default function BeneficiariesPage() {
 
       {/* 3 Major Segmented Tabs: People, Billers, Groups (Figma Node 1374:35963) */}
       <div className="flex items-center justify-between">
-        <div className="flex w-full sm:w-fit items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-muted p-1">
+        <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-muted p-1">
           <button
             type="button"
             onClick={() => {

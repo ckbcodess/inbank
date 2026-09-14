@@ -20,6 +20,7 @@ import {
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import type { Transaction } from "@/lib/mock-data";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface RecentActivityWidgetProps {
   transactions?: Transaction[];
@@ -200,7 +201,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
           </div>
 
           <Link
-            href="/accounts"
+            href="/transactions"
             className="inline-flex items-center gap-1 text-[12.5px] font-medium text-muted-foreground hover:text-foreground transition-colors active:scale-[0.96] transition-transform"
           >
             <span>View all</span>
@@ -209,46 +210,70 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
         </div>
 
         {/* Transactions List */}
-        <div className="my-auto flex flex-col divide-y divide-border/50 py-1">
+        <div className="my-auto flex flex-col divide-y divide-border/40 py-1">
           {items.map((item) => {
             const isDebit = item.direction === "debit";
-            const CategoryIcon = getCategoryIcon(item.category);
+            const isCredit = !isDebit;
+            const isFailed = item.status.toLowerCase() === "failed";
+            const isPending = item.status.toLowerCase() === "pending";
+
             return (
               <div
                 key={item.id}
                 data-ripple="true"
                 onClick={() => setSelectedTx(item)}
-                className="group relative overflow-hidden flex items-center justify-between py-2.5 px-2.5 -mx-2.5 rounded-xl cursor-pointer hover:bg-muted/40 transition-colors first:pt-1.5 last:pb-1.5"
+                className="group relative overflow-hidden flex items-center gap-3.5 py-3 px-2 -mx-2 rounded-xl cursor-pointer hover:bg-muted/40 transition-colors"
               >
-                {/* Left: Icon Tile + Details */}
-                <div className="flex items-center gap-3.5 min-w-0 pr-3">
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground border border-border/50 transition-colors group-hover:border-border">
-                    <CategoryIcon size={16} strokeWidth={1.8} />
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="truncate text-[13.5px] font-medium text-foreground">
-                      {item.title}
-                    </span>
-                    <span className="truncate text-[11.5px] text-muted-foreground">
-                      {item.subtitle}
-                    </span>
+                {/* Direction Anchor Icon */}
+                <div
+                  className={cn(
+                    "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
+                    isCredit
+                      ? "bg-emerald-500/10 text-[#12B76A] dark:text-emerald-400"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  {isCredit ? (
+                    <ArrowDownLeft className="size-4 stroke-[1.8]" />
+                  ) : (
+                    <ArrowUpRight className="size-4 stroke-[1.8]" />
+                  )}
+                </div>
+
+                {/* Counterparty & Metadata */}
+                <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                  <span className="font-normal text-foreground text-[14px] leading-tight truncate">
+                    {item.title}
+                  </span>
+                  <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground truncate">
+                    <span>{item.subtitle}</span>
                   </div>
                 </div>
 
-                {/* Right: Amount & Status Badge */}
-                <div className="flex shrink-0 items-center gap-2.5">
+                {/* Amount & State / Account Number */}
+                <div className="shrink-0 flex flex-col items-end gap-0.5">
                   <span
-                    className={`text-[13.5px] font-medium tabular ${
-                      isDebit ? "text-foreground" : "text-emerald-600 dark:text-emerald-400"
-                    }`}
+                    className={cn(
+                      "tabular text-[14px] font-normal",
+                      isCredit ? "text-[#12B76A] dark:text-emerald-400" : "text-foreground"
+                    )}
                   >
-                    {isDebit ? "-" : "+"}
+                    {isDebit ? "− " : "+ "}
                     <RevealingAmount amount={item.amount} currency="GHS" />
                   </span>
-
-                  <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400">
-                    {item.status}
-                  </span>
+                  {isFailed ? (
+                    <span className="text-[11.5px] text-[#F04438] dark:text-rose-400 font-normal">
+                      Failed
+                    </span>
+                  ) : isPending ? (
+                    <span className="text-[11.5px] text-[#F79009] dark:text-amber-400 font-normal">
+                      Pending
+                    </span>
+                  ) : (
+                    <span className="text-[11.5px] text-muted-foreground">
+                      {item.account.split(" ").pop()}
+                    </span>
+                  )}
                 </div>
               </div>
             );
@@ -287,8 +312,9 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
               <span className="mt-1 text-[26px] font-medium tabular text-foreground">
                 GHS {selectedTx.amount.toFixed(2)}
               </span>
-              <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-[#49ff8d]">
-                <CheckCircle2 size={12} /> {selectedTx.status}
+              <span className="mt-2 inline-flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                <span className="size-1.5 rounded-full bg-emerald-500/80 shrink-0" />
+                {selectedTx.status}
               </span>
             </div>
 

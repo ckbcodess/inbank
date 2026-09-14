@@ -1367,7 +1367,7 @@ export interface PaymentCard {
 export const CARDS: PaymentCard[] = [
   {
     id: "card-v01",
-    name: "AWS & SaaS Virtual Card",
+    name: "AWS & SaaS",
     maskedNumber: "•••• 9102",
     fullNumber: "4532 8910 4421 9102",
     cvv: "814",
@@ -1387,7 +1387,7 @@ export const CARDS: PaymentCard[] = [
   },
   {
     id: "card-v02",
-    name: "Google Ads Marketing Virtual Card",
+    name: "Google Ads Marketing",
     maskedNumber: "•••• 3194",
     fullNumber: "5412 7719 3320 3194",
     cvv: "492",
@@ -1407,7 +1407,7 @@ export const CARDS: PaymentCard[] = [
   },
   {
     id: "card-001",
-    name: "Corporate Prepaid — Travel",
+    name: "Corporate Travel",
     maskedNumber: "•••• 4412",
     fullNumber: "4532 1100 8820 4412",
     cvv: "219",
@@ -1424,7 +1424,7 @@ export const CARDS: PaymentCard[] = [
   },
   {
     id: "card-002",
-    name: "Corporate Prepaid — Procurement",
+    name: "Corporate Procurement",
     maskedNumber: "•••• 8830",
     fullNumber: "5412 6601 2290 8830",
     cvv: "614",
@@ -1441,7 +1441,7 @@ export const CARDS: PaymentCard[] = [
   },
   {
     id: "card-003",
-    name: "Business Debit",
+    name: "Main Operating",
     maskedNumber: "•••• 1207",
     type: "Debit",
     scheme: "Visa",
@@ -1456,7 +1456,7 @@ export const CARDS: PaymentCard[] = [
   },
   {
     id: "card-004",
-    name: "Payroll Prepaid",
+    name: "Payroll Disbursements",
     maskedNumber: "•••• 6654",
     type: "Prepaid",
     scheme: "Mastercard",
@@ -1471,7 +1471,7 @@ export const CARDS: PaymentCard[] = [
   },
   {
     id: "card-ret-001",
-    name: "Visa Personal Debit",
+    name: "Everyday Checking",
     maskedNumber: "•••• 9102",
     type: "Debit",
     scheme: "Visa",
@@ -1486,7 +1486,7 @@ export const CARDS: PaymentCard[] = [
   },
   {
     id: "card-ret-002",
-    name: "Mastercard Virtual Prepaid",
+    name: "Online Subscriptions",
     maskedNumber: "•••• 5521",
     type: "Prepaid",
     scheme: "Mastercard",
@@ -1501,7 +1501,7 @@ export const CARDS: PaymentCard[] = [
   },
   {
     id: "card-005",
-    name: "Executive Rewards Debit",
+    name: "Executive Operating",
     maskedNumber: "•••• 3719",
     type: "Debit",
     scheme: "Mastercard",

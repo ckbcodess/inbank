@@ -71,7 +71,7 @@ export function CardsPanel({
                       )}
                     </span>
                     <span className="mt-0.5 text-[11.5px] text-muted-foreground tabular">
-                      {card.scheme} · {card.maskedNumber} · Exp {card.expiry}
+                      {card.type} · {card.maskedNumber}
                     </span>
                   </Link>
                   <span className="shrink-0 text-right text-[13px] text-foreground tabular">

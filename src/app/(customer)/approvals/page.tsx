@@ -89,7 +89,7 @@ export default function ApprovalQueuePage() {
 
       <div className="rounded-2xl border border-border bg-card">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
-          <div className="flex w-full sm:w-fit items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-muted p-1">
+          <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-muted p-1">
             {(["all", "payment", "trade"] as const).map((t) => {
               const isActive = typeFilter === t;
               return (

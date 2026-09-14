@@ -12,6 +12,7 @@ import Link from "next/link";
 import {
   AlertCircle,
   ArrowDownLeft,
+  ArrowUpRight,
   Check,
   ChevronDown,
   ChevronLeft,
@@ -25,6 +26,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -82,32 +84,32 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
       : activeProfile?.name || actor?.name || "Primary Account Holder";
 
   return (
-    <div className="w-full flex flex-col gap-10">
+    <div className="w-full flex flex-col gap-6 sm:gap-10">
       {/* Figma 1277:11187 Header: Back + Title + Standing Order + Request Dropdown */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3 min-w-0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 min-w-0">
           <Link
             href="/accounts"
-            className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1"
             title="Back to Accounts"
             aria-label="Back to Accounts"
           >
             <ChevronLeft size={22} strokeWidth={1.8} />
           </Link>
-          <h1 className="text-[24px] sm:text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground truncate">
+          <h1 className="text-[22px] sm:text-[26px] font-medium leading-[30px] sm:leading-[32px] tracking-[-0.02em] text-foreground truncate">
             {account.name}
           </h1>
           {account.isJoint && (
             <span
               title={account.mandate ? `Mandate: ${account.mandate}` : "Joint Account"}
-              className="inline-flex items-center rounded-full bg-[#FEF3D6] px-2.5 py-0.5 text-[11px] font-semibold text-[#B27B00] dark:bg-amber-500/20 dark:text-amber-300 shrink-0"
+              className="inline-flex items-center rounded-full bg-[#FEF3D6] px-2.5 py-0.5 text-[11px] font-medium text-[#B27B00] dark:bg-amber-500/20 dark:text-amber-300 shrink-0"
             >
               Joint
             </span>
           )}
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 sm:gap-2.5 pl-9 sm:pl-0">
           <Button
             variant="outline"
             size="sm"
@@ -240,7 +242,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
                           {c.name}
                         </span>
                         <span className="text-[11.5px] text-muted-foreground tabular mt-0.5">
-                          {c.scheme} · {c.maskedNumber} · Exp {c.expiry}
+                          {c.type} · {c.maskedNumber}
                         </span>
                       </div>
                     </div>
@@ -263,41 +265,79 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
               </Link>
             </div>
 
-            <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/60 shadow-sm">
+            <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/40 shadow-xs">
               {recentTransactions.length === 0 ? (
                 <div className="px-6 py-12 text-center text-[13.5px] text-muted-foreground">
                   No activity on this account yet.
                 </div>
               ) : (
-                recentTransactions.map((t) => (
-                  <Link
-                    key={t.id}
-                    href={`/transactions/${t.id}`}
-                    className="flex items-center justify-between px-5 py-3.5 transition-colors hover:bg-muted/30"
-                  >
-                    <div className="flex flex-col min-w-0 pr-4">
-                      <span className="truncate text-[13.5px] font-normal text-foreground">
-                        {t.description}
-                      </span>
-                      <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">
-                        {t.reference} · {formatDate(t.date)}
-                      </span>
-                    </div>
+                recentTransactions.map((t) => {
+                  const isCredit = t.direction === "credit";
+                  const isFailed = t.state.startsWith("failed") || t.state === "reversed" || t.state === "disputed";
+                  const isPending = t.state === "pending" || t.state === "awaiting-approval";
 
-                    <div className="flex items-center gap-6 shrink-0">
-                      <span className="text-[13.5px] tabular font-normal text-foreground">
-                        {t.direction === "debit" ? "−" : "+"}
-                        <RevealingAmount amount={t.amount} currency={t.currency} />
-                      </span>
+                  return (
+                    <Link
+                      key={t.id}
+                      href={`/transactions/${t.id}`}
+                      className="flex items-center gap-3.5 px-4 py-3 transition-colors hover:bg-muted/30"
+                    >
+                      {/* Direction Anchor Icon */}
+                      <div
+                        className={cn(
+                          "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
+                          isCredit
+                            ? "bg-emerald-500/10 text-[#12B76A] dark:text-emerald-400"
+                            : "bg-muted text-muted-foreground"
+                        )}
+                      >
+                        {isCredit ? (
+                          <ArrowDownLeft className="size-4 stroke-[1.8]" />
+                        ) : (
+                          <ArrowUpRight className="size-4 stroke-[1.8]" />
+                        )}
+                      </div>
 
-                      <span className="w-24 text-right">
-                        <span className="inline-flex items-center justify-center rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 px-2.5 py-0.5 text-[11.5px] font-medium text-emerald-700 dark:text-emerald-400">
-                          Completed
+                      {/* Counterparty & Metadata */}
+                      <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                        <span className="font-normal text-foreground text-[14px] leading-tight truncate">
+                          {t.counterparty || t.description}
                         </span>
-                      </span>
-                    </div>
-                  </Link>
-                ))
+                        <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground truncate">
+                          <span>{formatDate(t.date)}</span>
+                          <span>·</span>
+                          <span className="truncate">{t.category || t.paymentMethod || "Payment"}</span>
+                        </div>
+                      </div>
+
+                      {/* Amount & State / Reference */}
+                      <div className="shrink-0 flex flex-col items-end gap-0.5">
+                        <span
+                          className={cn(
+                            "tabular text-[14px] font-normal",
+                            isCredit ? "text-[#12B76A] dark:text-emerald-400" : "text-foreground"
+                          )}
+                        >
+                          {isCredit ? "+ " : "− "}
+                          <RevealingAmount amount={t.amount} currency={t.currency} />
+                        </span>
+                        {isFailed ? (
+                          <span className="text-[11.5px] text-[#F04438] dark:text-rose-400 font-normal">
+                            Failed
+                          </span>
+                        ) : isPending ? (
+                          <span className="text-[11.5px] text-[#F79009] dark:text-amber-400 font-normal">
+                            Pending
+                          </span>
+                        ) : (
+                          <span className="text-[11.5px] text-muted-foreground">
+                            {t.reference}
+                          </span>
+                        )}
+                      </div>
+                    </Link>
+                  );
+                })
               )}
             </div>
           </div>
@@ -344,8 +384,8 @@ function AccountHeroGrid({ account, holderName, onOpenFund }: AccountHeroGridPro
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 w-full items-stretch">
       {/* Left Hero Card - Balance, Actions & Account Details */}
-      <div className="lg:col-span-7 flex flex-col justify-between rounded-2xl border border-border/80 bg-[#f6f6f5] dark:bg-card/70 p-6 shadow-sm min-h-[220px]">
-        <div className="flex items-start justify-between gap-4">
+      <div className="lg:col-span-7 flex flex-col justify-between rounded-2xl border border-border/80 bg-[#f6f6f5] dark:bg-card/70 p-5 sm:p-6 shadow-sm min-h-[220px] gap-5">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <span className="text-[13px] font-normal text-muted-foreground">Available balance</span>
@@ -361,46 +401,46 @@ function AccountHeroGrid({ account, holderName, onOpenFund }: AccountHeroGridPro
           </div>
 
           {/* Action buttons inside Left Hero Card */}
-          <div className="flex items-center gap-2.5 shrink-0">
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-2.5 w-full sm:w-auto sm:shrink-0 pt-1 sm:pt-0">
             <Button
               variant="outline"
               size="sm"
               nativeButton={false}
-              className="bg-white dark:bg-card border-border/80 text-[13px] font-medium h-8 px-3 rounded-lg shadow-xs hover:bg-muted/50"
+              className="bg-white dark:bg-card border-border/80 text-[13px] font-medium h-9 sm:h-8 px-3.5 rounded-lg shadow-xs hover:bg-muted/50 justify-center"
               render={<Link href="/payments" />}
             >
-              <Send size={13} className="text-muted-foreground mr-0.5" />
+              <Send size={13} className="text-muted-foreground mr-1.5" />
               Pay
             </Button>
             <Button
               size="sm"
               onClick={onOpenFund}
-              className="bg-[#fdc307] hover:bg-[#eab306] text-[#451a03] font-medium h-8 px-3 rounded-lg shadow-xs active:scale-[0.98] transition-all cursor-pointer text-[13px]"
+              className="bg-[#fdc307] hover:bg-[#eab306] text-[#451a03] font-medium h-9 sm:h-8 px-3.5 rounded-lg shadow-xs active:scale-[0.98] transition-all cursor-pointer text-[13px] justify-center whitespace-nowrap"
             >
-              <ArrowDownLeft size={14} className="text-[#451a03] mr-0.5" />
+              <ArrowDownLeft size={14} className="text-[#451a03] mr-1.5 shrink-0" />
               Fund Account
             </Button>
           </div>
         </div>
 
         {/* Bottom Metadata Row: Type, Currency, Status, Mandate */}
-        <div className="flex flex-wrap items-center gap-8 pt-5 border-t border-border/50">
-          <div className="flex flex-col gap-0.5">
+        <div className="flex flex-wrap items-center gap-6 sm:gap-8 pt-4 sm:pt-5 border-t border-border/50">
+          <div className="flex flex-col gap-0.5 min-w-[64px]">
             <span className="text-[12px] text-muted-foreground">Type</span>
-            <span className="text-[15px] font-normal text-foreground">{account.type}</span>
+            <span className="text-[14px] sm:text-[15px] font-normal text-foreground">{account.type}</span>
           </div>
-          <div className="flex flex-col gap-0.5">
+          <div className="flex flex-col gap-0.5 min-w-[64px]">
             <span className="text-[12px] text-muted-foreground">Currency</span>
-            <span className="text-[15px] font-normal text-foreground">{account.currency}</span>
+            <span className="text-[14px] sm:text-[15px] font-normal text-foreground">{account.currency}</span>
           </div>
-          <div className="flex flex-col gap-0.5">
+          <div className="flex flex-col gap-0.5 min-w-[64px]">
             <span className="text-[12px] text-muted-foreground">Status</span>
-            <span className="text-[15px] font-normal text-foreground">{account.status}</span>
+            <span className="text-[14px] sm:text-[15px] font-normal text-foreground">{account.status}</span>
           </div>
           {account.isJoint && account.mandate && (
             <div className="flex flex-col gap-0.5">
               <span className="text-[12px] text-muted-foreground">Mandate</span>
-              <span className="text-[15px] font-normal text-foreground">{account.mandate}</span>
+              <span className="text-[14px] sm:text-[15px] font-normal text-foreground">{account.mandate}</span>
             </div>
           )}
         </div>

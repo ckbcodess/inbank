@@ -200,7 +200,7 @@ export default function CardsPage() {
       )}
 
       {/* Segmented Controls Filter (styled exactly like Payments Page) */}
-      <div className="flex overflow-x-auto no-scrollbar rounded-xl bg-muted p-1 w-full sm:w-fit">
+      <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-muted p-1">
         {(["all", "Virtual", "Prepaid", "Debit"] as const).map((t) => {
           const isActive = typeFilter === t;
           const label = t === "all" ? "All Cards" : t === "Virtual" ? "Virtual Cards" : t;
@@ -270,7 +270,7 @@ export default function CardsPage() {
                         )}
                       </div>
                       <span className="mt-0.5 text-[12px] text-muted-foreground tabular">
-                        {card.scheme} · {card.maskedNumber} · Exp {card.expiry}
+                        {card.type} · {card.maskedNumber}
                       </span>
                     </div>
 

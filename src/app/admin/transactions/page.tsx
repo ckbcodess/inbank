@@ -10,10 +10,18 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Calendar, RotateCcw } from "lucide-react";
+import { ChevronRight, Calendar, RotateCcw, SlidersHorizontal } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { ExpandableSearch } from "@/components/ui/expandable-search";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetFooter,
+} from "@/components/ui/sheet";
 import {
   Select,
   SelectContent,
@@ -22,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import { FilteredEmptyState } from "@/components/states/ListStates";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
@@ -133,6 +142,7 @@ export default function TransactionMonitoringPage() {
   const [datePreset, setDatePreset] = useState<DatePreset>("all");
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const filtered = useMemo(() => {
     return TRANSACTIONS.filter((t) => {
@@ -301,6 +311,13 @@ export default function TransactionMonitoringPage() {
     statusFilters.length +
     (datePreset !== "all" ? 1 : 0);
 
+  const secondaryFiltersCount =
+    categoryFilters.length +
+    methodFilters.length +
+    channelFilters.length +
+    (directionFilter !== "all" ? 1 : 0) +
+    statusFilters.length;
+
   const hasActiveFilters = activeFiltersCount > 0;
 
   const resetAllFilters = () => {
@@ -371,8 +388,81 @@ export default function TransactionMonitoringPage() {
             </div>
           </div>
 
-          {/* Filter Dropdowns Grid */}
-          <div className="flex w-full items-center gap-2.5 overflow-x-auto no-scrollbar flex-nowrap pb-1.5 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0">
+          {/* Mobile Filter Bar (< sm): Date quick selector + More Filters trigger button */}
+          <div className="flex sm:hidden items-center gap-2 w-full pt-0.5">
+            <div className="flex-1 min-w-0">
+              <Select value={datePreset} onValueChange={(val) => setDatePreset((val as DatePreset) ?? "all")}>
+                <SelectTrigger
+                  size="sm"
+                  isActive={datePreset !== "all"}
+                  onClear={
+                    datePreset !== "all"
+                      ? () => {
+                          setDatePreset("all");
+                          setDateFrom("");
+                          setDateTo("");
+                        }
+                      : undefined
+                  }
+                  clearLabel="Clear date filter"
+                  className="w-full h-9 text-[13px] rounded-lg border-border/80 bg-background/60"
+                >
+                  <div className="flex items-center gap-1.5 truncate">
+                    {datePreset !== "all" ? (
+                      <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
+                    ) : (
+                      <Calendar size={13} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
+                    )}
+                    <SelectValue placeholder="All Dates" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent align="start" className="min-w-[190px] max-h-72">
+                  <SelectItem value="all">All Dates</SelectItem>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="7d">Last 7 Days</SelectItem>
+                  <SelectItem value="30d">Last 30 Days</SelectItem>
+                  <SelectItem value="this-month">This Month</SelectItem>
+                  <SelectItem value="last-month">Last Month</SelectItem>
+                  <SelectItem value="custom">Custom Range...</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setMobileFiltersOpen(true)}
+              className={cn(
+                "h-9 px-3 gap-1.5 rounded-lg text-[13px] font-normal shrink-0 border-border/80 bg-background/60 transition-colors",
+                secondaryFiltersCount > 0 && "border-foreground/40 bg-muted/60 font-medium text-foreground"
+              )}
+              title="More filters"
+              aria-label="Open more filters"
+            >
+              <SlidersHorizontal size={13} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
+              <span>Filters</span>
+              {secondaryFiltersCount > 0 && (
+                <span className="flex size-4 items-center justify-center rounded-full bg-foreground text-background text-[10px] font-medium tabular leading-none">
+                  {secondaryFiltersCount}
+                </span>
+              )}
+            </Button>
+
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={resetAllFilters}
+                className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border/80 bg-background/60 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                title="Reset all filters"
+                aria-label="Reset all filters"
+              >
+                <RotateCcw size={13} strokeWidth={1.8} />
+              </button>
+            )}
+          </div>
+
+          {/* Filter Dropdowns Grid (hidden sm:flex on desktop) */}
+          <div className="hidden sm:flex w-full items-center gap-2.5 overflow-x-auto no-scrollbar flex-nowrap pb-1.5 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0">
             {/* 1. Date Preset Filter */}
             <Select value={datePreset} onValueChange={(val) => setDatePreset((val as DatePreset) ?? "all")}>
               <SelectTrigger
@@ -594,9 +684,9 @@ export default function TransactionMonitoringPage() {
             </Select>
           </div>
 
-          {/* Custom Date Range Picker */}
+          {/* Custom Date Range Picker (Desktop) */}
           {datePreset === "custom" && (
-            <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-border/60 animate-in fade-in slide-in-from-top-1 duration-150">
+            <div className="hidden sm:flex flex-wrap items-center gap-3 pt-2 border-t border-border/60 animate-in fade-in slide-in-from-top-1 duration-150">
               <div className="flex items-center gap-2">
                 <span className="text-[12px] font-medium text-muted-foreground">From:</span>
                 <input
@@ -630,6 +720,295 @@ export default function TransactionMonitoringPage() {
             </div>
           )}
         </div>
+
+        {/* Mobile Filters Bottom Sheet */}
+        <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
+          <SheetContent
+            side="bottom"
+            className="max-h-[85vh] rounded-t-2xl p-0 gap-0 overflow-hidden flex flex-col border-t border-border bg-card"
+          >
+            <SheetHeader className="px-5 py-4 border-b border-border flex flex-row items-center justify-between shrink-0">
+              <div className="flex items-center gap-2">
+                <SheetTitle className="text-[16px] font-medium text-foreground">
+                  Transaction filters
+                </SheetTitle>
+                {secondaryFiltersCount > 0 && (
+                  <span className="flex size-5 items-center justify-center rounded-full bg-foreground text-background text-[11px] font-medium tabular leading-none">
+                    {secondaryFiltersCount}
+                  </span>
+                )}
+              </div>
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={resetAllFilters}
+                  className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors mr-8 cursor-pointer"
+                >
+                  Reset all
+                </button>
+              )}
+            </SheetHeader>
+
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-6">
+              {/* 1. Date Range */}
+              <div>
+                <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                  Date Range
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    { id: "all", label: "All dates" },
+                    { id: "today", label: "Today" },
+                    { id: "7d", label: "Last 7 days" },
+                    { id: "30d", label: "Last 30 days" },
+                    { id: "this-month", label: "This month" },
+                    { id: "last-month", label: "Last month" },
+                    { id: "custom", label: "Custom" },
+                  ].map((preset) => {
+                    const isSelected = datePreset === preset.id;
+                    return (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        onClick={() => {
+                          setDatePreset(preset.id as DatePreset);
+                          if (preset.id !== "custom") {
+                            setDateFrom("");
+                            setDateTo("");
+                          }
+                        }}
+                        className={cn(
+                          "h-8 px-3 rounded-lg text-[12.5px] transition-colors cursor-pointer border",
+                          isSelected
+                            ? "bg-foreground text-background border-foreground font-medium"
+                            : "bg-muted/40 text-muted-foreground border-border/80 hover:text-foreground hover:bg-muted"
+                        )}
+                      >
+                        {preset.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {datePreset === "custom" && (
+                  <div className="mt-3 flex items-center gap-2 p-3 rounded-lg border border-border/70 bg-muted/20">
+                    <div className="flex-1 min-w-0">
+                      <span className="text-[11px] font-medium text-muted-foreground block mb-1">From</span>
+                      <input
+                        type="date"
+                        value={dateFrom}
+                        onChange={(e) => setDateFrom(e.target.value)}
+                        className="w-full h-8 rounded-md border border-border bg-background px-2 text-[12px] text-foreground outline-none focus:border-ring tabular"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-[11px] font-medium text-muted-foreground block mb-1">To</span>
+                      <input
+                        type="date"
+                        value={dateTo}
+                        onChange={(e) => setDateTo(e.target.value)}
+                        className="w-full h-8 rounded-md border border-border bg-background px-2 text-[12px] text-foreground outline-none focus:border-ring tabular"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 2. Flow / Direction */}
+              <div>
+                <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                  Flow / Direction
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    { id: "all", label: "All Flows" },
+                    { id: "debit", label: "Debits (Money Out)" },
+                    { id: "credit", label: "Credits (Money In)" },
+                  ].map((flow) => {
+                    const isSelected = directionFilter === flow.id;
+                    return (
+                      <button
+                        key={flow.id}
+                        type="button"
+                        onClick={() => setDirectionFilter(flow.id as DirectionFilter)}
+                        className={cn(
+                          "h-8 px-3 rounded-lg text-[12.5px] transition-colors cursor-pointer border",
+                          isSelected
+                            ? "bg-foreground text-background border-foreground font-medium"
+                            : "bg-muted/40 text-muted-foreground border-border/80 hover:text-foreground hover:bg-muted"
+                        )}
+                      >
+                        {flow.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 3. Status */}
+              <div>
+                <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                  Status
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {STATUS_OPTIONS.map((st) => {
+                    const isSelected = statusFilters.includes(st.id);
+                    return (
+                      <button
+                        key={st.id}
+                        type="button"
+                        onClick={() =>
+                          setStatusFilters((prev) =>
+                            prev.includes(st.id) ? prev.filter((x) => x !== st.id) : [...prev, st.id]
+                          )
+                        }
+                        className={cn(
+                          "h-8 px-3 rounded-lg text-[12.5px] transition-colors cursor-pointer border flex items-center gap-1.5",
+                          isSelected
+                            ? "bg-foreground text-background border-foreground font-medium"
+                            : "bg-muted/40 text-muted-foreground border-border/80 hover:text-foreground hover:bg-muted"
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "size-1.5 rounded-full shrink-0",
+                            st.id === "completed"
+                              ? "bg-emerald-500"
+                              : st.id === "pending"
+                              ? "bg-amber-500"
+                              : "bg-rose-500",
+                            isSelected && "bg-background"
+                          )}
+                        />
+                        {st.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 4. Channel */}
+              <div>
+                <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                  Channel
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {CHANNEL_OPTIONS.map((ch) => {
+                    const isSelected = channelFilters.includes(ch.id);
+                    return (
+                      <button
+                        key={ch.id}
+                        type="button"
+                        onClick={() =>
+                          setChannelFilters((prev) =>
+                            prev.includes(ch.id) ? prev.filter((x) => x !== ch.id) : [...prev, ch.id]
+                          )
+                        }
+                        className={cn(
+                          "h-8 px-3 rounded-lg text-[12.5px] transition-colors cursor-pointer border",
+                          isSelected
+                            ? "bg-foreground text-background border-foreground font-medium"
+                            : "bg-muted/40 text-muted-foreground border-border/80 hover:text-foreground hover:bg-muted"
+                        )}
+                      >
+                        {ch.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 5. Payment Method */}
+              <div>
+                <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                  Payment Method
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {TRANSACTION_PAYMENT_METHODS.filter((m) => m.id !== "all").map((method) => {
+                    const isSelected = methodFilters.includes(method.id);
+                    return (
+                      <button
+                        key={method.id}
+                        type="button"
+                        onClick={() =>
+                          setMethodFilters((prev) =>
+                            prev.includes(method.id) ? prev.filter((x) => x !== method.id) : [...prev, method.id]
+                          )
+                        }
+                        className={cn(
+                          "h-8 px-3 rounded-lg text-[12.5px] transition-colors cursor-pointer border",
+                          isSelected
+                            ? "bg-foreground text-background border-foreground font-medium"
+                            : "bg-muted/40 text-muted-foreground border-border/80 hover:text-foreground hover:bg-muted"
+                        )}
+                      >
+                        {method.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 6. Category */}
+              <div>
+                <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                  Category
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {TRANSACTION_CATEGORIES.filter((c) => c.id !== "all").map((cat) => {
+                    const isSelected = categoryFilters.includes(cat.id);
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() =>
+                          setCategoryFilters((prev) =>
+                            prev.includes(cat.id) ? prev.filter((x) => x !== cat.id) : [...prev, cat.id]
+                          )
+                        }
+                        className={cn(
+                          "h-8 px-3 rounded-lg text-[12.5px] transition-colors cursor-pointer border",
+                          isSelected
+                            ? "bg-foreground text-background border-foreground font-medium"
+                            : "bg-muted/40 text-muted-foreground border-border/80 hover:text-foreground hover:bg-muted"
+                        )}
+                      >
+                        {cat.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <SheetFooter className="p-4 border-t border-border bg-card flex flex-row gap-2 shrink-0">
+              {secondaryFiltersCount > 0 ? (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setCategoryFilters([]);
+                    setMethodFilters([]);
+                    setChannelFilters([]);
+                    setDirectionFilter("all");
+                    setStatusFilters([]);
+                    setDatePreset("all");
+                    setDateFrom("");
+                    setDateTo("");
+                  }}
+                  className="flex-1 h-10 text-[13px] font-normal"
+                >
+                  Clear all
+                </Button>
+              ) : null}
+              <Button
+                onClick={() => setMobileFiltersOpen(false)}
+                className="flex-1 h-10 text-[13px] font-medium"
+              >
+                Show {filtered.length} {filtered.length === 1 ? "record" : "records"}
+              </Button>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
 
         {filtered.length === 0 ? (
           hasActiveFilters ? (

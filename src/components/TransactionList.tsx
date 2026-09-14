@@ -14,15 +14,25 @@
 import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
+  ArrowDownLeft,
   ArrowDownToLine,
   ArrowLeftRight,
+  ArrowUpRight,
   ChevronLeft,
   ChevronRight,
   Landmark,
   RotateCcw,
   Search,
+  SlidersHorizontal,
   X,
 } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetFooter,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -128,23 +138,26 @@ function formatTableDate(dateStr: string): string {
   }
 }
 
-function renderStatusPill(state: TransactionState) {
+function renderStatusIndicator(state: TransactionState) {
   if (state === "completed") {
     return (
-      <span className="inline-flex items-center justify-center rounded-full px-3 py-0.5 text-[12px] font-medium bg-emerald-500/10 text-[#12B76A] dark:text-emerald-400 border border-emerald-500/20">
+      <span className="inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
+        <span className="size-1.5 rounded-full bg-emerald-500/80 shrink-0" />
         Complete
       </span>
     );
   }
   if (state.startsWith("failed") || state === "reversed" || state === "disputed") {
     return (
-      <span className="inline-flex items-center justify-center rounded-full px-3 py-0.5 text-[12px] font-medium bg-rose-500/10 text-[#F04438] dark:text-rose-400 border border-rose-500/20">
+      <span className="inline-flex items-center gap-1.5 text-[12.5px] text-[#F04438] dark:text-rose-400">
+        <span className="size-1.5 rounded-full bg-rose-500 shrink-0" />
         Failed
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center justify-center rounded-full px-3 py-0.5 text-[12px] font-medium bg-amber-500/10 text-[#F79009] dark:text-amber-400 border border-amber-500/20">
+    <span className="inline-flex items-center gap-1.5 text-[12.5px] text-[#F79009] dark:text-amber-400">
+      <span className="size-1.5 rounded-full bg-amber-500 shrink-0" />
       Pending
     </span>
   );
@@ -266,6 +279,7 @@ export default function TransactionList({
   const [datePreset, setDatePreset] = useState<DatePreset>("all");
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -474,6 +488,12 @@ export default function TransactionList({
     statusFilters.length +
     (datePreset !== "all" ? 1 : 0);
 
+  const secondaryFiltersCount =
+    categoryFilters.length +
+    methodFilters.length +
+    statusFilters.length +
+    (datePreset !== "all" ? 1 : 0);
+
   const hasActiveFilters = activeFiltersCount > 0;
 
   const resetAllFilters = () => {
@@ -598,7 +618,85 @@ export default function TransactionList({
 
       {/* Filter Toolbar */}
       <div className="w-full">
-        <div className="flex w-full items-center gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-1.5 -mx-4 px-4 sm:mx-0 sm:px-0">
+        {/* Mobile Filter Bar (< sm): Account selector + More Filters trigger button */}
+        <div className="flex sm:hidden items-center gap-2 w-full">
+          <div className="flex-1 min-w-0">
+            {(() => {
+              const isAccountActive = accountFilter !== "all";
+              return (
+                <Select
+                  value={accountFilter}
+                  onValueChange={(val) => setAccountFilter((val as string) ?? "all")}
+                >
+                  <SelectTrigger
+                    size="sm"
+                    isActive={isAccountActive}
+                    onClear={isAccountActive ? () => setAccountFilter("all") : undefined}
+                    clearLabel="Clear account filter"
+                    className="h-9 w-full text-[13px] rounded-lg border-border/80 bg-background/60"
+                  >
+                    <div className="flex items-center gap-1.5 truncate">
+                      {isAccountActive ? (
+                        <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
+                      ) : (
+                        <Landmark size={13} className="shrink-0 text-muted-foreground" />
+                      )}
+                      <SelectValue placeholder="All Accounts">
+                        {(val: string) =>
+                          !val || val === "all" ? "All Accounts" : formatAccountDisplay(val)
+                        }
+                      </SelectValue>
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent align="start" className="min-w-[260px] max-h-72">
+                    <SelectItem value="all">All Accounts</SelectItem>
+                    <SelectSeparator />
+                    {availableAccounts.map((acc) => (
+                      <SelectItem key={acc.id} value={acc.id}>
+                        {formatAccountDisplay(acc.id)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              );
+            })()}
+          </div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setMobileFiltersOpen(true)}
+            className={cn(
+              "h-9 px-3 gap-1.5 rounded-lg text-[13px] font-normal shrink-0 border-border/80 bg-background/60 transition-colors",
+              secondaryFiltersCount > 0 && "border-foreground/40 bg-muted/60 font-medium text-foreground"
+            )}
+            title="More filters"
+            aria-label="Open more filters"
+          >
+            <SlidersHorizontal size={13} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
+            <span>Filters</span>
+            {secondaryFiltersCount > 0 && (
+              <span className="flex size-4 items-center justify-center rounded-full bg-foreground text-background text-[10px] font-medium tabular leading-none">
+                {secondaryFiltersCount}
+              </span>
+            )}
+          </Button>
+
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={resetAllFilters}
+              className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border/80 bg-background/60 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              title="Reset all filters"
+              aria-label="Reset all filters"
+            >
+              <RotateCcw size={13} strokeWidth={1.8} />
+            </button>
+          )}
+        </div>
+
+        {/* Desktop Filter Ribbon (hidden sm:flex) */}
+        <div className="hidden sm:flex w-full items-center gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-1.5 sm:mx-0 sm:px-0">
           {/* 1. Account Filter */}
           {(() => {
             const isAccountActive = accountFilter !== "all";
@@ -809,7 +907,7 @@ export default function TransactionList({
                       }
                     </SelectValue>
                     {isStatusActive && (
-                      <span className="flex size-4 items-center justify-center rounded-full bg-foreground text-background text-[10px] font-semibold tabular shrink-0 leading-none">
+                      <span className="flex size-4 items-center justify-center rounded-full bg-foreground text-background text-[10px] font-medium tabular shrink-0 leading-none">
                         {statusFilters.length}
                       </span>
                     )}
@@ -847,9 +945,238 @@ export default function TransactionList({
         </div>
       </div>
 
-      {/* Custom Date Range Controls */}
+      {/* Mobile Filters Bottom Sheet */}
+      <Sheet open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
+        <SheetContent
+          side="bottom"
+          className="max-h-[85vh] rounded-t-2xl p-0 gap-0 overflow-hidden flex flex-col border-t border-border bg-card"
+        >
+          <SheetHeader className="px-5 py-4 border-b border-border flex flex-row items-center justify-between shrink-0">
+            <div className="flex items-center gap-2">
+              <SheetTitle className="text-[16px] font-medium text-foreground">
+                Transaction filters
+              </SheetTitle>
+              {secondaryFiltersCount > 0 && (
+                <span className="flex size-5 items-center justify-center rounded-full bg-foreground text-background text-[11px] font-medium tabular leading-none">
+                  {secondaryFiltersCount}
+                </span>
+              )}
+            </div>
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={resetAllFilters}
+                className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors mr-8 cursor-pointer"
+              >
+                Reset all
+              </button>
+            )}
+          </SheetHeader>
+
+          <div className="flex-1 overflow-y-auto px-5 py-4 space-y-6">
+            {/* 1. Date Range */}
+            <div>
+              <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                Date Range
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { id: "all", label: "All dates" },
+                  { id: "today", label: "Today" },
+                  { id: "7d", label: "Last 7 days" },
+                  { id: "30d", label: "Last 30 days" },
+                  { id: "this-month", label: "This month" },
+                  { id: "last-month", label: "Last month" },
+                  { id: "custom", label: "Custom" },
+                ].map((preset) => {
+                  const isSelected = datePreset === preset.id;
+                  return (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => {
+                        setDatePreset(preset.id as DatePreset);
+                        if (preset.id !== "custom") {
+                          setDateFrom("");
+                          setDateTo("");
+                        }
+                      }}
+                      className={cn(
+                        "h-8 px-3 rounded-lg text-[12.5px] transition-colors cursor-pointer border",
+                        isSelected
+                          ? "bg-foreground text-background border-foreground font-medium"
+                          : "bg-muted/40 text-muted-foreground border-border/80 hover:text-foreground hover:bg-muted"
+                      )}
+                    >
+                      {preset.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {datePreset === "custom" && (
+                <div className="mt-3 flex items-center gap-2 p-3 rounded-lg border border-border/70 bg-muted/20">
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[11px] font-medium text-muted-foreground block mb-1">From</span>
+                    <input
+                      type="date"
+                      value={dateFrom}
+                      onChange={(e) => setDateFrom(e.target.value)}
+                      className="w-full h-8 rounded-md border border-border bg-background px-2 text-[12px] text-foreground outline-none focus:border-ring tabular"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[11px] font-medium text-muted-foreground block mb-1">To</span>
+                    <input
+                      type="date"
+                      value={dateTo}
+                      onChange={(e) => setDateTo(e.target.value)}
+                      className="w-full h-8 rounded-md border border-border bg-background px-2 text-[12px] text-foreground outline-none focus:border-ring tabular"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 2. Status */}
+            <div>
+              <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                Status
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {STATUS_OPTIONS.map((st) => {
+                  const isSelected = statusFilters.includes(st.id);
+                  return (
+                    <button
+                      key={st.id}
+                      type="button"
+                      onClick={() =>
+                        setStatusFilters((prev) =>
+                          prev.includes(st.id) ? prev.filter((x) => x !== st.id) : [...prev, st.id]
+                        )
+                      }
+                      className={cn(
+                        "h-8 px-3 rounded-lg text-[12.5px] transition-colors cursor-pointer border flex items-center gap-1.5",
+                        isSelected
+                          ? "bg-foreground text-background border-foreground font-medium"
+                          : "bg-muted/40 text-muted-foreground border-border/80 hover:text-foreground hover:bg-muted"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "size-1.5 rounded-full shrink-0",
+                          st.id === "completed"
+                            ? "bg-emerald-500"
+                            : st.id === "pending"
+                            ? "bg-amber-500"
+                            : "bg-rose-500",
+                          isSelected && "bg-background"
+                        )}
+                      />
+                      {st.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 3. Payment Method */}
+            <div>
+              <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                Payment Method
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {TRANSACTION_PAYMENT_METHODS.filter((m) => m.id !== "all").map((method) => {
+                  const isSelected = methodFilters.includes(method.id);
+                  return (
+                    <button
+                      key={method.id}
+                      type="button"
+                      onClick={() =>
+                        setMethodFilters((prev) =>
+                          prev.includes(method.id)
+                            ? prev.filter((x) => x !== method.id)
+                            : [...prev, method.id]
+                        )
+                      }
+                      className={cn(
+                        "h-8 px-3 rounded-lg text-[12.5px] transition-colors cursor-pointer border",
+                        isSelected
+                          ? "bg-foreground text-background border-foreground font-medium"
+                          : "bg-muted/40 text-muted-foreground border-border/80 hover:text-foreground hover:bg-muted"
+                      )}
+                    >
+                      {method.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 4. Category */}
+            <div>
+              <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                Category
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {TRANSACTION_CATEGORIES.filter((c) => c.id !== "all").map((cat) => {
+                  const isSelected = categoryFilters.includes(cat.id);
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() =>
+                        setCategoryFilters((prev) =>
+                          prev.includes(cat.id)
+                            ? prev.filter((x) => x !== cat.id)
+                            : [...prev, cat.id]
+                        )
+                      }
+                      className={cn(
+                        "h-8 px-3 rounded-lg text-[12.5px] transition-colors cursor-pointer border",
+                        isSelected
+                          ? "bg-foreground text-background border-foreground font-medium"
+                          : "bg-muted/40 text-muted-foreground border-border/80 hover:text-foreground hover:bg-muted"
+                      )}
+                    >
+                      {cat.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <SheetFooter className="p-4 border-t border-border bg-card flex flex-row gap-2 shrink-0">
+            {secondaryFiltersCount > 0 ? (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setCategoryFilters([]);
+                  setMethodFilters([]);
+                  setStatusFilters([]);
+                  setDatePreset("all");
+                  setDateFrom("");
+                  setDateTo("");
+                }}
+                className="flex-1 h-10 text-[13px] font-normal"
+              >
+                Clear all
+              </Button>
+            ) : null}
+            <Button
+              onClick={() => setMobileFiltersOpen(false)}
+              className="flex-1 h-10 text-[13px] font-medium"
+            >
+              Show {results.length} {results.length === 1 ? "transaction" : "transactions"}
+            </Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+
+      {/* Custom Date Range Controls (Desktop) */}
       {datePreset === "custom" && (
-        <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg border border-border/60 bg-muted/20 animate-in fade-in slide-in-from-top-1 duration-150">
+        <div className="hidden sm:flex flex-wrap items-center gap-3 p-3 rounded-lg border border-border/60 bg-muted/20 animate-in fade-in slide-in-from-top-1 duration-150">
           <div className="flex items-center gap-2">
             <span className="text-[12px] font-medium text-muted-foreground">From:</span>
             <input
@@ -910,22 +1237,53 @@ export default function TransactionList({
       {/* Data Table / List Views */}
       {(effective === "populated" || effective === "partial-load") && (
         <div className="flex flex-col gap-4">
-          {/* Mobile High-Density Transaction List View (md:hidden) */}
-          <div className="md:hidden divide-y divide-border/50 rounded-xl border border-border/70 bg-card/40 backdrop-blur-sm overflow-hidden">
+          {/* Mobile High-Density Clean Fintech Transaction List (md:hidden) */}
+          <div className="md:hidden divide-y divide-border/40 rounded-xl border border-border/70 bg-card/40 backdrop-blur-sm overflow-hidden">
             {paginatedRows.map((t) => {
               const { colorClass, prefix } = getAmountStyling(t);
+              const isCredit = t.direction === "credit";
+              const isFailed = t.state.startsWith("failed") || t.state === "reversed" || t.state === "disputed";
+              const isPending = t.state === "pending" || t.state === "awaiting-approval";
+
               return (
                 <div
                   key={t.id}
                   onClick={() => router.push(`${detailBase}/${t.id}`)}
-                  className="flex flex-col gap-2 p-3.5 hover:bg-muted/30 transition-colors cursor-pointer active:bg-muted/50"
+                  className="flex items-center gap-3.5 p-3.5 hover:bg-muted/30 transition-colors cursor-pointer active:bg-muted/50"
                 >
-                  {/* Top Row: Counterparty/Description & Amount */}
-                  <div className="flex items-start justify-between gap-3">
-                    <span className="font-medium text-foreground text-[14px] leading-snug line-clamp-1 flex-1">
+                  {/* Direction Anchor Icon */}
+                  <div
+                    className={cn(
+                      "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
+                      isCredit
+                        ? "bg-emerald-500/10 text-[#12B76A] dark:text-emerald-400"
+                        : "bg-muted text-muted-foreground"
+                    )}
+                  >
+                    {isCredit ? (
+                      <ArrowDownLeft className="size-4 stroke-[1.8]" />
+                    ) : (
+                      <ArrowUpRight className="size-4 stroke-[1.8]" />
+                    )}
+                  </div>
+
+                  {/* Counterparty & Metadata */}
+                  <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                    <span className="font-normal text-foreground text-[14px] leading-tight truncate">
                       {t.counterparty || t.description}
                     </span>
-                    <span className={cn("tabular text-[14px] font-medium shrink-0 leading-snug", colorClass)}>
+                    <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground truncate">
+                      <span>{formatTableDate(t.date)}</span>
+                      <span>·</span>
+                      <span className="truncate">
+                        {t.category ? CATEGORY_MAP[t.category] || t.category : getPaymentMethodDisplay(t)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Amount & State / Account Number */}
+                  <div className="shrink-0 flex flex-col items-end gap-0.5">
+                    <span className={cn("tabular text-[14px]", colorClass)}>
                       {prefix}
                       {t.currency}{" "}
                       {showAmounts
@@ -935,45 +1293,37 @@ export default function TransactionList({
                           })
                         : "••••••"}
                     </span>
-                  </div>
-
-                  {/* Middle Row: Date, Method, Account */}
-                  <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground truncate">
-                    <span>{formatTableDate(t.date)}</span>
-                    <span>·</span>
-                    <span className="truncate">{getPaymentMethodDisplay(t)}</span>
-                    <span>·</span>
-                    <span className="truncate">{formatAccountDisplay(t.accountId)}</span>
-                  </div>
-
-                  {/* Bottom Row: Category chip & Status */}
-                  <div className="flex items-center justify-between gap-2 pt-0.5">
-                    {t.category ? (
-                      <span className="rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground truncate max-w-[150px]">
-                        {CATEGORY_MAP[t.category] || t.category}
+                    {isFailed ? (
+                      <span className="text-[11.5px] text-[#F04438] dark:text-rose-400 font-normal">
+                        Failed
+                      </span>
+                    ) : isPending ? (
+                      <span className="text-[11.5px] text-[#F79009] dark:text-amber-400 font-normal">
+                        Pending
                       </span>
                     ) : (
-                      <span />
+                      <span className="text-[11.5px] text-muted-foreground">
+                        {formatAccountDisplay(t.accountId).split(" ").pop()}
+                      </span>
                     )}
-                    <div className="shrink-0">{renderStatusPill(t.state)}</div>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* Desktop 1:1 Figma Data Table (hidden md:block) */}
+          {/* Desktop 1:1 Clean Data Table (hidden md:block) */}
           <div className="hidden md:block overflow-x-auto rounded-xl border border-border/70 bg-card/40 backdrop-blur-sm">
             <table className="w-full border-collapse text-left">
               <thead>
-                <tr className="border-b border-border/70 text-[13px] font-medium text-muted-foreground bg-muted/15">
-                  <th className="py-3.5 pl-5 pr-4 text-left font-normal w-[95px]">Date</th>
-                  <th className="py-3.5 px-4 text-left font-normal min-w-[160px]">Recipient</th>
-                  <th className="py-3.5 px-4 text-left font-normal min-w-[210px]">Account</th>
+                <tr className="border-b border-border/70 text-[13px] font-normal text-muted-foreground bg-muted/15">
+                  <th className="py-3.5 pl-5 pr-4 text-left font-normal w-[100px]">Date</th>
+                  <th className="py-3.5 px-4 text-left font-normal min-w-[170px]">Recipient</th>
+                  <th className="py-3.5 px-4 text-left font-normal min-w-[190px]">Account</th>
                   <th className="py-3.5 px-4 text-left font-normal min-w-[140px]">Method</th>
-                  <th className="py-3.5 px-4 text-right font-normal min-w-[150px]">Amount</th>
-                  <th className="py-3.5 pl-10 pr-4 text-left font-normal min-w-[130px]">Category</th>
-                  <th className="py-3.5 px-4 pr-5 text-center font-normal w-[120px]">Status</th>
+                  <th className="py-3.5 px-4 text-right font-normal min-w-[140px]">Amount</th>
+                  <th className="py-3.5 px-4 text-left font-normal min-w-[130px]">Category</th>
+                  <th className="py-3.5 px-4 pr-5 text-left font-normal w-[120px]">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
@@ -1009,11 +1359,11 @@ export default function TransactionList({
                             : "••••••"}
                         </span>
                       </td>
-                      <td className="py-4 pl-10 pr-4 text-left text-muted-foreground text-[13px] whitespace-nowrap">
-                        {t.category || "—"}
+                      <td className="py-4 px-4 text-left text-muted-foreground text-[13px] whitespace-nowrap">
+                        {t.category ? CATEGORY_MAP[t.category] || t.category : "—"}
                       </td>
-                      <td className="py-4 px-4 pr-5 text-center whitespace-nowrap">
-                        {renderStatusPill(t.state)}
+                      <td className="py-4 px-4 pr-5 text-left whitespace-nowrap">
+                        {renderStatusIndicator(t.state)}
                       </td>
                     </tr>
                   );
