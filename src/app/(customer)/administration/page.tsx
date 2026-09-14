@@ -54,7 +54,6 @@ export default function UserManagementPage() {
     <div className="flex flex-col gap-5">
       <PageHeader
         title="Administration"
-        description="Users, roles, limits and approval matrices for this corporate relationship."
         actions={
           <Button nativeButton={false} render={<Link href="/administration/user-1" />}>
             <Plus size={15} strokeWidth={1.9} aria-hidden="true" />

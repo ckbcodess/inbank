@@ -194,7 +194,7 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
         >
           <ChevronLeft size={22} strokeWidth={1.8} />
         </Link>
-        <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground truncate">
+        <h1 className="text-[20px] sm:text-[24px] lg:text-[26px] font-medium leading-tight sm:leading-[32px] tracking-[-0.02em] text-foreground truncate">
           {cardNickname || "Virtual Card"}
         </h1>
       </div>

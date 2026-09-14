@@ -169,16 +169,7 @@ export default function ReportsPage() {
 
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader
-        title="Reports"
-        description="Standard reports across your relationship. Filter, drill down to a transaction, or export what you see."
-        actions={
-          <Button variant="outline" size="sm" onClick={handleExport} disabled={rowCount === 0}>
-            <Download size={14} strokeWidth={1.9} aria-hidden="true" />
-            Export CSV
-          </Button>
-        }
-      />
+      <PageHeader title="Reports" />
 
       <StateSwitcher
         section="13.1"
@@ -268,8 +259,12 @@ export default function ReportsPage() {
 
       {/* Results */}
       <div className="rounded-2xl border border-border bg-card">
-        <div className="border-b border-border px-4 py-3">
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h2 className="text-[14px] text-foreground">{active.label}</h2>
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={rowCount === 0}>
+            <Download size={14} strokeWidth={1.9} aria-hidden="true" />
+            Export CSV
+          </Button>
         </div>
 
         {effective === "loading" && <ListSkeleton rows={6} columns={5} />}

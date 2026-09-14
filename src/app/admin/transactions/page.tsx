@@ -372,7 +372,7 @@ export default function TransactionMonitoringPage() {
           </div>
 
           {/* Filter Dropdowns Grid */}
-          <div className="flex flex-wrap items-center gap-2.5 pt-1">
+          <div className="flex w-full items-center gap-2.5 overflow-x-auto no-scrollbar flex-nowrap pb-1.5 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0">
             {/* 1. Date Preset Filter */}
             <Select value={datePreset} onValueChange={(val) => setDatePreset((val as DatePreset) ?? "all")}>
               <SelectTrigger
@@ -388,7 +388,7 @@ export default function TransactionMonitoringPage() {
                     : undefined
                 }
                 clearLabel="Clear date filter"
-                className="w-[140px] sm:w-[155px] h-9 text-[13px]"
+                className="w-[140px] sm:w-[155px] h-9 text-[13px] shrink-0"
               >
                 <div className="flex items-center gap-1.5 truncate">
                   {datePreset !== "all" ? (
@@ -423,7 +423,7 @@ export default function TransactionMonitoringPage() {
                 isActive={categoryFilters.length > 0}
                 onClear={categoryFilters.length > 0 ? () => setCategoryFilters([]) : undefined}
                 clearLabel="Clear category filter"
-                className="w-[155px] sm:w-[170px] h-9 text-[13px]"
+                className="w-[155px] sm:w-[170px] h-9 text-[13px] shrink-0"
               >
                 <div className="flex items-center gap-1.5 truncate">
                   <SelectValue placeholder="All Categories">
@@ -462,7 +462,7 @@ export default function TransactionMonitoringPage() {
                 isActive={methodFilters.length > 0}
                 onClear={methodFilters.length > 0 ? () => setMethodFilters([]) : undefined}
                 clearLabel="Clear payment method filter"
-                className="w-[160px] sm:w-[175px] h-9 text-[13px]"
+                className="w-[160px] sm:w-[175px] h-9 text-[13px] shrink-0"
               >
                 <div className="flex items-center gap-1.5 truncate">
                   <SelectValue placeholder="All Methods">
@@ -503,7 +503,7 @@ export default function TransactionMonitoringPage() {
                 isActive={channelFilters.length > 0}
                 onClear={channelFilters.length > 0 ? () => setChannelFilters([]) : undefined}
                 clearLabel="Clear channel filter"
-                className="w-[145px] sm:w-[160px] h-9 text-[13px]"
+                className="w-[145px] sm:w-[160px] h-9 text-[13px] shrink-0"
               >
                 <div className="flex items-center gap-1.5 truncate">
                   <SelectValue placeholder="All Channels">
@@ -536,7 +536,7 @@ export default function TransactionMonitoringPage() {
                 isActive={directionFilter !== "all"}
                 onClear={directionFilter !== "all" ? () => setDirectionFilter("all") : undefined}
                 clearLabel="Clear direction filter"
-                className="w-[135px] sm:w-[150px] h-9 text-[13px]"
+                className="w-[135px] sm:w-[150px] h-9 text-[13px] shrink-0"
               >
                 <div className="flex items-center gap-1.5 truncate">
                   {directionFilter !== "all" && (
@@ -567,7 +567,7 @@ export default function TransactionMonitoringPage() {
                 isActive={statusFilters.length > 0}
                 onClear={statusFilters.length > 0 ? () => setStatusFilters([]) : undefined}
                 clearLabel="Clear status filter"
-                className="w-[130px] sm:w-[145px] h-9 text-[13px]"
+                className="w-[130px] sm:w-[145px] h-9 text-[13px] shrink-0"
               >
                 <div className="flex items-center gap-1.5 truncate">
                   <SelectValue placeholder="All Statuses">

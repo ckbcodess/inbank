@@ -26,8 +26,8 @@ import {
   TriangleAlert,
   XCircle,
 } from "lucide-react";
-import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
+import PageHeader from "@/components/layout/PageHeader";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
@@ -101,23 +101,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader
-        title="Notifications"
-        description="Submissions, approvals, rejections and status changes across your relationship."
-        actions={
-          unread > 0 ? (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setReadIds(NOTIFICATIONS.map((n) => n.id))}
-            >
-              <CheckCheck size={14} strokeWidth={1.9} aria-hidden="true" />
-              Mark all read
-            </Button>
-          ) : undefined
-        }
-      />
-
+      <PageHeader title="Notifications" />
       <StateSwitcher
         section="13.1"
         states={LIST_STATES}
@@ -127,17 +111,32 @@ export default function NotificationsPage() {
       />
 
       <div className="rounded-2xl border border-border bg-card">
-        <div className="flex flex-wrap items-center gap-1 border-b border-border px-4 py-3">
-          {FILTERS.map((f) => (
+        <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-3 overflow-x-auto no-scrollbar flex-nowrap">
+          <div className="flex items-center gap-1.5 shrink-0">
+            {FILTERS.map((f) => (
+              <Button
+                key={f.key}
+                variant={filter === f.key ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setFilter(f.key)}
+                className="shrink-0 whitespace-nowrap"
+              >
+                {f.label}
+              </Button>
+            ))}
+          </div>
+
+          {unread > 0 && (
             <Button
-              key={f.key}
-              variant={filter === f.key ? "secondary" : "ghost"}
+              variant="ghost"
               size="sm"
-              onClick={() => setFilter(f.key)}
+              onClick={() => setReadIds(NOTIFICATIONS.map((n) => n.id))}
+              className="shrink-0 whitespace-nowrap text-xs gap-1.5 text-muted-foreground hover:text-foreground ml-auto"
             >
-              {f.label}
+              <CheckCheck size={14} strokeWidth={1.9} aria-hidden="true" />
+              Mark all read
             </Button>
-          ))}
+          )}
         </div>
 
         {effective === "loading" && <ListSkeleton rows={5} columns={3} />}

@@ -351,58 +351,59 @@ export function MySpendsWidget({
       />
 
       {/* ── 3. Filters Toolbar (1:1 Figma Node 1386:59783) ── */}
-      <div className="flex flex-wrap items-center gap-3">
-        {/* Toggle Pill: Transaction vs Category */}
-        <div className="inline-flex w-fit flex-wrap rounded-xl bg-muted p-1">
-          <button
-            type="button"
-            onClick={() => {
-              setViewMode("types");
-              setSelectedItemName(null);
-              setExpandedOther(false);
-            }}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
-              viewMode === "types"
-                ? "bg-background text-foreground shadow-sm font-medium"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Transaction
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setViewMode("categories");
-              setSelectedItemName(null);
-              setExpandedOther(false);
-            }}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
-              viewMode === "categories"
-                ? "bg-background text-foreground shadow-sm font-medium"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Category
-          </button>
-        </div>
+      <div className="w-full">
+        <div className="flex w-full items-center gap-2.5 overflow-x-auto no-scrollbar flex-nowrap pb-1.5 -mx-4 px-4 sm:mx-0 sm:px-0">
+          {/* Toggle Pill: Transaction vs Category */}
+          <div className="flex shrink-0 items-center rounded-xl bg-muted p-1">
+            <button
+              type="button"
+              onClick={() => {
+                setViewMode("types");
+                setSelectedItemName(null);
+                setExpandedOther(false);
+              }}
+              className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 text-[12.5px] sm:text-[13px] transition-all cursor-pointer ${
+                viewMode === "types"
+                  ? "bg-background text-foreground shadow-sm font-medium"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Transaction
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setViewMode("categories");
+                setSelectedItemName(null);
+                setExpandedOther(false);
+              }}
+              className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 text-[12.5px] sm:text-[13px] transition-all cursor-pointer ${
+                viewMode === "categories"
+                  ? "bg-background text-foreground shadow-sm font-medium"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Category
+            </button>
+          </div>
 
-        {/* Account Selector Dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                variant="outline"
-                size="sm"
-                className="rounded-xl h-9 px-3.5 text-[13px] font-medium border-border/80 bg-card shadow-xs hover:bg-muted/50 cursor-pointer"
-              >
-                <Landmark size={14} className="text-muted-foreground mr-2" />
-                <span className="truncate max-w-[200px]">
-                  {selectedAccount ? selectedAccount.name : "Personal Current Account"}
-                </span>
-                <ChevronDown size={14} className="text-muted-foreground ml-2 opacity-70" />
-              </Button>
-            }
-          />
+          {/* Account Selector Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-xl h-9 px-3.5 text-[13px] font-medium border-border/80 bg-card shadow-xs hover:bg-muted/50 cursor-pointer shrink-0 whitespace-nowrap"
+                >
+                  <Landmark size={14} className="text-muted-foreground mr-2 shrink-0" />
+                  <span className="truncate max-w-[180px]">
+                    {selectedAccount ? selectedAccount.name : "Personal Current Account"}
+                  </span>
+                  <ChevronDown size={14} className="text-muted-foreground ml-2 opacity-70 shrink-0" />
+                </Button>
+              }
+            />
           <DropdownMenuContent align="start" className="w-fit min-w-max">
             <DropdownMenuItem
               onClick={() => onSelectAccount?.(null)}
@@ -435,11 +436,11 @@ export function MySpendsWidget({
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-xl h-9 px-3.5 text-[13px] font-medium border-border/80 bg-card shadow-xs hover:bg-muted/50 cursor-pointer"
+                className="rounded-xl h-9 px-3.5 text-[13px] font-medium border-border/80 bg-card shadow-xs hover:bg-muted/50 cursor-pointer shrink-0 whitespace-nowrap"
               >
-                <Calendar size={14} className="text-muted-foreground mr-2" />
+                <Calendar size={14} className="text-muted-foreground mr-2 shrink-0" />
                 <span>{PERIOD_LABELS[period]}</span>
-                <ChevronDown size={14} className="text-muted-foreground ml-2 opacity-70" />
+                <ChevronDown size={14} className="text-muted-foreground ml-2 opacity-70 shrink-0" />
               </Button>
             }
           />
@@ -455,6 +456,7 @@ export function MySpendsWidget({
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+        </div>
       </div>
 
       {/* ── 4. Donut Chart & Category Breakdown (1:1 Figma Node 1386:59792) ── */}

@@ -100,37 +100,39 @@ function AccountsContent() {
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200">
-      {/* ── Header: Title & Action Buttons (1:1 Figma Node 1225:6904) ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+      {/* ── Page Header: Title & Action Buttons (no description underneath) ── */}
+      <div className="flex items-center justify-between gap-3 w-full">
+        <h1 className="text-[20px] sm:text-[24px] lg:text-[26px] font-medium leading-[26px] sm:leading-[32px] tracking-[-0.02em] text-foreground truncate">
           Accounts
         </h1>
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {/* My Spends Button */}
           <Button
             type="button"
             variant="outline"
             onClick={() => handleSwitchTab("spends")}
-            className="h-10 px-4 rounded-xl border border-border/80 bg-background/50 hover:bg-muted font-medium text-[13.5px] text-foreground flex items-center gap-2 cursor-pointer transition-all active:scale-[0.98]"
+            className="h-9 sm:h-10 px-2.5 sm:px-4 rounded-xl border border-border/80 bg-card hover:bg-muted font-medium text-[13px] sm:text-[13.5px] text-foreground flex items-center gap-1.5 sm:gap-2 cursor-pointer transition-all active:scale-[0.98]"
+            title="My Spends"
           >
-            <PieChartIcon size={16} className="text-foreground" />
-            <span>My Spends</span>
+            <PieChartIcon size={16} className="text-foreground shrink-0" />
+            <span className="hidden sm:inline">My Spends</span>
           </Button>
 
           {/* Add Funding Method Button (GCB Yellow) */}
           <Button
             type="button"
             onClick={() => setIsLinkModalOpen(true)}
-            className="h-10 px-4 rounded-xl bg-[#fdc307] hover:bg-[#eab306] text-[#18181b] font-semibold text-[13.5px] flex items-center gap-2 cursor-pointer transition-all active:scale-[0.98] shadow-xs"
+            className="h-9 sm:h-10 px-3 sm:px-4 rounded-xl bg-[#fdc307] hover:bg-[#eab306] text-[#18181b] font-medium text-[13px] sm:text-[13.5px] flex items-center gap-1.5 sm:gap-2 cursor-pointer transition-all active:scale-[0.98] shadow-xs shrink-0"
           >
-            <Plus size={16} strokeWidth={2.2} />
-            <span>Add Funding Method</span>
+            <Plus size={16} strokeWidth={2.2} className="shrink-0" />
+            <span className="hidden sm:inline">Add Funding Method</span>
+            <span className="sm:hidden">Add Method</span>
           </Button>
         </div>
       </div>
 
-      {/* ── Search Input (1:1 Figma Node 1225:6909) ── */}
+      {/* ── Full-width Search Input ── */}
       <div className="relative w-full">
         <Search
           size={16}
@@ -207,23 +209,23 @@ function AccountsContent() {
                   <li key={acc.id} className="group relative">
                     <Link
                       href={`/accounts/${acc.id}`}
-                      className="flex items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-muted/40 active:scale-[0.998]"
+                      className="flex items-center justify-between gap-3 sm:gap-4 px-3.5 sm:px-5 py-3.5 sm:py-4 transition-colors hover:bg-muted/40 active:scale-[0.998]"
                     >
                       {/* Left: Icon & Identity */}
-                      <div className="flex items-center gap-3.5 min-w-0">
-                        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/70 text-foreground dark:bg-[#27272a] border border-border/40">
-                          <Landmark size={18} strokeWidth={1.8} aria-hidden="true" />
+                      <div className="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
+                        <span className="flex size-9 sm:size-10 shrink-0 items-center justify-center rounded-full bg-muted/70 text-foreground dark:bg-[#27272a] border border-border/40">
+                          <Landmark size={17} strokeWidth={1.8} aria-hidden="true" />
                         </span>
 
                         <div className="flex min-w-0 flex-col justify-center">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="truncate text-[14.5px] sm:text-[15px] font-medium text-foreground tracking-[-0.01em]">
+                          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                            <span className="truncate text-[14px] sm:text-[15px] font-medium text-foreground tracking-[-0.01em]">
                               {acc.name}
                             </span>
                             {acc.isJoint && (
                               <span
                                 title={acc.mandate ? `Mandate: ${acc.mandate}` : "Joint Account"}
-                                className="inline-flex items-center rounded-full bg-[#FEF3D6] dark:bg-[#3b2d18] px-2 py-0.5 text-[10.5px] font-semibold text-[#B27B00] dark:text-[#f59e0b]"
+                                className="inline-flex items-center rounded-full bg-[#FEF3D6] dark:bg-[#3b2d18] px-1.5 py-0.5 text-[10px] font-semibold text-[#B27B00] dark:text-[#f59e0b]"
                               >
                                 Joint
                               </span>
@@ -234,25 +236,27 @@ function AccountsContent() {
                               </Badge>
                             )}
                           </div>
-                          <span className="mt-0.5 text-[12.5px] sm:text-[13px] text-muted-foreground tabular font-normal truncate">
+                          <span className="mt-0.5 text-[12px] sm:text-[13px] text-muted-foreground tabular font-normal truncate">
                             {subtitle}
                           </span>
                         </div>
                       </div>
 
                       {/* Right: Available Balance & Chevron */}
-                      <div className="flex items-center shrink-0 pl-2">
-                        <span className="text-[13px] sm:text-[13.5px] text-muted-foreground font-normal">
-                          Available:
-                        </span>
-                        <span className="text-[14px] sm:text-[14.5px] font-semibold text-foreground ml-1.5 tabular-nums numorainput">
-                          GHS <RevealingAmount amount={acc.available} currency="" />
-                        </span>
+                      <div className="flex items-center shrink-0 pl-1 sm:pl-2">
+                        <div className="flex flex-col items-end sm:flex-row sm:items-center">
+                          <span className="hidden sm:inline text-[13px] sm:text-[13.5px] text-muted-foreground font-normal">
+                            Available:
+                          </span>
+                          <span className="text-[13.5px] sm:text-[14.5px] font-semibold text-foreground sm:ml-1.5 tabular-nums numorainput">
+                            GHS <RevealingAmount amount={acc.available} currency="" />
+                          </span>
+                        </div>
                         <ChevronRight
                           size={16}
                           strokeWidth={1.8}
                           aria-hidden="true"
-                          className="ml-3 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+                          className="ml-2 sm:ml-3 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
                         />
                       </div>
                     </Link>

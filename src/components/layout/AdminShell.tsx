@@ -80,8 +80,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           onToggleCollapse={toggleCollapse}
         />
 
-        <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[var(--surface)] dark:bg-[#09090b] p-2 sm:p-3 lg:p-3.5">
-          <div className="shell-card flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[var(--surface)] dark:bg-[#09090b] p-0 sm:p-3 lg:p-3.5">
+          <div className="shell-card flex min-h-0 flex-1 flex-col overflow-hidden rounded-none border-0 shadow-none sm:rounded-2xl sm:border sm:border-border sm:shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
             {/* No activeProfile passed — the switcher cannot render here. */}
             <TopHeader
               actor={actor}
@@ -93,7 +93,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               className="custom-scrollbar flex-1 overflow-y-auto"
               style={{ scrollbarGutter: "stable" }}
             >
-              <div key={pathname} className="page-stagger mx-auto w-full max-w-[1360px] px-8 pb-14 pt-9 sm:px-12 sm:pt-12 sm:pb-16 lg:px-16 lg:pt-14 lg:pb-20 xl:px-20 xl:pt-16">{children}</div>
+              <div key={pathname} className="page-stagger mx-auto w-full max-w-[1360px] px-4 pt-5 pb-12 sm:px-12 sm:pt-12 sm:pb-16 lg:px-16 lg:pt-14 lg:pb-20 xl:px-20 xl:pt-16">{children}</div>
             </main>
           </div>
         </div>

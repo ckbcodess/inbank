@@ -174,17 +174,16 @@ export default function CardsPage() {
         labels={LIST_STATE_LABEL}
       />
 
-      {/* Page Header */}
+      {/* ── Page Header: Title & Action (no description underneath) ── */}
       <PageHeader
         title="Cards"
-        description="Prepaid and debit cards linked here. Instantly issue, fund, or block cards."
         actions={
           <Button
             onClick={() => {
               setNotice("Card requests are coming soon.");
               setTimeout(() => setNotice(null), 5000);
             }}
-            className="h-9 gap-1.5 px-3.5 text-[13px] font-medium rounded-lg shadow-xs"
+            className="h-9 gap-1.5 px-3.5 text-[13px] font-medium rounded-lg shadow-xs shrink-0"
           >
             <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
             <span>Request Card</span>
@@ -200,7 +199,7 @@ export default function CardsPage() {
       )}
 
       {/* Segmented Controls Filter (styled exactly like Payments Page) */}
-      <div className="inline-flex w-fit flex-wrap rounded-xl bg-muted p-1">
+      <div className="flex overflow-x-auto no-scrollbar rounded-xl bg-muted p-1 w-full sm:w-fit">
         {(["all", "Virtual", "Prepaid", "Debit"] as const).map((t) => {
           const isActive = typeFilter === t;
           const label = t === "all" ? "All Cards" : t === "Virtual" ? "Virtual Cards" : t;
@@ -210,7 +209,7 @@ export default function CardsPage() {
               type="button"
               onClick={() => setTypeFilter(t)}
               aria-pressed={isActive}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
+              className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 sm:px-4 sm:py-2 text-[12.5px] sm:text-[13px] whitespace-nowrap transition-all cursor-pointer ${
                 isActive
                   ? "bg-background text-foreground shadow-sm font-medium"
                   : "text-muted-foreground hover:text-foreground"
@@ -258,7 +257,7 @@ export default function CardsPage() {
                 <li key={card.id} className="group relative">
                   <Link
                     href={`/cards/${card.id}`}
-                    className="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-muted/40 active:scale-[0.995] transition-transform"
+                    className="flex items-center gap-3 sm:gap-4 px-3.5 sm:px-5 py-3.5 sm:py-4 transition-colors hover:bg-muted/40 active:scale-[0.995] transition-transform"
                   >
                     <MiniCardThumbnail card={card} />
 

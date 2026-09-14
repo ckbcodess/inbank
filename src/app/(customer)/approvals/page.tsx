@@ -77,10 +77,7 @@ export default function ApprovalQueuePage() {
 
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader
-        title="Approvals"
-        description="Transactions waiting on your decision."
-      />
+      <PageHeader title="Approvals" />
 
       <StateSwitcher
         section="13.1"
@@ -92,7 +89,7 @@ export default function ApprovalQueuePage() {
 
       <div className="rounded-2xl border border-border bg-card">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
-          <div className="inline-flex w-fit flex-wrap rounded-xl bg-muted p-1">
+          <div className="flex w-full sm:w-fit items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-muted p-1">
             {(["all", "payment", "trade"] as const).map((t) => {
               const isActive = typeFilter === t;
               return (
@@ -101,7 +98,7 @@ export default function ApprovalQueuePage() {
                   type="button"
                   onClick={() => setTypeFilter(t)}
                   aria-pressed={isActive}
-                  className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] capitalize transition-all cursor-pointer ${
+                  className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] capitalize transition-all cursor-pointer ${
                     isActive
                       ? "bg-background text-foreground shadow-sm font-medium"
                       : "text-muted-foreground hover:text-foreground"

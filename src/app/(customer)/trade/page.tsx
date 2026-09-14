@@ -41,7 +41,6 @@ export default function TradeHubPage() {
     <div className="flex flex-col gap-5">
       <PageHeader
         title="Trade"
-        description="Trade finance requests and their lifecycle."
         actions={
           <Button nativeButton={false} render={<Link href="/trade/new" />}>
             <Plus size={15} strokeWidth={1.9} aria-hidden="true" />

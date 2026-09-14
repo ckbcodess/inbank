@@ -32,8 +32,8 @@ import {
   Wallet,
   X,
 } from "lucide-react";
-import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
+import PageHeader from "@/components/layout/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import {
@@ -783,16 +783,15 @@ export default function BeneficiariesPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Header matching Figma */}
+      {/* ── Page Header: Title & Action (no description underneath) ── */}
       <PageHeader
         title="Beneficiaries"
-        description="Manage your saved counterparties, bank accounts, mobile wallets, and payment groups."
         actions={
           activeTab === "groups" ? (
             <Button
               nativeButton={false}
               render={<Link href="/beneficiaries/groups/new" />}
-              className="h-9 gap-1.5 px-3.5 text-[13px] rounded-lg shadow-xs"
+              className="h-9 gap-1.5 px-3.5 text-[13px] rounded-lg shadow-xs shrink-0"
             >
               <Plus size={15} strokeWidth={2} />
               Add new group
@@ -806,7 +805,7 @@ export default function BeneficiariesPage() {
                 });
                 setFormOpen(true);
               }}
-              className="h-9 gap-1.5 px-3.5 text-[13px] font-medium rounded-lg shadow-xs"
+              className="h-9 gap-1.5 px-3.5 text-[13px] font-medium rounded-lg shadow-xs shrink-0"
             >
               <Plus size={15} strokeWidth={2} />
               {activeTab === "billers" ? "Add biller" : "Add beneficiary"}
@@ -817,14 +816,14 @@ export default function BeneficiariesPage() {
 
       {/* 3 Major Segmented Tabs: People, Billers, Groups (Figma Node 1374:35963) */}
       <div className="flex items-center justify-between">
-        <div className="inline-flex w-fit flex-wrap rounded-xl bg-muted p-1">
+        <div className="flex w-full sm:w-fit items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-muted p-1">
           <button
             type="button"
             onClick={() => {
               setActiveTab("people");
               setTypeFilter("all");
             }}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
+            className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
               activeTab === "people"
                 ? "bg-background text-foreground shadow-sm font-medium"
                 : "text-muted-foreground hover:text-foreground"
@@ -842,7 +841,7 @@ export default function BeneficiariesPage() {
               setActiveTab("billers");
               setTypeFilter("all");
             }}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
+            className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
               activeTab === "billers"
                 ? "bg-background text-foreground shadow-sm font-medium"
                 : "text-muted-foreground hover:text-foreground"
@@ -860,7 +859,7 @@ export default function BeneficiariesPage() {
               setActiveTab("groups");
               setTypeFilter("all");
             }}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
+            className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
               activeTab === "groups"
                 ? "bg-background text-foreground shadow-sm font-medium"
                 : "text-muted-foreground hover:text-foreground"
@@ -907,8 +906,8 @@ export default function BeneficiariesPage() {
 
       {/* Filter Toolbar (for People & Billers) */}
       {activeTab !== "groups" && (
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2.5">
+        <div className="w-full">
+          <div className="flex w-full items-center gap-2.5 overflow-x-auto no-scrollbar flex-nowrap pb-1.5 -mx-4 px-4 sm:mx-0 sm:px-0">
             {/* 1. Method / Rail Filter */}
             {(() => {
               const isTypeActive = typeFilter !== "all";
@@ -922,7 +921,7 @@ export default function BeneficiariesPage() {
                     isActive={isTypeActive}
                     onClear={isTypeActive ? () => setTypeFilter("all") : undefined}
                     clearLabel="Clear method filter"
-                    className="h-9.5 w-auto min-w-[145px] text-[12.5px] rounded-xl border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] shadow-xs"
+                    className="h-9.5 w-auto shrink-0 min-w-[145px] text-[12.5px] rounded-xl border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] shadow-xs"
                   >
                     <div className="flex items-center gap-1.5 truncate">
                       {isTypeActive && (
@@ -952,7 +951,7 @@ export default function BeneficiariesPage() {
             <Select value={groupBy} onValueChange={(val) => setGroupBy(val as GroupByOption)}>
               <SelectTrigger
                 size="sm"
-                className="h-9.5 w-auto min-w-[145px] text-[12.5px] rounded-xl border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] shadow-xs"
+                className="h-9.5 w-auto shrink-0 min-w-[145px] text-[12.5px] rounded-xl border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] shadow-xs"
               >
                 <SelectValue placeholder="Group by">
                   {(val: string) => {
@@ -972,25 +971,23 @@ export default function BeneficiariesPage() {
               <button
                 type="button"
                 onClick={clearAllFilters}
-                className="text-[12px] text-muted-foreground hover:text-foreground font-medium underline underline-offset-4 cursor-pointer pl-1 transition-colors"
+                className="shrink-0 whitespace-nowrap text-[12px] text-muted-foreground hover:text-foreground font-medium underline underline-offset-4 cursor-pointer pl-1 transition-colors"
               >
                 Reset filters
               </button>
             )}
-          </div>
 
-          {/* Expand / Collapse All Toggle (Visible when grouped) */}
-          {groupBy !== "none" && (
-            <div className="flex items-center gap-2">
+            {/* Expand / Collapse All Toggle (Visible when grouped) */}
+            {groupBy !== "none" && (
               <button
                 type="button"
                 onClick={collapsedSections.size === 0 ? collapseAllSections : expandAllSections}
-                className="text-[12px] text-muted-foreground hover:text-foreground cursor-pointer font-medium transition-colors"
+                className="shrink-0 whitespace-nowrap text-[12px] text-muted-foreground hover:text-foreground cursor-pointer font-medium transition-colors"
               >
                 {collapsedSections.size === 0 ? "Collapse all" : "Expand all"}
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
 

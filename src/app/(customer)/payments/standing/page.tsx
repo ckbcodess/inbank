@@ -15,8 +15,8 @@ import {
   Repeat,
   Trash2,
 } from "lucide-react";
-import PageHeader from "@/components/layout/PageHeader";
 import { Button, buttonVariants } from "@/components/ui/button";
+import PageHeader from "@/components/layout/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import {
@@ -81,7 +81,6 @@ export default function StandingOrdersPage() {
     <div className="flex flex-col gap-6">
       <PageHeader
         title="Standing Orders"
-        description="Manage recurring scheduled transfers running on automatic cycles."
         backTo={{ href: "/payments", label: "Payments" }}
         actions={
           <Link href="/payments/standing/new" className={buttonVariants()}>
@@ -90,7 +89,6 @@ export default function StandingOrdersPage() {
           </Link>
         }
       />
-
       {notice && (
         <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/60 px-4 py-3 text-[13px] text-foreground">
           <CheckCircle2 size={16} strokeWidth={1.8} className="shrink-0 text-emerald-500" aria-hidden="true" />
@@ -98,35 +96,37 @@ export default function StandingOrdersPage() {
         </div>
       )}
 
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-border pb-3">
-        <button
-          type="button"
-          onClick={() => setFilterTab("all")}
-          className={`rounded-lg px-3 py-1.5 text-[13px] transition-colors ${
-            filterTab === "all" ? "bg-muted text-foreground font-normal" : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          All Orders ({items.length})
-        </button>
-        <button
-          type="button"
-          onClick={() => setFilterTab("active")}
-          className={`rounded-lg px-3 py-1.5 text-[13px] transition-colors ${
-            filterTab === "active" ? "bg-muted text-foreground font-normal" : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          Active ({items.filter((i) => i.status === "Active").length})
-        </button>
-        <button
-          type="button"
-          onClick={() => setFilterTab("paused")}
-          className={`rounded-lg px-3 py-1.5 text-[13px] transition-colors ${
-            filterTab === "paused" ? "bg-muted text-foreground font-normal" : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          Paused ({items.filter((i) => i.status === "Paused").length})
-        </button>
+      {/* Filter Tabs & Action */}
+      <div className="flex items-center justify-between gap-3 border-b border-border pb-3 flex-wrap sm:flex-nowrap">
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <button
+            type="button"
+            onClick={() => setFilterTab("all")}
+            className={`rounded-lg px-3 py-1.5 text-[13px] transition-colors shrink-0 ${
+              filterTab === "all" ? "bg-muted text-foreground font-normal" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            All Orders ({items.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterTab("active")}
+            className={`rounded-lg px-3 py-1.5 text-[13px] transition-colors shrink-0 ${
+              filterTab === "active" ? "bg-muted text-foreground font-normal" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Active ({items.filter((i) => i.status === "Active").length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setFilterTab("paused")}
+            className={`rounded-lg px-3 py-1.5 text-[13px] transition-colors shrink-0 ${
+              filterTab === "paused" ? "bg-muted text-foreground font-normal" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Paused ({items.filter((i) => i.status === "Paused").length})
+          </button>
+        </div>
       </div>
 
       {/* Standing Orders Cards List */}

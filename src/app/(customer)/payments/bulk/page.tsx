@@ -45,8 +45,7 @@ export default function BulkUploadPage() {
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
-        title="Bulk payment"
-        description="Upload a payment file, then correct any records that fail validation."
+        title="Bulk Payments"
         backTo={{ href: "/payments", label: "Payments" }}
       />
 

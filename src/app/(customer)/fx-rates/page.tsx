@@ -21,8 +21,8 @@ import {
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
-import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
+import PageHeader from "@/components/layout/PageHeader";
 import {
   CurrencyLogo,
   CurrencyPairLogos,
@@ -135,8 +135,7 @@ export default function FxRatesPage() {
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
-        title="FX rates"
-        description="The Bank's published daily foreign exchange rates. Indicative for reference — the rate applied to a transaction is confirmed at the point of execution."
+        title="Foreign Exchange Rates"
         actions={
           <span className="text-[12px] text-muted-foreground">
             Published {formatDateTime(FX_PUBLISHED_AT)}
@@ -312,7 +311,52 @@ export default function FxRatesPage() {
 
           {/* Rates board */}
           <div className="overflow-hidden rounded-2xl border border-border bg-card">
-            <div className="overflow-x-auto">
+            {/* Mobile View (sm:hidden) */}
+            <div className="sm:hidden divide-y divide-border">
+              {FX_RATES.map((rate) => {
+                const up = rate.changePct >= 0;
+                const meta = getCurrencyMeta(rate.base);
+                return (
+                  <div key={rate.pair} className="flex items-center justify-between p-3.5 gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <CurrencyPairLogos base={rate.base} quote={rate.quote} size={26} />
+                      <div className="flex flex-col min-w-0">
+                        <span className="font-medium text-[14px] text-foreground tabular">
+                          {rate.pair}
+                        </span>
+                        <span className="text-[11.5px] text-muted-foreground truncate">
+                          {meta.name}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-end shrink-0">
+                      <div className="flex items-center gap-2 text-[13px] tabular font-medium text-foreground">
+                        <span>Buy {formatRate(rate.buy)}</span>
+                        <span className="text-muted-foreground/50">·</span>
+                        <span>Sell {formatRate(rate.sell)}</span>
+                      </div>
+                      <span
+                        className={`mt-0.5 inline-flex items-center gap-1 text-[11.5px] tabular font-medium ${
+                          up ? "text-[var(--pay-cash,#17c858)]" : "text-destructive"
+                        }`}
+                      >
+                        {up ? (
+                          <TrendingUp size={12} strokeWidth={2} aria-hidden="true" />
+                        ) : (
+                          <TrendingDown size={12} strokeWidth={2} aria-hidden="true" />
+                        )}
+                        {up ? "+" : ""}
+                        {rate.changePct.toFixed(2)}%
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop Table View (hidden sm:block) */}
+            <div className="hidden sm:block overflow-x-auto">
               <table className="w-full min-w-[560px] text-[13px]">
                 <thead>
                   <tr className="border-b border-border text-left text-muted-foreground">

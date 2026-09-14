@@ -2393,10 +2393,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                 <ArrowLeftRight size={20} strokeWidth={1.8} />
               </span>
-              <div className="flex flex-col">
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Between My Accounts</span>
-                <span className="text-[12.5px] text-muted-foreground">Move money between your own GCB accounts (Zero fee)</span>
-              </div>
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Between My Accounts</span>
             </div>
             <ChevronRight
               size={20}
@@ -2421,10 +2418,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none font-medium text-[13px]">
                 GCB
               </span>
-              <div className="flex flex-col">
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Other GCB Accounts</span>
-                <span className="text-[12.5px] text-muted-foreground">Transfer to another GCB Bank customer</span>
-              </div>
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Other GCB Accounts</span>
             </div>
             <ChevronRight
               size={20}
@@ -2449,10 +2443,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                 <Landmark size={20} strokeWidth={1.8} />
               </span>
-              <div className="flex flex-col">
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Other Local Banks</span>
-                <span className="text-[12.5px] text-muted-foreground">Transfer to other banks in Ghana via GhIPSS / ACH</span>
-              </div>
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Other Local Banks</span>
             </div>
             <ChevronRight
               size={20}
@@ -2478,10 +2469,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                 <Globe size={20} strokeWidth={1.8} />
               </span>
-              <div className="flex flex-col">
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">International (SWIFT)</span>
-                <span className="text-[12.5px] text-muted-foreground">Cross-border wire transfers worldwide via SWIFT</span>
-              </div>
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">International (SWIFT)</span>
             </div>
             <ChevronRight
               size={20}
@@ -2564,10 +2552,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                 <Smartphone size={20} strokeWidth={1.8} />
               </span>
-              <div className="flex flex-col">
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">My Own Wallet (Self)</span>
-                <span className="text-[12.5px] text-muted-foreground">Transfer to your registered mobile number ({REGISTERED_PHONE})</span>
-              </div>
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">My Own Wallet (Self)</span>
             </div>
             <ChevronRight
               size={20}
@@ -2599,10 +2584,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                 <Users size={20} strokeWidth={1.8} />
               </span>
-              <div className="flex flex-col">
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Other Mobile Wallets</span>
-                <span className="text-[12.5px] text-muted-foreground">Transfer to any MTN, Telecel, or AT Money wallet in Ghana</span>
-              </div>
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Other Mobile Wallets</span>
             </div>
             <ChevronRight
               size={20}
@@ -2700,10 +2682,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                 <Smartphone size={20} strokeWidth={1.8} />
               </span>
-              <div className="flex flex-col">
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Generate Token for self</span>
-                <span className="text-[12.5px] text-muted-foreground">Withdraw cash for yourself using your registered mobile number ({REGISTERED_PHONE})</span>
-              </div>
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Generate Token for self</span>
             </div>
             <ChevronRight
               size={20}
@@ -2735,10 +2714,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                 <Users size={20} strokeWidth={1.8} />
               </span>
-              <div className="flex flex-col">
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Generate Token for others</span>
-                <span className="text-[12.5px] text-muted-foreground">Send a cardless cash withdrawal token to a third-party recipient</span>
-              </div>
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Generate Token for others</span>
             </div>
             <ChevronRight
               size={20}
@@ -2969,10 +2945,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <span className={proxyIconCls}>
                 <ArrowLeftRight size={20} strokeWidth={1.8} />
               </span>
-              <div className="flex flex-col">
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Transfer to a proxy ID</span>
-                <span className="text-[12.5px] text-muted-foreground">Pay anyone by their phone, @alias or Ghana Card</span>
-              </div>
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Transfer to a proxy ID</span>
             </div>
             <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
           </button>
@@ -2992,10 +2965,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   <span className={proxyIconCls}>
                     <Pencil size={19} strokeWidth={1.8} />
                   </span>
-                  <div className="flex flex-col">
-                    <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Update proxy ID</span>
-                    <span className="text-[12.5px] text-muted-foreground">Change your proxy details or the account it pays into</span>
-                  </div>
+                  <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Update proxy ID</span>
                 </div>
                 <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
               </button>
@@ -3010,10 +2980,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   <span className={proxyIconCls}>
                     <Trash2 size={19} strokeWidth={1.8} className="text-destructive" />
                   </span>
-                  <div className="flex flex-col">
-                    <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Deregister proxy ID</span>
-                    <span className="text-[12.5px] text-muted-foreground">Remove your proxy ID — people can no longer pay you this way</span>
-                  </div>
+                  <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Deregister proxy ID</span>
                 </div>
                 <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
               </button>
@@ -3032,10 +2999,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 <span className={proxyIconCls}>
                   <Plus size={20} strokeWidth={1.8} />
                 </span>
-                <div className="flex flex-col">
-                  <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Create a proxy ID</span>
-                  <span className="text-[12.5px] text-muted-foreground">Register your phone or Ghana Card to receive payments</span>
-                </div>
+                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Create a proxy ID</span>
               </div>
               <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
             </button>
@@ -3160,10 +3124,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <span className={groupIconCls}>
                 <Users size={20} strokeWidth={1.8} />
               </span>
-              <div className="flex flex-col">
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Transfer to group</span>
-                <span className="text-[12.5px] text-muted-foreground">Split a payment across a Susu circle, family or team</span>
-              </div>
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Transfer to group</span>
             </div>
             <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
           </button>
@@ -3178,10 +3139,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <span className={groupIconCls}>
                 <Pencil size={19} strokeWidth={1.8} />
               </span>
-              <div className="flex flex-col">
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Manage groups</span>
-                <span className="text-[12.5px] text-muted-foreground">Create, edit members and split amounts, or remove a group</span>
-              </div>
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Manage groups</span>
             </div>
             <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
           </button>
@@ -3264,12 +3222,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                 <Smartphone size={20} strokeWidth={1.8} />
               </span>
-              <div className="flex flex-col">
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">My own number (Self)</span>
-                <span className="text-[12.5px] text-muted-foreground">
-                  {isData ? "Buy a bundle for your registered number" : "Top up your registered number"} ({REGISTERED_PHONE})
-                </span>
-              </div>
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">My own number (Self)</span>
             </div>
             <ChevronRight
               size={20}
@@ -3301,12 +3254,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
                 <Users size={20} strokeWidth={1.8} />
               </span>
-              <div className="flex flex-col">
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Someone else</span>
-                <span className="text-[12.5px] text-muted-foreground">
-                  {isData ? "Buy a bundle for any MTN, Telecel, or AT number" : "Top up any MTN, Telecel, or AT number in Ghana"}
-                </span>
-              </div>
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Someone else</span>
             </div>
             <ChevronRight
               size={20}

@@ -25,7 +25,7 @@ export function TotalBalanceCard({ accounts }: TotalBalanceCardProps) {
   return (
     <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card shadow-xs transition-colors">
       {/* Top Banner (Yellow Header in light mode, Obsidian Gold in dark mode) */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#f6bf36] via-[#f5ba2f] to-[#e8ab1c] text-[#121212] px-6 pt-7 pb-5 dark:from-[#211a0c] dark:via-[#191409] dark:to-[#141008] dark:text-neutral-100 dark:border-b dark:border-amber-500/20">
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#f6bf36] via-[#f5ba2f] to-[#e8ab1c] text-[#121212] px-4.5 sm:px-6 pt-5 sm:pt-7 pb-4 sm:pb-5 dark:from-[#211a0c] dark:via-[#191409] dark:to-[#141008] dark:text-neutral-100 dark:border-b dark:border-amber-500/20">
         {/* Background Eagle Graphic Watermark */}
         <div className="pointer-events-none absolute -top-8 -right-4 h-[200px] w-[280px] select-none opacity-25 mix-blend-color-burn dark:opacity-10 dark:mix-blend-screen dark:invert">
           <Image
@@ -38,9 +38,9 @@ export function TotalBalanceCard({ accounts }: TotalBalanceCardProps) {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col gap-2.5">
+        <div className="relative z-10 flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <span className="text-[15px] font-medium text-current/90">Total Balance</span>
+            <span className="text-[14px] sm:text-[15px] font-medium text-current/90">Total Balance</span>
             <button
               type="button"
               onClick={toggleAmountVisibility}
@@ -55,15 +55,15 @@ export function TotalBalanceCard({ accounts }: TotalBalanceCardProps) {
           <div className="flex items-baseline text-current">
             {showAmounts ? (
               <>
-                <span className="text-[32px] sm:text-[34px] font-normal tracking-tight tabular">
+                <span className="text-[26px] sm:text-[34px] font-normal tracking-tight tabular">
                   GHS {formattedInt}
                 </span>
-                <span className="text-[19px] font-normal ml-0.5 tabular opacity-85">
+                <span className="text-[16px] sm:text-[19px] font-normal ml-0.5 tabular opacity-85">
                   {fractionalPart}
                 </span>
               </>
             ) : (
-              <span className="text-[32px] sm:text-[34px] font-normal tracking-tight tabular">
+              <span className="text-[26px] sm:text-[34px] font-normal tracking-tight tabular">
                 GHS ••••••
               </span>
             )}
@@ -72,7 +72,7 @@ export function TotalBalanceCard({ accounts }: TotalBalanceCardProps) {
       </div>
 
       {/* Embedded Accounts Preview List */}
-      <div className="flex flex-col bg-card px-6 py-2.5 divide-y divide-border/50">
+      <div className="flex flex-col bg-card px-4 sm:px-6 py-2.5 divide-y divide-border/50">
         {accounts.slice(0, 3).map((acc) => (
           <Link
             key={acc.id}

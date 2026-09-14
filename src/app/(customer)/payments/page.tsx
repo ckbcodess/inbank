@@ -152,19 +152,17 @@ function ActionSection({
 export default function SendAndPayPage() {
   return (
     <div className="flex flex-col gap-8">
-      {/* Header */}
+      {/* ── Page Header: Title & Action (no description underneath) ── */}
       <PageHeader
         title="Send & Pay"
         actions={
-          <div className="flex items-center gap-3">
-            <Link
-              href="/payments/standing"
-              className="inline-flex h-8 items-center gap-1.5 rounded-[8px] bg-[#ebebe9] px-3 text-[13px] font-medium text-foreground transition-colors hover:bg-[#e0e0de] dark:bg-[#232323] dark:hover:bg-[#2c2c2c]"
-            >
-              <Repeat size={15} strokeWidth={1.8} aria-hidden="true" />
-              Standing Orders
-            </Link>
-          </div>
+          <Link
+            href="/payments/standing"
+            className="inline-flex h-8 items-center gap-1.5 rounded-[8px] bg-muted px-3 text-[13px] font-medium text-foreground transition-colors hover:bg-muted/80"
+          >
+            <Repeat size={15} strokeWidth={1.8} aria-hidden="true" />
+            Standing Orders
+          </Link>
         }
       />
 

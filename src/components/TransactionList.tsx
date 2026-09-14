@@ -556,16 +556,19 @@ export default function TransactionList({
         />
       )}
 
-      {/* Page Title & Export Action Header */}
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">Transactions</h1>
+      {/* ── Page Header: Title & Export Action (no description underneath) ── */}
+      <div className="flex items-center justify-between gap-3 w-full">
+        <h1 className="text-[20px] sm:text-[24px] lg:text-[26px] font-medium leading-[26px] sm:leading-[32px] tracking-[-0.02em] text-foreground truncate">
+          Transactions
+        </h1>
         <Button
           variant="outline"
           onClick={() => exportTransactionsCSV(results)}
-          className="h-9 gap-2 px-3.5 text-[13px] font-medium border-border/80 bg-background/50 hover:bg-muted/50 rounded-lg shadow-xs"
+          className="h-9 gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 text-[13px] font-medium border-border/80 bg-card hover:bg-muted/50 rounded-lg shadow-xs shrink-0"
         >
-          <ArrowDownToLine size={14} className="text-muted-foreground" />
-          Export Transactions
+          <ArrowDownToLine size={14} className="text-muted-foreground shrink-0" />
+          <span className="hidden sm:inline">Export Transactions</span>
+          <span className="sm:hidden">Export</span>
         </Button>
       </div>
 
@@ -580,7 +583,7 @@ export default function TransactionList({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by reference ID,  recipient ...."
-          className="w-full h-12 pl-11 pr-10 rounded-xl border border-border/70 bg-card/40 text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-colors"
+          className="w-full h-11 sm:h-12 pl-11 pr-10 rounded-xl border border-border/70 bg-card/40 text-[13.5px] sm:text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-colors"
         />
         {query && (
           <button
@@ -594,8 +597,8 @@ export default function TransactionList({
       </div>
 
       {/* Filter Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2.5">
+      <div className="w-full">
+        <div className="flex w-full items-center gap-2 overflow-x-auto no-scrollbar flex-nowrap pb-1.5 -mx-4 px-4 sm:mx-0 sm:px-0">
           {/* 1. Account Filter */}
           {(() => {
             const isAccountActive = accountFilter !== "all";
@@ -609,7 +612,7 @@ export default function TransactionList({
                   isActive={isAccountActive}
                   onClear={isAccountActive ? () => setAccountFilter("all") : undefined}
                   clearLabel="Clear account filter"
-                  className="h-9 w-auto min-w-[145px] text-[13px] rounded-lg border-border/80 bg-background/60"
+                  className="h-9 w-auto shrink-0 min-w-[145px] text-[13px] rounded-lg border-border/80 bg-background/60"
                 >
                   <div className="flex items-center gap-1.5 truncate">
                     {isAccountActive ? (
@@ -658,7 +661,7 @@ export default function TransactionList({
                       : undefined
                   }
                   clearLabel="Clear date filter"
-                  className="h-9 w-auto min-w-[115px] text-[13px] rounded-lg border-border/80 bg-background/60"
+                  className="h-9 w-auto shrink-0 min-w-[115px] text-[13px] rounded-lg border-border/80 bg-background/60"
                 >
                   <div className="flex items-center gap-1.5 truncate">
                     {isDateActive && (
@@ -707,7 +710,7 @@ export default function TransactionList({
                   isActive={isMethodActive}
                   onClear={isMethodActive ? () => setMethodFilters([]) : undefined}
                   clearLabel="Clear payment method filter"
-                  className="h-9 w-auto min-w-[125px] text-[13px] rounded-lg border-border/80 bg-background/60"
+                  className="h-9 w-auto shrink-0 min-w-[125px] text-[13px] rounded-lg border-border/80 bg-background/60"
                 >
                   <div className="flex items-center gap-1.5 truncate">
                     <SelectValue placeholder="All Methods">
@@ -751,7 +754,7 @@ export default function TransactionList({
                   isActive={isCategoryActive}
                   onClear={isCategoryActive ? () => setCategoryFilters([]) : undefined}
                   clearLabel="Clear category filter"
-                  className="h-9 w-auto min-w-[130px] text-[13px] rounded-lg border-border/80 bg-background/60"
+                  className="h-9 w-auto shrink-0 min-w-[130px] text-[13px] rounded-lg border-border/80 bg-background/60"
                 >
                   <div className="flex items-center gap-1.5 truncate">
                     <SelectValue placeholder="All Categories">
@@ -797,7 +800,7 @@ export default function TransactionList({
                   isActive={isStatusActive}
                   onClear={isStatusActive ? () => setStatusFilters([]) : undefined}
                   clearLabel="Clear status filter"
-                  className="h-9 w-auto min-w-[120px] text-[13px] rounded-lg border-border/80 bg-background/60"
+                  className="h-9 w-auto shrink-0 min-w-[120px] text-[13px] rounded-lg border-border/80 bg-background/60"
                 >
                   <div className="flex items-center gap-1.5 truncate">
                     <SelectValue placeholder="All Statuses">
@@ -824,24 +827,24 @@ export default function TransactionList({
               </Select>
             );
           })()}
-        </div>
 
-        {/* Active Filter Counter & Reset */}
-        {hasActiveFilters && (
-          <div className="flex items-center gap-2">
-            <span className="text-[12px] font-medium text-muted-foreground bg-muted/60 px-2.5 py-1 rounded-full border border-border">
-              {activeFiltersCount} {activeFiltersCount === 1 ? "filter" : "filters"} applied
-            </span>
-            <button
-              type="button"
-              onClick={resetAllFilters}
-              className="flex items-center gap-1 text-[12.5px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1 px-1.5"
-            >
-              <RotateCcw size={12} strokeWidth={2} />
-              Reset all
-            </button>
-          </div>
-        )}
+          {/* Active Filter Counter & Reset */}
+          {hasActiveFilters && (
+            <div className="flex shrink-0 items-center gap-2 pl-1">
+              <span className="text-[12px] font-medium text-muted-foreground bg-muted/60 px-2.5 py-1 rounded-full border border-border whitespace-nowrap">
+                {activeFiltersCount} {activeFiltersCount === 1 ? "filter" : "filters"} applied
+              </span>
+              <button
+                type="button"
+                onClick={resetAllFilters}
+                className="flex shrink-0 items-center gap-1 text-[12.5px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1 px-1.5 whitespace-nowrap"
+              >
+                <RotateCcw size={12} strokeWidth={2} />
+                Reset all
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Custom Date Range Controls */}
@@ -904,10 +907,63 @@ export default function TransactionList({
         </div>
       )}
 
-      {/* 1:1 Figma Data Table */}
+      {/* Data Table / List Views */}
       {(effective === "populated" || effective === "partial-load") && (
         <div className="flex flex-col gap-4">
-          <div className="overflow-x-auto rounded-xl border border-border/70 bg-card/40 backdrop-blur-sm">
+          {/* Mobile High-Density Transaction List View (md:hidden) */}
+          <div className="md:hidden divide-y divide-border/50 rounded-xl border border-border/70 bg-card/40 backdrop-blur-sm overflow-hidden">
+            {paginatedRows.map((t) => {
+              const { colorClass, prefix } = getAmountStyling(t);
+              return (
+                <div
+                  key={t.id}
+                  onClick={() => router.push(`${detailBase}/${t.id}`)}
+                  className="flex flex-col gap-2 p-3.5 hover:bg-muted/30 transition-colors cursor-pointer active:bg-muted/50"
+                >
+                  {/* Top Row: Counterparty/Description & Amount */}
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="font-medium text-foreground text-[14px] leading-snug line-clamp-1 flex-1">
+                      {t.counterparty || t.description}
+                    </span>
+                    <span className={cn("tabular text-[14px] font-medium shrink-0 leading-snug", colorClass)}>
+                      {prefix}
+                      {t.currency}{" "}
+                      {showAmounts
+                        ? t.amount.toLocaleString("en-US", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })
+                        : "••••••"}
+                    </span>
+                  </div>
+
+                  {/* Middle Row: Date, Method, Account */}
+                  <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground truncate">
+                    <span>{formatTableDate(t.date)}</span>
+                    <span>·</span>
+                    <span className="truncate">{getPaymentMethodDisplay(t)}</span>
+                    <span>·</span>
+                    <span className="truncate">{formatAccountDisplay(t.accountId)}</span>
+                  </div>
+
+                  {/* Bottom Row: Category chip & Status */}
+                  <div className="flex items-center justify-between gap-2 pt-0.5">
+                    {t.category ? (
+                      <span className="rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground truncate max-w-[150px]">
+                        {CATEGORY_MAP[t.category] || t.category}
+                      </span>
+                    ) : (
+                      <span />
+                    )}
+                    <div className="shrink-0">{renderStatusPill(t.state)}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop 1:1 Figma Data Table (hidden md:block) */}
+          <div className="hidden md:block overflow-x-auto rounded-xl border border-border/70 bg-card/40 backdrop-blur-sm">
             <table className="w-full border-collapse text-left">
               <thead>
                 <tr className="border-b border-border/70 text-[13px] font-medium text-muted-foreground bg-muted/15">
