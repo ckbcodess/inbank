@@ -187,7 +187,7 @@ export default function Sidebar({
   }, [isOpen]);
 
   // Admin Portal carries its own mark (section 12.1), customer portal renders official GCB logo mark.
-  const brandLabel = shell === "admin" ? "GCB Admin" : "GCB Bank";
+  const brandLabel = shell === "admin" ? "GCB Admin" : "Internet Banking";
 
   return (
     /* Only width and transform animate. `transition-all` also animated colour,
@@ -232,7 +232,7 @@ export default function Sidebar({
               ) : (
                 <GCBLogo className="h-7 w-auto shrink-0" />
               )}
-              <span className="truncate text-[15px] font-bold leading-tight tracking-tight text-foreground">
+              <span className="truncate text-[14px] font-medium leading-tight tracking-tight text-foreground">
                 {brandLabel}
               </span>
             </div>

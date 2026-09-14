@@ -53,23 +53,18 @@ export default function OverviewPage() {
       {/* State Switcher for prototype testing */}
       <StateSwitcher section="13.9" states={BASELINE_STATES} value={pageState} onChange={setPageState} />
 
-      {/* Greeting & Last Login Header */}
+      {/* Greeting Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-        <div className="flex flex-col gap-1">
-          <div className="flex flex-wrap items-center gap-2.5">
-            <h1 className="text-[22px] font-medium tracking-tight text-foreground sm:text-[25px]">
-              Good morning, {actor.name.split(" ")[0]} 👋🏾
-            </h1>
-            {actor.id === "u-joint" && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-2.5 py-0.5 text-[11.5px] font-medium text-amber-700 dark:text-amber-300">
-                <Users size={13} strokeWidth={1.8} />
-                Joint Mandate · Both to sign
-              </span>
-            )}
-          </div>
-          <span className="text-[13px] text-muted-foreground tabular">
-            Last login: 21 August, 2026 · 08:43 GMT
-          </span>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <h1 className="text-[22px] font-medium tracking-tight text-foreground sm:text-[25px]">
+            Good morning, {actor.name.split(" ")[0]} 👋🏾
+          </h1>
+          {actor.id === "u-joint" && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-2.5 py-0.5 text-[11.5px] font-medium text-amber-700 dark:text-amber-300">
+              <Users size={13} strokeWidth={1.8} />
+              Joint Mandate · Both to sign
+            </span>
+          )}
         </div>
       </div>
 

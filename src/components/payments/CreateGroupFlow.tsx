@@ -503,7 +503,7 @@ export default function CreateGroupFlow({
             onClick={() => setStep(2)}
             className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-[14.5px] font-normal cursor-pointer shadow-xs disabled:opacity-50 mt-1"
           >
-            Continue to Distribution
+            Proceed to Amount
           </Button>
         </div>
       )}
