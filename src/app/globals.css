@@ -262,13 +262,13 @@
 
   /* Fluid Functionalism Surfaces (Dark Mode) */
   --surface-1: #171717;
-  --surface-2: #1E1E1E;
-  --surface-3: #252525;
-  --surface-4: #2C2C2C;
-  --surface-5: #333333;
-  --surface-6: #3A3A3A;
-  --surface-7: #414141;
-  --surface-8: #484848;
+  --surface-2: #1B1B1B;
+  --surface-3: #1F1F1F;
+  --surface-4: #232323;
+  --surface-5: #272727;
+  --surface-6: #2B2B2B;
+  --surface-7: #2F2F2F;
+  --surface-8: #333333;
   --dm-hi-base: rgba(255,255,255,0.01);
   --dm-hi-mid: rgba(255,255,255,0.02);
   --dm-hi-high: rgba(255,255,255,0.04);
