@@ -22,11 +22,13 @@ import {
   LayoutDashboard,
   LayoutGrid,
   LineChart,
+  MapPin,
   PanelLeftClose,
   PanelLeftOpen,
   Percent,
   Receipt,
   Send,
+  Settings,
   Shield,
   Ship,
   ShieldCheck,
@@ -65,6 +67,8 @@ const ICON_MAP: Record<string, React.ElementType> = {
   Landmark,
   Sparkles,
   LayoutGrid,
+  MapPin,
+  Settings,
 };
 
 /**

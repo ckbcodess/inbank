@@ -24,8 +24,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -190,15 +190,14 @@ export function QuickActionBar({
 
       {/* Top up a card — FR-33 */}
       <Dialog open={activeModal === "top-up"} onOpenChange={(open) => !open && setActiveModal(null)}>
-        <DialogContent className="sm:max-w-[460px]">
+        <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle>Top up a card</DialogTitle>
-            <DialogDescription>
-              Move funds from an account onto a prepaid or virtual card. Debit cards draw on their
-              linked account and cannot be funded.
-            </DialogDescription>
+            <DialogTitle>Top up card</DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col gap-4 py-2">
+          <DialogBody>
+            <p className="text-[13px] text-muted-foreground leading-relaxed">
+              Move funds from an account onto a prepaid or virtual card.
+            </p>
             <div className="flex flex-col gap-2">
               <Label>Card</Label>
               <Select
@@ -245,7 +244,7 @@ export function QuickActionBar({
                 className="tabular"
               />
             </div>
-          </div>
+          </DialogBody>
           <DialogFooter>
             <Button variant="outline" onClick={() => setActiveModal(null)}>
               Cancel
@@ -259,14 +258,11 @@ export function QuickActionBar({
 
       {/* Internal transfer */}
       <Dialog open={activeModal === "transfer"} onOpenChange={(open) => !open && setActiveModal(null)}>
-        <DialogContent className="sm:max-w-[460px]">
+        <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle>Internal account transfer</DialogTitle>
-            <DialogDescription>
-              Move funds instantly between your linked NIBS accounts.
-            </DialogDescription>
+            <DialogTitle>Internal transfer</DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col gap-4 py-2">
+          <DialogBody>
             <div className="flex flex-col gap-2">
               <Label>From account</Label>
               <Select
@@ -322,7 +318,7 @@ export function QuickActionBar({
                 onChange={(e) => setTransferRef(e.target.value)}
               />
             </div>
-          </div>
+          </DialogBody>
           <DialogFooter>
             <Button variant="outline" onClick={() => setActiveModal(null)}>
               Cancel
@@ -336,14 +332,11 @@ export function QuickActionBar({
 
       {/* Pay a bill */}
       <Dialog open={activeModal === "pay-bill"} onOpenChange={(open) => !open && setActiveModal(null)}>
-        <DialogContent className="sm:max-w-[480px]">
+        <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle>Pay a utility or service bill</DialogTitle>
-            <DialogDescription>
-              Select a registered biller and make an instant bill payment from your account.
-            </DialogDescription>
+            <DialogTitle>Pay a bill</DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col gap-4 py-2">
+          <DialogBody>
             <div className="flex flex-col gap-2">
               <Label>Biller</Label>
               <Select
@@ -405,7 +398,7 @@ export function QuickActionBar({
                 className="tabular"
               />
             </div>
-          </div>
+          </DialogBody>
           <DialogFooter>
             <Button variant="outline" onClick={() => setActiveModal(null)}>
               Cancel
@@ -419,31 +412,30 @@ export function QuickActionBar({
 
       {/* Customize */}
       <Dialog open={activeModal === "customize"} onOpenChange={(open) => !open && setActiveModal(null)}>
-        <DialogContent className="sm:max-w-[420px]">
+        <DialogContent size="sm">
           <DialogHeader>
             <DialogTitle>Customize quick actions</DialogTitle>
-            <DialogDescription>
-              Select which shortcuts appear on your dashboard action bar.
-            </DialogDescription>
           </DialogHeader>
-          <div className="flex flex-col gap-3 py-2 text-[13px]">
-            {[
-              "Send money",
-              "Top up a card",
-              "Quick pay",
-              "Transfer between accounts",
-              "Pay bills",
-              ...(isCorporate ? ["Bulk pay"] : []),
-            ].map((act) => (
-              <label
-                key={act}
-                className="flex cursor-pointer items-center justify-between rounded-xl border border-border p-3 hover:bg-muted/40"
-              >
-                <span className="text-foreground">{act}</span>
-                <input type="checkbox" defaultChecked className="size-4 rounded border-border" />
-              </label>
-            ))}
-          </div>
+          <DialogBody>
+            <div className="flex flex-col gap-2.5">
+              {[
+                "Send money",
+                "Top up a card",
+                "Quick pay",
+                "Transfer between accounts",
+                "Pay bills",
+                ...(isCorporate ? ["Bulk pay"] : []),
+              ].map((act) => (
+                <label
+                  key={act}
+                  className="flex cursor-pointer items-center justify-between rounded-xl border border-border p-3 hover:bg-muted/40 transition-colors"
+                >
+                  <span className="text-[13px] text-foreground">{act}</span>
+                  <input type="checkbox" defaultChecked className="size-4 rounded border-border" />
+                </label>
+              ))}
+            </div>
+          </DialogBody>
           <DialogFooter>
             <Button onClick={() => setActiveModal(null)}>Save preferences</Button>
           </DialogFooter>

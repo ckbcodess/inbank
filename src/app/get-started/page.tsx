@@ -15,6 +15,14 @@ import {
 } from "lucide-react";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function GetStartedPage() {
   const router = useRouter();
@@ -209,60 +217,52 @@ export default function GetStartedPage() {
       </AuthLayout>
 
       {/* COOS Redirection Confirmation Modal */}
-      {showCoosModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md rounded-3xl border border-black/10 bg-card p-6 sm:p-7 shadow-2xl transition-all">
-            <div className="flex flex-col items-center text-center">
-              <div className="mb-4 flex size-14 items-center justify-center rounded-2xl bg-[#FEF3D6] text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200]">
-                <ExternalLink size={28} strokeWidth={2} />
-              </div>
+      <Dialog open={showCoosModal} onOpenChange={setShowCoosModal}>
+        <DialogContent size="sm">
+          <DialogHeader>
+            <DialogTitle>Account opening portal</DialogTitle>
+          </DialogHeader>
 
-              <h3 className="text-[19px] font-semibold text-foreground">
-                Redirecting to GCB Account Opening
-              </h3>
-              <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
-                You will be redirected to our secure Customer Onboarding &amp; Origination System (COOS) portal at{" "}
-                <span className="font-semibold text-foreground">
-                  accountopening.gcb.com.gh
-                </span>{" "}
-                to complete your full account creation.
-              </p>
+          <DialogBody>
+            <p className="text-[13.5px] leading-relaxed text-muted-foreground">
+              You will be redirected to our secure Customer Onboarding & Origination System (COOS) portal at{" "}
+              <span className="font-medium text-foreground">accountopening.gcb.com.gh</span> to complete your full account creation.
+            </p>
+          </DialogBody>
 
-              <div className="mt-6 flex w-full flex-col gap-2.5">
-                <Button
-                  type="button"
-                  data-tour="gs-cos-confirm"
-                  onClick={executeCoosRedirect}
-                  disabled={isRedirecting}
-                  className="h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] shadow-md shadow-[#F2B200]/20 cursor-pointer"
-                >
-                  {isRedirecting ? (
-                    <>
-                      <Loader2 className="mr-2 size-4 animate-spin" />
-                      Opening secure portal...
-                    </>
-                  ) : (
-                    <>
-                      Open account on COOS
-                      <ExternalLink className="ml-2 size-4" />
-                    </>
-                  )}
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setShowCoosModal(false)}
-                  disabled={isRedirecting}
-                  className="h-11 w-full rounded-2xl text-[13.5px] text-muted-foreground hover:text-foreground active:scale-[0.96] cursor-pointer"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowCoosModal(false)}
+              disabled={isRedirecting}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              data-tour="gs-cos-confirm"
+              onClick={executeCoosRedirect}
+              disabled={isRedirecting}
+              className="gap-1.5"
+            >
+              {isRedirecting ? (
+                <>
+                  <Loader2 className="size-3.5 animate-spin" />
+                  Opening portal...
+                </>
+              ) : (
+                <>
+                  Open on COOS
+                  <ExternalLink className="size-3.5" />
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

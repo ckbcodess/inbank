@@ -67,7 +67,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { CurrencyLogo, CurrencyPairLogos } from "@/components/ui/currency-logo";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter } from "@/components/ui/dialog";
 
 export default function FigmaDesignFidelityDashboard() {
   const [showAmounts, setShowAmounts] = useState(false);
@@ -709,48 +709,45 @@ export default function FigmaDesignFidelityDashboard() {
           INTERACTIVE ACTION MODAL
           ============================================================ */}
       <Dialog open={transferOpen} onOpenChange={setTransferOpen}>
-        <DialogContent className="sm:max-w-[400px] rounded-2xl p-6 bg-white border-[#e8ecef] text-[#18181b]">
+        <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold">{transferTitle}</DialogTitle>
-            <DialogDescription className="text-xs text-[#71717a]">
-              Execute instant transfers with zero settlement delays.
-            </DialogDescription>
+            <DialogTitle>{transferTitle}</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4 my-3">
-            <div>
-              <label className="text-xs font-bold text-[#71717a] block mb-1">Recipient Account / Phone</label>
+          <DialogBody>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-muted-foreground block">Recipient account / phone</label>
               <input
                 type="text"
                 placeholder="e.g. 0244 123 456 or 4001 9922 1100"
-                className="w-full h-10 px-3 rounded-lg border border-[#e8ecef] font-mono text-xs focus:outline-none focus:border-[#18181b]"
+                className="w-full h-10 px-3 rounded-xl border border-border bg-transparent font-mono text-xs focus:outline-none focus:border-foreground"
               />
             </div>
 
-            <div>
-              <label className="text-xs font-bold text-[#71717a] block mb-1">Amount (GHS)</label>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-muted-foreground block">Amount (GHS)</label>
               <input
                 type="number"
                 defaultValue="100"
-                className="w-full h-11 px-3 rounded-lg border border-[#e8ecef] font-mono text-base font-bold focus:outline-none focus:border-[#18181b]"
+                className="w-full h-10 px-3 rounded-xl border border-border bg-transparent font-mono text-base font-medium focus:outline-none focus:border-foreground"
               />
             </div>
-          </div>
+          </DialogBody>
 
-          <div className="flex justify-end gap-2 pt-2 border-t border-[#f1f3f5]">
-            <Button variant="outline" className="rounded-lg" onClick={() => setTransferOpen(false)}>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setTransferOpen(false)}>
               Cancel
             </Button>
             <Button
-              className="rounded-lg bg-[#18181b] text-white font-bold"
+              size="sm"
               onClick={() => {
                 alert(`${transferTitle} executed successfully!`);
                 setTransferOpen(false);
               }}
             >
-              Authorize →
+              Authorize
             </Button>
-          </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Check, Eye, EyeOff, Layers, LogOut, Menu, Moon, Sun } from "lucide-react";
+import { Bell, Check, Eye, EyeOff, Layers, LogOut, Menu, Moon, Settings, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
@@ -180,6 +180,14 @@ export default function TopHeader({
               <span className="block text-[12px] font-normal text-muted-foreground">{actor.email}</span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem
+              render={
+                <Link href="/settings" className="flex items-center gap-2.5 w-full">
+                  <Settings size={15} strokeWidth={1.8} />
+                  Settings
+                </Link>
+              }
+            />
             <DropdownMenuItem onClick={onSignOut} className="gap-2.5">
               <LogOut size={15} strokeWidth={1.8} />
               Sign out

@@ -20,6 +20,7 @@ import {
   Landmark,
   Receipt,
   Repeat,
+  QrCode,
   Smartphone,
   User,
   Users,
@@ -103,6 +104,12 @@ const PAY_ACTIONS: PaymentAction[] = [
     title: "Cardless Withdrawal",
     href: "/payments/send?rail=cardless",
     icon: Banknote,
+  },
+  {
+    id: "qr",
+    title: "Scan & Pay",
+    href: "/payments/send?rail=qr",
+    icon: QrCode,
   },
 ];
 

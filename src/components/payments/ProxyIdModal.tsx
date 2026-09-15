@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { Fingerprint } from "lucide-react";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
+  DialogFooter,
+  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
@@ -80,25 +83,14 @@ export default function ProxyIdModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="sm:max-w-md max-h-[92vh] overflow-y-auto p-5 sm:p-6 rounded-[20px] border border-border/80 bg-card shadow-2xl"
-        showCloseButton
-      >
-        <div className="flex items-center gap-3">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#FEF3D6] text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200]">
-            <Fingerprint size={20} strokeWidth={1.8} />
-          </span>
-          <div>
-            <DialogTitle className="text-[16px] text-foreground tracking-[-0.01em]">
-              {mode === "edit" ? "Update your proxy ID" : "Create a proxy ID"}
-            </DialogTitle>
-            <p className="text-[12.5px] text-muted-foreground">
-              Let people pay you with a number they already know.
-            </p>
-          </div>
-        </div>
+      <DialogContent size="md">
+        <DialogHeader>
+          <DialogTitle>
+            {mode === "edit" ? "Update your proxy ID" : "Create a proxy ID"}
+          </DialogTitle>
+        </DialogHeader>
 
-        <div className="mt-5 flex flex-col gap-4">
+        <DialogBody>
           {/* Proxy type */}
           <div className="flex flex-col gap-1.5">
             <label className={labelCls}>Proxy type</label>
@@ -145,26 +137,26 @@ export default function ProxyIdModal({
               </SelectContent>
             </Select>
           </div>
-        </div>
+        </DialogBody>
 
-        <div className="mt-6 flex items-center justify-end gap-2.5">
+        <DialogFooter>
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
+            size="sm"
             onClick={() => onOpenChange(false)}
-            className="h-10 rounded-xl px-4 text-[13.5px] cursor-pointer"
           >
             Cancel
           </Button>
           <Button
             type="button"
+            size="sm"
             onClick={handleSave}
             disabled={!canSave}
-            className="h-10 rounded-xl bg-[#F2B200] px-4 text-[13.5px] font-semibold text-black hover:bg-[#E0A300] cursor-pointer"
           >
             {mode === "edit" ? "Save changes" : "Create proxy ID"}
           </Button>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

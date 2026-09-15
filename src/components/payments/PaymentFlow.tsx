@@ -63,7 +63,13 @@ import { useGroupsStore } from "@/lib/groups-store";
 import { useProxyStore, PROXY_TYPE_LABEL } from "@/lib/proxy-store";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import ProxyIdModal from "@/components/payments/ProxyIdModal";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useSession } from "@/lib/session-store";
 import { roundMoney, sumMoney } from "@/lib/money";
 import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
@@ -83,6 +89,7 @@ import { PapssPaymentFlow } from "./flows/PapssPaymentFlow";
 import { CardlessWithdrawalFlow } from "./flows/CardlessWithdrawalFlow";
 import { GroupPaymentFlow } from "./flows/GroupPaymentFlow";
 import { ProxyPayFlow } from "./flows/ProxyPayFlow";
+import { ScanAndPayFlow } from "./flows/ScanAndPayFlow";
 import {
   PAYMENT_METHODS,
   getPaymentMethodName,
@@ -1773,6 +1780,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "ghanagov") return "Invoice / Reference";
     if (rail === "proxy") return "Proxy ID";
     if (rail === "group") return "Split Type";
+    if (rail === "qr") return "Terminal / Merchant ID";
     return "Account";
   }, [rail, biller?.reference]);
 
@@ -1790,8 +1798,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "ghanagov") return f.govRef;
     if (rail === "proxy") return f.pxId;
     if (rail === "group") return selectedGroupObj ? `${selectedGroupObj.members.length} members (${selectedGroupObj.splitType === "equal" ? `GHS ${selectedGroupObj.defaultPerMemberAmount} each` : "Custom"})` : "Group";
+    if (rail === "qr") return f.qrRef || "Verified GCB QR";
     return f.benAcct;
-  }, [bankCategory, toOwnAccount?.number, rail, f.benAcct, f.wPhone, f.aPhone, f.ecgMeter, f.billRef, f.govRef, f.pxId, f.cardId, selectedGroupObj]);
+  }, [bankCategory, toOwnAccount?.number, rail, f.benAcct, f.wPhone, f.aPhone, f.ecgMeter, f.billRef, f.govRef, f.pxId, f.cardId, selectedGroupObj, f.qrRef]);
 
   const reviewInstitutionLabel = useMemo(() => {
     if (rail === "card-topup") return "Card Details";
@@ -3018,37 +3027,39 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
         {/* Deregister confirmation */}
         <Dialog open={proxyDeregisterOpen} onOpenChange={setProxyDeregisterOpen}>
-          <DialogContent className="sm:max-w-sm p-5 sm:p-6 rounded-[20px] border border-border/80 bg-card shadow-2xl" showCloseButton={false}>
-            <DialogTitle className="text-[16px] text-foreground tracking-[-0.01em]">
-              Deregister your proxy ID?
-            </DialogTitle>
-            <p className="mt-1.5 text-[13px] leading-snug text-muted-foreground">
+          <DialogContent size="sm">
+            <DialogHeader>
+              <DialogTitle>
+                Deregister your proxy ID?
+              </DialogTitle>
+            </DialogHeader>
+            <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
               People will no longer be able to pay you using{" "}
               <span className="text-foreground tabular">{myProxy?.value}</span>. You can register a new
               one at any time.
-            </p>
-            <div className="mt-5 flex items-center justify-end gap-2.5">
+            </div>
+            <DialogFooter>
               <Button
                 type="button"
-                variant="outline"
+                variant="ghost"
+                size="sm"
                 onClick={() => setProxyDeregisterOpen(false)}
-                className="h-10 rounded-xl px-4 text-[13.5px] cursor-pointer"
               >
                 Keep it
               </Button>
               <Button
                 type="button"
                 variant="destructive"
+                size="sm"
                 onClick={() => {
                   deregisterProxy();
                   setProxyDeregisterOpen(false);
                   toast.success("Proxy ID deregistered");
                 }}
-                className="h-10 rounded-xl px-4 text-[13.5px] font-semibold cursor-pointer"
               >
                 Deregister
               </Button>
-            </div>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
@@ -3826,6 +3837,37 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   else if (key === "narration") set("wRef", val as string);
                   else if (key === "wNetwork") set("wNetwork", val as string);
                   else set(key, val);
+                }}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
+            )}
+
+            {/* Flow 12: Scan & Pay (QR) */}
+            {rail === "qr" && (
+              <ScanAndPayFlow
+                accounts={accounts}
+                state={{
+                  fromId: f.fromId,
+                  qrMerchant: f.qrMerchant,
+                  qrCode: f.qrRef || "",
+                  amount: f.qrAmount,
+                  narration: f.bankRef || f.wRef,
+                  category: f.category,
+                }}
+                onChange={(key, val) => {
+                  if (key === "amount") set("qrAmount", val);
+                  else if (key === "qrCode") set("qrRef", val);
+                  else if (key === "qrMerchant") set("qrMerchant", val);
+                  else if (key === "narration") {
+                    set("bankRef", val);
+                    set("wRef", val);
+                  } else set(key, val);
                 }}
                 detailsCollapsed={stage1Collapsed}
                 onToggleCollapsed={setStage1Collapsed}

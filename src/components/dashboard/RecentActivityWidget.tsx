@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   ChevronDown,
   ChevronRight,
-  X,
   Download,
   RotateCw,
   CheckCircle2,
@@ -21,6 +20,15 @@ import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider
 import type { Transaction } from "@/lib/mock-data";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface RecentActivityWidgetProps {
   transactions?: Transaction[];
@@ -282,89 +290,86 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
       </div>
 
       {/* Transaction Details Modal */}
-      {selectedTx && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-xl">
-            <div className="flex items-center justify-between border-b border-border/60 pb-4">
-              <div className="flex items-center gap-3">
-                <div className={`flex size-10 items-center justify-center rounded-full ${
+      <Dialog open={!!selectedTx} onOpenChange={(open) => !open && setSelectedTx(null)}>
+        {selectedTx && (
+          <DialogContent size="md">
+            <DialogHeader>
+              <DialogTitle>Transaction details</DialogTitle>
+            </DialogHeader>
+
+            <DialogBody>
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border/60">
+                <div className={`flex size-10 items-center justify-center rounded-full shrink-0 ${
                   selectedTx.direction === "debit" ? "bg-red-500/10 text-red-500" : "bg-emerald-500/10 text-emerald-600"
                 }`}>
                   {selectedTx.direction === "debit" ? <ArrowUpRight size={20} /> : <ArrowDownLeft size={20} />}
                 </div>
                 <div>
-                  <h3 className="text-[16px] font-medium text-foreground">{selectedTx.title}</h3>
+                  <span className="text-[14px] font-medium text-foreground">{selectedTx.title}</span>
                   <p className="text-[12px] text-muted-foreground">{selectedTx.subtitle}</p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setSelectedTx(null)}
-                className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
-              >
-                <X size={18} />
-              </button>
-            </div>
 
-            {/* Receipt Summary */}
-            <div className="my-5 flex flex-col items-center justify-center rounded-xl bg-muted/40 p-4 text-center">
-              <span className="text-[12px] text-muted-foreground">Amount Transferred</span>
-              <span className="mt-1 text-[26px] font-medium tabular text-foreground">
-                GHS {selectedTx.amount.toFixed(2)}
-              </span>
-              <span className="mt-2 inline-flex items-center gap-1.5 text-[12px] text-muted-foreground">
-                <span className="size-1.5 rounded-full bg-emerald-500/80 shrink-0" />
-                {selectedTx.status}
-              </span>
-            </div>
+              {/* Receipt Summary */}
+              <div className="my-1 flex flex-col items-center justify-center rounded-xl bg-muted/30 p-4 text-center">
+                <span className="text-[12px] text-muted-foreground">Amount transferred</span>
+                <span className="mt-1 text-[24px] font-medium tabular text-foreground">
+                  GHS {selectedTx.amount.toFixed(2)}
+                </span>
+                <span className="mt-1.5 inline-flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                  <span className="size-1.5 rounded-full bg-emerald-500/80 shrink-0" />
+                  {selectedTx.status}
+                </span>
+              </div>
 
-            {/* Breakdown Details */}
-            <div className="flex flex-col divide-y divide-border/60 text-[13px]">
-              <div className="flex justify-between py-2">
-                <span className="text-muted-foreground">Reference</span>
-                <span className="font-mono text-foreground">{selectedTx.reference}</span>
+              {/* Breakdown Details */}
+              <div className="flex flex-col divide-y divide-border/60 text-[13px]">
+                <div className="flex justify-between py-2">
+                  <span className="text-muted-foreground">Reference</span>
+                  <span className="font-mono text-foreground">{selectedTx.reference}</span>
+                </div>
+                <div className="flex justify-between py-2">
+                  <span className="text-muted-foreground">Category</span>
+                  <span className="font-medium text-foreground">{selectedTx.category}</span>
+                </div>
+                <div className="flex justify-between py-2">
+                  <span className="text-muted-foreground">Fee</span>
+                  <span className="text-foreground">GHS 0.00 (Zero fee)</span>
+                </div>
+                <div className="flex justify-between py-2">
+                  <span className="text-muted-foreground">Channel</span>
+                  <span className="text-foreground">Instant electronic transfer</span>
+                </div>
               </div>
-              <div className="flex justify-between py-2">
-                <span className="text-muted-foreground">Category</span>
-                <span className="font-medium text-foreground">{selectedTx.category}</span>
-              </div>
-              <div className="flex justify-between py-2">
-                <span className="text-muted-foreground">Fee</span>
-                <span className="text-foreground">GHS 0.00 (Zero Fee)</span>
-              </div>
-              <div className="flex justify-between py-2">
-                <span className="text-muted-foreground">Channel</span>
-                <span className="text-foreground">Instant Electronic Transfer</span>
-              </div>
-            </div>
+            </DialogBody>
 
-            {/* Actions */}
-            <div className="mt-6 flex gap-2">
-              <button
-                type="button"
+            <DialogFooter>
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => {
                   toast.success("Receipt PDF downloaded to your device.");
                 }}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-muted/50 py-2.5 text-[13px] font-medium text-foreground hover:bg-muted cursor-pointer"
+                className="gap-1.5"
               >
-                <Download size={15} />
+                <Download size={14} />
                 Download PDF
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                size="sm"
                 onClick={() => {
                   toast.success(`Repeat transfer of GHS ${selectedTx.amount} queued.`);
                   setSelectedTx(null);
                 }}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#f6bf36] py-2.5 text-[13px] font-medium text-neutral-950 hover:bg-[#eab025] cursor-pointer shadow-xs"
+                className="gap-1.5"
               >
-                <RotateCw size={15} />
-                Repeat Payment
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                <RotateCw size={14} />
+                Repeat payment
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        )}
+      </Dialog>
     </>
   );
 }

@@ -21,10 +21,7 @@ export default function CreateGroupModal({
 }: CreateGroupModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="fixed inset-0 z-50 w-full h-full max-w-none max-h-none rounded-none border-none p-0 overflow-y-auto bg-background"
-        showCloseButton={false}
-      >
+      <DialogContent size="full" showCloseButton={false}>
         <DialogTitle className="sr-only">
           {groupToEdit ? "Edit Payment Group" : "Create Payment Group"}
         </DialogTitle>

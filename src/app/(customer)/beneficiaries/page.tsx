@@ -49,7 +49,10 @@ import {
 import { BILLERS } from "@/lib/mock-data";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
+  DialogFooter,
+  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
@@ -275,6 +278,9 @@ interface FormState {
   billerReference: string;
   country: string;
   swiftCode: string;
+  swiftBic?: string;
+  address?: string;
+  nickname?: string;
 }
 
 const INITIAL_FORM: FormState = {
@@ -290,6 +296,9 @@ const INITIAL_FORM: FormState = {
   billerReference: "",
   country: "United States",
   swiftCode: "",
+  swiftBic: "",
+  address: "",
+  nickname: "",
 };
 
 function initials(name: string) {
@@ -1136,36 +1145,20 @@ export default function BeneficiariesPage() {
 
       {/* ── Progressive Add / Edit Beneficiary Modal / Mobile Bottom Sheet ── */}
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent
-          className="max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:border-t max-sm:border-border/80 max-sm:max-h-[92vh] sm:max-w-[480px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
-          showCloseButton={false}
-        >
-          {/* Mobile Bottom Sheet Drag Handle */}
-          <div className="sm:hidden flex justify-center pt-2.5 pb-1 select-none">
-            <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
-          </div>
-
+        <DialogContent size="md">
           {/* Header */}
-          <div className="flex items-center justify-between px-5 sm:px-6 py-3.5 sm:py-4 border-b border-border/60">
-            <DialogTitle className="text-[17px] text-foreground tracking-[-0.01em]">
+          <DialogHeader>
+            <DialogTitle>
               {form.id
                 ? "Edit Beneficiary"
                 : activeTab === "billers"
                 ? "Add Biller"
                 : "Add Beneficiary"}
             </DialogTitle>
-            <button
-              type="button"
-              onClick={() => setFormOpen(false)}
-              className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-              aria-label="Close"
-            >
-              <X size={15} strokeWidth={1.8} />
-            </button>
-          </div>
+          </DialogHeader>
 
           {/* Modal Content with Progressive Disclosure */}
-          <div className="max-h-[calc(90vh-130px)] sm:max-h-[75vh] overflow-y-auto px-5 sm:px-6 py-5 flex flex-col gap-4">
+          <DialogBody>
             {/* Step 1: Destination Rail (Dropdown) */}
             <div className="flex flex-col gap-1.5">
               <label className="text-[12.5px] text-muted-foreground">
@@ -1221,13 +1214,13 @@ export default function BeneficiariesPage() {
                     value={form.network}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, network: val }))}
                   >
-                    <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px]">
-                      <SelectValue placeholder="Select network provider" />
+                    <SelectTrigger className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px] shadow-xs">
+                      <SelectValue placeholder="Select network" />
                     </SelectTrigger>
                     <SelectContent>
-                      {WALLET_NETWORKS.map((n) => (
-                        <SelectItem key={n} value={n}>
-                          {n}
+                      {WALLET_NETWORKS.map((w) => (
+                        <SelectItem key={w} value={w}>
+                          {w}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -1236,38 +1229,34 @@ export default function BeneficiariesPage() {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[12.5px] font-medium text-muted-foreground">
-                    Mobile Money Number
+                    Wallet Phone Number
                   </label>
                   <input
-                    type="text"
+                    type="tel"
                     value={form.phoneNumber}
-                    onChange={(e) => {
-                      const ph = e.target.value;
-                      const detected = detectNetworkFromPhone(ph);
-                      setForm((p) => ({ ...p, phoneNumber: ph, network: p.network || detected }));
-                    }}
-                    placeholder="e.g. 0244 123 456"
-                    className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                    onChange={(e) => setForm((p) => ({ ...p, phoneNumber: e.target.value }))}
+                    placeholder="e.g. 024 123 4567"
+                    className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all shadow-xs"
                   />
                 </div>
               </div>
             )}
 
-            {/* Bank Rail */}
+            {/* Domestic Bank Rail (GCB / Other Banks) */}
             {form.transactionType === "bank" && (
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[12.5px] font-medium text-muted-foreground">
-                    Receiving Bank
+                    Destination Bank
                   </label>
                   <Select
                     value={form.bankName}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
                   >
-                    <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px]">
-                      <SelectValue placeholder="Select receiving bank" />
+                    <SelectTrigger className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px] shadow-xs">
+                      <SelectValue placeholder="Select destination bank" />
                     </SelectTrigger>
-                    <SelectContent className="max-h-60">
+                    <SelectContent className="max-h-56">
                       {GHANA_BANKS.map((b) => (
                         <SelectItem key={b} value={b}>
                           {b}
@@ -1285,8 +1274,8 @@ export default function BeneficiariesPage() {
                     type="text"
                     value={form.accountNumber}
                     onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
-                    placeholder="Enter bank account number"
-                    className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                    placeholder={form.bankName === "GCB Bank" ? "13-digit GCB Account" : "Recipient account number"}
+                    className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all shadow-xs"
                   />
                 </div>
               </div>
@@ -1463,7 +1452,7 @@ export default function BeneficiariesPage() {
                         <SelectValue placeholder="Select bank" />
                       </SelectTrigger>
                       <SelectContent className="max-h-56">
-                        {(INTERNATIONAL_BANKS_BY_COUNTRY[form.country] || INTERNATIONAL_BANKS_BY_COUNTRY["United States"]).map((bank) => (
+                        {(INTERNATIONAL_BANKS_BY_COUNTRY[form.country] || INTERNATIONAL_BANKS_BY_COUNTRY["United Kingdom"]).map((bank) => (
                           <SelectItem key={bank} value={bank}>
                             {bank}
                           </SelectItem>
@@ -1474,19 +1463,37 @@ export default function BeneficiariesPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[12.5px] font-medium text-muted-foreground">SWIFT / BIC Code</label>
+                    <input
+                      type="text"
+                      value={form.swiftBic}
+                      onChange={(e) => setForm((p) => ({ ...p, swiftBic: e.target.value.toUpperCase() }))}
+                      placeholder="e.g. BARCGB22"
+                      className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground uppercase tracking-wider tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all font-mono"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[12.5px] font-medium text-muted-foreground">IBAN / Account Number</label>
+                    <input
+                      type="text"
+                      value={form.accountNumber}
+                      onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
+                      placeholder="GB29 BARC 2020 1555"
+                      className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[12.5px] font-medium text-muted-foreground">Recipient Physical Address</label>
                   <input
                     type="text"
-                    value={form.swiftCode}
-                    onChange={(e) => setForm((p) => ({ ...p, swiftCode: e.target.value.toUpperCase() }))}
-                    placeholder="SWIFT / BIC Code"
-                    className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground uppercase tracking-wider placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
-                  />
-                  <input
-                    type="text"
-                    value={form.accountNumber}
-                    onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
-                    placeholder="IBAN / Account"
-                    className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                    value={form.address}
+                    onChange={(e) => setForm((p) => ({ ...p, address: e.target.value }))}
+                    placeholder="Street, City, Postal Code"
+                    className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                   />
                 </div>
               </div>
@@ -1548,24 +1555,34 @@ export default function BeneficiariesPage() {
             {/* Step 3: Beneficiary Legal Name / Biller Nickname */}
             <div className="flex flex-col gap-1.5">
               <label className="text-[12.5px] font-medium text-muted-foreground">
-                {form.transactionType === "bill" ? "Biller Nickname" : "Beneficiary Legal Name"}
+                {activeTab === "billers" ? "Biller Name" : "Beneficiary Full Name"}
               </label>
               <input
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                placeholder={
-                  form.transactionType === "bill"
-                    ? "Biller account nickname (e.g. Home ECG, Office Water)"
-                    : "Beneficiary legal name (e.g. Kwame Boateng)"
-                }
+                placeholder={activeTab === "billers" ? "e.g. ECG PowerApp" : "e.g. Kojo Mensah"}
                 className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
               />
             </div>
-          </div>
+
+            {/* Step 4: Optional Nickname / Reference */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[12.5px] text-muted-foreground">
+                Nickname / Note <span className="text-[11px] text-muted-foreground/60">(optional)</span>
+              </label>
+              <input
+                type="text"
+                value={form.nickname}
+                onChange={(e) => setForm((p) => ({ ...p, nickname: e.target.value }))}
+                placeholder="e.g. Landlord, Monthly Groceries"
+                className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+              />
+            </div>
+          </DialogBody>
 
           {/* Sticky Footer with Primary Button */}
-          <div className="flex items-center justify-end gap-2 px-5 sm:px-6 py-3.5 border-t border-border/60 bg-muted/20 sticky bottom-0 z-10">
+          <DialogFooter>
             <Button
               variant="ghost"
               size="sm"
@@ -1582,78 +1599,50 @@ export default function BeneficiariesPage() {
             >
               {form.id ? "Save Changes" : "Save Beneficiary"}
             </Button>
-          </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* ── Delete Confirmation Dialogs (Responsive Bottom Sheet on Mobile) ── */}
       <Dialog open={Boolean(removeId)} onOpenChange={(o) => !o && setRemoveId(null)}>
-        <DialogContent
-          className="max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:border-t max-sm:border-border/80 sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
-          showCloseButton={false}
-        >
-          <div className="sm:hidden flex justify-center pt-2.5 pb-1 select-none">
-            <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
-          </div>
-          <div className="flex items-center justify-between px-5 sm:px-6 py-3.5 sm:py-4 border-b border-border/60">
-            <DialogTitle className="text-[17px] text-foreground tracking-[-0.01em]">
+        <DialogContent size="sm">
+          <DialogHeader>
+            <DialogTitle>
               Remove Beneficiary
             </DialogTitle>
-            <button
-              type="button"
-              onClick={() => setRemoveId(null)}
-              className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-              aria-label="Close"
-            >
-              <X size={15} strokeWidth={1.8} />
-            </button>
-          </div>
+          </DialogHeader>
           <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground">
             Are you sure you want to remove <span className="text-foreground">{toRemove?.name}</span>? This will not affect past transactions.
           </div>
-          <div className="flex items-center justify-end gap-2 px-5 sm:px-6 py-3.5 border-t border-border/60 bg-muted/20">
+          <DialogFooter>
             <Button variant="ghost" size="sm" onClick={() => setRemoveId(null)}>
               Cancel
             </Button>
             <Button variant="destructive" size="sm" onClick={handleRemoveBeneficiary}>
               Remove
             </Button>
-          </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
       <Dialog open={Boolean(removeGroupId)} onOpenChange={(o) => !o && setRemoveGroupId(null)}>
-        <DialogContent
-          className="max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:border-t max-sm:border-border/80 sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
-          showCloseButton={false}
-        >
-          <div className="sm:hidden flex justify-center pt-2.5 pb-1 select-none">
-            <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
-          </div>
-          <div className="flex items-center justify-between px-5 sm:px-6 py-3.5 sm:py-4 border-b border-border/60">
-            <DialogTitle className="text-[17px] text-foreground tracking-[-0.01em]">
+        <DialogContent size="sm">
+          <DialogHeader>
+            <DialogTitle>
               Delete Payment Group
             </DialogTitle>
-            <button
-              type="button"
-              onClick={() => setRemoveGroupId(null)}
-              className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-              aria-label="Close"
-            >
-              <X size={15} strokeWidth={1.8} />
-            </button>
-          </div>
+          </DialogHeader>
           <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground">
             Are you sure you want to delete <span className="text-foreground">{toRemoveGroup?.name}</span>? Group members will remain in your individual beneficiaries directory.
           </div>
-          <div className="flex items-center justify-end gap-2 px-5 sm:px-6 py-3.5 border-t border-border/60 bg-muted/20">
+          <DialogFooter>
             <Button variant="ghost" size="sm" onClick={() => setRemoveGroupId(null)}>
               Cancel
             </Button>
             <Button variant="destructive" size="sm" onClick={handleRemoveGroup}>
               Delete Group
             </Button>
-          </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 

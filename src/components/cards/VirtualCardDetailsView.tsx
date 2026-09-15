@@ -25,7 +25,14 @@ import {
   Snowflake,
   Sparkles,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SimpleTooltip } from "@/components/ui/tooltip";
@@ -660,87 +667,70 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
 
       {/* 1. Top Up Modal */}
       <Dialog open={activeModal === "top-up"} onOpenChange={(open) => !open && setActiveModal(null)}>
-        <DialogContent className="max-w-md rounded-2xl p-6">
+        <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[17px]">
-              <PlusCircle size={18} className="text-foreground" />
-              <span>Top up {currentCard.name}</span>
-            </DialogTitle>
-            <DialogDescription className="text-[13px]">
-              Transfer funds instantly from your bank account to this card.
-            </DialogDescription>
+            <DialogTitle>Top up {currentCard.name}</DialogTitle>
           </DialogHeader>
 
-          <form onSubmit={handleExecuteTopUp} className="space-y-4 pt-2">
-            {/* Current Balance */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-muted/50 border border-border">
-              <span className="text-[12px] text-muted-foreground">Current Card Balance</span>
-              <span className="text-[14px] font-medium text-foreground tabular">
-                GHS {(currentCard.balance ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </span>
-            </div>
-
-            {/* Source Account */}
-            <div className="space-y-1.5">
-              <label className="text-[12px] font-medium text-foreground">Fund from Account</label>
-              <select
-                value={topUpSourceAccountId}
-                onChange={(e) => setTopUpSourceAccountId(e.target.value)}
-                className="w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 py-2.5 text-[13.5px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
-              >
-                {availableAccounts.map((acc) => (
-                  <option key={acc.id} value={acc.id}>
-                    {acc.name} — GHS {acc.available.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Top Up Amount */}
-            <div className="space-y-1.5">
-              <label className="text-[12px] font-medium text-foreground">Top Up Amount (GHS)</label>
-              <Input
-                type="number"
-                min="1"
-                step="any"
-                placeholder="0.00"
-                value={topUpAmount}
-                onChange={(e) => setTopUpAmount(e.target.value)}
-                required
-                className="rounded-xl h-11 text-[14px] tabular"
-              />
-              {/* Preset chips */}
-              <div className="flex gap-2 pt-1">
-                {[100, 250, 500, 1000].map((amt) => (
-                  <button
-                    key={amt}
-                    type="button"
-                    onClick={() => setTopUpAmount(String(amt))}
-                    className="px-2.5 py-1 rounded-lg border border-border bg-muted/40 hover:bg-muted text-[12px] font-medium text-foreground transition-colors cursor-pointer"
-                  >
-                    +GHS {amt}
-                  </button>
-                ))}
+          <form onSubmit={handleExecuteTopUp}>
+            <DialogBody>
+              {/* Current Balance */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-muted/50 border border-border">
+                <span className="text-[12px] text-muted-foreground">Current Card Balance</span>
+                <span className="text-[14px] font-medium text-foreground tabular">
+                  GHS {(currentCard.balance ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
               </div>
-            </div>
 
-            <div className="flex justify-end gap-2 pt-3">
+              {/* Source Account */}
+              <div className="space-y-1.5">
+                <label className="text-[12px] font-medium text-foreground">Fund from Account</label>
+                <select
+                  value={topUpSourceAccountId}
+                  onChange={(e) => setTopUpSourceAccountId(e.target.value)}
+                  className="w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 py-2.5 text-[13.5px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                >
+                  {availableAccounts.map((acc) => (
+                    <option key={acc.id} value={acc.id}>
+                      {acc.name} — GHS {acc.available.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Top Up Amount */}
+              <div className="space-y-1.5">
+                <label className="text-[12px] font-medium text-foreground">Top Up Amount (GHS)</label>
+                <Input
+                  type="number"
+                  min="1"
+                  step="any"
+                  placeholder="0.00"
+                  value={topUpAmount}
+                  onChange={(e) => setTopUpAmount(e.target.value)}
+                  required
+                  className="rounded-xl h-11 text-[14px] tabular"
+                />
+              </div>
+            </DialogBody>
+
+            <DialogFooter>
               <Button
                 type="button"
-                variant="outline"
+                variant="ghost"
+                size="sm"
                 onClick={() => setActiveModal(null)}
-                className="cursor-pointer"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
+                size="sm"
                 disabled={!topUpAmount || parseFloat(topUpAmount) <= 0}
-                className="cursor-pointer"
               >
                 Top Up Now
               </Button>
-            </div>
+            </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
@@ -755,16 +745,12 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
           }
         }}
       >
-        <DialogContent className="max-w-sm rounded-2xl p-6">
-          <div className="text-center">
-            <DialogHeader className="text-center sm:text-center">
-              <DialogTitle className="text-[17px] text-center">Security PIN</DialogTitle>
-              <DialogDescription className="text-[13px] text-center">
-                Your 4-digit card PIN for ATM &amp; point-of-sale verification.
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="py-5 flex flex-col items-center justify-center gap-3">
+        <DialogContent size="sm">
+          <DialogHeader>
+            <DialogTitle>Security PIN</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <div className="py-2 flex flex-col items-center justify-center gap-3 text-center">
               <div className="flex gap-3 justify-center">
                 {["4", "8", "2", "1"].map((digit, idx) => (
                   <div
@@ -776,29 +762,30 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
                 ))}
               </div>
 
-              <div className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full font-medium mt-2">
+              <div className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full font-medium mt-1">
                 <Clock size={13} className="animate-pulse" />
                 <span>Closing in {pinCountdown}s</span>
               </div>
 
-              <p className="text-[11.5px] text-muted-foreground mt-1">
+              <p className="text-[12px] text-muted-foreground mt-1">
                 This window will close automatically for your security. Do not share your PIN.
               </p>
-
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setActiveModal(null);
-                  setPinCountdown(15);
-                }}
-                className="mt-3 w-full cursor-pointer text-xs"
-              >
-                Done
-              </Button>
             </div>
-          </div>
+          </DialogBody>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setActiveModal(null);
+                setPinCountdown(15);
+              }}
+              className="w-full cursor-pointer text-xs"
+            >
+              Done
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -811,21 +798,19 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
 
       {/* 3. Freeze Card Confirmation Modal */}
       <Dialog open={activeModal === "freeze"} onOpenChange={(open) => !open && setActiveModal(null)}>
-        <DialogContent className="max-w-sm rounded-2xl p-6">
+        <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[17px]">
-              <Snowflake size={18} className="text-foreground" />
-              <span>{isFrozen ? "Unfreeze Card?" : "Freeze Card?"}</span>
-            </DialogTitle>
-            <DialogDescription className="text-[13px]">
-              {isFrozen
-                ? "Unfreezing will immediately re-enable payments and transactions on this card."
-                : "Freezing will temporarily block all new transactions, online payments, and ATM withdrawals."}
-            </DialogDescription>
+            <DialogTitle>{isFrozen ? "Unfreeze Card?" : "Freeze Card?"}</DialogTitle>
           </DialogHeader>
 
-          <div className="pt-4 flex items-center justify-end gap-3">
-            <Button variant="outline" size="sm" onClick={() => setActiveModal(null)}>
+          <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
+            {isFrozen
+              ? "Unfreezing will immediately re-enable payments and transactions on this card."
+              : "Freezing will temporarily block all new transactions, online payments, and ATM withdrawals."}
+          </div>
+
+          <DialogFooter>
+            <Button variant="ghost" size="sm" onClick={() => setActiveModal(null)}>
               Cancel
             </Button>
             <Button
@@ -835,86 +820,76 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
             >
               {isFrozen ? "Unfreeze Card" : "Freeze Card"}
             </Button>
-          </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* 4. Set Limits Modal */}
       <Dialog open={activeModal === "limits"} onOpenChange={(open) => !open && setActiveModal(null)}>
-        <DialogContent className="max-w-md rounded-2xl p-6">
+        <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[17px]">
-              <SlidersHorizontal size={18} className="text-foreground" />
-              <span>Adjust Spending Limits</span>
-            </DialogTitle>
-            <DialogDescription className="text-[13px]">
-              Set maximum transaction limits for daily and monthly spend.
-            </DialogDescription>
+            <DialogTitle>Adjust Spending Limits</DialogTitle>
           </DialogHeader>
 
-          <form onSubmit={handleSaveLimits} className="space-y-4 pt-2">
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="daily-limit-input" className="text-[12.5px] font-medium text-foreground">
-                Daily Limit (GHS)
-              </label>
-              <Input
-                id="daily-limit-input"
-                type="number"
-                min="100"
-                max={maxDailyCap}
-                value={tempDaily}
-                onChange={(e) => setTempDaily(e.target.value)}
-                placeholder="5000"
-                className="h-10 text-[13.5px] tabular"
-              />
-              <span className="text-[11px] text-muted-foreground">
-                Current spend today: GHS {dailySpent.toLocaleString()} · Maximum cap: GHS {maxDailyCap.toLocaleString()}
-              </span>
-            </div>
+          <form onSubmit={handleSaveLimits}>
+            <DialogBody>
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="daily-limit-input" className="text-[12.5px] font-medium text-foreground">
+                  Daily Limit (GHS)
+                </label>
+                <Input
+                  id="daily-limit-input"
+                  type="number"
+                  min="100"
+                  max={maxDailyCap}
+                  value={tempDaily}
+                  onChange={(e) => setTempDaily(e.target.value)}
+                  placeholder="5000"
+                  className="h-10 text-[13.5px] tabular"
+                />
+                <span className="text-[11px] text-muted-foreground">
+                  Current spend today: GHS {dailySpent.toLocaleString()} · Maximum cap: GHS {maxDailyCap.toLocaleString()}
+                </span>
+              </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="monthly-limit-input" className="text-[12.5px] font-medium text-foreground">
-                Monthly Limit (GHS)
-              </label>
-              <Input
-                id="monthly-limit-input"
-                type="number"
-                min="500"
-                max={maxMonthlyCap}
-                value={tempMonthly}
-                onChange={(e) => setTempMonthly(e.target.value)}
-                placeholder="15000"
-                className="h-10 text-[13.5px] tabular"
-              />
-              <span className="text-[11px] text-muted-foreground">Maximum available cap: GHS {maxMonthlyCap.toLocaleString()}</span>
-            </div>
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="monthly-limit-input" className="text-[12.5px] font-medium text-foreground">
+                  Monthly Limit (GHS)
+                </label>
+                <Input
+                  id="monthly-limit-input"
+                  type="number"
+                  min="500"
+                  max={maxMonthlyCap}
+                  value={tempMonthly}
+                  onChange={(e) => setTempMonthly(e.target.value)}
+                  placeholder="15000"
+                  className="h-10 text-[13.5px] tabular"
+                />
+                <span className="text-[11px] text-muted-foreground">Maximum available cap: GHS {maxMonthlyCap.toLocaleString()}</span>
+              </div>
+            </DialogBody>
 
-            <div className="pt-3 flex items-center justify-end gap-3">
-              <Button type="button" variant="outline" size="sm" onClick={() => setActiveModal(null)}>
+            <DialogFooter>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setActiveModal(null)}>
                 Cancel
               </Button>
               <Button type="submit" size="sm">
                 Save Limits
               </Button>
-            </div>
+            </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
       {/* 5. Card Controls Modal */}
       <Dialog open={activeModal === "controls"} onOpenChange={(open) => !open && setActiveModal(null)}>
-        <DialogContent className="max-w-md rounded-2xl p-6">
+        <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[17px]">
-              <Settings2 size={18} className="text-foreground" />
-              <span>Card Controls & Channels</span>
-            </DialogTitle>
-            <DialogDescription className="text-[13px]">
-              Enable or disable specific transaction types and security channels.
-            </DialogDescription>
+            <DialogTitle>Card Controls & Channels</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-3.5 pt-2 text-[13.5px]">
+          <DialogBody>
             <label className="flex items-center justify-between p-3.5 rounded-xl border border-border bg-muted/40 cursor-pointer">
               <div className="flex items-center gap-3">
                 <Globe size={18} className="text-muted-foreground" />
@@ -971,24 +946,24 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
                 className="size-4.5 rounded accent-primary"
               />
             </label>
-          </div>
+          </DialogBody>
+
+          <DialogFooter>
+            <Button size="sm" onClick={() => setActiveModal(null)}>
+              Done
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* 6. Unblock / Reset PIN Modal */}
       <Dialog open={activeModal === "reset-pin"} onOpenChange={(open) => !open && setActiveModal(null)}>
-        <DialogContent className="max-w-md rounded-2xl p-6">
+        <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[17px]">
-              <Key size={18} className="text-foreground" />
-              <span>Reset Card PIN</span>
-            </DialogTitle>
-            <DialogDescription className="text-[13px]">
-              Set a new 4-digit security PIN for this virtual card.
-            </DialogDescription>
+            <DialogTitle>Reset Card PIN</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4 pt-2">
+          <DialogBody>
             <div className="flex flex-col gap-1.5">
               <label htmlFor="new-pin-input" className="text-[12.5px] font-medium text-foreground">New 4-Digit PIN</label>
               <Input id="new-pin-input" type="password" maxLength={4} placeholder="••••" className="h-10 tracking-widest text-[16px]" />
@@ -998,99 +973,89 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
               <label htmlFor="confirm-pin-input" className="text-[12.5px] font-medium text-foreground">Confirm New PIN</label>
               <Input id="confirm-pin-input" type="password" maxLength={4} placeholder="••••" className="h-10 tracking-widest text-[16px]" />
             </div>
+          </DialogBody>
 
-            <div className="pt-3 flex items-center justify-end gap-3">
-              <Button variant="outline" size="sm" onClick={() => setActiveModal(null)}>
-                Cancel
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => {
-                  triggerToast("PIN reset successfully");
-                  setActiveModal(null);
-                }}
-              >
-                Update PIN
-              </Button>
-            </div>
-          </div>
+          <DialogFooter>
+            <Button variant="ghost" size="sm" onClick={() => setActiveModal(null)}>
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                triggerToast("PIN reset successfully");
+                setActiveModal(null);
+              }}
+            >
+              Update PIN
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* 7. Edit Nickname Modal */}
       <Dialog open={activeModal === "edit-nickname"} onOpenChange={(open) => !open && setActiveModal(null)}>
-        <DialogContent className="max-w-md rounded-2xl p-6">
+        <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[17px]">
-              <Sparkles size={18} className="text-foreground" />
-              <span>Edit Card Details</span>
-            </DialogTitle>
-            <DialogDescription className="text-[13px]">
-              Update your card nickname and linked account label.
-            </DialogDescription>
+            <DialogTitle>Edit Card Nickname</DialogTitle>
           </DialogHeader>
 
-          <form onSubmit={handleSaveNickname} className="space-y-4 pt-2">
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="card-nickname-input" className="text-[12.5px] font-medium text-foreground">Card Nickname</label>
-              <Input
-                id="card-nickname-input"
-                value={tempNickname}
-                onChange={(e) => setTempNickname(e.target.value)}
-                placeholder="AWS & SaaS Virtual Card"
-                className="h-10 text-[13.5px]"
-              />
-            </div>
+          <form onSubmit={handleSaveNickname}>
+            <DialogBody>
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="card-nickname-input" className="text-[12.5px] font-medium text-foreground">Card Nickname</label>
+                <Input
+                  id="card-nickname-input"
+                  value={tempNickname}
+                  onChange={(e) => setTempNickname(e.target.value)}
+                  placeholder="AWS & SaaS Virtual Card"
+                  className="h-10 text-[13.5px]"
+                />
+              </div>
+            </DialogBody>
 
-            <div className="pt-3 flex items-center justify-end gap-3">
-              <Button type="button" variant="outline" size="sm" onClick={() => setActiveModal(null)}>
+            <DialogFooter>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setActiveModal(null)}>
                 Cancel
               </Button>
               <Button type="submit" size="sm">
                 Save Changes
               </Button>
-            </div>
+            </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
 
       {/* 8. Replace Card Modal */}
       <Dialog open={activeModal === "replace"} onOpenChange={(open) => !open && setActiveModal(null)}>
-        <DialogContent className="max-w-md rounded-2xl p-6">
+        <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-[17px]">
-              <CreditCard size={18} className="text-rose-500" />
-              <span>Request Card Replacement</span>
-            </DialogTitle>
-            <DialogDescription className="text-[13px]">
-              If your card was compromised or lost, request a new card number instantly.
-            </DialogDescription>
+            <DialogTitle>Request Card Replacement</DialogTitle>
           </DialogHeader>
 
-          <div className="pt-2 space-y-4">
+          <DialogBody>
             <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 text-[12.5px] flex items-start gap-2.5">
               <AlertTriangle size={18} className="shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
               <span>
                 Replacing this card will block current card numbers (`•••• {maskedLast4}`) immediately and issue new virtual card credentials.
               </span>
             </div>
+          </DialogBody>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
-              <Button variant="outline" size="sm" onClick={() => setActiveModal(null)}>
-                Cancel
-              </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => {
-                  triggerToast("Card replacement requested. New card issued.");
-                  setActiveModal(null);
-                }}
-              >
-                Request Replacement
-              </Button>
-            </div>
-          </div>
+          <DialogFooter>
+            <Button variant="ghost" size="sm" onClick={() => setActiveModal(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => {
+                triggerToast("Card replacement requested. New card issued.");
+                setActiveModal(null);
+              }}
+            >
+              Request Replacement
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

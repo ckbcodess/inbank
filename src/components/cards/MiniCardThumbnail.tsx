@@ -1,4 +1,5 @@
 import type { PaymentCard } from "@/lib/mock-data";
+import { getCardTheme } from "@/components/cards/card-themes";
 
 export function MiniCardThumbnail({ card }: { card: PaymentCard }) {
   const isVisa = card.scheme === "Visa";
@@ -7,7 +8,10 @@ export function MiniCardThumbnail({ card }: { card: PaymentCard }) {
   const isBlocked = card.status === "Blocked";
 
   let bgGradient = "from-amber-400 via-yellow-400 to-amber-500 text-zinc-950";
-  if (isVirtual) {
+  if (card.colorTheme) {
+    const theme = getCardTheme(card.colorTheme);
+    bgGradient = `${theme.cardGradient} ${theme.textColor} ${theme.borderColor ? `border ${theme.borderColor}` : ""}`;
+  } else if (isVirtual) {
     bgGradient = "from-cyan-500 via-sky-600 to-indigo-700 text-white border border-cyan-300/30";
   } else if (card.scheme === "Mastercard" && isPrepaid) {
     bgGradient = "from-slate-800 via-zinc-900 to-slate-900 text-white border border-white/10";

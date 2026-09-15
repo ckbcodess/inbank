@@ -21,8 +21,8 @@ import { Badge } from "@/components/ui/badge";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -221,24 +221,26 @@ export default function StandingOrdersPage() {
 
       {/* Cancel Confirmation Dialog */}
       <Dialog open={cancelId !== null} onOpenChange={(open) => !open && setCancelId(null)}>
-        <DialogContent className="sm:max-w-[420px]">
+        <DialogContent size="sm">
           <DialogHeader>
             <DialogTitle>Cancel this standing order?</DialogTitle>
-            <DialogDescription>
+          </DialogHeader>
+          <DialogBody className="gap-3.5">
+            <p className="text-[13.5px] text-muted-foreground leading-relaxed">
               {toCancel ? `"${toCancel.beneficiary}" ` : "This instruction "}
               will stop running. You can set it up again anytime.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex items-start gap-3 rounded-xl border border-border bg-muted/40 p-3.5 text-[12.5px] text-muted-foreground">
-            <AlertTriangle size={15} strokeWidth={1.8} className="mt-px shrink-0 text-warning" aria-hidden="true" />
-            <span>If you just want to pause it temporarily, use the pause button instead.</span>
-          </div>
+            </p>
+            <div className="flex items-start gap-3 rounded-xl border border-border bg-muted/40 p-3 text-[12.5px] text-muted-foreground">
+              <AlertTriangle size={15} strokeWidth={1.8} className="mt-0.5 shrink-0 text-amber-500" aria-hidden="true" />
+              <span>If you just want to pause it temporarily, use the pause button instead.</span>
+            </div>
+          </DialogBody>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCancelId(null)}>
+            <Button variant="ghost" size="sm" onClick={() => setCancelId(null)}>
               Keep it
             </Button>
-            <Button variant="destructive" onClick={handleCancel}>
-              <Trash2 size={15} strokeWidth={1.8} aria-hidden="true" />
+            <Button variant="destructive" size="sm" onClick={handleCancel}>
+              <Trash2 size={14} strokeWidth={1.8} aria-hidden="true" className="mr-1.5" />
               Cancel order
             </Button>
           </DialogFooter>

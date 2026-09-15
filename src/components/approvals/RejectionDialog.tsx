@@ -16,8 +16,8 @@ import { useState } from "react";
 import { XCircle } from "lucide-react";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -44,40 +44,43 @@ export default function RejectionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent size="md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <XCircle size={18} strokeWidth={1.9} className="text-destructive" />
-            Reject this transaction
+            <span>Reject transaction</span>
           </DialogTitle>
-          <DialogDescription>
-            Rejecting is final — {reference} will not be sent, and the submitter will need to start a
-            new request. Your reason is recorded in the audit log.
-          </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-2 py-1">
-          <Label htmlFor="reject-reason">Reason for rejection</Label>
-          <Textarea
-            id="reject-reason"
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            rows={4}
-            placeholder="Explain why this is being rejected so the submitter understands what went wrong."
-          />
-          <p className="text-[12px] text-muted-foreground">
-            {reason.trim().length < 10
-              ? "A reason of at least 10 characters is required."
-              : `${reason.trim().length} characters`}
+        <DialogBody>
+          <p className="text-[13px] text-muted-foreground leading-relaxed">
+            Rejecting is final — {reference} will not be sent, and the submitter will need to start a new request.
           </p>
-        </div>
+
+          <div className="flex flex-col gap-2 pt-1">
+            <Label htmlFor="reject-reason">Reason for rejection</Label>
+            <Textarea
+              id="reject-reason"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              rows={4}
+              placeholder="Explain why this is being rejected so the submitter understands what went wrong."
+            />
+            <p className="text-[12px] text-muted-foreground">
+              {reason.trim().length < 10
+                ? "A reason of at least 10 characters is required."
+                : `${reason.trim().length} characters`}
+            </p>
+          </div>
+        </DialogBody>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
           <Button
             variant="destructive"
+            size="sm"
             disabled={!canSubmit}
             onClick={() => {
               onConfirm(reason.trim());

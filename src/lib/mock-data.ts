@@ -1362,6 +1362,7 @@ export interface PaymentCard {
   isVirtual?: boolean;
   singleUse?: boolean;
   profileKind?: "RETAIL" | "CORPORATE";
+  colorTheme?: string;
 }
 
 export const CARDS: PaymentCard[] = [

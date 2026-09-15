@@ -2,11 +2,10 @@
 
 import * as React from "react"
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
+import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Cancel01Icon } from "@hugeicons/core-free-icons"
 import { useSurface, SurfaceProvider } from "@/lib/surface-context"
 import { surfaceClasses } from "@/lib/surface-classes"
 
@@ -42,14 +41,30 @@ function DialogOverlay({
   )
 }
 
+export type DialogSize = "sm" | "md" | "lg" | "xl" | "full"
+
+const sizeClasses: Record<DialogSize, string> = {
+  sm: "sm:max-w-[420px]",
+  md: "sm:max-w-[480px]",
+  lg: "sm:max-w-[540px]",
+  xl: "sm:max-w-[640px]",
+  full: "max-sm:fixed max-sm:inset-0 max-sm:w-full max-sm:h-full max-sm:max-h-none max-sm:rounded-none sm:max-w-none sm:w-full sm:h-full sm:rounded-none",
+}
+
+export interface DialogContentProps extends DialogPrimitive.Popup.Props {
+  size?: DialogSize
+  showCloseButton?: boolean
+  showDragHandle?: boolean
+}
+
 function DialogContent({
   className,
   children,
-  showCloseButton = true,
+  size = "md",
+  showCloseButton = false,
+  showDragHandle = true,
   ...props
-}: DialogPrimitive.Popup.Props & {
-  showCloseButton?: boolean
-}) {
+}: DialogContentProps) {
   const substrate = useSurface()
   const level = Math.min(substrate + 4, 8)
 
@@ -60,27 +75,36 @@ function DialogContent({
         <DialogPrimitive.Popup
           data-slot="dialog-content"
           className={cn(
-            "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-2xl border-none outline-none shadow-2xl duration-100 sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+            size === "full"
+              ? "fixed inset-0 z-50 flex flex-col w-full h-full bg-card text-foreground overflow-y-auto"
+              : "fixed top-1/2 left-1/2 z-50 flex flex-col w-full -translate-x-1/2 -translate-y-1/2 rounded-2xl border-none outline-none shadow-2xl duration-100 bg-card text-foreground overflow-hidden max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:border-t max-sm:border-border/80 max-sm:max-h-[92vh]",
+            sizeClasses[size],
             surfaceClasses(level, level),
             className
           )}
           {...props}
         >
+          {showDragHandle && size !== "full" && (
+            <div className="sm:hidden flex justify-center pt-2.5 pb-1 select-none shrink-0">
+              <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+            </div>
+          )}
+
           {children}
+
           {showCloseButton && (
             <DialogPrimitive.Close
               data-slot="dialog-close"
               render={
-                <Button
-                  variant="ghost"
-                  className="absolute top-2 right-2"
-                  size="icon-sm"
-                />
+                <button
+                  type="button"
+                  className="absolute top-3.5 right-4 sm:right-6 flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
+                  aria-label="Close"
+                >
+                  <X size={15} strokeWidth={1.8} />
+                </button>
               }
-            >
-              <HugeiconsIcon icon={Cancel01Icon} strokeWidth={2} />
-              <span className="sr-only">Close</span>
-            </DialogPrimitive.Close>
+            />
           )}
         </DialogPrimitive.Popup>
       </SurfaceProvider>
@@ -88,11 +112,67 @@ function DialogContent({
   )
 }
 
-function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
+export interface DialogHeaderProps extends React.ComponentProps<"div"> {
+  showCloseButton?: boolean
+  onClose?: () => void
+}
+
+function DialogHeader({
+  className,
+  children,
+  showCloseButton = true,
+  onClose,
+  ...props
+}: DialogHeaderProps) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-2", className)}
+      className={cn(
+        "flex items-center justify-between px-5 sm:px-6 py-3.5 sm:py-4 border-b border-border/60 shrink-0",
+        className
+      )}
+      {...props}
+    >
+      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+        {children}
+      </div>
+
+      {showCloseButton && (
+        onClose ? (
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer ml-3"
+            aria-label="Close"
+          >
+            <X size={15} strokeWidth={1.8} />
+          </button>
+        ) : (
+          <DialogClose
+            render={
+              <button
+                type="button"
+                className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer ml-3"
+                aria-label="Close"
+              >
+                <X size={15} strokeWidth={1.8} />
+              </button>
+            }
+          />
+        )
+      )}
+    </div>
+  )
+}
+
+function DialogBody({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="dialog-body"
+      className={cn(
+        "max-h-[calc(90vh-130px)] sm:max-h-[75vh] overflow-y-auto px-5 sm:px-6 py-5 flex flex-col gap-4",
+        className
+      )}
       {...props}
     />
   )
@@ -110,14 +190,14 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 sm:flex-row sm:justify-end",
+        "flex items-center justify-end gap-2 px-5 sm:px-6 py-3.5 border-t border-border/60 bg-muted/20 shrink-0",
         className
       )}
       {...props}
     >
       {children}
       {showCloseButton && (
-        <DialogPrimitive.Close render={<Button variant="outline" />}>
+        <DialogPrimitive.Close render={<Button variant="outline" size="sm" />}>
           Close
         </DialogPrimitive.Close>
       )}
@@ -129,7 +209,7 @@ function DialogTitle({ className, ...props }: DialogPrimitive.Title.Props) {
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-base leading-none font-medium", className)}
+      className={cn("text-[17px] text-foreground tracking-[-0.01em] font-normal truncate", className)}
       {...props}
     />
   )
@@ -143,11 +223,55 @@ function DialogDescription({
     <DialogPrimitive.Description
       data-slot="dialog-description"
       className={cn(
-        "text-sm text-muted-foreground *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground",
+        "text-[13px] text-muted-foreground leading-normal",
         className
       )}
       {...props}
     />
+  )
+}
+
+export interface ModalProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  title?: React.ReactNode
+  size?: DialogSize
+  children: React.ReactNode
+  footer?: React.ReactNode
+  className?: string
+  bodyClassName?: string
+  showCloseButton?: boolean
+}
+
+export function Modal({
+  open,
+  onOpenChange,
+  title,
+  size = "md",
+  children,
+  footer,
+  className,
+  bodyClassName,
+  showCloseButton = true,
+}: ModalProps) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size={size} className={className} showCloseButton={false}>
+        {title && (
+          <DialogHeader showCloseButton={showCloseButton}>
+            <DialogTitle>{title}</DialogTitle>
+          </DialogHeader>
+        )}
+        <DialogBody className={bodyClassName}>
+          {children}
+        </DialogBody>
+        {footer && (
+          <DialogFooter>
+            {footer}
+          </DialogFooter>
+        )}
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -158,6 +282,7 @@ export {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogBody,
   DialogOverlay,
   DialogPortal,
   DialogTitle,

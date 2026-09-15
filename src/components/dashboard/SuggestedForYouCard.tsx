@@ -2,8 +2,17 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Send, Receipt, CreditCard, Zap, X, Check, ArrowRight, ShieldCheck } from "lucide-react";
+import { Send, Receipt, CreditCard, Zap, Check, ArrowRight, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface SuggestedForYouCardProps {
   onQuickAction?: (action: string) => void;
@@ -139,117 +148,110 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
       </div>
 
       {/* Quick Pay Dialog Modal */}
-      {activeBeneficiary && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-xl">
-            <div className="flex items-center justify-between border-b border-border/60 pb-4">
-              <div className="flex items-center gap-3">
-                <div className={`flex size-10 items-center justify-center rounded-full text-[16px] font-medium ${activeBeneficiary.bg}`}>
-                  {activeBeneficiary.initial}
+      <Dialog open={!!activeBeneficiary} onOpenChange={(open) => !open && setActiveBeneficiary(null)}>
+        {activeBeneficiary && (
+          <DialogContent size="md">
+            <DialogHeader>
+              <DialogTitle>Quick pay: {activeBeneficiary.name}</DialogTitle>
+            </DialogHeader>
+
+            <form onSubmit={handleSendPayment}>
+              <DialogBody>
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border/60">
+                  <div className={`flex size-9 items-center justify-center rounded-full text-[14px] font-medium shrink-0 ${activeBeneficiary.bg}`}>
+                    {activeBeneficiary.initial}
+                  </div>
+                  <div>
+                    <span className="text-[13.5px] font-medium text-foreground">{activeBeneficiary.name}</span>
+                    <p className="text-[12px] text-muted-foreground">{activeBeneficiary.detail} · {activeBeneficiary.phone}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-[16px] font-medium text-foreground">Quick Pay: {activeBeneficiary.name}</h3>
-                  <p className="text-[12px] text-muted-foreground">{activeBeneficiary.detail} · {activeBeneficiary.phone}</p>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[13px] font-medium text-foreground">Amount (GHS)</label>
+                  <div className="flex items-center rounded-xl border border-border bg-muted/40 px-3.5 py-2 focus-within:border-primary">
+                    <span className="text-[14px] font-medium text-muted-foreground mr-2">GHS</span>
+                    <input
+                      type="number"
+                      min="1"
+                      step="any"
+                      value={payAmount}
+                      onChange={(e) => setPayAmount(e.target.value)}
+                      className="w-full bg-transparent text-[17px] font-medium text-foreground outline-none tabular"
+                      autoFocus
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveBeneficiary(null)}
-                className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
-              >
-                <X size={18} />
-              </button>
-            </div>
 
-            <form onSubmit={handleSendPayment} className="mt-5 flex flex-col gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[13px] font-medium text-foreground">Enter amount (GHS)</label>
-                <div className="flex items-center rounded-xl border border-border bg-muted/40 px-4 py-2.5 focus-within:border-primary">
-                  <span className="text-[16px] font-medium text-muted-foreground mr-2">GHS</span>
-                  <input
-                    type="number"
-                    min="1"
-                    step="any"
-                    value={payAmount}
-                    onChange={(e) => setPayAmount(e.target.value)}
-                    className="w-full bg-transparent text-[20px] font-medium text-foreground outline-none tabular"
-                    autoFocus
-                    required
-                  />
+                {/* Quick Amount Chips */}
+                <div className="flex items-center gap-2">
+                  {["20", "50", "100", "200", "500"].map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => setPayAmount(preset)}
+                      className={`flex-1 rounded-xl border py-1.5 text-[12px] transition-colors cursor-pointer ${
+                        payAmount === preset
+                          ? "border-primary bg-primary/10 text-primary font-medium"
+                          : "border-border bg-muted/40 text-foreground hover:bg-muted"
+                      }`}
+                    >
+                      +{preset}
+                    </button>
+                  ))}
                 </div>
-              </div>
 
-              {/* Quick Amount Chips */}
-              <div className="flex items-center gap-2">
-                {["20", "50", "100", "200", "500"].map((preset) => (
-                  <button
-                    key={preset}
-                    type="button"
-                    onClick={() => setPayAmount(preset)}
-                    className={`flex-1 rounded-lg border py-1.5 text-[12px] transition-colors cursor-pointer active:scale-[0.96] transition-transform ${
-                      payAmount === preset
-                        ? "border-foreground bg-muted font-medium text-foreground shadow-xs"
-                        : "border-border bg-muted/50 text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    +{preset}
-                  </button>
-                ))}
-              </div>
+                <div className="rounded-xl bg-muted/40 p-3 text-[12px] text-muted-foreground flex items-center gap-2">
+                  <ShieldCheck size={16} className="text-emerald-600 shrink-0" />
+                  <span>Zero transaction fees applied for instant wallet transfers.</span>
+                </div>
+              </DialogBody>
 
-              <div className="rounded-xl bg-muted/50 p-3 text-[12px] text-muted-foreground flex items-center gap-2">
-                <ShieldCheck size={16} className="text-emerald-600 shrink-0" />
-                <span>Zero transaction fees applied for instant wallet transfers.</span>
-              </div>
-
-              <div className="mt-2 flex items-center justify-end gap-2">
-                <button
+              <DialogFooter>
+                <Button
                   type="button"
+                  variant="outline"
+                  size="sm"
                   onClick={() => setActiveBeneficiary(null)}
-                  className="rounded-xl border border-border px-4 py-2 text-[13.5px] font-medium text-foreground hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
+                  size="sm"
                   disabled={isProcessing}
-                  className="flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2 text-[13.5px] font-medium hover:bg-primary/90 active:scale-[0.96] transition-transform disabled:opacity-50 cursor-pointer shadow-xs"
+                  className="gap-1.5"
                 >
-                  {isProcessing ? "Processing..." : "Confirm & Send"}
+                  {isProcessing ? "Processing..." : "Confirm & send"}
                   <ArrowRight size={14} strokeWidth={1.8} />
-                </button>
-              </div>
+                </Button>
+              </DialogFooter>
             </form>
-          </div>
-        </div>
-      )}
+          </DialogContent>
+        )}
+      </Dialog>
 
       {/* Customize Quick Suggestions Modal */}
-      {showEditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-xl">
-            <div className="flex items-center justify-between border-b border-border/60 pb-4">
-              <div>
-                <h3 className="text-[16px] font-medium text-foreground">Customize Shortcuts</h3>
-                <p className="text-[12px] text-muted-foreground">Select which quick actions appear on your dashboard</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowEditModal(false)}
-                className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
-              >
-                <X size={18} />
-              </button>
-            </div>
+      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
+        <DialogContent size="sm">
+          <DialogHeader>
+            <DialogTitle>Customize shortcuts</DialogTitle>
+          </DialogHeader>
 
-            <div className="mt-4 flex flex-col divide-y divide-border/60">
+          <DialogBody>
+            <p className="text-[13px] text-muted-foreground leading-relaxed">
+              Select which quick actions appear on your dashboard.
+            </p>
+
+            <div className="flex flex-col divide-y divide-border/60">
               {quickActions.map((action, idx) => (
-                <div key={action.id} className="flex items-center justify-between py-3">
+                <div key={action.id} className="flex items-center justify-between py-2.5">
                   <div className="flex items-center gap-3">
                     <div className="flex size-8 items-center justify-center rounded-full bg-muted text-foreground">
-                      <action.icon size={16} />
+                      <action.icon size={15} />
                     </div>
-                    <span className="text-[14px] font-medium text-foreground">{action.label}</span>
+                    <span className="text-[13.5px] font-medium text-foreground">{action.label}</span>
                   </div>
                   <button
                     type="button"
@@ -258,33 +260,32 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                         prev.map((a, i) => (i === idx ? { ...a, enabled: !a.enabled } : a))
                       );
                     }}
-                    className={`flex size-6 items-center justify-center rounded-md border transition-colors cursor-pointer ${
+                    className={`flex size-5 items-center justify-center rounded-md border transition-colors cursor-pointer ${
                       action.enabled
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-border bg-muted/40 text-transparent"
                     }`}
                   >
-                    <Check size={14} strokeWidth={2.5} />
+                    <Check size={12} strokeWidth={2.5} />
                   </button>
                 </div>
               ))}
             </div>
+          </DialogBody>
 
-            <div className="mt-6 flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowEditModal(false);
-                  toast.success("Quick suggestions updated successfully!");
-                }}
-                className="rounded-xl bg-foreground px-5 py-2 text-[14px] font-medium text-background hover:bg-foreground/90 cursor-pointer shadow-xs"
-              >
-                Save Preferences
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+          <DialogFooter>
+            <Button
+              size="sm"
+              onClick={() => {
+                setShowEditModal(false);
+                toast.success("Quick suggestions updated successfully!");
+              }}
+            >
+              Save preferences
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

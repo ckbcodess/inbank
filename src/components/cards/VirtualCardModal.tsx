@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, X, Check, Lock, ShieldAlert, RefreshCw } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatMoney, type PaymentCard } from "@/lib/mock-data";
@@ -387,14 +393,20 @@ export function VirtualCardModal({
 }: VirtualCardProps & { open: boolean; onOpenChange: (open: boolean) => void }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="p-0 border-none bg-transparent shadow-none max-w-fit">
-        <VirtualCardView
-          card={card}
-          cards={cards}
-          initialIndex={initialIndex}
-          onAdjustLimit={onAdjustLimit}
-          onClose={() => onOpenChange(false)}
-        />
+      <DialogContent size="sm">
+        <DialogHeader>
+          <DialogTitle>Virtual Card</DialogTitle>
+        </DialogHeader>
+        <DialogBody className="p-5 sm:p-6 overflow-y-auto">
+          <VirtualCardView
+            card={card}
+            cards={cards}
+            initialIndex={initialIndex}
+            onAdjustLimit={onAdjustLimit}
+            showTitleHeader={false}
+            className="w-full max-w-none border-none p-0 shadow-none bg-transparent"
+          />
+        </DialogBody>
       </DialogContent>
     </Dialog>
   );

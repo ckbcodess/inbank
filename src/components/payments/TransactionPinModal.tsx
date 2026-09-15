@@ -20,6 +20,7 @@ import { Lock, Smartphone, KeyRound, AlertCircle, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
+  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import OtpInput from "@/components/auth/OtpInput";
@@ -112,24 +113,11 @@ export default function TransactionPinModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="sm:max-w-[500px] p-0 overflow-hidden rounded-2xl border-none bg-card shadow-2xl"
-        showCloseButton={false}
-      >
+      <DialogContent size="md">
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
-          <DialogTitle className="text-[17px] font-medium text-foreground tracking-[-0.01em]">
-            {title}
-          </DialogTitle>
-          <button
-            type="button"
-            onClick={() => onOpenChange(false)}
-            className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-            aria-label="Close"
-          >
-            <X size={15} strokeWidth={1.8} />
-          </button>
-        </div>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
 
         {/* Modal Content */}
         <div className="flex flex-col items-center justify-center px-6 py-10 sm:py-12 text-center">

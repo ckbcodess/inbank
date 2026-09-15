@@ -18,6 +18,8 @@ import { AmountInput } from "@/components/payments/flows/shared";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
+  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
@@ -84,6 +86,7 @@ export default function CreateGroupFlow({
 
   // Auto-focus Group Name input
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const descriptionInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (step === 1) {
       nameInputRef.current?.focus();
@@ -632,36 +635,34 @@ export default function CreateGroupFlow({
       {/* UNSAVED CHANGES CONFIRMATION DIALOG                                        */}
       {/* ────────────────────────────────────────────────────────────────────────── */}
       <Dialog open={showExitConfirm} onOpenChange={setShowExitConfirm}>
-        <DialogContent className="max-w-md max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:border-t p-6">
-          <div className="flex flex-col gap-4">
-            <DialogTitle className="text-[18px] text-foreground font-normal">
-              Discard unsaved changes?
-            </DialogTitle>
-            <p className="text-[13.5px] text-muted-foreground leading-relaxed font-normal">
-              You have unsaved changes in this group. Leaving now will discard your entered data.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowExitConfirm(false)}
-                className="flex-1 h-11 rounded-xl text-[14px] border-border font-normal"
-              >
-                Keep Editing
-              </Button>
-              <Button
-                type="button"
-                variant="destructive"
-                onClick={() => {
-                  setShowExitConfirm(false);
-                  handleExit();
-                }}
-                className="flex-1 h-11 rounded-xl text-[14px] font-normal"
-              >
-                Discard & Exit
-              </Button>
-            </div>
+        <DialogContent size="sm">
+          <DialogHeader>
+            <DialogTitle>Discard unsaved changes?</DialogTitle>
+          </DialogHeader>
+          <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
+            You have unsaved changes in this group. Leaving now will discard your entered data.
           </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowExitConfirm(false)}
+            >
+              Keep Editing
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              onClick={() => {
+                setShowExitConfirm(false);
+                handleExit();
+              }}
+            >
+              Discard & Exit
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

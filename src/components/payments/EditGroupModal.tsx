@@ -9,6 +9,8 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
+  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -768,35 +770,20 @@ export default function EditGroupModal({
 
       {/* ── MODAL 1: Confirm Remove Member Dialog ─────────────────────── */}
       <Dialog open={Boolean(memberToDelete)} onOpenChange={(isOpen) => !isOpen && setMemberToDelete(null)}>
-        <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border-none bg-card text-foreground shadow-2xl flex flex-col gap-0" showCloseButton={false}>
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
-            <div className="flex items-center gap-2.5">
-              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-                <Trash2 size={15} strokeWidth={2} />
-              </span>
-              <DialogTitle className="text-[16px] font-medium text-foreground tracking-[-0.01em]">
-                Remove Member
-              </DialogTitle>
-            </div>
-            <button
-              type="button"
-              onClick={() => setMemberToDelete(null)}
-              className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-            >
-              <X size={15} strokeWidth={1.8} />
-            </button>
-          </div>
+        <DialogContent size="sm">
+          <DialogHeader>
+            <DialogTitle>Remove Member</DialogTitle>
+          </DialogHeader>
 
-          <div className="px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
+          <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
             Are you sure you want to remove <span className="text-foreground font-medium">{memberToDelete?.name}</span> from <span className="text-foreground font-medium">{name || group.name}</span>? They will no longer receive disbursements when you send to this group.
           </div>
 
-          <div className="flex items-center justify-end gap-2.5 px-6 py-3.5 border-t border-border/60 bg-muted/20">
+          <DialogFooter>
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={() => setMemberToDelete(null)}
-              className="h-9 px-3.5 text-[13px] rounded-xl font-normal"
             >
               Cancel
             </Button>
@@ -804,45 +791,29 @@ export default function EditGroupModal({
               variant="destructive"
               size="sm"
               onClick={handleConfirmRemoveMember}
-              className="h-9 px-4 text-[13px] rounded-xl font-normal"
             >
               Remove Member
             </Button>
-          </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* ── MODAL 2: Confirm Delete Group Dialog ──────────────────────── */}
       <Dialog open={showDeleteGroupConfirm} onOpenChange={setShowDeleteGroupConfirm}>
-        <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden rounded-2xl border-none bg-card text-foreground shadow-2xl flex flex-col gap-0" showCloseButton={false}>
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
-            <div className="flex items-center gap-2.5">
-              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-                <Trash2 size={15} strokeWidth={2} />
-              </span>
-              <DialogTitle className="text-[16px] font-medium text-foreground tracking-[-0.01em]">
-                Delete Payment Group
-              </DialogTitle>
-            </div>
-            <button
-              type="button"
-              onClick={() => setShowDeleteGroupConfirm(false)}
-              className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-            >
-              <X size={15} strokeWidth={1.8} />
-            </button>
-          </div>
+        <DialogContent size="sm">
+          <DialogHeader>
+            <DialogTitle>Delete Payment Group</DialogTitle>
+          </DialogHeader>
 
-          <div className="px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
+          <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
             Are you sure you want to delete <span className="text-foreground font-medium">{group.name}</span>? This action cannot be undone. All member contact details will remain safely saved in your individual beneficiaries directory.
           </div>
 
-          <div className="flex items-center justify-end gap-2.5 px-6 py-3.5 border-t border-border/60 bg-muted/20">
+          <DialogFooter>
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={() => setShowDeleteGroupConfirm(false)}
-              className="h-9 px-3.5 text-[13px] rounded-xl font-normal"
             >
               Cancel
             </Button>
@@ -850,11 +821,10 @@ export default function EditGroupModal({
               variant="destructive"
               size="sm"
               onClick={handleConfirmDeleteGroup}
-              className="h-9 px-4 text-[13px] rounded-xl font-normal"
             >
               Delete Group
             </Button>
-          </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

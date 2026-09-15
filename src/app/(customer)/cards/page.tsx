@@ -9,8 +9,9 @@
  * - Search bar removed
  */
 
-import { useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { CheckCircle2, ChevronRight, CreditCard, Plus } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -19,8 +20,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -69,12 +70,22 @@ const STATUS_VARIANT: Record<CardStatus, "success" | "destructive" | "secondary"
   Expired: "secondary",
 };
 
-export default function CardsPage() {
+function CardsPageContent() {
   const actor = useSession((s) => s.actor);
   const activeProfile = useSession((s) => s.activeProfile);
+  const searchParams = useSearchParams();
 
   const [state, setState] = useState<ListState>("populated");
   const [notice, setNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (searchParams.get("created") === "true") {
+      const name = searchParams.get("name") || "New Card";
+      setNotice(`Card "${name}" requested and issued successfully.`);
+      const timer = setTimeout(() => setNotice(null), 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
 
   // Card Creation Modal States
   const [createOpen, setCreateOpen] = useState(false);
@@ -180,14 +191,12 @@ export default function CardsPage() {
         title="Cards"
         actions={
           <Button
-            onClick={() => {
-              setNotice("Card requests are coming soon.");
-              setTimeout(() => setNotice(null), 5000);
-            }}
+            nativeButton={false}
+            render={<Link href="/cards/request" />}
             className="h-9 gap-1.5 px-3.5 text-[13px] font-medium rounded-lg shadow-xs shrink-0"
           >
             <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-            <span>Request Card</span>
+            <span>Request a Card</span>
           </Button>
         }
       />
@@ -301,15 +310,12 @@ export default function CardsPage() {
 
       {/* CREATE NEW CARD MODAL DIALOG */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="sm:max-w-[460px]">
+        <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle>Issue New Digital / Virtual Card</DialogTitle>
-            <DialogDescription>
-              Create a new payment or virtual card instantly linked to your account.
-            </DialogDescription>
+            <DialogTitle>Issue New Card</DialogTitle>
           </DialogHeader>
 
-          <div className="flex flex-col gap-4 py-2">
+          <DialogBody>
             <div className="flex flex-col gap-2">
               <Label htmlFor="c-name">Card Name / Nickname</Label>
               <Input
@@ -416,13 +422,13 @@ export default function CardsPage() {
                 />
               </div>
             )}
-          </div>
+          </DialogBody>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateOpen(false)}>
+            <Button variant="ghost" size="sm" onClick={() => setCreateOpen(false)}>
               Cancel
             </Button>
-            <Button disabled={!cardName.trim()} onClick={handleCreateCard}>
+            <Button size="sm" disabled={!cardName.trim()} onClick={handleCreateCard}>
               Issue Card
             </Button>
           </DialogFooter>
@@ -431,4 +437,13 @@ export default function CardsPage() {
     </div>
   );
 }
+
+export default function CardsPage() {
+  return (
+    <Suspense fallback={null}>
+      <CardsPageContent />
+    </Suspense>
+  );
+}
+
 

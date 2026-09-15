@@ -548,15 +548,19 @@ export function AmountInput({
   error,
   hasError,
   disabled,
+  onNext,
+  enterKeyHint = "next",
 }: {
   value: string;
   onChange: (val: string) => void;
   onFocus?: () => void;
+  onNext?: () => void;
   currency?: string;
   label?: string;
   error?: React.ReactNode;
   hasError?: boolean;
   disabled?: boolean;
+  enterKeyHint?: "next" | "done" | "go" | "search" | "send" | "enter" | "previous";
 }) {
   const isError = Boolean(error || hasError);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -637,6 +641,40 @@ export function AmountInput({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (onNext) {
+        onNext();
+        return;
+      }
+      // Locate the narration input within the current flow or page container
+      const container =
+        inputRef.current?.closest("form") ||
+        inputRef.current?.closest(".animate-in") ||
+        inputRef.current?.closest(".page-stagger") ||
+        document;
+      const narrationEl = container.querySelector<HTMLInputElement>(
+        'input[data-field="narration"], input[data-narration="true"], input[name="narration"], input[placeholder*="narration" i]'
+      );
+
+      if (narrationEl) {
+        narrationEl.focus();
+        narrationEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else {
+        // No narration field found; dismiss keyboard so CTA is visible
+        inputRef.current?.blur();
+        setTimeout(() => {
+          const cta = document.querySelector<HTMLElement>(
+            'button[data-proceed-cta="true"], .proceed-btn, button[type="submit"]'
+          );
+          if (cta) {
+            cta.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }
+        }, 120);
+      }
+      return;
+    }
+
     if (e.key === "Backspace") {
       const inputEl = inputRef.current;
       if (!inputEl) return;
@@ -747,6 +785,7 @@ export function AmountInput({
               ref={inputRef}
               type="text"
               inputMode="decimal"
+              enterKeyHint={enterKeyHint}
               disabled={disabled}
               readOnly={disabled}
               value={displayValue}
@@ -779,21 +818,45 @@ export function AmountInput({
 export function NarrationInput({
   value,
   onChange,
+  onDone,
   label = "Narration",
   placeholder = "Enter narration",
 }: {
   value: string;
   onChange: (val: string) => void;
+  onDone?: () => void;
   label?: string;
   placeholder?: string;
 }) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      // Dismiss the virtual keyboard automatically
+      e.currentTarget.blur();
+      onDone?.();
+      // Smoothly bring CTA into view after keyboard collapses
+      setTimeout(() => {
+        const cta = document.querySelector<HTMLElement>(
+          'button[data-proceed-cta="true"], .proceed-btn, button[type="submit"]'
+        );
+        if (cta) {
+          cta.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }, 120);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-2">
       <label className="text-[14px] font-medium text-foreground">{label}</label>
       <input
         type="text"
+        data-field="narration"
+        data-narration="true"
+        enterKeyHint="done"
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={handleKeyDown}
         placeholder={placeholder}
         className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
       />
@@ -892,6 +955,7 @@ export function ProceedButton({
     <div className="pt-2">
       <Button
         type="button"
+        data-proceed-cta="true"
         className="w-full h-13 rounded-2xl text-[16px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
         disabled={disabled}
         onClick={onClick}

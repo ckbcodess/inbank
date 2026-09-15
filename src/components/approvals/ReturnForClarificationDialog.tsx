@@ -18,8 +18,8 @@ import { useState } from "react";
 import { MessageSquareWarning } from "lucide-react";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -56,63 +56,67 @@ export default function ReturnForClarificationDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[520px]">
+      <DialogContent size="md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <MessageSquareWarning size={18} strokeWidth={1.9} className="text-amber-600 dark:text-amber-400" />
-            Return for clarification
+            <span>Return for clarification</span>
           </DialogTitle>
-          <DialogDescription>
-            This keeps {reference} alive. The submitter answers your questions and resubmits as v
-            {nextVersion}, and you&apos;ll be able to compare it against the current version.
-          </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-4 py-1">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="clarify-note">What needs clarifying?</Label>
-            <Textarea
-              id="clarify-note"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              rows={4}
-              placeholder="Be specific about what you need — the submitter sees this verbatim."
-            />
-            <p className="text-[12px] text-muted-foreground">
-              {note.trim().length < 10
-                ? "At least 10 characters required."
-                : `${note.trim().length} characters`}
-            </p>
-          </div>
+        <DialogBody>
+          <p className="text-[13px] text-muted-foreground leading-relaxed">
+            This keeps {reference} alive. The submitter answers your questions and resubmits as v
+            {nextVersion}, and you&apos;ll be able to compare it against the current version.
+          </p>
 
-          {/* Document-level flagging — has no equivalent in rejection */}
-          <div className="flex flex-col gap-2">
-            <Label>Flag specific documents (optional)</Label>
-            <div className="flex flex-col gap-1.5 rounded-xl border border-border p-3">
-              {TRADE_DOCUMENTS.map((doc) => (
-                <label
-                  key={doc.id}
-                  className="flex cursor-pointer items-center gap-2.5 rounded-lg px-1.5 py-1 text-[13px] text-foreground hover:bg-muted/50"
-                >
-                  <Checkbox
-                    checked={flagged.includes(doc.id)}
-                    onCheckedChange={() => toggleDoc(doc.id)}
-                  />
-                  <span className="flex-1">{doc.name}</span>
-                  {doc.status === "missing" && (
-                    <span className="text-[12px] text-amber-600 dark:text-amber-400">Missing</span>
-                  )}
-                </label>
-              ))}
+          <div className="flex flex-col gap-4 pt-1">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="clarify-note">What needs clarifying?</Label>
+              <Textarea
+                id="clarify-note"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                rows={4}
+                placeholder="Be specific about what you need — the submitter sees this verbatim."
+              />
+              <p className="text-[12px] text-muted-foreground">
+                {note.trim().length < 10
+                  ? "At least 10 characters required."
+                  : `${note.trim().length} characters`}
+              </p>
+            </div>
+
+            {/* Document-level flagging — has no equivalent in rejection */}
+            <div className="flex flex-col gap-2">
+              <Label>Flag specific documents (optional)</Label>
+              <div className="flex flex-col gap-1.5 rounded-xl border border-border p-3">
+                {TRADE_DOCUMENTS.map((doc) => (
+                  <label
+                    key={doc.id}
+                    className="flex cursor-pointer items-center gap-2.5 rounded-lg px-1.5 py-1 text-[13px] text-foreground hover:bg-muted/50"
+                  >
+                    <Checkbox
+                      checked={flagged.includes(doc.id)}
+                      onCheckedChange={() => toggleDoc(doc.id)}
+                    />
+                    <span className="flex-1">{doc.name}</span>
+                    {doc.status === "missing" && (
+                      <span className="text-[12px] text-amber-600 dark:text-amber-400">Missing</span>
+                    )}
+                  </label>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        </DialogBody>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
           <Button
+            size="sm"
             disabled={!canSubmit}
             onClick={() => {
               onConfirm({ note: note.trim(), documents: flagged });

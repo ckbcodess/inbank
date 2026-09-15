@@ -1,7 +1,16 @@
 import { useState } from "react";
 import Link from "next/link";
-import { Snowflake, X, Smartphone, Globe, ChevronRight } from "lucide-react";
+import { Snowflake, Smartphone, Globe, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface CardItem {
   id: string;
@@ -173,131 +182,127 @@ export function DashboardCardsWidget() {
       </div>
 
       {/* Card Quick Management Modal */}
-      {managingCard && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-xl">
-            <div className="flex items-center justify-between border-b border-border/60 pb-4">
-              <div className="flex items-center gap-3">
+      <Dialog open={!!managingCard} onOpenChange={(open) => !open && setManagingCard(null)}>
+        {managingCard && (
+          <DialogContent size="md">
+            <DialogHeader>
+              <DialogTitle>{managingCard.type} card controls</DialogTitle>
+            </DialogHeader>
+
+            <DialogBody>
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border/60">
                 <div
-                  className="relative flex h-[34px] w-[52px] flex-col justify-between overflow-hidden rounded-md p-1 shadow-xs"
+                  className="relative flex h-[34px] w-[52px] shrink-0 flex-col justify-between overflow-hidden rounded-md p-1 shadow-xs"
                   style={{ background: managingCard.gradient }}
                 >
                   <div className="h-2 w-2.5 rounded-xs bg-[#f9c632]/90" />
-                  <div className="text-[8px] font-bold text-white text-right">{managingCard.network}</div>
+                  <div className="text-[8px] font-medium text-white text-right">{managingCard.network}</div>
                 </div>
                 <div>
-                  <h3 className="text-[16px] font-medium text-foreground">{managingCard.type} Card Controls</h3>
-                  <p className="text-[12px] text-muted-foreground">{managingCard.maskedNumber} · Exp: 09/29</p>
+                  <span className="text-[13.5px] font-medium text-foreground">{managingCard.maskedNumber}</span>
+                  <p className="text-[12px] text-muted-foreground">Expires 09/29</p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setManagingCard(null)}
-                className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
-              >
-                <X size={18} />
-              </button>
-            </div>
 
-            {/* Controls */}
-            <div className="mt-4 flex flex-col divide-y divide-border/60">
-              {/* Freeze Toggle */}
-              <div className="flex items-center justify-between py-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex size-8 items-center justify-center rounded-full bg-muted text-foreground">
-                    <Snowflake size={16} />
+              {/* Controls */}
+              <div className="flex flex-col divide-y divide-border/60">
+                {/* Freeze Toggle */}
+                <div className="flex items-center justify-between py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-8 items-center justify-center rounded-full bg-muted text-foreground">
+                      <Snowflake size={16} />
+                    </div>
+                    <div>
+                      <span className="text-[13.5px] font-medium text-foreground">Freeze card</span>
+                      <p className="text-[12px] text-muted-foreground">Temporarily disable transactions</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[14px] font-medium text-foreground">Freeze Card</span>
-                    <p className="text-[12px] text-muted-foreground">Temporarily disable transactions</p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => toggleFreeze(managingCard.id)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
-                    managingCard.frozen ? "bg-destructive" : "bg-muted"
-                  }`}
-                >
-                  <span
-                    className={`inline-block size-4 transform rounded-full bg-white transition-transform ${
-                      managingCard.frozen ? "translate-x-6" : "translate-x-1"
+                  <button
+                    type="button"
+                    onClick={() => toggleFreeze(managingCard.id)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
+                      managingCard.frozen ? "bg-destructive" : "bg-muted"
                     }`}
-                  />
-                </button>
-              </div>
-
-              {/* Online Purchases */}
-              <div className="flex items-center justify-between py-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex size-8 items-center justify-center rounded-full bg-muted text-foreground">
-                    <Globe size={16} />
-                  </div>
-                  <div>
-                    <span className="text-[14px] font-medium text-foreground">Online Purchases</span>
-                    <p className="text-[12px] text-muted-foreground">Allow web and e-commerce payments</p>
-                  </div>
+                  >
+                    <span
+                      className={`inline-block size-4 transform rounded-full bg-white transition-transform ${
+                        managingCard.frozen ? "translate-x-6" : "translate-x-1"
+                      }`}
+                    />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleToggleCardSetting("onlineEnabled")}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
-                    managingCard.onlineEnabled ? "bg-primary" : "bg-muted"
-                  }`}
-                >
-                  <span
-                    className={`inline-block size-4 transform rounded-full bg-white transition-transform ${
-                      managingCard.onlineEnabled ? "translate-x-6" : "translate-x-1"
-                    }`}
-                  />
-                </button>
-              </div>
 
-              {/* Contactless Payments */}
-              <div className="flex items-center justify-between py-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex size-8 items-center justify-center rounded-full bg-muted text-foreground">
-                    <Smartphone size={16} />
+                {/* Online Purchases */}
+                <div className="flex items-center justify-between py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-8 items-center justify-center rounded-full bg-muted text-foreground">
+                      <Globe size={16} />
+                    </div>
+                    <div>
+                      <span className="text-[13.5px] font-medium text-foreground">Online purchases</span>
+                      <p className="text-[12px] text-muted-foreground">Allow web and e-commerce payments</p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-[14px] font-medium text-foreground">Contactless POS</span>
-                    <p className="text-[12px] text-muted-foreground">Tap-to-pay on point of sale terminals</p>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleCardSetting("onlineEnabled")}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
+                      managingCard.onlineEnabled ? "bg-primary" : "bg-muted"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block size-4 transform rounded-full bg-white transition-transform ${
+                        managingCard.onlineEnabled ? "translate-x-6" : "translate-x-1"
+                      }`}
+                    />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleToggleCardSetting("contactlessEnabled")}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
-                    managingCard.contactlessEnabled ? "bg-primary" : "bg-muted"
-                  }`}
-                >
-                  <span
-                    className={`inline-block size-4 transform rounded-full bg-white transition-transform ${
-                      managingCard.contactlessEnabled ? "translate-x-6" : "translate-x-1"
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
 
-            <div className="mt-6 flex justify-between items-center gap-2">
-              <Link
-                href="/cards"
-                className="text-[13px] font-medium text-foreground hover:underline"
+                {/* Contactless Payments */}
+                <div className="flex items-center justify-between py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-8 items-center justify-center rounded-full bg-muted text-foreground">
+                      <Smartphone size={16} />
+                    </div>
+                    <div>
+                      <span className="text-[13.5px] font-medium text-foreground">Contactless POS</span>
+                      <p className="text-[12px] text-muted-foreground">Tap-to-pay on point of sale terminals</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleCardSetting("contactlessEnabled")}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
+                      managingCard.contactlessEnabled ? "bg-primary" : "bg-muted"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block size-4 transform rounded-full bg-white transition-transform ${
+                        managingCard.contactlessEnabled ? "translate-x-6" : "translate-x-1"
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+            </DialogBody>
+
+            <DialogFooter className="justify-between">
+              <Button
+                variant="ghost"
+                size="sm"
+                nativeButton={false}
+                render={<Link href="/cards" />}
+                className="text-[13px] text-muted-foreground hover:text-foreground"
               >
-                Open Full Card Hub →
-              </Link>
-              <button
-                type="button"
-                onClick={() => setManagingCard(null)}
-                className="rounded-xl bg-foreground px-5 py-2 text-[14px] font-medium text-background hover:bg-foreground/90 cursor-pointer shadow-xs"
-              >
+                Card hub →
+              </Button>
+              <Button size="sm" onClick={() => setManagingCard(null)}>
                 Done
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        )}
+      </Dialog>
     </>
   );
 }

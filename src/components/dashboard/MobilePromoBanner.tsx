@@ -1,8 +1,17 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Globe, Calculator, X } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Globe, Calculator } from "lucide-react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export function MobilePromoBanner() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -195,103 +204,89 @@ export function MobilePromoBanner() {
       </div>
 
       {/* Fixed Deposit Calculator Modal */}
-      {showCalculator && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-xl">
-            <div className="flex items-center justify-between border-b border-border/60 pb-4">
-              <div className="flex items-center gap-2.5">
-                <div className="flex size-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                  <TrendingUp size={18} strokeWidth={1.8} />
-                </div>
-                <div>
-                  <h3 className="text-[15px] font-medium text-foreground">Fixed Deposit Calculator</h3>
-                  <p className="text-[12px] text-muted-foreground">Estimated interest at 14.50% p.a.</p>
-                </div>
+      <Dialog open={showCalculator} onOpenChange={setShowCalculator}>
+        <DialogContent size="md">
+          <DialogHeader>
+            <DialogTitle>Fixed deposit calculator</DialogTitle>
+          </DialogHeader>
+
+          <DialogBody>
+            <p className="text-[13px] text-muted-foreground leading-relaxed">
+              Estimated returns calculated at 14.50% annual interest.
+            </p>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[13px] font-medium text-foreground">Deposit amount (GHS)</label>
+              <div className="flex items-center rounded-xl border border-border bg-muted/40 px-3.5 py-2 focus-within:border-primary">
+                <span className="text-[14px] font-medium text-muted-foreground mr-2">GHS</span>
+                <input
+                  type="number"
+                  min="500"
+                  step="500"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                  className="w-full bg-transparent text-[17px] font-medium text-foreground outline-none tabular"
+                />
               </div>
-              <button
-                type="button"
-                onClick={() => setShowCalculator(false)}
-                className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
-              >
-                <X size={18} />
-              </button>
             </div>
 
-            <div className="mt-5 flex flex-col gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[13px] font-medium text-foreground">Deposit Amount (GHS)</label>
-                <div className="flex items-center rounded-xl border border-border bg-muted/40 px-4 py-2.5 focus-within:border-primary">
-                  <span className="text-[16px] font-medium text-muted-foreground mr-2">GHS</span>
-                  <input
-                    type="number"
-                    min="500"
-                    step="500"
-                    value={depositAmount}
-                    onChange={(e) => setDepositAmount(e.target.value)}
-                    className="w-full bg-transparent text-[20px] font-medium text-foreground outline-none tabular"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[13px] font-medium text-foreground">Tenure (Months)</label>
-                <div className="grid grid-cols-4 gap-2">
-                  {[3, 6, 12, 24].map((m) => (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() => setTenureMonths(m)}
-                      className={`rounded-lg border py-2 text-[12.5px] font-medium transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
-                        tenureMonths === m
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border bg-muted/40 text-foreground hover:bg-muted"
-                      }`}
-                    >
-                      {m} Months
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Earnings Result Card */}
-              <div className="mt-2 rounded-xl bg-emerald-500/10 p-4 dark:bg-emerald-500/15 border border-emerald-500/20">
-                <div className="flex justify-between text-[13px] text-muted-foreground">
-                  <span>Estimated Interest</span>
-                  <span className="font-medium text-emerald-600 dark:text-emerald-400 tabular">
-                    +GHS {estimatedReturn.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </span>
-                </div>
-                <div className="mt-2 flex justify-between border-t border-emerald-500/20 pt-2 text-[14px] font-medium text-foreground">
-                  <span>Total at Maturity</span>
-                  <span className="tabular">
-                    GHS {totalMaturity.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-3 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowCalculator(false)}
-                  className="rounded-xl border border-border px-4 py-2 text-[13.5px] font-medium text-foreground hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowCalculator(false);
-                    toast.success("Fixed Deposit application initiated.");
-                  }}
-                  className="rounded-xl bg-emerald-700 dark:bg-emerald-600 px-5 py-2 text-[13.5px] font-medium text-white hover:opacity-90 active:scale-[0.96] transition-transform cursor-pointer shadow-xs"
-                >
-                  Create Deposit
-                </button>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[13px] font-medium text-foreground">Tenure (months)</label>
+              <div className="grid grid-cols-4 gap-2">
+                {[3, 6, 12, 24].map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => setTenureMonths(m)}
+                    className={`rounded-xl border py-2 text-[12.5px] font-medium transition-colors cursor-pointer ${
+                      tenureMonths === m
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border bg-muted/40 text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {m}m
+                  </button>
+                ))}
               </div>
             </div>
-          </div>
-        </div>
-      )}
+
+            {/* Earnings Result Card */}
+            <div className="rounded-xl bg-emerald-500/10 p-3.5 dark:bg-emerald-500/15 border border-emerald-500/20">
+              <div className="flex justify-between text-[13px] text-muted-foreground">
+                <span>Estimated interest</span>
+                <span className="font-medium text-emerald-600 dark:text-emerald-400 tabular">
+                  +GHS {estimatedReturn.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+              </div>
+              <div className="mt-2 flex justify-between border-t border-emerald-500/20 pt-2 text-[14px] font-medium text-foreground">
+                <span>Total at maturity</span>
+                <span className="tabular">
+                  GHS {totalMaturity.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+              </div>
+            </div>
+          </DialogBody>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowCalculator(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => {
+                setShowCalculator(false);
+                toast.success("Fixed Deposit application initiated.");
+              }}
+            >
+              Create deposit
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

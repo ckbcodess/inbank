@@ -19,8 +19,8 @@ import { useState } from "react";
 import { AlertCircle, ShieldAlert } from "lucide-react";
 import {
   Dialog,
+  DialogBody,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -94,7 +94,7 @@ export default function ComplianceActionDialog({
         onOpenChange(next);
       }}
     >
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent size="md">
         {stage === "confirm" ? (
           <>
             <DialogHeader>
@@ -104,33 +104,37 @@ export default function ComplianceActionDialog({
                   strokeWidth={1.9}
                   className={destructive ? "text-destructive" : "text-muted-foreground"}
                 />
-                {title}
+                <span>{title}</span>
               </DialogTitle>
-              <DialogDescription>{description}</DialogDescription>
             </DialogHeader>
 
-            <div className="flex flex-col gap-2 py-1">
-              <Label htmlFor="compliance-reason">Reason (required)</Label>
-              <Textarea
-                id="compliance-reason"
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                rows={3}
-                placeholder={reasonPlaceholder}
-              />
-              <p className="text-[12px] text-muted-foreground">
-                {reason.trim().length < minReason
-                  ? `At least ${minReason} characters required.`
-                  : `${reason.trim().length} characters`}
-              </p>
-            </div>
+            <DialogBody>
+              <p className="text-[13px] text-muted-foreground leading-relaxed">{description}</p>
+
+              <div className="flex flex-col gap-2 pt-1">
+                <Label htmlFor="compliance-reason">Reason (required)</Label>
+                <Textarea
+                  id="compliance-reason"
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  rows={3}
+                  placeholder={reasonPlaceholder}
+                />
+                <p className="text-[12px] text-muted-foreground">
+                  {reason.trim().length < minReason
+                    ? `At least ${minReason} characters required.`
+                    : `${reason.trim().length} characters`}
+                </p>
+              </div>
+            </DialogBody>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
+              <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
               <Button
                 variant={commitVariant}
+                size="sm"
                 disabled={!canProceed}
                 onClick={() => (requiresStepUp ? setStage("step-up") : commit())}
               >
@@ -147,32 +151,34 @@ export default function ComplianceActionDialog({
                   strokeWidth={1.9}
                   className={destructive ? "text-destructive" : "text-muted-foreground"}
                 />
-                Confirm with your authenticator
+                <span>Confirm with Authenticator</span>
               </DialogTitle>
-              <DialogDescription>
-                High-risk changes need a second factor. Enter the 6-digit code from your
-                authenticator to apply this change.
-              </DialogDescription>
             </DialogHeader>
 
-            <div className="flex flex-col gap-2 py-1">
-              <Label htmlFor="compliance-stepup">Verification code</Label>
-              <Input
-                id="compliance-stepup"
-                inputMode="numeric"
-                maxLength={6}
-                value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-                placeholder="000000"
-                className="tabular"
-              />
-            </div>
+            <DialogBody>
+              <p className="text-[13px] text-muted-foreground leading-relaxed">
+                High-risk changes need a second factor. Enter the 6-digit code from your authenticator to apply this change.
+              </p>
+
+              <div className="flex flex-col gap-2 pt-1">
+                <Label htmlFor="compliance-stepup">Verification code</Label>
+                <Input
+                  id="compliance-stepup"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+                  placeholder="000000"
+                  className="tabular"
+                />
+              </div>
+            </DialogBody>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setStage("confirm")}>
+              <Button variant="ghost" size="sm" onClick={() => setStage("confirm")}>
                 Back
               </Button>
-              <Button variant={commitVariant} disabled={!canComplete} onClick={commit}>
+              <Button variant={commitVariant} size="sm" disabled={!canComplete} onClick={commit}>
                 {confirmLabel}
               </Button>
             </DialogFooter>
