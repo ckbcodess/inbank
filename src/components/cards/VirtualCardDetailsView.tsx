@@ -24,6 +24,7 @@ import {
   SlidersHorizontal,
   Snowflake,
   Sparkles,
+  Truck,
 } from "lucide-react";
 import {
   Dialog,
@@ -40,6 +41,7 @@ import { accountsForProfile, type PaymentCard } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import TransactionPinModal from "@/components/payments/TransactionPinModal";
+import { CardDeliveryTracker, CardDeliveryTrackerModal } from "@/components/cards/CardDeliveryTracker";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -65,7 +67,7 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
 
   // Modals state
   const [activeModal, setActiveModal] = useState<
-    "details" | "pin" | "freeze" | "limits" | "controls" | "reset-pin" | "edit-nickname" | "replace" | "top-up" | null
+    "details" | "pin" | "freeze" | "limits" | "controls" | "reset-pin" | "edit-nickname" | "replace" | "top-up" | "tracking" | null
   >(null);
 
   // Top Up Form State
@@ -211,6 +213,43 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
 
       {/* Main Container matching Figma 1243:25983 w-[905.9px] */}
       <div className="w-full max-w-[920px] flex flex-col gap-8">
+        {/* Physical Card Fulfillment & Delivery Banner (if card has active fulfillment) */}
+        {currentCard.deliveryStatus && currentCard.deliveryStatus !== "delivered" && (
+          <div className="rounded-[16px] border border-border bg-card p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+            <div className="flex items-center gap-3.5">
+              <div className="size-10 rounded-xl bg-muted flex items-center justify-center shrink-0 text-foreground">
+                <Truck size={18} strokeWidth={1.8} />
+              </div>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[14.5px] font-medium text-foreground">
+                    Physical Card Fulfillment in Progress
+                  </span>
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-foreground border border-border">
+                    {currentCard.deliveryStatus === "ready_for_pickup"
+                      ? "Ready for Pickup"
+                      : currentCard.deliveryStatus === "in_transit"
+                      ? "In Transit"
+                      : "In Production"}
+                  </span>
+                </div>
+                <span className="text-[12.5px] text-muted-foreground mt-0.5">
+                  {currentCard.deliveryMethod === "BRANCH_PICKUP"
+                    ? `Collection at ${currentCard.deliveryBranch || "GCB Head Office Branch"}`
+                    : `Delivering to ${currentCard.deliveryAddress || "Registered Address"}`}
+                </span>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setActiveModal("tracking")}
+              className="px-3.5 py-1.5 rounded-xl text-[13px] font-medium bg-foreground text-background hover:bg-foreground/90 transition-colors shrink-0 cursor-pointer self-start sm:self-auto"
+            >
+              Track Delivery
+            </button>
+          </div>
+        )}
+
         {/* Top 2 Columns */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch w-full">
           {/* ========================================================================= */}
@@ -531,6 +570,25 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
                 </div>
                 <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
               </button>
+
+              {/* Item 5: Track card delivery (if physical card in fulfillment) */}
+              {currentCard.deliveryStatus && (
+                <button
+                  type="button"
+                  onClick={() => setActiveModal("tracking")}
+                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors text-left group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="size-[32px] rounded-full bg-[#f5f5f5] dark:bg-muted text-[#121212] dark:text-foreground flex items-center justify-center shrink-0">
+                      <Truck size={16} strokeWidth={1.8} />
+                    </div>
+                    <span className="text-[14px] font-normal text-[#0a0a0a] dark:text-foreground">
+                      Track delivery & fulfillment
+                    </span>
+                  </div>
+                  <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -1058,6 +1116,13 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* 9. Card Delivery Tracker Modal */}
+      <CardDeliveryTrackerModal
+        card={currentCard}
+        open={activeModal === "tracking"}
+        onOpenChange={(open) => !open && setActiveModal(null)}
+      />
     </div>
   );
 }

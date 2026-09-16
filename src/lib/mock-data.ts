@@ -1339,6 +1339,68 @@ export const TRADE_APPROVAL_DEFAULT_STATE: TradeApprovalState = "awaiting-decisi
 
 export type CardStatus = "Active" | "Blocked" | "Expired";
 export type CardType = "Prepaid" | "Debit" | "Virtual";
+export type DeliveryStatus = "processing" | "in_production" | "in_transit" | "ready_for_pickup" | "delivered";
+export type DeliveryMethod = "BRANCH_PICKUP" | "DELIVERY";
+
+export interface GcbBranch {
+  id: string;
+  name: string;
+  address: string;
+  city: string;
+  operatingHours: string;
+}
+
+export const GCB_BRANCHES: readonly GcbBranch[] = [
+  {
+    id: "branch-01",
+    name: "GCB Head Office Branch",
+    address: "High Street, Thorpe Road, Accra",
+    city: "Accra",
+    operatingHours: "Mon - Fri: 8:00 AM - 5:00 PM",
+  },
+  {
+    id: "branch-02",
+    name: "GCB Airport City Branch",
+    address: "One Airport Square, Airport City, Accra",
+    city: "Accra",
+    operatingHours: "Mon - Fri: 8:30 AM - 5:00 PM, Sat: 9:00 AM - 2:00 PM",
+  },
+  {
+    id: "branch-03",
+    name: "GCB Ring Road Central Branch",
+    address: "Ring Road Central, near Circle, Accra",
+    city: "Accra",
+    operatingHours: "Mon - Fri: 8:00 AM - 4:30 PM",
+  },
+  {
+    id: "branch-04",
+    name: "GCB Legon Campus Branch",
+    address: "University of Ghana Campus, Legon, Accra",
+    city: "Accra",
+    operatingHours: "Mon - Fri: 8:30 AM - 4:00 PM",
+  },
+  {
+    id: "branch-05",
+    name: "GCB Kumasi Main Branch",
+    address: "Harper Road, Adum, Kumasi",
+    city: "Kumasi",
+    operatingHours: "Mon - Fri: 8:00 AM - 5:00 PM",
+  },
+  {
+    id: "branch-06",
+    name: "GCB Takoradi Harbour Branch",
+    address: "Harbour Commercial Area, Takoradi",
+    city: "Takoradi",
+    operatingHours: "Mon - Fri: 8:00 AM - 4:30 PM",
+  },
+  {
+    id: "branch-07",
+    name: "GCB Tamale Main Branch",
+    address: "Hospital Road, Commercial Area, Tamale",
+    city: "Tamale",
+    operatingHours: "Mon - Fri: 8:00 AM - 4:00 PM",
+  },
+] as const;
 
 export interface PaymentCard {
   id: string;
@@ -1363,6 +1425,14 @@ export interface PaymentCard {
   singleUse?: boolean;
   profileKind?: "RETAIL" | "CORPORATE";
   colorTheme?: string;
+  /** Fulfillment and Delivery Tracking */
+  deliveryMethod?: DeliveryMethod;
+  deliveryBranch?: string;
+  deliveryAddress?: string;
+  deliveryStatus?: DeliveryStatus;
+  trackingNumber?: string;
+  estimatedDeliveryDate?: string;
+  pickupCode?: string;
 }
 
 export const CARDS: PaymentCard[] = [
@@ -1484,6 +1554,12 @@ export const CARDS: PaymentCard[] = [
     status: "Active",
     fundable: false,
     profileKind: "RETAIL",
+    deliveryMethod: "BRANCH_PICKUP",
+    deliveryBranch: "GCB Head Office Branch (High Street, Accra)",
+    deliveryStatus: "ready_for_pickup",
+    trackingNumber: "GCB-CRD-882104",
+    estimatedDeliveryDate: "Ready for Pickup",
+    pickupCode: "4920",
   },
   {
     id: "card-ret-002",
@@ -1514,6 +1590,11 @@ export const CARDS: PaymentCard[] = [
     status: "Active",
     fundable: false,
     profileKind: "CORPORATE",
+    deliveryMethod: "DELIVERY",
+    deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
+    deliveryStatus: "in_transit",
+    trackingNumber: "GCB-CRD-947201",
+    estimatedDeliveryDate: "Sept 19, 2026",
   },
 ];
 

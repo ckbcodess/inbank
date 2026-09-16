@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { DM_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { AmountVisibilityProvider } from "@/components/providers/AmountVisibilityProvider";
@@ -14,7 +14,10 @@ import { AndroidRippleProvider } from "@/components/providers/AndroidRippleProvi
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-const geist = Geist({ variable: "--font-sans", subsets: ["latin"] });
+const dmSans = DM_Sans({
+  variable: "--font-sans",
+  subsets: ["latin"],
+});
 const geistMono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -24,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn(geist.variable, geistMono.variable, "font-sans")}>
+    <html lang="en" suppressHydrationWarning className={cn(dmSans.variable, geistMono.variable, "font-sans")}>
       <body className="antialiased">
         <ThemeProvider>
           <TooltipProvider delay={350} closeDelay={100} timeout={300}>
