@@ -78,7 +78,7 @@ export default function GetStartedPage() {
           current: screen,
           total: 8,
         }}
-        width="compact"
+        width="wide"
         footer={
           <div className="flex justify-center">
             {screen === 1 ? (
