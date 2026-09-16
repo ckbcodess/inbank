@@ -221,15 +221,15 @@ function ActivateContent() {
     >
       {/* Mobile App Sync Banner (if applicable) */}
       {isMobileSync && step === "ghana_card" && (
-        <div className="mb-4 flex items-start gap-3 rounded-2xl border border-amber-500/20 bg-[#FFFBF0] dark:bg-amber-500/10 p-3.5 text-left">
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-[#B27B00] dark:text-amber-300">
-            <Smartphone size={16} />
+        <div className="mb-5 flex items-start gap-3.5 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-left">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
+            <Smartphone size={17} />
           </div>
           <div>
-            <span className="text-[13px] font-semibold text-foreground">
+            <span className="text-[13.5px] font-medium text-foreground">
               Mobile App User Detected
             </span>
-            <p className="text-[12px] text-muted-foreground">
+            <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
               We found your GCB Mobile App account (Abena Osei). Enter your Ghana Card to link your web banking.
             </p>
           </div>
@@ -238,15 +238,15 @@ function ActivateContent() {
 
       {/* Joint Account Banner (if applicable) */}
       {isJoint && step === "ghana_card" && (
-        <div className="mb-4 flex items-start gap-3 rounded-2xl border border-amber-500/20 bg-[#FFFBF0] dark:bg-amber-500/10 p-3.5 text-left">
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-[#B27B00] dark:text-amber-300">
-            <Users size={16} />
+        <div className="mb-5 flex items-start gap-3.5 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-left">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
+            <Users size={17} />
           </div>
           <div>
-            <span className="text-[13px] font-semibold text-foreground">
+            <span className="text-[13.5px] font-medium text-foreground">
               Joint Account Onboarding
             </span>
-            <p className="text-[12px] text-muted-foreground">
+            <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
               Activating Internet Banking for Kwame &amp; Efua Mensah (Joint Premier Savings).
             </p>
           </div>
@@ -255,9 +255,9 @@ function ActivateContent() {
 
       {/* STEP 1: Ghana Card Input */}
       {step === "ghana_card" && (
-        <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="ghana-card" className="text-[13px] font-medium">
+        <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="ghana-card" className="text-[13.5px] font-medium text-foreground">
               Ghana Card Number (PIN)
             </Label>
             <Input
@@ -265,26 +265,28 @@ function ActivateContent() {
               value={ghanaCard}
               onChange={(e) => setGhanaCard(e.target.value)}
               placeholder="e.g. GHA-0123456789-0"
-              className="h-12 rounded-xl border-border bg-background px-4 font-mono text-[14px] uppercase tracking-wider focus-visible:ring-[#F2B200]"
+              className="h-11 font-mono text-[14.5px] uppercase tracking-wider"
               autoFocus
             />
-            <p className="text-[12px] text-muted-foreground">
+            <p className="text-[12.5px] text-muted-foreground">
               Format: GHA-XXXXXXXXX-X as shown on your physical card.
             </p>
           </div>
 
           {errorMsg && (
-            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
-              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+            <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-[13px] text-destructive">
+              <AlertCircle size={16} className="mt-0.5 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           <Button
             type="submit"
+            variant="default"
+            size="lg"
             data-tour="activate-card"
             disabled={busy}
-            className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+            className="mt-3.5 h-11 w-full text-[14px]"
           >
             {busy ? (
               <>
@@ -300,27 +302,29 @@ function ActivateContent() {
 
       {/* STEP 2: Selfie / Photo Capture */}
       {step === "selfie" && (
-        <div className="flex flex-col items-center gap-5">
-          <div className="relative flex size-44 sm:size-48 items-center justify-center overflow-hidden rounded-full border-4 border-[#F2B200]/30 bg-muted/30 shadow-inner">
+        <div className="flex flex-col items-center gap-6">
+          <div className="relative flex size-44 sm:size-52 items-center justify-center overflow-hidden rounded-full border-4 border-primary/30 bg-muted/30 shadow-inner">
             {selfieTaken ? (
               <div className="flex flex-col items-center gap-2 text-center text-primary">
-                <CheckCircle2 size={48} className="text-[#E5A500] dark:text-[#F2B200]" />
-                <span className="text-[13px] font-medium text-foreground">Photo captured</span>
+                <CheckCircle2 size={52} className="text-primary" />
+                <span className="text-[14px] font-medium text-foreground">Photo captured</span>
               </div>
             ) : (
-              <div className="flex flex-col items-center gap-2 text-center text-muted-foreground">
-                <Camera size={36} strokeWidth={1.7} />
-                <span className="text-[12px]">Position face in frame</span>
+              <div className="flex flex-col items-center gap-2.5 text-center text-muted-foreground">
+                <Camera size={40} strokeWidth={1.7} />
+                <span className="text-[12.5px]">Position face in frame</span>
               </div>
             )}
           </div>
 
           <Button
             type="button"
+            variant="default"
+            size="lg"
             data-tour="activate-selfie"
             onClick={handleCaptureSelfie}
             disabled={busy || selfieTaken}
-            className="h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+            className="h-11 w-full text-[14px]"
           >
             {busy ? (
               <>
@@ -338,84 +342,84 @@ function ActivateContent() {
 
       {/* STEP 3: Review Details */}
       {step === "review_details" && (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-5">
           {isJoint ? (
             /* Joint Account Details Card */
-            <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 divide-y divide-border/60">
-              <div className="flex items-center justify-between pb-3">
-                <span className="text-[12.5px] text-muted-foreground">Account Holders</span>
-                <span className="text-[13.5px] font-semibold text-foreground">
+            <div className="rounded-2xl border border-border/80 bg-muted/20 p-5 divide-y divide-border/60">
+              <div className="flex items-center justify-between pb-3.5">
+                <span className="text-[13px] text-muted-foreground">Account Holders</span>
+                <span className="text-[14px] font-medium text-foreground">
                   Kwame Mensah &amp; Efua Mensah
                 </span>
               </div>
-              <div className="flex items-center justify-between py-3">
-                <span className="text-[12.5px] text-muted-foreground">Account Type</span>
-                <span className="text-[13.5px] font-semibold text-foreground">
+              <div className="flex items-center justify-between py-3.5">
+                <span className="text-[13px] text-muted-foreground">Account Type</span>
+                <span className="text-[14px] font-medium text-foreground">
                   Joint Premier Savings ···· 8844
                 </span>
               </div>
-              <div className="flex items-center justify-between py-3">
-                <span className="text-[12.5px] text-muted-foreground">Signing Mandate</span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-[#FEF3D6] px-2 py-0.5 text-[11px] font-semibold text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200]">
+              <div className="flex items-center justify-between py-3.5">
+                <span className="text-[13px] text-muted-foreground">Signing Mandate</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-1 text-[11.5px] font-medium text-primary">
                   <Users size={12} />
                   Both Signatures Required
                 </span>
               </div>
-              <div className="flex items-center justify-between py-3">
-                <span className="text-[12.5px] text-muted-foreground">Primary Phone (Kwame)</span>
-                <span className="text-[13.5px] font-semibold text-foreground">+233 24 *** *192</span>
+              <div className="flex items-center justify-between py-3.5">
+                <span className="text-[13px] text-muted-foreground">Primary Phone (Kwame)</span>
+                <span className="text-[14px] font-medium text-foreground">+233 24 *** *192</span>
               </div>
-              <div className="flex items-center justify-between pt-3">
-                <span className="text-[12.5px] text-muted-foreground">Co-Signatory (Efua)</span>
-                <span className="text-[13.5px] font-semibold text-foreground">+233 20 *** *410</span>
+              <div className="flex items-center justify-between pt-3.5">
+                <span className="text-[13px] text-muted-foreground">Co-Signatory (Efua)</span>
+                <span className="text-[14px] font-medium text-foreground">+233 20 *** *410</span>
               </div>
             </div>
           ) : isMobileSync ? (
             /* Mobile App Sync Details Card */
-            <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 divide-y divide-border/60">
-              <div className="flex items-center justify-between pb-3">
-                <span className="text-[12.5px] text-muted-foreground">Account Holder</span>
-                <span className="text-[13.5px] font-semibold text-foreground">Abena Osei</span>
+            <div className="rounded-2xl border border-border/80 bg-muted/20 p-5 divide-y divide-border/60">
+              <div className="flex items-center justify-between pb-3.5">
+                <span className="text-[13px] text-muted-foreground">Account Holder</span>
+                <span className="text-[14px] font-medium text-foreground">Abena Osei</span>
               </div>
-              <div className="flex items-center justify-between py-3">
-                <span className="text-[12.5px] text-muted-foreground">Account</span>
-                <span className="text-[13.5px] font-semibold text-foreground">Personal Current ···· 4821</span>
+              <div className="flex items-center justify-between py-3.5">
+                <span className="text-[13px] text-muted-foreground">Account</span>
+                <span className="text-[14px] font-medium text-foreground">Personal Current ···· 4821</span>
               </div>
-              <div className="flex items-center justify-between py-3">
-                <span className="text-[12.5px] text-muted-foreground">Mobile App Status</span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                  <Check size={12} />
+              <div className="flex items-center justify-between py-3.5">
+                <span className="text-[13px] text-muted-foreground">Mobile App Status</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11.5px] font-medium text-emerald-600 dark:text-emerald-400">
+                  <Check size={13} />
                   Linked on iOS &amp; Android
                 </span>
               </div>
-              <div className="flex items-center justify-between pt-3">
-                <span className="text-[12.5px] text-muted-foreground">Mobile Phone</span>
-                <span className="text-[13.5px] font-semibold text-foreground">+233 24 *** *234</span>
+              <div className="flex items-center justify-between pt-3.5">
+                <span className="text-[13px] text-muted-foreground">Mobile Phone</span>
+                <span className="text-[14px] font-medium text-foreground">+233 24 *** *234</span>
               </div>
             </div>
           ) : (
             /* Standard Individual Account Details Card */
-            <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 divide-y divide-border/60">
-              <div className="flex items-center justify-between pb-3">
-                <span className="text-[12.5px] text-muted-foreground">Name</span>
-                <span className="text-[13.5px] font-semibold text-foreground">Ama Serwaa</span>
+            <div className="rounded-2xl border border-border/80 bg-muted/20 p-5 divide-y divide-border/60">
+              <div className="flex items-center justify-between pb-3.5">
+                <span className="text-[13px] text-muted-foreground">Name</span>
+                <span className="text-[14px] font-medium text-foreground">Ama Serwaa</span>
               </div>
-              <div className="flex items-center justify-between py-3">
-                <span className="text-[12.5px] text-muted-foreground">Account</span>
-                <span className="text-[13.5px] font-semibold text-foreground">Reserve Savings ···· 5566</span>
+              <div className="flex items-center justify-between py-3.5">
+                <span className="text-[13px] text-muted-foreground">Account</span>
+                <span className="text-[14px] font-medium text-foreground">Reserve Savings ···· 5566</span>
               </div>
-              <div className="flex items-center justify-between py-3">
-                <span className="text-[12.5px] text-muted-foreground">Mobile</span>
-                <span className="text-[13.5px] font-semibold text-foreground">+233 24 *** *567</span>
+              <div className="flex items-center justify-between py-3.5">
+                <span className="text-[13px] text-muted-foreground">Mobile</span>
+                <span className="text-[14px] font-medium text-foreground">+233 24 *** *567</span>
               </div>
-              <div className="flex items-center justify-between pt-3">
-                <span className="text-[12.5px] text-muted-foreground">Email</span>
-                <span className="text-[13.5px] font-semibold text-foreground">am•••••@example.com</span>
+              <div className="flex items-center justify-between pt-3.5">
+                <span className="text-[13px] text-muted-foreground">Email</span>
+                <span className="text-[14px] font-medium text-foreground">am•••••@example.com</span>
               </div>
             </div>
           )}
 
-          <p className="text-center text-[12px] leading-relaxed text-muted-foreground">
+          <p className="text-center text-[12.5px] leading-relaxed text-muted-foreground">
             {isJoint
               ? "Both account holders will receive security confirmation notices upon completing activation."
               : "We have partially masked your contact details for privacy and security."}
@@ -423,10 +427,12 @@ function ActivateContent() {
 
           <Button
             type="button"
+            variant="default"
+            size="lg"
             data-tour="activate-review"
             onClick={handleVerifyDetails}
             disabled={busy}
-            className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+            className="mt-3.5 h-11 w-full text-[14px]"
           >
             {busy ? (
               <>
@@ -441,7 +447,7 @@ function ActivateContent() {
           <button
             type="button"
             onClick={() => setStep("ghana_card")}
-            className="text-center text-[12.5px] text-muted-foreground hover:text-foreground underline underline-offset-4 active:scale-[0.96] cursor-pointer"
+            className="text-center text-[13px] text-muted-foreground hover:text-foreground underline underline-offset-4 cursor-pointer"
           >
             Use a different Ghana Card
           </button>
@@ -450,25 +456,25 @@ function ActivateContent() {
 
       {/* STEP 4: OTP Verification */}
       {step === "otp" && (
-        <form onSubmit={handleOtpSubmit} className="flex flex-col items-center gap-4">
+        <form onSubmit={handleOtpSubmit} className="flex flex-col items-center gap-5">
           <div className="w-full">
             <OtpInput value={digits} onChange={setDigits} disabled={busy} autoFocus />
           </div>
 
           {errorMsg && (
-            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
-              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+            <div className="w-full flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-[13px] text-destructive">
+              <AlertCircle size={16} className="mt-0.5 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           {isJoint && (
-            <div className="w-full rounded-2xl border border-amber-500/20 bg-amber-500/5 p-3 text-[12px] text-muted-foreground">
-              <span className="font-semibold text-foreground">Joint mandate notice:</span> An alert has also been sent to co-holder Efua (+233 20 *** *410) confirming this activation request.
+            <div className="w-full rounded-2xl border border-primary/20 bg-primary/5 p-3.5 text-[12.5px] text-muted-foreground">
+              <span className="font-medium text-foreground">Joint mandate notice:</span> An alert has also been sent to co-holder Efua (+233 20 *** *410) confirming this activation request.
             </div>
           )}
 
-          <div className="flex items-center justify-between w-full text-[12.5px] text-muted-foreground px-1">
+          <div className="flex items-center justify-between w-full text-[13px] text-muted-foreground px-1">
             <span>
               {countdown > 0 ? (
                 `Resend code in ${countdown}s`
@@ -476,7 +482,7 @@ function ActivateContent() {
                 <button
                   type="button"
                   onClick={() => setCountdown(RESEND_SECONDS)}
-                  className="font-medium text-[#B27B00] dark:text-[#F2B200] hover:underline cursor-pointer"
+                  className="font-medium text-primary hover:underline cursor-pointer"
                 >
                   Resend code
                 </button>
@@ -494,9 +500,11 @@ function ActivateContent() {
 
           <Button
             type="submit"
+            variant="default"
+            size="lg"
             data-tour="activate-otp"
             disabled={busy || digits.join("").length < OTP_LENGTH}
-            className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+            className="mt-3.5 h-11 w-full text-[14px]"
           >
             {busy ? (
               <>
@@ -512,9 +520,9 @@ function ActivateContent() {
 
       {/* STEP 5: Password Creation */}
       {step === "password" && (
-        <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="create-pass" className="text-[13px] font-medium">
+        <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="create-pass" className="text-[13.5px] font-medium text-foreground">
               Create password
             </Label>
             <div className="relative">
@@ -524,43 +532,44 @@ function ActivateContent() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Choose a strong password"
-                className="h-12 rounded-xl border-border bg-background pr-10 text-[14px] focus-visible:ring-[#F2B200]"
+                className="h-11 pr-11 text-[14.5px]"
                 autoFocus
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-1.5 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
           </div>
 
-          <p className="text-[12px] text-muted-foreground">
+          <p className="text-[12.5px] text-muted-foreground">
             Demo — any password works. Enter{" "}
             <span className="tabular font-mono text-foreground">00000</span> to see the error state.
           </p>
 
           {/* Password Checklist */}
-          <div className="rounded-2xl border border-border/80 bg-muted/20 p-3.5 space-y-2">
-            <span className="text-[12px] font-semibold text-foreground">
+          <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 space-y-2.5">
+            <span className="text-[12.5px] font-medium text-foreground">
               Password requirements:
             </span>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12px]">
-              <div className={`flex items-center gap-1.5 ${hasMinLength ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-[12.5px]">
+              <div className={`flex items-center gap-2 ${hasMinLength ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
                 <Check size={14} className={hasMinLength ? "opacity-100" : "opacity-30"} />
                 <span>At least 12 characters</span>
               </div>
-              <div className={`flex items-center gap-1.5 ${hasCase ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
+              <div className={`flex items-center gap-2 ${hasCase ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
                 <Check size={14} className={hasCase ? "opacity-100" : "opacity-30"} />
                 <span>Upper and lower case</span>
               </div>
-              <div className={`flex items-center gap-1.5 ${hasNumber ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
+              <div className={`flex items-center gap-2 ${hasNumber ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
                 <Check size={14} className={hasNumber ? "opacity-100" : "opacity-30"} />
                 <span>At least 1 number</span>
               </div>
-              <div className={`flex items-center gap-1.5 ${hasSymbol ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
+              <div className={`flex items-center gap-2 ${hasSymbol ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
                 <Check size={14} className={hasSymbol ? "opacity-100" : "opacity-30"} />
                 <span>At least 1 special character</span>
               </div>
@@ -568,16 +577,18 @@ function ActivateContent() {
           </div>
 
           {errorMsg && (
-            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
-              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+            <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-[13px] text-destructive">
+              <AlertCircle size={16} className="mt-0.5 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           <Button
             type="submit"
+            variant="default"
+            size="lg"
             data-tour="activate-password"
-            className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+            className="mt-3.5 h-11 w-full text-[14px]"
           >
             Save password and continue
           </Button>
@@ -586,43 +597,37 @@ function ActivateContent() {
 
       {/* STEP 6: 4-digit PIN */}
       {step === "pin" && (
-        <form onSubmit={handlePinSubmit} className="flex flex-col items-center gap-5">
-          <div className="flex items-center justify-center gap-3">
-            {pinDigits.map((digit, idx) => (
-              <Input
-                key={idx}
-                id={`pin-${idx}`}
-                type="password"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/\D/g, "");
-                  const newPin = [...pinDigits];
-                  newPin[idx] = val;
-                  setPinDigits(newPin);
-                  if (val && idx < 3) {
-                    const nextInput = document.getElementById(`pin-${idx + 1}`);
-                    nextInput?.focus();
-                  }
-                }}
-                className="size-13 rounded-2xl border-2 border-border/80 text-center font-mono text-[22px] font-bold shadow-sm focus-visible:border-[#F2B200] focus-visible:ring-[#F2B200]"
-                autoFocus={idx === 0}
+        <form onSubmit={handlePinSubmit} className="flex flex-col items-center gap-6">
+          <div className="w-full flex flex-col items-center gap-2.5">
+            <p className="text-[13.5px] text-muted-foreground text-center">
+              Enter a 4-digit PIN for completing transfers and payments.
+            </p>
+            <div className="mt-3">
+              <OtpInput
+                value={pinDigits}
+                onChange={setPinDigits}
+                length={4}
+                mask
+                disabled={busy}
+                autoFocus
               />
-            ))}
+            </div>
           </div>
 
           {errorMsg && (
-            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
-              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+            <div className="w-full flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-[13px] text-destructive">
+              <AlertCircle size={16} className="mt-0.5 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           <Button
             type="submit"
+            variant="default"
+            size="lg"
             data-tour="activate-pin"
             disabled={busy || pinDigits.join("").length < 4}
-            className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+            className="mt-3.5 h-11 w-full text-[14px]"
           >
             {busy ? (
               <>

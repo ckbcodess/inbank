@@ -77,7 +77,7 @@ export default function OtpInput({
   }
 
   return (
-    <div className="flex justify-center gap-2.5" onPaste={handlePaste}>
+    <div className="flex justify-center gap-2.5 sm:gap-3.5" onPaste={handlePaste}>
       {Array.from({ length }, (_, i) => (
         <input
           key={i}
@@ -94,8 +94,8 @@ export default function OtpInput({
           onKeyDown={(e) => handleKeyDown(i, e)}
           aria-label={mask ? `PIN Digit ${i + 1}` : `Digit ${i + 1}`}
           aria-invalid={invalid || undefined}
-          className={`numorainput size-12 md:size-13 rounded-xl border bg-background text-center text-[20px] font-semibold text-foreground outline-none transition-all tabular focus:border-ring focus:ring-3 focus:ring-ring/40 disabled:opacity-60 ${
-            invalid ? "border-destructive bg-destructive/5" : "border-border"
+          className={`numorainput size-12 sm:size-13 rounded-xl border bg-background text-center text-[20px] tracking-wider text-foreground outline-none transition-all tabular focus:border-ring focus:ring-3 focus:ring-ring/40 disabled:opacity-60 dark:bg-white/[0.07] dark:border-white/[0.12] ${
+            invalid ? "border-destructive bg-destructive/5 dark:border-destructive/50" : "border-input"
           }`}
         />
       ))}

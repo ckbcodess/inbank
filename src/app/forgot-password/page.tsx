@@ -83,23 +83,23 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--surface)] px-5 py-12">
-      <div className="w-full max-w-[400px]">
-        <div className="mb-8 flex flex-col items-center text-center">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 pt-20 pb-12 sm:pt-24 sm:pb-16">
+      <div className="w-full max-w-[480px]">
+        <div className="mb-7 flex flex-col items-center text-center">
           <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
             {stage === "done" ? (
-              <CheckCircle2 size={22} strokeWidth={1.9} aria-hidden="true" />
+              <CheckCircle2 size={24} strokeWidth={1.9} aria-hidden="true" />
             ) : (
-              <Landmark size={22} strokeWidth={1.9} aria-hidden="true" />
+              <Landmark size={24} strokeWidth={1.9} aria-hidden="true" />
             )}
           </div>
-          <h1 className="text-[24px] leading-tight tracking-[-0.02em] text-foreground">
+          <h1 className="text-[24px] sm:text-[26px] font-medium leading-tight tracking-[-0.02em] text-foreground">
             {stage === "identify" && "Reset your password"}
             {stage === "verify" && "Verify it's you"}
             {stage === "reset" && "Choose a new password"}
             {stage === "done" && "Password updated"}
           </h1>
-          <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+          <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
             {stage === "identify" &&
               "We'll send a one-time code to the contact details registered on your profile."}
             {stage === "verify" && "Enter the 6-digit code we just sent you."}
@@ -108,36 +108,45 @@ export default function ForgotPasswordPage() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+        <div className="rounded-3xl border border-border bg-card p-7 sm:p-9 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
           {stage === "identify" && (
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 advance("verify");
               }}
-              className="flex flex-col gap-4"
+              className="flex flex-col gap-5"
             >
               <div className="flex flex-col gap-2">
-                <Label htmlFor="identifier">Email or user ID</Label>
+                <Label htmlFor="identifier" className="text-[13.5px] font-medium text-foreground">
+                  Email or user ID
+                </Label>
                 <Input
                   id="identifier"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   placeholder="you@company.com"
                   autoComplete="username"
+                  className="h-11 text-[14.5px]"
                   required
                 />
               </div>
 
-              <Button type="submit" disabled={busy || identifier.trim() === ""} className="mt-1 w-full">
+              <Button
+                type="submit"
+                variant="default"
+                size="lg"
+                disabled={busy || identifier.trim() === ""}
+                className="mt-2 h-11 w-full text-[14px]"
+              >
                 {busy ? (
                   <>
-                    <Loader2 size={15} strokeWidth={2} className="animate-spin" aria-hidden="true" />
+                    <Loader2 size={16} strokeWidth={2} className="mr-2 animate-spin" aria-hidden="true" />
                     Sending code…
                   </>
                 ) : (
                   <>
-                    <MailCheck size={15} strokeWidth={1.9} aria-hidden="true" />
+                    <MailCheck size={16} strokeWidth={1.9} className="mr-2" aria-hidden="true" />
                     Send one-time code
                   </>
                 )}
@@ -146,9 +155,11 @@ export default function ForgotPasswordPage() {
           )}
 
           {stage === "verify" && (
-            <form onSubmit={handleVerify} className="flex flex-col gap-4">
+            <form onSubmit={handleVerify} className="flex flex-col gap-5">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="otp">One-time code</Label>
+                <Label htmlFor="otp" className="text-[13.5px] font-medium text-foreground">
+                  One-time code
+                </Label>
                 <Input
                   id="otp"
                   inputMode="numeric"
@@ -163,30 +174,36 @@ export default function ForgotPasswordPage() {
                     }
                   }}
                   placeholder="000000"
-                  className="tabular"
+                  className="h-11 font-mono text-[16px] tracking-widest tabular"
                   aria-invalid={codeError || undefined}
                   required
                 />
                 {codeError ? (
-                  <p className="text-[12px] text-destructive">
+                  <p className="text-[12.5px] text-destructive">
                     That code isn&apos;t valid or has expired. Request a new one to continue.
                   </p>
                 ) : (
-                  <p className="text-[12px] text-muted-foreground">
+                  <p className="text-[12.5px] text-muted-foreground">
                     Sent to the contact details on your profile. It expires in 5 minutes.
                   </p>
                 )}
               </div>
 
-              <Button type="submit" disabled={busy || code.length !== 6} className="mt-1 w-full">
+              <Button
+                type="submit"
+                variant="default"
+                size="lg"
+                disabled={busy || code.length !== 6}
+                className="mt-2 h-11 w-full text-[14px]"
+              >
                 {busy ? (
                   <>
-                    <Loader2 size={15} strokeWidth={2} className="animate-spin" aria-hidden="true" />
+                    <Loader2 size={16} strokeWidth={2} className="mr-2 animate-spin" aria-hidden="true" />
                     Verifying…
                   </>
                 ) : (
                   <>
-                    <ShieldCheck size={15} strokeWidth={1.9} aria-hidden="true" />
+                    <ShieldCheck size={16} strokeWidth={1.9} className="mr-2" aria-hidden="true" />
                     Verify code
                   </>
                 )}
@@ -195,7 +212,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="button"
                 onClick={() => setStage("identify")}
-                className="text-[12px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                className="text-center text-[13px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline cursor-pointer"
               >
                 Use a different email or user ID
               </button>
@@ -208,10 +225,12 @@ export default function ForgotPasswordPage() {
                 e.preventDefault();
                 if (canReset) advance("done");
               }}
-              className="flex flex-col gap-4"
+              className="flex flex-col gap-5"
             >
               <div className="flex flex-col gap-2">
-                <Label htmlFor="new-password">New password</Label>
+                <Label htmlFor="new-password" className="text-[13.5px] font-medium text-foreground">
+                  New password
+                </Label>
                 <Input
                   id="new-password"
                   type="password"
@@ -219,10 +238,11 @@ export default function ForgotPasswordPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
+                  className="h-11 text-[14.5px]"
                   required
                 />
                 {/* Inline requirements, stated up front rather than only on failure. */}
-                <p className="text-[12px] text-muted-foreground">
+                <p className="text-[12.5px] text-muted-foreground">
                   {password.length === 0
                     ? "Needs 12+ characters, upper and lower case, a number and a symbol."
                     : issues.length > 0
@@ -232,7 +252,9 @@ export default function ForgotPasswordPage() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label htmlFor="confirm-password">Confirm new password</Label>
+                <Label htmlFor="confirm-password" className="text-[13.5px] font-medium text-foreground">
+                  Confirm new password
+                </Label>
                 <Input
                   id="confirm-password"
                   type="password"
@@ -240,23 +262,30 @@ export default function ForgotPasswordPage() {
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   placeholder="••••••••••••"
+                  className="h-11 text-[14.5px]"
                   aria-invalid={mismatch || undefined}
                   required
                 />
                 {mismatch && (
-                  <p className="text-[12px] text-destructive">Both passwords must match.</p>
+                  <p className="text-[12.5px] text-destructive">Both passwords must match.</p>
                 )}
               </div>
 
-              <Button type="submit" disabled={busy || !canReset} className="mt-1 w-full">
+              <Button
+                type="submit"
+                variant="default"
+                size="lg"
+                disabled={busy || !canReset}
+                className="mt-2 h-11 w-full text-[14px]"
+              >
                 {busy ? (
                   <>
-                    <Loader2 size={15} strokeWidth={2} className="animate-spin" aria-hidden="true" />
+                    <Loader2 size={16} strokeWidth={2} className="mr-2 animate-spin" aria-hidden="true" />
                     Updating…
                   </>
                 ) : (
                   <>
-                    <KeyRound size={15} strokeWidth={1.9} aria-hidden="true" />
+                    <KeyRound size={16} strokeWidth={1.9} className="mr-2" aria-hidden="true" />
                     Update password
                   </>
                 )}
@@ -265,12 +294,17 @@ export default function ForgotPasswordPage() {
           )}
 
           {stage === "done" && (
-            <div className="flex flex-col gap-4">
-              <p className="text-[13px] leading-relaxed text-muted-foreground">
+            <div className="flex flex-col gap-5">
+              <p className="text-[13.5px] leading-relaxed text-muted-foreground">
                 Your password was changed and every active session was signed out. This reset has
                 been written to the audit log.
               </p>
-              <Button onClick={() => router.push("/login")} className="w-full">
+              <Button
+                variant="default"
+                size="lg"
+                onClick={() => router.push("/login")}
+                className="h-11 w-full text-[14px]"
+              >
                 Back to sign in
               </Button>
             </div>
@@ -278,18 +312,18 @@ export default function ForgotPasswordPage() {
         </div>
 
         {stage !== "done" && (
-          <div className="mt-5 text-center">
+          <div className="mt-6 text-center">
             <Link
               href="/login"
-              className="inline-flex items-center gap-1 text-[12px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+              className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              <ArrowLeft size={13} strokeWidth={1.9} aria-hidden="true" />
+              <ArrowLeft size={15} strokeWidth={2} aria-hidden="true" />
               Back to sign in
             </Link>
           </div>
         )}
 
-        <p className="mt-6 text-center text-[11px] leading-relaxed text-muted-foreground">
+        <p className="mt-6 text-center text-[12px] leading-relaxed text-muted-foreground">
           For your security, every password reset attempt is recorded with the time and the device
           used.
         </p>

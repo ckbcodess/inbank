@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertCircle, Laptop, Loader2, MapPin, ShieldAlert, ShieldCheck, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
@@ -95,19 +96,19 @@ function MfaContent() {
     >
       {/* New Device Information Card (if applicable) */}
       {isNewDevice && (
-        <div data-tour="mfa-device-info" className="mb-5 rounded-2xl border border-amber-500/30 bg-[#FFFBF0] dark:bg-amber-500/10 p-3.5 text-left space-y-2">
-          <div className="flex items-center gap-2 text-[13px] font-semibold text-foreground">
-            <Laptop size={16} className="text-[#B27B00] dark:text-[#F2B200]" />
+        <div data-tour="mfa-device-info" className="mb-6 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-left space-y-2.5">
+          <div className="flex items-center gap-2.5 text-[13.5px] font-medium text-foreground">
+            <Laptop size={17} className="text-primary" />
             <span>Windows PC · Google Chrome</span>
           </div>
-          <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
-            <MapPin size={14} />
+          <div className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
+            <MapPin size={15} />
             <span>Accra, Greater Accra · IP 154.160.22.84</span>
           </div>
         </div>
       )}
 
-      <form onSubmit={handleVerify} className="flex flex-col gap-5">
+      <form onSubmit={handleVerify} className="flex flex-col gap-6">
         <div data-tour="mfa-otp">
           <OtpInput
             value={digits}
@@ -122,12 +123,10 @@ function MfaContent() {
 
         {/* Trust Device Checkbox */}
         {isNewDevice && (
-          <label className="flex items-center gap-2.5 px-1 text-[13px] text-foreground cursor-pointer select-none">
-            <input
-              type="checkbox"
+          <label className="flex items-center gap-3 px-1 text-[13.5px] text-foreground cursor-pointer select-none">
+            <Checkbox
               checked={trustDevice}
-              onChange={(e) => setTrustDevice(e.target.checked)}
-              className="size-4 rounded border-border text-[#F2B200] accent-[#F2B200] focus:ring-[#F2B200]"
+              onCheckedChange={(checked) => setTrustDevice(!!checked)}
             />
             <span>Trust this browser for 30 days</span>
           </label>
@@ -136,23 +135,25 @@ function MfaContent() {
         {state === "error" && (
           <div
             role="alert"
-            className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-3.5 py-3 text-[13px] text-destructive"
+            className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3.5 text-[13px] text-destructive"
           >
-            <AlertCircle size={15} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
+            <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
             <span>The code entered is incorrect or has expired. Request a new code below.</span>
           </div>
         )}
 
         {state === "resent" && (
-          <p className="rounded-xl bg-muted px-3 py-2.5 text-center text-[13px] text-muted-foreground">
+          <p className="rounded-xl bg-muted px-3.5 py-3 text-center text-[13px] text-muted-foreground">
             A new verification code has been sent to your phone.
           </p>
         )}
 
         <Button
           type="submit"
+          variant="default"
+          size="lg"
           disabled={!complete || state === "verifying"}
-          className="h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+          className="mt-1 h-11 w-full text-[14px]"
         >
           {state === "verifying" ? (
             <>
@@ -166,7 +167,7 @@ function MfaContent() {
       </form>
 
       {/* Recovery path */}
-      <div className="mt-5 flex flex-col items-center gap-2 border-t border-border pt-4">
+      <div className="mt-6 flex flex-col items-center gap-2 border-t border-border pt-5">
         <button
           type="button"
           disabled={countdown > 0}

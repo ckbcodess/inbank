@@ -21,29 +21,29 @@ export default function RootRoutingPage() {
       description="Choose your account category to continue to sign in."
       width="compact"
     >
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3.5">
         {/* Personal Banking Option */}
         <button
           type="button"
           data-tour="entry-personal"
           onClick={() => selectOption("personal")}
-          className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4.5 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md hover:shadow-[#F2B200]/10 active:scale-[0.96] cursor-pointer"
+          className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
         >
-          <div className="flex items-center gap-3.5">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#FEF3D6] text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200] transition-colors group-hover:bg-[#E5A500] group-hover:text-white dark:group-hover:bg-[#F2B200] dark:group-hover:text-black">
+          <div className="flex items-center gap-4">
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
               <User size={22} strokeWidth={2} />
             </div>
             <div className="flex flex-col">
-              <span className="text-[15px] font-semibold text-foreground">
+              <span className="text-[15.5px] font-medium text-foreground">
                 Personal
               </span>
-              <span className="text-[12.5px] text-muted-foreground">
+              <span className="text-[13px] text-muted-foreground mt-0.5">
                 For individual accounts and everyday banking.
               </span>
             </div>
           </div>
 
-          <div className="flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-[#E5A500] dark:group-hover:text-[#F2B200]">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-primary">
             <ArrowRight size={18} strokeWidth={2} />
           </div>
         </button>
@@ -53,23 +53,23 @@ export default function RootRoutingPage() {
           type="button"
           data-tour="entry-business"
           onClick={() => selectOption("business")}
-          className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4.5 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md hover:shadow-[#F2B200]/10 active:scale-[0.96] cursor-pointer"
+          className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
         >
-          <div className="flex items-center gap-3.5">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#FEF3D6] text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200] transition-colors group-hover:bg-[#E5A500] group-hover:text-white dark:group-hover:bg-[#F2B200] dark:group-hover:text-black">
+          <div className="flex items-center gap-4">
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
               <Building2 size={22} strokeWidth={2} />
             </div>
             <div className="flex flex-col">
-              <span className="text-[15px] font-semibold text-foreground">
+              <span className="text-[15.5px] font-medium text-foreground">
                 Business
               </span>
-              <span className="text-[12.5px] text-muted-foreground">
+              <span className="text-[13px] text-muted-foreground mt-0.5">
                 For companies, organizations, and business accounts.
               </span>
             </div>
           </div>
 
-          <div className="flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-[#E5A500] dark:group-hover:text-[#F2B200]">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-primary">
             <ArrowRight size={18} strokeWidth={2} />
           </div>
         </button>

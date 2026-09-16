@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogBody,
@@ -81,7 +82,7 @@ export default function GetStartedPage() {
             {screen === 1 ? (
               <Link
                 href="/login"
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-[0.96]"
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
                 <ArrowLeft size={15} strokeWidth={2} />
                 Back to sign in
@@ -90,7 +91,7 @@ export default function GetStartedPage() {
               <button
                 type="button"
                 onClick={() => setScreen(1)}
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-[0.96] cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
               >
                 <ArrowLeft size={15} strokeWidth={2} />
                 Back to previous step
@@ -100,30 +101,30 @@ export default function GetStartedPage() {
         }
       >
         {screen === 1 ? (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3.5">
             {/* Option 1: Yes - I have a GCB account -> Immediate route to /activate */}
             <button
               type="button"
               data-tour="gs-existing"
               onClick={handleChooseExisting}
-              className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md hover:shadow-[#F2B200]/10 active:scale-[0.96] cursor-pointer"
+              className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
-              <div className="flex items-center gap-3.5">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#FEF3D6] text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200] transition-colors group-hover:bg-[#E5A500] group-hover:text-white dark:group-hover:bg-[#F2B200] dark:group-hover:text-black">
-                  <Landmark size={20} strokeWidth={2} />
+              <div className="flex items-center gap-4">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <Landmark size={22} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[14.5px] font-semibold text-foreground">
+                  <span className="text-[15px] font-medium text-foreground">
                     Yes — I have a GCB account
                   </span>
-                  <span className="text-[12.5px] text-muted-foreground">
+                  <span className="text-[13px] text-muted-foreground mt-0.5">
                     We will get your internet banking switched on.
                   </span>
                 </div>
               </div>
 
-              <div className="flex size-6 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-[#E5A500] dark:group-hover:text-[#F2B200]">
-                <ArrowRight size={16} strokeWidth={2} />
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-primary">
+                <ArrowRight size={18} strokeWidth={2} />
               </div>
             </button>
 
@@ -132,58 +133,58 @@ export default function GetStartedPage() {
               type="button"
               data-tour="gs-new"
               onClick={handleChooseNew}
-              className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md hover:shadow-[#F2B200]/10 active:scale-[0.96] cursor-pointer"
+              className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
-              <div className="flex items-center gap-3.5">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#FEF3D6] text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200] transition-colors group-hover:bg-[#E5A500] group-hover:text-white dark:group-hover:bg-[#F2B200] dark:group-hover:text-black">
-                  <UserPlus size={20} strokeWidth={2} />
+              <div className="flex items-center gap-4">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <UserPlus size={22} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[14.5px] font-semibold text-foreground">
+                  <span className="text-[15px] font-medium text-foreground">
                     No — I am new to GCB
                   </span>
-                  <span className="text-[12.5px] text-muted-foreground">
+                  <span className="text-[13px] text-muted-foreground mt-0.5">
                     Open a new account or start with a card or wallet.
                   </span>
                 </div>
               </div>
 
-              <div className="flex size-6 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-[#E5A500] dark:group-hover:text-[#F2B200]">
-                <ArrowRight size={16} strokeWidth={2} />
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-primary">
+                <ArrowRight size={18} strokeWidth={2} />
               </div>
             </button>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3.5">
             {/* Step 2 Option 1: Open a GCB Account -> Immediate COOS modal */}
             <button
               type="button"
               data-tour="gs-cos"
               onClick={handleChooseCoos}
-              className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md hover:shadow-[#F2B200]/10 active:scale-[0.96] cursor-pointer"
+              className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
-              <div className="flex items-center gap-3.5">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#FEF3D6] text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200] transition-colors group-hover:bg-[#E5A500] group-hover:text-white dark:group-hover:bg-[#F2B200] dark:group-hover:text-black">
-                  <Landmark size={20} strokeWidth={2} />
+              <div className="flex items-center gap-4">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <Landmark size={22} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
-                    <span className="text-[14.5px] font-semibold text-foreground">
+                    <span className="text-[15px] font-medium text-foreground">
                       Open a GCB Account
                     </span>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-[#FEF3D6] px-2 py-0.5 text-[10.5px] font-semibold text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200]">
+                    <Badge variant="warning" className="gap-1 text-[10.5px]">
                       <Sparkles size={11} />
                       Fast online opening
-                    </span>
+                    </Badge>
                   </div>
-                  <span className="text-[12.5px] text-muted-foreground">
+                  <span className="text-[13px] text-muted-foreground mt-0.5">
                     Create a full bank account via GCB Account Opening Portal.
                   </span>
                 </div>
               </div>
 
-              <div className="flex size-6 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-[#E5A500] dark:group-hover:text-[#F2B200]">
-                <ExternalLink size={16} strokeWidth={2} />
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-primary">
+                <ExternalLink size={18} strokeWidth={2} />
               </div>
             </button>
 
@@ -192,24 +193,24 @@ export default function GetStartedPage() {
               type="button"
               data-tour="gs-walletcard"
               onClick={handleChooseWalletCard}
-              className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md hover:shadow-[#F2B200]/10 active:scale-[0.96] cursor-pointer"
+              className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
-              <div className="flex items-center gap-3.5">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#FEF3D6] text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200] transition-colors group-hover:bg-[#E5A500] group-hover:text-white dark:group-hover:bg-[#F2B200] dark:group-hover:text-black">
-                  <CreditCard size={20} strokeWidth={2} />
+              <div className="flex items-center gap-4">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <CreditCard size={22} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[14.5px] font-semibold text-foreground">
+                  <span className="text-[15px] font-medium text-foreground">
                     Start with a Wallet or Card
                   </span>
-                  <span className="text-[12.5px] text-muted-foreground">
+                  <span className="text-[13px] text-muted-foreground mt-0.5">
                     Register with Ghana Card and link your mobile money or bank card.
                   </span>
                 </div>
               </div>
 
-              <div className="flex size-6 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-[#E5A500] dark:group-hover:text-[#F2B200]">
-                <ArrowRight size={16} strokeWidth={2} />
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-primary">
+                <ArrowRight size={18} strokeWidth={2} />
               </div>
             </button>
           </div>

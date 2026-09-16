@@ -199,9 +199,9 @@ function SignupContent() {
     >
       {/* STEP 1: Enter Ghana Card */}
       {step === "ghana_card" && (
-        <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="ghanaCard" className="text-[13px] font-medium text-foreground">
+        <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="ghanaCard" className="text-[13.5px] font-medium text-foreground">
               Enter Ghana Card Number
             </Label>
             <Input
@@ -210,23 +210,25 @@ function SignupContent() {
               placeholder="e.g GHA-0123456789-0"
               value={ghanaCard}
               onChange={(e) => setGhanaCard(e.target.value.toUpperCase())}
-              className="h-11 rounded-xl border-border bg-background px-3.5 text-[14px] uppercase tracking-wider focus-visible:border-[#F2B200] focus-visible:ring-[#F2B200]/20"
+              className="h-11 font-mono text-[14.5px] uppercase tracking-wider"
               required
             />
           </div>
 
           {errorMsg && (
-            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
-              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+            <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-[13px] text-destructive">
+              <AlertCircle size={16} className="mt-0.5 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           <Button
             type="submit"
+            variant="default"
+            size="lg"
             data-tour="signup-card"
             disabled={busy}
-            className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+            className="mt-3.5 h-11 w-full text-[14px]"
           >
             {busy ? (
               <>
@@ -242,27 +244,29 @@ function SignupContent() {
 
       {/* STEP 2: Selfie / Photo Capture */}
       {step === "selfie" && (
-        <div className="flex flex-col items-center gap-5">
-          <div className="relative flex size-44 sm:size-48 items-center justify-center overflow-hidden rounded-full border-4 border-[#F2B200]/30 bg-muted/30 shadow-inner">
+        <div className="flex flex-col items-center gap-6">
+          <div className="relative flex size-44 sm:size-52 items-center justify-center overflow-hidden rounded-full border-4 border-primary/30 bg-muted/30 shadow-inner">
             {selfieTaken ? (
               <div className="flex flex-col items-center gap-2 text-center text-primary">
-                <CheckCircle2 size={48} className="text-[#E5A500] dark:text-[#F2B200]" />
-                <span className="text-[13px] font-medium text-foreground">Selfie Verified</span>
+                <CheckCircle2 size={52} className="text-primary" />
+                <span className="text-[14px] font-medium text-foreground">Selfie Verified</span>
               </div>
             ) : (
-              <div className="flex flex-col items-center gap-2 text-center text-muted-foreground">
-                <Camera size={36} strokeWidth={1.7} />
-                <span className="text-[12px]">Position face in circle</span>
+              <div className="flex flex-col items-center gap-2.5 text-center text-muted-foreground">
+                <Camera size={40} strokeWidth={1.7} />
+                <span className="text-[12.5px]">Position face in circle</span>
               </div>
             )}
           </div>
 
           <Button
             type="button"
+            variant="default"
+            size="lg"
             data-tour="signup-selfie"
             onClick={handleCaptureSelfie}
             disabled={busy || selfieTaken}
-            className="h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+            className="h-11 w-full text-[14px]"
           >
             {busy ? (
               <>
@@ -280,36 +284,38 @@ function SignupContent() {
 
       {/* STEP 3: Review Details */}
       {step === "review_details" && (
-        <div className="flex flex-col gap-4">
-          <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 divide-y divide-border/60">
-            <div className="flex items-center justify-between pb-3">
-              <span className="text-[12.5px] text-muted-foreground">Name</span>
-              <span className="text-[13.5px] font-semibold text-foreground">Tsotsoo Mills</span>
+        <div className="flex flex-col gap-5">
+          <div className="rounded-2xl border border-border/80 bg-muted/20 p-5 divide-y divide-border/60">
+            <div className="flex items-center justify-between pb-3.5">
+              <span className="text-[13px] text-muted-foreground">Name</span>
+              <span className="text-[14px] font-medium text-foreground">Tsotsoo Mills</span>
             </div>
-            <div className="flex items-center justify-between py-3">
-              <span className="text-[12.5px] text-muted-foreground">National ID</span>
-              <span className="text-[13.5px] font-semibold text-foreground">{ghanaCard}</span>
+            <div className="flex items-center justify-between py-3.5">
+              <span className="text-[13px] text-muted-foreground">National ID</span>
+              <span className="text-[14px] font-medium text-foreground">{ghanaCard}</span>
             </div>
-            <div className="flex items-center justify-between py-3">
-              <span className="text-[12.5px] text-muted-foreground">Mobile</span>
-              <span className="text-[13.5px] font-semibold text-foreground">+233 24 *** *567</span>
+            <div className="flex items-center justify-between py-3.5">
+              <span className="text-[13px] text-muted-foreground">Mobile</span>
+              <span className="text-[14px] font-medium text-foreground">+233 24 *** *567</span>
             </div>
-            <div className="flex items-center justify-between pt-3">
-              <span className="text-[12.5px] text-muted-foreground">Email</span>
-              <span className="text-[13.5px] font-semibold text-foreground">ts•••••@example.com</span>
+            <div className="flex items-center justify-between pt-3.5">
+              <span className="text-[13px] text-muted-foreground">Email</span>
+              <span className="text-[14px] font-medium text-foreground">ts•••••@example.com</span>
             </div>
           </div>
 
-          <p className="text-center text-[12px] leading-relaxed text-muted-foreground">
+          <p className="text-center text-[12.5px] leading-relaxed text-muted-foreground">
             We&apos;ve verified your identity against national records. Proceed to verify your phone.
           </p>
 
           <Button
             type="button"
+            variant="default"
+            size="lg"
             data-tour="signup-review"
             onClick={handleVerifyDetails}
             disabled={busy}
-            className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+            className="mt-3.5 h-11 w-full text-[14px]"
           >
             {busy ? (
               <>
@@ -325,19 +331,19 @@ function SignupContent() {
 
       {/* STEP 4: OTP Verification */}
       {step === "otp" && (
-        <form onSubmit={handleOtpSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleOtpSubmit} className="flex flex-col gap-5">
           <div className="my-2 flex justify-center">
             <OtpInput value={digits} onChange={setDigits} />
           </div>
 
           {errorMsg && (
-            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
-              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+            <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-[13px] text-destructive">
+              <AlertCircle size={16} className="mt-0.5 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
 
-          <div className="flex flex-col items-center gap-1.5 text-[12.5px]">
+          <div className="flex flex-col items-center gap-2 text-[13px]">
             {countdown > 0 ? (
               <span className="text-muted-foreground">
                 Resend code in <strong className="text-foreground">{countdown}s</strong>
@@ -349,7 +355,7 @@ function SignupContent() {
                   setCountdown(RESEND_SECONDS);
                   setErrorMsg("");
                 }}
-                className="font-medium text-[#B27B00] dark:text-[#F2B200] hover:underline cursor-pointer"
+                className="font-medium text-primary hover:underline cursor-pointer"
               >
                 Resend code now
               </button>
@@ -371,9 +377,11 @@ function SignupContent() {
 
           <Button
             type="submit"
+            variant="default"
+            size="lg"
             data-tour="signup-otp"
             disabled={busy}
-            className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+            className="mt-3.5 h-11 w-full text-[14px]"
           >
             {busy ? (
               <>
@@ -389,9 +397,9 @@ function SignupContent() {
 
       {/* STEP 5: Set up Password */}
       {step === "password" && (
-        <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="pass" className="text-[13px] font-medium text-foreground">
+        <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="pass" className="text-[13.5px] font-medium text-foreground">
               Create Password
             </Label>
             <div className="relative">
@@ -401,31 +409,32 @@ function SignupContent() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
-                className="h-11 rounded-xl border-border bg-background pr-10 pl-3.5 text-[14px] focus-visible:border-[#F2B200] focus-visible:ring-[#F2B200]/20"
+                className="h-11 pr-11 text-[14.5px]"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-1.5 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               >
-                {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
           </div>
 
-          <p className="text-[12px] text-muted-foreground">
+          <p className="text-[12.5px] text-muted-foreground">
             Demo — any password works. Enter{" "}
             <span className="tabular font-mono text-foreground">00000</span> to see the error state.
           </p>
 
           {/* Password Requirements Checklist */}
-          <div className="rounded-2xl border border-border/80 bg-muted/20 p-3.5">
-            <p className="mb-2 text-[11.5px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <div className="rounded-2xl border border-border/80 bg-muted/20 p-4">
+            <p className="mb-2.5 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
               Password Requirements
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12px]">
-              <div className="flex items-center gap-1.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-[12.5px]">
+              <div className="flex items-center gap-2">
                 <span
                   className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
                     hasMinLength ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
@@ -437,7 +446,7 @@ function SignupContent() {
                   At least 12 characters
                 </span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <span
                   className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
                     hasCase ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
@@ -449,7 +458,7 @@ function SignupContent() {
                   Upper and lower case
                 </span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <span
                   className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
                     hasNumber ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
@@ -461,7 +470,7 @@ function SignupContent() {
                   A number
                 </span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <span
                   className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
                     hasSymbol ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
@@ -477,16 +486,18 @@ function SignupContent() {
           </div>
 
           {errorMsg && (
-            <div className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
-              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+            <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-[13px] text-destructive">
+              <AlertCircle size={16} className="mt-0.5 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           <Button
             type="submit"
+            variant="default"
+            size="lg"
             data-tour="signup-password"
-            className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+            className="mt-3.5 h-11 w-full text-[14px]"
           >
             Proceed
           </Button>
@@ -495,52 +506,37 @@ function SignupContent() {
 
       {/* STEP 6: Create Transaction PIN */}
       {step === "pin" && (
-        <form onSubmit={handlePinSubmit} className="flex flex-col items-center gap-5">
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-[13px] text-muted-foreground text-center">
+        <form onSubmit={handlePinSubmit} className="flex flex-col items-center gap-6">
+          <div className="w-full flex flex-col items-center gap-2.5">
+            <p className="text-[13.5px] text-muted-foreground text-center">
               Enter a 4-digit PIN for completing transfers and payments.
             </p>
-            <div className="mt-3 flex gap-3">
-              {[0, 1, 2, 3].map((idx) => (
-                <input
-                  key={idx}
-                  id={`pin-${idx}`}
-                  type="password"
-                  maxLength={1}
-                  inputMode="numeric"
-                  value={pinDigits[idx]}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, "");
-                    const newPins = [...pinDigits];
-                    newPins[idx] = val;
-                    setPinDigits(newPins);
-                    if (val && idx < 3) {
-                      document.getElementById(`pin-${idx + 1}`)?.focus();
-                    }
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Backspace" && !pinDigits[idx] && idx > 0) {
-                      document.getElementById(`pin-${idx - 1}`)?.focus();
-                    }
-                  }}
-                  className="size-13 rounded-2xl border border-border bg-background text-center text-[22px] font-bold tracking-widest text-foreground shadow-sm focus:border-[#F2B200] focus:ring-2 focus:ring-[#F2B200]/20 focus:outline-hidden"
-                />
-              ))}
+            <div className="mt-3">
+              <OtpInput
+                value={pinDigits}
+                onChange={setPinDigits}
+                length={4}
+                mask
+                disabled={busy}
+                autoFocus
+              />
             </div>
           </div>
 
           {errorMsg && (
-            <div className="w-full flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[12.5px] text-destructive">
-              <AlertCircle size={15} className="mt-0.5 shrink-0" />
+            <div className="w-full flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-[13px] text-destructive">
+              <AlertCircle size={16} className="mt-0.5 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           <Button
             type="submit"
+            variant="default"
+            size="lg"
             data-tour="signup-pin"
-            disabled={busy}
-            className="mt-2 h-11 w-full rounded-xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.99] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+            disabled={busy || pinDigits.join("").length < 4}
+            className="mt-3.5 h-11 w-full text-[14px]"
           >
             {busy ? (
               <>

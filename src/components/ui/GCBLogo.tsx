@@ -1,4 +1,5 @@
 import * as React from "react";
+import { cn } from "@/lib/utils";
 
 interface GCBLogoProps extends React.SVGProps<SVGSVGElement> {
   showWordmark?: boolean;
@@ -8,7 +9,8 @@ interface GCBLogoProps extends React.SVGProps<SVGSVGElement> {
 
 /**
  * Official GCB Bank PLC Brand Logo mark.
- * Eagle uses the brand amber (#fdc307), while wordmark respects theme foreground (currentColor).
+ * Eagle uses the brand amber (#fdc307), while wordmark respects theme foreground (currentColor / text-foreground).
+ * In dark mode, GCB text is pure white.
  */
 export function GCBLogo({
   className = "size-8",
@@ -22,14 +24,14 @@ export function GCBLogo({
       viewBox="0 0 50 43.0555"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={className}
+      className={cn("text-foreground", className)}
       aria-label="GCB Bank"
       role="img"
       {...props}
     >
       <g id="Group-2-Copy">
         {showWordmark && (
-          <g id="GCB-Letters" fill={wordmarkColor}>
+          <g id="GCB-Letters" fill={wordmarkColor} className="fill-current text-foreground">
             {/* G */}
             <path
               id="Fill-6761"

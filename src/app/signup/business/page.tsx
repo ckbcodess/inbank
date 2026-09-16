@@ -31,6 +31,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -204,37 +205,44 @@ export default function BusinessSignupPage() {
 
         {/* ── Company ──────────────────────────────────────────────────────── */}
         {step === "company" && variant !== "existingCustomer" && (
-          <form onSubmit={handleCompanySubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleCompanySubmit} className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="companyName">Registered business name</Label>
+              <Label htmlFor="companyName" className="text-[13.5px] font-medium text-foreground">
+                Registered business name
+              </Label>
               <Input
                 id="companyName"
                 value={company.name}
                 onChange={(e) => setCompany((c) => ({ ...c, name: e.target.value }))}
                 placeholder="Adinkra Fabrics Ltd"
+                className="h-11 text-[14.5px]"
                 required
               />
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="tin">Taxpayer Identification Number (TIN)</Label>
+              <Label htmlFor="tin" className="text-[13.5px] font-medium text-foreground">
+                Taxpayer Identification Number (TIN)
+              </Label>
               <Input
                 id="tin"
                 value={company.tin}
                 onChange={(e) => setCompany((c) => ({ ...c, tin: e.target.value }))}
                 placeholder="C0099887766"
-                className="tabular"
+                className="h-11 font-mono text-[14.5px] uppercase tracking-wider tabular"
                 required
               />
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="businessType">Business type</Label>
+              <Label htmlFor="businessType" className="text-[13.5px] font-medium text-foreground">
+                Business type
+              </Label>
               <Select
                 value={company.businessType}
                 onValueChange={(v) => v && setCompany((c) => ({ ...c, businessType: v }))}
               >
-                <SelectTrigger id="businessType" className="w-full">
+                <SelectTrigger id="businessType" className="h-11 w-full text-[14px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -247,19 +255,21 @@ export default function BusinessSignupPage() {
               </Select>
             </div>
 
-            <p className="text-[12px] text-muted-foreground">
+            <p className="text-[12.5px] text-muted-foreground">
               We check this against your incorporation documents later, so it&apos;s fine if you
               don&apos;t have everything else to hand yet.
             </p>
 
             <Button
               type="submit"
+              variant="default"
+              size="lg"
               disabled={busy || company.name.trim() === "" || company.tin.trim() === ""}
-              className="mt-1 w-full"
+              className="mt-2 h-11 w-full text-[14px]"
             >
               {busy ? (
                 <>
-                  <Loader2 size={15} strokeWidth={2} className="animate-spin" aria-hidden="true" />
+                  <Loader2 size={16} strokeWidth={2} className="mr-2 animate-spin" aria-hidden="true" />
                   Checking…
                 </>
               ) : (
@@ -270,17 +280,23 @@ export default function BusinessSignupPage() {
         )}
 
         {step === "company" && variant === "existingCustomer" && (
-          <div className="flex flex-col gap-4">
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
+          <div className="flex flex-col gap-5">
+            <p className="text-[13.5px] leading-relaxed text-muted-foreground">
               {EXISTING_COMPANY_NAME} already banks with GCB, so a new application isn&apos;t
               needed. Internet banking access for your company is granted by your Corporate Admin
               from Administration — ask them to send you an invitation.
             </p>
-            <p className="text-[12px] text-muted-foreground">
+            <p className="text-[12.5px] text-muted-foreground">
               Not sure who that is, or think this is a mistake? Call us on{" "}
               <span className="tabular text-foreground">{SUPPORT_LINE}</span>.
             </p>
-            <Button nativeButton={false} render={<Link href="/login" />} className="w-full">
+            <Button
+              variant="default"
+              size="lg"
+              nativeButton={false}
+              render={<Link href="/login" />}
+              className="mt-2 h-11 w-full text-[14px]"
+            >
               Back to sign in
             </Button>
           </div>
@@ -293,9 +309,9 @@ export default function BusinessSignupPage() {
               e.preventDefault();
               setStep("signatories");
             }}
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-5"
           >
-            <p className="text-[12px] leading-relaxed text-muted-foreground">
+            <p className="text-[12.5px] leading-relaxed text-muted-foreground">
               You — the person filling this in. Once we approve the application, we&apos;ll send
               this person the activation link that sets them up as the company&apos;s first
               Corporate Admin.
@@ -303,18 +319,23 @@ export default function BusinessSignupPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="contactName">Full name</Label>
+                <Label htmlFor="contactName" className="text-[13.5px] font-medium text-foreground">
+                  Full name
+                </Label>
                 <Input
                   id="contactName"
                   value={contact.name}
                   onChange={(e) => setContact((c) => ({ ...c, name: e.target.value }))}
+                  className="h-11 text-[14.5px]"
                   required
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="contactRole">Your role</Label>
+                <Label htmlFor="contactRole" className="text-[13.5px] font-medium text-foreground">
+                  Your role
+                </Label>
                 <Select value={contact.role} onValueChange={(v) => v && setContact((c) => ({ ...c, role: v }))}>
-                  <SelectTrigger id="contactRole" className="w-full">
+                  <SelectTrigger id="contactRole" className="h-11 w-full text-[14px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -329,36 +350,43 @@ export default function BusinessSignupPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="contactGhanaCard">Ghana Card number</Label>
+              <Label htmlFor="contactGhanaCard" className="text-[13.5px] font-medium text-foreground">
+                Ghana Card number
+              </Label>
               <Input
                 id="contactGhanaCard"
                 value={contact.ghanaCard}
                 onChange={(e) => setContact((c) => ({ ...c, ghanaCard: e.target.value }))}
                 placeholder="GHA-0123456789-0"
-                className="tabular"
+                className="h-11 font-mono text-[14.5px] uppercase tracking-wider tabular"
                 required
               />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="contactMobile">Mobile number</Label>
+                <Label htmlFor="contactMobile" className="text-[13.5px] font-medium text-foreground">
+                  Mobile number
+                </Label>
                 <Input
                   id="contactMobile"
                   type="tel"
                   value={contact.mobile}
                   onChange={(e) => setContact((c) => ({ ...c, mobile: e.target.value }))}
-                  className="tabular"
+                  className="h-11 text-[14.5px] tabular"
                   required
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="contactEmail">Email</Label>
+                <Label htmlFor="contactEmail" className="text-[13.5px] font-medium text-foreground">
+                  Email
+                </Label>
                 <Input
                   id="contactEmail"
                   type="email"
                   value={contact.email}
                   onChange={(e) => setContact((c) => ({ ...c, email: e.target.value }))}
+                  className="h-11 text-[14.5px]"
                   required
                 />
               </div>
@@ -366,8 +394,10 @@ export default function BusinessSignupPage() {
 
             <Button
               type="submit"
+              variant="default"
+              size="lg"
               disabled={contact.name.trim() === "" || contact.ghanaCard.trim() === "" || contact.mobile.trim() === "" || contact.email.trim() === ""}
-              className="mt-1 w-full"
+              className="mt-2 h-11 w-full text-[14px]"
             >
               Continue
             </Button>
@@ -376,38 +406,37 @@ export default function BusinessSignupPage() {
 
         {/* ── Signatories ──────────────────────────────────────────────────── */}
         {step === "signatories" && (
-          <div className="flex flex-col gap-4">
-            <p className="text-[12px] leading-relaxed text-muted-foreground">
+          <div className="flex flex-col gap-5">
+            <p className="text-[12.5px] leading-relaxed text-muted-foreground">
               Anyone who can act for the company on this account — approve payments, view
               statements. Add as many as you need; you can always add more later from
               Administration.
             </p>
 
-            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-card p-3.5">
-              <input
-                type="checkbox"
+            <label className="flex cursor-pointer items-start gap-3.5 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-primary/40">
+              <Checkbox
                 checked={contactIsSignatory}
-                onChange={(e) => setContactIsSignatory(e.target.checked)}
-                className="mt-0.5 size-4 shrink-0 accent-[var(--primary)]"
+                onCheckedChange={(checked) => setContactIsSignatory(!!checked)}
+                className="mt-0.5"
               />
               <span className="flex min-w-0 flex-col">
-                <span className="text-[13px] text-foreground">
+                <span className="text-[13.5px] font-medium text-foreground">
                   {contact.name || "You"} — {contact.role}
                 </span>
-                <span className="mt-0.5 text-[12px] text-muted-foreground">
+                <span className="mt-0.5 text-[12.5px] text-muted-foreground">
                   Included automatically as the primary contact, unless removed here.
                 </span>
               </span>
             </label>
 
             {signatories.map((sig) => (
-              <div key={sig.id} className="flex items-center gap-3 rounded-xl border border-border bg-card p-3.5">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                  <Users size={16} strokeWidth={1.8} aria-hidden="true" />
+              <div key={sig.id} className="flex items-center gap-3.5 rounded-2xl border border-border bg-card p-4">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+                  <Users size={18} strokeWidth={1.8} aria-hidden="true" />
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[13px] text-foreground">{sig.name || "Unnamed signatory"}</span>
-                  <span className="mt-0.5 text-[12px] text-muted-foreground tabular">
+                  <span className="truncate text-[13.5px] font-medium text-foreground">{sig.name || "Unnamed signatory"}</span>
+                  <span className="mt-0.5 text-[12.5px] text-muted-foreground tabular">
                     {sig.role} · {sig.mobile || "no number yet"}
                   </span>
                 </span>
@@ -415,9 +444,9 @@ export default function BusinessSignupPage() {
                   type="button"
                   onClick={() => setSignatories((prev) => prev.filter((s) => s.id !== sig.id))}
                   aria-label={`Remove ${sig.name || "this signatory"}`}
-                  className="shrink-0 text-muted-foreground transition-colors hover:text-destructive"
+                  className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive cursor-pointer"
                 >
-                  <Trash2 size={15} strokeWidth={1.8} />
+                  <Trash2 size={16} strokeWidth={1.8} />
                 </button>
               </div>
             ))}
@@ -425,14 +454,16 @@ export default function BusinessSignupPage() {
             <SignatoryForm onAdd={(sig) => setSignatories((prev) => [...prev, sig])} />
 
             <Button
+              variant="default"
+              size="lg"
               onClick={() => setStep("documents")}
               disabled={effectiveSignatories.length === 0}
-              className="mt-1 w-full"
+              className="mt-2 h-11 w-full text-[14px]"
             >
               Continue
             </Button>
             {effectiveSignatories.length === 0 && (
-              <p className="text-center text-[12px] text-muted-foreground">
+              <p className="text-center text-[12.5px] text-muted-foreground">
                 At least one signatory is required to open the account.
               </p>
             )}
@@ -441,8 +472,8 @@ export default function BusinessSignupPage() {
 
         {/* ── Documents ────────────────────────────────────────────────────── */}
         {step === "documents" && (
-          <div className="flex flex-col gap-4">
-            <p className="text-[12px] leading-relaxed text-muted-foreground">
+          <div className="flex flex-col gap-5">
+            <p className="text-[12.5px] leading-relaxed text-muted-foreground">
               Bank of Ghana requires all four before an application can be reviewed. PDF or a clear
               photo, up to 10MB each.
             </p>
@@ -452,20 +483,20 @@ export default function BusinessSignupPage() {
               return (
                 <div
                   key={doc.id}
-                  className={`flex items-center gap-3 rounded-xl border p-3.5 transition-colors ${
-                    filename ? "border-[var(--active-border)] bg-[var(--active-bg)]" : "border-border bg-card"
+                  className={`flex items-center gap-3.5 rounded-2xl border p-4 transition-colors ${
+                    filename ? "border-primary/40 bg-primary/5" : "border-border bg-card"
                   }`}
                 >
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
                     {filename ? (
-                      <Check size={16} strokeWidth={1.9} className="text-primary" aria-hidden="true" />
+                      <Check size={18} strokeWidth={1.9} className="text-primary" aria-hidden="true" />
                     ) : (
-                      <FileText size={16} strokeWidth={1.8} aria-hidden="true" />
+                      <FileText size={18} strokeWidth={1.8} aria-hidden="true" />
                     )}
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-[13px] text-foreground">{doc.label}</span>
-                    <span className="mt-0.5 truncate text-[12px] text-muted-foreground">
+                    <span className="truncate text-[13.5px] font-medium text-foreground">{doc.label}</span>
+                    <span className="mt-0.5 truncate text-[12.5px] text-muted-foreground">
                       {filename ?? doc.hint}
                     </span>
                   </span>
@@ -483,20 +514,26 @@ export default function BusinessSignupPage() {
                     variant="outline"
                     size="sm"
                     onClick={() => fileInputs.current[doc.id]?.click()}
-                    className="shrink-0"
+                    className="shrink-0 h-9"
                   >
-                    <Paperclip size={14} strokeWidth={1.8} aria-hidden="true" />
+                    <Paperclip size={14} strokeWidth={1.8} className="mr-1.5" aria-hidden="true" />
                     {filename ? "Replace" : "Attach"}
                   </Button>
                 </div>
               );
             })}
 
-            <Button onClick={() => setStep("review")} disabled={!allDocsAttached} className="mt-1 w-full">
+            <Button
+              variant="default"
+              size="lg"
+              onClick={() => setStep("review")}
+              disabled={!allDocsAttached}
+              className="mt-2 h-11 w-full text-[14px]"
+            >
               Continue
             </Button>
             {!allDocsAttached && (
-              <p className="text-center text-[12px] text-muted-foreground">
+              <p className="text-center text-[12.5px] text-muted-foreground">
                 All four documents are needed before we can review this.
               </p>
             )}
@@ -507,7 +544,7 @@ export default function BusinessSignupPage() {
         {step === "review" && (
           <div className="flex flex-col gap-5">
             <ReviewSection title="Company" onEdit={() => setStep("company")}>
-              <dl className="grid grid-cols-1 gap-y-2 text-[13px]">
+              <dl className="grid grid-cols-1 gap-y-2.5 text-[13.5px]">
                 <Row label="Name" value={company.name} />
                 <Row label="TIN" value={company.tin} tabular />
                 <Row label="Type" value={company.businessType} />
@@ -515,7 +552,7 @@ export default function BusinessSignupPage() {
             </ReviewSection>
 
             <ReviewSection title="Primary contact" onEdit={() => setStep("contact")}>
-              <dl className="grid grid-cols-1 gap-y-2 text-[13px]">
+              <dl className="grid grid-cols-1 gap-y-2.5 text-[13.5px]">
                 <Row label="Name" value={contact.name} />
                 <Row label="Role" value={contact.role} />
                 <Row label="Mobile" value={contact.mobile} tabular />
@@ -524,7 +561,7 @@ export default function BusinessSignupPage() {
             </ReviewSection>
 
             <ReviewSection title={`Signatories (${effectiveSignatories.length})`} onEdit={() => setStep("signatories")}>
-              <ul className="flex flex-col gap-1.5 text-[13px]">
+              <ul className="flex flex-col gap-2 text-[13.5px]">
                 {effectiveSignatories.map((sig) => (
                   <li key={sig.id} className="text-foreground">
                     {sig.name} <span className="text-muted-foreground">· {sig.role}</span>
@@ -534,10 +571,10 @@ export default function BusinessSignupPage() {
             </ReviewSection>
 
             <ReviewSection title="Documents" onEdit={() => setStep("documents")}>
-              <ul className="flex flex-col gap-1.5 text-[13px] text-foreground">
+              <ul className="flex flex-col gap-2 text-[13.5px] text-foreground">
                 {REQUIRED_DOCUMENTS.map((doc) => (
                   <li key={doc.id} className="flex items-center gap-2">
-                    <Check size={14} strokeWidth={1.9} className="text-primary" aria-hidden="true" />
+                    <Check size={15} strokeWidth={1.9} className="text-primary" aria-hidden="true" />
                     {doc.label}
                   </li>
                 ))}
@@ -546,19 +583,25 @@ export default function BusinessSignupPage() {
 
             <div
               role="note"
-              className="flex items-start gap-2.5 rounded-lg bg-muted px-3.5 py-3 text-[12px] leading-relaxed text-muted-foreground"
+              className="flex items-start gap-3 rounded-2xl bg-muted p-4 text-[12.5px] leading-relaxed text-muted-foreground"
             >
-              <ClipboardCheck size={15} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0" />
+              <ClipboardCheck size={16} strokeWidth={1.8} aria-hidden="true" className="mt-0.5 shrink-0" />
               <span>
                 Submitting sends this for review — it doesn&apos;t open the account yet. We&apos;ll
                 email {contact.email || "your primary contact"} within {REVIEW_TIMELINE}.
               </span>
             </div>
 
-            <Button onClick={handleSubmitApplication} disabled={busy} className="w-full">
+            <Button
+              variant="default"
+              size="lg"
+              onClick={handleSubmitApplication}
+              disabled={busy}
+              className="mt-2 h-11 w-full text-[14px]"
+            >
               {busy ? (
                 <>
-                  <Loader2 size={15} strokeWidth={2} className="animate-spin" aria-hidden="true" />
+                  <Loader2 size={16} strokeWidth={2} className="mr-2 animate-spin" aria-hidden="true" />
                   Submitting…
                 </>
               ) : (
@@ -570,15 +613,15 @@ export default function BusinessSignupPage() {
 
         {/* ── Submitted ────────────────────────────────────────────────────── */}
         {step === "submitted" && (
-          <div className="flex flex-col gap-5">
-            <div className="rounded-xl border border-border bg-muted/30 p-4 text-center">
-              <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
+          <div className="flex flex-col gap-6">
+            <div className="rounded-2xl border border-border bg-muted/30 p-5 text-center">
+              <p className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
                 Application reference
               </p>
-              <p className="mt-1 text-[18px] text-foreground tabular">{reference}</p>
+              <p className="mt-1.5 text-[20px] font-medium text-foreground tabular">{reference}</p>
             </div>
 
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
+            <p className="text-[13.5px] leading-relaxed text-muted-foreground">
               We review applications within <span className="text-foreground">{REVIEW_TIMELINE}</span>.
               We&apos;ll email <span className="text-foreground">{contact.email}</span> either way — if
               anything&apos;s missing, we&apos;ll say exactly what. Once approved,{" "}
@@ -587,11 +630,17 @@ export default function BusinessSignupPage() {
               team from Administration.
             </p>
 
-            <Button nativeButton={false} render={<Link href="/login" />} className="w-full">
+            <Button
+              variant="default"
+              size="lg"
+              nativeButton={false}
+              render={<Link href="/login" />}
+              className="h-11 w-full text-[14px]"
+            >
               Back to sign in
             </Button>
 
-            <p className="text-center text-[12px] text-muted-foreground">
+            <p className="text-center text-[12.5px] text-muted-foreground">
               Keep this reference — quote it if you call us on{" "}
               <span className="tabular text-foreground">{SUPPORT_LINE}</span>.
             </p>
@@ -623,15 +672,15 @@ function ReviewSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <p className="text-[13px] text-foreground">{title}</p>
+    <div className="rounded-2xl border border-border bg-card p-5">
+      <div className="mb-3.5 flex items-center justify-between">
+        <p className="text-[13.5px] font-medium text-foreground">{title}</p>
         <button
           type="button"
           onClick={onEdit}
-          className="flex items-center gap-1 text-[12px] text-primary underline-offset-4 hover:underline"
+          className="flex items-center gap-1.5 text-[12.5px] font-medium text-primary underline-offset-4 hover:underline cursor-pointer"
         >
-          <Pencil size={12} strokeWidth={1.9} aria-hidden="true" />
+          <Pencil size={13} strokeWidth={1.9} aria-hidden="true" />
           Edit
         </button>
       </div>
@@ -648,19 +697,25 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
 
   if (!open) {
     return (
-      <Button type="button" variant="outline" onClick={() => setOpen(true)} className="w-full">
-        <UserPlus size={15} strokeWidth={1.9} aria-hidden="true" />
+      <Button type="button" variant="outline" onClick={() => setOpen(true)} className="h-11 w-full text-[14px]">
+        <UserPlus size={16} strokeWidth={1.9} className="mr-2" aria-hidden="true" />
         Add another signatory
       </Button>
     );
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-dashed border-border p-3.5">
+    <div className="flex flex-col gap-4 rounded-2xl border border-dashed border-border p-4">
       <div className="grid gap-3 sm:grid-cols-2">
-        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name" aria-label="Signatory name" />
+        <Input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Full name"
+          aria-label="Signatory name"
+          className="h-11 text-[14.5px]"
+        />
         <Select value={role} onValueChange={(v) => v && setRole(v)}>
-          <SelectTrigger aria-label="Signatory role" className="w-full">
+          <SelectTrigger aria-label="Signatory role" className="h-11 w-full text-[14px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -677,7 +732,7 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
         onChange={(e) => setMobile(e.target.value)}
         placeholder="Mobile number"
         type="tel"
-        className="tabular"
+        className="h-11 text-[14.5px] tabular"
         aria-label="Signatory mobile number"
       />
       <div className="flex gap-2">
@@ -692,10 +747,11 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
             setMobile("");
             setOpen(false);
           }}
+          className="h-9"
         >
           Add signatory
         </Button>
-        <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)}>
+        <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)} className="h-9">
           Cancel
         </Button>
       </div>

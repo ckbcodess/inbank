@@ -66,13 +66,13 @@ function LoginForm() {
       footer={
         <div className="flex flex-col gap-4 text-center">
           <p className="text-[13px] text-muted-foreground">
-            New here, or do not have a password yet?{" "}
+            Don’t have an account?{" "}
             <Link
               href="/get-started"
               data-tour="login-get-started"
-              className="font-semibold text-[#B27B00] dark:text-[#F2B200] underline-offset-4 hover:underline active:scale-[0.96]"
+              className="font-medium text-primary underline-offset-4 hover:underline active:scale-[0.96]"
             >
-              Get started
+              Register
             </Link>
           </p>
 
@@ -88,7 +88,7 @@ function LoginForm() {
 
             {showDemoMenu && (
               <div className="mt-3 rounded-2xl border border-dashed border-border bg-card/90 p-4 backdrop-blur-md text-left">
-                <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                   Select Persona to Test Flow
                 </p>
                 <div className="flex flex-col gap-1.5">
@@ -98,9 +98,9 @@ function LoginForm() {
                     className="flex items-center justify-between rounded-xl p-2 text-left text-[12.5px] transition-colors hover:bg-muted/70 active:scale-[0.96] cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <User size={15} className="text-amber-500" />
+                      <User size={15} className="text-primary" />
                       <div>
-                        <span className="font-semibold text-foreground">Ama Serwaa</span>
+                        <span className="font-medium text-foreground">Ama Serwaa</span>
                         <p className="text-[11px] text-muted-foreground">Personal / Card &amp; Wallet Customer</p>
                       </div>
                     </div>
@@ -113,9 +113,9 @@ function LoginForm() {
                     className="flex items-center justify-between rounded-xl p-2 text-left text-[12.5px] transition-colors hover:bg-muted/70 active:scale-[0.96] cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <Users size={15} className="text-amber-500" />
+                      <Users size={15} className="text-primary" />
                       <div>
-                        <span className="font-semibold text-foreground">Kwame Mensah</span>
+                        <span className="font-medium text-foreground">Kwame Mensah</span>
                         <p className="text-[11px] text-muted-foreground">Joint: Both to Sign Mandate (with Efua)</p>
                       </div>
                     </div>
@@ -130,7 +130,7 @@ function LoginForm() {
                     <div className="flex items-center gap-2">
                       <Users size={15} className="text-emerald-500" />
                       <div>
-                        <span className="font-semibold text-foreground">Kojo Appiah</span>
+                        <span className="font-medium text-foreground">Kojo Appiah</span>
                         <p className="text-[11px] text-muted-foreground">Joint: Either to Sign Mandate (with Akosua)</p>
                       </div>
                     </div>
@@ -143,9 +143,9 @@ function LoginForm() {
                     className="flex items-center justify-between rounded-xl p-2 text-left text-[12.5px] transition-colors hover:bg-muted/70 active:scale-[0.96] cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <Smartphone size={15} className="text-amber-500" />
+                      <Smartphone size={15} className="text-primary" />
                       <div>
-                        <span className="font-semibold text-foreground">Abena Osei</span>
+                        <span className="font-medium text-foreground">Abena Osei</span>
                         <p className="text-[11px] text-muted-foreground">Mobile App User → Web Sync</p>
                       </div>
                     </div>
@@ -158,9 +158,9 @@ function LoginForm() {
                     className="flex items-center justify-between rounded-xl p-2 text-left text-[12.5px] transition-colors hover:bg-muted/70 active:scale-[0.96] cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
-                      <Laptop size={15} className="text-amber-500" />
+                      <Laptop size={15} className="text-primary" />
                       <div>
-                        <span className="font-semibold text-foreground">Yaw Oppong</span>
+                        <span className="font-medium text-foreground">Yaw Oppong</span>
                         <p className="text-[11px] text-muted-foreground">New Device Sign-in Challenge</p>
                       </div>
                     </div>
@@ -168,7 +168,7 @@ function LoginForm() {
                   </button>
 
                   <div className="border-t border-border/60 my-1 pt-1.5">
-                    <p className="text-[11px] font-semibold text-muted-foreground uppercase px-1 mb-1">
+                    <p className="text-[11px] font-medium text-muted-foreground uppercase px-1 mb-1">
                       Corporate Personas
                     </p>
                     <button
@@ -195,9 +195,9 @@ function LoginForm() {
         </div>
       }
     >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         {/* Email / User ID Input */}
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="email" className="text-[13px] font-medium text-foreground">
             Email or user ID
           </Label>
@@ -211,20 +211,20 @@ function LoginForm() {
               setEmail(e.target.value);
               if (state === "error") setState("idle");
             }}
-            className="h-12 rounded-xl border-border bg-background px-4 text-[14px] focus-visible:border-[#F2B200] focus-visible:ring-[#F2B200]/20"
+            className="h-11 px-3.5 text-[14px]"
             required
           />
         </div>
 
         {/* Password Input */}
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="password" className="text-[13px] font-medium text-foreground">
               Password
             </Label>
             <Link
               href="/forgot-password"
-              className="text-[12.5px] font-medium text-muted-foreground hover:text-foreground active:scale-[0.96]"
+              className="text-[12.5px] font-medium text-muted-foreground hover:text-foreground"
             >
               Forgot password?
             </Link>
@@ -240,14 +240,14 @@ function LoginForm() {
                 setPassword(e.target.value);
                 if (state === "error") setState("idle");
               }}
-              className="h-12 rounded-xl border-border bg-background pr-10 text-[14px] focus-visible:border-[#F2B200] focus-visible:ring-[#F2B200]/20"
+              className="h-11 px-3.5 pr-11 text-[14px]"
               required
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? "Hide password" : "Show password"}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+              className="absolute right-2 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/50 cursor-pointer"
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
@@ -257,7 +257,7 @@ function LoginForm() {
         {state === "error" && (
           <div
             role="alert"
-            className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-3.5 py-3 text-[13px] text-destructive"
+            className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3 text-[13px] text-destructive"
           >
             <AlertCircle size={15} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
             <span>The email or password entered is incorrect. Please try again.</span>
@@ -266,8 +266,10 @@ function LoginForm() {
 
         <Button
           type="submit"
+          variant="default"
+          size="lg"
           disabled={state === "submitting"}
-          className="mt-2 h-12 w-full rounded-2xl bg-[#F2B200] text-[14.5px] font-semibold text-black hover:bg-[#E0A300] active:scale-[0.96] transition-all shadow-md shadow-[#F2B200]/20 cursor-pointer"
+          className="mt-3 h-11 w-full text-[14.5px]"
         >
           {state === "submitting" ? (
             <>
