@@ -62,6 +62,19 @@ function ActivateContent() {
     return () => window.clearTimeout(t);
   }, [step, countdown]);
 
+  // Auto-advance OTP verification when 6 digits are entered
+  useEffect(() => {
+    if (step === "otp" && digits.join("").length === OTP_LENGTH && !busy) {
+      setErrorMsg("");
+      setBusy(true);
+      const timer = window.setTimeout(() => {
+        setBusy(false);
+        setStep("password");
+      }, 600);
+      return () => window.clearTimeout(timer);
+    }
+  }, [step, digits, busy]);
+
   // Password Checklist validation
   const hasMinLength = password.length >= 12;
   const hasCase = /[a-z]/.test(password) && /[A-Z]/.test(password);
@@ -475,7 +488,7 @@ function ActivateContent() {
       {/* STEP 4: OTP Verification */}
       {step === "otp" && (
         <form onSubmit={handleOtpSubmit} className="flex flex-col items-center gap-5">
-          <div className="w-full">
+          <div className="w-full" data-tour="activate-otp">
             <OtpInput value={digits} onChange={setDigits} disabled={busy} autoFocus />
           </div>
 
@@ -489,6 +502,13 @@ function ActivateContent() {
           {isJoint && (
             <div className="w-full rounded-2xl border border-primary/20 bg-primary/5 p-3.5 text-[12.5px] text-muted-foreground">
               <span className="font-medium text-foreground">Joint mandate notice:</span> An alert has also been sent to co-holder Efua (+233 20 *** *410) confirming this activation request.
+            </div>
+          )}
+
+          {busy && (
+            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+              <Loader2 size={16} className="animate-spin text-primary" />
+              <span>Verifying code...</span>
             </div>
           )}
 
@@ -509,25 +529,7 @@ function ActivateContent() {
             )}
           </div>
 
-          <Button
-            type="submit"
-            variant="default"
-            size="lg"
-            data-tour="activate-otp"
-            disabled={busy || digits.join("").length < OTP_LENGTH}
-            className="mt-1 h-11 w-full text-[14px]"
-          >
-            {busy ? (
-              <>
-                <Loader2 size={16} className="mr-2 animate-spin" />
-                Verifying code...
-              </>
-            ) : (
-              "Verify code"
-            )}
-          </Button>
-
-          {/* Alternative channel below primary button */}
+          {/* Alternative channel below resend code */}
           <button
             type="button"
             onClick={() => setOtpTarget(otpTarget === "sms" ? "email" : "sms")}

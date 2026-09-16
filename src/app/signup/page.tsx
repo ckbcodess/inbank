@@ -53,6 +53,19 @@ function SignupContent() {
     return () => window.clearTimeout(t);
   }, [step, countdown]);
 
+  // Auto-advance OTP verification when 6 digits are entered
+  useEffect(() => {
+    if (step === "otp" && digits.join("").length === OTP_LENGTH && !busy) {
+      setErrorMsg("");
+      setBusy(true);
+      const timer = window.setTimeout(() => {
+        setBusy(false);
+        setStep("password");
+      }, 700);
+      return () => window.clearTimeout(timer);
+    }
+  }, [step, digits, busy]);
+
   const hasMinLength = password.length >= 12;
   const hasCase = /[a-z]/.test(password) && /[A-Z]/.test(password);
   const hasNumber = /\d/.test(password);
@@ -361,6 +374,13 @@ function SignupContent() {
             </div>
           )}
 
+          {busy && (
+            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+              <Loader2 size={16} className="animate-spin text-primary" />
+              <span>Validating Code…</span>
+            </div>
+          )}
+
           {/* Centered Resend Code Countdown */}
           <div className="text-center text-[13px] text-muted-foreground">
             {countdown > 0 ? (
@@ -381,25 +401,7 @@ function SignupContent() {
             )}
           </div>
 
-          <Button
-            type="submit"
-            variant="default"
-            size="lg"
-            data-tour="signup-otp"
-            disabled={busy}
-            className="mt-1 h-11 w-full text-[14px]"
-          >
-            {busy ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                Validating Code…
-              </>
-            ) : (
-              "Proceed"
-            )}
-          </Button>
-
-          {/* Alternative channel below primary button */}
+          {/* Alternative channel below resend code */}
           <button
             type="button"
             onClick={() => {
