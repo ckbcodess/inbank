@@ -74,10 +74,14 @@ export default function GetStartedPage() {
             ? "Select the option that best describes your relationship with GCB."
             : "Select your preferred option to get started on GCB Internet Banking."
         }
-        stepProgress={{
-          current: screen,
-          total: 8,
-        }}
+        stepProgress={
+          screen === 2
+            ? {
+                current: 2,
+                total: 8,
+              }
+            : undefined
+        }
         width="compact"
         footer={
           <div className="flex justify-center">
