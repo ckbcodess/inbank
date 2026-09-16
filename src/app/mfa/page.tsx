@@ -3,7 +3,6 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertCircle, Laptop, Loader2, MapPin, ShieldAlert, ShieldCheck, Smartphone } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
@@ -132,6 +131,13 @@ function MfaContent() {
           </label>
         )}
 
+        {state === "verifying" && (
+          <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+            <Loader2 size={16} className="animate-spin text-primary" aria-hidden="true" />
+            <span>Verifying code...</span>
+          </div>
+        )}
+
         {state === "error" && (
           <div
             role="alert"
@@ -147,23 +153,6 @@ function MfaContent() {
             A new verification code has been sent to your phone.
           </p>
         )}
-
-        <Button
-          type="submit"
-          variant="default"
-          size="lg"
-          disabled={!complete || state === "verifying"}
-          className="mt-1 h-11 w-full text-[14px]"
-        >
-          {state === "verifying" ? (
-            <>
-              <Loader2 size={16} className="mr-2 animate-spin" aria-hidden="true" />
-              Verifying code...
-            </>
-          ) : (
-            "Authorize device"
-          )}
-        </Button>
       </form>
 
       {/* Recovery path */}
