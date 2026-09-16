@@ -148,11 +148,10 @@ function ActivateContent() {
     setStep("pin");
   }
 
-  function handlePinSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const pin = pinDigits.join("");
-    if (pin.length < 4) {
-      setErrorMsg("Please enter a 4-digit PIN");
+  function handlePinSubmit(incomingPin?: string) {
+    const pin = incomingPin ?? pinDigits.join("");
+    if (pin.length < 4 || busy) {
+      if (pin.length < 4) setErrorMsg("Please enter a 4-digit PIN");
       return;
     }
     setErrorMsg("");
@@ -227,7 +226,7 @@ function ActivateContent() {
             : `6-digit code sent via ${otpTarget === "sms" ? "SMS to +233 24 *** *567" : "Email to am•••••@example.com"}. Enter 000000 to see the error state.`
           : step === "password"
           ? "Your password must be at least 12 characters and include upper, lower, numbers and symbols."
-          : "You will use this 4-digit PIN to authorize transfers, bill payments, and card top-ups."
+          : "Choose a 4-digit PIN to authorize transfers and payments."
       }
       stepProgress={{
         current: stepNumberMap[step],
@@ -489,9 +488,9 @@ function ActivateContent() {
             e.preventDefault();
             handleOtpSubmit();
           }}
-          className="flex flex-col items-center gap-5"
+          className="flex flex-col gap-6"
         >
-          <div className="w-full" data-tour="activate-otp">
+          <div data-tour="activate-otp">
             <OtpInput
               value={digits}
               onChange={(next) => {
@@ -505,51 +504,61 @@ function ActivateContent() {
             />
           </div>
 
-          {errorMsg && (
-            <div className="w-full flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-[13px] text-destructive">
-              <AlertCircle size={16} className="mt-0.5 shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
-
           {isJoint && (
-            <div className="w-full rounded-2xl border border-primary/20 bg-primary/5 p-3.5 text-[12.5px] text-muted-foreground">
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3.5 text-[12.5px] text-muted-foreground">
               <span className="font-medium text-foreground">Joint mandate notice:</span> An alert has also been sent to co-holder Efua (+233 20 *** *410) confirming this activation request.
             </div>
           )}
 
           {busy && (
             <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
-              <Loader2 size={16} className="animate-spin text-primary" />
+              <Loader2 size={16} className="animate-spin text-primary" aria-hidden="true" />
               <span>Verifying code...</span>
             </div>
           )}
 
-          {/* Centered Resend Code Countdown */}
-          <div className="text-center text-[13px] text-muted-foreground">
-            {countdown > 0 ? (
-              <span>
-                Resend code in <strong className="font-medium text-foreground tabular">{countdown}s</strong>
-              </span>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setCountdown(RESEND_SECONDS)}
-                className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80 cursor-pointer"
-              >
-                Resend code
-              </button>
-            )}
-          </div>
+          {errorMsg && (
+            <div
+              role="alert"
+              className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3.5 text-[13px] text-destructive"
+            >
+              <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
 
-          {/* Alternative channel below resend code */}
-          <button
-            type="button"
-            onClick={() => setOtpTarget(otpTarget === "sms" ? "email" : "sms")}
-            className="text-center text-[13px] text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
-          >
-            Send to {otpTarget === "sms" ? "email instead" : "SMS instead"}
-          </button>
+          {/* Recovery path */}
+          <div className="mt-2 flex flex-col items-center gap-2 border-t border-border pt-4">
+            <button
+              type="button"
+              disabled={countdown > 0}
+              onClick={() => {
+                setCountdown(RESEND_SECONDS);
+                setErrorMsg("");
+              }}
+              className="text-[13px] text-foreground underline-offset-4 hover:underline disabled:text-muted-foreground disabled:no-underline cursor-pointer"
+            >
+              {countdown > 0 ? (
+                <>
+                  Resend code in <span className="tabular">{countdown}s</span>
+                </>
+              ) : (
+                "Resend code"
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setOtpTarget(otpTarget === "sms" ? "email" : "sms");
+                setCountdown(RESEND_SECONDS);
+                setErrorMsg("");
+              }}
+              className="text-center text-[12.5px] text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
+            >
+              Send to {otpTarget === "sms" ? "email instead" : "SMS instead"}
+            </button>
+          </div>
         </form>
       )}
 
@@ -632,47 +641,45 @@ function ActivateContent() {
 
       {/* STEP 6: 4-digit PIN */}
       {step === "pin" && (
-        <form onSubmit={handlePinSubmit} className="flex flex-col items-center gap-6">
-          <div className="w-full flex flex-col items-center gap-2.5">
-            <p className="text-[13.5px] text-muted-foreground text-center">
-              Enter a 4-digit PIN for completing transfers and payments.
-            </p>
-            <div className="mt-3">
-              <OtpInput
-                value={pinDigits}
-                onChange={setPinDigits}
-                length={4}
-                mask
-                disabled={busy}
-                autoFocus
-              />
-            </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handlePinSubmit();
+          }}
+          className="flex flex-col items-center gap-6"
+        >
+          <div className="w-full" data-tour="activate-pin">
+            <OtpInput
+              value={pinDigits}
+              onChange={(next) => {
+                setPinDigits(next);
+                if (errorMsg) setErrorMsg("");
+              }}
+              length={4}
+              mask
+              onComplete={(pin) => handlePinSubmit(pin)}
+              disabled={busy}
+              invalid={!!errorMsg}
+              autoFocus
+            />
           </div>
 
-          {errorMsg && (
-            <div className="w-full flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-[13px] text-destructive">
-              <AlertCircle size={16} className="mt-0.5 shrink-0" />
-              <span>{errorMsg}</span>
+          {busy && (
+            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+              <Loader2 size={16} className="animate-spin text-primary" aria-hidden="true" />
+              <span>Completing activation...</span>
             </div>
           )}
 
-          <Button
-            type="submit"
-            variant="default"
-            size="lg"
-            data-tour="activate-pin"
-            disabled={busy || pinDigits.join("").length < 4}
-            className="mt-3.5 h-11 w-full text-[14px]"
-          >
-            {busy ? (
-              <>
-                <Loader2 size={16} className="mr-2 animate-spin" />
-                Completing activation...
-              </>
-            ) : (
-              "Finish activation"
-            )}
-          </Button>
+          {errorMsg && (
+            <div
+              role="alert"
+              className="w-full flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3.5 text-[13px] text-destructive"
+            >
+              <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
         </form>
       )}
     </AuthLayout>

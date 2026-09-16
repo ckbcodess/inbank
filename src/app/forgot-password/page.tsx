@@ -23,6 +23,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
+  AlertCircle,
   ArrowLeft,
   CheckCircle2,
   KeyRound,
@@ -34,6 +35,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { PASSWORD_RULES } from "@/lib/activation";
 
 type Stage = "identify" | "verify" | "reset" | "done";
@@ -52,7 +54,7 @@ export default function ForgotPasswordPage() {
   const [busy, setBusy] = useState(false);
 
   const [identifier, setIdentifier] = useState("");
-  const [code, setCode] = useState("");
+  const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
   const [codeError, setCodeError] = useState(false);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -71,11 +73,12 @@ export default function ForgotPasswordPage() {
 
   function handleVerify(e?: React.FormEvent, incomingCode?: string) {
     if (e) e.preventDefault();
-    const codeToVerify = incomingCode ?? code;
+    const codeToVerify = incomingCode ?? digits.join("");
     if (codeToVerify.length !== 6 || busy) return;
 
     if (codeToVerify === "000000") {
       setCodeError(true);
+      setDigits(Array(OTP_LENGTH).fill(""));
       return;
     }
     setCodeError(false);
@@ -155,67 +158,57 @@ export default function ForgotPasswordPage() {
           )}
 
           {stage === "verify" && (
-            <form onSubmit={handleVerify} className="flex flex-col gap-5">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="otp" className="text-[13.5px] font-medium text-foreground">
-                  One-time code
-                </Label>
-                <Input
-                  id="otp"
-                  inputMode="numeric"
-                  maxLength={6}
-                  value={code}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, "");
-                    setCode(val);
-                    setCodeError(false);
-                    if (val.length === 6) {
-                      handleVerify(undefined, val);
-                    }
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleVerify();
+              }}
+              className="flex flex-col gap-6"
+            >
+              <div>
+                <OtpInput
+                  value={digits}
+                  onChange={(next) => {
+                    setDigits(next);
+                    if (codeError) setCodeError(false);
                   }}
-                  placeholder="000000"
-                  className="h-11 font-mono text-[16px] tracking-widest tabular"
-                  aria-invalid={codeError || undefined}
-                  required
+                  onComplete={(c) => handleVerify(undefined, c)}
+                  disabled={busy}
+                  invalid={codeError}
+                  autoFocus
                 />
-                {codeError ? (
-                  <p className="text-[12.5px] text-destructive">
-                    That code isn&apos;t valid or has expired. Request a new one to continue.
-                  </p>
-                ) : (
-                  <p className="text-[12.5px] text-muted-foreground">
-                    Sent to the contact details on your profile. It expires in 5 minutes.
-                  </p>
-                )}
               </div>
 
-              <Button
-                type="submit"
-                variant="default"
-                size="lg"
-                disabled={busy || code.length !== 6}
-                className="mt-2 h-11 w-full text-[14px]"
-              >
-                {busy ? (
-                  <>
-                    <Loader2 size={16} strokeWidth={2} className="mr-2 animate-spin" aria-hidden="true" />
-                    Verifying…
-                  </>
-                ) : (
-                  <>
-                    <ShieldCheck size={16} strokeWidth={1.9} className="mr-2" aria-hidden="true" />
-                    Verify code
-                  </>
-                )}
-              </Button>
+              {busy && (
+                <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+                  <Loader2 size={16} className="animate-spin text-primary" aria-hidden="true" />
+                  <span>Verifying code...</span>
+                </div>
+              )}
 
-              <button
-                type="button"
-                onClick={() => setStage("identify")}
-                className="text-center text-[13px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline cursor-pointer"
-              >
-                Use a different email or user ID
-              </button>
+              {codeError && (
+                <div
+                  role="alert"
+                  className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3.5 text-[13px] text-destructive"
+                >
+                  <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
+                  <span>That code isn&apos;t valid or has expired. Request a new code or enter any other 6 digits.</span>
+                </div>
+              )}
+
+              <div className="mt-2 flex flex-col items-center gap-2 border-t border-border pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setDigits(Array(OTP_LENGTH).fill(""));
+                    setCodeError(false);
+                    setStage("identify");
+                  }}
+                  className="text-center text-[12.5px] text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
+                >
+                  Use a different email or user ID
+                </button>
+              </div>
             </form>
           )}
 
