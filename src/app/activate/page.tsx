@@ -62,17 +62,35 @@ function ActivateContent() {
     return () => window.clearTimeout(t);
   }, [step, countdown]);
 
+  function handleVerifyDetails() {
+    setBusy(true);
+    window.setTimeout(() => {
+      setDigits(Array(OTP_LENGTH).fill(""));
+      setBusy(false);
+      setStep("otp");
+      setCountdown(RESEND_SECONDS);
+    }, 600);
+  }
+
+  function handleOtpSubmit(e?: React.FormEvent) {
+    if (e) e.preventDefault();
+    const code = digits.join("");
+    if (code.length < OTP_LENGTH || busy) return;
+
+    setErrorMsg("");
+    setBusy(true);
+    window.setTimeout(() => {
+      setBusy(false);
+      setStep("password");
+    }, 600);
+  }
+
   // Auto-advance OTP verification when 6 digits are entered
   useEffect(() => {
     if (step === "otp" && digits.join("").length === OTP_LENGTH && !busy) {
-      setErrorMsg("");
-      setBusy(true);
-      const timer = window.setTimeout(() => {
-        setBusy(false);
-        setStep("password");
-      }, 600);
-      return () => window.clearTimeout(timer);
+      handleOtpSubmit();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, digits, busy]);
 
   // Password Checklist validation
@@ -114,30 +132,6 @@ function ActivateContent() {
         setStep("review_details");
       }, 500);
     }, 1000);
-  }
-
-  function handleVerifyDetails() {
-    setBusy(true);
-    setTimeout(() => {
-      setBusy(false);
-      setStep("otp");
-      setCountdown(RESEND_SECONDS);
-    }, 600);
-  }
-
-  function handleOtpSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const code = digits.join("");
-    if (code.length < OTP_LENGTH) {
-      setErrorMsg("Please enter the complete 6-digit code");
-      return;
-    }
-    setErrorMsg("");
-    setBusy(true);
-    setTimeout(() => {
-      setBusy(false);
-      setStep("password");
-    }, 600);
   }
 
   function handlePasswordSubmit(e: React.FormEvent) {
@@ -489,7 +483,13 @@ function ActivateContent() {
       {step === "otp" && (
         <form onSubmit={handleOtpSubmit} className="flex flex-col items-center gap-5">
           <div className="w-full" data-tour="activate-otp">
-            <OtpInput value={digits} onChange={setDigits} disabled={busy} autoFocus />
+            <OtpInput
+              value={digits}
+              onChange={setDigits}
+              onComplete={() => handleOtpSubmit()}
+              disabled={busy}
+              autoFocus
+            />
           </div>
 
           {errorMsg && (
