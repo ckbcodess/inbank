@@ -11,7 +11,6 @@ interface AuthLayoutProps {
   titleClassName?: string;
   description?: ReactNode;
   descriptionClassName?: string;
-  headerClassName?: string;
   children: ReactNode;
   /** Optional icon component */
   icon?: React.ComponentType<{
@@ -38,7 +37,6 @@ export default function AuthLayout({
   titleClassName,
   description,
   descriptionClassName,
-  headerClassName,
   children,
   icon: Icon,
   footer,
@@ -48,10 +46,10 @@ export default function AuthLayout({
 }: AuthLayoutProps) {
   const maxWidthClass =
     width === "wide"
-      ? "max-w-[640px]"
+      ? "max-w-[620px]"
       : width === "compact"
       ? "max-w-[500px]"
-      : "max-w-[560px]";
+      : "max-w-[540px]";
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background text-foreground transition-colors selection:bg-primary/30 selection:text-foreground overflow-x-hidden">
@@ -117,7 +115,7 @@ export default function AuthLayout({
 
             {/* Title & Description */}
             {(title || description) && (
-              <div className={cn("mb-7 text-center", headerClassName)}>
+              <div className="mb-7 text-center">
                 {title && (
                   <h1
                     className={cn(
