@@ -46,10 +46,10 @@ export default function AuthLayout({
 }: AuthLayoutProps) {
   const maxWidthClass =
     width === "wide"
-      ? "max-w-[620px]"
+      ? "max-w-[640px]"
       : width === "compact"
       ? "max-w-[500px]"
-      : "max-w-[540px]";
+      : "max-w-[560px]";
 
   return (
     <div className="relative flex min-h-screen w-full flex-col bg-background text-foreground transition-colors selection:bg-primary/30 selection:text-foreground overflow-x-hidden">
