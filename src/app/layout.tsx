@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -32,7 +33,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <DevStateProvider>
                   <Toaster position="top-right" style={{ zIndex: 999999 }} />
                   {children}
-                  <PersonaFlowSwitcher />
+                  <Suspense fallback={null}>
+                    <PersonaFlowSwitcher />
+                  </Suspense>
                   <TourOverlay />
                 </DevStateProvider>
               </AndroidRippleProvider>

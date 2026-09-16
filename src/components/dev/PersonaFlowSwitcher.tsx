@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   Building2,
@@ -26,14 +26,6 @@ import { useTour } from "@/lib/tour-store";
 import { TOURS, type Tour, type TourIcon } from "@/lib/tours";
 import { ACTORS } from "@/lib/mock-data";
 import type { Actor, Profile } from "@/lib/roles";
-
-const TOUR_ICONS: Record<TourIcon, typeof UserCheck> = {
-  userCheck: UserCheck,
-  laptop: Laptop,
-  landmark: Building2,
-  wallet: Wallet,
-  creditCard: CreditCard,
-};
 
 interface DemoPersonaQuickPick {
   id: string;
@@ -131,7 +123,7 @@ const DEMO_PERSONAS: DemoPersonaQuickPick[] = [
   },
 ];
 
-export default function PersonaFlowSwitcher() {
+function PersonaFlowSwitcherContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -517,6 +509,14 @@ export default function PersonaFlowSwitcher() {
         </div>
       )}
     </>
+  );
+}
+
+export default function PersonaFlowSwitcher() {
+  return (
+    <Suspense fallback={null}>
+      <PersonaFlowSwitcherContent />
+    </Suspense>
   );
 }
 
