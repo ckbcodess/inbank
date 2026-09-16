@@ -66,12 +66,67 @@ const LOGIN_GET_STARTED: TourStep = {
 };
 
 export const TOURS: Tour[] = [
-  /* 1 ── Existing customer, not yet activated ─────────────────────────────── */
+  /* 1 ── Existing customer, Multi-Account (Primary Account Picker) ────────── */
+  {
+    id: "existing-multi",
+    name: "Kwame Mensah",
+    title: "Existing customer · multi-account",
+    badge: "Primary Picker",
+    summary: "Multiple accounts found (Personal & Joint) — select primary operating account.",
+    icon: "userCheck",
+    startRoute: "/activate?persona=multi",
+    steps: [
+      {
+        target: "activate-card",
+        route: "/activate",
+        title: "Enter the Ghana Card",
+        body: "Identity is matched against NIA records. Kwame's demo card is prefilled.",
+        action: "Click Continue",
+      },
+      {
+        target: "activate-selfie",
+        route: "/activate",
+        title: "Biometric Selfie",
+        body: "Liveness verification confirms identity against NIA biometric register.",
+        action: "Click Capture photo",
+      },
+      {
+        target: "activate-account-picker",
+        route: "/activate",
+        title: "Choose Primary Account",
+        body: "Multiple accounts discovered (Personal and Joint). Select your primary operating account.",
+        action: "Select an account and click Confirm and send code",
+      },
+      {
+        target: "activate-otp",
+        route: "/activate",
+        title: "Enter the code",
+        body: "Type any 6 digits to verify the registered mobile number.",
+        action: "Enter the code and Verify",
+      },
+      {
+        target: "activate-password",
+        route: "/activate",
+        title: "Create a password",
+        body: "Set a password with minimum 12 characters, upper, lower, numbers and symbols.",
+        action: "Click Save password and continue",
+      },
+      {
+        target: "activate-pin",
+        route: "/activate",
+        title: "Set a transaction PIN",
+        body: "The 4-digit PIN authorises payments. This completes activation and logs into the overview.",
+        action: "Click Finish activation",
+      },
+    ],
+  },
+
+  /* 3 ── Existing customer, Single Account (Ama Serwaa) ───────────────────── */
   {
     id: "existing-not-activated",
     name: "Ama Serwaa",
-    title: "Existing customer · not activated",
-    badge: "Activation",
+    title: "Existing customer · single account",
+    badge: "Single Account",
     summary: "Already banks with GCB, switching internet banking on for the first time.",
     icon: "userCheck",
     startRoute: "/",
@@ -103,7 +158,7 @@ export const TOURS: Tour[] = [
         target: "activate-review",
         route: "/activate",
         title: "Confirm the matched details",
-        body: "Pulled from the account — nothing is retyped.",
+        body: "Pulled from the account — single account is automatically designated as Primary.",
         action: "Click Confirm and send code",
       },
       {

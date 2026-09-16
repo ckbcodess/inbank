@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import {
-  ArrowRight,
+  ChevronRight,
   CheckCircle2,
   CreditCard,
   Smartphone,
@@ -121,7 +121,7 @@ export default function LinkSourceAccountModal({
                   className="group flex items-center justify-between rounded-xl border border-border bg-card p-4 text-left transition-all hover:bg-muted/40 cursor-pointer"
                 >
                   <div className="flex items-center gap-3.5">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 transition-colors">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary transition-colors">
                       <Smartphone size={20} strokeWidth={1.8} />
                     </div>
                     <div className="flex flex-col">
@@ -134,9 +134,11 @@ export default function LinkSourceAccountModal({
                     </div>
                   </div>
 
-                  <div className="flex size-6 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-transform group-hover:translate-x-0.5">
-                    <ArrowRight size={16} strokeWidth={1.8} />
-                  </div>
+                  <ChevronRight
+                    size={18}
+                    strokeWidth={2}
+                    className="text-muted-foreground/60 transition-transform group-hover:translate-x-0.5 group-hover:text-foreground"
+                  />
                 </button>
 
                 <button
@@ -145,7 +147,7 @@ export default function LinkSourceAccountModal({
                   className="group flex items-center justify-between rounded-xl border border-border bg-card p-4 text-left transition-all hover:bg-muted/40 cursor-pointer"
                 >
                   <div className="flex items-center gap-3.5">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 transition-colors">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary transition-colors">
                       <CreditCard size={20} strokeWidth={1.8} />
                     </div>
                     <div className="flex flex-col">
@@ -158,9 +160,11 @@ export default function LinkSourceAccountModal({
                     </div>
                   </div>
 
-                  <div className="flex size-6 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-transform group-hover:translate-x-0.5">
-                    <ArrowRight size={16} strokeWidth={1.8} />
-                  </div>
+                  <ChevronRight
+                    size={18}
+                    strokeWidth={2}
+                    className="text-muted-foreground/60 transition-transform group-hover:translate-x-0.5 group-hover:text-foreground"
+                  />
                 </button>
               </div>
 

@@ -1,11 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
+  Building2,
+  Check,
+  ChevronDown,
+  ChevronRight,
   CreditCard,
-  Landmark,
+  ExternalLink,
+  Layers,
   Laptop,
+  Play,
+  RotateCcw,
+  ShieldCheck,
+  Smartphone,
   Sparkles,
   UserCheck,
   Users,
@@ -21,76 +30,118 @@ import type { Actor, Profile } from "@/lib/roles";
 const TOUR_ICONS: Record<TourIcon, typeof UserCheck> = {
   userCheck: UserCheck,
   laptop: Laptop,
-  landmark: Landmark,
+  landmark: Building2,
   wallet: Wallet,
   creditCard: CreditCard,
 };
 
-/**
- * Signed-in states that aren't a walk-through — they drop the tester straight
- * onto a dashboard or a variant activation screen. Kept from the old switcher
- * so no persona coverage is lost.
- */
-interface QuickJump {
+interface DemoPersonaQuickPick {
   id: string;
   name: string;
+  category: "Existing GCB Customer" | "New to GCB" | "Direct Dashboard";
   title: string;
-  action: (helpers: {
-    router: ReturnType<typeof useRouter>;
-    signIn: (actor: Actor) => void;
-    selectProfile: (profile: Profile) => void;
-    verifyMfa: () => void;
-  }) => void;
+  description: string;
+  badge: string;
+  route: string;
+  actorId?: string;
+  isTour?: boolean;
+  tourId?: string;
 }
 
-const QUICK_JUMPS: QuickJump[] = [
+const DEMO_PERSONAS: DemoPersonaQuickPick[] = [
+  // Existing GCB Customers
   {
-    id: "joint_both",
+    id: "multi",
     name: "Kwame Mensah",
-    title: "Joint · both to sign → dashboard",
-    action: ({ router, signIn, selectProfile, verifyMfa }) => {
-      const actor = ACTORS.find((a) => a.id === "u-joint") || ACTORS[0];
-      signIn(actor);
-      if (actor.profiles.length > 0) selectProfile(actor.profiles[0]);
-      verifyMfa();
-      router.push("/overview");
-    },
+    category: "Existing GCB Customer",
+    title: "Multi-Account · Personal & Joint Accounts",
+    description: "Matches 4 accounts (Personal Current, Joint Savings, Reserve Savings, USD); pick primary account.",
+    badge: "Primary Picker",
+    route: "/activate?persona=multi",
+    actorId: "u-joint",
   },
   {
-    id: "joint_either",
-    name: "Kojo Appiah",
-    title: "Joint · either to sign → dashboard",
-    action: ({ router, signIn, selectProfile, verifyMfa }) => {
-      const actor = ACTORS.find((a) => a.id === "u-joint-either") || ACTORS[0];
-      signIn(actor);
-      if (actor.profiles.length > 0) selectProfile(actor.profiles[0]);
-      verifyMfa();
-      router.push("/overview");
-    },
-  },
-  {
-    id: "joint_activation",
-    name: "Kwame & Efua Mensah",
-    title: "Joint account activation",
-    action: ({ router }) => router.push("/activate?persona=joint"),
+    id: "single",
+    name: "Ama Serwaa",
+    category: "Existing GCB Customer",
+    title: "Single Account · 1 Savings Account",
+    description: "Standard retail customer with one savings account auto-designated as primary.",
+    badge: "Single Account",
+    route: "/activate?persona=single",
+    actorId: "u-retail",
   },
   {
     id: "mobile_sync",
     name: "Abena Osei",
-    title: "Mobile app → web sync",
-    action: ({ router }) => router.push("/activate?persona=mobile_sync"),
+    category: "Existing GCB Customer",
+    title: "Mobile App User · Fast Web Sync",
+    description: "Existing GCB Mobile App user activating web banking with matched profile.",
+    badge: "Mobile Sync",
+    route: "/activate?persona=mobile_sync",
+    actorId: "u-abena",
+  },
+  {
+    id: "new_device",
+    name: "Yaw Oppong",
+    category: "Existing GCB Customer",
+    title: "Existing Customer · New Device MFA",
+    description: "Unrecognised browser/device security challenge with 30-day trust option.",
+    badge: "Security / MFA",
+    route: "/mfa?device=new",
+    actorId: "u-yaw",
+  },
+
+  // New to GCB Customers
+  {
+    id: "new_cos",
+    name: "Kofi Mensah",
+    category: "New to GCB",
+    title: "Open Full Account · COS Portal",
+    description: "Redirects to GCB Customer Onboarding & Origination System (COOS).",
+    badge: "COOS Portal",
+    route: "/get-started",
+    actorId: "u-kofi",
+  },
+  {
+    id: "new_wallet",
+    name: "Tsotsoo Mills",
+    category: "New to GCB",
+    title: "Start with Mobile Money Wallet",
+    description: "Registers with Ghana Card and links a mobile-money wallet for everyday banking.",
+    badge: "Wallet Registration",
+    route: "/signup?flow=wallet_card",
+  },
+  {
+    id: "new_card",
+    name: "Kofi Addo",
+    category: "New to GCB",
+    title: "Start with Bank Card",
+    description: "Registers with Ghana Card and links an existing bank debit/credit card.",
+    badge: "Card Registration",
+    route: "/signup?flow=wallet_card",
+  },
+  {
+    id: "new_business",
+    name: "Adinkra Textiles Ltd",
+    category: "New to GCB",
+    title: "Business Account Onboarding",
+    description: "Corporate entity registration with TIN, certificate of incorporation, and mandate.",
+    badge: "Corporate",
+    route: "/signup/business",
   },
 ];
 
 export default function PersonaFlowSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { signIn, selectProfile, verifyMfa } = useSession();
   const startTour = useTour((s) => s.start);
   const activeTourId = useTour((s) => s.activeTourId);
   const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"existing" | "new" | "tours" | "dashboards">("existing");
 
-  // Onboarding / entry surfaces only.
+  // Onboarding / entry surfaces only
   const isOnboardingSide =
     pathname === "/" ||
     pathname?.startsWith("/signup") ||
@@ -100,10 +151,40 @@ export default function PersonaFlowSwitcher() {
     pathname?.startsWith("/mfa") ||
     pathname?.startsWith("/forgot-password");
 
-  // Hide the trigger while a tour is running — the coach card owns the screen.
   if (!isOnboardingSide || activeTourId) return null;
 
-  function launchTour(tour: Tour) {
+  // Active persona context label
+  const personaParam = searchParams.get("persona");
+  let currentPersonaLabel = "Demo Showcase";
+  if (pathname === "/activate") {
+    if (personaParam === "single") currentPersonaLabel = "Single Account (Ama)";
+    else if (personaParam === "mobile_sync") currentPersonaLabel = "Mobile Sync (Abena)";
+    else currentPersonaLabel = "Multi-Account (Kwame M.)";
+  } else if (pathname === "/get-started") {
+    currentPersonaLabel = "Registration Entry";
+  } else if (pathname?.startsWith("/signup")) {
+    currentPersonaLabel = "New Customer Sign Up";
+  }
+
+  function handleSelectPersona(item: DemoPersonaQuickPick) {
+    if (item.actorId) {
+      const actor = ACTORS.find((a) => a.id === item.actorId);
+      if (actor) signIn(actor);
+    }
+    router.push(item.route);
+    setIsOpen(false);
+  }
+
+  function handleJumpDashboard(actorId: string) {
+    const actor = ACTORS.find((a) => a.id === actorId) || ACTORS[0];
+    signIn(actor);
+    if (actor.profiles.length > 0) selectProfile(actor.profiles[0]);
+    verifyMfa();
+    router.push("/overview");
+    setIsOpen(false);
+  }
+
+  function handleLaunchTour(tour: Tour) {
     if (tour.startActorId) {
       const actor = ACTORS.find((a) => a.id === tour.startActorId);
       if (actor) signIn(actor);
@@ -113,39 +194,78 @@ export default function PersonaFlowSwitcher() {
     setIsOpen(false);
   }
 
-  function runQuickJump(jump: QuickJump) {
-    jump.action({ router, signIn, selectProfile, verifyMfa });
-    setIsOpen(false);
-  }
-
   return (
     <>
-      {/* Floating trigger */}
-      <div className="fixed bottom-5 left-5 z-40">
+      {/* Floating Demo Control Dock */}
+      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full border border-border/80 bg-card/95 p-1.5 shadow-xl backdrop-blur-xl transition-all hover:border-primary/40">
         <button
           type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          className="flex h-9 items-center gap-2 rounded-full border border-border/80 bg-card/95 px-3.5 text-[12px] font-medium text-foreground shadow-md backdrop-blur-md transition-all hover:border-primary/50 active:scale-[0.96] cursor-pointer"
+          onClick={() => setIsOpen(true)}
+          className="flex h-9 items-center gap-2 rounded-full bg-primary/10 px-3 text-[12.5px] font-medium text-foreground transition-colors hover:bg-primary/20 active:scale-[0.97] cursor-pointer"
         >
           <div className="flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <Sparkles size={11} strokeWidth={2.2} />
           </div>
-          <span>Persona &amp; Flow Switcher</span>
+          <span>Demo Hub:</span>
+          <span className="text-foreground/90 underline underline-offset-2 decoration-primary/60">
+            {currentPersonaLabel}
+          </span>
+          <ChevronDown size={14} className="text-muted-foreground ml-0.5" />
         </button>
+
+        {/* In-dock quick toggles for activate page */}
+        {pathname === "/activate" && (
+          <div className="hidden sm:flex items-center gap-1 border-l border-border/80 pl-1.5 pr-1">
+            <button
+              type="button"
+              onClick={() => router.push("/activate?persona=multi")}
+              className={`rounded-full px-2.5 py-1 text-[11.5px] transition-colors cursor-pointer ${
+                personaParam === "multi" || !personaParam
+                  ? "bg-primary text-primary-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              }`}
+            >
+              Multi (Personal + Joint)
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push("/activate?persona=single")}
+              className={`rounded-full px-2.5 py-1 text-[11.5px] transition-colors cursor-pointer ${
+                personaParam === "single"
+                  ? "bg-primary text-primary-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              }`}
+            >
+              Single
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push("/activate?persona=mobile_sync")}
+              className={`rounded-full px-2.5 py-1 text-[11.5px] transition-colors cursor-pointer ${
+                personaParam === "mobile_sync"
+                  ? "bg-primary text-primary-foreground font-medium"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              }`}
+            >
+              Mobile
+            </button>
+          </div>
+        )}
       </div>
 
+      {/* Demo Showcase Modal */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-          <div className="relative w-full max-w-xl max-h-[85vh] overflow-y-auto rounded-3xl border border-border bg-card p-6 sm:p-7 shadow-2xl">
+          <div className="relative w-full max-w-2xl max-h-[88vh] overflow-y-auto rounded-3xl border border-border bg-card p-6 sm:p-7 shadow-2xl">
             {/* Header */}
             <div className="flex items-start justify-between pb-4 border-b border-border/70">
               <div>
-                <h3 className="text-[18px] text-foreground flex items-center gap-2 tracking-[-0.01em]">
-                  <Sparkles size={18} className="text-[#E5A500] dark:text-[#F2B200]" />
-                  Onboarding journeys
+                <h3 className="text-[19px] text-foreground flex items-center gap-2 tracking-[-0.01em]">
+                  <Sparkles size={20} className="text-primary" />
+                  Onboarding &amp; Persona Showcase Hub
                 </h3>
-                <p className="text-[12.5px] text-muted-foreground mt-0.5">
-                  Pick a user type — we&apos;ll walk you through it, highlighting exactly what to click.
+                <p className="text-[13px] text-muted-foreground mt-0.5">
+                  Select any persona or use case to immediately demonstrate the full user flow and UI states.
                 </p>
               </div>
               <button
@@ -157,66 +277,246 @@ export default function PersonaFlowSwitcher() {
               </button>
             </div>
 
-            {/* Guided tours — the five user types */}
-            <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {TOURS.map((tour) => {
-                const Icon = TOUR_ICONS[tour.icon];
-                return (
-                  <button
-                    key={tour.id}
-                    type="button"
-                    onClick={() => launchTour(tour)}
-                    className="group flex flex-col justify-between rounded-2xl border border-border/80 bg-background/60 p-4 text-left transition-all duration-200 hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 hover:shadow-md active:scale-[0.96] cursor-pointer"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex size-9 items-center justify-center rounded-xl bg-[#FEF3D6] text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200] transition-colors group-hover:bg-[#E5A500] group-hover:text-white dark:group-hover:bg-[#F2B200] dark:group-hover:text-black">
-                          <Icon size={18} />
-                        </div>
-                        <span className="rounded-full bg-muted px-2 py-0.5 text-[10.5px] font-semibold text-muted-foreground">
-                          {tour.badge}
-                        </span>
-                      </div>
-                      <h4 className="text-[13.5px] text-foreground tracking-[-0.01em]">{tour.name}</h4>
-                      <p className="text-[12px] text-muted-foreground mt-0.5">{tour.title}</p>
-                      <p className="text-[11.5px] leading-snug text-muted-foreground/80 mt-2">
-                        {tour.summary}
-                      </p>
-                    </div>
-                    <div className="mt-3.5 flex items-center gap-1 text-[12px] font-semibold text-[#B27B00] dark:text-[#F2B200] group-hover:translate-x-1 transition-transform">
-                      <span>Start guided walk-through →</span>
-                    </div>
-                  </button>
-                );
-              })}
+            {/* Navigation Tabs */}
+            <div className="flex items-center gap-1.5 mt-4 p-1 rounded-2xl bg-muted/40 border border-border/60">
+              <button
+                type="button"
+                onClick={() => setActiveTab("existing")}
+                className={`flex-1 rounded-xl py-2 text-[12.5px] transition-all cursor-pointer ${
+                  activeTab === "existing"
+                    ? "bg-card text-foreground font-medium shadow-xs border border-border/80"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Existing GCB Customers
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("new")}
+                className={`flex-1 rounded-xl py-2 text-[12.5px] transition-all cursor-pointer ${
+                  activeTab === "new"
+                    ? "bg-card text-foreground font-medium shadow-xs border border-border/80"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                New to GCB
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("tours")}
+                className={`flex-1 rounded-xl py-2 text-[12.5px] transition-all cursor-pointer ${
+                  activeTab === "tours"
+                    ? "bg-card text-foreground font-medium shadow-xs border border-border/80"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Guided Walkthroughs
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("dashboards")}
+                className={`flex-1 rounded-xl py-2 text-[12.5px] transition-all cursor-pointer ${
+                  activeTab === "dashboards"
+                    ? "bg-card text-foreground font-medium shadow-xs border border-border/80"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Direct Jumps
+              </button>
             </div>
 
-            {/* Quick jumps — signed-in states, no walk-through */}
-            <div className="mt-5 pt-4 border-t border-border/70">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                <Users size={13} />
-                Jump straight in — no walk-through
-              </p>
-              <div className="mt-2.5 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {QUICK_JUMPS.map((jump) => (
+            {/* TAB 1: Existing GCB Customers */}
+            {activeTab === "existing" && (
+              <div className="mt-4 space-y-2.5">
+                {DEMO_PERSONAS.filter((p) => p.category === "Existing GCB Customer").map((item) => (
                   <button
-                    key={jump.id}
+                    key={item.id}
                     type="button"
-                    onClick={() => runQuickJump(jump)}
-                    className="flex items-center justify-between rounded-xl border border-border/70 bg-background/40 px-3 py-2.5 text-left transition-colors hover:border-[#E5A500] hover:bg-[#FFFBF0] dark:hover:bg-[#F2B200]/10 active:scale-[0.97] cursor-pointer"
+                    onClick={() => handleSelectPersona(item)}
+                    className="group w-full flex items-center justify-between rounded-2xl border border-border/80 bg-background/50 p-4 text-left transition-all duration-150 hover:border-primary/50 hover:bg-card hover:shadow-xs active:scale-[0.99] cursor-pointer"
                   >
-                    <div>
-                      <span className="block text-[12.5px] text-foreground">{jump.name}</span>
-                      <span className="block text-[11px] text-muted-foreground">{jump.title}</span>
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                        {item.id === "multi" ? (
+                          <Layers size={18} />
+                        ) : item.id === "joint" ? (
+                          <Users size={18} />
+                        ) : item.id === "mobile_sync" ? (
+                          <Smartphone size={18} />
+                        ) : item.id === "new_device" ? (
+                          <Laptop size={18} />
+                        ) : (
+                          <UserCheck size={18} />
+                        )}
+                      </div>
+
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[14px] font-medium text-foreground truncate">
+                            {item.name}
+                          </span>
+                          <span className="rounded-full bg-muted px-2 py-0.5 text-[10.5px] text-muted-foreground shrink-0">
+                            {item.badge}
+                          </span>
+                        </div>
+                        <span className="text-[13px] text-foreground/80 mt-0.5 block">
+                          {item.title}
+                        </span>
+                        <p className="text-[11.5px] text-muted-foreground mt-0.5 leading-snug">
+                          {item.description}
+                        </p>
+                      </div>
                     </div>
-                    <span className="text-[11px] text-muted-foreground shrink-0 ml-2">→</span>
+
+                    <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all ml-3">
+                      <ChevronRight size={18} />
+                    </div>
                   </button>
                 ))}
               </div>
-            </div>
+            )}
+
+            {/* TAB 2: New to GCB */}
+            {activeTab === "new" && (
+              <div className="mt-4 space-y-2.5">
+                {DEMO_PERSONAS.filter((p) => p.category === "New to GCB").map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => handleSelectPersona(item)}
+                    className="group w-full flex items-center justify-between rounded-2xl border border-border/80 bg-background/50 p-4 text-left transition-all duration-150 hover:border-primary/50 hover:bg-card hover:shadow-xs active:scale-[0.99] cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                        {item.id === "new_cos" ? (
+                          <Building2 size={18} />
+                        ) : item.id === "new_wallet" ? (
+                          <Wallet size={18} />
+                        ) : item.id === "new_card" ? (
+                          <CreditCard size={18} />
+                        ) : (
+                          <Building2 size={18} />
+                        )}
+                      </div>
+
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[14px] font-medium text-foreground truncate">
+                            {item.name}
+                          </span>
+                          <span className="rounded-full bg-muted px-2 py-0.5 text-[10.5px] text-muted-foreground shrink-0">
+                            {item.badge}
+                          </span>
+                        </div>
+                        <span className="text-[13px] text-foreground/80 mt-0.5 block">
+                          {item.title}
+                        </span>
+                        <p className="text-[11.5px] text-muted-foreground mt-0.5 leading-snug">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all ml-3">
+                      <ChevronRight size={18} />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* TAB 3: Guided Walkthroughs */}
+            {activeTab === "tours" && (
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {TOURS.map((tour) => {
+                  const Icon = TOUR_ICONS[tour.icon];
+                  return (
+                    <button
+                      key={tour.id}
+                      type="button"
+                      onClick={() => handleLaunchTour(tour)}
+                      className="group flex flex-col justify-between rounded-2xl border border-border/80 bg-background/50 p-4 text-left transition-all duration-150 hover:border-primary/50 hover:bg-card hover:shadow-xs active:scale-[0.98] cursor-pointer"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex size-8 items-center justify-center rounded-lg bg-primary/15 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                            <Icon size={16} />
+                          </div>
+                          <span className="rounded-full bg-muted px-2 py-0.5 text-[10.5px] text-muted-foreground font-medium">
+                            {tour.badge}
+                          </span>
+                        </div>
+                        <h4 className="text-[13.5px] font-medium text-foreground">{tour.name}</h4>
+                        <p className="text-[12px] text-muted-foreground mt-0.5">{tour.title}</p>
+                        <p className="text-[11.5px] leading-snug text-muted-foreground/80 mt-1.5">
+                          {tour.summary}
+                        </p>
+                      </div>
+                      <div className="mt-3 flex items-center gap-1 text-[12px] font-medium text-foreground group-hover:translate-x-0.5 transition-transform">
+                        <span>Launch walkthrough →</span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* TAB 4: Direct Dashboard Jumps */}
+            {activeTab === "dashboards" && (
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => handleJumpDashboard("u-retail")}
+                  className="flex items-center justify-between rounded-2xl border border-border/80 bg-background/50 p-3.5 text-left transition-colors hover:border-primary/50 hover:bg-card cursor-pointer group"
+                >
+                  <div>
+                    <span className="text-[13px] font-medium text-foreground block">Ama Serwaa</span>
+                    <span className="text-[11.5px] text-muted-foreground">Retail Single Dashboard</span>
+                  </div>
+                  <ChevronRight size={18} className="text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleJumpDashboard("u-dual")}
+                  className="flex items-center justify-between rounded-2xl border border-border/80 bg-background/50 p-3.5 text-left transition-colors hover:border-primary/50 hover:bg-card cursor-pointer group"
+                >
+                  <div>
+                    <span className="text-[13px] font-medium text-foreground block">Kwame Boateng</span>
+                    <span className="text-[11.5px] text-muted-foreground">Dual Retail + Corporate</span>
+                  </div>
+                  <ChevronRight size={18} className="text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleJumpDashboard("u-joint")}
+                  className="flex items-center justify-between rounded-2xl border border-border/80 bg-background/50 p-3.5 text-left transition-colors hover:border-primary/50 hover:bg-card cursor-pointer group"
+                >
+                  <div>
+                    <span className="text-[13px] font-medium text-foreground block">Kwame &amp; Efua</span>
+                    <span className="text-[11.5px] text-muted-foreground">Joint Mandate Dashboard</span>
+                  </div>
+                  <ChevronRight size={18} className="text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleJumpDashboard("u-corpadmin")}
+                  className="flex items-center justify-between rounded-2xl border border-border/80 bg-background/50 p-3.5 text-left transition-colors hover:border-primary/50 hover:bg-card cursor-pointer group"
+                >
+                  <div>
+                    <span className="text-[13px] font-medium text-foreground block">Yaw Oppong</span>
+                    <span className="text-[11.5px] text-muted-foreground">Corporate Admin Portal</span>
+                  </div>
+                  <ChevronRight size={18} className="text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
     </>
   );
 }
+

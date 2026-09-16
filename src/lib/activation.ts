@@ -118,50 +118,213 @@ export function scenarioIdFor(
   return fallback?.id ?? ACTIVATION_SCENARIOS[0].id;
 }
 
-/* ── Identity lookup ───────────────────────────────────────────────────────── */
+/* ── Identity lookup & Personas ───────────────────────────────────────────── */
+
+export interface DiscoveredAccount {
+  id: string;
+  name: string;
+  number: string;
+  type: "Current" | "Savings" | "Foreign Currency";
+  currency: string;
+  balance: number;
+  isJoint?: boolean;
+  jointHolders?: string[];
+  mandate?: string;
+  isPrimaryDefault?: boolean;
+}
+
+export interface ActivationPersonaConfig {
+  id: "single" | "multi" | "joint" | "mobile_sync";
+  name: string;
+  tag: string;
+  description: string;
+  ghanaCard: string;
+  holderName: string;
+  phone: string;
+  email: string;
+  actorId: string;
+  accounts: DiscoveredAccount[];
+  isJoint?: boolean;
+  jointMandate?: string;
+  jointHolders?: string[];
+  coSignatoryPhone?: string;
+  mobileAppLinked?: boolean;
+}
+
+export const ACTIVATION_PERSONAS: Record<
+  "single" | "multi" | "joint" | "mobile_sync",
+  ActivationPersonaConfig
+> = {
+  multi: {
+    id: "multi",
+    name: "Kwame Mensah",
+    tag: "Multi-Account Holder",
+    description: "Customer with Personal, Joint, and Savings accounts — selects primary account",
+    ghanaCard: "GHA-998877665-1",
+    holderName: "Kwame Mensah",
+    phone: "+233 24 555 9812",
+    email: "kwame.mensah@example.com",
+    actorId: "u-joint",
+    accounts: [
+      {
+        id: "acc-current-1",
+        name: "Personal Current Account",
+        number: "1001 4821 4561",
+        type: "Current",
+        currency: "GHS",
+        balance: 42300.0,
+        isPrimaryDefault: true,
+      },
+      {
+        id: "acc-joint-1",
+        name: "Joint Premier Savings",
+        number: "3300 8844 9922",
+        type: "Savings",
+        currency: "GHS",
+        balance: 245800.0,
+        isJoint: true,
+        jointHolders: ["Kwame Mensah", "Efua Mensah"],
+        mandate: "Both to sign (2 of 2)",
+      },
+      {
+        id: "acc-savings-2",
+        name: "Reserve High-Yield Savings",
+        number: "3300 1122 5566",
+        type: "Savings",
+        currency: "GHS",
+        balance: 128450.0,
+      },
+      {
+        id: "acc-fx-1",
+        name: "USD Foreign Currency Account",
+        number: "7700 9944 1092",
+        type: "Foreign Currency",
+        currency: "USD",
+        balance: 14250.0,
+      },
+    ],
+  },
+  single: {
+    id: "single",
+    name: "Ama Serwaa",
+    tag: "Single Account",
+    description: "Existing retail customer with one savings account",
+    ghanaCard: "GHA-0123456789-0",
+    holderName: "Ama Serwaa",
+    phone: "+233 24 123 4567",
+    email: "ama.serwaa@example.com",
+    actorId: "u-retail",
+    accounts: [
+      {
+        id: "acc-savings-1",
+        name: "Reserve High-Yield Savings",
+        number: "3300 1122 5566",
+        type: "Savings",
+        currency: "GHS",
+        balance: 128450.0,
+        isPrimaryDefault: true,
+      },
+    ],
+  },
+  joint: {
+    id: "joint",
+    name: "Kwame Mensah",
+    tag: "Multi-Account (with Joint)",
+    description: "Customer with Personal and Joint accounts",
+    ghanaCard: "GHA-998877665-1",
+    holderName: "Kwame Mensah",
+    phone: "+233 24 555 9812",
+    email: "kwame.mensah@example.com",
+    actorId: "u-joint",
+    accounts: [
+      {
+        id: "acc-current-1",
+        name: "Personal Current Account",
+        number: "1001 4821 4561",
+        type: "Current",
+        currency: "GHS",
+        balance: 42300.0,
+        isPrimaryDefault: true,
+      },
+      {
+        id: "acc-joint-1",
+        name: "Joint Premier Savings",
+        number: "3300 8844 9922",
+        type: "Savings",
+        currency: "GHS",
+        balance: 245800.0,
+        isJoint: true,
+        jointHolders: ["Kwame Mensah", "Efua Mensah"],
+        mandate: "Both to sign (2 of 2)",
+      },
+    ],
+  },
+  mobile_sync: {
+    id: "mobile_sync",
+    name: "Abena Osei",
+    tag: "Mobile App Sync",
+    description: "Existing GCB Mobile app user activating Web Banking",
+    ghanaCard: "GHA-554433221-0",
+    holderName: "Abena Osei",
+    phone: "+233 24 888 2234",
+    email: "abena.osei@example.com",
+    actorId: "u-abena",
+    mobileAppLinked: true,
+    accounts: [
+      {
+        id: "acc-mobile-1",
+        name: "Personal Current Account",
+        number: "1001 4821 4821",
+        type: "Current",
+        currency: "GHS",
+        balance: 18200.0,
+        isPrimaryDefault: true,
+      },
+      {
+        id: "acc-mobile-2",
+        name: "Smart Goal Savings",
+        number: "3300 4455 9012",
+        type: "Savings",
+        currency: "GHS",
+        balance: 5400.0,
+      },
+    ],
+  },
+};
+
+export function getPersonaByGhanaCard(card: string): ActivationPersonaConfig {
+  const norm = card.trim().toUpperCase();
+  if (norm.includes("554433221") || norm.includes("MOBILE")) return ACTIVATION_PERSONAS.mobile_sync;
+  if (norm.includes("0123456789") || norm.includes("SINGLE")) return ACTIVATION_PERSONAS.single;
+  return ACTIVATION_PERSONAS.multi;
+}
 
 export interface ActivationMatch {
   actor: Actor;
   maskedMobile: string;
   maskedEmail: string;
-  /** Masked account the activation was matched against. */
   accountLabel: string;
-  /**
-   * Internet banking is already switched on for this customer. A third lookup
-   * outcome rather than an error: they are who they say they are, they just
-   * arrived at the wrong door, and the fix is to sign in.
-   */
   alreadyEnrolled: boolean;
+  persona?: ActivationPersonaConfig;
 }
 
 export interface DemoIdentifier {
   value: string;
-  /** What this identifier demonstrates, shown beside it on the identify step. */
   outcome: string;
   alreadyEnrolled: boolean;
+  personaKey?: "single" | "multi" | "joint" | "mobile_sync";
 }
 
-/**
- * Demo identifiers accepted by the identify step. The real service matches a
- * Ghana Card *or* an account number — one field, because making the customer
- * choose which kind of number they are about to type is a decision that buys
- * nothing.
- */
 export const DEMO_IDENTIFIERS: readonly DemoIdentifier[] = [
-  { value: "GHA-0123456789-0", outcome: "Not yet activated", alreadyEnrolled: false },
+  { value: "GHA-0123456789-0", outcome: "Single Account · Ama Serwaa", alreadyEnrolled: false, personaKey: "single" },
+  { value: "GHA-998877665-1", outcome: "Multi-Account · Kwame Boateng (Pick Primary)", alreadyEnrolled: false, personaKey: "multi" },
+  { value: "GHA-001234567-9", outcome: "Joint Account · Kwame & Efua Mensah", alreadyEnrolled: false, personaKey: "joint" },
+  { value: "GHA-554433221-0", outcome: "Mobile Sync · Abena Osei", alreadyEnrolled: false, personaKey: "mobile_sync" },
   { value: "3300 1122 5566", outcome: "Already activated", alreadyEnrolled: true },
 ];
 
 export const DEMO_MOBILE = "+233241234567";
 
-/**
- * Note on enumeration: the reset flow deliberately never confirms whether an
- * account exists. Activation *does* — it shows a masked match — because the
- * customer cannot sensibly consent to "we're about to text this number" without
- * seeing which number. The trade is contained by requiring two secrets (the ID
- * number and the registered mobile) before anything is revealed, and by keeping
- * the failure copy generic. Rate limiting is the server's half of the bargain.
- */
 export function matchIdentity(identifier: string, mobile: string): ActivationMatch | null {
   const id = identifier.trim().replace(/\s+/g, " ").toUpperCase();
   const known = DEMO_IDENTIFIERS.find((d) => d.value.toUpperCase() === id);
@@ -170,20 +333,23 @@ export function matchIdentity(identifier: string, mobile: string): ActivationMat
 
   if (!known || !mobileMatches) return null;
 
-  const actor = ACTORS.find((a) => a.id === "u-retail");
-  if (!actor) return null;
+  const persona = known.personaKey ? ACTIVATION_PERSONAS[known.personaKey] : ACTIVATION_PERSONAS.single;
+  const actor = ACTORS.find((a) => a.id === persona.actorId) || ACTORS[0];
 
   return {
     actor,
-    maskedMobile: maskMobile(DEMO_MOBILE),
-    maskedEmail: maskEmail(actor.email),
-    accountLabel: known.alreadyEnrolled ? "Personal Current ···· 4821" : "Reserve Savings ···· 5566",
+    maskedMobile: maskMobile(persona.phone),
+    maskedEmail: maskEmail(persona.email),
+    accountLabel: persona.accounts[0] ? `${persona.accounts[0].name} ···· ${persona.accounts[0].number.slice(-4)}` : "Reserve Savings ···· 5566",
     alreadyEnrolled: known.alreadyEnrolled,
+    persona,
   };
 }
 
-/** The identifier a given branch needs, so the dev switcher can seed itself. */
-export function demoIdentifierFor(alreadyEnrolled: boolean): string {
+export function demoIdentifierFor(alreadyEnrolled: boolean, personaKey?: "single" | "multi" | "joint" | "mobile_sync"): string {
+  if (personaKey && ACTIVATION_PERSONAS[personaKey]) {
+    return ACTIVATION_PERSONAS[personaKey].ghanaCard;
+  }
   return (
     DEMO_IDENTIFIERS.find((d) => d.alreadyEnrolled === alreadyEnrolled)?.value ??
     DEMO_IDENTIFIERS[0].value
@@ -199,7 +365,6 @@ export interface CorporateInvite {
   roleLabel: string;
   maskedMobile: string;
   maskedEmail: string;
-  /** Plain-language expiry, stated before the customer invests any effort. */
   expiresIn: string;
 }
 
@@ -217,4 +382,5 @@ export function getCorporateInvite(): CorporateInvite | null {
     expiresIn: "6 days",
   };
 }
+
 

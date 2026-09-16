@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ArrowRight, Building2, User } from "lucide-react";
+import { Building2, ChevronRight, User } from "lucide-react";
 import AuthLayout from "@/components/auth/AuthLayout";
 
 export default function RootRoutingPage() {
@@ -27,25 +27,27 @@ export default function RootRoutingPage() {
           type="button"
           data-tour="entry-personal"
           onClick={() => selectOption("personal")}
-          className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+          className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
         >
-          <div className="flex items-center gap-4">
-            <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-              <User size={22} strokeWidth={2} />
+          <div className="flex items-center gap-3.5">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+              <User size={18} strokeWidth={2.2} />
             </div>
             <div className="flex flex-col">
-              <span className="text-[15.5px] font-medium text-foreground">
+              <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
                 Personal
               </span>
-              <span className="text-[13px] text-muted-foreground mt-0.5">
+              <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
                 For individual accounts and everyday banking.
               </span>
             </div>
           </div>
 
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-foreground">
-            <ArrowRight size={18} strokeWidth={2} />
-          </div>
+          <ChevronRight
+            size={20}
+            strokeWidth={2.2}
+            className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"
+          />
         </button>
 
         {/* Business Banking Option */}
@@ -53,25 +55,27 @@ export default function RootRoutingPage() {
           type="button"
           data-tour="entry-business"
           onClick={() => selectOption("business")}
-          className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+          className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
         >
-          <div className="flex items-center gap-4">
-            <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-              <Building2 size={22} strokeWidth={2} />
+          <div className="flex items-center gap-3.5">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+              <Building2 size={18} strokeWidth={2.2} />
             </div>
             <div className="flex flex-col">
-              <span className="text-[15.5px] font-medium text-foreground">
+              <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
                 Business
               </span>
-              <span className="text-[13px] text-muted-foreground mt-0.5">
+              <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
                 For companies, organizations, and business accounts.
               </span>
             </div>
           </div>
 
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-foreground">
-            <ArrowRight size={18} strokeWidth={2} />
-          </div>
+          <ChevronRight
+            size={20}
+            strokeWidth={2.2}
+            className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"
+          />
         </button>
       </div>
     </AuthLayout>

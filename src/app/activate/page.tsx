@@ -9,12 +9,18 @@ import {
   Camera,
   Check,
   CheckCircle2,
+  ChevronRight,
+  CreditCard,
   Eye,
   EyeOff,
+  Layers,
   Loader2,
+  ShieldCheck,
   Smartphone,
   Sparkles,
+  User,
   Users,
+  Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +29,12 @@ import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { useSession } from "@/lib/session-store";
 import { ACTORS } from "@/lib/mock-data";
+import {
+  ACTIVATION_PERSONAS,
+  getPersonaByGhanaCard,
+  type ActivationPersonaConfig,
+  type DiscoveredAccount,
+} from "@/lib/activation";
 
 type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "pin";
 
@@ -31,16 +43,30 @@ const RESEND_SECONDS = 30;
 function ActivateContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const personaParam = searchParams.get("persona"); // "joint" | "mobile_sync" | null
-  const isJoint = personaParam === "joint";
-  const isMobileSync = personaParam === "mobile_sync";
+  const personaParam = searchParams.get("persona") as
+    | "single"
+    | "multi"
+    | "joint"
+    | "mobile_sync"
+    | null;
+
+  const [activePersonaKey, setActivePersonaKey] = useState<
+    "single" | "multi" | "joint" | "mobile_sync"
+  >(personaParam && ACTIVATION_PERSONAS[personaParam] ? personaParam : "multi");
+
+  const activePersona: ActivationPersonaConfig = ACTIVATION_PERSONAS[activePersonaKey];
+  const isJoint = activePersona.isJoint ?? false;
+  const isMobileSync = activePersona.mobileAppLinked ?? false;
+  const isMultiAccount = activePersona.accounts.length > 1;
 
   const { signIn, selectProfile, verifyMfa } = useSession();
 
   const [step, setStep] = useState<Step>("ghana_card");
-  const [ghanaCard, setGhanaCard] = useState(
-    isJoint ? "GHA-001234567-9" : isMobileSync ? "GHA-554433221-0" : "GHA-0123456789-0"
+  const [ghanaCard, setGhanaCard] = useState(activePersona.ghanaCard);
+  const [selectedPrimaryAccountId, setSelectedPrimaryAccountId] = useState<string>(
+    activePersona.accounts.find((a) => a.isPrimaryDefault)?.id ?? activePersona.accounts[0]?.id ?? ""
   );
+
   const [selfieTaken, setSelfieTaken] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -56,6 +82,22 @@ function ActivateContent() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
   const [errorMsg, setErrorMsg] = useState("");
+
+  // Sync state when persona parameter or selection changes
+  const applyPersona = (key: "single" | "multi" | "joint" | "mobile_sync") => {
+    setActivePersonaKey(key);
+    const config = ACTIVATION_PERSONAS[key];
+    setGhanaCard(config.ghanaCard);
+    const primaryAcc = config.accounts.find((a) => a.isPrimaryDefault) ?? config.accounts[0];
+    if (primaryAcc) setSelectedPrimaryAccountId(primaryAcc.id);
+    setErrorMsg("");
+  };
+
+  useEffect(() => {
+    if (personaParam && ACTIVATION_PERSONAS[personaParam]) {
+      applyPersona(personaParam);
+    }
+  }, [personaParam]);
 
   // OTP Countdown
   useEffect(() => {
@@ -115,6 +157,15 @@ function ActivateContent() {
       setErrorMsg("Please enter your Ghana Card number");
       return;
     }
+
+    // Auto-detect persona if card matches known demo pattern
+    const detected = getPersonaByGhanaCard(ghanaCard);
+    if (detected.id !== activePersonaKey) {
+      setActivePersonaKey(detected.id);
+      const defaultPrimary = detected.accounts.find((a) => a.isPrimaryDefault) ?? detected.accounts[0];
+      if (defaultPrimary) setSelectedPrimaryAccountId(defaultPrimary.id);
+    }
+
     setErrorMsg("");
     setBusy(true);
     setTimeout(() => {
@@ -168,8 +219,7 @@ function ActivateContent() {
 
     // Finalize onboarding and log user into appropriate dashboard profile
     setTimeout(() => {
-      const targetActorId = isJoint ? "u-joint" : isMobileSync ? "u-abena" : "u-retail";
-      const actor = ACTORS.find((a) => a.id === targetActorId) || ACTORS[0];
+      const actor = ACTORS.find((a) => a.id === activePersona.actorId) || ACTORS[0];
       signIn(actor);
       if (actor.profiles.length > 0) {
         selectProfile(actor.profiles[0]);
@@ -203,6 +253,10 @@ function ActivateContent() {
     }
   }
 
+  const selectedPrimaryAccount =
+    activePersona.accounts.find((a) => a.id === selectedPrimaryAccountId) ??
+    activePersona.accounts[0];
+
   return (
     <AuthLayout
       title={
@@ -211,7 +265,9 @@ function ActivateContent() {
           : step === "selfie"
           ? "Let's take a photo of you"
           : step === "review_details"
-          ? isJoint
+          ? isMultiAccount
+            ? "Choose your primary account"
+            : isJoint
             ? "Verify joint account details"
             : "Review and verify your details"
           : step === "otp"
@@ -226,15 +282,21 @@ function ActivateContent() {
           : step === "selfie"
           ? "Hold your phone at eye level. Make sure you are in a well-lit area."
           : step === "review_details"
-          ? isJoint
-            ? "We matched your details with an active GCB Joint Account mandate."
+          ? isMultiAccount
+            ? "We found multiple accounts linked to your Ghana Card. Select which account to set as your primary operating account."
+            : isJoint
+            ? "We matched your identity with an active GCB Joint Account mandate."
             : isMobileSync
             ? "Existing GCB Mobile App profile matched. Verify your details below."
             : "Confirm that these details match your existing GCB account."
           : step === "otp"
           ? isJoint
-            ? `6-digit code sent to primary number +233 24 *** *192. Co-signatory notification sent to +233 20 *** *410.`
-            : `6-digit code sent via ${otpTarget === "sms" ? "SMS to +233 24 *** *567" : "Email to am•••••@example.com"}. Enter 000000 to see the error state.`
+            ? `6-digit code sent to primary number ${activePersona.phone}. Co-signatory notice dispatched to ${activePersona.coSignatoryPhone}.`
+            : `6-digit code sent via ${
+                otpTarget === "sms"
+                  ? `SMS to ${activePersona.phone}`
+                  : `Email to ${activePersona.email}`
+              }. Enter 000000 to see the error state.`
           : step === "password"
           ? "Your password must be at least 12 characters and include upper, lower, numbers and symbols."
           : "Choose a 4-digit PIN to authorize transfers and payments."
@@ -257,43 +319,43 @@ function ActivateContent() {
         </div>
       }
     >
-      {/* Mobile App Sync Banner (if applicable) */}
-      {isMobileSync && step === "ghana_card" && (
-        <div className="mb-5 flex items-start gap-3.5 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-left">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
-            <Smartphone size={17} />
-          </div>
-          <div>
-            <span className="text-[13.5px] font-medium text-foreground">
-              Mobile App User Detected
-            </span>
-            <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
-              We found your GCB Mobile App account (Abena Osei). Enter your Ghana Card to link your web banking.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Joint Account Banner (if applicable) */}
-      {isJoint && step === "ghana_card" && (
-        <div className="mb-5 flex items-start gap-3.5 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-left">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
-            <Users size={17} />
-          </div>
-          <div>
-            <span className="text-[13.5px] font-medium text-foreground">
-              Joint Account Onboarding
-            </span>
-            <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
-              Activating Internet Banking for Kwame &amp; Efua Mensah (Joint Premier Savings).
-            </p>
-          </div>
-        </div>
-      )}
-
       {/* STEP 1: Ghana Card Input */}
       {step === "ghana_card" && (
         <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-5">
+          {/* Context Banner */}
+          {isMobileSync && (
+            <div className="flex items-start gap-3.5 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-left">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
+                <Smartphone size={17} />
+              </div>
+              <div>
+                <span className="text-[13.5px] font-medium text-foreground">
+                  Mobile App User Detected
+                </span>
+                <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
+                  We found your GCB Mobile App account ({activePersona.holderName}). Enter your Ghana Card to link your web banking.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {isJoint && (
+            <div className="flex items-start gap-3.5 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-left">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
+                <Users size={17} />
+              </div>
+              <div>
+                <span className="text-[13.5px] font-medium text-foreground">
+                  Joint Account Onboarding
+                </span>
+                <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
+                  Activating Internet Banking for {activePersona.holderName} (Joint Mandate: {activePersona.jointMandate}).
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Card Input Field */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="ghana-card" className="text-[13.5px] font-medium text-foreground">
               Ghana Card Number (PIN)
@@ -324,7 +386,7 @@ function ActivateContent() {
             size="lg"
             data-tour="activate-card"
             disabled={busy}
-            className="mt-3.5 h-11 w-full text-[14px]"
+            className="mt-2 h-11 w-full text-[14px]"
           >
             {busy ? (
               <>
@@ -378,81 +440,153 @@ function ActivateContent() {
         </div>
       )}
 
-      {/* STEP 3: Review Details */}
+      {/* STEP 3: Review Details & Primary Account Picker */}
       {step === "review_details" && (
         <div className="flex flex-col gap-5">
-          {isJoint ? (
-            /* Joint Account Details Card */
-            <div className="rounded-2xl border border-border/80 bg-muted/20 p-5 divide-y divide-border/60">
-              <div className="flex items-center justify-between pb-3.5">
-                <span className="text-[13px] text-muted-foreground">Account Holders</span>
-                <span className="text-[14px] font-medium text-foreground">
-                  Kwame Mensah &amp; Efua Mensah
-                </span>
+          {/* Verified Customer Header Info */}
+          <div className="rounded-2xl border border-border/80 bg-muted/20 p-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 items-center justify-center rounded-full bg-primary/15 text-primary">
+                  {isJoint ? <Users size={18} /> : <User size={18} />}
+                </div>
+                <div>
+                  <span className="text-[14.5px] font-medium text-foreground block">
+                    {activePersona.holderName}
+                  </span>
+                  <span className="text-[12px] text-muted-foreground font-mono">
+                    {activePersona.ghanaCard}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center justify-between py-3.5">
-                <span className="text-[13px] text-muted-foreground">Account Type</span>
-                <span className="text-[14px] font-medium text-foreground">
-                  Joint Premier Savings ···· 8844
-                </span>
-              </div>
-              <div className="flex items-center justify-between py-3.5">
-                <span className="text-[13px] text-muted-foreground">Signing Mandate</span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 px-2.5 py-1 text-[11.5px] font-medium text-foreground">
-                  <Users size={12} className="text-primary" />
-                  Both Signatures Required
-                </span>
-              </div>
-              <div className="flex items-center justify-between py-3.5">
-                <span className="text-[13px] text-muted-foreground">Primary Phone (Kwame)</span>
-                <span className="text-[14px] font-medium text-foreground">+233 24 *** *192</span>
-              </div>
-              <div className="flex items-center justify-between pt-3.5">
-                <span className="text-[13px] text-muted-foreground">Co-Signatory (Efua)</span>
-                <span className="text-[14px] font-medium text-foreground">+233 20 *** *410</span>
-              </div>
+
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+                <Check size={12} />
+                NIA Verified
+              </span>
             </div>
-          ) : isMobileSync ? (
-            /* Mobile App Sync Details Card */
-            <div className="rounded-2xl border border-border/80 bg-muted/20 p-5 divide-y divide-border/60">
-              <div className="flex items-center justify-between pb-3.5">
-                <span className="text-[13px] text-muted-foreground">Account Holder</span>
-                <span className="text-[14px] font-medium text-foreground">Abena Osei</span>
-              </div>
-              <div className="flex items-center justify-between py-3.5">
-                <span className="text-[13px] text-muted-foreground">Account</span>
-                <span className="text-[14px] font-medium text-foreground">Personal Current ···· 4821</span>
-              </div>
-              <div className="flex items-center justify-between py-3.5">
-                <span className="text-[13px] text-muted-foreground">Mobile App Status</span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11.5px] font-medium text-emerald-600 dark:text-emerald-400">
-                  <Check size={13} />
-                  Linked on iOS &amp; Android
+          </div>
+
+          {/* CASE A: Multi-Account - Interactive Primary Account Selection (Includes Joint Accounts) */}
+          {isMultiAccount && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[13px] font-medium text-foreground flex items-center gap-1.5">
+                  <Layers size={14} className="text-primary" />
+                  Select Primary Account ({activePersona.accounts.length} found)
+                </span>
+                <span className="text-[11.5px] text-muted-foreground">
+                  Default for transfers &amp; statements
                 </span>
               </div>
-              <div className="flex items-center justify-between pt-3.5">
-                <span className="text-[13px] text-muted-foreground">Mobile Phone</span>
-                <span className="text-[14px] font-medium text-foreground">+233 24 *** *234</span>
+
+              <div className="space-y-2.5" data-tour="activate-account-picker">
+                {activePersona.accounts.map((acc) => {
+                  const isSelected = acc.id === selectedPrimaryAccountId;
+                  return (
+                    <button
+                      key={acc.id}
+                      type="button"
+                      onClick={() => setSelectedPrimaryAccountId(acc.id)}
+                      className={`group w-full flex items-center justify-between rounded-2xl border p-4 text-left transition-all duration-150 cursor-pointer active:scale-[0.99] ${
+                        isSelected
+                          ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/40"
+                          : "border-border/80 bg-card hover:border-primary/40 hover:bg-muted/30"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3.5 min-w-0">
+                        {/* Radio circle */}
+                        <div
+                          className={`flex size-5 shrink-0 items-center justify-center rounded-full border transition-all ${
+                            isSelected
+                              ? "border-primary bg-primary text-primary-foreground"
+                              : "border-muted-foreground/40 group-hover:border-primary/60"
+                          }`}
+                        >
+                          {isSelected && <div className="size-2 rounded-full bg-primary-foreground" />}
+                        </div>
+
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-[14px] font-medium text-foreground truncate">
+                              {acc.name}
+                            </span>
+                            <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10.5px] text-muted-foreground shrink-0">
+                              {acc.type}
+                            </span>
+                            {acc.isJoint && (
+                              <span className="inline-flex items-center gap-1 rounded-md bg-primary/15 px-1.5 py-0.5 text-[10.5px] font-medium text-foreground shrink-0">
+                                <Users size={11} className="text-primary" />
+                                Joint
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[12.5px] text-muted-foreground font-mono mt-0.5 block">
+                            •••• {acc.number.slice(-4)}
+                            {acc.isJoint && acc.jointHolders && ` · ${acc.jointHolders.join(" & ")}`}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="text-right shrink-0 ml-3">
+                        <span className="text-[13.5px] font-medium text-foreground tabular">
+                          {acc.currency} {acc.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                        </span>
+                        {isSelected ? (
+                          <span className="mt-1 block rounded-full bg-primary px-2 py-0.5 text-[10px] font-medium text-primary-foreground text-center">
+                            Primary Account
+                          </span>
+                        ) : (
+                          <span className="mt-1 block text-[11px] text-muted-foreground text-right">
+                            Click to set primary
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
+
+              {/* Dynamic Mandate Disclosure if selected account is Joint */}
+              {selectedPrimaryAccount.isJoint && (
+                <div className="mt-2 rounded-2xl border border-primary/20 bg-primary/5 p-3.5 text-left animate-in fade-in duration-200">
+                  <div className="flex items-start gap-2.5">
+                    <Users size={16} className="text-primary mt-0.5 shrink-0" />
+                    <div>
+                      <span className="text-[13px] font-medium text-foreground block">
+                        Joint Mandate: {selectedPrimaryAccount.mandate || "Both Signatures Required"}
+                      </span>
+                      <p className="text-[12px] text-muted-foreground mt-0.5 leading-relaxed">
+                        Security and notification alerts will be sent to both primary signatory Kwame and co-signatory Efua upon activation.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          ) : (
-            /* Standard Individual Account Details Card */
+          )}
+
+          {/* CASE B: Single Account Display */}
+          {!isMultiAccount && (
             <div className="rounded-2xl border border-border/80 bg-muted/20 p-5 divide-y divide-border/60">
               <div className="flex items-center justify-between pb-3.5">
-                <span className="text-[13px] text-muted-foreground">Name</span>
-                <span className="text-[14px] font-medium text-foreground">Ama Serwaa</span>
+                <span className="text-[13px] text-muted-foreground">Primary Account</span>
+                <div className="text-right">
+                  <span className="text-[14px] font-medium text-foreground block">
+                    {selectedPrimaryAccount.name}
+                  </span>
+                  <span className="text-[12.5px] text-muted-foreground font-mono">
+                    •••• {selectedPrimaryAccount.number.slice(-4)}
+                  </span>
+                </div>
               </div>
               <div className="flex items-center justify-between py-3.5">
-                <span className="text-[13px] text-muted-foreground">Account</span>
-                <span className="text-[14px] font-medium text-foreground">Reserve Savings ···· 5566</span>
-              </div>
-              <div className="flex items-center justify-between py-3.5">
-                <span className="text-[13px] text-muted-foreground">Mobile</span>
-                <span className="text-[14px] font-medium text-foreground">+233 24 *** *567</span>
+                <span className="text-[13px] text-muted-foreground">Registered Phone</span>
+                <span className="text-[14px] font-medium text-foreground">{activePersona.phone}</span>
               </div>
               <div className="flex items-center justify-between pt-3.5">
-                <span className="text-[13px] text-muted-foreground">Email</span>
-                <span className="text-[14px] font-medium text-foreground">am•••••@example.com</span>
+                <span className="text-[13px] text-muted-foreground">Registered Email</span>
+                <span className="text-[14px] font-medium text-foreground">{activePersona.email}</span>
               </div>
             </div>
           )}
@@ -460,6 +594,8 @@ function ActivateContent() {
           <p className="text-center text-[12.5px] leading-relaxed text-muted-foreground">
             {isJoint
               ? "Both account holders will receive security confirmation notices upon completing activation."
+              : isMultiAccount
+              ? "All your accounts will be accessible on Internet Banking. You can change your primary account anytime in Settings."
               : "We have partially masked your contact details for privacy and security."}
           </p>
 
@@ -470,7 +606,7 @@ function ActivateContent() {
             data-tour="activate-review"
             onClick={handleVerifyDetails}
             disabled={busy}
-            className="mt-3.5 h-11 w-full text-[14px]"
+            className="mt-2 h-11 w-full text-[14px]"
           >
             {busy ? (
               <>
@@ -517,7 +653,7 @@ function ActivateContent() {
 
           {isJoint && (
             <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3.5 text-[12.5px] text-muted-foreground">
-              <span className="font-medium text-foreground">Joint mandate notice:</span> An alert has also been sent to co-holder Efua (+233 20 *** *410) confirming this activation request.
+              <span className="font-medium text-foreground">Joint mandate notice:</span> An alert has also been sent to co-holder Efua ({activePersona.coSignatoryPhone}) confirming this activation request.
             </div>
           )}
 
@@ -741,3 +877,4 @@ export default function ActivatePage() {
     </Suspense>
   );
 }
+

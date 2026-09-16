@@ -10,7 +10,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, Building2, ArrowLeftRight, Ship } from "lucide-react";
+import { AlertTriangle, ChevronRight, Building2, ArrowLeftRight, Ship } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import StubNotice from "@/components/StubNotice";
 import { SummaryCard } from "@/components/SummaryCard";
@@ -111,7 +111,7 @@ function QueueLink({
   return (
     <Link
       href={href}
-      className="flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3 transition-colors hover:border-primary/40 hover:bg-muted/40 active:scale-[0.99] transition-transform"
+      className="group flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3 transition-colors hover:border-primary/40 hover:bg-muted/40 active:scale-[0.99] transition-transform"
     >
       <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
         {icon}
@@ -120,7 +120,7 @@ function QueueLink({
         <span className="text-[13.5px] text-foreground">{label}</span>
         <span className="text-[12px] text-muted-foreground">{hint}</span>
       </span>
-      <ArrowRight size={15} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+      <ChevronRight size={17} strokeWidth={2} aria-hidden="true" className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
     </Link>
   );
 }
