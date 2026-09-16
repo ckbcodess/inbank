@@ -678,7 +678,7 @@ function ReviewSection({
         <button
           type="button"
           onClick={onEdit}
-          className="flex items-center gap-1.5 text-[12.5px] font-medium text-primary underline-offset-4 hover:underline cursor-pointer"
+          className="flex items-center gap-1.5 text-[12.5px] font-medium text-foreground underline underline-offset-4 hover:text-foreground/80 cursor-pointer"
         >
           <Pencil size={13} strokeWidth={1.9} aria-hidden="true" />
           Edit

@@ -530,7 +530,7 @@ export function MySpendsWidget({
               <button
                 type="button"
                 onClick={() => setExpandedOther(false)}
-                className="text-[12.5px] font-medium text-primary hover:underline cursor-pointer"
+                className="text-[12.5px] font-medium text-foreground hover:underline cursor-pointer"
               >
                 ← Back to Primary List
               </button>
@@ -603,7 +603,7 @@ export function MySpendsWidget({
               className="flex items-center justify-between p-4 sm:px-5 hover:bg-muted/40 transition-colors group"
             >
               <div className="flex flex-col min-w-0">
-                <span className="text-[14px] font-medium text-foreground truncate group-hover:text-primary transition-colors">
+                <span className="text-[14px] font-medium text-foreground truncate transition-colors">
                   {t.description}
                 </span>
                 <span className="text-[12.5px] text-muted-foreground mt-0.5 tabular-nums numorainput">

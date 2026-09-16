@@ -70,7 +70,7 @@ function LoginForm() {
             <Link
               href="/get-started"
               data-tour="login-get-started"
-              className="font-medium text-primary underline-offset-4 hover:underline active:scale-[0.96]"
+              className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80 active:scale-[0.96]"
             >
               Register
             </Link>

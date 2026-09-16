@@ -43,7 +43,7 @@ export default function RootRoutingPage() {
             </div>
           </div>
 
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-primary">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-foreground">
             <ArrowRight size={18} strokeWidth={2} />
           </div>
         </button>
@@ -69,7 +69,7 @@ export default function RootRoutingPage() {
             </div>
           </div>
 
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-primary">
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-foreground">
             <ArrowRight size={18} strokeWidth={2} />
           </div>
         </button>

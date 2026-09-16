@@ -37,6 +37,11 @@ This file is automatically loaded by Antigravity in every session and chat withi
   - Smooth digit-morphing transitions (`TextMorph` from `torph/react` with spring easing `stiffness: 400, damping: 30`) when values change.
   - Tabular numbers (`tabular-nums .numorainput`) to prevent layout jumpiness.
 
+### G. Strict Contrast Rule: NEVER Amber/Primary Text on Light Surfaces
+- **Zero amber text on white/light cards**: The brand amber (`#fdc307` / `text-primary` / `text-amber-400/500`) has high luminance and fails WCAG contrast rules on light backgrounds.
+- **Amber is exclusively for filled buttons/badges with dark text** (`bg-primary text-primary-foreground`), decorative icon containers (`bg-primary/15`), or dark-mode accent strokes.
+- **Text links, triggers, and labels on cards must use `text-foreground font-medium hover:underline` or `text-muted-foreground hover:text-foreground`** — NEVER `text-primary`.
+
 ---
 
 ## 2. Core Architectural & Codebase Standards

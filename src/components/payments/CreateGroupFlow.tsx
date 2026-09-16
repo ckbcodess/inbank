@@ -345,7 +345,7 @@ export default function CreateGroupFlow({
               <button
                 type="button"
                 onClick={() => setShowNewContact(!showNewContact)}
-                className="text-[13px] text-primary hover:underline cursor-pointer flex items-center gap-1 font-normal transition-colors"
+                className="text-[13px] text-foreground hover:underline cursor-pointer flex items-center gap-1 font-medium transition-colors"
               >
                 <Plus size={14} strokeWidth={2} /> New contact
               </button>

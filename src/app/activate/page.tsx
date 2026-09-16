@@ -360,8 +360,8 @@ function ActivateContent() {
               </div>
               <div className="flex items-center justify-between py-3.5">
                 <span className="text-[13px] text-muted-foreground">Signing Mandate</span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2.5 py-1 text-[11.5px] font-medium text-primary">
-                  <Users size={12} />
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/20 px-2.5 py-1 text-[11.5px] font-medium text-foreground">
+                  <Users size={12} className="text-primary" />
                   Both Signatures Required
                 </span>
               </div>
@@ -484,7 +484,7 @@ function ActivateContent() {
               <button
                 type="button"
                 onClick={() => setCountdown(RESEND_SECONDS)}
-                className="font-medium text-primary hover:underline cursor-pointer"
+                className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80 cursor-pointer"
               >
                 Resend code
               </button>

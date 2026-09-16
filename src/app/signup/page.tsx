@@ -356,7 +356,7 @@ function SignupContent() {
                   setCountdown(RESEND_SECONDS);
                   setErrorMsg("");
                 }}
-                className="font-medium text-primary hover:underline cursor-pointer"
+                className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80 cursor-pointer"
               >
                 Resend code now
               </button>
