@@ -111,23 +111,23 @@ export default function GetStartedPage() {
               onClick={handleChooseExisting}
               className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
-              <div className="flex items-center gap-4">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <UserCheck size={22} strokeWidth={2.4} />
+              <div className="flex items-center gap-3.5">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                  <UserCheck size={18} strokeWidth={2.2} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[16px] sm:text-[17px] font-medium text-foreground tracking-[-0.01em]">
+                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
                     GCB Account Holder
                   </span>
-                  <span className="text-[13.5px] sm:text-[14px] text-muted-foreground leading-snug mt-0.5">
+                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
                     Link your existing GCB account to start transacting instantly.
                   </span>
                 </div>
               </div>
 
               <ChevronRight
-                size={22}
-                strokeWidth={2.4}
+                size={20}
+                strokeWidth={2.2}
                 className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"
               />
             </button>
@@ -139,23 +139,23 @@ export default function GetStartedPage() {
               onClick={handleChooseNew}
               className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
-              <div className="flex items-center gap-4">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <Plus size={24} strokeWidth={2.6} />
+              <div className="flex items-center gap-3.5">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                  <Plus size={19} strokeWidth={2.4} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[16px] sm:text-[17px] font-medium text-foreground tracking-[-0.01em]">
+                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
                     New to GCB
                   </span>
-                  <span className="text-[13.5px] sm:text-[14px] text-muted-foreground leading-snug mt-0.5">
+                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
                     Open an instant account and fund it with your wallet or card.
                   </span>
                 </div>
               </div>
 
               <ChevronRight
-                size={22}
-                strokeWidth={2.4}
+                size={20}
+                strokeWidth={2.2}
                 className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"
               />
             </button>
@@ -169,9 +169,9 @@ export default function GetStartedPage() {
               onClick={handleChooseCoos}
               className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
-              <div className="flex items-center gap-4">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                  <Landmark size={22} strokeWidth={2} />
+              <div className="flex items-center gap-3.5">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                  <Landmark size={18} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
@@ -201,9 +201,9 @@ export default function GetStartedPage() {
               onClick={handleChooseWalletCard}
               className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
-              <div className="flex items-center gap-4">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                  <CreditCard size={22} strokeWidth={2} />
+              <div className="flex items-center gap-3.5">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                  <CreditCard size={18} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[15px] font-medium text-foreground">
