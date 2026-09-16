@@ -125,10 +125,10 @@ export default function PersonaFlowSwitcher() {
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="flex h-9 items-center gap-2 rounded-full border border-amber-500/40 bg-card/95 px-3.5 text-[12.5px] font-semibold text-foreground shadow-lg backdrop-blur-md transition-all hover:scale-105 hover:border-amber-500 active:scale-[0.96] cursor-pointer"
+          className="flex h-9 items-center gap-2 rounded-full border border-border/80 bg-card/95 px-3.5 text-[12px] font-medium text-foreground shadow-md backdrop-blur-md transition-all hover:border-primary/50 active:scale-[0.96] cursor-pointer"
         >
-          <div className="flex size-5 items-center justify-center rounded-full bg-[#FEF3D6] text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200]">
-            <Sparkles size={12} />
+          <div className="flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
+            <Sparkles size={11} strokeWidth={2.2} />
           </div>
           <span>Persona &amp; Flow Switcher</span>
         </button>

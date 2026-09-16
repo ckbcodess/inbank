@@ -3,14 +3,13 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertCircle, Eye, EyeOff, Loader2, Sparkles, User, Users, Smartphone, Laptop } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { useSession } from "@/lib/session-store";
 import { ACTORS, findActorByEmail } from "@/lib/mock-data";
-import { ROLE_LABEL } from "@/lib/roles";
 
 type LoginState = "idle" | "submitting" | "error";
 
@@ -24,7 +23,6 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [state, setState] = useState<LoginState>("idle");
-  const [showDemoMenu, setShowDemoMenu] = useState(false);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,16 +44,6 @@ function LoginForm() {
         router.push("/mfa");
       }
     }, 600);
-  }
-
-  function handleQuickLogin(actorId: string, isNewDevice = false) {
-    const actor = ACTORS.find((a) => a.id === actorId) || ACTORS[0];
-    signIn(actor);
-    if (isNewDevice) {
-      router.push("/mfa?device=new");
-    } else {
-      router.push("/mfa");
-    }
   }
 
   return (
@@ -164,123 +152,6 @@ function LoginForm() {
           )}
         </Button>
       </form>
-
-      {/* Floating Demo Personas Switcher */}
-      <div className="fixed bottom-5 right-5 z-40 hidden sm:block">
-        <button
-          type="button"
-          onClick={() => setShowDemoMenu(!showDemoMenu)}
-          className="flex items-center gap-1.5 rounded-full border border-border/80 bg-card/95 px-3.5 py-1.5 text-[12px] font-medium text-muted-foreground shadow-md backdrop-blur-md transition-all hover:text-foreground hover:border-primary/50 active:scale-95 cursor-pointer"
-        >
-          {showDemoMenu ? "Hide Demo Personas" : "⚡ Switch Demo Personas"}
-        </button>
-
-        {showDemoMenu && (
-          <div className="absolute bottom-full right-0 mb-2 w-80 rounded-2xl border border-border bg-card/95 p-4 shadow-xl backdrop-blur-xl text-left animate-in fade-in slide-in-from-bottom-2 duration-200">
-            <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-              Select Persona to Test Flow
-            </p>
-            <div className="flex flex-col gap-1.5 max-h-[360px] overflow-y-auto pr-1">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin("u-retail")}
-                className="flex items-center justify-between rounded-xl p-2 text-left text-[12.5px] transition-colors hover:bg-muted/70 active:scale-[0.96] cursor-pointer"
-              >
-                <div className="flex items-center gap-2">
-                  <User size={15} className="text-primary" />
-                  <div>
-                    <span className="font-medium text-foreground">Ama Serwaa</span>
-                    <p className="text-[11px] text-muted-foreground">Personal / Card &amp; Wallet Customer</p>
-                  </div>
-                </div>
-                <span className="text-[11px] text-muted-foreground">Log in →</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin("u-joint")}
-                className="flex items-center justify-between rounded-xl p-2 text-left text-[12.5px] transition-colors hover:bg-muted/70 active:scale-[0.96] cursor-pointer"
-              >
-                <div className="flex items-center gap-2">
-                  <Users size={15} className="text-primary" />
-                  <div>
-                    <span className="font-medium text-foreground">Kwame Mensah</span>
-                    <p className="text-[11px] text-muted-foreground">Joint: Both to Sign Mandate (with Efua)</p>
-                  </div>
-                </div>
-                <span className="text-[11px] text-muted-foreground">Log in →</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin("u-joint-either")}
-                className="flex items-center justify-between rounded-xl p-2 text-left text-[12.5px] transition-colors hover:bg-muted/70 active:scale-[0.96] cursor-pointer"
-              >
-                <div className="flex items-center gap-2">
-                  <Users size={15} className="text-emerald-500" />
-                  <div>
-                    <span className="font-medium text-foreground">Kojo Appiah</span>
-                    <p className="text-[11px] text-muted-foreground">Joint: Either to Sign Mandate (with Akosua)</p>
-                  </div>
-                </div>
-                <span className="text-[11px] text-muted-foreground">Log in →</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin("u-abena")}
-                className="flex items-center justify-between rounded-xl p-2 text-left text-[12.5px] transition-colors hover:bg-muted/70 active:scale-[0.96] cursor-pointer"
-              >
-                <div className="flex items-center gap-2">
-                  <Smartphone size={15} className="text-primary" />
-                  <div>
-                    <span className="font-medium text-foreground">Abena Osei</span>
-                    <p className="text-[11px] text-muted-foreground">Mobile App User → Web Sync</p>
-                  </div>
-                </div>
-                <span className="text-[11px] text-muted-foreground">Log in →</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin("u-yaw", true)}
-                className="flex items-center justify-between rounded-xl p-2 text-left text-[12.5px] transition-colors hover:bg-muted/70 active:scale-[0.96] cursor-pointer"
-              >
-                <div className="flex items-center gap-2">
-                  <Laptop size={15} className="text-primary" />
-                  <div>
-                    <span className="font-medium text-foreground">Yaw Oppong</span>
-                    <p className="text-[11px] text-muted-foreground">New Device Sign-in Challenge</p>
-                  </div>
-                </div>
-                <span className="text-[11px] text-muted-foreground">Challenge →</span>
-              </button>
-
-              <div className="border-t border-border/60 my-1 pt-1.5">
-                <p className="text-[11px] font-medium text-muted-foreground uppercase px-1 mb-1">
-                  Corporate Personas
-                </p>
-                <button
-                  type="button"
-                  onClick={() => handleQuickLogin("u-dual")}
-                  className="flex items-center justify-between w-full rounded-xl p-2 text-left text-[12px] transition-colors hover:bg-muted/70 active:scale-[0.96] cursor-pointer"
-                >
-                  <span className="font-medium text-foreground">Kwame Boateng (Corporate Maker)</span>
-                  <span className="text-[11px] text-muted-foreground">Adinkra Ltd</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickLogin("u-approver")}
-                  className="flex items-center justify-between w-full rounded-xl p-2 text-left text-[12px] transition-colors hover:bg-muted/70 active:scale-[0.96] cursor-pointer"
-                >
-                  <span className="font-medium text-foreground">Efua Mensah (Corporate Approver)</span>
-                  <span className="text-[11px] text-muted-foreground">Adinkra Ltd</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
     </AuthLayout>
   );
 }
