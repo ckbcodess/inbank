@@ -51,7 +51,9 @@ function ActivateContent() {
 
   // Password & PIN State
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -134,14 +136,21 @@ function ActivateContent() {
 
   function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Demo: any password proceeds. Enter 00000 to see the error state (same
-    // convention as the MFA screen).
-    if (password === "00000") {
-      setErrorMsg("That password can’t be used. Choose another.");
+    if (!password) {
+      setErrorMsg("Please enter a password.");
       return;
     }
-    if (!password) {
-      setErrorMsg("Please enter a password");
+    // Demo: 00000 or 000000 triggers error state
+    if (password === "00000" || password === "000000") {
+      setErrorMsg("That password cannot be used. Choose another.");
+      return;
+    }
+    if (!confirmPassword) {
+      setErrorMsg("Please confirm your password.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setErrorMsg("Passwords do not match.");
       return;
     }
     setErrorMsg("");
@@ -177,6 +186,8 @@ function ActivateContent() {
       setPinDigits(["", "", "", ""]);
       setStep("password");
     } else if (step === "password") {
+      setPassword("");
+      setConfirmPassword("");
       setDigits(Array(OTP_LENGTH).fill(""));
       setCountdown(RESEND_SECONDS);
       setStep("otp");
@@ -565,19 +576,24 @@ function ActivateContent() {
       {/* STEP 5: Password Creation */}
       {step === "password" && (
         <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-5">
+          {/* Password Field */}
           <div className="flex flex-col gap-2">
-            <Label htmlFor="create-pass" className="text-[13.5px] font-medium text-foreground">
-              Create password
+            <Label htmlFor="create-pass" className="text-[13px] font-medium text-foreground">
+              Password
             </Label>
             <div className="relative">
               <Input
                 id="create-pass"
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (errorMsg) setErrorMsg("");
+                }}
                 placeholder="Choose a strong password"
-                className="h-11 pr-11 text-[14.5px]"
+                className="h-11 pr-11 text-[14px]"
                 autoFocus
+                required
               />
               <button
                 type="button"
@@ -590,8 +606,37 @@ function ActivateContent() {
             </div>
           </div>
 
+          {/* Confirm Password Field */}
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="confirm-pass" className="text-[13px] font-medium text-foreground">
+              Confirm password
+            </Label>
+            <div className="relative">
+              <Input
+                id="confirm-pass"
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  if (errorMsg) setErrorMsg("");
+                }}
+                placeholder="Re-enter your password"
+                className="h-11 pr-11 text-[14px]"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                className="absolute right-1.5 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+              >
+                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+          </div>
+
           <p className="text-[12.5px] text-muted-foreground">
-            Demo — any password works. Enter{" "}
+            Demo — any matching password works. Enter{" "}
             <span className="tabular font-mono text-foreground">00000</span> to see the error state.
           </p>
 
@@ -621,8 +666,11 @@ function ActivateContent() {
           </div>
 
           {errorMsg && (
-            <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-[13px] text-destructive">
-              <AlertCircle size={16} className="mt-0.5 shrink-0" />
+            <div
+              role="alert"
+              className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3.5 text-[13px] text-destructive"
+            >
+              <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
@@ -632,7 +680,7 @@ function ActivateContent() {
             variant="default"
             size="lg"
             data-tour="activate-password"
-            className="mt-3.5 h-11 w-full text-[14px]"
+            className="mt-2 h-11 w-full text-[14px]"
           >
             Save password and continue
           </Button>
