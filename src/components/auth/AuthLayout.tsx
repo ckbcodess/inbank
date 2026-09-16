@@ -4,10 +4,13 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import AuthHeader from "./AuthHeader";
 import { GCBLogo } from "@/components/ui/GCBLogo";
+import { cn } from "@/lib/utils";
 
 interface AuthLayoutProps {
   title?: string;
+  titleClassName?: string;
   description?: ReactNode;
+  descriptionClassName?: string;
   children: ReactNode;
   /** Optional icon component */
   icon?: React.ComponentType<{
@@ -31,7 +34,9 @@ interface AuthLayoutProps {
 
 export default function AuthLayout({
   title,
+  titleClassName,
   description,
+  descriptionClassName,
   children,
   icon: Icon,
   footer,
@@ -43,7 +48,7 @@ export default function AuthLayout({
     width === "wide"
       ? "max-w-[620px]"
       : width === "compact"
-      ? "max-w-[480px]"
+      ? "max-w-[500px]"
       : "max-w-[540px]";
 
   return (
@@ -112,12 +117,22 @@ export default function AuthLayout({
             {(title || description) && (
               <div className="mb-7 text-center">
                 {title && (
-                  <h1 className="text-[21px] sm:text-[23px] font-medium tracking-[-0.015em] text-foreground leading-snug">
+                  <h1
+                    className={cn(
+                      "text-[20px] sm:text-[22px] font-medium tracking-[-0.015em] text-foreground leading-snug",
+                      titleClassName
+                    )}
+                  >
                     {title}
                   </h1>
                 )}
                 {description && (
-                  <div className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground max-w-[420px] mx-auto">
+                  <div
+                    className={cn(
+                      "mt-2 text-[13.5px] leading-relaxed text-muted-foreground max-w-[420px] mx-auto",
+                      descriptionClassName
+                    )}
+                  >
                     {description}
                   </div>
                 )}
