@@ -166,6 +166,23 @@ function ActivateContent() {
     }, 800);
   }
 
+  function handleBackStep() {
+    setErrorMsg("");
+    if (step === "pin") {
+      setStep("password");
+    } else if (step === "password") {
+      setStep("otp");
+    } else if (step === "otp") {
+      setStep("review_details");
+    } else if (step === "review_details") {
+      setStep("selfie");
+    } else if (step === "selfie") {
+      setStep("ghana_card");
+    } else {
+      router.push("/get-started");
+    }
+  }
+
   return (
     <AuthLayout
       title={
@@ -209,13 +226,14 @@ function ActivateContent() {
       width={step === "review_details" ? "wide" : "compact"}
       footer={
         <div className="flex justify-center">
-          <Link
-            href="/get-started"
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-[0.96]"
+          <button
+            type="button"
+            onClick={handleBackStep}
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-[0.96] cursor-pointer"
           >
             <ArrowLeft size={15} strokeWidth={2} />
             Back to previous step
-          </Link>
+          </button>
         </div>
       }
     >

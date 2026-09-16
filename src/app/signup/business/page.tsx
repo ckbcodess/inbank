@@ -154,6 +154,18 @@ export default function BusinessSignupPage() {
     }, 900);
   }
 
+  function handleBackStep() {
+    if (step === "review") {
+      setStep("documents");
+    } else if (step === "documents") {
+      setStep("signatories");
+    } else if (step === "signatories") {
+      setStep("contact");
+    } else if (step === "contact") {
+      setStep("company");
+    }
+  }
+
   const headings = resolveHeadings(step, variant);
   const stepIndex = ["company", "contact", "signatories", "documents", "review"].indexOf(step);
 
@@ -174,15 +186,26 @@ export default function BusinessSignupPage() {
         description={headings.description}
         width="wide"
         footer={
-          step === "submitted" || (step === "company" && variant === "existingCustomer") ? null : (
+          step === "submitted" || (step === "company" && variant === "existingCustomer") ? null : step === "company" ? (
             <div className="mt-5 text-center">
               <Link
                 href="/login"
-                className="inline-flex items-center gap-1 text-[12px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
-                <ArrowLeft size={13} strokeWidth={1.9} aria-hidden="true" />
+                <ArrowLeft size={15} strokeWidth={2} aria-hidden="true" />
                 Back to sign in
               </Link>
+            </div>
+          ) : (
+            <div className="mt-5 text-center">
+              <button
+                type="button"
+                onClick={handleBackStep}
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+              >
+                <ArrowLeft size={15} strokeWidth={2} aria-hidden="true" />
+                Back to previous step
+              </button>
             </div>
           )
         }
