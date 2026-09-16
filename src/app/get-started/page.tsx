@@ -78,7 +78,7 @@ export default function GetStartedPage() {
           current: screen,
           total: 8,
         }}
-        width="wide"
+        width="compact"
         footer={
           <div className="flex justify-center">
             {screen === 1 ? (
@@ -120,7 +120,7 @@ export default function GetStartedPage() {
                     GCB Account Holder
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
-                    Link your existing GCB account to start transacting instantly.
+                    Link your existing account to get started.
                   </span>
                 </div>
               </div>
@@ -148,7 +148,7 @@ export default function GetStartedPage() {
                     New to GCB
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
-                    Open an instant account and fund it with your wallet or card.
+                    Open an account with your wallet or card.
                   </span>
                 </div>
               </div>
