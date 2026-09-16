@@ -331,22 +331,23 @@ function SignupContent() {
 
       {/* STEP 4: OTP Verification */}
       {step === "otp" && (
-        <form onSubmit={handleOtpSubmit} className="flex flex-col gap-5">
-          <div className="my-2 flex justify-center">
+        <form onSubmit={handleOtpSubmit} className="flex flex-col items-center gap-5">
+          <div className="w-full">
             <OtpInput value={digits} onChange={setDigits} />
           </div>
 
           {errorMsg && (
-            <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-[13px] text-destructive">
+            <div className="w-full flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-[13px] text-destructive">
               <AlertCircle size={16} className="mt-0.5 shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
 
-          <div className="flex flex-col items-center gap-2 text-[13px]">
+          {/* Centered Resend Code Countdown */}
+          <div className="text-center text-[13px] text-muted-foreground">
             {countdown > 0 ? (
-              <span className="text-muted-foreground">
-                Resend code in <strong className="text-foreground">{countdown}s</strong>
+              <span>
+                Resend code in <strong className="font-medium text-foreground tabular">{countdown}s</strong>
               </span>
             ) : (
               <button
@@ -360,19 +361,6 @@ function SignupContent() {
                 Resend code now
               </button>
             )}
-
-            <button
-              type="button"
-              onClick={() => {
-                setOtpTarget(otpTarget === "sms" ? "email" : "sms");
-                setCountdown(RESEND_SECONDS);
-              }}
-              className="text-muted-foreground hover:text-foreground underline underline-offset-4 cursor-pointer"
-            >
-              {otpTarget === "sms"
-                ? "Send it to ts•••••@example.com instead"
-                : "Send it to +233 24 *** *567 instead"}
-            </button>
           </div>
 
           <Button
@@ -381,7 +369,7 @@ function SignupContent() {
             size="lg"
             data-tour="signup-otp"
             disabled={busy}
-            className="mt-3.5 h-11 w-full text-[14px]"
+            className="mt-1 h-11 w-full text-[14px]"
           >
             {busy ? (
               <>
@@ -392,6 +380,20 @@ function SignupContent() {
               "Proceed"
             )}
           </Button>
+
+          {/* Alternative channel below primary button */}
+          <button
+            type="button"
+            onClick={() => {
+              setOtpTarget(otpTarget === "sms" ? "email" : "sms");
+              setCountdown(RESEND_SECONDS);
+            }}
+            className="text-center text-[13px] text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
+          >
+            {otpTarget === "sms"
+              ? "Send it to ts•••••@example.com instead"
+              : "Send it to +233 24 *** *567 instead"}
+          </button>
         </form>
       )}
 

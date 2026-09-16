@@ -474,28 +474,21 @@ function ActivateContent() {
             </div>
           )}
 
-          <div className="flex items-center justify-between w-full text-[13px] text-muted-foreground px-1">
-            <span>
-              {countdown > 0 ? (
-                `Resend code in ${countdown}s`
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setCountdown(RESEND_SECONDS)}
-                  className="font-medium text-primary hover:underline cursor-pointer"
-                >
-                  Resend code
-                </button>
-              )}
-            </span>
-
-            <button
-              type="button"
-              onClick={() => setOtpTarget(otpTarget === "sms" ? "email" : "sms")}
-              className="text-foreground hover:underline cursor-pointer"
-            >
-              Send to {otpTarget === "sms" ? "email instead" : "SMS instead"}
-            </button>
+          {/* Centered Resend Code Countdown */}
+          <div className="text-center text-[13px] text-muted-foreground">
+            {countdown > 0 ? (
+              <span>
+                Resend code in <strong className="font-medium text-foreground tabular">{countdown}s</strong>
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setCountdown(RESEND_SECONDS)}
+                className="font-medium text-primary hover:underline cursor-pointer"
+              >
+                Resend code
+              </button>
+            )}
           </div>
 
           <Button
@@ -504,7 +497,7 @@ function ActivateContent() {
             size="lg"
             data-tour="activate-otp"
             disabled={busy || digits.join("").length < OTP_LENGTH}
-            className="mt-3.5 h-11 w-full text-[14px]"
+            className="mt-1 h-11 w-full text-[14px]"
           >
             {busy ? (
               <>
@@ -515,6 +508,15 @@ function ActivateContent() {
               "Verify code"
             )}
           </Button>
+
+          {/* Alternative channel below primary button */}
+          <button
+            type="button"
+            onClick={() => setOtpTarget(otpTarget === "sms" ? "email" : "sms")}
+            className="text-center text-[13px] text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
+          >
+            Send to {otpTarget === "sms" ? "email instead" : "SMS instead"}
+          </button>
         </form>
       )}
 
