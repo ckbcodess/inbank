@@ -66,8 +66,8 @@ export default function AuthLayout({
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
       </div>
 
-      {/* Main Container - Top-anchored to guarantee zero layout shifts across steps and flows */}
-      <main className="relative z-10 flex flex-1 w-full justify-center px-4 sm:px-6 pt-24 pb-12 sm:pt-28 sm:pb-16 items-start">
+      {/* Main Container - Vertically and horizontally centered in available viewport */}
+      <main className="relative z-10 flex min-h-[calc(100vh-4rem)] w-full items-center justify-center px-4 sm:px-6 py-8 mt-16">
         <div className={`w-full ${maxWidthClass}`}>
           {/* Central Card with generous breathing room */}
           <div className="rounded-3xl border border-border/80 bg-card/95 p-7 sm:p-9 lg:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl">
