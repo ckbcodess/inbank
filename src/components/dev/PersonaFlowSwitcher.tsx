@@ -27,6 +27,14 @@ import { TOURS, type Tour, type TourIcon } from "@/lib/tours";
 import { ACTORS } from "@/lib/mock-data";
 import type { Actor, Profile } from "@/lib/roles";
 
+const TOUR_ICONS: Record<TourIcon, React.ComponentType<{ size?: number; className?: string }>> = {
+  userCheck: UserCheck,
+  laptop: Laptop,
+  landmark: Building2,
+  wallet: Wallet,
+  creditCard: CreditCard,
+};
+
 interface DemoPersonaQuickPick {
   id: string;
   name: string;
