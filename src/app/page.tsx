@@ -19,6 +19,7 @@ export default function RootRoutingPage() {
     <AuthLayout
       title="How do you prefer using Internet Banking?"
       titleClassName="text-[21px] sm:text-[23.5px] sm:whitespace-nowrap"
+      headerClassName="mb-16"
       width="default"
     >
       <div className="flex flex-col gap-4 sm:gap-4.5">

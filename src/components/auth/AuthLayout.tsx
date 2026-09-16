@@ -11,6 +11,7 @@ interface AuthLayoutProps {
   titleClassName?: string;
   description?: ReactNode;
   descriptionClassName?: string;
+  headerClassName?: string;
   children: ReactNode;
   /** Optional icon component */
   icon?: React.ComponentType<{
@@ -37,6 +38,7 @@ export default function AuthLayout({
   titleClassName,
   description,
   descriptionClassName,
+  headerClassName,
   children,
   icon: Icon,
   footer,
@@ -115,7 +117,7 @@ export default function AuthLayout({
 
             {/* Title & Description */}
             {(title || description) && (
-              <div className="mb-7 text-center">
+              <div className={cn("mb-7 text-center", headerClassName)}>
                 {title && (
                   <h1
                     className={cn(
