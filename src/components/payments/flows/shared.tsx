@@ -973,7 +973,7 @@ export function VerifiedAccountBadge({ name }: { name: string }) {
   if (!name) return null;
   return (
     <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-[13px] text-foreground animate-in fade-in duration-150">
-      <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+      <CheckCircle2 size={14} strokeWidth={1.9} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
       <span className="font-medium text-foreground">{name}</span>
       <span className="text-[11.5px] text-emerald-600 dark:text-emerald-400 ml-auto font-medium">
         Verified
@@ -1015,13 +1015,13 @@ export function CollapsedDetailsBadge({
         {icon ? (
           <div className="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/60 border border-black/5 dark:border-white/10 overflow-hidden p-0">
             {icon}
-            <span className="absolute bottom-0 right-0 flex size-4 items-center justify-center rounded-full bg-emerald-600 text-white ring-1 ring-background shadow-xs">
-              <Check size={10} strokeWidth={3} />
+            <span className="absolute bottom-0 right-0 flex size-3.5 items-center justify-center rounded-full bg-emerald-600 text-white ring-1 ring-background shadow-xs">
+              <Check size={9} strokeWidth={2.5} />
             </span>
           </div>
         ) : (
           <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-            <Check size={18} strokeWidth={2.5} />
+            <Check size={16} strokeWidth={2} />
           </span>
         )}
         <div className="flex flex-col min-w-0 text-left gap-0.5">
