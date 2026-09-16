@@ -33,7 +33,7 @@ export default function AuthHeader() {
           <GCBLogo className="h-8 w-auto text-foreground" />
         </div>
         <span className="text-[17px] font-medium tracking-tight text-foreground sm:text-[18px]">
-          Online Banking
+          Internet Banking
         </span>
       </Link>
 

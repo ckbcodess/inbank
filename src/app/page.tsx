@@ -17,7 +17,7 @@ export default function RootRoutingPage() {
 
   return (
     <AuthLayout
-      title="Select how you would want to use Online Banking"
+      title="Select how you would want to use Internet Banking"
       description="Choose your account category to continue to sign in."
       width="compact"
     >
