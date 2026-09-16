@@ -6,12 +6,14 @@ import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   ArrowRight,
+  ChevronRight,
   CreditCard,
   ExternalLink,
   Landmark,
   Loader2,
+  Plus,
   Sparkles,
-  UserPlus,
+  UserCheck,
 } from "lucide-react";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { Button } from "@/components/ui/button";
@@ -102,56 +104,60 @@ export default function GetStartedPage() {
       >
         {screen === 1 ? (
           <div className="flex flex-col gap-3.5">
-            {/* Option 1: Yes - I have a GCB account -> Immediate route to /activate */}
+            {/* Option 1: GCB Account Holder -> Immediate route to /activate */}
             <button
               type="button"
               data-tour="gs-existing"
               onClick={handleChooseExisting}
-              className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
               <div className="flex items-center gap-4">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                  <Landmark size={22} strokeWidth={2} />
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                  <UserCheck size={22} strokeWidth={2.4} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[15px] font-medium text-foreground">
-                    Yes — I have a GCB account
+                  <span className="text-[16px] sm:text-[17px] font-medium text-foreground tracking-[-0.01em]">
+                    GCB Account Holder
                   </span>
-                  <span className="text-[13px] text-muted-foreground mt-0.5">
-                    We will get your internet banking switched on.
+                  <span className="text-[13.5px] sm:text-[14px] text-muted-foreground leading-snug mt-0.5">
+                    Link your existing GCB account to start transacting instantly.
                   </span>
                 </div>
               </div>
 
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-foreground">
-                <ArrowRight size={18} strokeWidth={2} />
-              </div>
+              <ChevronRight
+                size={22}
+                strokeWidth={2.4}
+                className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"
+              />
             </button>
 
-            {/* Option 2: No - I'm new to GCB -> Immediate transition to Step 2 */}
+            {/* Option 2: New to GCB -> Immediate transition to Step 2 */}
             <button
               type="button"
               data-tour="gs-new"
               onClick={handleChooseNew}
-              className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
               <div className="flex items-center gap-4">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                  <UserPlus size={22} strokeWidth={2} />
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                  <Plus size={24} strokeWidth={2.6} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[15px] font-medium text-foreground">
-                    No — I am new to GCB
+                  <span className="text-[16px] sm:text-[17px] font-medium text-foreground tracking-[-0.01em]">
+                    New to GCB
                   </span>
-                  <span className="text-[13px] text-muted-foreground mt-0.5">
-                    Open a new account or start with a card or wallet.
+                  <span className="text-[13.5px] sm:text-[14px] text-muted-foreground leading-snug mt-0.5">
+                    Open an instant account and fund it with your wallet or card.
                   </span>
                 </div>
               </div>
 
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-foreground">
-                <ArrowRight size={18} strokeWidth={2} />
-              </div>
+              <ChevronRight
+                size={22}
+                strokeWidth={2.4}
+                className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"
+              />
             </button>
           </div>
         ) : (
