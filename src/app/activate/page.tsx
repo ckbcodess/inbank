@@ -72,9 +72,8 @@ function ActivateContent() {
     }, 600);
   }
 
-  function handleOtpSubmit(e?: React.FormEvent) {
-    if (e) e.preventDefault();
-    const code = digits.join("");
+  function handleOtpSubmit(incomingCode?: string) {
+    const code = incomingCode ?? digits.join("");
     if (code.length < OTP_LENGTH || busy) return;
 
     setErrorMsg("");
@@ -84,14 +83,6 @@ function ActivateContent() {
       setStep("password");
     }, 600);
   }
-
-  // Auto-advance OTP verification when 6 digits are entered
-  useEffect(() => {
-    if (step === "otp" && digits.join("").length === OTP_LENGTH && !busy) {
-      handleOtpSubmit();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, digits, busy]);
 
   // Password Checklist validation
   const hasMinLength = password.length >= 12;
@@ -175,11 +166,16 @@ function ActivateContent() {
 
   function handleBackStep() {
     setErrorMsg("");
+    setBusy(false);
     if (step === "pin") {
+      setPinDigits(["", "", "", ""]);
       setStep("password");
     } else if (step === "password") {
+      setDigits(Array(OTP_LENGTH).fill(""));
+      setCountdown(RESEND_SECONDS);
       setStep("otp");
     } else if (step === "otp") {
+      setDigits(Array(OTP_LENGTH).fill(""));
       setStep("review_details");
     } else if (step === "review_details") {
       setStep("selfie");
@@ -481,7 +477,13 @@ function ActivateContent() {
 
       {/* STEP 4: OTP Verification */}
       {step === "otp" && (
-        <form onSubmit={handleOtpSubmit} className="flex flex-col items-center gap-5">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleOtpSubmit();
+          }}
+          className="flex flex-col items-center gap-5"
+        >
           <div className="w-full" data-tour="activate-otp">
             <OtpInput
               value={digits}
