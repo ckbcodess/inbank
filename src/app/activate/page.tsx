@@ -76,6 +76,13 @@ function ActivateContent() {
     const code = incomingCode ?? digits.join("");
     if (code.length < OTP_LENGTH || busy) return;
 
+    // Demo: 000000 triggers the invalid error state
+    if (code === "000000") {
+      setErrorMsg("The code entered is incorrect or has expired. Please try again or request a new code.");
+      setDigits(Array(OTP_LENGTH).fill(""));
+      return;
+    }
+
     setErrorMsg("");
     setBusy(true);
     window.setTimeout(() => {
@@ -216,8 +223,8 @@ function ActivateContent() {
             : "Confirm that these details match your existing GCB account."
           : step === "otp"
           ? isJoint
-            ? `Code sent to primary number +233 24 *** *192. Co-signatory notification sent to +233 20 *** *410.`
-            : `Code sent via ${otpTarget === "sms" ? "SMS to +233 24 *** *567" : "Email to am•••••@example.com"}`
+            ? `6-digit code sent to primary number +233 24 *** *192. Co-signatory notification sent to +233 20 *** *410.`
+            : `6-digit code sent via ${otpTarget === "sms" ? "SMS to +233 24 *** *567" : "Email to am•••••@example.com"}. Enter 000000 to see the error state.`
           : step === "password"
           ? "Your password must be at least 12 characters and include upper, lower, numbers and symbols."
           : "You will use this 4-digit PIN to authorize transfers, bill payments, and card top-ups."
@@ -487,9 +494,13 @@ function ActivateContent() {
           <div className="w-full" data-tour="activate-otp">
             <OtpInput
               value={digits}
-              onChange={setDigits}
-              onComplete={() => handleOtpSubmit()}
+              onChange={(next) => {
+                setDigits(next);
+                if (errorMsg) setErrorMsg("");
+              }}
+              onComplete={(code) => handleOtpSubmit(code)}
               disabled={busy}
+              invalid={!!errorMsg}
               autoFocus
             />
           </div>

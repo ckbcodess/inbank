@@ -68,6 +68,13 @@ function SignupContent() {
     const code = incomingCode ?? digits.join("");
     if (code.length < OTP_LENGTH || busy) return;
 
+    // Demo: 000000 triggers the invalid error state
+    if (code === "000000") {
+      setErrorMsg("The code entered is incorrect or has expired. Please try again or request a new code.");
+      setDigits(Array(OTP_LENGTH).fill(""));
+      return;
+    }
+
     setErrorMsg("");
     setBusy(true);
     window.setTimeout(() => {
@@ -195,8 +202,8 @@ function SignupContent() {
           ? "Please review your information to make sure everything is accurate before you continue."
           : step === "otp"
           ? otpTarget === "sms"
-            ? "6-digit code sent to +233 24 *** *567. It expires in 5 minutes."
-            : "6-digit code sent to am•••••@example.com. It expires in 5 minutes."
+            ? "6-digit code sent to +233 24 *** *567. It expires in 5 minutes. Enter 000000 to see the error state."
+            : "6-digit code sent to am•••••@example.com. It expires in 5 minutes. Enter 000000 to see the error state."
           : step === "password"
           ? "Create a secure password to access your account."
           : "Create a secure PIN to authorize your transactions."
@@ -363,9 +370,13 @@ function SignupContent() {
           <div className="w-full" data-tour="signup-otp">
             <OtpInput
               value={digits}
-              onChange={setDigits}
-              onComplete={() => handleOtpSubmit()}
+              onChange={(next) => {
+                setDigits(next);
+                if (errorMsg) setErrorMsg("");
+              }}
+              onComplete={(code) => handleOtpSubmit(code)}
               disabled={busy}
+              invalid={!!errorMsg}
               autoFocus
             />
           </div>

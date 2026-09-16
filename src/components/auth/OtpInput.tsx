@@ -77,28 +77,38 @@ export default function OtpInput({
   }
 
   return (
-    <div className="flex justify-center gap-2.5 sm:gap-3.5" onPaste={handlePaste}>
-      {Array.from({ length }, (_, i) => (
-        <input
-          key={i}
-          ref={(el) => {
-            inputsRef.current[i] = el;
-          }}
-          type={mask ? "password" : "text"}
-          inputMode="numeric"
-          autoComplete={mask ? "current-password" : "one-time-code"}
-          value={value[i] ?? ""}
-          autoFocus={autoFocus && i === 0}
-          disabled={disabled}
-          onChange={(e) => setDigit(i, e.target.value)}
-          onKeyDown={(e) => handleKeyDown(i, e)}
-          aria-label={mask ? `PIN Digit ${i + 1}` : `Digit ${i + 1}`}
-          aria-invalid={invalid || undefined}
-          className={`numorainput size-12 sm:size-13 rounded-xl border bg-background text-center text-[20px] tracking-wider text-foreground outline-none transition-all tabular focus:border-ring focus:ring-3 focus:ring-ring/40 disabled:opacity-60 dark:bg-white/[0.07] dark:border-white/[0.12] ${
-            invalid ? "border-destructive bg-destructive/5 dark:border-destructive/50" : "border-input"
-          }`}
-        />
-      ))}
+    <div className="flex items-center justify-center gap-2 sm:gap-2.5" onPaste={handlePaste}>
+      {Array.from({ length }, (_, i) => {
+        const showSeparator = length === 6 && i === 3;
+        return (
+          <div key={i} className="flex items-center">
+            {showSeparator && (
+              <span className="mx-1 sm:mx-1.5 text-muted-foreground/40 font-light select-none text-[16px]">
+                –
+              </span>
+            )}
+            <input
+              ref={(el) => {
+                inputsRef.current[i] = el;
+              }}
+              type={mask ? "password" : "text"}
+              inputMode="numeric"
+              maxLength={1}
+              autoComplete={mask ? "current-password" : "one-time-code"}
+              value={value[i] ?? ""}
+              autoFocus={autoFocus && i === 0}
+              disabled={disabled}
+              onChange={(e) => setDigit(i, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(i, e)}
+              aria-label={mask ? `PIN Digit ${i + 1} of ${length}` : `Digit ${i + 1} of ${length}`}
+              aria-invalid={invalid || undefined}
+              className={`numorainput size-11 sm:size-12 rounded-xl border bg-background text-center text-[19px] sm:text-[20px] font-medium tracking-tight text-foreground outline-none transition-all tabular focus:border-ring focus:ring-3 focus:ring-ring/40 disabled:opacity-60 dark:bg-white/[0.07] dark:border-white/[0.12] ${
+                invalid ? "border-destructive bg-destructive/5 dark:border-destructive/50" : "border-input"
+              }`}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }
