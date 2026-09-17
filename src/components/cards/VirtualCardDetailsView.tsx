@@ -255,9 +255,9 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
           {/* ========================================================================= */}
           {/* LEFT COLUMN: Hero Yellow Branded GCB Virtual Card & 3 Action Buttons      */}
           {/* ========================================================================= */}
-          <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col justify-between h-full gap-4 w-full">
             {/* The Yellow Branded GCB Virtual Card */}
-            <div className="relative h-[237px] w-full rounded-[15.75px] overflow-hidden p-[18px] flex flex-col justify-between select-none shadow-xs transition-all duration-200 bg-gradient-to-b from-[#fddc07] from-[39%] to-[#ffbc04] text-[#121212]">
+            <div className="relative flex-1 min-h-[237px] w-full rounded-[15.75px] overflow-hidden p-[18px] flex flex-col justify-between select-none shadow-xs transition-all duration-200 bg-gradient-to-b from-[#fddc07] from-[39%] to-[#ffbc04] text-[#121212]">
               {/* Background Watermark Elements from Figma */}
               <div className="-translate-x-1/2 -translate-y-1/2 absolute flex h-[535px] items-center justify-center left-[calc(50%+73px)] top-[calc(50%+19px)] w-[564px] pointer-events-none select-none opacity-20">
                 <div className="flex-none rotate-30">
