@@ -3960,7 +3960,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   <div className="flex items-center justify-between px-4 py-3 w-full">
                     <span className="text-[13.5px] text-muted-foreground">Save Beneficiary</span>
                     <span className="text-[13.5px] font-normal text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
-                      <CheckCircle2 size={14} />
+                      <CheckCircle2 size={14} strokeWidth={1.9} className="shrink-0" />
                       <span>Yes {f.beneficiaryNickname ? `(“${f.beneficiaryNickname}”)` : ""}</span>
                     </span>
                   </div>

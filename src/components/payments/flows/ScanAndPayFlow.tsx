@@ -220,7 +220,7 @@ export function ScanAndPayFlow({
                   <div className="flex flex-col">
                     <div className="flex items-center gap-1.5">
                       <span className="text-[14px] font-medium text-foreground">{state.qrMerchant}</span>
-                      <CheckCircle2 size={14} className="text-emerald-600 dark:text-emerald-400" />
+                      <CheckCircle2 size={14} strokeWidth={1.9} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
                     </div>
                     <span className="text-[11.5px] text-muted-foreground font-mono">
                       Terminal: {state.qrCode || "Universal QR Verified"}

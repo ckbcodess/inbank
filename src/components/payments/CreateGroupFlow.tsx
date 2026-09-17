@@ -485,7 +485,7 @@ export default function CreateGroupFlow({
                           : "border-muted-foreground/30 bg-transparent"
                       )}
                     >
-                      {isSelected && <Check size={12} strokeWidth={2.5} />}
+                      {isSelected && <Check size={11} strokeWidth={2.4} className="shrink-0" />}
                     </div>
                   </div>
                 );
