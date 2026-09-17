@@ -42,10 +42,10 @@ import TransactionPinModal from "@/components/payments/TransactionPinModal";
 import { toast } from "sonner";
 
 // Visa Official Vector Logo
-function VisaLogo({ className = "h-4.5 w-auto" }: { className?: string }) {
+function VisaLogo({ className = "h-4 w-auto" }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 36 12"
+      viewBox="0 0 39 13"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
@@ -568,7 +568,9 @@ export function RequestCardFlow() {
               </label>
               <Select
                 value={networkType}
-                onValueChange={setNetworkType}
+                onValueChange={(val) => {
+                  if (val) setNetworkType(val);
+                }}
               >
                 <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
                   <div className="flex flex-col min-w-0 text-left flex-1">
