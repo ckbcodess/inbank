@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useContextualBack } from "@/lib/contextual-back";
@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   CreditCard,
   Wallet,
   Sparkles,
@@ -16,6 +17,7 @@ import {
   Building2,
   Truck,
   MapPin,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,6 +41,9 @@ import {
 } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
 import { CARD_THEMES, type CardTheme } from "@/components/cards/card-themes";
+import { TiltCard3D } from "@/components/cards/TiltCard3D";
+import { EmvChip } from "@/components/cards/EmvChip";
+import { GcbCardLogo } from "@/components/cards/GcbCardLogo";
 import TransactionPinModal from "@/components/payments/TransactionPinModal";
 import { toast } from "sonner";
 
@@ -250,6 +255,209 @@ const CARD_TYPE_OPTIONS: readonly CardTypeOption[] = [
   },
 ] as const;
 
+interface BranchComboboxProps {
+  value: GcbBranch | null;
+  onChange: (branch: GcbBranch | null) => void;
+  branches: readonly GcbBranch[];
+}
+
+function BranchCombobox({ value, onChange, branches }: BranchComboboxProps) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState(value?.name ?? "");
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Sync query when value changes
+  useEffect(() => {
+    setQuery(value?.name ?? "");
+  }, [value]);
+
+  // Click outside listener
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+        if (value && query !== value.name) {
+          setQuery(value.name);
+        }
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [value, query]);
+
+  // Filter branches by name
+  const filteredBranches = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return branches;
+    return branches.filter((b) => b.name.toLowerCase().includes(q));
+  }, [branches, query]);
+
+  const handleSelect = (branch: GcbBranch) => {
+    onChange(branch);
+    setQuery(branch.name);
+    setOpen(false);
+    setHighlightedIndex(-1);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setQuery(val);
+    setOpen(true);
+    setHighlightedIndex(-1);
+
+    const exactMatch = branches.find(
+      (b) => b.name.toLowerCase() === val.trim().toLowerCase()
+    );
+    if (exactMatch) {
+      onChange(exactMatch);
+    } else if (!val.trim()) {
+      onChange(null);
+    } else {
+      onChange({
+        id: `branch-custom-${Date.now()}`,
+        name: val.trim(),
+        address: "Custom Branch Location",
+        city: "Accra",
+        operatingHours: "Mon - Fri: 8:00 AM - 5:00 PM",
+      });
+    }
+  };
+
+  const handleClear = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setQuery("");
+    onChange(null);
+    setHighlightedIndex(-1);
+    inputRef.current?.focus();
+    setOpen(true);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (!open) {
+        setOpen(true);
+      } else {
+        setHighlightedIndex((prev) =>
+          prev < filteredBranches.length - 1 ? prev + 1 : 0
+        );
+      }
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (open) {
+        setHighlightedIndex((prev) =>
+          prev > 0 ? prev - 1 : filteredBranches.length - 1
+        );
+      }
+    } else if (e.key === "Enter") {
+      if (open && filteredBranches.length > 0) {
+        e.preventDefault();
+        const target =
+          highlightedIndex >= 0 && highlightedIndex < filteredBranches.length
+            ? filteredBranches[highlightedIndex]
+            : filteredBranches[0];
+        handleSelect(target);
+      }
+    } else if (e.key === "Escape") {
+      setOpen(false);
+    }
+  };
+
+  return (
+    <div ref={containerRef} className="relative w-full">
+      <div
+        onClick={() => {
+          setOpen(true);
+          inputRef.current?.focus();
+        }}
+        className={`h-13 px-4 w-full rounded-2xl border bg-card text-left transition-all shadow-none flex items-center gap-3 cursor-text ${
+          open
+            ? "border-ring ring-1 ring-ring/30"
+            : "border-border/80 hover:bg-muted/20"
+        }`}
+      >
+        <MapPin size={18} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
+        <input
+          ref={inputRef}
+          type="text"
+          value={query}
+          onFocus={() => setOpen(true)}
+          onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
+          placeholder="Type or select pickup branch..."
+          className="flex-1 min-w-0 bg-transparent text-[15px] font-medium text-foreground placeholder:text-muted-foreground/60 placeholder:font-normal outline-none"
+        />
+        {query && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="size-6 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
+            aria-label="Clear branch"
+          >
+            <X size={14} strokeWidth={2} />
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen((prev) => !prev);
+            if (!open) inputRef.current?.focus();
+          }}
+          className="p-1 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          aria-label="Toggle branch dropdown"
+        >
+          <ChevronDown
+            size={18}
+            className={`transition-transform duration-200 ${open ? "rotate-180 text-foreground" : ""}`}
+          />
+        </button>
+      </div>
+
+      {open && (
+        <div className="absolute top-[calc(100%+6px)] left-0 right-0 z-50 rounded-2xl border border-border/80 bg-popover/95 backdrop-blur-md shadow-lg p-1.5 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
+          {filteredBranches.length > 0 ? (
+            <div className="flex flex-col gap-0.5" role="listbox">
+              {filteredBranches.map((branch, index) => {
+                const isSelected =
+                  value?.id === branch.id ||
+                  value?.name.toLowerCase() === branch.name.toLowerCase();
+                const isHighlighted = highlightedIndex === index;
+                return (
+                  <button
+                    key={branch.id}
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    onClick={() => handleSelect(branch)}
+                    onMouseEnter={() => setHighlightedIndex(index)}
+                    className={`w-full text-left px-3.5 py-2.5 rounded-xl text-[14px] font-medium transition-colors flex items-center justify-between cursor-pointer ${
+                      isHighlighted || isSelected
+                        ? "bg-muted text-foreground"
+                        : "text-foreground hover:bg-muted/60"
+                    }`}
+                  >
+                    <span className="truncate">{branch.name}</span>
+                    {isSelected && (
+                      <Check size={16} strokeWidth={2.2} className="shrink-0 ml-2 text-foreground" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="p-3 text-center text-[13.5px] text-muted-foreground">
+              <span>No branches found matching "{query}"</span>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function RequestCardFlow() {
   const router = useRouter();
   const { handleBack: handleBackNavigation } = useContextualBack("/cards");
@@ -384,7 +592,7 @@ export function RequestCardFlow() {
       linkedAccountId: selectedAccount?.id ?? "acc-001",
       holder: actor?.name ?? "Ama Serwaa",
       expiry: "09/30",
-      status: "Active",
+      status: isPhysical ? "Inactive" : "Active",
       fundable: isFundable,
       isVirtual: cardType === "Virtual",
       profileKind: activeProfile?.kind ?? "RETAIL",
@@ -630,22 +838,25 @@ export function RequestCardFlow() {
                   </Select>
                 </div>
 
-                {/* Initial Funding */}
-                {isFundable && (
-                  <AmountInput
-                    value={fundAmount}
-                    onChange={setFundAmount}
-                    currency={selectedAccount?.currency ?? "GHS"}
-                    label="Initial funding amount"
-                  />
-                )}
+                {/* Progressive Disclosure: Disclose funding and fulfillment ONLY after network type is selected */}
+                {Boolean(networkType) && (
+                  <div className="flex flex-col gap-5 w-full animate-in fade-in duration-200 ease-out">
+                    {/* Initial Funding */}
+                    {isFundable && (
+                      <AmountInput
+                        value={fundAmount}
+                        onChange={setFundAmount}
+                        currency={selectedAccount?.currency ?? "GHS"}
+                        label="Initial funding amount"
+                      />
+                    )}
 
-                {/* Physical Fulfillment */}
-                {isPhysical && (
-                  <div className="flex flex-col gap-4 pt-2 border-t border-border/80">
-                    <label className="text-[14px] font-medium text-foreground">
-                      Fulfillment method
-                    </label>
+                    {/* Physical Fulfillment */}
+                    {isPhysical && (
+                      <div className="flex flex-col gap-4 pt-2 border-t border-border/80">
+                        <label className="text-[14px] font-medium text-foreground">
+                          Fulfillment method
+                        </label>
 
                     <div className="grid grid-cols-2 gap-3">
                       <button
@@ -710,43 +921,11 @@ export function RequestCardFlow() {
                         <label className="text-[14px] font-medium text-foreground">
                           Pickup branch
                         </label>
-                        <Select
-                          value={selectedBranch?.id ?? ""}
-                          onValueChange={(val) => {
-                            const found = GCB_BRANCHES.find((b) => b.id === val);
-                            if (found) setSelectedBranch(found);
-                          }}
-                        >
-                          <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
-                            <div className="flex items-center gap-3 min-w-0 flex-1">
-                              <MapPin size={18} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
-                              <div className="flex flex-col min-w-0 text-left">
-                                <span
-                                  className={`text-[14.5px] font-medium truncate leading-tight ${
-                                    selectedBranch ? "text-foreground" : "text-muted-foreground font-normal"
-                                  }`}
-                                >
-                                  {selectedBranch ? selectedBranch.name : "Select pickup branch"}
-                                </span>
-                                {selectedBranch && (
-                                  <span className="text-[12.5px] text-muted-foreground truncate leading-tight mt-0.5">
-                                    {selectedBranch.address}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </SelectTrigger>
-                          <SelectContent>
-                            {GCB_BRANCHES.map((b) => (
-                              <SelectItem key={b.id} value={b.id}>
-                                <div className="flex flex-col min-w-0 py-0.5 text-left">
-                                  <span className="text-[14px] font-medium text-foreground">{b.name}</span>
-                                  <span className="text-[12px] text-muted-foreground">{b.address}</span>
-                                </div>
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <BranchCombobox
+                          value={selectedBranch}
+                          onChange={setSelectedBranch}
+                          branches={GCB_BRANCHES}
+                        />
                       </div>
                     )}
 
@@ -816,6 +995,8 @@ export function RequestCardFlow() {
                 </div>
               </div>
             )}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -840,92 +1021,95 @@ export function RequestCardFlow() {
             </h1>
           </div>
 
-          {/* Interactive Full Card Preview */}
+          {/* Interactive Full Card Preview with 3D Mouse Tilt & Smooth Color Crossfades */}
           <div className="w-full flex flex-col items-center gap-6">
-            <div
-              className={`relative w-full aspect-[1.586/1] max-w-[500px] rounded-[20px] p-6 sm:p-7 flex flex-col justify-between overflow-hidden select-none shadow-md transition-all duration-300 bg-gradient-to-tr ${selectedTheme.cardGradient} ${selectedTheme.textColor} ${
-                selectedTheme.borderColor ? `border ${selectedTheme.borderColor}` : ""
-              }`}
-            >
-              <div className="absolute -right-12 -top-12 size-48 rounded-full bg-white/10 blur-2xl pointer-events-none" />
-              <div className="absolute -left-12 -bottom-12 size-48 rounded-full bg-black/10 blur-2xl pointer-events-none" />
+            <TiltCard3D className="w-full max-w-[500px]">
+              <motion.div
+                animate={{
+                  backgroundColor: selectedTheme.colorHex,
+                }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className={`relative w-full aspect-[1.586/1] rounded-[20px] p-6 sm:p-8 flex flex-col justify-between overflow-hidden select-none shadow-xl transition-colors duration-400 [transform-style:preserve-3d] ${selectedTheme.textColor}`}
+              >
+                {/* Pre-rendered Stacked Theme Backgrounds for Silky 60fps GPU Crossfade */}
+                {CARD_THEMES.map((theme) => {
+                  const isActive = selectedTheme.id === theme.id;
+                  return (
+                    <motion.img
+                      key={theme.id}
+                      src={theme.bgImage}
+                      alt={theme.name}
+                      initial={false}
+                      animate={{
+                        opacity: isActive ? 1 : 0,
+                        scale: isActive ? 1.03 : 1.01,
+                      }}
+                      transition={{
+                        duration: 0.45,
+                        ease: [0.22, 1, 0.36, 1],
+                      }}
+                      className="absolute -inset-[3px] w-[calc(100%+6px)] h-[calc(100%+6px)] max-w-none object-cover pointer-events-none select-none will-change-[opacity,transform]"
+                    />
+                  );
+                })}
 
-              {/* Top Row */}
-              <div className="relative z-10 flex items-center justify-between">
-                <span className="text-[13px] tracking-widest font-medium uppercase opacity-90">
-                  GCB Bank
-                </span>
-                <div className="flex items-center gap-2">
-                  <Wifi size={16} strokeWidth={2} className="rotate-90 opacity-70" />
-                  <span className="rounded-full bg-white/20 backdrop-blur-xs px-2 py-0.5 text-[9px] font-medium uppercase tracking-wider">
-                    {cardType}
-                  </span>
-                </div>
-              </div>
-
-              {/* Middle Row: EMV Chip */}
-              <div className="relative z-10 flex items-center gap-3">
-                <div
-                  className={`size-10 rounded-[6px] border ${
-                    selectedTheme.chipColor ?? "bg-amber-300/90 border-amber-500/40"
-                  } relative overflow-hidden shadow-xs`}
-                >
-                  <div className="absolute inset-0 grid grid-cols-2 divide-x divide-black/20">
-                    <div className="border-b border-black/20" />
-                    <div className="border-b border-black/20" />
-                  </div>
-                  <div className="absolute inset-x-1.5 inset-y-2 rounded-[2px] border border-black/25" />
-                </div>
-              </div>
-
-              {/* Bottom Row */}
-              <div className="relative z-10 flex flex-col gap-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[14px] sm:text-[15px] font-medium tracking-tight truncate max-w-[280px]">
-                    {cardType === "Virtual" ? (cardName || "Virtual Card") : `${cardType} Card`}
-                  </span>
-                  <span className="text-[13px] font-medium tracking-wider tabular-nums opacity-90">
-                    •••• 9102
+                {/* Top Row: GCB Logo (Left) & Unboxed Card Type (Right) */}
+                <div className="relative z-10 flex items-center justify-between transition-colors duration-300">
+                  <GcbCardLogo themeId={selectedTheme.id} className="h-8 sm:h-9 w-auto drop-shadow-xs shrink-0 transition-colors duration-300" />
+                  <span className="text-[14px] sm:text-[15.5px] font-normal tracking-wide opacity-90 capitalize transition-colors duration-300">
+                    {cardType === "Virtual" ? (cardName || "Virtual") : cardType}
                   </span>
                 </div>
 
-                <div className="flex items-end justify-between pt-1 border-t border-white/15">
-                  <div className="flex flex-col">
-                    <span className="text-[9px] uppercase tracking-wider opacity-75">
-                      Cardholder
+                {/* Middle Row: Gold EMV Chip with Metallic Sheen + Contactless Waves */}
+                <div className="relative z-10 my-auto py-2 flex items-center gap-3.5">
+                  <EmvChip />
+                  <Wifi size={22} strokeWidth={2.4} className="rotate-90 opacity-85 shrink-0 transition-colors duration-300" />
+                </div>
+
+                {/* Bottom Row: CARD HOLDER (Left), EXP (Center), VISA/Mastercard (Right) */}
+                <div className="relative z-10 flex items-end justify-between whitespace-nowrap gap-4 transition-colors duration-300">
+                  <div className="flex flex-col gap-0.5 text-left">
+                    <span className="text-[10.5px] sm:text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
+                      CARD HOLDER
                     </span>
-                    <span className="text-[12px] font-medium tracking-tight">
-                      {actor?.name ?? "Ama Serwaa"}
+                    <span className="text-[15px] sm:text-[17px] font-medium leading-[22px] tracking-tight uppercase">
+                      {actor?.name ?? "TSOTSOO MILLS"}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <div className="flex flex-col text-right">
-                      <span className="text-[8px] uppercase tracking-wider opacity-75">
-                        Expires
-                      </span>
-                      <span className="text-[11px] font-medium tabular-nums">09/30</span>
-                    </div>
+                  <div className="flex flex-col gap-0.5 text-left">
+                    <span className="text-[10.5px] sm:text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
+                      EXP
+                    </span>
+                    <span className="text-[15px] sm:text-[17px] font-medium leading-[22px] tracking-tight font-mono">
+                      09/28
+                    </span>
+                  </div>
 
-                    {cardScheme === "Visa" ? (
-                      <span className="font-sans text-[16px] font-black italic tracking-tighter opacity-95">
+                  <div className="shrink-0 flex items-end justify-end pl-2">
+                    {cardScheme === "Mastercard" ? (
+                      <div className="flex -space-x-2 items-center drop-shadow-xs pb-0.5">
+                        <div className="size-6 sm:size-7 rounded-full bg-[#eb001b]/95" />
+                        <div className="size-6 sm:size-7 rounded-full bg-[#f79e1b]/95" />
+                      </div>
+                    ) : (
+                      <span className="font-sans text-[26px] sm:text-[32px] font-black italic tracking-tighter leading-none opacity-95 drop-shadow-xs">
                         VISA
                       </span>
-                    ) : (
-                      <div className="flex -space-x-2 items-center">
-                        <div className="size-5 rounded-full bg-red-500/90" />
-                        <div className="size-5 rounded-full bg-amber-400/90" />
-                      </div>
                     )}
                   </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </TiltCard3D>
 
-            {/* 7 Color Palette Swatches */}
-            <div className="w-full flex items-center justify-between px-2 sm:px-4 py-2">
+            {/* 7 Flat Color Circles with generous responsive spacing */}
+            <div className="w-full flex items-center justify-center gap-3 sm:gap-4 md:gap-5 px-2 sm:px-4 py-3 flex-wrap">
               {CARD_THEMES.map((theme) => {
                 const isSelected = selectedTheme.id === theme.id;
+                const isDarkIcon =
+                  theme.textColor.includes("zinc-950") ||
+                  theme.textColor.includes("082f49");
                 return (
                   <button
                     key={theme.id}
@@ -933,19 +1117,30 @@ export function RequestCardFlow() {
                     aria-label={`Select ${theme.name} card color`}
                     aria-pressed={isSelected}
                     onClick={() => setSelectedTheme(theme)}
-                    className={`relative size-11 sm:size-12 rounded-full ${theme.swatchGradient} shadow-xs transition-all duration-150 cursor-pointer flex items-center justify-center ${
+                    className={`relative size-9 sm:size-10 rounded-full cursor-pointer flex items-center justify-center transition-all duration-200 border border-black/10 dark:border-white/15 ${
                       isSelected
-                        ? "ring-2 ring-foreground ring-offset-2 ring-offset-background scale-110 shadow-md"
+                        ? "ring-2 ring-foreground ring-offset-2 ring-offset-background scale-105 shadow-sm"
                         : "hover:scale-105 opacity-90 hover:opacity-100"
                     }`}
+                    style={{ backgroundColor: theme.colorHex }}
                   >
-                    {isSelected && (
-                      <Check
-                        size={18}
-                        strokeWidth={2.4}
-                        className={theme.textColor === "text-zinc-950" ? "text-zinc-950" : "text-white"}
-                      />
-                    )}
+                    <AnimatePresence>
+                      {isSelected && (
+                        <motion.div
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0, opacity: 0 }}
+                          transition={{ type: "spring", stiffness: 450, damping: 26 }}
+                          className="flex items-center justify-center"
+                        >
+                          <Check
+                            size={15}
+                            strokeWidth={2.6}
+                            className={isDarkIcon ? "text-zinc-950" : "text-white"}
+                          />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </button>
                 );
               })}
@@ -988,13 +1183,18 @@ export function RequestCardFlow() {
           {/* Mini Card Spec Banner */}
           <div className="rounded-2xl border border-border/80 bg-card p-4 flex items-center gap-4">
             <div
-              className={`w-16 aspect-[1.586/1] rounded-lg bg-gradient-to-tr ${selectedTheme.cardGradient} ${selectedTheme.textColor} p-1.5 flex flex-col justify-between shrink-0 shadow-xs`}
+              className={`relative w-16 aspect-[1.586/1] rounded-lg overflow-hidden ${selectedTheme.textColor} p-1.5 flex flex-col justify-between shrink-0 shadow-xs`}
             >
-              <div className="flex items-center justify-between">
+              <img
+                src={selectedTheme.bgImage}
+                alt=""
+                className="absolute inset-0 size-full object-cover pointer-events-none select-none"
+              />
+              <div className="relative z-10 flex items-center justify-between">
                 <span className="text-[6.5px] font-medium uppercase opacity-90">GCB</span>
                 <span className="text-[6px] font-medium uppercase opacity-80">{cardType}</span>
               </div>
-              <div className="flex items-end justify-between">
+              <div className="relative z-10 flex items-end justify-between">
                 <span className="text-[7.5px] font-medium truncate max-w-[40px]">
                   {cardType === "Virtual" ? (cardName || "Virtual") : cardType}
                 </span>

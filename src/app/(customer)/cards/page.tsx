@@ -68,6 +68,7 @@ const STATUS_VARIANT: Record<CardStatus, "success" | "destructive" | "secondary"
   Active: "success",
   Blocked: "destructive",
   Expired: "secondary",
+  Inactive: "secondary",
 };
 
 function CardsPageContent() {
@@ -263,10 +264,8 @@ function CardsPageContent() {
         {(effective === "populated" || effective === "partial-load") && (
           <>
             <ul className="divide-y divide-border">
-              {rows.map((card) => {
-                const hasDelivery = Boolean(card.deliveryStatus && card.deliveryStatus !== "delivered");
-                return (
-                  <li key={card.id}>
+              {rows.map((card) => (
+                <li key={card.id}>
                     <Link
                       href={`/cards/${card.id}`}
                       className="flex items-center justify-between gap-3 sm:gap-4 px-3.5 sm:px-5 py-3.5 sm:py-4 transition-colors hover:bg-muted/40 group"
@@ -277,17 +276,24 @@ function CardsPageContent() {
                         <div className="flex min-w-0 flex-1 flex-col">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="truncate text-[14px] font-medium text-foreground">{card.name}</span>
-                            {card.status !== "Active" && (
-                              <Badge variant={STATUS_VARIANT[card.status]}>{card.status}</Badge>
-                            )}
-                            {hasDelivery && (
+                            {card.deliveryStatus ? (
                               <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10.5px] font-medium text-foreground border border-border">
                                 {card.deliveryStatus === "ready_for_pickup"
                                   ? "Ready for Pickup"
                                   : card.deliveryStatus === "in_transit"
                                   ? "In Transit"
+                                  : card.deliveryStatus === "delivered"
+                                  ? card.status === "Inactive"
+                                    ? "Needs Activation"
+                                    : "Delivered"
                                   : "In Production"}
                               </span>
+                            ) : (
+                              card.status !== "Active" && (
+                                <Badge variant={STATUS_VARIANT[card.status]}>
+                                  {card.status === "Inactive" ? "Needs Activation" : card.status}
+                                </Badge>
+                              )
                             )}
                           </div>
                           <span className="mt-0.5 text-[12px] text-muted-foreground tabular">
@@ -313,8 +319,7 @@ function CardsPageContent() {
                       </div>
                     </Link>
                   </li>
-                );
-              })}
+                ))}
             </ul>
 
             {effective === "partial-load" && <PartialLoadFooter />}

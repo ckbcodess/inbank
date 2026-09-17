@@ -1337,7 +1337,7 @@ export const TRADE_APPROVAL_DEFAULT_STATE: TradeApprovalState = "awaiting-decisi
 
 /* ── Cards — FR-33 (fund prepaid card), FR-34 (block / unblock) ─────────────── */
 
-export type CardStatus = "Active" | "Blocked" | "Expired";
+export type CardStatus = "Active" | "Blocked" | "Expired" | "Inactive";
 export type CardType = "Prepaid" | "Debit" | "Virtual";
 export type DeliveryStatus = "processing" | "in_production" | "in_transit" | "ready_for_pickup" | "delivered";
 export type DeliveryMethod = "BRANCH_PICKUP" | "DELIVERY";
@@ -1456,6 +1456,7 @@ export const CARDS: PaymentCard[] = [
     isVirtual: true,
     singleUse: false,
     profileKind: "CORPORATE",
+    colorTheme: "blue",
   },
   {
     id: "card-v02",
@@ -1476,6 +1477,7 @@ export const CARDS: PaymentCard[] = [
     isVirtual: true,
     singleUse: false,
     profileKind: "CORPORATE",
+    colorTheme: "silver",
   },
   {
     id: "card-001",
@@ -1493,6 +1495,7 @@ export const CARDS: PaymentCard[] = [
     status: "Active",
     fundable: true,
     profileKind: "CORPORATE",
+    colorTheme: "maroon",
   },
   {
     id: "card-002",
@@ -1510,6 +1513,7 @@ export const CARDS: PaymentCard[] = [
     status: "Active",
     fundable: true,
     profileKind: "CORPORATE",
+    colorTheme: "black",
   },
   {
     id: "card-003",
@@ -1525,6 +1529,7 @@ export const CARDS: PaymentCard[] = [
     status: "Active",
     fundable: false,
     profileKind: "CORPORATE",
+    colorTheme: "gold",
   },
   {
     id: "card-004",
@@ -1540,11 +1545,84 @@ export const CARDS: PaymentCard[] = [
     status: "Blocked",
     fundable: true,
     profileKind: "CORPORATE",
+    colorTheme: "blue",
+  },
+  {
+    id: "card-005",
+    name: "Executive Operating",
+    maskedNumber: "•••• 3719",
+    fullNumber: "5412 8840 1920 3719",
+    cvv: "721",
+    type: "Debit",
+    scheme: "Mastercard",
+    currency: "GHS",
+    balance: null,
+    linkedAccountId: "acc-001",
+    holder: "Kwame Boateng",
+    expiry: "10/30",
+    status: "Inactive",
+    fundable: false,
+    profileKind: "CORPORATE",
+    colorTheme: "black",
+    deliveryMethod: "DELIVERY",
+    deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
+    deliveryStatus: "in_transit",
+    trackingNumber: "GCB-CRD-947201",
+    estimatedDeliveryDate: "Sept 19, 2026",
+  },
+  {
+    id: "card-006",
+    name: "Branch Operations Card",
+    maskedNumber: "•••• 6128",
+    fullNumber: "4532 9901 3344 6128",
+    cvv: "392",
+    type: "Debit",
+    scheme: "Visa",
+    currency: "GHS",
+    balance: null,
+    linkedAccountId: "acc-001",
+    holder: "Ama Serwaa",
+    expiry: "11/29",
+    status: "Inactive",
+    fundable: false,
+    profileKind: "CORPORATE",
+    colorTheme: "gold",
+    deliveryMethod: "BRANCH_PICKUP",
+    deliveryBranch: "GCB Head Office Branch (High Street, Accra)",
+    deliveryStatus: "ready_for_pickup",
+    trackingNumber: "GCB-CRD-771920",
+    estimatedDeliveryDate: "Ready for Pickup",
+    pickupCode: "4920",
+  },
+  {
+    id: "card-007",
+    name: "Field Logistics Prepaid",
+    maskedNumber: "•••• 7841",
+    fullNumber: "5412 1188 4402 7841",
+    cvv: "563",
+    type: "Prepaid",
+    scheme: "Mastercard",
+    currency: "GHS",
+    balance: 1_200.0,
+    linkedAccountId: "acc-002",
+    holder: "Kwabena Mensah",
+    expiry: "07/28",
+    status: "Inactive",
+    fundable: true,
+    profileKind: "CORPORATE",
+    colorTheme: "maroon",
+    deliveryMethod: "DELIVERY",
+    deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
+    deliveryStatus: "delivered",
+    trackingNumber: "GCB-CRD-491028",
+    estimatedDeliveryDate: "Delivered on Sep 17, 2026",
   },
   {
     id: "card-ret-001",
     name: "Everyday Checking",
     maskedNumber: "•••• 9102",
+    fullNumber: "4532 8901 2345 9102",
+    cvv: "842",
     type: "Debit",
     scheme: "Visa",
     currency: "GHS",
@@ -1552,9 +1630,10 @@ export const CARDS: PaymentCard[] = [
     linkedAccountId: "acc-ret-002",
     holder: "Efua Mensah",
     expiry: "12/28",
-    status: "Active",
+    status: "Inactive",
     fundable: false,
     profileKind: "RETAIL",
+    colorTheme: "gold",
     deliveryMethod: "BRANCH_PICKUP",
     deliveryBranch: "GCB Head Office Branch (High Street, Accra)",
     deliveryStatus: "ready_for_pickup",
@@ -1566,6 +1645,8 @@ export const CARDS: PaymentCard[] = [
     id: "card-ret-002",
     name: "Online Subscriptions",
     maskedNumber: "•••• 5521",
+    fullNumber: "5412 9012 3456 5521",
+    cvv: "318",
     type: "Prepaid",
     scheme: "Mastercard",
     currency: "GHS",
@@ -1576,26 +1657,53 @@ export const CARDS: PaymentCard[] = [
     status: "Active",
     fundable: true,
     profileKind: "RETAIL",
+    colorTheme: "silver",
   },
   {
-    id: "card-005",
-    name: "Executive Operating",
-    maskedNumber: "•••• 3719",
+    id: "card-ret-003",
+    name: "Salary Direct Debit",
+    maskedNumber: "•••• 2419",
+    fullNumber: "4532 6677 8899 2419",
+    cvv: "914",
     type: "Debit",
-    scheme: "Mastercard",
+    scheme: "Visa",
     currency: "GHS",
     balance: null,
-    linkedAccountId: "acc-001",
-    holder: "Kwame Boateng",
-    expiry: "10/30",
-    status: "Active",
+    linkedAccountId: "acc-ret-001",
+    holder: "Ama Serwaa",
+    expiry: "09/30",
+    status: "Inactive",
     fundable: false,
-    profileKind: "CORPORATE",
+    profileKind: "RETAIL",
+    colorTheme: "black",
     deliveryMethod: "DELIVERY",
-    deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
-    deliveryStatus: "in_transit",
-    trackingNumber: "GCB-CRD-947201",
-    estimatedDeliveryDate: "Sept 19, 2026",
+    deliveryAddress: "Plot 12, Airport Residential, Accra",
+    deliveryStatus: "processing",
+    trackingNumber: "GCB-CRD-319402",
+    estimatedDeliveryDate: "3-5 business days (Sep 21, 2026)",
+  },
+  {
+    id: "card-ret-004",
+    name: "Savings Travel Card",
+    maskedNumber: "•••• 8301",
+    fullNumber: "5412 3344 5566 8301",
+    cvv: "427",
+    type: "Prepaid",
+    scheme: "Mastercard",
+    currency: "USD",
+    balance: 850.0,
+    linkedAccountId: "acc-ret-001",
+    holder: "Ama Serwaa",
+    expiry: "05/29",
+    status: "Inactive",
+    fundable: true,
+    profileKind: "RETAIL",
+    colorTheme: "maroon",
+    deliveryMethod: "DELIVERY",
+    deliveryAddress: "Plot 12, Airport Residential, Accra",
+    deliveryStatus: "delivered",
+    trackingNumber: "GCB-CRD-550192",
+    estimatedDeliveryDate: "Delivered on Sep 17, 2026",
   },
 ];
 
@@ -1607,8 +1715,238 @@ export function findCard(id: string): PaymentCard | undefined {
   return CARDS.find((c) => c.id === id);
 }
 
+export function updateCard(id: string, updates: Partial<PaymentCard>): void {
+  const card = CARDS.find((c) => c.id === id);
+  if (card) {
+    Object.assign(card, updates);
+  }
+}
+
 export function addCard(card: PaymentCard): void {
   CARDS.unshift(card);
+  if (card.balance && card.balance > 0) {
+    addCardTransaction({
+      id: `c-act-init-${Date.now()}`,
+      cardId: card.id,
+      title: "Initial Card Funding",
+      category: "Between Accounts",
+      date: "Today",
+      amount: card.balance,
+      direction: "credit",
+      status: "completed",
+    });
+  }
+}
+
+/* ── Card Transactions & Activity Store ─────────────────────────────────────── */
+
+export interface CardTransaction {
+  id: string;
+  cardId: string;
+  title: string;
+  category: string;
+  date: string;
+  amount: number;
+  direction: "debit" | "credit";
+  status: "completed" | "pending" | "failed";
+}
+
+export const CARD_TRANSACTIONS: CardTransaction[] = [
+  // card-v01 (AWS & SaaS)
+  {
+    id: "c-act-1",
+    cardId: "card-v01",
+    title: "AWS Cloud Infrastructure",
+    category: "Cloud Services",
+    date: "14 Aug 2026",
+    amount: 142.5,
+    direction: "debit",
+    status: "completed",
+  },
+  {
+    id: "c-act-2",
+    cardId: "card-v01",
+    title: "Google Workspace EMEA",
+    category: "Software & SaaS",
+    date: "11 Aug 2026",
+    amount: 36.0,
+    direction: "debit",
+    status: "completed",
+  },
+  {
+    id: "c-act-3",
+    cardId: "card-v01",
+    title: "Card Balance Top Up",
+    category: "Between Accounts",
+    date: "08 Aug 2026",
+    amount: 2000.0,
+    direction: "credit",
+    status: "completed",
+  },
+  {
+    id: "c-act-4",
+    cardId: "card-v01",
+    title: "GitHub Enterprise Subscription",
+    category: "Developer Tools",
+    date: "02 Aug 2026",
+    amount: 84.0,
+    direction: "debit",
+    status: "completed",
+  },
+  // card-v02 (Google Ads Marketing)
+  {
+    id: "c-act-201",
+    cardId: "card-v02",
+    title: "Google Ads Global Campaign",
+    category: "Advertising",
+    date: "15 Aug 2026",
+    amount: 850.0,
+    direction: "debit",
+    status: "completed",
+  },
+  {
+    id: "c-act-202",
+    cardId: "card-v02",
+    title: "Meta Business Ads",
+    category: "Advertising",
+    date: "12 Aug 2026",
+    amount: 420.0,
+    direction: "debit",
+    status: "completed",
+  },
+  // card-001 (Corporate Travel)
+  {
+    id: "c-act-101",
+    cardId: "card-001",
+    title: "Africa World Airlines",
+    category: "Airlines",
+    date: "15 Aug 2026",
+    amount: 1850.0,
+    direction: "debit",
+    status: "completed",
+  },
+  {
+    id: "c-act-102",
+    cardId: "card-001",
+    title: "Kempinski Hotel Gold Coast",
+    category: "Hotels",
+    date: "13 Aug 2026",
+    amount: 2400.0,
+    direction: "debit",
+    status: "completed",
+  },
+  {
+    id: "c-act-103",
+    cardId: "card-001",
+    title: "Uber Business Ghana",
+    category: "Transport",
+    date: "10 Aug 2026",
+    amount: 320.0,
+    direction: "debit",
+    status: "completed",
+  },
+  // card-002 (Corporate Procurement)
+  {
+    id: "c-act-301",
+    cardId: "card-002",
+    title: "Alibaba B2B Procurement",
+    category: "Procurement",
+    date: "14 Aug 2026",
+    amount: 1450.0,
+    direction: "debit",
+    status: "completed",
+  },
+  {
+    id: "c-act-302",
+    cardId: "card-002",
+    title: "DHL Express Logistics",
+    category: "Logistics",
+    date: "10 Aug 2026",
+    amount: 280.0,
+    direction: "debit",
+    status: "completed",
+  },
+  // card-003 (Main Operating)
+  {
+    id: "c-act-401",
+    cardId: "card-003",
+    title: "Shell Airport Station",
+    category: "Fuel & Transit",
+    date: "16 Aug 2026",
+    amount: 450.0,
+    direction: "debit",
+    status: "completed",
+  },
+  {
+    id: "c-act-402",
+    cardId: "card-003",
+    title: "Melcom Plus Supermarket",
+    category: "Groceries",
+    date: "12 Aug 2026",
+    amount: 620.0,
+    direction: "debit",
+    status: "completed",
+  },
+  {
+    id: "c-act-403",
+    cardId: "card-003",
+    title: "TotalEnergies Fuel",
+    category: "Fuel & Transit",
+    date: "08 Aug 2026",
+    amount: 380.0,
+    direction: "debit",
+    status: "completed",
+  },
+  // card-ret-001 (Everyday Checking)
+  {
+    id: "c-act-501",
+    cardId: "card-ret-001",
+    title: "Accra Mall Pharmacy",
+    category: "Health & Wellness",
+    date: "15 Aug 2026",
+    amount: 180.0,
+    direction: "debit",
+    status: "completed",
+  },
+  {
+    id: "c-act-502",
+    cardId: "card-ret-001",
+    title: "MaxMart Grocery",
+    category: "Groceries",
+    date: "11 Aug 2026",
+    amount: 340.0,
+    direction: "debit",
+    status: "completed",
+  },
+  // card-ret-002 (Online Subscriptions)
+  {
+    id: "c-act-601",
+    cardId: "card-ret-002",
+    title: "Netflix Premium Subscription",
+    category: "Entertainment",
+    date: "14 Aug 2026",
+    amount: 95.0,
+    direction: "debit",
+    status: "completed",
+  },
+  {
+    id: "c-act-602",
+    cardId: "card-ret-002",
+    title: "Spotify Family Plan",
+    category: "Entertainment",
+    date: "10 Aug 2026",
+    amount: 45.0,
+    direction: "debit",
+    status: "completed",
+  },
+];
+
+export function getCardTransactions(cardId: string): CardTransaction[] {
+  return CARD_TRANSACTIONS.filter((t) => t.cardId === cardId);
+}
+
+export function addCardTransaction(txn: CardTransaction): void {
+  CARD_TRANSACTIONS.unshift(txn);
 }
 
 /**

@@ -176,7 +176,7 @@ export function LiquidityDeck({
           <button
             type="button"
             onClick={onOpenTransfer}
-            className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 active:scale-[0.97] transition-all shadow-xs group cursor-pointer"
+            className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-primary text-primary-foreground hover:bg-primary-hover active:scale-[0.97] transition-all shadow-xs group cursor-pointer"
           >
             <span className="flex size-9 items-center justify-center rounded-full bg-black/10 text-primary-foreground transition-transform group-hover:scale-110">
               <Send size={16} strokeWidth={2.2} />

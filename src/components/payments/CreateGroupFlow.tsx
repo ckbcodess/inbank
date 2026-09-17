@@ -504,7 +504,7 @@ export default function CreateGroupFlow({
             type="button"
             disabled={!name.trim() || members.length === 0}
             onClick={() => setStep(2)}
-            className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground text-[14.5px] font-normal cursor-pointer shadow-xs disabled:opacity-50 mt-1"
+            className="w-full h-12 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground text-[14.5px] font-normal cursor-pointer shadow-xs disabled:opacity-50 mt-1"
           >
             Proceed to Amount
           </Button>
@@ -623,7 +623,7 @@ export default function CreateGroupFlow({
               type="button"
               disabled={totalAmount <= 0}
               onClick={handleCreateGroup}
-              className="flex-1 h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-normal text-[14.5px] cursor-pointer shadow-xs disabled:opacity-50"
+              className="flex-1 h-12 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground font-normal text-[14.5px] cursor-pointer shadow-xs disabled:opacity-50"
             >
               Create Group
             </Button>

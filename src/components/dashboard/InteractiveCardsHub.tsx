@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { setCardStatus, type PaymentCard } from "@/lib/mock-data";
+import { getCardTheme } from "@/components/cards/card-themes";
 
 export function InteractiveCardsHub({
   cards,
@@ -67,12 +68,14 @@ export function InteractiveCardsHub({
   }
 
   // Visual card styles
-  const isVirtual = currentCard.type === "Virtual";
-  const cardGradient = isVirtual
-    ? "from-slate-900 via-indigo-950 to-blue-900 text-white"
-    : isBlocked
-    ? "from-zinc-800 to-zinc-900 text-zinc-400 opacity-90"
-    : "from-amber-950 via-stone-900 to-neutral-900 text-amber-100";
+  const themeId =
+    currentCard.colorTheme ||
+    (currentCard.type === "Virtual"
+      ? "blue"
+      : currentCard.type === "Prepaid"
+      ? "maroon"
+      : "gold");
+  const theme = getCardTheme(themeId);
 
   return (
     <div className="flex h-full flex-col rounded-3xl border border-border bg-card p-5">
@@ -112,10 +115,17 @@ export function InteractiveCardsHub({
       {/* Interactive Visual Card */}
       <div className="pt-2">
         <div
-          className={`relative overflow-hidden rounded-2xl bg-gradient-to-tr p-4.5 shadow-md transition-all duration-300 ${cardGradient} min-h-[170px] flex flex-col justify-between`}
+          style={{ backgroundColor: theme.colorHex }}
+          className={`relative overflow-hidden rounded-2xl p-4.5 shadow-md transition-all duration-300 min-h-[170px] flex flex-col justify-between ${theme.textColor} ${
+            isBlocked ? "opacity-75 saturate-50" : ""
+          }`}
         >
-          {/* Card Ambient Gloss Overlay */}
-          <div className="pointer-events-none absolute -right-12 -top-12 size-36 rounded-full bg-white/10 blur-xl" />
+          {/* High-res Card Artwork Background with Expanded Full-Bleed Fill */}
+          <img
+            src={theme.bgImage}
+            alt=""
+            className="absolute -inset-[3px] w-[calc(100%+6px)] h-[calc(100%+6px)] max-w-none object-cover scale-[1.03] pointer-events-none select-none"
+          />
 
           {/* Top Row: Brand & Status */}
           <div className="flex items-center justify-between z-10">

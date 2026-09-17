@@ -760,7 +760,7 @@ export default function EditGroupModal({
               type="button"
               onClick={handleSaveChanges}
               disabled={!name.trim() || members.length === 0}
-              className="h-11 px-6 rounded-xl text-[13.5px] bg-primary hover:bg-primary/90 text-primary-foreground font-normal cursor-pointer shadow-xs disabled:opacity-50"
+              className="h-11 px-6 rounded-xl text-[13.5px] bg-primary hover:bg-primary-hover text-primary-foreground font-normal cursor-pointer shadow-xs disabled:opacity-50"
             >
               Save Changes
             </Button>

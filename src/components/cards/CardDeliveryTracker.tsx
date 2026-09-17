@@ -3,18 +3,13 @@
 import React, { useState } from "react";
 import {
   Check,
-  Clock,
+  Building2,
+  ChevronRight,
+  ChevronLeft,
+  X,
   Truck,
   MapPin,
-  Building2,
-  Copy,
-  CheckCircle2,
-  Package,
-  ShieldCheck,
-  Phone,
-  QrCode,
   Sparkles,
-  ExternalLink,
 } from "lucide-react";
 import {
   Dialog,
@@ -23,51 +18,87 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { PaymentCard, DeliveryStatus } from "@/lib/mock-data";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export interface CardDeliveryTrackerProps {
   card: PaymentCard;
   className?: string;
-  isCompact?: boolean;
+  onShowPickupCode?: () => void;
 }
 
-interface TrackingStep {
+// 6-dot matrix keypad icon matching Figma
+function KeypadMatrixIcon({ className = "size-5" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <circle cx="5" cy="5" r="1.75" />
+      <circle cx="10" cy="5" r="1.75" />
+      <circle cx="15" cy="5" r="1.75" />
+      <circle cx="5" cy="10" r="1.75" />
+      <circle cx="10" cy="10" r="1.75" />
+      <circle cx="15" cy="10" r="1.75" />
+      <circle cx="5" cy="15" r="1.75" />
+      <circle cx="10" cy="15" r="1.75" />
+      <circle cx="15" cy="15" r="1.75" />
+    </svg>
+  );
+}
+
+export interface DeliveryTrackingStep {
   key: DeliveryStatus;
+  stepNum: number;
   title: string;
-  description: string;
+  description?: string;
   dateStr?: string;
 }
 
-const TRACKING_STEPS: readonly TrackingStep[] = [
-  {
-    key: "processing",
-    title: "Request Approved",
-    description: "Application verified and security clearance granted.",
-    dateStr: "Sep 16, 2026 • 10:45 AM",
-  },
-  {
-    key: "in_production",
-    title: "Card in Production",
-    description: "Embossing cardholder name and programming EMV chip.",
-    dateStr: "Sep 17, 2026 • 02:15 PM",
-  },
-  {
-    key: "in_transit",
-    title: "Dispatched & In Transit",
-    description: "Card secured in tamper-evident envelope and en route.",
-    dateStr: "Sep 18, 2026 • 09:30 AM",
-  },
-  {
-    key: "ready_for_pickup",
-    title: "Ready for Pickup / Delivered",
-    description: "Available for collection at branch or delivered to recipient.",
-    dateStr: "Expected Sep 21, 2026",
-  },
-] as const;
+export function getTrackingSteps(
+  card: PaymentCard,
+  isBranch: boolean
+): readonly DeliveryTrackingStep[] {
+  const isReady = card.deliveryStatus === "ready_for_pickup" || card.deliveryStatus === "delivered";
+
+  return [
+    {
+      key: "processing",
+      stepNum: 1,
+      title: "Request Approved",
+      description: isReady ? "Application verified and security clearance granted." : undefined,
+      dateStr: "Sep 16, 2026 • 10:45 AM",
+    },
+    {
+      key: "in_production",
+      stepNum: 2,
+      title: "Card in Production",
+      description: isReady ? "Embossing cardholder name and programming EMV chip." : undefined,
+      dateStr: "Sep 16, 2026 • 10:45 AM",
+    },
+    {
+      key: "in_transit",
+      stepNum: 3,
+      title: "Dispatched & In Transit",
+      description: isReady ? "Card secured in tamper-evident envelope and en route." : undefined,
+      dateStr: "Sep 16, 2026 • 10:45 AM",
+    },
+    {
+      key: "ready_for_pickup",
+      stepNum: 4,
+      title: isBranch ? "Ready for Pickup" : "Ready for Delivery",
+      description: isReady
+        ? isBranch
+          ? "Available for collection at branch"
+          : "Dispatched to recipient address"
+        : undefined,
+      dateStr: "Sep 16, 2026 • 10:45 AM",
+    },
+  ] as const;
+}
 
 function getStepIndex(status?: DeliveryStatus): number {
   switch (status) {
@@ -81,207 +112,136 @@ function getStepIndex(status?: DeliveryStatus): number {
     case "delivered":
       return 3;
     default:
-      return 1; // Default to in_production for demo cards
+      return 0;
   }
 }
 
-export function CardDeliveryTracker({ card, className, isCompact = false }: CardDeliveryTrackerProps) {
-  const [copied, setCopied] = useState(false);
-  const currentStepIndex = getStepIndex(card.deliveryStatus);
+export function CardDeliveryTracker({
+  card,
+  className,
+  onShowPickupCode,
+}: CardDeliveryTrackerProps) {
   const isBranchPickup = card.deliveryMethod === "BRANCH_PICKUP" || !card.deliveryAddress;
-  const trackingNumber = card.trackingNumber || `GCB-CRD-${card.id.slice(-6).toUpperCase()}`;
-
-  const handleCopyTracking = () => {
-    navigator.clipboard.writeText(trackingNumber);
-    setCopied(true);
-    toast.success("Tracking number copied to clipboard");
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const currentStepIndex = getStepIndex(card.deliveryStatus);
+  const steps = getTrackingSteps(card, isBranchPickup);
+  const isReadyForPickup =
+    card.deliveryStatus === "ready_for_pickup" || card.deliveryStatus === "delivered";
 
   return (
     <div className={cn("flex flex-col gap-6 w-full", className)}>
-      {/* Top Header Card */}
-      <div className="rounded-[16px] border border-border bg-card p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5 min-w-0">
-          <div className="size-11 rounded-2xl bg-muted flex items-center justify-center shrink-0 text-foreground">
-            {isBranchPickup ? (
-              <Building2 size={20} strokeWidth={1.8} />
-            ) : (
-              <Truck size={20} strokeWidth={1.8} />
-            )}
-          </div>
-          <div className="flex flex-col min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[15px] sm:text-[16px] font-medium text-foreground tracking-[-0.01em]">
-                {isBranchPickup ? "Branch Pickup" : "Doorstep Delivery"}
-              </span>
-              <Badge
-                variant={
-                  card.deliveryStatus === "ready_for_pickup" || card.deliveryStatus === "delivered"
-                    ? "success"
-                    : "secondary"
-                }
-                className="text-[11px] capitalize"
-              >
-                {card.deliveryStatus === "ready_for_pickup"
-                  ? "Ready for Collection"
-                  : card.deliveryStatus === "in_transit"
-                  ? "In Transit"
-                  : card.deliveryStatus === "in_production"
-                  ? "In Production"
-                  : "Order Placed"}
-              </Badge>
-            </div>
-            <p className="text-[13px] text-muted-foreground truncate">
-              {isBranchPickup
-                ? card.deliveryBranch || "GCB Head Office Branch (High Street, Accra)"
-                : card.deliveryAddress || "Standard Residential Delivery"}
-            </p>
-          </div>
-        </div>
-
-        {/* Tracking Reference Pill */}
-        <div className="flex items-center gap-2 bg-muted/60 px-3 py-1.5 rounded-xl border border-border shrink-0">
-          <span className="text-[12px] text-muted-foreground">Tracking ID:</span>
-          <span className="text-[13px] font-medium text-foreground font-mono tabular-nums">
-            {trackingNumber}
-          </span>
-          <button
-            type="button"
-            onClick={handleCopyTracking}
-            className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer p-0.5"
-            title="Copy tracking number"
-            aria-label="Copy tracking number"
-          >
-            {copied ? <Check size={14} className="text-foreground" /> : <Copy size={14} />}
-          </button>
-        </div>
+      {/* Subheader: Delivery Progress + Status Badge */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-[17px] font-medium text-foreground tracking-[-0.01em]">
+          Delivery Progress
+        </h3>
+        <span className="rounded-full bg-[#fef3eb] dark:bg-amber-950/50 px-3 py-0.5 text-[12px] font-medium text-[#b54708] dark:text-amber-400">
+          {isReadyForPickup ? "Ready" : "Pending"}
+        </span>
       </div>
 
-      {/* 4-Step Interactive Timeline */}
-      <div className="rounded-[16px] border border-border bg-card p-5 sm:p-6 flex flex-col gap-6">
-        <div className="flex items-center justify-between">
-          <h4 className="text-[15px] font-medium text-foreground tracking-[-0.01em]">
-            Delivery Progress
-          </h4>
-          <span className="text-[12.5px] text-muted-foreground">
-            {card.estimatedDeliveryDate
-              ? `ETA: ${card.estimatedDeliveryDate}`
-              : "Estimated: 3-5 business days"}
-          </span>
-        </div>
+      {/* 4-Step Timeline Stepper matching Figma 1:1 */}
+      <div className="relative flex flex-col pl-1">
+        {steps.map((step, idx) => {
+          const isCompleted = idx <= currentStepIndex;
+          const isLast = idx === steps.length - 1;
+          const isCurrentActive = idx === currentStepIndex;
 
-        {/* Stepper Node Tree */}
-        <div className="relative flex flex-col gap-8 pl-2 sm:pl-3">
-          {TRACKING_STEPS.map((step, idx) => {
-            const isCompleted = idx < currentStepIndex;
-            const isCurrent = idx === currentStepIndex;
-            const isPending = idx > currentStepIndex;
-            const isLast = idx === TRACKING_STEPS.length - 1;
-
-            return (
-              <div key={step.key} className="relative flex items-start gap-4">
-                {/* Connecting vertical stroke line */}
-                {!isLast && (
-                  <div
-                    className={cn(
-                      "absolute left-[15px] top-[32px] bottom-[-24px] w-[2px] transition-colors",
-                      isCompleted ? "bg-foreground" : "bg-border"
-                    )}
-                  />
-                )}
-
-                {/* Node circle indicator */}
+          return (
+            <div key={step.key} className="relative flex items-start gap-4 pb-6 last:pb-0">
+              {/* Connecting vertical stroke line */}
+              {!isLast && (
                 <div
                   className={cn(
-                    "size-8 rounded-full flex items-center justify-center shrink-0 border transition-all z-10",
-                    isCompleted
-                      ? "bg-foreground border-foreground text-background"
-                      : isCurrent
-                      ? "bg-background border-foreground text-foreground ring-4 ring-muted"
-                      : "bg-background border-border text-muted-foreground opacity-60"
+                    "absolute left-[13px] top-[26px] bottom-0 w-[2px] transition-colors",
+                    isCompleted && idx < currentStepIndex
+                      ? "bg-[#ffbc04]"
+                      : "bg-[#e5e5e5] dark:bg-border"
                   )}
-                >
-                  {isCompleted ? (
-                    <Check size={15} strokeWidth={2.4} />
-                  ) : (
-                    <span className="text-[12px] font-medium tabular-nums">{idx + 1}</span>
+                />
+              )}
+
+              {/* Node indicator */}
+              <div
+                className={cn(
+                  "size-7 rounded-full flex items-center justify-center shrink-0 transition-all z-10 select-none",
+                  isCompleted
+                    ? "bg-[#ffbc04] text-[#121212] font-medium"
+                    : "bg-[#f5f5f5] dark:bg-muted text-muted-foreground text-[12px] border border-border"
+                )}
+              >
+                {isCompleted ? (
+                  <Check size={15} strokeWidth={2.4} />
+                ) : (
+                  <span className="text-[12px] font-medium tabular-nums">{step.stepNum}</span>
+                )}
+              </div>
+
+              {/* Content Row */}
+              <div className="flex flex-col min-w-0 flex-1 pt-0.5">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <span
+                    className={cn(
+                      "text-[15px] font-normal leading-tight tracking-[-0.01em]",
+                      isCompleted ? "text-foreground font-medium" : "text-[#737373] dark:text-muted-foreground"
+                    )}
+                  >
+                    {step.title}
+                  </span>
+                  {step.dateStr && (
+                    <span className="text-[13px] text-[#8c8c8c] dark:text-muted-foreground tabular-nums">
+                      {step.dateStr}
+                    </span>
                   )}
                 </div>
 
-                {/* Content */}
-                <div className="flex flex-col min-w-0 flex-1 pt-0.5">
-                  <div className="flex items-center justify-between gap-2 flex-wrap">
-                    <span
-                      className={cn(
-                        "text-[14px] font-medium tracking-[-0.01em]",
-                        isPending ? "text-muted-foreground" : "text-foreground"
-                      )}
-                    >
-                      {step.title}
-                    </span>
-                    {step.dateStr && (
-                      <span className="text-[12px] text-muted-foreground tabular-nums">
-                        {step.dateStr}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[12.5px] text-muted-foreground mt-0.5 leading-relaxed">
+                {step.description && (
+                  <p className="text-[13px] text-[#737373] dark:text-muted-foreground mt-1 leading-relaxed">
                     {step.description}
                   </p>
-                </div>
+                )}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Fulfillment Instructions Card (Branch Pickup or Delivery) */}
-      {isBranchPickup ? (
-        <div className="rounded-[16px] border border-border bg-muted/40 p-5 sm:p-6 flex flex-col sm:flex-row items-start justify-between gap-5">
-          <div className="flex flex-col gap-2 min-w-0">
-            <div className="flex items-center gap-2 text-foreground font-medium text-[14px]">
-              <MapPin size={16} strokeWidth={1.8} className="text-foreground shrink-0" />
-              <span>Branch Collection Instructions</span>
-            </div>
-            <p className="text-[13px] text-muted-foreground leading-relaxed">
-              When your card arrives at{" "}
-              <span className="text-foreground font-medium">
-                {card.deliveryBranch || "GCB Head Office Branch"}
-              </span>
-              , present your valid national ID (Ghana Card) along with your secure pickup code to
-              collect your card package.
-            </p>
-            <div className="flex items-center gap-4 text-[12px] text-muted-foreground mt-1">
-              <span>Hours: Mon - Fri (8:00 AM - 5:00 PM)</span>
-              <span>•</span>
-              <span>Branch Support: 0800 422 422</span>
-            </div>
+      {/* Branch Location Item (Shows when branch details exist) */}
+      {isBranchPickup && isReadyForPickup && (
+        <div className="flex items-center gap-3 pt-2">
+          <div className="size-10 rounded-xl bg-muted/60 flex items-center justify-center shrink-0 text-foreground">
+            <Building2 size={20} strokeWidth={1.8} />
           </div>
+          <div className="flex flex-col min-w-0">
+            <span className="text-[15px] font-medium text-foreground leading-tight">
+              Branch Pickup
+            </span>
+            <span className="text-[13px] text-muted-foreground mt-0.5 truncate">
+              {card.deliveryBranch || "GCB Head Office Branch (High Street, Accra)"}
+            </span>
+          </div>
+        </div>
+      )}
 
-          {/* Pickup Verification Code Box */}
-          <div className="bg-card border border-border rounded-xl p-3.5 flex flex-col items-center justify-center shrink-0 min-w-[140px] text-center shadow-2xs">
-            <span className="text-[10.5px] uppercase tracking-wider text-muted-foreground">
-              Pickup Code
+      {/* "Show Pickup Code" Action Row Button matching Screenshot 2 */}
+      {isBranchPickup && isReadyForPickup && onShowPickupCode && (
+        <button
+          type="button"
+          onClick={onShowPickupCode}
+          className="w-full rounded-2xl bg-[#f6f6f5] dark:bg-muted/70 hover:bg-[#ededec] dark:hover:bg-muted transition-colors p-4 flex items-center justify-between gap-3 text-left cursor-pointer group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="text-foreground shrink-0">
+              <KeypadMatrixIcon className="size-5 text-foreground" />
+            </div>
+            <span className="text-[15px] font-medium text-foreground">
+              Show Pickup Code
             </span>
-            <span className="text-[20px] font-medium text-foreground tracking-widest font-mono mt-0.5">
-              {card.pickupCode || "4920"}
-            </span>
-            <span className="text-[10px] text-muted-foreground mt-1">Show to Branch Teller</span>
           </div>
-        </div>
-      ) : (
-        <div className="rounded-[16px] border border-border bg-muted/40 p-5 sm:p-6 flex flex-col gap-3">
-          <div className="flex items-center gap-2 text-foreground font-medium text-[14px]">
-            <Truck size={16} strokeWidth={1.8} className="text-foreground shrink-0" />
-            <span>Courier Dispatch & Delivery Note</span>
-          </div>
-          <p className="text-[13px] text-muted-foreground leading-relaxed">
-            Your card is delivered in a sealed, tamper-evident security pouch. The courier will
-            require biometric or SMS OTP confirmation upon handover at{" "}
-            <span className="text-foreground font-medium">{card.deliveryAddress}</span>.
-          </p>
-        </div>
+          <ChevronRight
+            size={18}
+            className="text-muted-foreground group-hover:translate-x-0.5 group-hover:text-foreground transition-all"
+          />
+        </button>
       )}
     </div>
   );
@@ -291,25 +251,99 @@ export interface CardDeliveryTrackerModalProps {
   card: PaymentCard | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialView?: "timeline" | "pickup-code";
 }
 
 export function CardDeliveryTrackerModal({
   card,
   open,
   onOpenChange,
+  initialView = "timeline",
 }: CardDeliveryTrackerModalProps) {
+  const [view, setView] = useState<"timeline" | "pickup-code">(initialView);
+
   if (!card) return null;
 
+  const isBranchPickup = card.deliveryMethod === "BRANCH_PICKUP" || !card.deliveryAddress;
+  const branchName = card.deliveryBranch || "GCB Head Office Branch";
+  const pickupCode = card.pickupCode || "4920";
+
+  const handleClose = () => {
+    onOpenChange(false);
+    setTimeout(() => setView("timeline"), 200);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent size="lg" className="max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Card Delivery Tracking</DialogTitle>
-        </DialogHeader>
-        <DialogBody className="py-2">
-          <CardDeliveryTracker card={card} />
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) handleClose();
+        else onOpenChange(next);
+      }}
+    >
+      <DialogContent size="md" className="p-0 overflow-hidden rounded-[20px]">
+        {/* Custom Header matching Figma Node 1646:4485 */}
+        <div className="flex items-center justify-between px-6 pt-6 pb-2">
+          <div className="flex items-center gap-2">
+            {view === "pickup-code" && (
+              <button
+                type="button"
+                onClick={() => setView("timeline")}
+                className="flex size-8 items-center justify-center rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer mr-1"
+                aria-label="Back to timeline"
+                title="Back to timeline"
+              >
+                <ChevronLeft size={20} strokeWidth={2} />
+              </button>
+            )}
+            <h2 className="text-[18px] font-medium text-foreground tracking-[-0.01em]">
+              {view === "pickup-code" ? "Branch Pickup Code" : "Track Delivery"}
+            </h2>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleClose}
+            className="flex size-9 items-center justify-center rounded-full bg-[#f6f6f5] dark:bg-muted text-muted-foreground hover:text-foreground hover:bg-[#ededec] dark:hover:bg-muted/80 transition-colors cursor-pointer"
+            aria-label="Close dialog"
+          >
+            <X size={18} strokeWidth={2} />
+          </button>
+        </div>
+
+        <DialogBody className="px-6 pb-7 pt-3">
+          {view === "timeline" ? (
+            <CardDeliveryTracker
+              card={card}
+              onShowPickupCode={() => setView("pickup-code")}
+            />
+          ) : (
+            /* Branch Pickup Code View matching Figma Node 1646:4485 & Screenshot 3 */
+            <div className="flex flex-col items-center justify-center py-4 text-center gap-8">
+              {/* Huge Bold Pickup Code */}
+              <div className="flex flex-col items-center gap-4">
+                <span className="text-[46px] sm:text-[48px] font-mono font-medium tracking-[4px] text-foreground tabular-nums select-all">
+                  {pickupCode}
+                </span>
+
+                {/* Instruction Paragraph */}
+                <p className="text-[14px] text-[#747472] dark:text-muted-foreground max-w-[380px] leading-[22px]">
+                  When your card arrives at{" "}
+                  <span className="text-foreground font-medium">{branchName}</span>, present your
+                  Ghana Card and pickup code to collect it.
+                </p>
+              </div>
+
+              {/* Operating Hours & Support metadata */}
+              <div className="flex flex-col items-center gap-2 text-[15px] font-medium text-[#a1a1a1] dark:text-muted-foreground/80">
+                <span>Hours: Mon - Fri (8:00 AM - 5:00 PM)</span>
+                <span>Branch Support: 030 4222 422</span>
+              </div>
+            </div>
+          )}
         </DialogBody>
       </DialogContent>
     </Dialog>
   );
 }
+

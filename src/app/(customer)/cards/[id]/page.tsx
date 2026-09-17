@@ -55,14 +55,16 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="flex flex-col gap-6 w-full">
-      {/* Prototype Baseline State Switcher */}
-      <StateSwitcher
-        section="13.9"
-        states={BASELINE_STATES}
-        value={state}
-        onChange={setState}
-        labels={BASELINE_LABEL}
-      />
+      {/* Prototype Baseline State Switcher (Active when not populated) */}
+      {state !== "populated" && (
+        <StateSwitcher
+          section="13.9"
+          states={BASELINE_STATES}
+          value={state}
+          onChange={setState}
+          labels={BASELINE_LABEL}
+        />
+      )}
 
       {state === "loading" && (
         <div className="rounded-2xl border border-border bg-card p-6">

@@ -1,12 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import {
   AlertTriangle,
   ArrowDownLeft,
   ArrowUpRight,
+  Building2,
   ChevronLeft,
   ChevronRight,
   Clock,
@@ -25,6 +27,9 @@ import {
   Snowflake,
   Sparkles,
   Truck,
+  Check,
+  MapPin,
+  Wifi,
 } from "lucide-react";
 import {
   Dialog,
@@ -37,14 +42,74 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SimpleTooltip } from "@/components/ui/tooltip";
-import { accountsForProfile, type PaymentCard } from "@/lib/mock-data";
+import {
+  accountsForProfile,
+  type PaymentCard,
+  type CardTransaction,
+  getCardTransactions,
+  addCardTransaction,
+  setCardStatus as setCardStatusInStore,
+  updateCard as updateCardInStore,
+} from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
+import { getCardTheme } from "@/components/cards/card-themes";
+import { EmvChip } from "@/components/cards/EmvChip";
+import { GcbCardLogo } from "@/components/cards/GcbCardLogo";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import TransactionPinModal from "@/components/payments/TransactionPinModal";
 import { CardDeliveryTracker, CardDeliveryTrackerModal } from "@/components/cards/CardDeliveryTracker";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useContextualBack } from "@/lib/contextual-back";
+
+function KeypadMatrixIcon({ className = "size-5" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" className={className} aria-hidden="true">
+      <circle cx="5" cy="5" r="1.75" />
+      <circle cx="10" cy="5" r="1.75" />
+      <circle cx="15" cy="5" r="1.75" />
+      <circle cx="5" cy="10" r="1.75" />
+      <circle cx="10" cy="10" r="1.75" />
+      <circle cx="15" cy="10" r="1.75" />
+      <circle cx="5" cy="15" r="1.75" />
+      <circle cx="10" cy="15" r="1.75" />
+      <circle cx="15" cy="15" r="1.75" />
+    </svg>
+  );
+}
+
+export type DeliverySimulationState =
+  | "default"
+  | "branch_processing"
+  | "doorstep_processing"
+  | "branch_ready_unactivated"
+  | "doorstep_delivered_unactivated"
+  | "branch_activated"
+  | "doorstep_activated"
+  | "virtual_active";
+
+export const DELIVERY_SIMULATION_STATES: readonly DeliverySimulationState[] = [
+  "default",
+  "branch_processing",
+  "doorstep_processing",
+  "branch_ready_unactivated",
+  "doorstep_delivered_unactivated",
+  "branch_activated",
+  "doorstep_activated",
+  "virtual_active",
+] as const;
+
+export const DELIVERY_SIMULATION_LABELS: Record<DeliverySimulationState, string> = {
+  default: "Default (Card State)",
+  branch_processing: "1. Branch · Being Processed (Inactive)",
+  doorstep_processing: "2. Doorstep · In Transit (Inactive)",
+  branch_ready_unactivated: "3. Branch · Ready for Pickup (Needs Activation)",
+  doorstep_delivered_unactivated: "4. Doorstep · Delivered (Needs Activation)",
+  branch_activated: "5. Branch · Collected & Activated (Active)",
+  doorstep_activated: "6. Doorstep · Delivered & Activated (Active)",
+  virtual_active: "7. Virtual · Instant Active (Active)",
+};
 
 export interface VirtualCardDetailsViewProps {
   card: PaymentCard;
@@ -61,21 +126,169 @@ export function VirtualCardDetailsView({
   const activeProfile = useSession((s) => s.activeProfile);
   const availableAccounts = accountsForProfile(activeProfile?.kind ?? "RETAIL");
 
+  // Delivery Tracking State Simulation (Controlled via Dev Mode Switcher)
+  const [deliverySimState, setDeliverySimState] = useState<DeliverySimulationState>("default");
+
   // Local reactive states
   const [currentCard, setCurrentCard] = useState<PaymentCard>(card);
   const [isFrozen, setIsFrozen] = useState(card.status === "Blocked");
   const [showCardDetails, setShowCardDetails] = useState(false);
-  const [dailySpent] = useState(1240);
+
+  // Dynamic card activity list linked to card ID
+  const [activities, setActivities] = useState<CardTransaction[]>(() => getCardTransactions(card.id));
+
+  // Compute daily spend dynamically from actual card transactions
+  const dailySpent = useMemo(() => {
+    return activities
+      .filter((a) => a.direction === "debit")
+      .reduce((acc, curr) => acc + curr.amount, 0);
+  }, [activities]);
+
   const [dailyLimit, setDailyLimit] = useState(card.spendLimit ?? 5000);
   const [maxDailyCap] = useState(20000);
   const [monthlyLimit, setMonthlyLimit] = useState(15000);
   const [maxMonthlyCap] = useState(50000);
   const [cardNickname, setCardNickname] = useState(card.name ?? "Virtual Card");
 
+  // Derive effective card with simulation overrides
+  const effectiveCard = useMemo<PaymentCard>(() => {
+    if (deliverySimState === "default") {
+      return currentCard;
+    }
+
+    const baseTracking = currentCard.trackingNumber || `GCB-CRD-${currentCard.id.slice(-6).toUpperCase()}`;
+
+    switch (deliverySimState) {
+      case "branch_processing":
+        return {
+          ...currentCard,
+          type: "Debit",
+          deliveryMethod: "BRANCH_PICKUP",
+          deliveryBranch: "GCB Head Office Branch (High Street, Accra)",
+          deliveryAddress: undefined,
+          deliveryStatus: "processing",
+          trackingNumber: baseTracking,
+          estimatedDeliveryDate: "Sep 23, 2026 (5-7 business days)",
+          pickupCode: "4920",
+          status: "Inactive",
+        };
+      case "doorstep_processing":
+        return {
+          ...currentCard,
+          type: "Debit",
+          deliveryMethod: "DELIVERY",
+          deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
+          deliveryBranch: undefined,
+          deliveryStatus: "in_transit",
+          trackingNumber: baseTracking,
+          estimatedDeliveryDate: "Sep 21, 2026 (3-5 business days)",
+          status: "Inactive",
+        };
+      case "branch_ready_unactivated":
+        return {
+          ...currentCard,
+          type: "Debit",
+          deliveryMethod: "BRANCH_PICKUP",
+          deliveryBranch: "GCB Head Office Branch (High Street, Accra)",
+          deliveryAddress: undefined,
+          deliveryStatus: "ready_for_pickup",
+          trackingNumber: baseTracking,
+          estimatedDeliveryDate: "Ready for Pickup Today",
+          pickupCode: "4920",
+          status: "Inactive",
+        };
+      case "doorstep_delivered_unactivated":
+        return {
+          ...currentCard,
+          type: "Debit",
+          deliveryMethod: "DELIVERY",
+          deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
+          deliveryBranch: undefined,
+          deliveryStatus: "delivered",
+          trackingNumber: baseTracking,
+          estimatedDeliveryDate: "Delivered on Sep 18, 2026",
+          status: "Inactive",
+        };
+      case "branch_activated":
+        return {
+          ...currentCard,
+          type: "Debit",
+          deliveryMethod: "BRANCH_PICKUP",
+          deliveryBranch: "GCB Head Office Branch (High Street, Accra)",
+          deliveryAddress: undefined,
+          deliveryStatus: "delivered",
+          trackingNumber: baseTracking,
+          estimatedDeliveryDate: "Delivered",
+          pickupCode: "4920",
+          status: "Active",
+        };
+      case "doorstep_activated":
+        return {
+          ...currentCard,
+          type: "Debit",
+          deliveryMethod: "DELIVERY",
+          deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
+          deliveryBranch: undefined,
+          deliveryStatus: "delivered",
+          trackingNumber: baseTracking,
+          estimatedDeliveryDate: "Delivered",
+          status: "Active",
+        };
+      case "virtual_active":
+        return {
+          ...currentCard,
+          type: "Virtual",
+          isVirtual: true,
+          deliveryStatus: undefined,
+          deliveryMethod: undefined,
+          deliveryBranch: undefined,
+          deliveryAddress: undefined,
+          trackingNumber: undefined,
+          estimatedDeliveryDate: undefined,
+          pickupCode: undefined,
+          status: "Active",
+        };
+      default:
+        return currentCard;
+    }
+  }, [currentCard, deliverySimState]);
+
   // Modals state
   const [activeModal, setActiveModal] = useState<
-    "details" | "pin" | "freeze" | "limits" | "controls" | "reset-pin" | "edit-nickname" | "replace" | "top-up" | "tracking" | null
+    "details" | "pin" | "freeze" | "limits" | "controls" | "reset-pin" | "edit-nickname" | "replace" | "top-up" | "tracking" | "activate" | null
   >(null);
+
+  // Card Activation Form State
+  const [activationCvv, setActivationCvv] = useState("");
+  const [activationPin, setActivationPin] = useState("");
+  const [activationPinConfirm, setActivationPinConfirm] = useState("");
+
+  const handleActivateCard = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (activationCvv.trim().length !== 3) {
+      toast.error("Please enter the 3-digit CVV from the back of your card.");
+      return;
+    }
+    if (activationPin.length !== 4) {
+      toast.error("PIN must be 4 digits.");
+      return;
+    }
+    if (activationPin !== activationPinConfirm) {
+      toast.error("PINs do not match. Please check and re-enter.");
+      return;
+    }
+
+    setCurrentCard((prev) => ({ ...prev, status: "Active" }));
+    setCardStatusInStore(currentCard.id, "Active");
+    updateCardInStore(currentCard.id, { status: "Active" });
+    if (onUpdateCard) onUpdateCard({ status: "Active" });
+
+    toast.success(`Card "${effectiveCard.name}" activated successfully! All functions are unlocked.`);
+    setActiveModal(null);
+    setActivationCvv("");
+    setActivationPin("");
+    setActivationPinConfirm("");
+  };
 
   // Top Up Form State
   const [topUpAmount, setTopUpAmount] = useState("");
@@ -136,6 +349,19 @@ export function VirtualCardDetailsView({
     const updatedBalance = (currentCard.balance ?? 0) + amt;
     setCurrentCard((prev) => ({ ...prev, balance: updatedBalance }));
     if (onUpdateCard) onUpdateCard({ balance: updatedBalance });
+
+    const newTxn: CardTransaction = {
+      id: `c-act-topup-${Date.now()}`,
+      cardId: currentCard.id,
+      title: "Card Balance Top Up",
+      category: "Between Accounts",
+      date: "Today",
+      amount: amt,
+      direction: "credit",
+      status: "completed",
+    };
+    addCardTransaction(newTxn);
+    setActivities((prev) => [newTxn, ...prev]);
 
     triggerToast(
       `Top up successful! Added GHS ${amt.toLocaleString(undefined, { minimumFractionDigits: 2 })} to ${currentCard.name}`
@@ -200,9 +426,34 @@ export function VirtualCardDetailsView({
 
   // Daily percentage of limit used
   const dailyPct = Math.min(100, Math.max(0, Math.round((dailySpent / (dailyLimit || 1)) * 100)));
+  const isInactive = effectiveCard.status === "Inactive";
+  const isPreparing = Boolean(
+    effectiveCard.deliveryStatus &&
+      (effectiveCard.deliveryStatus === "processing" ||
+        effectiveCard.deliveryStatus === "in_production" ||
+        effectiveCard.deliveryStatus === "in_transit")
+  );
+
+  const cardThemeId =
+    effectiveCard.colorTheme ||
+    (effectiveCard.type === "Virtual"
+      ? "blue"
+      : effectiveCard.type === "Prepaid"
+      ? "maroon"
+      : "gold");
+  const activeTheme = getCardTheme(cardThemeId);
 
   return (
     <div className="flex flex-col gap-10 w-full">
+      {/* Dev Mode Toolbar State Switcher for Delivery Tracking Simulation */}
+      <StateSwitcher
+        section="13.9 - Delivery Tracking"
+        states={DELIVERY_SIMULATION_STATES}
+        value={deliverySimState}
+        onChange={setDeliverySimState}
+        labels={DELIVERY_SIMULATION_LABELS}
+      />
+
       {/* Back Button & Title Header */}
       <div className="flex items-center gap-3 min-w-0">
         <button
@@ -221,387 +472,671 @@ export function VirtualCardDetailsView({
 
       {/* Main Container matching Figma 1243:25983 w-[905.9px] */}
       <div className="w-full max-w-[920px] flex flex-col gap-8">
-        {/* Physical Card Fulfillment & Delivery Banner (if card has active fulfillment) */}
-        {currentCard.deliveryStatus && currentCard.deliveryStatus !== "delivered" && (
-          <div className="rounded-[16px] border border-border bg-card p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
-            <div className="flex items-center gap-3.5">
-              <div className="size-10 rounded-xl bg-muted flex items-center justify-center shrink-0 text-foreground">
-                <Truck size={18} strokeWidth={1.8} />
+        {isPreparing ? (
+          /* ========================================================================= */
+          /* IN-PRODUCTION / PREPARING STATE HERO (Matching Figma Node 1643:3459)       */
+          /* ========================================================================= */
+          <div className="flex flex-col items-center justify-center py-6 sm:py-12 gap-8 sm:gap-10 w-full max-w-lg mx-auto animate-in fade-in duration-300">
+            {/* Physical Card Artwork matching Selected Card Theme & Reference Design */}
+            <div
+              style={{ backgroundColor: activeTheme.colorHex }}
+              className={`relative w-full max-w-[460px] aspect-[1.586/1] rounded-[20px] overflow-hidden p-6 sm:p-7 flex flex-col justify-between select-none shadow-xl ${activeTheme.textColor}`}
+            >
+              {/* High-res Card Artwork Background with Expanded Full-Bleed Fill */}
+              <img
+                src={activeTheme.bgImage}
+                alt=""
+                className="absolute -inset-[3px] w-[calc(100%+6px)] h-[calc(100%+6px)] max-w-none object-cover scale-[1.03] pointer-events-none select-none"
+              />
+
+              {/* Top Row: GCB Logo & Card Type */}
+              <div className="relative z-10 flex items-center justify-between">
+                <GcbCardLogo themeId={activeTheme.id} className="h-8 sm:h-9 w-auto drop-shadow-xs shrink-0" />
+                <span className="text-[14px] sm:text-[15.5px] font-normal tracking-wide opacity-90 capitalize">
+                  {effectiveCard.type}
+                </span>
               </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-[14.5px] font-medium text-foreground">
-                    Physical Card Fulfillment in Progress
+
+              {/* Middle Row: Gold EMV Chip with Metallic Sheen + Contactless Waves */}
+              <div className="relative z-10 my-auto py-2 flex items-center gap-3.5">
+                <EmvChip />
+                <Wifi size={22} strokeWidth={2.4} className="rotate-90 opacity-85 shrink-0" />
+              </div>
+
+              {/* Bottom Row: Card Holder, Exp, and Visa / Mastercard */}
+              <div className="relative z-10 flex items-end justify-between whitespace-nowrap gap-4">
+                <div className="flex flex-col gap-0.5 text-left">
+                  <span className="text-[10.5px] sm:text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
+                    CARD HOLDER
                   </span>
-                  <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-foreground border border-border">
-                    {currentCard.deliveryStatus === "ready_for_pickup"
-                      ? "Ready for Pickup"
-                      : currentCard.deliveryStatus === "in_transit"
-                      ? "In Transit"
-                      : "In Production"}
+                  <span className="text-[15px] sm:text-[17px] font-medium leading-[22px] tracking-tight uppercase">
+                    {effectiveCard.holder || "TSOTSOO MILLS"}
                   </span>
                 </div>
-                <span className="text-[12.5px] text-muted-foreground mt-0.5">
-                  {currentCard.deliveryMethod === "BRANCH_PICKUP"
-                    ? `Collection at ${currentCard.deliveryBranch || "GCB Head Office Branch"}`
-                    : `Delivering to ${currentCard.deliveryAddress || "Registered Address"}`}
+
+                <div className="flex flex-col gap-0.5 text-left">
+                  <span className="text-[10.5px] sm:text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
+                    EXP
+                  </span>
+                  <span className="text-[15px] sm:text-[17px] font-medium leading-[22px] tracking-tight font-mono">
+                    {displayExpiry || "09/28"}
+                  </span>
+                </div>
+
+                <div className="shrink-0 flex items-end justify-end pl-2">
+                  {effectiveCard.scheme === "Mastercard" ? (
+                    <div className="flex -space-x-2 items-center drop-shadow-xs pb-0.5">
+                      <div className="size-6 sm:size-7 rounded-full bg-[#eb001b]/95" />
+                      <div className="size-6 sm:size-7 rounded-full bg-[#f79e1b]/95" />
+                    </div>
+                  ) : (
+                    <span className="font-sans text-[26px] sm:text-[32px] font-black italic tracking-tighter leading-none opacity-95 drop-shadow-xs">
+                      VISA
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Text Details */}
+            <div className="flex flex-col gap-3 items-center text-center">
+              <h2 className="text-[24px] sm:text-[26px] font-medium text-foreground tracking-[-0.52px]">
+                Your card is being prepared
+              </h2>
+              <p className="text-[15px] sm:text-[16px] text-muted-foreground tracking-[-0.08px]">
+                {effectiveCard.estimatedDeliveryDate
+                  ? `Estimated readiness: ${effectiveCard.estimatedDeliveryDate}`
+                  : "It will be ready within 5-7 days."}
+              </p>
+
+              <div className="flex items-center gap-1.5 text-[15px] sm:text-[16px] text-foreground mt-1">
+                <MapPin size={16} className="text-foreground shrink-0" />
+                <span>
+                  {effectiveCard.deliveryMethod === "BRANCH_PICKUP"
+                    ? `Pickup Location:  ${effectiveCard.deliveryBranch || "GCB Head Office"}`
+                    : `Delivery to:  ${effectiveCard.deliveryAddress || "No. 14 Ridge Road, Cantonments, Accra"}`}
                 </span>
               </div>
             </div>
+
+            {/* CTA Button to Track Delivery Progress */}
             <button
               type="button"
               onClick={() => setActiveModal("tracking")}
-              className="px-3.5 py-1.5 rounded-xl text-[13px] font-medium bg-foreground text-background hover:bg-foreground/90 transition-colors shrink-0 cursor-pointer self-start sm:self-auto"
+              className="bg-[#f9c632] hover:bg-[#eab308] text-[#451a03] font-medium h-11 px-5 rounded-[8px] flex items-center gap-2 shadow-xs cursor-pointer text-[14px] transition-colors"
             >
-              Track Delivery
+              {effectiveCard.deliveryMethod === "BRANCH_PICKUP" ? (
+                <Building2 size={18} />
+              ) : (
+                <Truck size={18} />
+              )}
+              <span>Track Delivery Progress</span>
             </button>
           </div>
-        )}
+        ) : (
+          /* ========================================================================= */
+          /* ACTIVE / INACTIVE HERO STATE WITH TABS (Matching Figma Node 1243:25983)   */
+          /* ========================================================================= */
+          <div className="flex flex-col gap-6 w-full animate-in fade-in duration-300">
+            {/* Delivery Progress Banner */}
+            {effectiveCard.deliveryStatus && (
+              <button
+                type="button"
+                onClick={() => setActiveModal("tracking")}
+                className="w-full rounded-2xl bg-muted/40 hover:bg-muted/60 border border-border/80 px-4 py-3 flex items-center justify-between gap-3 text-left transition-colors cursor-pointer group shadow-xs"
+              >
+                {/* Left side: Icon + Message */}
+                <div className="flex items-center gap-3 min-w-0">
+                  {effectiveCard.deliveryMethod === "BRANCH_PICKUP" ? (
+                    <div className="size-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                      <Building2 size={18} />
+                    </div>
+                  ) : (
+                    <div className="size-9 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+                      <Truck size={18} />
+                    </div>
+                  )}
+                  <span className="text-[15px] sm:text-[16px] font-normal text-foreground truncate">
+                    {effectiveCard.deliveryStatus === "in_transit"
+                      ? "Your card is on the way!"
+                      : "Your card is being prepared"}
+                  </span>
+                </div>
 
-        {/* Top 2 Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch w-full">
+                {/* Right side: Action link + Chevron */}
+                <div className="flex items-center gap-1.5 text-foreground shrink-0 text-[14px] sm:text-[15px] font-normal">
+                  <span>Track Delivery</span>
+                  <ChevronRight
+                    size={16}
+                    strokeWidth={1.8}
+                    className="text-foreground transition-transform group-hover:translate-x-0.5"
+                  />
+                </div>
+              </button>
+            )}
+
+            {/* Top 2 Columns */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch w-full">
           {/* ========================================================================= */}
           {/* LEFT COLUMN: Hero Yellow Branded GCB Virtual Card & 3 Action Buttons      */}
           {/* ========================================================================= */}
           <div className="flex flex-col justify-between h-full gap-4 w-full">
-            {/* The Yellow Branded GCB Virtual Card */}
-            <div className="relative flex-1 min-h-[237px] w-full rounded-[15.75px] overflow-hidden p-[18px] flex flex-col justify-between select-none shadow-xs transition-all duration-200 bg-gradient-to-b from-[#fddc07] from-[39%] to-[#ffbc04] text-[#121212]">
-              {/* Background Watermark Elements from Figma */}
-              <div className="-translate-x-1/2 -translate-y-1/2 absolute flex h-[535px] items-center justify-center left-[calc(50%+73px)] top-[calc(50%+19px)] w-[564px] pointer-events-none select-none opacity-20">
-                <div className="flex-none rotate-30">
-                  <div className="h-[364px] relative w-[441px]">
-                    <div className="absolute inset-[-27.5%_-22.7%]">
-                      <img alt="" className="block size-full object-contain" src="/card-bg-wings.svg" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="absolute h-[334px] left-[189px] top-[18px] w-[410px] pointer-events-none select-none opacity-90">
-                <img alt="" className="block size-full object-contain" src="/card-watermark.svg" />
-              </div>
+            {/* The Branded GCB Card */}
+            {(() => {
+              const isDarkText =
+                activeTheme.textColor.includes("121212") ||
+                activeTheme.textColor.includes("zinc-950") ||
+                activeTheme.textColor.includes("082f49");
+              const btnClass = isDarkText
+                ? "bg-black/10 hover:bg-black/20 text-[#082f49]"
+                : "bg-white/15 hover:bg-white/25 text-white";
+              const badgeClass = isDarkText
+                ? "bg-black/15 text-[#082f49] border-black/10"
+                : "bg-white/20 text-white border-white/20";
 
-              {/* Top Row: GCB Logo & Eye Toggle */}
-              <div className="relative z-10 flex items-center justify-between">
-                <div className="h-[32px] w-[37.2px] relative shrink-0">
-                  <img alt="GCB" className="size-full object-contain" src="/gcb-card-logo.svg" />
-                </div>
-                <div className="flex items-center gap-2">
-                  {isFrozen && (
-                    <span className="bg-black/15 backdrop-blur-xs text-[#121212] px-2.5 py-0.5 rounded-full text-[11px] font-medium border border-black/10">
-                      Frozen
-                    </span>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => setShowCardDetails((prev) => !prev)}
-                    className="size-8 rounded-full bg-black/10 hover:bg-black/20 text-[#121212] flex items-center justify-center transition-colors cursor-pointer"
-                    title={showCardDetails ? "Hide card details" : "Show card details"}
-                    aria-label={showCardDetails ? "Hide card details" : "Show card details"}
-                  >
-                    {showCardDetails ? (
-                      <EyeOff size={16} strokeWidth={2} />
-                    ) : (
-                      <Eye size={16} strokeWidth={2} />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* Center Row: Card Number & Inline Quick Copy */}
-              <div className="relative z-10 my-auto py-1 flex items-center gap-2.5">
-                <p
-                  onClick={() => {
-                    if (showCardDetails) {
-                      handleCopy(displayFullNumber.replace(/\s/g, ""), "Card Number");
-                    }
-                  }}
-                  className={`font-mono text-[18px] sm:text-[22px] tracking-wider leading-[24px] text-[#121212] whitespace-nowrap select-none ${
-                    showCardDetails
-                      ? "cursor-pointer hover:opacity-85 transition-opacity"
-                      : "cursor-default"
-                  }`}
-                  title={showCardDetails ? "Click to copy card number" : undefined}
-                >
-                  {showCardDetails ? displayFullNumber : `•••• •••• •••• ${maskedLast4}`}
-                </p>
-                {showCardDetails && (
-                  <button
-                    type="button"
-                    onClick={() => handleCopy(displayFullNumber.replace(/\s/g, ""), "Card Number")}
-                    className="size-7 rounded-full bg-black/10 hover:bg-black/20 text-[#121212] flex items-center justify-center transition-colors cursor-pointer shrink-0"
-                    title="Copy card number"
-                    aria-label="Copy card number"
-                  >
-                    <Copy size={13} strokeWidth={2} />
-                  </button>
-                )}
-              </div>
-
-              {/* Bottom Row: CARD HOLDER, EXP, and CVV */}
-              <div className="relative z-10 flex items-end justify-between text-[#121212] whitespace-nowrap">
-                {showCardDetails ? (
-                  <button
-                    type="button"
-                    onClick={() => handleCopy(card.holder || "TSOTSOO MILLS", "Cardholder Name")}
-                    className="flex flex-col gap-0.5 text-left group cursor-pointer hover:opacity-80 transition-opacity"
-                    title="Click to copy cardholder name"
-                  >
-                    <span className="text-[12px] font-semibold opacity-40 leading-[20px] uppercase tracking-wider">
-                      CARD HOLDER
-                    </span>
-                    <span className="text-[16px] font-medium leading-[24px] tracking-[-0.08px] uppercase">
-                      {card.holder || "TSOTSOO MILLS"}
-                    </span>
-                  </button>
-                ) : (
-                  <div className="flex flex-col gap-0.5 text-left select-none">
-                    <span className="text-[12px] font-semibold opacity-40 leading-[20px] uppercase tracking-wider">
-                      CARD HOLDER
-                    </span>
-                    <span className="text-[16px] font-medium leading-[24px] tracking-[-0.08px] uppercase">
-                      {card.holder || "TSOTSOO MILLS"}
-                    </span>
-                  </div>
-                )}
-
-                <div className="flex items-center gap-5">
-                  {showCardDetails ? (
-                    <button
-                      type="button"
-                      onClick={() => handleCopy(displayExpiry, "Expiry Date")}
-                      className="flex flex-col gap-0.5 items-end group cursor-pointer hover:opacity-80 transition-opacity text-right"
-                      title="Click to copy expiry date"
-                    >
-                      <span className="text-[12px] font-semibold opacity-40 leading-[20px] uppercase tracking-wider">
-                        EXP
-                      </span>
-                      <span className="text-[16px] font-medium leading-[24px] tracking-[-0.08px] font-mono">
-                        {displayExpiry}
-                      </span>
-                    </button>
-                  ) : (
-                    <div className="flex flex-col gap-0.5 items-end text-right select-none">
-                      <span className="text-[12px] font-semibold opacity-40 leading-[20px] uppercase tracking-wider">
-                        EXP
-                      </span>
-                      <span className="text-[16px] font-medium leading-[24px] tracking-[-0.08px] font-mono">
-                        {displayExpiry}
-                      </span>
-                    </div>
-                  )}
-
-                  {showCardDetails ? (
-                    <button
-                      type="button"
-                      onClick={() => handleCopy(displayCvv, "CVV")}
-                      className="flex flex-col gap-0.5 items-end group cursor-pointer hover:opacity-80 transition-opacity text-right"
-                      title="Click to copy CVV"
-                    >
-                      <span className="text-[12px] font-semibold opacity-40 leading-[20px] uppercase tracking-wider">
-                        CVV
-                      </span>
-                      <span className="text-[16px] font-medium leading-[24px] tracking-[-0.08px] font-mono">
-                        {displayCvv}
-                      </span>
-                    </button>
-                  ) : (
-                    <div className="flex flex-col gap-0.5 items-end text-right select-none">
-                      <span className="text-[12px] font-semibold opacity-40 leading-[20px] uppercase tracking-wider">
-                        CVV
-                      </span>
-                      <span className="text-[16px] font-medium leading-[24px] tracking-[-0.08px] font-mono">
-                        •••
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* 3 Horizontal Action Buttons matching Figma Node 1243:26133 */}
-            <div className="grid grid-cols-3 gap-2 w-full">
-              {/* Button 1: Top Up (if fundable) or View Linked Account (if debit) */}
-              {isFundable ? (
-                <Link
-                  href={`/payments/send?rail=card-topup&cardId=${currentCard.id}`}
-                  className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
-                  title="Top up card balance"
-                >
-                  <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
-                    <PlusCircle size={17} strokeWidth={1.8} />
-                  </div>
-                  <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
-                    Top Up
-                  </span>
-                </Link>
-              ) : (
-                <Link
-                  href={`/accounts/${currentCard.linkedAccountId || "acc-001"}`}
-                  className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
-                  title="View linked bank account"
-                >
-                  <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
-                    <Landmark size={17} strokeWidth={1.8} />
-                  </div>
-                  <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
-                    Account
-                  </span>
-                </Link>
-              )}
-
-              {/* Button 2: Show PIN */}
-              <button
-                type="button"
-                onClick={handleOpenPinModal}
-                className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
-              >
-                <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
-                  <Grid size={17} strokeWidth={1.8} />
-                </div>
-                <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
-                  Show PIN
-                </span>
-              </button>
-
-              {/* Button 3: Block / Unblock */}
-              <button
-                type="button"
-                onClick={() => setActiveModal("freeze")}
-                className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
-              >
-                <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
-                  <Snowflake size={17} strokeWidth={1.8} />
-                </div>
-                <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
-                  {isFrozen ? "Unblock" : "Block"}
-                </span>
-              </button>
-            </div>
-          </div>
-
-          {/* ========================================================================= */}
-          {/* RIGHT COLUMN: Daily Limit Progress & 4-Item Action Menu Card             */}
-          {/* ========================================================================= */}
-          <div className="flex flex-col justify-between h-full gap-5 w-full">
-            {/* Daily Limit Tracker matching Figma Node 1243:26138 */}
-            <div className="flex flex-col gap-1.5 w-full">
-              <div className="flex items-center justify-between">
-                <span className="text-[14px] font-normal text-[#737373] dark:text-muted-foreground">
-                  Daily Limit
-                </span>
-                <span className="text-[14px] font-normal text-[#0a0a0a] dark:text-foreground tabular">
-                  GHS {dailySpent.toLocaleString()} / GHS {dailyLimit.toLocaleString()}
-                </span>
-              </div>
-              <div className="h-[12px] w-full rounded-full bg-[#f6f6f5] dark:bg-muted overflow-hidden">
+              return (
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-[#ffb200] to-[#f9c632] transition-all duration-500"
-                  style={{ width: `${dailyPct}%` }}
-                />
-              </div>
-            </div>
+                  style={{ backgroundColor: activeTheme.colorHex }}
+                  className={`relative flex-1 min-h-[237px] w-full rounded-[15.75px] overflow-hidden p-[18px] flex flex-col justify-between select-none shadow-xs transition-all duration-200 ${
+                    activeTheme.textColor
+                  }`}
+                >
+                  {/* High-res Card Artwork Background with Expanded Full-Bleed Fill */}
+                  <img
+                    src={activeTheme.bgImage}
+                    alt=""
+                    className="absolute -inset-[3px] w-[calc(100%+6px)] h-[calc(100%+6px)] max-w-none object-cover scale-[1.03] pointer-events-none select-none"
+                  />
 
-            {/* 4-Item Grouped Action Menu List Card matching Figma Node 1243:26146 */}
-            <div className="rounded-[12px] border border-[#ebebe9] dark:border-border bg-card overflow-hidden divide-y divide-[#ebebe9] dark:divide-border w-full">
-              {/* Item 1: Set limits for this card */}
-              <button
-                type="button"
-                onClick={() => {
-                  setTempDaily(String(dailyLimit));
-                  setTempMonthly(String(monthlyLimit));
-                  setActiveModal("limits");
-                }}
-                className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors text-left group cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="size-[32px] rounded-full bg-[#f5f5f5] dark:bg-muted text-[#121212] dark:text-foreground flex items-center justify-center shrink-0">
-                    <SlidersHorizontal size={16} strokeWidth={1.8} />
+                  {/* Top Row: GCB Logo & Eye Toggle / Status Badge */}
+                  <div className="relative z-10 flex items-center justify-between">
+                    <GcbCardLogo themeId={activeTheme.id} className="h-8 sm:h-9 w-auto drop-shadow-xs shrink-0" />
+                    <div className="flex items-center gap-2">
+                      {isPreparing ? (
+                        <span className={`backdrop-blur-xs px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${badgeClass}`}>
+                          {effectiveCard.deliveryStatus === "in_transit" ? "In Transit" : "In Production"}
+                        </span>
+                      ) : isInactive ? (
+                        <span className={`backdrop-blur-xs px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${badgeClass}`}>
+                          Needs Activation
+                        </span>
+                      ) : isFrozen ? (
+                        <span className={`backdrop-blur-xs px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${badgeClass}`}>
+                          Frozen
+                        </span>
+                      ) : null}
+                      <button
+                        type="button"
+                        onClick={() => setShowCardDetails((prev) => !prev)}
+                        className={`size-8 rounded-full flex items-center justify-center transition-colors cursor-pointer ${btnClass}`}
+                        title={showCardDetails ? "Hide card details" : "Show card details"}
+                        aria-label={showCardDetails ? "Hide card details" : "Show card details"}
+                      >
+                        {showCardDetails ? (
+                          <EyeOff size={16} strokeWidth={2} />
+                        ) : (
+                          <Eye size={16} strokeWidth={2} />
+                        )}
+                      </button>
+                    </div>
                   </div>
-                  <span className="text-[14px] font-normal text-[#0a0a0a] dark:text-foreground">
-                    Set limits for this card
-                  </span>
-                </div>
-                <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
-              </button>
 
-              {/* Item 2: Edit card nickname & account */}
-              <button
-                type="button"
-                onClick={() => {
-                  setTempNickname(cardNickname);
-                  setActiveModal("edit-nickname");
-                }}
-                className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors text-left group cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="size-[32px] rounded-full bg-[#f5f5f5] dark:bg-muted text-[#121212] dark:text-foreground flex items-center justify-center shrink-0">
-                    <Sparkles size={16} strokeWidth={1.8} />
+                  {/* Center Row: Card Number & Inline Quick Copy */}
+                  <div className="relative z-10 my-auto py-1 flex items-center gap-2.5 text-inherit">
+                    <p
+                      onClick={() => {
+                        if (showCardDetails) {
+                          handleCopy(displayFullNumber.replace(/\s/g, ""), "Card Number");
+                        }
+                      }}
+                      className={`font-mono text-[18px] sm:text-[22px] tracking-wider leading-[24px] whitespace-nowrap select-none ${
+                        showCardDetails
+                          ? "cursor-pointer hover:opacity-85 transition-opacity"
+                          : "cursor-default"
+                      }`}
+                      title={showCardDetails ? "Click to copy card number" : undefined}
+                    >
+                      {showCardDetails ? displayFullNumber : `•••• •••• •••• ${maskedLast4}`}
+                    </p>
+                    {showCardDetails && (
+                      <button
+                        type="button"
+                        onClick={() => handleCopy(displayFullNumber.replace(/\s/g, ""), "Card Number")}
+                        className={`size-7 rounded-full flex items-center justify-center transition-colors cursor-pointer shrink-0 ${btnClass}`}
+                        title="Copy card number"
+                        aria-label="Copy card number"
+                      >
+                        <Copy size={13} strokeWidth={2} />
+                      </button>
+                    )}
                   </div>
-                  <span className="text-[14px] font-normal text-[#0a0a0a] dark:text-foreground">
-                    Edit card nickname & account
-                  </span>
-                </div>
-                <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
-              </button>
 
-              {/* Item 3: Reset PIN */}
-              <button
-                type="button"
-                onClick={() => setActiveModal("reset-pin")}
-                className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors text-left group cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="size-[32px] rounded-full bg-[#f5f5f5] dark:bg-muted text-[#121212] dark:text-foreground flex items-center justify-center shrink-0">
-                    <Key size={16} strokeWidth={1.8} />
+                  {/* Bottom Row: CARD HOLDER, EXP, CVV & Scheme Logo */}
+                  <div className="relative z-10 flex items-end justify-between text-inherit whitespace-nowrap gap-3">
+                    {showCardDetails ? (
+                      <button
+                        type="button"
+                        onClick={() => handleCopy(card.holder || "TSOTSOO MILLS", "Cardholder Name")}
+                        className="flex flex-col gap-0.5 text-left group cursor-pointer hover:opacity-80 transition-opacity min-w-0"
+                        title="Click to copy cardholder name"
+                      >
+                        <span className="text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
+                          CARD HOLDER
+                        </span>
+                        <span className="text-[15px] sm:text-[16px] font-medium leading-[22px] tracking-[-0.05px] uppercase truncate max-w-[140px] sm:max-w-[170px]">
+                          {card.holder || "TSOTSOO MILLS"}
+                        </span>
+                      </button>
+                    ) : (
+                      <div className="flex flex-col gap-0.5 text-left select-none min-w-0">
+                        <span className="text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
+                          CARD HOLDER
+                        </span>
+                        <span className="text-[15px] sm:text-[16px] font-medium leading-[22px] tracking-[-0.05px] uppercase truncate max-w-[140px] sm:max-w-[170px]">
+                          {card.holder || "TSOTSOO MILLS"}
+                        </span>
+                      </div>
+                    )}
+
+                    <div className="flex items-end gap-3.5 sm:gap-4 shrink-0">
+                      {showCardDetails ? (
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(displayExpiry, "Expiry Date")}
+                          className="flex flex-col gap-0.5 items-start group cursor-pointer hover:opacity-80 transition-opacity text-left"
+                          title="Click to copy expiry date"
+                        >
+                          <span className="text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
+                            EXP
+                          </span>
+                          <span className="text-[14px] sm:text-[15px] font-medium leading-[22px] tracking-[-0.05px] font-mono">
+                            {displayExpiry}
+                          </span>
+                        </button>
+                      ) : (
+                        <div className="flex flex-col gap-0.5 items-start text-left select-none">
+                          <span className="text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
+                            EXP
+                          </span>
+                          <span className="text-[14px] sm:text-[15px] font-medium leading-[22px] tracking-[-0.05px] font-mono">
+                            {displayExpiry}
+                          </span>
+                        </div>
+                      )}
+
+                      {showCardDetails ? (
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(displayCvv, "CVV")}
+                          className="flex flex-col gap-0.5 items-start group cursor-pointer hover:opacity-80 transition-opacity text-left"
+                          title="Click to copy CVV"
+                        >
+                          <span className="text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
+                            CVV
+                          </span>
+                          <span className="text-[14px] sm:text-[15px] font-medium leading-[22px] tracking-[-0.05px] font-mono">
+                            {displayCvv}
+                          </span>
+                        </button>
+                      ) : (
+                        <div className="flex flex-col gap-0.5 items-start text-left select-none">
+                          <span className="text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
+                            CVV
+                          </span>
+                          <span className="text-[14px] sm:text-[15px] font-medium leading-[22px] tracking-[-0.05px] font-mono">
+                            •••
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Scheme Logo */}
+                      <div className="h-5 shrink-0 flex items-center justify-end pl-1 pb-0.5">
+                        {effectiveCard.scheme === "Mastercard" ? (
+                          <div className="flex -space-x-1.5 items-center drop-shadow-xs">
+                            <div className="size-4.5 rounded-full bg-[#eb001b]/95" />
+                            <div className="size-4.5 rounded-full bg-[#f79e1b]/95" />
+                          </div>
+                        ) : (
+                          <span className="font-bold italic text-[16px] sm:text-[17px] tracking-tighter font-sans drop-shadow-xs leading-none">
+                            VISA
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-[14px] font-normal text-[#0a0a0a] dark:text-foreground">
-                    Reset PIN
-                  </span>
                 </div>
-                <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
-              </button>
+              );
+            })()}
 
-              {/* Item 4: Replace card */}
-              <button
-                type="button"
-                onClick={() => setActiveModal("replace")}
-                className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors text-left group cursor-pointer"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="size-[32px] rounded-full bg-[#f5f5f5] dark:bg-muted text-[#121212] dark:text-foreground flex items-center justify-center shrink-0">
-                    <CreditCard size={16} strokeWidth={1.8} />
-                  </div>
-                  <span className="text-[14px] font-normal text-[#0a0a0a] dark:text-foreground">
-                    Replace card
-                  </span>
-                </div>
-                <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
-              </button>
-
-              {/* Item 5: Track card delivery (if physical card in fulfillment) */}
-              {currentCard.deliveryStatus && (
+            {/* Left Column Controls: Preparing vs Inactive (Ready) vs Active */}
+            {isPreparing ? (
+              <div className="w-full">
                 <button
                   type="button"
                   onClick={() => setActiveModal("tracking")}
+                  className="w-full rounded-[10px] border border-border bg-card hover:bg-muted/50 py-3 px-4 flex items-center justify-center gap-2 text-[14px] font-medium text-foreground transition-colors cursor-pointer shadow-2xs"
+                >
+                  <Truck size={17} strokeWidth={1.8} className="text-muted-foreground" />
+                  Track Fulfillment & Delivery
+                </button>
+              </div>
+            ) : isInactive ? (
+              <div className="w-full">
+                <button
+                  type="button"
+                  onClick={() => setActiveModal("activate")}
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary-hover rounded-[10px] py-3 px-4 flex items-center justify-center gap-2 font-medium text-[14px] shadow-2xs cursor-pointer transition-colors"
+                >
+                  <Sparkles size={17} strokeWidth={1.8} />
+                  Activate Card
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-3 gap-2 w-full">
+                {/* Button 1: Top Up (if fundable) or View Linked Account (if debit) */}
+                {isFundable ? (
+                  <Link
+                    href={`/payments/send?rail=card-topup&cardId=${currentCard.id}`}
+                    className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
+                    title="Top up card balance"
+                  >
+                    <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
+                      <PlusCircle size={17} strokeWidth={1.8} />
+                    </div>
+                    <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
+                      Top Up
+                    </span>
+                  </Link>
+                ) : (
+                  <Link
+                    href={`/accounts/${currentCard.linkedAccountId || "acc-001"}`}
+                    className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
+                    title="View linked bank account"
+                  >
+                    <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
+                      <Landmark size={17} strokeWidth={1.8} />
+                    </div>
+                    <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
+                      Account
+                    </span>
+                  </Link>
+                )}
+
+                {/* Button 2: Show PIN */}
+                <button
+                  type="button"
+                  onClick={handleOpenPinModal}
+                  className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
+                >
+                  <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
+                    <Grid size={17} strokeWidth={1.8} />
+                  </div>
+                  <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
+                    Show PIN
+                  </span>
+                </button>
+
+                {/* Button 3: Block / Unblock */}
+                <button
+                  type="button"
+                  onClick={() => setActiveModal("freeze")}
+                  className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
+                >
+                  <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
+                    <Snowflake size={17} strokeWidth={1.8} />
+                  </div>
+                  <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
+                    {isFrozen ? "Unblock" : "Block"}
+                  </span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* ========================================================================= */}
+          {/* RIGHT COLUMN: Preparation Status vs Activation vs Active Management      */}
+          {/* ========================================================================= */}
+          {isPreparing ? (
+            <div className="flex flex-col justify-between h-full gap-4 w-full">
+              {/* Card is being prepared Status Card */}
+              <div className="rounded-[15.75px] border border-border/80 bg-card p-6 flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="size-10 rounded-full bg-muted text-foreground flex items-center justify-center shrink-0">
+                    <Building2 size={18} strokeWidth={1.8} />
+                  </div>
+                  <div>
+                    <h3 className="text-[15px] font-medium text-foreground">Card is being prepared</h3>
+                    <p className="text-[12.5px] text-muted-foreground">
+                      {effectiveCard.deliveryMethod === "BRANCH_PICKUP"
+                        ? `Your card is in production and will be delivered to ${effectiveCard.deliveryBranch || "your selected branch"}.`
+                        : `Your card is in production and will be delivered to your address.`}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2.5 pt-1 text-[13px] text-muted-foreground">
+                  <div className="flex items-start gap-2.5">
+                    <Clock size={16} className="text-amber-500 shrink-0 mt-0.5" />
+                    <span>Estimated arrival: {effectiveCard.estimatedDeliveryDate || "3-5 business days"}</span>
+                  </div>
+                  <div className="flex items-start gap-2.5">
+                    <Check size={16} className="text-muted-foreground shrink-0 mt-0.5" />
+                    <span>You will be able to activate your card once it is ready for pickup or delivered.</span>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setActiveModal("tracking")}
+                    className="w-full text-[13.5px]"
+                  >
+                    Track Delivery Progress
+                  </Button>
+                </div>
+              </div>
+
+              {/* Delivery Tracking Quick Access */}
+              <div className="rounded-[12px] border border-border/70 bg-muted/30 px-4 py-3.5 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Truck size={17} className="text-muted-foreground shrink-0" />
+                  <span className="text-[13px] text-muted-foreground truncate">
+                    Tracking: {effectiveCard.trackingNumber || "GCB-CRD-882104"}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal("tracking")}
+                  className="text-[13px] font-medium text-foreground hover:underline shrink-0 cursor-pointer"
+                >
+                  View status
+                </button>
+              </div>
+            </div>
+          ) : isInactive ? (
+            <div className="flex flex-col justify-between h-full gap-4 w-full">
+              {/* Card Activation Required Card */}
+              <div className="rounded-[15.75px] border border-border/80 bg-card p-6 flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="size-10 rounded-full bg-primary/15 text-primary-foreground flex items-center justify-center shrink-0">
+                    <CreditCard size={18} strokeWidth={1.8} className="text-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="text-[15px] font-medium text-foreground">Card Activation Required</h3>
+                    <p className="text-[12.5px] text-muted-foreground">
+                      Activate your physical {effectiveCard.type.toLowerCase()} card to unlock features and card controls.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-2.5 pt-1 text-[13px] text-muted-foreground">
+                  <div className="flex items-start gap-2.5">
+                    <Check size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                    <span>Set your 4-digit PIN for ATM cash withdrawals and POS retail purchases</span>
+                  </div>
+                  <div className="flex items-start gap-2.5">
+                    <Check size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                    <span>Unlock daily spend limits, card security freeze, and balance management</span>
+                  </div>
+                  <div className="flex items-start gap-2.5">
+                    <Check size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                    <span>Enable contactless tap-to-pay and online merchant payments</span>
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <Button
+                    type="button"
+                    onClick={() => setActiveModal("activate")}
+                    className="w-full h-10 text-[13.5px] bg-primary text-primary-foreground hover:bg-primary-hover"
+                  >
+                    Activate Card
+                  </Button>
+                </div>
+              </div>
+
+              {/* Delivery Tracking Quick Access if card was dispatched */}
+              {effectiveCard.deliveryStatus && (
+                <div className="rounded-[12px] border border-border/70 bg-muted/30 px-4 py-3.5 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <Truck size={17} className="text-muted-foreground shrink-0" />
+                    <span className="text-[13px] text-muted-foreground truncate">
+                      Delivery tracking: {effectiveCard.trackingNumber || "GCB-CRD-882104"}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveModal("tracking")}
+                    className="text-[13px] font-medium text-foreground hover:underline shrink-0 cursor-pointer"
+                  >
+                    View status
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col justify-between h-full gap-5 w-full">
+              {/* Daily Limit Tracker matching Figma Node 1243:26138 */}
+              <div className="flex flex-col gap-1.5 w-full">
+                <div className="flex items-center justify-between">
+                  <span className="text-[14px] font-normal text-[#737373] dark:text-muted-foreground">
+                    Daily Limit
+                  </span>
+                  <span className="text-[14px] font-normal text-[#0a0a0a] dark:text-foreground tabular">
+                    GHS {dailySpent.toLocaleString()} / GHS {dailyLimit.toLocaleString()}
+                  </span>
+                </div>
+                <div className="h-[12px] w-full rounded-full bg-[#f6f6f5] dark:bg-muted overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-[#ffb200] to-[#f9c632] transition-all duration-500"
+                    style={{ width: `${dailyPct}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* 4-Item Grouped Action Menu List Card matching Figma Node 1243:26146 */}
+              <div className="rounded-[12px] border border-[#ebebe9] dark:border-border bg-card overflow-hidden divide-y divide-[#ebebe9] dark:divide-border w-full">
+                {/* Item 1: Set limits for this card */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTempDaily(String(dailyLimit));
+                    setTempMonthly(String(monthlyLimit));
+                    setActiveModal("limits");
+                  }}
                   className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors text-left group cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
                     <div className="size-[32px] rounded-full bg-[#f5f5f5] dark:bg-muted text-[#121212] dark:text-foreground flex items-center justify-center shrink-0">
-                      <Truck size={16} strokeWidth={1.8} />
+                      <SlidersHorizontal size={16} strokeWidth={1.8} />
                     </div>
                     <span className="text-[14px] font-normal text-[#0a0a0a] dark:text-foreground">
-                      Track delivery & fulfillment
+                      Set limits for this card
                     </span>
                   </div>
                   <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
                 </button>
-              )}
+
+                {/* Item 2: Edit card nickname & account */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTempNickname(cardNickname);
+                    setActiveModal("edit-nickname");
+                  }}
+                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors text-left group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="size-[32px] rounded-full bg-[#f5f5f5] dark:bg-muted text-[#121212] dark:text-foreground flex items-center justify-center shrink-0">
+                      <Sparkles size={16} strokeWidth={1.8} />
+                    </div>
+                    <span className="text-[14px] font-normal text-[#0a0a0a] dark:text-foreground">
+                      Edit card nickname & account
+                    </span>
+                  </div>
+                  <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
+                </button>
+
+                {/* Item 3: Reset PIN */}
+                <button
+                  type="button"
+                  onClick={() => setActiveModal("reset-pin")}
+                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors text-left group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="size-[32px] rounded-full bg-[#f5f5f5] dark:bg-muted text-[#121212] dark:text-foreground flex items-center justify-center shrink-0">
+                      <Key size={16} strokeWidth={1.8} />
+                    </div>
+                    <span className="text-[14px] font-normal text-[#0a0a0a] dark:text-foreground">
+                      Reset PIN
+                    </span>
+                  </div>
+                  <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
+                </button>
+
+                {/* Item 4: Replace card */}
+                <button
+                  type="button"
+                  onClick={() => setActiveModal("replace")}
+                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors text-left group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="size-[32px] rounded-full bg-[#f5f5f5] dark:bg-muted text-[#121212] dark:text-foreground flex items-center justify-center shrink-0">
+                      <CreditCard size={16} strokeWidth={1.8} />
+                    </div>
+                    <span className="text-[14px] font-normal text-[#0a0a0a] dark:text-foreground">
+                      Replace card
+                    </span>
+                  </div>
+                  <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
+                </button>
+
+                {/* Item 5: Track card delivery (if physical card in fulfillment or delivery simulated) */}
+                {effectiveCard.deliveryStatus && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveModal("tracking")}
+                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-muted/50 transition-colors text-left group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="size-[32px] rounded-full bg-[#f5f5f5] dark:bg-muted text-[#121212] dark:text-foreground flex items-center justify-center shrink-0">
+                        <Truck size={16} strokeWidth={1.8} />
+                      </div>
+                      <span className="text-[14px] font-normal text-[#0a0a0a] dark:text-foreground">
+                        Track delivery & fulfillment
+                      </span>
+                    </div>
+                    <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* ========================================================================= */}
-        {/* BOTTOM SECTION: Activity matching Figma Node 1243:26197                  */}
+        {/* BOTTOM SECTION: Activity                                                  */}
         {/* ========================================================================= */}
         <div className="flex flex-col gap-3 w-full">
           {/* Heading 3 */}
@@ -617,114 +1152,101 @@ export function VirtualCardDetailsView({
             </Link>
           </div>
 
-          {/* Activity List Container */}
-          <div className="rounded-[15.75px] border border-border/80 bg-card overflow-hidden divide-y divide-border/40 w-full">
-            {[
-              {
-                id: "c-act-1",
-                title: currentCard.type === "Virtual" ? "AWS Cloud Infrastructure" : "Shell Airport Station",
-                category: currentCard.type === "Virtual" ? "Cloud Services" : "Transport",
-                date: "14 Aug 2026",
-                amount: currentCard.type === "Virtual" ? 142.5 : 450.0,
-                direction: "debit",
-                status: "completed",
-              },
-              {
-                id: "c-act-2",
-                title: currentCard.type === "Virtual" ? "Google Workspace EMEA" : "Melcom Supermarket",
-                category: currentCard.type === "Virtual" ? "Software & SaaS" : "Groceries",
-                date: "11 Aug 2026",
-                amount: currentCard.type === "Virtual" ? 36.0 : 620.0,
-                direction: "debit",
-                status: "completed",
-              },
-              {
-                id: "c-act-3",
-                title: "Card Balance Top Up",
-                category: "Between Accounts",
-                date: "08 Aug 2026",
-                amount: 2000.0,
-                direction: "credit",
-                status: "completed",
-              },
-              {
-                id: "c-act-4",
-                title: currentCard.type === "Virtual" ? "GitHub Enterprise Subscription" : "TotalEnergies Fuel",
-                category: currentCard.type === "Virtual" ? "Developer Tools" : "Transport",
-                date: "02 Aug 2026",
-                amount: currentCard.type === "Virtual" ? 84.0 : 380.0,
-                direction: "debit",
-                status: "completed",
-              },
-            ].map((item) => {
-              const isCredit = item.direction === "credit";
-              const isFailed = item.status === "failed";
-              const isPending = item.status === "pending";
+          {/* Activity List Container or Empty State */}
+          {isInactive ? (
+            <div className="rounded-[15.75px] border border-border/80 bg-card p-8 flex flex-col items-center justify-center text-center">
+              <div className="flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground mb-3">
+                <CreditCard className="size-5 stroke-[1.8]" />
+              </div>
+              <p className="text-[14px] font-normal text-foreground">Card not activated</p>
+              <p className="text-[12px] text-muted-foreground max-w-xs mt-1">
+                Activate this card to begin making transactions, online purchases, and ATM withdrawals.
+              </p>
+            </div>
+          ) : activities.length === 0 ? (
+            <div className="rounded-[15.75px] border border-border/80 bg-card p-8 flex flex-col items-center justify-center text-center">
+              <div className="flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground mb-3">
+                <CreditCard className="size-5 stroke-[1.8]" />
+              </div>
+              <p className="text-[14px] font-normal text-foreground">No card activity yet</p>
+              <p className="text-[12px] text-muted-foreground max-w-xs mt-1">
+                Transactions, top-ups, and payments made with this card will appear here.
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-[15.75px] border border-border/80 bg-card overflow-hidden divide-y divide-border/40 w-full">
+              {activities.map((item) => {
+                const isCredit = item.direction === "credit";
+                const isFailed = item.status === "failed";
+                const isPending = item.status === "pending";
 
-              return (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-3.5 px-4 py-3 hover:bg-muted/30 transition-colors"
-                >
-                  {/* Direction Anchor Icon */}
+                return (
                   <div
-                    className={cn(
-                      "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
-                      isCredit
-                        ? "bg-emerald-500/10 text-[#12B76A] dark:text-emerald-400"
-                        : "bg-muted text-muted-foreground"
-                    )}
+                    key={item.id}
+                    className="flex items-center gap-3.5 px-4 py-3 hover:bg-muted/30 transition-colors"
                   >
-                    {isCredit ? (
-                      <ArrowDownLeft className="size-4 stroke-[1.8]" />
-                    ) : (
-                      <ArrowUpRight className="size-4 stroke-[1.8]" />
-                    )}
-                  </div>
-
-                  {/* Counterparty & Metadata */}
-                  <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                    <span className="font-normal text-foreground text-[14px] leading-tight truncate">
-                      {item.title}
-                    </span>
-                    <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground truncate">
-                      <span>{item.date}</span>
-                      <span>·</span>
-                      <span className="truncate">{item.category}</span>
-                    </div>
-                  </div>
-
-                  {/* Amount & State / Card Ending */}
-                  <div className="shrink-0 flex flex-col items-end gap-0.5">
-                    <span
+                    {/* Direction Anchor Icon */}
+                    <div
                       className={cn(
-                        "tabular text-[14px] font-normal",
-                        isCredit ? "text-[#12B76A] dark:text-emerald-400" : "text-foreground"
+                        "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
+                        isCredit
+                          ? "bg-emerald-500/10 text-[#12B76A] dark:text-emerald-400"
+                          : "bg-muted text-muted-foreground"
                       )}
                     >
-                      {isCredit ? "+ " : "− "}
-                      <RevealingAmount amount={item.amount} currency={currentCard.currency || "GHS"} />
-                    </span>
-                    {isFailed ? (
-                      <span className="text-[11.5px] text-[#F04438] dark:text-rose-400 font-normal">
-                        Failed
+                      {isCredit ? (
+                        <ArrowDownLeft className="size-4 stroke-[1.8]" />
+                      ) : (
+                        <ArrowUpRight className="size-4 stroke-[1.8]" />
+                      )}
+                    </div>
+
+                    {/* Counterparty & Metadata */}
+                    <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                      <span className="font-normal text-foreground text-[14px] leading-tight truncate">
+                        {item.title}
                       </span>
-                    ) : isPending ? (
-                      <span className="text-[11.5px] text-[#F79009] dark:text-amber-400 font-normal">
-                        Pending
+                      <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground truncate">
+                        <span>{item.date}</span>
+                        <span>·</span>
+                        <span className="truncate">{item.category}</span>
+                      </div>
+                    </div>
+
+                    {/* Amount & State / Card Ending */}
+                    <div className="shrink-0 flex flex-col items-end gap-0.5">
+                      <span
+                        className={cn(
+                          "tabular text-[14px] font-normal",
+                          isCredit ? "text-[#12B76A] dark:text-emerald-400" : "text-foreground"
+                        )}
+                      >
+                        {isCredit ? "+ " : "− "}
+                        <RevealingAmount amount={item.amount} currency={currentCard.currency || "GHS"} />
                       </span>
-                    ) : (
-                      <span className="text-[11.5px] text-muted-foreground">
-                        {currentCard.maskedNumber || "•••• 9102"}
-                      </span>
-                    )}
+                      {isFailed ? (
+                        <span className="text-[11.5px] text-[#F04438] dark:text-rose-400 font-normal">
+                          Failed
+                        </span>
+                      ) : isPending ? (
+                        <span className="text-[11.5px] text-[#F79009] dark:text-amber-400 font-normal">
+                          Pending
+                        </span>
+                      ) : (
+                        <span className="text-[11.5px] text-muted-foreground">
+                          {currentCard.maskedNumber || "•••• 9102"}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
+    )}
+  </div>
 
       {/* ========================================================================= */}
       {/* MODAL DIALOGS                                                              */}
@@ -1124,9 +1646,103 @@ export function VirtualCardDetailsView({
         </DialogContent>
       </Dialog>
 
-      {/* 9. Card Delivery Tracker Modal */}
+      {/* 9. Activate Card Modal */}
+      <Dialog open={activeModal === "activate"} onOpenChange={(open) => !open && setActiveModal(null)}>
+        <DialogContent size="md">
+          <DialogHeader>
+            <DialogTitle>Activate {effectiveCard.name}</DialogTitle>
+          </DialogHeader>
+
+          <form onSubmit={handleActivateCard}>
+            <DialogBody className="space-y-4">
+              {/* Card Summary Badge */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border">
+                <div className="flex items-center gap-3">
+                  <div className="size-9 rounded-lg bg-primary/15 text-primary-foreground flex items-center justify-center shrink-0">
+                    <CreditCard size={18} strokeWidth={1.8} className="text-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-[13.5px] font-medium text-foreground">{effectiveCard.name}</p>
+                    <p className="text-[12px] text-muted-foreground">
+                      {effectiveCard.scheme} {effectiveCard.type} · {effectiveCard.maskedNumber || "•••• 9102"}
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[11.5px] font-medium text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">
+                  Inactive
+                </span>
+              </div>
+
+              {/* CVV Input */}
+              <div className="space-y-1.5">
+                <label className="text-[13px] font-normal text-foreground">
+                  3-Digit CVV Security Code
+                </label>
+                <Input
+                  type="text"
+                  maxLength={3}
+                  placeholder="e.g. 842"
+                  value={activationCvv}
+                  onChange={(e) => setActivationCvv(e.target.value.replace(/\D/g, ""))}
+                  className="font-mono text-center tracking-widest text-[16px]"
+                  required
+                />
+                <p className="text-[11.5px] text-muted-foreground">
+                  Found on the signature strip on the back of your physical card.
+                </p>
+              </div>
+
+              {/* Set 4-digit PIN */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <label className="text-[13px] font-normal text-foreground">
+                    Set 4-Digit Card PIN
+                  </label>
+                  <Input
+                    type="password"
+                    maxLength={4}
+                    placeholder="••••"
+                    value={activationPin}
+                    onChange={(e) => setActivationPin(e.target.value.replace(/\D/g, ""))}
+                    className="font-mono text-center tracking-widest text-[16px]"
+                    required
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[13px] font-normal text-foreground">
+                    Confirm 4-Digit PIN
+                  </label>
+                  <Input
+                    type="password"
+                    maxLength={4}
+                    placeholder="••••"
+                    value={activationPinConfirm}
+                    onChange={(e) => setActivationPinConfirm(e.target.value.replace(/\D/g, ""))}
+                    className="font-mono text-center tracking-widest text-[16px]"
+                    required
+                  />
+                </div>
+              </div>
+              <p className="text-[11.5px] text-muted-foreground">
+                This PIN will be required for ATM cash withdrawals and point-of-sale transactions.
+              </p>
+            </DialogBody>
+
+            <DialogFooter>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setActiveModal(null)}>
+                Cancel
+              </Button>
+              <Button type="submit" size="sm" className="bg-primary text-primary-foreground hover:bg-primary-hover">
+                Activate Card
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* 10. Card Delivery Tracker Modal */}
       <CardDeliveryTrackerModal
-        card={currentCard}
+        card={effectiveCard}
         open={activeModal === "tracking"}
         onOpenChange={(open) => !open && setActiveModal(null)}
       />
