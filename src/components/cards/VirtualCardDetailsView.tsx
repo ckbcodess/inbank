@@ -417,27 +417,27 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
                 <button
                   type="button"
                   onClick={() => setActiveModal("top-up")}
-                  className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-[12px] px-[12px] flex items-center justify-center gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
+                  className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
                   title="Top up card balance"
                 >
-                  <div className="size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
-                    <PlusCircle size={18} strokeWidth={1.8} />
+                  <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
+                    <PlusCircle size={17} strokeWidth={1.8} />
                   </div>
-                  <span className="text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
+                  <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
                     Top Up
                   </span>
                 </button>
               ) : (
                 <Link
                   href={`/accounts/${currentCard.linkedAccountId || "acc-001"}`}
-                  className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-[12px] px-[12px] flex items-center justify-center gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
+                  className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
                   title="View linked bank account"
                 >
-                  <div className="size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
-                    <Landmark size={18} strokeWidth={1.8} />
+                  <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
+                    <Landmark size={17} strokeWidth={1.8} />
                   </div>
-                  <span className="text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
-                    Linked Account
+                  <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
+                    <span className="hidden sm:inline">Linked </span>Account
                   </span>
                 </Link>
               )}
@@ -446,12 +446,12 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
               <button
                 type="button"
                 onClick={handleOpenPinModal}
-                className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-[12px] px-[12px] flex items-center justify-center gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
+                className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
               >
-                <div className="size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
-                  <Grid size={18} strokeWidth={1.8} />
+                <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
+                  <Grid size={17} strokeWidth={1.8} />
                 </div>
-                <span className="text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
+                <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
                   Show PIN
                 </span>
               </button>
@@ -460,12 +460,12 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
               <button
                 type="button"
                 onClick={() => setActiveModal("freeze")}
-                className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-[12px] px-[12px] flex items-center justify-center gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
+                className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
               >
-                <div className="size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
-                  <Snowflake size={18} strokeWidth={1.8} />
+                <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
+                  <Snowflake size={17} strokeWidth={1.8} />
                 </div>
-                <span className="text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
+                <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
                   {isFrozen ? "Unblock" : "Block"}
                 </span>
               </button>
