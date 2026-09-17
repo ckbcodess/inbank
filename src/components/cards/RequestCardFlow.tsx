@@ -41,6 +41,59 @@ import { CARD_THEMES, type CardTheme } from "@/components/cards/card-themes";
 import TransactionPinModal from "@/components/payments/TransactionPinModal";
 import { toast } from "sonner";
 
+// Visa Official Vector Logo
+function VisaLogo({ className = "h-4.5 w-auto" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 36 12"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-label="Visa"
+    >
+      <path
+        d="M14.545 0.282L9.537 11.718H6.264L3.818 2.518C3.67 1.942 3.525 1.724 3.072 1.48C2.33 1.08 1.09 0.702 0 0.463L0.068 0.282H5.518C6.216 0.282 6.837 0.742 6.993 1.543L8.32 8.575L11.602 0.282H14.545ZM27.355 7.957C27.368 4.931 23.109 4.766 23.138 3.42C23.148 3.01 23.548 2.569 24.444 2.454C24.887 2.397 26.115 2.348 27.38 2.932L27.902 0.54C27.186 0.282 26.265 0.05 25.109 0.05C22.062 0.05 19.92 1.637 19.902 3.905C19.873 5.589 21.41 6.529 22.584 7.094C23.789 7.676 24.195 8.048 24.189 8.571C24.179 9.369 23.218 9.728 22.334 9.742C20.764 9.766 19.845 9.336 19.124 9.006L18.583 11.492C19.349 11.839 20.771 12.14 22.241 12.158C25.438 12.158 27.34 10.612 27.355 7.957ZM35.438 11.718H38.297L35.807 0.282H33.16C32.568 0.282 32.066 0.623 31.848 1.139L27.202 11.718H30.434L31.082 9.967H35.032L35.438 11.718ZM31.977 7.551L33.606 3.167L34.54 7.551H31.977ZM19.263 0.282L16.714 11.718H13.629L16.178 0.282H19.263Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+// Mastercard Official Vector Logo
+function MastercardLogo({ className = "h-5 w-auto" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 36 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-label="Mastercard"
+    >
+      <circle cx="12" cy="12" r="11" fill="#EB001B" />
+      <circle cx="24" cy="12" r="11" fill="#F79E1B" fillOpacity="0.95" />
+      <path
+        d="M18 4.223A10.96 10.96 0 0 0 13.633 12 10.96 10.96 0 0 0 18 19.777 10.96 10.96 0 0 0 22.367 12 10.96 10.96 0 0 0 18 4.223Z"
+        fill="#FF5F00"
+      />
+    </svg>
+  );
+}
+
+const VISA_NETWORK_TYPES = [
+  { id: "Classic", label: "Classic", description: "Standard electronic transactions" },
+  { id: "Gold", label: "Gold", description: "Enhanced limits & global purchase protection" },
+  { id: "Platinum", label: "Platinum", description: "Premium lifestyle privileges & travel perks" },
+  { id: "Signature", label: "Signature", description: "High-tier concierge & luxury benefits" },
+  { id: "Infinite", label: "Infinite", description: "Ultra-exclusive bespoke banking" },
+] as const;
+
+const MASTERCARD_NETWORK_TYPES = [
+  { id: "MChip Classic", label: "MChip Classic", description: "Standard EMV Chip & contactless" },
+  { id: "MChip Gold", label: "MChip Gold", description: "Travel assistance & higher withdrawal" },
+  { id: "MChip Platinum", label: "MChip Platinum", description: "Global lounge access & priority support" },
+  { id: "World Elite", label: "World Elite", description: "Bespoke executive & international privileges" },
+] as const;
+
 // GCB Iconic Soaring Golden Eagle Emblem (Standalone with Specular White Sheen Mask)
 function GcbEagleEmblem({ className, idPrefix = "gcb-card-eagle" }: { className?: string; idPrefix?: string }) {
   const maskId = `${idPrefix}-mask`;
@@ -215,7 +268,17 @@ export function RequestCardFlow() {
   const [cardName, setCardName] = useState("");
   const [fundAmount, setFundAmount] = useState("500");
   const [cardScheme, setCardScheme] = useState<"Visa" | "Mastercard">("Visa");
+  const [networkType, setNetworkType] = useState<string>("Classic");
   const [selectedTheme, setSelectedTheme] = useState<CardTheme>(CARD_THEMES[1]); // Default to Gold
+
+  function handleSchemeChange(scheme: "Visa" | "Mastercard") {
+    setCardScheme(scheme);
+    if (scheme === "Visa") {
+      setNetworkType("Classic");
+    } else {
+      setNetworkType("MChip Classic");
+    }
+  }
 
   // Physical fulfillment state
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("BRANCH_PICKUP");
@@ -294,6 +357,7 @@ export function RequestCardFlow() {
       cvv: generatedCvv,
       type: cardType,
       scheme: cardScheme,
+      networkType: networkType,
       currency: selectedAccount?.currency ?? "GHS",
       balance: numericFund,
       spendLimit: cardType === "Virtual" ? 5000 : null,
@@ -331,6 +395,8 @@ export function RequestCardFlow() {
     setStep("select-type");
     setCardName("");
     setFundAmount("500");
+    setCardScheme("Visa");
+    setNetworkType("Classic");
     setCreatedCard(null);
   }
 
@@ -455,21 +521,76 @@ export function RequestCardFlow() {
                 Card network
               </label>
               <div className="grid grid-cols-2 gap-3">
-                {(["Visa", "Mastercard"] as const).map((scheme) => (
-                  <button
-                    key={scheme}
-                    type="button"
-                    onClick={() => setCardScheme(scheme)}
-                    className={`h-12 rounded-2xl border text-[14px] font-medium transition-colors cursor-pointer flex items-center justify-center gap-2 ${
-                      cardScheme === scheme
-                        ? "bg-foreground text-background border-foreground"
-                        : "bg-card border-border/80 text-foreground hover:bg-muted/40"
-                    }`}
-                  >
-                    <span>{scheme}</span>
-                  </button>
-                ))}
+                {(["Visa", "Mastercard"] as const).map((scheme) => {
+                  const isSelected = cardScheme === scheme;
+                  return (
+                    <button
+                      key={scheme}
+                      type="button"
+                      onClick={() => handleSchemeChange(scheme)}
+                      className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                        isSelected
+                          ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
+                          : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div
+                          className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                            isSelected
+                              ? "border-foreground bg-foreground"
+                              : "border-muted-foreground/40 bg-transparent"
+                          }`}
+                        >
+                          {isSelected && (
+                            <div className="size-1.5 rounded-full bg-background" />
+                          )}
+                        </div>
+                        <span className="text-[14px] font-medium truncate">{scheme}</span>
+                      </div>
+                      <div className="shrink-0 flex items-center">
+                        {scheme === "Visa" ? (
+                          <VisaLogo className="h-4 w-auto text-foreground" />
+                        ) : (
+                          <MastercardLogo className="h-4.5 w-auto" />
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
+            </div>
+
+            {/* Network Type Selector */}
+            <div className="flex flex-col gap-2">
+              <label className="text-[14px] font-medium text-foreground">
+                Network type
+              </label>
+              <Select
+                value={networkType}
+                onValueChange={setNetworkType}
+              >
+                <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+                  <div className="flex flex-col min-w-0 text-left flex-1">
+                    <span className="text-[14.5px] text-foreground font-medium truncate leading-tight">
+                      {networkType}
+                    </span>
+                    <span className="text-[12px] text-muted-foreground truncate leading-tight mt-0.5">
+                      {(cardScheme === "Visa" ? VISA_NETWORK_TYPES : MASTERCARD_NETWORK_TYPES).find((t) => t.id === networkType)?.description ?? "Card tier"}
+                    </span>
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  {(cardScheme === "Visa" ? VISA_NETWORK_TYPES : MASTERCARD_NETWORK_TYPES).map((opt) => (
+                    <SelectItem key={opt.id} value={opt.id}>
+                      <div className="flex flex-col min-w-0 py-0.5 text-left">
+                        <span className="text-[14px] font-medium text-foreground">{opt.label}</span>
+                        <span className="text-[12px] text-muted-foreground">{opt.description}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Initial Funding */}
@@ -493,20 +614,26 @@ export function RequestCardFlow() {
                   <button
                     type="button"
                     onClick={() => setDeliveryMethod("BRANCH_PICKUP")}
-                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
+                    className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
                       deliveryMethod === "BRANCH_PICKUP"
-                        ? "bg-foreground text-background border-foreground shadow-xs"
-                        : "bg-card border-border/80 text-foreground hover:bg-muted/40"
+                        ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
+                        : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
                     }`}
                   >
-                    <Building2 size={18} strokeWidth={1.8} className="shrink-0" />
+                    <div
+                      className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                        deliveryMethod === "BRANCH_PICKUP"
+                          ? "border-foreground bg-foreground"
+                          : "border-muted-foreground/40 bg-transparent"
+                      }`}
+                    >
+                      {deliveryMethod === "BRANCH_PICKUP" && (
+                        <div className="size-1.5 rounded-full bg-background" />
+                      )}
+                    </div>
                     <div className="flex flex-col min-w-0">
                       <span className="text-[14px] font-medium leading-tight">Branch pickup</span>
-                      <span
-                        className={`text-[11.5px] mt-0.5 ${
-                          deliveryMethod === "BRANCH_PICKUP" ? "opacity-80" : "text-muted-foreground"
-                        }`}
-                      >
+                      <span className="text-[11.5px] text-muted-foreground mt-0.5">
                         Collect at branch
                       </span>
                     </div>
@@ -515,20 +642,26 @@ export function RequestCardFlow() {
                   <button
                     type="button"
                     onClick={() => setDeliveryMethod("DELIVERY")}
-                    className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
+                    className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
                       deliveryMethod === "DELIVERY"
-                        ? "bg-foreground text-background border-foreground shadow-xs"
-                        : "bg-card border-border/80 text-foreground hover:bg-muted/40"
+                        ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
+                        : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
                     }`}
                   >
-                    <Truck size={18} strokeWidth={1.8} className="shrink-0" />
+                    <div
+                      className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                        deliveryMethod === "DELIVERY"
+                          ? "border-foreground bg-foreground"
+                          : "border-muted-foreground/40 bg-transparent"
+                      }`}
+                    >
+                      {deliveryMethod === "DELIVERY" && (
+                        <div className="size-1.5 rounded-full bg-background" />
+                      )}
+                    </div>
                     <div className="flex flex-col min-w-0">
                       <span className="text-[14px] font-medium leading-tight">Doorstep delivery</span>
-                      <span
-                        className={`text-[11.5px] mt-0.5 ${
-                          deliveryMethod === "DELIVERY" ? "opacity-80" : "text-muted-foreground"
-                        }`}
-                      >
+                      <span className="text-[11.5px] text-muted-foreground mt-0.5">
                         Courier delivery
                       </span>
                     </div>
@@ -824,7 +957,7 @@ export function RequestCardFlow() {
                 {cardName || "New Card"}
               </span>
               <span className="text-[13px] text-muted-foreground mt-0.5">
-                {cardType} Card • {cardScheme} • {selectedTheme.name}
+                {cardType} Card • {cardScheme} ({networkType}) • {selectedTheme.name}
               </span>
             </div>
           </div>
@@ -847,6 +980,13 @@ export function RequestCardFlow() {
               <span className="text-[13.5px] text-muted-foreground">Cardholder</span>
               <span className="text-[14px] font-medium text-foreground">
                 {actor?.name ?? "Ama Serwaa"}
+              </span>
+            </div>
+
+            <div className="p-4 flex items-center justify-between gap-4">
+              <span className="text-[13.5px] text-muted-foreground">Card network</span>
+              <span className="text-[14px] font-medium text-foreground">
+                {cardScheme} • {networkType}
               </span>
             </div>
 

@@ -1411,6 +1411,7 @@ export interface PaymentCard {
   cvv?: string;
   type: CardType;
   scheme: "Visa" | "Mastercard";
+  networkType?: string;
   currency: string;
   /** Prepaid/Virtual cards carry their own balance; debit cards draw on the linked account. */
   balance: number | null;
