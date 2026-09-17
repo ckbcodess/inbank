@@ -100,6 +100,7 @@ import {
   getBundlesForNetwork,
 } from "./flows/shared";
 import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
+import { useContextualBack } from "@/lib/contextual-back";
 
 export type FlowGroup = "send" | "bills";
 
@@ -995,6 +996,7 @@ function RailBeneficiaryStrip({
 export function PaymentFlow({ group }: { group: FlowGroup }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { handleBack: handleBackNavigation } = useContextualBack("/payments");
   const activeProfile = useSession((s) => s.activeProfile);
   const accounts = useMemo(() => accountsForProfile(activeProfile?.kind), [activeProfile?.kind]);
 
@@ -1282,13 +1284,17 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     const categoryParam = searchParams.get("category") as string | null;
     const billerIdParam = searchParams.get("billerId");
     const refParam = searchParams.get("ref");
+    const cardIdParam = searchParams.get("cardId");
 
     if (productParam === "data" || r === "data") {
       setRail("data");
     } else if (productParam === "airtime" || r === "airtime") {
       setRail("airtime");
-    } else if (categoryParam === "card" || r === "card-topup") {
+    } else if (categoryParam === "card" || r === "card-topup" || cardIdParam) {
       setRail("card-topup");
+      if (cardIdParam) {
+        setF((p) => ({ ...p, cardId: cardIdParam }));
+      }
     } else if (r && r in RAIL_FACTS) {
       setRail(r);
     } else if (group === "bills") {
@@ -2281,7 +2287,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           auth.reset();
         }}
         secondaryActionLabel="Send another"
-        onPrimaryAction={() => router.push("/payments")}
+        onPrimaryAction={handleBackNavigation}
         primaryActionLabel="Back to Overview"
         cardlessToken={
           rail === "cardless"
@@ -2295,9 +2301,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 }),
                 recipientPhone: f.cardlessType === "self" ? REGISTERED_PHONE : f.wPhone || f.aPhone || REGISTERED_PHONE,
                 recipientName: f.cardlessType === "self" ? "Myself" : f.benName,
-                onDelete: () => {
-                  router.push("/payments");
-                },
+                onDelete: handleBackNavigation,
               }
             : undefined
         }
@@ -2338,7 +2342,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         <div className="relative flex items-center">
           <button
             type="button"
-            onClick={() => router.push("/payments")}
+            onClick={handleBackNavigation}
             className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
             aria-label="Back to Send & Pay"
           >
@@ -2498,7 +2502,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         <div className="relative flex items-center">
           <button
             type="button"
-            onClick={() => router.push("/payments")}
+            onClick={handleBackNavigation}
             className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
             aria-label="Back to Send & Pay"
           >
@@ -2614,7 +2618,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           <div className="flex items-center">
             <button
               type="button"
-              onClick={() => router.push("/payments")}
+              onClick={handleBackNavigation}
               className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               aria-label="Back to Send & Pay"
             >
@@ -2817,7 +2821,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         <div className="relative flex items-center">
           <button
             type="button"
-            onClick={() => router.push("/payments")}
+            onClick={handleBackNavigation}
             className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
             aria-label="Back to Send & Pay"
           >
@@ -2904,7 +2908,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         <div className="relative flex items-center">
           <button
             type="button"
-            onClick={() => router.push("/payments")}
+            onClick={handleBackNavigation}
             className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
             aria-label="Back to Send & Pay"
           >
@@ -3077,7 +3081,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         <div className="relative flex items-center">
           <button
             type="button"
-            onClick={() => router.push("/payments")}
+            onClick={handleBackNavigation}
             className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
             aria-label="Back to Send & Pay"
           >
@@ -3167,7 +3171,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         <div className="relative flex items-center">
           <button
             type="button"
-            onClick={() => router.push("/payments")}
+            onClick={handleBackNavigation}
             className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
             aria-label="Back to Send & Pay"
           >
@@ -3306,7 +3310,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               } else if (rail === "bill" && billCategory) {
                 setBillCategory(null);
               } else {
-                router.push("/payments");
+                handleBackNavigation();
               }
             }}
             className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"

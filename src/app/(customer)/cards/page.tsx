@@ -212,7 +212,7 @@ function CardsPageContent() {
       <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-muted p-1">
         {(["all", "Virtual", "Debit", "Prepaid"] as const).map((t) => {
           const isActive = typeFilter === t;
-          const label = t === "all" ? "All Cards" : t === "Virtual" ? "Virtual Cards" : `${t} Cards`;
+          const label = t === "all" ? "All Cards" : t;
           return (
             <button
               key={t}

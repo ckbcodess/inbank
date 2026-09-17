@@ -65,12 +65,16 @@ export function CardTopUpFlow({
 
   const fundableCards = useMemo(() => {
     const list = CARDS.filter((c) => c.fundable && c.status === "Active");
+    if (state.cardId && !list.some((c) => c.id === state.cardId)) {
+      const match = CARDS.find((c) => c.id === state.cardId);
+      if (match) list.unshift(match);
+    }
     return list.length > 0 ? list : CARDS.filter((c) => c.status === "Active");
-  }, []);
+  }, [state.cardId]);
 
   const selectedCard = useMemo(() => {
     if (!state.cardId) return undefined;
-    return fundableCards.find((c) => c.id === state.cardId);
+    return fundableCards.find((c) => c.id === state.cardId) ?? CARDS.find((c) => c.id === state.cardId);
   }, [fundableCards, state.cardId]);
 
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;

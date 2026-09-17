@@ -163,8 +163,11 @@ function detectNetworkFromPhone(phone: string): { airtimeNet: string; walletNet:
   return null;
 }
 
+import { useContextualBack } from "@/lib/contextual-back";
+
 export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const router = useRouter();
+  const { handleBack: handleBackNavigation } = useContextualBack("/payments/standing");
   const activeProfile = useSession((s) => s.activeProfile);
   const accounts = useMemo(() => accountsForProfile(activeProfile?.kind), [activeProfile?.kind]);
   const auth = useAuthorisation();
@@ -516,7 +519,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             type="button"
             onClick={() => {
               if (onDone) onDone();
-              else router.push("/payments/standing");
+              else handleBackNavigation();
             }}
             className="flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
             aria-label="Back to Standing Orders"

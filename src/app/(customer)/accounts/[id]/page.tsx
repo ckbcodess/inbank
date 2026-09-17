@@ -41,12 +41,14 @@ import { useSession } from "@/lib/session-store";
 import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
 import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import LinkSourceAccountModal from "@/components/dashboard/LinkSourceAccountModal";
+import { useContextualBack } from "@/lib/contextual-back";
 
 const BASELINE: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 
 export default function AccountDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   useAmountVisibility();
   const { id } = use(params);
+  const { handleBack: handleBackNavigation } = useContextualBack("/accounts");
   const account = findAccount(id);
   const activeProfile = useSession((s) => s.activeProfile);
   const actor = useSession((s) => s.actor);
@@ -57,12 +59,13 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
     return (
       <div className="w-full flex flex-col gap-5">
         <div className="flex items-center gap-3">
-          <Link
-            href="/accounts"
-            className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:text-foreground"
+          <button
+            type="button"
+            onClick={handleBackNavigation}
+            className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
           >
             <ChevronLeft size={16} strokeWidth={2} />
-          </Link>
+          </button>
           <h1 className="text-[24px] font-medium text-foreground">Account not found</h1>
         </div>
         <p className="text-[13px] text-muted-foreground">
@@ -88,14 +91,15 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
       {/* Figma 1277:11187 Header: Back + Title + Standing Order + Request Dropdown */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2.5 min-w-0">
-          <Link
-            href="/accounts"
+          <button
+            type="button"
+            onClick={handleBackNavigation}
             className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1"
-            title="Back to Accounts"
+            title="Back"
             aria-label="Back to Accounts"
           >
             <ChevronLeft size={22} strokeWidth={1.8} />
-          </Link>
+          </button>
           <h1 className="text-[22px] sm:text-[26px] font-medium leading-[30px] sm:leading-[32px] tracking-[-0.02em] text-foreground truncate">
             {account.name}
           </h1>

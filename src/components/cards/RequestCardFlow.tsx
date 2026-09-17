@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useContextualBack } from "@/lib/contextual-back";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
@@ -251,6 +252,7 @@ const CARD_TYPE_OPTIONS: readonly CardTypeOption[] = [
 
 export function RequestCardFlow() {
   const router = useRouter();
+  const { handleBack: handleBackNavigation } = useContextualBack("/cards");
   const actor = useSession((s) => s.actor);
   const activeProfile = useSession((s) => s.activeProfile);
 
@@ -266,26 +268,22 @@ export function RequestCardFlow() {
     () => availableAccounts[0]?.id ?? "acc-001"
   );
   const [cardName, setCardName] = useState("");
-  const [fundAmount, setFundAmount] = useState("500");
-  const [cardScheme, setCardScheme] = useState<"Visa" | "Mastercard">("Visa");
-  const [networkType, setNetworkType] = useState<string>("Classic");
+  const [fundAmount, setFundAmount] = useState("");
+  const [cardScheme, setCardScheme] = useState<"Visa" | "Mastercard" | null>(null);
+  const [networkType, setNetworkType] = useState<string>("");
   const [selectedTheme, setSelectedTheme] = useState<CardTheme>(CARD_THEMES[1]); // Default to Gold
 
   function handleSchemeChange(scheme: "Visa" | "Mastercard") {
     setCardScheme(scheme);
-    if (scheme === "Visa") {
-      setNetworkType("Classic");
-    } else {
-      setNetworkType("MChip Classic");
-    }
+    setNetworkType("");
   }
 
   // Physical fulfillment state
-  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("BRANCH_PICKUP");
-  const [selectedBranch, setSelectedBranch] = useState<GcbBranch>(GCB_BRANCHES[0]);
-  const [recipientName, setRecipientName] = useState(actor?.name ?? "Ama Serwaa");
-  const [deliveryAddress, setDeliveryAddress] = useState("No. 14 Ridge Road, Cantonments, Accra");
-  const [deliveryCity, setDeliveryCity] = useState("Accra");
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod | null>(null);
+  const [selectedBranch, setSelectedBranch] = useState<GcbBranch | null>(null);
+  const [recipientName, setRecipientName] = useState(actor?.name ?? "");
+  const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [deliveryCity, setDeliveryCity] = useState("");
   const [deliveryPhone, setDeliveryPhone] = useState("+233 24 412 3456");
 
   // Authorization Modal
@@ -325,18 +323,39 @@ export function RequestCardFlow() {
   const isFundable = cardType === "Virtual" || cardType === "Prepaid";
 
   const isDetailsValid = useMemo(() => {
+    if (!selectedAccountId) return false;
     if (cardType === "Virtual" && !cardName.trim()) return false;
+    if (!cardScheme) return false;
+    if (!networkType) return false;
     if (isFundable) {
       const parsedAmt = Number(fundAmount.replace(/,/g, ""));
       if (isNaN(parsedAmt) || parsedAmt <= 0) return false;
     }
-    if (isPhysical && deliveryMethod === "DELIVERY") {
-      if (!recipientName.trim() || !deliveryAddress.trim() || !deliveryPhone.trim()) {
-        return false;
+    if (isPhysical) {
+      if (!deliveryMethod) return false;
+      if (deliveryMethod === "BRANCH_PICKUP" && !selectedBranch) return false;
+      if (deliveryMethod === "DELIVERY") {
+        if (!recipientName.trim() || !deliveryAddress.trim() || !deliveryPhone.trim()) {
+          return false;
+        }
       }
     }
     return true;
-  }, [cardType, cardName, isFundable, fundAmount, isPhysical, deliveryMethod, recipientName, deliveryAddress, deliveryPhone]);
+  }, [
+    selectedAccountId,
+    cardType,
+    cardName,
+    cardScheme,
+    networkType,
+    isFundable,
+    fundAmount,
+    isPhysical,
+    deliveryMethod,
+    selectedBranch,
+    recipientName,
+    deliveryAddress,
+    deliveryPhone,
+  ]);
 
   function handleAuthorizeSuccess() {
     setAuthModalOpen(false);
@@ -357,8 +376,8 @@ export function RequestCardFlow() {
       fullNumber: fullNum,
       cvv: generatedCvv,
       type: cardType,
-      scheme: cardScheme,
-      networkType: networkType,
+      scheme: cardScheme ?? "Visa",
+      networkType: networkType || "Classic",
       currency: selectedAccount?.currency ?? "GHS",
       balance: numericFund,
       spendLimit: cardType === "Virtual" ? 5000 : null,
@@ -370,11 +389,11 @@ export function RequestCardFlow() {
       isVirtual: cardType === "Virtual",
       profileKind: activeProfile?.kind ?? "RETAIL",
       colorTheme: selectedTheme.id,
-      deliveryMethod: isPhysical ? deliveryMethod : undefined,
-      deliveryBranch: isPhysical && deliveryMethod === "BRANCH_PICKUP" ? selectedBranch.name : undefined,
+      deliveryMethod: isPhysical && deliveryMethod ? deliveryMethod : undefined,
+      deliveryBranch: isPhysical && deliveryMethod === "BRANCH_PICKUP" && selectedBranch ? selectedBranch.name : undefined,
       deliveryAddress:
         isPhysical && deliveryMethod === "DELIVERY"
-          ? `${deliveryAddress.trim()}, ${deliveryCity.trim()}`
+          ? `${deliveryAddress.trim()}${deliveryCity.trim() ? `, ${deliveryCity.trim()}` : ""}`
           : undefined,
       deliveryStatus: isPhysical ? "in_production" : undefined,
       trackingNumber: isPhysical ? trackingCode : undefined,
@@ -395,9 +414,11 @@ export function RequestCardFlow() {
   function handleReset() {
     setStep("select-type");
     setCardName("");
-    setFundAmount("500");
-    setCardScheme("Visa");
-    setNetworkType("Classic");
+    setFundAmount("");
+    setCardScheme(null);
+    setNetworkType("");
+    setDeliveryMethod(null);
+    setSelectedBranch(null);
     setCreatedCard(null);
   }
 
@@ -410,14 +431,15 @@ export function RequestCardFlow() {
         <div className="w-full max-w-[540px] mx-auto flex flex-col gap-6">
           {/* Header Row: Back Link & Title */}
           <div className="flex items-center gap-3">
-            <Link
-              href="/cards"
+            <button
+              type="button"
+              onClick={handleBackNavigation}
               className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-              title="Back to Cards"
-              aria-label="Back to Cards"
+              title="Back"
+              aria-label="Back"
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
-            </Link>
+            </button>
             <h1 className="text-[24px] font-medium leading-tight tracking-[-0.02em] text-foreground">
               Request a Card
             </h1>
@@ -433,7 +455,16 @@ export function RequestCardFlow() {
                   type="button"
                   onClick={() => {
                     setCardType(opt.type);
-                    setCardName(opt.type === "Virtual" ? "Online Subscriptions" : "");
+                    setCardName("");
+                    setFundAmount("");
+                    setCardScheme(null);
+                    setNetworkType("");
+                    setDeliveryMethod(null);
+                    setSelectedBranch(null);
+                    setRecipientName(actor?.name ?? "");
+                    setDeliveryAddress("");
+                    setDeliveryCity("");
+                    setDeliveryPhone("+233 24 412 3456");
                     setStep("details");
                   }}
                   className="group w-full p-4 sm:p-4.5 flex items-center justify-between rounded-2xl bg-card hover:bg-muted/30 active:scale-[0.99] border border-border/80 transition-all cursor-pointer text-left gap-4"
@@ -556,216 +587,235 @@ export function RequestCardFlow() {
               </div>
             </div>
 
-            {/* Network Type Selector */}
-            <div className="flex flex-col gap-2">
-              <label className="text-[14px] font-medium text-foreground">
-                Network type
-              </label>
-              <Select
-                value={networkType}
-                onValueChange={(val) => {
-                  if (val) setNetworkType(val);
-                }}
-              >
-                <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
-                  <div className="flex flex-col min-w-0 text-left flex-1">
-                    <span className="text-[14.5px] text-foreground font-medium truncate leading-tight">
-                      {networkType}
-                    </span>
-                    <span className="text-[12px] text-muted-foreground truncate leading-tight mt-0.5">
-                      {(cardScheme === "Visa" ? VISA_NETWORK_TYPES : MASTERCARD_NETWORK_TYPES).find((t) => t.id === networkType)?.description ?? "Card tier"}
-                    </span>
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  {(cardScheme === "Visa" ? VISA_NETWORK_TYPES : MASTERCARD_NETWORK_TYPES).map((opt) => (
-                    <SelectItem key={opt.id} value={opt.id}>
-                      <div className="flex flex-col min-w-0 py-0.5 text-left">
-                        <span className="text-[14px] font-medium text-foreground">{opt.label}</span>
-                        <span className="text-[12px] text-muted-foreground">{opt.description}</span>
+            {/* Progressive Disclosure: Disclose tier, funding, and delivery ONLY after card scheme is selected */}
+            {cardScheme !== null && (
+              <div className="flex flex-col gap-5 w-full animate-in fade-in duration-200 ease-out">
+                {/* Network Type Selector */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-[14px] font-medium text-foreground">
+                    Network type
+                  </label>
+                  <Select
+                    value={networkType}
+                    onValueChange={(val) => {
+                      if (val) setNetworkType(val);
+                    }}
+                  >
+                    <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+                      <div className="flex flex-col min-w-0 text-left flex-1">
+                        <span
+                          className={`text-[14.5px] font-medium truncate leading-tight ${
+                            networkType ? "text-foreground" : "text-muted-foreground font-normal"
+                          }`}
+                        >
+                          {networkType || "Select card tier"}
+                        </span>
+                        {networkType && (
+                          <span className="text-[12px] text-muted-foreground truncate leading-tight mt-0.5">
+                            {(cardScheme === "Visa" ? VISA_NETWORK_TYPES : MASTERCARD_NETWORK_TYPES).find((t) => t.id === networkType)?.description ?? "Card tier"}
+                          </span>
+                        )}
                       </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Initial Funding */}
-            {isFundable && (
-              <AmountInput
-                value={fundAmount}
-                onChange={setFundAmount}
-                currency={selectedAccount?.currency ?? "GHS"}
-                label="Initial funding amount"
-              />
-            )}
-
-            {/* Physical Fulfillment */}
-            {isPhysical && (
-              <div className="flex flex-col gap-4 pt-2 border-t border-border/80">
-                <label className="text-[14px] font-medium text-foreground">
-                  Fulfillment method
-                </label>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setDeliveryMethod("BRANCH_PICKUP")}
-                    className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
-                      deliveryMethod === "BRANCH_PICKUP"
-                        ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
-                        : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
-                    }`}
-                  >
-                    <div
-                      className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
-                        deliveryMethod === "BRANCH_PICKUP"
-                          ? "border-foreground bg-foreground"
-                          : "border-muted-foreground/40 bg-transparent"
-                      }`}
-                    >
-                      {deliveryMethod === "BRANCH_PICKUP" && (
-                        <div className="size-1.5 rounded-full bg-background" />
-                      )}
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-[14px] font-medium leading-tight">Branch pickup</span>
-                      <span className="text-[11.5px] text-muted-foreground mt-0.5">
-                        Collect at branch
-                      </span>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setDeliveryMethod("DELIVERY")}
-                    className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
-                      deliveryMethod === "DELIVERY"
-                        ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
-                        : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
-                    }`}
-                  >
-                    <div
-                      className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
-                        deliveryMethod === "DELIVERY"
-                          ? "border-foreground bg-foreground"
-                          : "border-muted-foreground/40 bg-transparent"
-                      }`}
-                    >
-                      {deliveryMethod === "DELIVERY" && (
-                        <div className="size-1.5 rounded-full bg-background" />
-                      )}
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-[14px] font-medium leading-tight">Doorstep delivery</span>
-                      <span className="text-[11.5px] text-muted-foreground mt-0.5">
-                        Courier delivery
-                      </span>
-                    </div>
-                  </button>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(cardScheme === "Visa" ? VISA_NETWORK_TYPES : MASTERCARD_NETWORK_TYPES).map((opt) => (
+                        <SelectItem key={opt.id} value={opt.id}>
+                          <div className="flex flex-col min-w-0 py-0.5 text-left">
+                            <span className="text-[14px] font-medium text-foreground">{opt.label}</span>
+                            <span className="text-[12px] text-muted-foreground">{opt.description}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                {deliveryMethod === "BRANCH_PICKUP" ? (
-                  <div className="flex flex-col gap-2">
+                {/* Initial Funding */}
+                {isFundable && (
+                  <AmountInput
+                    value={fundAmount}
+                    onChange={setFundAmount}
+                    currency={selectedAccount?.currency ?? "GHS"}
+                    label="Initial funding amount"
+                  />
+                )}
+
+                {/* Physical Fulfillment */}
+                {isPhysical && (
+                  <div className="flex flex-col gap-4 pt-2 border-t border-border/80">
                     <label className="text-[14px] font-medium text-foreground">
-                      Pickup branch
+                      Fulfillment method
                     </label>
-                    <Select
-                      value={selectedBranch.id}
-                      onValueChange={(val) => {
-                        const found = GCB_BRANCHES.find((b) => b.id === val);
-                        if (found) setSelectedBranch(found);
-                      }}
-                    >
-                      <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <MapPin size={18} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
-                          <div className="flex flex-col min-w-0 text-left">
-                            <span className="text-[14.5px] text-foreground font-medium truncate leading-tight">
-                              {selectedBranch.name}
-                            </span>
-                            <span className="text-[12.5px] text-muted-foreground truncate leading-tight mt-0.5">
-                              {selectedBranch.address}
-                            </span>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setDeliveryMethod("BRANCH_PICKUP")}
+                        className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
+                          deliveryMethod === "BRANCH_PICKUP"
+                            ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
+                            : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
+                        }`}
+                      >
+                        <div
+                          className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                            deliveryMethod === "BRANCH_PICKUP"
+                              ? "border-foreground bg-foreground"
+                              : "border-muted-foreground/40 bg-transparent"
+                          }`}
+                        >
+                          {deliveryMethod === "BRANCH_PICKUP" && (
+                            <div className="size-1.5 rounded-full bg-background" />
+                          )}
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-[14px] font-medium leading-tight">Branch pickup</span>
+                          <span className="text-[11.5px] text-muted-foreground mt-0.5">
+                            Collect at branch
+                          </span>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setDeliveryMethod("DELIVERY")}
+                        className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
+                          deliveryMethod === "DELIVERY"
+                            ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
+                            : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
+                        }`}
+                      >
+                        <div
+                          className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                            deliveryMethod === "DELIVERY"
+                              ? "border-foreground bg-foreground"
+                              : "border-muted-foreground/40 bg-transparent"
+                          }`}
+                        >
+                          {deliveryMethod === "DELIVERY" && (
+                            <div className="size-1.5 rounded-full bg-background" />
+                          )}
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-[14px] font-medium leading-tight">Doorstep delivery</span>
+                          <span className="text-[11.5px] text-muted-foreground mt-0.5">
+                            Courier delivery
+                          </span>
+                        </div>
+                      </button>
+                    </div>
+
+                    {deliveryMethod === "BRANCH_PICKUP" && (
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[14px] font-medium text-foreground">
+                          Pickup branch
+                        </label>
+                        <Select
+                          value={selectedBranch?.id ?? ""}
+                          onValueChange={(val) => {
+                            const found = GCB_BRANCHES.find((b) => b.id === val);
+                            if (found) setSelectedBranch(found);
+                          }}
+                        >
+                          <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                              <MapPin size={18} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
+                              <div className="flex flex-col min-w-0 text-left">
+                                <span
+                                  className={`text-[14.5px] font-medium truncate leading-tight ${
+                                    selectedBranch ? "text-foreground" : "text-muted-foreground font-normal"
+                                  }`}
+                                >
+                                  {selectedBranch ? selectedBranch.name : "Select pickup branch"}
+                                </span>
+                                {selectedBranch && (
+                                  <span className="text-[12.5px] text-muted-foreground truncate leading-tight mt-0.5">
+                                    {selectedBranch.address}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {GCB_BRANCHES.map((b) => (
+                              <SelectItem key={b.id} value={b.id}>
+                                <div className="flex flex-col min-w-0 py-0.5 text-left">
+                                  <span className="text-[14px] font-medium text-foreground">{b.name}</span>
+                                  <span className="text-[12px] text-muted-foreground">{b.address}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+
+                    {deliveryMethod === "DELIVERY" && (
+                      <div className="flex flex-col gap-3.5">
+                        <div className="flex flex-col gap-2">
+                          <label className="text-[14px] font-medium text-foreground">
+                            Recipient name
+                          </label>
+                          <input
+                            type="text"
+                            value={recipientName}
+                            onChange={(e) => setRecipientName(e.target.value)}
+                            placeholder="Full name"
+                            className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <label className="text-[14px] font-medium text-foreground">
+                            Delivery address
+                          </label>
+                          <input
+                            type="text"
+                            value={deliveryAddress}
+                            onChange={(e) => setDeliveryAddress(e.target.value)}
+                            placeholder="Street or digital address"
+                            className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div className="flex flex-col gap-2">
+                            <label className="text-[14px] font-medium text-foreground">City</label>
+                            <input
+                              type="text"
+                              value={deliveryCity}
+                              onChange={(e) => setDeliveryCity(e.target.value)}
+                              placeholder="City"
+                              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-2">
+                            <label className="text-[14px] font-medium text-foreground">Phone</label>
+                            <input
+                              type="text"
+                              value={deliveryPhone}
+                              onChange={(e) => setDeliveryPhone(e.target.value)}
+                              placeholder="Phone number"
+                              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+                            />
                           </div>
                         </div>
-                      </SelectTrigger>
-                      <SelectContent>
-                        {GCB_BRANCHES.map((b) => (
-                          <SelectItem key={b.id} value={b.id}>
-                            <div className="flex flex-col min-w-0 py-0.5 text-left">
-                              <span className="text-[14px] font-medium text-foreground">{b.name}</span>
-                              <span className="text-[12px] text-muted-foreground">{b.address}</span>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                ) : (
-                  <div className="flex flex-col gap-3.5">
-                    <div className="flex flex-col gap-2">
-                      <label className="text-[14px] font-medium text-foreground">
-                        Recipient name
-                      </label>
-                      <input
-                        type="text"
-                        value={recipientName}
-                        onChange={(e) => setRecipientName(e.target.value)}
-                        placeholder="Full name"
-                        className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <label className="text-[14px] font-medium text-foreground">
-                        Delivery address
-                      </label>
-                      <input
-                        type="text"
-                        value={deliveryAddress}
-                        onChange={(e) => setDeliveryAddress(e.target.value)}
-                        placeholder="Street or digital address"
-                        className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-2">
-                        <label className="text-[14px] font-medium text-foreground">City</label>
-                        <input
-                          type="text"
-                          value={deliveryCity}
-                          onChange={(e) => setDeliveryCity(e.target.value)}
-                          placeholder="City"
-                          className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
-                        />
                       </div>
-                      <div className="flex flex-col gap-2">
-                        <label className="text-[14px] font-medium text-foreground">Phone</label>
-                        <input
-                          type="text"
-                          value={deliveryPhone}
-                          onChange={(e) => setDeliveryPhone(e.target.value)}
-                          placeholder="Phone number"
-                          className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
-                        />
-                      </div>
-                    </div>
+                    )}
                   </div>
                 )}
+
+                {/* Proceed Button */}
+                <div className="pt-2">
+                  <Button
+                    type="button"
+                    disabled={!isDetailsValid}
+                    onClick={() => setStep("customize")}
+                    className="w-full h-12 rounded-xl text-[14px] font-medium"
+                  >
+                    Continue
+                  </Button>
+                </div>
               </div>
             )}
-
-            {/* Proceed Button */}
-            <div className="pt-2">
-              <Button
-                type="button"
-                disabled={!isDetailsValid}
-                onClick={() => setStep("customize")}
-                className="w-full h-12 rounded-xl text-[14px] font-medium"
-              >
-                Continue
-              </Button>
-            </div>
           </div>
         </div>
       )}
@@ -1008,7 +1058,7 @@ export function RequestCardFlow() {
                         Branch pickup
                       </span>
                       <span className="text-[12px] text-muted-foreground mt-0.5">
-                        {selectedBranch.name}
+                        {selectedBranch?.name ?? "Branch pickup"}
                       </span>
                     </>
                   ) : (

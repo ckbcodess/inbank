@@ -44,13 +44,20 @@ import TransactionPinModal from "@/components/payments/TransactionPinModal";
 import { CardDeliveryTracker, CardDeliveryTrackerModal } from "@/components/cards/CardDeliveryTracker";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useContextualBack } from "@/lib/contextual-back";
 
 export interface VirtualCardDetailsViewProps {
   card: PaymentCard;
   onUpdateCard?: (updated: Partial<PaymentCard>) => void;
+  initialTab?: string;
 }
 
-export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetailsViewProps) {
+export function VirtualCardDetailsView({
+  card,
+  onUpdateCard,
+  initialTab = "history",
+}: VirtualCardDetailsViewProps) {
+  const { handleBack: handleBackNavigation } = useContextualBack("/cards");
   const activeProfile = useSession((s) => s.activeProfile);
   const availableAccounts = accountsForProfile(activeProfile?.kind ?? "RETAIL");
 
@@ -198,14 +205,15 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
     <div className="flex flex-col gap-10 w-full">
       {/* Back Button & Title Header */}
       <div className="flex items-center gap-3 min-w-0">
-        <Link
-          href="/cards"
+        <button
+          type="button"
+          onClick={handleBackNavigation}
           className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-          title="Back to Cards"
-          aria-label="Back to Cards"
+          title="Back"
+          aria-label="Back"
         >
           <ChevronLeft size={22} strokeWidth={1.8} />
-        </Link>
+        </button>
         <h1 className="text-[20px] sm:text-[24px] lg:text-[26px] font-medium leading-tight sm:leading-[32px] tracking-[-0.02em] text-foreground truncate">
           {cardNickname || "Virtual Card"}
         </h1>
@@ -414,9 +422,8 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
             <div className="grid grid-cols-3 gap-2 w-full">
               {/* Button 1: Top Up (if fundable) or View Linked Account (if debit) */}
               {isFundable ? (
-                <button
-                  type="button"
-                  onClick={() => setActiveModal("top-up")}
+                <Link
+                  href={`/payments/send?rail=card-topup&cardId=${currentCard.id}`}
                   className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
                   title="Top up card balance"
                 >
@@ -426,7 +433,7 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
                   <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
                     Top Up
                   </span>
-                </button>
+                </Link>
               ) : (
                 <Link
                   href={`/accounts/${currentCard.linkedAccountId || "acc-001"}`}
@@ -437,7 +444,7 @@ export function VirtualCardDetailsView({ card, onUpdateCard }: VirtualCardDetail
                     <Landmark size={17} strokeWidth={1.8} />
                   </div>
                   <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
-                    <span className="hidden sm:inline">Linked </span>Account
+                    Account
                   </span>
                 </Link>
               )}

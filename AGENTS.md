@@ -42,6 +42,14 @@ This file is automatically loaded by Antigravity in every session and chat withi
 - **Amber is exclusively for filled buttons/badges with dark text** (`bg-primary text-primary-foreground`), decorative icon containers (`bg-primary/15`), or dark-mode accent strokes.
 - **Text links, triggers, and labels on cards must use `text-foreground font-medium hover:underline` or `text-muted-foreground hover:text-foreground`** — NEVER `text-primary`.
 
+### H. Contextual Back Navigation as the Universal Default
+- **Always return to where the user came from**: Back buttons must never hardcode a single rigid parent route when invoked from external contexts (e.g., navigating to "Top Up" from `/cards/[id]` and clicking Back must return the user to `/cards/[id]`, not force them to `/payments`).
+- **Universal standard**: Use `useContextualBack(defaultFallbackUrl)` from `@/lib/contextual-back`:
+  1. Respects explicit `returnUrl` query parameter (e.g., `?returnUrl=/cards/c1`).
+  2. Falls back to `router.back()` if browser history exists (`window.history.length > 1`).
+  3. Falls back to `defaultFallbackUrl` (e.g., `/payments`, `/cards`, `/accounts`) when no prior history or query parameter is present.
+- **Consistent Back Button UI**: `flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer` with `<ChevronLeft size={22} strokeWidth={1.8} />`.
+
 ---
 
 ## 2. Core Architectural & Codebase Standards
