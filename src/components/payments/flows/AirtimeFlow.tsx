@@ -117,24 +117,24 @@ export function AirtimeFlow({
               value={state.wNetwork ? normalizeNetworkName(state.wNetwork) : ""}
               onValueChange={(val) => val && onChange("wNetwork", val)}
             >
-              <SelectTrigger className="h-[68px] min-h-[68px] py-0 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+              <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
                 {state.wNetwork && getTelcoLogo(state.wNetwork) ? (
-                  <div className="flex items-center gap-3.5">
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden border border-black/5 dark:border-white/10 p-0">
+                  <div className="flex items-center gap-3">
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden border border-black/5 dark:border-white/10 p-0">
                       <img
                         src={getTelcoLogo(state.wNetwork)!}
                         alt={state.wNetwork}
                         className="size-full object-cover rounded-full"
                       />
                     </span>
-                    <span className="text-[15px] font-medium text-foreground">{normalizeNetworkName(state.wNetwork)}</span>
+                    <span className="text-[14.5px] font-medium text-foreground">{normalizeNetworkName(state.wNetwork)}</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3.5">
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                      <Smartphone size={19} strokeWidth={1.8} />
+                  <div className="flex items-center gap-3">
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                      <Smartphone size={17} strokeWidth={1.8} />
                     </span>
-                    <span className="text-[15px] text-muted-foreground font-normal">
+                    <span className="text-[14px] text-muted-foreground font-normal">
                       Select Network
                     </span>
                   </div>

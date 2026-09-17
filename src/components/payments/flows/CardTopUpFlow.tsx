@@ -104,27 +104,27 @@ export function CardTopUpFlow({
               }
             }}
           >
-            <SelectTrigger className="h-[68px] min-h-[68px] px-4 w-full rounded-2xl border border-border/80 bg-card text-left shadow-none flex items-center">
+            <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-border/80 bg-card text-left shadow-none flex items-center">
               {!selectedCard ? (
-                <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                    <CreditCard size={18} strokeWidth={1.8} />
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
+                    <CreditCard size={17} strokeWidth={1.8} />
                   </span>
-                  <span className="text-[15px] text-muted-foreground font-normal">
+                  <span className="text-[14px] text-muted-foreground font-normal">
                     Select destination card
                   </span>
                 </div>
               ) : (
                 <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                      <CreditCard size={18} strokeWidth={1.8} />
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
+                      <CreditCard size={17} strokeWidth={1.8} />
                     </span>
                     <div className="flex flex-col min-w-0 text-left gap-0.5">
-                      <span className="text-[15px] text-foreground font-medium truncate leading-tight">
+                      <span className="text-[14.5px] text-foreground font-medium truncate leading-tight">
                         {selectedCard.name}
                       </span>
-                      <span className="text-[13px] text-muted-foreground font-normal truncate leading-tight">
+                      <span className="text-[12.5px] text-muted-foreground font-normal truncate leading-tight">
                         {selectedCard.scheme} · {selectedCard.maskedNumber}
                       </span>
                     </div>

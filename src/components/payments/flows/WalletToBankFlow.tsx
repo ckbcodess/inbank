@@ -77,22 +77,22 @@ export function WalletToBankFlow({
       {/* 1. Source Mobile Wallet */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Source Mobile Wallet</label>
-        <div className="flex items-center justify-between h-[68px] min-h-[68px] px-4 w-full rounded-2xl border border-border/80 bg-card gap-3">
-          <div className="flex items-center gap-3.5 min-w-0">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-              <Smartphone size={19} strokeWidth={1.8} />
+        <div className="flex items-center justify-between h-[58px] min-h-[58px] px-3.5 w-full rounded-2xl border border-border/80 bg-card gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
+              <Smartphone size={17} strokeWidth={1.8} />
             </span>
             <div className="flex flex-col min-w-0 text-left gap-0.5">
-              <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
+              <span className="text-[14.5px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
                 MTN Mobile Money
               </span>
-              <span className="text-[13px] text-muted-foreground font-normal truncate tabular leading-tight">
+              <span className="text-[12.5px] text-muted-foreground font-normal truncate tabular leading-tight">
                 024 412 3456
               </span>
             </div>
           </div>
           <div className="text-right shrink-0">
-            <span className="text-[15px] text-foreground font-medium tabular tracking-tight">
+            <span className="text-[14.5px] text-foreground font-medium tabular tracking-tight">
               GHS 1,450.00
             </span>
           </div>
