@@ -410,16 +410,14 @@ export function RequestCardFlow() {
         <div className="w-full max-w-[540px] mx-auto flex flex-col gap-6">
           {/* Header Row: Back Link & Title */}
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon-lg"
-              nativeButton={false}
-              render={<Link href="/cards" />}
-              className="size-10 rounded-xl hover:bg-muted text-foreground transition-colors shrink-0"
+            <Link
+              href="/cards"
+              className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+              title="Back to Cards"
               aria-label="Back to Cards"
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
-            </Button>
+            </Link>
             <h1 className="text-[24px] font-medium leading-tight tracking-[-0.02em] text-foreground">
               Request a Card
             </h1>
@@ -475,7 +473,7 @@ export function RequestCardFlow() {
             <button
               type="button"
               onClick={() => setStep("select-type")}
-              className="size-10 rounded-xl flex items-center justify-center hover:bg-muted text-foreground transition-colors shrink-0 cursor-pointer"
+              className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               aria-label="Back"
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
@@ -782,7 +780,7 @@ export function RequestCardFlow() {
             <button
               type="button"
               onClick={() => setStep("details")}
-              className="size-10 rounded-xl flex items-center justify-center hover:bg-muted text-foreground transition-colors shrink-0 cursor-pointer"
+              className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               aria-label="Back"
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
@@ -927,7 +925,7 @@ export function RequestCardFlow() {
             <button
               type="button"
               onClick={() => setStep("customize")}
-              className="size-10 rounded-xl flex items-center justify-center hover:bg-muted text-foreground transition-colors shrink-0 cursor-pointer"
+              className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               aria-label="Back"
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
