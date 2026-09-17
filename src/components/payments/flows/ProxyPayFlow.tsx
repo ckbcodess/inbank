@@ -122,6 +122,9 @@ export function ProxyPayFlow({
           <AmountInput
             value={state.amount}
             onChange={(val) => onChange("amount", val)}
+            onFocus={() => {
+              if (isPxValid) setCollapsed(true);
+            }}
             error={
               overBalance ? (
                 <InsufficientFundsAlert

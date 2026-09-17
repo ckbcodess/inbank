@@ -242,6 +242,9 @@ export function MobileWalletFlow({
           <AmountInput
             value={state.amount}
             onChange={(val) => onChange("amount", val)}
+            onFocus={() => {
+              if (isVerified) setCollapsed(true);
+            }}
             error={
               overBalance ? (
                 <InsufficientFundsAlert

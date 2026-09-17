@@ -156,6 +156,9 @@ export function CardTopUpFlow({
           <AmountInput
             value={state.amount}
             onChange={(val) => onChange("amount", val)}
+            onFocus={() => {
+              if (selectedCard) setCollapsed(true);
+            }}
             currency={selectedCard?.currency || "GHS"}
             label={`Top up Amount (${selectedCard?.currency || "GHS"})`}
             error={
