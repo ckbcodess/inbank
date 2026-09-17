@@ -325,7 +325,7 @@ export function RequestCardFlow() {
   const isFundable = cardType === "Virtual" || cardType === "Prepaid";
 
   const isDetailsValid = useMemo(() => {
-    if (!cardName.trim()) return false;
+    if (cardType === "Virtual" && !cardName.trim()) return false;
     if (isFundable) {
       const parsedAmt = Number(fundAmount.replace(/,/g, ""));
       if (isNaN(parsedAmt) || parsedAmt <= 0) return false;
@@ -336,7 +336,7 @@ export function RequestCardFlow() {
       }
     }
     return true;
-  }, [cardName, isFundable, fundAmount, isPhysical, deliveryMethod, recipientName, deliveryAddress, deliveryPhone]);
+  }, [cardType, cardName, isFundable, fundAmount, isPhysical, deliveryMethod, recipientName, deliveryAddress, deliveryPhone]);
 
   function handleAuthorizeSuccess() {
     setAuthModalOpen(false);
@@ -348,10 +348,11 @@ export function RequestCardFlow() {
     const numericFund = isFundable ? Number(fundAmount.replace(/,/g, "")) || 0 : null;
     const trackingCode = `GCB-CRD-${Math.floor(100000 + Math.random() * 900000)}`;
     const pickupPin = String(Math.floor(1000 + Math.random() * 9000));
+    const finalCardName = cardType === "Virtual" ? (cardName.trim() || "Virtual Card") : `${cardType} Card`;
 
     const newCard: PaymentCard = {
       id: `card-req-${Date.now()}`,
-      name: cardName.trim(),
+      name: finalCardName,
       maskedNumber: `•••• ${lastFour}`,
       fullNumber: fullNum,
       cvv: generatedCvv,
@@ -434,13 +435,7 @@ export function RequestCardFlow() {
                   type="button"
                   onClick={() => {
                     setCardType(opt.type);
-                    setCardName(
-                      opt.type === "Debit"
-                        ? "Everyday Debit"
-                        : opt.type === "Prepaid"
-                        ? "Travel Prepaid"
-                        : "Online Subscriptions"
-                    );
+                    setCardName(opt.type === "Virtual" ? "Online Subscriptions" : "");
                     setStep("details");
                   }}
                   className="group w-full p-4 sm:p-4.5 flex items-center justify-between rounded-2xl bg-card hover:bg-muted/30 active:scale-[0.99] border border-border/80 transition-all cursor-pointer text-left gap-4"
@@ -500,20 +495,22 @@ export function RequestCardFlow() {
               label="Linked account"
             />
 
-            {/* Card Nickname */}
-            <div className="flex flex-col gap-2">
-              <label htmlFor="card-name-input" className="text-[14px] font-medium text-foreground">
-                Card nickname
-              </label>
-              <input
-                id="card-name-input"
-                type="text"
-                placeholder="e.g. Daily Spending"
-                value={cardName}
-                onChange={(e) => setCardName(e.target.value)}
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
-              />
-            </div>
+            {/* Card Nickname — Only for Virtual Cards */}
+            {cardType === "Virtual" && (
+              <div className="flex flex-col gap-2">
+                <label htmlFor="card-name-input" className="text-[14px] font-medium text-foreground">
+                  Card nickname
+                </label>
+                <input
+                  id="card-name-input"
+                  type="text"
+                  placeholder="e.g. Online Subscriptions, SaaS"
+                  value={cardName}
+                  onChange={(e) => setCardName(e.target.value)}
+                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+                />
+              </div>
+            )}
 
             {/* Scheme Selector */}
             <div className="flex flex-col gap-2">
@@ -837,7 +834,7 @@ export function RequestCardFlow() {
               <div className="relative z-10 flex flex-col gap-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[14px] sm:text-[15px] font-medium tracking-tight truncate max-w-[280px]">
-                    {cardName || "Everyday Card"}
+                    {cardType === "Virtual" ? (cardName || "Virtual Card") : `${cardType} Card`}
                   </span>
                   <span className="text-[13px] font-medium tracking-wider tabular-nums opacity-90">
                     •••• 9102
@@ -950,13 +947,15 @@ export function RequestCardFlow() {
                 <span className="text-[6px] font-medium uppercase opacity-80">{cardType}</span>
               </div>
               <div className="flex items-end justify-between">
-                <span className="text-[7.5px] font-medium truncate max-w-[40px]">{cardName}</span>
+                <span className="text-[7.5px] font-medium truncate max-w-[40px]">
+                  {cardType === "Virtual" ? (cardName || "Virtual") : cardType}
+                </span>
                 <span className="text-[6.5px] font-mono opacity-80">••••</span>
               </div>
             </div>
             <div className="flex flex-col min-w-0">
               <span className="text-[15px] font-medium text-foreground tracking-[-0.01em] truncate">
-                {cardName || "New Card"}
+                {cardType === "Virtual" ? (cardName || "Virtual Card") : `${cardType} Card`}
               </span>
               <span className="text-[13px] text-muted-foreground mt-0.5">
                 {cardType} Card • {cardScheme} ({networkType}) • {selectedTheme.name}
