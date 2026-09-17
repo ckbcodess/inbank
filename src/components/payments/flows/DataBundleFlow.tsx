@@ -134,7 +134,7 @@ export function DataBundleFlow({
                 }
               }}
             >
-              <SelectTrigger className="min-h-[68px] h-auto py-3 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+              <SelectTrigger className="h-[68px] min-h-[68px] py-0 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
                 {state.wNetwork && getTelcoLogo(state.wNetwork) ? (
                   <div className="flex items-center gap-3.5">
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden border border-black/5 dark:border-white/10 p-0">

@@ -452,7 +452,7 @@ export function AccountSelectTriggerContent({
     return (
       <div className="flex items-center gap-3.5 min-w-0 flex-1">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-          <Landmark size={19} strokeWidth={1.8} />
+          <Landmark size={18} strokeWidth={1.8} className="shrink-0" />
         </span>
         <span className="text-[15px] text-muted-foreground font-normal truncate">
           {placeholder}
@@ -466,7 +466,7 @@ export function AccountSelectTriggerContent({
       {/* Left: Icon + Account Name + Account Number */}
       <div className="flex items-center gap-3.5 min-w-0">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-          <Landmark size={19} strokeWidth={1.8} />
+          <Landmark size={18} strokeWidth={1.8} className="shrink-0" />
         </span>
         <div className="flex flex-col min-w-0 text-left gap-0.5">
           <span className="text-[15px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
@@ -510,7 +510,7 @@ export function FromAccountSelector({
     <div className="flex flex-col gap-2">
       <label className="text-[14px] font-medium text-foreground">{label}</label>
       <Select value={value} onValueChange={(val) => val && onChange(val)}>
-        <SelectTrigger className="min-h-[68px] h-auto py-3 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+        <SelectTrigger className="h-[68px] min-h-[68px] py-0 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
           <AccountSelectTriggerContent
             account={selected}
             placeholder={placeholder}
@@ -1010,10 +1010,10 @@ export function CollapsedDetailsBadge({
   onChange: () => void;
 }) {
   return (
-    <div className="flex h-[68px] min-h-[68px] items-center justify-between rounded-2xl border border-border/80 bg-muted/40 dark:bg-muted/20 px-4 py-2 transition-all animate-in fade-in duration-150 ease-out">
+    <div className="flex h-[68px] min-h-[68px] items-center justify-between rounded-2xl border border-border/80 bg-card hover:bg-muted/20 px-4 py-0 transition-all animate-in fade-in duration-150 ease-out">
       <div className="flex items-center gap-3.5 min-w-0">
         {icon ? (
-          <div className="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/60 border border-black/5 dark:border-white/10 overflow-hidden p-0">
+          <div className="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground border border-black/5 dark:border-white/10 overflow-hidden p-0">
             {icon}
             <span className="absolute bottom-0 right-0 flex size-3.5 items-center justify-center rounded-full bg-emerald-600 text-white ring-1 ring-background shadow-xs">
               <Check size={9} strokeWidth={2.5} />
@@ -1021,7 +1021,7 @@ export function CollapsedDetailsBadge({
           </div>
         ) : (
           <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-            <Check size={16} strokeWidth={2} />
+            <Check size={18} strokeWidth={2} className="shrink-0" />
           </span>
         )}
         <div className="flex flex-col min-w-0 text-left gap-0.5">
@@ -1029,7 +1029,7 @@ export function CollapsedDetailsBadge({
             {title}
           </span>
           {subtitle && (
-            <span className="text-[13px] text-muted-foreground truncate leading-tight">
+            <span className="text-[13px] text-muted-foreground font-normal truncate tabular leading-tight">
               {subtitle}
             </span>
           )}
