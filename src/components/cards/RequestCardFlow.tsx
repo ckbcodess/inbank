@@ -263,8 +263,36 @@ function BranchCombobox({ value, onChange, branches }: BranchComboboxProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState(value?.name ?? "");
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [placement, setPlacement] = useState<"top" | "bottom">("top");
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Dynamic collision detection to open upward above the input when space below is tight
+  useEffect(() => {
+    if (!open || !containerRef.current) return;
+
+    const updatePlacement = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      const dropdownHeight = 260;
+
+      if (spaceBelow < dropdownHeight && spaceAbove > 140) {
+        setPlacement("top");
+      } else {
+        setPlacement("bottom");
+      }
+    };
+
+    updatePlacement();
+    window.addEventListener("scroll", updatePlacement, true);
+    window.addEventListener("resize", updatePlacement);
+    return () => {
+      window.removeEventListener("scroll", updatePlacement, true);
+      window.removeEventListener("resize", updatePlacement);
+    };
+  }, [open]);
 
   // Sync query when value changes
   useEffect(() => {
@@ -415,7 +443,13 @@ function BranchCombobox({ value, onChange, branches }: BranchComboboxProps) {
       </div>
 
       {open && (
-        <div className="absolute top-[calc(100%+6px)] left-0 right-0 z-50 rounded-2xl border border-border/80 bg-popover/95 backdrop-blur-md shadow-lg p-1.5 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
+        <div
+          className={`absolute left-0 right-0 z-50 rounded-2xl border border-border/80 bg-popover/95 backdrop-blur-md shadow-lg p-1.5 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-150 ${
+            placement === "top"
+              ? "bottom-[calc(100%+6px)] origin-bottom"
+              : "top-[calc(100%+6px)] origin-top"
+          }`}
+        >
           {filteredBranches.length > 0 ? (
             <div className="flex flex-col gap-0.5" role="listbox">
               {filteredBranches.map((branch, index) => {
