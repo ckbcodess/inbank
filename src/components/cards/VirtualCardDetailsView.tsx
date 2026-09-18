@@ -152,7 +152,7 @@ export function VirtualCardDetailsView({
           deliveryMethod: "BRANCH_PICKUP",
           deliveryBranch: currentCard.deliveryBranch || "GCB Head Office Branch (High Street, Accra)",
           deliveryAddress: undefined,
-          deliveryStatus: "processing",
+          deliveryStatus: "in_production",
           trackingNumber: baseTracking,
           estimatedDeliveryDate: "3-5 business days",
           pickupCode: currentCard.pickupCode || "4920",
@@ -492,7 +492,7 @@ export function VirtualCardDetailsView({
           <div className="flex flex-col items-center justify-center py-4 sm:py-8 gap-6 sm:gap-8 w-full max-w-[480px] mx-auto animate-in fade-in duration-300">
             {/* The Ordered Card Visual: Faded card for In Production; Real 3D Tilt Card for Delivery/Pickup */}
             <div className="w-full max-w-[440px] flex justify-center">
-              {effectiveCard.deliveryStatus === "in_production" || !effectiveCard.deliveryStatus ? (
+              {effectiveCard.deliveryStatus === "in_production" || effectiveCard.deliveryStatus === "processing" || !effectiveCard.deliveryStatus ? (
                 <div className="w-full max-w-[440px] flex justify-center select-none pointer-events-none">
                   <img
                     src={
