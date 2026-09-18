@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useMemo, useState } from "react";
+import Link from "next/link";
 import {
   ArrowLeftRight,
   Check,
@@ -495,6 +496,16 @@ export default function LinkSourceAccountModal({
                     >
                       Back
                     </Button>
+
+                    <div className="pt-2 text-center">
+                      <Link
+                        href={`/payments/send?rail=bank&returnUrl=/accounts/${destinationAccount?.id || ""}`}
+                        onClick={handleClose}
+                        className="text-[12px] text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        Need a standing order or scheduled transfer? <span className="underline underline-offset-2">Use Full Payments</span>
+                      </Link>
+                    </div>
                   </div>
                 </>
               )}
