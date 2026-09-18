@@ -201,9 +201,9 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
             holderName={holderName}
             onOpenFund={() => setIsFundModalOpen(true)}
           />
-          <div className="rounded-2xl border border-border bg-card px-6 py-14 text-center">
-            <p className="text-[15px] font-medium text-foreground">No activity on this account yet</p>
-            <p className="mx-auto mt-1.5 max-w-sm text-[13px] leading-relaxed text-muted-foreground">
+          <div className="px-4 py-14 sm:py-16 text-center">
+            <p className="text-[14.5px] font-medium text-foreground">No activity on this account yet</p>
+            <p className="mx-auto mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">
               Transactions will appear here once money moves in or out.
             </p>
           </div>

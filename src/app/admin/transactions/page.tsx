@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { FilteredEmptyState } from "@/components/states/ListStates";
+import { FilteredEmptyState, TrueEmptyState } from "@/components/states/ListStates";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
@@ -356,7 +356,7 @@ export default function TransactionMonitoringPage() {
       <StubNotice section="section 7 / sitemap 12.5" states="13.1 list, 13.2 ops variant" />
 
       <section className="rounded-2xl border border-border bg-card">
-        <div className="flex flex-col gap-3 border-b border-border p-4">
+        <div className="flex flex-col gap-3 p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <ExpandableSearch
               value={query}
@@ -1009,19 +1009,22 @@ export default function TransactionMonitoringPage() {
             </SheetFooter>
           </SheetContent>
         </Sheet>
+      </section>
 
-        {filtered.length === 0 ? (
-          hasActiveFilters ? (
-            <FilteredEmptyState
-              onReset={resetAllFilters}
-              description="No transactions match your search filters. Reset filters to view all operational records."
-            />
-          ) : (
-            <div className="py-12 text-center text-[13px] text-muted-foreground">
-              No transactions recorded in monitoring queue
-            </div>
-          )
+      {filtered.length === 0 ? (
+        hasActiveFilters ? (
+          <FilteredEmptyState
+            onReset={resetAllFilters}
+            description="No transactions match your search filters. Reset filters to view all operational records."
+          />
         ) : (
+          <TrueEmptyState
+            title="No transactions recorded"
+            description="No operational records in the monitoring queue."
+          />
+        )
+      ) : (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <ul className="divide-y divide-border">
             {filtered.map((t) => {
               const methodLabel = getPaymentMethodLabel(t.paymentMethod);
@@ -1049,8 +1052,8 @@ export default function TransactionMonitoringPage() {
               );
             })}
           </ul>
-        )}
-      </section>
+        </div>
+      )}
     </div>
   );
 }

@@ -1000,8 +1000,6 @@ export default function BeneficiariesPage() {
         </div>
       )}
 
-      {/* Main List Container */}
-      <div className="rounded-2xl border border-border/80 dark:border-white/[0.1] bg-card overflow-hidden shadow-xs">
         {/* PEOPLE & BILLERS LIST */}
         {activeTab !== "groups" && (
           filteredList.length === 0 ? (
@@ -1042,7 +1040,7 @@ export default function BeneficiariesPage() {
             )
           ) : groupBy === "type" ? (
             /* ── Collapsible Grouping by Rail Type ─────────────────────────────── */
-            <div className="divide-y divide-border">
+            <div className="rounded-2xl border border-border/80 dark:border-white/[0.1] bg-card overflow-hidden shadow-xs divide-y divide-border">
               {activeRailList.map((typeKey) => {
                 const items = filteredList.filter((b) => b.transactionType === typeKey);
                 if (items.length === 0) return null;
@@ -1106,9 +1104,11 @@ export default function BeneficiariesPage() {
             </div>
           ) : (
             /* ── Flat List ─────────────────────────────────────────────────────── */
-            <ul className="divide-y divide-border">
-              {filteredList.map(renderBeneficiaryRow)}
-            </ul>
+            <div className="rounded-2xl border border-border/80 dark:border-white/[0.1] bg-card overflow-hidden shadow-xs">
+              <ul className="divide-y divide-border">
+                {filteredList.map(renderBeneficiaryRow)}
+              </ul>
+            </div>
           )
         )}
 
@@ -1136,12 +1136,13 @@ export default function BeneficiariesPage() {
               />
             )
           ) : (
-            <ul className="divide-y divide-border">
-              {filteredGroups.map(renderGroupRow)}
-            </ul>
+            <div className="rounded-2xl border border-border/80 dark:border-white/[0.1] bg-card overflow-hidden shadow-xs">
+              <ul className="divide-y divide-border">
+                {filteredGroups.map(renderGroupRow)}
+              </ul>
+            </div>
           )
         )}
-      </div>
 
       {/* ── Progressive Add / Edit Beneficiary Modal / Mobile Bottom Sheet ── */}
       <Dialog open={formOpen} onOpenChange={setFormOpen}>

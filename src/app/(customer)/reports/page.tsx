@@ -258,43 +258,43 @@ export default function ReportsPage() {
       </section>
 
       {/* Results */}
-      <div className="rounded-2xl border border-border bg-card">
-        <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <h2 className="text-[14px] text-foreground">{active.label}</h2>
-          <Button variant="outline" size="sm" onClick={handleExport} disabled={rowCount === 0}>
-            <Download size={14} strokeWidth={1.9} aria-hidden="true" />
-            Export CSV
-          </Button>
-        </div>
+      <div className="flex items-center justify-between px-1">
+        <h2 className="text-[14px] font-medium text-foreground">{active.label}</h2>
+        <Button variant="outline" size="sm" onClick={handleExport} disabled={rowCount === 0}>
+          <Download size={14} strokeWidth={1.9} aria-hidden="true" />
+          Export CSV
+        </Button>
+      </div>
 
-        {effective === "loading" && <ListSkeleton rows={6} columns={5} />}
+      {effective === "loading" && <ListSkeleton rows={6} columns={5} />}
 
-        {effective === "error" && (
-          <ListErrorState
-            onRetry={() => setState("populated")}
-            description="We couldn't generate this report. No data has changed — try again."
-          />
-        )}
+      {effective === "error" && (
+        <ListErrorState
+          onRetry={() => setState("populated")}
+          description="We couldn't generate this report. No data has changed — try again."
+        />
+      )}
 
-        {effective === "empty" && (
-          <TrueEmptyState
-            icon={<BarChart3 size={20} strokeWidth={1.7} />}
-            title="No activity in this period"
-            description="There are no records between the dates selected. Widen the date range to see more."
-          />
-        )}
+      {effective === "empty" && (
+        <TrueEmptyState
+          icon={<BarChart3 size={20} strokeWidth={1.7} />}
+          title="No activity in this period"
+          description="There are no records between the dates selected. Widen the date range to see more."
+        />
+      )}
 
-        {effective === "filtered-empty" && (
-          <FilteredEmptyState
-            onReset={() => {
-              setQuery("");
-              setState("populated");
-            }}
-            description="No records match your search within this date range. Clear it to see the full report."
-          />
-        )}
+      {effective === "filtered-empty" && (
+        <FilteredEmptyState
+          onReset={() => {
+            setQuery("");
+            setState("populated");
+          }}
+          description="No records match your search within this date range. Clear it to see the full report."
+        />
+      )}
 
-        {effective === "populated" && (
+      {effective === "populated" && (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <div className="overflow-x-auto">
             {isActivity ? (
               <table className="w-full min-w-[640px] text-[13px]">
@@ -355,8 +355,8 @@ export default function ReportsPage() {
               </table>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

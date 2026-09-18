@@ -94,90 +94,93 @@ export default function AuditLogPage() {
         labels={LIST_STATE_LABEL}
       />
 
-      <div className="rounded-2xl border border-border bg-card">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border px-4 py-3">
-          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar flex-nowrap pb-1 sm:pb-0">
-            {CHANNELS.map((c) => (
-              <Button
-                key={c.key}
-                variant={channel === c.key ? "secondary" : "ghost"}
-                size="sm"
-                onClick={() => setChannel(c.key)}
-                className="shrink-0 whitespace-nowrap"
-              >
-                {c.label}
-              </Button>
-            ))}
-          </div>
-
-          <ExpandableSearch
-            value={query}
-            onChange={setQuery}
-            placeholder="Search by actor, role, action or target..."
-            tooltip="Search audit log"
-            inputWidthClassName="w-64 sm:w-80"
-          />
+      {/* Filter and Search Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar flex-nowrap pb-1 sm:pb-0">
+          {CHANNELS.map((c) => (
+            <Button
+              key={c.key}
+              variant={channel === c.key ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => setChannel(c.key)}
+              className="shrink-0 whitespace-nowrap h-8 px-3 rounded-lg text-[13px]"
+            >
+              {c.label}
+            </Button>
+          ))}
         </div>
 
-        {effective === "loading" && <ListSkeleton rows={6} columns={4} />}
-
-        {effective === "error" && (
-          <ListErrorState
-            onRetry={() => setState("populated")}
-            description="We couldn't load the audit log. No entries have been lost — the log is append-only. Try again."
-          />
-        )}
-
-        {effective === "empty" && (
-          <TrueEmptyState
-            icon={<ShieldCheck size={20} strokeWidth={1.7} aria-hidden="true" />}
-            title="No activity recorded yet"
-            description="Once users sign in and act on transactions, every action will be recorded here with its actor and timestamp."
-          />
-        )}
-
-        {effective === "filtered-empty" && (
-          <FilteredEmptyState
-            onReset={resetFilters}
-            description="No audit entries match these filters. Clear them to see the full log."
-          />
-        )}
-
-        {(effective === "populated" || effective === "partial-load") && (
-          <>
-            <ul className="divide-y divide-border">
-              {rows.map((event) => (
-                <li key={event.id} className="flex items-start gap-4 px-4 py-4">
-                  <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                    <Lock size={15} strokeWidth={1.8} aria-hidden="true" />
-                  </span>
-
-                  <div className="flex min-w-0 flex-1 flex-col">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[14px] text-foreground">{event.action}</span>
-                      <Badge variant={event.channel === "Admin Portal" ? "secondary" : "outline"}>
-                        {event.channel}
-                      </Badge>
-                    </div>
-                    <span className="mt-0.5 break-words text-[13px] text-muted-foreground">
-                      {event.target}
-                    </span>
-                    <span className="mt-1.5 text-[12px] text-muted-foreground">
-                      {event.actor} · {event.role} · IP {event.ip}
-                    </span>
-                  </div>
-
-                  <span className="shrink-0 text-right text-[12px] text-muted-foreground tabular">
-                    {formatDateTime(event.timestamp)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-
-            {effective === "partial-load" && <PartialLoadFooter />}
-          </>
-        )}
+        <ExpandableSearch
+          value={query}
+          onChange={setQuery}
+          placeholder="Search by actor, role, action or target..."
+          tooltip="Search audit log"
+          inputWidthClassName="w-64 sm:w-80"
+        />
       </div>
+
+      {effective === "loading" && (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+          <ListSkeleton rows={6} columns={4} />
+        </div>
+      )}
+
+      {effective === "error" && (
+        <ListErrorState
+          onRetry={() => setState("populated")}
+          description="We couldn't load the audit log. No entries have been lost — the log is append-only. Try again."
+        />
+      )}
+
+      {effective === "empty" && (
+        <TrueEmptyState
+          icon={<ShieldCheck size={20} strokeWidth={1.7} aria-hidden="true" />}
+          title="No activity recorded yet"
+          description="Once users sign in and act on transactions, every action will be recorded here with its actor and timestamp."
+        />
+      )}
+
+      {effective === "filtered-empty" && (
+        <FilteredEmptyState
+          onReset={resetFilters}
+          description="No audit entries match these filters. Clear them to see the full log."
+        />
+      )}
+
+      {(effective === "populated" || effective === "partial-load") && (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+          <ul className="divide-y divide-border">
+            {rows.map((event) => (
+              <li key={event.id} className="flex items-start gap-4 px-4 py-4">
+                <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                  <Lock size={15} strokeWidth={1.8} aria-hidden="true" />
+                </span>
+
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-[14px] text-foreground">{event.action}</span>
+                    <Badge variant={event.channel === "Admin Portal" ? "secondary" : "outline"}>
+                      {event.channel}
+                    </Badge>
+                  </div>
+                  <span className="mt-0.5 break-words text-[13px] text-muted-foreground">
+                    {event.target}
+                  </span>
+                  <span className="mt-1.5 text-[12px] text-muted-foreground">
+                    {event.actor} · {event.role} · IP {event.ip}
+                  </span>
+                </div>
+
+                <span className="shrink-0 text-right text-[12px] text-muted-foreground tabular">
+                  {formatDateTime(event.timestamp)}
+                </span>
+              </li>
+            ))}
+          </ul>
+
+          {effective === "partial-load" && <PartialLoadFooter />}
+        </div>
+      )}
 
       <p className="text-[12px] leading-relaxed text-muted-foreground">
         Retention follows FR-21 — entries remain searchable for at least the configured retention

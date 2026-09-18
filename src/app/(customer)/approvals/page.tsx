@@ -87,111 +87,114 @@ export default function ApprovalQueuePage() {
         labels={LIST_STATE_LABEL}
       />
 
-      <div className="rounded-2xl border border-border bg-card">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
-          <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-muted p-1">
-            {(["all", "payment", "trade"] as const).map((t) => {
-              const isActive = typeFilter === t;
-              return (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setTypeFilter(t)}
-                  aria-pressed={isActive}
-                  className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] capitalize transition-all cursor-pointer ${
-                    isActive
-                      ? "bg-background text-foreground shadow-sm font-medium"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {t}
-                </button>
-              );
-            })}
-          </div>
-
-          <ExpandableSearch
-            value={query}
-            onChange={setQuery}
-            placeholder="Search reference, description or counterparty..."
-            tooltip="Search approvals"
-            inputWidthClassName="w-60 sm:w-80"
-          />
+      {/* Filter and Search Ribbon */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-muted/60 p-1">
+          {(["all", "payment", "trade"] as const).map((t) => {
+            const isActive = typeFilter === t;
+            return (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTypeFilter(t)}
+                aria-pressed={isActive}
+                className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-3.5 py-1.5 text-[13px] capitalize transition-all cursor-pointer ${
+                  isActive
+                    ? "bg-background text-foreground shadow-xs font-medium"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t}
+              </button>
+            );
+          })}
         </div>
 
-        {effective === "loading" && <ListSkeleton rows={4} columns={5} />}
-
-        {effective === "error" && (
-          <ListErrorState
-            onRetry={() => setState("populated")}
-            description="We couldn't load your approval queue. Nothing has been approved or rejected — try again."
-          />
-        )}
-
-        {effective === "empty" && (
-          <TrueEmptyState
-            icon={<CheckCircle2 size={20} strokeWidth={1.7} aria-hidden="true" />}
-            title="Nothing waiting on you"
-            description="When a colleague submits a payment or trade request that needs your approval, it will appear here."
-          />
-        )}
-
-        {effective === "filtered-empty" && (
-          <FilteredEmptyState
-            onReset={resetFilters}
-            description="No items match these filters. Clear them to see everything in your queue."
-          />
-        )}
-
-        {(effective === "populated" || effective === "partial-load") && (
-          <>
-            <ul className="divide-y divide-border">
-              {rows.map((item) => {
-                const exceedsLimit = item.amount > item.approvalLimit;
-                return (
-                  <li key={item.id}>
-                    <Link
-                      href={
-                        item.type === "payment"
-                          ? `/approvals/payment/${item.id}`
-                          : `/approvals/trade/${item.id}`
-                      }
-                      className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
-                    >
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                        {item.type === "payment" ? (
-                          <Send size={16} strokeWidth={1.8} aria-hidden="true" />
-                        ) : (
-                          <FileText size={16} strokeWidth={1.8} aria-hidden="true" />
-                        )}
-                      </span>
-
-                      <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="flex items-center gap-2">
-                          <span className="truncate text-[13.5px] text-foreground">{item.description}</span>
-                          {item.priority === "urgent" && <Badge variant="warning">Urgent</Badge>}
-                          {exceedsLimit && <Badge variant="destructive">Exceeds your limit</Badge>}
-                        </span>
-                        <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">
-                          {item.reference} · {item.submittedBy} · {item.submittedAt}
-                        </span>
-                      </span>
-
-                      <span className="shrink-0 text-[13.5px] text-foreground tabular">
-                        <RevealingAmount amount={item.amount} currency={item.currency} />
-                      </span>
-
-                      <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-
-            {effective === "partial-load" && <PartialLoadFooter />}
-          </>
-        )}
+        <ExpandableSearch
+          value={query}
+          onChange={setQuery}
+          placeholder="Search reference, description or counterparty..."
+          tooltip="Search approvals"
+          inputWidthClassName="w-60 sm:w-80"
+        />
       </div>
+
+      {effective === "loading" && (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+          <ListSkeleton rows={4} columns={5} />
+        </div>
+      )}
+
+      {effective === "error" && (
+        <ListErrorState
+          onRetry={() => setState("populated")}
+          description="We couldn't load your approval queue. Nothing has been approved or rejected — try again."
+        />
+      )}
+
+      {effective === "empty" && (
+        <TrueEmptyState
+          icon={<CheckCircle2 size={20} strokeWidth={1.7} aria-hidden="true" />}
+          title="Nothing waiting on you"
+          description="When a colleague submits a payment or trade request that needs your approval, it will appear here."
+        />
+      )}
+
+      {effective === "filtered-empty" && (
+        <FilteredEmptyState
+          onReset={resetFilters}
+          description="No items match these filters. Clear them to see everything in your queue."
+        />
+      )}
+
+      {(effective === "populated" || effective === "partial-load") && (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+          <ul className="divide-y divide-border">
+            {rows.map((item) => {
+              const exceedsLimit = item.amount > item.approvalLimit;
+              return (
+                <li key={item.id}>
+                  <Link
+                    href={
+                      item.type === "payment"
+                        ? `/approvals/payment/${item.id}`
+                        : `/approvals/trade/${item.id}`
+                    }
+                    className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                  >
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                      {item.type === "payment" ? (
+                        <Send size={16} strokeWidth={1.8} aria-hidden="true" />
+                      ) : (
+                        <FileText size={16} strokeWidth={1.8} aria-hidden="true" />
+                      )}
+                    </span>
+
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="flex items-center gap-2">
+                        <span className="truncate text-[13.5px] text-foreground">{item.description}</span>
+                        {item.priority === "urgent" && <Badge variant="warning">Urgent</Badge>}
+                        {exceedsLimit && <Badge variant="destructive">Exceeds your limit</Badge>}
+                      </span>
+                      <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">
+                        {item.reference} · {item.submittedBy} · {item.submittedAt}
+                      </span>
+                    </span>
+
+                    <span className="shrink-0 text-[13.5px] text-foreground tabular">
+                      <RevealingAmount amount={item.amount} currency={item.currency} />
+                    </span>
+
+                    <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+
+          {effective === "partial-load" && <PartialLoadFooter />}
+        </div>
+      )}
     </div>
   );
 }

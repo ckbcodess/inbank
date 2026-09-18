@@ -1216,22 +1216,18 @@ export default function TransactionList({
       {effective === "error" && <ListErrorState onRetry={() => setState("populated")} />}
 
       {effective === "empty" && (
-        <div className="rounded-xl border border-border/70 bg-card/40 p-8">
-          <TrueEmptyState
-            icon={<ArrowLeftRight size={20} strokeWidth={1.7} />}
-            title={emptyTitle}
-            description={emptyDescription}
-          />
-        </div>
+        <TrueEmptyState
+          icon={<ArrowLeftRight size={20} strokeWidth={1.7} />}
+          title={emptyTitle}
+          description={emptyDescription}
+        />
       )}
 
       {effective === "filtered-empty" && (
-        <div className="rounded-xl border border-border/70 bg-card/40 p-8">
-          <FilteredEmptyState
-            onReset={resetAllFilters}
-            description="No transactions match your search filters. Reset filters to view all transactions."
-          />
-        </div>
+        <FilteredEmptyState
+          onReset={resetAllFilters}
+          description="No transactions match your search filters. Reset filters to view all transactions."
+        />
       )}
 
       {/* Data Table / List Views */}

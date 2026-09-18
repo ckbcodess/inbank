@@ -156,53 +156,55 @@ function AccountsContent() {
         labels={LIST_STATE_LABEL}
       />
 
-      {/* ── Accounts Card List (1:1 Figma Node 1225:6909) ── */}
-      <div className="rounded-2xl border border-border/80 bg-card overflow-hidden shadow-xs">
-        {/* States */}
-        {effective === "loading" && <ListSkeleton rows={4} columns={4} />}
+      {/* States */}
+      {effective === "loading" && (
+        <div className="rounded-2xl border border-border/80 bg-card overflow-hidden shadow-xs">
+          <ListSkeleton rows={4} columns={4} />
+        </div>
+      )}
 
-        {effective === "error" && (
-          <ListErrorState
-            onRetry={() => setState("populated")}
-            description="We couldn't load your accounts. Your balances are unaffected — try again."
-          />
-        )}
+      {effective === "error" && (
+        <ListErrorState
+          onRetry={() => setState("populated")}
+          description="We couldn't load your accounts. Your balances are unaffected — try again."
+        />
+      )}
 
-        {effective === "empty" && (
-          <TrueEmptyState
-            icon={<Landmark size={20} strokeWidth={1.7} aria-hidden="true" />}
-            title="No accounts yet"
-            description="Once an account is opened or linked under this relationship it will appear here with its balance and activity."
-            action={
-              <Button
-                size="sm"
-                onClick={() => setIsLinkModalOpen(true)}
-                className="bg-primary text-primary-foreground hover:bg-primary-hover cursor-pointer rounded-xl font-semibold text-[13px]"
-              >
-                <Plus size={14} strokeWidth={2.2} aria-hidden="true" />
-                Add Funding Method
-              </Button>
-            }
-          />
-        )}
+      {effective === "empty" && (
+        <TrueEmptyState
+          icon={<Landmark size={20} strokeWidth={1.7} aria-hidden="true" />}
+          title="No accounts yet"
+          description="Once an account is opened or linked under this relationship it will appear here with its balance and activity."
+          action={
+            <Button
+              size="sm"
+              onClick={() => setIsLinkModalOpen(true)}
+              className="bg-primary text-primary-foreground hover:bg-primary-hover cursor-pointer rounded-xl font-semibold text-[13px]"
+            >
+              <Plus size={14} strokeWidth={2.2} aria-hidden="true" />
+              Add Funding Method
+            </Button>
+          }
+        />
+      )}
 
-        {effective === "filtered-empty" && (
-          <FilteredEmptyState
-            onReset={() => {
-              setQuery("");
-              setState("populated");
-            }}
-            description="No accounts match your search. Clear it to see everything under this relationship."
-          />
-        )}
+      {effective === "filtered-empty" && (
+        <FilteredEmptyState
+          onReset={() => {
+            setQuery("");
+            setState("populated");
+          }}
+          description="No accounts match your search. Clear it to see everything under this relationship."
+        />
+      )}
 
-        {(effective === "populated" || effective === "partial-load") && (
-          <>
-            <ul className="divide-y divide-border/60">
-              {rows.map((acc) => {
-                const otherHolder = acc.jointHolders?.[1] || acc.jointHolders?.[0];
-                const subtitle = acc.isJoint && otherHolder
-                  ? `${acc.number} • with ${otherHolder}`
+      {(effective === "populated" || effective === "partial-load") && (
+        <div className="rounded-2xl border border-border/80 bg-card overflow-hidden shadow-xs">
+          <ul className="divide-y divide-border/60">
+            {rows.map((acc) => {
+              const otherHolder = acc.jointHolders?.[1] || acc.jointHolders?.[0];
+              const subtitle = acc.isJoint && otherHolder
+                ? `${acc.number} • with ${otherHolder}`
                   : acc.number;
 
                 return (
@@ -267,9 +269,8 @@ function AccountsContent() {
 
             {/* 13.1 partial load — rows above stay interactive */}
             {effective === "partial-load" && <PartialLoadFooter />}
-          </>
+          </div>
         )}
-      </div>
 
       {/* Link Source Account Modal */}
       <LinkSourceAccountModal

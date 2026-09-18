@@ -232,38 +232,40 @@ function CardsPageContent() {
         })}
       </div>
 
-      {/* Cards List Box Container */}
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        {effective === "loading" && <ListSkeleton rows={4} columns={3} />}
+      {effective === "loading" && (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+          <ListSkeleton rows={4} columns={3} />
+        </div>
+      )}
 
-        {effective === "error" && (
-          <ListErrorState
-            onRetry={() => setState("populated")}
-            description="We couldn't load your cards. Card status and balances are unaffected — try again."
-          />
-        )}
+      {effective === "error" && (
+        <ListErrorState
+          onRetry={() => setState("populated")}
+          description="We couldn't load your cards. Card status and balances are unaffected — try again."
+        />
+      )}
 
-        {effective === "empty" && (
-          <TrueEmptyState
-            icon={<CreditCard size={20} strokeWidth={1.7} aria-hidden="true" />}
-            title="No cards issued yet"
-            description="Prepaid, debit and virtual cards issued under this relationship will appear here once active."
-          />
-        )}
+      {effective === "empty" && (
+        <TrueEmptyState
+          icon={<CreditCard size={20} strokeWidth={1.7} aria-hidden="true" />}
+          title="No cards issued yet"
+          description="Prepaid, debit and virtual cards issued under this relationship will appear here once active."
+        />
+      )}
 
-        {effective === "filtered-empty" && (
-          <FilteredEmptyState
-            onReset={() => {
-              setTypeFilter("all");
-              setState("populated");
-            }}
-            description="No cards match your selected filter. Clear it to see every card on this relationship."
-          />
-        )}
+      {effective === "filtered-empty" && (
+        <FilteredEmptyState
+          onReset={() => {
+            setTypeFilter("all");
+            setState("populated");
+          }}
+          description="No cards match your selected filter. Clear it to see every card on this relationship."
+        />
+      )}
 
-        {(effective === "populated" || effective === "partial-load") && (
-          <>
-            <ul className="divide-y divide-border">
+      {(effective === "populated" || effective === "partial-load") && (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+          <ul className="divide-y divide-border">
               {rows.map((card) => (
                 <li key={card.id}>
                     <Link
@@ -325,9 +327,8 @@ function CardsPageContent() {
             </ul>
 
             {effective === "partial-load" && <PartialLoadFooter />}
-          </>
+          </div>
         )}
-      </div>
 
       {/* CREATE NEW CARD MODAL DIALOG */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>

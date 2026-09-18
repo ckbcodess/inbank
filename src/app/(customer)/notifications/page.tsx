@@ -99,6 +99,10 @@ export default function NotificationsPage() {
 
   const unread = NOTIFICATIONS.filter((n) => !n.read && !readIds.includes(n.id)).length;
 
+  function markRead(id: string) {
+    setReadIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+  }
+
   return (
     <div className="flex flex-col gap-5">
       <PageHeader title="Notifications" />
@@ -110,120 +114,124 @@ export default function NotificationsPage() {
         labels={LIST_STATE_LABEL}
       />
 
-      <div className="rounded-2xl border border-border bg-card">
-        <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-3 overflow-x-auto no-scrollbar flex-nowrap">
-          <div className="flex items-center gap-1.5 shrink-0">
-            {FILTERS.map((f) => (
-              <Button
-                key={f.key}
-                variant={filter === f.key ? "secondary" : "ghost"}
-                size="sm"
-                onClick={() => setFilter(f.key)}
-                className="shrink-0 whitespace-nowrap"
-              >
-                {f.label}
-              </Button>
-            ))}
-          </div>
-
-          {unread > 0 && (
+      {/* Filter and Action Bar */}
+      <div className="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar flex-nowrap">
+        <div className="flex items-center gap-1.5 shrink-0">
+          {FILTERS.map((f) => (
             <Button
-              variant="ghost"
+              key={f.key}
+              variant={filter === f.key ? "secondary" : "ghost"}
               size="sm"
-              onClick={() => setReadIds(NOTIFICATIONS.map((n) => n.id))}
-              className="shrink-0 whitespace-nowrap text-xs gap-1.5 text-muted-foreground hover:text-foreground ml-auto"
+              onClick={() => setFilter(f.key)}
+              className="shrink-0 whitespace-nowrap h-8 px-3 rounded-lg text-[13px]"
             >
-              <CheckCheck size={14} strokeWidth={1.9} aria-hidden="true" />
-              Mark all read
+              {f.label}
             </Button>
-          )}
+          ))}
         </div>
 
-        {effective === "loading" && <ListSkeleton rows={5} columns={3} />}
-
-        {effective === "error" && (
-          <ListErrorState
-            onRetry={() => setState("populated")}
-            description="We couldn't load your notifications. Nothing has been dismissed — try again."
-          />
-        )}
-
-        {effective === "empty" && (
-          <TrueEmptyState
-            icon={<Bell size={20} strokeWidth={1.7} aria-hidden="true" />}
-            title="Nothing to catch up on"
-            description="You'll be notified here when a payment is submitted, approved, returned, or changes status."
-          />
-        )}
-
-        {effective === "filtered-empty" && (
-          <FilteredEmptyState
-            onReset={() => {
-              setFilter("all");
-              setState("populated");
-            }}
-            description="No notifications of this type. Clear the filter to see everything."
-          />
-        )}
-
-        {(effective === "populated" || effective === "partial-load") && (
-          <>
-            <ul className="divide-y divide-border">
-              {items.map((n) => {
-                const meta = KIND_META[n.kind];
-                const Icon = meta.icon;
-                const row = (
-                  <>
-                    <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted">
-                      <Icon size={16} strokeWidth={1.8} aria-hidden="true" className={meta.className} />
-                    </span>
-
-                    <span className="flex min-w-0 flex-1 flex-col">
-                      <span className="flex flex-wrap items-center gap-2">
-                        <span className="text-[14px] text-foreground">{n.title}</span>
-                        {!n.read && (
-                          <span className="size-1.5 rounded-full bg-destructive" aria-label="Unread" />
-                        )}
-                      </span>
-                      <span className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground">
-                        {n.body}
-                      </span>
-                    </span>
-
-                    <span className="shrink-0 text-right text-[12px] text-muted-foreground tabular">
-                      {formatRelative(n.date)}
-                    </span>
-                  </>
-                );
-
-                return (
-                  <li key={n.id}>
-                    {n.href ? (
-                      <Link
-                        href={n.href}
-                        onClick={() => setReadIds((prev) => [...prev, n.id])}
-                        className="flex items-start gap-4 px-4 py-4 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
-                      >
-                        {row}
-                        <ChevronRight
-                          size={16}
-                          strokeWidth={1.8}
-                          aria-hidden="true"
-                          className="mt-0.5 shrink-0 text-muted-foreground"
-                        />
-                      </Link>
-                    ) : (
-                      <div className="flex items-start gap-4 px-4 py-4">{row}</div>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-
-            {effective === "partial-load" && <PartialLoadFooter />}
-          </>
+        {unread > 0 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setReadIds(NOTIFICATIONS.map((n) => n.id))}
+            className="shrink-0 whitespace-nowrap text-xs gap-1.5 text-muted-foreground hover:text-foreground ml-auto h-8 px-3"
+          >
+            <CheckCheck size={14} strokeWidth={1.9} aria-hidden="true" />
+            Mark all read
+          </Button>
         )}
       </div>
+
+      {effective === "loading" && (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+          <ListSkeleton rows={5} columns={3} />
+        </div>
+      )}
+
+      {effective === "error" && (
+        <ListErrorState
+          onRetry={() => setState("populated")}
+          description="We couldn't load your notifications. Nothing has been dismissed — try again."
+        />
+      )}
+
+      {effective === "empty" && (
+        <TrueEmptyState
+          icon={<Bell size={20} strokeWidth={1.7} aria-hidden="true" />}
+          title="Nothing to catch up on"
+          description="You'll be notified here when a payment is submitted, approved, returned, or changes status."
+        />
+      )}
+
+      {effective === "filtered-empty" && (
+        <FilteredEmptyState
+          onReset={() => {
+            setFilter("all");
+            setState("populated");
+          }}
+          description="No notifications of this type. Clear the filter to see everything."
+        />
+      )}
+
+      {(effective === "populated" || effective === "partial-load") && (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+          <ul className="divide-y divide-border">
+            {items.map((n) => {
+              const meta = KIND_META[n.kind];
+              const Icon = meta.icon;
+              const row = (
+                <>
+                  <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted">
+                    <Icon size={16} strokeWidth={1.8} aria-hidden="true" className={meta.className} />
+                  </span>
+
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="flex items-center gap-2">
+                      <span className="truncate text-[13.5px] text-foreground">{n.title}</span>
+                      {!n.read && (
+                        <span
+                          className="size-1.5 rounded-full bg-primary"
+                          aria-label="Unread"
+                        />
+                      )}
+                    </span>
+                    <span className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
+                      {n.body}
+                    </span>
+                    <span className="mt-1 text-[11px] text-muted-foreground">{formatRelative(n.date)}</span>
+                  </span>
+
+                  <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                </>
+              );
+
+              return (
+                <li key={n.id}>
+                  {n.href ? (
+                    <Link
+                      href={n.href}
+                      onClick={() => markRead(n.id)}
+                      className="flex items-start gap-4 px-4 py-3.5 transition-colors hover:bg-muted/50"
+                    >
+                      {row}
+                    </Link>
+                  ) : (
+                    <div
+                      onClick={() => markRead(n.id)}
+                      className="flex items-start gap-4 px-4 py-3.5"
+                    >
+                      {row}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+
+          {effective === "partial-load" && <PartialLoadFooter />}
+        </div>
+      )}
 
       {/* FR-22 — "delivered via configured channels" */}
       <section className="rounded-2xl border border-border bg-card p-5">
