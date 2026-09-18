@@ -388,9 +388,9 @@ function AccountHeroGrid({ account, holderName, onOpenFund }: AccountHeroGridPro
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 w-full items-stretch">
       {/* Left Hero Card - Balance, Actions & Account Details */}
-      <div className="lg:col-span-7 flex flex-col justify-between rounded-2xl border border-border/80 bg-[#f6f6f5] dark:bg-card/70 p-5 sm:p-6 shadow-sm min-h-[220px] gap-5">
-        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-          <div className="flex flex-col gap-2">
+      <div className="lg:col-span-7 flex flex-col justify-between rounded-2xl border border-border/80 bg-[#f6f6f5] dark:bg-card/70 p-5 sm:p-6 shadow-2xs min-h-[220px] gap-6">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2">
               <span className="text-[13px] font-normal text-muted-foreground">Available balance</span>
               {account.status === "Dormant" && (
@@ -404,13 +404,13 @@ function AccountHeroGrid({ account, holderName, onOpenFund }: AccountHeroGridPro
             </div>
           </div>
 
-          {/* Action buttons inside Left Hero Card */}
-          <div className="grid grid-cols-2 sm:flex sm:items-center gap-2.5 w-full sm:w-auto sm:shrink-0 pt-1 sm:pt-0">
+          {/* Action buttons directly underneath the amount */}
+          <div className="flex items-center gap-2.5 pt-0.5">
             <Button
               variant="outline"
               size="sm"
               nativeButton={false}
-              className="bg-white dark:bg-card border-border/80 text-[13px] font-medium h-9 sm:h-8 px-3.5 rounded-lg shadow-xs hover:bg-muted/50 justify-center"
+              className="bg-white dark:bg-card border-border/80 text-[13px] font-medium h-9 px-4 rounded-xl shadow-2xs hover:bg-muted/60 transition-colors"
               render={<Link href="/payments" />}
             >
               <Send size={13} className="text-muted-foreground mr-1.5" />
@@ -419,7 +419,7 @@ function AccountHeroGrid({ account, holderName, onOpenFund }: AccountHeroGridPro
             <Button
               size="sm"
               onClick={onOpenFund}
-              className="bg-primary hover:bg-primary-hover text-primary-foreground font-medium h-9 sm:h-8 px-3.5 rounded-lg shadow-xs active:scale-[0.98] transition-all cursor-pointer text-[13px] justify-center whitespace-nowrap"
+              className="bg-primary hover:bg-primary-hover text-primary-foreground font-medium h-9 px-4 rounded-xl shadow-2xs active:scale-[0.98] transition-all cursor-pointer text-[13px] whitespace-nowrap"
             >
               <ArrowDownLeft size={14} className="text-primary-foreground mr-1.5 shrink-0" />
               Fund Account
@@ -427,31 +427,31 @@ function AccountHeroGrid({ account, holderName, onOpenFund }: AccountHeroGridPro
           </div>
         </div>
 
-        {/* Bottom Metadata Row: Type, Currency, Status, Mandate */}
-        <div className="flex flex-wrap items-center gap-6 sm:gap-8 pt-4 sm:pt-5 border-t border-border/50">
-          <div className="flex flex-col gap-0.5 min-w-[64px]">
+        {/* Bottom Metadata Grid: Type, Currency, Status, Mandate */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 sm:pt-5 border-t border-border/50">
+          <div className="flex flex-col gap-0.5">
             <span className="text-[12px] text-muted-foreground">Type</span>
             <span className="text-[14px] sm:text-[15px] font-normal text-foreground">{account.type}</span>
           </div>
-          <div className="flex flex-col gap-0.5 min-w-[64px]">
+          <div className="flex flex-col gap-0.5">
             <span className="text-[12px] text-muted-foreground">Currency</span>
             <span className="text-[14px] sm:text-[15px] font-normal text-foreground">{account.currency}</span>
           </div>
-          <div className="flex flex-col gap-0.5 min-w-[64px]">
+          <div className="flex flex-col gap-0.5">
             <span className="text-[12px] text-muted-foreground">Status</span>
             <span className="text-[14px] sm:text-[15px] font-normal text-foreground">{account.status}</span>
           </div>
-          {account.isJoint && account.mandate && (
-            <div className="flex flex-col gap-0.5">
-              <span className="text-[12px] text-muted-foreground">Mandate</span>
-              <span className="text-[14px] sm:text-[15px] font-normal text-foreground">{account.mandate}</span>
-            </div>
-          )}
+          <div className="flex flex-col gap-0.5">
+            <span className="text-[12px] text-muted-foreground">Mandate</span>
+            <span className="text-[14px] sm:text-[15px] font-normal text-foreground">
+              {account.mandate || (account.isJoint ? "Both to sign" : "Single authority")}
+            </span>
+          </div>
         </div>
       </div>
 
       {/* Right Hero Card - Account Identifiers & SWIFT Details */}
-      <div className="lg:col-span-5 flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-6 shadow-xs min-h-[220px]">
+      <div className="lg:col-span-5 flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-6 shadow-2xs min-h-[220px]">
         {/* Section title matching Figma 1277:11364 */}
         <div className="text-[12px] text-muted-foreground font-normal mb-1">
           Details
