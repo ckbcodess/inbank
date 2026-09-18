@@ -258,12 +258,12 @@ export default function Sidebar({
             </div>
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="icon"
               onClick={onToggleCollapse}
-              className="hidden lg:flex cursor-pointer"
+              className="hidden lg:flex size-9 cursor-pointer text-muted-foreground hover:text-foreground"
               aria-label="Collapse sidebar"
             >
-              <PanelLeftClose size={16} strokeWidth={1.9} />
+              <PanelLeftClose size={18} strokeWidth={1.8} />
             </Button>
           </>
         )}
