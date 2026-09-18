@@ -21,10 +21,10 @@ export function GCBLogo({
 }: GCBLogoProps) {
   return (
     <svg
-      viewBox="0 0 50 43.0555"
+      viewBox="-2 -2 54 47.5"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("text-foreground", className)}
+      className={cn("text-foreground overflow-visible", className)}
       aria-label="GCB Bank"
       role="img"
       {...props}

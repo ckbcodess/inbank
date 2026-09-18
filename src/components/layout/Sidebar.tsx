@@ -212,14 +212,14 @@ export default function Sidebar({
         {collapsed ? (
           <button
             onClick={onToggleCollapse}
-            className="group/logo relative hidden size-8 flex-shrink-0 items-center justify-center lg:flex cursor-pointer"
+            className="group/logo relative hidden size-9 flex-shrink-0 items-center justify-center rounded-lg hover:bg-muted/50 transition-colors lg:flex cursor-pointer"
             aria-label="Expand sidebar"
           >
             <span className="absolute inset-0 flex items-center justify-center transition-opacity duration-150 group-hover/logo:opacity-0">
               {shell === "admin" ? (
                 <ShieldCheck size={18} strokeWidth={2.1} className="text-primary" />
               ) : (
-                <GCBLogo className="h-6 w-auto shrink-0" />
+                <GCBLogo className="h-6.5 w-auto shrink-0" />
               )}
             </span>
             <PanelLeftOpen
