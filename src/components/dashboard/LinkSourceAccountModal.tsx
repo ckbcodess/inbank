@@ -27,6 +27,7 @@ import {
 import { Account, accountsForProfile } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
 import { roundMoney } from "@/lib/money";
+import TransactionPinModal from "@/components/payments/TransactionPinModal";
 
 interface LinkSourceAccountModalProps {
   isOpen: boolean;
@@ -143,21 +144,29 @@ export default function LinkSourceAccountModal({
     [linkedSources, selectedSourceId]
   );
 
+  const [isPinModalOpen, setIsPinModalOpen] = useState(false);
+
   // Reset helper when modal closes
   function handleClose() {
     setScreen("choice");
     setBusy(false);
+    setIsPinModalOpen(false);
     onClose();
   }
 
   // ── Handlers: Internal Transfer ──
   function handleInternalTransferSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setIsPinModalOpen(true);
+  }
+
+  function handlePinSuccess() {
+    setIsPinModalOpen(false);
     setBusy(true);
     setTimeout(() => {
       setBusy(false);
       setScreen("internal_success");
-    }, 750);
+    }, 450);
   }
 
   // ── Handlers: Linked Source Funding ──
@@ -227,8 +236,9 @@ export default function LinkSourceAccountModal({
   if (!isOpen) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent size="md">
+    <>
+      <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+        <DialogContent size="md">
         <DialogHeader>
           <div className="flex items-center gap-2">
             {screen !== "choice" &&
@@ -994,5 +1004,14 @@ export default function LinkSourceAccountModal({
         </DialogBody>
       </DialogContent>
     </Dialog>
+
+    {/* Transaction PIN Authorization Modal */}
+    <TransactionPinModal
+      open={isPinModalOpen}
+      onOpenChange={setIsPinModalOpen}
+      onSuccess={handlePinSuccess}
+      title="Authorise Transfer"
+    />
+    </>
   );
 }
