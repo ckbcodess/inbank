@@ -2,7 +2,7 @@
  * Number formatting shared by the dashboard charts.
  *
  * Axis ticks and slice labels need a much shorter form than `formatMoney` —
- * "GH₵ 1,284,530.44" on a y-axis tick would push the plot off the card — so
+ * "GHS 1,284,530.44" on a y-axis tick would push the plot off the card — so
  * these compact the magnitude and drop the decimals. Both honour the
  * hide-amounts toggle, since a chart is as much of a shoulder-surfing risk as
  * a balance is.
@@ -36,20 +36,20 @@ export function compactTick(value: number, showAmounts: boolean): string {
 
 /** Compact with the currency symbol, for tooltips and headline figures. */
 export function compactMoney(value: number, showAmounts: boolean): string {
-  if (!showAmounts) return "GH₵ ••••";
+  if (!showAmounts) return "GHS ••••";
   const sign = value < 0 ? "−" : "";
-  return `${sign}GH₵ ${compactNumber(Math.abs(value))}`;
+  return `${sign}GHS ${compactNumber(Math.abs(value))}`;
 }
 
 /** Exact figure with grouping, for the values printed beside a chart. */
 export function exactMoney(value: number, showAmounts: boolean): string {
-  if (!showAmounts) return "GH₵ ••••••";
+  if (!showAmounts) return "GHS ••••••";
   const sign = value < 0 ? "−" : "";
   const body = new Intl.NumberFormat("en-GH", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(Math.abs(value));
-  return `${sign}GH₵ ${body}`;
+  return `${sign}GHS ${body}`;
 }
 
 export function formatPercent(share: number): string {

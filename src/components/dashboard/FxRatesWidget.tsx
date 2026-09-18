@@ -3,7 +3,7 @@ import { ArrowUpDown, ChevronDown, RefreshCw } from "lucide-react";
 import { CurrencyLogo } from "@/components/ui/currency-logo";
 
 const CURRENCIES = [
-  { code: "GHS", name: "Ghanaian Cedi", symbol: "GH₵", flag: "🇬🇭" },
+  { code: "GHS", name: "Ghanaian Cedi", symbol: "GHS", flag: "🇬🇭" },
   { code: "USD", name: "US Dollar", symbol: "$", flag: "🇺🇸" },
   { code: "EUR", name: "Euro", symbol: "€", flag: "🇪🇺" },
   { code: "GBP", name: "British Pound", symbol: "£", flag: "🇬🇧" },

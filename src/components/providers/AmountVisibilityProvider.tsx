@@ -17,7 +17,7 @@ export function setGlobalShowAmounts(show: boolean): void {
 }
 
 /**
- * Helper to mask currency strings (e.g. "GH₵ 124,500.00" -> "GH₵ ••••••").
+ * Helper to mask currency strings (e.g. "GHS 124,500.00" -> "GHS ••••••").
  * Only masks strings that explicitly contain a recognized currency symbol/code (GH₵, GHS, $, €, £, USD, EUR, GBP).
  * Non-monetary counts (e.g. "2", "0", "Awaiting 3 approvals") remain completely untouched.
  */
@@ -38,15 +38,15 @@ export function maskCurrencyString(val: string | number): string {
     const trimmed = match.trim();
     const sign = trimmed.startsWith("+") ? "+" : trimmed.startsWith("-") || trimmed.startsWith("−") ? "−" : "";
     const symMatch = match.match(/(GH₵|\$|€|£|GHS|USD|EUR|GBP)/i);
-    const rawSym = symMatch ? symMatch[1] : "GH₵";
-    const sym = rawSym.toUpperCase() === "GHS" ? "GH₵" : rawSym;
+    const rawSym = symMatch ? symMatch[1] : "GHS";
+    const sym = rawSym.toUpperCase() === "GHS" || rawSym === "GH₵" ? "GHS" : rawSym;
     return `${sign}${sym} ••••••`;
   });
 }
 
 /**
- * Helper to separate static currency prefix (USD, GH₵, $, etc.) from the animated numeric/bullet text.
- * Keeps currency codes like "USD" static so only digits and bullets animate.
+ * Helper to separate static currency prefix (USD, GHS, $, etc.) from the animated numeric/bullet text.
+ * Keeps currency codes like "USD" or "GHS" static so only digits and bullets animate.
  */
 export function splitCurrencyAndAmount(
   amount?: number,
@@ -65,8 +65,8 @@ export function splitCurrencyAndAmount(
         ? "€"
         : currUpper === "GBP"
         ? "£"
-        : currUpper === "GHS"
-        ? "GH₵ "
+        : currUpper === "GHS" || currUpper === "GH₵"
+        ? "GHS "
         : `${currency} `;
 
     if (!showAmounts) {
@@ -92,7 +92,7 @@ export function splitCurrencyAndAmount(
       let sym = "";
       if (symMatch) {
         const u = symMatch[1].toUpperCase();
-        sym = u === "GHS" ? "GH₵ " : u === "USD" ? "USD " : `${symMatch[1]} `;
+        sym = u === "GHS" || symMatch[1] === "GH₵" ? "GHS " : u === "USD" ? "USD " : `${symMatch[1]} `;
       }
       const prefix = `${sign}${sym}`;
       const numericText = !showAmounts ? "••••••" : rawBody;
@@ -160,8 +160,15 @@ export function AmountVisibilityProvider({ children }: { children: React.ReactNo
             ? "€"
             : currency.toUpperCase() === "GBP"
             ? "£"
-            : "GH₵";
+            : "GHS";
         return `${symbol} ••••••`;
+      }
+      if (currency.toUpperCase() === "GHS" || currency === "GH₵") {
+        const formattedNum = new Intl.NumberFormat("en-GH", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(amount);
+        return `GHS ${formattedNum}`;
       }
       return new Intl.NumberFormat("en-GH", {
         style: "currency",
@@ -210,8 +217,15 @@ export function useAmountVisibility() {
               ? "€"
               : currency.toUpperCase() === "GBP"
               ? "£"
-              : "GH₵";
+              : "GHS";
           return `${symbol} ••••••`;
+        }
+        if (currency.toUpperCase() === "GHS" || currency === "GH₵") {
+          const formattedNum = new Intl.NumberFormat("en-GH", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(amount);
+          return `GHS ${formattedNum}`;
         }
         return new Intl.NumberFormat("en-GH", {
           style: "currency",
@@ -229,8 +243,15 @@ export function useAmountVisibility() {
               ? "€"
               : currency.toUpperCase() === "GBP"
               ? "£"
-              : "GH₵";
+              : "GHS";
           return `${symbol} ••••••`;
+        }
+        if (currency.toUpperCase() === "GHS" || currency === "GH₵") {
+          const formattedNum = new Intl.NumberFormat("en-GH", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(amount);
+          return `GHS ${formattedNum}`;
         }
         return new Intl.NumberFormat("en-GH", {
           style: "currency",
@@ -245,7 +266,7 @@ export function useAmountVisibility() {
 }
 
 /**
- * RevealingAmount component with static currency prefix (USD, GH₵, etc.) and animated numbers/bullets.
+ * RevealingAmount component with static currency prefix (USD, GHS, etc.) and animated numbers/bullets.
  * The currency prefix remains static so only numeric digits and bullets animate upwards.
  */
 export function RevealingAmount({

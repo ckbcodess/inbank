@@ -8,7 +8,7 @@
  * - Left Sidebar (w-64, dark neutral background, Section headers: BANKING, MOVE MONEY, REFERENCE)
  * - Clean White Canvas with Header (Personal Banking switcher, Dev Mode pill, Notification badge, Eye amount toggle, AS user menu)
  * - Greeting ("Good day, Ama", Date subline "Thursday, August 15")
- * - Hero Balance ("Total available", large "GH₵ 18,070.50")
+ * - Hero Balance ("Total available", large "GHS 18,070.50")
  * - Action Tiles Row (Customize pill + 4 Distinctive White Action Cards:
  *    1. Send money (with icon)
  *    2. Pay Bill (with icon)
@@ -264,7 +264,7 @@ export default function FigmaDesignFidelityDashboard() {
           <section className="space-y-1">
             <span className="text-xs font-medium text-[#71717a]">Total available</span>
             <div className="text-4xl sm:text-5xl font-extrabold font-mono tracking-tight text-[#18181b] tabular">
-              {showAmounts ? "GH₵ 18,070.50" : "GH₵ ••••••"}
+              {showAmounts ? "GHS 18,070.50" : "GHS ••••••"}
             </div>
           </section>
 
@@ -347,9 +347,9 @@ export default function FigmaDesignFidelityDashboard() {
 
                 <div className="divide-y divide-[#f8f9fa]">
                   {[
-                    { name: "Personal Savings Account", type: "Savings", num: "4001 9922 1100", amount: "GH₵ 12,340.00" },
-                    { name: "Personal Current Account", type: "Current", num: "4001 9922 3344", amount: "GH₵ 5,730.50" },
-                    { name: "Investment Pot", type: "Fixed Deposit", num: "4001 9922 8899", amount: "GH₵ 0.00" },
+                    { name: "Personal Savings Account", type: "Savings", num: "4001 9922 1100", amount: "GHS 12,340.00" },
+                    { name: "Personal Current Account", type: "Current", num: "4001 9922 3344", amount: "GHS 5,730.50" },
+                    { name: "Investment Pot", type: "Fixed Deposit", num: "4001 9922 8899", amount: "GHS 0.00" },
                   ].map(acc => (
                     <div key={acc.name} className="p-4 flex items-center justify-between hover:bg-[#fafafa] transition-colors">
                       <div className="flex items-center gap-3">
@@ -364,7 +364,7 @@ export default function FigmaDesignFidelityDashboard() {
 
                       <div className="text-right font-mono">
                         <p className="text-xs font-bold text-[#18181b]">
-                          {showAmounts ? acc.amount : "GH₵ ••••••"}
+                          {showAmounts ? acc.amount : "GHS ••••••"}
                         </p>
                         <span className="text-[10px] text-[#71717a] font-sans">available</span>
                       </div>
@@ -467,7 +467,7 @@ export default function FigmaDesignFidelityDashboard() {
                         <span>Money in</span>
                       </div>
                       <p className="font-mono font-bold text-[#18181b] mt-0.5">
-                        {showAmounts ? "GH₵ 42,500.00" : "GH₵ ••••••"}
+                        {showAmounts ? "GHS 42,500.00" : "GHS ••••••"}
                       </p>
                     </div>
 
@@ -477,7 +477,7 @@ export default function FigmaDesignFidelityDashboard() {
                         <span>Money out</span>
                       </div>
                       <p className="font-mono font-bold text-[#18181b] mt-0.5">
-                        {showAmounts ? "GH₵ 24,429.50" : "GH₵ ••••••"}
+                        {showAmounts ? "GHS 24,429.50" : "GHS ••••••"}
                       </p>
                     </div>
 
@@ -487,7 +487,7 @@ export default function FigmaDesignFidelityDashboard() {
                         <span>Net</span>
                       </div>
                       <p className="font-mono font-bold text-[#18181b] mt-0.5">
-                        {showAmounts ? "+GH₵ 18,070.50" : "GH₵ ••••••"}
+                        {showAmounts ? "+GHS 18,070.50" : "GHS ••••••"}
                       </p>
                     </div>
                   </div>
@@ -548,7 +548,7 @@ export default function FigmaDesignFidelityDashboard() {
                         <div className="flex items-center gap-3 font-mono font-bold">
                           <span className="text-[#18181b]">{cat.pct}%</span>
                           <span className="text-[#71717a] text-[11px]">
-                            {showAmounts ? `GH₵ ${(cat.pct * 75).toFixed(0)}` : "GH₵ ••••"}
+                            {showAmounts ? `GHS ${(cat.pct * 75).toFixed(0)}` : "GHS ••••"}
                           </span>
                         </div>
                       </div>
@@ -646,7 +646,7 @@ export default function FigmaDesignFidelityDashboard() {
                 <div className="flex items-center gap-2">
                   <CurrencyLogo currency="GHS" size={24} />
                   <div className="text-2xl font-bold font-mono text-[#18181b] tabular">
-                    {showAmounts ? `GH₵ ${(Number(fxAmount || 0) * 15.385).toLocaleString("en-US", { minimumFractionDigits: 2 })}` : "GH₵ ••••••"}
+                    {showAmounts ? `GHS ${(Number(fxAmount || 0) * 15.385).toLocaleString("en-US", { minimumFractionDigits: 2 })}` : "GHS ••••••"}
                   </div>
                 </div>
                 <p className="text-xs text-[#71717a] pt-1">
@@ -672,11 +672,11 @@ export default function FigmaDesignFidelityDashboard() {
 
             <div className="divide-y divide-[#f8f9fa]">
               {[
-                { title: "Supermarket Purchase — Melcom", desc: "11 Aug 2026 · Melcom Stores", amount: "GH₵ 480.00", dir: "debit", status: "Completed" },
-                { title: "Monthly Salary Credit", desc: "10 Aug 2026 · Employer Ltd", amount: "GH₵ 12,500.00", dir: "credit", status: "Completed" },
-                { title: "Transfer to Savings", desc: "08 Aug 2026 · Personal Savings Account", amount: "GH₵ 2,000.00", dir: "credit", status: "Completed" },
-                { title: "Online Merchant — Amazon Checkout", desc: "07 Aug 2026 · Amazon Pay", amount: "GH₵ 340.50", dir: "debit", status: "Completed" },
-                { title: "Mobile Money Cashout — MTN MoMo", desc: "06 Aug 2026 · MTN MoMo Agent", amount: "GH₵ 150.00", dir: "debit", status: "Completed" },
+                { title: "Supermarket Purchase — Melcom", desc: "11 Aug 2026 · Melcom Stores", amount: "GHS 480.00", dir: "debit", status: "Completed" },
+                { title: "Monthly Salary Credit", desc: "10 Aug 2026 · Employer Ltd", amount: "GHS 12,500.00", dir: "credit", status: "Completed" },
+                { title: "Transfer to Savings", desc: "08 Aug 2026 · Personal Savings Account", amount: "GHS 2,000.00", dir: "credit", status: "Completed" },
+                { title: "Online Merchant — Amazon Checkout", desc: "07 Aug 2026 · Amazon Pay", amount: "GHS 340.50", dir: "debit", status: "Completed" },
+                { title: "Mobile Money Cashout — MTN MoMo", desc: "06 Aug 2026 · MTN MoMo Agent", amount: "GHS 150.00", dir: "debit", status: "Completed" },
               ].map(t => {
                 const isCred = t.dir === "credit";
 
@@ -689,7 +689,7 @@ export default function FigmaDesignFidelityDashboard() {
 
                     <div className="flex items-center gap-4">
                       <span className={`font-mono text-xs font-bold tabular ${isCred ? "text-emerald-700" : "text-[#18181b]"}`}>
-                        {isCred ? "+" : "−"}{showAmounts ? t.amount : "GH₵ ••••••"}
+                        {isCred ? "+" : "−"}{showAmounts ? t.amount : "GHS ••••••"}
                       </span>
                       <Badge variant="outline" className="text-[10px] hidden sm:inline-flex">
                         {t.status}

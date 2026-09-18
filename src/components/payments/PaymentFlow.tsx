@@ -2131,7 +2131,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           ["Payment Method", isOwnTransfer ? "OWN ACCOUNT TRANSFER" : ((rail === "bank" && bankCategory === "other") || rail === "ach") && f.paymentMethod ? getPaymentMethodName(f.paymentMethod) : rail.toUpperCase()],
           ["Delivery Speed", isDualMandate ? "Upon Co-Signatory Approval" : (f.isScheduled ? `Scheduled for ${f.scheduleDate}` : deliverySpeed)],
           ["Payment Timing", f.isScheduled ? `Scheduled · ${f.scheduleFrequency === "once" ? "One-off" : f.scheduleFrequency.charAt(0).toUpperCase() + f.scheduleFrequency.slice(1)} (${f.scheduleDate})` : "Immediate Transfer"],
-          ["Fee", `${feeDetails.feeName}: ${feeDetails.feeAmount === 0 ? "Free (GH₵0.00)" : formatMoney(feeDetails.feeAmount, "GHS", true)}`],
+          ["Fee", `${feeDetails.feeName}: ${feeDetails.feeAmount === 0 ? "Free (GHS 0.00)" : formatMoney(feeDetails.feeAmount, "GHS", true)}`],
           ...(f.saveBeneficiary ? ([["Beneficiary Saved", `Yes — ${f.beneficiaryNickname || resolvedName || "Saved to Payees"}`]] as [string, string][]) : []),
           ["From Account", `${account?.name} (••${account?.number.slice(-4)})`],
           ...(isOwnTransfer ? ([["To Account", `${toOwnAccount?.name} (••${toOwnAccount?.number.slice(-4)})`]] as [string, string][]) : []),

@@ -578,7 +578,7 @@ export function PaymentSuccessScreen({
             </div>
             <div className="text-right">
               <span className="text-[12px] text-muted-foreground">Amount</span>
-              <div className="text-[18px] font-semibold tabular text-foreground">GH₵ {cardlessToken.amount}</div>
+              <div className="text-[18px] font-semibold tabular text-foreground">GHS {cardlessToken.amount}</div>
             </div>
           </div>
           {cardlessToken.onDelete && (

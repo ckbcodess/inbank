@@ -48,7 +48,7 @@ export const PAYMENT_METHODS: PaymentMethodOption[] = [
     description: "Instant (24/7) · Real-time interbank settlement",
     speed: "Instant",
     fee: 5.0,
-    feeText: "GH₵5.00",
+    feeText: "GHS 5.00",
   },
   {
     id: "ach",
@@ -57,7 +57,7 @@ export const PAYMENT_METHODS: PaymentMethodOption[] = [
     description: "Standard clearing · Same day or next clearing cycle",
     speed: "Same day",
     fee: 12.5,
-    feeText: "GH₵12.50",
+    feeText: "GHS 12.50",
   },
   {
     id: "ach-nrt",
@@ -66,7 +66,7 @@ export const PAYMENT_METHODS: PaymentMethodOption[] = [
     description: "Express clearing · Clears within 15–30 minutes",
     speed: "15–30 mins",
     fee: 8.0,
-    feeText: "GH₵8.00",
+    feeText: "GHS 8.00",
   },
   {
     id: "rtgs",
@@ -75,7 +75,7 @@ export const PAYMENT_METHODS: PaymentMethodOption[] = [
     description: "Real-time gross settlement · Bank hours only",
     speed: "1–2 hours",
     fee: 25.0,
-    feeText: "GH₵25.00",
+    feeText: "GHS 25.00",
   },
 ];
 
@@ -110,8 +110,8 @@ export function getDetailedFeeBreakdown({
         feeName: "Internal Transfer Fee (Between My Accounts)",
         feeShortName: "GCB Internal",
         feeAmount: 0,
-        eLevyText: "GH₵0.00 (Exempt)",
-        commissionText: "GH₵0.00 (Waived)",
+        eLevyText: "GHS 0.00 (Exempt)",
+        commissionText: "GHS 0.00 (Waived)",
       };
     }
     if (bankCategory === "gcb") {
@@ -119,8 +119,8 @@ export function getDetailedFeeBreakdown({
         feeName: "GCB Intra-bank Transfer Fee",
         feeShortName: "GCB Intra-bank",
         feeAmount: 0,
-        eLevyText: "GH₵0.00 (Exempt)",
-        commissionText: "GH₵0.00 (Waived)",
+        eLevyText: "GHS 0.00 (Exempt)",
+        commissionText: "GHS 0.00 (Waived)",
       };
     }
     const pm = PAYMENT_METHODS.find((m) => m.id === paymentMethod);
@@ -129,16 +129,16 @@ export function getDetailedFeeBreakdown({
         feeName: `${pm.name} Fee`,
         feeShortName: pm.shortName,
         feeAmount: pm.fee,
-        eLevyText: "GH₵0.00 (Exempt)",
-        commissionText: "GH₵0.00 (Waived)",
+        eLevyText: "GHS 0.00 (Exempt)",
+        commissionText: "GHS 0.00 (Waived)",
       };
     }
     return {
       feeName: "GhIPSS Instant Pay (GIP) Fee",
       feeShortName: "GIP",
       feeAmount: 5.0,
-      eLevyText: "GH₵0.00 (Exempt)",
-      commissionText: "GH₵0.00 (Waived)",
+      eLevyText: "GHS 0.00 (Exempt)",
+      commissionText: "GHS 0.00 (Waived)",
     };
   }
 
@@ -149,16 +149,16 @@ export function getDetailedFeeBreakdown({
         feeName: `${pm.name} Fee`,
         feeShortName: pm.shortName,
         feeAmount: pm.fee,
-        eLevyText: "GH₵0.00 (Exempt)",
-        commissionText: "GH₵0.00 (Waived)",
+        eLevyText: "GHS 0.00 (Exempt)",
+        commissionText: "GHS 0.00 (Waived)",
       };
     }
     return {
       feeName: "ACH Direct Credit Clearing Fee",
       feeShortName: "ACH",
       feeAmount: 12.5,
-      eLevyText: "GH₵0.00 (Exempt)",
-      commissionText: "GH₵0.00 (Waived)",
+      eLevyText: "GHS 0.00 (Exempt)",
+      commissionText: "GHS 0.00 (Waived)",
     };
   }
 
@@ -167,8 +167,8 @@ export function getDetailedFeeBreakdown({
       feeName: "Mobile Money Network Processing Fee",
       feeShortName: "Mobile Money",
       feeAmount: 0.5,
-      eLevyText: "GH₵0.00 (Exempt)",
-      commissionText: "GH₵0.00 (Waived)",
+      eLevyText: "GHS 0.00 (Exempt)",
+      commissionText: "GHS 0.00 (Waived)",
     };
   }
 
@@ -177,8 +177,8 @@ export function getDetailedFeeBreakdown({
       feeName: "Wallet-to-Bank Interoperability Fee",
       feeShortName: "Interoperability",
       feeAmount: 0.5,
-      eLevyText: "GH₵0.00 (Exempt)",
-      commissionText: "GH₵0.00 (Waived)",
+      eLevyText: "GHS 0.00 (Exempt)",
+      commissionText: "GHS 0.00 (Waived)",
     };
   }
 
@@ -187,18 +187,18 @@ export function getDetailedFeeBreakdown({
       feeName: "Proxy Pay Routing Fee",
       feeShortName: "Proxy Pay",
       feeAmount: 0.5,
-      eLevyText: "GH₵0.00 (Exempt)",
-      commissionText: "GH₵0.00 (Waived)",
+      eLevyText: "GHS 0.00 (Exempt)",
+      commissionText: "GHS 0.00 (Waived)",
     };
   }
 
   if (rail === "group") {
     return {
-      feeName: `Group Batch Transfer Fee (${membersCount} members × GH₵0.50)`,
+      feeName: `Group Batch Transfer Fee (${membersCount} members × GHS 0.50)`,
       feeShortName: "Group Batch",
       feeAmount: 0.5 * membersCount,
-      eLevyText: "GH₵0.00 (Exempt)",
-      commissionText: "GH₵0.00 (Waived)",
+      eLevyText: "GHS 0.00 (Exempt)",
+      commissionText: "GHS 0.00 (Waived)",
     };
   }
 
@@ -207,8 +207,8 @@ export function getDetailedFeeBreakdown({
       feeName: "PAPSS Cross-Border Settlement Fee",
       feeShortName: "PAPSS",
       feeAmount: 25.0,
-      eLevyText: "GH₵0.00 (Exempt)",
-      commissionText: "GH₵0.00 (Waived)",
+      eLevyText: "GHS 0.00 (Exempt)",
+      commissionText: "GHS 0.00 (Waived)",
     };
   }
 
@@ -217,8 +217,8 @@ export function getDetailedFeeBreakdown({
       feeName: "SWIFT International Wire Processing Fee",
       feeShortName: "SWIFT Wire",
       feeAmount: 50.0,
-      eLevyText: "GH₵0.00 (Exempt)",
-      commissionText: "GH₵0.00 (Waived)",
+      eLevyText: "GHS 0.00 (Exempt)",
+      commissionText: "GHS 0.00 (Waived)",
     };
   }
 
@@ -227,8 +227,8 @@ export function getDetailedFeeBreakdown({
       feeName: "Card Funding Convenience Fee",
       feeShortName: "Card Funding",
       feeAmount: 0,
-      eLevyText: "GH₵0.00 (Exempt)",
-      commissionText: "GH₵0.00 (Waived)",
+      eLevyText: "GHS 0.00 (Exempt)",
+      commissionText: "GHS 0.00 (Waived)",
     };
   }
 
@@ -237,8 +237,8 @@ export function getDetailedFeeBreakdown({
       feeName: "Cardless Token Generation Fee",
       feeShortName: "Cardless",
       feeAmount: 1.0,
-      eLevyText: "GH₵0.00 (Exempt)",
-      commissionText: "GH₵0.00 (Waived)",
+      eLevyText: "GHS 0.00 (Exempt)",
+      commissionText: "GHS 0.00 (Waived)",
     };
   }
 
@@ -247,8 +247,8 @@ export function getDetailedFeeBreakdown({
       feeName: "Telco Airtime / Data Service Fee",
       feeShortName: "Telco Service",
       feeAmount: 0,
-      eLevyText: "GH₵0.00 (Exempt)",
-      commissionText: "GH₵0.00 (Waived)",
+      eLevyText: "GHS 0.00 (Exempt)",
+      commissionText: "GHS 0.00 (Waived)",
     };
   }
 
@@ -257,8 +257,8 @@ export function getDetailedFeeBreakdown({
       feeName: "Biller Platform Convenience Fee",
       feeShortName: "Biller Platform",
       feeAmount: 0,
-      eLevyText: "GH₵0.00 (Exempt)",
-      commissionText: "GH₵0.00 (Waived)",
+      eLevyText: "GHS 0.00 (Exempt)",
+      commissionText: "GHS 0.00 (Waived)",
     };
   }
 
@@ -266,8 +266,8 @@ export function getDetailedFeeBreakdown({
     feeName: "Payment Processing Fee",
     feeShortName: "Processing",
     feeAmount: 0,
-    eLevyText: "GH₵0.00 (Exempt)",
-    commissionText: "GH₵0.00 (Waived)",
+    eLevyText: "GHS 0.00 (Exempt)",
+    commissionText: "GHS 0.00 (Waived)",
   };
 }
 

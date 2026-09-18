@@ -690,7 +690,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             <div className="flex items-center justify-between py-3.5">
               <span className="text-muted-foreground">Clearing Fee</span>
               <span className="text-muted-foreground tabular">
-                {feeAmount === 0 ? "GH₵0.00 (Free)" : formatMoney(feeAmount, "GHS", true)}
+                {feeAmount === 0 ? "GHS 0.00 (Free)" : formatMoney(feeAmount, "GHS", true)}
               </span>
             </div>
             <div className="flex items-center justify-between pt-3.5">

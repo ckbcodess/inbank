@@ -212,10 +212,10 @@ export function DashboardAnalyticsWidget() {
                 </span>
                 <span className="text-[17px] sm:text-[18px] font-semibold tracking-tight text-foreground tabular leading-tight mt-0.5">
                   {showAmounts
-                    ? `GH₵${new Intl.NumberFormat("en-GH").format(
+                    ? `GHS ${new Intl.NumberFormat("en-GH").format(
                         activeItem ? activeItem.amount : totalSpend
                       )}`
-                    : "GH₵••••"}
+                    : "GHS ••••"}
                 </span>
                 <span className="mt-0.5 text-[10.5px] text-muted-foreground tabular">
                   {activeItem ? `${activeItem.percentage}% of total` : activeDataset.trend}
@@ -260,8 +260,8 @@ export function DashboardAnalyticsWidget() {
                   <div className="flex items-center shrink-0 pl-2">
                     <span className="text-[12.5px] font-medium text-foreground tabular">
                       {showAmounts
-                        ? `GH₵${new Intl.NumberFormat("en-GH").format(cat.amount)}`
-                        : "GH₵••••"}
+                        ? `GHS ${new Intl.NumberFormat("en-GH").format(cat.amount)}`
+                        : "GHS ••••"}
                     </span>
                   </div>
                 </div>

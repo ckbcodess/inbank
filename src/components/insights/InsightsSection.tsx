@@ -10,7 +10,7 @@
  * together.
  *
  * Monthly is the default. Daily is available but corporate cash flow is lumpy
- * day to day — a single GH₵ 512k receipt flattens every other bar — so the
+ * day to day — a single GHS 512k receipt flattens every other bar — so the
  * grain that reads cleanest leads.
  */
 

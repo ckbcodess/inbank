@@ -18,7 +18,7 @@ export const CURRENCY_METADATA: Record<string, CurrencyMeta> = {
   ZAR: { code: "ZAR", name: "South African Rand", country: "South Africa", symbol: "R" },
   NGN: { code: "NGN", name: "Nigerian Naira", country: "Nigeria", symbol: "₦" },
   CNY: { code: "CNY", name: "Chinese Yuan", country: "China", symbol: "¥" },
-  GHS: { code: "GHS", name: "Ghanaian Cedi", country: "Ghana", symbol: "GH₵" },
+  GHS: { code: "GHS", name: "Ghanaian Cedi", country: "Ghana", symbol: "GHS" },
   CAD: { code: "CAD", name: "Canadian Dollar", country: "Canada", symbol: "CA$" },
   KES: { code: "KES", name: "Kenyan Shilling", country: "Kenya", symbol: "KSh" },
 };

@@ -202,8 +202,8 @@ const MODELS: Record<ProfileKind, ProfileModel> = {
     ],
   },
   RETAIL: {
-    // Sized so a salaried customer runs a realistic surplus: ~GH₵ 8.6k in
-    // against ~GH₵ 6k out. Categories that over-spend the salary would make
+    // Sized so a salaried customer runs a realistic surplus: ~GHS 8.6k in
+    // against ~GHS 6k out. Categories that over-spend the salary would make
     // every month read as a loss.
     seed: 0x2c0f_fee0,
     categories: [

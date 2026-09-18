@@ -505,7 +505,7 @@ export function MySpendsWidget({
                 {selectedItemName || (expandedOther ? `${viewMode === "categories" ? "Other" : "All Others"} Sub-breakdown` : "Total Spends")}
               </span>
               <span className="mt-1 text-[26px] sm:text-[28px] font-bold text-foreground tracking-tight tabular-nums numorainput">
-                GH₵{(activeSpendItem ? activeSpendItem.amount : totalSpend).toLocaleString("en-US", {
+                GHS {(activeSpendItem ? activeSpendItem.amount : totalSpend).toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
@@ -573,7 +573,7 @@ export function MySpendsWidget({
                       )}
                     </div>
                     <span className="text-[14px] font-medium text-foreground tabular-nums numorainput">
-                      GH₵{item.amount.toLocaleString()}
+                      GHS {item.amount.toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -613,7 +613,7 @@ export function MySpendsWidget({
 
               <div className="flex items-center gap-3.5 shrink-0">
                 <span className="text-[14px] font-medium text-foreground tabular-nums numorainput">
-                  {t.direction === "credit" ? "+" : "-"}GH₵{t.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  {t.direction === "credit" ? "+" : "-"}GHS {t.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11.5px] font-medium bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
                   Completed
