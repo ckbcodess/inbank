@@ -419,9 +419,9 @@ function AccountHeroGrid({ account, holderName, onOpenFund }: AccountHeroGridPro
             <Button
               size="sm"
               onClick={onOpenFund}
-              className="bg-[#fdc307] hover:bg-[#eab306] text-[#451a03] font-medium h-9 sm:h-8 px-3.5 rounded-lg shadow-xs active:scale-[0.98] transition-all cursor-pointer text-[13px] justify-center whitespace-nowrap"
+              className="bg-primary hover:bg-primary-hover text-primary-foreground font-medium h-9 sm:h-8 px-3.5 rounded-lg shadow-xs active:scale-[0.98] transition-all cursor-pointer text-[13px] justify-center whitespace-nowrap"
             >
-              <ArrowDownLeft size={14} className="text-[#451a03] mr-1.5 shrink-0" />
+              <ArrowDownLeft size={14} className="text-primary-foreground mr-1.5 shrink-0" />
               Fund Account
             </Button>
           </div>

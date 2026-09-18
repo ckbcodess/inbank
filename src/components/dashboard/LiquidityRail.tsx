@@ -50,7 +50,7 @@ function SquareAction({
   const tileClass = `flex size-14 shrink-0 items-center justify-center rounded-xl transition-colors ${
     disabled
       ? "cursor-not-allowed bg-muted text-muted-foreground/50"
-      : "bg-primary text-primary-foreground hover:opacity-90 active:scale-[0.97] transition-transform"
+      : "bg-primary text-primary-foreground hover:bg-primary-hover active:scale-[0.97] transition-transform"
   }`;
 
   return (

@@ -694,7 +694,7 @@ export function PaymentSuccessScreen({
         <button
           type="button"
           onClick={onPrimaryAction}
-          className="relative overflow-hidden flex-1 rounded-[8px] bg-[#f9c632] hover:bg-[#eab308] text-[#451a03] px-5 py-3 text-[14px] font-medium active:scale-[0.99] transition-all cursor-pointer text-center shadow-xs"
+          className="relative overflow-hidden flex-1 rounded-[8px] bg-primary hover:bg-primary-hover text-primary-foreground px-5 py-3 text-[14px] font-medium active:scale-[0.99] transition-all cursor-pointer text-center shadow-xs"
         >
           {/* Single light sweep as the button arrives — then it stays still */}
           <motion.div

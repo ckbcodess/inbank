@@ -123,7 +123,7 @@ function AccountsContent() {
           <Button
             type="button"
             onClick={() => setIsLinkModalOpen(true)}
-            className="h-9 sm:h-10 px-3 sm:px-4 rounded-xl bg-[#fdc307] hover:bg-[#eab306] text-[#18181b] font-medium text-[13px] sm:text-[13.5px] flex items-center gap-1.5 sm:gap-2 cursor-pointer transition-all active:scale-[0.98] shadow-xs shrink-0"
+            className="h-9 sm:h-10 px-3 sm:px-4 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground font-medium text-[13px] sm:text-[13.5px] flex items-center gap-1.5 sm:gap-2 cursor-pointer transition-all active:scale-[0.98] shadow-xs shrink-0"
           >
             <Plus size={16} strokeWidth={2.2} className="shrink-0" />
             <span className="hidden sm:inline">Add Funding Method</span>
@@ -177,7 +177,7 @@ function AccountsContent() {
               <Button
                 size="sm"
                 onClick={() => setIsLinkModalOpen(true)}
-                className="bg-[#fdc307] text-[#18181b] hover:bg-[#eab306] cursor-pointer rounded-xl font-semibold text-[13px]"
+                className="bg-primary text-primary-foreground hover:bg-primary-hover cursor-pointer rounded-xl font-semibold text-[13px]"
               >
                 <Plus size={14} strokeWidth={2.2} aria-hidden="true" />
                 Add Funding Method
