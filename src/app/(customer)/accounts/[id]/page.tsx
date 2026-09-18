@@ -387,63 +387,66 @@ function AccountHeroGrid({ account, holderName, onOpenFund }: AccountHeroGridPro
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 w-full items-stretch">
-      {/* Left Hero Card - Balance, Actions & Account Details */}
-      <div className="lg:col-span-7 flex flex-col justify-between rounded-2xl border border-border/80 bg-[#f6f6f5] dark:bg-card/70 p-5 sm:p-6 shadow-2xs min-h-[220px] gap-6">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
+      {/* Left Hero Card - Available Balance & Primary Quick Actions */}
+      <div className="lg:col-span-7 flex flex-col justify-between rounded-2xl border border-border/80 bg-[#f8f8f7] dark:bg-card/70 p-6 sm:p-7 shadow-2xs min-h-[240px]">
+        {/* Top: Balance & Actions */}
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-[13px] font-normal text-muted-foreground">Available balance</span>
+              <span className="text-[12.5px] font-medium uppercase tracking-wider text-muted-foreground">
+                Available balance
+              </span>
               {account.status === "Dormant" && (
-                <Badge variant="warning" className="text-[10px] px-2 py-0">
+                <Badge variant="warning" className="text-[10.5px] px-2 py-0.5">
                   Dormant
                 </Badge>
               )}
             </div>
-            <div className="text-[32px] sm:text-[36px] font-normal tracking-[-0.03em] text-foreground tabular leading-none">
+            <div className="text-[34px] sm:text-[40px] font-normal tracking-[-0.035em] text-foreground tabular leading-none">
               <RevealingAmount amount={account.available} currency={account.currency} />
             </div>
           </div>
 
           {/* Action buttons directly underneath the amount */}
-          <div className="flex items-center gap-2.5 pt-0.5">
+          <div className="flex items-center gap-3 pt-1">
             <Button
               variant="outline"
               size="sm"
               nativeButton={false}
-              className="bg-white dark:bg-card border-border/80 text-[13px] font-medium h-9 px-4 rounded-xl shadow-2xs hover:bg-muted/60 transition-colors"
+              className="bg-card dark:bg-card border-border/80 text-[13px] font-medium h-9 px-4.5 rounded-xl shadow-2xs hover:bg-muted/60 transition-colors"
               render={<Link href="/payments" />}
             >
-              <Send size={13} className="text-muted-foreground mr-1.5" />
+              <Send size={13.5} className="text-muted-foreground mr-2" />
               Pay
             </Button>
             <Button
               size="sm"
               onClick={onOpenFund}
-              className="bg-primary hover:bg-primary-hover text-primary-foreground font-medium h-9 px-4 rounded-xl shadow-2xs active:scale-[0.98] transition-all cursor-pointer text-[13px] whitespace-nowrap"
+              className="bg-primary hover:bg-primary-hover text-primary-foreground font-medium h-9 px-4.5 rounded-xl shadow-2xs active:scale-[0.98] transition-all cursor-pointer text-[13px] whitespace-nowrap"
             >
-              <ArrowDownLeft size={14} className="text-primary-foreground mr-1.5 shrink-0" />
+              <ArrowDownLeft size={14.5} className="text-primary-foreground mr-1.5 shrink-0" />
               Fund Account
             </Button>
           </div>
         </div>
 
-        {/* Bottom Metadata Grid: Type, Currency, Status, Mandate */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 sm:pt-5 border-t border-border/50">
-          <div className="flex flex-col gap-0.5">
-            <span className="text-[12px] text-muted-foreground">Type</span>
-            <span className="text-[14px] sm:text-[15px] font-normal text-foreground">{account.type}</span>
+        {/* Bottom: Account Key Metadata Strip */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-border/60">
+          <div className="flex flex-col gap-1">
+            <span className="text-[11.5px] font-medium uppercase tracking-wider text-muted-foreground">Type</span>
+            <span className="text-[14.5px] font-normal text-foreground">{account.type}</span>
           </div>
-          <div className="flex flex-col gap-0.5">
-            <span className="text-[12px] text-muted-foreground">Currency</span>
-            <span className="text-[14px] sm:text-[15px] font-normal text-foreground">{account.currency}</span>
+          <div className="flex flex-col gap-1">
+            <span className="text-[11.5px] font-medium uppercase tracking-wider text-muted-foreground">Currency</span>
+            <span className="text-[14.5px] font-normal text-foreground">{account.currency}</span>
           </div>
-          <div className="flex flex-col gap-0.5">
-            <span className="text-[12px] text-muted-foreground">Status</span>
-            <span className="text-[14px] sm:text-[15px] font-normal text-foreground">{account.status}</span>
+          <div className="flex flex-col gap-1">
+            <span className="text-[11.5px] font-medium uppercase tracking-wider text-muted-foreground">Status</span>
+            <span className="text-[14.5px] font-normal text-foreground">{account.status}</span>
           </div>
-          <div className="flex flex-col gap-0.5">
-            <span className="text-[12px] text-muted-foreground">Mandate</span>
-            <span className="text-[14px] sm:text-[15px] font-normal text-foreground">
+          <div className="flex flex-col gap-1">
+            <span className="text-[11.5px] font-medium uppercase tracking-wider text-muted-foreground">Mandate</span>
+            <span className="text-[14.5px] font-normal text-foreground truncate" title={account.mandate || "Single authority"}>
               {account.mandate || (account.isJoint ? "Both to sign" : "Single authority")}
             </span>
           </div>
@@ -451,89 +454,91 @@ function AccountHeroGrid({ account, holderName, onOpenFund }: AccountHeroGridPro
       </div>
 
       {/* Right Hero Card - Account Identifiers & SWIFT Details */}
-      <div className="lg:col-span-5 flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-6 shadow-2xs min-h-[220px]">
-        {/* Section title matching Figma 1277:11364 */}
-        <div className="text-[12px] text-muted-foreground font-normal mb-1">
-          Details
+      <div className="lg:col-span-5 flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-6 sm:p-7 shadow-2xs min-h-[240px]">
+        {/* Section title */}
+        <div className="text-[12.5px] font-medium uppercase tracking-wider text-muted-foreground">
+          Account Details
         </div>
 
-        {/* Account Number */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <span className="text-[12px]">Account number</span>
-            <button
-              type="button"
-              onClick={() => setShowFullAccountNum((v) => !v)}
-              className="hover:text-foreground transition-colors p-0.5 rounded text-muted-foreground cursor-pointer"
-              title={showFullAccountNum ? "Mask account number" : "Reveal account number"}
-              aria-label={showFullAccountNum ? "Mask account number" : "Reveal account number"}
-            >
-              {showFullAccountNum ? <EyeOff size={13} /> : <Eye size={13} />}
-            </button>
+        <div className="flex flex-col divide-y divide-border/50 my-auto py-2">
+          {/* Account Number */}
+          <div className="flex items-center justify-between py-3">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <span className="text-[13px]">Account number</span>
+              <button
+                type="button"
+                onClick={() => setShowFullAccountNum((v) => !v)}
+                className="hover:text-foreground transition-colors p-0.5 rounded text-muted-foreground cursor-pointer"
+                title={showFullAccountNum ? "Mask account number" : "Reveal account number"}
+                aria-label={showFullAccountNum ? "Mask account number" : "Reveal account number"}
+              >
+                {showFullAccountNum ? <EyeOff size={13.5} /> : <Eye size={13.5} />}
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[14.5px] font-mono tabular text-foreground font-normal">
+                {showFullAccountNum ? formattedAccountNum : maskedAccountNum}
+              </span>
+              <button
+                type="button"
+                onClick={() => handleCopy("accountNumber", account.number.replace(/\s+/g, ""))}
+                className="text-muted-foreground hover:text-foreground p-1 transition-colors rounded hover:bg-muted cursor-pointer"
+                title="Copy account number"
+                aria-label="Copy account number"
+              >
+                {copiedKey === "accountNumber" ? (
+                  <Check size={13.5} className="text-emerald-600 dark:text-emerald-400" />
+                ) : (
+                  <Copy size={13.5} />
+                )}
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[15px] font-mono tabular text-foreground font-normal">
-              {showFullAccountNum ? formattedAccountNum : maskedAccountNum}
-            </span>
-            <button
-              type="button"
-              onClick={() => handleCopy("accountNumber", account.number.replace(/\s+/g, ""))}
-              className="text-muted-foreground hover:text-foreground p-1 transition-colors rounded hover:bg-muted cursor-pointer"
-              title="Copy account number"
-              aria-label="Copy account number"
-            >
-              {copiedKey === "accountNumber" ? (
-                <Check size={13} className="text-emerald-600 dark:text-emerald-400" />
-              ) : (
-                <Copy size={13} />
-              )}
-            </button>
-          </div>
-        </div>
 
-        {/* Account Holder */}
-        <div className="flex items-center justify-between">
-          <span className="text-[12px] text-muted-foreground">Account holder</span>
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="text-[15px] font-normal text-foreground truncate max-w-[190px] sm:max-w-[220px] uppercase text-right">
-              {holderName}
-            </span>
-            <button
-              type="button"
-              onClick={() => handleCopy("holderName", holderName)}
-              className="text-muted-foreground hover:text-foreground p-1 transition-colors rounded hover:bg-muted shrink-0 cursor-pointer"
-              title="Copy account holder name"
-              aria-label="Copy account holder name"
-            >
-              {copiedKey === "holderName" ? (
-                <Check size={13} className="text-emerald-600 dark:text-emerald-400" />
-              ) : (
-                <Copy size={13} />
-              )}
-            </button>
+          {/* Account Holder */}
+          <div className="flex items-center justify-between py-3">
+            <span className="text-[13px] text-muted-foreground">Account holder</span>
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-[14.5px] font-normal text-foreground truncate max-w-[170px] sm:max-w-[200px] uppercase text-right">
+                {holderName}
+              </span>
+              <button
+                type="button"
+                onClick={() => handleCopy("holderName", holderName)}
+                className="text-muted-foreground hover:text-foreground p-1 transition-colors rounded hover:bg-muted shrink-0 cursor-pointer"
+                title="Copy account holder name"
+                aria-label="Copy account holder name"
+              >
+                {copiedKey === "holderName" ? (
+                  <Check size={13.5} className="text-emerald-600 dark:text-emerald-400" />
+                ) : (
+                  <Copy size={13.5} />
+                )}
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* SWIFT Code */}
-        <div className="flex items-center justify-between">
-          <span className="text-[12px] text-muted-foreground uppercase tracking-wider">SWIFT Code</span>
-          <div className="flex items-center gap-2">
-            <span className="text-[15px] font-mono tabular text-foreground font-normal uppercase">
-              {swiftCode}
-            </span>
-            <button
-              type="button"
-              onClick={() => handleCopy("swift", swiftCode)}
-              className="text-muted-foreground hover:text-foreground p-1 transition-colors rounded hover:bg-muted cursor-pointer"
-              title="Copy SWIFT code"
-              aria-label="Copy SWIFT code"
-            >
-              {copiedKey === "swift" ? (
-                <Check size={13} className="text-emerald-600 dark:text-emerald-400" />
-              ) : (
-                <Copy size={13} />
-              )}
-            </button>
+          {/* SWIFT Code */}
+          <div className="flex items-center justify-between py-3">
+            <span className="text-[13px] text-muted-foreground uppercase tracking-wider">SWIFT Code</span>
+            <div className="flex items-center gap-2">
+              <span className="text-[14.5px] font-mono tabular text-foreground font-normal uppercase">
+                {swiftCode}
+              </span>
+              <button
+                type="button"
+                onClick={() => handleCopy("swift", swiftCode)}
+                className="text-muted-foreground hover:text-foreground p-1 transition-colors rounded hover:bg-muted cursor-pointer"
+                title="Copy SWIFT code"
+                aria-label="Copy SWIFT code"
+              >
+                {copiedKey === "swift" ? (
+                  <Check size={13.5} className="text-emerald-600 dark:text-emerald-400" />
+                ) : (
+                  <Copy size={13.5} />
+                )}
+              </button>
+            </div>
           </div>
         </div>
       </div>
