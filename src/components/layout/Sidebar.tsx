@@ -219,7 +219,7 @@ export default function Sidebar({
               {shell === "admin" ? (
                 <ShieldCheck size={18} strokeWidth={2.1} className="text-primary" />
               ) : (
-                <GCBLogo className="h-6 w-auto shrink-0" showWordmark={false} />
+                <GCBLogo className="h-6 w-auto shrink-0" />
               )}
             </span>
             <PanelLeftOpen
