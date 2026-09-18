@@ -217,7 +217,7 @@ export default function Sidebar({
             <button
               type="button"
               onClick={onToggleCollapse}
-              className="relative hidden size-9 flex-shrink-0 items-center justify-center rounded-lg hover:bg-muted/70 transition-colors lg:flex cursor-pointer overflow-hidden"
+              className="relative hidden size-9 flex-shrink-0 items-center justify-center rounded-lg hover:bg-muted/70 text-muted-foreground hover:text-foreground transition-colors lg:flex cursor-pointer overflow-hidden"
               aria-label="Expand sidebar"
             >
               <span
@@ -237,9 +237,8 @@ export default function Sidebar({
                 }`}
               >
                 <PanelLeftOpen
-                  size={18}
+                  className="size-[17.5px] text-muted-foreground group-hover:text-foreground"
                   strokeWidth={1.8}
-                  className="text-foreground"
                 />
               </span>
             </button>
@@ -256,15 +255,14 @@ export default function Sidebar({
                 {brandLabel}
               </span>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
+            <button
+              type="button"
               onClick={onToggleCollapse}
-              className="hidden lg:flex size-9 cursor-pointer text-muted-foreground hover:text-foreground"
+              className="hidden lg:flex size-9 flex-shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted/70 hover:text-foreground transition-colors cursor-pointer"
               aria-label="Collapse sidebar"
             >
-              <PanelLeftClose size={18} strokeWidth={1.8} />
-            </Button>
+              <PanelLeftClose className="size-[17.5px]" strokeWidth={1.8} />
+            </button>
           </>
         )}
 
