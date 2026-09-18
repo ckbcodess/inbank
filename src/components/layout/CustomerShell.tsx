@@ -124,7 +124,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
               className="custom-scrollbar animate-in fade-in flex-1 overflow-y-auto duration-200"
               style={{ scrollbarGutter: "stable" }}
             >
-              <div key={pathname} className="page-stagger mx-auto w-full max-w-[1360px] px-4 pt-12 pb-12 sm:px-12 sm:pt-12 sm:pb-16 lg:px-16 lg:pt-14 lg:pb-20 xl:px-20 xl:pt-16">{children}</div>
+              <div key={pathname} className="page-stagger mx-auto w-full max-w-[1140px] px-4 pt-10 pb-12 sm:px-8 sm:pt-10 sm:pb-14 lg:px-10 lg:pt-12 lg:pb-16 xl:px-10">{children}</div>
             </main>
           </div>
         </div>
