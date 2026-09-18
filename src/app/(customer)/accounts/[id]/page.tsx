@@ -357,6 +357,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
       <LinkSourceAccountModal
         isOpen={isFundModalOpen}
         onClose={() => setIsFundModalOpen(false)}
+        targetAccount={account}
       />
     </div>
   );
