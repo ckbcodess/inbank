@@ -10,6 +10,9 @@ import {
   Truck,
   MapPin,
   Sparkles,
+  Bike,
+  Phone,
+  ShieldCheck,
 } from "lucide-react";
 import {
   Dialog,
@@ -58,48 +61,6 @@ export interface DeliveryTrackingStep {
   dateStr?: string;
 }
 
-export function getTrackingSteps(
-  card: PaymentCard,
-  isBranch: boolean
-): readonly DeliveryTrackingStep[] {
-  const isReady = card.deliveryStatus === "ready_for_pickup" || card.deliveryStatus === "delivered";
-
-  return [
-    {
-      key: "processing",
-      stepNum: 1,
-      title: "Request Approved",
-      description: isReady ? "Application verified and security clearance granted." : undefined,
-      dateStr: "Sep 16, 2026 • 10:45 AM",
-    },
-    {
-      key: "in_production",
-      stepNum: 2,
-      title: "Card in Production",
-      description: isReady ? "Embossing cardholder name and programming EMV chip." : undefined,
-      dateStr: "Sep 16, 2026 • 10:45 AM",
-    },
-    {
-      key: "in_transit",
-      stepNum: 3,
-      title: "Dispatched & In Transit",
-      description: isReady ? "Card secured in tamper-evident envelope and en route." : undefined,
-      dateStr: "Sep 16, 2026 • 10:45 AM",
-    },
-    {
-      key: "ready_for_pickup",
-      stepNum: 4,
-      title: isBranch ? "Ready for Pickup" : "Ready for Delivery",
-      description: isReady
-        ? isBranch
-          ? "Available for collection at branch"
-          : "Dispatched to recipient address"
-        : undefined,
-      dateStr: "Sep 16, 2026 • 10:45 AM",
-    },
-  ] as const;
-}
-
 function getStepIndex(status?: DeliveryStatus): number {
   switch (status) {
     case "processing":
@@ -107,6 +68,7 @@ function getStepIndex(status?: DeliveryStatus): number {
     case "in_production":
       return 1;
     case "in_transit":
+    case "out_for_delivery":
       return 2;
     case "ready_for_pickup":
     case "delivered":
@@ -114,6 +76,72 @@ function getStepIndex(status?: DeliveryStatus): number {
     default:
       return 0;
   }
+}
+
+export function getTrackingSteps(
+  card: PaymentCard,
+  isBranch: boolean
+): readonly DeliveryTrackingStep[] {
+  const currentStepIndex = getStepIndex(card.deliveryStatus);
+  const isOutForDelivery = card.deliveryStatus === "out_for_delivery";
+
+  return [
+    {
+      key: "processing",
+      stepNum: 1,
+      title: "Request Approved",
+      description: "Application verified and card order confirmed.",
+      dateStr: currentStepIndex >= 0 ? "Sep 16, 2026 • 10:45 AM" : undefined,
+    },
+    {
+      key: "in_production",
+      stepNum: 2,
+      title: "Card in Production",
+      description: "Embossing cardholder name and programming EMV chip.",
+      dateStr:
+        currentStepIndex > 1
+          ? "Sep 17, 2026 • 02:15 PM"
+          : currentStepIndex === 1
+          ? "In progress"
+          : undefined,
+    },
+    {
+      key: isOutForDelivery ? "out_for_delivery" : "in_transit",
+      stepNum: 3,
+      title: isBranch
+        ? "In Transit to Branch"
+        : isOutForDelivery
+        ? "Out for Delivery"
+        : "Dispatched & In Transit",
+      description: isBranch
+        ? "Card secured in tamper-evident envelope and en route to branch."
+        : isOutForDelivery && card.courierRider
+        ? `Courier ${card.courierRider.name} (${card.courierRider.vehiclePlate || "Motorbike"}) is en route to your address.`
+        : "Card secured in tamper-evident envelope and en route.",
+      dateStr:
+        currentStepIndex > 2
+          ? "Sep 18, 2026 • 08:30 AM"
+          : currentStepIndex === 2
+          ? isOutForDelivery
+            ? "Out for delivery today"
+            : "In transit"
+          : undefined,
+    },
+    {
+      key: "ready_for_pickup",
+      stepNum: 4,
+      title: isBranch ? "Ready for Pickup" : "Delivered",
+      description: isBranch
+        ? "Available for collection at branch."
+        : "Delivered to recipient address.",
+      dateStr:
+        currentStepIndex >= 3
+          ? isBranch
+            ? "Ready for collection"
+            : "Delivered"
+          : undefined,
+    },
+  ];
 }
 
 export function CardDeliveryTracker({
@@ -181,21 +209,26 @@ export function CardDeliveryTracker({
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <span
                     className={cn(
-                      "text-[15px] font-normal leading-tight tracking-[-0.01em]",
-                      isCompleted ? "text-foreground font-medium" : "text-[#737373] dark:text-muted-foreground"
+                      "text-[15px] leading-tight tracking-[-0.01em]",
+                      isCompleted ? "text-foreground font-medium" : "text-muted-foreground"
                     )}
                   >
                     {step.title}
                   </span>
                   {step.dateStr && (
-                    <span className="text-[13px] text-[#8c8c8c] dark:text-muted-foreground tabular-nums">
+                    <span
+                      className={cn(
+                        "text-[13px] tabular-nums",
+                        isCurrentActive ? "text-foreground font-medium" : "text-muted-foreground"
+                      )}
+                    >
                       {step.dateStr}
                     </span>
                   )}
                 </div>
 
                 {step.description && (
-                  <p className="text-[13px] text-[#737373] dark:text-muted-foreground mt-1 leading-relaxed">
+                  <p className="text-[13px] text-muted-foreground mt-1 leading-relaxed">
                     {step.description}
                   </p>
                 )}
@@ -219,6 +252,38 @@ export function CardDeliveryTracker({
               {card.deliveryBranch || "GCB Head Office Branch (High Street, Accra)"}
             </span>
           </div>
+        </div>
+      )}
+
+      {/* Rider Contact Card (Shows when doorstep delivery has assigned rider) */}
+      {!isBranchPickup && card.courierRider && (card.deliveryStatus === "out_for_delivery" || card.deliveryStatus === "in_transit") && (
+        <div className="rounded-2xl border border-border/80 bg-muted/40 p-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="size-10 rounded-full bg-primary/15 text-foreground flex items-center justify-center shrink-0">
+              <Bike size={20} strokeWidth={1.8} />
+            </div>
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[14.5px] font-medium text-foreground truncate">
+                  {card.courierRider.name}
+                </span>
+                <span className="text-[10.5px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium border border-emerald-500/20">
+                  Rider
+                </span>
+              </div>
+              <span className="text-[12.5px] text-muted-foreground truncate">
+                {card.courierRider.company || "GCB Express Courier"} • {card.courierRider.vehiclePlate || "Motorbike"}
+              </span>
+            </div>
+          </div>
+          <a
+            href={`tel:${card.courierRider.phone}`}
+            className="flex size-9 items-center justify-center rounded-full bg-card hover:bg-muted border border-border text-foreground transition-colors cursor-pointer shrink-0"
+            title={`Call rider: ${card.courierRider.phone}`}
+            aria-label="Call dispatch rider"
+          >
+            <Phone size={16} strokeWidth={1.8} />
+          </a>
         </div>
       )}
 
@@ -262,6 +327,12 @@ export function CardDeliveryTrackerModal({
 }: CardDeliveryTrackerModalProps) {
   const [view, setView] = useState<"timeline" | "pickup-code">(initialView);
 
+  React.useEffect(() => {
+    if (open) {
+      setView(initialView);
+    }
+  }, [open, initialView]);
+
   if (!card) return null;
 
   const isBranchPickup = card.deliveryMethod === "BRANCH_PICKUP" || !card.deliveryAddress;
@@ -285,7 +356,7 @@ export function CardDeliveryTrackerModal({
         {/* Custom Header matching Figma Node 1646:4485 */}
         <div className="flex items-center justify-between px-6 pt-6 pb-2">
           <div className="flex items-center gap-2">
-            {view === "pickup-code" && (
+            {view === "pickup-code" && initialView === "timeline" && (
               <button
                 type="button"
                 onClick={() => setView("timeline")}
@@ -297,7 +368,11 @@ export function CardDeliveryTrackerModal({
               </button>
             )}
             <h2 className="text-[18px] font-medium text-foreground tracking-[-0.01em]">
-              {view === "pickup-code" ? "Branch Pickup Code" : "Track Delivery"}
+              {view === "pickup-code"
+                ? isBranchPickup
+                  ? "Branch Pickup Code"
+                  : "Secure Handover Code"
+                : "Track Delivery"}
             </h2>
           </div>
 
@@ -317,7 +392,7 @@ export function CardDeliveryTrackerModal({
               card={card}
               onShowPickupCode={() => setView("pickup-code")}
             />
-          ) : (
+          ) : isBranchPickup ? (
             /* Branch Pickup Code View matching Figma Node 1646:4485 & Screenshot 3 */
             <div className="flex flex-col items-center justify-center py-4 text-center gap-8">
               {/* Huge Bold Pickup Code */}
@@ -338,6 +413,35 @@ export function CardDeliveryTrackerModal({
               <div className="flex flex-col items-center gap-2 text-[15px] font-medium text-[#a1a1a1] dark:text-muted-foreground/80">
                 <span>Hours: Mon - Fri (8:00 AM - 5:00 PM)</span>
                 <span>Branch Support: 030 4222 422</span>
+              </div>
+            </div>
+          ) : (
+            /* Doorstep Courier Handover Code View */
+            <div className="flex flex-col items-center justify-center py-4 text-center gap-6">
+              {/* Huge Bold Handover Code */}
+              <div className="flex flex-col items-center gap-3">
+                <span className="text-[46px] sm:text-[48px] font-mono font-medium tracking-[6px] text-foreground tabular-nums select-all">
+                  {card.deliveryCode || card.pickupCode || "8419"}
+                </span>
+
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/15 text-foreground text-[12px] font-medium">
+                  <ShieldCheck size={14} className="text-foreground" />
+                  <span>Handover Verification Code</span>
+                </div>
+
+                {/* Instruction Paragraph */}
+                <p className="text-[14px] text-muted-foreground max-w-[380px] leading-[22px] mt-1">
+                  Show this code to your courier rider{" "}
+                  <span className="text-foreground font-medium">
+                    ({card.courierRider?.name || "Kofi Mensah"})
+                  </span>{" "}
+                  upon arrival. The rider must confirm this code on their terminal to verify your identity and release your card.
+                </p>
+              </div>
+
+              {/* Security Hint */}
+              <div className="w-full rounded-xl bg-muted/40 border border-border/80 px-4 py-3 text-[12.5px] text-muted-foreground text-center">
+                <span>Do not share this code via phone or SMS. Present it only in person upon delivery.</span>
               </div>
             </div>
           )}

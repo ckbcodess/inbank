@@ -477,7 +477,7 @@ export function RequestCardFlow() {
   );
   const [cardName, setCardName] = useState("");
   const [fundAmount, setFundAmount] = useState("");
-  const [cardScheme, setCardScheme] = useState<"Visa" | "Mastercard" | null>(null);
+  const [cardScheme, setCardScheme] = useState<"Visa" | "Mastercard">("Visa");
   const [networkType, setNetworkType] = useState<string>("");
   const [selectedTheme, setSelectedTheme] = useState<CardTheme>(CARD_THEMES[1]); // Default to Gold
 
@@ -532,10 +532,15 @@ export function RequestCardFlow() {
 
   const isDetailsValid = useMemo(() => {
     if (!selectedAccountId) return false;
-    if (cardType === "Virtual" && !cardName.trim()) return false;
+    if (!cardName.trim()) return false;
+    if (cardType === "Virtual") {
+      const parsedAmt = Number(fundAmount.replace(/,/g, ""));
+      if (isNaN(parsedAmt) || parsedAmt <= 0) return false;
+      return true;
+    }
     if (!cardScheme) return false;
     if (!networkType) return false;
-    if (isFundable) {
+    if (cardType === "Prepaid") {
       const parsedAmt = Number(fundAmount.replace(/,/g, ""));
       if (isNaN(parsedAmt) || parsedAmt <= 0) return false;
     }
@@ -551,12 +556,11 @@ export function RequestCardFlow() {
     return true;
   }, [
     selectedAccountId,
-    cardType,
     cardName,
+    cardType,
+    fundAmount,
     cardScheme,
     networkType,
-    isFundable,
-    fundAmount,
     isPhysical,
     deliveryMethod,
     selectedBranch,
@@ -575,7 +579,7 @@ export function RequestCardFlow() {
     const numericFund = isFundable ? Number(fundAmount.replace(/,/g, "")) || 0 : null;
     const trackingCode = `GCB-CRD-${Math.floor(100000 + Math.random() * 900000)}`;
     const pickupPin = String(Math.floor(1000 + Math.random() * 9000));
-    const finalCardName = cardType === "Virtual" ? (cardName.trim() || "Virtual Card") : `${cardType} Card`;
+    const finalCardName = cardName.trim() || `${cardType} Card`;
 
     const newCard: PaymentCard = {
       id: `card-req-${Date.now()}`,
@@ -584,8 +588,8 @@ export function RequestCardFlow() {
       fullNumber: fullNum,
       cvv: generatedCvv,
       type: cardType,
-      scheme: cardScheme ?? "Visa",
-      networkType: networkType || "Classic",
+      scheme: cardType === "Virtual" ? "Visa" : (cardScheme ?? "Visa"),
+      networkType: cardType === "Virtual" ? "Virtual" : (networkType || "Classic"),
       currency: selectedAccount?.currency ?? "GHS",
       balance: numericFund,
       spendLimit: cardType === "Virtual" ? 5000 : null,
@@ -605,7 +609,7 @@ export function RequestCardFlow() {
           : undefined,
       deliveryStatus: isPhysical ? "in_production" : undefined,
       trackingNumber: isPhysical ? trackingCode : undefined,
-      estimatedDeliveryDate: isPhysical ? "3-5 business days (Sep 21, 2026)" : undefined,
+      estimatedDeliveryDate: isPhysical ? "3-5 business days" : undefined,
       pickupCode: isPhysical && deliveryMethod === "BRANCH_PICKUP" ? pickupPin : undefined,
     };
 
@@ -623,7 +627,7 @@ export function RequestCardFlow() {
     setStep("select-type");
     setCardName("");
     setFundAmount("");
-    setCardScheme(null);
+    setCardScheme("Visa");
     setNetworkType("");
     setDeliveryMethod(null);
     setSelectedBranch(null);
@@ -665,7 +669,7 @@ export function RequestCardFlow() {
                     setCardType(opt.type);
                     setCardName("");
                     setFundAmount("");
-                    setCardScheme(null);
+                    setCardScheme("Visa");
                     setNetworkType("");
                     setDeliveryMethod(null);
                     setSelectedBranch(null);
@@ -732,73 +736,93 @@ export function RequestCardFlow() {
               label="Linked account"
             />
 
-            {/* Card Nickname — Only for Virtual Cards */}
-            {cardType === "Virtual" && (
-              <div className="flex flex-col gap-2">
-                <label htmlFor="card-name-input" className="text-[14px] font-medium text-foreground">
-                  Card nickname
-                </label>
-                <input
-                  id="card-name-input"
-                  type="text"
-                  placeholder="e.g. Online Subscriptions, SaaS"
-                  value={cardName}
-                  onChange={(e) => setCardName(e.target.value)}
-                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
-                />
-              </div>
-            )}
-
-            {/* Scheme Selector */}
+            {/* Card Nickname - Universal for all card types */}
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] font-medium text-foreground">
-                Card network
+              <label htmlFor="card-name-input" className="text-[14px] font-medium text-foreground">
+                Card nickname
               </label>
-              <div className="grid grid-cols-2 gap-3">
-                {(["Visa", "Mastercard"] as const).map((scheme) => {
-                  const isSelected = cardScheme === scheme;
-                  return (
-                    <button
-                      key={scheme}
-                      type="button"
-                      onClick={() => handleSchemeChange(scheme)}
-                      className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                        isSelected
-                          ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
-                          : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <div
-                          className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
-                            isSelected
-                              ? "border-foreground bg-foreground"
-                              : "border-muted-foreground/40 bg-transparent"
-                          }`}
-                        >
-                          {isSelected && (
-                            <div className="size-1.5 rounded-full bg-background" />
-                          )}
-                        </div>
-                        <span className="text-[14px] font-medium truncate">{scheme}</span>
-                      </div>
-                      <div className="shrink-0 flex items-center">
-                        {scheme === "Visa" ? (
-                          <VisaLogo className="h-4 w-auto text-foreground" />
-                        ) : (
-                          <MastercardLogo className="h-4.5 w-auto" />
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+              <input
+                id="card-name-input"
+                type="text"
+                placeholder="How the card shows up in the app"
+                value={cardName}
+                onChange={(e) => setCardName(e.target.value)}
+                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+              />
             </div>
 
-            {/* Progressive Disclosure: Disclose tier, funding, and delivery ONLY after card scheme is selected */}
-            {cardScheme !== null && (
-              <div className="flex flex-col gap-5 w-full animate-in fade-in duration-200 ease-out">
-                {/* Network Type Selector */}
+            {/* Virtual Card Flow: Initial Funding & Continue */}
+            {cardType === "Virtual" ? (
+              <>
+                {/* Initial Funding */}
+                <AmountInput
+                  value={fundAmount}
+                  onChange={setFundAmount}
+                  currency={selectedAccount?.currency ?? "GHS"}
+                  label="Initial funding amount"
+                />
+
+                {/* Proceed Button */}
+                <div className="pt-2">
+                  <Button
+                    type="button"
+                    disabled={!isDetailsValid}
+                    onClick={() => setStep("customize")}
+                    className="w-full h-12 rounded-xl text-[14px] font-medium"
+                  >
+                    Continue
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Scheme Selector */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-[14px] font-medium text-foreground">
+                    Card network
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {(["Visa", "Mastercard"] as const).map((scheme) => {
+                      const isSelected = cardScheme === scheme;
+                      return (
+                        <button
+                          key={scheme}
+                          type="button"
+                          onClick={() => handleSchemeChange(scheme)}
+                          className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                            isSelected
+                              ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
+                              : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div
+                              className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                                isSelected
+                                  ? "border-foreground bg-foreground"
+                                  : "border-muted-foreground/40 bg-transparent"
+                              }`}
+                            >
+                              {isSelected && (
+                                <div className="size-1.5 rounded-full bg-background" />
+                              )}
+                            </div>
+                            <span className="text-[14px] font-medium truncate">{scheme}</span>
+                          </div>
+                          <div className="shrink-0 flex items-center">
+                            {scheme === "Visa" ? (
+                              <VisaLogo className="h-4 w-auto text-foreground" />
+                            ) : (
+                              <MastercardLogo className="h-4.5 w-auto" />
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Network Type Selector - Always visible on entry of the page */}
                 <div className="flex flex-col gap-2">
                   <label className="text-[14px] font-medium text-foreground">
                     Network type
@@ -841,8 +865,8 @@ export function RequestCardFlow() {
                 {/* Progressive Disclosure: Disclose funding and fulfillment ONLY after network type is selected */}
                 {Boolean(networkType) && (
                   <div className="flex flex-col gap-5 w-full animate-in fade-in duration-200 ease-out">
-                    {/* Initial Funding */}
-                    {isFundable && (
+                    {/* Initial Funding - for Prepaid Physical Cards */}
+                    {cardType === "Prepaid" && (
                       <AmountInput
                         value={fundAmount}
                         onChange={setFundAmount}
@@ -852,150 +876,148 @@ export function RequestCardFlow() {
                     )}
 
                     {/* Physical Fulfillment */}
-                    {isPhysical && (
-                      <div className="flex flex-col gap-4 pt-2 border-t border-border/80">
-                        <label className="text-[14px] font-medium text-foreground">
-                          Fulfillment method
-                        </label>
+                    <div className="flex flex-col gap-4 pt-2 border-t border-border/80">
+                      <label className="text-[14px] font-medium text-foreground">
+                        Fulfillment method
+                      </label>
 
-                    <div className="grid grid-cols-2 gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setDeliveryMethod("BRANCH_PICKUP")}
-                        className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
-                          deliveryMethod === "BRANCH_PICKUP"
-                            ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
-                            : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
-                        }`}
-                      >
-                        <div
-                          className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setDeliveryMethod("BRANCH_PICKUP")}
+                          className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
                             deliveryMethod === "BRANCH_PICKUP"
-                              ? "border-foreground bg-foreground"
-                              : "border-muted-foreground/40 bg-transparent"
+                              ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
+                              : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
                           }`}
                         >
-                          {deliveryMethod === "BRANCH_PICKUP" && (
-                            <div className="size-1.5 rounded-full bg-background" />
-                          )}
-                        </div>
-                        <div className="flex flex-col min-w-0">
-                          <span className="text-[14px] font-medium leading-tight">Branch pickup</span>
-                          <span className="text-[11.5px] text-muted-foreground mt-0.5">
-                            Collect at branch
-                          </span>
-                        </div>
-                      </button>
+                          <div
+                            className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                              deliveryMethod === "BRANCH_PICKUP"
+                                ? "border-foreground bg-foreground"
+                                : "border-muted-foreground/40 bg-transparent"
+                            }`}
+                          >
+                            {deliveryMethod === "BRANCH_PICKUP" && (
+                              <div className="size-1.5 rounded-full bg-background" />
+                            )}
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[14px] font-medium leading-tight">Branch pickup</span>
+                            <span className="text-[11.5px] text-muted-foreground mt-0.5">
+                              Collect at branch
+                            </span>
+                          </div>
+                        </button>
 
-                      <button
-                        type="button"
-                        onClick={() => setDeliveryMethod("DELIVERY")}
-                        className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
-                          deliveryMethod === "DELIVERY"
-                            ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
-                            : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
-                        }`}
-                      >
-                        <div
-                          className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                        <button
+                          type="button"
+                          onClick={() => setDeliveryMethod("DELIVERY")}
+                          className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
                             deliveryMethod === "DELIVERY"
-                              ? "border-foreground bg-foreground"
-                              : "border-muted-foreground/40 bg-transparent"
+                              ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
+                              : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
                           }`}
                         >
-                          {deliveryMethod === "DELIVERY" && (
-                            <div className="size-1.5 rounded-full bg-background" />
-                          )}
+                          <div
+                            className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                              deliveryMethod === "DELIVERY"
+                                ? "border-foreground bg-foreground"
+                                : "border-muted-foreground/40 bg-transparent"
+                            }`}
+                          >
+                            {deliveryMethod === "DELIVERY" && (
+                              <div className="size-1.5 rounded-full bg-background" />
+                            )}
+                          </div>
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[14px] font-medium leading-tight">Doorstep delivery</span>
+                            <span className="text-[11.5px] text-muted-foreground mt-0.5">
+                              Courier delivery
+                            </span>
+                          </div>
+                        </button>
+                      </div>
+
+                      {deliveryMethod === "BRANCH_PICKUP" && (
+                        <div className="flex flex-col gap-2">
+                          <label className="text-[14px] font-medium text-foreground">
+                            Pickup branch
+                          </label>
+                          <BranchCombobox
+                            value={selectedBranch}
+                            onChange={setSelectedBranch}
+                            branches={GCB_BRANCHES}
+                          />
                         </div>
-                        <div className="flex flex-col min-w-0">
-                          <span className="text-[14px] font-medium leading-tight">Doorstep delivery</span>
-                          <span className="text-[11.5px] text-muted-foreground mt-0.5">
-                            Courier delivery
-                          </span>
+                      )}
+
+                      {deliveryMethod === "DELIVERY" && (
+                        <div className="flex flex-col gap-3.5">
+                          <div className="flex flex-col gap-2">
+                            <label className="text-[14px] font-medium text-foreground">
+                              Recipient name
+                            </label>
+                            <input
+                              type="text"
+                              value={recipientName}
+                              onChange={(e) => setRecipientName(e.target.value)}
+                              placeholder="Full name"
+                              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-2">
+                            <label className="text-[14px] font-medium text-foreground">
+                              Delivery address
+                            </label>
+                            <input
+                              type="text"
+                              value={deliveryAddress}
+                              onChange={(e) => setDeliveryAddress(e.target.value)}
+                              placeholder="Street or digital address"
+                              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+                            />
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="flex flex-col gap-2">
+                              <label className="text-[14px] font-medium text-foreground">City</label>
+                              <input
+                                type="text"
+                                value={deliveryCity}
+                                onChange={(e) => setDeliveryCity(e.target.value)}
+                                placeholder="City"
+                                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+                              />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                              <label className="text-[14px] font-medium text-foreground">Phone</label>
+                              <input
+                                type="text"
+                                value={deliveryPhone}
+                                onChange={(e) => setDeliveryPhone(e.target.value)}
+                                placeholder="Phone number"
+                                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </button>
+                      )}
                     </div>
 
-                    {deliveryMethod === "BRANCH_PICKUP" && (
-                      <div className="flex flex-col gap-2">
-                        <label className="text-[14px] font-medium text-foreground">
-                          Pickup branch
-                        </label>
-                        <BranchCombobox
-                          value={selectedBranch}
-                          onChange={setSelectedBranch}
-                          branches={GCB_BRANCHES}
-                        />
-                      </div>
-                    )}
-
-                    {deliveryMethod === "DELIVERY" && (
-                      <div className="flex flex-col gap-3.5">
-                        <div className="flex flex-col gap-2">
-                          <label className="text-[14px] font-medium text-foreground">
-                            Recipient name
-                          </label>
-                          <input
-                            type="text"
-                            value={recipientName}
-                            onChange={(e) => setRecipientName(e.target.value)}
-                            placeholder="Full name"
-                            className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <label className="text-[14px] font-medium text-foreground">
-                            Delivery address
-                          </label>
-                          <input
-                            type="text"
-                            value={deliveryAddress}
-                            onChange={(e) => setDeliveryAddress(e.target.value)}
-                            placeholder="Street or digital address"
-                            className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div className="flex flex-col gap-2">
-                            <label className="text-[14px] font-medium text-foreground">City</label>
-                            <input
-                              type="text"
-                              value={deliveryCity}
-                              onChange={(e) => setDeliveryCity(e.target.value)}
-                              placeholder="City"
-                              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
-                            />
-                          </div>
-                          <div className="flex flex-col gap-2">
-                            <label className="text-[14px] font-medium text-foreground">Phone</label>
-                            <input
-                              type="text"
-                              value={deliveryPhone}
-                              onChange={(e) => setDeliveryPhone(e.target.value)}
-                              placeholder="Phone number"
-                              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                    {/* Proceed Button */}
+                    <div className="pt-2">
+                      <Button
+                        type="button"
+                        disabled={!isDetailsValid}
+                        onClick={() => setStep("customize")}
+                        className="w-full h-12 rounded-xl text-[14px] font-medium"
+                      >
+                        Continue
+                      </Button>
+                    </div>
                   </div>
                 )}
-
-                {/* Proceed Button */}
-                <div className="pt-2">
-                  <Button
-                    type="button"
-                    disabled={!isDetailsValid}
-                    onClick={() => setStep("customize")}
-                    className="w-full h-12 rounded-xl text-[14px] font-medium"
-                  >
-                    Continue
-                  </Button>
-                </div>
-              </div>
-            )}
-              </div>
+              </>
             )}
           </div>
         </div>
@@ -1057,7 +1079,7 @@ export function RequestCardFlow() {
                 <div className="relative z-10 flex items-center justify-between transition-colors duration-300">
                   <GcbCardLogo themeId={selectedTheme.id} className="h-8 sm:h-9 w-auto drop-shadow-xs shrink-0 transition-colors duration-300" />
                   <span className="text-[14px] sm:text-[15.5px] font-normal tracking-wide opacity-90 capitalize transition-colors duration-300">
-                    {cardType === "Virtual" ? (cardName || "Virtual") : cardType}
+                    {cardType}
                   </span>
                 </div>
 
@@ -1196,23 +1218,32 @@ export function RequestCardFlow() {
               </div>
               <div className="relative z-10 flex items-end justify-between">
                 <span className="text-[7.5px] font-medium truncate max-w-[40px]">
-                  {cardType === "Virtual" ? (cardName || "Virtual") : cardType}
+                  {cardType}
                 </span>
                 <span className="text-[6.5px] font-mono opacity-80">••••</span>
               </div>
             </div>
             <div className="flex flex-col min-w-0">
               <span className="text-[15px] font-medium text-foreground tracking-[-0.01em] truncate">
-                {cardType === "Virtual" ? (cardName || "Virtual Card") : `${cardType} Card`}
+                {cardName.trim() || `${cardType} Card`}
               </span>
               <span className="text-[13px] text-muted-foreground mt-0.5">
-                {cardType} Card • {cardScheme} ({networkType}) • {selectedTheme.name}
+                {cardType === "Virtual"
+                  ? `Virtual Card • ${selectedTheme.name}`
+                  : `${cardType} Card • ${cardScheme} (${networkType}) • ${selectedTheme.name}`}
               </span>
             </div>
           </div>
 
           {/* Detailed Summary Rows */}
           <div className="rounded-2xl border border-border/80 bg-card divide-y divide-border/80 overflow-hidden">
+            <div className="p-4 flex items-center justify-between gap-4">
+              <span className="text-[13.5px] text-muted-foreground">Card nickname</span>
+              <span className="text-[14px] font-medium text-foreground truncate">
+                {cardName.trim() || `${cardType} Card`}
+              </span>
+            </div>
+
             <div className="p-4 flex items-center justify-between gap-4">
               <span className="text-[13.5px] text-muted-foreground">Linked account</span>
               <div className="flex flex-col items-end text-right">
@@ -1232,12 +1263,14 @@ export function RequestCardFlow() {
               </span>
             </div>
 
-            <div className="p-4 flex items-center justify-between gap-4">
-              <span className="text-[13.5px] text-muted-foreground">Card network</span>
-              <span className="text-[14px] font-medium text-foreground">
-                {cardScheme} • {networkType}
-              </span>
-            </div>
+            {cardType !== "Virtual" && (
+              <div className="p-4 flex items-center justify-between gap-4">
+                <span className="text-[13.5px] text-muted-foreground">Card network</span>
+                <span className="text-[14px] font-medium text-foreground">
+                  {cardScheme} • {networkType}
+                </span>
+              </div>
+            )}
 
             {isFundable && (
               <div className="p-4 flex items-center justify-between gap-4">

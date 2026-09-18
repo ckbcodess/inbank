@@ -1339,8 +1339,24 @@ export const TRADE_APPROVAL_DEFAULT_STATE: TradeApprovalState = "awaiting-decisi
 
 export type CardStatus = "Active" | "Blocked" | "Expired" | "Inactive";
 export type CardType = "Prepaid" | "Debit" | "Virtual";
-export type DeliveryStatus = "processing" | "in_production" | "in_transit" | "ready_for_pickup" | "delivered";
+export type DeliveryStatus =
+  | "processing"
+  | "in_production"
+  | "in_transit"
+  | "out_for_delivery"
+  | "ready_for_pickup"
+  | "delivered";
 export type DeliveryMethod = "BRANCH_PICKUP" | "DELIVERY";
+
+export interface CourierRider {
+  name: string;
+  phone: string;
+  company?: string;
+  vehicleType?: string;
+  vehiclePlate?: string;
+  avatarUrl?: string;
+  estimatedArrival?: string;
+}
 
 export interface GcbBranch {
   id: string;
@@ -1434,6 +1450,8 @@ export interface PaymentCard {
   trackingNumber?: string;
   estimatedDeliveryDate?: string;
   pickupCode?: string;
+  deliveryCode?: string;
+  courierRider?: CourierRider;
 }
 
 export const CARDS: PaymentCard[] = [
@@ -1568,7 +1586,7 @@ export const CARDS: PaymentCard[] = [
     deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
     deliveryStatus: "in_transit",
     trackingNumber: "GCB-CRD-947201",
-    estimatedDeliveryDate: "Sept 19, 2026",
+    estimatedDeliveryDate: "3-5 business days",
   },
   {
     id: "card-006",
@@ -1680,7 +1698,7 @@ export const CARDS: PaymentCard[] = [
     deliveryAddress: "Plot 12, Airport Residential, Accra",
     deliveryStatus: "processing",
     trackingNumber: "GCB-CRD-319402",
-    estimatedDeliveryDate: "3-5 business days (Sep 21, 2026)",
+    estimatedDeliveryDate: "3-5 business days",
   },
   {
     id: "card-ret-004",
@@ -1704,6 +1722,70 @@ export const CARDS: PaymentCard[] = [
     deliveryStatus: "delivered",
     trackingNumber: "GCB-CRD-550192",
     estimatedDeliveryDate: "Delivered on Sep 17, 2026",
+  },
+  {
+    id: "card-008",
+    name: "Premier Gold Corporate",
+    maskedNumber: "•••• 8821",
+    fullNumber: "5412 8821 7701 8821",
+    cvv: "629",
+    type: "Debit",
+    scheme: "Mastercard",
+    currency: "GHS",
+    balance: null,
+    linkedAccountId: "acc-001",
+    holder: "Kwame Boateng",
+    expiry: "08/30",
+    status: "Inactive",
+    fundable: false,
+    profileKind: "CORPORATE",
+    colorTheme: "gold",
+    deliveryMethod: "DELIVERY",
+    deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
+    deliveryStatus: "out_for_delivery",
+    trackingNumber: "GCB-EXP-992104",
+    estimatedDeliveryDate: "Today • 2:00 PM - 3:30 PM",
+    deliveryCode: "7392",
+    courierRider: {
+      name: "Kofi Mensah",
+      phone: "+233 24 456 7890",
+      company: "GCB Express Courier",
+      vehicleType: "Dispatch Motorbike",
+      vehiclePlate: "GT-5842-24",
+      estimatedArrival: "Today between 2:00 PM – 3:30 PM",
+    },
+  },
+  {
+    id: "card-ret-005",
+    name: "Executive Premier Card",
+    maskedNumber: "•••• 3491",
+    fullNumber: "4532 9900 1234 3491",
+    cvv: "512",
+    type: "Debit",
+    scheme: "Visa",
+    currency: "GHS",
+    balance: null,
+    linkedAccountId: "acc-personal",
+    holder: "Tsotsoo Mills",
+    expiry: "11/30",
+    status: "Inactive",
+    fundable: false,
+    profileKind: "RETAIL",
+    colorTheme: "black",
+    deliveryMethod: "DELIVERY",
+    deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
+    deliveryStatus: "out_for_delivery",
+    trackingNumber: "GCB-EXP-884219",
+    estimatedDeliveryDate: "Today • 2:00 PM - 3:30 PM",
+    deliveryCode: "8419",
+    courierRider: {
+      name: "Kofi Mensah",
+      phone: "+233 24 456 7890",
+      company: "GCB Express Courier",
+      vehicleType: "Dispatch Motorbike",
+      vehiclePlate: "GT-5842-24",
+      estimatedArrival: "Today between 2:00 PM – 3:30 PM",
+    },
   },
 ];
 

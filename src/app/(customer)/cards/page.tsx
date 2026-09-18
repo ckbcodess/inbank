@@ -280,6 +280,8 @@ function CardsPageContent() {
                               <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10.5px] font-medium text-foreground border border-border">
                                 {card.deliveryStatus === "ready_for_pickup"
                                   ? "Ready for Pickup"
+                                  : card.deliveryStatus === "out_for_delivery"
+                                  ? "Out for Delivery"
                                   : card.deliveryStatus === "in_transit"
                                   ? "In Transit"
                                   : card.deliveryStatus === "delivered"

@@ -30,6 +30,8 @@ import {
   Check,
   MapPin,
   Wifi,
+  Bike,
+  Phone,
 } from "lucide-react";
 import {
   Dialog,
@@ -55,6 +57,7 @@ import { useSession } from "@/lib/session-store";
 import { getCardTheme } from "@/components/cards/card-themes";
 import { EmvChip } from "@/components/cards/EmvChip";
 import { GcbCardLogo } from "@/components/cards/GcbCardLogo";
+import { TiltCard3D } from "@/components/cards/TiltCard3D";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import TransactionPinModal from "@/components/payments/TransactionPinModal";
 import { CardDeliveryTracker, CardDeliveryTrackerModal } from "@/components/cards/CardDeliveryTracker";
@@ -83,6 +86,7 @@ export type DeliverySimulationState =
   | "default"
   | "branch_processing"
   | "doorstep_processing"
+  | "doorstep_out_for_delivery"
   | "branch_ready_unactivated"
   | "doorstep_delivered_unactivated"
   | "branch_activated"
@@ -93,6 +97,7 @@ export const DELIVERY_SIMULATION_STATES: readonly DeliverySimulationState[] = [
   "default",
   "branch_processing",
   "doorstep_processing",
+  "doorstep_out_for_delivery",
   "branch_ready_unactivated",
   "doorstep_delivered_unactivated",
   "branch_activated",
@@ -103,7 +108,8 @@ export const DELIVERY_SIMULATION_STATES: readonly DeliverySimulationState[] = [
 export const DELIVERY_SIMULATION_LABELS: Record<DeliverySimulationState, string> = {
   default: "Default (Card State)",
   branch_processing: "1. Branch · Being Processed (Inactive)",
-  doorstep_processing: "2. Doorstep · In Transit (Inactive)",
+  doorstep_processing: "2a. Doorstep · In Transit (Inactive)",
+  doorstep_out_for_delivery: "2b. Doorstep · Out for Delivery / Rider Assigned (Inactive)",
   branch_ready_unactivated: "3. Branch · Ready for Pickup (Needs Activation)",
   doorstep_delivered_unactivated: "4. Doorstep · Delivered (Needs Activation)",
   branch_activated: "5. Branch · Collected & Activated (Active)",
@@ -124,6 +130,7 @@ export function VirtualCardDetailsView({
 }: VirtualCardDetailsViewProps) {
   const { handleBack: handleBackNavigation } = useContextualBack("/cards");
   const activeProfile = useSession((s) => s.activeProfile);
+  const actor = useSession((s) => s.actor);
   const availableAccounts = accountsForProfile(activeProfile?.kind ?? "RETAIL");
 
   // Delivery Tracking State Simulation (Controlled via Dev Mode Switcher)
@@ -162,72 +169,86 @@ export function VirtualCardDetailsView({
       case "branch_processing":
         return {
           ...currentCard,
-          type: "Debit",
           deliveryMethod: "BRANCH_PICKUP",
-          deliveryBranch: "GCB Head Office Branch (High Street, Accra)",
+          deliveryBranch: currentCard.deliveryBranch || "GCB Head Office Branch (High Street, Accra)",
           deliveryAddress: undefined,
           deliveryStatus: "processing",
           trackingNumber: baseTracking,
-          estimatedDeliveryDate: "Sep 23, 2026 (5-7 business days)",
-          pickupCode: "4920",
+          estimatedDeliveryDate: "3-5 business days",
+          pickupCode: currentCard.pickupCode || "4920",
           status: "Inactive",
         };
       case "doorstep_processing":
         return {
           ...currentCard,
-          type: "Debit",
           deliveryMethod: "DELIVERY",
-          deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
+          deliveryAddress: currentCard.deliveryAddress || "No. 14 Ridge Road, Cantonments, Accra",
           deliveryBranch: undefined,
           deliveryStatus: "in_transit",
           trackingNumber: baseTracking,
-          estimatedDeliveryDate: "Sep 21, 2026 (3-5 business days)",
+          estimatedDeliveryDate: "3-5 business days",
+          status: "Inactive",
+        };
+      case "doorstep_out_for_delivery":
+        return {
+          ...currentCard,
+          deliveryMethod: "DELIVERY",
+          deliveryAddress: currentCard.deliveryAddress || "No. 14 Ridge Road, Cantonments, Accra",
+          deliveryBranch: undefined,
+          deliveryStatus: "out_for_delivery",
+          trackingNumber: baseTracking,
+          estimatedDeliveryDate: "Today • 2:00 PM - 3:30 PM",
+          deliveryCode: currentCard.deliveryCode || "8419",
+          courierRider: currentCard.courierRider || {
+            name: "Kofi Mensah",
+            phone: "+233 24 456 7890",
+            company: "GCB Express Courier",
+            vehicleType: "Dispatch Motorbike",
+            vehiclePlate: "GT-5842-24",
+            estimatedArrival: "Today between 2:00 PM – 3:30 PM",
+          },
           status: "Inactive",
         };
       case "branch_ready_unactivated":
         return {
           ...currentCard,
-          type: "Debit",
           deliveryMethod: "BRANCH_PICKUP",
-          deliveryBranch: "GCB Head Office Branch (High Street, Accra)",
+          deliveryBranch: currentCard.deliveryBranch || "GCB Head Office Branch (High Street, Accra)",
           deliveryAddress: undefined,
           deliveryStatus: "ready_for_pickup",
           trackingNumber: baseTracking,
-          estimatedDeliveryDate: "Ready for Pickup Today",
-          pickupCode: "4920",
+          estimatedDeliveryDate: "Ready for Pickup",
+          pickupCode: currentCard.pickupCode || "4920",
           status: "Inactive",
         };
       case "doorstep_delivered_unactivated":
         return {
           ...currentCard,
-          type: "Debit",
           deliveryMethod: "DELIVERY",
-          deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
+          deliveryAddress: currentCard.deliveryAddress || "No. 14 Ridge Road, Cantonments, Accra",
           deliveryBranch: undefined,
           deliveryStatus: "delivered",
           trackingNumber: baseTracking,
-          estimatedDeliveryDate: "Delivered on Sep 18, 2026",
+          estimatedDeliveryDate: "Delivered",
           status: "Inactive",
         };
       case "branch_activated":
         return {
           ...currentCard,
-          type: "Debit",
           deliveryMethod: "BRANCH_PICKUP",
-          deliveryBranch: "GCB Head Office Branch (High Street, Accra)",
+          deliveryBranch: currentCard.deliveryBranch || "GCB Head Office Branch (High Street, Accra)",
           deliveryAddress: undefined,
           deliveryStatus: "delivered",
           trackingNumber: baseTracking,
           estimatedDeliveryDate: "Delivered",
-          pickupCode: "4920",
+          pickupCode: currentCard.pickupCode || "4920",
           status: "Active",
         };
       case "doorstep_activated":
         return {
           ...currentCard,
-          type: "Debit",
           deliveryMethod: "DELIVERY",
-          deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
+          deliveryAddress: currentCard.deliveryAddress || "No. 14 Ridge Road, Cantonments, Accra",
           deliveryBranch: undefined,
           deliveryStatus: "delivered",
           trackingNumber: baseTracking,
@@ -257,6 +278,7 @@ export function VirtualCardDetailsView({
   const [activeModal, setActiveModal] = useState<
     "details" | "pin" | "freeze" | "limits" | "controls" | "reset-pin" | "edit-nickname" | "replace" | "top-up" | "tracking" | "activate" | null
   >(null);
+  const [initialTrackerView, setInitialTrackerView] = useState<"timeline" | "pickup-code">("timeline");
 
   // Card Activation Form State
   const [activationCvv, setActivationCvv] = useState("");
@@ -311,6 +333,19 @@ export function VirtualCardDetailsView({
   // PIN Verification & Security PIN Countdown State
   const [pinAuthOpen, setPinAuthOpen] = useState(false);
   const [pinCountdown, setPinCountdown] = useState(15);
+
+  // Card Activation Authorization State (Requires 4-digit PIN before showing Activation Modal)
+  const [activateAuthOpen, setActivateAuthOpen] = useState(false);
+
+  const handleOpenActivate = () => {
+    setActivateAuthOpen(true);
+  };
+
+  const handleActivateAuthSuccess = () => {
+    setActivateAuthOpen(false);
+    setActiveModal("activate");
+    triggerToast("Identity confirmed. Please set up your card PIN.");
+  };
 
   useEffect(() => {
     if (activeModal !== "pin") return;
@@ -427,11 +462,9 @@ export function VirtualCardDetailsView({
   // Daily percentage of limit used
   const dailyPct = Math.min(100, Math.max(0, Math.round((dailySpent / (dailyLimit || 1)) * 100)));
   const isInactive = effectiveCard.status === "Inactive";
-  const isPreparing = Boolean(
+  const isInactiveDelivery = Boolean(
     effectiveCard.deliveryStatus &&
-      (effectiveCard.deliveryStatus === "processing" ||
-        effectiveCard.deliveryStatus === "in_production" ||
-        effectiveCard.deliveryStatus === "in_transit")
+      effectiveCard.status === "Inactive"
   );
 
   const cardThemeId =
@@ -470,108 +503,241 @@ export function VirtualCardDetailsView({
         </h1>
       </div>
 
-      {/* Main Container matching Figma 1243:25983 w-[905.9px] */}
+      {/* Main Container */}
       <div className="w-full max-w-[920px] flex flex-col gap-8">
-        {isPreparing ? (
+        {isInactiveDelivery ? (
           /* ========================================================================= */
-          /* IN-PRODUCTION / PREPARING STATE HERO (Matching Figma Node 1643:3459)       */
+          /* INACTIVE PHYSICAL CARD DELIVERY / PICKUP HERO STATE                      */
           /* ========================================================================= */
-          <div className="flex flex-col items-center justify-center py-6 sm:py-12 gap-8 sm:gap-10 w-full max-w-lg mx-auto animate-in fade-in duration-300">
-            {/* Physical Card Artwork matching Selected Card Theme & Reference Design */}
-            <div
-              style={{ backgroundColor: activeTheme.colorHex }}
-              className={`relative w-full max-w-[460px] aspect-[1.586/1] rounded-[20px] overflow-hidden p-6 sm:p-7 flex flex-col justify-between select-none shadow-xl ${activeTheme.textColor}`}
-            >
-              {/* High-res Card Artwork Background with Expanded Full-Bleed Fill */}
-              <img
-                src={activeTheme.bgImage}
-                alt=""
-                className="absolute -inset-[3px] w-[calc(100%+6px)] h-[calc(100%+6px)] max-w-none object-cover scale-[1.03] pointer-events-none select-none"
-              />
+          <div className="flex flex-col items-center justify-center py-4 sm:py-8 gap-6 sm:gap-8 w-full max-w-[480px] mx-auto animate-in fade-in duration-300">
+            {/* The Actual Ordered Card with Tilt3D & Full Real Branding */}
+            <div className="w-full max-w-[440px] flex justify-center">
+              <TiltCard3D className="w-full">
+                <div
+                  style={{ backgroundColor: activeTheme.colorHex }}
+                  className={`relative w-full aspect-[1.586/1] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between overflow-hidden select-none shadow-xl [transform-style:preserve-3d] ${activeTheme.textColor}`}
+                >
+                  {/* Card Background Artwork */}
+                  <img
+                    src={activeTheme.bgImage}
+                    alt=""
+                    className="absolute -inset-[3px] w-[calc(100%+6px)] h-[calc(100%+6px)] max-w-none object-cover pointer-events-none select-none"
+                  />
 
-              {/* Top Row: GCB Logo & Card Type */}
-              <div className="relative z-10 flex items-center justify-between">
-                <GcbCardLogo themeId={activeTheme.id} className="h-8 sm:h-9 w-auto drop-shadow-xs shrink-0" />
-                <span className="text-[14px] sm:text-[15.5px] font-normal tracking-wide opacity-90 capitalize">
-                  {effectiveCard.type}
-                </span>
-              </div>
-
-              {/* Middle Row: Gold EMV Chip with Metallic Sheen + Contactless Waves */}
-              <div className="relative z-10 my-auto py-2 flex items-center gap-3.5">
-                <EmvChip />
-                <Wifi size={22} strokeWidth={2.4} className="rotate-90 opacity-85 shrink-0" />
-              </div>
-
-              {/* Bottom Row: Card Holder, Exp, and Visa / Mastercard */}
-              <div className="relative z-10 flex items-end justify-between whitespace-nowrap gap-4">
-                <div className="flex flex-col gap-0.5 text-left">
-                  <span className="text-[10.5px] sm:text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
-                    CARD HOLDER
-                  </span>
-                  <span className="text-[15px] sm:text-[17px] font-medium leading-[22px] tracking-tight uppercase">
-                    {effectiveCard.holder || "TSOTSOO MILLS"}
-                  </span>
-                </div>
-
-                <div className="flex flex-col gap-0.5 text-left">
-                  <span className="text-[10.5px] sm:text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
-                    EXP
-                  </span>
-                  <span className="text-[15px] sm:text-[17px] font-medium leading-[22px] tracking-tight font-mono">
-                    {displayExpiry || "09/28"}
-                  </span>
-                </div>
-
-                <div className="shrink-0 flex items-end justify-end pl-2">
-                  {effectiveCard.scheme === "Mastercard" ? (
-                    <div className="flex -space-x-2 items-center drop-shadow-xs pb-0.5">
-                      <div className="size-6 sm:size-7 rounded-full bg-[#eb001b]/95" />
-                      <div className="size-6 sm:size-7 rounded-full bg-[#f79e1b]/95" />
-                    </div>
-                  ) : (
-                    <span className="font-sans text-[26px] sm:text-[32px] font-black italic tracking-tighter leading-none opacity-95 drop-shadow-xs">
-                      VISA
+                  {/* Top Row: GCB Logo (Left) & Card Type (Right) */}
+                  <div className="relative z-10 flex items-center justify-between">
+                    <GcbCardLogo themeId={activeTheme.id} className="h-7 sm:h-8 w-auto drop-shadow-xs shrink-0" />
+                    <span className="text-[13px] sm:text-[14px] font-normal tracking-wide opacity-90 capitalize">
+                      {effectiveCard.type}
                     </span>
-                  )}
+                  </div>
+
+                  {/* Middle Row: Chip & Contactless Waves */}
+                  <div className="relative z-10 my-auto py-1 flex items-center gap-3">
+                    <EmvChip />
+                    <Wifi size={20} strokeWidth={2.4} className="rotate-90 opacity-85 shrink-0" />
+                  </div>
+
+                  {/* Bottom Row: CARD HOLDER, EXP, Visa/Mastercard Logo */}
+                  <div className="relative z-10 flex items-end justify-between whitespace-nowrap gap-4">
+                    <div className="flex flex-col gap-0.5 text-left">
+                      <span className="text-[10px] sm:text-[10.5px] font-medium opacity-60 leading-[14px] uppercase tracking-wider">
+                        CARD HOLDER
+                      </span>
+                      <span className="text-[14px] sm:text-[15.5px] font-medium leading-[20px] tracking-tight uppercase">
+                        {effectiveCard.holder || actor?.name || "TSOTSOO MILLS"}
+                      </span>
+                    </div>
+
+                    <div className="flex flex-col gap-0.5 text-left">
+                      <span className="text-[10px] sm:text-[10.5px] font-medium opacity-60 leading-[14px] uppercase tracking-wider">
+                        EXP
+                      </span>
+                      <span className="text-[14px] sm:text-[15.5px] font-medium leading-[20px] tracking-tight font-mono">
+                        {effectiveCard.expiry || "09/30"}
+                      </span>
+                    </div>
+
+                    <div className="shrink-0 flex items-end justify-end pl-2">
+                      {effectiveCard.scheme === "Mastercard" ? (
+                        <div className="flex -space-x-2 items-center drop-shadow-xs pb-0.5">
+                          <div className="size-5 sm:size-6 rounded-full bg-[#eb001b]/95" />
+                          <div className="size-5 sm:size-6 rounded-full bg-[#f79e1b]/95" />
+                        </div>
+                      ) : (
+                        <span className="font-sans text-[22px] sm:text-[26px] font-black italic tracking-tighter leading-none opacity-95 drop-shadow-xs">
+                          VISA
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </TiltCard3D>
+            </div>
+
+            {/* Headline & Subtitle */}
+            <div className="flex flex-col gap-2 items-center text-center">
+              <h2 className="text-[22px] sm:text-[26px] font-medium text-foreground tracking-[-0.02em]">
+                {effectiveCard.deliveryStatus === "ready_for_pickup"
+                  ? "Your card is ready for pickup"
+                  : effectiveCard.deliveryStatus === "delivered"
+                  ? "Your card has arrived!"
+                  : effectiveCard.deliveryStatus === "out_for_delivery"
+                  ? "Your card is being delivered to you"
+                  : effectiveCard.deliveryStatus === "in_transit"
+                  ? "Your card is on the way"
+                  : "Your card is being prepared"}
+              </h2>
+              <p className="text-[14.5px] sm:text-[15px] text-muted-foreground">
+                {effectiveCard.deliveryStatus === "ready_for_pickup"
+                  ? "Available for collection at your selected branch."
+                  : effectiveCard.deliveryStatus === "delivered"
+                  ? "Activate now to start using it."
+                  : effectiveCard.deliveryStatus === "out_for_delivery"
+                  ? "Dispatch rider has picked up your card and is en route."
+                  : `Estimated arrival: ${effectiveCard.estimatedDeliveryDate || "3-5 business days"}`}
+              </p>
+            </div>
+
+            {/* Location Detail Row */}
+            <div className="flex items-center justify-center gap-2 text-[14px] text-foreground -mt-1.5 px-4 text-center">
+              {effectiveCard.deliveryMethod === "BRANCH_PICKUP" ? (
+                <Building2 size={16} className="text-muted-foreground shrink-0" />
+              ) : (
+                <MapPin size={16} className="text-muted-foreground shrink-0" />
+              )}
+              <span className="text-muted-foreground">
+                {effectiveCard.deliveryMethod === "BRANCH_PICKUP" ? (
+                  <>
+                    Pickup Location:{" "}
+                    <span className="text-foreground font-medium">
+                      {effectiveCard.deliveryBranch || "GCB Head Office Branch"}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    Delivery to:{" "}
+                    <span className="text-foreground font-medium">
+                      {effectiveCard.deliveryAddress || "Your designated address"}
+                    </span>
+                  </>
+                )}
+              </span>
+            </div>
+
+            {/* Rider Details Card (when card has an assigned courier rider) */}
+            {effectiveCard.courierRider && (effectiveCard.deliveryStatus === "out_for_delivery" || effectiveCard.deliveryStatus === "in_transit") && (
+              <div className="w-full rounded-2xl border border-border/80 bg-muted/30 p-4 flex items-center justify-between gap-3 text-left shadow-2xs">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="size-11 rounded-full bg-primary/15 text-foreground flex items-center justify-center shrink-0">
+                    <Bike size={22} strokeWidth={1.8} />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[14.5px] font-medium text-foreground truncate">
+                        {effectiveCard.courierRider.name}
+                      </span>
+                      <span className="text-[10.5px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium border border-emerald-500/20">
+                        Rider Assigned
+                      </span>
+                    </div>
+                    <span className="text-[12.5px] text-muted-foreground truncate">
+                      {effectiveCard.courierRider.company || "GCB Express Courier"} • {effectiveCard.courierRider.vehiclePlate || "Motorbike"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <a
+                    href={`tel:${effectiveCard.courierRider.phone}`}
+                    className="flex size-9 items-center justify-center rounded-full bg-card hover:bg-muted border border-border text-foreground transition-colors cursor-pointer shrink-0"
+                    title={`Call ${effectiveCard.courierRider.name} (${effectiveCard.courierRider.phone})`}
+                    aria-label={`Call ${effectiveCard.courierRider.name}`}
+                  >
+                    <Phone size={16} strokeWidth={1.8} />
+                  </a>
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Text Details */}
-            <div className="flex flex-col gap-3 items-center text-center">
-              <h2 className="text-[24px] sm:text-[26px] font-medium text-foreground tracking-[-0.52px]">
-                Your card is being prepared
-              </h2>
-              <p className="text-[15px] sm:text-[16px] text-muted-foreground tracking-[-0.08px]">
-                {effectiveCard.estimatedDeliveryDate
-                  ? `Estimated readiness: ${effectiveCard.estimatedDeliveryDate}`
-                  : "It will be ready within 5-7 days."}
-              </p>
-
-              <div className="flex items-center gap-1.5 text-[15px] sm:text-[16px] text-foreground mt-1">
-                <MapPin size={16} className="text-foreground shrink-0" />
-                <span>
-                  {effectiveCard.deliveryMethod === "BRANCH_PICKUP"
-                    ? `Pickup Location:  ${effectiveCard.deliveryBranch || "GCB Head Office"}`
-                    : `Delivery to:  ${effectiveCard.deliveryAddress || "No. 14 Ridge Road, Cantonments, Accra"}`}
-                </span>
-              </div>
-            </div>
-
-            {/* CTA Button to Track Delivery Progress */}
-            <button
-              type="button"
-              onClick={() => setActiveModal("tracking")}
-              className="bg-[#f9c632] hover:bg-[#eab308] text-[#451a03] font-medium h-11 px-5 rounded-[8px] flex items-center gap-2 shadow-xs cursor-pointer text-[14px] transition-colors"
-            >
-              {effectiveCard.deliveryMethod === "BRANCH_PICKUP" ? (
-                <Building2 size={18} />
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full pt-2">
+              {effectiveCard.deliveryStatus === "ready_for_pickup" ? (
+                <>
+                  <Button
+                    type="button"
+                    onClick={handleOpenActivate}
+                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px] font-medium"
+                  >
+                    Activate Card
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setInitialTrackerView("pickup-code");
+                      setActiveModal("tracking");
+                    }}
+                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px] font-medium"
+                  >
+                    Show Pickup Code
+                  </Button>
+                </>
+              ) : effectiveCard.deliveryStatus === "delivered" ? (
+                <>
+                  <Button
+                    type="button"
+                    onClick={handleOpenActivate}
+                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px] font-medium"
+                  >
+                    Activate Card
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setInitialTrackerView("timeline");
+                      setActiveModal("tracking");
+                    }}
+                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px] font-medium"
+                  >
+                    Track Delivery
+                  </Button>
+                </>
+              ) : effectiveCard.deliveryStatus === "out_for_delivery" ? (
+                <>
+                  <Button
+                    type="button"
+                    onClick={handleOpenActivate}
+                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px] font-medium"
+                  >
+                    Activate Card
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setInitialTrackerView("pickup-code");
+                      setActiveModal("tracking");
+                    }}
+                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px] font-medium"
+                  >
+                    Show Delivery Code
+                  </Button>
+                </>
               ) : (
-                <Truck size={18} />
+                <Button
+                  type="button"
+                  onClick={() => {
+                    setInitialTrackerView("timeline");
+                    setActiveModal("tracking");
+                  }}
+                  className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px] font-medium"
+                >
+                  Track Delivery Progress
+                </Button>
               )}
-              <span>Track Delivery Progress</span>
-            </button>
+            </div>
           </div>
         ) : (
           /* ========================================================================= */
@@ -597,7 +763,9 @@ export function VirtualCardDetailsView({
                     </div>
                   )}
                   <span className="text-[15px] sm:text-[16px] font-normal text-foreground truncate">
-                    {effectiveCard.deliveryStatus === "in_transit"
+                    {effectiveCard.deliveryStatus === "out_for_delivery"
+                      ? "Your card is being delivered to you!"
+                      : effectiveCard.deliveryStatus === "in_transit"
                       ? "Your card is on the way!"
                       : "Your card is being prepared"}
                   </span>
@@ -652,11 +820,7 @@ export function VirtualCardDetailsView({
                   <div className="relative z-10 flex items-center justify-between">
                     <GcbCardLogo themeId={activeTheme.id} className="h-8 sm:h-9 w-auto drop-shadow-xs shrink-0" />
                     <div className="flex items-center gap-2">
-                      {isPreparing ? (
-                        <span className={`backdrop-blur-xs px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${badgeClass}`}>
-                          {effectiveCard.deliveryStatus === "in_transit" ? "In Transit" : "In Production"}
-                        </span>
-                      ) : isInactive ? (
+                      {isInactive ? (
                         <span className={`backdrop-blur-xs px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${badgeClass}`}>
                           Needs Activation
                         </span>
@@ -808,23 +972,12 @@ export function VirtualCardDetailsView({
               );
             })()}
 
-            {/* Left Column Controls: Preparing vs Inactive (Ready) vs Active */}
-            {isPreparing ? (
+            {/* Left Column Controls: Inactive (Activation) vs Active Controls */}
+            {isInactive ? (
               <div className="w-full">
                 <button
                   type="button"
-                  onClick={() => setActiveModal("tracking")}
-                  className="w-full rounded-[10px] border border-border bg-card hover:bg-muted/50 py-3 px-4 flex items-center justify-center gap-2 text-[14px] font-medium text-foreground transition-colors cursor-pointer shadow-2xs"
-                >
-                  <Truck size={17} strokeWidth={1.8} className="text-muted-foreground" />
-                  Track Fulfillment & Delivery
-                </button>
-              </div>
-            ) : isInactive ? (
-              <div className="w-full">
-                <button
-                  type="button"
-                  onClick={() => setActiveModal("activate")}
+                  onClick={handleOpenActivate}
                   className="w-full bg-primary text-primary-foreground hover:bg-primary-hover rounded-[10px] py-3 px-4 flex items-center justify-center gap-2 font-medium text-[14px] shadow-2xs cursor-pointer transition-colors"
                 >
                   <Sparkles size={17} strokeWidth={1.8} />
@@ -894,67 +1047,9 @@ export function VirtualCardDetailsView({
           </div>
 
           {/* ========================================================================= */}
-          {/* RIGHT COLUMN: Preparation Status vs Activation vs Active Management      */}
+          {/* RIGHT COLUMN: Activation vs Active Management                             */}
           {/* ========================================================================= */}
-          {isPreparing ? (
-            <div className="flex flex-col justify-between h-full gap-4 w-full">
-              {/* Card is being prepared Status Card */}
-              <div className="rounded-[15.75px] border border-border/80 bg-card p-6 flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="size-10 rounded-full bg-muted text-foreground flex items-center justify-center shrink-0">
-                    <Building2 size={18} strokeWidth={1.8} />
-                  </div>
-                  <div>
-                    <h3 className="text-[15px] font-medium text-foreground">Card is being prepared</h3>
-                    <p className="text-[12.5px] text-muted-foreground">
-                      {effectiveCard.deliveryMethod === "BRANCH_PICKUP"
-                        ? `Your card is in production and will be delivered to ${effectiveCard.deliveryBranch || "your selected branch"}.`
-                        : `Your card is in production and will be delivered to your address.`}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-2.5 pt-1 text-[13px] text-muted-foreground">
-                  <div className="flex items-start gap-2.5">
-                    <Clock size={16} className="text-amber-500 shrink-0 mt-0.5" />
-                    <span>Estimated arrival: {effectiveCard.estimatedDeliveryDate || "3-5 business days"}</span>
-                  </div>
-                  <div className="flex items-start gap-2.5">
-                    <Check size={16} className="text-muted-foreground shrink-0 mt-0.5" />
-                    <span>You will be able to activate your card once it is ready for pickup or delivered.</span>
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setActiveModal("tracking")}
-                    className="w-full text-[13.5px]"
-                  >
-                    Track Delivery Progress
-                  </Button>
-                </div>
-              </div>
-
-              {/* Delivery Tracking Quick Access */}
-              <div className="rounded-[12px] border border-border/70 bg-muted/30 px-4 py-3.5 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <Truck size={17} className="text-muted-foreground shrink-0" />
-                  <span className="text-[13px] text-muted-foreground truncate">
-                    Tracking: {effectiveCard.trackingNumber || "GCB-CRD-882104"}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setActiveModal("tracking")}
-                  className="text-[13px] font-medium text-foreground hover:underline shrink-0 cursor-pointer"
-                >
-                  View status
-                </button>
-              </div>
-            </div>
-          ) : isInactive ? (
+          {isInactive ? (
             <div className="flex flex-col justify-between h-full gap-4 w-full">
               {/* Card Activation Required Card */}
               <div className="rounded-[15.75px] border border-border/80 bg-card p-6 flex flex-col gap-4">
@@ -988,7 +1083,7 @@ export function VirtualCardDetailsView({
                 <div className="pt-2">
                   <Button
                     type="button"
-                    onClick={() => setActiveModal("activate")}
+                    onClick={handleOpenActivate}
                     className="w-full h-10 text-[13.5px] bg-primary text-primary-foreground hover:bg-primary-hover"
                   >
                     Activate Card
@@ -1383,6 +1478,14 @@ export function VirtualCardDetailsView({
         onSuccess={handlePinAuthSuccess}
       />
 
+      {/* Security Authorization PIN Modal for Card Activation */}
+      <TransactionPinModal
+        open={activateAuthOpen}
+        onOpenChange={setActivateAuthOpen}
+        onSuccess={handleActivateAuthSuccess}
+        title="Authorize Activation"
+      />
+
       {/* 3. Freeze Card Confirmation Modal */}
       <Dialog open={activeModal === "freeze"} onOpenChange={(open) => !open && setActiveModal(null)}>
         <DialogContent size="sm">
@@ -1655,84 +1758,69 @@ export function VirtualCardDetailsView({
 
           <form onSubmit={handleActivateCard}>
             <DialogBody className="space-y-4">
-              {/* Card Summary Badge */}
-              <div className="flex items-center justify-between p-3 rounded-xl bg-muted/40 border border-border">
-                <div className="flex items-center gap-3">
-                  <div className="size-9 rounded-lg bg-primary/15 text-primary-foreground flex items-center justify-center shrink-0">
-                    <CreditCard size={18} strokeWidth={1.8} className="text-foreground" />
-                  </div>
-                  <div>
-                    <p className="text-[13.5px] font-medium text-foreground">{effectiveCard.name}</p>
-                    <p className="text-[12px] text-muted-foreground">
-                      {effectiveCard.scheme} {effectiveCard.type} · {effectiveCard.maskedNumber || "•••• 9102"}
-                    </p>
-                  </div>
-                </div>
-                <span className="text-[11.5px] font-medium text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full">
-                  Inactive
-                </span>
-              </div>
-
               {/* CVV Input */}
-              <div className="space-y-1.5">
-                <label className="text-[13px] font-normal text-foreground">
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="card-cvv-input" className="text-[12.5px] font-medium text-foreground">
                   3-Digit CVV Security Code
                 </label>
                 <Input
+                  id="card-cvv-input"
                   type="text"
                   maxLength={3}
                   placeholder="e.g. 842"
                   value={activationCvv}
                   onChange={(e) => setActivationCvv(e.target.value.replace(/\D/g, ""))}
-                  className="font-mono text-center tracking-widest text-[16px]"
+                  className="h-10 text-[13.5px] font-mono tracking-wider"
                   required
                 />
-                <p className="text-[11.5px] text-muted-foreground">
+                <span className="text-[11.5px] text-muted-foreground">
                   Found on the signature strip on the back of your physical card.
-                </p>
+                </span>
               </div>
 
               {/* Set 4-digit PIN */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <label className="text-[13px] font-normal text-foreground">
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="card-pin-input" className="text-[12.5px] font-medium text-foreground">
                     Set 4-Digit Card PIN
                   </label>
                   <Input
+                    id="card-pin-input"
                     type="password"
                     maxLength={4}
                     placeholder="••••"
                     value={activationPin}
                     onChange={(e) => setActivationPin(e.target.value.replace(/\D/g, ""))}
-                    className="font-mono text-center tracking-widest text-[16px]"
+                    className="h-10 text-[13.5px] font-mono text-center tracking-widest"
                     required
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-[13px] font-normal text-foreground">
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="card-pin-confirm-input" className="text-[12.5px] font-medium text-foreground">
                     Confirm 4-Digit PIN
                   </label>
                   <Input
+                    id="card-pin-confirm-input"
                     type="password"
                     maxLength={4}
                     placeholder="••••"
                     value={activationPinConfirm}
                     onChange={(e) => setActivationPinConfirm(e.target.value.replace(/\D/g, ""))}
-                    className="font-mono text-center tracking-widest text-[16px]"
+                    className="h-10 text-[13.5px] font-mono text-center tracking-widest"
                     required
                   />
                 </div>
               </div>
-              <p className="text-[11.5px] text-muted-foreground">
+              <span className="text-[11.5px] text-muted-foreground block -mt-1">
                 This PIN will be required for ATM cash withdrawals and point-of-sale transactions.
-              </p>
+              </span>
             </DialogBody>
 
             <DialogFooter>
               <Button type="button" variant="ghost" size="sm" onClick={() => setActiveModal(null)}>
                 Cancel
               </Button>
-              <Button type="submit" size="sm" className="bg-primary text-primary-foreground hover:bg-primary-hover">
+              <Button type="submit" size="sm">
                 Activate Card
               </Button>
             </DialogFooter>
@@ -1745,6 +1833,7 @@ export function VirtualCardDetailsView({
         card={effectiveCard}
         open={activeModal === "tracking"}
         onOpenChange={(open) => !open && setActiveModal(null)}
+        initialView={initialTrackerView}
       />
     </div>
   );
