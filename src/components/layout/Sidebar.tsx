@@ -217,23 +217,23 @@ export default function Sidebar({
             <button
               type="button"
               onClick={onToggleCollapse}
-              className="group relative hidden size-9 flex-shrink-0 items-center justify-center rounded-lg hover:bg-muted/70 transition-colors lg:flex cursor-pointer"
+              className="relative hidden size-9 flex-shrink-0 items-center justify-center rounded-lg hover:bg-muted/70 transition-colors lg:flex cursor-pointer overflow-hidden"
               aria-label="Expand sidebar"
             >
               <span
-                className={`flex items-center justify-center transition-all duration-200 ${
-                  isSidebarHovered ? "opacity-0 scale-90 pointer-events-none" : "opacity-100 scale-100"
+                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-150 ease-in-out ${
+                  isSidebarHovered ? "opacity-0 pointer-events-none" : "opacity-100"
                 }`}
               >
                 {shell === "admin" ? (
                   <ShieldCheck size={18} strokeWidth={2.1} className="text-primary" />
                 ) : (
-                  <GCBLogo className="h-6.5 w-auto shrink-0" />
+                  <GCBLogo className="h-6 w-auto shrink-0" />
                 )}
               </span>
               <span
-                className={`absolute inset-0 flex items-center justify-center transition-all duration-200 pointer-events-none ${
-                  isSidebarHovered ? "opacity-100 scale-100" : "opacity-0 scale-90"
+                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-150 ease-in-out pointer-events-none ${
+                  isSidebarHovered ? "opacity-100" : "opacity-0"
                 }`}
               >
                 <PanelLeftOpen
