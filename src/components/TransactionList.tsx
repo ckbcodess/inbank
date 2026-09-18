@@ -1314,16 +1314,16 @@ export default function TransactionList({
 
           {/* Desktop 1:1 Clean Data Table (hidden md:block) */}
           <div className="hidden md:block overflow-x-auto rounded-xl border border-border/70 bg-card/40 backdrop-blur-sm">
-            <table className="w-full border-collapse text-left">
+            <table className="w-full border-collapse text-left table-auto">
               <thead>
-                <tr className="border-b border-border/70 text-[13px] font-normal text-muted-foreground bg-muted/15">
-                  <th className="py-3.5 pl-5 pr-4 text-left font-normal w-[100px]">Date</th>
-                  <th className="py-3.5 px-4 text-left font-normal min-w-[170px]">Recipient</th>
-                  <th className="py-3.5 px-4 text-left font-normal min-w-[190px]">Account</th>
-                  <th className="py-3.5 px-4 text-left font-normal min-w-[140px]">Method</th>
-                  <th className="py-3.5 px-4 text-right font-normal min-w-[140px]">Amount</th>
-                  <th className="py-3.5 px-4 text-left font-normal min-w-[130px]">Category</th>
-                  <th className="py-3.5 px-4 pr-5 text-left font-normal w-[120px]">Status</th>
+                <tr className="border-b border-border/70 text-[12.5px] font-normal text-muted-foreground bg-muted/15">
+                  <th className="py-3 pl-4 pr-2 text-left font-normal w-[80px]">Date</th>
+                  <th className="py-3 px-3 text-left font-normal">Recipient</th>
+                  <th className="py-3 px-3 text-left font-normal">Account</th>
+                  <th className="py-3 px-3 text-left font-normal">Method</th>
+                  <th className="py-3 px-3 text-right font-normal">Amount</th>
+                  <th className="py-3 px-3 text-left font-normal">Category</th>
+                  <th className="py-3 pl-3 pr-4 text-left font-normal w-[100px]">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
@@ -1333,22 +1333,22 @@ export default function TransactionList({
                     <tr
                       key={t.id}
                       onClick={() => router.push(`${detailBase}/${t.id}`)}
-                      className="hover:bg-muted/25 transition-colors cursor-pointer text-[13.5px] group"
+                      className="hover:bg-muted/25 transition-colors cursor-pointer text-[13px] group"
                     >
-                      <td className="py-4 pl-5 pr-4 text-left text-muted-foreground text-[13px] whitespace-nowrap">
+                      <td className="py-3 pl-4 pr-2 text-left text-muted-foreground text-[12.5px] whitespace-nowrap">
                         {formatTableDate(t.date)}
                       </td>
-                      <td className="py-4 px-4 text-left font-normal text-foreground whitespace-nowrap">
+                      <td className="py-3 px-3 text-left font-normal text-foreground whitespace-nowrap">
                         {t.counterparty || t.description}
                       </td>
-                      <td className="py-4 px-4 text-left text-muted-foreground text-[13px] whitespace-nowrap">
+                      <td className="py-3 px-3 text-left text-muted-foreground text-[12.5px] whitespace-nowrap">
                         {formatAccountDisplay(t.accountId)}
                       </td>
-                      <td className="py-4 px-4 text-left text-muted-foreground text-[13px] whitespace-nowrap">
+                      <td className="py-3 px-3 text-left text-muted-foreground text-[12.5px] whitespace-nowrap">
                         {getPaymentMethodDisplay(t)}
                       </td>
-                      <td className="py-4 px-4 text-right whitespace-nowrap">
-                        <span className={cn("tabular text-[13.5px]", colorClass)}>
+                      <td className="py-3 px-3 text-right whitespace-nowrap">
+                        <span className={cn("tabular text-[13px]", colorClass)}>
                           {prefix}
                           {t.currency}{" "}
                           {showAmounts
@@ -1359,10 +1359,10 @@ export default function TransactionList({
                             : "••••••"}
                         </span>
                       </td>
-                      <td className="py-4 px-4 text-left text-muted-foreground text-[13px] whitespace-nowrap">
+                      <td className="py-3 px-3 text-left text-muted-foreground text-[12.5px] whitespace-nowrap">
                         {t.category ? CATEGORY_MAP[t.category] || t.category : "—"}
                       </td>
-                      <td className="py-4 px-4 pr-5 text-left whitespace-nowrap">
+                      <td className="py-3 pl-3 pr-4 text-left whitespace-nowrap">
                         {renderStatusIndicator(t.state)}
                       </td>
                     </tr>
