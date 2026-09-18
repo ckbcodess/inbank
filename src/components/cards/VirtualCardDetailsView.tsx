@@ -490,69 +490,83 @@ export function VirtualCardDetailsView({
           /* INACTIVE PHYSICAL CARD DELIVERY / PICKUP HERO STATE                      */
           /* ========================================================================= */
           <div className="flex flex-col items-center justify-center py-4 sm:py-8 gap-6 sm:gap-8 w-full max-w-[480px] mx-auto animate-in fade-in duration-300">
-            {/* The Actual Ordered Card with Tilt3D & Full Real Branding */}
+            {/* The Ordered Card Visual: Faded card for In Production; Real 3D Tilt Card for Delivery/Pickup */}
             <div className="w-full max-w-[440px] flex justify-center">
-              <TiltCard3D className="w-full">
-                <div
-                  style={{ backgroundColor: activeTheme.colorHex }}
-                  className={`relative w-full aspect-[1.586/1] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between overflow-hidden select-none shadow-xl [transform-style:preserve-3d] ${activeTheme.textColor}`}
-                >
-                  {/* Card Background Artwork */}
+              {effectiveCard.deliveryStatus === "in_production" || !effectiveCard.deliveryStatus ? (
+                <div className="w-full max-w-[440px] flex justify-center select-none pointer-events-none">
                   <img
-                    src={activeTheme.bgImage}
-                    alt=""
-                    className="absolute -inset-[3px] w-[calc(100%+6px)] h-[calc(100%+6px)] max-w-none object-cover pointer-events-none select-none"
+                    src={
+                      effectiveCard.type === "Prepaid"
+                        ? "/images/cards/faded-card-prepaid.png"
+                        : "/images/cards/faded-card-debit.png"
+                    }
+                    alt={`${effectiveCard.type} Card in Production`}
+                    className="w-full h-auto object-contain drop-shadow-md rounded-[20px]"
                   />
-
-                  {/* Top Row: GCB Logo (Left) & Card Type (Right) */}
-                  <div className="relative z-10 flex items-center justify-between">
-                    <GcbCardLogo themeId={activeTheme.id} className="h-7 sm:h-8 w-auto drop-shadow-xs shrink-0" />
-                    <span className="text-[13px] sm:text-[14px] font-normal tracking-wide opacity-90 capitalize">
-                      {effectiveCard.type}
-                    </span>
-                  </div>
-
-                  {/* Middle Row: Chip & Contactless Waves */}
-                  <div className="relative z-10 my-auto py-1 flex items-center gap-3">
-                    <EmvChip />
-                    <Wifi size={20} strokeWidth={2.4} className="rotate-90 opacity-85 shrink-0" />
-                  </div>
-
-                  {/* Bottom Row: CARD HOLDER, EXP, Visa/Mastercard Logo */}
-                  <div className="relative z-10 flex items-end justify-between whitespace-nowrap gap-4">
-                    <div className="flex flex-col gap-0.5 text-left">
-                      <span className="text-[10px] sm:text-[10.5px] font-medium opacity-60 leading-[14px] uppercase tracking-wider">
-                        CARD HOLDER
-                      </span>
-                      <span className="text-[14px] sm:text-[15.5px] font-medium leading-[20px] tracking-tight uppercase">
-                        {effectiveCard.holder || actor?.name || "TSOTSOO MILLS"}
-                      </span>
-                    </div>
-
-                    <div className="flex flex-col gap-0.5 text-left">
-                      <span className="text-[10px] sm:text-[10.5px] font-medium opacity-60 leading-[14px] uppercase tracking-wider">
-                        EXP
-                      </span>
-                      <span className="text-[14px] sm:text-[15.5px] font-medium leading-[20px] tracking-tight font-mono">
-                        {effectiveCard.expiry || "09/30"}
-                      </span>
-                    </div>
-
-                    <div className="shrink-0 flex items-end justify-end pl-2">
-                      {effectiveCard.scheme === "Mastercard" ? (
-                        <div className="flex -space-x-2 items-center drop-shadow-xs pb-0.5">
-                          <div className="size-5 sm:size-6 rounded-full bg-[#eb001b]/95" />
-                          <div className="size-5 sm:size-6 rounded-full bg-[#f79e1b]/95" />
-                        </div>
-                      ) : (
-                        <span className="font-sans text-[22px] sm:text-[26px] font-black italic tracking-tighter leading-none opacity-95 drop-shadow-xs">
-                          VISA
-                        </span>
-                      )}
-                    </div>
-                  </div>
                 </div>
-              </TiltCard3D>
+              ) : (
+                <TiltCard3D className="w-full">
+                  <div
+                    style={{ backgroundColor: activeTheme.colorHex }}
+                    className={`relative w-full aspect-[1.586/1] rounded-[20px] p-5 sm:p-6 flex flex-col justify-between overflow-hidden select-none shadow-xl [transform-style:preserve-3d] ${activeTheme.textColor}`}
+                  >
+                    {/* Card Background Artwork */}
+                    <img
+                      src={activeTheme.bgImage}
+                      alt=""
+                      className="absolute -inset-[3px] w-[calc(100%+6px)] h-[calc(100%+6px)] max-w-none object-cover pointer-events-none select-none"
+                    />
+
+                    {/* Top Row: GCB Logo (Left) & Card Type (Right) */}
+                    <div className="relative z-10 flex items-center justify-between">
+                      <GcbCardLogo themeId={activeTheme.id} className="h-7 sm:h-8 w-auto drop-shadow-xs shrink-0" />
+                      <span className="text-[13px] sm:text-[14px] font-normal tracking-wide opacity-90 capitalize">
+                        {effectiveCard.type}
+                      </span>
+                    </div>
+
+                    {/* Middle Row: Chip & Contactless Waves */}
+                    <div className="relative z-10 my-auto py-1 flex items-center gap-3">
+                      <EmvChip />
+                      <Wifi size={20} strokeWidth={2.4} className="rotate-90 opacity-85 shrink-0" />
+                    </div>
+
+                    {/* Bottom Row: CARD HOLDER, EXP, Visa/Mastercard Logo */}
+                    <div className="relative z-10 flex items-end justify-between whitespace-nowrap gap-4">
+                      <div className="flex flex-col gap-0.5 text-left">
+                        <span className="text-[10px] sm:text-[10.5px] font-medium opacity-60 leading-[14px] uppercase tracking-wider">
+                          CARD HOLDER
+                        </span>
+                        <span className="text-[14px] sm:text-[15.5px] font-medium leading-[20px] tracking-tight uppercase">
+                          {effectiveCard.holder || actor?.name || "TSOTSOO MILLS"}
+                        </span>
+                      </div>
+
+                      <div className="flex flex-col gap-0.5 text-left">
+                        <span className="text-[10px] sm:text-[10.5px] font-medium opacity-60 leading-[14px] uppercase tracking-wider">
+                          EXP
+                        </span>
+                        <span className="text-[14px] sm:text-[15.5px] font-medium leading-[20px] tracking-tight font-mono">
+                          {effectiveCard.expiry || "09/30"}
+                        </span>
+                      </div>
+
+                      <div className="shrink-0 flex items-end justify-end pl-2">
+                        {effectiveCard.scheme === "Mastercard" ? (
+                          <div className="flex -space-x-2 items-center drop-shadow-xs pb-0.5">
+                            <div className="size-5 sm:size-6 rounded-full bg-[#eb001b]/95" />
+                            <div className="size-5 sm:size-6 rounded-full bg-[#f79e1b]/95" />
+                          </div>
+                        ) : (
+                          <span className="font-sans text-[22px] sm:text-[26px] font-black italic tracking-tighter leading-none opacity-95 drop-shadow-xs">
+                            VISA
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </TiltCard3D>
+              )}
             </div>
 
             {/* Headline & Subtitle */}
