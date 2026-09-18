@@ -249,7 +249,7 @@ function AccountsContent() {
                             Available:
                           </span>
                           <span className="text-[13.5px] sm:text-[14.5px] font-semibold text-foreground sm:ml-1.5 tabular-nums numorainput">
-                            GHS <RevealingAmount amount={acc.available} currency="" />
+                            <RevealingAmount amount={acc.available} currency={acc.currency || "GHS"} />
                           </span>
                         </div>
                         <ChevronRight

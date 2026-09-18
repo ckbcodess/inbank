@@ -487,7 +487,7 @@ export default function FigmaDesignFidelityDashboard() {
                         <span>Net</span>
                       </div>
                       <p className="font-mono font-bold text-[#18181b] mt-0.5">
-                        {showAmounts ? "+GHS 18,070.50" : "GHS ••••••"}
+                        {showAmounts ? "+ GHS 18,070.50" : "GHS ••••••"}
                       </p>
                     </div>
                   </div>
@@ -689,7 +689,7 @@ export default function FigmaDesignFidelityDashboard() {
 
                     <div className="flex items-center gap-4">
                       <span className={`font-mono text-xs font-bold tabular ${isCred ? "text-emerald-700" : "text-[#18181b]"}`}>
-                        {isCred ? "+" : "−"}{showAmounts ? t.amount : "GHS ••••••"}
+                        {isCred ? "+ " : "− "}{showAmounts ? t.amount : "GHS ••••••"}
                       </span>
                       <Badge variant="outline" className="text-[10px] hidden sm:inline-flex">
                         {t.status}

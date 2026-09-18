@@ -286,7 +286,7 @@ export function RevealingAmount({
 
   return (
     <span className={`inline-flex items-center select-none ${className}`}>
-      {prefix && <span className="shrink-0 select-none font-normal">{prefix}</span>}
+      {prefix && <span className="shrink-0 select-none font-normal mr-[0.3em]">{prefix.trim()}</span>}
       <RollingText
         text={numericText}
         transition="direct"

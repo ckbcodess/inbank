@@ -153,7 +153,7 @@ export function LiquidityDeck({
               <div>
                 <span className="text-[10px] text-muted-foreground block font-sans">Inflow</span>
                 <span className="text-emerald-600 dark:text-emerald-400 font-medium">
-                  +{formatMoney(monthlyInflow, "GHS", showAmounts)}
+                  + {formatMoney(monthlyInflow, "GHS", showAmounts)}
                 </span>
               </div>
             </div>
@@ -164,7 +164,7 @@ export function LiquidityDeck({
               <div>
                 <span className="text-[10px] text-muted-foreground block font-sans">Outflow</span>
                 <span className="text-rose-600 dark:text-rose-400 font-medium">
-                  -{formatMoney(monthlyOutflow, "GHS", showAmounts)}
+                  − {formatMoney(monthlyOutflow, "GHS", showAmounts)}
                 </span>
               </div>
             </div>

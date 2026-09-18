@@ -121,7 +121,7 @@ export function ActivityFeed({ transactions }: { transactions: Transaction[] }) 
                     </span>
                   </span>
                   <span className="shrink-0 text-[13px] text-foreground tabular">
-                    {t.direction === "debit" ? "−" : "+"}
+                    {t.direction === "debit" ? "− " : "+ "}
                     <RevealingAmount amount={t.amount} currency={t.currency} />
                   </span>
                   <TransactionStatusBadge state={t.state} />
