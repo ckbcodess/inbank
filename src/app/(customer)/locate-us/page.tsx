@@ -16,6 +16,7 @@ import PageHeader from "@/components/layout/PageHeader";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { FilteredEmptyState, TrueEmptyState } from "@/components/states/ListStates";
 
 export interface BranchLocation {
   id: string;
@@ -284,13 +285,26 @@ export default function LocateUsPage() {
 
       {/* ── Locations Grid ── */}
       {filteredLocations.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-12 text-center rounded-2xl border border-border bg-card">
-          <MapPin size={32} className="text-muted-foreground mb-2 stroke-[1.5]" />
-          <h3 className="text-[16px] font-medium text-foreground">No locations found</h3>
-          <p className="text-[13px] text-muted-foreground mt-1 max-w-xs">
-            We couldn&apos;t find any branch or ATM matching &ldquo;{query}&rdquo;. Try another search term.
-          </p>
-        </div>
+        query || selectedCity !== "All" || filterType !== "all" ? (
+          <FilteredEmptyState
+            onReset={() => {
+              setQuery("");
+              setSelectedCity("All");
+              setFilterType("all");
+            }}
+            description={
+              query
+                ? `We couldn't find any branch or ATM matching "${query}". Clear filters to view all locations.`
+                : "No branch or ATM found matching the selected filters."
+            }
+          />
+        ) : (
+          <TrueEmptyState
+            icon={<MapPin size={22} strokeWidth={1.8} />}
+            title="No locations found"
+            description="Branch and ATM locations will appear here."
+          />
+        )
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filteredLocations.map((loc) => {

@@ -14,6 +14,7 @@ import StubNotice from "@/components/StubNotice";
 import { ExpandableSearch } from "@/components/ui/expandable-search";
 import { Badge } from "@/components/ui/badge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
+import { FilteredEmptyState, TrueEmptyState } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
 
 const LIST_STATES: readonly ListState[] = [
@@ -62,7 +63,7 @@ export default function CustomerManagementPage() {
       <StubNotice section="section 7 / sitemap 12.5" states="13.1 list" />
 
       <section className="rounded-2xl border border-border bg-card">
-        <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
+        <div className="flex items-center justify-between gap-3 p-4">
           <span className="text-[13px] font-medium text-foreground">
             Customers ({filtered.length})
           </span>
@@ -73,37 +74,48 @@ export default function CustomerManagementPage() {
             tooltip="Search customers"
           />
         </div>
+      </section>
 
-        {filtered.length === 0 ? (
-          <div className="py-12 text-center text-[13px] text-muted-foreground">
-            No customers match &ldquo;{query}&rdquo;
-          </div>
+      {filtered.length === 0 ? (
+        query ? (
+          <FilteredEmptyState
+            onReset={() => setQuery("")}
+            description={`No customers match "${query}". Clear search to view all customers.`}
+          />
         ) : (
+          <TrueEmptyState
+            icon={<Building2 size={22} strokeWidth={1.8} />}
+            title="No customers found"
+            description="Customers will appear here once onboarded to the system."
+          />
+        )
+      ) : (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <ul className="divide-y divide-border">
             {filtered.map((c) => (
-            <li key={c.id}>
-              <Link
-                href={`/admin/customers/${c.id}`}
-                className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
-              >
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                  <Building2 size={16} strokeWidth={1.8} aria-hidden="true" />
-                </span>
-                <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[13.5px] text-foreground">{c.name}</span>
-                  <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">
-                    {c.ref} · {c.users} users
+              <li key={c.id}>
+                <Link
+                  href={`/admin/customers/${c.id}`}
+                  className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                >
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                    <Building2 size={16} strokeWidth={1.8} aria-hidden="true" />
                   </span>
-                </span>
-                <Badge variant="outline">{c.segment}</Badge>
-                <Badge variant={c.status === "Active" ? "success" : "warning"}>{c.status}</Badge>
-                <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
-              </Link>
-            </li>
-          ))}
-        </ul>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-[13.5px] text-foreground">{c.name}</span>
+                    <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">
+                      {c.ref} · {c.users} users
+                    </span>
+                  </span>
+                  <Badge variant="outline">{c.segment}</Badge>
+                  <Badge variant={c.status === "Active" ? "success" : "warning"}>{c.status}</Badge>
+                  <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
-    </section>
     </div>
   );
 }

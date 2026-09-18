@@ -16,6 +16,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { FilteredEmptyState, TrueEmptyState } from "@/components/states/ListStates";
 import PageHeader from "@/components/layout/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { SimpleTooltip } from "@/components/ui/tooltip";
@@ -132,19 +133,24 @@ export default function StandingOrdersPage() {
       {/* Standing Orders Cards List */}
       <section className="flex flex-col gap-3.5">
         {filteredItems.length === 0 ? (
-          <div className="flex flex-col items-center gap-3 rounded-2xl border border-border bg-card px-6 py-14 text-center">
-            <span className="flex size-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
-              <Repeat size={22} strokeWidth={1.8} aria-hidden="true" />
-            </span>
-            <p className="text-[15px] text-foreground font-normal">No standing orders found</p>
-            <p className="max-w-sm text-[13px] leading-relaxed text-muted-foreground">
-              Automate rent, susu contributions, family stipends, airtime, data or savings transfers.
-            </p>
-            <Link href="/payments/standing/new" className={buttonVariants({ className: "mt-2" })}>
-              <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-              Create First Standing Order
-            </Link>
-          </div>
+          filterTab !== "all" ? (
+            <FilteredEmptyState
+              onReset={() => setFilterTab("all")}
+              description={`No ${filterTab} standing orders found.`}
+            />
+          ) : (
+            <TrueEmptyState
+              icon={<Repeat size={22} strokeWidth={1.8} />}
+              title="No standing orders found"
+              description="Automate rent, susu contributions, family stipends, airtime, data or savings transfers."
+              action={
+                <Button size="sm" nativeButton={false} render={<Link href="/payments/standing/new" />}>
+                  <Plus size={14} strokeWidth={2} className="mr-1.5" />
+                  Create First Standing Order
+                </Button>
+              }
+            />
+          )
         ) : (
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
             {filteredItems.map((si) => {

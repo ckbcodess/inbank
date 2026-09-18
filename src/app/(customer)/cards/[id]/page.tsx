@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
-import { ListSkeleton } from "@/components/states/ListStates";
+import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
 import { VirtualCardDetailsView } from "@/components/cards/VirtualCardDetailsView";
 import type { BaselineState } from "@/lib/states";
 import { findCard } from "@/lib/mock-data";
@@ -66,32 +66,23 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
         />
       )}
 
-      {state === "loading" && (
-        <div className="rounded-2xl border border-border bg-card p-6">
-          <ListSkeleton rows={5} columns={3} />
-        </div>
-      )}
+      {state === "loading" && <ListSkeleton rows={5} columns={3} />}
 
       {state === "error" && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card px-6 py-12 text-center">
-          <AlertCircle size={20} className="text-destructive mb-2" />
-          <p className="text-[14px] font-medium text-foreground">Couldn&apos;t load card details</p>
-          <Button variant="outline" size="sm" className="mt-3" onClick={() => setState("populated")}>
-            <RefreshCw size={14} /> Retry
-          </Button>
-        </div>
+        <ListErrorState
+          onRetry={() => setState("populated")}
+          description="Couldn't load card details. Your account has not changed — try again."
+        />
       )}
 
       {state === "empty" && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card px-6 py-12 text-center">
-          <CreditCard size={24} className="text-muted-foreground mb-2" />
-          <p className="text-[14px] font-medium text-foreground">No card activity found</p>
-        </div>
+        <TrueEmptyState
+          title="No card activity found"
+          description="Transactions made with this card will appear here once authorized."
+        />
       )}
 
-      {state === "populated" && (
-        <VirtualCardDetailsView card={card} />
-      )}
+      {state === "populated" && <VirtualCardDetailsView card={card} />}
     </div>
   );
 }

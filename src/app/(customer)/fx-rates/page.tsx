@@ -35,7 +35,7 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
-import { ListSkeleton } from "@/components/states/ListStates";
+import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
 import type { BaselineState } from "@/lib/states";
 import { FX_PUBLISHED_AT, FX_RATES, formatDateTime } from "@/lib/mock-data";
 import { formatValueForDisplay, FormatOn, ThousandStyle } from "numora";
@@ -151,40 +151,21 @@ export default function FxRatesPage() {
         labels={BASELINE_LABEL}
       />
 
-      {state === "loading" && (
-        <div className="rounded-2xl border border-border bg-card">
-          <ListSkeleton rows={6} columns={5} />
-        </div>
-      )}
+      {state === "loading" && <ListSkeleton rows={6} columns={5} />}
 
       {state === "error" && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card px-6 py-16 text-center">
-          <div className="mb-4 flex size-11 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-            <AlertCircle size={20} strokeWidth={1.7} aria-hidden="true" />
-          </div>
-          <p className="text-[15px] text-foreground">Couldn&apos;t load today&apos;s rates</p>
-          <p className="mt-1.5 max-w-sm text-[13px] leading-relaxed text-muted-foreground">
-            Rates are published each business morning. Showing nothing is safer than showing a stale
-            rate — try again.
-          </p>
-          <Button variant="outline" size="sm" className="mt-5" onClick={() => setState("populated")}>
-            <RefreshCw size={14} strokeWidth={1.8} aria-hidden="true" />
-            Retry
-          </Button>
-        </div>
+        <ListErrorState
+          onRetry={() => setState("populated")}
+          description="Rates are published each business morning. Showing nothing is safer than showing a stale rate — try again."
+        />
       )}
 
       {state === "empty" && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-border bg-card px-6 py-16 text-center">
-          <div className="mb-4 flex size-11 items-center justify-center rounded-full bg-muted text-muted-foreground">
-            <TrendingUp size={20} strokeWidth={1.7} aria-hidden="true" />
-          </div>
-          <p className="text-[15px] text-foreground">No rates published yet today</p>
-          <p className="mt-1.5 max-w-sm text-[13px] leading-relaxed text-muted-foreground">
-            Today&apos;s rates have not been published. Yesterday&apos;s rates are not shown here
-            because they may no longer be accurate.
-          </p>
-        </div>
+        <TrueEmptyState
+          icon={<TrendingUp size={22} strokeWidth={1.8} />}
+          title="No rates published yet today"
+          description="Today's rates have not been published. Yesterday's rates are not shown here because they may no longer be accurate."
+        />
       )}
 
       {state === "populated" && (

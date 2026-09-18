@@ -34,7 +34,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
-import { ListSkeleton } from "@/components/states/ListStates";
+import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
 import type { BaselineState } from "@/lib/states";
 import { cardsForProfile, findAccount, formatDate, transactionsForAccount } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
@@ -173,25 +173,13 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
         </div>
       </div>
 
-      {state === "loading" && (
-        <div className="rounded-2xl border border-border bg-card">
-          <ListSkeleton rows={5} columns={4} />
-        </div>
-      )}
+      {state === "loading" && <ListSkeleton rows={5} columns={4} />}
 
       {state === "error" && (
-        <div className="flex items-start gap-3 rounded-2xl border border-border bg-card px-5 py-4">
-          <AlertCircle size={17} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0 text-destructive" />
-          <div>
-            <p className="text-[14px] text-foreground font-medium">Couldn&apos;t load this account</p>
-            <p className="mt-1 text-[13px] text-muted-foreground">
-              The balance shown may be out of date. Try again in a moment.
-            </p>
-            <Button variant="outline" size="sm" className="mt-3" onClick={() => setState("populated")}>
-              Retry
-            </Button>
-          </div>
-        </div>
+        <ListErrorState
+          onRetry={() => setState("populated")}
+          description="The balance shown may be out of date. Try again in a moment."
+        />
       )}
 
       {state === "empty" && (
@@ -201,12 +189,10 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
             holderName={holderName}
             onOpenFund={() => setIsFundModalOpen(true)}
           />
-          <div className="px-4 py-14 sm:py-16 text-center">
-            <p className="text-[14.5px] font-medium text-foreground">No activity on this account yet</p>
-            <p className="mx-auto mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">
-              Transactions will appear here once money moves in or out.
-            </p>
-          </div>
+          <TrueEmptyState
+            title="No activity on this account yet"
+            description="Transactions will appear here once money moves in or out."
+          />
         </>
       )}
 
@@ -261,21 +247,24 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <h2 className="text-[18px] font-medium text-foreground tracking-[-0.01em]">Activity</h2>
-              <Link
-                href="/transactions"
-                className="text-[13.5px] text-muted-foreground hover:text-foreground transition-colors"
-              >
-                View all
-              </Link>
+              {recentTransactions.length > 0 && (
+                <Link
+                  href="/transactions"
+                  className="text-[13.5px] text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  View all
+                </Link>
+              )}
             </div>
 
-            <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/40 shadow-xs">
-              {recentTransactions.length === 0 ? (
-                <div className="px-6 py-12 text-center text-[13.5px] text-muted-foreground">
-                  No activity on this account yet.
-                </div>
-              ) : (
-                recentTransactions.map((t) => {
+            {recentTransactions.length === 0 ? (
+              <TrueEmptyState
+                title="No activity on this account yet"
+                description="Transactions will appear here once money moves in or out."
+              />
+            ) : (
+              <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/40 shadow-xs">
+                {recentTransactions.map((t) => {
                   const isCredit = t.direction === "credit";
                   const isFailed = t.state.startsWith("failed") || t.state === "reversed" || t.state === "disputed";
                   const isPending = t.state === "pending" || t.state === "awaiting-approval";
@@ -341,9 +330,9 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
                       </div>
                     </Link>
                   );
-                })
-              )}
-            </div>
+                })}
+              </div>
+            )}
           </div>
         </>
       )}
