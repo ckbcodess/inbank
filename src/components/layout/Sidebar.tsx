@@ -135,6 +135,7 @@ export default function Sidebar({
   // Explicit open/closed overrides for dropdown groups; absent means "auto"
   // (open when a child is active).
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const [isSidebarHovered, setIsSidebarHovered] = useState(false);
 
   // A single nav link — shared by flat groups and dropdown children.
   const renderNavLink = (item: NavItem, indent = false) => {
@@ -198,6 +199,8 @@ export default function Sidebar({
        opacity and layout properties, so any incidental style recalculation on a
        parent re-render read as a flicker. */
     <aside
+      onMouseEnter={() => setIsSidebarHovered(true)}
+      onMouseLeave={() => setIsSidebarHovered(false)}
       className={`fixed inset-y-0 left-0 z-40 flex shrink-0 flex-col bg-[var(--surface)] dark:bg-[#09090b] transition-[width,transform] duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)] lg:relative lg:z-20 lg:translate-x-0 ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       }`}
@@ -217,14 +220,22 @@ export default function Sidebar({
               className="group relative hidden size-9 flex-shrink-0 items-center justify-center rounded-lg hover:bg-muted/70 transition-colors lg:flex cursor-pointer"
               aria-label="Expand sidebar"
             >
-              <span className="flex items-center justify-center transition-all duration-150 group-hover:opacity-0 group-hover:scale-90">
+              <span
+                className={`flex items-center justify-center transition-all duration-200 ${
+                  isSidebarHovered ? "opacity-0 scale-90 pointer-events-none" : "opacity-100 scale-100"
+                }`}
+              >
                 {shell === "admin" ? (
                   <ShieldCheck size={18} strokeWidth={2.1} className="text-primary" />
                 ) : (
                   <GCBLogo className="h-6.5 w-auto shrink-0" />
                 )}
               </span>
-              <span className="absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100 pointer-events-none">
+              <span
+                className={`absolute inset-0 flex items-center justify-center transition-all duration-200 pointer-events-none ${
+                  isSidebarHovered ? "opacity-100 scale-100" : "opacity-0 scale-90"
+                }`}
+              >
                 <PanelLeftOpen
                   size={18}
                   strokeWidth={1.8}
