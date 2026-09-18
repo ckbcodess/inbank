@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useId } from "react";
-import { motion, useTransform } from "framer-motion";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useTiltContext } from "./TiltCard3D";
 
 interface GcbCardLogoProps {
@@ -13,11 +13,12 @@ export function GcbCardLogo({ className = "h-8 w-auto" }: GcbCardLogoProps) {
   const tilt = useTiltContext();
   const maskId = useId();
   const gradientId = useId();
+  const fallbackSpring = useMotionValue(0);
 
   // Map mouse tilt springX directly to horizontal sweeping position across the logo
-  const sweepX = tilt?.springX
-    ? useTransform(tilt.springX, [-1, 1], [-25, 45])
-    : undefined;
+  const activeSpringX = tilt?.springX ?? fallbackSpring;
+  const sweepX = useTransform(activeSpringX, [-1, 1], [-25, 45]);
+  const hasTilt = Boolean(tilt?.springX);
 
   const paths = (
     <>
@@ -80,7 +81,7 @@ export function GcbCardLogo({ className = "h-8 w-auto" }: GcbCardLogoProps) {
         </defs>
 
         <g mask={`url(#${maskId})`}>
-          {sweepX ? (
+          {hasTilt ? (
             <motion.rect
               y="-50%"
               height="200%"

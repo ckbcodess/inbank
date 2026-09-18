@@ -1,8 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useContextualBack } from "@/lib/contextual-back";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -14,8 +14,6 @@ import {
   Sparkles,
   Wifi,
   Check,
-  Building2,
-  Truck,
   MapPin,
   X,
 } from "lucide-react";
@@ -449,7 +447,7 @@ function BranchCombobox({ value, onChange, branches }: BranchComboboxProps) {
             </div>
           ) : (
             <div className="p-3 text-center text-[13.5px] text-muted-foreground">
-              <span>No branches found matching "{query}"</span>
+              <span>No branches found matching &ldquo;{query}&rdquo;</span>
             </div>
           )}
         </div>
@@ -621,17 +619,6 @@ export function RequestCardFlow() {
         ? `Card "${newCard.name}" ordered successfully! Delivery is now tracking.`
         : `Virtual Card "${newCard.name}" issued and active.`
     );
-  }
-
-  function handleReset() {
-    setStep("select-type");
-    setCardName("");
-    setFundAmount("");
-    setCardScheme("Visa");
-    setNetworkType("");
-    setDeliveryMethod(null);
-    setSelectedBranch(null);
-    setCreatedCard(null);
   }
 
   return (

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import type { PaymentCard } from "@/lib/mock-data";
 import { getCardTheme } from "@/components/cards/card-themes";
 

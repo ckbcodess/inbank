@@ -3,7 +3,6 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import {
   AlertTriangle,
   ArrowDownLeft,
@@ -21,8 +20,6 @@ import {
   Key,
   Landmark,
   PlusCircle,
-  Settings2,
-  ShieldCheck,
   SlidersHorizontal,
   Snowflake,
   Sparkles,
@@ -43,7 +40,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SimpleTooltip } from "@/components/ui/tooltip";
 import {
   accountsForProfile,
   type PaymentCard,
@@ -60,27 +56,12 @@ import { GcbCardLogo } from "@/components/cards/GcbCardLogo";
 import { TiltCard3D } from "@/components/cards/TiltCard3D";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import TransactionPinModal from "@/components/payments/TransactionPinModal";
-import { CardDeliveryTracker, CardDeliveryTrackerModal } from "@/components/cards/CardDeliveryTracker";
+import { CardDeliveryTrackerModal } from "@/components/cards/CardDeliveryTracker";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useContextualBack } from "@/lib/contextual-back";
 
-function KeypadMatrixIcon({ className = "size-5" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 20 20" fill="currentColor" className={className} aria-hidden="true">
-      <circle cx="5" cy="5" r="1.75" />
-      <circle cx="10" cy="5" r="1.75" />
-      <circle cx="15" cy="5" r="1.75" />
-      <circle cx="5" cy="10" r="1.75" />
-      <circle cx="10" cy="10" r="1.75" />
-      <circle cx="15" cy="10" r="1.75" />
-      <circle cx="5" cy="15" r="1.75" />
-      <circle cx="10" cy="15" r="1.75" />
-      <circle cx="15" cy="15" r="1.75" />
-    </svg>
-  );
-}
 
 export type DeliverySimulationState =
   | "default"
@@ -126,7 +107,6 @@ export interface VirtualCardDetailsViewProps {
 export function VirtualCardDetailsView({
   card,
   onUpdateCard,
-  initialTab = "history",
 }: VirtualCardDetailsViewProps) {
   const { handleBack: handleBackNavigation } = useContextualBack("/cards");
   const activeProfile = useSession((s) => s.activeProfile);

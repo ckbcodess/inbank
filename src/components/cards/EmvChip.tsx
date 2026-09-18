@@ -1,7 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import React from "react";
-import { motion, useTransform } from "framer-motion";
+import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useTiltContext } from "./TiltCard3D";
 
 interface EmvChipProps {
@@ -10,11 +11,12 @@ interface EmvChipProps {
 
 export function EmvChip({ className = "" }: EmvChipProps) {
   const tilt = useTiltContext();
+  const fallbackSpring = useMotionValue(0);
 
   // Map mouse tilt springX directly to horizontal sweeping position across the chip
-  const sweepX = tilt?.springX
-    ? useTransform(tilt.springX, [-1, 1], ["-120%", "220%"])
-    : undefined;
+  const activeSpringX = tilt?.springX ?? fallbackSpring;
+  const sweepX = useTransform(activeSpringX, [-1, 1], ["-120%", "220%"]);
+  const hasTilt = Boolean(tilt?.springX);
 
   return (
     <div
@@ -41,7 +43,7 @@ export function EmvChip({ className = "" }: EmvChipProps) {
           WebkitMaskPosition: "center",
         }}
       >
-        {sweepX ? (
+        {hasTilt ? (
           <>
             {/* Soft wider sweep diffusion */}
             <motion.div

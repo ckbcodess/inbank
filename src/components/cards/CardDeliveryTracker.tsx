@@ -7,9 +7,6 @@ import {
   ChevronRight,
   ChevronLeft,
   X,
-  Truck,
-  MapPin,
-  Sparkles,
   Bike,
   Phone,
   ShieldCheck,
@@ -18,10 +15,7 @@ import {
   Dialog,
   DialogBody,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
 import type { PaymentCard, DeliveryStatus } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
