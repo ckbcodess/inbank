@@ -484,7 +484,7 @@ export function VirtualCardDetailsView({
       </div>
 
       {/* Main Container */}
-      <div className="w-full max-w-[920px] flex flex-col gap-8">
+      <div className="w-full flex flex-col gap-8">
         {isInactiveDelivery ? (
           /* ========================================================================= */
           /* INACTIVE PHYSICAL CARD DELIVERY / PICKUP HERO STATE                      */
