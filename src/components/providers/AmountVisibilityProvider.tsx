@@ -21,6 +21,38 @@ export function setGlobalShowAmounts(show: boolean): void {
  * Only masks strings that explicitly contain a recognized currency symbol/code (GH₵, GHS, $, €, £, USD, EUR, GBP).
  * Non-monetary counts (e.g. "2", "0", "Awaiting 3 approvals") remain completely untouched.
  */
+/**
+ * Mask an amount for the hidden view: drop grouping commas and the decimal
+ * point, then replace every digit with a bullet — so the mask is pure bullets
+ * with no punctuation, and its length reflects the magnitude (a 7-figure amount
+ * shows 7 bullets). Currency symbols and the +/− sign are left in place.
+ */
+export function maskDigits(str: string): string {
+  return str.replace(/[.,]/g, "").replace(/[0-9]/g, "•");
+}
+
+/** Format an amount as a string, masking digits when amounts are hidden. */
+function formatMasked(amount: number, currency: string, show: boolean): string {
+  const formatted =
+    currency.toUpperCase() === "GHS" || currency === "GH₵"
+      ? `GHS ${new Intl.NumberFormat("en-GH", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(amount)}`
+      : new Intl.NumberFormat("en-GH", {
+          style: "currency",
+          currency,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(amount);
+  return show ? formatted : maskDigits(formatted);
+}
+
+/** Fallback formatter for the hook used outside the provider. */
+function fallbackFormat(amount: number, currency = "GHS"): string {
+  return formatMasked(amount, currency, globalShowAmounts);
+}
+
 export function maskCurrencyString(val: string | number): string {
   if (val === null || val === undefined) return "";
   const str = String(val);
@@ -34,14 +66,9 @@ export function maskCurrencyString(val: string | number): string {
     return str;
   }
 
-  return str.replace(currencyRegex, (match) => {
-    const trimmed = match.trim();
-    const sign = trimmed.startsWith("+") ? "+" : trimmed.startsWith("-") || trimmed.startsWith("−") ? "−" : "";
-    const symMatch = match.match(/(GH₵|\$|€|£|GHS|USD|EUR|GBP)/i);
-    const rawSym = symMatch ? symMatch[1] : "GHS";
-    const sym = rawSym.toUpperCase() === "GHS" || rawSym === "GH₵" ? "GHS" : rawSym;
-    return `${sign}${sym} ••••••`;
-  });
+  // Mask only the digits inside a currency-prefixed amount; keep the symbol,
+  // sign, commas and decimal point so width and structure are preserved.
+  return str.replace(currencyRegex, (match) => maskDigits(match));
 }
 
 /**
@@ -69,15 +96,12 @@ export function splitCurrencyAndAmount(
         ? "GHS "
         : `${currency} `;
 
-    if (!showAmounts) {
-      return { prefix: symbol, numericText: "••••••" };
-    }
     const formatted = new Intl.NumberFormat("en-GH", {
       style: "decimal",
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(amount);
-    return { prefix: symbol, numericText: formatted };
+    return { prefix: symbol, numericText: showAmounts ? formatted : maskDigits(formatted) };
   }
 
   if (value !== undefined) {
@@ -95,11 +119,11 @@ export function splitCurrencyAndAmount(
         sym = u === "GHS" || symMatch[1] === "GH₵" ? "GHS " : u === "USD" ? "USD " : `${symMatch[1]} `;
       }
       const prefix = `${sign}${sym}`;
-      const numericText = !showAmounts ? "••••••" : rawBody;
+      const numericText = showAmounts ? rawBody : maskDigits(rawBody);
       return { prefix, numericText };
     }
     // No currency prefix match — return whole string as numericText
-    return { prefix: "", numericText: !showAmounts ? maskCurrencyString(str) : str };
+    return { prefix: "", numericText: showAmounts ? str : maskDigits(str) };
   }
 
   return { prefix: "", numericText: "" };
@@ -151,32 +175,7 @@ export function AmountVisibilityProvider({ children }: { children: React.ReactNo
   }, []);
 
   const formatAmount = useCallback(
-    (amount: number, currency = "GHS"): string => {
-      if (!showAmounts) {
-        const symbol =
-          currency.toUpperCase() === "USD"
-            ? "$"
-            : currency.toUpperCase() === "EUR"
-            ? "€"
-            : currency.toUpperCase() === "GBP"
-            ? "£"
-            : "GHS";
-        return `${symbol} ••••••`;
-      }
-      if (currency.toUpperCase() === "GHS" || currency === "GH₵") {
-        const formattedNum = new Intl.NumberFormat("en-GH", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }).format(amount);
-        return `GHS ${formattedNum}`;
-      }
-      return new Intl.NumberFormat("en-GH", {
-        style: "currency",
-        currency,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(amount);
-    },
+    (amount: number, currency = "GHS"): string => formatMasked(amount, currency, showAmounts),
     [showAmounts]
   );
 
@@ -208,58 +207,8 @@ export function useAmountVisibility() {
       showAmounts: globalShowAmounts,
       toggleAmountVisibility: () => {},
       setShowAmounts: () => {},
-      formatAmount: (amount: number, currency = "GHS") => {
-        if (!globalShowAmounts) {
-          const symbol =
-            currency.toUpperCase() === "USD"
-              ? "$"
-              : currency.toUpperCase() === "EUR"
-              ? "€"
-              : currency.toUpperCase() === "GBP"
-              ? "£"
-              : "GHS";
-          return `${symbol} ••••••`;
-        }
-        if (currency.toUpperCase() === "GHS" || currency === "GH₵") {
-          const formattedNum = new Intl.NumberFormat("en-GH", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }).format(amount);
-          return `GHS ${formattedNum}`;
-        }
-        return new Intl.NumberFormat("en-GH", {
-          style: "currency",
-          currency,
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }).format(amount);
-      },
-      formatMoney: (amount: number, currency = "GHS") => {
-        if (!globalShowAmounts) {
-          const symbol =
-            currency.toUpperCase() === "USD"
-              ? "$"
-              : currency.toUpperCase() === "EUR"
-              ? "€"
-              : currency.toUpperCase() === "GBP"
-              ? "£"
-              : "GHS";
-          return `${symbol} ••••••`;
-        }
-        if (currency.toUpperCase() === "GHS" || currency === "GH₵") {
-          const formattedNum = new Intl.NumberFormat("en-GH", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }).format(amount);
-          return `GHS ${formattedNum}`;
-        }
-        return new Intl.NumberFormat("en-GH", {
-          style: "currency",
-          currency,
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }).format(amount);
-      },
+      formatAmount: (amount: number, currency = "GHS") => fallbackFormat(amount, currency),
+      formatMoney: (amount: number, currency = "GHS") => fallbackFormat(amount, currency),
     };
   }
   return context;

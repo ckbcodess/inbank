@@ -232,3 +232,65 @@ When designing any feature that consumes saved or configured entities (e.g., Ben
   - Use a subtle hairline divider or a muted `"Or enter new details"` label to bridge into the manual input form.
 - **Automatic Collapse on Selection**:
   - Tapping a saved avatar or group must immediately populate all known parameters and collapse the step into a calm, verified badge (`<Check /> Recipient Name [Change]`), advancing focus directly to Amount or Confirmation.
+
+---
+
+## 9. Clean Minimal Screen Language (House Default — Non-Negotiable)
+
+> This is the agreed visual + information register for **every new screen** in this
+> product (established on the dashboard revamp, Sept 2026). Reference vibe:
+> **Wealthsimple** and **Origin** — quiet, spacious, numbers-forward. When generating
+> any new screen, produce it in this language by default; do not revert to dense,
+> boxed-in layouts.
+
+### A. The feel
+- **Space is the primary design material.** Lead with generous padding and large gaps
+  (`gap-6`/`gap-8`+, `py-8`+ on hero blocks). White space carries hierarchy — resist
+  filling it.
+- **Hairlines over boxes.** Prefer `divide-y divide-border/40..50` and single
+  `border-t border-border` separators to nested bordered cards. When a card is needed,
+  one calm panel (`rounded-2xl border border-border bg-card`, the shared
+  `.premium-card` elevation) — never cards inside cards.
+- **One loud thing per screen: the number.** The primary figure is large and thin
+  (`text-[40px]`–`[76px]`, `tracking-[-0.02em]`, `.tabular`). Everything else is quiet.
+- **Tiny tracked eyebrows** label sections: `text-[11px] uppercase tracking-[0.14em]
+  text-muted-foreground`. Use for micro-labels above content.
+- **Type weight:** headings, section titles, labels and buttons are **medium** —
+  apply `font-medium` (500). Body copy and numbers stay **normal** (400). Semibold (600)
+  and bold (700) remain banned. The base-layer `font-weight: inherit` cap in globals.css is
+  overridden by the `font-medium` utility, so use it rather than leaning on size/tracking
+  alone for heading hierarchy.
+- **Monochrome + one restrained accent.** Trend lines are `foreground/70–80` with a
+  whisper gradient fill; category color only via `--cat-1..5` / `--cat-other`. Positive
+  deltas use `--success`; a decline uses `muted-foreground`, never `destructive`.
+
+### B. Information architecture (glance → disclosure → detail)
+1. **Glance (above the fold):** the one question the screen answers, plus anything that
+   genuinely needs action. On the dashboard that is **total balance + trend + a "Needs
+   attention" band**. Nothing decorative competes here.
+2. **Wrap detail in disclosures.** Secondary breakdowns (e.g. the individual accounts
+   behind a total) live in a **collapsed disclosure** with a hairline teaser (an
+   allocation bar), opened on demand — never a permanently expanded list eating space.
+3. **Each module appears exactly once.** No element is repeated across the screen
+   (no duplicate account lists, no restating a count like "5 accounts" as its own tile).
+   If it was shown in the hero, omit it from the detail grid.
+4. **Priority surface.** Show high-priority, time-sensitive items (failed payments,
+   expiring/blocked cards, dormant accounts, due bills) in a compact **"Needs attention"**
+   band that only renders when items exist. Derive it from real data, cap it (~4), each
+   row links to the fix.
+
+### C. Anti-clutter rules (in addition to §7)
+- ❌ No redundant summary tiles that restate a number already visible (counts, totals
+  shown twice).
+- ❌ No always-open long lists for secondary detail — collapse them.
+- ❌ No stat tile / widget that exists only to fill a grid cell.
+- ❌ No repeating the same module in two places on one screen.
+- ✅ Honest data only — charts, trends, and breakdowns are derived from the ledger
+  (`src/lib/dashboard-insights.ts` patterns), never hardcoded decoration.
+- ✅ Every amount respects the hide-amounts toggle and carries `.tabular`.
+
+### D. Reference implementation
+The dashboard kit at `src/components/dashboard/v2/MinimalKit.tsx` is the canonical
+source of these primitives — `BalanceHeadline`, `TrendChart`, `Eyebrow`, `SectionHeader`,
+`Panel`, `AccountsDisclosure`, `AttentionBand`, `AllocationBar`/`DotLegend`. Reuse and
+extend these rather than reinventing a denser pattern.
