@@ -453,54 +453,49 @@ function ActivateContent() {
       {step === "review_details" && (
         <div className="flex flex-col gap-5">
           {/* Verified Customer Header Info */}
-          <div className="rounded-2xl border border-border/80 bg-muted/20 p-4">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-full bg-primary/15 text-primary overflow-hidden">
-                  {selfieImage ? (
-                    <img src={selfieImage} alt={activePersona.holderName} className="size-full object-cover" />
-                  ) : isJoint ? (
-                    <Users size={18} />
-                  ) : (
-                    <User size={18} />
-                  )}
-                </div>
-                <div>
-                  <span className="text-[14.5px] font-medium text-foreground block">
-                    {activePersona.holderName}
-                  </span>
-                  <span className="text-[12px] text-muted-foreground font-mono">
-                    {activePersona.ghanaCard}
-                  </span>
-                </div>
+          <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-muted/15 px-4 py-3.5">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary overflow-hidden">
+                {selfieImage ? (
+                  <img src={selfieImage} alt={activePersona.holderName} className="size-full object-cover" />
+                ) : isJoint ? (
+                  <Users size={16} />
+                ) : (
+                  <User size={16} />
+                )}
               </div>
-
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
-                <Check size={12} />
-                NIA Verified
-              </span>
+              <div className="min-w-0">
+                <span className="text-[14px] font-medium text-foreground block truncate">
+                  {activePersona.holderName}
+                </span>
+                <span className="text-[12px] text-muted-foreground font-mono">
+                  {activePersona.ghanaCard}
+                </span>
+              </div>
             </div>
+
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 shrink-0">
+              <Check size={12} strokeWidth={2.5} />
+              Verified
+            </span>
           </div>
 
-          {/* CASE A: Multi-Account - Interactive Primary Account Selection (Includes Joint Accounts) */}
+          {/* CASE A: Multi-Account Dropdown Selection */}
           {isMultiAccount && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between px-1">
-                <span className="text-[13px] font-medium text-foreground flex items-center gap-1.5">
-                  <Layers size={14} className="text-primary" />
-                  Primary Account
-                </span>
-                <span className="text-[11.5px] text-muted-foreground">
-                  Default for transfers &amp; statements
-                </span>
-              </div>
+            <div className="space-y-2">
+              <label htmlFor="primary-account-select" className="text-[13px] font-medium text-foreground px-0.5">
+                Primary Account
+              </label>
 
               <div data-tour="activate-account-picker">
                 <Select
                   value={selectedPrimaryAccountId}
                   onValueChange={(val) => val && setSelectedPrimaryAccountId(val)}
                 >
-                  <SelectTrigger className="h-12 min-h-12 py-2 px-3.5 w-full rounded-xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center justify-between">
+                  <SelectTrigger
+                    id="primary-account-select"
+                    className="h-11 min-h-11 py-2 px-3.5 w-full rounded-xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center justify-between"
+                  >
                     <SelectValue>
                       <div className="flex items-center gap-2 truncate">
                         <span className="font-medium text-foreground truncate">
@@ -550,15 +545,15 @@ function ActivateContent() {
 
               {/* Dynamic Mandate Disclosure if selected account is Joint */}
               {selectedPrimaryAccount.isJoint && (
-                <div className="mt-2 rounded-2xl border border-primary/20 bg-primary/5 p-3.5 text-left animate-in fade-in duration-200">
+                <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-left animate-in fade-in duration-200">
                   <div className="flex items-start gap-2.5">
-                    <Users size={16} className="text-primary mt-0.5 shrink-0" />
+                    <Users size={15} className="text-primary mt-0.5 shrink-0" />
                     <div>
-                      <span className="text-[13px] font-medium text-foreground block">
+                      <span className="text-[12.5px] font-medium text-foreground block">
                         Joint Mandate: {selectedPrimaryAccount.mandate || "Both Signatures Required"}
                       </span>
-                      <p className="text-[12px] text-muted-foreground mt-0.5 leading-relaxed">
-                        Alerts will be sent to both Kwame and Efua upon activation.
+                      <p className="text-[11.5px] text-muted-foreground mt-0.5 leading-relaxed">
+                        Alerts will be sent to both signatories upon activation.
                       </p>
                     </div>
                   </div>
@@ -569,8 +564,8 @@ function ActivateContent() {
 
           {/* CASE B: Single Account Display */}
           {!isMultiAccount && (
-            <div className="rounded-2xl border border-border/80 bg-muted/20 p-5 divide-y divide-border/60">
-              <div className="flex items-center justify-between pb-3.5">
+            <div className="rounded-xl border border-border/80 bg-muted/20 p-4 divide-y divide-border/60">
+              <div className="flex items-center justify-between pb-3">
                 <span className="text-[13px] text-muted-foreground">Primary Account</span>
                 <div className="text-right">
                   <span className="text-[14px] font-medium text-foreground block">
@@ -581,23 +576,15 @@ function ActivateContent() {
                   </span>
                 </div>
               </div>
-              <div className="flex items-center justify-between py-3.5">
+              <div className="flex items-center justify-between py-3">
                 <span className="text-[13px] text-muted-foreground">Registered Phone</span>
-                <span className="text-[14px] font-medium text-foreground">{activePersona.phone}</span>
+                <span className="text-[13.5px] font-medium text-foreground">{activePersona.phone}</span>
               </div>
-              <div className="flex items-center justify-between pt-3.5">
+              <div className="flex items-center justify-between pt-3">
                 <span className="text-[13px] text-muted-foreground">Registered Email</span>
-                <span className="text-[14px] font-medium text-foreground">{activePersona.email}</span>
+                <span className="text-[13.5px] font-medium text-foreground">{activePersona.email}</span>
               </div>
             </div>
-          )}
-
-          {(isJoint || isMultiAccount) && (
-            <p className="text-center text-[12.5px] leading-relaxed text-muted-foreground">
-              {isJoint
-                ? "Both account holders will receive a confirmation alert upon activation."
-                : "All accounts will be linked. You can change your primary account anytime in Settings."}
-            </p>
           )}
 
           <Button
@@ -607,7 +594,7 @@ function ActivateContent() {
             data-tour="activate-review"
             onClick={handleVerifyDetails}
             disabled={busy}
-            className="mt-2 h-11 w-full text-[14px]"
+            className="mt-1 h-11 w-full text-[14px]"
           >
             {busy ? (
               <>
@@ -622,7 +609,7 @@ function ActivateContent() {
           <button
             type="button"
             onClick={() => setStep("ghana_card")}
-            className="text-center text-[13px] text-muted-foreground hover:text-foreground underline underline-offset-4 cursor-pointer"
+            className="text-center text-[12.5px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
           >
             Use a different Ghana Card
           </button>
