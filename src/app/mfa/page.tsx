@@ -2,7 +2,8 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertCircle, Laptop, Loader2, MapPin, ShieldAlert, ShieldCheck, Smartphone } from "lucide-react";
+import { AlertCircle, Laptop, MapPin, ShieldAlert, ShieldCheck, Smartphone } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import { Checkbox } from "@/components/ui/checkbox";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
@@ -133,7 +134,7 @@ function MfaContent() {
 
         {state === "verifying" && (
           <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
-            <Loader2 size={16} className="animate-spin text-primary" aria-hidden="true" />
+            <AppLoader size={16} />
             <span>Verifying code...</span>
           </div>
         )}

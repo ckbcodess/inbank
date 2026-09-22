@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
   Clock,
-  Loader2,
 } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/layout/PageHeader";
 import { Input } from "@/components/ui/input";
@@ -292,7 +292,7 @@ export default function ChequeBookRequestPage() {
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
-                <Loader2 size={16} className="animate-spin" />
+                <AppLoader size={16} />
                 Processing Order...
               </span>
             ) : (

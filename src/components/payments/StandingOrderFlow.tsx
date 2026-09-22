@@ -23,7 +23,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Landmark,
-  Loader2,
   PhoneCall,
   Plus,
   User,
@@ -31,6 +30,7 @@ import {
   Wallet,
   Wifi,
 } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -1063,7 +1063,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {/* Live Resolving State / Verification Badge */}
               {rail !== "group" && resolving && (
                 <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 p-2.5 text-[12.5px] text-muted-foreground animate-pulse">
-                  <Loader2 size={13} className="animate-spin text-muted-foreground shrink-0" />
+                  <AppLoader size={13} className="text-muted-foreground shrink-0" />
                   <span>Resolving account holder details...</span>
                 </div>
               )}

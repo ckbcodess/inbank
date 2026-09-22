@@ -8,8 +8,8 @@ import {
   Check,
   Eye,
   EyeOff,
-  Loader2,
 } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -298,7 +298,7 @@ function SignupContent() {
           >
             {busy ? (
               <>
-                <Loader2 size={16} className="animate-spin" />
+                <AppLoader size={16} />
                 Verifying...
               </>
             ) : (
@@ -354,7 +354,7 @@ function SignupContent() {
           >
             {busy ? (
               <>
-                <Loader2 size={16} className="animate-spin" />
+                <AppLoader size={16} />
                 Sending code...
               </>
             ) : (
@@ -389,7 +389,7 @@ function SignupContent() {
 
           {busy && (
             <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
-              <Loader2 size={16} className="animate-spin text-primary" aria-hidden="true" />
+              <AppLoader size={16} />
               <span>Verifying code...</span>
             </div>
           )}
@@ -644,7 +644,7 @@ function SignupContent() {
 
           {busy && (
             <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
-              <Loader2 size={16} className="animate-spin text-primary" aria-hidden="true" />
+              <AppLoader size={16} />
               <span>Setting up account...</span>
             </div>
           )}

@@ -22,10 +22,10 @@ import {
   ArrowUpRight,
   CheckCircle2,
   Info,
-  Loader2,
   ShieldAlert,
   XCircle,
 } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import Link from "next/link";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -118,7 +118,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
               {outcome === "rejected" ? "Payment rejected" : "Payment approved"}
             </p>
             <p className="mt-1 flex items-center gap-1.5 text-[13px] text-muted-foreground">
-              <Loader2 size={13} className="animate-spin" aria-hidden="true" />
+              <AppLoader size={13} />
               Returning you to the queue…
             </p>
           </div>

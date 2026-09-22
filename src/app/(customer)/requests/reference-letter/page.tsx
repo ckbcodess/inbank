@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import {
   CheckCircle2,
   Download,
-  Loader2,
   ShieldCheck,
 } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/layout/PageHeader";
 import { Input } from "@/components/ui/input";
@@ -404,7 +404,7 @@ export default function ReferenceLetterPage() {
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
-                <Loader2 size={16} className="animate-spin" />
+                <AppLoader size={16} />
                 Generating Letter...
               </span>
             ) : (

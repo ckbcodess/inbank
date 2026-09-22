@@ -3,7 +3,8 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
+import { AlertCircle, Eye, EyeOff } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -143,7 +144,7 @@ function LoginForm() {
         >
           {state === "submitting" ? (
             <>
-              <Loader2 size={16} className="mr-2 animate-spin" aria-hidden="true" />
+              <AppLoader size={16} className="mr-2" />
               Signing in...
             </>
           ) : (

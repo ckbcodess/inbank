@@ -27,10 +27,10 @@ import {
   FileText,
   FileWarning,
   GitCompare,
-  Loader2,
   MessageSquareWarning,
   XCircle,
 } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -177,7 +177,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                 : "The request moves to bank operations for processing."}
             </p>
             <p className="mt-1.5 flex items-center gap-1.5 text-[13px] text-muted-foreground">
-              <Loader2 size={13} className="animate-spin" aria-hidden="true" />
+              <AppLoader size={13} />
               Returning you to the queue…
             </p>
           </div>

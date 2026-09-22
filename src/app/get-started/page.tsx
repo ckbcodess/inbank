@@ -9,10 +9,10 @@ import {
   CreditCard,
   ExternalLink,
   Landmark,
-  Loader2,
   Plus,
   UserCheck,
 } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -253,7 +253,7 @@ export default function GetStartedPage() {
             >
               {isRedirecting ? (
                 <>
-                  <Loader2 className="size-3.5 animate-spin" />
+                  <AppLoader size={14} />
                   Opening portal...
                 </>
               ) : (

@@ -21,13 +21,13 @@ import {
   CheckCircle2,
   ClipboardCheck,
   FileText,
-  Loader2,
   Paperclip,
   Pencil,
   Trash2,
   UserPlus,
   Users,
 } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -287,7 +287,7 @@ export default function BusinessSignupPage() {
             >
               {busy ? (
                 <>
-                  <Loader2 size={16} strokeWidth={2} className="mr-2 animate-spin" aria-hidden="true" />
+                  <AppLoader size={16} className="mr-2" />
                   Checking…
                 </>
               ) : (
@@ -619,7 +619,7 @@ export default function BusinessSignupPage() {
             >
               {busy ? (
                 <>
-                  <Loader2 size={16} strokeWidth={2} className="mr-2 animate-spin" aria-hidden="true" />
+                  <AppLoader size={16} className="mr-2" />
                   Submitting…
                 </>
               ) : (

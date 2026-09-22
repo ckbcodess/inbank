@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Camera, CameraOff, Check, Loader2, RefreshCw, Upload } from "lucide-react";
+import { Camera, CameraOff, Check, RefreshCw, Upload } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 
 interface NativeFaceDetector {
@@ -386,7 +387,7 @@ export default function SelfieCapture({
             </>
           ) : cameraState === "requesting" ? (
             <div className="flex flex-col items-center gap-2.5 p-4 text-center text-muted-foreground">
-              <Loader2 size={32} className="animate-spin text-primary" />
+              <AppLoader size={32} />
               <span className="text-[12.5px] font-medium text-foreground">Starting camera...</span>
             </div>
           ) : (
@@ -439,7 +440,7 @@ export default function SelfieCapture({
             >
               {busy ? (
                 <>
-                  <Loader2 size={16} className="mr-2 animate-spin" />
+                  <AppLoader size={16} className="mr-2" />
                   Verifying photo...
                 </>
               ) : (
@@ -501,7 +502,7 @@ export default function SelfieCapture({
             disabled
             className="h-11 w-full text-[14px]"
           >
-            <Loader2 size={16} className="mr-2 animate-spin" />
+            <AppLoader size={16} className="mr-2" />
             Preparing camera...
           </Button>
         )}

@@ -29,7 +29,6 @@ import {
   GraduationCap,
   Heart,
   Landmark,
-  Loader2,
   Pencil,
   Plus,
   Receipt,
@@ -41,6 +40,7 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -2218,7 +2218,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col items-center justify-center py-24 text-center">
         <div className="flex flex-col items-center gap-3.5">
-          <Loader2 size={30} strokeWidth={1.9} className="animate-spin text-muted-foreground" />
+          <AppLoader size={36} className="text-muted-foreground" />
           <p className="text-[15px] text-foreground tracking-[-0.01em]">Processing</p>
         </div>
       </div>

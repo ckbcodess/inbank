@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useMemo, useRef, useState, useEffect } from "react";
-import { Landmark, AlertCircle, CheckCircle2, Check, Loader2 } from "lucide-react";
+import { Landmark, AlertCircle, CheckCircle2, Check } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -988,8 +989,8 @@ export function ResolvingAccountBadge({
   message?: string;
 }) {
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2 text-[12.5px] text-muted-foreground animate-pulse">
-      <Loader2 size={14} className="animate-spin text-muted-foreground shrink-0" />
+    <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2 text-[12.5px] text-muted-foreground">
+      <AppLoader size={14} className="text-muted-foreground shrink-0" />
       <span>{message}</span>
     </div>
   );
