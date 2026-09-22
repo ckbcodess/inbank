@@ -1,14 +1,11 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   AlertCircle,
   ArrowLeft,
-  Camera,
   Check,
-  CheckCircle2,
   Eye,
   EyeOff,
   Loader2,
@@ -28,13 +25,10 @@ const RESEND_SECONDS = 30;
 
 function SignupContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const flow = searchParams.get("flow") || "wallet_card";
   const { signIn, selectProfile, verifyMfa } = useSession();
 
   const [step, setStep] = useState<Step>("ghana_card");
   const [ghanaCard, setGhanaCard] = useState("GHA-7890123456-1");
-  const [selfieTaken, setSelfieTaken] = useState(false);
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -119,7 +113,6 @@ function SignupContent() {
 
   function handleCaptureSelfie(imageDataUrl: string) {
     setSelfieImage(imageDataUrl);
-    setSelfieTaken(true);
     setBusy(true);
     setTimeout(() => {
       setBusy(false);
@@ -209,7 +202,6 @@ function SignupContent() {
       setDigits(Array(OTP_LENGTH).fill(""));
       setStep("review_details");
     } else if (step === "review_details") {
-      setSelfieTaken(false);
       setSelfieImage(null);
       setStep("selfie");
     } else if (step === "selfie") {
@@ -324,7 +316,6 @@ function SignupContent() {
           capturedImage={selfieImage}
           onRetake={() => {
             setSelfieImage(null);
-            setSelfieTaken(false);
           }}
           dataTour="signup-selfie"
         />

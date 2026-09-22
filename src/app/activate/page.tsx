@@ -1,26 +1,16 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   AlertCircle,
   ArrowLeft,
-  Camera,
   Check,
-  CheckCircle2,
-  ChevronRight,
-  CreditCard,
   Eye,
   EyeOff,
-  Layers,
   Loader2,
-  ShieldCheck,
-  Smartphone,
-  Sparkles,
   User,
   Users,
-  Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,7 +31,6 @@ import {
   ACTIVATION_PERSONAS,
   getPersonaByGhanaCard,
   type ActivationPersonaConfig,
-  type DiscoveredAccount,
 } from "@/lib/activation";
 
 type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "pin" | "confirm_pin";
@@ -75,7 +64,6 @@ function ActivateContent() {
     activePersona.accounts.find((a) => a.isPrimaryDefault)?.id ?? activePersona.accounts[0]?.id ?? ""
   );
 
-  const [selfieTaken, setSelfieTaken] = useState(false);
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -187,7 +175,6 @@ function ActivateContent() {
 
   function handleCaptureSelfie(imageDataUrl: string) {
     setSelfieImage(imageDataUrl);
-    setSelfieTaken(true);
     setBusy(true);
     setTimeout(() => {
       setBusy(false);
@@ -277,7 +264,6 @@ function ActivateContent() {
       setDigits(Array(OTP_LENGTH).fill(""));
       setStep("review_details");
     } else if (step === "review_details") {
-      setSelfieTaken(false);
       setSelfieImage(null);
       setStep("selfie");
     } else if (step === "selfie") {
@@ -357,41 +343,34 @@ function ActivateContent() {
         </div>
       }
     >
-      {/* STEP 1: Ghana Card Input */}
+      {/* STEP 1: Enter Ghana Card */}
       {step === "ghana_card" && (
         <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-5">
-          {/* Context Banner */}
-          {isMobileSync && (
-            <div className="flex items-start gap-3.5 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-left">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
-                <Smartphone size={17} />
-              </div>
-              <div>
-                <span className="text-[13.5px] font-medium text-foreground">
-                  Mobile App Profile Found
-                </span>
-                <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
-                  Enter your Ghana Card to link your existing mobile app profile ({activePersona.holderName}).
-                </p>
-              </div>
+          <div className="flex items-center justify-between rounded-xl bg-muted/40 px-3.5 py-2.5 text-[12.5px] text-muted-foreground">
+            <span className="font-medium text-foreground">Interactive Demo Mode</span>
+            <div className="flex items-center gap-1.5">
+              {(["single", "multi", "joint", "mobile_sync"] as const).map((key) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => applyPersona(key)}
+                  className={`rounded-md px-2 py-0.5 text-[11px] font-medium transition-colors cursor-pointer ${
+                    activePersonaKey === key
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-background text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {key === "single"
+                    ? "Single"
+                    : key === "multi"
+                    ? "Multi"
+                    : key === "joint"
+                    ? "Joint"
+                    : "Mobile Sync"}
+                </button>
+              ))}
             </div>
-          )}
-
-          {isJoint && (
-            <div className="flex items-start gap-3.5 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-left">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/20 text-primary">
-                <Users size={17} />
-              </div>
-              <div>
-                <span className="text-[13.5px] font-medium text-foreground">
-                  Joint Account
-                </span>
-                <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
-                  Activating internet banking for {activePersona.holderName} ({activePersona.jointMandate}).
-                </p>
-              </div>
-            </div>
-          )}
+          </div>
 
           {/* Card Input Field */}
           <div className="flex flex-col gap-2">
@@ -443,7 +422,6 @@ function ActivateContent() {
           capturedImage={selfieImage}
           onRetake={() => {
             setSelfieImage(null);
-            setSelfieTaken(false);
           }}
           dataTour="activate-selfie"
         />

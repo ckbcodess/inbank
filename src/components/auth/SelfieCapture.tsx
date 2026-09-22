@@ -1,8 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Camera, CameraOff, Check, CheckCircle2, Loader2, RefreshCw, Upload } from "lucide-react";
+import { Camera, CameraOff, Check, Loader2, RefreshCw, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+interface NativeFaceDetector {
+  detect: (image: HTMLVideoElement | HTMLCanvasElement | ImageBitmap) => Promise<
+    Array<{
+      boundingBox: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+      };
+    }>
+  >;
+}
 
 interface SelfieCaptureProps {
   onCapture: (dataUrl: string) => void;
@@ -25,7 +38,7 @@ export default function SelfieCapture({
   const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const animFrameRef = useRef<number | null>(null);
-  const detectorRef = useRef<any>(null);
+  const detectorRef = useRef<NativeFaceDetector | null>(null);
 
   const [cameraState, setCameraState] = useState<
     "idle" | "requesting" | "ready" | "denied" | "unsupported"
