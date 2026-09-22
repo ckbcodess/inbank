@@ -11,12 +11,10 @@ import {
   Landmark,
   Loader2,
   Plus,
-  Sparkles,
   UserCheck,
 } from "lucide-react";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogBody,
@@ -65,13 +63,13 @@ export default function GetStartedPage() {
       <AuthLayout
         title={
           screen === 1
-            ? "How will you like to register?"
-            : "How would you like to proceed?"
+            ? "How Would You Like to Register?"
+            : "How Would You Like to Proceed?"
         }
         description={
           screen === 1
-            ? "Select the option that best describes your relationship with GCB."
-            : "Select your preferred option to get started on GCB Internet Banking."
+            ? "Choose how you would like to bank with us."
+            : "Choose how to set up your account."
         }
         stepProgress={
           screen === 2
@@ -123,7 +121,7 @@ export default function GetStartedPage() {
                     GCB Account Holder
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
-                    Link your existing account to get started.
+                    Link your existing account.
                   </span>
                 </div>
               </div>
@@ -151,7 +149,7 @@ export default function GetStartedPage() {
                     New to GCB
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
-                    Open an account with your wallet or card.
+                    Open an account or link a wallet.
                   </span>
                 </div>
               </div>
@@ -177,17 +175,11 @@ export default function GetStartedPage() {
                   <Landmark size={18} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[15px] font-medium text-foreground">
-                      Open a GCB Account
-                    </span>
-                    <Badge variant="warning" className="gap-1 text-[10.5px]">
-                      <Sparkles size={11} />
-                      Fast online opening
-                    </Badge>
-                  </div>
+                  <span className="text-[15px] font-medium text-foreground">
+                    Open a GCB Account
+                  </span>
                   <span className="text-[13px] text-muted-foreground mt-0.5">
-                    Create a full bank account via GCB Account Opening Portal.
+                    Open a new bank account online.
                   </span>
                 </div>
               </div>
@@ -213,7 +205,7 @@ export default function GetStartedPage() {
                     Start with a Wallet or Card
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
-                    Register with Ghana Card and link your mobile money or bank card.
+                    Link a mobile money wallet or debit card.
                   </span>
                 </div>
               </div>
@@ -232,13 +224,12 @@ export default function GetStartedPage() {
       <Dialog open={showCoosModal} onOpenChange={setShowCoosModal}>
         <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle>Account opening portal</DialogTitle>
+            <DialogTitle>Account Opening Portal</DialogTitle>
           </DialogHeader>
 
           <DialogBody>
             <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-              You will be redirected to our secure Customer Onboarding & Origination System (COOS) portal at{" "}
-              <span className="font-medium text-foreground">accountopening.gcb.com.gh</span> to complete your full account creation.
+              You will be redirected to <span className="font-medium text-foreground">accountopening.gcb.com.gh</span> to complete your account application.
             </p>
           </DialogBody>
 
@@ -267,7 +258,7 @@ export default function GetStartedPage() {
                 </>
               ) : (
                 <>
-                  Open on COOS
+                  Continue to portal
                   <ExternalLink className="size-3.5" />
                 </>
               )}

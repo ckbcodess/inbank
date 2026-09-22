@@ -48,8 +48,7 @@ function LoginForm() {
 
   return (
     <AuthLayout
-      title="Get Started with GCB Internet Banking"
-      description="Enter your credentials to access your accounts securely."
+      title="Login to GCB Internet Banking"
       width="compact"
       footer={
         <div className="flex justify-center text-center">

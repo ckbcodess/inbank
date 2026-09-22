@@ -25,8 +25,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
+import SelfieCapture from "@/components/auth/SelfieCapture";
 import { useSession } from "@/lib/session-store";
 import { ACTORS } from "@/lib/mock-data";
 import {
@@ -36,7 +44,7 @@ import {
   type DiscoveredAccount,
 } from "@/lib/activation";
 
-type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "pin";
+type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "pin" | "confirm_pin";
 
 const RESEND_SECONDS = 30;
 
@@ -68,6 +76,7 @@ function ActivateContent() {
   );
 
   const [selfieTaken, setSelfieTaken] = useState(false);
+  const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   // OTP State
@@ -81,6 +90,7 @@ function ActivateContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
+  const [confirmPinDigits, setConfirmPinDigits] = useState<string[]>(["", "", "", ""]);
   const [errorMsg, setErrorMsg] = useState("");
 
   // Sync state when persona parameter or selection changes
@@ -136,12 +146,12 @@ function ActivateContent() {
   }
 
   // Password Checklist validation
-  const hasMinLength = password.length >= 12;
+  const hasMinLength = password.length >= 8;
   const hasCase = /[a-z]/.test(password) && /[A-Z]/.test(password);
   const hasNumber = /\d/.test(password);
   const hasSymbol = /[^A-Za-z0-9]/.test(password);
 
-  // Step Progress Index (out of 8)
+  // Step Progress Index (out of 9)
   const stepNumberMap: Record<Step, number> = {
     ghana_card: 3,
     selfie: 4,
@@ -149,6 +159,7 @@ function ActivateContent() {
     otp: 6,
     password: 7,
     pin: 8,
+    confirm_pin: 9,
   };
 
   function handleGhanaCardSubmit(e: React.FormEvent) {
@@ -174,15 +185,14 @@ function ActivateContent() {
     }, 600);
   }
 
-  function handleCaptureSelfie() {
+  function handleCaptureSelfie(imageDataUrl: string) {
+    setSelfieImage(imageDataUrl);
+    setSelfieTaken(true);
     setBusy(true);
     setTimeout(() => {
-      setSelfieTaken(true);
       setBusy(false);
-      setTimeout(() => {
-        setStep("review_details");
-      }, 500);
-    }, 1000);
+      setStep("review_details");
+    }, 800);
   }
 
   function handlePasswordSubmit(e: React.FormEvent) {
@@ -205,6 +215,8 @@ function ActivateContent() {
       return;
     }
     setErrorMsg("");
+    setPinDigits(["", "", "", ""]);
+    setConfirmPinDigits(["", "", "", ""]);
     setStep("pin");
   }
 
@@ -212,6 +224,23 @@ function ActivateContent() {
     const pin = incomingPin ?? pinDigits.join("");
     if (pin.length < 4 || busy) {
       if (pin.length < 4) setErrorMsg("Please enter a 4-digit PIN");
+      return;
+    }
+    setErrorMsg("");
+    setConfirmPinDigits(["", "", "", ""]);
+    setStep("confirm_pin");
+  }
+
+  function handleConfirmPinSubmit(incomingConfirmPin?: string) {
+    const confirmPin = incomingConfirmPin ?? confirmPinDigits.join("");
+    if (confirmPin.length < 4 || busy) {
+      if (confirmPin.length < 4) setErrorMsg("Please confirm your 4-digit PIN");
+      return;
+    }
+    const originalPin = pinDigits.join("");
+    if (confirmPin !== originalPin) {
+      setErrorMsg("PINs do not match. Please try again.");
+      setConfirmPinDigits(["", "", "", ""]);
       return;
     }
     setErrorMsg("");
@@ -232,7 +261,10 @@ function ActivateContent() {
   function handleBackStep() {
     setErrorMsg("");
     setBusy(false);
-    if (step === "pin") {
+    if (step === "confirm_pin") {
+      setConfirmPinDigits(["", "", "", ""]);
+      setStep("pin");
+    } else if (step === "pin") {
       setPinDigits(["", "", "", ""]);
       setStep("password");
     } else if (step === "password") {
@@ -245,6 +277,8 @@ function ActivateContent() {
       setDigits(Array(OTP_LENGTH).fill(""));
       setStep("review_details");
     } else if (step === "review_details") {
+      setSelfieTaken(false);
+      setSelfieImage(null);
       setStep("selfie");
     } else if (step === "selfie") {
       setStep("ghana_card");
@@ -261,51 +295,55 @@ function ActivateContent() {
     <AuthLayout
       title={
         step === "ghana_card"
-          ? "Enter your Ghana Card details"
+          ? "Let's Verify Your Account"
           : step === "selfie"
-          ? "Let's take a photo of you"
+          ? "Take a Selfie"
           : step === "review_details"
           ? isMultiAccount
-            ? "Choose your primary account"
+            ? "Choose Your Primary Account"
             : isJoint
-            ? "Verify joint account details"
-            : "Review and verify your details"
+            ? "Review Joint Account Details"
+            : "Review Your Details"
           : step === "otp"
-          ? "Enter the verification code"
+          ? "Enter Verification Code"
           : step === "password"
-          ? "Create a secure password"
-          : "Create your transaction PIN"
+          ? "Create Password"
+          : step === "pin"
+          ? "Set Your PIN"
+          : "Confirm Your PIN"
       }
       description={
         step === "ghana_card"
-          ? "We will verify your identity using the National Identification Authority register."
+          ? "Enter your card number to verify your identity."
           : step === "selfie"
-          ? "Hold your phone at eye level. Make sure you are in a well-lit area."
+          ? "Center your face in the frame."
           : step === "review_details"
           ? isMultiAccount
-            ? "We found multiple accounts linked to your Ghana Card. Select which account to set as your primary operating account."
+            ? "Select your primary account for everyday banking."
             : isJoint
-            ? "We matched your identity with an active GCB Joint Account mandate."
+            ? "Confirm your joint account details."
             : isMobileSync
-            ? "Existing GCB Mobile App profile matched. Verify your details below."
-            : "Confirm that these details match your existing GCB account."
+            ? "Confirm your details to link internet banking."
+            : "Confirm your details match your account records."
           : step === "otp"
           ? isJoint
-            ? `6-digit code sent to primary number ${activePersona.phone}. Co-signatory notice dispatched to ${activePersona.coSignatoryPhone}.`
+            ? `6-digit code sent to ${activePersona.phone}. Co-signatory notice sent to ${activePersona.coSignatoryPhone}.`
             : `6-digit code sent via ${
                 otpTarget === "sms"
                   ? `SMS to ${activePersona.phone}`
-                  : `Email to ${activePersona.email}`
-              }. Enter 000000 to see the error state.`
+                  : `email to ${activePersona.email}`
+              }.`
           : step === "password"
-          ? "Your password must be at least 12 characters and include upper, lower, numbers and symbols."
-          : "Choose a 4-digit PIN to authorize transfers and payments."
+          ? "Choose a password you will remember."
+          : step === "pin"
+          ? "Set a PIN for all your transactions in the app."
+          : "Re-enter your 4-digit PIN to confirm."
       }
       stepProgress={{
         current: stepNumberMap[step],
-        total: 8,
+        total: 9,
       }}
-      width={step === "review_details" ? "wide" : "compact"}
+      width="compact"
       footer={
         <div className="flex justify-center">
           <button
@@ -330,10 +368,10 @@ function ActivateContent() {
               </div>
               <div>
                 <span className="text-[13.5px] font-medium text-foreground">
-                  Mobile App User Detected
+                  Mobile App Profile Found
                 </span>
                 <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
-                  We found your GCB Mobile App account ({activePersona.holderName}). Enter your Ghana Card to link your web banking.
+                  Enter your Ghana Card to link your existing mobile app profile ({activePersona.holderName}).
                 </p>
               </div>
             </div>
@@ -346,10 +384,10 @@ function ActivateContent() {
               </div>
               <div>
                 <span className="text-[13.5px] font-medium text-foreground">
-                  Joint Account Onboarding
+                  Joint Account
                 </span>
                 <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
-                  Activating Internet Banking for {activePersona.holderName} (Joint Mandate: {activePersona.jointMandate}).
+                  Activating internet banking for {activePersona.holderName} ({activePersona.jointMandate}).
                 </p>
               </div>
             </div>
@@ -358,7 +396,7 @@ function ActivateContent() {
           {/* Card Input Field */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="ghana-card" className="text-[13.5px] font-medium text-foreground">
-              Ghana Card Number (PIN)
+              Ghana Card number
             </Label>
             <Input
               id="ghana-card"
@@ -368,9 +406,6 @@ function ActivateContent() {
               className="h-11 font-mono text-[14.5px] uppercase tracking-wider"
               autoFocus
             />
-            <p className="text-[12.5px] text-muted-foreground">
-              Format: GHA-XXXXXXXXX-X as shown on your physical card.
-            </p>
           </div>
 
           {errorMsg && (
@@ -391,7 +426,7 @@ function ActivateContent() {
             {busy ? (
               <>
                 <Loader2 size={16} className="mr-2 animate-spin" />
-                Verifying card details...
+                Verifying...
               </>
             ) : (
               "Continue"
@@ -402,42 +437,16 @@ function ActivateContent() {
 
       {/* STEP 2: Selfie / Photo Capture */}
       {step === "selfie" && (
-        <div className="flex flex-col items-center gap-6">
-          <div className="relative flex size-44 sm:size-52 items-center justify-center overflow-hidden rounded-full border-4 border-primary/30 bg-muted/30 shadow-inner">
-            {selfieTaken ? (
-              <div className="flex flex-col items-center gap-2 text-center text-primary">
-                <CheckCircle2 size={52} className="text-primary" />
-                <span className="text-[14px] font-medium text-foreground">Photo captured</span>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-2.5 text-center text-muted-foreground">
-                <Camera size={40} strokeWidth={1.7} />
-                <span className="text-[12.5px]">Position face in frame</span>
-              </div>
-            )}
-          </div>
-
-          <Button
-            type="button"
-            variant="default"
-            size="lg"
-            data-tour="activate-selfie"
-            onClick={handleCaptureSelfie}
-            disabled={busy || selfieTaken}
-            className="h-11 w-full text-[14px]"
-          >
-            {busy ? (
-              <>
-                <Loader2 size={16} className="mr-2 animate-spin" />
-                Verifying facial biometrics...
-              </>
-            ) : selfieTaken ? (
-              "Verified ✓"
-            ) : (
-              "Capture photo"
-            )}
-          </Button>
-        </div>
+        <SelfieCapture
+          onCapture={handleCaptureSelfie}
+          busy={busy}
+          capturedImage={selfieImage}
+          onRetake={() => {
+            setSelfieImage(null);
+            setSelfieTaken(false);
+          }}
+          dataTour="activate-selfie"
+        />
       )}
 
       {/* STEP 3: Review Details & Primary Account Picker */}
@@ -447,8 +456,14 @@ function ActivateContent() {
           <div className="rounded-2xl border border-border/80 bg-muted/20 p-4">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-full bg-primary/15 text-primary">
-                  {isJoint ? <Users size={18} /> : <User size={18} />}
+                <div className="flex size-10 items-center justify-center rounded-full bg-primary/15 text-primary overflow-hidden">
+                  {selfieImage ? (
+                    <img src={selfieImage} alt={activePersona.holderName} className="size-full object-cover" />
+                  ) : isJoint ? (
+                    <Users size={18} />
+                  ) : (
+                    <User size={18} />
+                  )}
                 </div>
                 <div>
                   <span className="text-[14.5px] font-medium text-foreground block">
@@ -473,44 +488,46 @@ function ActivateContent() {
               <div className="flex items-center justify-between px-1">
                 <span className="text-[13px] font-medium text-foreground flex items-center gap-1.5">
                   <Layers size={14} className="text-primary" />
-                  Select Primary Account ({activePersona.accounts.length} found)
+                  Primary Account
                 </span>
                 <span className="text-[11.5px] text-muted-foreground">
                   Default for transfers &amp; statements
                 </span>
               </div>
 
-              <div className="space-y-2.5" data-tour="activate-account-picker">
-                {activePersona.accounts.map((acc) => {
-                  const isSelected = acc.id === selectedPrimaryAccountId;
-                  return (
-                    <button
-                      key={acc.id}
-                      type="button"
-                      onClick={() => setSelectedPrimaryAccountId(acc.id)}
-                      className={`group w-full flex items-center justify-between rounded-2xl border p-4 text-left transition-all duration-150 cursor-pointer active:scale-[0.99] ${
-                        isSelected
-                          ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/40"
-                          : "border-border/80 bg-card hover:border-primary/40 hover:bg-muted/30"
-                      }`}
-                    >
-                      <div className="flex items-center gap-3.5 min-w-0">
-                        {/* Radio circle */}
-                        <div
-                          className={`flex size-5 shrink-0 items-center justify-center rounded-full border transition-all ${
-                            isSelected
-                              ? "border-primary bg-primary text-primary-foreground"
-                              : "border-muted-foreground/40 group-hover:border-primary/60"
-                          }`}
-                        >
-                          {isSelected && <div className="size-2 rounded-full bg-primary-foreground" />}
-                        </div>
-
-                        <div className="min-w-0">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-[14px] font-medium text-foreground truncate">
-                              {acc.name}
-                            </span>
+              <div data-tour="activate-account-picker">
+                <Select
+                  value={selectedPrimaryAccountId}
+                  onValueChange={(val) => val && setSelectedPrimaryAccountId(val)}
+                >
+                  <SelectTrigger className="h-12 min-h-12 py-2 px-3.5 w-full rounded-xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center justify-between">
+                    <SelectValue>
+                      <div className="flex items-center gap-2 truncate">
+                        <span className="font-medium text-foreground truncate">
+                          {selectedPrimaryAccount.name}
+                        </span>
+                        <span className="text-muted-foreground font-mono text-[12.5px] shrink-0">
+                          •••• {selectedPrimaryAccount.number.slice(-4)}
+                        </span>
+                        {selectedPrimaryAccount.isJoint && (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-primary/15 px-1.5 py-0.2 text-[10px] font-medium text-foreground shrink-0">
+                            <Users size={10} className="text-primary" />
+                            Joint
+                          </span>
+                        )}
+                      </div>
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {activePersona.accounts.map((acc) => (
+                      <SelectItem
+                        key={acc.id}
+                        value={acc.id}
+                        label={`${acc.name} · •••• ${acc.number.slice(-4)}`}
+                      >
+                        <div className="flex items-center justify-between w-full gap-3 py-0.5">
+                          <div className="flex items-center gap-2 truncate">
+                            <span className="font-medium text-foreground truncate">{acc.name}</span>
                             <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10.5px] text-muted-foreground shrink-0">
                               {acc.type}
                             </span>
@@ -521,30 +538,14 @@ function ActivateContent() {
                               </span>
                             )}
                           </div>
-                          <span className="text-[12.5px] text-muted-foreground font-mono mt-0.5 block">
+                          <span className="text-[12px] text-muted-foreground font-mono shrink-0">
                             •••• {acc.number.slice(-4)}
-                            {acc.isJoint && acc.jointHolders && ` · ${acc.jointHolders.join(" & ")}`}
                           </span>
                         </div>
-                      </div>
-
-                      <div className="text-right shrink-0 ml-3">
-                        <span className="text-[13.5px] font-medium text-foreground tabular">
-                          {acc.currency} {acc.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                        </span>
-                        {isSelected ? (
-                          <span className="mt-1 block rounded-full bg-primary px-2 py-0.5 text-[10px] font-medium text-primary-foreground text-center">
-                            Primary Account
-                          </span>
-                        ) : (
-                          <span className="mt-1 block text-[11px] text-muted-foreground text-right">
-                            Click to set primary
-                          </span>
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Dynamic Mandate Disclosure if selected account is Joint */}
@@ -557,7 +558,7 @@ function ActivateContent() {
                         Joint Mandate: {selectedPrimaryAccount.mandate || "Both Signatures Required"}
                       </span>
                       <p className="text-[12px] text-muted-foreground mt-0.5 leading-relaxed">
-                        Security and notification alerts will be sent to both primary signatory Kwame and co-signatory Efua upon activation.
+                        Alerts will be sent to both Kwame and Efua upon activation.
                       </p>
                     </div>
                   </div>
@@ -591,13 +592,13 @@ function ActivateContent() {
             </div>
           )}
 
-          <p className="text-center text-[12.5px] leading-relaxed text-muted-foreground">
-            {isJoint
-              ? "Both account holders will receive security confirmation notices upon completing activation."
-              : isMultiAccount
-              ? "All your accounts will be accessible on Internet Banking. You can change your primary account anytime in Settings."
-              : "We have partially masked your contact details for privacy and security."}
-          </p>
+          {(isJoint || isMultiAccount) && (
+            <p className="text-center text-[12.5px] leading-relaxed text-muted-foreground">
+              {isJoint
+                ? "Both account holders will receive a confirmation alert upon activation."
+                : "All accounts will be linked. You can change your primary account anytime in Settings."}
+            </p>
+          )}
 
           <Button
             type="button"
@@ -611,10 +612,10 @@ function ActivateContent() {
             {busy ? (
               <>
                 <Loader2 size={16} className="mr-2 animate-spin" />
-                Sending verification code...
+                Sending code...
               </>
             ) : (
-              "Confirm and send code"
+              "Continue"
             )}
           </Button>
 
@@ -653,7 +654,7 @@ function ActivateContent() {
 
           {isJoint && (
             <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3.5 text-[12.5px] text-muted-foreground">
-              <span className="font-medium text-foreground">Joint mandate notice:</span> An alert has also been sent to co-holder Efua ({activePersona.coSignatoryPhone}) confirming this activation request.
+              <span className="font-medium text-foreground">Joint mandate notice:</span> Notice sent to co-holder Efua ({activePersona.coSignatoryPhone}).
             </div>
           )}
 
@@ -771,32 +772,59 @@ function ActivateContent() {
             </div>
           </div>
 
-          <p className="text-[12.5px] text-muted-foreground">
-            Demo — any matching password works. Enter{" "}
-            <span className="tabular font-mono text-foreground">00000</span> to see the error state.
-          </p>
-
-          {/* Password Checklist */}
-          <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 space-y-2.5">
-            <span className="text-[12.5px] font-medium text-foreground">
-              Password requirements:
-            </span>
+          {/* Password Requirements Checklist */}
+          <div className="rounded-2xl border border-border/80 bg-muted/20 p-4">
+            <p className="mb-2.5 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
+              Password Requirements
+            </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-[12.5px]">
-              <div className={`flex items-center gap-2 ${hasMinLength ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
-                <Check size={14} className={hasMinLength ? "opacity-100" : "opacity-30"} />
-                <span>At least 12 characters</span>
+              <div className="flex items-center gap-2">
+                <span
+                  className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
+                    hasMinLength ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  <Check size={11} strokeWidth={3} />
+                </span>
+                <span className={hasMinLength ? "text-foreground font-medium" : "text-muted-foreground"}>
+                  At least 8 characters
+                </span>
               </div>
-              <div className={`flex items-center gap-2 ${hasCase ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
-                <Check size={14} className={hasCase ? "opacity-100" : "opacity-30"} />
-                <span>Upper and lower case</span>
+              <div className="flex items-center gap-2">
+                <span
+                  className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
+                    hasCase ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  <Check size={11} strokeWidth={3} />
+                </span>
+                <span className={hasCase ? "text-foreground font-medium" : "text-muted-foreground"}>
+                  Upper and lower case
+                </span>
               </div>
-              <div className={`flex items-center gap-2 ${hasNumber ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
-                <Check size={14} className={hasNumber ? "opacity-100" : "opacity-30"} />
-                <span>At least 1 number</span>
+              <div className="flex items-center gap-2">
+                <span
+                  className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
+                    hasNumber ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  <Check size={11} strokeWidth={3} />
+                </span>
+                <span className={hasNumber ? "text-foreground font-medium" : "text-muted-foreground"}>
+                  A number
+                </span>
               </div>
-              <div className={`flex items-center gap-2 ${hasSymbol ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"}`}>
-                <Check size={14} className={hasSymbol ? "opacity-100" : "opacity-30"} />
-                <span>At least 1 special character</span>
+              <div className="flex items-center gap-2">
+                <span
+                  className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
+                    hasSymbol ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  <Check size={11} strokeWidth={3} />
+                </span>
+                <span className={hasSymbol ? "text-foreground font-medium" : "text-muted-foreground"}>
+                  A symbol
+                </span>
               </div>
             </div>
           </div>
@@ -818,7 +846,7 @@ function ActivateContent() {
             data-tour="activate-password"
             className="mt-2 h-11 w-full text-[14px]"
           >
-            Save password and continue
+            Continue
           </Button>
         </form>
       )}
@@ -848,10 +876,47 @@ function ActivateContent() {
             />
           </div>
 
+          {errorMsg && (
+            <div
+              role="alert"
+              className="w-full flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3.5 text-[13px] text-destructive"
+            >
+              <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+        </form>
+      )}
+
+      {/* STEP 7: Confirm 4-digit PIN */}
+      {step === "confirm_pin" && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleConfirmPinSubmit();
+          }}
+          className="flex flex-col items-center gap-6"
+        >
+          <div className="w-full" data-tour="activate-confirm-pin">
+            <OtpInput
+              value={confirmPinDigits}
+              onChange={(next) => {
+                setConfirmPinDigits(next);
+                if (errorMsg) setErrorMsg("");
+              }}
+              length={4}
+              mask
+              onComplete={(pin) => handleConfirmPinSubmit(pin)}
+              disabled={busy}
+              invalid={!!errorMsg}
+              autoFocus
+            />
+          </div>
+
           {busy && (
             <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
               <Loader2 size={16} className="animate-spin text-primary" aria-hidden="true" />
-              <span>Completing activation...</span>
+              <span>Activating...</span>
             </div>
           )}
 

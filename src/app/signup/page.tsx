@@ -18,10 +18,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
+import SelfieCapture from "@/components/auth/SelfieCapture";
 import { useSession } from "@/lib/session-store";
 import { ACTORS } from "@/lib/mock-data";
 
-type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "pin";
+type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "pin" | "confirm_pin";
 
 const RESEND_SECONDS = 30;
 
@@ -34,6 +35,7 @@ function SignupContent() {
   const [step, setStep] = useState<Step>("ghana_card");
   const [ghanaCard, setGhanaCard] = useState("GHA-7890123456-1");
   const [selfieTaken, setSelfieTaken] = useState(false);
+  const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   // OTP State
@@ -47,6 +49,7 @@ function SignupContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
+  const [confirmPinDigits, setConfirmPinDigits] = useState<string[]>(["", "", "", ""]);
   const [errorMsg, setErrorMsg] = useState("");
 
   // OTP Countdown
@@ -85,7 +88,7 @@ function SignupContent() {
     }, 700);
   }
 
-  const hasMinLength = password.length >= 12;
+  const hasMinLength = password.length >= 8;
   const hasCase = /[a-z]/.test(password) && /[A-Z]/.test(password);
   const hasNumber = /\d/.test(password);
   const hasSymbol = /[^A-Za-z0-9]/.test(password);
@@ -97,6 +100,7 @@ function SignupContent() {
     otp: 6,
     password: 7,
     pin: 8,
+    confirm_pin: 9,
   };
 
   function handleGhanaCardSubmit(e: React.FormEvent) {
@@ -113,15 +117,14 @@ function SignupContent() {
     }, 600);
   }
 
-  function handleCaptureSelfie() {
+  function handleCaptureSelfie(imageDataUrl: string) {
+    setSelfieImage(imageDataUrl);
+    setSelfieTaken(true);
     setBusy(true);
     setTimeout(() => {
-      setSelfieTaken(true);
       setBusy(false);
-      setTimeout(() => {
-        setStep("review_details");
-      }, 500);
-    }, 1200);
+      setStep("review_details");
+    }, 800);
   }
 
   function handlePasswordSubmit(e: React.FormEvent) {
@@ -144,6 +147,8 @@ function SignupContent() {
       return;
     }
     setErrorMsg("");
+    setPinDigits(["", "", "", ""]);
+    setConfirmPinDigits(["", "", "", ""]);
     setStep("pin");
   }
 
@@ -151,6 +156,23 @@ function SignupContent() {
     const pin = incomingPin ?? pinDigits.join("");
     if (pin.length < 4 || busy) {
       if (pin.length < 4) setErrorMsg("Please enter a 4-digit PIN");
+      return;
+    }
+    setErrorMsg("");
+    setConfirmPinDigits(["", "", "", ""]);
+    setStep("confirm_pin");
+  }
+
+  function handleConfirmPinSubmit(incomingConfirmPin?: string) {
+    const confirmPin = incomingConfirmPin ?? confirmPinDigits.join("");
+    if (confirmPin.length < 4 || busy) {
+      if (confirmPin.length < 4) setErrorMsg("Please confirm your 4-digit PIN");
+      return;
+    }
+    const originalPin = pinDigits.join("");
+    if (confirmPin !== originalPin) {
+      setErrorMsg("PINs do not match. Please try again.");
+      setConfirmPinDigits(["", "", "", ""]);
       return;
     }
     setErrorMsg("");
@@ -171,7 +193,10 @@ function SignupContent() {
   function handleBackStep() {
     setErrorMsg("");
     setBusy(false);
-    if (step === "pin") {
+    if (step === "confirm_pin") {
+      setConfirmPinDigits(["", "", "", ""]);
+      setStep("pin");
+    } else if (step === "pin") {
       setPinDigits(["", "", "", ""]);
       setStep("password");
     } else if (step === "password") {
@@ -184,6 +209,8 @@ function SignupContent() {
       setDigits(Array(OTP_LENGTH).fill(""));
       setStep("review_details");
     } else if (step === "review_details") {
+      setSelfieTaken(false);
+      setSelfieImage(null);
       setStep("selfie");
     } else if (step === "selfie") {
       setStep("ghana_card");
@@ -195,32 +222,40 @@ function SignupContent() {
   return (
     <AuthLayout
       title={
-        step === "ghana_card" || step === "selfie"
-          ? "Let’s find your account"
+        step === "ghana_card"
+          ? "Let's Verify Your Account"
+          : step === "selfie"
+          ? "Take a Selfie"
           : step === "review_details"
-          ? "Please verify your details"
+          ? "Review Your Details"
           : step === "otp"
-          ? "Enter the code we sent"
+          ? "Enter Verification Code"
           : step === "password"
-          ? "Set up how you sign in"
-          : "Create transaction PIN"
+          ? "Create Password"
+          : step === "pin"
+          ? "Set Your PIN"
+          : "Confirm Your PIN"
       }
       description={
-        step === "ghana_card" || step === "selfie"
-          ? "To keep things simple and secure, we’ll quickly verify your identity with your Ghana Card."
+        step === "ghana_card"
+          ? "Enter your card number to verify your identity."
+          : step === "selfie"
+          ? "Center your face in the circle."
           : step === "review_details"
-          ? "Please review your information to make sure everything is accurate before you continue."
+          ? "Confirm your details match your records."
           : step === "otp"
           ? otpTarget === "sms"
-            ? "6-digit code sent to +233 24 *** *567. It expires in 5 minutes. Enter 000000 to see the error state."
-            : "6-digit code sent to am•••••@example.com. It expires in 5 minutes. Enter 000000 to see the error state."
+            ? "6-digit code sent to +233 24 *** *567."
+            : "6-digit code sent to am•••••@example.com."
           : step === "password"
-          ? "Create a secure password to access your account."
-          : "Choose a 4-digit PIN to authorize transfers and payments."
+          ? "Choose a password you will remember."
+          : step === "pin"
+          ? "Set a PIN for all your transactions in the app."
+          : "Re-enter your 4-digit PIN to confirm."
       }
       stepProgress={{
         current: stepNumberMap[step],
-        total: 8,
+        total: 9,
       }}
       width={step === "review_details" ? "default" : "compact"}
       footer={
@@ -241,7 +276,7 @@ function SignupContent() {
         <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
             <Label htmlFor="ghanaCard" className="text-[13.5px] font-medium text-foreground">
-              Enter Ghana Card Number
+              Ghana Card number
             </Label>
             <Input
               id="ghanaCard"
@@ -272,10 +307,10 @@ function SignupContent() {
             {busy ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
-                Verifying Card with NIA…
+                Verifying...
               </>
             ) : (
-              "Proceed"
+              "Continue"
             )}
           </Button>
         </form>
@@ -283,42 +318,16 @@ function SignupContent() {
 
       {/* STEP 2: Selfie / Photo Capture */}
       {step === "selfie" && (
-        <div className="flex flex-col items-center gap-6">
-          <div className="relative flex size-44 sm:size-52 items-center justify-center overflow-hidden rounded-full border-4 border-primary/30 bg-muted/30 shadow-inner">
-            {selfieTaken ? (
-              <div className="flex flex-col items-center gap-2 text-center text-primary">
-                <CheckCircle2 size={52} className="text-primary" />
-                <span className="text-[14px] font-medium text-foreground">Selfie Verified</span>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-2.5 text-center text-muted-foreground">
-                <Camera size={40} strokeWidth={1.7} />
-                <span className="text-[12.5px]">Position face in circle</span>
-              </div>
-            )}
-          </div>
-
-          <Button
-            type="button"
-            variant="default"
-            size="lg"
-            data-tour="signup-selfie"
-            onClick={handleCaptureSelfie}
-            disabled={busy || selfieTaken}
-            className="h-11 w-full text-[14px]"
-          >
-            {busy ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                Verifying Biometric Liveness…
-              </>
-            ) : selfieTaken ? (
-              "Verified ✓"
-            ) : (
-              "Take photo"
-            )}
-          </Button>
-        </div>
+        <SelfieCapture
+          onCapture={handleCaptureSelfie}
+          busy={busy}
+          capturedImage={selfieImage}
+          onRetake={() => {
+            setSelfieImage(null);
+            setSelfieTaken(false);
+          }}
+          dataTour="signup-selfie"
+        />
       )}
 
       {/* STEP 3: Review Details */}
@@ -343,10 +352,6 @@ function SignupContent() {
             </div>
           </div>
 
-          <p className="text-center text-[12.5px] leading-relaxed text-muted-foreground">
-            We&apos;ve verified your identity against national records. Proceed to verify your phone.
-          </p>
-
           <Button
             type="button"
             variant="default"
@@ -359,10 +364,10 @@ function SignupContent() {
             {busy ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
-                Sending verification code…
+                Sending code...
               </>
             ) : (
-              "Proceed"
+              "Continue"
             )}
           </Button>
         </div>
@@ -394,7 +399,7 @@ function SignupContent() {
           {busy && (
             <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
               <Loader2 size={16} className="animate-spin text-primary" aria-hidden="true" />
-              <span>Validating Code…</span>
+              <span>Verifying code...</span>
             </div>
           )}
 
@@ -437,9 +442,7 @@ function SignupContent() {
               }}
               className="text-center text-[12.5px] text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
             >
-              {otpTarget === "sms"
-                ? "Send it to ts•••••@example.com instead"
-                : "Send it to +233 24 *** *567 instead"}
+              Send to {otpTarget === "sms" ? "email instead" : "SMS instead"}
             </button>
           </div>
         </form>
@@ -507,11 +510,6 @@ function SignupContent() {
             </div>
           </div>
 
-          <p className="text-[12.5px] text-muted-foreground">
-            Demo — any matching password works. Enter{" "}
-            <span className="tabular font-mono text-foreground">00000</span> to see the error state.
-          </p>
-
           {/* Password Requirements Checklist */}
           <div className="rounded-2xl border border-border/80 bg-muted/20 p-4">
             <p className="mb-2.5 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -527,7 +525,7 @@ function SignupContent() {
                   <Check size={11} strokeWidth={3} />
                 </span>
                 <span className={hasMinLength ? "text-foreground font-medium" : "text-muted-foreground"}>
-                  At least 12 characters
+                  At least 8 characters
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -586,12 +584,12 @@ function SignupContent() {
             data-tour="signup-password"
             className="mt-2 h-11 w-full text-[14px]"
           >
-            Save password and continue
+            Continue
           </Button>
         </form>
       )}
 
-      {/* STEP 6: Create Transaction PIN */}
+      {/* STEP 6: Set PIN */}
       {step === "pin" && (
         <form
           onSubmit={(e) => {
@@ -616,10 +614,47 @@ function SignupContent() {
             />
           </div>
 
+          {errorMsg && (
+            <div
+              role="alert"
+              className="w-full flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3.5 text-[13px] text-destructive"
+            >
+              <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
+              <span>{errorMsg}</span>
+            </div>
+          )}
+        </form>
+      )}
+
+      {/* STEP 7: Confirm PIN */}
+      {step === "confirm_pin" && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleConfirmPinSubmit();
+          }}
+          className="flex flex-col items-center gap-6"
+        >
+          <div className="w-full" data-tour="signup-confirm-pin">
+            <OtpInput
+              value={confirmPinDigits}
+              onChange={(next) => {
+                setConfirmPinDigits(next);
+                if (errorMsg) setErrorMsg("");
+              }}
+              length={4}
+              mask
+              onComplete={(pin) => handleConfirmPinSubmit(pin)}
+              disabled={busy}
+              invalid={!!errorMsg}
+              autoFocus
+            />
+          </div>
+
           {busy && (
             <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
               <Loader2 size={16} className="animate-spin text-primary" aria-hidden="true" />
-              <span>Setting up your account…</span>
+              <span>Setting up account...</span>
             </div>
           )}
 

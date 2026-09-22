@@ -15,8 +15,9 @@
  * ledger). Semantic tokens + zero-bold; the amber CTA/banner use the brand gold.
  */
 
-import { useId, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Eye,
   EyeOff,
@@ -29,7 +30,7 @@ import {
   QrCode,
   Send,
   Download,
-  EllipsisVertical,
+  RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Account, Transaction, PaymentCard } from "@/lib/mock-data";
@@ -42,6 +43,7 @@ import {
   AccountRows,
   FxRatesMini,
 } from "./MinimalKit";
+import { SpendsRadialChart } from "@/components/dashboard/SpendsRadialChart";
 
 export interface DashData {
   firstName: string;
@@ -83,6 +85,15 @@ function CardHeader({ title, href, cta = "View all" }: { title: string; href?: s
 }
 
 function ActionButtons() {
+  const router = useRouter();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    router.refresh();
+    setTimeout(() => setIsRefreshing(false), 600);
+  };
+
   return (
     <div className="flex flex-wrap items-center gap-3">
       <Link
@@ -108,10 +119,11 @@ function ActionButtons() {
       </Link>
       <button
         type="button"
+        onClick={handleRefresh}
         className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-        aria-label="More actions"
+        aria-label="Refresh dashboard"
       >
-        <EllipsisVertical size={18} strokeWidth={1.8} />
+        <RefreshCw size={18} strokeWidth={1.8} className={cn("transition-transform", isRefreshing && "animate-spin")} />
       </button>
     </div>
   );
@@ -231,85 +243,7 @@ function SuggestedForYou() {
   );
 }
 
-/* ── Analytics — semicircle spend gauge ──────────────────────────────────── */
 
-const RANGES = ["1w", "1m", "3m", "6m", "1y"] as const;
-
-function SpendGauge({ breakdown, showAmounts }: { breakdown: SpendBreakdown; showAmounts: boolean }) {
-  const [range, setRange] = useState<(typeof RANGES)[number]>("1y");
-  const gid = useId();
-
-  // Semicircle geometry (top half), rounded segments with small gaps.
-  const cx = 130;
-  const cy = 130;
-  const r = 100;
-  const stroke = 18;
-  const circ = Math.PI * r; // half circumference
-  const gap = 6;
-  const slices = breakdown.slices;
-  const totalGap = gap * Math.max(slices.length, 1);
-  const drawable = circ - totalGap;
-
-  let offset = 0;
-  const segs = slices.map((s) => {
-    const len = Math.max(s.share * drawable, 1);
-    const seg = { len, dash: offset, color: s.color };
-    offset += len + gap;
-    return seg;
-  });
-
-  const arc = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
-
-  return (
-    <Card>
-      <CardHeader title="Spending" href="/reports" cta="View" />
-      <div className="flex flex-col items-center gap-8">
-        <div className="relative w-full max-w-[260px]">
-          <svg viewBox="0 0 260 150" className="w-full overflow-visible">
-            <path d={arc} fill="none" stroke="var(--muted)" strokeWidth={stroke} strokeLinecap="round" />
-            <g key={gid}>
-              {segs.map((seg, i) => (
-                <path
-                  key={i}
-                  d={arc}
-                  fill="none"
-                  stroke={seg.color}
-                  strokeWidth={stroke}
-                  strokeLinecap="round"
-                  strokeDasharray={`${seg.len} ${circ * 2}`}
-                  strokeDashoffset={-seg.dash}
-                />
-              ))}
-            </g>
-            <text x={cx} y={112} textAnchor="middle" className="fill-foreground tabular text-[17px]">
-              {showAmounts ? fmtGHS(breakdown.total, true) : "GHS ••••"}
-            </text>
-            <text x={cx} y={132} textAnchor="middle" className="fill-muted-foreground text-[12.5px]">
-              Total spend
-            </text>
-          </svg>
-        </div>
-        <div className="flex w-full items-center gap-2">
-          {RANGES.map((rg) => (
-            <button
-              key={rg}
-              type="button"
-              onClick={() => setRange(rg)}
-              className={cn(
-                "flex-1 rounded-full px-4 py-1 text-[14px] leading-none transition-colors cursor-pointer",
-                range === rg
-                  ? "bg-foreground text-background"
-                  : "border border-border text-foreground hover:bg-muted",
-              )}
-            >
-              {rg}
-            </button>
-          ))}
-        </div>
-      </div>
-    </Card>
-  );
-}
 
 /* ── Promo banner ────────────────────────────────────────────────────────── */
 
@@ -393,7 +327,7 @@ export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
             <CardsMini cards={data.cards} />
           </Card>
 
-          <SpendGauge breakdown={data.breakdown} showAmounts={showAmounts} />
+          <SpendsRadialChart breakdown={data.breakdown} showAmounts={showAmounts} />
 
           <div className="lg:col-span-2">
             <DisclosureBar label="Exchange rates">

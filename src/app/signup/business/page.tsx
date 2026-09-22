@@ -278,11 +278,6 @@ export default function BusinessSignupPage() {
               </Select>
             </div>
 
-            <p className="text-[12.5px] text-muted-foreground">
-              We check this against your incorporation documents later, so it&apos;s fine if you
-              don&apos;t have everything else to hand yet.
-            </p>
-
             <Button
               type="submit"
               variant="default"
@@ -786,21 +781,21 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
 
 function resolveHeadings(step: BusinessSignupStep, variant: BusinessSignupVariant) {
   if (step === "submitted") {
-    return { icon: CheckCircle2, title: "Application submitted", description: "We'll be in touch." };
+    return { icon: CheckCircle2, title: "Application Submitted", description: "We'll review your application within 2 business days." };
   }
   if (step === "review") {
-    return { icon: ClipboardCheck, title: "Review your application", description: "Check everything before it goes to us." };
+    return { icon: ClipboardCheck, title: "Review Your Application", description: "Review and confirm your application details." };
   }
   if (step === "documents") {
-    return { icon: FileText, title: "Upload your documents", description: "What Bank of Ghana requires to open a business account." };
+    return { icon: FileText, title: "Upload Your Documents", description: "Required documents for business registration." };
   }
   if (step === "signatories") {
-    return { icon: Users, title: "Authorised signatories", description: "Who can act for the company on this account." };
+    return { icon: Users, title: "Authorised Signatories", description: "People authorised to operate this account." };
   }
   if (step === "contact") {
-    return { icon: UserPlus, title: "Primary contact", description: "The person we'll reach about this application." };
+    return { icon: UserPlus, title: "Primary Contact", description: "Contact person for this application." };
   }
   return variant === "existingCustomer"
-    ? { icon: CheckCircle2, title: "Already a GCB customer", description: "This company doesn't need a new application." }
-    : { icon: Building2, title: "Open a business account", description: "We review every application before it opens." };
+    ? { icon: CheckCircle2, title: "Already a GCB Customer", description: "This company is already registered with GCB." }
+    : { icon: Building2, title: "Open a Business Account", description: "Enter your company details to begin." };
 }
