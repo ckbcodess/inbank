@@ -71,13 +71,34 @@ export interface SpendBreakdown {
   count: number;
 }
 
-/** Spend by category, from settled debits that carry a category. */
+/** Latest ledger date for a profile — the anchor for trailing windows. */
+function latestLedgerDate(txns: Transaction[]): string | null {
+  return txns.reduce<string | null>((max, t) => (max === null || t.date > max ? t.date : max), null);
+}
+
+/** ISO date `days` before `iso` (exclusive lower bound of a trailing window). */
+function daysBefore(iso: string, days: number): string {
+  return new Date(new Date(iso).getTime() - days * DAY_MS).toISOString().slice(0, 10);
+}
+
+/**
+ * Spend by category, from debits that carry a category and didn't fail.
+ * With `days`, only the trailing window ending on the latest ledger entry.
+ */
 export function spendBreakdownForProfile(
   kind: "RETAIL" | "CORPORATE" = "RETAIL",
+  days?: number,
 ): SpendBreakdown {
-  const debits = transactionsForProfile(kind).filter(
+  const all = transactionsForProfile(kind);
+  const latest = latestLedgerDate(all);
+  const from = days && latest ? daysBefore(latest, days) : null;
+  const debits = all.filter(
     (t) =>
-      t.direction === "debit" && t.state !== "failed-single" && t.category,
+      t.direction === "debit" &&
+      typeof t.state === "string" &&
+      !t.state.startsWith("failed") &&
+      t.category &&
+      (from === null || t.date > from),
   );
   const byCategory = new Map<string, number>();
   for (const t of debits) {
@@ -91,6 +112,26 @@ export function spendBreakdownForProfile(
     [...byCategory.entries()].map(([label, amount]) => ({ label, amount })),
   );
   return { total, slices, count: debits.length };
+}
+
+export const SPEND_RANGES = ["1w", "1m", "3m", "6m", "1y"] as const;
+export type SpendRange = (typeof SPEND_RANGES)[number];
+
+const SPEND_RANGE_DAYS: Record<SpendRange, number> = {
+  "1w": 7,
+  "1m": 30,
+  "3m": 91,
+  "6m": 182,
+  "1y": 365,
+};
+
+/** One real breakdown per range, for the dashboard's range pills. */
+export function spendByRangeForProfile(
+  kind: "RETAIL" | "CORPORATE" = "RETAIL",
+): Record<SpendRange, SpendBreakdown> {
+  return Object.fromEntries(
+    SPEND_RANGES.map((r) => [r, spendBreakdownForProfile(kind, SPEND_RANGE_DAYS[r])]),
+  ) as Record<SpendRange, SpendBreakdown>;
 }
 
 /** Account balances as allocation slices — for a net-worth style bar. */
@@ -170,6 +211,35 @@ export function balanceTrendForProfile(
   return { points, current, delta, deltaPct, spanDays };
 }
 
+/* ── Cash flow ───────────────────────────────────────────────────────────── */
+
+export interface CashFlow {
+  moneyIn: number;
+  moneyOut: number;
+  /** Window length in days. */
+  days: number;
+}
+
+/**
+ * Settled money in vs money out over a trailing window, anchored on the most
+ * recent ledger entry so the figure always reflects real movement.
+ */
+export function cashFlowForProfile(
+  kind: "RETAIL" | "CORPORATE" = "RETAIL",
+  days = 30,
+): CashFlow {
+  const settled = transactionsForProfile(kind).filter((t) => t.state === "completed");
+  const latest = latestLedgerDate(settled);
+  if (latest === null) return { moneyIn: 0, moneyOut: 0, days };
+  const from = daysBefore(latest, days);
+  const inWindow = settled.filter((t) => t.date > from);
+  return {
+    moneyIn: sumMoney(inWindow.filter((t) => t.direction === "credit").map((t) => Math.abs(t.amount))),
+    moneyOut: sumMoney(inWindow.filter((t) => t.direction === "debit").map((t) => Math.abs(t.amount))),
+    days,
+  };
+}
+
 /* ── Needs attention ─────────────────────────────────────────────────────── */
 
 export type AttentionTone = "destructive" | "warning" | "muted";
@@ -206,12 +276,13 @@ export function attentionItemsForProfile(
   const DAYS_90 = 90 * DAY_MS;
 
   for (const t of transactionsForProfile(kind)) {
-    if (typeof t.state === "string" && t.state.startsWith("failed")) {
+    // Outgoing only — a failed incoming transfer is the sender's to retry.
+    if (t.direction === "debit" && typeof t.state === "string" && t.state.startsWith("failed")) {
       items.push({
         id: `fail-${t.id}`,
-        tone: "destructive",
-        title: "Payment failed",
-        detail: t.counterparty || t.description,
+        tone: "warning",
+        title: "Payment didn't go through",
+        detail: `${t.counterparty || t.description} · see why and retry`,
         href: `/transactions/${t.id}`,
       });
     }

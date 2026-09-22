@@ -10,8 +10,10 @@ import {
 } from "@/lib/mock-data";
 import { sumMoney } from "@/lib/money";
 import {
-  spendBreakdownForProfile,
+  spendByRangeForProfile,
   accountAllocation,
+  cashFlowForProfile,
+  attentionItemsForProfile,
 } from "@/lib/dashboard-insights";
 import { GcbDashboard, type DashData } from "@/components/dashboard/v2/GcbDashboard";
 
@@ -29,12 +31,14 @@ export default function OverviewPage() {
       firstName: actor.name.split(" ")[0],
       accounts,
       netWorth: sumMoney(accounts.map((a) => a.balance ?? 0)),
-      breakdown: spendBreakdownForProfile(kind),
+      spendByRange: spendByRangeForProfile(kind),
       latestTxns: transactionsForProfile(kind)
         .slice()
         .sort((a, b) => b.date.localeCompare(a.date)),
       cards: cardsForProfile(kind),
       allocation: accountAllocation(accounts),
+      cashFlow: cashFlowForProfile(kind),
+      attention: attentionItemsForProfile(kind),
     };
   }, [actor, activeProfile, kind]);
 

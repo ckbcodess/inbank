@@ -5,11 +5,12 @@
  *
  * Layout (inside the existing app shell / icon sidebar / top header):
  *   1. Greeting + action buttons (Send Money / Pay Bill / Top-Up)
- *   2. Net Worth + eye toggle
- *   3. Accounts disclosure bar
- *   4. 2×2 grid: Recent Activity · Suggested for you · Cards · Analytics gauge
- *   5. FX Rates disclosure bar
- *   6. Promo banner
+ *   2. Total balance + eye toggle, with a 30-day money in / out line
+ *   3. Needs attention (only when something does)
+ *   4. Accounts disclosure bar (allocation peek while collapsed)
+ *   5. 2×2 grid: Recent Activity · Pay again · Cards · Analytics gauge
+ *   6. FX Rates disclosure bar (headline rate peek while collapsed)
+ *   7. Promo banner
  *
  * Honest data throughout (net worth, activity, cards, spend gauge from the
  * ledger). Semantic tokens + zero-bold; the amber CTA/banner use the brand gold.
@@ -22,11 +23,7 @@ import {
   Eye,
   EyeOff,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  User,
   Receipt,
-  Smartphone,
   QrCode,
   Send,
   Download,
@@ -34,14 +31,17 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Account, Transaction, PaymentCard } from "@/lib/mock-data";
-import type { SpendBreakdown, Slice } from "@/lib/dashboard-insights";
+import type { SpendBreakdown, SpendRange, Slice, CashFlow, AttentionItem } from "@/lib/dashboard-insights";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import {
   fmtGHS,
   RecentTransactions,
   CardsMini,
   AccountRows,
+  AllocationBar,
+  AttentionBand,
   FxRatesMini,
+  fxPeek,
 } from "./MinimalKit";
 import { SpendsRadialChart } from "@/components/dashboard/SpendsRadialChart";
 
@@ -49,10 +49,12 @@ export interface DashData {
   firstName: string;
   accounts: Account[];
   netWorth: number;
-  breakdown: SpendBreakdown;
+  spendByRange: Record<SpendRange, SpendBreakdown>;
   latestTxns: Transaction[];
   cards: PaymentCard[];
   allocation: { total: number; slices: Slice[] };
+  cashFlow: CashFlow;
+  attention: AttentionItem[];
 }
 
 interface DashProps {
@@ -111,7 +113,7 @@ function ActionButtons() {
         Pay Bill
       </Link>
       <Link
-        href="/payments/bills"
+        href="/payments/send?rail=airtime"
         className="flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-3 text-[14px] font-medium leading-none text-foreground transition-colors hover:bg-muted"
       >
         <Download size={17} strokeWidth={1.8} />
@@ -129,7 +131,17 @@ function ActionButtons() {
   );
 }
 
-function NetWorth({ amount, showAmounts, onToggle }: { amount: number; showAmounts: boolean; onToggle: () => void }) {
+function NetWorth({
+  amount,
+  cashFlow,
+  showAmounts,
+  onToggle,
+}: {
+  amount: number;
+  cashFlow: CashFlow;
+  showAmounts: boolean;
+  onToggle: () => void;
+}) {
   return (
     <div className="flex flex-col gap-4">
       <span className="text-[16px] font-medium leading-none text-foreground">Total balance</span>
@@ -147,6 +159,19 @@ function NetWorth({ amount, showAmounts, onToggle }: { amount: number; showAmoun
           {showAmounts ? <Eye size={18} strokeWidth={1.8} /> : <EyeOff size={18} strokeWidth={1.8} />}
         </button>
       </div>
+      {(cashFlow.moneyIn > 0 || cashFlow.moneyOut > 0) && (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-muted-foreground">
+          <span>Last {cashFlow.days} days</span>
+          <span className="inline-flex items-center gap-1.5">
+            In
+            <span className="tabular text-success">+ {fmtGHS(cashFlow.moneyIn, showAmounts)}</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            Out
+            <span className="tabular text-foreground">− {fmtGHS(cashFlow.moneyOut, showAmounts)}</span>
+          </span>
+        </div>
+      )}
     </div>
   );
 }
@@ -155,11 +180,14 @@ function NetWorth({ amount, showAmounts, onToggle }: { amount: number; showAmoun
 function DisclosureBar({
   label,
   count,
+  peek,
   defaultOpen = false,
   children,
 }: {
   label: string;
   count?: number;
+  /** A one-glance summary shown only while collapsed. */
+  peek?: React.ReactNode;
   defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
@@ -169,37 +197,44 @@ function DisclosureBar({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between px-6 py-4 cursor-pointer"
+        className="flex w-full items-center justify-between gap-6 px-6 py-4 cursor-pointer"
         aria-expanded={open}
       >
-        <span className="flex items-baseline gap-2">
+        <span className="flex shrink-0 items-baseline gap-2">
           <span className="text-[16px] font-medium leading-none text-foreground">{label}</span>
           {count != null && (
             <span className="text-[16px] font-medium leading-none text-foreground opacity-40 tabular">{count}</span>
           )}
         </span>
-        <ChevronDown
-          size={16}
-          strokeWidth={1.8}
-          className={cn("text-muted-foreground transition-transform", open && "rotate-180")}
-        />
+        <span className="flex min-w-0 flex-1 items-center justify-end gap-4">
+          {!open && peek}
+          <ChevronDown
+            size={16}
+            strokeWidth={1.8}
+            className={cn("shrink-0 text-muted-foreground transition-transform", open && "rotate-180")}
+          />
+        </span>
       </button>
       {open && <div className="border-t border-border px-6 pb-4 pt-1">{children}</div>}
     </div>
   );
 }
 
-/* ── Suggested for you (quick-pick contacts) ─────────────────────────────── */
+/* ── Pay again (saved payees) ────────────────────────────────────────────── */
 
-const SUGGESTED = [
-  { name: "Ama", detail: "St Marys School", icon: User },
-  { name: "Lester", detail: "ECG", icon: Receipt },
-  { name: "Kofi", detail: "MTN Momo", icon: Smartphone },
-  { name: "Kofi", detail: "MTN Airtime", icon: Smartphone },
-  { name: "Ama", detail: "St Marys School", icon: User },
-  { name: "Lester", detail: "ECG", icon: Receipt },
-  { name: "Kofi", detail: "MTN Momo", icon: Smartphone },
-  { name: "Kofi", detail: "MTN Airtime", icon: Smartphone },
+/**
+ * Real saved payees, each deep-linked into its own rail so a tap lands on a
+ * prefilled recipient — not a generic Send screen.
+ */
+const PAY_AGAIN = [
+  { name: "Ama Serwaa", detail: "MTN MoMo", rail: "wallet", recipient: "Ama Serwaa Mensah" },
+  { name: "Lester Adjei", detail: "ECG prepaid", rail: "ecg", recipient: "Lester Adjei" },
+  { name: "Kwame Boateng", detail: "GCB Bank", rail: "bank", recipient: "Kwame Boateng" },
+  { name: "Yaa Asantewaa", detail: "MTN Airtime", rail: "airtime", recipient: "Yaa Asantewaa" },
+  { name: "Abena Osei", detail: "Stanbic Bank", rail: "bank", recipient: "Abena Osei" },
+  { name: "Yaw Mensah", detail: "Telecel Cash", rail: "wallet", recipient: "Yaw Mensah" },
+  { name: "Kofi Boateng", detail: "AT Airtime", rail: "airtime", recipient: "Kofi Boateng" },
+  { name: "Home MiFi", detail: "Telecel Data", rail: "data", recipient: "Home Router (MiFi)" },
 ] as const;
 
 const AVATAR_TINTS = [
@@ -209,41 +244,41 @@ const AVATAR_TINTS = [
   "bg-[color-mix(in_oklch,var(--cat-4)_18%,transparent)] text-[var(--cat-4)]",
 ];
 
-function SuggestedForYou() {
-  const rows = [SUGGESTED.slice(0, 4), SUGGESTED.slice(4, 8)];
+function initials(name: string): string {
+  const parts = name.split(" ").filter(Boolean);
+  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
+}
+
+function PayAgain() {
   return (
     <Card>
-      <CardHeader title="Pay again" href="/beneficiaries" cta="Edit" />
-      <div className="mt-3 flex flex-col gap-7">
-        {rows.map((row, rowIdx) => (
-          <div key={rowIdx} className="flex items-start justify-between">
-            {row.map((s, i) => {
-              const Icon = s.icon;
-              const tint = AVATAR_TINTS[(rowIdx * 4 + i) % AVATAR_TINTS.length];
-              return (
-                <Link
-                  key={`${s.name}-${s.detail}-${i}`}
-                  href="/payments/send"
-                  className="group flex w-[72px] flex-col items-center gap-3 text-center"
-                >
-                  <span className={cn("flex size-12 items-center justify-center rounded-full transition-transform group-hover:scale-105", tint)}>
-                    <Icon size={17} strokeWidth={1.8} />
-                  </span>
-                  <span className="flex flex-col gap-1">
-                    <span className="truncate text-[12px] leading-tight text-foreground">{s.name}</span>
-                    <span className="truncate text-[11.5px] leading-tight text-muted-foreground">{s.detail}</span>
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
+      <CardHeader title="Pay again" href="/beneficiaries" cta="Manage" />
+      <div className="mt-3 grid grid-cols-4 gap-x-2 gap-y-7">
+        {PAY_AGAIN.map((p, i) => (
+          <Link
+            key={`${p.rail}-${p.recipient}`}
+            href={`/payments/send?rail=${p.rail}&recipient=${encodeURIComponent(p.recipient)}`}
+            className="group flex min-w-0 flex-col items-center gap-3 text-center"
+            aria-label={`Pay ${p.name}, ${p.detail}`}
+          >
+            <span
+              className={cn(
+                "flex size-12 items-center justify-center rounded-full text-[14px] tracking-[0.02em] transition-transform group-hover:scale-105",
+                AVATAR_TINTS[i % AVATAR_TINTS.length],
+              )}
+            >
+              {initials(p.name)}
+            </span>
+            <span className="flex w-full min-w-0 flex-col gap-1">
+              <span className="truncate text-[12px] leading-tight text-foreground">{p.name}</span>
+              <span className="truncate text-[11.5px] leading-tight text-muted-foreground">{p.detail}</span>
+            </span>
+          </Link>
         ))}
       </div>
     </Card>
   );
 }
-
-
 
 /* ── Promo banner ────────────────────────────────────────────────────────── */
 
@@ -275,42 +310,47 @@ function PromoBanner() {
   );
 }
 
-/** Promo carousel — a single banner today, framed by prev/next controls. */
-function PromoCarousel() {
-  const arrow =
-    "flex size-10 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer";
-  return (
-    <div className="flex items-center gap-4">
-      <button type="button" className={arrow} aria-label="Previous">
-        <ChevronLeft size={18} strokeWidth={1.8} />
-      </button>
-      <div className="min-w-0 flex-1">
-        <PromoBanner />
-      </div>
-      <button type="button" className={arrow} aria-label="Next">
-        <ChevronRight size={18} strokeWidth={1.8} />
-      </button>
-    </div>
-  );
-}
-
 /* ── The dashboard ───────────────────────────────────────────────────────── */
+
+function greeting(hour: number): string {
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
 
 export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
   return (
     <div className="flex flex-col gap-10">
       {/* Greeting + actions */}
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
-          Good morning, {data.firstName} 👋🏾
+        <h1
+          className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground"
+          suppressHydrationWarning
+        >
+          {greeting(new Date().getHours())}, {data.firstName} 👋🏾
         </h1>
         <ActionButtons />
       </div>
 
       <div className="flex flex-col gap-8">
-        <NetWorth amount={data.netWorth} showAmounts={showAmounts} onToggle={onToggle} />
+        <NetWorth
+          amount={data.netWorth}
+          cashFlow={data.cashFlow}
+          showAmounts={showAmounts}
+          onToggle={onToggle}
+        />
 
-        <DisclosureBar label="Accounts" count={data.accounts.length}>
+        <AttentionBand items={data.attention} />
+
+        <DisclosureBar
+          label="Accounts"
+          count={data.accounts.length}
+          peek={
+            <span className="hidden w-full max-w-[240px] sm:block">
+              <AllocationBar slices={data.allocation.slices} thickness={6} />
+            </span>
+          }
+        >
           <AccountRows accounts={data.accounts} showAmounts={showAmounts} />
         </DisclosureBar>
 
@@ -320,23 +360,26 @@ export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
             <RecentTransactions txns={data.latestTxns} showAmounts={showAmounts} limit={4} />
           </Card>
 
-          <SuggestedForYou />
+          <PayAgain />
 
           <Card>
             <CardHeader title="Cards" href="/cards" />
             <CardsMini cards={data.cards} />
           </Card>
 
-          <SpendsRadialChart breakdown={data.breakdown} showAmounts={showAmounts} />
+          <SpendsRadialChart byRange={data.spendByRange} showAmounts={showAmounts} />
 
           <div className="lg:col-span-2">
-            <DisclosureBar label="Exchange rates">
+            <DisclosureBar
+              label="Exchange rates"
+              peek={<span className="text-[13px] text-muted-foreground tabular">{fxPeek()}</span>}
+            >
               <FxRatesMini />
             </DisclosureBar>
           </div>
         </div>
 
-        <PromoCarousel />
+        <PromoBanner />
       </div>
     </div>
   );

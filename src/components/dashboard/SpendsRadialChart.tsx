@@ -5,84 +5,27 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
-import type { SpendBreakdown } from "@/lib/dashboard-insights";
+import { SPEND_RANGES, type SpendBreakdown, type SpendRange } from "@/lib/dashboard-insights";
 
-export const SPEND_RANGES = ["1w", "1m", "3m", "6m", "1y"] as const;
-export type SpendRange = (typeof SPEND_RANGES)[number];
+export { SPEND_RANGES, type SpendRange };
+
+const RANGE_LABEL: Record<SpendRange, string> = {
+  "1w": "past week",
+  "1m": "past month",
+  "3m": "past 3 months",
+  "6m": "past 6 months",
+  "1y": "past year",
+};
+
+function fmtAmount(amount: number): string {
+  return `GHS ${amount.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
 
 interface CategoryItem {
   id: string;
   label: string;
   amount: number;
 }
-
-interface PeriodData {
-  range: SpendRange;
-  categories: CategoryItem[];
-}
-
-/**
- * Period dataset with amounts.
- * Sorted descending by spend (largest on left -> smallest on right).
- */
-const PERIOD_DATA: Record<SpendRange, PeriodData> = {
-  "1w": {
-    range: "1w",
-    categories: [
-      { id: "shopping", label: "Shopping", amount: 1120 },
-      { id: "bills", label: "Bills & Utilities", amount: 720 },
-      { id: "groceries", label: "Groceries", amount: 560 },
-      { id: "other", label: "Other", amount: 200 },
-      { id: "transport", label: "Transport", amount: 150 },
-      { id: "subscriptions", label: "Entertainment", amount: 100 },
-    ],
-  },
-  "1m": {
-    range: "1m",
-    categories: [
-      { id: "shopping", label: "Shopping", amount: 2520 },
-      { id: "bills", label: "Bills & Utilities", amount: 1620 },
-      { id: "groceries", label: "Groceries", amount: 1260 },
-      { id: "other", label: "Other", amount: 450 },
-      { id: "transport", label: "Transport", amount: 340 },
-      { id: "subscriptions", label: "Entertainment", amount: 230 },
-    ],
-  },
-  "3m": {
-    range: "3m",
-    categories: [
-      { id: "shopping", label: "Shopping", amount: 3860 },
-      { id: "bills", label: "Bills & Utilities", amount: 2480 },
-      { id: "groceries", label: "Groceries", amount: 1940 },
-      { id: "other", label: "Other", amount: 700 },
-      { id: "transport", label: "Transport", amount: 520 },
-      { id: "subscriptions", label: "Entertainment", amount: 350 },
-    ],
-  },
-  "6m": {
-    range: "6m",
-    categories: [
-      { id: "shopping", label: "Shopping", amount: 4860 },
-      { id: "bills", label: "Bills & Utilities", amount: 3120 },
-      { id: "groceries", label: "Groceries", amount: 2440 },
-      { id: "other", label: "Other", amount: 880 },
-      { id: "transport", label: "Transport", amount: 660 },
-      { id: "subscriptions", label: "Entertainment", amount: 440 },
-    ],
-  },
-  // Exact GH₵ 15,150.00 from the reference design
-  "1y": {
-    range: "1y",
-    categories: [
-      { id: "shopping", label: "Shopping", amount: 5940 },
-      { id: "bills", label: "Bills & Utilities", amount: 3820 },
-      { id: "groceries", label: "Groceries", amount: 2980 },
-      { id: "other", label: "Other", amount: 1060 },
-      { id: "transport", label: "Transport", amount: 810 },
-      { id: "subscriptions", label: "Entertainment", amount: 540 },
-    ],
-  },
-};
 
 /**
  * Segment colors assigned by rank (from largest on far-left to smallest on far-right):
@@ -189,16 +132,18 @@ function createAnnularWedgePath(
 }
 
 export interface SpendsRadialChartProps {
-  breakdown?: SpendBreakdown;
+  /** One ledger-derived breakdown per range pill. */
+  byRange: Record<SpendRange, SpendBreakdown>;
   showAmounts?: boolean;
   className?: string;
   defaultRange?: SpendRange;
 }
 
 export function SpendsRadialChart({
+  byRange,
   showAmounts: propShowAmounts,
   className,
-  defaultRange = "1y",
+  defaultRange = "1m",
 }: SpendsRadialChartProps) {
   const [selectedRange, setSelectedRange] = useState<SpendRange>(defaultRange);
   const { showAmounts: contextShowAmounts } = useAmountVisibility();
@@ -209,16 +154,17 @@ export function SpendsRadialChart({
   const { resolvedTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
 
-  const activePeriod = PERIOD_DATA[selectedRange];
+  const activeBreakdown = byRange[selectedRange];
 
   // 1. Sort descending by amount (largest on far left to smallest on far right)
-  const sortedCategories = useMemo(() => {
-    return [...activePeriod.categories].sort((a, b) => b.amount - a.amount);
-  }, [activePeriod]);
+  const sortedCategories = useMemo<CategoryItem[]>(() => {
+    return activeBreakdown.slices
+      .map((sl) => ({ id: sl.label, label: sl.label, amount: sl.amount }))
+      .sort((a, b) => b.amount - a.amount);
+  }, [activeBreakdown]);
 
-  const totalSpend = useMemo(() => {
-    return sortedCategories.reduce((sum, item) => sum + item.amount, 0);
-  }, [sortedCategories]);
+  const totalSpend = activeBreakdown.total;
+  const isEmpty = totalSpend <= 0;
 
   /**
    * PERFECT SEMICIRCLE GEOMETRY:
@@ -236,7 +182,6 @@ export function SpendsRadialChart({
   const gapDeg = 3.2; // Clean radial gaps between segments
 
   const startArchAngle = 180.0;
-  const endArchAngle = 360.0;
   const totalArchSpan = 180.0;
 
   // 2. Angular span proportional to spend amount
@@ -279,7 +224,11 @@ export function SpendsRadialChart({
   }, [sortedCategories, totalSpend, totalArchSpan, startArchAngle, cx, cy, innerR, outerR, gapDeg]);
 
   const displayedAmount = hoveredCategory ? hoveredCategory.amount : totalSpend;
-  const displayedLabel = hoveredCategory ? hoveredCategory.label : "Total Spend";
+  const displayedLabel = hoveredCategory
+    ? `${hoveredCategory.label} · ${Math.round((hoveredCategory.amount / totalSpend) * 100)}%`
+    : isEmpty
+      ? `No spending · ${RANGE_LABEL[selectedRange]}`
+      : `Spent · ${RANGE_LABEL[selectedRange]}`;
 
   return (
     <div
@@ -297,7 +246,7 @@ export function SpendsRadialChart({
           href="/reports"
           className="text-[13px] text-muted-foreground transition-colors hover:text-foreground"
         >
-          View
+          View all
         </Link>
       </div>
 
@@ -308,13 +257,21 @@ export function SpendsRadialChart({
             viewBox="0 0 400 225"
             className="size-full overflow-visible"
             role="img"
-            aria-label="Spending Analytics Perfect Semicircle Chart"
+            aria-label={`Spending by category, ${RANGE_LABEL[selectedRange]}`}
           >
             <defs>
               <filter id="segment-glow" x="-15%" y="-15%" width="130%" height="130%">
                 <feDropShadow dx="0" dy="2" stdDeviation="3.5" floodOpacity="0.22" />
               </filter>
             </defs>
+
+            {/* Empty period — a quiet track, so the card keeps its shape */}
+            {isEmpty && (
+              <path
+                d={createAnnularWedgePath(cx, cy, innerR, outerR, startArchAngle, startArchAngle + totalArchSpan, 8)}
+                fill="var(--muted)"
+              />
+            )}
 
             {/* Perfect Semicircle Wedges (180° -> 360°) */}
             {slices.map((slice) => {
@@ -345,15 +302,10 @@ export function SpendsRadialChart({
               x={cx}
               y={cy - 40}
               textAnchor="middle"
-              className="fill-foreground font-sans font-medium"
+              className="fill-foreground font-sans tabular"
               style={{ fontSize: "22px", letterSpacing: "-0.015em" }}
             >
-              {showEffectiveAmounts
-                ? `GH₵ ${displayedAmount.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}`
-                : "GH₵ ••••"}
+              {showEffectiveAmounts ? fmtAmount(displayedAmount) : "GHS ••••"}
             </text>
             <text
               x={cx}
@@ -368,6 +320,42 @@ export function SpendsRadialChart({
         </div>
       </div>
 
+      {/* Top categories — the chart's hover detail, reachable by touch and keyboard too */}
+      <ul className="flex flex-col pt-3">
+        {slices.slice(0, 3).map((slice) => {
+          const isActive = hoveredCategory?.id === slice.id;
+          return (
+            <li key={slice.id}>
+              <button
+                type="button"
+                onMouseEnter={() => setHoveredCategory(slice)}
+                onMouseLeave={() => setHoveredCategory(null)}
+                onFocus={() => setHoveredCategory(slice)}
+                onBlur={() => setHoveredCategory(null)}
+                onClick={() => setHoveredCategory(isActive ? null : slice)}
+                className={cn(
+                  "flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors cursor-pointer",
+                  isActive ? "bg-muted" : "hover:bg-muted/60",
+                )}
+              >
+                <span
+                  className="size-2.5 shrink-0 rounded-full"
+                  style={{ background: isDark ? slice.darkColor : slice.lightColor }}
+                  aria-hidden="true"
+                />
+                <span className="flex-1 truncate text-[13px] text-foreground">{slice.label}</span>
+                <span className="tabular text-[12px] text-muted-foreground">
+                  {Math.round(slice.proportion * 100)}%
+                </span>
+                <span className="tabular w-[92px] text-right text-[13px] text-foreground">
+                  {showEffectiveAmounts ? fmtAmount(slice.amount) : "GHS ••••"}
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+
       {/* Time Range Filter Pills */}
       <div className="flex w-full items-center gap-2 pt-2">
         {SPEND_RANGES.map((rg) => {
@@ -376,14 +364,15 @@ export function SpendsRadialChart({
             <button
               key={rg}
               type="button"
+              aria-pressed={isActive}
               onClick={() => {
                 setSelectedRange(rg);
                 setHoveredCategory(null);
               }}
               className={cn(
-                "flex-1 rounded-full py-2 text-[13.5px] font-medium transition-colors cursor-pointer text-center outline-none select-none",
+                "flex-1 rounded-full py-2 text-[13.5px] tabular transition-colors cursor-pointer text-center outline-none select-none",
                 isActive
-                  ? "bg-foreground text-background shadow-xs font-semibold"
+                  ? "bg-foreground text-background shadow-xs"
                   : "border border-border/80 bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >

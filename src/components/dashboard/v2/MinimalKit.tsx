@@ -25,7 +25,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { maskDigits } from "@/components/providers/AmountVisibilityProvider";
-import type { Account, Transaction, PaymentCard } from "@/lib/mock-data";
+import { FX_RATES, FX_PUBLISHED_AT, type Account, type Transaction, type PaymentCard } from "@/lib/mock-data";
 import type {
   BalancePoint,
   Slice,
@@ -81,6 +81,13 @@ export function pct(share: number): string {
 
 function shortName(name: string): string {
   return name.replace("Personal ", "").replace(" Account", "");
+}
+
+/** "2026-08-11" → "11 Aug" — how people say dates, not how ledgers store them. */
+export function friendlyDate(iso: string): string {
+  const d = new Date(`${iso}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
 }
 
 /* ── Text primitives ─────────────────────────────────────────────────────── */
@@ -518,8 +525,8 @@ export function AttentionBand({ items }: { items: AttentionItem[] }) {
   if (items.length === 0) return null;
   return (
     <div className="rounded-2xl border border-border bg-card">
-      <div className="px-6 pt-4">
-        <Eyebrow>Needs attention</Eyebrow>
+      <div className="px-6 pt-5">
+        <span className="text-[16px] font-medium leading-none text-foreground">Needs attention</span>
       </div>
       <ul className="flex flex-col divide-y divide-border/50 px-6 pb-2 pt-1">
         {items.map((it) => (
@@ -631,7 +638,7 @@ export function RecentTransactions({
                 <span className="truncate text-[14px] text-foreground">
                   {t.counterparty || t.description}
                 </span>
-                <span className="text-[12px] text-muted-foreground tabular">{t.date}</span>
+                <span className="text-[12px] text-muted-foreground tabular">{friendlyDate(t.date)}</span>
               </span>
               <span className="flex shrink-0 flex-col items-end gap-0.5">
                 <span
@@ -703,13 +710,18 @@ export function CardsMini({
     return <p className="py-8 text-center text-[13px] text-muted-foreground">No cards yet.</p>;
   }
 
-  const toggle = (c: PaymentCard) => {
-    setFrozen((prev) => {
-      const next = !prev[c.id];
-      toast(next ? `${c.name} frozen` : `${c.name} unfrozen`, {
-        description: next ? "Transactions are temporarily blocked." : "Card is active again.",
-      });
-      return { ...prev, [c.id]: next };
+  const setCardFrozen = (id: string, value: boolean) =>
+    setFrozen((prev) => ({ ...prev, [id]: value }));
+
+  // Freezing is a safety move, so it is one tap and instantly reversible.
+  const toggle = (c: PaymentCard, isFrozen: boolean) => {
+    const next = !isFrozen;
+    setCardFrozen(c.id, next);
+    toast(next ? `${c.name} is frozen` : `${c.name} is active again`, {
+      description: next
+        ? "New payments are paused. Nothing else changes."
+        : "You can use it for payments right away.",
+      action: { label: "Undo", onClick: () => setCardFrozen(c.id, isFrozen) },
     });
   };
 
@@ -730,11 +742,12 @@ export function CardsMini({
             </span>
             <button
               type="button"
-              onClick={() => toggle(c)}
+              onClick={() => toggle(c, isFrozen)}
+              aria-pressed={isFrozen}
               className={cn(
                 "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px] transition-colors cursor-pointer",
                 isFrozen
-                  ? "border-destructive/30 bg-destructive/10 text-destructive"
+                  ? "border-transparent bg-muted text-foreground"
                   : "border-border text-muted-foreground hover:text-foreground",
               )}
             >
@@ -748,31 +761,57 @@ export function CardsMini({
   );
 }
 
-const FX_PAIRS = [
-  { pair: "USD / GHS", rate: 15.65 },
-  { pair: "GBP / GHS", rate: 20.06 },
-  { pair: "EUR / GHS", rate: 17.01 },
-  { pair: "NGN / GHS", rate: 0.0104 },
-] as const;
+const FX_SHOWN = ["USD", "GBP", "EUR", "NGN"];
 
-/** Glanceable FX rates with a link to the full converter. */
+function fmtRate(rate: number): string {
+  const digits = rate < 1 ? 4 : 2;
+  return rate.toLocaleString("en-GH", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+}
+
+/** The headline pair, for a collapsed FX bar ("USD 11.55"). */
+export function fxPeek(): string | null {
+  const usd = FX_RATES.find((r) => r.base === "USD");
+  return usd ? `USD ${fmtRate(usd.mid)}` : null;
+}
+
+/** Glanceable published rates (same source as /fx-rates) with a link through. */
 export function FxRatesMini() {
+  const rows = FX_SHOWN.map((b) => FX_RATES.find((r) => r.base === b)).filter(
+    (r): r is (typeof FX_RATES)[number] => Boolean(r),
+  );
+  const published = new Date(FX_PUBLISHED_AT).toLocaleString("en-GB", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
   return (
     <div className="flex flex-col gap-3">
       <ul className="flex flex-col divide-y divide-border/40">
-        {FX_PAIRS.map((f) => (
-          <li key={f.pair} className="flex items-center justify-between py-2.5">
-            <span className="text-[13.5px] text-foreground tabular">{f.pair}</span>
-            <span className="text-[13.5px] text-foreground tabular">
-              {f.rate.toLocaleString("en-GH", {
-                minimumFractionDigits: f.rate < 1 ? 4 : 2,
-                maximumFractionDigits: f.rate < 1 ? 4 : 2,
-              })}
+        {rows.map((f) => (
+          <li key={f.pair} className="flex items-center justify-between gap-4 py-2.5">
+            <span className="text-[13.5px] text-foreground tabular">{f.base} / {f.quote}</span>
+            <span className="flex items-baseline gap-3">
+              <span
+                className={cn(
+                  "text-[12px] tabular",
+                  f.changePct > 0 ? "text-success" : "text-muted-foreground",
+                )}
+              >
+                {f.changePct > 0 ? "+" : f.changePct < 0 ? "−" : ""}
+                {Math.abs(f.changePct).toFixed(2)}%
+              </span>
+              <span className="w-[64px] text-right text-[13.5px] text-foreground tabular">{fmtRate(f.mid)}</span>
             </span>
           </li>
         ))}
       </ul>
-      <span className="text-[11.5px] text-muted-foreground">Bank of Ghana mid-rate · updated 2 min ago</span>
+      <div className="flex items-center justify-between gap-4">
+        <span className="text-[11.5px] text-muted-foreground tabular">Mid-rate · published {published}</span>
+        <Link href="/fx-rates" className="text-[12.5px] text-muted-foreground transition-colors hover:text-foreground">
+          All rates
+        </Link>
+      </div>
     </div>
   );
 }
