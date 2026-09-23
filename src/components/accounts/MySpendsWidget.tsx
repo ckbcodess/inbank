@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import PageHeader from "@/components/layout/PageHeader";
+import { SmoothHeight } from "@/components/ui/smooth-height";
 
 export type SpendViewMode = "types" | "categories";
 export type SpendPeriod = "7d" | "30d" | "3m" | "12m";
@@ -537,49 +538,51 @@ export function MySpendsWidget({
             )}
           </div>
 
-          <div className="flex flex-col divide-y divide-border/40">
-            {chartData.map((item) => {
-              const isSelected = selectedItemName === item.name;
-              const isCatchAll =
-                !expandedOther &&
-                ((viewMode === "categories" && item.name === "Other") ||
-                  (viewMode === "types" && item.name === "All Others"));
+          <SmoothHeight duration={0.32}>
+            <div className="flex flex-col divide-y divide-border/40">
+              {chartData.map((item) => {
+                const isSelected = selectedItemName === item.name;
+                const isCatchAll =
+                  !expandedOther &&
+                  ((viewMode === "categories" && item.name === "Other") ||
+                    (viewMode === "types" && item.name === "All Others"));
 
-              return (
-                <div key={item.name} className="flex flex-col">
-                  <div
-                    onClick={() => {
-                      if (isCatchAll) {
-                        setExpandedOther(true);
-                      } else {
-                        setSelectedItemName(isSelected ? null : item.name);
-                      }
-                    }}
-                    className={cn(
-                      "flex items-center justify-between py-2.5 px-3 rounded-xl transition-all cursor-pointer",
-                      isSelected ? "bg-muted/70 ring-1 ring-border" : "hover:bg-muted/40"
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="size-2.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                      <span className="text-[14px] font-normal text-foreground">{item.name}</span>
-                      <span className="text-[13px] text-muted-foreground tabular-nums numorainput">
-                        {item.percentage}%
-                      </span>
-                      {isCatchAll && (
-                        <span className="text-[11.5px] font-medium text-muted-foreground/80 bg-muted px-2 py-0.5 rounded-full ml-1">
-                          Click to expand
-                        </span>
+                return (
+                  <div key={item.name} className="flex flex-col">
+                    <div
+                      onClick={() => {
+                        if (isCatchAll) {
+                          setExpandedOther(true);
+                        } else {
+                          setSelectedItemName(isSelected ? null : item.name);
+                        }
+                      }}
+                      className={cn(
+                        "flex items-center justify-between py-2.5 px-3 rounded-xl transition-all cursor-pointer",
+                        isSelected ? "bg-muted/70 ring-1 ring-border" : "hover:bg-muted/40"
                       )}
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="size-2.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                        <span className="text-[14px] font-normal text-foreground">{item.name}</span>
+                        <span className="text-[13px] text-muted-foreground tabular-nums numorainput">
+                          {item.percentage}%
+                        </span>
+                        {isCatchAll && (
+                          <span className="text-[11.5px] font-medium text-muted-foreground/80 bg-muted px-2 py-0.5 rounded-full ml-1">
+                            Click to expand
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-[14px] font-medium text-foreground tabular-nums numorainput">
+                        GHS {item.amount.toLocaleString()}
+                      </span>
                     </div>
-                    <span className="text-[14px] font-medium text-foreground tabular-nums numorainput">
-                      GHS {item.amount.toLocaleString()}
-                    </span>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          </SmoothHeight>
         </div>
       </div>
 

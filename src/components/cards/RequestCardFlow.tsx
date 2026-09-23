@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SmoothCollapse } from "@/components/ui/smooth-height";
 import {
   FromAccountSelector,
   AmountInput,
@@ -711,11 +712,19 @@ export function RequestCardFlow() {
 
   return (
     <div className="flex flex-col w-full py-4 sm:py-8">
-      {/* ───────────────────────────────────────────────────────────── */}
-      {/* STEP 1: SELECT CARD TYPE                                      */}
-      {/* ───────────────────────────────────────────────────────────── */}
-      {step === "select-type" && (
-        <div className="w-full max-w-[540px] mx-auto flex flex-col gap-6">
+      <AnimatePresence mode="wait">
+        {/* ───────────────────────────────────────────────────────────── */}
+        {/* STEP 1: SELECT CARD TYPE                                      */}
+        {/* ───────────────────────────────────────────────────────────── */}
+        {step === "select-type" && (
+          <motion.div
+            key="step-select-type"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22 }}
+            className="w-full max-w-[540px] mx-auto flex flex-col gap-6"
+          >
           {/* Header Row: Back Link & Title */}
           <div className="flex items-center gap-3">
             <button
@@ -778,14 +787,21 @@ export function RequestCardFlow() {
               );
             })}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* ───────────────────────────────────────────────────────────── */}
       {/* STEP 2: CONFIGURE CARD & MODE OF DELIVERY                     */}
       {/* ───────────────────────────────────────────────────────────── */}
       {step === "details" && (
-        <div className="w-full max-w-[540px] mx-auto flex flex-col gap-6">
+        <motion.div
+          key="step-details"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.22 }}
+          className="w-full max-w-[540px] mx-auto flex flex-col gap-6"
+        >
           {/* Header Row: Back to Step 1 & Title */}
           <div className="flex items-center gap-3">
             <button
@@ -947,8 +963,8 @@ export function RequestCardFlow() {
                 </div>
 
                 {/* Progressive Disclosure: Disclose funding and fulfillment ONLY after network type is selected */}
-                {Boolean(networkType) && (
-                  <div className="flex flex-col gap-5 w-full animate-in fade-in duration-200 ease-out">
+                <SmoothCollapse open={Boolean(networkType)} className="w-full">
+                  <div className="flex flex-col gap-5 w-full pt-1">
                     {/* Initial Funding - for Prepaid Physical Cards */}
                     {cardType === "Prepaid" && needsFunding && (
                       <AmountInput
@@ -1029,8 +1045,8 @@ export function RequestCardFlow() {
                         </button>
                       </div>
 
-                      {deliveryMethod === "BRANCH_PICKUP" && (
-                        <div className="flex flex-col gap-2">
+                      <SmoothCollapse open={deliveryMethod === "BRANCH_PICKUP"} className="w-full">
+                        <div className="flex flex-col gap-2 pt-1">
                           <label className="text-[14px] font-medium text-foreground">
                             Pickup branch
                           </label>
@@ -1040,10 +1056,10 @@ export function RequestCardFlow() {
                             branches={GCB_BRANCHES}
                           />
                         </div>
-                      )}
+                      </SmoothCollapse>
 
-                      {deliveryMethod === "DELIVERY" && (
-                        <div className="flex flex-col gap-3.5">
+                      <SmoothCollapse open={deliveryMethod === "DELIVERY"} className="w-full">
+                        <div className="flex flex-col gap-3.5 pt-1">
                           <div className="flex flex-col gap-2">
                             <label className="text-[14px] font-medium text-foreground">
                               Recipient name
@@ -1091,7 +1107,7 @@ export function RequestCardFlow() {
                             </div>
                           </div>
                         </div>
-                      )}
+                      </SmoothCollapse>
                     </div>
 
                     {/* Proceed Button */}
@@ -1106,18 +1122,25 @@ export function RequestCardFlow() {
                       </Button>
                     </div>
                   </div>
-                )}
+                </SmoothCollapse>
               </>
             )}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* ───────────────────────────────────────────────────────────── */}
       {/* STEP 3: CUSTOMIZE YOUR CARD                                   */}
       {/* ───────────────────────────────────────────────────────────── */}
       {step === "customize" && (
-        <div className="w-full max-w-[540px] mx-auto flex flex-col items-center gap-6">
+        <motion.div
+          key="step-customize"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.22 }}
+          className="w-full max-w-[540px] mx-auto flex flex-col items-center gap-6"
+        >
           {/* Header Row: Back to Step 2 & Title */}
           <div className="flex items-center gap-3 w-full">
             <button
@@ -1269,14 +1292,21 @@ export function RequestCardFlow() {
               </Button>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* ───────────────────────────────────────────────────────────── */}
       {/* STEP 4: REVIEW SCREEN                                         */}
       {/* ───────────────────────────────────────────────────────────── */}
       {step === "review" && (
-        <div className="w-full max-w-[540px] mx-auto flex flex-col gap-6">
+        <motion.div
+          key="step-review"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.22 }}
+          className="w-full max-w-[540px] mx-auto flex flex-col gap-6"
+        >
           {/* Header Row: Back to Customize & Title */}
           <div className="flex items-center gap-3">
             <button
@@ -1435,14 +1465,21 @@ export function RequestCardFlow() {
               Back
             </Button>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* ───────────────────────────────────────────────────────────── */}
       {/* STEP 5: SUCCESS SCREEN                                       */}
       {/* ───────────────────────────────────────────────────────────── */}
       {step === "success" && createdCard && (
-        <div className="relative mx-auto flex w-full max-w-[460px] min-h-[65vh] flex-col items-center justify-center gap-8 py-10 px-4 text-center overflow-visible">
+        <motion.div
+          key="step-success"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.22 }}
+          className="relative mx-auto flex w-full max-w-[460px] min-h-[65vh] flex-col items-center justify-center gap-8 py-10 px-4 text-center overflow-visible"
+        >
           {/* 1. Dynamic Hero Stage: Standalone Eagle -> Morph -> Emerald Check */}
           <motion.div
             layout="position"
@@ -1598,8 +1635,9 @@ export function RequestCardFlow() {
               </button>
             </motion.div>
           )}
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* PIN & SMS OTP Authorization Modal */}
       <TransactionPinModal

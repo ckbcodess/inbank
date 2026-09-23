@@ -188,13 +188,15 @@ export default function BusinessSignupPage() {
         footer={
           step === "submitted" || (step === "company" && variant === "existingCustomer") ? null : step === "company" ? (
             <div className="mt-5 text-center">
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <ArrowLeft size={15} strokeWidth={2} aria-hidden="true" />
-                Back to sign in
-              </Link>
+              <p className="text-[13px] text-muted-foreground">
+                Already have an account?{" "}
+                <Link
+                  href="/login"
+                  className="font-medium text-foreground underline underline-offset-4 hover:text-foreground"
+                >
+                  Login
+                </Link>
+              </p>
             </div>
           ) : (
             <div className="mt-5 text-center">

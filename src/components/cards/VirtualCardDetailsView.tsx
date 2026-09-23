@@ -62,6 +62,7 @@ import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useContextualBack } from "@/lib/contextual-back";
+import { SmoothCollapse } from "@/components/ui/smooth-height";
 
 
 export type DeliverySimulationState =
@@ -763,7 +764,7 @@ export function VirtualCardDetailsView({
           /* ========================================================================= */
           <div className="flex flex-col gap-6 w-full animate-in fade-in duration-300">
             {/* Delivery Progress Banner */}
-            {effectiveCard.deliveryStatus && (
+            <SmoothCollapse open={Boolean(effectiveCard.deliveryStatus)} className="w-full">
               <button
                 type="button"
                 onClick={() => setActiveModal("tracking")}
@@ -799,7 +800,7 @@ export function VirtualCardDetailsView({
                   />
                 </div>
               </button>
-            )}
+            </SmoothCollapse>
 
             {/* Top 2 Columns */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch w-full">
@@ -1113,7 +1114,7 @@ export function VirtualCardDetailsView({
               </div>
 
               {/* Delivery Tracking Quick Access if card was dispatched */}
-              {effectiveCard.deliveryStatus && (
+              <SmoothCollapse open={Boolean(effectiveCard.deliveryStatus)} className="w-full">
                 <div className="rounded-[12px] border border-border/70 bg-muted/30 px-4 py-3.5 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5 min-w-0">
                     <Truck size={17} className="text-muted-foreground shrink-0" />
@@ -1129,7 +1130,7 @@ export function VirtualCardDetailsView({
                     View status
                   </button>
                 </div>
-              )}
+              </SmoothCollapse>
             </div>
           ) : (
             <div className="flex flex-col justify-between h-full gap-5 w-full">

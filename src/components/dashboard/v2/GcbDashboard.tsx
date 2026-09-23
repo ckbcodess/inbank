@@ -19,6 +19,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import {
   Eye,
   EyeOff,
@@ -193,7 +194,11 @@ function DisclosureBar({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="rounded-2xl border border-border bg-card">
+    <motion.div
+      layout
+      transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+      className="rounded-2xl border border-border bg-card overflow-hidden"
+    >
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -211,12 +216,24 @@ function DisclosureBar({
           <ChevronDown
             size={16}
             strokeWidth={1.8}
-            className={cn("shrink-0 text-muted-foreground transition-transform", open && "rotate-180")}
+            className={cn("shrink-0 text-muted-foreground transition-transform duration-200", open && "rotate-180")}
           />
         </span>
       </button>
-      {open && <div className="border-t border-border px-6 pb-4 pt-1">{children}</div>}
-    </div>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="border-t border-border px-6 pb-4 pt-1">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
@@ -320,67 +337,96 @@ function greeting(hour: number): string {
 
 export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
   return (
-    <div className="flex flex-col gap-10">
-      {/* Greeting + actions */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1
-          className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground"
-          suppressHydrationWarning
-        >
-          {greeting(new Date().getHours())}, {data.firstName} 👋🏾
-        </h1>
-        <ActionButtons />
-      </div>
-
-      <div className="flex flex-col gap-8">
-        <NetWorth
-          amount={data.netWorth}
-          cashFlow={data.cashFlow}
-          showAmounts={showAmounts}
-          onToggle={onToggle}
-        />
-
-        <AttentionBand items={data.attention} />
-
-        <DisclosureBar
-          label="Accounts"
-          count={data.accounts.length}
-          peek={
-            <span className="hidden w-full max-w-[240px] sm:block">
-              <AllocationBar slices={data.allocation.slices} thickness={6} />
-            </span>
-          }
-        >
-          <AccountRows accounts={data.accounts} showAmounts={showAmounts} />
-        </DisclosureBar>
-
-        <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2">
-          <Card>
-            <CardHeader title="Recent activity" href="/transactions" />
-            <RecentTransactions txns={data.latestTxns} showAmounts={showAmounts} limit={4} />
-          </Card>
-
-          <PayAgain />
-
-          <Card>
-            <CardHeader title="Cards" href="/cards" />
-            <CardsMini cards={data.cards} />
-          </Card>
-
-          <SpendsRadialChart byRange={data.spendByRange} showAmounts={showAmounts} />
-
-          <div className="lg:col-span-2">
-            <DisclosureBar
-              label="Exchange rates"
-              peek={<span className="text-[13px] text-muted-foreground tabular">{fxPeek()}</span>}
-            >
-              <FxRatesMini />
-            </DisclosureBar>
-          </div>
+    <LayoutGroup>
+      <div className="flex flex-col gap-10">
+        {/* Greeting + actions */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h1
+            className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground"
+            suppressHydrationWarning
+          >
+            {greeting(new Date().getHours())}, {data.firstName} 👋🏾
+          </h1>
+          <ActionButtons />
         </div>
 
-        <PromoBanner />
+        <motion.div
+          layout
+          transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+          className="flex flex-col gap-8"
+        >
+          <motion.div layout transition={{ type: "spring", duration: 0.35, bounce: 0 }}>
+            <NetWorth
+              amount={data.netWorth}
+              cashFlow={data.cashFlow}
+              showAmounts={showAmounts}
+              onToggle={onToggle}
+            />
+          </motion.div>
+
+          <AnimatePresence initial={false}>
+            {data.attention.length > 0 && (
+              <motion.div
+                layout
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+                className="overflow-hidden"
+              >
+                <AttentionBand items={data.attention} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <motion.div layout transition={{ type: "spring", duration: 0.35, bounce: 0 }}>
+            <DisclosureBar
+              label="Accounts"
+              count={data.accounts.length}
+              peek={
+                <span className="hidden w-full max-w-[240px] sm:block">
+                  <AllocationBar slices={data.allocation.slices} thickness={6} />
+                </span>
+              }
+            >
+              <AccountRows accounts={data.accounts} showAmounts={showAmounts} />
+            </DisclosureBar>
+          </motion.div>
+
+          <motion.div
+            layout
+            transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+            className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2"
+          >
+            <Card>
+              <CardHeader title="Recent activity" href="/transactions" />
+              <RecentTransactions txns={data.latestTxns} showAmounts={showAmounts} limit={4} />
+            </Card>
+
+            <PayAgain />
+
+            <Card>
+              <CardHeader title="Cards" href="/cards" />
+              <CardsMini cards={data.cards} />
+            </Card>
+
+            <SpendsRadialChart byRange={data.spendByRange} showAmounts={showAmounts} />
+
+            <div className="lg:col-span-2">
+              <DisclosureBar
+                label="Exchange rates"
+                peek={<span className="text-[13px] text-muted-foreground tabular">{fxPeek()}</span>}
+              >
+                <FxRatesMini />
+              </DisclosureBar>
+            </div>
+          </motion.div>
+
+          <motion.div layout transition={{ type: "spring", duration: 0.35, bounce: 0 }}>
+            <PromoBanner />
+          </motion.div>
+        </motion.div>
       </div>
-    </div>
+    </LayoutGroup>
   );
 }

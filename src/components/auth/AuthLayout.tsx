@@ -2,9 +2,11 @@
 
 import type { ReactNode } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import AuthHeader from "./AuthHeader";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { cn } from "@/lib/utils";
+import { SmoothHeight } from "@/components/ui/smooth-height";
 
 interface AuthLayoutProps {
   title?: string;
@@ -74,8 +76,12 @@ export default function AuthLayout({
       {/* Main Container - Vertically and horizontally centered in available viewport */}
       <main className="relative z-10 flex min-h-[calc(100vh-4rem)] w-full items-center justify-center px-4 sm:px-6 py-8 mt-16">
         <div className={`w-full ${maxWidthClass}`}>
-          {/* Central Card with generous breathing room */}
-          <div className="rounded-3xl border border-border/80 bg-card/95 p-7 sm:p-9 lg:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+          {/* Central Card with generous breathing room and smooth height morphing */}
+          <motion.div
+            layout
+            transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+            className="rounded-3xl border border-border/80 bg-card/95 p-7 sm:p-9 lg:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden"
+          >
             {/* Step Progress Segments */}
             {stepProgress && (
               <div className="mb-7 flex items-center gap-2 px-1">
@@ -113,38 +119,49 @@ export default function AuthLayout({
               </div>
             ) : null}
 
-            {/* Title & Description */}
-            {(title || description) && (
-              <div className="mb-7 text-center">
-                {title && (
-                  <h1
-                    className={cn(
-                      "text-[20px] sm:text-[22px] font-medium tracking-[-0.015em] text-foreground leading-snug",
-                      titleClassName
-                    )}
-                  >
-                    {title}
-                  </h1>
-                )}
-                {description && (
-                  <div
-                    className={cn(
-                      "mt-2 text-[13.5px] leading-relaxed text-muted-foreground max-w-[420px] mx-auto",
-                      descriptionClassName
-                    )}
-                  >
-                    {description}
-                  </div>
-                )}
-              </div>
-            )}
+            {/* Dynamic Step Content: Automatically and smoothly morphs height */}
+            <SmoothHeight duration={0.35}>
+              {/* Title & Description */}
+              {(title || description) && (
+                <div className="mb-7 text-center">
+                  {title && (
+                    <h1
+                      className={cn(
+                        "text-[20px] sm:text-[22px] font-medium tracking-[-0.015em] text-foreground leading-snug",
+                        titleClassName
+                      )}
+                    >
+                      {title}
+                    </h1>
+                  )}
+                  {description && (
+                    <div
+                      className={cn(
+                        "mt-2 text-[13.5px] leading-relaxed text-muted-foreground max-w-[420px] mx-auto",
+                        descriptionClassName
+                      )}
+                    >
+                      {description}
+                    </div>
+                  )}
+                </div>
+              )}
 
-            {/* Form & Actions */}
-            {children}
-          </div>
+              {/* Form & Actions */}
+              {children}
+            </SmoothHeight>
+          </motion.div>
 
-          {/* Optional Footer Elements */}
-          {footer && <div className="mt-5 w-full">{footer}</div>}
+          {/* Optional Footer Elements — glides smoothly beneath the morphing card */}
+          {footer && (
+            <motion.div
+              layout
+              transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+              className="mt-5 w-full"
+            >
+              {footer}
+            </motion.div>
+          )}
         </div>
       </main>
     </div>

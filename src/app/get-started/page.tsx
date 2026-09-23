@@ -68,7 +68,7 @@ export default function GetStartedPage() {
         }
         description={
           screen === 1
-            ? "Choose how you would like to bank with us."
+            ? "Select the option that best describes your relationship with GCB."
             : "Choose how to set up your account."
         }
         stepProgress={
@@ -83,13 +83,15 @@ export default function GetStartedPage() {
         footer={
           <div className="flex justify-center">
             {screen === 1 ? (
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <ArrowLeft size={15} strokeWidth={2} />
-                Back to sign in
-              </Link>
+              <p className="text-[13px] text-muted-foreground">
+                Already have an account?{" "}
+                <Link
+                  href="/login"
+                  className="font-medium text-foreground underline underline-offset-4 hover:text-foreground"
+                >
+                  Login
+                </Link>
+              </p>
             ) : (
               <button
                 type="button"
@@ -149,7 +151,7 @@ export default function GetStartedPage() {
                     New to GCB
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
-                    Open an account or link a wallet.
+                    Open an account with a card or mobile wallet.
                   </span>
                 </div>
               </div>

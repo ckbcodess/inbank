@@ -26,6 +26,7 @@ import {
   SlidersHorizontal,
   X,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Sheet,
   SheetContent,
@@ -682,17 +683,23 @@ export default function TransactionList({
             )}
           </Button>
 
-          {hasActiveFilters && (
-            <button
-              type="button"
-              onClick={resetAllFilters}
-              className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border/80 bg-background/60 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-              title="Reset all filters"
-              aria-label="Reset all filters"
-            >
-              <RotateCcw size={13} strokeWidth={1.8} />
-            </button>
-          )}
+          <AnimatePresence>
+            {hasActiveFilters && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.16 }}
+                type="button"
+                onClick={resetAllFilters}
+                className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border/80 bg-background/60 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                title="Reset all filters"
+                aria-label="Reset all filters"
+              >
+                <RotateCcw size={13} strokeWidth={1.8} />
+              </motion.button>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Desktop Filter Ribbon (hidden sm:flex) */}
@@ -927,21 +934,29 @@ export default function TransactionList({
           })()}
 
           {/* Active Filter Counter & Reset */}
-          {hasActiveFilters && (
-            <div className="flex shrink-0 items-center gap-2 pl-1">
-              <span className="text-[12px] font-medium text-muted-foreground bg-muted/60 px-2.5 py-1 rounded-full border border-border whitespace-nowrap">
-                {activeFiltersCount} {activeFiltersCount === 1 ? "filter" : "filters"} applied
-              </span>
-              <button
-                type="button"
-                onClick={resetAllFilters}
-                className="flex shrink-0 items-center gap-1 text-[12.5px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1 px-1.5 whitespace-nowrap"
+          <AnimatePresence>
+            {hasActiveFilters && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.16 }}
+                className="flex shrink-0 items-center gap-2 pl-1"
               >
-                <RotateCcw size={12} strokeWidth={2} />
-                Reset all
-              </button>
-            </div>
-          )}
+                <span className="text-[12px] font-medium text-muted-foreground bg-muted/60 px-2.5 py-1 rounded-full border border-border whitespace-nowrap">
+                  {activeFiltersCount} {activeFiltersCount === 1 ? "filter" : "filters"} applied
+                </span>
+                <button
+                  type="button"
+                  onClick={resetAllFilters}
+                  className="flex shrink-0 items-center gap-1 text-[12.5px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1 px-1.5 whitespace-nowrap"
+                >
+                  <RotateCcw size={12} strokeWidth={2} />
+                  Reset all
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
@@ -1223,16 +1238,32 @@ export default function TransactionList({
         />
       )}
 
-      {effective === "filtered-empty" && (
-        <FilteredEmptyState
-          onReset={resetAllFilters}
-          description="No transactions match your search filters. Reset filters to view all transactions."
-        />
-      )}
+      <AnimatePresence mode="wait">
+        {effective === "filtered-empty" && (
+          <motion.div
+            key="filtered-empty"
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.18 }}
+          >
+            <FilteredEmptyState
+              onReset={resetAllFilters}
+              description="No transactions match your search filters. Reset filters to view all transactions."
+            />
+          </motion.div>
+        )}
 
-      {/* Data Table / List Views */}
-      {(effective === "populated" || effective === "partial-load") && (
-        <div className="flex flex-col gap-4">
+        {/* Data Table / List Views */}
+        {(effective === "populated" || effective === "partial-load") && (
+          <motion.div
+            key="transactions-content"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="flex flex-col gap-4"
+          >
           {/* Mobile High-Density Clean Fintech Transaction List (md:hidden) */}
           <div className="md:hidden divide-y divide-border/40 rounded-xl border border-border/70 bg-card/40 backdrop-blur-sm overflow-hidden">
             {paginatedRows.map((t) => {
@@ -1405,8 +1436,9 @@ export default function TransactionList({
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
   );
 }

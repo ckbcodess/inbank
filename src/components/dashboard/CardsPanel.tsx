@@ -13,8 +13,9 @@
  * would cost more than the mistake does.
  */
 
+import { useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Lock, Plus, Unlock } from "lucide-react";
+import { ChevronRight, Loader2, Lock, Plus, Unlock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
@@ -33,6 +34,7 @@ export function CardsPanel({
   onChanged: () => void;
 }) {
   const { showAmounts } = useAmountVisibility();
+  const [navigatingCardId, setNavigatingCardId] = useState<string | null>(null);
 
   function toggleBlock(card: PaymentCard) {
     setCardStatus(card.id, card.status === "Blocked" ? "Active" : "Blocked");
@@ -63,7 +65,11 @@ export function CardsPanel({
               <li key={card.id} className="px-5 py-3.5">
                 <div className="flex items-center gap-3">
                   <MiniCardThumbnail card={card} />
-                  <Link href={`/cards/${card.id}`} className="flex min-w-0 flex-1 flex-col">
+                  <Link
+                    href={`/cards/${card.id}`}
+                    onClick={() => setNavigatingCardId(card.id)}
+                    className="flex min-w-0 flex-1 flex-col"
+                  >
                     <span className="flex items-center gap-2">
                       <span className="truncate text-[13px] text-foreground">{card.name}</span>
                       {card.status !== "Active" && (
@@ -82,12 +88,19 @@ export function CardsPanel({
                           return linked ? formatMoney(linked.balance, linked.currency, showAmounts) : "—";
                         })()}
                   </span>
-                  <ChevronRight
-                    size={15}
-                    strokeWidth={1.8}
-                    aria-hidden="true"
-                    className="shrink-0 text-muted-foreground"
-                  />
+                  {navigatingCardId === card.id ? (
+                    <Loader2
+                      size={15}
+                      className="shrink-0 animate-spin text-foreground"
+                    />
+                  ) : (
+                    <ChevronRight
+                      size={15}
+                      strokeWidth={1.8}
+                      aria-hidden="true"
+                      className="shrink-0 text-muted-foreground"
+                    />
+                  )}
                 </div>
 
                 <div className="mt-2.5 flex flex-wrap items-center gap-2 pl-[52px]">

@@ -197,17 +197,17 @@ function PersonaFlowSwitcherContent() {
   return (
     <>
       {/* Floating Demo Control Dock */}
-      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full border border-border/80 bg-card/95 p-1.5 shadow-xl backdrop-blur-xl transition-all hover:border-primary/40">
+      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full border border-border bg-card/95 p-1.5 shadow-xl backdrop-blur-xl transition-all hover:border-border">
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="flex h-9 items-center gap-2 rounded-full bg-primary/10 px-3 text-[12.5px] font-medium text-foreground transition-colors hover:bg-primary/20 active:scale-[0.97] cursor-pointer"
+          className="flex h-9 items-center gap-2 rounded-full bg-muted/60 px-3 text-[12.5px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.97] cursor-pointer"
         >
-          <div className="flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
+          <div className="flex size-5 items-center justify-center rounded-full bg-foreground/10 text-foreground">
             <Sparkles size={11} strokeWidth={2.2} />
           </div>
           <span>Demo Hub:</span>
-          <span className="text-foreground/90 underline underline-offset-2 decoration-primary/60">
+          <span className="text-foreground/90 font-normal">
             {currentPersonaLabel}
           </span>
           <ChevronDown size={14} className="text-muted-foreground ml-0.5" />
@@ -221,7 +221,7 @@ function PersonaFlowSwitcherContent() {
               onClick={() => router.push("/activate?persona=multi")}
               className={`rounded-full px-2.5 py-1 text-[11.5px] transition-colors cursor-pointer ${
                 personaParam === "multi" || !personaParam
-                  ? "bg-primary text-primary-foreground font-medium"
+                  ? "bg-foreground text-background font-medium"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
             >
@@ -232,7 +232,7 @@ function PersonaFlowSwitcherContent() {
               onClick={() => router.push("/activate?persona=single")}
               className={`rounded-full px-2.5 py-1 text-[11.5px] transition-colors cursor-pointer ${
                 personaParam === "single"
-                  ? "bg-primary text-primary-foreground font-medium"
+                  ? "bg-foreground text-background font-medium"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
             >
@@ -243,7 +243,7 @@ function PersonaFlowSwitcherContent() {
               onClick={() => router.push("/activate?persona=mobile_sync")}
               className={`rounded-full px-2.5 py-1 text-[11.5px] transition-colors cursor-pointer ${
                 personaParam === "mobile_sync"
-                  ? "bg-primary text-primary-foreground font-medium"
+                  ? "bg-foreground text-background font-medium"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
             >
@@ -261,7 +261,7 @@ function PersonaFlowSwitcherContent() {
             <div className="flex items-start justify-between pb-4 border-b border-border/70">
               <div>
                 <h3 className="text-[19px] text-foreground flex items-center gap-2 tracking-[-0.01em]">
-                  <Sparkles size={20} className="text-primary" />
+                  <Sparkles size={20} className="text-foreground" />
                   Onboarding &amp; Persona Showcase Hub
                 </h3>
                 <p className="text-[13px] text-muted-foreground mt-0.5">
@@ -333,10 +333,10 @@ function PersonaFlowSwitcherContent() {
                     key={item.id}
                     type="button"
                     onClick={() => handleSelectPersona(item)}
-                    className="group w-full flex items-center justify-between rounded-2xl border border-border/80 bg-background/50 p-4 text-left transition-all duration-150 hover:border-primary/50 hover:bg-card hover:shadow-xs active:scale-[0.99] cursor-pointer"
+                    className="group w-full flex items-center justify-between rounded-2xl border border-border/80 bg-background/50 p-4 text-left transition-all duration-150 hover:border-border hover:bg-card hover:shadow-xs active:scale-[0.99] cursor-pointer"
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground group-hover:bg-foreground group-hover:text-background transition-colors">
                         {item.id === "multi" ? (
                           <Layers size={18} />
                         ) : item.id === "joint" ? (
@@ -384,10 +384,10 @@ function PersonaFlowSwitcherContent() {
                     key={item.id}
                     type="button"
                     onClick={() => handleSelectPersona(item)}
-                    className="group w-full flex items-center justify-between rounded-2xl border border-border/80 bg-background/50 p-4 text-left transition-all duration-150 hover:border-primary/50 hover:bg-card hover:shadow-xs active:scale-[0.99] cursor-pointer"
+                    className="group w-full flex items-center justify-between rounded-2xl border border-border/80 bg-background/50 p-4 text-left transition-all duration-150 hover:border-border hover:bg-card hover:shadow-xs active:scale-[0.99] cursor-pointer"
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground group-hover:bg-foreground group-hover:text-background transition-colors">
                         {item.id === "new_cos" ? (
                           <Building2 size={18} />
                         ) : item.id === "new_wallet" ? (
@@ -435,11 +435,11 @@ function PersonaFlowSwitcherContent() {
                       key={tour.id}
                       type="button"
                       onClick={() => handleLaunchTour(tour)}
-                      className="group flex flex-col justify-between rounded-2xl border border-border/80 bg-background/50 p-4 text-left transition-all duration-150 hover:border-primary/50 hover:bg-card hover:shadow-xs active:scale-[0.98] cursor-pointer"
+                      className="group flex flex-col justify-between rounded-2xl border border-border/80 bg-background/50 p-4 text-left transition-all duration-150 hover:border-border hover:bg-card hover:shadow-xs active:scale-[0.98] cursor-pointer"
                     >
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <div className="flex size-8 items-center justify-center rounded-lg bg-primary/15 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                          <div className="flex size-8 items-center justify-center rounded-lg bg-muted text-foreground group-hover:bg-foreground group-hover:text-background transition-colors">
                             <Icon size={16} />
                           </div>
                           <span className="rounded-full bg-muted px-2 py-0.5 text-[10.5px] text-muted-foreground font-medium">

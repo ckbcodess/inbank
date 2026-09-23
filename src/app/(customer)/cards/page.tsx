@@ -12,7 +12,8 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle2, ChevronRight, CreditCard, Plus } from "lucide-react";
+import { CheckCircle2, ChevronRight, CreditCard, Loader2, Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -78,6 +79,7 @@ function CardsPageContent() {
 
   const [state, setState] = useState<ListState>("populated");
   const [notice, setNotice] = useState<string | null>(null);
+  const [navigatingCardId, setNavigatingCardId] = useState<string | null>(null);
 
   useEffect(() => {
     if (searchParams.get("created") === "true") {
@@ -266,11 +268,17 @@ function CardsPageContent() {
       {(effective === "populated" || effective === "partial-load") && (
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <ul className="divide-y divide-border">
-              {rows.map((card) => (
-                <li key={card.id}>
+              {rows.map((card) => {
+                const isNavigating = navigatingCardId === card.id;
+                return (
+                  <li key={card.id}>
                     <Link
                       href={`/cards/${card.id}`}
-                      className="flex items-center justify-between gap-3 sm:gap-4 px-3.5 sm:px-5 py-3.5 sm:py-4 transition-colors hover:bg-muted/40 group"
+                      onClick={() => setNavigatingCardId(card.id)}
+                      className={cn(
+                        "flex items-center justify-between gap-3 sm:gap-4 px-3.5 sm:px-5 py-3.5 sm:py-4 transition-colors hover:bg-muted/40 group",
+                        isNavigating && "bg-muted/60"
+                      )}
                     >
                       <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
                         <MiniCardThumbnail card={card} />
@@ -319,11 +327,16 @@ function CardsPageContent() {
                             })()
                           )}
                         </span>
-                        <ChevronRight size={16} strokeWidth={1.8} className="text-muted-foreground group-hover:text-foreground transition-colors" />
+                        {isNavigating ? (
+                          <Loader2 size={16} className="animate-spin text-foreground shrink-0" />
+                        ) : (
+                          <ChevronRight size={16} strokeWidth={1.8} className="text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
+                        )}
                       </div>
                     </Link>
                   </li>
-                ))}
+                );
+              })}
             </ul>
 
             {effective === "partial-load" && <PartialLoadFooter />}

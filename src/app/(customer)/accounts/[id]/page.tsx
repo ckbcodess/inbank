@@ -21,6 +21,7 @@ import {
   Eye,
   EyeOff,
   FileText,
+  Loader2,
   Plus,
   Send,
 } from "lucide-react";
@@ -54,6 +55,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
   const actor = useSession((s) => s.actor);
   const [state, setState] = useState<BaselineState>("populated");
   const [isFundModalOpen, setIsFundModalOpen] = useState(false);
+  const [navigatingCardId, setNavigatingCardId] = useState<string | null>(null);
 
   if (!account) {
     return (
@@ -219,26 +221,37 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {linkedCards.map((c) => (
-                  <Link
-                    key={c.id}
-                    href={`/cards/${c.id}`}
-                    className="group flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-border/80 bg-card hover:bg-muted/30 transition-all shadow-xs"
-                  >
-                    <div className="flex items-center gap-3.5 min-w-0">
-                      <MiniCardThumbnail card={c} />
-                      <div className="flex flex-col min-w-0">
-                        <span className="truncate text-[13.5px] font-medium text-foreground">
-                          {c.name}
-                        </span>
-                        <span className="text-[11.5px] text-muted-foreground tabular mt-0.5">
-                          {c.type} · {c.maskedNumber}
-                        </span>
+                {linkedCards.map((c) => {
+                  const isNavigating = navigatingCardId === c.id;
+                  return (
+                    <Link
+                      key={c.id}
+                      href={`/cards/${c.id}`}
+                      onClick={() => setNavigatingCardId(c.id)}
+                      className={cn(
+                        "group flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-border/80 bg-card hover:bg-muted/30 transition-all shadow-xs",
+                        isNavigating && "bg-muted/60"
+                      )}
+                    >
+                      <div className="flex items-center gap-3.5 min-w-0">
+                        <MiniCardThumbnail card={c} />
+                        <div className="flex flex-col min-w-0">
+                          <span className="truncate text-[13.5px] font-medium text-foreground">
+                            {c.name}
+                          </span>
+                          <span className="text-[11.5px] text-muted-foreground tabular mt-0.5">
+                            {c.type} · {c.maskedNumber}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <ChevronRight size={15} className="text-muted-foreground/60 group-hover:text-foreground transition-transform group-hover:translate-x-0.5 shrink-0" />
-                  </Link>
-                ))}
+                      {isNavigating ? (
+                        <Loader2 size={15} className="animate-spin text-foreground shrink-0" />
+                      ) : (
+                        <ChevronRight size={15} className="text-muted-foreground/60 group-hover:text-foreground transition-transform group-hover:translate-x-0.5 shrink-0" />
+                      )}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}
