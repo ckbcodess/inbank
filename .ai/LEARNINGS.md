@@ -94,3 +94,17 @@
   - When introducing or refining any payment capability (e.g. Group disbursements, Airtime beneficiaries, Meter lookups), audit the entire application for parity. If one rail supports one-tap saved payees or in-flow creation, all applicable rails must offer equivalent affordances.
 - **Zero Phantom Collections**:
   - Any multi-entity collection (e.g. Susu groups, split lists, batch payees) referenced in selection components must have full CRUD parity within the user's primary domain management space. Mock data must reflect real user entities rather than disconnected dummy options.
+
+---
+
+## 7. Internationalisation (EN / FR / ES / ZH)
+
+- **Two layers, one toggle**:
+  - `t(key, "English default")` from `useTranslation()` (keyed dictionary in `src/lib/i18n/translations.ts`) — used by the shell/dashboard from the first i18n pass.
+  - **DOM translator** (`src/lib/i18n/dom-translator.ts`) — every other screen keeps its English copy inline; when FR/ES/ZH is active it swaps rendered text + `placeholder`/`aria-label`/`title`/`alt` using the phrase catalog (`src/lib/i18n/catalog/*.ts`, keyed by the exact English string, `{0}` placeholders may be reordered). Catalog is lazy-loaded only for non-English users.
+- **Adding or changing copy**: write English as normal, then run `npx tsx scripts/i18n-coverage.mts` and add a `[en, fr, es, zh]` row to the matching catalog file for anything new. If you change an English string, its catalog key must change too or the screen silently falls back to English.
+- **Keep sentences in one text run**: `<p>Sent {amount} to {name}.</p>` translates as one template (adjacent text nodes are joined). Splitting a sentence around an element (`<p>Sent <b>{amount}</b> to …</p>`) forces fragment-by-fragment translation, which reads badly in Mandarin — prefer a single run or a `t()` call with params.
+- **Customer data stays English**: names, merchants, bank names, addresses, references and amounts are deliberately not in the catalog. Wrap anything that must never be touched in `translate="no"` (also stops browser auto-translate).
+- **Hydration gate**: the translator only rewrites elements React already owns (`__reactFiber$…` expando). Unhydrated streamed/Suspense markup is parked and retried — rewriting it earlier trips React's hydration text check.
+- **No English flash**: an inline boot script in `app/layout.tsx` adds `html.i18n-pending` (body hidden) for saved non-English users until the first pass; 1.5s failsafe.
+- **Money and dates**: amounts keep the Ghana format (`GHS 1,234.56`) in every language. Rendered dates like `23 Sep 2026` / `Sep 17, 2026` are re-formatted per locale by the translator.

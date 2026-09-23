@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -15,6 +16,7 @@ import {
   type SupportedLanguage,
 } from "./languages";
 import { TRANSLATIONS } from "./translations";
+import { DomTranslator } from "./dom-translator";
 
 interface LanguageContextType {
   language: SupportedLanguage;
@@ -30,6 +32,13 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | null>(null);
 
 const STORAGE_KEY = "gcb-language";
+
+/** Set by the inline boot script in the root layout to hide the page until translated. */
+const PENDING_CLASS = "i18n-pending";
+
+function clearPending() {
+  document.documentElement.classList.remove(PENDING_CLASS);
+}
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<SupportedLanguage>(DEFAULT_LANGUAGE);
@@ -59,6 +68,33 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       // Ignore storage errors
     }
   }, []);
+
+  // Page-wide translation of inline English copy (see dom-translator.ts)
+  const translatorRef = useRef<DomTranslator | null>(null);
+  useEffect(() => {
+    if (!mounted) return;
+    translatorRef.current ??= new DomTranslator();
+    const translator = translatorRef.current;
+    if (language === "en") {
+      translator.setLanguage(null);
+      clearPending();
+      return;
+    }
+    let cancelled = false;
+    import("./catalog")
+      .then(({ buildCatalog }) => {
+        if (!cancelled) translator.setLanguage(language, buildCatalog(language));
+      })
+      .catch(() => {
+        // Catalog failed to load — stay in English rather than blank the page
+      })
+      .finally(clearPending);
+    return () => {
+      cancelled = true;
+    };
+  }, [language, mounted]);
+
+  useEffect(() => () => translatorRef.current?.destroy(), []);
 
   const t = useCallback(
     (

@@ -27,9 +27,19 @@ export const metadata: Metadata = {
   description: "GCB Bank PLC Internet Banking — Personal, Corporate and SME Banking",
 };
 
+/**
+ * Runs before paint: if a non-English language is saved, hide the page until
+ * the DOM translator has done its first pass, so English never flashes.
+ * Failsafe reveals the page after 1.5s regardless.
+ */
+const LANGUAGE_BOOT_SCRIPT = `try{var l=localStorage.getItem("gcb-language");if(l&&l!=="en"){var d=document.documentElement;d.lang=l;d.classList.add("i18n-pending");setTimeout(function(){d.classList.remove("i18n-pending")},1500)}}catch(e){}`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning className={cn(dmSans.variable, geistMono.variable, "font-sans")}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: LANGUAGE_BOOT_SCRIPT }} />
+      </head>
       <body className="antialiased">
         <ThemeProvider>
           <LanguageProvider>

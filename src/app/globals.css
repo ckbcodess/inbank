@@ -291,6 +291,11 @@
 }
 
 
+/* Non-English visitors: hide until the DOM translator's first pass (boot script in app/layout.tsx) */
+html.i18n-pending body {
+  visibility: hidden;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -551,4 +556,4 @@ select {
 .dark [role="dialog"] [data-slot="select-trigger"]:focus-visible {
   background-color: rgba(255, 255, 255, 0.10);
   border-color: var(--primary);
-}
+}
