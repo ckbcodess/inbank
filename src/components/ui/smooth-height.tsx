@@ -4,6 +4,13 @@ import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
+/**
+ * Room around the clip box so focus rings / shadows on edge-to-edge children
+ * (e.g. a full-width input's 3px ring) aren't cut off by `overflow: hidden`.
+ * Offset by an equal negative margin, so layout is unchanged.
+ */
+const BLEED = 6;
+
 interface SmoothHeightProps {
   children: React.ReactNode;
   className?: string;
@@ -26,7 +33,7 @@ export function SmoothHeight({
     if (!containerRef.current) return;
     const observer = new ResizeObserver(([entry]) => {
       if (entry) {
-        setHeight(entry.contentRect.height);
+        setHeight(entry.contentRect.height + BLEED * 2);
       }
     });
     observer.observe(containerRef.current);
@@ -37,6 +44,7 @@ export function SmoothHeight({
     <motion.div
       animate={{ height }}
       transition={{ type: "spring", duration, bounce: 0 }}
+      style={{ margin: -BLEED, padding: BLEED }}
       className={cn("overflow-hidden", className)}
     >
       <div ref={containerRef}>{children}</div>
