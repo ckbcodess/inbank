@@ -107,6 +107,12 @@ export default function GetStartedPage() {
       >
         {screen === 1 ? (
           <div className="flex flex-col gap-3.5">
+            {/* Prerequisite & Time Expectation notice */}
+            <div className="flex items-center justify-between text-[12px] text-muted-foreground px-1 pb-0.5">
+              <span>Takes ~2 mins</span>
+              <span>Ghana Card & selfie required</span>
+            </div>
+
             {/* Option 1: GCB Account Holder -> Immediate route to /activate */}
             <button
               type="button"
@@ -230,9 +236,28 @@ export default function GetStartedPage() {
           </DialogHeader>
 
           <DialogBody>
-            <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-              You will be redirected to <span className="font-medium text-foreground">accountopening.gcb.com.gh</span> to complete your account application.
-            </p>
+            <div className="space-y-3">
+              <p className="text-[13.5px] leading-relaxed text-muted-foreground">
+                You will be redirected to <span className="font-medium text-foreground">accountopening.gcb.com.gh</span> to submit your full banking application.
+              </p>
+              <div className="rounded-xl border border-border/70 bg-muted/20 p-3 text-[12.5px] space-y-2 text-muted-foreground">
+                <p className="text-foreground font-medium text-[11.5px] uppercase tracking-wider">
+                  What to expect
+                </p>
+                <div className="flex items-start gap-2">
+                  <span className="text-foreground">•</span>
+                  <span>Upload your Ghana Card and digital signature</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-foreground">•</span>
+                  <span>Instant account number issuance upon verification</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className="text-foreground">•</span>
+                  <span>Return here to activate your internet banking immediately</span>
+                </div>
+              </div>
+            </div>
           </DialogBody>
 
           <DialogFooter>

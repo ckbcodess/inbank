@@ -6,8 +6,10 @@ import {
   AlertCircle,
   ArrowLeft,
   Check,
+  CheckCircle2,
   Eye,
   EyeOff,
+  ShieldCheck,
   User,
   Users,
 } from "lucide-react";
@@ -22,10 +24,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import AuthLayout from "@/components/auth/AuthLayout";
+import AuthLayout, { type PhaseProgress } from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import SelfieCapture from "@/components/auth/SelfieCapture";
 import { useSession } from "@/lib/session-store";
+import { useTour } from "@/lib/tour-store";
 import { ACTORS } from "@/lib/mock-data";
 import {
   ACTIVATION_PERSONAS,
@@ -33,7 +36,7 @@ import {
   type ActivationPersonaConfig,
 } from "@/lib/activation";
 
-type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "pin" | "confirm_pin";
+type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "pin" | "confirm_pin" | "success";
 
 const RESEND_SECONDS = 30;
 
@@ -148,6 +151,7 @@ function ActivateContent() {
     password: 7,
     pin: 8,
     confirm_pin: 9,
+    success: 10,
   };
 
   function handleGhanaCardSubmit(e: React.FormEvent) {
@@ -218,6 +222,8 @@ function ActivateContent() {
     setStep("confirm_pin");
   }
 
+  const { start: startTour } = useTour();
+
   function handleConfirmPinSubmit(incomingConfirmPin?: string) {
     const confirmPin = incomingConfirmPin ?? confirmPinDigits.join("");
     if (confirmPin.length < 4 || busy) {
@@ -233,7 +239,7 @@ function ActivateContent() {
     setErrorMsg("");
     setBusy(true);
 
-    // Finalize onboarding and log user into appropriate dashboard profile
+    // Finalize onboarding and log user into appropriate dashboard profile, then show celebration
     setTimeout(() => {
       const actor = ACTORS.find((a) => a.id === activePersona.actorId) || ACTORS[0];
       signIn(actor);
@@ -241,11 +247,22 @@ function ActivateContent() {
         selectProfile(actor.profiles[0]);
       }
       verifyMfa();
-      router.push("/overview");
-    }, 800);
+      setBusy(false);
+      setStep("success");
+    }, 700);
+  }
+
+  function handleFinishToDashboard() {
+    router.push("/overview?welcome=true");
+  }
+
+  function handleFinishWithTour() {
+    startTour("overview-tour");
+    router.push("/overview?welcome=true");
   }
 
   function handleBackStep() {
+    if (step === "success") return;
     setErrorMsg("");
     setBusy(false);
     if (step === "confirm_pin") {
@@ -273,6 +290,22 @@ function ActivateContent() {
     }
   }
 
+  const phaseProgress: PhaseProgress = {
+    currentPhaseIndex:
+      step === "ghana_card" || step === "selfie"
+        ? 0
+        : step === "review_details" || step === "otp"
+        ? 1
+        : step === "password" || step === "pin" || step === "confirm_pin"
+        ? 2
+        : 3,
+    phases: [
+      { id: "identity", label: "Identity" },
+      { id: "verification", label: "Verification" },
+      { id: "security", label: "Security" },
+    ],
+  };
+
   const selectedPrimaryAccount =
     activePersona.accounts.find((a) => a.id === selectedPrimaryAccountId) ??
     activePersona.accounts[0];
@@ -296,7 +329,9 @@ function ActivateContent() {
           ? "Create Password"
           : step === "pin"
           ? "Set Your PIN"
-          : "Confirm Your PIN"
+          : step === "confirm_pin"
+          ? "Confirm Your PIN"
+          : "Your Digital Banking is Ready"
       }
       description={
         step === "ghana_card"
@@ -323,24 +358,31 @@ function ActivateContent() {
           ? "Choose a password you will remember."
           : step === "pin"
           ? "Set a PIN for all your transactions in the app."
-          : "Re-enter your 4-digit PIN to confirm."
+          : step === "confirm_pin"
+          ? "Re-enter your 4-digit PIN to confirm."
+          : `Welcome back, ${activePersona.name.split(" ")[0]}. Your accounts are connected and ready to manage.`
       }
-      stepProgress={{
-        current: stepNumberMap[step],
-        total: 9,
-      }}
+      phaseProgress={step === "success" ? undefined : phaseProgress}
       width="compact"
       footer={
-        <div className="flex justify-center">
-          <button
-            type="button"
-            onClick={handleBackStep}
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-[0.96] cursor-pointer"
-          >
-            <ArrowLeft size={15} strokeWidth={2} />
-            Back to previous step
-          </button>
-        </div>
+        step === "success" ? (
+          <div className="flex justify-center text-center">
+            <p className="text-[12px] text-muted-foreground/80">
+              Bank-grade 256-bit encryption · Regulated by Bank of Ghana
+            </p>
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={handleBackStep}
+              className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-[0.96] cursor-pointer"
+            >
+              <ArrowLeft size={15} strokeWidth={2} />
+              Back to previous step
+            </button>
+          </div>
+        )
       }
     >
       {/* STEP 1: Enter Ghana Card */}
@@ -385,6 +427,10 @@ function ActivateContent() {
               className="h-11 font-mono text-[14.5px] uppercase tracking-wider"
               autoFocus
             />
+            <p className="text-[12px] text-muted-foreground/80 flex items-center gap-1.5 mt-0.5">
+              <ShieldCheck size={14} className="text-primary shrink-0" />
+              <span>Matched securely against the National Identification Authority (NIA) register.</span>
+            </p>
           </div>
 
           {errorMsg && (
@@ -416,15 +462,21 @@ function ActivateContent() {
 
       {/* STEP 2: Selfie / Photo Capture */}
       {step === "selfie" && (
-        <SelfieCapture
-          onCapture={handleCaptureSelfie}
-          busy={busy}
-          capturedImage={selfieImage}
-          onRetake={() => {
-            setSelfieImage(null);
-          }}
-          dataTour="activate-selfie"
-        />
+        <div className="flex flex-col gap-3">
+          <SelfieCapture
+            onCapture={handleCaptureSelfie}
+            busy={busy}
+            capturedImage={selfieImage}
+            onRetake={() => {
+              setSelfieImage(null);
+            }}
+            dataTour="activate-selfie"
+          />
+          <p className="text-[12px] text-muted-foreground/80 flex items-center justify-center gap-1.5 text-center px-2">
+            <ShieldCheck size={14} className="text-primary shrink-0" />
+            <span>Biometric liveness verification · Encrypted and privacy-protected under the Data Protection Act.</span>
+          </p>
+        </div>
       )}
 
       {/* STEP 3: Review Details & Primary Account Picker */}
@@ -895,6 +947,67 @@ function ActivateContent() {
             </div>
           )}
         </form>
+      )}
+
+      {/* STEP 8: Success Celebration */}
+      {step === "success" && (
+        <div className="flex flex-col gap-6 text-center">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+            <CheckCircle2 size={32} strokeWidth={2} />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <h3 className="text-[17px] font-medium text-foreground tracking-[-0.01em]">
+              All Set, {activePersona.name.split(" ")[0]}!
+            </h3>
+            <p className="text-[13px] text-muted-foreground leading-relaxed">
+              Your credentials and transaction PIN are active. You can now access your accounts, transfer funds, and pay bills.
+            </p>
+          </div>
+
+          {/* Account Confirmation Summary */}
+          <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 text-left space-y-2.5">
+            <div className="flex items-center justify-between text-[13px]">
+              <span className="text-muted-foreground">Primary Operating Account</span>
+              <span className="font-medium text-foreground">{selectedPrimaryAccount.name}</span>
+            </div>
+            <div className="flex items-center justify-between text-[13px]">
+              <span className="text-muted-foreground">Account Number</span>
+              <span className="tabular-nums font-mono text-[12.5px] text-foreground">{selectedPrimaryAccount.number}</span>
+            </div>
+            <div className="flex items-center justify-between text-[13px]">
+              <span className="text-muted-foreground">Linked Accounts</span>
+              <span className="font-medium text-foreground">{activePersona.accounts.length} Total</span>
+            </div>
+            <div className="flex items-center justify-between text-[13px]">
+              <span className="text-muted-foreground">Security PIN</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                <Check size={13} strokeWidth={2.5} /> Active
+              </span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col gap-2.5">
+            <Button
+              type="button"
+              size="lg"
+              onClick={handleFinishToDashboard}
+              className="h-11 w-full text-[14px]"
+            >
+              Go to Dashboard
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              onClick={handleFinishWithTour}
+              className="h-11 w-full text-[14px]"
+            >
+              Take a 30-Second Tour
+            </Button>
+          </div>
+        </div>
       )}
     </AuthLayout>
   );

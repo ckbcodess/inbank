@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useSession } from "@/lib/session-store";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { GcbDashboard } from "@/components/dashboard/v2/GcbDashboard";
@@ -12,7 +13,9 @@ import {
   type DashboardUsageType,
 } from "@/lib/dashboard-simulations";
 
-export default function OverviewPage() {
+function OverviewContent() {
+  const searchParams = useSearchParams();
+  const isWelcome = searchParams.get("welcome") === "true";
   const actor = useSession((s) => s.actor);
   const activeProfile = useSession((s) => s.activeProfile);
   const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
@@ -34,7 +37,20 @@ export default function OverviewPage() {
         onChange={setUsageType}
         labels={DASHBOARD_STATE_LABELS}
       />
-      <GcbDashboard data={data} showAmounts={showAmounts} onToggle={toggleAmountVisibility} />
+      <GcbDashboard
+        data={data}
+        showAmounts={showAmounts}
+        onToggle={toggleAmountVisibility}
+        showWelcome={isWelcome}
+      />
     </>
+  );
+}
+
+export default function OverviewPage() {
+  return (
+    <Suspense fallback={null}>
+      <OverviewContent />
+    </Suspense>
   );
 }

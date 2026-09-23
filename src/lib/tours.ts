@@ -390,6 +390,47 @@ export const TOURS: Tour[] = [
       },
     ],
   },
+
+  /* 6 ── Dashboard & Workspace Tour ────────────────────────────────────────── */
+  {
+    id: "overview-tour",
+    name: "Dashboard Overview",
+    title: "Quick Dashboard Walkthrough",
+    badge: "30-Sec Tour",
+    summary: "A quick spotlight tour of your active balances, quick actions, cards, and activity.",
+    icon: "laptop",
+    startRoute: "/overview",
+    steps: [
+      {
+        target: "tour-operating-balance",
+        route: "/overview",
+        title: "Operating Balance & Liquidity",
+        body: "Your consolidated balance across all active accounts. Toggle privacy mode anytime with the eye icon.",
+        action: "Review your available balance",
+      },
+      {
+        target: "tour-quick-actions",
+        route: "/overview",
+        title: "Quick Actions",
+        body: "Instant shortcuts to send money, buy airtime/data, pay utilities, or request a statement.",
+        action: "Explore common banking shortcuts",
+      },
+      {
+        target: "tour-cards-section",
+        route: "/overview",
+        title: "Cards & Spending",
+        body: "Track active debit and virtual cards with live balances and freeze/unfreeze controls.",
+        action: "View your active cards",
+      },
+      {
+        target: "tour-recent-activity",
+        route: "/overview",
+        title: "Recent Activity & Analytics",
+        body: "Live transaction feed with category breakdowns and spend analytics.",
+        action: "Click to finish tour",
+      },
+    ],
+  },
 ];
 
 export function findTour(id: string): Tour | undefined {

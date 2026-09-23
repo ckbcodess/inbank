@@ -29,8 +29,12 @@ import {
   Send,
   Download,
   RefreshCw,
+  Sparkles,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { useTour } from "@/lib/tour-store";
 import type { Account, Transaction, PaymentCard } from "@/lib/mock-data";
 import type { SpendBreakdown, SpendRange, Slice, CashFlow, AttentionItem } from "@/lib/dashboard-insights";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
@@ -62,6 +66,7 @@ interface DashProps {
   data: DashData;
   showAmounts: boolean;
   onToggle: () => void;
+  showWelcome?: boolean;
 }
 
 /* ── Small building blocks ───────────────────────────────────────────────── */
@@ -329,16 +334,74 @@ function PromoBanner() {
 
 /* ── The dashboard ───────────────────────────────────────────────────────── */
 
+function FirstRunWelcomeBanner({ firstName, onTakeTour }: { firstName: string; onTakeTour: () => void }) {
+  const [dismissed, setDismissed] = useState(false);
+  if (dismissed) return null;
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, height: 0 }}
+      transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+      className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card p-5 sm:p-6 shadow-xs"
+    >
+      <div className="flex items-start sm:items-center gap-3.5">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+          <Sparkles size={20} strokeWidth={2} />
+        </div>
+        <div className="flex flex-col">
+          <span className="text-[15px] font-medium text-foreground tracking-[-0.01em]">
+            Welcome to your GCB digital workspace, {firstName}!
+          </span>
+          <span className="text-[13px] text-muted-foreground mt-0.5 leading-relaxed">
+            Your accounts are linked and ready. Take a quick 30-second tour to discover your new tools.
+          </span>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-auto">
+        <Button
+          type="button"
+          size="sm"
+          onClick={onTakeTour}
+          className="h-9 px-4 text-[13px]"
+        >
+          Take a 30-Sec Tour
+        </Button>
+        <button
+          type="button"
+          onClick={() => setDismissed(true)}
+          className="flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+          aria-label="Dismiss welcome banner"
+        >
+          <X size={16} strokeWidth={2} />
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
 function greeting(hour: number): string {
   if (hour < 12) return "Good morning";
   if (hour < 17) return "Good afternoon";
   return "Good evening";
 }
 
-export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
+export function GcbDashboard({ data, showAmounts, onToggle, showWelcome = false }: DashProps) {
+  const { start: startTour } = useTour();
+
   return (
     <LayoutGroup>
       <div className="flex flex-col gap-10">
+        {showWelcome && (
+          <FirstRunWelcomeBanner
+            firstName={data.firstName}
+            onTakeTour={() => startTour("overview-tour")}
+          />
+        )}
+
         {/* Greeting + actions */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h1
@@ -347,7 +410,9 @@ export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
           >
             {greeting(new Date().getHours())}, {data.firstName} 👋🏾
           </h1>
-          <ActionButtons />
+          <div data-tour="tour-quick-actions">
+            <ActionButtons />
+          </div>
         </div>
 
         <motion.div
@@ -356,12 +421,14 @@ export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
           className="flex flex-col gap-8"
         >
           <motion.div layout transition={{ type: "spring", duration: 0.35, bounce: 0 }}>
-            <NetWorth
-              amount={data.netWorth}
-              cashFlow={data.cashFlow}
-              showAmounts={showAmounts}
-              onToggle={onToggle}
-            />
+            <div data-tour="tour-operating-balance">
+              <NetWorth
+                amount={data.netWorth}
+                cashFlow={data.cashFlow}
+                showAmounts={showAmounts}
+                onToggle={onToggle}
+              />
+            </div>
           </motion.div>
 
           <AnimatePresence initial={false}>
@@ -398,17 +465,21 @@ export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
             transition={{ type: "spring", duration: 0.35, bounce: 0 }}
             className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2"
           >
-            <Card>
-              <CardHeader title="Recent activity" href="/transactions" />
-              <RecentTransactions txns={data.latestTxns} showAmounts={showAmounts} limit={4} />
-            </Card>
+            <div data-tour="tour-recent-activity">
+              <Card>
+                <CardHeader title="Recent activity" href="/transactions" />
+                <RecentTransactions txns={data.latestTxns} showAmounts={showAmounts} limit={4} />
+              </Card>
+            </div>
 
             <PayAgain />
 
-            <Card>
-              <CardHeader title="Cards" href="/cards" />
-              <CardsMini cards={data.cards} />
-            </Card>
+            <div data-tour="tour-cards-section">
+              <Card>
+                <CardHeader title="Cards" href="/cards" />
+                <CardsMini cards={data.cards} />
+              </Card>
+            </div>
 
             <SpendsRadialChart byRange={data.spendByRange} showAmounts={showAmounts} />
 

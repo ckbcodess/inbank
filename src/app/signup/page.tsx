@@ -6,20 +6,22 @@ import {
   AlertCircle,
   ArrowLeft,
   Check,
+  CheckCircle2,
   Eye,
   EyeOff,
+  ShieldCheck,
 } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import AuthLayout from "@/components/auth/AuthLayout";
+import AuthLayout, { type PhaseProgress } from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import SelfieCapture from "@/components/auth/SelfieCapture";
 import { useSession } from "@/lib/session-store";
 import { ACTORS } from "@/lib/mock-data";
 
-type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "pin" | "confirm_pin";
+type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "pin" | "confirm_pin" | "success";
 
 const RESEND_SECONDS = 30;
 
@@ -95,6 +97,7 @@ function SignupContent() {
     password: 7,
     pin: 8,
     confirm_pin: 9,
+    success: 10,
   };
 
   function handleGhanaCardSubmit(e: React.FormEvent) {
@@ -171,7 +174,7 @@ function SignupContent() {
     setErrorMsg("");
     setBusy(true);
 
-    // Finalize registration and redirect to Accounts with linking modal trigger!
+    // Finalize registration and transition to success celebration
     setTimeout(() => {
       const actor = ACTORS[0]; // Log in as registered user
       signIn(actor);
@@ -179,11 +182,21 @@ function SignupContent() {
         selectProfile(actor.profiles[0]);
       }
       verifyMfa();
-      router.push("/accounts?link_source=true");
-    }, 800);
+      setBusy(false);
+      setStep("success");
+    }, 700);
+  }
+
+  function handleProceedToFunding() {
+    router.push("/accounts?link_source=true");
+  }
+
+  function handleProceedToDashboard() {
+    router.push("/overview?welcome=true");
   }
 
   function handleBackStep() {
+    if (step === "success") return;
     setErrorMsg("");
     setBusy(false);
     if (step === "confirm_pin") {
@@ -211,6 +224,22 @@ function SignupContent() {
     }
   }
 
+  const phaseProgress: PhaseProgress = {
+    currentPhaseIndex:
+      step === "ghana_card" || step === "selfie"
+        ? 0
+        : step === "review_details" || step === "otp"
+        ? 1
+        : step === "password" || step === "pin" || step === "confirm_pin"
+        ? 2
+        : 3,
+    phases: [
+      { id: "identity", label: "Identity" },
+      { id: "verification", label: "Verification" },
+      { id: "security", label: "Security" },
+    ],
+  };
+
   return (
     <AuthLayout
       title={
@@ -226,7 +255,9 @@ function SignupContent() {
           ? "Create Password"
           : step === "pin"
           ? "Set Your PIN"
-          : "Confirm Your PIN"
+          : step === "confirm_pin"
+          ? "Confirm Your PIN"
+          : "Your Digital Account is Ready"
       }
       description={
         step === "ghana_card"
@@ -243,24 +274,31 @@ function SignupContent() {
           ? "Choose a password you will remember."
           : step === "pin"
           ? "Set a PIN for all your transactions in the app."
-          : "Re-enter your 4-digit PIN to confirm."
+          : step === "confirm_pin"
+          ? "Re-enter your 4-digit PIN to confirm."
+          : "Your instant mobile wallet and digital credentials have been created."
       }
-      stepProgress={{
-        current: stepNumberMap[step],
-        total: 9,
-      }}
+      phaseProgress={step === "success" ? undefined : phaseProgress}
       width={step === "review_details" ? "default" : "compact"}
       footer={
-        <div className="flex justify-center">
-          <button
-            type="button"
-            onClick={handleBackStep}
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
-          >
-            <ArrowLeft size={15} strokeWidth={2} />
-            Back to previous step
-          </button>
-        </div>
+        step === "success" ? (
+          <div className="flex justify-center text-center">
+            <p className="text-[12px] text-muted-foreground/80">
+              Bank-grade 256-bit encryption · Regulated by Bank of Ghana
+            </p>
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={handleBackStep}
+              className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+            >
+              <ArrowLeft size={15} strokeWidth={2} />
+              Back to previous step
+            </button>
+          </div>
+        )
       }
     >
       {/* STEP 1: Enter Ghana Card */}
@@ -279,6 +317,10 @@ function SignupContent() {
               className="h-11 font-mono text-[14.5px] uppercase tracking-wider"
               required
             />
+            <p className="text-[12px] text-muted-foreground/80 flex items-center gap-1.5 mt-0.5">
+              <ShieldCheck size={14} className="text-primary shrink-0" />
+              <span>Matched securely against the National Identification Authority (NIA) register.</span>
+            </p>
           </div>
 
           {errorMsg && (
@@ -310,15 +352,21 @@ function SignupContent() {
 
       {/* STEP 2: Selfie / Photo Capture */}
       {step === "selfie" && (
-        <SelfieCapture
-          onCapture={handleCaptureSelfie}
-          busy={busy}
-          capturedImage={selfieImage}
-          onRetake={() => {
-            setSelfieImage(null);
-          }}
-          dataTour="signup-selfie"
-        />
+        <div className="flex flex-col gap-3">
+          <SelfieCapture
+            onCapture={handleCaptureSelfie}
+            busy={busy}
+            capturedImage={selfieImage}
+            onRetake={() => {
+              setSelfieImage(null);
+            }}
+            dataTour="signup-selfie"
+          />
+          <p className="text-[12px] text-muted-foreground/80 flex items-center justify-center gap-1.5 text-center px-2">
+            <ShieldCheck size={14} className="text-primary shrink-0" />
+            <span>Biometric liveness verification · Encrypted and privacy-protected under the Data Protection Act.</span>
+          </p>
+        </div>
       )}
 
       {/* STEP 3: Review Details */}
@@ -659,6 +707,63 @@ function SignupContent() {
             </div>
           )}
         </form>
+      )}
+
+      {/* STEP 8: Success Celebration */}
+      {step === "success" && (
+        <div className="flex flex-col gap-6 text-center">
+          <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+            <CheckCircle2 size={32} strokeWidth={2} />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <h3 className="text-[17px] font-medium text-foreground tracking-[-0.01em]">
+              Welcome to GCB Digital Banking!
+            </h3>
+            <p className="text-[13px] text-muted-foreground leading-relaxed">
+              Your instant mobile wallet and digital credentials have been created. Add funds to activate your virtual card and begin transacting.
+            </p>
+          </div>
+
+          {/* Account Details Box */}
+          <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 text-left space-y-2.5">
+            <div className="flex items-center justify-between text-[13px]">
+              <span className="text-muted-foreground">Account Type</span>
+              <span className="font-medium text-foreground">Instant Mobile Wallet & Virtual Card</span>
+            </div>
+            <div className="flex items-center justify-between text-[13px]">
+              <span className="text-muted-foreground">National ID</span>
+              <span className="tabular-nums font-mono text-[12.5px] text-foreground">{ghanaCard}</span>
+            </div>
+            <div className="flex items-center justify-between text-[13px]">
+              <span className="text-muted-foreground">Security PIN</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                <Check size={13} strokeWidth={2.5} /> Active
+              </span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-col gap-2.5">
+            <Button
+              type="button"
+              size="lg"
+              onClick={handleProceedToFunding}
+              className="h-11 w-full text-[14px]"
+            >
+              Add Funds via MoMo / Card
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              onClick={handleProceedToDashboard}
+              className="h-11 w-full text-[14px]"
+            >
+              Explore Dashboard
+            </Button>
+          </div>
+        </div>
       )}
     </AuthLayout>
   );
