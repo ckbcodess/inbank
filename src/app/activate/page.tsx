@@ -346,6 +346,8 @@ function ActivateContent() {
       {/* STEP 1: Enter Ghana Card */}
       {step === "ghana_card" && (
         <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-5">
+          {/* Demo persona picker — dev only, never in the live build */}
+          {process.env.NODE_ENV !== "production" && (
           <div className="flex items-center justify-between rounded-xl bg-muted/40 px-3.5 py-2.5 text-[12.5px] text-muted-foreground">
             <span className="font-medium text-foreground">Interactive Demo Mode</span>
             <div className="flex items-center gap-1.5">
@@ -371,6 +373,7 @@ function ActivateContent() {
               ))}
             </div>
           </div>
+          )}
 
           {/* Card Input Field */}
           <div className="flex flex-col gap-2">
