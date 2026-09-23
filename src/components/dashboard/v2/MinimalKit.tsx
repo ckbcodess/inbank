@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { maskDigits } from "@/components/providers/AmountVisibilityProvider";
 import { FX_RATES, FX_PUBLISHED_AT, type Account, type Transaction, type PaymentCard } from "@/lib/mock-data";
 import type {
@@ -703,11 +704,12 @@ export function CardsMini({
   cards: PaymentCard[];
   limit?: number;
 }) {
+  const { t } = useTranslation();
   const [blocked, setBlocked] = useState<Record<string, boolean>>({});
   const shown = cards.slice(0, limit);
 
   if (shown.length === 0) {
-    return <p className="py-8 text-center text-[13px] text-muted-foreground">No cards yet.</p>;
+    return <p className="py-8 text-center text-[13px] text-muted-foreground">{t("dashboard.noCards", "No cards yet.")}</p>;
   }
 
   const setCardBlocked = (id: string, value: boolean) =>
@@ -721,7 +723,7 @@ export function CardsMini({
       description: next
         ? "New payments stop until you unblock it. Nothing else changes."
         : "You can use it for payments right away.",
-      action: { label: "Undo", onClick: () => setCardBlocked(c.id, isBlocked) },
+      action: { label: t("common.undo", "Undo"), onClick: () => setCardBlocked(c.id, isBlocked) },
     });
   };
 
@@ -752,7 +754,7 @@ export function CardsMini({
               )}
             >
               <Lock size={12} strokeWidth={1.8} />
-              {isBlocked ? "Blocked" : "Block"}
+              {isBlocked ? t("dashboard.blocked", "Blocked") : t("dashboard.block", "Block")}
             </button>
           </li>
         );
@@ -776,6 +778,7 @@ export function fxPeek(): string | null {
 
 /** Glanceable published rates (same source as /fx-rates) with a link through. */
 export function FxRatesMini() {
+  const { t } = useTranslation();
   const rows = FX_SHOWN.map((b) => FX_RATES.find((r) => r.base === b)).filter(
     (r): r is (typeof FX_RATES)[number] => Boolean(r),
   );
@@ -809,7 +812,7 @@ export function FxRatesMini() {
       <div className="flex items-center justify-between gap-4">
         <span className="text-[11.5px] text-muted-foreground tabular">Mid-rate · published {published}</span>
         <Link href="/fx-rates" className="text-[12.5px] text-muted-foreground transition-colors hover:text-foreground">
-          All rates
+          {t("dashboard.allRates", "All rates")}
         </Link>
       </div>
     </div>

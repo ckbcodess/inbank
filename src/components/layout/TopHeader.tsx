@@ -20,6 +20,8 @@ import {
 import { ROLE_LABEL, type Actor, type Profile } from "@/lib/roles";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import HeaderBreadcrumbs from "./HeaderBreadcrumbs";
+import LanguageToggle from "./LanguageToggle";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 interface TopHeaderProps {
   actor: Actor;
@@ -41,6 +43,7 @@ export default function TopHeader({
   const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
   const { devState } = useDevState();
   const captureMode = useCaptureMode();
+  const { t } = useTranslation();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -124,14 +127,14 @@ export default function TopHeader({
         )}
 
         <SimpleTooltip
-          content={showAmounts ? "Hide cash amounts" : "Show cash amounts"}
+          content={showAmounts ? t("header.hideAmounts", "Hide cash amounts") : t("header.showAmounts", "Show cash amounts")}
           side="bottom"
         >
           <Button
             variant="ghost"
             size="icon-sm"
             onClick={toggleAmountVisibility}
-            aria-label={showAmounts ? "Hide cash amounts" : "Show cash amounts"}
+            aria-label={showAmounts ? t("header.hideAmounts", "Hide cash amounts") : t("header.showAmounts", "Show cash amounts")}
             className="relative shrink-0 text-muted-foreground hover:text-foreground"
           >
             {mounted && showAmounts ? (
@@ -143,14 +146,14 @@ export default function TopHeader({
         </SimpleTooltip>
 
         <SimpleTooltip
-          content={resolvedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          content={resolvedTheme === "dark" ? t("header.themeLight", "Switch to light mode") : t("header.themeDark", "Switch to dark mode")}
           side="bottom"
         >
           <Button
             variant="ghost"
             size="icon-sm"
             onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-            aria-label="Toggle theme"
+            aria-label={resolvedTheme === "dark" ? t("header.themeLight", "Switch to light mode") : t("header.themeDark", "Switch to dark mode")}
             className="shrink-0"
           >
             {mounted && resolvedTheme === "dark" ? (
@@ -160,6 +163,9 @@ export default function TopHeader({
             )}
           </Button>
         </SimpleTooltip>
+
+        {/* Global Language Selector */}
+        <LanguageToggle />
 
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -184,13 +190,13 @@ export default function TopHeader({
               render={
                 <Link href="/settings" className="flex items-center gap-2.5 w-full">
                   <Settings size={15} strokeWidth={1.8} />
-                  Settings
+                  {t("header.settings", "Settings")}
                 </Link>
               }
             />
             <DropdownMenuItem onClick={onSignOut} className="gap-2.5">
               <LogOut size={15} strokeWidth={1.8} />
-              Sign out
+              {t("header.signOut", "Sign out")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

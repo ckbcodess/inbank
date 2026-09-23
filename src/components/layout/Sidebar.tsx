@@ -44,6 +44,7 @@ import { SimpleTooltip } from "@/components/ui/tooltip";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import type { NavItem } from "@/lib/navigation";
 import type { Shell } from "@/lib/roles";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 const ICON_MAP: Record<string, React.ElementType> = {
   LayoutDashboard,
@@ -131,6 +132,7 @@ export default function Sidebar({
   onToggleCollapse,
 }: SidebarProps) {
   const pathname = usePathname();
+  const { t } = useTranslation();
   const groups = groupItems(items);
   // Explicit open/closed overrides for dropdown groups; absent means "auto"
   // (open when a child is active).
@@ -141,15 +143,16 @@ export default function Sidebar({
   const renderNavLink = (item: NavItem, indent = false) => {
     const Icon = ICON_MAP[item.icon] ?? Wallet;
     const active = isItemActive(item, pathname, items);
+    const label = t(`nav.${item.key}`, item.label);
 
     if (collapsed) {
       return (
-        <SimpleTooltip key={item.key} content={item.label} side="right" sideOffset={12}>
+        <SimpleTooltip key={item.key} content={label} side="right" sideOffset={12}>
           <div className="w-full flex justify-center">
             <Link
               href={item.path}
               onClick={onClose}
-              aria-label={item.label}
+              aria-label={label}
               className={`relative flex size-9 items-center justify-center rounded-lg transition-all duration-150 ${
                 active
                   ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
@@ -177,7 +180,7 @@ export default function Sidebar({
         }`}
       >
         <Icon size={17} strokeWidth={active ? 2.1 : 1.8} className="shrink-0" />
-        <span className="leading-none whitespace-nowrap truncate">{item.label}</span>
+        <span className="leading-none whitespace-nowrap truncate">{label}</span>
       </Link>
     );
   };
@@ -192,7 +195,7 @@ export default function Sidebar({
   }, [isOpen]);
 
   // Admin Portal carries its own mark (section 12.1), customer portal renders official GCB logo mark.
-  const brandLabel = shell === "admin" ? "GCB Admin" : "Internet Banking";
+  const brandLabel = shell === "admin" ? "GCB Admin" : t("header.brand", "Internet Banking");
 
   return (
     /* Only width and transform animate. `transition-all` also animated colour,
@@ -295,7 +298,9 @@ export default function Sidebar({
                     }`}
                   >
                     <DropIcon size={17} strokeWidth={1.8} className="shrink-0" />
-                    <span className="leading-none whitespace-nowrap truncate">{name}</span>
+                    <span className="leading-none whitespace-nowrap truncate">
+                      {name === "More Services" ? t("nav.moreServices", name) : name}
+                    </span>
                     <ChevronDown
                       size={15}
                       strokeWidth={1.9}

@@ -31,6 +31,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import type { Account, Transaction, PaymentCard } from "@/lib/mock-data";
 import type { SpendBreakdown, SpendRange, Slice, CashFlow, AttentionItem } from "@/lib/dashboard-insights";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
@@ -75,12 +76,13 @@ function Card({ children, className }: { children: React.ReactNode; className?: 
 }
 
 function CardHeader({ title, href, cta = "View all" }: { title: string; href?: string; cta?: string }) {
+  const { t } = useTranslation();
   return (
     <div className="flex items-center justify-between">
       <span className="text-[16px] font-medium leading-none text-foreground">{title}</span>
       {href && (
         <Link href={href} className="text-[12.5px] text-muted-foreground transition-colors hover:text-foreground">
-          {cta}
+          {cta === "View all" ? t("dashboard.viewAll", "View all") : cta}
         </Link>
       )}
     </div>
@@ -89,6 +91,7 @@ function CardHeader({ title, href, cta = "View all" }: { title: string; href?: s
 
 function ActionButtons() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = () => {
@@ -104,27 +107,27 @@ function ActionButtons() {
         className="flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-[14px] font-medium leading-none text-primary-foreground shadow-xs transition-colors hover:bg-primary-hover"
       >
         <Send size={17} strokeWidth={1.8} />
-        Send Money
+        {t("dashboard.sendMoney", "Send Money")}
       </Link>
       <Link
         href="/payments/bills"
         className="flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-3 text-[14px] font-medium leading-none text-foreground transition-colors hover:bg-muted"
       >
         <Receipt size={17} strokeWidth={1.8} />
-        Pay Bill
+        {t("dashboard.payBill", "Pay Bill")}
       </Link>
       <Link
         href="/payments/send?rail=airtime"
         className="flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-3 text-[14px] font-medium leading-none text-foreground transition-colors hover:bg-muted"
       >
         <Download size={17} strokeWidth={1.8} />
-        Top-Up
+        {t("dashboard.topUp", "Top-Up")}
       </Link>
       <button
         type="button"
         onClick={handleRefresh}
         className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-        aria-label="Refresh dashboard"
+        aria-label={t("dashboard.refresh", "Refresh dashboard")}
       >
         <RefreshCw size={18} strokeWidth={1.8} className={cn("transition-transform", isRefreshing && "animate-spin")} />
       </button>
@@ -143,9 +146,13 @@ function NetWorth({
   showAmounts: boolean;
   onToggle: () => void;
 }) {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-col gap-4">
-      <span className="text-[16px] font-medium leading-none text-foreground">Total balance</span>
+      <span className="text-[16px] font-medium leading-none text-foreground">
+        {t("dashboard.totalBalance", "Total balance")}
+      </span>
       <div className="flex items-center gap-4">
         <span className="tabular text-[34px] leading-none tracking-[0.02em] text-foreground">
           <span className="text-muted-foreground">GHS</span>{" "}
@@ -155,20 +162,20 @@ function NetWorth({
           type="button"
           onClick={onToggle}
           className="flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-          aria-label={showAmounts ? "Hide balances" : "Show balances"}
+          aria-label={showAmounts ? t("header.hideAmounts", "Hide balances") : t("header.showAmounts", "Show balances")}
         >
           {showAmounts ? <Eye size={18} strokeWidth={1.8} /> : <EyeOff size={18} strokeWidth={1.8} />}
         </button>
       </div>
       {(cashFlow.moneyIn > 0 || cashFlow.moneyOut > 0) && (
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-muted-foreground">
-          <span>Last {cashFlow.days} days</span>
+          <span>{t("dashboard.lastDays", "Last {days} days", { days: cashFlow.days })}</span>
           <span className="inline-flex items-center gap-1.5">
-            In
+            {t("dashboard.moneyIn", "In")}
             <span className="tabular text-success">+ {fmtGHS(cashFlow.moneyIn, showAmounts)}</span>
           </span>
           <span className="inline-flex items-center gap-1.5">
-            Out
+            {t("dashboard.moneyOut", "Out")}
             <span className="tabular text-foreground">− {fmtGHS(cashFlow.moneyOut, showAmounts)}</span>
           </span>
         </div>
@@ -267,9 +274,10 @@ function initials(name: string): string {
 }
 
 function PayAgain() {
+  const { t } = useTranslation();
   return (
     <Card>
-      <CardHeader title="Pay again" href="/beneficiaries" cta="Manage" />
+      <CardHeader title={t("dashboard.payAgain", "Pay again")} href="/beneficiaries" cta={t("common.manage", "Manage")} />
       <div className="mt-3 grid grid-cols-4 gap-x-2 gap-y-7">
         {PAY_AGAIN.map((p, i) => (
           <Link
@@ -300,6 +308,7 @@ function PayAgain() {
 /* ── Promo banner ────────────────────────────────────────────────────────── */
 
 function PromoBanner() {
+  const { t } = useTranslation();
   return (
     <div
       className="relative overflow-hidden rounded-2xl p-8 text-primary-foreground"
@@ -310,16 +319,14 @@ function PromoBanner() {
     >
       <div className="relative flex flex-col gap-6">
         <h3 className="max-w-[280px] text-[26px] leading-[1.15] tracking-[-0.01em]">
-          Banking made easier, wherever you are.
+          {t("dashboard.promoTitle", "Banking made easier, wherever you are.")}
         </h3>
         <div className="flex items-center gap-4">
           <span className="flex size-[92px] items-center justify-center rounded-xl bg-[color-mix(in_oklch,var(--primary-foreground)_10%,transparent)]">
             <QrCode size={64} strokeWidth={1.4} />
           </span>
-          <span className="text-[13px] opacity-80">
-            Scan to get the
-            <br />
-            GCB mobile app
+          <span className="text-[13px] opacity-80 leading-snug max-w-[150px]">
+            {t("dashboard.promoScan", "Scan to get the GCB mobile app")}
           </span>
         </div>
       </div>
@@ -329,13 +336,15 @@ function PromoBanner() {
 
 /* ── The dashboard ───────────────────────────────────────────────────────── */
 
-function greeting(hour: number): string {
-  if (hour < 12) return "Good morning";
-  if (hour < 17) return "Good afternoon";
-  return "Good evening";
+function greeting(hour: number, t: (key: string, fallback?: string) => string): string {
+  if (hour < 12) return t("dashboard.greeting.morning", "Good morning");
+  if (hour < 17) return t("dashboard.greeting.afternoon", "Good afternoon");
+  return t("dashboard.greeting.evening", "Good evening");
 }
 
 export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
+  const { t } = useTranslation();
+
   return (
     <LayoutGroup>
       <div className="flex flex-col gap-10">
@@ -345,7 +354,7 @@ export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
             className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground"
             suppressHydrationWarning
           >
-            {greeting(new Date().getHours())}, {data.firstName} 👋🏾
+            {greeting(new Date().getHours(), t)}, {data.firstName} 👋🏾
           </h1>
           <ActionButtons />
         </div>
@@ -381,7 +390,7 @@ export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
 
           <motion.div layout transition={{ type: "spring", duration: 0.35, bounce: 0 }}>
             <DisclosureBar
-              label="Accounts"
+              label={t("dashboard.accounts", "Accounts")}
               count={data.accounts.length}
               peek={
                 <span className="hidden w-full max-w-[240px] sm:block">
@@ -399,14 +408,14 @@ export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
             className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2"
           >
             <Card>
-              <CardHeader title="Recent activity" href="/transactions" />
+              <CardHeader title={t("dashboard.recentActivity", "Recent activity")} href="/transactions" />
               <RecentTransactions txns={data.latestTxns} showAmounts={showAmounts} limit={4} />
             </Card>
 
             <PayAgain />
 
             <Card>
-              <CardHeader title="Cards" href="/cards" />
+              <CardHeader title={t("dashboard.cards", "Cards")} href="/cards" />
               <CardsMini cards={data.cards} />
             </Card>
 
@@ -414,7 +423,7 @@ export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
 
             <div className="lg:col-span-2">
               <DisclosureBar
-                label="Exchange rates"
+                label={t("dashboard.exchangeRates", "Exchange rates")}
                 peek={<span className="text-[13px] text-muted-foreground tabular">{fxPeek()}</span>}
               >
                 <FxRatesMini />

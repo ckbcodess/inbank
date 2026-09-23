@@ -5,9 +5,12 @@ import { useEffect, useState } from "react";
 import { MapPin, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GCBLogo } from "@/components/ui/GCBLogo";
+import LanguageToggle from "@/components/layout/LanguageToggle";
+import { useTranslation } from "@/lib/i18n/LanguageProvider";
 
 export default function AuthHeader() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (document.documentElement.classList.contains("dark")) {
@@ -33,18 +36,21 @@ export default function AuthHeader() {
           <GCBLogo className="h-8 w-auto text-foreground" />
         </div>
         <span className="text-[17px] font-medium tracking-tight text-foreground sm:text-[18px]">
-          Internet Banking
+          {t("header.brand", "Internet Banking")}
         </span>
       </Link>
 
       {/* Header Utilities */}
       <div className="flex items-center gap-2 sm:gap-3">
+        {/* Global Language Selector */}
+        <LanguageToggle />
+
         <Button
           type="button"
           variant="ghost"
           size="icon-sm"
           onClick={toggleTheme}
-          aria-label="Toggle color theme"
+          aria-label={t("header.themeLight", "Toggle color theme")}
           className="rounded-full text-muted-foreground"
         >
           {theme === "light" ? (
@@ -61,7 +67,7 @@ export default function AuthHeader() {
               href="https://www.gcbbank.com.gh/branches-and-atms"
               target="_blank"
               rel="noreferrer"
-              aria-label="Branch and ATM locator"
+              aria-label={t("header.locator", "Branch and ATM locator")}
             />
           }
           variant="ghost"

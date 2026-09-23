@@ -14,6 +14,7 @@ import { AndroidRippleProvider } from "@/components/providers/AndroidRippleProvi
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { RouteLoadingProvider } from "@/components/providers/RouteLoadingProvider";
+import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 
 const dmSans = DM_Sans({
   variable: "--font-sans",
@@ -31,22 +32,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning className={cn(dmSans.variable, geistMono.variable, "font-sans")}>
       <body className="antialiased">
         <ThemeProvider>
-          <RouteLoadingProvider>
-            <TooltipProvider delay={350} closeDelay={100} timeout={300}>
-              <AmountVisibilityProvider>
-                <AndroidRippleProvider>
-                  <DevStateProvider>
-                    <Toaster position="top-right" style={{ zIndex: 999999 }} />
-                    {children}
-                    <Suspense fallback={null}>
-                      <PersonaFlowSwitcher />
-                    </Suspense>
-                    <TourOverlay />
-                  </DevStateProvider>
-                </AndroidRippleProvider>
-              </AmountVisibilityProvider>
-            </TooltipProvider>
-          </RouteLoadingProvider>
+          <LanguageProvider>
+            <RouteLoadingProvider>
+              <TooltipProvider delay={350} closeDelay={100} timeout={300}>
+                <AmountVisibilityProvider>
+                  <AndroidRippleProvider>
+                    <DevStateProvider>
+                      <Toaster position="top-right" style={{ zIndex: 999999 }} />
+                      {children}
+                      <Suspense fallback={null}>
+                        <PersonaFlowSwitcher />
+                      </Suspense>
+                      <TourOverlay />
+                    </DevStateProvider>
+                  </AndroidRippleProvider>
+                </AmountVisibilityProvider>
+              </TooltipProvider>
+            </RouteLoadingProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>
