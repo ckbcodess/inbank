@@ -207,7 +207,7 @@ export default function GetStartedPage() {
                     Start with a Wallet or Card
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
-                    Link a mobile money wallet or debit card.
+                    Open an account using a mobile wallet or card.
                   </span>
                 </div>
               </div>

@@ -112,7 +112,7 @@ const onboarding: Entry[] = [
   ["Open a GCB Account", "Ouvrir un compte GCB", "Abrir una cuenta GCB", "开立 GCB 账户"],
   ["Open a new bank account online.", "Ouvrez un nouveau compte bancaire en ligne.", "Abre una nueva cuenta bancaria en línea.", "在线开立新银行账户。"],
   ["Start with a Wallet or Card", "Commencer avec un portefeuille ou une carte", "Empezar con billetera o tarjeta", "从钱包或银行卡开始"],
-  ["Link a mobile money wallet or debit card.", "Associez un portefeuille Mobile Money ou une carte de débit.", "Vincula una billetera de dinero móvil o una tarjeta de débito.", "关联手机钱包或借记卡。"],
+  ["Open an account using a mobile wallet or card.", "Ouvrez un compte avec un portefeuille mobile ou une carte.", "Abre una cuenta con una billetera móvil o una tarjeta.", "使用手机钱包或银行卡开户。"],
   ["Account Opening Portal", "Portail d’ouverture de compte", "Portal de apertura de cuentas", "开户门户"],
   ["You will be redirected to", "Vous allez être redirigé vers", "Se te redirigirá a", "您将被转至"],
   ["to complete your account application.", "pour finaliser votre demande d’ouverture de compte.", "para completar tu solicitud de cuenta.", "以完成开户申请。"],
