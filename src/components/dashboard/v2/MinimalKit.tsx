@@ -20,7 +20,7 @@ import {
   ArrowDownLeft,
   ChevronDown,
   ChevronRight,
-  Snowflake,
+  Lock,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -695,7 +695,7 @@ export function SpendDetail({
   );
 }
 
-/** Minimal cards list with an inline freeze toggle. */
+/** Minimal cards list with an inline block toggle. */
 export function CardsMini({
   cards,
   limit = 3,
@@ -703,32 +703,32 @@ export function CardsMini({
   cards: PaymentCard[];
   limit?: number;
 }) {
-  const [frozen, setFrozen] = useState<Record<string, boolean>>({});
+  const [blocked, setBlocked] = useState<Record<string, boolean>>({});
   const shown = cards.slice(0, limit);
 
   if (shown.length === 0) {
     return <p className="py-8 text-center text-[13px] text-muted-foreground">No cards yet.</p>;
   }
 
-  const setCardFrozen = (id: string, value: boolean) =>
-    setFrozen((prev) => ({ ...prev, [id]: value }));
+  const setCardBlocked = (id: string, value: boolean) =>
+    setBlocked((prev) => ({ ...prev, [id]: value }));
 
-  // Freezing is a safety move, so it is one tap and instantly reversible.
-  const toggle = (c: PaymentCard, isFrozen: boolean) => {
-    const next = !isFrozen;
-    setCardFrozen(c.id, next);
-    toast(next ? `${c.name} is frozen` : `${c.name} is active again`, {
+  // Blocking is a safety move, so it is one tap and instantly reversible.
+  const toggle = (c: PaymentCard, isBlocked: boolean) => {
+    const next = !isBlocked;
+    setCardBlocked(c.id, next);
+    toast(next ? `${c.name} is blocked` : `${c.name} is unblocked`, {
       description: next
-        ? "New payments are paused. Nothing else changes."
+        ? "New payments stop until you unblock it. Nothing else changes."
         : "You can use it for payments right away.",
-      action: { label: "Undo", onClick: () => setCardFrozen(c.id, isFrozen) },
+      action: { label: "Undo", onClick: () => setCardBlocked(c.id, isBlocked) },
     });
   };
 
   return (
     <ul className="flex flex-col divide-y divide-border/40">
       {shown.map((c) => {
-        const isFrozen = frozen[c.id] ?? c.status === "Blocked";
+        const isBlocked = blocked[c.id] ?? c.status === "Blocked";
         return (
           <li key={c.id} className="flex items-center gap-3 py-3">
             <span className="flex h-6 w-9 shrink-0 items-center justify-center rounded-[5px] bg-muted text-[8px] uppercase tracking-wide text-muted-foreground">
@@ -742,17 +742,17 @@ export function CardsMini({
             </span>
             <button
               type="button"
-              onClick={() => toggle(c, isFrozen)}
-              aria-pressed={isFrozen}
+              onClick={() => toggle(c, isBlocked)}
+              aria-pressed={isBlocked}
               className={cn(
                 "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px] transition-colors cursor-pointer",
-                isFrozen
+                isBlocked
                   ? "border-transparent bg-muted text-foreground"
                   : "border-border text-muted-foreground hover:text-foreground",
               )}
             >
-              <Snowflake size={12} strokeWidth={1.8} />
-              {isFrozen ? "Frozen" : "Freeze"}
+              <Lock size={12} strokeWidth={1.8} />
+              {isBlocked ? "Blocked" : "Block"}
             </button>
           </li>
         );

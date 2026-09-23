@@ -107,7 +107,7 @@ export function VirtualCardView({
     const next = !isFrozen;
     setIsFrozen(next);
     activeCard.status = next ? "Blocked" : "Active";
-    setNotice(next ? "Card frozen successfully." : "Card unfrozen and active.");
+    setNotice(next ? "Card blocked. New payments stop until you unblock it." : "Card unblocked and active.");
     setTimeout(() => setNotice(null), 3000);
     setShowMoreMenu(false);
   };
@@ -176,7 +176,7 @@ export function VirtualCardView({
               <span className={`flex size-3.5 items-center justify-center rounded-full text-white text-[8px] font-medium ${isFrozen ? "bg-amber-500" : "bg-[#22c55e]"}`}>
                 {isFrozen ? "!" : "✓"}
               </span>
-              <span>{isFrozen ? "Frozen" : "Active"}</span>
+              <span>{isFrozen ? "Blocked" : "Active"}</span>
             </div>
           </div>
 
@@ -320,7 +320,7 @@ export function VirtualCardView({
             className="flex items-center gap-2.5 px-4 py-2.5 text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-800 dark:text-slate-200 cursor-pointer"
           >
             <Lock size={15} className="text-slate-400" />
-            <span>{isFrozen ? "Unfreeze Card" : "Freeze / Lock Card"}</span>
+            <span>{isFrozen ? "Unblock card" : "Block card"}</span>
           </button>
 
           <button

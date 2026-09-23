@@ -81,6 +81,21 @@ function daysBefore(iso: string, days: number): string {
   return new Date(new Date(iso).getTime() - days * DAY_MS).toISOString().slice(0, 10);
 }
 
+/** Categorised debits that didn't fail, optionally within a trailing window. */
+function spendingDebits(kind: "RETAIL" | "CORPORATE", days?: number): Transaction[] {
+  const all = transactionsForProfile(kind);
+  const latest = latestLedgerDate(all);
+  const from = days && latest ? daysBefore(latest, days) : null;
+  return all.filter(
+    (t) =>
+      t.direction === "debit" &&
+      typeof t.state === "string" &&
+      !t.state.startsWith("failed") &&
+      Boolean(t.category) &&
+      (from === null || t.date > from),
+  );
+}
+
 /**
  * Spend by category, from debits that carry a category and didn't fail.
  * With `days`, only the trailing window ending on the latest ledger entry.
@@ -89,17 +104,7 @@ export function spendBreakdownForProfile(
   kind: "RETAIL" | "CORPORATE" = "RETAIL",
   days?: number,
 ): SpendBreakdown {
-  const all = transactionsForProfile(kind);
-  const latest = latestLedgerDate(all);
-  const from = days && latest ? daysBefore(latest, days) : null;
-  const debits = all.filter(
-    (t) =>
-      t.direction === "debit" &&
-      typeof t.state === "string" &&
-      !t.state.startsWith("failed") &&
-      t.category &&
-      (from === null || t.date > from),
-  );
+  const debits = spendingDebits(kind, days);
   const byCategory = new Map<string, number>();
   for (const t of debits) {
     const label = t.category as string;
@@ -125,12 +130,42 @@ const SPEND_RANGE_DAYS: Record<SpendRange, number> = {
   "1y": 365,
 };
 
-/** One real breakdown per range, for the dashboard's range pills. */
+/**
+ * One real breakdown per range, for the dashboard's range pills.
+ *
+ * Every range shares the same named categories, in the same order and colour —
+ * taken from the longest range — so switching pills resizes segments instead
+ * of reshuffling them. Anything outside that set folds into "Other" (always
+ * last). Slices can be zero in a short range; the chart collapses them.
+ */
 export function spendByRangeForProfile(
   kind: "RETAIL" | "CORPORATE" = "RETAIL",
 ): Record<SpendRange, SpendBreakdown> {
+  // Windows are nested, so every shorter range's categories fit this set.
+  const widest = spendBreakdownForProfile(kind, SPEND_RANGE_DAYS["1y"]);
+  const labels = widest.slices.map((s) => s.label);
+  const named = labels.filter((l) => l !== "Other");
+
   return Object.fromEntries(
-    SPEND_RANGES.map((r) => [r, spendBreakdownForProfile(kind, SPEND_RANGE_DAYS[r])]),
+    SPEND_RANGES.map((r) => {
+      const b = spendBreakdownForProfile(kind, SPEND_RANGE_DAYS[r]);
+      // Re-bucket this range's categories onto the shared named set.
+      const byLabel = new Map<string, number>();
+      for (const t of spendingDebits(kind, SPEND_RANGE_DAYS[r])) {
+        const label = named.includes(t.category as string) ? (t.category as string) : "Other";
+        byLabel.set(label, sumMoney([byLabel.get(label) ?? 0, Math.abs(t.amount)]));
+      }
+      const slices: Slice[] = labels.map((label, i) => {
+        const amount = byLabel.get(label) ?? 0;
+        return {
+          label,
+          amount,
+          share: b.total > 0 ? amount / b.total : 0,
+          color: label === "Other" ? OTHER_COLOR : CAT_COLORS[i],
+        };
+      });
+      return [r, { total: b.total, count: b.count, slices }];
+    }),
   ) as Record<SpendRange, SpendBreakdown>;
 }
 

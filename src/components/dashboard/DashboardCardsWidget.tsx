@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
-import { Snowflake, Smartphone, Globe, ChevronRight } from "lucide-react";
+import { Lock, Smartphone, Globe, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -72,7 +72,7 @@ export function DashboardCardsWidget() {
       prev.map((c) => {
         if (c.id === cardId) {
           const nextState = !c.frozen;
-          toast(nextState ? `${c.type} card frozen` : `${c.type} card unfrozen`, {
+          toast(nextState ? `${c.type} card blocked` : `${c.type} card unblocked`, {
             description: nextState ? "Online and POS transactions are temporarily blocked." : "Card is now active.",
           });
           return { ...c, frozen: nextState };
@@ -146,7 +146,7 @@ export function DashboardCardsWidget() {
                     <span className="text-[11.5px] text-muted-foreground tabular">{card.maskedNumber}</span>
                   </div>
                   {card.frozen ? (
-                    <span className="text-[11px] font-medium text-destructive">Frozen</span>
+                    <span className="text-[11px] font-medium text-destructive">Blocked</span>
                   ) : (
                     <span className="text-[11.5px] text-muted-foreground tabular">Active · GHS {card.limit.toLocaleString()} limit</span>
                   )}
@@ -164,8 +164,8 @@ export function DashboardCardsWidget() {
                       : "border-border bg-muted/60 text-foreground hover:bg-muted"
                   }`}
                 >
-                  <Snowflake size={13} strokeWidth={1.8} />
-                  <span>{card.frozen ? "Unfreeze" : "Freeze"}</span>
+                  <Lock size={13} strokeWidth={1.8} />
+                  <span>{card.frozen ? "Unblock" : "Block"}</span>
                 </button>
 
                 <button
@@ -210,10 +210,10 @@ export function DashboardCardsWidget() {
                 <div className="flex items-center justify-between py-3">
                   <div className="flex items-center gap-3">
                     <div className="flex size-8 items-center justify-center rounded-full bg-muted text-foreground">
-                      <Snowflake size={16} />
+                      <Lock size={16} />
                     </div>
                     <div>
-                      <span className="text-[13.5px] font-medium text-foreground">Freeze card</span>
+                      <span className="text-[13.5px] font-medium text-foreground">Block card</span>
                       <p className="text-[12px] text-muted-foreground">Temporarily disable transactions</p>
                     </div>
                   </div>

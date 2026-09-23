@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -131,6 +131,56 @@ function createAnnularWedgePath(
   ].join(" ");
 }
 
+interface Arc {
+  start: number;
+  end: number;
+}
+
+const TWEEN_MS = 420;
+
+function easeInOutCubic(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+/**
+ * Ease each segment's start/end angle from where it is now to the new target,
+ * so switching ranges reads as the same segments growing and shrinking.
+ * Honours prefers-reduced-motion by snapping.
+ */
+function useTweenedArcs(target: Record<string, Arc>): Record<string, Arc> {
+  const [arcs, setArcs] = useState(target);
+  const current = useRef(target);
+
+  useEffect(() => {
+    const from = current.current;
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      current.current = target;
+      setArcs(target);
+      return;
+    }
+    let raf = 0;
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      const k = easeInOutCubic(Math.min(1, (now - t0) / TWEEN_MS));
+      const frame: Record<string, Arc> = {};
+      for (const [id, to] of Object.entries(target)) {
+        const f = from[id] ?? to;
+        frame[id] = { start: f.start + (to.start - f.start) * k, end: f.end + (to.end - f.end) * k };
+      }
+      current.current = frame;
+      setArcs(frame);
+      if (k < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target]);
+
+  return arcs;
+}
+
 export interface SpendsRadialChartProps {
   /** One ledger-derived breakdown per range pill. */
   byRange: Record<SpendRange, SpendBreakdown>;
@@ -156,11 +206,10 @@ export function SpendsRadialChart({
 
   const activeBreakdown = byRange[selectedRange];
 
-  // 1. Sort descending by amount (largest on far left to smallest on far right)
-  const sortedCategories = useMemo<CategoryItem[]>(() => {
-    return activeBreakdown.slices
-      .map((sl) => ({ id: sl.label, label: sl.label, amount: sl.amount }))
-      .sort((a, b) => b.amount - a.amount);
+  // 1. Stable order across ranges (shared category set, "Other" last), so a
+  //    range switch resizes segments in place instead of reshuffling them.
+  const categories = useMemo<CategoryItem[]>(() => {
+    return activeBreakdown.slices.map((sl) => ({ id: sl.label, label: sl.label, amount: sl.amount }));
   }, [activeBreakdown]);
 
   const totalSpend = activeBreakdown.total;
@@ -184,44 +233,48 @@ export function SpendsRadialChart({
   const startArchAngle = 180.0;
   const totalArchSpan = 180.0;
 
-  // 2. Angular span proportional to spend amount
-  const slices = useMemo(() => {
-    const n = sortedCategories.length;
-    const totalGap = (n - 1) * gapDeg;
-    const availableSpan = totalArchSpan - totalGap;
+  // 2. Target angles: span proportional to spend. Empty categories collapse to
+  //    a point where they sit, so every category keeps a slot to animate from.
+  const target = useMemo(() => {
+    const visible = categories.filter((c) => c.amount > 0).length;
+    const available = totalArchSpan - Math.max(0, visible - 1) * gapDeg;
+    const out: Record<string, Arc> = {};
+    let angle = startArchAngle;
+    let first = true;
+    for (const cat of categories) {
+      if (cat.amount <= 0 || totalSpend <= 0) {
+        out[cat.id] = { start: angle, end: angle };
+        continue;
+      }
+      if (!first) angle += gapDeg;
+      first = false;
+      const start = angle;
+      angle += (cat.amount / totalSpend) * available;
+      out[cat.id] = { start, end: angle };
+    }
+    return out;
+  }, [categories, totalSpend, totalArchSpan, startArchAngle, gapDeg]);
 
-    let currentAngle = startArchAngle;
+  const arcs = useTweenedArcs(target);
 
-    return sortedCategories.map((cat, index) => {
-      const proportion = cat.amount / totalSpend;
-      const span = proportion * availableSpan;
-      const startAngle = currentAngle;
-      const endAngle = currentAngle + span;
-      currentAngle = endAngle + gapDeg;
+  const slices = categories.map((cat, index) => {
+    const arc = arcs[cat.id] ?? target[cat.id];
+    const palette = SEGMENT_PALETTE[index % SEGMENT_PALETTE.length];
+    return {
+      ...cat,
+      proportion: totalSpend > 0 ? cat.amount / totalSpend : 0,
+      visible: arc.end - arc.start > 0.3,
+      path: createAnnularWedgePath(cx, cy, innerR, outerR, arc.start, arc.end, 8),
+      lightColor: palette.light,
+      darkColor: palette.dark,
+    };
+  });
 
-      const path = createAnnularWedgePath(
-        cx,
-        cy,
-        innerR,
-        outerR,
-        startAngle,
-        endAngle,
-        8
-      );
-
-      const palette = SEGMENT_PALETTE[index % SEGMENT_PALETTE.length];
-
-      return {
-        ...cat,
-        proportion,
-        startAngle,
-        endAngle,
-        path,
-        lightColor: palette.light,
-        darkColor: palette.dark,
-      };
-    });
-  }, [sortedCategories, totalSpend, totalArchSpan, startArchAngle, cx, cy, innerR, outerR, gapDeg]);
+  // The legend ranks this range's biggest categories; colours stay stable.
+  const topSlices = slices
+    .filter((sl) => sl.amount > 0)
+    .sort((a, b) => b.amount - a.amount)
+    .slice(0, 3);
 
   const displayedAmount = hoveredCategory ? hoveredCategory.amount : totalSpend;
   const displayedLabel = hoveredCategory
@@ -274,7 +327,7 @@ export function SpendsRadialChart({
             )}
 
             {/* Perfect Semicircle Wedges (180° -> 360°) */}
-            {slices.map((slice) => {
+            {slices.filter((slice) => slice.visible).map((slice) => {
               const isHovered = hoveredCategory?.id === slice.id;
               const isDimmed = hoveredCategory !== null && !isHovered;
               const fillColor = isDark ? slice.darkColor : slice.lightColor;
@@ -284,7 +337,7 @@ export function SpendsRadialChart({
                   key={slice.id}
                   d={slice.path}
                   fill={fillColor}
-                  className="cursor-pointer transition-all duration-200"
+                  className="cursor-pointer transition-[opacity,transform,filter] duration-200"
                   style={{
                     opacity: isDimmed ? 0.35 : 1,
                     transformOrigin: `${cx}px ${cy}px`,
@@ -322,7 +375,7 @@ export function SpendsRadialChart({
 
       {/* Top categories — the chart's hover detail, reachable by touch and keyboard too */}
       <ul className="flex flex-col pt-3">
-        {slices.slice(0, 3).map((slice) => {
+        {topSlices.map((slice) => {
           const isActive = hoveredCategory?.id === slice.id;
           return (
             <li key={slice.id}>

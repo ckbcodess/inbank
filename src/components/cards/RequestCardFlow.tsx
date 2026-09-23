@@ -2,7 +2,7 @@
 "use client";
 
 import { useMemo, useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useContextualBack } from "@/lib/contextual-back";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -31,6 +31,8 @@ import {
 import {
   accountsForProfile,
   addCard,
+  findCard,
+  setCardStatus,
   GCB_BRANCHES,
   type CardType,
   type DeliveryMethod,
@@ -252,6 +254,22 @@ const CARD_TYPE_OPTIONS: readonly CardTypeOption[] = [
     icon: Sparkles,
   },
 ] as const;
+
+/** One-off fee to issue (or replace) a card, charged to the source account. */
+const ISSUANCE_FEE: Record<CardType, number> = {
+  Debit: 50,
+  Prepaid: 30,
+  Virtual: 10,
+};
+
+function fmtGhs(amount: number, currency = "GHS"): string {
+  return `${currency} ${amount.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+/** Default artwork per card type — mirrors the card detail view. */
+function defaultThemeId(type: CardType): string {
+  return type === "Virtual" ? "blue" : type === "Prepaid" ? "maroon" : "gold";
+}
 
 interface BranchComboboxProps {
   value: GcbBranch | null;
@@ -501,28 +519,54 @@ export function RequestCardFlow() {
     [activeProfile]
   );
 
+  // Replacement: `?replace=<cardId>` starts on the details step with every
+  // field carried over from the old card, so the customer only confirms.
+  const searchParams = useSearchParams();
+  const replacing = useMemo(() => {
+    const id = searchParams.get("replace");
+    return id ? findCard(id) ?? null : null;
+  }, [searchParams]);
+  const isReplacement = replacing !== null;
+
   // Flow State
-  const [step, setStep] = useState<FlowStep>("select-type");
-  const [cardType, setCardType] = useState<CardType>("Debit");
-  const [selectedAccountId, setSelectedAccountId] = useState<string>(
-    () => availableAccounts[0]?.id ?? "acc-001"
+  const [step, setStep] = useState<FlowStep>(() => (replacing ? "details" : "select-type"));
+  const [cardType, setCardType] = useState<CardType>(() => replacing?.type ?? "Debit");
+  const [selectedAccountId, setSelectedAccountId] = useState<string>(() =>
+    replacing && availableAccounts.some((a) => a.id === replacing.linkedAccountId)
+      ? replacing.linkedAccountId
+      : availableAccounts[0]?.id ?? "acc-001"
   );
-  const [cardName, setCardName] = useState("");
+  const [cardName, setCardName] = useState(() => replacing?.name ?? "");
   const [fundAmount, setFundAmount] = useState("");
-  const [cardScheme, setCardScheme] = useState<"Visa" | "Mastercard">("Visa");
-  const [networkType, setNetworkType] = useState<string>("");
-  const [selectedTheme, setSelectedTheme] = useState<CardTheme>(CARD_THEMES[1]); // Default to Gold
+  const [cardScheme, setCardScheme] = useState<"Visa" | "Mastercard">(() => replacing?.scheme ?? "Visa");
+  const [networkType, setNetworkType] = useState<string>(() => {
+    if (!replacing || replacing.type === "Virtual") return "";
+    // Older cards may not record a tier; fall back to the network's base tier.
+    const tiers = replacing.scheme === "Mastercard" ? MASTERCARD_NETWORK_TYPES : VISA_NETWORK_TYPES;
+    return tiers.some((t) => t.id === replacing.networkType)
+      ? (replacing.networkType as string)
+      : tiers[0].id;
+  });
+  const [selectedTheme, setSelectedTheme] = useState<CardTheme>(() => {
+    if (!replacing) return CARD_THEMES[1]; // Default to Gold
+    const id = replacing.colorTheme || defaultThemeId(replacing.type);
+    return CARD_THEMES.find((t) => t.id === id) ?? CARD_THEMES[1];
+  });
 
   function handleSchemeChange(scheme: "Visa" | "Mastercard") {
     setCardScheme(scheme);
     setNetworkType("");
   }
 
-  // Physical fulfillment state
-  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod | null>(null);
-  const [selectedBranch, setSelectedBranch] = useState<GcbBranch | null>(null);
+  // Mode of delivery state
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod | null>(
+    () => replacing?.deliveryMethod ?? null
+  );
+  const [selectedBranch, setSelectedBranch] = useState<GcbBranch | null>(
+    () => GCB_BRANCHES.find((b) => b.name === replacing?.deliveryBranch) ?? null
+  );
   const [recipientName, setRecipientName] = useState(actor?.name ?? "");
-  const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [deliveryAddress, setDeliveryAddress] = useState(() => replacing?.deliveryAddress ?? "");
   const [deliveryCity, setDeliveryCity] = useState("");
   const [deliveryPhone, setDeliveryPhone] = useState("+233 24 412 3456");
 
@@ -561,18 +605,24 @@ export function RequestCardFlow() {
 
   const isPhysical = cardType === "Debit" || cardType === "Prepaid";
   const isFundable = cardType === "Virtual" || cardType === "Prepaid";
+  // A replacement carries the old card's balance over instead of new funding.
+  const carriedBalance = isReplacement && isFundable ? replacing?.balance ?? 0 : null;
+  const needsFunding = isFundable && !isReplacement;
+  const issuanceFee = ISSUANCE_FEE[cardType];
+  const currency = selectedAccount?.currency ?? "GHS";
 
   const isDetailsValid = useMemo(() => {
     if (!selectedAccountId) return false;
     if (!cardName.trim()) return false;
     if (cardType === "Virtual") {
+      if (!needsFunding) return true;
       const parsedAmt = Number(fundAmount.replace(/,/g, ""));
       if (isNaN(parsedAmt) || parsedAmt <= 0) return false;
       return true;
     }
     if (!cardScheme) return false;
     if (!networkType) return false;
-    if (cardType === "Prepaid") {
+    if (cardType === "Prepaid" && needsFunding) {
       const parsedAmt = Number(fundAmount.replace(/,/g, ""));
       if (isNaN(parsedAmt) || parsedAmt <= 0) return false;
     }
@@ -591,6 +641,7 @@ export function RequestCardFlow() {
     cardName,
     cardType,
     fundAmount,
+    needsFunding,
     cardScheme,
     networkType,
     isPhysical,
@@ -608,7 +659,9 @@ export function RequestCardFlow() {
     const prefix = cardScheme === "Visa" ? "4532" : "5412";
     const fullNum = `${prefix} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${lastFour}`;
     const generatedCvv = String(Math.floor(100 + Math.random() * 900));
-    const numericFund = isFundable ? Number(fundAmount.replace(/,/g, "")) || 0 : null;
+    const numericFund = isFundable
+      ? carriedBalance ?? (Number(fundAmount.replace(/,/g, "")) || 0)
+      : null;
     const trackingCode = `GCB-CRD-${Math.floor(100000 + Math.random() * 900000)}`;
     const pickupPin = String(Math.floor(1000 + Math.random() * 9000));
     const finalCardName = cardName.trim() || `${cardType} Card`;
@@ -646,12 +699,13 @@ export function RequestCardFlow() {
     };
 
     addCard(newCard);
+    if (replacing) setCardStatus(replacing.id, "Blocked");
     setCreatedCard(newCard);
     setStep("success");
     toast.success(
       isPhysical
-        ? `Card "${newCard.name}" ordered successfully! Delivery is now tracking.`
-        : `Virtual Card "${newCard.name}" issued and active.`
+        ? `Your ${newCard.type.toLowerCase()} card request has been submitted for production.`
+        : `Virtual card "${newCard.name}" issued and active.`
     );
   }
 
@@ -728,7 +782,7 @@ export function RequestCardFlow() {
       )}
 
       {/* ───────────────────────────────────────────────────────────── */}
-      {/* STEP 2: CONFIGURE CARD & FULFILLMENT                          */}
+      {/* STEP 2: CONFIGURE CARD & MODE OF DELIVERY                     */}
       {/* ───────────────────────────────────────────────────────────── */}
       {step === "details" && (
         <div className="w-full max-w-[540px] mx-auto flex flex-col gap-6">
@@ -736,25 +790,27 @@ export function RequestCardFlow() {
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={() => setStep("select-type")}
+              onClick={() =>
+                replacing ? router.push(`/cards/${replacing.id}`) : setStep("select-type")
+              }
               className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               aria-label="Back"
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
-            <h1 className="text-[24px] font-medium leading-tight tracking-[-0.02em] text-foreground capitalize">
-              Configure {cardType.toLowerCase()} card
+            <h1 className="text-[24px] font-medium leading-tight tracking-[-0.02em] text-foreground">
+              {isReplacement ? "Replace" : "Configure"} {cardType.toLowerCase()} card
             </h1>
           </div>
 
           {/* Form Container */}
           <div className="flex flex-col gap-5 w-full">
-            {/* Linked Account Selector */}
+            {/* Source Account Selector */}
             <FromAccountSelector
               accounts={availableAccounts}
               value={selectedAccountId}
               onChange={setSelectedAccountId}
-              label="Linked account"
+              label="Source account"
             />
 
             {/* Card Nickname - Universal for all card types */}
@@ -775,13 +831,20 @@ export function RequestCardFlow() {
             {/* Virtual Card Flow: Initial Funding & Continue */}
             {cardType === "Virtual" ? (
               <>
-                {/* Initial Funding */}
-                <AmountInput
-                  value={fundAmount}
-                  onChange={setFundAmount}
-                  currency={selectedAccount?.currency ?? "GHS"}
-                  label="Initial funding amount"
-                />
+                {/* Initial Funding (a replacement carries the old balance instead) */}
+                {needsFunding ? (
+                  <AmountInput
+                    value={fundAmount}
+                    onChange={setFundAmount}
+                    currency={currency}
+                    label="Initial funding amount"
+                  />
+                ) : (
+                  <div className="flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-muted/30 px-4 py-3.5">
+                  <span className="text-[13.5px] text-muted-foreground">Balance moving to the new card</span>
+                  <span className="tabular text-[14px] text-foreground">{fmtGhs(carriedBalance ?? 0, currency)}</span>
+                </div>
+                )}
 
                 {/* Proceed Button */}
                 <div className="pt-2">
@@ -887,19 +950,25 @@ export function RequestCardFlow() {
                 {Boolean(networkType) && (
                   <div className="flex flex-col gap-5 w-full animate-in fade-in duration-200 ease-out">
                     {/* Initial Funding - for Prepaid Physical Cards */}
-                    {cardType === "Prepaid" && (
+                    {cardType === "Prepaid" && needsFunding && (
                       <AmountInput
                         value={fundAmount}
                         onChange={setFundAmount}
-                        currency={selectedAccount?.currency ?? "GHS"}
+                        currency={currency}
                         label="Initial funding amount"
                       />
                     )}
+                    {cardType === "Prepaid" && !needsFunding && (
+                      <div className="flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-muted/30 px-4 py-3.5">
+                  <span className="text-[13.5px] text-muted-foreground">Balance moving to the new card</span>
+                  <span className="tabular text-[14px] text-foreground">{fmtGhs(carriedBalance ?? 0, currency)}</span>
+                </div>
+                    )}
 
-                    {/* Physical Fulfillment */}
+                    {/* Mode of Delivery */}
                     <div className="flex flex-col gap-4 pt-2 border-t border-border/80">
                       <label className="text-[14px] font-medium text-foreground">
-                        Fulfillment method
+                        Mode of delivery
                       </label>
 
                       <div className="grid grid-cols-2 gap-3">
@@ -1219,7 +1288,7 @@ export function RequestCardFlow() {
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
             <h1 className="text-[24px] font-medium leading-tight tracking-[-0.02em] text-foreground">
-              Review request
+              {isReplacement ? "Review replacement" : "Review request"}
             </h1>
           </div>
 
@@ -1266,7 +1335,7 @@ export function RequestCardFlow() {
             </div>
 
             <div className="p-4 flex items-center justify-between gap-4">
-              <span className="text-[13.5px] text-muted-foreground">Linked account</span>
+              <span className="text-[13.5px] text-muted-foreground">Source account</span>
               <div className="flex flex-col items-end text-right">
                 <span className="text-[14px] font-medium text-foreground">
                   {selectedAccount?.name ?? "Current Account"}
@@ -1295,15 +1364,17 @@ export function RequestCardFlow() {
 
             {isFundable && (
               <div className="p-4 flex items-center justify-between gap-4">
-                <span className="text-[13.5px] text-muted-foreground">Initial funding</span>
-                <span className="text-[14px] font-medium text-foreground tabular-nums">
-                  {selectedAccount?.currency ?? "GHS"} {Number(fundAmount || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                <span className="text-[13.5px] text-muted-foreground">
+                  {isReplacement ? "Balance carried over" : "Initial funding"}
+                </span>
+                <span className="text-[14px] font-medium text-foreground tabular">
+                  {fmtGhs(carriedBalance ?? (Number(fundAmount.replace(/,/g, "")) || 0), currency)}
                 </span>
               </div>
             )}
 
             <div className="p-4 flex items-start justify-between gap-4">
-              <span className="text-[13.5px] text-muted-foreground pt-0.5">Fulfillment</span>
+              <span className="text-[13.5px] text-muted-foreground pt-0.5">Mode of delivery</span>
               <div className="flex flex-col items-end text-right max-w-[280px]">
                 {isPhysical ? (
                   deliveryMethod === "BRANCH_PICKUP" ? (
@@ -1334,8 +1405,15 @@ export function RequestCardFlow() {
             </div>
 
             <div className="p-4 flex items-center justify-between gap-4">
-              <span className="text-[13.5px] text-muted-foreground">Issuance fee</span>
-              <span className="text-[14px] font-medium text-foreground">Free</span>
+              <span className="text-[13.5px] text-muted-foreground">
+                {isReplacement ? "Replacement fee" : "Issuance fee"}
+              </span>
+              <div className="flex flex-col items-end text-right">
+                <span className="text-[14px] font-medium text-foreground tabular">
+                  {fmtGhs(issuanceFee, currency)}
+                </span>
+                <span className="text-[12px] text-muted-foreground">Charged to source account</span>
+              </div>
             </div>
           </div>
 
@@ -1479,7 +1557,7 @@ export function RequestCardFlow() {
                 transition={{ duration: 0.44, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
                 className="text-[26px] sm:text-[28px] font-medium leading-[34px] tracking-[-0.02em] text-foreground text-center"
               >
-                Card Request Confirmed
+                {isReplacement ? "Replacement Request Confirmed" : "Card Request Confirmed"}
               </motion.h1>
               {revealRest && (
                 <motion.p
@@ -1489,7 +1567,7 @@ export function RequestCardFlow() {
                   className="text-[14.5px] text-muted-foreground text-center"
                 >
                   {isPhysical
-                    ? `Your ${createdCard.type.toLowerCase()} card is in production.`
+                    ? `Your ${createdCard.type.toLowerCase()} card request has been submitted for production.`
                     : `Your virtual card is active and ready for use.`}
                 </motion.p>
               )}
@@ -1528,7 +1606,7 @@ export function RequestCardFlow() {
         open={authModalOpen}
         onOpenChange={setAuthModalOpen}
         onSuccess={handleAuthorizeSuccess}
-        title="Authorize Card Request"
+        title={isReplacement ? "Authorize Card Replacement" : "Authorize Card Request"}
       />
     </div>
   );

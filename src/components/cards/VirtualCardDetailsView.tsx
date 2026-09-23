@@ -21,7 +21,7 @@ import {
   Landmark,
   PlusCircle,
   SlidersHorizontal,
-  Snowflake,
+  Lock,
   Sparkles,
   Truck,
   Check,
@@ -42,6 +42,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   accountsForProfile,
+  findAccount,
   type PaymentCard,
   type CardTransaction,
   getCardTransactions,
@@ -400,7 +401,7 @@ export function VirtualCardDetailsView({
     const newStatus = nextFrozen ? "Blocked" : "Active";
     setCurrentCard((prev) => ({ ...prev, status: newStatus }));
     if (onUpdateCard) onUpdateCard({ status: newStatus });
-    triggerToast(nextFrozen ? "Card frozen successfully" : "Card unfrozen and active");
+    triggerToast(nextFrozen ? "Card blocked. You can unblock it here anytime." : "Card unblocked and active");
     setActiveModal(null);
   };
 
@@ -455,6 +456,7 @@ export function VirtualCardDetailsView({
       ? "maroon"
       : "gold");
   const activeTheme = getCardTheme(cardThemeId);
+  const linkedAccount = findAccount(currentCard.linkedAccountId);
 
   return (
     <div className="flex flex-col gap-10 w-full">
@@ -467,20 +469,42 @@ export function VirtualCardDetailsView({
         labels={DELIVERY_SIMULATION_LABELS}
       />
 
-      {/* Back Button & Title Header */}
-      <div className="flex items-center gap-3 min-w-0">
-        <button
-          type="button"
-          onClick={handleBackNavigation}
-          className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-          title="Back"
-          aria-label="Back"
-        >
-          <ChevronLeft size={22} strokeWidth={1.8} />
-        </button>
-        <h1 className="text-[20px] sm:text-[24px] lg:text-[26px] font-medium leading-tight sm:leading-[32px] tracking-[-0.02em] text-foreground truncate">
-          {cardNickname || "Virtual Card"}
-        </h1>
+      {/* Back Button, Title & Subtitle — the subtitle carries the money line:
+          the card's own balance (prepaid/virtual) or the account a debit card
+          spends from, so every card screen shares one structure. */}
+      <div className="flex flex-col gap-1 min-w-0">
+        <div className="flex items-center gap-3 min-w-0">
+          <button
+            type="button"
+            onClick={handleBackNavigation}
+            className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            title="Back"
+            aria-label="Back"
+          >
+            <ChevronLeft size={22} strokeWidth={1.8} />
+          </button>
+          <h1 className="text-[20px] sm:text-[24px] lg:text-[26px] font-medium leading-tight sm:leading-[32px] tracking-[-0.02em] text-foreground truncate min-w-0">
+            {cardNickname || "Virtual Card"}
+          </h1>
+        </div>
+
+        {!isInactiveDelivery && (
+          <p className="pl-12 text-[14px] text-muted-foreground truncate">
+            {isFundable ? (
+              <>
+                Balance{" "}
+                <span className="tabular text-foreground">
+                  <RevealingAmount amount={currentCard.balance ?? 0} currency={currentCard.currency || "GHS"} />
+                </span>
+              </>
+            ) : linkedAccount ? (
+              <>
+                Spends from {linkedAccount.name}{" "}
+                <span className="tabular">•• {linkedAccount.number.slice(-4)}</span>
+              </>
+            ) : null}
+          </p>
+        )}
       </div>
 
       {/* Main Container */}
@@ -810,17 +834,20 @@ export function VirtualCardDetailsView({
                     className="absolute -inset-[3px] w-[calc(100%+6px)] h-[calc(100%+6px)] max-w-none object-cover scale-[1.03] pointer-events-none select-none"
                   />
 
-                  {/* Top Row: GCB Logo & Eye Toggle / Status Badge */}
+                  {/* Top Row: GCB Logo & Card Type / Status Badge / Eye Toggle */}
                   <div className="relative z-10 flex items-center justify-between">
                     <GcbCardLogo themeId={activeTheme.id} className="h-8 sm:h-9 w-auto drop-shadow-xs shrink-0" />
                     <div className="flex items-center gap-2">
+                      <span className="text-[13px] sm:text-[14px] tracking-wide opacity-90">
+                        {effectiveCard.type}
+                      </span>
                       {isInactive ? (
                         <span className={`backdrop-blur-xs px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${badgeClass}`}>
                           Needs Activation
                         </span>
                       ) : isFrozen ? (
                         <span className={`backdrop-blur-xs px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${badgeClass}`}>
-                          Frozen
+                          Blocked
                         </span>
                       ) : null}
                       <button
@@ -1030,7 +1057,7 @@ export function VirtualCardDetailsView({
                   className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
                 >
                   <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
-                    <Snowflake size={17} strokeWidth={1.8} />
+                    <Lock size={17} strokeWidth={1.8} />
                   </div>
                   <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
                     {isFrozen ? "Unblock" : "Block"}
@@ -1066,7 +1093,7 @@ export function VirtualCardDetailsView({
                   </div>
                   <div className="flex items-start gap-2.5">
                     <Check size={16} className="text-emerald-500 shrink-0 mt-0.5" />
-                    <span>Unlock daily spend limits, card security freeze, and balance management</span>
+                    <span>Unlock daily spend limits, card blocking, and balance management</span>
                   </div>
                   <div className="flex items-start gap-2.5">
                     <Check size={16} className="text-emerald-500 shrink-0 mt-0.5" />
@@ -1480,17 +1507,17 @@ export function VirtualCardDetailsView({
         title="Authorize Activation"
       />
 
-      {/* 3. Freeze Card Confirmation Modal */}
+      {/* 3. Block Card Confirmation Modal */}
       <Dialog open={activeModal === "freeze"} onOpenChange={(open) => !open && setActiveModal(null)}>
         <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle>{isFrozen ? "Unfreeze Card?" : "Freeze Card?"}</DialogTitle>
+            <DialogTitle>{isFrozen ? "Unblock card?" : "Block card?"}</DialogTitle>
           </DialogHeader>
 
           <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
             {isFrozen
-              ? "Unfreezing will immediately re-enable payments and transactions on this card."
-              : "Freezing will temporarily block all new transactions, online payments, and ATM withdrawals."}
+              ? "Payments and withdrawals on this card will work again straight away."
+              : "New payments, online purchases and ATM withdrawals on this card stop until you unblock it. You can unblock it here anytime."}
           </div>
 
           <DialogFooter>
@@ -1502,7 +1529,7 @@ export function VirtualCardDetailsView({
               size="sm"
               onClick={handleToggleFreeze}
             >
-              {isFrozen ? "Unfreeze Card" : "Freeze Card"}
+              {isFrozen ? "Unblock card" : "Block card"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1720,7 +1747,9 @@ export function VirtualCardDetailsView({
             <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 text-[12.5px] flex items-start gap-2.5">
               <AlertTriangle size={18} className="shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
               <span>
-                Replacing this card will block current card numbers (`•••• {maskedLast4}`) immediately and issue new virtual card credentials.
+                Once you submit the replacement, this card (•••• {maskedLast4}) is blocked
+                {isFundable ? " and its balance moves to the new card" : ""}. Next, check the
+                details we&rsquo;ve filled in from this card.
               </span>
             </div>
           </DialogBody>
@@ -1730,14 +1759,11 @@ export function VirtualCardDetailsView({
               Cancel
             </Button>
             <Button
-              variant="destructive"
               size="sm"
-              onClick={() => {
-                triggerToast("Card replacement requested. New card issued.");
-                setActiveModal(null);
-              }}
+              nativeButton={false}
+              render={<Link href={`/cards/request?replace=${encodeURIComponent(currentCard.id)}`} />}
             >
-              Request Replacement
+              Continue
             </Button>
           </DialogFooter>
         </DialogContent>
