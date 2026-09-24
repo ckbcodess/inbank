@@ -21,6 +21,7 @@ import {
 import { useSession } from "@/lib/session-store";
 import { accountsForProfile, formatMoney } from "@/lib/mock-data";
 import { toast } from "sonner";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 const BOOKLET_SIZES = [
   { leaves: 25, fee: 35.0, label: "25 Leaves (Standard Personal)" },
@@ -257,11 +258,10 @@ export default function ChequeBookRequestPage() {
             <Label htmlFor="notify-phone" className="text-[13px] text-muted-foreground">
               SMS Notification Number
             </Label>
-            <Input
+            <PhoneInput
               id="notify-phone"
               value={notifyPhone}
-              onChange={(e) => setNotifyPhone(e.target.value)}
-              className="h-11"
+              onValueChange={setNotifyPhone}
               required
             />
           </div>

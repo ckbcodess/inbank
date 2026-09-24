@@ -77,12 +77,12 @@ export const ACTIVATION_SCENARIOS: readonly ActivationScenario[] = [
   { id: "retail-verify", label: "Retail · Enter code", mode: "retail", step: "verify", variant: "default" },
   { id: "retail-code-error", label: "Retail · Code rejected", mode: "retail", step: "verify", variant: "codeError" },
   { id: "retail-code-locked", label: "Retail · Attempts used up", mode: "retail", step: "verify", variant: "codeLocked" },
-  { id: "retail-setup", label: "Retail · Set up sign-in", mode: "retail", step: "setup", variant: "default" },
+  { id: "retail-setup", label: "Retail · Set up login", mode: "retail", step: "setup", variant: "default" },
   { id: "retail-done", label: "Retail · Activated", mode: "retail", step: "done", variant: "default" },
   { id: "corp-invite", label: "Corporate · Invitation", mode: "corporate", step: "identify", variant: "default" },
   { id: "corp-invite-expired", label: "Corporate · Invitation expired", mode: "corporate", step: "identify", variant: "inviteExpired" },
   { id: "corp-verify", label: "Corporate · Enter code", mode: "corporate", step: "verify", variant: "default" },
-  { id: "corp-setup", label: "Corporate · Set up sign-in", mode: "corporate", step: "setup", variant: "default" },
+  { id: "corp-setup", label: "Corporate · Set up login", mode: "corporate", step: "setup", variant: "default" },
   { id: "corp-done", label: "Corporate · Activated", mode: "corporate", step: "done", variant: "default" },
 ];
 

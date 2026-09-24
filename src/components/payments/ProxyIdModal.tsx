@@ -20,6 +20,8 @@ import {
 import { Button } from "@/components/ui/button";
 import type { Account } from "@/lib/mock-data";
 import { useProxyStore, type ProxyType } from "@/lib/proxy-store";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { isCompleteGhanaMobile } from "@/lib/phone";
 
 interface ProxyIdModalProps {
   open: boolean;
@@ -66,7 +68,7 @@ export default function ProxyIdModal({
 
   const valueValid =
     type === "phone"
-      ? value.replace(/\D/g, "").length >= 9
+      ? isCompleteGhanaMobile(value)
       : value.trim().replace(/\s/g, "").length >= 10;
   const canSave = valueValid && Boolean(linkedAccountId);
 
@@ -110,15 +112,24 @@ export default function ProxyIdModal({
             <label className={labelCls}>
               {type === "phone" ? "Phone number" : "Ghana Card number"}
             </label>
-            <input
-              type="text"
-              inputMode={type === "phone" ? "numeric" : "text"}
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder={type === "phone" ? "e.g. 0244 123 821" : "e.g. GHA-0123456789-0"}
-              className={`${inputCls} tabular`}
-              autoFocus
-            />
+            {type === "phone" ? (
+              <PhoneInput
+                value={value}
+                onValueChange={setValue}
+                aria-label="Phone number"
+                className="h-11 rounded-xl border-border/80 bg-muted/40 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30"
+                autoFocus
+              />
+            ) : (
+              <input
+                type="text"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder="e.g. GHA-0123456789-0"
+                className={`${inputCls} tabular`}
+                autoFocus
+              />
+            )}
           </div>
 
           {/* Linked account */}

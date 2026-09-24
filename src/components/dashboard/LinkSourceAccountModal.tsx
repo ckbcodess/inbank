@@ -31,6 +31,8 @@ import {
   NarrationInput,
   ProceedButton,
 } from "@/components/payments/flows/shared";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { displayGhanaMobile, isCompleteGhanaMobile } from "@/lib/phone";
 
 interface LinkSourceAccountModalProps {
   isOpen: boolean;
@@ -205,14 +207,14 @@ export default function LinkSourceAccountModal({
 
   function handleAddNewMomo(e: React.FormEvent) {
     e.preventDefault();
-    if (!newMomoNumber.trim()) return;
+    if (!isCompleteGhanaMobile(newMomoNumber)) return;
     const newSource: LinkedSource = {
       id: `src-momo-${Date.now()}`,
       type: "momo",
       title: `${newMomoOperator} Mobile Money`,
-      subtitle: newMomoNumber,
+      subtitle: displayGhanaMobile(newMomoNumber),
       operator: newMomoOperator,
-      maskedNumber: newMomoNumber,
+      maskedNumber: displayGhanaMobile(newMomoNumber),
     };
     setLinkedSources((prev) => [newSource, ...prev]);
     setSelectedSourceId(newSource.id);
@@ -733,20 +735,13 @@ export default function LinkSourceAccountModal({
                   <label htmlFor={`${modalId}-momoNum`} className="text-[13px] font-medium text-foreground">
                     Mobile number
                   </label>
-                  <div className="flex rounded-xl border border-border bg-card focus-within:ring-1 focus-within:ring-primary overflow-hidden">
-                    <span className="flex items-center border-r border-border px-3 text-[13.5px] font-medium text-muted-foreground select-none">
-                      +233
-                    </span>
-                    <input
-                      id={`${modalId}-momoNum`}
-                      type="tel"
-                      value={newMomoNumber}
-                      onChange={(e) => setNewMomoNumber(e.target.value)}
-                      placeholder="24 123 4567"
-                      className="h-11 w-full bg-transparent px-3 text-[14px] text-foreground focus:outline-hidden"
-                      required
-                    />
-                  </div>
+                  <PhoneInput
+                    id={`${modalId}-momoNum`}
+                    value={newMomoNumber}
+                    onValueChange={setNewMomoNumber}
+                    className="rounded-xl border-border bg-card"
+                    required
+                  />
                 </div>
 
                 <div className="flex flex-col gap-1.5">

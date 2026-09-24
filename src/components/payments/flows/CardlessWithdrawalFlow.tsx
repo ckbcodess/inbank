@@ -25,6 +25,8 @@ import {
   resolveAccountName,
 } from "./shared";
 import { REGISTERED_PHONE } from "../useAuthorisation";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { isCompleteGhanaMobile } from "@/lib/phone";
 
 export interface CardlessFormState {
   fromId: string;
@@ -77,8 +79,7 @@ export function CardlessWithdrawalFlow({
     [accounts, state.fromId]
   );
 
-  const cleanPhone = (state.recipientPhone || "").replace(/[^0-9]/g, "");
-  const isPhoneValid = isSelf || cleanPhone.length >= 9;
+  const isPhoneValid = isSelf || isCompleteGhanaMobile(state.recipientPhone || "");
   const isNetworkValid = isSelf || Boolean(state.wNetwork);
   const isDetailsEntered = isPhoneValid && isNetworkValid;
 
@@ -201,12 +202,9 @@ export function CardlessWithdrawalFlow({
 
                 {/* Phone Number Input with Auto-Network Detection & Verification */}
                 <div>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
+                  <PhoneInput
                     value={state.recipientPhone}
-                    onChange={(e) => {
-                      const val = e.target.value.replace(/[^0-9]/g, "");
+                    onValueChange={(val) => {
                       onChange("recipientPhone", val);
                       const detected = detectTelcoNetwork(val);
                       if (detected && !state.wNetwork) {
@@ -217,8 +215,8 @@ export function CardlessWithdrawalFlow({
                         onChange("recipientName", resolved);
                       }
                     }}
-                    placeholder="Enter phone number (e.g. 024 123 4567)"
-                    className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular placeholder:text-muted-foreground/50"
+                    aria-label="Phone number"
+                    className="h-13 rounded-2xl border-border/80 bg-card px-4 text-[15px] focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 dark:border-border/80 dark:bg-card dark:focus-within:bg-card"
                   />
                 </div>
 

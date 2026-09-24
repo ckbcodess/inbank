@@ -30,6 +30,7 @@ import { useSession } from "@/lib/session-store";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 type SettingsTab = "profile" | "security" | "notifications" | "preferences";
 
@@ -176,10 +177,10 @@ export default function SettingsPage() {
                 <Label htmlFor="phone" className="text-[12.5px] text-muted-foreground">
                   Primary Mobile Phone
                 </Label>
-                <Input
+                <PhoneInput
                   id="phone"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onValueChange={setPhone}
                   className="h-10 text-[13px]"
                   required
                 />

@@ -28,6 +28,8 @@ import {
   resolveAccountName,
 } from "./shared";
 import { REGISTERED_PHONE } from "../useAuthorisation";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { isCompleteGhanaMobile } from "@/lib/phone";
 
 export interface MobileWalletFormState {
   fromId: string;
@@ -86,8 +88,7 @@ export function MobileWalletFlow({
     [accounts, state.fromId]
   );
 
-  const cleanPhone = state.wPhone.replace(/[\s-]/g, "");
-  const isPhoneValid = isSelf || cleanPhone.length >= 9;
+  const isPhoneValid = isSelf || isCompleteGhanaMobile(state.wPhone);
   const isNetworkValid = isSelf || Boolean(state.wNetwork);
   const isDetailsEntered = isPhoneValid && isNetworkValid;
 
@@ -202,12 +203,9 @@ export function MobileWalletFlow({
                   </SelectContent>
                 </Select>
 
-                <input
-                  type="tel"
-                  inputMode="numeric"
+                <PhoneInput
                   value={state.wPhone}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/[^0-9]/g, "");
+                  onValueChange={(val) => {
                     onChange("wPhone", val);
                     const detected = detectTelcoNetwork(val);
                     if (detected && !state.wNetwork) {
@@ -218,8 +216,8 @@ export function MobileWalletFlow({
                       onChange("wName", resolved);
                     }
                   }}
-                  placeholder="Enter mobile number (e.g. 024 123 4567)"
-                  className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                  aria-label="Mobile number"
+                  className="h-13 rounded-2xl border-border/80 bg-card px-4 text-[15px] focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 dark:border-border/80 dark:bg-card dark:focus-within:bg-card"
                 />
               </>
             )}

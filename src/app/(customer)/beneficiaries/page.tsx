@@ -70,6 +70,7 @@ import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import EditGroupModal from "@/components/payments/EditGroupModal";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 type ActiveTab = "people" | "billers" | "groups";
 type TypeFilter = "all" | TransactionType;
@@ -1232,12 +1233,11 @@ export default function BeneficiariesPage() {
                   <label className="text-[12.5px] font-medium text-muted-foreground">
                     Wallet Phone Number
                   </label>
-                  <input
-                    type="tel"
+                  <PhoneInput
                     value={form.phoneNumber}
-                    onChange={(e) => setForm((p) => ({ ...p, phoneNumber: e.target.value }))}
-                    placeholder="e.g. 024 123 4567"
-                    className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all shadow-xs"
+                    onValueChange={(v) => setForm((p) => ({ ...p, phoneNumber: v }))}
+                    aria-label="Wallet phone number"
+                    className="h-11 rounded-xl border-border/80 bg-muted/40 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 shadow-xs"
                   />
                 </div>
               </div>
@@ -1381,12 +1381,11 @@ export default function BeneficiariesPage() {
                   <label className="text-[12.5px] font-medium text-muted-foreground">
                     Phone Number
                   </label>
-                  <input
-                    type="text"
+                  <PhoneInput
                     value={form.phoneNumber}
-                    onChange={(e) => setForm((p) => ({ ...p, phoneNumber: e.target.value }))}
-                    placeholder="Phone number to top up (e.g. 0244 123 821)"
-                    className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                    onValueChange={(v) => setForm((p) => ({ ...p, phoneNumber: v }))}
+                    aria-label="Phone number to top up"
+                    className="h-11 rounded-xl border-border/80 bg-muted/40 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30"
                   />
                 </div>
               </div>

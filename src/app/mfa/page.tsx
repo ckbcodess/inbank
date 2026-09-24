@@ -80,7 +80,7 @@ function MfaContent() {
       title={isNewDevice ? "New device authorization" : "Verify your identity"}
       description={
         isNewDevice ? (
-          "We detected a sign-in from an unrecognized browser or device. Enter the code sent to your phone."
+          "We detected a login from an unrecognized browser or device. Enter the code sent to your phone."
         ) : (
           <span className="flex items-center justify-center gap-1.5">
             <Smartphone size={14} strokeWidth={1.9} aria-hidden="true" />

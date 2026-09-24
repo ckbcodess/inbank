@@ -3,18 +3,23 @@
 /**
  * Password Reset — BRD FR-31.
  *
- * "The system shall allow customers to reset passwords using OTP or other
- * Bank-approved verification methods… Customers can reset their passwords after
- * successful verification, and all activities are logged."
+ * Mobile number → selfie → new password → back to login.
  *
- * Three stages: identify → verify OTP → set a new password. Two deliberate
- * security properties:
+ * The selfie is the verification: it's matched against the Ghana Card photo
+ * the Bank already holds, so the customer doesn't need access to an inbox or
+ * a code to get back in. Two deliberate security properties:
  *
- *  - The identify step never confirms whether an account exists. It always
- *    advances with the same wording, so this screen can't be used to enumerate
- *    customers.
- *  - Every stage states that the activity is logged, matching FR-31's
- *    acceptance criterion and section 8's audit promise.
+ *  - The mobile step never confirms whether a profile exists. It always
+ *    advances with the same wording, so this screen can't be used to
+ *    enumerate customers.
+ *  - Password rules come from the same component activation uses
+ *    (`NewPasswordFields`), so a reset can't enforce a different standard.
+ *
+ * A selfie that doesn't match gets a calm retry screen (likely causes, no
+ * blame). After MAX_SELFIE_ATTEMPTS misses, selfie checks stop and the
+ * customer is sent to a branch with their Ghana Card.
+ *
+ * Demo: any mobile number ending in 0000 (e.g. 24 000 0000) never matches.
  *
  * Sits outside both shells — it is reached from Login, before authentication.
  */
@@ -22,305 +27,282 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  AlertCircle,
-  ArrowLeft,
-  CheckCircle2,
-  KeyRound,
-  Landmark,
-  MailCheck,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowLeft, CheckCircle2, Landmark, ScanFace } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
-import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
-import { PASSWORD_RULES } from "@/lib/activation";
+import AuthLayout from "@/components/auth/AuthLayout";
+import SelfieCapture from "@/components/auth/SelfieCapture";
+import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
+import { isCompleteGhanaMobile } from "@/lib/phone";
 
-type Stage = "identify" | "verify" | "reset" | "done";
+type Stage = "mobile" | "selfie" | "no_match" | "branch" | "password" | "done";
 
-/**
- * Rules live in one place with activation — a reset that enforces a different
- * standard from enrolment is how the two quietly drift apart.
- */
-function passwordIssues(pw: string): string[] {
-  return PASSWORD_RULES.filter((r) => !r.test(pw)).map((r) => r.label.toLowerCase());
+const STEP_NUMBER: Partial<Record<Stage, number>> = {
+  mobile: 1,
+  selfie: 2,
+  no_match: 2,
+  password: 3,
+};
+
+const MAX_SELFIE_ATTEMPTS = 3;
+const BRANCH_LOCATOR_URL = "https://www.gcbbank.com.gh/branches-and-atms";
+
+/** Demo hook: numbers ending in 0000 stand in for a face that won't match. */
+function selfieMatches(mobile: string): boolean {
+  return !mobile.endsWith("0000");
 }
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
-  const [stage, setStage] = useState<Stage>("identify");
+  const [stage, setStage] = useState<Stage>("mobile");
   const [busy, setBusy] = useState(false);
 
-  const [identifier, setIdentifier] = useState("");
-  const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
-  const [codeError, setCodeError] = useState(false);
+  const [mobile, setMobile] = useState("");
+  const [selfieImage, setSelfieImage] = useState<string | null>(null);
+  const [failedAttempts, setFailedAttempts] = useState(0);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
 
-  const issues = passwordIssues(password);
-  const mismatch = confirm.length > 0 && confirm !== password;
-  const canReset = password.length > 0 && issues.length === 0 && !mismatch && confirm.length > 0;
+  const mobileValid = isCompleteGhanaMobile(mobile);
+  const canReset = newPasswordReady(password, confirm);
 
-  function advance(next: Stage) {
+  function advance(next: Stage, delay = 600) {
     setBusy(true);
-    setTimeout(() => {
+    window.setTimeout(() => {
       setBusy(false);
       setStage(next);
-    }, 600);
+    }, delay);
   }
 
-  function handleVerify(e?: React.FormEvent, incomingCode?: string) {
-    if (e) e.preventDefault();
-    const codeToVerify = incomingCode ?? digits.join("");
-    if (codeToVerify.length !== 6 || busy) return;
-
-    if (codeToVerify === "000000") {
-      setCodeError(true);
-      setDigits(Array(OTP_LENGTH).fill(""));
+  function handleSelfie(image: string) {
+    setSelfieImage(image);
+    if (selfieMatches(mobile)) {
+      advance("password", 800);
       return;
     }
-    setCodeError(false);
-    advance("reset");
+    const attempts = failedAttempts + 1;
+    setFailedAttempts(attempts);
+    advance(attempts >= MAX_SELFIE_ATTEMPTS ? "branch" : "no_match", 800);
   }
 
+  function retrySelfie() {
+    setSelfieImage(null);
+    setStage("selfie");
+  }
+
+  function handleBack() {
+    if (stage === "password") {
+      setPassword("");
+      setConfirm("");
+      setSelfieImage(null);
+      setStage("selfie");
+    } else if (stage === "selfie" || stage === "no_match") {
+      setSelfieImage(null);
+      setStage("mobile");
+    }
+  }
+
+  const copy: Record<Stage, { title: string; description: string }> = {
+    mobile: {
+      title: "Reset Your Password",
+      description: "Enter the mobile number registered on your account.",
+    },
+    selfie: {
+      title: "Take a Selfie",
+      description: "We'll match it to the photo on your Ghana Card.",
+    },
+    no_match: {
+      title: "We Couldn't Match Your Selfie",
+      description:
+        "This usually comes down to light, glare, or something covering part of your face. Find even light, face the camera and try again.",
+    },
+    branch: {
+      title: "Let's Finish This at a Branch",
+      description:
+        "Your selfie still didn't match, so we've paused selfie checks for this number. Bring your Ghana Card to any GCB branch and we'll reset your password there.",
+    },
+    password: {
+      title: "Create a New Password",
+      description: "Enter it twice to make sure it's right.",
+    },
+    done: {
+      title: "Password Reset",
+      description: "Log in with your new password. Any other devices have been signed out.",
+    },
+  };
+
   return (
-    <div className="flex min-h-screen items-start justify-center bg-background px-4 pt-20 pb-12 sm:pt-24 sm:pb-16">
-      <div className="w-full max-w-[480px]">
-        <div className="mb-7 flex flex-col items-center text-center">
-          <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-            {stage === "done" ? (
-              <CheckCircle2 size={24} strokeWidth={1.9} aria-hidden="true" />
+    <AuthLayout
+      title={copy[stage].title}
+      description={copy[stage].description}
+      icon={
+        stage === "done"
+          ? CheckCircle2
+          : stage === "no_match"
+            ? ScanFace
+            : stage === "branch"
+              ? Landmark
+              : undefined
+      }
+      stepProgress={STEP_NUMBER[stage] ? { current: STEP_NUMBER[stage], total: 3 } : undefined}
+      width="compact"
+      footer={
+        stage === "done" || stage === "branch" ? undefined : (
+          <div className="flex justify-center">
+            {stage === "mobile" ? (
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <ArrowLeft size={15} strokeWidth={1.9} aria-hidden="true" />
+                Back to login
+              </Link>
             ) : (
-              <Landmark size={24} strokeWidth={1.9} aria-hidden="true" />
+              <button
+                type="button"
+                onClick={handleBack}
+                disabled={busy}
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer disabled:opacity-50"
+              >
+                <ArrowLeft size={15} strokeWidth={1.9} aria-hidden="true" />
+                Back
+              </button>
             )}
           </div>
-          <h1 className="text-[24px] sm:text-[26px] font-medium leading-tight tracking-[-0.02em] text-foreground">
-            {stage === "identify" && "Reset your password"}
-            {stage === "verify" && "Verify it's you"}
-            {stage === "reset" && "Choose a new password"}
-            {stage === "done" && "Password updated"}
-          </h1>
-          <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
-            {stage === "identify" &&
-              "We'll send a one-time code to the contact details registered on your profile."}
-            {stage === "verify" && "Enter the 6-digit code we just sent you."}
-            {stage === "reset" && "Pick something you haven't used on this account before."}
-            {stage === "done" && "You can now sign in with your new password."}
+        )
+      }
+    >
+      {stage === "mobile" && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (mobileValid && !busy) advance("selfie");
+          }}
+          className="flex flex-col gap-5"
+        >
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="mobile" className="text-[13px] font-medium text-foreground">
+              Mobile number
+            </Label>
+            <PhoneInput
+              id="mobile"
+              value={mobile}
+              onValueChange={setMobile}
+              autoFocus
+              required
+            />
+          </div>
+
+          <Button
+            type="submit"
+            variant="default"
+            size="lg"
+            disabled={busy || !mobileValid}
+            className="mt-2 h-11 w-full text-[14px]"
+          >
+            {busy ? (
+              <>
+                <AppLoader size={16} className="mr-2" />
+                Checking…
+              </>
+            ) : (
+              "Continue"
+            )}
+          </Button>
+        </form>
+      )}
+
+      {stage === "selfie" && (
+        <SelfieCapture
+          onCapture={handleSelfie}
+          busy={busy}
+          capturedImage={selfieImage}
+          onRetake={() => setSelfieImage(null)}
+          dataTour="reset-selfie"
+        />
+      )}
+
+      {stage === "password" && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (canReset && !busy) advance("done");
+          }}
+          className="flex flex-col gap-5"
+        >
+          <NewPasswordFields
+            password={password}
+            confirm={confirm}
+            onPasswordChange={setPassword}
+            onConfirmChange={setConfirm}
+            autoFocus
+          />
+
+          <Button
+            type="submit"
+            variant="default"
+            size="lg"
+            disabled={busy || !canReset}
+            className="mt-2 h-11 w-full text-[14px]"
+          >
+            {busy ? (
+              <>
+                <AppLoader size={16} className="mr-2" />
+                Resetting…
+              </>
+            ) : (
+              "Reset password"
+            )}
+          </Button>
+        </form>
+      )}
+
+      {stage === "no_match" && (
+        <div className="flex flex-col gap-3">
+          <Button variant="default" size="lg" onClick={retrySelfie} className="h-11 w-full text-[14px]">
+            Try again
+          </Button>
+          <p className="text-center text-[12.5px] text-muted-foreground">
+            <span className="tabular">{MAX_SELFIE_ATTEMPTS - failedAttempts}</span>{" "}
+            {MAX_SELFIE_ATTEMPTS - failedAttempts === 1 ? "try" : "tries"} left before we ask you to visit a branch
           </p>
         </div>
+      )}
 
-        <div className="rounded-3xl border border-border bg-card p-7 sm:p-9 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
-          {stage === "identify" && (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                advance("verify");
-              }}
-              className="flex flex-col gap-5"
-            >
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="identifier" className="text-[13.5px] font-medium text-foreground">
-                  Email or user ID
-                </Label>
-                <Input
-                  id="identifier"
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="you@company.com"
-                  autoComplete="username"
-                  className="h-11 text-[14.5px]"
-                  required
-                />
-              </div>
-
-              <Button
-                type="submit"
-                variant="default"
-                size="lg"
-                disabled={busy || identifier.trim() === ""}
-                className="mt-2 h-11 w-full text-[14px]"
-              >
-                {busy ? (
-                  <>
-                    <AppLoader size={16} className="mr-2" />
-                    Sending code…
-                  </>
-                ) : (
-                  <>
-                    <MailCheck size={16} strokeWidth={1.9} className="mr-2" aria-hidden="true" />
-                    Send one-time code
-                  </>
-                )}
-              </Button>
-            </form>
-          )}
-
-          {stage === "verify" && (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleVerify();
-              }}
-              className="flex flex-col gap-6"
-            >
-              <div>
-                <OtpInput
-                  value={digits}
-                  onChange={(next) => {
-                    setDigits(next);
-                    if (codeError) setCodeError(false);
-                  }}
-                  onComplete={(c) => handleVerify(undefined, c)}
-                  disabled={busy}
-                  invalid={codeError}
-                  autoFocus
-                />
-              </div>
-
-              {busy && (
-                <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
-                  <AppLoader size={16} />
-                  <span>Verifying code...</span>
-                </div>
-              )}
-
-              {codeError && (
-                <div
-                  role="alert"
-                  className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3.5 text-[13px] text-destructive"
-                >
-                  <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
-                  <span>That code isn&apos;t valid or has expired. Request a new code or enter any other 6 digits.</span>
-                </div>
-              )}
-
-              <div className="mt-2 flex flex-col items-center gap-2 border-t border-border pt-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDigits(Array(OTP_LENGTH).fill(""));
-                    setCodeError(false);
-                    setStage("identify");
-                  }}
-                  className="text-center text-[12.5px] text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
-                >
-                  Use a different email or user ID
-                </button>
-              </div>
-            </form>
-          )}
-
-          {stage === "reset" && (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (canReset) advance("done");
-              }}
-              className="flex flex-col gap-5"
-            >
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="new-password" className="text-[13.5px] font-medium text-foreground">
-                  New password
-                </Label>
-                <Input
-                  id="new-password"
-                  type="password"
-                  autoComplete="new-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="h-11 text-[14.5px]"
-                  required
-                />
-                {/* Inline requirements, stated up front rather than only on failure. */}
-                <p className="text-[12.5px] text-muted-foreground">
-                  {password.length === 0
-                    ? "Needs 12+ characters, upper and lower case, a number and a symbol."
-                    : issues.length > 0
-                      ? `Still needs ${issues.join(", ")}.`
-                      : "Meets all requirements."}
-                </p>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="confirm-password" className="text-[13.5px] font-medium text-foreground">
-                  Confirm new password
-                </Label>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  autoComplete="new-password"
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="h-11 text-[14.5px]"
-                  aria-invalid={mismatch || undefined}
-                  required
-                />
-                {mismatch && (
-                  <p className="text-[12.5px] text-destructive">Both passwords must match.</p>
-                )}
-              </div>
-
-              <Button
-                type="submit"
-                variant="default"
-                size="lg"
-                disabled={busy || !canReset}
-                className="mt-2 h-11 w-full text-[14px]"
-              >
-                {busy ? (
-                  <>
-                    <AppLoader size={16} className="mr-2" />
-                    Updating…
-                  </>
-                ) : (
-                  <>
-                    <KeyRound size={16} strokeWidth={1.9} className="mr-2" aria-hidden="true" />
-                    Update password
-                  </>
-                )}
-              </Button>
-            </form>
-          )}
-
-          {stage === "done" && (
-            <div className="flex flex-col gap-5">
-              <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-                Your password was changed and every active session was signed out. This reset has
-                been written to the audit log.
-              </p>
-              <Button
-                variant="default"
-                size="lg"
-                onClick={() => router.push("/login")}
-                className="h-11 w-full text-[14px]"
-              >
-                Back to sign in
-              </Button>
-            </div>
-          )}
+      {stage === "branch" && (
+        <div className="flex flex-col gap-3">
+          <Button
+            variant="default"
+            size="lg"
+            nativeButton={false}
+            render={<a href={BRANCH_LOCATOR_URL} target="_blank" rel="noreferrer" />}
+            className="h-11 w-full text-[14px]"
+          >
+            Find a branch
+          </Button>
+          <Button
+            variant="ghost"
+            size="lg"
+            onClick={() => router.push("/login")}
+            className="h-11 w-full text-[14px]"
+          >
+            Back to login
+          </Button>
         </div>
+      )}
 
-        {stage !== "done" && (
-          <div className="mt-6 text-center">
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft size={15} strokeWidth={2} aria-hidden="true" />
-              Back to sign in
-            </Link>
-          </div>
-        )}
-
-        <p className="mt-6 text-center text-[12px] leading-relaxed text-muted-foreground">
-          For your security, every password reset attempt is recorded with the time and the device
-          used.
-        </p>
-      </div>
-    </div>
+      {stage === "done" && (
+        <Button
+          variant="default"
+          size="lg"
+          onClick={() => router.push("/login")}
+          className="h-11 w-full text-[14px]"
+        >
+          Back to login
+        </Button>
+      )}
+    </AuthLayout>
   );
 }

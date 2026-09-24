@@ -164,6 +164,7 @@ function detectNetworkFromPhone(phone: string): { airtimeNet: string; walletNet:
 }
 
 import { useContextualBack } from "@/lib/contextual-back";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const router = useRouter();
@@ -891,13 +892,11 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     </SelectContent>
                   </Select>
 
-                  <input
-                    type="tel"
-                    inputMode="numeric"
+                  <PhoneInput
                     value={f.destination}
-                    onChange={(e) => handlePhoneChange(e.target.value.replace(/[^0-9]/g, ""))}
-                    placeholder="Enter mobile / wallet number (e.g. 024 123 4567)"
-                    className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                    onValueChange={handlePhoneChange}
+                    aria-label="Mobile or wallet number"
+                    className="h-13 rounded-2xl border-border/80 bg-card px-4 text-[15px] focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 dark:border-border/80 dark:bg-card dark:focus-within:bg-card"
                   />
                 </>
               )}
@@ -994,13 +993,11 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     </SelectContent>
                   </Select>
 
-                  <input
-                    type="tel"
-                    inputMode="numeric"
+                  <PhoneInput
                     value={f.destination}
-                    onChange={(e) => handlePhoneChange(e.target.value.replace(/[^0-9]/g, ""))}
-                    placeholder="Enter phone number (e.g. 024 123 4567)"
-                    className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                    onValueChange={handlePhoneChange}
+                    aria-label="Phone number"
+                    className="h-13 rounded-2xl border-border/80 bg-card px-4 text-[15px] focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 dark:border-border/80 dark:bg-card dark:focus-within:bg-card"
                   />
 
                   <Select
@@ -1049,13 +1046,11 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     </SelectContent>
                   </Select>
 
-                  <input
-                    type="tel"
-                    inputMode="numeric"
+                  <PhoneInput
                     value={f.destination}
-                    onChange={(e) => handlePhoneChange(e.target.value.replace(/[^0-9]/g, ""))}
-                    placeholder="Enter phone number (e.g. 024 123 4567)"
-                    className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                    onValueChange={handlePhoneChange}
+                    aria-label="Phone number"
+                    className="h-13 rounded-2xl border-border/80 bg-card px-4 text-[15px] focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 dark:border-border/80 dark:bg-card dark:focus-within:bg-card"
                   />
                 </>
               )}

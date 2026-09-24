@@ -136,7 +136,7 @@ export default function AuditLogPage() {
         <TrueEmptyState
           icon={<ShieldCheck size={20} strokeWidth={1.7} aria-hidden="true" />}
           title="No activity recorded yet"
-          description="Once users sign in and act on transactions, every action will be recorded here with its actor and timestamp."
+          description="Once users log in and act on transactions, every action will be recorded here with its actor and timestamp."
         />
       )}
 

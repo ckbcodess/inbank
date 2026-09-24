@@ -62,6 +62,8 @@ import {
   type PrimaryContact,
   type Signatory,
 } from "@/lib/signup-business";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { displayGhanaMobile, isCompleteGhanaMobile } from "@/lib/phone";
 
 const EMPTY_COMPANY: CompanyDetails = { name: "", tin: "", businessType: BUSINESS_TYPES[0] };
 const EMPTY_CONTACT: PrimaryContact = { name: "", role: SIGNATORY_ROLES[0], ghanaCard: "", mobile: "", email: "" };
@@ -317,7 +319,7 @@ export default function BusinessSignupPage() {
               render={<Link href="/login" />}
               className="mt-2 h-11 w-full text-[14px]"
             >
-              Back to sign in
+              Back to login
             </Button>
           </div>
         )}
@@ -388,12 +390,11 @@ export default function BusinessSignupPage() {
                 <Label htmlFor="contactMobile" className="text-[13.5px] font-medium text-foreground">
                   Mobile number
                 </Label>
-                <Input
+                <PhoneInput
                   id="contactMobile"
-                  type="tel"
                   value={contact.mobile}
-                  onChange={(e) => setContact((c) => ({ ...c, mobile: e.target.value }))}
-                  className="h-11 text-[14.5px] tabular"
+                  onValueChange={(v) => setContact((c) => ({ ...c, mobile: v }))}
+                  className="text-[14.5px]"
                   required
                 />
               </div>
@@ -416,7 +417,7 @@ export default function BusinessSignupPage() {
               type="submit"
               variant="default"
               size="lg"
-              disabled={contact.name.trim() === "" || contact.ghanaCard.trim() === "" || contact.mobile.trim() === "" || contact.email.trim() === ""}
+              disabled={contact.name.trim() === "" || contact.ghanaCard.trim() === "" || !isCompleteGhanaMobile(contact.mobile) || contact.email.trim() === ""}
               className="mt-2 h-11 w-full text-[14px]"
             >
               Continue
@@ -457,7 +458,7 @@ export default function BusinessSignupPage() {
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-[13.5px] font-medium text-foreground">{sig.name || "Unnamed signatory"}</span>
                   <span className="mt-0.5 text-[12.5px] text-muted-foreground tabular">
-                    {sig.role} · {sig.mobile || "no number yet"}
+                    {sig.role} · {sig.mobile ? displayGhanaMobile(sig.mobile) : "no number yet"}
                   </span>
                 </span>
                 <button
@@ -575,7 +576,7 @@ export default function BusinessSignupPage() {
               <dl className="grid grid-cols-1 gap-y-2.5 text-[13.5px]">
                 <Row label="Name" value={contact.name} />
                 <Row label="Role" value={contact.role} />
-                <Row label="Mobile" value={contact.mobile} tabular />
+                <Row label="Mobile" value={displayGhanaMobile(contact.mobile)} tabular />
                 <Row label="Email" value={contact.email} />
               </dl>
             </ReviewSection>
@@ -646,7 +647,7 @@ export default function BusinessSignupPage() {
               We&apos;ll email <span className="text-foreground">{contact.email}</span> either way — if
               anything&apos;s missing, we&apos;ll say exactly what. Once approved,{" "}
               <span className="text-foreground">{contact.name}</span> receives an activation link to
-              sign in as the company&apos;s first Corporate Admin, and can invite the rest of the
+              log in as the company&apos;s first Corporate Admin, and can invite the rest of the
               team from Administration.
             </p>
 
@@ -657,7 +658,7 @@ export default function BusinessSignupPage() {
               render={<Link href="/login" />}
               className="h-11 w-full text-[14px]"
             >
-              Back to sign in
+              Back to login
             </Button>
 
             <p className="text-center text-[12.5px] text-muted-foreground">
@@ -747,19 +748,17 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
           </SelectContent>
         </Select>
       </div>
-      <Input
+      <PhoneInput
         value={mobile}
-        onChange={(e) => setMobile(e.target.value)}
-        placeholder="Mobile number"
-        type="tel"
-        className="h-11 text-[14.5px] tabular"
+        onValueChange={setMobile}
+        className="text-[14.5px]"
         aria-label="Signatory mobile number"
       />
       <div className="flex gap-2">
         <Button
           type="button"
           size="sm"
-          disabled={name.trim() === "" || mobile.trim() === ""}
+          disabled={name.trim() === "" || !isCompleteGhanaMobile(mobile)}
           onClick={() => {
             onAdd({ id: newSignatoryId(), name, role, mobile });
             setName("");

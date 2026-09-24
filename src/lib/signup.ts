@@ -54,7 +54,7 @@ export const SIGNUP_SCENARIOS: readonly SignupScenario[] = [
   { id: "verify", label: "Enter code", step: "verify", variant: "default" },
   { id: "verify-error", label: "Code rejected", step: "verify", variant: "codeError" },
   { id: "verify-locked", label: "Attempts used up", step: "verify", variant: "codeLocked" },
-  { id: "setup", label: "Set up sign-in", step: "setup", variant: "default" },
+  { id: "setup", label: "Set up login", step: "setup", variant: "default" },
   { id: "done", label: "Account opened", step: "done", variant: "default" },
 ];
 

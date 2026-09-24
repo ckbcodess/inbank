@@ -145,10 +145,10 @@ function LoginForm() {
           {state === "submitting" ? (
             <>
               <AppLoader size={16} className="mr-2" />
-              Signing in...
+              Logging in...
             </>
           ) : (
-            "Sign in"
+            "Login"
           )}
         </Button>
       </form>

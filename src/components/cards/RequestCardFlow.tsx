@@ -47,6 +47,7 @@ import { EmvChip } from "@/components/cards/EmvChip";
 import { GcbCardLogo } from "@/components/cards/GcbCardLogo";
 import TransactionPinModal from "@/components/payments/TransactionPinModal";
 import { toast } from "sonner";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 // Visa Official Vector Logo
 function VisaLogo({ className = "h-4 w-auto" }: { className?: string }) {
@@ -1097,12 +1098,11 @@ export function RequestCardFlow() {
                             </div>
                             <div className="flex flex-col gap-2">
                               <label className="text-[14px] font-medium text-foreground">Phone</label>
-                              <input
-                                type="text"
+                              <PhoneInput
                                 value={deliveryPhone}
-                                onChange={(e) => setDeliveryPhone(e.target.value)}
-                                placeholder="Phone number"
-                                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+                                onValueChange={setDeliveryPhone}
+                                aria-label="Delivery phone number"
+                                className="h-13 rounded-2xl border-border/80 bg-card px-4 text-[15px] focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 dark:border-border/80 dark:bg-card dark:focus-within:bg-card"
                               />
                             </div>
                           </div>

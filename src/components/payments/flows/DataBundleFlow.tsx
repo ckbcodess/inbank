@@ -28,6 +28,8 @@ import {
   normalizeNetworkName,
   resolveAccountName,
 } from "./shared";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { isCompleteGhanaMobile } from "@/lib/phone";
 
 export interface DataBundleFormState {
   fromId: string;
@@ -89,7 +91,7 @@ export function DataBundleFlow({
 
   const numAmount = selectedBundle?.price ?? 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
-  const isPhoneValid = state.aPhone.replace(/\s/g, "").length >= 9;
+  const isPhoneValid = isCompleteGhanaMobile(state.aPhone);
   const isNetworkValid = Boolean(state.wNetwork);
   const isValid = Boolean(state.fromId) && isNetworkValid && isPhoneValid && numAmount > 0 && !overBalance;
 
@@ -180,12 +182,9 @@ export function DataBundleFlow({
               </SelectContent>
             </Select>
 
-            <input
-              type="tel"
-              inputMode="numeric"
+            <PhoneInput
               value={state.aPhone}
-              onChange={(e) => {
-                const val = e.target.value.replace(/[^0-9]/g, "");
+              onValueChange={(val) => {
                 onChange("aPhone", val);
                 const detected = detectTelcoNetwork(val);
                 if (detected && !state.wNetwork) {
@@ -201,8 +200,8 @@ export function DataBundleFlow({
                   onChange("benName", resolved);
                 }
               }}
-              placeholder="Enter phone number (e.g. 024 123 4567)"
-              className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+              aria-label="Phone number"
+              className="h-13 rounded-2xl border-border/80 bg-card px-4 text-[15px] focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 dark:border-border/80 dark:bg-card dark:focus-within:bg-card"
             />
 
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}

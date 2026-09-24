@@ -61,7 +61,7 @@ const LOGIN_GET_STARTED: TourStep = {
   target: "login-get-started",
   route: "/login",
   title: "Open “Get started”",
-  body: "First-time enrolment lives behind the sign-in form.",
+  body: "First-time enrolment lives behind the login form.",
   action: "Click “Get started”",
 };
 
@@ -191,7 +191,7 @@ export const TOURS: Tour[] = [
     name: "Yaw Oppong",
     title: "Existing customer · new device",
     badge: "Device trust",
-    summary: "Already enrolled, signing in from an unrecognised browser.",
+    summary: "Already enrolled, logging in from an unrecognised browser.",
     icon: "laptop",
     startActorId: "u-yaw",
     startRoute: "/mfa?device=new",

@@ -6,8 +6,6 @@ import {
   AlertCircle,
   ArrowLeft,
   Check,
-  Eye,
-  EyeOff,
   User,
   Users,
 } from "lucide-react";
@@ -25,6 +23,7 @@ import {
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import SelfieCapture from "@/components/auth/SelfieCapture";
+import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 import { useSession } from "@/lib/session-store";
 import { ACTORS } from "@/lib/mock-data";
 import {
@@ -75,8 +74,6 @@ function ActivateContent() {
   // Password & PIN State
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
   const [confirmPinDigits, setConfirmPinDigits] = useState<string[]>(["", "", "", ""]);
   const [errorMsg, setErrorMsg] = useState("");
@@ -132,12 +129,6 @@ function ActivateContent() {
       setStep("password");
     }, 600);
   }
-
-  // Password Checklist validation
-  const hasMinLength = password.length >= 8;
-  const hasCase = /[a-z]/.test(password) && /[A-Z]/.test(password);
-  const hasNumber = /\d/.test(password);
-  const hasSymbol = /[^A-Za-z0-9]/.test(password);
 
   // Step Progress Index (out of 9)
   const stepNumberMap: Record<Step, number> = {
@@ -681,121 +672,19 @@ function ActivateContent() {
       {/* STEP 5: Password Creation */}
       {step === "password" && (
         <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-5">
-          {/* Password Field */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="create-pass" className="text-[13px] font-medium text-foreground">
-              Password
-            </Label>
-            <div className="relative">
-              <Input
-                id="create-pass"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (errorMsg) setErrorMsg("");
-                }}
-                placeholder="Choose a strong password"
-                className="h-11 pr-11 text-[14px]"
-                autoFocus
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                className="absolute right-1.5 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </div>
-
-          {/* Confirm Password Field */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="confirm-pass" className="text-[13px] font-medium text-foreground">
-              Confirm password
-            </Label>
-            <div className="relative">
-              <Input
-                id="confirm-pass"
-                type={showConfirmPassword ? "text" : "password"}
-                value={confirmPassword}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                  if (errorMsg) setErrorMsg("");
-                }}
-                placeholder="Re-enter your password"
-                className="h-11 pr-11 text-[14px]"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                aria-label={showConfirmPassword ? "Hide password" : "Show password"}
-                className="absolute right-1.5 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-              >
-                {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </div>
-
-          {/* Password Requirements Checklist */}
-          <div className="rounded-2xl border border-border/80 bg-muted/20 p-4">
-            <p className="mb-2.5 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
-              Password Requirements
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-[12.5px]">
-              <div className="flex items-center gap-2">
-                <span
-                  className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
-                    hasMinLength ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  <Check size={11} strokeWidth={3} />
-                </span>
-                <span className={hasMinLength ? "text-foreground font-medium" : "text-muted-foreground"}>
-                  At least 8 characters
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
-                    hasCase ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  <Check size={11} strokeWidth={3} />
-                </span>
-                <span className={hasCase ? "text-foreground font-medium" : "text-muted-foreground"}>
-                  Upper and lower case
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
-                    hasNumber ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  <Check size={11} strokeWidth={3} />
-                </span>
-                <span className={hasNumber ? "text-foreground font-medium" : "text-muted-foreground"}>
-                  A number
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
-                    hasSymbol ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  <Check size={11} strokeWidth={3} />
-                </span>
-                <span className={hasSymbol ? "text-foreground font-medium" : "text-muted-foreground"}>
-                  A symbol
-                </span>
-              </div>
-            </div>
-          </div>
+          <NewPasswordFields
+            password={password}
+            confirm={confirmPassword}
+            onPasswordChange={(v) => {
+              setPassword(v);
+              if (errorMsg) setErrorMsg("");
+            }}
+            onConfirmChange={(v) => {
+              setConfirmPassword(v);
+              if (errorMsg) setErrorMsg("");
+            }}
+            autoFocus
+          />
 
           {errorMsg && (
             <div
@@ -812,6 +701,7 @@ function ActivateContent() {
             variant="default"
             size="lg"
             data-tour="activate-password"
+            disabled={!newPasswordReady(password, confirmPassword)}
             className="mt-2 h-11 w-full text-[14px]"
           >
             Continue
