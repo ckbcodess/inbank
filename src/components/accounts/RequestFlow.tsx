@@ -4,25 +4,36 @@
  * Place a request — Account Details → /accounts/[id]/requests.
  *
  * Same shape as Send & Pay: a "what do you need?" chooser, then one form that
- * reveals its next question only once the last one is answered, a review card,
- * PIN (the fee is charged to this account) and a receipt. Every control is
- * the Send & Pay one: PageHeader back arrow, ActionTile, the payment-method
+ * reveals its next question only once the last one is answered. Every control
+ * is the Send & Pay one: PageHeader back arrow, ActionTile, the payment-method
  * select, ProceedButton, the review cards and PaymentSuccessScreen.
+ *
+ *  - Statement: free, emailed to an address the customer enters (prefilled
+ *    with their registered email). No fee, so no review or PIN — it's sent.
+ *  - Cheque book: booklet size, how many booklets, and the same mode of
+ *    delivery as Request a Card (branch pickup or doorstep) → review → PIN.
+ *  - Letter: purpose, addressee, email or branch → review → PIN.
  *
  * The account is never re-selected — it was chosen by opening its details.
  * Anything the bank already knows (holder name, email) is filled in, not asked.
  */
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useContextualBack } from "@/lib/contextual-back";
-import { BookOpen, FileText, Mail } from "lucide-react";
+import { BookOpen, FileText, Mail, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ActionTile } from "@/components/ui/action-tile";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import PageHeader from "@/components/layout/PageHeader";
 import { GCB_BRANCHES, formatMoney, type Account, type GcbBranch } from "@/lib/mock-data";
+import { multiplyMoney } from "@/lib/money";
+import {
+  DeliveryModeFields,
+  deliveryComplete,
+  deliverySummary,
+  type DeliveryDetails,
+} from "@/components/ui/delivery-mode-fields";
 import { accountHolderName } from "@/lib/account-holder";
 import { BranchCombobox } from "@/components/ui/branch-combobox";
 import { useSession } from "@/lib/session-store";
@@ -54,18 +65,17 @@ const LETTER_PURPOSES = [
 
 type Delivery = "email" | "branch";
 
-/** Fees and turnaround per request and delivery. Placeholder values — confirm with product. */
-const DELIVERY: Record<"statement" | "letter", Record<Delivery, { fee: number; ready: string }>> = {
-  statement: {
-    email: { fee: 10, ready: "Within the hour" },
-    branch: { fee: 20, ready: "In 2 working days" },
-  },
-  letter: {
-    email: { fee: 50, ready: "Within 1 working day" },
-    branch: { fee: 75, ready: "In 2 working days" },
-  },
+/** Letter fees and turnaround. Placeholder values — confirm with product. */
+const LETTER_DELIVERY: Record<Delivery, { fee: number; ready: string }> = {
+  email: { fee: 50, ready: "Within 1 working day" },
+  branch: { fee: 75, ready: "In 2 working days" },
 };
-const CHEQUE_READY = "In 3 working days";
+const CHEQUE_READY: Record<"BRANCH_PICKUP" | "DELIVERY", string> = {
+  BRANCH_PICKUP: "In 3 working days",
+  DELIVERY: "In 3–5 working days",
+};
+const MAX_BOOKLETS = 5;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const KIND_META: Record<RequestKind, { title: string; icon: typeof FileText }> = {
   statement: { title: "Bank Statement", icon: FileText },
@@ -97,8 +107,20 @@ export default function RequestFlow({ account }: { account: Account }) {
   const [period, setPeriod] = useState<(typeof PERIODS)[number]["id"] | null>(null);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [statementEmail, setStatementEmail] = useState(actor?.email ?? "");
   // Cheque book
   const [leaves, setLeaves] = useState<(typeof LEAVES)[number]["id"] | null>(null);
+  const [booklets, setBooklets] = useState(1);
+  const holderName = accountHolderName(account, activeProfile, actor);
+  const blankDelivery: DeliveryDetails = {
+    method: null,
+    branch: null,
+    recipientName: holderName,
+    address: "",
+    city: "",
+    phone: "",
+  };
+  const [chequeDelivery, setChequeDelivery] = useState<DeliveryDetails>(blankDelivery);
   // Letter
   const [purpose, setPurpose] = useState<(typeof LETTER_PURPOSES)[number]["id"] | null>(null);
   const [addressee, setAddressee] = useState("");
@@ -110,7 +132,7 @@ export default function RequestFlow({ account }: { account: Account }) {
   const [reference, setReference] = useState("");
 
   const email = actor?.email ? maskEmail(actor.email) : "your registered email";
-  const holder = accountHolderName(account, activeProfile, actor).toUpperCase();
+  const holder = holderName.toUpperCase();
   const last4 = account.number.replace(/\s+/g, "").slice(-4);
   const today = new Date().toISOString().slice(0, 10);
 
@@ -120,7 +142,10 @@ export default function RequestFlow({ account }: { account: Account }) {
     setPeriod(null);
     setFrom("");
     setTo("");
+    setStatementEmail(actor?.email ?? "");
     setLeaves(null);
+    setBooklets(1);
+    setChequeDelivery(blankDelivery);
     setPurpose(null);
     setAddressee("");
     setDelivery(null);
@@ -129,14 +154,14 @@ export default function RequestFlow({ account }: { account: Account }) {
 
   // ── What the request resolves to — drives review, fee and receipt ──
   const periodDone = period !== null && (period !== "custom" || (Boolean(from) && Boolean(to) && from <= to));
-  const needsBranch = kind === "cheque-book" || delivery === "branch";
+  const emailValid = EMAIL_RE.test(statementEmail.trim());
   const complete =
     kind === "statement"
-      ? periodDone && delivery !== null && (!needsBranch || branch !== null)
+      ? periodDone && emailValid
       : kind === "cheque-book"
-        ? leaves !== null && branch !== null
+        ? leaves !== null && deliveryComplete(chequeDelivery)
         : kind === "letter"
-          ? purpose !== null && delivery !== null && (!needsBranch || branch !== null)
+          ? purpose !== null && delivery !== null && (delivery !== "branch" || branch !== null)
           : false;
 
   const summary = useMemo(() => {
@@ -147,29 +172,59 @@ export default function RequestFlow({ account }: { account: Account }) {
 
     if (kind === "statement") {
       const p = PERIODS.find((x) => x.id === period);
-      rows.push(["Period", period === "custom" ? `${from} to ${to}` : (p?.label ?? "")]);
-      if (delivery) ({ fee, ready } = DELIVERY.statement[delivery]);
+      rows.push(
+        ["Period", period === "custom" ? `${from} to ${to}` : (p?.label ?? "")],
+        ["Sent to", statementEmail.trim()],
+      );
     } else if (kind === "cheque-book") {
       const l = LEAVES.find((x) => x.id === leaves);
-      rows.push(["Booklet", l?.label ?? ""], ["Name printed", holder]);
-      fee = l?.fee ?? 0;
-      ready = CHEQUE_READY;
+      fee = multiplyMoney(l?.fee ?? 0, booklets);
+      ready = chequeDelivery.method ? CHEQUE_READY[chequeDelivery.method] : "";
+      rows.push(
+        ["Booklet", l?.label ?? ""],
+        ["Number of booklets", String(booklets)],
+        ["Name printed", holder],
+        ["Delivery", deliverySummary(chequeDelivery)],
+        ["Ready", ready],
+      );
     } else {
       const p = LETTER_PURPOSES.find((x) => x.id === purpose);
-      rows.push(["Letter", p?.label ?? ""], ["Addressed to", addressee.trim() || "To Whom It May Concern"]);
-      if (delivery) ({ fee, ready } = DELIVERY.letter[delivery]);
+      if (delivery) ({ fee, ready } = LETTER_DELIVERY[delivery]);
+      rows.push(
+        ["Letter", p?.label ?? ""],
+        ["Addressed to", addressee.trim() || "To Whom It May Concern"],
+        ["Delivery", delivery === "branch" ? `Collect at ${branch?.name ?? "a branch"}` : `Email to ${email}`],
+        ["Ready", ready],
+      );
     }
-
-    rows.push([
-      "Delivery",
-      kind === "cheque-book" || delivery === "branch" ? `Collect at ${branch?.name ?? "a branch"}` : `Email to ${email}`,
-    ]);
-    rows.push(["Ready", ready]);
     return { rows, fee, ready };
-  }, [kind, account.name, last4, period, from, to, delivery, leaves, holder, purpose, addressee, branch, email]);
+  }, [
+    kind,
+    account.name,
+    last4,
+    period,
+    from,
+    to,
+    statementEmail,
+    delivery,
+    leaves,
+    booklets,
+    chequeDelivery,
+    holder,
+    purpose,
+    addressee,
+    branch,
+    email,
+  ]);
 
   function submit() {
     setPinOpen(false);
+    setReference(`REQ-2026-${Math.floor(10000 + Math.random() * 90000)}`);
+    setPhase("done");
+  }
+
+  // A free statement has nothing to charge or review — it's sent straight away.
+  function sendStatement() {
     setReference(`REQ-2026-${Math.floor(10000 + Math.random() * 90000)}`);
     setPhase("done");
   }
@@ -187,24 +242,27 @@ export default function RequestFlow({ account }: { account: Account }) {
 
   /* ── Receipt — the same success screen Send & Pay uses ─────────────────── */
   if (phase === "done" && kind && summary) {
+    const books = booklets === 1 ? "cheque book" : "cheque books";
     const message =
-      kind === "cheque-book"
-        ? `We'll text you when your cheque book is ready at ${branch?.name}.`
-        : delivery === "email"
-          ? kind === "statement"
-            ? `We'll email your statement to ${email}.`
-            : `We'll email your letter to ${email}.`
-          : `We'll text you when it's ready to collect at ${branch?.name}.`;
+      kind === "statement"
+        ? `We're emailing your statement to ${statementEmail.trim()}. It usually arrives within a few minutes.`
+        : kind === "cheque-book"
+          ? chequeDelivery.method === "DELIVERY"
+            ? `We'll text you when your ${books} ${booklets === 1 ? "is" : "are"} on the way to ${chequeDelivery.address.trim()}.`
+            : `We'll text you when your ${books} ${booklets === 1 ? "is" : "are"} ready at ${chequeDelivery.branch?.name}.`
+          : delivery === "email"
+            ? `We'll email your letter to ${email}.`
+            : `We'll text you when it's ready to collect at ${branch?.name}.`;
 
     return (
       <PaymentSuccessScreen
-        title="Request received"
+        title={kind === "statement" ? "Statement Sent" : "Request Received"}
         message={`${message} Your reference is ${reference}.`}
         transactionId={reference}
         receiptRows={[
           ["Request", KIND_META[kind].title],
           ...summary.rows,
-          ["Fee charged", formatMoney(summary.fee, "GHS", true)],
+          ...(summary.fee > 0 ? [["Fee charged", formatMoney(summary.fee, "GHS", true)] as [string, string]] : []),
         ]}
         customActionCards={[]}
         showSaveBeneficiary={false}
@@ -278,12 +336,24 @@ export default function RequestFlow({ account }: { account: Account }) {
                 </div>
               )}
               {periodDone && (
-                <DeliveryField kind="statement" email={email} value={delivery} onChange={setDelivery} />
+                <Field label="Send to" htmlFor="statement-email">
+                  <input
+                    id="statement-email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    value={statementEmail}
+                    onChange={(e) => setStatementEmail(e.target.value)}
+                    placeholder="Email address"
+                    className={INPUT}
+                  />
+                </Field>
               )}
             </>
           )}
 
           {kind === "cheque-book" && (
+            <>
             <Field label="Booklet size">
               <FlowSelect
                 value={leaves}
@@ -293,11 +363,24 @@ export default function RequestFlow({ account }: { account: Account }) {
                   id: l.id,
                   name: l.label,
                   description: `Printed with ${holder}`,
-                  fee: formatMoney(l.fee, "GHS", true),
-                  speed: CHEQUE_READY,
+                  fee: `${formatMoney(l.fee, "GHS", true)} each`,
                 }))}
               />
             </Field>
+            {leaves && (
+              <Field label="Number of booklets">
+                <Stepper value={booklets} min={1} max={MAX_BOOKLETS} onChange={setBooklets} label="booklets" />
+              </Field>
+            )}
+            {leaves && (
+              <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+                <DeliveryModeFields
+                  value={chequeDelivery}
+                  onChange={(patch) => setChequeDelivery((d) => ({ ...d, ...patch }))}
+                />
+              </div>
+            )}
+            </>
           )}
 
           {kind === "letter" && (
@@ -321,29 +404,22 @@ export default function RequestFlow({ account }: { account: Account }) {
                   />
                 </Field>
               )}
-              {purpose && <DeliveryField kind="letter" email={email} value={delivery} onChange={setDelivery} />}
+              {purpose && <DeliveryField email={email} value={delivery} onChange={setDelivery} />}
             </>
           )}
 
-          {((kind === "cheque-book" && leaves) || delivery === "branch") && (
-            <Field label={kind === "cheque-book" ? "Collection branch" : "Branch"}>
+          {kind === "letter" && delivery === "branch" && (
+            <Field label="Branch">
               <BranchCombobox value={branch} onChange={setBranch} branches={GCB_BRANCHES} />
             </Field>
           )}
 
-          <ProceedButton disabled={!complete} onClick={() => setPhase("review")} label="Continue" />
+          <ProceedButton
+            disabled={!complete}
+            onClick={kind === "statement" ? sendStatement : () => setPhase("review")}
+            label={kind === "statement" ? "Send Statement" : "Continue"}
+          />
 
-          {kind === "statement" && (
-            <p className="-mt-2 text-center text-[13px] text-muted-foreground">
-              Just need a copy for yourself?{" "}
-              <Link
-                href={`/accounts/${account.id}/statement`}
-                className="text-foreground underline underline-offset-4 hover:no-underline"
-              >
-                Download a statement now
-              </Link>
-            </p>
-          )}
         </div>
       )}
 
@@ -470,17 +546,15 @@ function FlowSelect({
 }
 
 function DeliveryField({
-  kind,
   email,
   value,
   onChange,
 }: {
-  kind: "statement" | "letter";
   email: string;
   value: Delivery | null;
   onChange: (v: Delivery) => void;
 }) {
-  const fees = DELIVERY[kind];
+  const fees = LETTER_DELIVERY;
   return (
     <Field label="Delivery">
       <FlowSelect
@@ -505,5 +579,48 @@ function DeliveryField({
         ]}
       />
     </Field>
+  );
+}
+
+/** Quantity picker in the Send & Pay input style. */
+function Stepper({
+  value,
+  min,
+  max,
+  onChange,
+  label,
+}: {
+  value: number;
+  min: number;
+  max: number;
+  onChange: (n: number) => void;
+  label: string;
+}) {
+  const btn =
+    "flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-xl text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent";
+  return (
+    <div className="flex h-13 w-full items-center justify-between rounded-2xl border border-border/80 bg-card px-2">
+      <button
+        type="button"
+        onClick={() => onChange(Math.max(min, value - 1))}
+        disabled={value <= min}
+        aria-label={`Fewer ${label}`}
+        className={btn}
+      >
+        <Minus size={17} strokeWidth={1.8} aria-hidden="true" />
+      </button>
+      <span className="text-[15px] text-foreground tabular" aria-live="polite">
+        {value}
+      </span>
+      <button
+        type="button"
+        onClick={() => onChange(Math.min(max, value + 1))}
+        disabled={value >= max}
+        aria-label={`More ${label}`}
+        className={btn}
+      >
+        <Plus size={17} strokeWidth={1.8} aria-hidden="true" />
+      </button>
+    </div>
   );
 }
