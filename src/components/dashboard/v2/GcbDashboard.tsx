@@ -5,15 +5,15 @@
  *
  * Layout (inside the existing app shell / icon sidebar / top header):
  *   1. Greeting + action buttons (Send Money / Pay Bill / Top-Up)
- *   2. Total balance + eye toggle, with a 30-day money in / out line
+ *   2. Selected account's balance + eye toggle (switcher when there's more than one)
  *   3. Needs attention (only when something does)
- *   4. Accounts disclosure bar (allocation peek while collapsed)
- *   5. 2×2 grid: Recent Activity · Pay again · Cards · Analytics gauge
- *   6. FX Rates disclosure bar (headline rate peek while collapsed)
- *   7. Promo banner
+ *   4. 2×2 grid: Recent Activity · Pay again · Cards · Analytics gauge
+ *   5. FX Rates disclosure bar (headline rate peek while collapsed)
+ *   6. Promo banner
  *
- * Honest data throughout (net worth, activity, cards, spend gauge from the
- * ledger). Semantic tokens + zero-bold; the amber CTA/banner use the brand gold.
+ * The dashboard is scoped to one account — the default unless another is
+ * picked — so activity, cards and spend all follow the switcher. Honest data
+ * throughout. Semantic tokens + zero-bold; the amber CTA/banner use the brand gold.
  */
 
 import { useState } from "react";
@@ -29,18 +29,23 @@ import {
   Send,
   Download,
   RefreshCw,
+  Landmark,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import type { Account, Transaction, PaymentCard } from "@/lib/mock-data";
-import type { SpendBreakdown, SpendRange, Slice, CashFlow, AttentionItem } from "@/lib/dashboard-insights";
+import type { SpendBreakdown, SpendRange, AttentionItem } from "@/lib/dashboard-insights";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import {
-  fmtGHS,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   RecentTransactions,
   CardsMini,
-  AccountRows,
-  AllocationBar,
   AttentionBand,
   FxRatesMini,
   fxPeek,
@@ -50,12 +55,12 @@ import { SpendsRadialChart } from "@/components/dashboard/SpendsRadialChart";
 export interface DashData {
   firstName: string;
   accounts: Account[];
-  netWorth: number;
+  defaultAccountId: string | null;
+  /** The account everything on the dashboard is scoped to. */
+  selectedAccountId: string | null;
   spendByRange: Record<SpendRange, SpendBreakdown>;
   latestTxns: Transaction[];
   cards: PaymentCard[];
-  allocation: { total: number; slices: Slice[] };
-  cashFlow: CashFlow;
   attention: AttentionItem[];
 }
 
@@ -63,6 +68,7 @@ interface DashProps {
   data: DashData;
   showAmounts: boolean;
   onToggle: () => void;
+  onSelectAccount: (id: string) => void;
 }
 
 /* ── Small building blocks ───────────────────────────────────────────────── */
@@ -135,28 +141,80 @@ function ActionButtons() {
   );
 }
 
-function NetWorth({
-  amount,
-  cashFlow,
+function last4(number: string): string {
+  return number.replace(/\s/g, "").slice(-4);
+}
+
+function AccountLabel({ account }: { account: Account }) {
+  const { t } = useTranslation();
+  return (
+    <>
+      <Landmark size={17} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
+      <span>{t(`accounts.type.${account.type}`, account.type)}</span>
+      <span className="tabular text-muted-foreground">••••{last4(account.number)}</span>
+    </>
+  );
+}
+
+/**
+ * The selected account's balance — not a sum across accounts. Customers with
+ * more than one account switch from the label, which rescopes the whole
+ * dashboard; it's a view switch only and doesn't change the default.
+ */
+function AccountBalance({
+  accounts,
+  selectedId,
+  defaultId,
+  onSelect,
   showAmounts,
   onToggle,
 }: {
-  amount: number;
-  cashFlow: CashFlow;
+  accounts: Account[];
+  selectedId: string | null;
+  defaultId: string | null;
+  onSelect: (id: string) => void;
   showAmounts: boolean;
   onToggle: () => void;
 }) {
   const { t } = useTranslation();
+  const account = accounts.find((a) => a.id === selectedId) ?? accounts[0];
+  if (!account) return null;
+
+  const canSwitch = accounts.length > 1;
 
   return (
     <div className="flex flex-col gap-4">
-      <span className="text-[16px] font-medium leading-none text-foreground">
-        {t("dashboard.totalBalance", "Total balance")}
-      </span>
+      {canSwitch ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            className="-mx-3 flex w-fit items-center gap-2.5 rounded-lg px-3 py-2 text-[15px] leading-none text-foreground outline-none transition-colors hover:bg-muted aria-expanded:bg-muted cursor-pointer"
+            aria-label={t("dashboard.switchAccount", "Switch account")}
+          >
+            <AccountLabel account={account} />
+            <ChevronDown size={16} strokeWidth={1.8} className="text-muted-foreground" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" sideOffset={6} className="w-[280px] p-1.5">
+            <DropdownMenuRadioGroup value={account.id} onValueChange={(id) => onSelect(id as string)}>
+              {accounts.map((a) => (
+                <DropdownMenuRadioItem key={a.id} value={a.id} className="gap-2.5 rounded-lg py-3 pl-3 pr-9 text-[14px]">
+                  <AccountLabel account={a} />
+                  {a.id === defaultId && (
+                    <span className="ml-auto text-[12px] text-muted-foreground">{t("common.default", "Default")}</span>
+                  )}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : (
+        <span className="flex items-center gap-2.5 py-2 text-[15px] leading-none text-foreground">
+          <AccountLabel account={account} />
+        </span>
+      )}
       <div className="flex items-center gap-4">
         <span className="tabular text-[34px] leading-none tracking-[0.02em] text-foreground">
-          <span className="text-muted-foreground">GHS</span>{" "}
-          <RevealingAmount amount={amount} currency="" />
+          <span className="text-muted-foreground">{account.currency}</span>{" "}
+          <RevealingAmount amount={account.balance ?? 0} currency="" />
         </span>
         <button
           type="button"
@@ -167,24 +225,11 @@ function NetWorth({
           {showAmounts ? <Eye size={18} strokeWidth={1.8} /> : <EyeOff size={18} strokeWidth={1.8} />}
         </button>
       </div>
-      {(cashFlow.moneyIn > 0 || cashFlow.moneyOut > 0) && (
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-muted-foreground">
-          <span>{t("dashboard.lastDays", "Last {days} days", { days: cashFlow.days })}</span>
-          <span className="inline-flex items-center gap-1.5">
-            {t("dashboard.moneyIn", "In")}
-            <span className="tabular text-success">+ {fmtGHS(cashFlow.moneyIn, showAmounts)}</span>
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            {t("dashboard.moneyOut", "Out")}
-            <span className="tabular text-foreground">− {fmtGHS(cashFlow.moneyOut, showAmounts)}</span>
-          </span>
-        </div>
-      )}
     </div>
   );
 }
 
-/** Full-width collapsible bar (used for Accounts and FX rates). */
+/** Full-width collapsible bar (used for FX rates). */
 function DisclosureBar({
   label,
   count,
@@ -342,7 +387,7 @@ function greeting(hour: number, t: (key: string, fallback?: string) => string): 
   return t("dashboard.greeting.evening", "Good evening");
 }
 
-export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
+export function GcbDashboard({ data, showAmounts, onToggle, onSelectAccount }: DashProps) {
   const { t } = useTranslation();
 
   return (
@@ -365,9 +410,11 @@ export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
           className="flex flex-col gap-8"
         >
           <motion.div layout transition={{ type: "spring", duration: 0.35, bounce: 0 }}>
-            <NetWorth
-              amount={data.netWorth}
-              cashFlow={data.cashFlow}
+            <AccountBalance
+              accounts={data.accounts}
+              selectedId={data.selectedAccountId}
+              defaultId={data.defaultAccountId}
+              onSelect={onSelectAccount}
               showAmounts={showAmounts}
               onToggle={onToggle}
             />
@@ -388,22 +435,12 @@ export function GcbDashboard({ data, showAmounts, onToggle }: DashProps) {
             )}
           </AnimatePresence>
 
-          <motion.div layout transition={{ type: "spring", duration: 0.35, bounce: 0 }}>
-            <DisclosureBar
-              label={t("dashboard.accounts", "Accounts")}
-              count={data.accounts.length}
-              peek={
-                <span className="hidden w-full max-w-[240px] sm:block">
-                  <AllocationBar slices={data.allocation.slices} thickness={6} />
-                </span>
-              }
-            >
-              <AccountRows accounts={data.accounts} showAmounts={showAmounts} />
-            </DisclosureBar>
-          </motion.div>
-
+          {/* Re-keyed per account so a switch visibly reloads the account's widgets. */}
           <motion.div
+            key={data.selectedAccountId ?? "none"}
             layout
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ type: "spring", duration: 0.35, bounce: 0 }}
             className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2"
           >

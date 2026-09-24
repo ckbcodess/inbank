@@ -4,6 +4,7 @@ import type { Entry } from "./types";
 const dashboard: Entry[] = [
   ["Dashboard", "Tableau de bord", "Panel", "首页"],
   ["Your Accounts", "Vos comptes", "Tus cuentas", "您的账户"],
+  ["Switch account", "Changer de compte", "Cambiar de cuenta", "切换账户"],
   ["View all accounts →", "Voir tous les comptes →", "Ver todas las cuentas →", "查看全部账户 →"],
   ["No accounts on this relationship yet.", "Aucun compte dans cette relation pour l’instant.", "Aún no hay cuentas en esta relación.", "此关系下暂无账户。"],
   ["Primary", "Principal", "Principal", "主账户"],

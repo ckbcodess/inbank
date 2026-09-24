@@ -81,13 +81,18 @@ function daysBefore(iso: string, days: number): string {
   return new Date(new Date(iso).getTime() - days * DAY_MS).toISOString().slice(0, 10);
 }
 
-/** Categorised debits that didn't fail, optionally within a trailing window. */
-function spendingDebits(kind: "RETAIL" | "CORPORATE", days?: number): Transaction[] {
+/**
+ * Categorised debits that didn't fail, optionally within a trailing window and
+ * on one account. The window stays anchored on the profile's latest entry so
+ * every account shares the same calendar.
+ */
+function spendingDebits(kind: "RETAIL" | "CORPORATE", days?: number, accountId?: string): Transaction[] {
   const all = transactionsForProfile(kind);
   const latest = latestLedgerDate(all);
   const from = days && latest ? daysBefore(latest, days) : null;
   return all.filter(
     (t) =>
+      (accountId === undefined || t.accountId === accountId) &&
       t.direction === "debit" &&
       typeof t.state === "string" &&
       !t.state.startsWith("failed") &&
@@ -103,8 +108,9 @@ function spendingDebits(kind: "RETAIL" | "CORPORATE", days?: number): Transactio
 export function spendBreakdownForProfile(
   kind: "RETAIL" | "CORPORATE" = "RETAIL",
   days?: number,
+  accountId?: string,
 ): SpendBreakdown {
-  const debits = spendingDebits(kind, days);
+  const debits = spendingDebits(kind, days, accountId);
   const byCategory = new Map<string, number>();
   for (const t of debits) {
     const label = t.category as string;
@@ -140,18 +146,19 @@ const SPEND_RANGE_DAYS: Record<SpendRange, number> = {
  */
 export function spendByRangeForProfile(
   kind: "RETAIL" | "CORPORATE" = "RETAIL",
+  accountId?: string,
 ): Record<SpendRange, SpendBreakdown> {
   // Windows are nested, so every shorter range's categories fit this set.
-  const widest = spendBreakdownForProfile(kind, SPEND_RANGE_DAYS["1y"]);
+  const widest = spendBreakdownForProfile(kind, SPEND_RANGE_DAYS["1y"], accountId);
   const labels = widest.slices.map((s) => s.label);
   const named = labels.filter((l) => l !== "Other");
 
   return Object.fromEntries(
     SPEND_RANGES.map((r) => {
-      const b = spendBreakdownForProfile(kind, SPEND_RANGE_DAYS[r]);
+      const b = spendBreakdownForProfile(kind, SPEND_RANGE_DAYS[r], accountId);
       // Re-bucket this range's categories onto the shared named set.
       const byLabel = new Map<string, number>();
-      for (const t of spendingDebits(kind, SPEND_RANGE_DAYS[r])) {
+      for (const t of spendingDebits(kind, SPEND_RANGE_DAYS[r], accountId)) {
         const label = named.includes(t.category as string) ? (t.category as string) : "Other";
         byLabel.set(label, sumMoney([byLabel.get(label) ?? 0, Math.abs(t.amount)]));
       }

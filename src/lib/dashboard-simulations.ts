@@ -13,16 +13,13 @@ import {
   type PaymentCard,
   type Transaction,
 } from "@/lib/mock-data";
-import { sumMoney } from "@/lib/money";
 import {
   spendByRangeForProfile,
-  accountAllocation,
-  cashFlowForProfile,
   type SpendRange,
   type SpendBreakdown,
-  type CashFlow,
   type AttentionItem,
 } from "@/lib/dashboard-insights";
+import { resolveDefaultAccountId } from "@/lib/accounts-store";
 import type { DashData } from "@/components/dashboard/v2/GcbDashboard";
 import type { Actor, Profile } from "@/lib/roles";
 
@@ -88,12 +85,22 @@ interface GetSimulatedDashboardDataOptions {
   actor: Actor;
   activeProfile: Profile;
   usageType: DashboardUsageType;
+  /** The account picked in the switcher (`?account=`), if any. */
+  accountId: string | null;
+  /** The customer's stored default account. */
+  defaultAccountId: string | null;
 }
 
+/**
+ * Everything below the balance — activity, cards, spend — belongs to one
+ * account: the picked one when it's valid, else the default.
+ */
 export function getSimulatedDashboardData({
   actor,
   activeProfile,
   usageType,
+  accountId: pickedId,
+  defaultAccountId,
 }: GetSimulatedDashboardDataOptions): DashData {
   const kind = activeProfile.kind ?? "RETAIL";
   const baseAccounts = accountsForProfile(kind);
@@ -101,14 +108,12 @@ export function getSimulatedDashboardData({
     .slice()
     .sort((a, b) => b.date.localeCompare(a.date));
   const baseCards = cardsForProfile(kind);
-  const baseCashFlow = cashFlowForProfile(kind);
-  const baseSpend = spendByRangeForProfile(kind);
 
   let accounts: Account[] = baseAccounts;
   let cards: PaymentCard[] = baseCards;
   let latestTxns: Transaction[] = baseTxns;
-  let cashFlow: CashFlow = baseCashFlow;
-  let spendByRange: Record<SpendRange, SpendBreakdown> = baseSpend;
+  /** null = derive from the ledger for the selected account. */
+  let spendByRange: Record<SpendRange, SpendBreakdown> | null = null;
   let attention: AttentionItem[] = [];
 
   switch (usageType) {
@@ -177,7 +182,6 @@ export function getSimulatedDashboardData({
           state: "completed",
         },
       ];
-      cashFlow = { days: 30, moneyIn: 500, moneyOut: 0 };
       spendByRange = EMPTY_SPEND_BREAKDOWN;
       attention = [];
       break;
@@ -208,11 +212,6 @@ export function getSimulatedDashboardData({
           ? { ...a, balance: (a.balance ?? 0) + 28450, available: (a.available ?? 0) + 28450 }
           : a,
       );
-      cashFlow = {
-        days: 30,
-        moneyIn: baseCashFlow.moneyIn + 28450,
-        moneyOut: baseCashFlow.moneyOut,
-      };
       attention = [];
       break;
 
@@ -253,7 +252,6 @@ export function getSimulatedDashboardData({
           profileKind: "RETAIL",
         },
       ];
-      cashFlow = { days: 30, moneyIn: 185000, moneyOut: 54300 };
       attention = [];
       break;
 
@@ -274,21 +272,22 @@ export function getSimulatedDashboardData({
       ];
       cards = [];
       latestTxns = [];
-      cashFlow = { days: 30, moneyIn: 0, moneyOut: 0 };
       spendByRange = EMPTY_SPEND_BREAKDOWN;
       attention = [];
       break;
   }
 
+  const defaultId = resolveDefaultAccountId(accounts, defaultAccountId);
+  const selectedId = accounts.some((a) => a.id === pickedId) ? (pickedId as string) : defaultId;
+
   return {
     firstName: actor.name.split(" ")[0],
     accounts,
-    netWorth: sumMoney(accounts.map((a) => a.balance ?? 0)),
-    spendByRange,
-    latestTxns,
-    cards,
-    allocation: accountAllocation(accounts),
-    cashFlow,
+    defaultAccountId: defaultId,
+    selectedAccountId: selectedId,
+    spendByRange: spendByRange ?? spendByRangeForProfile(kind, selectedId ?? undefined),
+    latestTxns: latestTxns.filter((t) => t.accountId === selectedId),
+    cards: cards.filter((c) => c.linkedAccountId === selectedId),
     attention,
   };
 }
