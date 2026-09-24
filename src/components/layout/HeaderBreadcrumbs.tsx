@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { BackLink } from "@/components/layout/BackLink";
 
 const RAIL_BREADCRUMB_LABELS: Record<string, string> = {
   bill: "GCB Pay",
@@ -28,6 +29,8 @@ const ROUTE_LABELS: Record<string, string> = {
   overview: "Dashboard",
   accounts: "Accounts",
   statement: "Statement",
+  expenses: "My Spends",
+  requests: "Place a Request",
   payments: "Send & Pay",
   send: "Send Money",
   standing: "Standing Orders",
@@ -68,11 +71,10 @@ function BreadcrumbView({ list }: { list: Crumb[] }) {
       {/* Mobile: Only current page with left-pointing chevron linking back */}
       <div className="flex sm:hidden items-center min-w-0">
         {parentCrumb ? (
-          <Link
+          <BackLink
             href={parentCrumb.href}
             className="group flex items-center gap-1 text-foreground hover:text-foreground transition-colors min-w-0"
             title={`Back to ${parentCrumb.label}`}
-            aria-label={`Back to ${parentCrumb.label}`}
           >
             <ChevronLeft
               size={17}
@@ -83,7 +85,7 @@ function BreadcrumbView({ list }: { list: Crumb[] }) {
             <span className="font-medium text-foreground truncate max-w-[180px] text-[13.5px]">
               {currentCrumb.label}
             </span>
-          </Link>
+          </BackLink>
         ) : (
           <span className="font-medium text-foreground truncate max-w-[200px] text-[13.5px]">
             {currentCrumb.label}
@@ -171,7 +173,7 @@ export default function HeaderBreadcrumbs() {
 
   segments.forEach((segment, index) => {
     currentPath += `/${segment}`;
-    const isLast = index === segments.length - 1 && !(segment.toLowerCase() === "accounts" && searchParams.get("tab") === "spends");
+    const isLast = index === segments.length - 1;
 
     // Check if known route label
     let label = ROUTE_LABELS[segment.toLowerCase()];
@@ -204,14 +206,6 @@ export default function HeaderBreadcrumbs() {
       isLast,
     });
   });
-
-  if (segments[0]?.toLowerCase() === "accounts" && searchParams.get("tab") === "spends") {
-    crumbs.push({
-      label: "My Spends",
-      href: "/accounts?tab=spends",
-      isLast: true,
-    });
-  }
 
   return <BreadcrumbView list={crumbs} />;
 }

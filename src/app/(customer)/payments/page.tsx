@@ -11,10 +11,10 @@
 
 import Link from "next/link";
 import PageHeader from "@/components/layout/PageHeader";
+import { ActionTile } from "@/components/ui/action-tile";
 import {
   ArrowLeftRight,
   Banknote,
-  ChevronRight,
   CreditCard,
   Globe,
   Landmark,
@@ -126,31 +126,9 @@ function ActionSection({
         {title}
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {actions.map((action) => {
-          const Icon = action.icon;
-          return (
-            <Link
-              key={action.id}
-              href={action.href}
-              className="group flex items-center justify-between gap-4 rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99]"
-            >
-              <div className="flex min-w-0 items-center gap-4">
-                <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12.25px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
-                  <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
-                </span>
-                <span className="truncate text-[16px] font-medium tracking-[-0.01em] text-foreground">
-                  {action.title}
-                </span>
-              </div>
-              <ChevronRight
-                size={20}
-                strokeWidth={1.8}
-                aria-hidden="true"
-                className="shrink-0 text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
-              />
-            </Link>
-          );
-        })}
+        {actions.map((action) => (
+          <ActionTile key={action.id} href={action.href} icon={action.icon} title={action.title} />
+        ))}
       </div>
     </div>
   );

@@ -3,549 +3,476 @@
 /**
  * Account Details — object destination, reached only from the Accounts list
  * (12.4). State model: baseline per 13.9 (object-detail-derived).
+ * Layout: Figma 1896:15266.
  *
- * Designed to faithfully match Figma node 1264:2483.
+ * One calm column:
+ *  1. Balance card — type, number, balance (with its own eye, the same switch
+ *     as the header eye) and Type / Currency / Status.
+ *  2. Two actions: Top up (the Add money modal) and Share details.
+ *  3. Four doors: My Spends, Standing orders, Place a request (statements,
+ *     cheque books, bank letters — its own flow) and Last 10 transactions
+ *     (a mini statement in a dialog, with "View All Transactions" — the
+ *     transactions list filtered to this account — one tap further).
  */
 
 import { use, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
-  AlertCircle,
   ArrowDownLeft,
+  ArrowLeftRight,
   ArrowUpRight,
   Check,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   Copy,
   Eye,
   EyeOff,
-  FileText,
-  Loader2,
+  Files,
+  Landmark,
+  PieChart,
   Plus,
-  Send,
+  Repeat,
+  Share,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
 import type { BaselineState } from "@/lib/states";
-import { cardsForProfile, findAccount, formatDate, transactionsForAccount } from "@/lib/mock-data";
+import { findAccount, formatDate, transactionsForAccount, type Account, type Transaction } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
-import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
+import { accountHolderName } from "@/lib/account-holder";
+import { useCustomerAccounts } from "@/lib/use-customer-accounts";
+import { useAccountPrefs } from "@/lib/accounts-store";
 import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
-import LinkSourceAccountModal from "@/components/dashboard/LinkSourceAccountModal";
-import { useContextualBack } from "@/lib/contextual-back";
+import LinkSourceAccountModal, { type ModalScreen } from "@/components/dashboard/LinkSourceAccountModal";
+import { useCardLinkReturn } from "@/lib/card-link";
+import PageHeader from "@/components/layout/PageHeader";
+import { ActionTile } from "@/components/ui/action-tile";
+import { ToggleTile } from "@/components/ui/toggle-tile";
 
 const BASELINE: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
+const SWIFT_CODE = "GHCBGHAC";
+const MINI_STATEMENT_SIZE = 10;
+
+/** "1243 5456 6233" — easier to read out and to check against a payslip. */
+function groupDigits(number: string): string {
+  const digits = number.replace(/\s+/g, "");
+  return /^\d+$/.test(digits) ? digits.replace(/(\d{4})(?=\d)/g, "$1 ") : number;
+}
 
 export default function AccountDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-  useAmountVisibility();
   const { id } = use(params);
-  const { handleBack: handleBackNavigation } = useContextualBack("/accounts");
-  const account = findAccount(id);
   const activeProfile = useSession((s) => s.activeProfile);
   const actor = useSession((s) => s.actor);
+  // Default and reactivation live here, not in an Accounts row menu — both are
+  // rare, and the list rows stay one-tap-one-destination.
+  const { accounts: customerAccounts, defaultId } = useCustomerAccounts();
+  // The customer's own copy first: it carries a wallet balance that moved in.
+  const account = customerAccounts.find((a) => a.id === id) ?? findAccount(id);
+  const setDefaultAccount = useAccountPrefs((s) => s.setDefaultAccount);
   const [state, setState] = useState<BaselineState>("populated");
-  const [isFundModalOpen, setIsFundModalOpen] = useState(false);
-  const [navigatingCardId, setNavigatingCardId] = useState<string | null>(null);
+  const [fundOpen, setFundOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [recentOpen, setRecentOpen] = useState(false);
+  const [fundResume, setFundResume] = useState<{ screen: ModalScreen; sourceId?: string } | null>(null);
+
+  // Back from the bank's card page (Add money → new card): reopen with the card.
+  useCardLinkReturn((result) => {
+    if (result.status === "linked") {
+      toast.success(`${result.source.title} linked`, { description: "It's selected — choose an amount to add." });
+      setFundResume({ screen: "linked_source_select", sourceId: result.source.id });
+      setFundOpen(true);
+      return;
+    }
+    toast("Card not linked", {
+      description: "Nothing was saved. You can try again whenever you're ready.",
+      action: {
+        label: "Try again",
+        onClick: () => {
+          setFundResume({ screen: "link_new_card" });
+          setFundOpen(true);
+        },
+      },
+    });
+  });
 
   if (!account) {
     return (
-      <div className="w-full flex flex-col gap-5">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={handleBackNavigation}
-            className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-card text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
-          >
-            <ChevronLeft size={16} strokeWidth={2} />
-          </button>
-          <h1 className="text-[24px] font-medium text-foreground">Account not found</h1>
-        </div>
-        <p className="text-[13px] text-muted-foreground">
+      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-3">
+        <PageHeader title="Account not found" backTo={{ href: "/accounts", label: "Accounts" }} />
+        <p className="pl-11 text-[13px] text-muted-foreground">
           This account isn&apos;t available under the current banking relationship.
         </p>
       </div>
     );
   }
 
-  const profileCards = cardsForProfile(activeProfile?.kind);
-  const linkedCards = profileCards.filter((c) => c.linkedAccountId === account.id || account.id === "acc-001");
-  const transactions = transactionsForAccount(account.id);
-  const recentTransactions = transactions.slice(0, 5);
-
-  // Account holder string resolution
-  const holderName =
-    account.isJoint && account.jointHolders && account.jointHolders.length > 0
-      ? account.jointHolders.join(" & ")
-      : activeProfile?.name || actor?.name || "Primary Account Holder";
+  const recent = state === "empty" ? [] : transactionsForAccount(account.id).slice(0, MINI_STATEMENT_SIZE);
+  const holderName = accountHolderName(account, activeProfile, actor);
+  const dormant = account.status === "Dormant";
+  // "Default" only means something when there's more than one account to pick from,
+  // and a dormant account can't be one.
+  const choosable = !dormant && customerAccounts.length > 1 && customerAccounts.some((a) => a.id === account.id);
+  const isDefault = choosable && account.id === defaultId;
+  const canBeDefault = choosable && !isDefault;
 
   return (
-    <div className="w-full flex flex-col gap-6 sm:gap-10">
-      {/* Figma 1277:11187 Header: Back + Title + Standing Order + Request Dropdown */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <button
-            type="button"
-            onClick={handleBackNavigation}
-            className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1"
-            title="Back"
-            aria-label="Back to Accounts"
-          >
-            <ChevronLeft size={22} strokeWidth={1.8} />
-          </button>
-          <h1 className="text-[22px] sm:text-[26px] font-medium leading-[30px] sm:leading-[32px] tracking-[-0.02em] text-foreground truncate">
-            {account.name}
-          </h1>
-          {account.isJoint && (
-            <span
-              title={account.mandate ? `Mandate: ${account.mandate}` : "Joint Account"}
-              className="inline-flex items-center rounded-full bg-[#FEF3D6] px-2.5 py-0.5 text-[11px] font-medium text-[#B27B00] dark:bg-amber-500/20 dark:text-amber-300 shrink-0"
-            >
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-10 sm:gap-12">
+      <PageHeader
+        title={account.name}
+        backTo={{ href: "/accounts", label: "Accounts" }}
+        badge={
+          account.isJoint ? (
+            <Badge variant="outline" title={account.mandate ? `Mandate: ${account.mandate}` : undefined}>
               Joint
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2 sm:gap-2.5 pl-9 sm:pl-0">
-          <Button
-            variant="outline"
-            size="sm"
-            nativeButton={false}
-            className="rounded-lg h-8 px-3 text-[13px] font-medium border-border/80 bg-white dark:bg-card shadow-xs hover:bg-muted/50"
-            render={<Link href="/payments?tab=standing-orders" />}
-          >
-            <Plus size={14} strokeWidth={2} aria-hidden="true" />
-            Standing Order
-          </Button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="rounded-lg h-8 px-3 text-[13px] font-medium border-border/80 bg-white dark:bg-card shadow-xs hover:bg-muted/50"
-                >
-                  Request
-                  <ChevronDown size={14} strokeWidth={2} className="text-muted-foreground ml-0.5" />
-                </Button>
+            </Badge>
+          ) : null
+        }
+        actions={
+          dormant ? (
+            <HeaderPill
+              onClick={() =>
+                toast.success("Reactivation requested", {
+                  description: `We'll let you know when ${account.name} is active again.`,
+                })
               }
-            />
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem
-                render={
-                  <Link href={`/accounts/${account.id}/statement`} className="flex items-center gap-2 w-full">
-                    <FileText size={14} className="text-muted-foreground" />
-                    <span>Statement</span>
-                  </Link>
-                }
-              />
-              <DropdownMenuItem
-                render={
-                  <Link href="/requests/cheque-book" className="flex items-center gap-2 w-full">
-                    <span>Cheque Book</span>
-                  </Link>
-                }
-              />
-              <DropdownMenuItem
-                render={
-                  <Link href="/requests/reference-letter" className="flex items-center gap-2 w-full">
-                    <span>Reference Letter</span>
-                  </Link>
-                }
-              />
-              <DropdownMenuItem
-                render={
-                  <Link href="/requests/card" className="flex items-center gap-2 w-full">
-                    <span>Link New Card</span>
-                  </Link>
-                }
-              />
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
+            >
+              Reactivate
+            </HeaderPill>
+          ) : undefined
+        }
+      />
 
-      {state === "loading" && <ListSkeleton rows={5} columns={4} />}
+      {state === "loading" && <ListSkeleton rows={5} columns={3} />}
 
       {state === "error" && (
-        <ListErrorState
-          onRetry={() => setState("populated")}
-          description="The balance shown may be out of date. Try again in a moment."
-        />
+        <div className="rounded-2xl border border-border bg-card">
+          <ListErrorState
+            onRetry={() => setState("populated")}
+            description="We couldn't load this account. Your money hasn't moved — try again."
+          />
+        </div>
       )}
 
-      {state === "empty" && (
+      {(state === "populated" || state === "empty") && (
         <>
-          <AccountHeroGrid
-            account={account}
-            holderName={holderName}
-            onOpenFund={() => setIsFundModalOpen(true)}
-          />
-          <TrueEmptyState
-            title="No activity on this account yet"
-            description="Transactions will appear here once money moves in or out."
-          />
-        </>
-      )}
-
-      {state === "populated" && (
-        <>
-          {/* 2-Card Hero Grid */}
-          <AccountHeroGrid
-            account={account}
-            holderName={holderName}
-            onOpenFund={() => setIsFundModalOpen(true)}
-          />
-
-          {/* Linked Cards Section */}
-          {linkedCards.length > 0 && (
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <h2 className="text-[17px] font-medium text-foreground tracking-[-0.01em]">Linked Cards</h2>
-                <Link
-                  href="/cards"
-                  className="text-[13px] text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Manage cards
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {linkedCards.map((c) => {
-                  const isNavigating = navigatingCardId === c.id;
-                  return (
-                    <Link
-                      key={c.id}
-                      href={`/cards/${c.id}`}
-                      onClick={() => setNavigatingCardId(c.id)}
-                      className={cn(
-                        "group flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-border/80 bg-card hover:bg-muted/30 transition-all shadow-xs",
-                        isNavigating && "bg-muted/60"
-                      )}
-                    >
-                      <div className="flex items-center gap-3.5 min-w-0">
-                        <MiniCardThumbnail card={c} />
-                        <div className="flex flex-col min-w-0">
-                          <span className="truncate text-[13.5px] font-medium text-foreground">
-                            {c.name}
-                          </span>
-                          <span className="text-[11.5px] text-muted-foreground tabular mt-0.5">
-                            {c.type} · {c.maskedNumber}
-                          </span>
-                        </div>
-                      </div>
-                      {isNavigating ? (
-                        <Loader2 size={15} className="animate-spin text-foreground shrink-0" />
-                      ) : (
-                        <ChevronRight size={15} className="text-muted-foreground/60 group-hover:text-foreground transition-transform group-hover:translate-x-0.5 shrink-0" />
-                      )}
-                    </Link>
-                  );
-                })}
-              </div>
+          <div className="flex flex-col gap-6">
+            <BalanceCard account={account} isDefault={isDefault} />
+            <div className="flex gap-4 sm:gap-6">
+              <Button onClick={() => setFundOpen(true)} className="h-11 flex-1 gap-2 rounded-lg text-[14px] drop-shadow-sm">
+                <Plus size={18} strokeWidth={1.9} aria-hidden="true" />
+                Top up
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShareOpen(true)}
+                className="h-11 flex-1 gap-2 rounded-lg bg-card text-[14px]"
+              >
+                <Share size={17} strokeWidth={1.8} aria-hidden="true" />
+                Share details
+              </Button>
             </div>
-          )}
-
-          {/* Activity Section matching Figma 1:1 */}
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-[18px] font-medium text-foreground tracking-[-0.01em]">Activity</h2>
-              {recentTransactions.length > 0 && (
-                <Link
-                  href="/transactions"
-                  className="text-[13.5px] text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  View all
-                </Link>
-              )}
-            </div>
-
-            {recentTransactions.length === 0 ? (
-              <TrueEmptyState
-                title="No activity on this account yet"
-                description="Transactions will appear here once money moves in or out."
-              />
-            ) : (
-              <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/40 shadow-xs">
-                {recentTransactions.map((t) => {
-                  const isCredit = t.direction === "credit";
-                  const isFailed = t.state.startsWith("failed") || t.state === "reversed" || t.state === "disputed";
-                  const isPending = t.state === "pending" || t.state === "awaiting-approval";
-
-                  return (
-                    <Link
-                      key={t.id}
-                      href={`/transactions/${t.id}`}
-                      className="flex items-center gap-3.5 px-4 py-3 transition-colors hover:bg-muted/30"
-                    >
-                      {/* Direction Anchor Icon */}
-                      <div
-                        className={cn(
-                          "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
-                          isCredit
-                            ? "bg-emerald-500/10 text-[#12B76A] dark:text-emerald-400"
-                            : "bg-muted text-muted-foreground"
-                        )}
-                      >
-                        {isCredit ? (
-                          <ArrowDownLeft className="size-4 stroke-[1.8]" />
-                        ) : (
-                          <ArrowUpRight className="size-4 stroke-[1.8]" />
-                        )}
-                      </div>
-
-                      {/* Counterparty & Metadata */}
-                      <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                        <span className="font-normal text-foreground text-[14px] leading-tight truncate">
-                          {t.counterparty || t.description}
-                        </span>
-                        <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground truncate">
-                          <span>{formatDate(t.date)}</span>
-                          <span>·</span>
-                          <span className="truncate">{t.category || t.paymentMethod || "Payment"}</span>
-                        </div>
-                      </div>
-
-                      {/* Amount & State / Reference */}
-                      <div className="shrink-0 flex flex-col items-end gap-0.5">
-                        <span
-                          className={cn(
-                            "tabular text-[14px] font-normal",
-                            isCredit ? "text-[#12B76A] dark:text-emerald-400" : "text-foreground"
-                          )}
-                        >
-                          {isCredit ? "+ " : "− "}
-                          <RevealingAmount amount={t.amount} currency={t.currency} />
-                        </span>
-                        {isFailed ? (
-                          <span className="text-[11.5px] text-[#F04438] dark:text-rose-400 font-normal">
-                            Failed
-                          </span>
-                        ) : isPending ? (
-                          <span className="text-[11.5px] text-[#F79009] dark:text-amber-400 font-normal">
-                            Pending
-                          </span>
-                        ) : (
-                          <span className="text-[11.5px] text-muted-foreground">
-                            {t.reference}
-                          </span>
-                        )}
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
           </div>
+
+          <nav aria-label="Account options" className="flex flex-col gap-4">
+            <ActionTile href={`/accounts/${account.id}/expenses`} icon={PieChart} title="My Spends" />
+            <ActionTile onClick={() => setRecentOpen(true)} icon={ArrowLeftRight} title="Last 10 Transactions" />
+            <ActionTile href="/payments/standing" icon={Repeat} title="Standing Orders" />
+            <ActionTile
+              href={`/accounts/${account.id}/requests`}
+              icon={Files}
+              title="Place a Request"
+              description="Statements, cheque books, bank letters"
+            />
+            {/* The card's badge shows which account is the default; this is only the way to make it one. */}
+            {canBeDefault && (
+              <ToggleTile
+                variant="row"
+                title="Set as Default"
+                checked={false}
+                onCheckedChange={() => {
+                  setDefaultAccount(account.id);
+                  toast.success(`${account.name} is now your default`);
+                }}
+              />
+            )}
+          </nav>
         </>
       )}
 
-      {/* Discrete StateSwitcher at bottom for testing */}
-      <div className="pt-2 opacity-40 hover:opacity-100 transition-opacity">
+      <div className="pt-2 opacity-40 transition-opacity hover:opacity-100">
         <StateSwitcher section="13.9 baseline" states={BASELINE} value={state} onChange={setState} />
       </div>
 
-      {/* Fund Account Modal */}
       <LinkSourceAccountModal
-        isOpen={isFundModalOpen}
-        onClose={() => setIsFundModalOpen(false)}
+        isOpen={fundOpen}
+        onClose={() => {
+          setFundOpen(false);
+          setFundResume(null);
+        }}
+        initialScreen={fundResume?.screen}
+        initialSourceId={fundResume?.sourceId}
         targetAccount={account}
       />
+      <ShareDetailsDialog open={shareOpen} onOpenChange={setShareOpen} account={account} holderName={holderName} />
+      <RecentTransactionsDialog open={recentOpen} onOpenChange={setRecentOpen} account={account} transactions={recent} />
     </div>
   );
 }
 
-interface AccountHeroGridProps {
-  account: NonNullable<ReturnType<typeof findAccount>>;
-  holderName: string;
-  onOpenFund: () => void;
+/* ── Header action ─────────────────────────────────────────────────────────── */
+
+/** The quiet header pill Send & Pay uses for "Standing Orders". */
+function HeaderPill({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="inline-flex h-8 shrink-0 cursor-pointer items-center rounded-[8px] bg-muted px-3 text-[13px] font-medium text-foreground transition-colors hover:bg-muted/80"
+    >
+      {children}
+    </button>
+  );
 }
 
-function AccountHeroGrid({ account, holderName, onOpenFund }: AccountHeroGridProps) {
-  const [showFullAccountNum, setShowFullAccountNum] = useState(false);
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+/* ── Balance card ──────────────────────────────────────────────────────────── */
 
-  const swiftCode = "GHCBGHAC";
-
-  const handleCopy = (key: string, text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    setTimeout(() => {
-      setCopiedKey((curr) => (curr === key ? null : curr));
-    }, 2000);
-  };
-
-  const formattedAccountNum = account.number;
-  const maskedAccountNum = formattedAccountNum.replace(/\d(?=.*\d{4})/g, "•");
+function BalanceCard({ account, isDefault }: { account: Account; isDefault: boolean }) {
+  const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
+  const facts: [string, string][] = [
+    ["Type", account.type],
+    ["Currency", account.currency],
+    ["Status", account.status],
+  ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 w-full items-stretch">
-      {/* Left Hero Card - Available Balance & Primary Quick Actions */}
-      <div className="lg:col-span-7 flex flex-col justify-between rounded-2xl border border-border/80 bg-[#f8f8f7] dark:bg-card/70 p-6 sm:p-7 shadow-2xs min-h-[240px]">
-        {/* Top: Balance & Actions */}
-        <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <span className="text-[12.5px] font-medium uppercase tracking-wider text-muted-foreground">
-                Available balance
-              </span>
-              {account.status === "Dormant" && (
-                <Badge variant="warning" className="text-[10.5px] px-2 py-0.5">
-                  Dormant
-                </Badge>
+    <section
+      aria-label="Balance"
+      className="relative flex min-h-[248px] flex-col justify-between gap-6 overflow-hidden rounded-xl border border-border bg-[var(--account-card)] p-6"
+    >
+      {/* Decorative dot map (Figma 1896:15434) */}
+      <Image
+        src="/images/figma/account-card-pattern.svg"
+        unoptimized
+        alt=""
+        aria-hidden="true"
+        width={430.279}
+        height={343.429}
+        className="pointer-events-none absolute -right-[207.7px] top-[8.68px] h-[343.429px] w-[430.279px] max-w-none select-none dark:opacity-40"
+      />
+
+      {isDefault && <Badge className="absolute right-6 top-6">Default</Badge>}
+
+      <div className="relative flex flex-col gap-2 text-[14px] leading-5 tracking-[-0.005em] text-muted-foreground">
+        <span className="flex items-center gap-1">
+          <Landmark size={15} strokeWidth={1.8} aria-hidden="true" />
+          {account.type}
+        </span>
+        <span className="tabular">{account.number.replace(/\s+/g, "")}</span>
+      </div>
+
+      <div className="relative flex items-center gap-2">
+        <RevealingAmount
+          amount={account.available}
+          currency={account.currency}
+          className="text-[30px] leading-[1.25] tracking-[-0.015em] text-foreground tabular sm:text-[36px]"
+        />
+        {/* Same switch as the header eye — one control, not two. */}
+        <button
+          type="button"
+          onClick={toggleAmountVisibility}
+          className="rounded-md p-1 text-foreground transition-colors hover:bg-background/60 cursor-pointer"
+          aria-label={showAmounts ? "Hide balance" : "Show balance"}
+          aria-pressed={!showAmounts}
+          title={showAmounts ? "Hide balance" : "Show balance"}
+        >
+          {showAmounts ? <Eye size={18} strokeWidth={1.8} /> : <EyeOff size={18} strokeWidth={1.8} />}
+        </button>
+      </div>
+
+      <dl className="relative flex gap-8">
+        {facts.map(([label, value]) => (
+          <div key={label} className="flex flex-col gap-2">
+            <dt className="text-[12px] leading-5 text-muted-foreground">{label}</dt>
+            <dd
+              className={cn(
+                "text-[16px] leading-6 tracking-[-0.005em]",
+                label === "Status" && value !== "Active" ? "text-warning" : "text-foreground",
               )}
-            </div>
-            <div className="text-[34px] sm:text-[40px] font-normal tracking-[-0.035em] text-foreground tabular leading-none">
-              <RevealingAmount amount={account.available} currency={account.currency} />
-            </div>
-          </div>
-
-          {/* Action buttons directly underneath the amount */}
-          <div className="flex items-center gap-3 pt-1">
-            <Button
-              variant="outline"
-              size="sm"
-              nativeButton={false}
-              className="bg-card dark:bg-card border-border/80 text-[13px] font-medium h-9 px-4.5 rounded-xl shadow-2xs hover:bg-muted/60 transition-colors"
-              render={<Link href="/payments" />}
             >
-              <Send size={13.5} className="text-muted-foreground mr-2" />
-              Pay
-            </Button>
-            <Button
-              size="sm"
-              onClick={onOpenFund}
-              className="bg-primary hover:bg-primary-hover text-primary-foreground font-medium h-9 px-4.5 rounded-xl shadow-2xs active:scale-[0.98] transition-all cursor-pointer text-[13px] whitespace-nowrap"
-            >
-              <ArrowDownLeft size={14.5} className="text-primary-foreground mr-1.5 shrink-0" />
-              Fund Account
-            </Button>
+              {value}
+            </dd>
           </div>
-        </div>
-
-        {/* Bottom: Account Key Metadata Strip */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-border/60">
-          <div className="flex flex-col gap-1">
-            <span className="text-[11.5px] font-medium uppercase tracking-wider text-muted-foreground">Type</span>
-            <span className="text-[14.5px] font-normal text-foreground">{account.type}</span>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-[11.5px] font-medium uppercase tracking-wider text-muted-foreground">Currency</span>
-            <span className="text-[14.5px] font-normal text-foreground">{account.currency}</span>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-[11.5px] font-medium uppercase tracking-wider text-muted-foreground">Status</span>
-            <span className="text-[14.5px] font-normal text-foreground">{account.status}</span>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-[11.5px] font-medium uppercase tracking-wider text-muted-foreground">Mandate</span>
-            <span className="text-[14.5px] font-normal text-foreground truncate" title={account.mandate || "Single authority"}>
-              {account.mandate || (account.isJoint ? "Both to sign" : "Single authority")}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Right Hero Card - Account Identifiers & SWIFT Details */}
-      <div className="lg:col-span-5 flex flex-col justify-between rounded-2xl border border-border/80 bg-card p-6 sm:p-7 shadow-2xs min-h-[240px]">
-        {/* Section title */}
-        <div className="text-[12.5px] font-medium uppercase tracking-wider text-muted-foreground">
-          Account Details
-        </div>
-
-        <div className="flex flex-col divide-y divide-border/50 my-auto py-2">
-          {/* Account Number */}
-          <div className="flex items-center justify-between py-3">
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              <span className="text-[13px]">Account number</span>
-              <button
-                type="button"
-                onClick={() => setShowFullAccountNum((v) => !v)}
-                className="hover:text-foreground transition-colors p-0.5 rounded text-muted-foreground cursor-pointer"
-                title={showFullAccountNum ? "Mask account number" : "Reveal account number"}
-                aria-label={showFullAccountNum ? "Mask account number" : "Reveal account number"}
-              >
-                {showFullAccountNum ? <EyeOff size={13.5} /> : <Eye size={13.5} />}
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[14.5px] font-mono tabular text-foreground font-normal">
-                {showFullAccountNum ? formattedAccountNum : maskedAccountNum}
-              </span>
-              <button
-                type="button"
-                onClick={() => handleCopy("accountNumber", account.number.replace(/\s+/g, ""))}
-                className="text-muted-foreground hover:text-foreground p-1 transition-colors rounded hover:bg-muted cursor-pointer"
-                title="Copy account number"
-                aria-label="Copy account number"
-              >
-                {copiedKey === "accountNumber" ? (
-                  <Check size={13.5} className="text-emerald-600 dark:text-emerald-400" />
-                ) : (
-                  <Copy size={13.5} />
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Account Holder */}
-          <div className="flex items-center justify-between py-3">
-            <span className="text-[13px] text-muted-foreground">Account holder</span>
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="text-[14.5px] font-normal text-foreground truncate max-w-[170px] sm:max-w-[200px] uppercase text-right">
-                {holderName}
-              </span>
-              <button
-                type="button"
-                onClick={() => handleCopy("holderName", holderName)}
-                className="text-muted-foreground hover:text-foreground p-1 transition-colors rounded hover:bg-muted shrink-0 cursor-pointer"
-                title="Copy account holder name"
-                aria-label="Copy account holder name"
-              >
-                {copiedKey === "holderName" ? (
-                  <Check size={13.5} className="text-emerald-600 dark:text-emerald-400" />
-                ) : (
-                  <Copy size={13.5} />
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* SWIFT Code */}
-          <div className="flex items-center justify-between py-3">
-            <span className="text-[13px] text-muted-foreground uppercase tracking-wider">SWIFT Code</span>
-            <div className="flex items-center gap-2">
-              <span className="text-[14.5px] font-mono tabular text-foreground font-normal uppercase">
-                {swiftCode}
-              </span>
-              <button
-                type="button"
-                onClick={() => handleCopy("swift", swiftCode)}
-                className="text-muted-foreground hover:text-foreground p-1 transition-colors rounded hover:bg-muted cursor-pointer"
-                title="Copy SWIFT code"
-                aria-label="Copy SWIFT code"
-              >
-                {copiedKey === "swift" ? (
-                  <Check size={13.5} className="text-emerald-600 dark:text-emerald-400" />
-                ) : (
-                  <Copy size={13.5} />
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        ))}
+      </dl>
+    </section>
   );
 }
 
+/* ── Last 10 transactions ──────────────────────────────────────────────────── */
+
+function ActivityRow({ t }: { t: Transaction }) {
+  const isCredit = t.direction === "credit";
+  const isFailed = t.state.startsWith("failed") || t.state === "reversed" || t.state === "disputed";
+  const isPending = t.state === "pending" || t.state === "awaiting-approval";
+
+  return (
+    <li>
+      <Link
+        href={`/transactions/${t.id}`}
+        className="flex items-center gap-3.5 rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/50"
+      >
+        <span
+          className={cn(
+            "flex size-9 shrink-0 items-center justify-center rounded-full",
+            isCredit ? "bg-success/10 text-success" : "bg-muted text-muted-foreground",
+          )}
+        >
+          {isCredit ? <ArrowDownLeft size={16} strokeWidth={1.8} /> : <ArrowUpRight size={16} strokeWidth={1.8} />}
+        </span>
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="truncate text-[14px] text-foreground">{t.counterparty || t.description}</span>
+          <span className="truncate text-[12px] text-muted-foreground">
+            <span className="tabular">{formatDate(t.date)}</span> · {t.category || t.paymentMethod || "Payment"}
+          </span>
+        </span>
+        <span className="flex shrink-0 flex-col items-end gap-0.5">
+          <span className={cn("text-[14px] tabular", isCredit ? "text-success" : "text-foreground")}>
+            {isCredit ? "+ " : "− "}
+            <RevealingAmount amount={t.amount} currency={t.currency} />
+          </span>
+          {isFailed ? (
+            <span className="text-[11.5px] text-destructive">Failed</span>
+          ) : isPending ? (
+            <span className="text-[11.5px] text-warning">Pending</span>
+          ) : null}
+        </span>
+      </Link>
+    </li>
+  );
+}
+
+/** A mini statement: the last ten movements, with this account's full transaction list one tap further. */
+function RecentTransactionsDialog({
+  open,
+  onOpenChange,
+  account,
+  transactions,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  account: Account;
+  transactions: Transaction[];
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="md">
+        <DialogHeader>
+          <DialogTitle>Last 10 Transactions</DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          {transactions.length === 0 ? (
+            <TrueEmptyState
+              title="No activity on this account yet"
+              description="Money in and out of this account will show here."
+            />
+          ) : (
+            <ul className="-mx-2 flex flex-col">
+              {transactions.map((t) => (
+                <ActivityRow key={t.id} t={t} />
+              ))}
+            </ul>
+          )}
+        </DialogBody>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            nativeButton={false}
+            render={<Link href={`/transactions?account=${account.id}`} />}
+            className="h-10 w-full rounded-lg text-[13.5px]"
+          >
+            View All Transactions
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/* ── Share account details ─────────────────────────────────────────────────── */
+
+function ShareDetailsDialog({
+  open,
+  onOpenChange,
+  account,
+  holderName,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  account: Account;
+  holderName: string;
+}) {
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const rows: { key: string; label: string; value: string; copy?: string }[] = [
+    { key: "holder", label: "Account holder", value: holderName },
+    { key: "number", label: "Account number", value: groupDigits(account.number), copy: account.number.replace(/\s+/g, "") },
+    { key: "bank", label: "Bank", value: "GCB Bank PLC" },
+    { key: "swift", label: "SWIFT code", value: SWIFT_CODE },
+  ];
+
+  const copy = (key: string, text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey((k) => (k === key ? null : k)), 2000);
+  };
+
+  const copyAll = () => {
+    navigator.clipboard.writeText(rows.map((r) => `${r.label}: ${r.value}`).join("\n"));
+    toast.success("Account details copied", { description: "Paste them into a message to get paid." });
+    onOpenChange(false);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="sm">
+        <DialogHeader>
+          <DialogTitle>Share account details</DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          <p className="mb-3 text-[13px] text-muted-foreground">Give these to anyone sending money to this account.</p>
+          <dl className="flex flex-col divide-y divide-border/50">
+            {rows.map((r) => (
+              <div key={r.key} className="flex items-center justify-between gap-3 py-3">
+                <dt className="text-[13px] text-muted-foreground">{r.label}</dt>
+                <dd className="flex min-w-0 items-center gap-1.5">
+                  <span className="truncate text-[14px] text-foreground tabular">{r.value}</span>
+                  <button
+                    type="button"
+                    onClick={() => copy(r.key, r.copy ?? r.value)}
+                    className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+                    aria-label={`Copy ${r.label.toLowerCase()}`}
+                  >
+                    {copiedKey === r.key ? (
+                      <Check size={14} strokeWidth={1.9} className="text-success" />
+                    ) : (
+                      <Copy size={14} strokeWidth={1.8} />
+                    )}
+                  </button>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </DialogBody>
+        <DialogFooter>
+          <Button onClick={copyAll} className="h-10 w-full gap-1.5 rounded-lg text-[13.5px]">
+            <Copy size={15} strokeWidth={1.8} />
+            Copy all
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

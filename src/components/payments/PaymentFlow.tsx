@@ -42,6 +42,7 @@ import {
 import { toast } from "sonner";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
+import { ActionTile } from "@/components/ui/action-tile";
 import {
   Select,
   SelectContent,
@@ -2383,8 +2384,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         {/* 4 Category Cards */}
         <div className="flex flex-col gap-3.5">
           {/* Card 1: Between My Accounts */}
-          <button
-            type="button"
+          <ActionTile
+            icon={ArrowLeftRight}
+            title="Between My Accounts"
             onClick={() => {
               setBankCategory("own");
               setF((p) => ({
@@ -2400,24 +2402,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage1Collapsed(false);
               setMaxRevealedStage(1);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
-          >
-            <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
-                <ArrowLeftRight size={20} strokeWidth={1.8} />
-              </span>
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Between My Accounts</span>
-            </div>
-            <ChevronRight
-              size={20}
-              strokeWidth={1.8}
-              className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
-            />
-          </button>
+            className="p-4.5"
+          />
 
           {/* Card 2: Other GCB Accounts */}
-          <button
-            type="button"
+          <ActionTile
+            leading={<span className="text-[13px] font-medium">GCB</span>}
+            title="Other GCB Accounts"
             onClick={() => {
               setBankCategory("gcb");
               setF((p) => ({ ...p, bank: "GCB Bank", benAcct: "", benName: "", bankAmount: "", bankRef: "" }));
@@ -2425,24 +2416,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage1Collapsed(false);
               setMaxRevealedStage(1);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
-          >
-            <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none font-medium text-[13px]">
-                GCB
-              </span>
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Other GCB Accounts</span>
-            </div>
-            <ChevronRight
-              size={20}
-              strokeWidth={1.8}
-              className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
-            />
-          </button>
+            className="p-4.5"
+          />
 
           {/* Card 3: Other Local Banks */}
-          <button
-            type="button"
+          <ActionTile
+            icon={Landmark}
+            title="Other Local Banks"
             onClick={() => {
               setBankCategory("other");
               setF((p) => ({ ...p, bank: "", benAcct: "", benName: "", paymentMethod: "", bankAmount: "", bankRef: "" }));
@@ -2450,24 +2430,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage1Collapsed(false);
               setMaxRevealedStage(1);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
-          >
-            <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
-                <Landmark size={20} strokeWidth={1.8} />
-              </span>
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Other Local Banks</span>
-            </div>
-            <ChevronRight
-              size={20}
-              strokeWidth={1.8}
-              className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
-            />
-          </button>
+            className="p-4.5"
+          />
 
           {/* Card 4: International */}
-          <button
-            type="button"
+          <ActionTile
+            icon={Globe}
+            title="International (SWIFT)"
             onClick={() => {
               setBankCategory("international");
               setRail("swift");
@@ -2476,20 +2445,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage1Collapsed(false);
               setMaxRevealedStage(1);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
-          >
-            <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
-                <Globe size={20} strokeWidth={1.8} />
-              </span>
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">International (SWIFT)</span>
-            </div>
-            <ChevronRight
-              size={20}
-              strokeWidth={1.8}
-              className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
-            />
-          </button>
+            className="p-4.5"
+          />
         </div>
       </div>
     );
@@ -2543,8 +2500,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         {/* 2 Category Cards */}
         <div className="flex flex-col gap-3.5">
           {/* Card 1: Send to Self */}
-          <button
-            type="button"
+          <ActionTile
+            icon={Smartphone}
+            title="My Own Wallet (Self)"
             onClick={() => {
               setWalletCategory("self");
               setF((p) => ({
@@ -2559,24 +2517,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setMaxRevealedStage(1);
               setStage1Collapsed(true);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
-          >
-            <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
-                <Smartphone size={20} strokeWidth={1.8} />
-              </span>
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">My Own Wallet (Self)</span>
-            </div>
-            <ChevronRight
-              size={20}
-              strokeWidth={1.8}
-              className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
-            />
-          </button>
+            className="p-4.5"
+          />
 
           {/* Card 2: Send to Others */}
-          <button
-            type="button"
+          <ActionTile
+            icon={Users}
+            title="Other Mobile Wallets"
             onClick={() => {
               setWalletCategory("other");
               setF((p) => ({
@@ -2591,20 +2538,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setMaxRevealedStage(1);
               setStage1Collapsed(false);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
-          >
-            <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
-                <Users size={20} strokeWidth={1.8} />
-              </span>
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Other Mobile Wallets</span>
-            </div>
-            <ChevronRight
-              size={20}
-              strokeWidth={1.8}
-              className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
-            />
-          </button>
+            className="p-4.5"
+          />
         </div>
       </div>
     );
@@ -2673,8 +2608,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         {/* 2 Separate Category Cards matching user uploaded image */}
         <div className="flex flex-col gap-3.5">
           {/* Card 1: Generate Token for self */}
-          <button
-            type="button"
+          <ActionTile
+            icon={Smartphone}
+            title="Generate Token for self"
             onClick={() => {
               setCardlessCategory("self");
               setF((p) => ({
@@ -2689,24 +2625,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setMaxRevealedStage(1);
               setStage1Collapsed(true);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
-          >
-            <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
-                <Smartphone size={20} strokeWidth={1.8} />
-              </span>
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Generate Token for self</span>
-            </div>
-            <ChevronRight
-              size={20}
-              strokeWidth={1.8}
-              className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
-            />
-          </button>
+            className="p-4.5"
+          />
 
           {/* Card 2: Generate Token for others */}
-          <button
-            type="button"
+          <ActionTile
+            icon={Users}
+            title="Generate Token for others"
             onClick={() => {
               setCardlessCategory("third-party");
               setF((p) => ({
@@ -2721,20 +2646,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setMaxRevealedStage(1);
               setStage1Collapsed(false);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
-          >
-            <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
-                <Users size={20} strokeWidth={1.8} />
-              </span>
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Generate Token for others</span>
-            </div>
-            <ChevronRight
-              size={20}
-              strokeWidth={1.8}
-              className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
-            />
-          </button>
+            className="p-4.5"
+          />
         </div>
 
         {/* 3. Active / Recent Generated Tokens Section */}
@@ -2864,9 +2777,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {GCB_PAY_CATEGORIES.map((cat) => {
             const Icon = cat.icon;
             return (
-              <button
+              <ActionTile
                 key={cat.id}
-                type="button"
+                icon={Icon}
+                title={cat.title}
                 onClick={() => {
                   setBillCategory(cat.id);
                   setF((p) => ({ ...p, billerId: "", billRef: "", benName: "" }));
@@ -2874,22 +2788,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   setStage1Collapsed(false);
                   setMaxRevealedStage(1);
                 }}
-                className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
-              >
-                <div className="flex items-center gap-4">
-                  <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
-                    <Icon size={20} strokeWidth={1.8} />
-                  </span>
-                  <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">
-                    {cat.title}
-                  </span>
-                </div>
-                <ChevronRight
-                  size={20}
-                  strokeWidth={1.8}
-                  className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
-                />
-              </button>
+              />
             );
           })}
         </div>
@@ -2899,10 +2798,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   // Proxy — chooser: transfer to a proxy ID, or manage your own proxy ID.
   if (rail === "proxy" && !proxyCategory) {
-    const proxyOptionCls =
-      "group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left";
-    const proxyIconCls =
-      "flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none";
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
         <div className="relative flex items-center">
@@ -2943,8 +2838,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
         <div className="flex flex-col gap-3.5">
           {/* Transfer to a proxy ID */}
-          <button
-            type="button"
+          <ActionTile
+            icon={ArrowLeftRight}
+            title="Transfer to a proxy ID"
             onClick={() => {
               setProxyCategory("transfer");
               setF((p) => ({ ...p, pxId: "", benName: "", bankAmount: "", bankRef: "" }));
@@ -2952,70 +2848,41 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setMaxRevealedStage(1);
               setStage1Collapsed(false);
             }}
-            className={proxyOptionCls}
-          >
-            <div className="flex items-center gap-4">
-              <span className={proxyIconCls}>
-                <ArrowLeftRight size={20} strokeWidth={1.8} />
-              </span>
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Transfer to a proxy ID</span>
-            </div>
-            <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
-          </button>
+            className="p-4.5"
+          />
 
           {myProxy ? (
             <>
               {/* Update proxy ID */}
-              <button
-                type="button"
+              <ActionTile
+                icon={Pencil}
+                title="Update proxy ID"
                 onClick={() => {
                   setProxyModalMode("edit");
                   setProxyModalOpen(true);
                 }}
-                className={proxyOptionCls}
-              >
-                <div className="flex items-center gap-4">
-                  <span className={proxyIconCls}>
-                    <Pencil size={19} strokeWidth={1.8} />
-                  </span>
-                  <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Update proxy ID</span>
-                </div>
-                <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
-              </button>
+                className="p-4.5"
+              />
 
               {/* Deregister proxy ID */}
-              <button
-                type="button"
+              <ActionTile
+                leading={<Trash2 size={20} strokeWidth={1.8} className="text-destructive" />}
+                title="Deregister proxy ID"
                 onClick={() => setProxyDeregisterOpen(true)}
-                className={proxyOptionCls}
-              >
-                <div className="flex items-center gap-4">
-                  <span className={proxyIconCls}>
-                    <Trash2 size={19} strokeWidth={1.8} className="text-destructive" />
-                  </span>
-                  <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Deregister proxy ID</span>
-                </div>
-                <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
-              </button>
+                className="p-4.5"
+              />
             </>
           ) : (
             /* Create proxy ID (shown once none is registered) */
-            <button
-              type="button"
+            <ActionTile
+              icon={Plus}
+              title="Create a proxy ID"
               onClick={() => {
                 setProxyModalMode("create");
                 setProxyModalOpen(true);
               }}
-              className={proxyOptionCls}
-            >
-              <div className="flex items-center gap-4">
-                <span className={proxyIconCls}>
-                  <Plus size={20} strokeWidth={1.8} />
-                </span>
-                <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Create a proxy ID</span>
-              </div>
-              <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
-            </button>
+              className="p-4.5"
+            />
           )}
         </div>
 
@@ -3072,10 +2939,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   // Group — chooser: transfer to a group, or manage groups.
   if (rail === "group" && !groupCategory) {
-    const groupOptionCls =
-      "group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left";
-    const groupIconCls =
-      "flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none";
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
         <div className="relative flex items-center">
@@ -3124,8 +2987,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
         <div className="flex flex-col gap-3.5">
           {/* Transfer to group */}
-          <button
-            type="button"
+          <ActionTile
+            icon={Users}
+            title="Transfer to group"
             onClick={() => {
               setGroupCategory("transfer");
               setF((p) => ({ ...p, groupName: "", grpAmount: "", grpRef: "" }));
@@ -3133,31 +2997,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setMaxRevealedStage(1);
               setStage1Collapsed(false);
             }}
-            className={groupOptionCls}
-          >
-            <div className="flex items-center gap-4">
-              <span className={groupIconCls}>
-                <Users size={20} strokeWidth={1.8} />
-              </span>
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Transfer to group</span>
-            </div>
-            <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
-          </button>
+            className="p-4.5"
+          />
 
           {/* Manage group */}
-          <button
-            type="button"
+          <ActionTile
+            icon={Pencil}
+            title="Manage groups"
             onClick={() => router.push("/beneficiaries?tab=groups")}
-            className={groupOptionCls}
-          >
-            <div className="flex items-center gap-4">
-              <span className={groupIconCls}>
-                <Pencil size={19} strokeWidth={1.8} />
-              </span>
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Manage groups</span>
-            </div>
-            <ChevronRight size={20} strokeWidth={1.8} className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]" />
-          </button>
+            className="p-4.5"
+          />
         </div>
       </div>
     );
@@ -3212,8 +3061,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         {/* 2 Category Cards */}
         <div className="flex flex-col gap-3.5">
           {/* Card 1: Self */}
-          <button
-            type="button"
+          <ActionTile
+            icon={Smartphone}
+            title="My own number (Self)"
             onClick={() => {
               setTopupCategory("self");
               const selfNum = "0244123821";
@@ -3231,24 +3081,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setMaxRevealedStage(1);
               setStage1Collapsed(true);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
-          >
-            <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
-                <Smartphone size={20} strokeWidth={1.8} />
-              </span>
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">My own number (Self)</span>
-            </div>
-            <ChevronRight
-              size={20}
-              strokeWidth={1.8}
-              className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
-            />
-          </button>
+            className="p-4.5"
+          />
 
           {/* Card 2: Someone else */}
-          <button
-            type="button"
+          <ActionTile
+            icon={Users}
+            title="Someone else"
             onClick={() => {
               setTopupCategory("other");
               setF((p) => ({
@@ -3263,20 +3102,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setMaxRevealedStage(1);
               setStage1Collapsed(false);
             }}
-            className="group flex w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4.5 transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99] cursor-pointer text-left"
-          >
-            <div className="flex items-center gap-4">
-              <span className="flex size-[38.5px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition-transform duration-150 group-hover:scale-105 dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground dark:shadow-none">
-                <Users size={20} strokeWidth={1.8} />
-              </span>
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Someone else</span>
-            </div>
-            <ChevronRight
-              size={20}
-              strokeWidth={1.8}
-              className="text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
-            />
-          </button>
+            className="p-4.5"
+          />
         </div>
       </div>
     );

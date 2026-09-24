@@ -87,6 +87,8 @@
   --tile: #f6f6f5;
   --tile-hover: #eeeeed;
   --tile-border: #ebebe9;
+  /* Account Details balance card (Figma 1896:15407) — slate tint over the page. */
+  --account-card: rgba(71, 85, 96, 0.1);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   /* GCB Bank PLC brand accent — iconic Amber / Gold (#fdc307) */
@@ -202,6 +204,7 @@
   --tile: #141414;
   --tile-hover: #262626;
   --tile-border: #292928;
+  --account-card: rgba(148, 163, 184, 0.1);
   --popover: oklch(0.269 0 0);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.846 0.172 86.7);

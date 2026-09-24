@@ -1,281 +1,517 @@
 "use client";
 
 /**
- * S06 Accounts (list) — section 2, state model 13.1.
+ * S06 Accounts — accounts and sources of funds, kept apart.
  *
- * Implements all six list states. `empty` and `filtered-empty` are separate
- * branches with different copy and different actions, per 13.1.
+ * Two sections, never one list:
+ * 1. **Your Accounts** — where money lives. Accounts aren't opened here:
+ *    "Add Account" brings on one the customer already holds (selfie match to
+ *    the Ghana Card → pick from the accounts in their name). The default shows
+ *    as a badge; it's changed on Account Details. No balances on this list.
+ * 2. **Sources of Funds** — linked MoMo wallets and cards money comes in from.
+ *    We never show their balances. Remove is their only action (row menu).
  *
- * Account Details is reached from a row here, never from navigation (12.4).
+ * Section actions are quiet pills, not primary buttons — nothing on this page
+ * outranks the list itself. Lists are the same white card as the Cards page,
+ * with the shared `TileChip` in its muted `onCard` tone.
+ *
+ * GCB customers never see a wallet: linking a source creates one in the
+ * backend, but it only passes money through to the account. Customers who
+ * onboarded with MoMo or a card see the wallet as their account.
+ *
+ * Dev Mode toggles the customer configuration and the screen state separately.
  */
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ChevronRight, Landmark, PieChart as PieChartIcon, Plus, Search } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  CreditCard,
+  Landmark,
+  MoreHorizontal,
+  Plus,
+  Smartphone,
+  Wallet,
+  X,
+} from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { StateSwitcher } from "@/components/states/StateSwitcher";
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
-  FilteredEmptyState,
-  ListErrorState,
-  ListSkeleton,
-  PartialLoadFooter,
-  TrueEmptyState,
-} from "@/components/states/ListStates";
-import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
-import { accountsForProfile } from "@/lib/mock-data";
-import { useSession } from "@/lib/session-store";
-import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
+import type { DevStateGroup } from "@/components/providers/DevStateProvider";
+import { formatMoney, type Account } from "@/lib/mock-data";
+import { useAccountPrefs, useLinkedSources, type LinkedSource } from "@/lib/accounts-store";
+import AddAccountDialog from "@/components/accounts/AddAccountDialog";
+import { useCustomerAccounts } from "@/lib/use-customer-accounts";
+import PageHeader from "@/components/layout/PageHeader";
+import { TileChip } from "@/components/ui/action-tile";
+import {
+  ACCOUNTS_SCENARIOS,
+  findScenario,
+  useAccountsScenario,
+  type AccountsScenarioId,
+} from "@/lib/accounts-scenarios";
+import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import LinkSourceAccountModal from "@/components/dashboard/LinkSourceAccountModal";
-import { MySpendsWidget } from "@/components/accounts/MySpendsWidget";
+import { useCardLinkReturn } from "@/lib/card-link";
 
-const LIST_STATES: readonly ListState[] = [
-  "loading",
-  "empty",
-  "filtered-empty",
-  "populated",
-  "partial-load",
-  "error",
-] as const;
+type ScreenState = "populated" | "loading" | "error" | "sources-error";
+
+const SCREEN_STATES: readonly ScreenState[] = ["populated", "loading", "error", "sources-error"] as const;
+const SCREEN_STATE_LABEL: Record<ScreenState, string> = {
+  populated: "Populated",
+  loading: "Loading",
+  error: "Accounts failed to load",
+  "sources-error": "Linked sources failed to load",
+};
+
+const SCENARIO_IDS = ACCOUNTS_SCENARIOS.map((s) => s.id);
+const SCENARIO_LABEL = Object.fromEntries(ACCOUNTS_SCENARIOS.map((s) => [s.id, s.label])) as Record<
+  AccountsScenarioId,
+  string
+>;
+
+/* ── Small pieces ─────────────────────────────────────────────────────────── */
+
+function SectionHeading({ id, title, action }: { id: string; title: string; action?: React.ReactNode }) {
+  return (
+    <div className="flex min-h-8 items-center justify-between gap-4 px-1">
+      <h2 id={id} className="text-[16px] font-medium tracking-[-0.01em] text-foreground">
+        {title}
+      </h2>
+      {action}
+    </div>
+  );
+}
+
+/** Section action: the system ghost button — no fill until hover. */
+function SectionAction({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
+  return (
+    <Button type="button" variant="ghost" size="sm" onClick={onClick} className="h-8 shrink-0 gap-1.5 text-[13px]">
+      <Plus size={15} strokeWidth={1.8} aria-hidden="true" />
+      {children}
+    </Button>
+  );
+}
+
+/** Same white list card as the Cards page. */
+const LIST = "overflow-hidden rounded-2xl border border-border bg-card";
+
+function RowMenu({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        aria-label={label}
+        className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <MoreHorizontal size={17} strokeWidth={1.8} />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52">
+        {children}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function AccountRow({
+  account,
+  isDefault,
+  showDefault,
+  pending,
+}: {
+  account: Account;
+  isDefault: boolean;
+  /** Only meaningful when there's more than one account to choose between. */
+  showDefault: boolean;
+  pending?: { amount: number; from: string };
+}) {
+  const isWallet = account.type === "Wallet";
+  const dormant = account.status === "Dormant";
+  const otherHolder = account.jointHolders?.find((h) => h !== account.jointHolders?.[0]) ?? account.jointHolders?.[0];
+
+  return (
+    <li>
+      <Link
+        href={`/accounts/${account.id}`}
+        className="group flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/40 sm:px-5"
+      >
+        <TileChip tone="onCard">
+          {isWallet ? (
+            <Wallet size={20} strokeWidth={1.8} aria-hidden="true" />
+          ) : (
+            <Landmark size={20} strokeWidth={1.8} aria-hidden="true" />
+          )}
+        </TileChip>
+        <span className="flex min-w-0 flex-1 flex-col gap-1">
+          <span className="flex flex-wrap items-center gap-1.5">
+            <span className="truncate text-[15px] font-medium tracking-[-0.01em] text-foreground">{account.name}</span>
+            {showDefault && isDefault && <Badge>Default</Badge>}
+            {account.isJoint && <Badge variant="outline">Joint</Badge>}
+            {dormant && <Badge variant="warning">Dormant</Badge>}
+          </span>
+          <span className="truncate text-[13px] text-muted-foreground tabular">
+            {account.type} · {account.number}
+            {account.isJoint && otherHolder ? ` · with ${otherHolder}` : ""}
+          </span>
+          {pending && (
+            <span className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
+              <Clock size={13} strokeWidth={1.8} className="shrink-0 text-warning" aria-hidden="true" />
+              <span className="tabular">
+                {formatMoney(pending.amount, "GHS", true)} from {pending.from} on its way · usually arrives within minutes
+              </span>
+            </span>
+          )}
+        </span>
+        <ChevronRight
+          size={20}
+          strokeWidth={1.8}
+          aria-hidden="true"
+          className="shrink-0 text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
+        />
+      </Link>
+    </li>
+  );
+}
+
+function SourceRow({ source, onRemove }: { source: LinkedSource; onRemove: () => void }) {
+  return (
+    <li className="flex items-center gap-4 py-4 pl-4 pr-2 sm:pl-5 sm:pr-3">
+      <TileChip tone="onCard">
+        {source.type === "momo" ? (
+          <Smartphone size={20} strokeWidth={1.8} aria-hidden="true" />
+        ) : (
+          <CreditCard size={20} strokeWidth={1.8} aria-hidden="true" />
+        )}
+      </TileChip>
+      <span className="flex min-w-0 flex-1 flex-col gap-1">
+        <span className="truncate text-[15px] font-medium tracking-[-0.01em] text-foreground">{source.title}</span>
+        <span className="truncate text-[13px] text-muted-foreground tabular">{source.subtitle}</span>
+      </span>
+      <RowMenu label={`More actions for ${source.title}`}>
+        <DropdownMenuItem onClick={onRemove} className="text-[13px]">
+          Remove
+        </DropdownMenuItem>
+      </RowMenu>
+    </li>
+  );
+}
+
+/* ── Page ─────────────────────────────────────────────────────────────────── */
 
 function AccountsContent() {
   useAmountVisibility();
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-  const activeProfile = useSession((s) => s.activeProfile);
-  const accounts = accountsForProfile(activeProfile?.kind);
+  const {
+    accounts,
+    defaultId,
+    defaultAccount,
+    isRetail,
+    isWalletCustomer,
+    ghanaCardAccountIds,
+    walletMigration,
+    scenario,
+  } = useCustomerAccounts();
+  const dismissWalletMigration = useAccountPrefs((s) => s.dismissWalletMigration);
+  const setScenarioId = useAccountsScenario((s) => s.setScenarioId);
 
-  const [activeTab, setActiveTab] = useState<"accounts" | "spends">(
-    searchParams.get("tab") === "spends" ? "spends" : "accounts"
-  );
-  const [selectedSpendAccountId, setSelectedSpendAccountId] = useState<string | null>(null);
+  const sources = useLinkedSources((s) => s.sources);
+  const setSources = useLinkedSources((s) => s.setSources);
+  const removeSource = useLinkedSources((s) => s.removeSource);
+  const restoreSource = useLinkedSources((s) => s.restoreSource);
 
-  const handleSwitchTab = (tab: "accounts" | "spends") => {
-    setActiveTab(tab);
-    if (tab === "spends") {
-      router.push(`${pathname}?tab=spends`);
-    } else {
-      router.push(pathname);
-    }
-  };
-
-  const [state, setState] = useState<ListState>("populated");
-  const [query, setQuery] = useState("");
-  const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
+  const [screenState, setScreenState] = useState<ScreenState>("populated");
+  const [linkOpen, setLinkOpen] = useState(false);
+  const [removing, setRemoving] = useState<LinkedSource | null>(null);
+  const [selfieMatch, setSelfieMatch] = useState<"match" | "no-match">("match");
+  const [addAccountOpen, setAddAccountOpen] = useState(false);
+  const clearAddedAccounts = useAccountPrefs((s) => s.clearAddedAccounts);
+  const [migratedDismissed, setMigratedDismissed] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get("link_source") === "true") {
-      setIsLinkModalOpen(true);
-    }
-    const tabParam = searchParams.get("tab");
-    setActiveTab(tabParam === "spends" ? "spends" : "accounts");
+    // Signup lands here with ?link_source=true to link the first source.
+    if (searchParams.get("link_source") === "true") setLinkOpen(true);
   }, [searchParams]);
 
-  const results = useMemo(() => {
-    if (!query.trim()) return accounts;
-    const q = query.toLowerCase();
-    return accounts.filter(
-      (a) => a.name.toLowerCase().includes(q) || a.number.replace(/\s/g, "").includes(q.replace(/\s/g, "")),
-    );
-  }, [query, accounts]);
+  // Back from the bank's card page: confirm, or reopen Add money with the card.
+  // Back from the bank's card page after "Link a Wallet or Card".
+  useCardLinkReturn((result) => {
+    if (result.status === "linked") {
+      toast.success(`${result.source.title} linked`, {
+        description: defaultAccount ? `Use it to top up ${defaultAccount.name} any time.` : undefined,
+      });
+      return;
+    }
+    toast("Card not linked", {
+      description: "Nothing was saved. You can try again whenever you're ready.",
+      action: { label: "Try again", onClick: () => setLinkOpen(true) },
+    });
+  });
 
-  // A live search that matches nothing is genuinely filtered-empty — the state
-  // switcher and real filtering converge on the same branch.
-  const effective: ListState = state === "populated" && query.trim() && results.length === 0 ? "filtered-empty" : state;
+  /* Dev Mode: customer configuration seeds linked sources; screen state is separate. */
+  const applyScenario = useCallback(
+    (id: string) => {
+      const next = findScenario(id as AccountsScenarioId);
+      setScenarioId(next.id);
+      setSources(next.sources);
+      clearAddedAccounts();
+      setMigratedDismissed(false);
+      setScreenState("populated");
+    },
+    [setScenarioId, setSources, clearAddedAccounts],
+  );
 
-  const rows = effective === "partial-load" ? accounts : results;
+  const devGroups = useMemo<DevStateGroup[] | undefined>(
+    () =>
+      isRetail
+        ? [
+            {
+              label: "Screen state",
+              states: SCREEN_STATES.map((s) => ({ id: s, label: SCREEN_STATE_LABEL[s] })),
+              value: screenState,
+              onChange: (v: string) => setScreenState(v as ScreenState),
+            },
+            {
+              label: "Add Account selfie",
+              states: [
+                { id: "match", label: "Matches Ghana Card" },
+                { id: "no-match", label: "Doesn't match" },
+              ],
+              value: selfieMatch,
+              onChange: (v: string) => setSelfieMatch(v as "match" | "no-match"),
+            },
+          ]
+        : undefined,
+    [isRetail, screenState, selfieMatch],
+  );
 
-  if (activeTab === "spends") {
-    return (
-      <MySpendsWidget
-        accounts={accounts}
-        selectedAccountId={selectedSpendAccountId}
-        onSelectAccount={setSelectedSpendAccountId}
-        onBackToAccounts={() => handleSwitchTab("accounts")}
-      />
-    );
+  // Removing stops top-ups from that source, so it asks first; Undo stays as a safety net.
+  function handleRemoveSource(source: LinkedSource) {
+    setRemoving(null);
+    const index = sources.findIndex((s) => s.id === source.id);
+    removeSource(source.id);
+    toast(`${source.title} removed`, {
+      description: "You can link it again any time.",
+      action: { label: "Undo", onClick: () => restoreSource(source, index) },
+    });
   }
 
+  const migratedAmount = walletMigration
+    ? walletMigration.dismissed
+      ? null
+      : walletMigration.amount
+    : isRetail && scenario.migrated && !migratedDismissed
+      ? scenario.migrated.amount
+      : null;
+  const multiple = accounts.length > 1;
+
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200">
-      {/* ── Page Header: Title & Action Buttons (no description underneath) ── */}
-      <div className="flex items-center justify-between gap-3 w-full">
-        <h1 className="text-[20px] sm:text-[24px] lg:text-[26px] font-medium leading-[26px] sm:leading-[32px] tracking-[-0.02em] text-foreground truncate">
-          Accounts
-        </h1>
+    <div className="flex flex-col gap-8 animate-in fade-in duration-200">
+      {/* Header */}
+      {/* No Add money here — every account has its own Top up on Account Details. */}
+      <PageHeader title="Accounts" />
 
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-          {/* My Spends Button */}
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => handleSwitchTab("spends")}
-            className="h-9 sm:h-10 px-2.5 sm:px-4 rounded-xl border border-border/80 bg-card hover:bg-muted font-medium text-[13px] sm:text-[13.5px] text-foreground flex items-center gap-1.5 sm:gap-2 cursor-pointer transition-all active:scale-[0.98]"
-            title="My Spends"
-          >
-            <PieChartIcon size={16} className="text-foreground shrink-0" />
-            <span className="hidden sm:inline">My Spends</span>
-          </Button>
-
-          {/* Add Funding Method Button (GCB Yellow) */}
-          <Button
-            type="button"
-            onClick={() => setIsLinkModalOpen(true)}
-            className="h-9 sm:h-10 px-3 sm:px-4 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground font-medium text-[13px] sm:text-[13.5px] flex items-center gap-1.5 sm:gap-2 cursor-pointer transition-all active:scale-[0.98] shadow-xs shrink-0"
-          >
-            <Plus size={16} strokeWidth={2.2} className="shrink-0" />
-            <span className="hidden sm:inline">Add Funding Method</span>
-            <span className="sm:hidden">Add Method</span>
-          </Button>
-        </div>
-      </div>
-
-      {/* ── Full-width Search Input ── */}
-      <div className="relative w-full">
-        <Search
-          size={16}
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+      {isRetail ? (
+        <StateSwitcher
+          section="S06"
+          label="Customer"
+          states={SCENARIO_IDS}
+          value={scenario.id}
+          onChange={applyScenario}
+          labels={SCENARIO_LABEL}
+          groups={devGroups}
         />
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search accounts..."
-          className="w-full h-11 pl-11 pr-4 rounded-xl border border-border/80 bg-card/60 dark:bg-[#18181a] text-[14px] text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-[#fdc307] focus:border-[#fdc307] transition-all"
-        />
-      </div>
-
-      {/* State Switcher for Section 13.1 verification */}
-      <StateSwitcher
-        section="13.1"
-        states={LIST_STATES}
-        value={state}
-        onChange={setState}
-        labels={LIST_STATE_LABEL}
-      />
-
-      {/* States */}
-      {effective === "loading" && (
-        <div className="rounded-2xl border border-border/80 bg-card overflow-hidden shadow-xs">
-          <ListSkeleton rows={4} columns={4} />
-        </div>
-      )}
-
-      {effective === "error" && (
-        <ListErrorState
-          onRetry={() => setState("populated")}
-          description="We couldn't load your accounts. Your balances are unaffected — try again."
+      ) : (
+        <StateSwitcher
+          section="S06"
+          states={SCREEN_STATES}
+          value={screenState}
+          onChange={setScreenState}
+          labels={SCREEN_STATE_LABEL}
         />
       )}
 
-      {effective === "empty" && (
-        <TrueEmptyState
-          icon={<Landmark size={20} strokeWidth={1.7} aria-hidden="true" />}
-          title="No accounts yet"
-          description="Once an account is opened or linked under this relationship it will appear here with its balance and activity."
+      {/* Just moved from wallet to a GCB account */}
+      {migratedAmount !== null && defaultAccount && screenState === "populated" && (
+        <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4 sm:p-5" role="status">
+          <CheckCircle2 size={18} strokeWidth={1.8} className="mt-0.5 shrink-0 text-success" aria-hidden="true" />
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <p className="text-[14.5px] text-foreground">Your GCB account is ready</p>
+            <p className="text-[13px] leading-relaxed text-muted-foreground tabular">
+              {formatMoney(migratedAmount, "GHS", true)} moved from your wallet to {defaultAccount.name}. Your linked
+              wallets and cards now top up this account.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => (walletMigration ? dismissWalletMigration() : setMigratedDismissed(true))}
+            aria-label="Dismiss"
+            className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <X size={16} strokeWidth={1.8} />
+          </button>
+        </div>
+      )}
+
+      {/* ── Your accounts ── */}
+      <section className="flex flex-col gap-3" aria-labelledby="accounts-heading">
+        <SectionHeading
+          id="accounts-heading"
+          title={multiple ? "Your Accounts" : "Your Account"}
           action={
-            <Button
-              size="sm"
-              onClick={() => setIsLinkModalOpen(true)}
-              className="bg-primary text-primary-foreground hover:bg-primary-hover cursor-pointer rounded-xl font-semibold text-[13px]"
-            >
-              <Plus size={14} strokeWidth={2.2} aria-hidden="true" />
-              Add Funding Method
-            </Button>
+            isRetail && screenState !== "loading" && screenState !== "error" ? (
+              <SectionAction onClick={() => setAddAccountOpen(true)}>Add Account</SectionAction>
+            ) : undefined
           }
         />
-      )}
 
-      {effective === "filtered-empty" && (
-        <FilteredEmptyState
-          onReset={() => {
-            setQuery("");
-            setState("populated");
-          }}
-          description="No accounts match your search. Clear it to see everything under this relationship."
-        />
-      )}
+        <div className={LIST}>
+          {screenState === "loading" && <ListSkeleton rows={Math.max(accounts.length, 2)} columns={3} />}
 
-      {(effective === "populated" || effective === "partial-load") && (
-        <div className="rounded-2xl border border-border/80 bg-card overflow-hidden shadow-xs">
-          <ul className="divide-y divide-border/60">
-            {rows.map((acc) => {
-              const otherHolder = acc.jointHolders?.[1] || acc.jointHolders?.[0];
-              const subtitle = acc.isJoint && otherHolder
-                ? `${acc.number} • with ${otherHolder}`
-                  : acc.number;
+          {screenState === "error" && (
+            <ListErrorState
+              onRetry={() => setScreenState("populated")}
+              description="We couldn't load your accounts. Your money is safe — try again."
+            />
+          )}
 
-                return (
-                  <li key={acc.id} className="group relative">
-                    <Link
-                      href={`/accounts/${acc.id}`}
-                      className="flex items-center justify-between gap-3 sm:gap-4 px-3.5 sm:px-5 py-3.5 sm:py-4 transition-colors hover:bg-muted/40 active:scale-[0.998]"
-                    >
-                      {/* Left: Icon & Identity */}
-                      <div className="flex items-center gap-3 sm:gap-3.5 min-w-0 flex-1">
-                        <span className="flex size-9 sm:size-10 shrink-0 items-center justify-center rounded-full bg-muted/70 text-foreground dark:bg-[#27272a] border border-border/40">
-                          <Landmark size={17} strokeWidth={1.8} aria-hidden="true" />
-                        </span>
+          {screenState !== "loading" && screenState !== "error" && (
+              <ul className="divide-y divide-border">
+                {accounts.map((account) => (
+                  <AccountRow
+                    key={account.id}
+                    account={account}
+                    isDefault={account.id === defaultId}
+                    showDefault={multiple}
+                    pending={account.id === defaultId ? scenario.pending : undefined}
+                  />
+                ))}
+              </ul>
+          )}
+        </div>
+      </section>
 
-                        <div className="flex min-w-0 flex-col justify-center">
-                          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                            <span className="truncate text-[14px] sm:text-[15px] font-medium text-foreground tracking-[-0.01em]">
-                              {acc.name}
-                            </span>
-                            {acc.isJoint && (
-                              <span
-                                title={acc.mandate ? `Mandate: ${acc.mandate}` : "Joint Account"}
-                                className="inline-flex items-center rounded-full bg-[#FEF3D6] dark:bg-[#3b2d18] px-1.5 py-0.5 text-[10px] font-semibold text-[#B27B00] dark:text-[#f59e0b]"
-                              >
-                                Joint
-                              </span>
-                            )}
-                            {acc.status === "Dormant" && (
-                              <Badge variant="warning" className="text-[10px] px-1.5 py-0">
-                                Dormant
-                              </Badge>
-                            )}
-                          </div>
-                          <span className="mt-0.5 text-[12px] sm:text-[13px] text-muted-foreground tabular font-normal truncate">
-                            {subtitle}
-                          </span>
-                        </div>
-                      </div>
+      {/* ── Sources of funds (linked wallets & cards) ── */}
+      {isRetail && screenState !== "error" && (
+        <section className="flex flex-col gap-3" aria-labelledby="sources-heading">
+          <SectionHeading
+            id="sources-heading"
+            title="Sources of Funds"
+            action={
+              sources.length > 0 && screenState === "populated" ? (
+                <SectionAction onClick={() => setLinkOpen(true)}>Link a Wallet or Card</SectionAction>
+              ) : undefined
+            }
+          />
 
-                      {/* Right: Available Balance & Chevron */}
-                      <div className="flex items-center shrink-0 pl-1 sm:pl-2">
-                        <div className="flex flex-col items-end sm:flex-row sm:items-center">
-                          <span className="hidden sm:inline text-[13px] sm:text-[13.5px] text-muted-foreground font-normal">
-                            Available:
-                          </span>
-                          <span className="text-[13.5px] sm:text-[14.5px] font-semibold text-foreground sm:ml-1.5 tabular-nums numorainput">
-                            <RevealingAmount amount={acc.available} currency={acc.currency || "GHS"} />
-                          </span>
-                        </div>
-                        <ChevronRight
-                          size={16}
-                          strokeWidth={1.8}
-                          aria-hidden="true"
-                          className="ml-2 sm:ml-3 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
-                        />
-                      </div>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+          <div className={LIST}>
+            {screenState === "loading" && <ListSkeleton rows={2} columns={3} />}
 
-            {/* 13.1 partial load — rows above stay interactive */}
-            {effective === "partial-load" && <PartialLoadFooter />}
+            {screenState === "sources-error" && (
+              <ListErrorState
+                onRetry={() => setScreenState("populated")}
+                description="We couldn't load your linked cards and wallets. Your accounts aren't affected."
+              />
+            )}
+
+            {screenState === "populated" && sources.length === 0 && (
+              <TrueEmptyState
+                icon={<Smartphone size={20} strokeWidth={1.7} aria-hidden="true" />}
+                title="No cards or wallets linked"
+                description={
+                  defaultAccount
+                    ? `Link mobile money or a bank card to top up ${defaultAccount.name}.`
+                    : "Link mobile money or a bank card to top up your account."
+                }
+                action={
+                  <Button size="sm" onClick={() => setLinkOpen(true)} className="gap-1.5 rounded-lg text-[13px]">
+                    <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
+                    Link a Wallet or Card
+                  </Button>
+                }
+              />
+            )}
+
+            {screenState === "populated" && sources.length > 0 && (
+              <ul className="divide-y divide-border">
+                {sources.map((source) => (
+                  <SourceRow key={source.id} source={source} onRemove={() => setRemoving(source)} />
+                ))}
+              </ul>
+            )}
           </div>
-        )}
+        </section>
+      )}
 
-      {/* Link Source Account Modal */}
+      {/* Link only — same store, so the new source appears in the list above */}
       <LinkSourceAccountModal
-        isOpen={isLinkModalOpen}
-        onClose={() => setIsLinkModalOpen(false)}
+        key={`link-${scenario.id}`}
+        mode="link"
+        isOpen={linkOpen}
+        onClose={() => setLinkOpen(false)}
+        accounts={accounts}
+        onLinked={(source) =>
+          toast.success(`${source.title} linked`, {
+            description: defaultAccount ? `Use it to top up ${defaultAccount.name} any time.` : undefined,
+          })
+        }
+      />
+
+      {/* Remove a source of funds — warn first */}
+      <Dialog open={removing !== null} onOpenChange={(o) => !o && setRemoving(null)}>
+        <DialogContent size="sm">
+          <DialogHeader>
+            <DialogTitle>Remove {removing?.title}?</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <div className="flex items-start gap-3">
+              <AlertTriangle size={18} strokeWidth={1.8} aria-hidden="true" className="mt-0.5 shrink-0 text-warning" />
+              <p className="text-[13.5px] leading-relaxed text-muted-foreground tabular">
+                You won&apos;t be able to add money from {removing?.subtitle} until you link it again. Money already in
+                your accounts isn&apos;t affected.
+              </p>
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setRemoving(null)} className="h-10 flex-1 rounded-lg text-[13.5px]">
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => removing && handleRemoveSource(removing)}
+              className="h-10 flex-1 rounded-lg text-[13.5px]"
+            >
+              Remove
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add an account the customer already holds — selfie, then pick one */}
+      <AddAccountDialog
+        key={`add-${scenario.id}`}
+        open={addAccountOpen}
+        onOpenChange={setAddAccountOpen}
+        existingIds={accounts.map((a) => a.id)}
+        ghanaCardAccountIds={ghanaCardAccountIds}
+        selfieMatches={selfieMatch === "match"}
+        wallet={
+          isWalletCustomer && defaultAccount
+            ? { balance: defaultAccount.available, sourceTitles: sources.map((src) => src.title) }
+            : undefined
+        }
       />
     </div>
   );
@@ -283,7 +519,7 @@ function AccountsContent() {
 
 export default function AccountsPage() {
   return (
-    <Suspense fallback={<div className="min-h-[400px] animate-pulse bg-muted/20 rounded-2xl" />}>
+    <Suspense fallback={<div className="min-h-[400px] animate-pulse rounded-2xl bg-muted/20" />}>
       <AccountsContent />
     </Suspense>
   );

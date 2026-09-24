@@ -108,3 +108,12 @@
 - **Hydration gate**: the translator only rewrites elements React already owns (`__reactFiber$…` expando). Unhydrated streamed/Suspense markup is parked and retried — rewriting it earlier trips React's hydration text check.
 - **No English flash**: an inline boot script in `app/layout.tsx` adds `html.i18n-pending` (body hidden) for saved non-English users until the first pass; 1.5s failsafe.
 - **Money and dates**: amounts keep the Ghana format (`GHS 1,234.56`) in every language. Rendered dates like `23 Sep 2026` / `Sep 17, 2026` are re-formatted per locale by the translator.
+
+## Back navigation (no loops)
+- Every in-app back arrow goes through `useContextualBack` (or `PageHeader backTo` / `BackLink`, which use it). It calls `router.back()` when the previous history entry is a NIBS page (`canGoBackInApp()` from `@/lib/nav-history`), otherwise `router.replace(returnUrl ?? parent)`.
+- Never implement Back as a pushed `<Link href="/parent">`: it leaves the child under the parent, and the parent's own Back bounces straight back — the ping-pong loop.
+- Filters, tabs and periods that live in the URL must use `router.replace`, never `push`, so they are not Back steps.
+- `window.history.length` is not a reliable "can go back" signal (it counts pre-app tab history); `nav-history.ts` stamps an in-app index on each entry instead.
+
+### RevealingAmount / rolling-number clips digits under tight line-height (2026-09-24)
+`@kitlangton/rolling-number` puts each digit in an `.rn-slot` that is exactly one line-height tall, with `overflow-y: clip` and a mask that fades the top and bottom `0.12em` (`--rn-edge-fade`). If the amount's `line-height` is smaller than its font size (`leading-none`, or `leading-8` on 36px text), the digits get clipped and faded, and it looks like a grey gradient on the number. Give any `RevealingAmount` a line-height of at least ~1.2 (`leading-[1.25]`). Motion blur is not the cause.

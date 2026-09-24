@@ -7,11 +7,25 @@ export interface DevStateOption {
   label: string;
 }
 
+export interface DevStateGroup {
+  label: string;
+  states: DevStateOption[];
+  value: string;
+  onChange: (val: string) => void;
+}
+
 export interface DevStateData {
   states: DevStateOption[];
   value: string;
   onChange: (val: string) => void;
   section?: string;
+  /** Heading for `states` when the screen also registers extra groups. */
+  label?: string;
+  /**
+   * Extra, independent dimensions a screen can be toggled through (e.g. the
+   * customer configuration alongside the list state). Each keeps its own value.
+   */
+  groups?: DevStateGroup[];
 }
 
 interface DevStateContextType {

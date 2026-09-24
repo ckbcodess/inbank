@@ -15,6 +15,7 @@ import { AndroidRippleProvider } from "@/components/providers/AndroidRippleProvi
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { RouteLoadingProvider } from "@/components/providers/RouteLoadingProvider";
 import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
+import { NavHistoryTracker } from "@/components/layout/NavHistoryTracker";
 
 const dmSans = DM_Sans({
   variable: "--font-sans",
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: LANGUAGE_BOOT_SCRIPT }} />
       </head>
       <body className="antialiased">
+        <NavHistoryTracker />
         <ThemeProvider>
           <LanguageProvider>
             <RouteLoadingProvider>

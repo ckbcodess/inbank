@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { BackLink } from "@/components/layout/BackLink";
 
 export interface BreadcrumbItem {
   label: string;
@@ -34,14 +34,13 @@ export default function PageHeader({ title, badge, actions, backTo }: PageHeader
               <ChevronLeft size={20} strokeWidth={1.8} />
             </button>
           ) : (
-            <Link
+            <BackLink
               href={backTo.href}
               className="flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               title={`Back to ${backTo.label}`}
-              aria-label={`Back to ${backTo.label}`}
             >
               <ChevronLeft size={20} strokeWidth={1.8} />
-            </Link>
+            </BackLink>
           )
         )}
         <h1 className="text-[20px] sm:text-[24px] lg:text-[26px] font-medium leading-[26px] sm:leading-[32px] tracking-[-0.02em] text-foreground truncate">

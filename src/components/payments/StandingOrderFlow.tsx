@@ -21,7 +21,6 @@ import {
   ArrowLeftRight,
   CheckCircle2,
   ChevronLeft,
-  ChevronRight,
   Landmark,
   PhoneCall,
   Plus,
@@ -32,6 +31,7 @@ import {
 } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
+import { ActionTile } from "@/components/ui/action-tile";
 import {
   Select,
   SelectContent,
@@ -536,9 +536,10 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
           {STANDING_ORDER_OPTIONS.map((opt) => {
             const Icon = opt.icon;
             return (
-              <button
+              <ActionTile
                 key={opt.id}
-                type="button"
+                icon={Icon}
+                title={opt.title}
                 onClick={() => {
                   setRail(opt.id);
                   setDetailsCollapsed(false);
@@ -557,19 +558,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     set("nickname", opt.title + " Recurring");
                   }
                 }}
-                className="group flex h-[68px] w-full items-center justify-between rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] px-4 transition-all duration-150 ease-out hover:bg-[var(--tile-hover)] active:scale-[0.98] cursor-pointer text-left"
-              >
-                <div className="flex items-center gap-3.5">
-                  <span className="flex size-[38px] shrink-0 items-center justify-center rounded-[12px] border border-black/[0.04] bg-white text-foreground shadow-sm dark:border-white/[0.06] dark:bg-[#252525] dark:text-foreground">
-                    <Icon size={19} strokeWidth={1.8} />
-                  </span>
-                  <span className="text-[15.5px] font-medium text-foreground">{opt.title}</span>
-                </div>
-                <ChevronRight
-                  size={19}
-                  className="text-muted-foreground transition-transform duration-150 ease-out group-hover:translate-x-0.5 group-hover:text-foreground"
-                />
-              </button>
+              />
             );
           })}
         </div>

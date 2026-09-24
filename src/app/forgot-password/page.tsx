@@ -264,9 +264,10 @@ export default function ForgotPasswordPage() {
           <Button variant="default" size="lg" onClick={retrySelfie} className="h-11 w-full text-[14px]">
             Try again
           </Button>
-          <p className="text-center text-[12.5px] text-muted-foreground">
-            <span className="tabular">{MAX_SELFIE_ATTEMPTS - failedAttempts}</span>{" "}
-            {MAX_SELFIE_ATTEMPTS - failedAttempts === 1 ? "try" : "tries"} left before we ask you to visit a branch
+          <p className="text-center text-[12.5px] text-muted-foreground tabular">
+            {MAX_SELFIE_ATTEMPTS - failedAttempts === 1
+              ? "1 try left before we ask you to visit a branch"
+              : `${MAX_SELFIE_ATTEMPTS - failedAttempts} tries left before we ask you to visit a branch`}
           </p>
         </div>
       )}

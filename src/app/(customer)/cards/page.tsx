@@ -47,14 +47,12 @@ import {
   accountsForProfile,
   addCard,
   cardsForProfile,
-  findAccount,
   formatMoney,
   type CardStatus,
   type PaymentCard,
 } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
 import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
-import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 
 const LIST_STATES: readonly ListState[] = [
   "loading",
@@ -315,18 +313,6 @@ function CardsPageContent() {
                       </div>
 
                       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                        <span className="text-[13.5px] text-foreground tabular font-medium">
-                          {card.balance !== null ? (
-                            <RevealingAmount amount={card.balance} currency={card.currency} />
-                          ) : (
-                            (() => {
-                              const linked = availableAccounts.find((a) => a.id === card.linkedAccountId) ?? findAccount(card.linkedAccountId);
-                              return linked ? (
-                                <RevealingAmount amount={linked.balance} currency={linked.currency} />
-                              ) : null;
-                            })()
-                          )}
-                        </span>
                         {isNavigating ? (
                           <Loader2 size={16} className="animate-spin text-foreground shrink-0" />
                         ) : (

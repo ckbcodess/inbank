@@ -8,7 +8,7 @@
  */
 
 import { useEffect } from "react";
-import { useDevState } from "@/components/providers/DevStateProvider";
+import { useDevState, type DevStateGroup } from "@/components/providers/DevStateProvider";
 
 interface StateSwitcherProps<T extends string> {
   states: readonly T[];
@@ -17,6 +17,10 @@ interface StateSwitcherProps<T extends string> {
   labels?: Partial<Record<T, string>>;
   /** Section reference, e.g. "13.2" */
   section: string;
+  /** Heading for `states` when `groups` are also shown. */
+  label?: string;
+  /** Extra independent dimensions (memoise these — they are effect deps). */
+  groups?: DevStateGroup[];
 }
 
 export function StateSwitcher<T extends string>({
@@ -25,6 +29,8 @@ export function StateSwitcher<T extends string>({
   onChange,
   labels,
   section,
+  label,
+  groups,
 }: StateSwitcherProps<T>) {
   const { registerState, unregisterState } = useDevState();
 
@@ -37,12 +43,14 @@ export function StateSwitcher<T extends string>({
       value,
       onChange: (nextId: string) => onChange(nextId as T),
       section,
+      label,
+      groups,
     });
 
     return () => {
       unregisterState();
     };
-  }, [states, value, onChange, labels, section, registerState, unregisterState]);
+  }, [states, value, onChange, labels, section, label, groups, registerState, unregisterState]);
 
   return null;
 }

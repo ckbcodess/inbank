@@ -12,17 +12,15 @@
  * Figma captures.
  */
 
-import { Check, Layers } from "lucide-react";
+import { Layers } from "lucide-react";
 import { useDevState } from "@/components/providers/DevStateProvider";
 import { useCaptureMode } from "@/lib/capture-mode";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { DevStateMenuItems } from "./DevStateMenuItems";
 
 export default function DevStatePanel() {
   const { devState } = useDevState();
@@ -48,23 +46,7 @@ export default function DevStatePanel() {
           )}
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" side="top" className="w-64">
-          <DropdownMenuLabel className="flex items-center justify-between text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-            <span>Dev Mode States</span>
-            {devState.section && <span className="font-mono">{devState.section}</span>}
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          {devState.states.map((st) => (
-            <DropdownMenuItem
-              key={st.id}
-              onClick={() => devState.onChange(st.id)}
-              className="flex cursor-pointer items-center justify-between text-[13px]"
-            >
-              <span>{st.label}</span>
-              {devState.value === st.id && (
-                <Check size={14} strokeWidth={2} className="text-primary" />
-              )}
-            </DropdownMenuItem>
-          ))}
+          <DevStateMenuItems devState={devState} />
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

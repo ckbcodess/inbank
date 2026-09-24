@@ -327,6 +327,19 @@ const cards: Entry[] = [
   ["Today between 2:00 PM – 3:30 PM", "Aujourd’hui entre 14 h et 15 h 30", "Hoy entre las 14:00 y las 15:30", "今天 14:00–15:30"],
   ["Today • 2:00 PM - 3:30 PM", "Aujourd’hui • 14 h – 15 h 30", "Hoy • 14:00–15:30", "今天 • 14:00–15:30"],
   ["Dispatch Motorbike", "Moto de livraison", "Moto de reparto", "配送摩托车"],
+  ["Secure card verification", "Vérification sécurisée de la carte", "Verificación segura de la tarjeta", "安全卡片验证"],
+  ["There's no card waiting to be verified.", "Aucune carte n’attend de vérification.", "No hay ninguna tarjeta pendiente de verificación.", "没有待验证的卡片。"],
+  ["Back to GCB", "Retour à GCB", "Volver a GCB", "返回 GCB"],
+  ["Card verified", "Carte vérifiée", "Tarjeta verificada", "卡片已验证"],
+  ["Taking you back to GCB…", "Retour vers GCB…", "Volviendo a GCB…", "正在返回 GCB…"],
+  ["Confirm it's you", "Confirmez votre identité", "Confirma que eres tú", "确认是您本人"],
+  ["GCB Bank wants to link your card. Enter the code we sent to the phone number on your card account.", "GCB Bank souhaite associer votre carte. Saisissez le code envoyé au numéro de téléphone lié à votre compte carte.", "GCB Bank quiere vincular tu tarjeta. Introduce el código que enviamos al teléfono asociado a tu tarjeta.", "GCB Bank 请求绑定您的卡片。请输入我们发送到您卡片账户预留手机号的验证码。"],
+  ["card check only", "vérification de la carte uniquement", "solo verificación de la tarjeta", "仅用于验证卡片"],
+  ["That code didn't match. Check the latest message from your bank and try again.", "Ce code ne correspond pas. Vérifiez le dernier message de votre banque et réessayez.", "Ese código no coincide. Revisa el último mensaje de tu banco e inténtalo de nuevo.", "验证码不正确。请查看银行发来的最新短信后重试。"],
+  ["Verifying…", "Vérification…", "Verificando…", "正在验证…"],
+  ["Cancel and return to GCB", "Annuler et revenir à GCB", "Cancelar y volver a GCB", "取消并返回 GCB"],
+  ["Demo: any 6 digits verify", "Démo : 6 chiffres quelconques valident", "Demo: cualquier código de 6 dígitos verifica", "演示：任意 6 位数字即可验证"],
+  ["000000 shows an error", "000000 affiche une erreur", "000000 muestra un error", "000000 会显示错误"],
 ];
 
 export default cards;

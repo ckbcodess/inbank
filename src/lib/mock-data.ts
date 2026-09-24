@@ -161,7 +161,7 @@ export interface Account {
   id: string;
   name: string;
   number: string;
-  type: "Current" | "Savings" | "Foreign Currency";
+  type: "Current" | "Savings" | "Foreign Currency" | "Wallet";
   currency: string;
   balance: number;
   available: number;
@@ -170,6 +170,12 @@ export interface Account {
   isJoint?: boolean;
   jointHolders?: string[];
   mandate?: "Either to sign" | "Both to sign";
+  /**
+   * Only reachable through a Dev Mode customer configuration on `/accounts`
+   * (wallet customer, dormant account, just-migrated). Resolvable by id so
+   * account detail links work, but never listed for the signed-in profile.
+   */
+  scenarioOnly?: boolean;
 }
 
 export const ACCOUNTS: Account[] = [
@@ -279,7 +285,75 @@ export const ACCOUNTS: Account[] = [
     status: "Active",
     profileKind: "RETAIL",
   },
+  {
+    id: "acc-wallet",
+    name: "GCB Wallet",
+    number: "024 123 4567",
+    type: "Wallet",
+    currency: "GHS",
+    balance: 340.0,
+    available: 340.0,
+    status: "Active",
+    profileKind: "RETAIL",
+    scenarioOnly: true,
+  },
+  {
+    id: "acc-ret-dormant",
+    name: "Education Savings",
+    number: "4001 9922 7730",
+    type: "Savings",
+    currency: "GHS",
+    balance: 1_180.0,
+    available: 1_180.0,
+    status: "Dormant",
+    profileKind: "RETAIL",
+    scenarioOnly: true,
+  },
+  {
+    id: "acc-ret-new",
+    name: "Personal Savings Account",
+    number: "4001 9931 0214",
+    type: "Savings",
+    currency: "GHS",
+    balance: 340.0,
+    available: 340.0,
+    status: "Active",
+    profileKind: "RETAIL",
+    scenarioOnly: true,
+  },  // Held under the customer's Ghana Card but not yet on internet banking —
+  // what "Add Account" on /accounts finds after the selfie check.
+  {
+    id: "acc-ret-home",
+    name: "Home Project Savings",
+    number: "4001 9945 1187",
+    type: "Savings",
+    currency: "GHS",
+    balance: 12_600.0,
+    available: 12_600.0,
+    status: "Active",
+    profileKind: "RETAIL",
+    scenarioOnly: true,
+  },
+  {
+    id: "acc-ret-salary",
+    name: "Salary Current Account",
+    number: "4001 9952 3309",
+    type: "Current",
+    currency: "GHS",
+    balance: 2_145.75,
+    available: 2_145.75,
+    status: "Active",
+    profileKind: "RETAIL",
+    scenarioOnly: true,
+  },
 ];
+
+/**
+ * Every retail account held under the signed-in customer's Ghana Card. "Add
+ * Account" lists these after a selfie match; ones already on the profile show
+ * as added. Prototype: one fixed customer.
+ */
+export const GHANA_CARD_ACCOUNT_IDS = ["acc-ret-001", "acc-ret-002", "acc-ret-home", "acc-ret-salary"] as const;
 
 /**
  * Foreign-currency accounts are out of scope — the BRD covers local-currency
@@ -289,7 +363,7 @@ export const ACCOUNTS: Account[] = [
  */
 export function accountsForProfile(kind: "RETAIL" | "CORPORATE" = "CORPORATE"): Account[] {
   return ACCOUNTS.filter(
-    (a) => (a.profileKind ?? "CORPORATE") === kind && a.type !== "Foreign Currency",
+    (a) => (a.profileKind ?? "CORPORATE") === kind && a.type !== "Foreign Currency" && !a.scenarioOnly,
   );
 }
 

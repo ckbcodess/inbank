@@ -258,6 +258,8 @@ interface TransactionListProps {
   showStateSwitcher?: boolean;
   emptyTitle?: string;
   emptyDescription?: string;
+  /** Start filtered to one account (e.g. "View All Transactions" from Account Details). */
+  initialAccountId?: string;
 }
 
 export default function TransactionList({
@@ -266,6 +268,7 @@ export default function TransactionList({
   showStateSwitcher = true,
   emptyTitle = "No transactions yet",
   emptyDescription = "Activity will appear here as soon as money moves on this account.",
+  initialAccountId,
 }: TransactionListProps) {
   const router = useRouter();
   const activeProfile = useSession((s) => s.activeProfile);
@@ -273,7 +276,7 @@ export default function TransactionList({
 
   const [state, setState] = useState<ListState>("populated");
   const [query, setQuery] = useState("");
-  const [accountFilter, setAccountFilter] = useState<string>("all");
+  const [accountFilter, setAccountFilter] = useState<string>(initialAccountId ?? "all");
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
   const [methodFilters, setMethodFilters] = useState<string[]>([]);
   const [statusFilters, setStatusFilters] = useState<StatusFilter[]>([]);

@@ -124,6 +124,22 @@ const common: Entry[] = [
   ["Print", "Imprimer", "Imprimir", "打印"],
   ["Help", "Aide", "Ayuda", "帮助"],
   ["No", "Non", "No", "否"],
+  ["Default", "Par défaut", "Predeterminada", "默认"],
+  ["Undo", "Annuler", "Deshacer", "撤销"],
+  ["Dismiss", "Fermer", "Descartar", "关闭"],
+  ["Hide balance", "Masquer le solde", "Ocultar saldo", "隐藏余额"],
+  ["Show balance", "Afficher le solde", "Mostrar saldo", "显示余额"],
+  ["Password requirements", "Exigences du mot de passe", "Requisitos de la contraseña", "密码要求"],
+  ["— met", "— respectée", "— cumplido", "— 已满足"],
+  ["— not yet", "— pas encore", "— aún no", "— 未满足"],
+  ["1 try left before we ask you to visit a branch", "Encore 1 essai avant que nous vous demandions de passer en agence", "Te queda 1 intento antes de pedirte que vayas a una sucursal", "还剩 1 次机会，之后需要您前往网点办理"],
+  ["{0} tries left before we ask you to visit a branch", "Encore {0} essais avant que nous vous demandions de passer en agence", "Te quedan {0} intentos antes de pedirte que vayas a una sucursal", "还剩 {0} 次机会，之后需要您前往网点办理"],
+  ["Mobile or wallet number", "Numéro de mobile ou de portefeuille", "Número de móvil o de billetera", "手机号或钱包号码"],
+  ["Wallet phone number", "Numéro de téléphone du portefeuille", "Número de teléfono de la billetera", "钱包手机号"],
+  ["Phone number to top up", "Numéro à recharger", "Número de teléfono a recargar", "要充值的手机号"],
+  ["Delivery phone number", "Téléphone pour la livraison", "Teléfono para la entrega", "收货人电话"],
+  ["Debit card", "Carte de débit", "Tarjeta de débito", "借记卡"],
+  ["{0} debit card", "Carte de débit {0}", "Tarjeta de débito {0}", "{0} 借记卡"],
 ];
 
 export default common;

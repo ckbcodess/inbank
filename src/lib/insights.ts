@@ -25,6 +25,7 @@ import {
   accountsForProfile,
   type SpendCategory,
 } from "./mock-data";
+import { sumMoney } from "./money";
 
 export type ProfileKind = "RETAIL" | "CORPORATE";
 
@@ -119,6 +120,8 @@ export interface LedgerEntry {
   category: SpendCategory | null;
   /** Which account the money moved on, so insights can be scoped to one. */
   accountId: string;
+  /** Debits only — how the money left (card, mobile money, …). */
+  channel?: SpendChannel;
   /**
    * A leg of a transfer between two of the customer's own accounts. Real for
    * one account (the payroll account genuinely receives its funding), but not
@@ -127,6 +130,41 @@ export interface LedgerEntry {
    * counting both legs would inflate money in AND money out by the same amount.
    */
   internal?: boolean;
+}
+
+/**
+ * How money left an account — the "Transaction type" view of expenses. A small
+ * fixed set, so it fits the five-slot palette without folding into Other.
+ */
+export const SPEND_CHANNELS = [
+  "Card payments",
+  "Mobile money",
+  "Bank transfers",
+  "Bills & airtime",
+  "Cross-border",
+  "Bank fees",
+] as const;
+export type SpendChannel = (typeof SPEND_CHANNELS)[number];
+
+/** Maps a transaction's `paymentMethod` to the channel it's reported under. */
+export function channelForPaymentMethod(method?: string): SpendChannel {
+  switch (method) {
+    case "card":
+      return "Card payments";
+    case "wallet-to-bank":
+    case "momo":
+    case "wallet":
+      return "Mobile money";
+    case "airtime":
+    case "data":
+    case "bill":
+      return "Bills & airtime";
+    case "papss":
+    case "trade":
+      return "Cross-border";
+    default:
+      return "Bank transfers";
+  }
 }
 
 /**
@@ -140,6 +178,9 @@ interface CategoryModel {
   min: number;
   max: number;
   dayOfMonth?: number;
+  /** Channels the debits rotate through — deterministic, so the seeded
+   *  amounts (and every other chart) are unchanged by this field. */
+  channels: SpendChannel[];
 }
 
 /** Credits are modelled as streams too — a salary is one stream, ad-hoc
@@ -178,14 +219,14 @@ const MODELS: Record<ProfileKind, ProfileModel> = {
   CORPORATE: {
     seed: 0x1b_a5e1,
     categories: [
-      { category: "Payroll", perMonth: 1, min: 268_000, max: 302_000, dayOfMonth: 25 },
-      { category: "Suppliers", perMonth: 16, min: 4_200, max: 46_000 },
-      { category: "Trade & imports", perMonth: 2, min: 42_000, max: 128_000 },
-      { category: "Rent & facilities", perMonth: 1, min: 17_800, max: 18_900, dayOfMonth: 1 },
-      { category: "Utilities", perMonth: 4, min: 900, max: 4_800 },
-      { category: "Travel", perMonth: 6, min: 1_100, max: 9_600 },
-      { category: "Taxes & levies", perMonth: 1, min: 22_000, max: 46_000, dayOfMonth: 15 },
-      { category: "Bank charges", perMonth: 10, min: 25, max: 480 },
+      { category: "Payroll", perMonth: 1, min: 268_000, max: 302_000, dayOfMonth: 25, channels: ["Bank transfers"] },
+      { category: "Suppliers", perMonth: 16, min: 4_200, max: 46_000, channels: ["Bank transfers", "Bank transfers", "Mobile money"] },
+      { category: "Trade & imports", perMonth: 2, min: 42_000, max: 128_000, channels: ["Cross-border"] },
+      { category: "Rent & facilities", perMonth: 1, min: 17_800, max: 18_900, dayOfMonth: 1, channels: ["Bank transfers"] },
+      { category: "Utilities", perMonth: 4, min: 900, max: 4_800, channels: ["Bills & airtime"] },
+      { category: "Travel", perMonth: 6, min: 1_100, max: 9_600, channels: ["Card payments"] },
+      { category: "Taxes & levies", perMonth: 1, min: 22_000, max: 46_000, dayOfMonth: 15, channels: ["Bank transfers"] },
+      { category: "Bank charges", perMonth: 10, min: 25, max: 480, channels: ["Bank fees"] },
     ],
     // Spread across more, smaller receipts than a handful of large ones, so the
     // daily view is not mostly empty bars.
@@ -207,14 +248,14 @@ const MODELS: Record<ProfileKind, ProfileModel> = {
     // every month read as a loss.
     seed: 0x2c0f_fee0,
     categories: [
-      { category: "Food", perMonth: 8, min: 120, max: 330 },
-      { category: "Transport", perMonth: 12, min: 25, max: 92 },
-      { category: "Shopping", perMonth: 3, min: 120, max: 480 },
-      { category: "Bills", perMonth: 3, min: 140, max: 325 },
-      { category: "Household", perMonth: 2, min: 180, max: 550 },
-      { category: "Family & Friends", perMonth: 4, min: 100, max: 300 },
-      { category: "Data", perMonth: 4, min: 20, max: 105 },
-      { category: "Health", perMonth: 1, min: 80, max: 420 },
+      { category: "Food", perMonth: 8, min: 120, max: 330, channels: ["Card payments", "Card payments", "Mobile money"] },
+      { category: "Transport", perMonth: 12, min: 25, max: 92, channels: ["Mobile money"] },
+      { category: "Shopping", perMonth: 3, min: 120, max: 480, channels: ["Card payments"] },
+      { category: "Bills", perMonth: 3, min: 140, max: 325, channels: ["Bills & airtime"] },
+      { category: "Household", perMonth: 2, min: 180, max: 550, channels: ["Card payments", "Mobile money"] },
+      { category: "Family & Friends", perMonth: 4, min: 100, max: 300, channels: ["Mobile money", "Bank transfers"] },
+      { category: "Data", perMonth: 4, min: 20, max: 105, channels: ["Bills & airtime"] },
+      { category: "Health", perMonth: 1, min: 80, max: 420, channels: ["Card payments"] },
     ],
     income: [{ perMonth: 1, min: 8_400, max: 8_800, dayOfMonth: 25 }],
     primaryAccount: "acc-ret-002",
@@ -281,6 +322,7 @@ function buildLedger(kind: ProfileKind): LedgerEntry[] {
           amount: round2(amount * drift),
           category: cat.category,
           accountId: model.categoryAccounts?.[cat.category] ?? model.primaryAccount,
+          channel: cat.channels[i % cat.channels.length],
         });
       }
     }
@@ -329,6 +371,7 @@ function buildLedger(kind: ProfileKind): LedgerEntry[] {
       amount: t.amount,
       category: t.direction === "debit" ? (t.category ?? null) : null,
       accountId: t.accountId,
+      ...(t.direction === "debit" ? { channel: channelForPaymentMethod(t.paymentMethod) } : {}),
       ...(internal ? { internal: true } : {}),
     });
   }
@@ -475,6 +518,10 @@ export interface CategorySlice {
   share: number;
   /** Palette slot — fixed per rank so a slice keeps its colour as data updates. */
   color: string;
+  /** "Other" only — the categories folded into it. */
+  members?: string[];
+  /** "Other" only — each folded category's amount and share of total spend, largest first. */
+  breakdown?: { category: string; amount: number; share: number }[];
 }
 
 /**
@@ -498,14 +545,32 @@ export function spendByCategory(
   accountId?: string,
 ): CategorySlice[] {
   const { from, to } = grainRange(grain);
-  const totals = new Map<string, number>();
+  return rankSlices(spendTotals(ledger(kind, accountId), from, to, "category"));
+}
 
-  for (const entry of ledger(kind, accountId)) {
+/** Expenses are grouped either by what was bought or by how it was paid. */
+export type ExpenseView = "category" | "type";
+
+/** Categorised debits inside [from, to], grouped by category or channel.
+ *  Transfers carry no category, so moving money between your own accounts
+ *  never counts as spend in either view. */
+function spendTotals(
+  entries: LedgerEntry[],
+  from: string,
+  to: string,
+  view: ExpenseView,
+): Map<string, number> {
+  const totals = new Map<string, number>();
+  for (const entry of entries) {
     if (entry.direction !== "debit" || !entry.category) continue;
     if (entry.date < from || entry.date > to) continue;
-    totals.set(entry.category, (totals.get(entry.category) ?? 0) + entry.amount);
+    const key = view === "category" ? entry.category : (entry.channel ?? "Bank transfers");
+    totals.set(key, (totals.get(key) ?? 0) + entry.amount);
   }
+  return totals;
+}
 
+function rankSlices(totals: Map<string, number>): CategorySlice[] {
   const ranked = [...totals.entries()]
     .map(([category, amount]) => ({ category, amount: round2(amount) }))
     .sort((a, b) => b.amount - a.amount);
@@ -530,9 +595,111 @@ export function spendByCategory(
       amount,
       share: amount / total,
       color: OTHER_COLOR,
+      members: tail.map((r) => r.category),
+      breakdown: tail.map((r) => ({ category: r.category, amount: r.amount, share: r.amount / total })),
     });
   }
 
+  return slices;
+}
+
+/* ── Account expenses ──────────────────────────────────────────────────────── */
+
+/**
+ * Expenses are read one account at a time, from that account's detail page —
+ * there is no relationship-wide expenses hub. Windows trail back from the
+ * app's fixed "now" and are compared with the window of equal length before.
+ */
+export const EXPENSE_PERIODS = ["7d", "30d", "3m", "12m"] as const;
+export type ExpensePeriod = (typeof EXPENSE_PERIODS)[number];
+
+const EXPENSE_PERIOD_DAYS: Record<ExpensePeriod, number> = {
+  "7d": 7,
+  "30d": 30,
+  "3m": 91,
+  "12m": 365,
+};
+
+export const EXPENSE_PERIOD_LABEL: Record<ExpensePeriod, string> = {
+  "7d": "7 days",
+  "30d": "30 days",
+  "3m": "3 months",
+  "12m": "12 months",
+};
+
+export interface AccountExpenses {
+  from: string;
+  to: string;
+  total: number;
+  /** Same account, the window of equal length immediately before. */
+  previousTotal: number;
+  slices: CategorySlice[];
+}
+
+export function expensePeriodRange(period: ExpensePeriod): { from: string; to: string } {
+  const to = fromKey(TODAY);
+  return { from: toKey(addDays(to, -(EXPENSE_PERIOD_DAYS[period] - 1))), to: TODAY };
+}
+
+export function accountExpenses(
+  kind: ProfileKind,
+  accountId: string,
+  period: ExpensePeriod,
+  view: ExpenseView = "category",
+): AccountExpenses {
+  const days = EXPENSE_PERIOD_DAYS[period];
+  const { from, to } = expensePeriodRange(period);
+  const prevTo = toKey(addDays(fromKey(from), -1));
+  const prevFrom = toKey(addDays(fromKey(from), -days));
+
+  const entries = ledger(kind, accountId);
+  const current = spendTotals(entries, from, to, view);
+  const previous = spendTotals(entries, prevFrom, prevTo, view);
+  // The widest window fixes which categories get a slot, their order and colour,
+  // so changing the period resizes segments in place (like the dashboard chart).
+  const wide = expensePeriodRange("12m");
+  const reference = spendTotals(entries, wide.from, wide.to, view);
+  const sum = (m: Map<string, number>) => sumMoney([...m.values()]);
+
+  return {
+    from,
+    to,
+    total: sum(current),
+    previousTotal: sum(previous),
+    slices: stableSlices(current, reference),
+  };
+}
+
+/**
+ * Like `rankSlices`, but the slots come from `reference` (the 12-month window):
+ * its top categories in its order, then "Other" — each carrying this window's
+ * amount, which may be zero. Zero slots stay in the list so the chart can
+ * shrink them to nothing and grow them back; lists should skip them.
+ */
+function stableSlices(current: Map<string, number>, reference: Map<string, number>): CategorySlice[] {
+  const total = round2([...current.values()].reduce((sum, v) => sum + v, 0));
+  if (total === 0) return [];
+
+  const order = [...reference.entries()].sort((a, b) => b[1] - a[1]).map(([category]) => category);
+  const head = order.slice(0, MAX_SLICES);
+
+  const slices: CategorySlice[] = head.map((category, i) => {
+    const amount = round2(current.get(category) ?? 0);
+    return { category, amount, share: amount / total, color: SLOT_COLORS[i] };
+  });
+
+  const tail = [...current.entries()].filter(([category, amount]) => !head.includes(category) && amount > 0);
+  const tailAmount = round2(tail.reduce((sum, [, amount]) => sum + amount, 0));
+  if (order.length > MAX_SLICES || tailAmount > 0) {
+    slices.push({
+      category: "Other",
+      amount: tailAmount,
+      share: tailAmount / total,
+      color: OTHER_COLOR,
+      members: tail.sort((a, b) => b[1] - a[1]).map(([category]) => category),
+      breakdown: tail.map(([category, amount]) => ({ category, amount: round2(amount), share: amount / total })),
+    });
+  }
   return slices;
 }
 

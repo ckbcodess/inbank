@@ -1,7 +1,8 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ArrowLeftRight,
   Check,
@@ -9,8 +10,6 @@ import {
   ChevronLeft,
   ChevronRight,
   CreditCard,
-  Landmark,
-  Plus,
   Smartphone,
   Wallet,
 } from "lucide-react";
@@ -24,6 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Account, accountsForProfile, formatMoney } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
+import { useLinkedSources, type LinkedSource, type NetworkOperator } from "@/lib/accounts-store";
 import TransactionPinModal from "@/components/payments/TransactionPinModal";
 import {
   FromAccountSelector,
@@ -33,12 +33,23 @@ import {
 } from "@/components/payments/flows/shared";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { displayGhanaMobile, isCompleteGhanaMobile } from "@/lib/phone";
+import { cardNetwork, useCardLink } from "@/lib/card-link";
 
 interface LinkSourceAccountModalProps {
   isOpen: boolean;
   onClose: () => void;
   targetAccount?: Account | null;
   initialScreen?: ModalScreen;
+  /** Accounts to transfer between; defaults to the signed-in profile's. */
+  accounts?: Account[];
+  /**
+   * `fund` (default) adds money to an account. `link` only links a new MoMo
+   * wallet or card, then closes — used by "Link a card or wallet" on /accounts.
+   */
+  mode?: "fund" | "link";
+  onLinked?: (source: LinkedSource) => void;
+  /** Preselect this source on open — the card just linked via the bank's page. */
+  initialSourceId?: string;
 }
 
 export type ModalScreen =
@@ -50,99 +61,103 @@ export type ModalScreen =
   | "card_3ds"
   | "funding_success"
   | "link_new_momo"
-  | "link_new_card";
-
-type NetworkOperator = "MTN" | "Telecel" | "AT";
-
-interface LinkedSource {
-  id: string;
-  type: "momo" | "card";
-  title: string;
-  subtitle: string;
-  operator?: NetworkOperator;
-  maskedNumber: string;
-}
-
-const DEFAULT_LINKED_SOURCES: LinkedSource[] = [
-  {
-    id: "src-momo-1",
-    type: "momo",
-    title: "MTN Mobile Money",
-    subtitle: "024 123 4567",
-    operator: "MTN",
-    maskedNumber: "024 123 4567",
-  },
-  {
-    id: "src-momo-2",
-    type: "momo",
-    title: "Telecel Cash",
-    subtitle: "020 987 6543",
-    operator: "Telecel",
-    maskedNumber: "020 987 6543",
-  },
-  {
-    id: "src-card-1",
-    type: "card",
-    title: "Visa Debit Card",
-    subtitle: "•••• 9102 · Exp 12/28",
-    maskedNumber: "•••• 9102",
-  },
-];
+  | "link_momo_pending"
+  | "link_new_card"
+  | "link_choice";
 
 export default function LinkSourceAccountModal({
   isOpen,
   onClose,
   targetAccount: targetAccountProp,
-  initialScreen = "choice",
+  initialScreen,
+  accounts: accountsProp,
+  mode = "fund",
+  onLinked,
+  initialSourceId,
 }: LinkSourceAccountModalProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const startCardLink = useCardLink((s) => s.start);
   const modalId = useId();
   const activeProfile = useSession((s) => s.activeProfile);
   const allAccounts = useMemo(
-    () => accountsForProfile(activeProfile?.kind ?? "RETAIL"),
-    [activeProfile?.kind]
+    () => accountsProp ?? accountsForProfile(activeProfile?.kind ?? "RETAIL"),
+    [accountsProp, activeProfile?.kind]
+  );
+  const startScreen: ModalScreen = initialScreen ?? (mode === "link" ? "link_choice" : "choice");
+  const linkBackScreen: ModalScreen = mode === "link" ? "link_choice" : "linked_source_select";
+
+  // Accounts money can be added to: active cedi accounts. Mobile money and
+  // local cards settle in GHS, and Send & Pay's own-account list excludes
+  // foreign-currency accounts the same way.
+  const fundableAccounts = useMemo(
+    () => allAccounts.filter((a) => a.status === "Active" && a.currency === "GHS"),
+    [allAccounts]
   );
 
-  // Resolved destination account
-  const destinationAccount = targetAccountProp || allAccounts[0] || null;
-
-  // Other available accounts for internal transfer
-  const availableSourceAccounts = useMemo(
-    () => allAccounts.filter((a) => a.id !== destinationAccount?.id),
-    [allAccounts, destinationAccount?.id]
+  // Where the money lands. Preselected from where Add money was opened (that
+  // account, or the default), and changeable in each form with the same
+  // "To Account" dropdown Send & Pay uses.
+  const [destinationId, setDestinationId] = useState<string>(
+    targetAccountProp?.id ?? fundableAccounts[0]?.id ?? ""
   );
+  useEffect(() => {
+    if (isOpen) setDestinationId(targetAccountProp?.id ?? fundableAccounts[0]?.id ?? "");
+    // Re-seed only when the modal opens or the entry point changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, targetAccountProp?.id]);
+  const destinationAccount =
+    fundableAccounts.find((a) => a.id === destinationId) ?? fundableAccounts[0] ?? null;
 
-  const [screen, setScreen] = useState<ModalScreen>(initialScreen);
+  const [screen, setScreen] = useState<ModalScreen>(startScreen);
   const [busy, setBusy] = useState(false);
 
   // ── Flow 1: Internal Transfer State ──
-  const [selectedSourceAccountId, setSelectedSourceAccountId] = useState<string>(
-    availableSourceAccounts[0]?.id || ""
-  );
+  const [selectedSourceAccountId, setSelectedSourceAccountId] = useState<string>("");
   const [internalAmount, setInternalAmount] = useState("500.00");
   const [internalRef, setInternalRef] = useState("Account top-up");
 
+  // From and To can never be the same account: each list leaves out the
+  // other's pick, and From falls back to the first other account.
   const selectedSourceAccount = useMemo(
-    () => allAccounts.find((a) => a.id === selectedSourceAccountId) || availableSourceAccounts[0],
-    [allAccounts, selectedSourceAccountId, availableSourceAccounts]
+    () =>
+      fundableAccounts.find((a) => a.id === selectedSourceAccountId && a.id !== destinationAccount?.id) ??
+      fundableAccounts.find((a) => a.id !== destinationAccount?.id),
+    [fundableAccounts, selectedSourceAccountId, destinationAccount?.id]
   );
+  const canTransferBetween = fundableAccounts.length > 1;
 
   // ── Flow 2: Linked Wallets / Cards State ──
-  const [linkedSources, setLinkedSources] = useState<LinkedSource[]>(DEFAULT_LINKED_SOURCES);
-  const [selectedSourceId, setSelectedSourceId] = useState<string>(DEFAULT_LINKED_SOURCES[0].id);
+  // Shared with the Accounts page — a source linked here shows up there too.
+  const linkedSources = useLinkedSources((s) => s.sources);
+  const addSource = useLinkedSources((s) => s.addSource);
+  const [selectedSourceId, setSelectedSourceId] = useState<string>(linkedSources[0]?.id ?? "");
   const [linkedAmount, setLinkedAmount] = useState("250.00");
 
   // New MoMo form
   const [newMomoNumber, setNewMomoNumber] = useState("");
   const [newMomoOperator, setNewMomoOperator] = useState<NetworkOperator>("MTN");
+  const [momoResent, setMomoResent] = useState(false);
 
   // New Card form
   const [newCardNumber, setNewCardNumber] = useState("");
   const [newCardExpiry, setNewCardExpiry] = useState("");
   const [newCardCvv, setNewCardCvv] = useState("");
-  const [newCardName, setNewCardName] = useState("");
+  const cardDigits = newCardNumber.replace(/\D/g, "");
+  const cardComplete =
+    cardDigits.length >= 15 && /^(0[1-9]|1[0-2])\/\d{2}$/.test(newCardExpiry) && newCardCvv.length >= 3;
 
   // Simulated OTP
   const [threeDsCode, setThreeDsCode] = useState("");
+
+  // Reopening after the bank's card page lands on the requested screen with the
+  // new card selected, instead of wherever the modal was left.
+  useEffect(() => {
+    if (!isOpen) return;
+    setScreen(startScreen);
+    if (initialSourceId) setSelectedSourceId(initialSourceId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   const activeLinkedSource = useMemo(
     () => linkedSources.find((s) => s.id === selectedSourceId) || linkedSources[0],
@@ -153,7 +168,7 @@ export default function LinkSourceAccountModal({
 
   // Reset helper when modal closes
   function handleClose() {
-    setScreen("choice");
+    setScreen(startScreen);
     setBusy(false);
     setIsPinModalOpen(false);
     onClose();
@@ -205,9 +220,28 @@ export default function LinkSourceAccountModal({
     }, 700);
   }
 
+  // The operator sends an approval prompt to the phone; linking waits for the
+  // customer to come back and say they've approved it.
   function handleAddNewMomo(e: React.FormEvent) {
     e.preventDefault();
     if (!isCompleteGhanaMobile(newMomoNumber)) return;
+    setBusy(true);
+    setTimeout(() => {
+      setBusy(false);
+      setMomoResent(false);
+      setScreen("link_momo_pending");
+    }, 600);
+  }
+
+  function handleMomoLinkApproved() {
+    setBusy(true);
+    setTimeout(() => {
+      setBusy(false);
+      confirmNewMomo();
+    }, 900);
+  }
+
+  function confirmNewMomo() {
     const newSource: LinkedSource = {
       id: `src-momo-${Date.now()}`,
       type: "momo",
@@ -216,26 +250,38 @@ export default function LinkSourceAccountModal({
       operator: newMomoOperator,
       maskedNumber: displayGhanaMobile(newMomoNumber),
     };
-    setLinkedSources((prev) => [newSource, ...prev]);
+    finishLinking(newSource);
+  }
+
+  function finishLinking(newSource: LinkedSource) {
+    addSource(newSource);
+    if (mode === "link") {
+      setNewMomoNumber("");
+      setNewCardNumber("");
+      setNewCardExpiry("");
+      setNewCardCvv("");
+      onLinked?.(newSource);
+      handleClose();
+      return;
+    }
     setSelectedSourceId(newSource.id);
     setScreen("linked_source_select");
   }
 
+  // Cards are verified by the customer's own bank on its page (3-D Secure),
+  // which sends them back here. Only the last four digits make the trip.
   function handleAddNewCard(e: React.FormEvent) {
     e.preventDefault();
-    if (!newCardNumber.trim()) return;
-    const cleanNum = newCardNumber.replace(/\s+/g, "");
-    const last4 = cleanNum.slice(-4) || "0000";
-    const newSource: LinkedSource = {
-      id: `src-card-${Date.now()}`,
-      type: "card",
-      title: "Visa Debit Card",
-      subtitle: `•••• ${last4} · Exp ${newCardExpiry || "12/28"}`,
-      maskedNumber: `•••• ${last4}`,
-    };
-    setLinkedSources((prev) => [newSource, ...prev]);
-    setSelectedSourceId(newSource.id);
-    setScreen("linked_source_select");
+    if (!cardComplete) return;
+    setBusy(true);
+    startCardLink({
+      last4: cardDigits.slice(-4),
+      expiry: newCardExpiry,
+      network: cardNetwork(cardDigits),
+      returnTo: pathname,
+      resumeAddMoney: mode === "fund",
+    });
+    setTimeout(() => router.push("/card-verification"), 700);
   }
 
   if (!isOpen) return null;
@@ -247,13 +293,16 @@ export default function LinkSourceAccountModal({
           <DialogHeader>
             <div className="flex items-center gap-2">
               {screen !== "choice" &&
+                screen !== "link_choice" &&
                 screen !== "internal_success" &&
                 screen !== "funding_success" && (
                   <button
                     type="button"
                     onClick={() => {
-                      if (screen === "link_new_momo" || screen === "link_new_card") {
-                        setScreen("linked_source_select");
+                      if (screen === "link_momo_pending") {
+                        setScreen("link_new_momo");
+                      } else if (screen === "link_new_momo" || screen === "link_new_card") {
+                        setScreen(linkBackScreen);
                       } else if (screen === "momo_waiting" || screen === "card_3ds") {
                         setScreen("linked_source_select");
                       } else {
@@ -267,14 +316,15 @@ export default function LinkSourceAccountModal({
                   </button>
                 )}
               <DialogTitle>
-                {screen === "choice" && "Fund account"}
+                {screen === "choice" && "Add money"}
+                {screen === "link_choice" && "Link a card or wallet"}
                 {screen === "internal_transfer" && "Transfer between accounts"}
                 {screen === "internal_success" && "Transfer completed"}
                 {screen === "linked_source_select" && "From linked wallet or card"}
                 {screen === "momo_waiting" && "Mobile authorization"}
                 {screen === "card_3ds" && "Card authorization"}
-                {screen === "funding_success" && "Funding successful"}
-                {screen === "link_new_momo" && "Link new mobile wallet"}
+                {screen === "funding_success" && "Money added"}
+                {(screen === "link_new_momo" || screen === "link_momo_pending") && "Link new mobile wallet"}
                 {screen === "link_new_card" && "Link new bank card"}
               </DialogTitle>
             </div>
@@ -284,32 +334,38 @@ export default function LinkSourceAccountModal({
             {/* ════════════════════════════════════════════════════════════════════
                 SCREEN 1: CHOICE MENU (2 Main Options)
                 ════════════════════════════════════════════════════════════════════ */}
-            {screen === "choice" && (
-              <div className="flex flex-col gap-4">
-                {/* Destination Account Preview */}
-                {destinationAccount && (
-                  <div className="flex items-center justify-between rounded-2xl border border-border/80 bg-muted/30 px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                        <Landmark size={17} strokeWidth={1.8} />
-                      </span>
-                      <div className="flex flex-col text-left">
-                        <span className="text-[14px] font-medium text-foreground">
-                          {destinationAccount.name}
-                        </span>
-                        <span className="text-[12px] text-muted-foreground font-mono tabular">
-                          {destinationAccount.number}
-                        </span>
+            {screen === "link_choice" && (
+              <div className="flex flex-col gap-3">
+                {([
+                  { to: "link_new_momo", icon: Smartphone, title: "Mobile money wallet", hint: "MTN MoMo, Telecel Cash or AT Money" },
+                  { to: "link_new_card", icon: CreditCard, title: "Bank card", hint: "A Visa or Mastercard debit card from any bank" },
+                ] as const).map((opt) => (
+                  <button
+                    key={opt.to}
+                    type="button"
+                    onClick={() => setScreen(opt.to)}
+                    className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all hover:bg-muted/40 cursor-pointer shadow-xs"
+                  >
+                    <div className="flex items-center gap-3.5 min-w-0">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
+                        <opt.icon size={18} strokeWidth={1.8} />
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-[14.5px] font-medium text-foreground">{opt.title}</span>
+                        <span className="text-[12.5px] text-muted-foreground truncate mt-0.5">{opt.hint}</span>
                       </div>
                     </div>
-                    <span className="text-[13.5px] font-medium text-foreground tabular">
-                      {formatMoney(destinationAccount.available, destinationAccount.currency, true)}
-                    </span>
-                  </div>
-                )}
+                    <ChevronRight size={18} strokeWidth={1.8} className="text-muted-foreground/60 shrink-0 ml-2" />
+                  </button>
+                ))}
+              </div>
+            )}
 
+            {screen === "choice" && (
+              <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-3 pt-1">
-                  {/* Option 1: Transfer between accounts */}
+                  {/* Option 1: Transfer between accounts — only with another account to move from */}
+                  {canTransferBetween && (
                   <button
                     type="button"
                     onClick={() => setScreen("internal_transfer")}
@@ -335,6 +391,7 @@ export default function LinkSourceAccountModal({
                       className="text-muted-foreground/60 transition-transform group-hover:translate-x-0.5 group-hover:text-foreground shrink-0 ml-2"
                     />
                   </button>
+                  )}
 
                   {/* Option 2: From linked mobile wallet or card */}
                   <button
@@ -383,7 +440,7 @@ export default function LinkSourceAccountModal({
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "internal_transfer" && (
               <form onSubmit={handleInternalTransferSubmit} className="flex flex-col gap-5">
-                {availableSourceAccounts.length === 0 ? (
+                {!canTransferBetween ? (
                   <div className="flex flex-col gap-3 py-4 text-center">
                     <p className="text-[13px] text-muted-foreground">
                       No other internal accounts available to transfer from.
@@ -400,10 +457,18 @@ export default function LinkSourceAccountModal({
                   <>
                     {/* Standard System From Account Selector */}
                     <FromAccountSelector
-                      accounts={availableSourceAccounts}
-                      value={selectedSourceAccountId}
+                      accounts={fundableAccounts.filter((a) => a.id !== destinationAccount?.id)}
+                      value={selectedSourceAccount?.id ?? ""}
                       onChange={setSelectedSourceAccountId}
                       label="From Account"
+                    />
+
+                    <FromAccountSelector
+                      accounts={fundableAccounts.filter((a) => a.id !== selectedSourceAccount?.id)}
+                      value={destinationAccount?.id ?? ""}
+                      onChange={setDestinationId}
+                      label="To Account"
+                      placeholder="Select destination account"
                     />
 
                     {/* Standard System Amount Input with Live Formatting */}
@@ -425,7 +490,7 @@ export default function LinkSourceAccountModal({
                     {/* Submit CTA with PIN Authorization Gate */}
                     <div className="pt-2 flex flex-col gap-2.5">
                       <ProceedButton
-                        disabled={!internalAmount || Number(internalAmount) <= 0 || busy}
+                        disabled={!selectedSourceAccount || !destinationAccount || !internalAmount || Number(internalAmount) <= 0 || busy}
                         onClick={() => setIsPinModalOpen(true)}
                         label={busy ? "Processing…" : `Transfer ${formatMoney(Number(internalAmount || 0), "GHS", true)}`}
                       />
@@ -546,26 +611,28 @@ export default function LinkSourceAccountModal({
                     })}
                   </div>
 
-                  {/* Add New Source Buttons */}
-                  <div className="grid grid-cols-2 gap-2 pt-1">
-                    <button
-                      type="button"
-                      onClick={() => setScreen("link_new_momo")}
-                      className="flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-border py-2 px-3 text-[12.5px] text-muted-foreground hover:text-foreground hover:border-foreground/40 hover:bg-muted/20 transition-all cursor-pointer"
-                    >
-                      <Plus size={14} />
-                      <span>New MoMo</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setScreen("link_new_card")}
-                      className="flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-border py-2 px-3 text-[12.5px] text-muted-foreground hover:text-foreground hover:border-foreground/40 hover:bg-muted/20 transition-all cursor-pointer"
-                    >
-                      <Plus size={14} />
-                      <span>New Card</span>
-                    </button>
-                  </div>
+                  {/* Only sources already linked can fund an account here; linking lives on Accounts. */}
+                  {linkedSources.length === 0 && (
+                    <p className="rounded-2xl border border-border/80 bg-muted/20 px-4 py-3.5 text-[13px] text-muted-foreground">
+                      You haven&apos;t linked a wallet or card yet.{" "}
+                      <Link
+                        href="/accounts?link_source=true"
+                        onClick={handleClose}
+                        className="text-foreground underline underline-offset-4 hover:no-underline"
+                      >
+                        Link one on Accounts
+                      </Link>
+                    </p>
+                  )}
                 </div>
+
+                <FromAccountSelector
+                  accounts={fundableAccounts}
+                  value={destinationAccount?.id ?? ""}
+                  onChange={setDestinationId}
+                  label="To Account"
+                  placeholder="Select destination account"
+                />
 
                 {/* Standard System Amount Input */}
                 <AmountInput
@@ -578,7 +645,7 @@ export default function LinkSourceAccountModal({
                 {/* Actions */}
                 <div className="pt-2 flex flex-col gap-2">
                   <ProceedButton
-                    disabled={!linkedAmount || Number(linkedAmount) <= 0 || busy}
+                    disabled={!activeLinkedSource || !destinationAccount || !linkedAmount || Number(linkedAmount) <= 0 || busy}
                     onClick={() => {
                       setBusy(true);
                       setTimeout(() => {
@@ -610,7 +677,7 @@ export default function LinkSourceAccountModal({
                     Mobile Money Prompt Sent
                   </h3>
                   <p className="text-[13px] text-muted-foreground">
-                    Enter your PIN on <strong className="text-foreground">{activeLinkedSource?.subtitle}</strong> to approve {formatMoney(Number(linkedAmount || 0), "GHS", true)}.
+                    Enter your PIN on <strong className="text-foreground">{activeLinkedSource?.subtitle}</strong> to add {formatMoney(Number(linkedAmount || 0), "GHS", true)} to {destinationAccount?.name}.
                   </p>
                 </div>
 
@@ -692,10 +759,10 @@ export default function LinkSourceAccountModal({
 
                 <div className="flex flex-col gap-1">
                   <h3 className="text-[17px] font-medium text-foreground">
-                    {formatMoney(Number(linkedAmount || 0), "GHS", true)} Deposited
+                    {formatMoney(Number(linkedAmount || 0), "GHS", true)} added to {destinationAccount?.name}
                   </h3>
                   <p className="text-[13px] text-muted-foreground">
-                    Funds added to {destinationAccount?.name}.
+                    From {activeLinkedSource?.title}. It&apos;s in your balance now.
                   </p>
                 </div>
 
@@ -767,14 +834,18 @@ export default function LinkSourceAccountModal({
                 </div>
 
                 <div className="pt-2 flex flex-col gap-2">
-                  <Button type="submit" className="w-full h-11 rounded-xl">
-                    Save & use wallet
+                  <Button
+                    type="submit"
+                    disabled={!isCompleteGhanaMobile(newMomoNumber) || busy}
+                    className="w-full h-11 rounded-xl"
+                  >
+                    {busy ? "Sending request…" : mode === "link" ? "Link wallet" : "Save & use wallet"}
                   </Button>
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => setScreen("linked_source_select")}
+                    onClick={() => setScreen(linkBackScreen)}
                     className="text-[13px] text-muted-foreground"
                   >
                     Cancel
@@ -784,25 +855,50 @@ export default function LinkSourceAccountModal({
             )}
 
             {/* ════════════════════════════════════════════════════════════════════
+                SCREEN 8b: NEW MOMO — WAITING FOR APPROVAL ON THE PHONE
+                ════════════════════════════════════════════════════════════════════ */}
+            {screen === "link_momo_pending" && (
+              <div className="flex flex-col items-center gap-4 text-center py-2">
+                <div className="flex size-14 items-center justify-center rounded-2xl bg-muted text-foreground animate-pulse">
+                  <Smartphone size={28} strokeWidth={1.8} aria-hidden="true" />
+                </div>
+
+                <div className="flex flex-col gap-1.5" role="status">
+                  <h3 className="text-[17px] text-foreground tracking-[-0.01em]">Approve on your phone</h3>
+                  <p className="text-[13px] leading-relaxed text-muted-foreground tabular">
+                    We&apos;ve sent a request to {displayGhanaMobile(newMomoNumber)}. Approve it with your{" "}
+                    {newMomoOperator} MoMo PIN, then come back here to confirm.
+                  </p>
+                </div>
+
+                <div className="w-full flex flex-col gap-2 pt-2">
+                  <Button
+                    type="button"
+                    onClick={handleMomoLinkApproved}
+                    disabled={busy}
+                    className="w-full h-11 rounded-xl"
+                  >
+                    {busy ? "Checking…" : "I've approved it"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    disabled={busy || momoResent}
+                    onClick={() => setMomoResent(true)}
+                    className="text-[13px] text-muted-foreground"
+                  >
+                    {momoResent ? "Request sent again" : "Didn't get it? Send again"}
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* ════════════════════════════════════════════════════════════════════
                 SCREEN 9: LINK NEW CARD
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_new_card" && (
               <form onSubmit={handleAddNewCard} className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor={`${modalId}-cardName`} className="text-[13px] font-medium text-foreground">
-                    Cardholder name
-                  </label>
-                  <input
-                    id={`${modalId}-cardName`}
-                    type="text"
-                    value={newCardName}
-                    onChange={(e) => setNewCardName(e.target.value)}
-                    placeholder="Ama Serwaa"
-                    className="h-11 w-full rounded-xl border border-border bg-card px-3 text-[14px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
-                    required
-                  />
-                </div>
-
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor={`${modalId}-cardNum`} className="text-[13px] font-medium text-foreground">
                     Card number
@@ -810,8 +906,14 @@ export default function LinkSourceAccountModal({
                   <input
                     id={`${modalId}-cardNum`}
                     type="text"
+                    inputMode="numeric"
+                    autoComplete="cc-number"
                     value={newCardNumber}
-                    onChange={(e) => setNewCardNumber(e.target.value)}
+                    onChange={(e) =>
+                      setNewCardNumber(
+                        e.target.value.replace(/\D/g, "").slice(0, 19).replace(/(\d{4})(?=\d)/g, "$1 ")
+                      )
+                    }
                     placeholder="4000 1234 5678 9010"
                     className="h-11 w-full rounded-xl border border-border bg-card px-3 font-mono tabular text-[14px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
                     required
@@ -826,8 +928,13 @@ export default function LinkSourceAccountModal({
                     <input
                       id={`${modalId}-cardExp`}
                       type="text"
+                      inputMode="numeric"
+                      autoComplete="cc-exp"
                       value={newCardExpiry}
-                      onChange={(e) => setNewCardExpiry(e.target.value)}
+                      onChange={(e) => {
+                        const d = e.target.value.replace(/\D/g, "").slice(0, 4);
+                        setNewCardExpiry(d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d);
+                      }}
                       placeholder="MM/YY"
                       className="h-11 w-full rounded-xl border border-border bg-card px-3 tabular text-[14px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
                       required
@@ -840,9 +947,11 @@ export default function LinkSourceAccountModal({
                     <input
                       id={`${modalId}-cardCvv`}
                       type="password"
+                      inputMode="numeric"
+                      autoComplete="cc-csc"
                       maxLength={4}
                       value={newCardCvv}
-                      onChange={(e) => setNewCardCvv(e.target.value)}
+                      onChange={(e) => setNewCardCvv(e.target.value.replace(/\D/g, ""))}
                       placeholder="•••"
                       className="h-11 w-full rounded-xl border border-border bg-card px-3 tabular text-[14px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
                       required
@@ -850,15 +959,19 @@ export default function LinkSourceAccountModal({
                   </div>
                 </div>
 
-                <div className="pt-2 flex flex-col gap-2">
-                  <Button type="submit" className="w-full h-11 rounded-xl">
-                    Save & use card
+                <p className="text-[12.5px] text-muted-foreground">
+                  Your bank will ask you to confirm it&apos;s you, then bring you back here.
+                </p>
+
+                <div className="flex flex-col gap-2">
+                  <Button type="submit" disabled={!cardComplete || busy} className="w-full h-11 rounded-xl">
+                    {busy ? "Taking you to your bank…" : mode === "link" ? "Link card" : "Save & use card"}
                   </Button>
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => setScreen("linked_source_select")}
+                    onClick={() => setScreen(linkBackScreen)}
                     className="text-[13px] text-muted-foreground"
                   >
                     Cancel

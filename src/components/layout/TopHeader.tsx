@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Check, Eye, EyeOff, Layers, LogOut, Menu, Moon, Settings, Sun } from "lucide-react";
+import { Bell, Eye, EyeOff, Layers, LogOut, Menu, Moon, Settings, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { useDevState } from "@/components/providers/DevStateProvider";
+import { DevStateMenuItems } from "@/components/states/DevStateMenuItems";
 import { useCaptureMode } from "@/lib/capture-mode";
 import { NOTIFICATIONS } from "@/lib/mock-data";
 import {
@@ -77,24 +78,8 @@ export default function TopHeader({
                 </span>
               )}
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="flex items-center justify-between text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-                <span>Dev Mode States</span>
-                {devState.section && <span className="font-mono">{devState.section}</span>}
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {devState.states.map((st) => (
-                <DropdownMenuItem
-                  key={st.id}
-                  onClick={() => devState.onChange(st.id)}
-                  className="flex items-center justify-between text-[13px] cursor-pointer"
-                >
-                  <span>{st.label}</span>
-                  {devState.value === st.id && (
-                    <Check size={14} strokeWidth={2} className="text-primary" />
-                  )}
-                </DropdownMenuItem>
-              ))}
+            <DropdownMenuContent align="end" className="w-64">
+              <DevStateMenuItems devState={devState} />
             </DropdownMenuContent>
           </DropdownMenu>
         )}
