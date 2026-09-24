@@ -242,14 +242,17 @@ export default function RequestFlow({ account }: { account: Account }) {
 
   /* ── Receipt — the same success screen Send & Pay uses ─────────────────── */
   if (phase === "done" && kind && summary) {
-    const books = booklets === 1 ? "cheque book" : "cheque books";
     const message =
       kind === "statement"
         ? `We're emailing your statement to ${statementEmail.trim()}. It usually arrives within a few minutes.`
         : kind === "cheque-book"
           ? chequeDelivery.method === "DELIVERY"
-            ? `We'll text you when your ${books} ${booklets === 1 ? "is" : "are"} on the way to ${chequeDelivery.address.trim()}.`
-            : `We'll text you when your ${books} ${booklets === 1 ? "is" : "are"} ready at ${chequeDelivery.branch?.name}.`
+            ? booklets === 1
+              ? `We'll text you when your cheque book is on the way to ${chequeDelivery.address.trim()}.`
+              : `We'll text you when your cheque books are on the way to ${chequeDelivery.address.trim()}.`
+            : booklets === 1
+              ? `We'll text you when your cheque book is ready at ${chequeDelivery.branch?.name}.`
+              : `We'll text you when your cheque books are ready at ${chequeDelivery.branch?.name}.`
           : delivery === "email"
             ? `We'll email your letter to ${email}.`
             : `We'll text you when it's ready to collect at ${branch?.name}.`;
