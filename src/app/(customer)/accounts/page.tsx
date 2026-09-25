@@ -27,6 +27,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
   AlertTriangle,
+  HandCoins,
   CheckCircle2,
   ChevronRight,
   Clock,
@@ -235,6 +236,9 @@ function AccountsContent() {
   const [linkOpen, setLinkOpen] = useState(false);
   // Opened by sign-up (not the pill) → the onboarding version of the link choice.
   const [linkOnboarding, setLinkOnboarding] = useState(false);
+  // Onboarding, step after linking: "You're almost there…" → fund now or skip.
+  const [fundPrompt, setFundPrompt] = useState<LinkedSource | null>(null);
+  const [fundWith, setFundWith] = useState<LinkedSource | null>(null);
   const [removing, setRemoving] = useState<LinkedSource | null>(null);
   const [selfieMatch, setSelfieMatch] = useState<"match" | "no-match">("match");
   const [addAccountOpen, setAddAccountOpen] = useState(false);
@@ -252,6 +256,10 @@ function AccountsContent() {
   // Back from the bank's card page: confirm, or reopen Add money with the card.
   // Back from the bank's card page after "Link a Wallet or Card".
   useCardLinkReturn((result) => {
+    if (result.status === "linked" && result.onboarding) {
+      setFundPrompt(result.source);
+      return;
+    }
     if (result.status === "linked") {
       toast.success(`${result.source.title} linked`, {
         description: defaultAccount ? `Use it to top up ${defaultAccount.name} any time.` : undefined,
@@ -470,11 +478,64 @@ function AccountsContent() {
           setLinkOnboarding(false);
         }}
         accounts={accounts}
-        onLinked={(source) =>
+        onLinked={(source) => {
+          if (linkOnboarding) {
+            setFundPrompt(source);
+            return;
+          }
           toast.success(`${source.title} linked`, {
             description: defaultAccount ? `Use it to top up ${defaultAccount.name} any time.` : undefined,
-          })
-        }
+          });
+        }}
+      />
+
+      {/* Onboarding: after the first source is linked, offer a first deposit — skippable. */}
+      <Dialog open={fundPrompt !== null} onOpenChange={(o) => !o && setFundPrompt(null)}>
+        <DialogContent size="sm">
+          <DialogBody>
+            <div className="flex flex-col items-center gap-4 pt-4 text-center">
+              <div className="flex size-24 items-center justify-center rounded-full bg-primary/15 text-foreground shadow-[0_0_60px_20px_color-mix(in_oklab,var(--primary)_18%,transparent)]">
+                <HandCoins size={40} strokeWidth={1.5} aria-hidden="true" />
+              </div>
+              <DialogTitle className="text-[22px] tracking-[-0.02em]">You&apos;re almost there…</DialogTitle>
+              <p className="max-w-[320px] text-[14px] leading-relaxed text-muted-foreground">
+                Deposit to unlock instant banking. Fund your account today for quick payments and everyday
+                convenience.
+              </p>
+            </div>
+          </DialogBody>
+          <DialogFooter className="flex-col gap-2.5 sm:flex-col">
+            <Button
+              type="button"
+              onClick={() => {
+                setFundWith(fundPrompt);
+                setFundPrompt(null);
+              }}
+              className="h-11 w-full rounded-lg text-[14px]"
+            >
+              Fund My Account Now
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setFundPrompt(null)}
+              className="h-11 w-full rounded-lg text-[14px]"
+            >
+              Skip For Now
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* "Fund My Account Now" — Add money on the default account, the new source preselected */}
+      <LinkSourceAccountModal
+        key={`fund-${fundWith?.id ?? "none"}`}
+        isOpen={fundWith !== null}
+        onClose={() => setFundWith(null)}
+        initialScreen="linked_source_select"
+        initialSourceId={fundWith?.id}
+        targetAccount={defaultAccount}
+        accounts={accounts}
       />
 
       {/* Remove a source of funds — warn first */}

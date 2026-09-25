@@ -1,7 +1,8 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { parseOnboardingStep, type OnboardingStep } from "@/lib/onboarding-steps";
 import {
   AlertCircle,
   ArrowLeft,
@@ -20,7 +21,7 @@ import ReferralStep from "@/components/auth/ReferralStep";
 import { useSession } from "@/lib/session-store";
 import { ACTORS } from "@/lib/mock-data";
 
-type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "referral" | "pin" | "confirm_pin";
+type Step = OnboardingStep;
 
 const RESEND_SECONDS = 30;
 
@@ -28,7 +29,16 @@ function SignupContent() {
   const router = useRouter();
   const { signIn, selectProfile, verifyMfa } = useSession();
 
-  const [step, setStep] = useState<Step>("ghana_card");
+  const searchParams = useSearchParams();
+  // `?step=` opens the flow on that step (the Demo hub jumps with it).
+  const stepParam = parseOnboardingStep(searchParams.get("step"));
+  const [step, setStep] = useState<Step>(stepParam ?? "ghana_card");
+  useEffect(() => {
+    if (!stepParam) return;
+    setStep(stepParam);
+    setErrorMsg("");
+    setBusy(false);
+  }, [stepParam]);
   const [ghanaCard, setGhanaCard] = useState("GHA-7890123456-1");
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -144,7 +154,12 @@ function SignupContent() {
     setErrorMsg("");
     setPinDigits(["", "", "", ""]);
     setConfirmPinDigits(["", "", "", ""]);
-    setStep("referral");
+    // A short pause (with a spinner) so steps don't snap past each other.
+    setBusy(true);
+    window.setTimeout(() => {
+      setBusy(false);
+      setStep("referral");
+    }, 600);
   }
 
   function handlePinSubmit(incomingPin?: string) {
@@ -155,7 +170,11 @@ function SignupContent() {
     }
     setErrorMsg("");
     setConfirmPinDigits(["", "", "", ""]);
-    setStep("confirm_pin");
+    setBusy(true);
+    window.setTimeout(() => {
+      setBusy(false);
+      setStep("confirm_pin");
+    }, 500);
   }
 
   function handleConfirmPinSubmit(incomingConfirmPin?: string) {
@@ -165,7 +184,7 @@ function SignupContent() {
       return;
     }
     const originalPin = pinDigits.join("");
-    if (confirmPin !== originalPin) {
+    if (originalPin.length === 4 && confirmPin !== originalPin) {
       setErrorMsg("PINs do not match. Please try again.");
       setConfirmPinDigits(["", "", "", ""]);
       return;
@@ -581,9 +600,17 @@ function SignupContent() {
             variant="default"
             size="lg"
             data-tour="signup-password"
+            disabled={busy}
             className="mt-2 h-11 w-full text-[14px]"
           >
-            Continue
+            {busy ? (
+              <>
+                <AppLoader size={16} className="mr-2" />
+                Saving…
+              </>
+            ) : (
+              "Continue"
+            )}
           </Button>
         </form>
       )}
@@ -623,6 +650,13 @@ function SignupContent() {
               autoFocus
             />
           </div>
+
+          {busy && (
+            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+              <AppLoader size={16} />
+              <span>Saving your PIN…</span>
+            </div>
+          )}
 
           {errorMsg && (
             <div

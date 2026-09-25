@@ -10,7 +10,7 @@
  * fills every box at once.
  */
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const OTP_LENGTH = 6;
 
@@ -37,6 +37,17 @@ export default function OtpInput({
   autoFocus = true,
 }: OtpInputProps) {
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
+  // Masked (PIN) mode: the digit just typed shows until the next one is typed,
+  // or after a beat — so people can check each digit without it lingering.
+  const [revealed, setRevealed] = useState<number | null>(null);
+  const revealTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(revealTimer.current), []);
+
+  function reveal(index: number | null) {
+    window.clearTimeout(revealTimer.current);
+    setRevealed(index);
+    if (index !== null) revealTimer.current = window.setTimeout(() => setRevealed(null), 1000);
+  }
 
   function commit(next: string[], focusIndex: number) {
     onChange(next);
@@ -51,9 +62,13 @@ export default function OtpInput({
 
     if (!incoming) {
       next[index] = "";
+      reveal(null);
       onChange(next);
       return;
     }
+
+    // One typed digit shows briefly; anything longer (autofill, fast paste) stays masked.
+    reveal(mask && incoming.length === 1 ? index : null);
 
     for (let i = 0; i < incoming.length && index + i < length; i++) {
       next[index + i] = incoming[i];
@@ -71,6 +86,7 @@ export default function OtpInput({
     e.preventDefault();
     const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, length);
     if (!pasted) return;
+    reveal(null);
     const next = Array<string>(length).fill("");
     pasted.split("").forEach((c, i) => (next[i] = c));
     commit(next, Math.min(pasted.length, length - 1));
@@ -91,7 +107,7 @@ export default function OtpInput({
               ref={(el) => {
                 inputsRef.current[i] = el;
               }}
-              type={mask ? "password" : "text"}
+              type={mask && revealed !== i ? "password" : "text"}
               inputMode="numeric"
               maxLength={1}
               autoComplete={mask ? "current-password" : "one-time-code"}

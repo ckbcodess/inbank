@@ -42,6 +42,12 @@ export default function ReferralStep({
   const [entering, setEntering] = useState(false);
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
+  const [skipping, setSkipping] = useState(false);
+
+  function skip() {
+    setSkipping(true);
+    window.setTimeout(() => onDone(null), 500);
+  }
 
   const referrer = REFERRAL_BRANCHES[code] ?? null;
   const notFound = code.length >= 3 && !referrer;
@@ -110,8 +116,8 @@ export default function ReferralStep({
               type="button"
               variant="outline"
               size="lg"
-              disabled={busy}
-              onClick={() => onDone(null)}
+              disabled={busy || skipping}
+              onClick={skip}
               className="h-11 w-full text-[14px]"
             >
               Skip &amp; Proceed
@@ -127,10 +133,18 @@ export default function ReferralStep({
             type="button"
             variant="outline"
             size="lg"
-            onClick={() => onDone(null)}
+            onClick={skip}
+            disabled={skipping}
             className="h-11 w-full text-[14px]"
           >
-            Skip &amp; Proceed
+            {skipping ? (
+              <>
+                <AppLoader size={16} className="mr-2" />
+                One moment…
+              </>
+            ) : (
+              "Skip & Proceed"
+            )}
           </Button>
         </div>
       )}

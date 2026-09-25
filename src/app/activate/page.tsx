@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { parseOnboardingStep, type OnboardingStep } from "@/lib/onboarding-steps";
 import {
   AlertCircle,
   ArrowLeft,
@@ -33,7 +34,7 @@ import {
   type ActivationPersonaConfig,
 } from "@/lib/activation";
 
-type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "referral" | "pin" | "confirm_pin";
+type Step = OnboardingStep;
 
 const RESEND_SECONDS = 30;
 
@@ -58,7 +59,15 @@ function ActivateContent() {
 
   const { signIn, selectProfile, verifyMfa } = useSession();
 
-  const [step, setStep] = useState<Step>("ghana_card");
+  // `?step=` opens the flow on that step (the Demo hub jumps with it).
+  const stepParam = parseOnboardingStep(searchParams.get("step"));
+  const [step, setStep] = useState<Step>(stepParam ?? "ghana_card");
+  useEffect(() => {
+    if (!stepParam) return;
+    setStep(stepParam);
+    setErrorMsg("");
+    setBusy(false);
+  }, [stepParam]);
   const [ghanaCard, setGhanaCard] = useState(activePersona.ghanaCard);
   const [selectedPrimaryAccountId, setSelectedPrimaryAccountId] = useState<string>(
     activePersona.accounts.find((a) => a.isPrimaryDefault)?.id ?? activePersona.accounts[0]?.id ?? ""
@@ -197,7 +206,12 @@ function ActivateContent() {
     setErrorMsg("");
     setPinDigits(["", "", "", ""]);
     setConfirmPinDigits(["", "", "", ""]);
-    setStep("referral");
+    // A short pause (with a spinner) so steps don't snap past each other.
+    setBusy(true);
+    window.setTimeout(() => {
+      setBusy(false);
+      setStep("referral");
+    }, 600);
   }
 
   function handlePinSubmit(incomingPin?: string) {
@@ -208,7 +222,11 @@ function ActivateContent() {
     }
     setErrorMsg("");
     setConfirmPinDigits(["", "", "", ""]);
-    setStep("confirm_pin");
+    setBusy(true);
+    window.setTimeout(() => {
+      setBusy(false);
+      setStep("confirm_pin");
+    }, 500);
   }
 
   function handleConfirmPinSubmit(incomingConfirmPin?: string) {
@@ -218,7 +236,7 @@ function ActivateContent() {
       return;
     }
     const originalPin = pinDigits.join("");
-    if (confirmPin !== originalPin) {
+    if (originalPin.length === 4 && confirmPin !== originalPin) {
       setErrorMsg("PINs do not match. Please try again.");
       setConfirmPinDigits(["", "", "", ""]);
       return;
@@ -709,10 +727,17 @@ function ActivateContent() {
             variant="default"
             size="lg"
             data-tour="activate-password"
-            disabled={!newPasswordReady(password, confirmPassword)}
+            disabled={busy || !newPasswordReady(password, confirmPassword)}
             className="mt-2 h-11 w-full text-[14px]"
           >
-            Continue
+            {busy ? (
+              <>
+                <AppLoader size={16} className="mr-2" />
+                Saving…
+              </>
+            ) : (
+              "Continue"
+            )}
           </Button>
         </form>
       )}
@@ -752,6 +777,13 @@ function ActivateContent() {
               autoFocus
             />
           </div>
+
+          {busy && (
+            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+              <AppLoader size={16} />
+              <span>Saving your PIN…</span>
+            </div>
+          )}
 
           {errorMsg && (
             <div

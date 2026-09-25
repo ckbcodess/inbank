@@ -22,10 +22,12 @@ export interface PendingCard {
   returnTo: string;
   /** Linked from Add money — reopen it with the new card selected. */
   resumeAddMoney: boolean;
+  /** Linked straight after sign-up — the Accounts page follows with the fund prompt. */
+  onboarding?: boolean;
 }
 
 export type CardLinkResult =
-  | { status: "linked"; source: LinkedSource; resumeAddMoney: boolean }
+  | { status: "linked"; source: LinkedSource; resumeAddMoney: boolean; onboarding?: boolean }
   | { status: "cancelled"; resumeAddMoney: boolean };
 
 interface CardLinkState {
@@ -61,7 +63,10 @@ export const useCardLink = create<CardLinkState>()(
             maskedNumber: `•••• ${card.last4}`,
           };
           useLinkedSources.getState().addSource(source);
-          set({ pending: null, result: { status: "linked", source, resumeAddMoney: card.resumeAddMoney } });
+          set({
+            pending: null,
+            result: { status: "linked", source, resumeAddMoney: card.resumeAddMoney, onboarding: card.onboarding },
+          });
         } else {
           set({ pending: null, result: { status: "cancelled", resumeAddMoney: card.resumeAddMoney } });
         }

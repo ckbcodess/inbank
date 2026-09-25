@@ -80,11 +80,11 @@ export default function AuthLayout({
           <motion.div
             layout
             transition={{ type: "spring", duration: 0.35, bounce: 0 }}
-            className="rounded-3xl border border-border/80 bg-card/95 p-7 sm:p-9 lg:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden"
+            className="rounded-[16px] border border-border/80 bg-card/95 px-6 py-10 sm:px-8 sm:py-12 shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden"
           >
             {/* Step Progress Segments */}
             {stepProgress && (
-              <div className="mb-7 flex items-center gap-2 px-1">
+              <div className="mb-8 flex items-center gap-2 px-1">
                 {Array.from({ length: stepProgress.total }).map((_, i) => {
                   const isActive = i + 1 <= stepProgress.current;
                   const isCurrent = i + 1 === stepProgress.current;
@@ -106,13 +106,13 @@ export default function AuthLayout({
 
             {/* GCB Eagle Emblem or Step Icon at Card Top */}
             {Icon ? (
-              <div className="mb-6 flex justify-center">
+              <div className="mb-8 flex justify-center">
                 <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-primary shadow-xs">
                   <Icon size={24} strokeWidth={2} aria-hidden="true" />
                 </div>
               </div>
             ) : showLogo ? (
-              <div className="mb-6 flex justify-center">
+              <div className="mb-8 flex justify-center">
                 <div className="flex items-center justify-center transition-transform hover:scale-105">
                   <GCBLogo className="h-10 w-auto text-foreground" />
                 </div>
@@ -123,7 +123,7 @@ export default function AuthLayout({
             <SmoothHeight duration={0.35}>
               {/* Title & Description */}
               {(title || description) && (
-                <div className="mb-7 text-center">
+                <div className="mb-10 text-center sm:mb-12">
                   {title && (
                     <h1
                       className={cn(

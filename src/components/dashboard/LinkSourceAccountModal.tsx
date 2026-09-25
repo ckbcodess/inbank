@@ -287,6 +287,7 @@ export default function LinkSourceAccountModal({
       network: cardNetwork(cardDigits),
       returnTo: pathname,
       resumeAddMoney: mode === "fund",
+      onboarding,
     });
     setTimeout(() => router.push("/card-verification"), 700);
   }
