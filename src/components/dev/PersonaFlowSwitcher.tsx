@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   Building2,
@@ -140,6 +140,12 @@ function PersonaFlowSwitcherContent() {
   const activeTourId = useTour((s) => s.activeTourId);
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"existing" | "new" | "tours" | "dashboards">("existing");
+  // Client-only: the dock sits in the root layout and reads search params, so the
+  // server may render this boundary as its fallback while the browser renders the
+  // dock — a hydration mismatch. A demo overlay has nothing worth server-rendering,
+  // so it appears after mount.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   // Onboarding / entry surfaces only
   const isOnboardingSide =
@@ -151,7 +157,7 @@ function PersonaFlowSwitcherContent() {
     pathname?.startsWith("/mfa") ||
     pathname?.startsWith("/forgot-password");
 
-  if (!isOnboardingSide || activeTourId) return null;
+  if (!mounted || !isOnboardingSide || activeTourId) return null;
 
   // Active persona context label
   const personaParam = searchParams.get("persona");

@@ -11,6 +11,7 @@ import {
   ChevronRight,
   CreditCard,
   Smartphone,
+  UserCheck,
   Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -50,6 +51,11 @@ interface LinkSourceAccountModalProps {
   onLinked?: (source: LinkedSource) => void;
   /** Preselect this source on open — the card just linked via the bank's page. */
   initialSourceId?: string;
+  /**
+   * Straight after new-to-GCB sign-up: the link choice reads "Link Source
+   * Account" with the mobile app's tiles (yellow icon, title, two-line hint).
+   */
+  onboarding?: boolean;
 }
 
 export type ModalScreen =
@@ -74,6 +80,7 @@ export default function LinkSourceAccountModal({
   mode = "fund",
   onLinked,
   initialSourceId,
+  onboarding = false,
 }: LinkSourceAccountModalProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -317,7 +324,7 @@ export default function LinkSourceAccountModal({
                 )}
               <DialogTitle>
                 {screen === "choice" && "Add money"}
-                {screen === "link_choice" && "Link a card or wallet"}
+                {screen === "link_choice" && (onboarding ? "Link Source Account" : "Link a card or wallet")}
                 {screen === "internal_transfer" && "Transfer between accounts"}
                 {screen === "internal_success" && "Transfer completed"}
                 {screen === "linked_source_select" && "From linked wallet or card"}
@@ -334,7 +341,52 @@ export default function LinkSourceAccountModal({
             {/* ════════════════════════════════════════════════════════════════════
                 SCREEN 1: CHOICE MENU (2 Main Options)
                 ════════════════════════════════════════════════════════════════════ */}
-            {screen === "link_choice" && (
+            {screen === "link_choice" && onboarding && (
+              <div className="flex flex-col gap-6">
+                <p className="text-[15px] leading-relaxed text-muted-foreground">
+                  Choose an account or payment method to link to your new account.
+                </p>
+                <div className="flex flex-col gap-4">
+                  {([
+                    {
+                      to: "link_new_momo",
+                      icon: UserCheck,
+                      title: "Link Mobile Money Wallet",
+                      hint: "Link your mobile money wallet to get started quickly and securely.",
+                    },
+                    {
+                      to: "link_new_card",
+                      icon: CreditCard,
+                      title: "Link a Card",
+                      hint: "Link your bank card to get started quickly and securely.",
+                    },
+                  ] as const).map((opt) => (
+                    <button
+                      key={opt.to}
+                      type="button"
+                      onClick={() => setScreen(opt.to)}
+                      className="group flex items-center gap-4 rounded-2xl bg-[var(--tile)] p-4 text-left transition-colors hover:bg-[var(--tile-hover)] cursor-pointer"
+                    >
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                        <opt.icon size={17} strokeWidth={1.9} aria-hidden="true" />
+                      </span>
+                      <span className="flex min-w-0 flex-1 flex-col gap-1">
+                        <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">{opt.title}</span>
+                        <span className="text-[14px] leading-snug text-muted-foreground">{opt.hint}</span>
+                      </span>
+                      <ChevronRight
+                        size={20}
+                        strokeWidth={2}
+                        aria-hidden="true"
+                        className="shrink-0 text-foreground transition-transform group-hover:translate-x-0.5"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {screen === "link_choice" && !onboarding && (
               <div className="flex flex-col gap-3">
                 {([
                   { to: "link_new_momo", icon: Smartphone, title: "Mobile money wallet", hint: "MTN MoMo, Telecel Cash or AT Money" },

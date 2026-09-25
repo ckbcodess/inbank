@@ -112,6 +112,13 @@ export const TOURS: Tour[] = [
         action: "Click Save password and continue",
       },
       {
+        target: "activate-referral",
+        route: "/activate",
+        title: "Referral code (optional)",
+        body: "Enter the code of whoever referred you so they're rewarded — or skip. It never blocks sign-up.",
+        action: "Click Skip & Proceed",
+      },
+      {
         target: "activate-pin",
         route: "/activate",
         title: "Set a transaction PIN",
@@ -174,6 +181,13 @@ export const TOURS: Tour[] = [
         title: "Create a password",
         body: "Any password works in this demo — enter 00000 to see the error state. Then continue.",
         action: "Click Save password and continue",
+      },
+      {
+        target: "activate-referral",
+        route: "/activate",
+        title: "Referral code (optional)",
+        body: "Enter the code of whoever referred you so they're rewarded — or skip. It never blocks sign-up.",
+        action: "Click Skip & Proceed",
       },
       {
         target: "activate-pin",
@@ -311,6 +325,13 @@ export const TOURS: Tour[] = [
         action: "Click Proceed",
       },
       {
+        target: "signup-referral",
+        route: "/signup",
+        title: "Referral code (optional)",
+        body: "Enter the code of whoever referred you so they're rewarded — or skip. It never blocks sign-up.",
+        action: "Click Skip & Proceed",
+      },
+      {
         target: "signup-pin",
         route: "/signup",
         title: "Create a PIN",
@@ -380,6 +401,13 @@ export const TOURS: Tour[] = [
         title: "Set a password",
         body: "Any password works in this demo — enter 00000 to see the error state. Then continue.",
         action: "Click Proceed",
+      },
+      {
+        target: "signup-referral",
+        route: "/signup",
+        title: "Referral code (optional)",
+        body: "Enter the code of whoever referred you so they're rewarded — or skip. It never blocks sign-up.",
+        action: "Click Skip & Proceed",
       },
       {
         target: "signup-pin",

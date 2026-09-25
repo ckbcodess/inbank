@@ -23,6 +23,7 @@ import {
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import SelfieCapture from "@/components/auth/SelfieCapture";
+import ReferralStep from "@/components/auth/ReferralStep";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 import { useSession } from "@/lib/session-store";
 import { ACTORS } from "@/lib/mock-data";
@@ -32,7 +33,7 @@ import {
   type ActivationPersonaConfig,
 } from "@/lib/activation";
 
-type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "pin" | "confirm_pin";
+type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "referral" | "pin" | "confirm_pin";
 
 const RESEND_SECONDS = 30;
 
@@ -137,8 +138,9 @@ function ActivateContent() {
     review_details: 5,
     otp: 6,
     password: 7,
-    pin: 8,
-    confirm_pin: 9,
+    referral: 8,
+    pin: 9,
+    confirm_pin: 10,
   };
 
   function handleGhanaCardSubmit(e: React.FormEvent) {
@@ -195,7 +197,7 @@ function ActivateContent() {
     setErrorMsg("");
     setPinDigits(["", "", "", ""]);
     setConfirmPinDigits(["", "", "", ""]);
-    setStep("pin");
+    setStep("referral");
   }
 
   function handlePinSubmit(incomingPin?: string) {
@@ -244,6 +246,8 @@ function ActivateContent() {
       setStep("pin");
     } else if (step === "pin") {
       setPinDigits(["", "", "", ""]);
+      setStep("referral");
+    } else if (step === "referral") {
       setStep("password");
     } else if (step === "password") {
       setPassword("");
@@ -274,7 +278,7 @@ function ActivateContent() {
         step === "ghana_card"
           ? "Let's Verify Your Account"
           : step === "selfie"
-          ? "Take a Selfie"
+          ? "Selfie Match"
           : step === "review_details"
           ? isMultiAccount
             ? "Choose Your Primary Account"
@@ -282,9 +286,11 @@ function ActivateContent() {
             ? "Review Joint Account Details"
             : "Review Your Details"
           : step === "otp"
-          ? "Enter Verification Code"
+          ? "Confirm Your Code"
           : step === "password"
-          ? "Create Password"
+          ? "Create Your Password"
+          : step === "referral"
+          ? `Welcome, ${activePersona.name.split(" ")[0]}!`
           : step === "pin"
           ? "Set Your PIN"
           : "Confirm Your PIN"
@@ -312,13 +318,15 @@ function ActivateContent() {
               }.`
           : step === "password"
           ? "Choose a password you will remember."
+          : step === "referral"
+          ? "Reward the person who referred you by entering their referral code. This step is optional."
           : step === "pin"
           ? "Set a PIN for all your transactions in the app."
           : "Re-enter your 4-digit PIN to confirm."
       }
       stepProgress={{
         current: stepNumberMap[step],
-        total: 9,
+        total: 10,
       }}
       width="compact"
       footer={
@@ -710,6 +718,17 @@ function ActivateContent() {
       )}
 
       {/* STEP 6: 4-digit PIN */}
+      {step === "referral" && (
+        <ReferralStep
+          dataTour="activate-referral"
+          onDone={() => {
+            setErrorMsg("");
+            setPinDigits(["", "", "", ""]);
+            setStep("pin");
+          }}
+        />
+      )}
+
       {step === "pin" && (
         <form
           onSubmit={(e) => {

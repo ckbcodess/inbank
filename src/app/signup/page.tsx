@@ -16,10 +16,11 @@ import { Label } from "@/components/ui/label";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import SelfieCapture from "@/components/auth/SelfieCapture";
+import ReferralStep from "@/components/auth/ReferralStep";
 import { useSession } from "@/lib/session-store";
 import { ACTORS } from "@/lib/mock-data";
 
-type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "pin" | "confirm_pin";
+type Step = "ghana_card" | "selfie" | "review_details" | "otp" | "password" | "referral" | "pin" | "confirm_pin";
 
 const RESEND_SECONDS = 30;
 
@@ -93,8 +94,9 @@ function SignupContent() {
     review_details: 5,
     otp: 6,
     password: 7,
-    pin: 8,
-    confirm_pin: 9,
+    referral: 8,
+    pin: 9,
+    confirm_pin: 10,
   };
 
   function handleGhanaCardSubmit(e: React.FormEvent) {
@@ -142,7 +144,7 @@ function SignupContent() {
     setErrorMsg("");
     setPinDigits(["", "", "", ""]);
     setConfirmPinDigits(["", "", "", ""]);
-    setStep("pin");
+    setStep("referral");
   }
 
   function handlePinSubmit(incomingPin?: string) {
@@ -191,6 +193,8 @@ function SignupContent() {
       setStep("pin");
     } else if (step === "pin") {
       setPinDigits(["", "", "", ""]);
+      setStep("referral");
+    } else if (step === "referral") {
       setStep("password");
     } else if (step === "password") {
       setPassword("");
@@ -217,13 +221,15 @@ function SignupContent() {
         step === "ghana_card"
           ? "Let's Verify Your Account"
           : step === "selfie"
-          ? "Take a Selfie"
+          ? "Selfie Match"
           : step === "review_details"
           ? "Review Your Details"
           : step === "otp"
-          ? "Enter Verification Code"
+          ? "Confirm Your Code"
           : step === "password"
-          ? "Create Password"
+          ? "Create Your Password"
+          : step === "referral"
+          ? `Welcome, ${"Tsotsoo"}!`
           : step === "pin"
           ? "Set Your PIN"
           : "Confirm Your PIN"
@@ -241,13 +247,15 @@ function SignupContent() {
             : "6-digit code sent to am•••••@example.com."
           : step === "password"
           ? "Choose a password you will remember."
+          : step === "referral"
+          ? "Reward the person who referred you by entering their referral code. This step is optional."
           : step === "pin"
           ? "Set a PIN for all your transactions in the app."
           : "Re-enter your 4-digit PIN to confirm."
       }
       stepProgress={{
         current: stepNumberMap[step],
-        total: 9,
+        total: 10,
       }}
       width={step === "review_details" ? "default" : "compact"}
       footer={
@@ -510,7 +518,7 @@ function SignupContent() {
               <div className="flex items-center gap-2">
                 <span
                   className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
-                    hasMinLength ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
+                    hasMinLength ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                   }`}
                 >
                   <Check size={11} strokeWidth={3} />
@@ -522,7 +530,7 @@ function SignupContent() {
               <div className="flex items-center gap-2">
                 <span
                   className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
-                    hasCase ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
+                    hasCase ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                   }`}
                 >
                   <Check size={11} strokeWidth={3} />
@@ -534,7 +542,7 @@ function SignupContent() {
               <div className="flex items-center gap-2">
                 <span
                   className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
-                    hasNumber ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
+                    hasNumber ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                   }`}
                 >
                   <Check size={11} strokeWidth={3} />
@@ -546,7 +554,7 @@ function SignupContent() {
               <div className="flex items-center gap-2">
                 <span
                   className={`flex size-4 items-center justify-center rounded-full text-[10px] ${
-                    hasSymbol ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground"
+                    hasSymbol ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                   }`}
                 >
                   <Check size={11} strokeWidth={3} />
@@ -578,6 +586,17 @@ function SignupContent() {
             Continue
           </Button>
         </form>
+      )}
+
+      {step === "referral" && (
+        <ReferralStep
+          dataTour="signup-referral"
+          onDone={() => {
+            setErrorMsg("");
+            setPinDigits(["", "", "", ""]);
+            setStep("pin");
+          }}
+        />
       )}
 
       {/* STEP 6: Set PIN */}

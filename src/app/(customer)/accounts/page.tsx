@@ -233,6 +233,8 @@ function AccountsContent() {
 
   const [screenState, setScreenState] = useState<ScreenState>("populated");
   const [linkOpen, setLinkOpen] = useState(false);
+  // Opened by sign-up (not the pill) → the onboarding version of the link choice.
+  const [linkOnboarding, setLinkOnboarding] = useState(false);
   const [removing, setRemoving] = useState<LinkedSource | null>(null);
   const [selfieMatch, setSelfieMatch] = useState<"match" | "no-match">("match");
   const [addAccountOpen, setAddAccountOpen] = useState(false);
@@ -241,7 +243,10 @@ function AccountsContent() {
 
   useEffect(() => {
     // Signup lands here with ?link_source=true to link the first source.
-    if (searchParams.get("link_source") === "true") setLinkOpen(true);
+    if (searchParams.get("link_source") === "true") {
+      setLinkOnboarding(true);
+      setLinkOpen(true);
+    }
   }, [searchParams]);
 
   // Back from the bank's card page: confirm, or reopen Add money with the card.
@@ -459,7 +464,11 @@ function AccountsContent() {
         key={`link-${scenario.id}`}
         mode="link"
         isOpen={linkOpen}
-        onClose={() => setLinkOpen(false)}
+        onboarding={linkOnboarding}
+        onClose={() => {
+          setLinkOpen(false);
+          setLinkOnboarding(false);
+        }}
         accounts={accounts}
         onLinked={(source) =>
           toast.success(`${source.title} linked`, {
