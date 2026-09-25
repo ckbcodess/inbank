@@ -846,7 +846,7 @@ function ActivateContent() {
 
 export default function ActivatePage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-background animate-pulse" />}>
+    <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
       <ActivateContent />
     </Suspense>
   );

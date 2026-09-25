@@ -92,7 +92,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
 
   return (
     <SurfaceProvider value={1}>
-      <div className="flex h-screen overflow-hidden bg-[var(--surface)] dark:bg-[#09090b]">
+      <div className="flex h-dvh overflow-hidden bg-[var(--surface)] dark:bg-[#09090b]">
         {sidebarOpen && (
           <div
             className="animate-in fade-in fixed inset-0 z-30 bg-black/30 backdrop-blur-[2px] duration-150 lg:hidden"

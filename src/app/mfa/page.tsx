@@ -182,7 +182,7 @@ function MfaContent() {
 
 export default function MfaPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-background animate-pulse" />}>
+    <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
       <MfaContent />
     </Suspense>
   );

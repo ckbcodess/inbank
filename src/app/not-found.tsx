@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-background px-4 text-center">
+    <div className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-background px-4 text-center">
       <div className="w-full max-w-md rounded-3xl border border-border/80 bg-card/95 p-8 shadow-sm backdrop-blur-xl">
         <div className="mb-6 flex justify-center">
           <GCBLogo className="h-10 w-auto text-foreground" />

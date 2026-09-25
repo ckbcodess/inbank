@@ -54,7 +54,7 @@ export default function AuthLayout({
       : "max-w-[540px]";
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col bg-background text-foreground transition-colors selection:bg-primary/30 selection:text-foreground overflow-x-hidden">
+    <div className="relative flex min-h-dvh w-full flex-col bg-background text-foreground transition-colors selection:bg-primary/30 selection:text-foreground overflow-x-hidden">
       {/* Top Fixed Header */}
       <AuthHeader />
 
@@ -74,7 +74,7 @@ export default function AuthLayout({
       </div>
 
       {/* Main Container - Vertically and horizontally centered in available viewport */}
-      <main className="relative z-10 flex min-h-[calc(100vh-4rem)] w-full items-center justify-center px-4 sm:px-6 py-8 mt-16">
+      <main className="relative z-10 flex min-h-[calc(100dvh-4rem)] w-full items-center justify-center px-4 sm:px-6 py-8 mt-16">
         <div className={`w-full ${maxWidthClass}`}>
           {/* Central Card with generous breathing room and smooth height morphing */}
           <motion.div

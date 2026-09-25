@@ -31,8 +31,12 @@ import {
   AmountInput,
   NarrationInput,
   ProceedButton,
+  getTelcoLogo,
 } from "@/components/payments/flows/shared";
 import { PhoneInput } from "@/components/ui/phone-input";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
+import { AppLoader } from "@/components/ui/loader";
 import { displayGhanaMobile, isCompleteGhanaMobile } from "@/lib/phone";
 import { cardNetwork, useCardLink } from "@/lib/card-link";
 
@@ -58,6 +62,12 @@ interface LinkSourceAccountModalProps {
   onboarding?: boolean;
 }
 
+const OPERATOR_NAME: Record<NetworkOperator, string> = {
+  MTN: "MTN Mobile Money",
+  Telecel: "Telecel Cash",
+  AT: "AT Money",
+};
+
 export type ModalScreen =
   | "choice"
   | "internal_transfer"
@@ -68,6 +78,7 @@ export type ModalScreen =
   | "funding_success"
   | "link_new_momo"
   | "link_momo_pending"
+  | "link_momo_code"
   | "link_new_card"
   | "link_choice";
 
@@ -145,6 +156,23 @@ export default function LinkSourceAccountModal({
   const [newMomoNumber, setNewMomoNumber] = useState("");
   const [newMomoOperator, setNewMomoOperator] = useState<NetworkOperator>("MTN");
   const [momoResent, setMomoResent] = useState(false);
+  const [momoCode, setMomoCode] = useState<string[]>(() => Array(OTP_LENGTH).fill(""));
+  const [momoCodeError, setMomoCodeError] = useState(false);
+
+  function handleMomoCode(code: string) {
+    if (busy) return;
+    setBusy(true);
+    setTimeout(() => {
+      setBusy(false);
+      // Demo: 000000 is the wrong-code state.
+      if (code === "000000") {
+        setMomoCodeError(true);
+        setMomoCode(Array(OTP_LENGTH).fill(""));
+        return;
+      }
+      confirmNewMomo();
+    }, 700);
+  }
 
   // New Card form
   const [newCardNumber, setNewCardNumber] = useState("");
@@ -236,7 +264,15 @@ export default function LinkSourceAccountModal({
     setTimeout(() => {
       setBusy(false);
       setMomoResent(false);
-      setScreen("link_momo_pending");
+      // New to GCB: the number is confirmed with a 6-digit code instead — the
+      // "approve on your phone" prompt comes later, when they actually fund.
+      if (onboarding) {
+        setMomoCode(Array(OTP_LENGTH).fill(""));
+        setMomoCodeError(false);
+        setScreen("link_momo_code");
+      } else {
+        setScreen("link_momo_pending");
+      }
     }, 600);
   }
 
@@ -252,7 +288,7 @@ export default function LinkSourceAccountModal({
     const newSource: LinkedSource = {
       id: `src-momo-${Date.now()}`,
       type: "momo",
-      title: `${newMomoOperator} Mobile Money`,
+      title: OPERATOR_NAME[newMomoOperator],
       subtitle: displayGhanaMobile(newMomoNumber),
       operator: newMomoOperator,
       maskedNumber: displayGhanaMobile(newMomoNumber),
@@ -307,7 +343,7 @@ export default function LinkSourceAccountModal({
                   <button
                     type="button"
                     onClick={() => {
-                      if (screen === "link_momo_pending") {
+                      if (screen === "link_momo_pending" || screen === "link_momo_code") {
                         setScreen("link_new_momo");
                       } else if (screen === "link_new_momo" || screen === "link_new_card") {
                         setScreen(linkBackScreen);
@@ -333,6 +369,7 @@ export default function LinkSourceAccountModal({
                 {screen === "card_3ds" && "Card authorization"}
                 {screen === "funding_success" && "Money added"}
                 {(screen === "link_new_momo" || screen === "link_momo_pending") && "Link new mobile wallet"}
+                {screen === "link_momo_code" && "Confirm Your Code"}
                 {screen === "link_new_card" && "Link new bank card"}
               </DialogTitle>
             </div>
@@ -868,22 +905,31 @@ export default function LinkSourceAccountModal({
                   <label className="text-[13px] font-medium text-foreground">
                     Network operator
                   </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {(["MTN", "Telecel", "AT"] as const).map((op) => (
-                      <button
-                        key={op}
-                        type="button"
-                        onClick={() => setNewMomoOperator(op)}
-                        className={`h-10 rounded-xl border text-[13px] font-medium transition-all cursor-pointer ${
-                          newMomoOperator === op
-                            ? "border-foreground bg-muted text-foreground"
-                            : "border-border bg-card text-muted-foreground hover:bg-muted/40"
-                        }`}
-                      >
-                        {op}
-                      </button>
-                    ))}
-                  </div>
+                  {/* Same provider picker as Send & Pay → Mobile Wallet, with logos. */}
+                  <Select value={newMomoOperator} onValueChange={(v) => v && setNewMomoOperator(v as NetworkOperator)}>
+                    <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+                      <div className="flex items-center gap-3">
+                        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden border border-black/5 dark:border-white/10 p-0">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={getTelcoLogo(OPERATOR_NAME[newMomoOperator])!} alt="" className="size-full object-cover rounded-full" />
+                        </span>
+                        <span className="text-[14.5px] font-medium text-foreground">{OPERATOR_NAME[newMomoOperator]}</span>
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(["MTN", "Telecel", "AT"] as const).map((op) => (
+                        <SelectItem key={op} value={op} label={OPERATOR_NAME[op]}>
+                          <div className="flex items-center gap-3">
+                            <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden p-0">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={getTelcoLogo(OPERATOR_NAME[op])!} alt="" className="size-full object-cover rounded-full" />
+                            </span>
+                            <span>{OPERATOR_NAME[op]}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="pt-2 flex flex-col gap-2">
@@ -910,6 +956,46 @@ export default function LinkSourceAccountModal({
             {/* ════════════════════════════════════════════════════════════════════
                 SCREEN 8b: NEW MOMO — WAITING FOR APPROVAL ON THE PHONE
                 ════════════════════════════════════════════════════════════════════ */}
+            {screen === "link_momo_code" && (
+              <div className="flex flex-col items-center gap-5 py-2 text-center">
+                <p className="text-[13.5px] leading-relaxed text-muted-foreground">
+                  Enter the 6-digit code sent to{" "}
+                  <span className="text-foreground tabular">{displayGhanaMobile(newMomoNumber)}</span>.
+                </p>
+                <OtpInput
+                  value={momoCode}
+                  onChange={(next) => {
+                    setMomoCode(next);
+                    setMomoCodeError(false);
+                  }}
+                  onComplete={handleMomoCode}
+                  disabled={busy}
+                  invalid={momoCodeError}
+                />
+                {busy && (
+                  <div className="flex items-center gap-2 text-[13.5px] text-muted-foreground">
+                    <AppLoader size={16} />
+                    <span>Verifying code…</span>
+                  </div>
+                )}
+                {momoCodeError && (
+                  <p role="alert" className="text-[13px] text-destructive">
+                    That code didn&apos;t match. Check the latest SMS and try again.
+                  </p>
+                )}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  disabled={busy || momoResent}
+                  onClick={() => setMomoResent(true)}
+                  className="text-[13px] text-muted-foreground"
+                >
+                  {momoResent ? "Code sent again" : "Didn't get it? Send again"}
+                </Button>
+              </div>
+            )}
+
             {screen === "link_momo_pending" && (
               <div className="flex flex-col items-center gap-4 text-center py-2">
                 <div className="flex size-14 items-center justify-center rounded-2xl bg-muted text-foreground animate-pulse">

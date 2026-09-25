@@ -309,9 +309,14 @@ html.i18n-pending body {
     /* No reserved document scrollbar gutter — the app shell is h-screen with its
        own overflow, so the document never scrolls and a reserved gutter only
        shows as an empty gap on the right. */
+    /* No rubber-band overscroll: full-height screens use dvh (the visible
+       viewport on phones, address bar included), so nothing should scroll the
+       document itself. */
+    overscroll-behavior: none;
   }
   body {
     @apply antialiased bg-background text-foreground;
+    overscroll-behavior: none;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

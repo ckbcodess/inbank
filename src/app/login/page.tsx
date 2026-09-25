@@ -158,7 +158,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-background animate-pulse" />}>
+    <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
       <LoginForm />
     </Suspense>
   );

@@ -91,7 +91,7 @@ export default function FigmaDesignFidelityDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-[#1c2024] font-sans antialiased flex flex-col md:flex-row">
+    <div className="min-h-dvh bg-[#f8f9fa] text-[#1c2024] font-sans antialiased flex flex-col md:flex-row">
       
       {/* ============================================================
           1. FIGMA SIDEBAR (Node 315:53322)
