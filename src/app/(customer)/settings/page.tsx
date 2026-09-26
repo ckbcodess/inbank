@@ -9,8 +9,6 @@ import {
   EyeOff,
   Lock,
   Moon,
-  Shield,
-  ShieldCheck,
   Sun,
   User,
 } from "lucide-react";

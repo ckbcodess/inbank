@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Users, Bell, Receipt } from "lucide-react";
 import { useGroupsStore } from "@/lib/groups-store";
-import { formatMoney, recordTransaction } from "@/lib/mock-data";
+import { formatMoney } from "@/lib/mock-data";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 
 function SuccessContent() {

@@ -16,7 +16,7 @@
  */
 
 import React, { useRef, useEffect, useState } from "react";
-import { Lock, Smartphone, KeyRound, AlertCircle, X } from "lucide-react";
+import { Lock, Smartphone, KeyRound, AlertCircle } from "lucide-react";
 import {
   Dialog,
   DialogContent,

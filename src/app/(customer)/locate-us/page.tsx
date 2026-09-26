@@ -2,20 +2,16 @@
 
 import { useMemo, useState } from "react";
 import {
-  Building2,
   Clock,
   ExternalLink,
   MapPin,
   Navigation,
   Phone,
   Search,
-  Sparkles,
   X,
 } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { FilteredEmptyState, TrueEmptyState } from "@/components/states/ListStates";
 
 export interface BranchLocation {
@@ -182,11 +178,6 @@ export default function LocateUsPage() {
   const [query, setQuery] = useState("");
   const [filterType, setFilterType] = useState<"all" | "branch" | "atm" | "deposit">("all");
   const [selectedCity, setSelectedCity] = useState<string>("all");
-
-  const cities = useMemo(() => {
-    const list = Array.from(new Set(LOCATIONS.map((l) => l.city)));
-    return ["all", ...list];
-  }, []);
 
   const filteredLocations = useMemo(() => {
     return LOCATIONS.filter((loc) => {

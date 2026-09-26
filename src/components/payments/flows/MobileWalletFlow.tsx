@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Account } from "@/lib/mock-data";
 import { Smartphone } from "lucide-react";
@@ -8,7 +9,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import {
   FromAccountSelector,
@@ -135,9 +135,11 @@ export function MobileWalletFlow({
             subtitle={`${state.wNetwork || "MTN Mobile Money"} · ${isSelf ? (state.wPhone || REGISTERED_PHONE) : state.wPhone}`}
             icon={
               getTelcoLogo(state.wNetwork) ? (
-                <img
+                <Image
                   src={getTelcoLogo(state.wNetwork)!}
                   alt={state.wNetwork || ""}
+                  width={40}
+                  height={40}
                   className="size-full object-cover rounded-full"
                 />
               ) : undefined
@@ -161,9 +163,11 @@ export function MobileWalletFlow({
                     {state.wNetwork && getTelcoLogo(state.wNetwork) ? (
                       <div className="flex items-center gap-3">
                         <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden border border-black/5 dark:border-white/10 p-0">
-                          <img
+                          <Image
                             src={getTelcoLogo(state.wNetwork)!}
                             alt={state.wNetwork}
+                            width={40}
+                            height={40}
                             className="size-full object-cover rounded-full"
                           />
                         </span>
@@ -188,9 +192,11 @@ export function MobileWalletFlow({
                           <div className="flex items-center gap-3">
                             {logo && (
                               <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden p-0">
-                                <img
+                                <Image
                                   src={logo}
                                   alt={n}
+                                  width={40}
+                                  height={40}
                                   className="size-full object-cover rounded-full"
                                 />
                               </span>

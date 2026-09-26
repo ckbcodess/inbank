@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { Camera, CameraOff, Check, RefreshCw, Upload } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
@@ -346,11 +347,8 @@ export default function SelfieCapture({
 
           {capturedImage ? (
             <div className="relative size-full">
-              <img
-                src={capturedImage}
-                alt="Captured selfie"
-                className="size-full object-cover"
-              />
+              {/* A camera snapshot (data URL) — nothing for the optimiser to do. */}
+              <Image src={capturedImage} alt="Captured selfie" fill unoptimized className="object-cover" />
               <div className="absolute inset-0 flex items-center justify-center bg-black/15">
                 <div className="flex size-11 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm">
                   <Check size={22} strokeWidth={2.8} />

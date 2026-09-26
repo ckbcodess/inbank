@@ -9,12 +9,8 @@
 import { use, useState } from "react";
 import Link from "next/link";
 import {
-  AlertCircle,
   ChevronRight,
-  CreditCard,
-  RefreshCw,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
 import { VirtualCardDetailsView } from "@/components/cards/VirtualCardDetailsView";
@@ -50,8 +46,6 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
       </div>
     );
   }
-
-  const maskedDigits = card.maskedNumber ? card.maskedNumber.slice(-4) : "5345";
 
   return (
     <div className="flex flex-col gap-6 w-full">

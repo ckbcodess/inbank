@@ -540,6 +540,16 @@ export function FromAccountSelector({
 /** Upper ceiling for any amount entry: 900 billion. */
 const MAX_AMOUNT = 900_000_000_000;
 
+/** Formats a raw or numeric string for display with thousands commas. */
+function getFormatted(val: string): string {
+  if (!val) return "";
+  return formatValueForDisplay(val, 2, {
+    formatOn: FormatOn.Change,
+    thousandSeparator: ",",
+    thousandStyle: ThousandStyle.Thousand,
+  }).formatted;
+}
+
 export function AmountInput({
   value,
   onChange,
@@ -570,26 +580,12 @@ export function AmountInput({
   // cross it, with a slight shake as the only nudge.
   const [nudge, setNudge] = useState(false);
 
-  // Helper to format any raw or numeric string for display with thousand commas
-  const getFormatted = (val: string) => {
-    if (!val) return "";
-    const res = formatValueForDisplay(val, 2, {
-      formatOn: FormatOn.Change,
-      thousandSeparator: ",",
-      thousandStyle: ThousandStyle.Thousand,
-    });
-    return res.formatted;
-  };
-
   const [displayValue, setDisplayValue] = useState(() => getFormatted(value));
 
   // Sync when parent component updates the value externally (e.g. form reset, preset amount)
   useEffect(() => {
-    const currentRaw = displayValue.replace(/,/g, "");
     const nextRaw = (value || "").replace(/,/g, "");
-    if (currentRaw !== nextRaw) {
-      setDisplayValue(getFormatted(nextRaw));
-    }
+    setDisplayValue((current) => (current.replace(/,/g, "") !== nextRaw ? getFormatted(nextRaw) : current));
   }, [value]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

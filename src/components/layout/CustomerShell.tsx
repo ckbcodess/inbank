@@ -4,8 +4,9 @@
  * Customer / Corporate application shell — section 12.4.
  *
  * Floating-card layout carried over from the Halepulse dashboard. Renders the
- * Global Profile Switcher and customer navigation only. It shares no navigation
- * chrome with the Admin Portal shell (section 12.1).
+ * customer navigation only — Personal and Business are chosen before sign-in,
+ * so there's no in-session profile switcher. It shares no navigation chrome
+ * with the Admin Portal shell (section 12.1).
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -15,7 +16,6 @@ import TopHeader from "./TopHeader";
 import { SurfaceProvider } from "@/lib/surface-context";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
 import { getNavigation } from "@/lib/navigation";
-import type { Profile } from "@/lib/roles";
 
 const COLLAPSE_KEY = "nibs-sidebar-collapsed";
 
@@ -71,14 +71,6 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
     });
   }, []);
 
-  const handleSelectProfile = useCallback(
-    (profile: Profile) => {
-      selectProfile(profile);
-      router.push("/overview");
-    },
-    [selectProfile, router],
-  );
-
   const handleSignOut = useCallback(() => {
     signOut();
     router.replace("/login");
@@ -113,8 +105,6 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
           <div className="shell-card flex min-h-0 flex-1 flex-col overflow-hidden rounded-none border-0 shadow-none sm:rounded-2xl sm:border sm:border-border sm:shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
             <TopHeader
               actor={actor}
-              activeProfile={activeProfile}
-              onSelectProfile={handleSelectProfile}
               onMenuToggle={() => setSidebarOpen((p) => !p)}
               onSignOut={handleSignOut}
             />

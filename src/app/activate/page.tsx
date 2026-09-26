@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { parseOnboardingStep, type OnboardingStep } from "@/lib/onboarding-steps";
@@ -455,7 +456,7 @@ function ActivateContent() {
             <div className="flex items-center gap-3 min-w-0">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary overflow-hidden">
                 {selfieImage ? (
-                  <img src={selfieImage} alt={activePersona.holderName} className="size-full object-cover" />
+                  <Image src={selfieImage} alt={activePersona.holderName} width={36} height={36} unoptimized className="size-full object-cover" />
                 ) : isJoint ? (
                   <Users size={16} />
                 ) : (

@@ -18,7 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ROLE_LABEL, type Actor, type Profile } from "@/lib/roles";
+import { ROLE_LABEL, type Actor } from "@/lib/roles";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import HeaderBreadcrumbs from "./HeaderBreadcrumbs";
 import LanguageToggle from "./LanguageToggle";
@@ -27,17 +27,12 @@ import { switchTheme } from "@/lib/theme-transition";
 
 interface TopHeaderProps {
   actor: Actor;
-  /** Omitted entirely for the Admin Portal — internal staff never see it (12.2). */
-  activeProfile?: Profile | null;
-  onSelectProfile?: (p: Profile) => void;
   onMenuToggle: () => void;
   onSignOut: () => void;
 }
 
 export default function TopHeader({
   actor,
-  activeProfile,
-  onSelectProfile,
   onMenuToggle,
   onSignOut,
 }: TopHeaderProps) {

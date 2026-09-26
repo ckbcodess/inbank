@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { CreditCard } from "lucide-react";
 import { Account, CARDS, formatMoney } from "@/lib/mock-data";
 import {

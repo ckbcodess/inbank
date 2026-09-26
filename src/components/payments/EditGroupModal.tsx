@@ -21,9 +21,7 @@ import {
   Trash2,
   Plus,
   Search,
-  AlertTriangle,
   UserPlus,
-  Check,
 } from "lucide-react";
 import { useGroupsStore, type PaymentGroup, type GroupMember } from "@/lib/groups-store";
 import { useBeneficiariesStore, type BeneficiaryRecord } from "@/lib/beneficiaries-store";

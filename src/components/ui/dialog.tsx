@@ -6,8 +6,6 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { useSurface, SurfaceProvider } from "@/lib/surface-context"
-import { surfaceClasses } from "@/lib/surface-classes"
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />

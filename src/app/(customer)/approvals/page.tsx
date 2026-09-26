@@ -30,7 +30,7 @@ import {
   TrueEmptyState,
 } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
-import { APPROVAL_QUEUE, formatMoney } from "@/lib/mock-data";
+import { APPROVAL_QUEUE } from "@/lib/mock-data";
 import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 
 const LIST_STATES: readonly ListState[] = [

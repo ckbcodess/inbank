@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -121,9 +122,11 @@ export function InteractiveCardsHub({
           }`}
         >
           {/* High-res Card Artwork Background with Expanded Full-Bleed Fill */}
-          <img
+          <Image
             src={theme.bgImage}
             alt=""
+            width={640}
+            height={400}
             className="absolute -inset-[3px] w-[calc(100%+6px)] h-[calc(100%+6px)] max-w-none object-cover scale-[1.03] pointer-events-none select-none"
           />
 

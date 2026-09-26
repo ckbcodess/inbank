@@ -86,7 +86,6 @@ export default function CreateGroupFlow({
 
   // Auto-focus Group Name input
   const nameInputRef = useRef<HTMLInputElement>(null);
-  const descriptionInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (step === 1) {
       nameInputRef.current?.focus();
@@ -98,7 +97,8 @@ export default function CreateGroupFlow({
   const [customName, setCustomName] = useState("");
   const [customDest, setCustomDest] = useState("");
   const [customType, setCustomType] = useState<"wallet" | "bank">("wallet");
-  const [customNetworkOrBank, setCustomNetworkOrBank] = useState(WALLET_NETWORKS[0]);
+  // One network for now; the choice isn't offered in the inline form yet.
+  const customNetworkOrBank = WALLET_NETWORKS[0];
 
   // Unsaved changes confirmation dialog
   const [showExitConfirm, setShowExitConfirm] = useState(false);

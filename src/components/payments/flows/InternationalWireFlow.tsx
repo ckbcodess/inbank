@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { ArrowLeftRight } from "lucide-react";
-import { Account, formatMoney } from "@/lib/mock-data";
+import { Account } from "@/lib/mock-data";
 import {
   Select,
   SelectContent,
@@ -148,7 +148,6 @@ export function InternationalWireFlow({
   onToggleCollapsed,
 }: InternationalWireFlowProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
-  const [amountMode, setAmountMode] = useState<"send" | "receive">("receive");
   const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
 
   const setCollapsed = (val: boolean) => {
@@ -280,11 +279,7 @@ export function InternationalWireFlow({
             <div className="relative grid grid-cols-1 md:grid-cols-2 gap-3 items-center">
               {/* You Send (GHS) */}
               <AmountInput
-                value={
-                  amountMode === "send"
-                    ? state.wForeign ? String(ghsEquivalent) : ""
-                    : String(ghsEquivalent)
-                }
+                value={String(ghsEquivalent)}
                 onChange={(val) => {
                   const numVal = Number(val.replace(/[^0-9.]/g, "")) || 0;
                   const foreignVal = rate > 0 ? Math.round((numVal / rate) * 100) / 100 : 0;

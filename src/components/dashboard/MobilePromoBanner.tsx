@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, TrendingUp, Globe, Calculator } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Sparkles, Globe, Calculator } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {

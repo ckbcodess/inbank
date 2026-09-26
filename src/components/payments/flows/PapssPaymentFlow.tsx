@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { ArrowLeftRight } from "lucide-react";
-import { Account, formatMoney } from "@/lib/mock-data";
+import { Account } from "@/lib/mock-data";
 import {
   Select,
   SelectContent,
@@ -18,7 +18,6 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   VerifiedAccountBadge,
-  ResolvingAccountBadge,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
   ScheduleFrequency,
@@ -126,7 +125,6 @@ export function PapssPaymentFlow({
   onToggleCollapsed,
 }: PapssPaymentFlowProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
-  const [amountMode, setAmountMode] = useState<"send" | "receive">("receive");
   const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
 
   const setCollapsed = (val: boolean) => {
@@ -155,7 +153,6 @@ export function PapssPaymentFlow({
     return resolveAccountName(state.wIban, state.wBenName);
   }, [state.wIban, state.wBenName]);
 
-  const [resolving, setResolving] = useState(false);
   const isVerified = isDetailsValid && Boolean(verifiedName);
 
   const isDestinationValid = isVerified;
@@ -240,11 +237,6 @@ export function PapssPaymentFlow({
               className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
             />
 
-            {/* Resolving indicator */}
-            {isDetailsValid && resolving && (
-              <ResolvingAccountBadge message={`Verifying account with ${state.wBank || "PAPSS network"}...`} />
-            )}
-
             {/* Verified badge */}
             {isVerified && <VerifiedAccountBadge name={verifiedName} />}
           </div>
@@ -261,11 +253,7 @@ export function PapssPaymentFlow({
             <div className="relative grid grid-cols-1 md:grid-cols-2 gap-3 items-center">
               {/* You Send (GHS) */}
               <AmountInput
-                value={
-                  amountMode === "send"
-                    ? state.wForeign ? String(ghsEquivalent) : ""
-                    : String(ghsEquivalent)
-                }
+                value={String(ghsEquivalent)}
                 onChange={(val) => {
                   const numVal = Number(val.replace(/[^0-9.]/g, "")) || 0;
                   const foreignVal = rate > 0 ? Math.round((numVal / rate) * 100) / 100 : 0;

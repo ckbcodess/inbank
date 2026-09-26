@@ -26,36 +26,26 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { 
-  Home, 
-  CreditCard, 
-  Send, 
-  Receipt, 
-  Zap, 
-  Briefcase, 
-  FileText, 
-  SlidersHorizontal, 
-  ChevronRight, 
-  ChevronDown, 
-  Eye, 
-  EyeOff, 
-  Bell, 
-  Sun, 
-  Moon,
+import {
+  Home,
+  CreditCard,
+  Send,
+  Receipt,
+  Zap,
+  Briefcase,
+  FileText,
+  SlidersHorizontal,
+  ChevronRight,
+  ChevronDown,
+  Eye,
+  EyeOff,
+  Bell,
   ArrowRight,
   TrendingDown,
-  TrendingUp,
   Lock,
   Unlock,
   Plus,
-  Building2,
-  Wallet,
   Landmark,
-  ArrowUpRight,
-  ArrowDownLeft,
-  Calendar,
-  Layers,
-  Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {

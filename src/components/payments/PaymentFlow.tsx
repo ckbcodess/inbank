@@ -11,13 +11,10 @@
  *   Receipt: Full transaction receipt with Share, Repeat, and Done actions.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  AlertCircle,
   ArrowLeftRight,
-  Check,
   CheckCircle2,
   ChevronDown,
   ChevronLeft,
@@ -36,13 +33,6 @@ import { toast } from "sonner";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { ActionTile } from "@/components/ui/action-tile";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   accountsForProfile,
   BillerCategory,
@@ -135,49 +125,6 @@ const RATES: Record<string, number> = {
   EGP: 0.32,
   RWF: 0.011,
   ZMW: 0.58,
-};
-
-const BANKS = [
-  "GCB Bank",
-  "Standard Bank Ghana",
-  "Ecobank Ghana",
-  "Absa Ghana",
-  "Fidelity Bank",
-  "Stanbic Bank Ghana",
-  "CalBank",
-  "CBG (Consolidated Bank Ghana)",
-  "Access Bank",
-  "Zenith Bank Ghana",
-];
-
-const NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money", "GCB Wallet"];
-
-type BundleItem = { id: string; name: string; val: string; price: number; network: string };
-
-const BUNDLES_BY_NETWORK: Record<string, BundleItem[]> = {
-  "MTN Mobile Money": [
-    { id: "mtn-1", name: "1 GB", val: "1 day", price: 5, network: "MTN Mobile Money" },
-    { id: "mtn-2", name: "3.5 GB", val: "7 days", price: 15, network: "MTN Mobile Money" },
-    { id: "mtn-3", name: "10 GB", val: "30 days", price: 45, network: "MTN Mobile Money" },
-    { id: "mtn-4", name: "25 GB", val: "30 days", price: 90, network: "MTN Mobile Money" },
-    { id: "mtn-5", name: "50 GB", val: "Non-expiry", price: 175, network: "MTN Mobile Money" },
-  ],
-  "Telecel Cash": [
-    { id: "tel-1", name: "1.5 GB", val: "1 day", price: 6, network: "Telecel Cash" },
-    { id: "tel-2", name: "5 GB", val: "7 days", price: 20, network: "Telecel Cash" },
-    { id: "tel-3", name: "15 GB", val: "30 days", price: 50, network: "Telecel Cash" },
-    { id: "tel-4", name: "40 GB", val: "30 days", price: 120, network: "Telecel Cash" },
-  ],
-  "AT Money": [
-    { id: "at-1", name: "2 GB", val: "1 day", price: 5, network: "AT Money" },
-    { id: "at-2", name: "6 GB", val: "7 days", price: 18, network: "AT Money" },
-    { id: "at-3", name: "20 GB", val: "30 days", price: 60, network: "AT Money" },
-    { id: "at-4", name: "50 GB", val: "Non-expiry", price: 150, network: "AT Money" },
-  ],
-  "GCB Wallet": [
-    { id: "gcb-1", name: "2 GB", val: "1 day", price: 5, network: "GCB Wallet" },
-    { id: "gcb-2", name: "10 GB", val: "30 days", price: 40, network: "GCB Wallet" },
-  ],
 };
 
 const RAIL_FACTS: Record<Rail, { fee: number; arrives: string; instant: boolean }> = {
@@ -816,20 +763,6 @@ function resolveAccountName(number: string, fallback: string = ""): string {
   return GHANAIAN_NAMES[Math.abs(hash)] || "Ama Serwaa Mensah";
 }
 
-function detectNetwork(phone: string): string {
-  const c = phone.replace(/[\s-]/g, "");
-  if (/^0(24|54|55|59|25)/.test(c)) return "MTN Mobile Money";
-  if (/^0(20|50)/.test(c)) return "Telecel Cash";
-  if (/^0(27|57|26)/.test(c)) return "AT Money";
-  return "MTN Mobile Money";
-}
-
-const inputCls =
-  "h-11 w-full rounded-xl border border-border bg-background px-3.5 text-[14px] text-foreground outline-none focus:border-ring focus:ring-3 focus:ring-ring/30 transition-all";
-const selectCls =
-  "h-11 w-full rounded-xl border border-border bg-background pl-3.5 pr-10 text-[14px] text-foreground outline-none focus:border-ring focus:ring-3 focus:ring-ring/30 transition-all cursor-pointer";
-const labelCls = "text-[12.5px] text-muted-foreground";
-
 type Phase = "form" | "submitting" | "success";
 type ReceiptData = {
   pending: boolean;
@@ -848,7 +781,6 @@ type ReceiptData = {
   rows: [string, string][];
 };
 
-type GroupLine = { id: string; name: string; dest: string; amount: string };
 
 function HorizontalScrollStrip({
   children,
@@ -1000,9 +932,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const { myProxy, deregisterProxy } = useProxyStore();
   const [cardlessCategory, setCardlessCategory] = useState<"self" | "third-party" | null>(null);
   const [billCategory, setBillCategory] = useState<BillerCategory | null>(null);
-  const [billMode, setBillMode] = useState<"saved" | "custom">("saved");
-  const [saveBillAsBeneficiary, setSaveBillAsBeneficiary] = useState(true);
-  const [saveBeneficiary, setSaveBeneficiary] = useState(true);
   const [phase, setPhase] = useState<Phase>("form");
   const [receipt, setReceipt] = useState<ReceiptData | null>(null);
   const { groups } = useGroupsStore();
@@ -1011,10 +940,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   // Progressive Disclosure Stage Control (1..4)
   const [stage, setStage] = useState<number>(1);
-  const [maxRevealedStage, setMaxRevealedStage] = useState<number>(1);
   const [stage1Collapsed, setStage1Collapsed] = useState(false);
   const [showFeeBreakdown, setShowFeeBreakdown] = useState(false);
-  const [resolvingAcct, setResolvingAcct] = useState(false);
   const storedDefaultId = useAccountPrefs((s) => s.defaultAccountId);
   const [f, setF] = useState({
     // Pay from the account the customer came from (e.g. the dashboard's
@@ -1078,14 +1005,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     cardlessType: "self" as "self" | "third-party",
   });
 
-  const [lines] = useState<GroupLine[]>([
-    { id: "g1", name: "Ama Serwaa Mensah", dest: "0244 123 456", amount: "500" },
-    { id: "g2", name: "Kwabena Boateng", dest: "0554 987 654", amount: "500" },
-    { id: "g3", name: "Kofi Appiah", dest: "0201 112 233", amount: "500" },
-    { id: "g4", name: "Yaa Asantewaa", dest: "0277 445 566", amount: "500" },
-    { id: "g5", name: "Abena Osei", dest: "0249 333 444", amount: "500" },
-  ]);
-
   const selectBeneficiary = (item: RecentPayeeAvatar) => {
     if (item.rail === "bill") {
       setRail("bill");
@@ -1105,7 +1024,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       }));
       setStage(1);
       setStage1Collapsed(true);
-      setMaxRevealedStage(1);
       return;
     }
 
@@ -1135,7 +1053,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       setBankCategory(item.bank.includes("GCB") ? "gcb" : "other");
       setStage(1);
       setStage1Collapsed(true);
-      setMaxRevealedStage(1);
       return;
     }
 
@@ -1144,7 +1061,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       setF((p) => ({ ...p, benName: item.name, benAcct: item.acct, bank: item.bank || "GCB Bank" }));
       setStage(1);
       setStage1Collapsed(true);
-      setMaxRevealedStage(1);
       return;
     }
 
@@ -1154,7 +1070,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       setWalletCategory("other");
       setStage(1);
       setStage1Collapsed(true);
-      setMaxRevealedStage(1);
       return;
     }
 
@@ -1171,7 +1086,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       }));
       setStage(1);
       setStage1Collapsed(true);
-      setMaxRevealedStage(1);
       return;
     }
 
@@ -1191,7 +1105,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       }));
       setStage(1);
       setStage1Collapsed(true);
-      setMaxRevealedStage(1);
       return;
     }
 
@@ -1205,7 +1118,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       }));
       setStage(1);
       setStage1Collapsed(true);
-      setMaxRevealedStage(1);
       return;
     }
 
@@ -1223,7 +1135,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       }));
       setStage(1);
       setStage1Collapsed(true);
-      setMaxRevealedStage(1);
       return;
     }
 
@@ -1236,7 +1147,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       }));
       setStage(1);
       setStage1Collapsed(true);
-      setMaxRevealedStage(1);
       return;
     }
 
@@ -1250,7 +1160,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       }));
       setStage(1);
       setStage1Collapsed(true);
-      setMaxRevealedStage(1);
       return;
     }
 
@@ -1263,12 +1172,340 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       }));
       setStage(1);
       setStage1Collapsed(true);
-      setMaxRevealedStage(1);
       return;
     }
   };
 
+  // Deep links (?rail=, ?recipient=, ?category=, …) apply once per URL change.
+  // The work lives in applyDeepLink (below the helpers it calls); the ref
+  // always points at the latest version, so it sees current state.
+  const applyDeepLinkRef = useRef<() => void>(() => {});
   useEffect(() => {
+    applyDeepLinkRef.current();
+  }, [searchParams, group, accounts]);
+
+  const set = (k: string, v: unknown) => setF((prev) => ({ ...prev, [k]: v } as typeof prev));
+
+  const account = accounts.find((a) => a.id === f.fromId) ?? accounts[0];
+  const toOwnAccount = accounts.find((a) => a.id === f.toOwnAccountId);
+
+  const availableBundles = useMemo(() => {
+    return getBundlesForNetwork(f.wNetwork);
+  }, [f.wNetwork]);
+
+  const bundle = useMemo(() => {
+    return availableBundles.find((b) => b.id === f.bundleId);
+  }, [availableBundles, f.bundleId]);
+
+  const biller = BILLERS.find((b) => b.id === f.billerId);
+
+  const categoryBeneficiaries = useMemo(() => {
+    if (!billCategory) return RECENT_AVATARS.filter((item) => item.rail === "bill");
+    return RECENT_AVATARS.filter((item) => item.rail === "bill" && item.category === billCategory);
+  }, [billCategory]);
+
+  const selectedGroupObj = useMemo(() => groups.find((g) => g.name === f.groupName), [groups, f.groupName]);
+
+  const activeRailBeneficiaries = useMemo(() => {
+    if (bankCategory === "own" || walletCategory === "self" || rail === "card-topup" || rail === "qr") {
+      return [];
+    }
+    if (rail === "group") {
+      return groups.map((g) => ({
+        id: g.id,
+        name: g.name,
+        initials:
+          g.name
+            .replace(/[^a-zA-Z ]/g, "")
+            .split(" ")
+            .filter(Boolean)
+            .map((w) => w[0])
+            .join("")
+            .slice(0, 2)
+            .toUpperCase() || "GP",
+        rail: "group" as const,
+        bank: `${g.members.length} members`,
+        acct: g.splitType === "equal" ? `GHS ${g.defaultPerMemberAmount} each` : "Custom split",
+      }));
+    }
+    if (rail === "bill") {
+      return categoryBeneficiaries;
+    }
+    if (rail === "bank" || rail === "ach") {
+      if (bankCategory === "gcb") {
+        return RECENT_AVATARS.filter((i) => i.rail === "bank" && i.bank.includes("GCB"));
+      }
+      return RECENT_AVATARS.filter((i) => i.rail === "bank" && !i.bank.includes("GCB"));
+    }
+    if (rail === "wallet-to-bank") {
+      return RECENT_AVATARS.filter((i) => i.rail === "bank" || i.rail === "wallet-to-bank");
+    }
+    return RECENT_AVATARS.filter((i) => i.rail === rail);
+  }, [rail, bankCategory, walletCategory, categoryBeneficiaries, groups]);
+
+  const num = (v: string) => Number(String(v).replace(/[^0-9.]/g, "")) || 0;
+
+  const currentAmount = useMemo(() => {
+    switch (rail) {
+      case "bank":
+      case "ach":
+      case "wallet-to-bank":
+        return num(f.bankAmount || f.wAmount);
+      case "wallet":
+      case "momo":
+        return num(f.wAmount);
+      case "proxy":
+        return num(f.pxAmount);
+      case "group": {
+        const count = selectedGroupObj ? selectedGroupObj.members.length : 5;
+        return num(f.grpAmount) * count;
+      }
+      case "airtime":
+        return num(f.airtimeAmount);
+      case "data":
+        return bundle?.price ?? 0;
+      case "card-topup":
+        return num(f.cardAmount);
+      case "ecg":
+        return num(f.ecgAmount);
+      case "bill":
+        return num(f.billAmount);
+      case "ghanagov":
+        return num(f.govAmount);
+      case "qr":
+        return num(f.qrAmount);
+      case "papss":
+        return num(f.wForeign);
+      default:
+        return 0;
+    }
+  }, [
+    rail,
+    f.bankAmount,
+    f.wAmount,
+    f.pxAmount,
+    f.grpAmount,
+    f.airtimeAmount,
+    bundle?.price,
+    f.cardAmount,
+    f.ecgAmount,
+    f.billAmount,
+    f.govAmount,
+    f.qrAmount,
+    f.wForeign,
+    selectedGroupObj,
+  ]);
+
+  const feeDetails = useMemo(() => {
+    return getDetailedFeeBreakdown({
+      rail,
+      bankCategory,
+      paymentMethod: f.paymentMethod,
+      membersCount: selectedGroupObj?.members.length ?? 5,
+    });
+  }, [rail, bankCategory, f.paymentMethod, selectedGroupObj]);
+
+  const fee = feeDetails.feeAmount;
+
+  const deliverySpeed = useMemo(() => {
+    if ((rail === "bank" && bankCategory === "other") || rail === "ach") {
+      const pm = PAYMENT_METHODS.find((m) => m.id === f.paymentMethod);
+      if (pm) return pm.speed;
+    }
+    return RAIL_FACTS[rail]?.arrives || "Same day";
+  }, [rail, bankCategory, f.paymentMethod]);
+
+  const rate = RATES[f.wCurrency] ?? 1;
+  const papssGhs = roundMoney(num(f.wForeign) * rate);
+  const totalDebit = rail === "papss" ? sumMoney([papssGhs, fee]) : sumMoney([currentAmount, fee]);
+
+  // Live external name enquiry / account verification result
+  const verifiedAccountName = useMemo(() => {
+    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") {
+      if (bankCategory === "own" && rail !== "wallet-to-bank") return ""; // Internal account transfers don't use external name enquiry
+      return resolveAccountName(f.benAcct, f.benName);
+    }
+    if (rail === "wallet" || rail === "momo") {
+      return resolveAccountName(f.wPhone, f.wName);
+    }
+    if (rail === "proxy") {
+      if (f.benName) return f.benName;
+      return resolveAccountName(f.pxId, f.pxId.startsWith("@") ? `${f.pxId.replace("@", "").toUpperCase()} Alias` : "");
+    }
+    if (rail === "data" || rail === "airtime") {
+      if (f.benName) return f.benName;
+      return resolveAccountName(f.aPhone, "");
+    }
+    if (rail === "bill") {
+      const matchedRecent = RECENT_AVATARS.find(
+        (x) => x.rail === "bill" && (x.billerId === f.billerId || x.acct === f.billRef)
+      );
+      if (matchedRecent && f.billRef === matchedRecent.acct) {
+        return `${matchedRecent.name} · ${biller?.name || matchedRecent.bank}`;
+      }
+      if (f.benName && f.billRef.trim().length >= 4) {
+        return `${f.benName} · ${biller?.name || "Biller"}`;
+      }
+      if (f.billRef.trim().length >= 4) {
+        return `${biller?.name || "Biller"} · Ref: ${f.billRef.trim()}`;
+      }
+      return "";
+    }
+    if (rail === "ecg") {
+      if (f.benName) return f.benName;
+      if (f.ecgMeter.trim().length >= 5) {
+        return `ECG Prepaid · Meter: ${f.ecgMeter.trim()}`;
+      }
+      return "";
+    }
+    if (rail === "ghanagov") {
+      if (f.benName) return f.benName;
+      if (f.govRef.trim().length >= 5) {
+        return `Ghana.gov Invoice · ${f.govRef.trim()}`;
+      }
+      return "";
+    }
+    return "";
+  }, [
+    rail,
+    bankCategory,
+    f.benAcct,
+    f.benName,
+    f.wPhone,
+    f.wName,
+    f.pxId,
+    f.aPhone,
+    f.billRef,
+    biller?.name,
+    f.billerId,
+    f.ecgMeter,
+    f.govRef,
+  ]);
+
+  // Overall display name of recipient for Stage 2/3 and receipts
+  const recipientDisplayName = useMemo(() => {
+    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") {
+      if (bankCategory === "own" && rail !== "wallet-to-bank") {
+        return toOwnAccount ? `${toOwnAccount.name} (••${toOwnAccount.number.slice(-4)})` : "My GCB Account";
+      }
+      return verifiedAccountName || f.benName || (f.benAcct ? `Account ${f.benAcct}` : "Beneficiary");
+    }
+    if (rail === "wallet" || rail === "momo") {
+      if (walletCategory === "self") return "My Own Wallet (Self)";
+      return verifiedAccountName || f.wName || (f.wPhone ? `Wallet ${f.wPhone}` : "Recipient");
+    }
+    if (rail === "proxy") return verifiedAccountName || f.pxId || "Proxy Recipient";
+    if (rail === "papss") return f.wBenName || "International Beneficiary";
+    if (rail === "group") return f.groupName || "Group Contribution";
+    if (rail === "data") return verifiedAccountName || (f.aPhone ? `Data Bundle (${f.aPhone})` : "Recipient");
+    if (rail === "airtime") return verifiedAccountName || (f.aPhone ? `Airtime (${f.aPhone})` : "Recipient");
+    if (rail === "card-topup") {
+      const card = CARDS.find((c) => c.id === f.cardId);
+      return card ? `${card.name} (${card.maskedNumber})` : "Card Top up";
+    }
+    if (rail === "bill") {
+      const matchedRecent = RECENT_AVATARS.find(
+        (x) => x.rail === "bill" && (x.billerId === f.billerId || x.acct === f.billRef)
+      );
+      if (matchedRecent && f.billRef === matchedRecent.acct) {
+        return matchedRecent.name;
+      }
+      return f.benName || biller?.name || "Biller";
+    }
+    if (rail === "ecg") return "ECG — Electricity";
+    if (rail === "ghanagov") return f.govService || "Ghana.gov";
+    if (rail === "qr") return f.qrMerchant || "Merchant";
+    return f.benName || "Recipient";
+  }, [
+    rail,
+    bankCategory,
+    walletCategory,
+    toOwnAccount,
+    verifiedAccountName,
+    f.benAcct,
+    f.benName,
+    f.wPhone,
+    f.wName,
+    f.pxId,
+    f.wBenName,
+    f.groupName,
+    f.aPhone,
+    f.cardId,
+    biller?.name,
+    f.billerId,
+    f.billRef,
+    f.govService,
+    f.qrMerchant,
+  ]);
+
+  // Backwards compatibility alias for components expecting resolvedName
+  const resolvedName = recipientDisplayName;
+
+  const reviewAccountLabel = useMemo(() => {
+    if (rail === "card-topup") return "Destination Card";
+    if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") {
+      return "Phone Number";
+    }
+    if (rail === "ecg") return "Meter Number";
+    if (rail === "bill") return biller?.reference || "Account / Reference";
+    if (rail === "ghanagov") return "Invoice / Reference";
+    if (rail === "proxy") return "Proxy ID";
+    if (rail === "group") return "Split Type";
+    if (rail === "qr") return "Terminal / Merchant ID";
+    return "Account";
+  }, [rail, biller?.reference]);
+
+  const reviewAccountValue = useMemo(() => {
+    if (bankCategory === "own" && rail !== "wallet-to-bank") return toOwnAccount?.number ? `••••${toOwnAccount.number.slice(-4)}` : "Own Account";
+    if (rail === "card-topup") {
+      const card = CARDS.find((c) => c.id === f.cardId);
+      return card ? `${card.maskedNumber}` : "Card";
+    }
+    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") return f.benAcct;
+    if (rail === "wallet" || rail === "momo") return f.wPhone;
+    if (rail === "airtime" || rail === "data") return f.aPhone;
+    if (rail === "ecg") return f.ecgMeter;
+    if (rail === "bill") return f.billRef;
+    if (rail === "ghanagov") return f.govRef;
+    if (rail === "proxy") return f.pxId;
+    if (rail === "group") return selectedGroupObj ? `${selectedGroupObj.members.length} members (${selectedGroupObj.splitType === "equal" ? `GHS ${selectedGroupObj.defaultPerMemberAmount} each` : "Custom"})` : "Group";
+    if (rail === "qr") return f.qrRef || "Verified GCB QR";
+    return f.benAcct;
+  }, [bankCategory, toOwnAccount?.number, rail, f.benAcct, f.wPhone, f.aPhone, f.ecgMeter, f.billRef, f.govRef, f.pxId, f.cardId, selectedGroupObj, f.qrRef]);
+
+  const reviewInstitutionLabel = useMemo(() => {
+    if (rail === "card-topup") return "Card Details";
+    if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") {
+      return "Network Provider";
+    }
+    if (rail === "bill" || rail === "ecg") return "Service Provider";
+    if (rail === "ghanagov") return "Agency / Service";
+    return "Bank";
+  }, [rail]);
+
+  const reviewInstitutionValue = useMemo(() => {
+    if (rail === "card-topup") {
+      const card = CARDS.find((c) => c.id === f.cardId);
+      return card ? `${card.scheme} ${card.type} (${card.currency})` : "Prepaid Card";
+    }
+    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") return f.bank || "GCB Bank";
+    if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") return f.wNetwork || "Mobile Money";
+    if (rail === "bill") return biller?.name || "Biller";
+    if (rail === "ecg") return "Electricity Company of Ghana";
+    if (rail === "ghanagov") return f.govService || "Ghana.gov";
+    return "";
+  }, [rail, f.bank, f.wNetwork, biller?.name, f.govService, f.cardId]);
+
+  const handleLookup = (key: keyof typeof f, rawVal: string) => {
+    set(key, rawVal);
+  };
+
+  const handlePhoneLookup = (key: "wPhone" | "aPhone" | "benAcct", rawVal: string) => {
+    const val = rawVal.replace(/[^\d\s]/g, "");
+    handleLookup(key, val);
+  };
+
+  const applyDeepLink = () => {
     const r = searchParams.get("rail") as Rail | null;
     const recipientParam = searchParams.get("recipient");
     const productParam = searchParams.get("product") as "airtime" | "data" | null;
@@ -1429,7 +1666,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         if (matched) {
           selectBeneficiary(matched);
         } else {
-          handleLookup("pxId", decoded, 4);
+          handleLookup("pxId", decoded);
           setStage1Collapsed(true);
         }
       } else if (r === "papss") {
@@ -1450,475 +1687,14 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         if (matched) {
           selectBeneficiary(matched);
         } else {
-          handleLookup("benAcct", decoded, 8);
+          handleLookup("benAcct", decoded);
         }
       }
     }
-  }, [searchParams, group, accounts]);
-
-  const set = (k: string, v: unknown) => setF((prev) => ({ ...prev, [k]: v } as typeof prev));
-
-  const account = accounts.find((a) => a.id === f.fromId) ?? accounts[0];
-  const toOwnAccount = accounts.find((a) => a.id === f.toOwnAccountId);
-
-  const availableBundles = useMemo(() => {
-    return getBundlesForNetwork(f.wNetwork);
-  }, [f.wNetwork]);
-
-  const bundle = useMemo(() => {
-    return availableBundles.find((b) => b.id === f.bundleId);
-  }, [availableBundles, f.bundleId]);
-
-  const biller = BILLERS.find((b) => b.id === f.billerId);
-
-  const availableBillers = useMemo(() => {
-    if (!billCategory) return BILLERS;
-    return BILLERS.filter((b) => b.category === billCategory);
-  }, [billCategory]);
-
-  const categoryBeneficiaries = useMemo(() => {
-    if (!billCategory) return RECENT_AVATARS.filter((item) => item.rail === "bill");
-    return RECENT_AVATARS.filter((item) => item.rail === "bill" && item.category === billCategory);
-  }, [billCategory]);
-
-  const selectedGroupObj = useMemo(() => groups.find((g) => g.name === f.groupName), [groups, f.groupName]);
-
-  const activeRailBeneficiaries = useMemo(() => {
-    if (bankCategory === "own" || walletCategory === "self" || rail === "card-topup" || rail === "qr") {
-      return [];
-    }
-    if (rail === "group") {
-      return groups.map((g) => ({
-        id: g.id,
-        name: g.name,
-        initials:
-          g.name
-            .replace(/[^a-zA-Z ]/g, "")
-            .split(" ")
-            .filter(Boolean)
-            .map((w) => w[0])
-            .join("")
-            .slice(0, 2)
-            .toUpperCase() || "GP",
-        rail: "group" as const,
-        bank: `${g.members.length} members`,
-        acct: g.splitType === "equal" ? `GHS ${g.defaultPerMemberAmount} each` : "Custom split",
-      }));
-    }
-    if (rail === "bill") {
-      return categoryBeneficiaries;
-    }
-    if (rail === "bank" || rail === "ach") {
-      if (bankCategory === "gcb") {
-        return RECENT_AVATARS.filter((i) => i.rail === "bank" && i.bank.includes("GCB"));
-      }
-      return RECENT_AVATARS.filter((i) => i.rail === "bank" && !i.bank.includes("GCB"));
-    }
-    if (rail === "wallet-to-bank") {
-      return RECENT_AVATARS.filter((i) => i.rail === "bank" || i.rail === "wallet-to-bank");
-    }
-    return RECENT_AVATARS.filter((i) => i.rail === rail);
-  }, [rail, bankCategory, walletCategory, categoryBeneficiaries, groups]);
-
-  const num = (v: string) => Number(String(v).replace(/[^0-9.]/g, "")) || 0;
-  const groupTotal = sumMoney(lines.map((l) => num(l.amount)));
-
-  const currentAmount = useMemo(() => {
-    switch (rail) {
-      case "bank":
-      case "ach":
-      case "wallet-to-bank":
-        return num(f.bankAmount || f.wAmount);
-      case "wallet":
-      case "momo":
-        return num(f.wAmount);
-      case "proxy":
-        return num(f.pxAmount);
-      case "group": {
-        const count = selectedGroupObj ? selectedGroupObj.members.length : 5;
-        return num(f.grpAmount) * count;
-      }
-      case "airtime":
-        return num(f.airtimeAmount);
-      case "data":
-        return bundle?.price ?? 0;
-      case "card-topup":
-        return num(f.cardAmount);
-      case "ecg":
-        return num(f.ecgAmount);
-      case "bill":
-        return num(f.billAmount);
-      case "ghanagov":
-        return num(f.govAmount);
-      case "qr":
-        return num(f.qrAmount);
-      case "papss":
-        return num(f.wForeign);
-      default:
-        return 0;
-    }
-  }, [
-    rail,
-    f.bankAmount,
-    f.wAmount,
-    f.pxAmount,
-    f.grpAmount,
-    f.airtimeAmount,
-    bundle?.price,
-    f.cardAmount,
-    f.ecgAmount,
-    f.billAmount,
-    f.govAmount,
-    f.qrAmount,
-    f.wForeign,
-    selectedGroupObj,
-  ]);
-
-  const feeDetails = useMemo(() => {
-    return getDetailedFeeBreakdown({
-      rail,
-      bankCategory,
-      paymentMethod: f.paymentMethod,
-      membersCount: selectedGroupObj?.members.length ?? 5,
-    });
-  }, [rail, bankCategory, f.paymentMethod, selectedGroupObj]);
-
-  const fee = feeDetails.feeAmount;
-
-  const deliverySpeed = useMemo(() => {
-    if ((rail === "bank" && bankCategory === "other") || rail === "ach") {
-      const pm = PAYMENT_METHODS.find((m) => m.id === f.paymentMethod);
-      if (pm) return pm.speed;
-    }
-    return RAIL_FACTS[rail]?.arrives || "Same day";
-  }, [rail, bankCategory, f.paymentMethod]);
-
-  const rate = RATES[f.wCurrency] ?? 1;
-  const papssGhs = roundMoney(num(f.wForeign) * rate);
-  const totalDebit = rail === "papss" ? sumMoney([papssGhs, fee]) : sumMoney([currentAmount, fee]);
-  const overBalance = rail === "wallet-to-bank" ? totalDebit > 1450 : totalDebit > (account?.available ?? 0);
-
-  // Live external name enquiry / account verification result
-  const verifiedAccountName = useMemo(() => {
-    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") {
-      if (bankCategory === "own" && rail !== "wallet-to-bank") return ""; // Internal account transfers don't use external name enquiry
-      return resolveAccountName(f.benAcct, f.benName);
-    }
-    if (rail === "wallet" || rail === "momo") {
-      return resolveAccountName(f.wPhone, f.wName);
-    }
-    if (rail === "proxy") {
-      if (f.benName) return f.benName;
-      return resolveAccountName(f.pxId, f.pxId.startsWith("@") ? `${f.pxId.replace("@", "").toUpperCase()} Alias` : "");
-    }
-    if (rail === "data" || rail === "airtime") {
-      if (f.benName) return f.benName;
-      return resolveAccountName(f.aPhone, "");
-    }
-    if (rail === "bill") {
-      const matchedRecent = RECENT_AVATARS.find(
-        (x) => x.rail === "bill" && (x.billerId === f.billerId || x.acct === f.billRef)
-      );
-      if (matchedRecent && f.billRef === matchedRecent.acct) {
-        return `${matchedRecent.name} · ${biller?.name || matchedRecent.bank}`;
-      }
-      if (f.benName && f.billRef.trim().length >= 4) {
-        return `${f.benName} · ${biller?.name || "Biller"}`;
-      }
-      if (f.billRef.trim().length >= 4) {
-        return `${biller?.name || "Biller"} · Ref: ${f.billRef.trim()}`;
-      }
-      return "";
-    }
-    if (rail === "ecg") {
-      if (f.benName) return f.benName;
-      if (f.ecgMeter.trim().length >= 5) {
-        return `ECG Prepaid · Meter: ${f.ecgMeter.trim()}`;
-      }
-      return "";
-    }
-    if (rail === "ghanagov") {
-      if (f.benName) return f.benName;
-      if (f.govRef.trim().length >= 5) {
-        return `Ghana.gov Invoice · ${f.govRef.trim()}`;
-      }
-      return "";
-    }
-    return "";
-  }, [
-    rail,
-    bankCategory,
-    f.benAcct,
-    f.benName,
-    f.wPhone,
-    f.wName,
-    f.pxId,
-    f.aPhone,
-    f.billRef,
-    biller?.name,
-    f.billerId,
-    f.ecgMeter,
-    f.govRef,
-  ]);
-
-  // Overall display name of recipient for Stage 2/3 and receipts
-  const recipientDisplayName = useMemo(() => {
-    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") {
-      if (bankCategory === "own" && rail !== "wallet-to-bank") {
-        return toOwnAccount ? `${toOwnAccount.name} (••${toOwnAccount.number.slice(-4)})` : "My GCB Account";
-      }
-      return verifiedAccountName || f.benName || (f.benAcct ? `Account ${f.benAcct}` : "Beneficiary");
-    }
-    if (rail === "wallet" || rail === "momo") {
-      if (walletCategory === "self") return "My Own Wallet (Self)";
-      return verifiedAccountName || f.wName || (f.wPhone ? `Wallet ${f.wPhone}` : "Recipient");
-    }
-    if (rail === "proxy") return verifiedAccountName || f.pxId || "Proxy Recipient";
-    if (rail === "papss") return f.wBenName || "International Beneficiary";
-    if (rail === "group") return f.groupName || "Group Contribution";
-    if (rail === "data") return verifiedAccountName || (f.aPhone ? `Data Bundle (${f.aPhone})` : "Recipient");
-    if (rail === "airtime") return verifiedAccountName || (f.aPhone ? `Airtime (${f.aPhone})` : "Recipient");
-    if (rail === "card-topup") {
-      const card = CARDS.find((c) => c.id === f.cardId);
-      return card ? `${card.name} (${card.maskedNumber})` : "Card Top up";
-    }
-    if (rail === "bill") {
-      const matchedRecent = RECENT_AVATARS.find(
-        (x) => x.rail === "bill" && (x.billerId === f.billerId || x.acct === f.billRef)
-      );
-      if (matchedRecent && f.billRef === matchedRecent.acct) {
-        return matchedRecent.name;
-      }
-      return f.benName || biller?.name || "Biller";
-    }
-    if (rail === "ecg") return "ECG — Electricity";
-    if (rail === "ghanagov") return f.govService || "Ghana.gov";
-    if (rail === "qr") return f.qrMerchant || "Merchant";
-    return f.benName || "Recipient";
-  }, [
-    rail,
-    bankCategory,
-    walletCategory,
-    toOwnAccount,
-    verifiedAccountName,
-    f.benAcct,
-    f.benName,
-    f.wPhone,
-    f.wName,
-    f.pxId,
-    f.wBenName,
-    f.groupName,
-    f.aPhone,
-    f.cardId,
-    biller?.name,
-    f.billerId,
-    f.billRef,
-    f.govService,
-    f.qrMerchant,
-  ]);
-
-  // Subtitle description of recipient for collapsed summary badge
-  const recipientSubtitle = useMemo(() => {
-    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") {
-      if (bankCategory === "own" && rail !== "wallet-to-bank") {
-        return `GCB Bank • Own Account (••${toOwnAccount?.number?.slice(-4) || "4891"})`;
-      }
-      return `${f.bank || "GCB Bank"} • ${f.benAcct}`;
-    }
-    if (rail === "wallet" || rail === "momo") {
-      if (walletCategory === "self") return "MTN Mobile Money • 0244 123 821";
-      return `${f.wNetwork || "Mobile Money"} • ${f.wPhone}`;
-    }
-    if (rail === "proxy") return `Proxy • ${f.pxId}`;
-    if (rail === "papss") return `${f.wBank} (${f.wCountry}) • ${f.wIban}`;
-    if (rail === "data") return `${f.wNetwork || "Mobile Network"} • ${f.aPhone}`;
-    if (rail === "airtime") return `${f.wNetwork || "Mobile Network"} • ${f.aPhone}`;
-    if (rail === "card-topup") {
-      const card = CARDS.find((c) => c.id === f.cardId);
-      return card ? `${card.scheme} ${card.type} • Balance: ${formatMoney(card.balance ?? 0, card.currency, true)}` : "Prepaid / Virtual Card";
-    }
-    if (rail === "bill") return `${biller?.name || "Biller"} • ${f.billRef}`;
-    if (rail === "ecg") return `Meter: ${f.ecgMeter}`;
-    if (rail === "ghanagov") return `Invoice: ${f.govRef}`;
-    if (rail === "group") return f.groupName;
-    return f.benAcct || "";
-  }, [
-    rail,
-    bankCategory,
-    walletCategory,
-    toOwnAccount,
-    f.bank,
-    f.benAcct,
-    f.wNetwork,
-    f.wPhone,
-    f.pxId,
-    f.wBank,
-    f.wCountry,
-    f.wIban,
-    f.aPhone,
-    f.cardId,
-    biller?.name,
-    f.billRef,
-    f.ecgMeter,
-    f.govRef,
-    f.groupName,
-  ]);
-
-  // Backwards compatibility alias for components expecting resolvedName
-  const resolvedName = recipientDisplayName;
-
-  const reviewAccountLabel = useMemo(() => {
-    if (rail === "card-topup") return "Destination Card";
-    if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") {
-      return "Phone Number";
-    }
-    if (rail === "ecg") return "Meter Number";
-    if (rail === "bill") return biller?.reference || "Account / Reference";
-    if (rail === "ghanagov") return "Invoice / Reference";
-    if (rail === "proxy") return "Proxy ID";
-    if (rail === "group") return "Split Type";
-    if (rail === "qr") return "Terminal / Merchant ID";
-    return "Account";
-  }, [rail, biller?.reference]);
-
-  const reviewAccountValue = useMemo(() => {
-    if (bankCategory === "own" && rail !== "wallet-to-bank") return toOwnAccount?.number ? `••••${toOwnAccount.number.slice(-4)}` : "Own Account";
-    if (rail === "card-topup") {
-      const card = CARDS.find((c) => c.id === f.cardId);
-      return card ? `${card.maskedNumber}` : "Card";
-    }
-    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") return f.benAcct;
-    if (rail === "wallet" || rail === "momo") return f.wPhone;
-    if (rail === "airtime" || rail === "data") return f.aPhone;
-    if (rail === "ecg") return f.ecgMeter;
-    if (rail === "bill") return f.billRef;
-    if (rail === "ghanagov") return f.govRef;
-    if (rail === "proxy") return f.pxId;
-    if (rail === "group") return selectedGroupObj ? `${selectedGroupObj.members.length} members (${selectedGroupObj.splitType === "equal" ? `GHS ${selectedGroupObj.defaultPerMemberAmount} each` : "Custom"})` : "Group";
-    if (rail === "qr") return f.qrRef || "Verified GCB QR";
-    return f.benAcct;
-  }, [bankCategory, toOwnAccount?.number, rail, f.benAcct, f.wPhone, f.aPhone, f.ecgMeter, f.billRef, f.govRef, f.pxId, f.cardId, selectedGroupObj, f.qrRef]);
-
-  const reviewInstitutionLabel = useMemo(() => {
-    if (rail === "card-topup") return "Card Details";
-    if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") {
-      return "Network Provider";
-    }
-    if (rail === "bill" || rail === "ecg") return "Service Provider";
-    if (rail === "ghanagov") return "Agency / Service";
-    return "Bank";
-  }, [rail]);
-
-  const reviewInstitutionValue = useMemo(() => {
-    if (rail === "card-topup") {
-      const card = CARDS.find((c) => c.id === f.cardId);
-      return card ? `${card.scheme} ${card.type} (${card.currency})` : "Prepaid Card";
-    }
-    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") return f.bank || "GCB Bank";
-    if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") return f.wNetwork || "Mobile Money";
-    if (rail === "bill") return biller?.name || "Biller";
-    if (rail === "ecg") return "Electricity Company of Ghana";
-    if (rail === "ghanagov") return f.govService || "Ghana.gov";
-    return "";
-  }, [rail, f.bank, f.wNetwork, biller?.name, f.govService, f.cardId]);
-
-  // Stage 1 Validation
-  const isStage1Valid = useMemo(() => {
-    if (resolvingAcct) return false;
-    switch (rail) {
-      case "bank":
-      case "ach":
-      case "wallet-to-bank":
-        if (rail === "wallet-to-bank") {
-          return f.benAcct.replace(/\s/g, "").length >= 8 && Boolean(verifiedAccountName);
-        }
-        if (bankCategory === "own") {
-          return Boolean(f.toOwnAccountId) && f.toOwnAccountId !== f.fromId;
-        }
-        return f.benAcct.replace(/\s/g, "").length >= 8 && Boolean(verifiedAccountName);
-      case "wallet":
-      case "momo":
-        if (walletCategory === "self") return true;
-        return f.wPhone.replace(/\s/g, "").length >= 9 && Boolean(verifiedAccountName);
-      case "proxy":
-        return f.pxId.trim().length >= 4 && Boolean(verifiedAccountName);
-      case "group":
-        return Boolean(f.groupName);
-      case "papss":
-        return f.wBenName.trim().length >= 3 && f.wIban.trim().length >= 6;
-      case "data":
-        return f.aPhone.replace(/\s/g, "").length >= 9 && Boolean(verifiedAccountName);
-      case "airtime":
-        return f.aPhone.replace(/\s/g, "").length >= 9 && Boolean(verifiedAccountName);
-      case "card-topup":
-        return Boolean(f.cardId);
-      case "ecg":
-        return f.ecgMeter.trim().length >= 5;
-      case "bill":
-        return Boolean(f.billerId) && f.billRef.trim().length >= 4;
-      case "ghanagov":
-        return Boolean(f.govService) && f.govRef.trim().length >= 4;
-      case "qr":
-        return Boolean(f.qrMerchant);
-      default:
-        return true;
-    }
-  }, [
-    rail,
-    bankCategory,
-    walletCategory,
-    resolvingAcct,
-    f.toOwnAccountId,
-    f.fromId,
-    f.benAcct,
-    f.bank,
-    verifiedAccountName,
-    f.wPhone,
-    f.pxId,
-    f.groupName,
-    f.wBenName,
-    f.wIban,
-    f.aPhone,
-    f.cardId,
-    f.ecgMeter,
-    f.billRef,
-    f.billerId,
-    f.govRef,
-    f.govService,
-    f.qrMerchant,
-  ]);
-
-  // Stage 2 Validation
-  const isStage2Valid = useMemo(() => {
-    return currentAmount > 0 && !overBalance;
-  }, [currentAmount, overBalance]);
-
-  const proceedToStage = (nextStage: number) => {
-    setStage(nextStage);
-    setMaxRevealedStage((prev) => Math.max(prev, nextStage));
   };
-
-  const editStage = (stageToEdit: number) => {
-    setStage(stageToEdit);
-  };
-
-  const handleLookup = (key: keyof typeof f, rawVal: string, minLength: number = 8) => {
-    set(key, rawVal);
-    const clean = rawVal.replace(/\s/g, "");
-    if (clean.length >= minLength) {
-      setResolvingAcct(true);
-      setTimeout(() => {
-        setResolvingAcct(false);
-      }, 300);
-    } else {
-      setResolvingAcct(false);
-    }
-  };
-
-  const handlePhoneLookup = (key: "wPhone" | "aPhone" | "benAcct", rawVal: string) => {
-    const val = rawVal.replace(/[^\d\s]/g, "");
-    handleLookup(key, val, 8);
-  };
+  useLayoutEffect(() => {
+    applyDeepLinkRef.current = applyDeepLink;
+  });
 
   const confirm = (codeOverride?: string | string[]) => {
     if (!auth.verify(codeOverride) || phase === "submitting") return;
@@ -2228,7 +2004,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         onSecondaryAction={() => {
           setPhase("form");
           setStage(1);
-          setMaxRevealedStage(1);
           setBankCategory(null);
           setWalletCategory(null);
           setCardlessCategory(null);
@@ -2390,7 +2165,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               }));
               setStage(1);
               setStage1Collapsed(false);
-              setMaxRevealedStage(1);
             }}
             className="p-4.5"
           />
@@ -2404,7 +2178,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setF((p) => ({ ...p, bank: "GCB Bank", benAcct: "", benName: "", bankAmount: "", bankRef: "" }));
               setStage(1);
               setStage1Collapsed(false);
-              setMaxRevealedStage(1);
             }}
             className="p-4.5"
           />
@@ -2418,7 +2191,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setF((p) => ({ ...p, bank: "", benAcct: "", benName: "", paymentMethod: "", bankAmount: "", bankRef: "" }));
               setStage(1);
               setStage1Collapsed(false);
-              setMaxRevealedStage(1);
             }}
             className="p-4.5"
           />
@@ -2433,7 +2205,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setF((p) => ({ ...p, wCountry: "United States", wCurrency: "USD", wBenName: "", wIban: "", wBank: "", wSwift: "", wForeign: "", wireRef: "" }));
               setStage(1);
               setStage1Collapsed(false);
-              setMaxRevealedStage(1);
             }}
             className="p-4.5"
           />
@@ -2504,7 +2275,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 wRef: "",
               }));
               setStage(1);
-              setMaxRevealedStage(1);
               setStage1Collapsed(true);
             }}
             className="p-4.5"
@@ -2525,7 +2295,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 wRef: "",
               }));
               setStage(1);
-              setMaxRevealedStage(1);
               setStage1Collapsed(false);
             }}
             className="p-4.5"
@@ -2572,7 +2341,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   wRef: "",
                 }));
                 setStage(1);
-                setMaxRevealedStage(1);
                 setStage1Collapsed(true);
               }}
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
@@ -2612,7 +2380,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 wRef: "",
               }));
               setStage(1);
-              setMaxRevealedStage(1);
               setStage1Collapsed(true);
             }}
             className="p-4.5"
@@ -2633,7 +2400,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 wRef: "",
               }));
               setStage(1);
-              setMaxRevealedStage(1);
               setStage1Collapsed(false);
             }}
             className="p-4.5"
@@ -2776,7 +2542,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   setF((p) => ({ ...p, billerId: "", billRef: "", benName: "" }));
                   setStage(1);
                   setStage1Collapsed(false);
-                  setMaxRevealedStage(1);
                 }}
               />
             );
@@ -2835,7 +2600,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setProxyCategory("transfer");
               setF((p) => ({ ...p, pxId: "", benName: "", bankAmount: "", bankRef: "" }));
               setStage(1);
-              setMaxRevealedStage(1);
               setStage1Collapsed(false);
             }}
             className="p-4.5"
@@ -2984,7 +2748,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setGroupCategory("transfer");
               setF((p) => ({ ...p, groupName: "", grpAmount: "", grpRef: "" }));
               setStage(1);
-              setMaxRevealedStage(1);
               setStage1Collapsed(false);
             }}
             className="p-4.5"
@@ -3068,7 +2831,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 bundleId: isData ? getBundlesForNetwork(net)[0]?.id || p.bundleId : p.bundleId,
               }));
               setStage(1);
-              setMaxRevealedStage(1);
               setStage1Collapsed(true);
             }}
             className="p-4.5"
@@ -3089,7 +2851,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 bundleId: "",
               }));
               setStage(1);
-              setMaxRevealedStage(1);
               setStage1Collapsed(false);
             }}
             className="p-4.5"

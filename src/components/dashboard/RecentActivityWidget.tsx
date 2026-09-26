@@ -5,16 +5,8 @@ import {
   ChevronRight,
   Download,
   RotateCw,
-  CheckCircle2,
   ArrowDownLeft,
   ArrowUpRight,
-  ShoppingBag,
-  Fuel,
-  Zap,
-  Briefcase,
-  PiggyBank,
-  Globe,
-  CreditCard,
 } from "lucide-react";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import type { Transaction } from "@/lib/mock-data";
@@ -32,25 +24,6 @@ import {
 
 interface RecentActivityWidgetProps {
   transactions?: Transaction[];
-}
-
-function getCategoryIcon(category: string) {
-  switch (category) {
-    case "Groceries":
-      return ShoppingBag;
-    case "Transport":
-      return Fuel;
-    case "Utilities":
-      return Zap;
-    case "Income":
-      return Briefcase;
-    case "Savings":
-      return PiggyBank;
-    case "Shopping":
-      return Globe;
-    default:
-      return CreditCard;
-  }
 }
 
 export function RecentActivityWidget({ transactions = [] }: RecentActivityWidgetProps) {

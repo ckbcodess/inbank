@@ -13,9 +13,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
-  ArrowUpRight,
   CheckCircle2,
   ChevronDown,
   Globe,
@@ -28,7 +26,6 @@ import {
   Smartphone,
   Trash2,
   User,
-  Users,
   Wallet,
   X,
 } from "lucide-react";
@@ -315,22 +312,7 @@ function initials(name: string) {
   );
 }
 
-function detectNetworkFromPhone(phone: string): string {
-  const clean = phone.replace(/[^0-9]/g, "");
-  if (clean.startsWith("024") || clean.startsWith("054") || clean.startsWith("055") || clean.startsWith("059")) {
-    return "MTN Mobile Money";
-  }
-  if (clean.startsWith("020") || clean.startsWith("050")) {
-    return "Telecel Cash";
-  }
-  if (clean.startsWith("027") || clean.startsWith("057") || clean.startsWith("026")) {
-    return "AT Money";
-  }
-  return "MTN Mobile Money";
-}
-
 export default function BeneficiariesPage() {
-  const router = useRouter();
   const activeProfile = useSession((s) => s.activeProfile);
   const isCorporate = activeProfile?.kind === "CORPORATE";
 
@@ -398,10 +380,6 @@ export default function BeneficiariesPage() {
   const [editGroupModalOpen, setEditGroupModalOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<PaymentGroup | null>(null);
   const [removeGroupId, setRemoveGroupId] = useState<string | null>(null);
-
-  function flash(msg: string) {
-    toast.success(msg);
-  }
 
   // Split beneficiaries into People and Billers
   const peopleBeneficiaries = useMemo(() => {

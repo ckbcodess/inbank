@@ -14,10 +14,8 @@
 
 import { useMemo, useState } from "react";
 import {
-  AlertCircle,
   ArrowUpDown,
   ChevronDown,
-  RefreshCw,
   TrendingDown,
   TrendingUp,
 } from "lucide-react";

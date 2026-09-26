@@ -45,6 +45,20 @@ export function RouteLoadingProvider({ children }: { children?: React.ReactNode 
     safetyTimerRef.current = null;
   }, []);
 
+  const finish = useCallback(() => {
+    clearTimers();
+    setProgress(100);
+    setLoading(false);
+
+    // Gracefully fade out after reaching 100%
+    setTimeout(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setProgress(0);
+      }, 200);
+    }, 240);
+  }, [clearTimers]);
+
   const start = useCallback(() => {
     clearTimers();
     setVisible(true);
@@ -64,21 +78,7 @@ export function RouteLoadingProvider({ children }: { children?: React.ReactNode 
     safetyTimerRef.current = setTimeout(() => {
       finish();
     }, 6000);
-  }, [clearTimers]);
-
-  const finish = useCallback(() => {
-    clearTimers();
-    setProgress(100);
-    setLoading(false);
-
-    // Gracefully fade out after reaching 100%
-    setTimeout(() => {
-      setVisible(false);
-      setTimeout(() => {
-        setProgress(0);
-      }, 200);
-    }, 240);
-  }, [clearTimers]);
+  }, [clearTimers, finish]);
 
   useEffect(() => {
     const handleStart = () => start();

@@ -7,10 +7,9 @@ import {
   Flashlight,
   QrCode,
   Store,
-  Upload,
   X,
 } from "lucide-react";
-import { Account, formatMoney } from "@/lib/mock-data";
+import { Account } from "@/lib/mock-data";
 import {
   FromAccountSelector,
   AmountInput,
