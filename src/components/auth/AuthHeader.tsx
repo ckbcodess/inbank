@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import LanguageToggle from "@/components/layout/LanguageToggle";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { switchTheme } from "@/lib/theme-transition";
 
 export default function AuthHeader() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -19,13 +20,8 @@ export default function AuthHeader() {
   }, []);
 
   function toggleTheme() {
-    if (theme === "light") {
-      document.documentElement.classList.add("dark");
-      setTheme("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      setTheme("light");
-    }
+    const next = theme === "light" ? "dark" : "light";
+    switchTheme(next, () => setTheme(next));
   }
 
   return (

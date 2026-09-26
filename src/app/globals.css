@@ -150,6 +150,24 @@
   /* Brand gradient: deep amber → brighter golden glow at bottom */
   --primary-gradient-from: #fdc307;
   --primary-gradient-to: #f59e0b;
+  /* Dashboard hero panel (Figma 1945:5108): a slate card with white type here; near-black with white type in dark. */
+  --hero-surface: #36434e;
+  /* The card is flat; the slow waves of light that drift across it are its gradient.
+     Mirrors HERO_WAVE_DEFAULTS in src/lib/hero-wave.ts — change both together. */
+  --hero-wave: color-mix(in srgb, #b1c3d2 59%, transparent);
+  --hero-border: #2c3740;
+  --hero-foreground: #ffffff;
+  /* Multiplied onto whatever is behind the account pill, so it tints to match. */
+  --hero-pill-shadow: #7d8a94;
+  /* The pointer-following rim light on the dashboard sheet. */
+  --sheet-rim: rgb(17 20 21 / 0.3);
+  /* Dashboard app promo (Figma 1945:5548): gold radial stops + the lenticular sheen. */
+  --promo-gold-1: #f9c632;
+  --promo-gold-2: #f5bc19;
+  --promo-gold-3: #f2b60d;
+  --promo-gold-4: #f0b100;
+  --promo-sheen: rgb(255 255 255 / 0.13);
+  --promo-shade: rgb(128 36 40 / 0.05);
   /* Uniform interaction tokens — derived from --primary so they follow the brand color */
   --hover: oklch(0 0 0 / 4%);
   --ripple-color: currentColor;
@@ -251,6 +269,20 @@
   --sidebar-ring: oklch(0.78 0.15 86.7);
   --primary-gradient-from: #fdc307;
   --primary-gradient-to: #d97706;
+  --hero-surface: #13181b;
+  /* Mirrors HERO_WAVE_DEFAULTS in src/lib/hero-wave.ts — change both together. */
+  --hero-wave: color-mix(in srgb, #455e68 77%, transparent);
+  --hero-border: #31353c;
+  --hero-foreground: #ffffff;
+  --hero-pill-shadow: #000000;
+  --sheet-rim: rgb(255 255 255 / 0.5);
+  /* Dashboard app promo (Figma 1945:5548): gold radial stops + the lenticular sheen. */
+  --promo-gold-1: #f9c632;
+  --promo-gold-2: #f5bc19;
+  --promo-gold-3: #f2b60d;
+  --promo-gold-4: #f0b100;
+  --promo-sheen: rgb(255 255 255 / 0.13);
+  --promo-shade: rgb(128 36 40 / 0.05);
   /* Uniform interaction tokens — derived from --primary so they follow the brand color */
   --hover: oklch(1 0 0 / 5%);
   --ripple-color: currentColor;
@@ -564,4 +596,53 @@ select {
 .dark [role="dialog"] [data-slot="select-trigger"]:focus-visible {
   background-color: rgba(255, 255, 255, 0.10);
   border-color: var(--primary);
+}
+
+/* Dashboard hero: a very slow, subtle wave of light across the gradient.
+   Tunable from Dev Mode → Tools → Wave tuner (see src/lib/hero-wave.ts). */
+/* Movement only — scaling makes the browser stretch the layer, which widens bands. */
+@keyframes hero-wave-a {
+  0%, 100% { transform: translate3d(calc(var(--wave-drift, 6%) * -1), 0, 0); }
+  50% { transform: translate3d(var(--wave-drift, 6%), calc(var(--wave-drift, 6%) * -0.66), 0); }
+}
+@keyframes hero-wave-b {
+  0%, 100% { transform: translate3d(calc(var(--wave-drift, 6%) * 0.83), calc(var(--wave-drift, 6%) * -0.33), 0); }
+  50% { transform: translate3d(calc(var(--wave-drift, 6%) * -0.83), calc(var(--wave-drift, 6%) * 0.5), 0); }
+}
+.hero-wave-a { animation: hero-wave-a var(--wave-speed-a, 18s) ease-in-out infinite var(--wave-play, running); }
+.hero-wave-b { animation: hero-wave-b var(--wave-speed-b, 26s) ease-in-out infinite var(--wave-play, running); }
+@media (prefers-reduced-motion: reduce) {
+  .hero-wave-a, .hero-wave-b { animation: none; }
+}
+
+/* Dashboard sheet rim light (hero-parts.tsx): registered so its strength eases. */
+@property --rim-o {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+/* ── Theme switch (src/lib/theme-transition.ts) ─────────────────────────────
+   A quick cross-fade of the whole page as one layer. Only theme switches start
+   a view transition in this app, so the root fade is tuned globally. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 250ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* During the fade, no element runs its own transition — they'd animate out of step. */
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+  transition: none !important;
+}
+/* Fallback without View Transitions: colours only, briefly. */
+html.theme-fade,
+html.theme-fade *,
+html.theme-fade *::before,
+html.theme-fade *::after {
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease !important;
 }

@@ -294,3 +294,22 @@ The dashboard kit at `src/components/dashboard/v2/MinimalKit.tsx` is the canonic
 source of these primitives — `BalanceHeadline`, `TrendChart`, `Eyebrow`, `SectionHeader`,
 `Panel`, `AccountsDisclosure`, `AttentionBand`, `AllocationBar`/`DotLegend`. Reuse and
 extend these rather than reinventing a denser pattern.
+
+### E. Phone scale (below `sm`, ~360–430px)
+The dashboard is the reference (`src/components/dashboard/v2/parts.tsx` + `layouts/`).
+Desktop values are unchanged; these apply below `sm` only.
+- **Balance is the loudest thing on screen.** Greeting drops to `text-[20px]` (26px from
+  `sm`); the currency code shrinks to `0.6em` beside the digits. The hero must fit a
+  seven-figure balance (`GHS 1,284,530.44`) on one line at 360px, so `xl` is 34px on a phone.
+- **Actions sit under the balance, never beside the greeting.** Use
+  `<MoneyActions variant="row" className="sm:hidden" />` (three equal columns, 48px icon
+  circle over a 12.5px label, primary action filled) and hide the pill version with
+  `className="hidden sm:flex"`. Pills that wrap into a ragged second row are the failure mode.
+- **Panels: 16px inside a 16px gutter.** `p-4 gap-3` on a phone, `sm:p-6 sm:gap-6`; section
+  stack `gap-6` (`sm:gap-8`–`10`), card grid `gap-4` (`sm:gap-6`). Page top padding is `pt-6`.
+- **Group small stats into one panel of rows** on a phone rather than stacking one boxed
+  tile per figure; they become tiles again from `sm`.
+- **Nothing that only works on a desktop.** The app-download QR banner is hidden on a phone
+  (a screen can't scan itself).
+- Header links like "View all" keep a taller hit area (`-my-2 py-2`) so they're thumb-sized
+  without shifting the text.

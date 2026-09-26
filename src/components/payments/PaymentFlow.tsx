@@ -17,25 +17,18 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   AlertCircle,
   ArrowLeftRight,
-  Building2,
   Check,
   CheckCircle2,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   ChevronUp,
-  Church,
   Globe,
-  GraduationCap,
-  Heart,
   Landmark,
   Pencil,
   Plus,
-  Receipt,
   Smartphone,
-  Store,
   Trash2,
-  Tv,
   User,
   Users,
 } from "lucide-react";
@@ -61,6 +54,7 @@ import {
   SpendCategory,
 } from "@/lib/mock-data";
 import { useGroupsStore } from "@/lib/groups-store";
+import { GCB_PAY_CATEGORIES } from "@/lib/payment-options";
 import { useProxyStore, PROXY_TYPE_LABEL } from "@/lib/proxy-store";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import ProxyIdModal from "@/components/payments/ProxyIdModal";
@@ -72,6 +66,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useSession } from "@/lib/session-store";
+import { resolveDefaultAccountId, useAccountPrefs } from "@/lib/accounts-store";
 import { roundMoney, sumMoney } from "@/lib/money";
 import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
 import TransactionPinModal from "./TransactionPinModal";
@@ -225,20 +220,8 @@ const RAIL_LABEL: Record<Rail, string> = {
   cardless: "Cardless Withdrawal",
 };
 
-export const GCB_PAY_CATEGORIES: {
-  id: BillerCategory;
-  title: string;
-  icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string; "aria-hidden"?: boolean | "true" | "false" }>;
-}[] = [
-  { id: "Bills & Utilities", title: "Bills & Utilities", icon: Receipt },
-  { id: "Education", title: "Education", icon: GraduationCap },
-  { id: "Giving & Donations", title: "Giving & Donations", icon: Church },
-  { id: "Government Services", title: "Government Services", icon: Building2 },
-  { id: "Healthcare", title: "Healthcare", icon: Heart },
-  { id: "Merchant Payments", title: "Merchant Payments", icon: Store },
-  { id: "Others", title: "Others", icon: Plus },
-  { id: "Subscriptions", title: "Subscriptions", icon: Tv },
-];
+// Shared with the dashboard's Pay Bill picker — one list, one source.
+export { GCB_PAY_CATEGORIES };
 
 interface RecentPayeeAvatar {
   id: string;
@@ -1032,8 +1015,15 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const [stage1Collapsed, setStage1Collapsed] = useState(false);
   const [showFeeBreakdown, setShowFeeBreakdown] = useState(false);
   const [resolvingAcct, setResolvingAcct] = useState(false);
+  const storedDefaultId = useAccountPrefs((s) => s.defaultAccountId);
   const [f, setF] = useState({
-    fromId: accounts[0]?.id ?? "",
+    // Pay from the account the customer came from (e.g. the dashboard's
+    // selected account), else their default.
+    fromId:
+      accounts.find((a) => a.id === searchParams.get("from"))?.id ??
+      resolveDefaultAccountId(accounts, storedDefaultId) ??
+      accounts[0]?.id ??
+      "",
     toOwnAccountId: "",
     benName: "",
     benAcct: "",

@@ -152,7 +152,7 @@ export function SpendsRadialChart({
   return (
     <div
       className={cn(
-        "flex flex-col justify-between rounded-2xl border border-border bg-card p-6 shadow-none transition-colors",
+        "flex flex-col justify-between rounded-2xl border border-border bg-card p-4 shadow-none transition-colors sm:p-6",
         className
       )}
     >

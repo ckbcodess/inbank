@@ -29,6 +29,7 @@ import {
 import { useSession } from "@/lib/session-store";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { useTheme } from "next-themes";
+import { switchTheme } from "@/lib/theme-transition";
 import { toast } from "sonner";
 import { PhoneInput } from "@/components/ui/phone-input";
 
@@ -464,7 +465,7 @@ export default function SettingsPage() {
                 <div className="flex items-center gap-1 border border-border rounded-lg p-0.5 bg-muted/20">
                   <button
                     type="button"
-                    onClick={() => setTheme("light")}
+                    onClick={() => resolvedTheme !== "light" && switchTheme("light", () => setTheme("light"))}
                     className={`flex items-center gap-1.5 px-3 py-1 text-[12px] rounded-md transition-colors cursor-pointer ${
                       resolvedTheme === "light" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"
                     }`}
@@ -474,7 +475,7 @@ export default function SettingsPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setTheme("dark")}
+                    onClick={() => resolvedTheme !== "dark" && switchTheme("dark", () => setTheme("dark"))}
                     className={`flex items-center gap-1.5 px-3 py-1 text-[12px] rounded-md transition-colors cursor-pointer ${
                       resolvedTheme === "dark" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"
                     }`}

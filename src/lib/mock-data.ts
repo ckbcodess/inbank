@@ -2169,6 +2169,9 @@ export interface FxRate {
  */
 export const FX_PUBLISHED_AT = "2026-08-11T08:30:00Z";
 
+/** The signed-in customer's previous session, shown on the dashboard greeting. */
+export const LAST_LOGIN_AT = "2026-08-21T08:43:00Z";
+
 export const FX_RATES: FxRate[] = [
   { pair: "USD/GHS", base: "USD", quote: "GHS", buy: 11.42, sell: 11.68, mid: 11.55, changePct: 0.34 },
   { pair: "GBP/GHS", base: "GBP", quote: "GHS", buy: 14.55, sell: 14.89, mid: 14.72, changePct: -0.18 },
@@ -2311,6 +2314,57 @@ export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
     frequency: "Monthly",
     nextRun: "2026-09-05",
     status: "Paused",
+  },
+  // Retail
+  {
+    id: "si-r01",
+    beneficiary: "ECG Prepaid — Home meter",
+    accountId: "acc-personal",
+    amount: 150,
+    currency: "GHS",
+    frequency: "Monthly",
+    nextRun: "2026-08-28",
+    status: "Active",
+  },
+  {
+    id: "si-r02",
+    beneficiary: "Kofi Osei — Rent contribution",
+    accountId: "acc-personal",
+    amount: 1_200,
+    currency: "GHS",
+    frequency: "Monthly",
+    nextRun: "2026-09-30",
+    status: "Active",
+  },
+  {
+    id: "si-r03",
+    beneficiary: "DSTV Family — Living room",
+    accountId: "acc-ret-002",
+    amount: 245,
+    currency: "GHS",
+    frequency: "Monthly",
+    nextRun: "2026-09-26",
+    status: "Active",
+  },
+  {
+    id: "si-r04",
+    beneficiary: "Ama Serwaa Mensah — Upkeep",
+    accountId: "acc-ret-002",
+    amount: 500,
+    currency: "GHS",
+    frequency: "Weekly",
+    nextRun: "2026-09-19",
+    status: "Active",
+  },
+  {
+    id: "si-r05",
+    beneficiary: "Enterprise Life — Education plan",
+    accountId: "acc-ret-001",
+    amount: 300,
+    currency: "GHS",
+    frequency: "Monthly",
+    nextRun: "2026-10-05",
+    status: "Active",
   },
 ];
 

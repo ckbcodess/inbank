@@ -16,7 +16,7 @@
  */
 
 import React, { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowLeftRight,
   CheckCircle2,
@@ -50,6 +50,7 @@ import {
 import { useGroupsStore } from "@/lib/groups-store";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import { useSession } from "@/lib/session-store";
+import { resolveDefaultAccountId, useAccountPrefs } from "@/lib/accounts-store";
 import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
 import TransactionPinModal from "./TransactionPinModal";
 import { useAuthorisation } from "./useAuthorisation";
@@ -174,6 +175,14 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const auth = useAuthorisation();
   const { groups } = useGroupsStore();
   const savedBeneficiaries = useBeneficiariesStore((s) => s.beneficiaries);
+  const storedDefaultId = useAccountPrefs((s) => s.defaultAccountId);
+  // Start from the account the customer came from (?from=), else their default.
+  const fromParam = useSearchParams().get("from");
+  const initialFromId =
+    accounts.find((a) => a.id === fromParam)?.id ??
+    resolveDefaultAccountId(accounts, storedDefaultId) ??
+    accounts[0]?.id ??
+    "";
 
   const [rail, setRail] = useState<TransactionType | null>(null);
   const [screen, setScreen] = useState<"form" | "review" | "success">("form");
@@ -184,7 +193,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
   // Form State
   const [f, setF] = useState({
-    fromId: accounts[0]?.id ?? "",
+    fromId: initialFromId,
     destination: "",
     bank: "GCB Bank",
     paymentMethod: "gip",
@@ -487,7 +496,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     setScreen("form");
     setDetailsCollapsed(false);
     setF({
-      fromId: accounts[0]?.id ?? "",
+      fromId: initialFromId,
       destination: "",
       bank: "GCB Bank",
       paymentMethod: "gip",

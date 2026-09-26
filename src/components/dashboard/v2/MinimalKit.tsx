@@ -526,10 +526,10 @@ export function AttentionBand({ items }: { items: AttentionItem[] }) {
   if (items.length === 0) return null;
   return (
     <div className="rounded-2xl border border-border bg-card">
-      <div className="px-6 pt-5">
-        <span className="text-[16px] font-medium leading-none text-foreground">Needs attention</span>
+      <div className="px-4 pt-4 sm:px-6 sm:pt-5">
+        <span className="text-[15px] font-medium leading-none text-foreground sm:text-[16px]">Needs attention</span>
       </div>
-      <ul className="flex flex-col divide-y divide-border/50 px-6 pb-2 pt-1">
+      <ul className="flex flex-col divide-y divide-border/50 px-4 pb-2 pt-1 sm:px-6">
         {items.map((it) => (
           <li key={it.id}>
             <Link
@@ -537,9 +537,10 @@ export function AttentionBand({ items }: { items: AttentionItem[] }) {
               className="group flex items-center gap-3 py-3 transition-colors"
             >
               <span className={cn("size-2 shrink-0 rounded-full", TONE_DOT[it.tone])} aria-hidden="true" />
-              <span className="min-w-0 flex-1">
+              {/* Title over detail on a phone; one line from sm up. */}
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5 sm:block">
                 <span className="text-[13.5px] text-foreground">{it.title}</span>
-                <span className="ml-2 text-[12.5px] text-muted-foreground">{it.detail}</span>
+                <span className="text-[12.5px] text-muted-foreground sm:ml-2">{it.detail}</span>
               </span>
               <ChevronRight
                 size={15}

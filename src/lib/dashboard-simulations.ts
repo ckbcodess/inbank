@@ -15,12 +15,15 @@ import {
 } from "@/lib/mock-data";
 import {
   spendByRangeForProfile,
+  cashFlowFor,
+  upcomingPayments,
+  scheduledOutflow,
   type SpendRange,
   type SpendBreakdown,
   type AttentionItem,
 } from "@/lib/dashboard-insights";
 import { resolveDefaultAccountId } from "@/lib/accounts-store";
-import type { DashData } from "@/components/dashboard/v2/GcbDashboard";
+import type { DashData } from "@/components/dashboard/v2/parts";
 import type { Actor, Profile } from "@/lib/roles";
 
 export type DashboardUsageType =
@@ -29,7 +32,9 @@ export type DashboardUsageType =
   | "new_customer"
   | "salary_surge"
   | "wealth"
-  | "empty";
+  | "empty"
+  | "loading"
+  | "error";
 
 export const DASHBOARD_USAGE_STATES: readonly DashboardUsageType[] = [
   "active",
@@ -38,7 +43,45 @@ export const DASHBOARD_USAGE_STATES: readonly DashboardUsageType[] = [
   "salary_surge",
   "wealth",
   "empty",
+  "loading",
+  "error",
 ] as const;
+
+/**
+ * Presentations of the same data, each leaning on a different strength. The
+ * `hero` layouts are the Figma dashboard (node 1945:5108) and a split take on it.
+ */
+export type DashboardLayout =
+  | "overview"
+  | "focus"
+  | "timeline"
+  | "insights"
+  | "actions"
+  | "hero"
+  | "hero-split";
+
+/** What the dashboard opens on (Dev Mode can switch it per browser). */
+export const DEFAULT_DASHBOARD_LAYOUT: DashboardLayout = "hero-split";
+
+export const DASHBOARD_LAYOUTS: readonly DashboardLayout[] = [
+  "overview",
+  "focus",
+  "timeline",
+  "insights",
+  "actions",
+  "hero",
+  "hero-split",
+] as const;
+
+export const DASHBOARD_LAYOUT_LABELS: Record<DashboardLayout, string> = {
+  overview: "Overview — everything at a glance",
+  focus: "Focus — calm, balance first",
+  timeline: "Timeline — past and upcoming in one feed",
+  insights: "Insights — where the money goes",
+  actions: "Actions — get things done fast",
+  hero: "Hero — Figma, actions by the greeting",
+  "hero-split": "Hero split — balance left, actions right",
+};
 
 export const DASHBOARD_STATE_LABELS: Record<DashboardUsageType, string> = {
   active: "Active (Clean Default)",
@@ -47,6 +90,8 @@ export const DASHBOARD_STATE_LABELS: Record<DashboardUsageType, string> = {
   salary_surge: "Salary Day / Inflow",
   wealth: "High Net Worth / Wealth",
   empty: "Empty State (Zero Balance)",
+  loading: "Loading",
+  error: "Refresh failed",
 };
 
 const EMPTY_SPEND_BREAKDOWN: Record<SpendRange, SpendBreakdown> = {
@@ -128,7 +173,11 @@ export function getSimulatedDashboardData({
 
     case "attention":
       // Demonstrates the Needs Attention band with 1-click remedies
-      attention = DEMO_ATTENTION_ITEMS;
+      // Pinned to the default account, so switching away shows them leave.
+      attention = DEMO_ATTENTION_ITEMS.map((i) => ({
+        ...i,
+        accountId: resolveDefaultAccountId(baseAccounts, defaultAccountId) ?? undefined,
+      }));
       break;
 
     case "new_customer":
@@ -280,14 +329,20 @@ export function getSimulatedDashboardData({
   const defaultId = resolveDefaultAccountId(accounts, defaultAccountId);
   const selectedId = accounts.some((a) => a.id === pickedId) ? (pickedId as string) : defaultId;
 
+  const today = new Date().toISOString().slice(0, 10);
+
   return {
     firstName: actor.name.split(" ")[0],
     accounts,
     defaultAccountId: defaultId,
     selectedAccountId: selectedId,
     spendByRange: spendByRange ?? spendByRangeForProfile(kind, selectedId ?? undefined),
+    cashFlow: cashFlowFor(latestTxns, selectedId ?? "", 30),
     latestTxns: latestTxns.filter((t) => t.accountId === selectedId),
     cards: cards.filter((c) => c.linkedAccountId === selectedId),
-    attention,
+    upcoming: selectedId ? upcomingPayments(selectedId, today, 4) : [],
+    scheduledNext30: selectedId ? scheduledOutflow(selectedId, today, 30) : 0,
+    // Items about another account belong on that account's view.
+    attention: attention.filter((i) => !i.accountId || i.accountId === selectedId),
   };
 }

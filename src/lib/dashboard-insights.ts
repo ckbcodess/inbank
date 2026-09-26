@@ -12,7 +12,9 @@ import {
   accountsForProfile,
   transactionsForProfile,
   cardsForProfile,
+  STANDING_INSTRUCTIONS,
   type Account,
+  type InstructionFrequency,
   type Transaction,
 } from "./mock-data";
 
@@ -270,16 +272,89 @@ export function cashFlowForProfile(
   kind: "RETAIL" | "CORPORATE" = "RETAIL",
   days = 30,
 ): CashFlow {
-  const settled = transactionsForProfile(kind).filter((t) => t.state === "completed");
+  return cashFlowFor(transactionsForProfile(kind), undefined, days);
+}
+
+/**
+ * Cash flow over any ledger, optionally for one account. The window is anchored
+ * on the whole ledger's latest entry, so every account shares the same dates.
+ */
+export function cashFlowFor(txns: Transaction[], accountId?: string, days = 30): CashFlow {
+  const settled = txns.filter((t) => t.state === "completed");
   const latest = latestLedgerDate(settled);
   if (latest === null) return { moneyIn: 0, moneyOut: 0, days };
   const from = daysBefore(latest, days);
-  const inWindow = settled.filter((t) => t.date > from);
+  const inWindow = settled.filter(
+    (t) => t.date > from && (accountId === undefined || t.accountId === accountId),
+  );
   return {
     moneyIn: sumMoney(inWindow.filter((t) => t.direction === "credit").map((t) => Math.abs(t.amount))),
     moneyOut: sumMoney(inWindow.filter((t) => t.direction === "debit").map((t) => Math.abs(t.amount))),
     days,
   };
+}
+
+/* ── Coming up ───────────────────────────────────────────────────────────── */
+
+export interface UpcomingPayment {
+  id: string;
+  payee: string;
+  amount: number;
+  currency: string;
+  frequency: InstructionFrequency;
+  /** ISO date of the next run on or after today. */
+  date: string;
+}
+
+const MONTHS_PER: Partial<Record<InstructionFrequency, number>> = { Monthly: 1, Quarterly: 3, Yearly: 12 };
+const DAYS_PER: Partial<Record<InstructionFrequency, number>> = { Daily: 1, Weekly: 7 };
+
+/** Roll a schedule forward from its stored run date to the first run on/after `today`. */
+function nextRunOnOrAfter(iso: string, frequency: InstructionFrequency, today: string): string {
+  const d = new Date(`${iso}T00:00:00Z`);
+  const months = MONTHS_PER[frequency];
+  const days = DAYS_PER[frequency] ?? 0;
+  // Bounded so a malformed date can never spin forever.
+  for (let i = 0; i < 2000 && d.toISOString().slice(0, 10) < today; i++) {
+    if (months) d.setUTCMonth(d.getUTCMonth() + months);
+    else d.setUTCDate(d.getUTCDate() + days);
+  }
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * Everything active standing orders will take from `accountId` in the next
+ * `days` days — every run, so a weekly order counts four or five times.
+ */
+export function scheduledOutflow(accountId: string, today: string, days = 30): number {
+  const end = new Date(new Date(`${today}T00:00:00Z`).getTime() + days * DAY_MS).toISOString().slice(0, 10);
+  const amounts: number[] = [];
+  for (const s of STANDING_INSTRUCTIONS) {
+    if (s.accountId !== accountId || s.status !== "Active") continue;
+    let run = nextRunOnOrAfter(s.nextRun, s.frequency, today);
+    for (let i = 0; i < 400 && run < end; i++) {
+      amounts.push(s.amount);
+      // The day after this run, rolled forward to the next one.
+      const after = new Date(new Date(`${run}T00:00:00Z`).getTime() + DAY_MS).toISOString().slice(0, 10);
+      run = nextRunOnOrAfter(run, s.frequency, after);
+    }
+  }
+  return sumMoney(amounts);
+}
+
+/** Active standing orders leaving `accountId`, soonest first. */
+export function upcomingPayments(accountId: string, today: string, limit = 3): UpcomingPayment[] {
+  return STANDING_INSTRUCTIONS.filter((s) => s.accountId === accountId && s.status === "Active")
+    .map((s) => ({
+      id: s.id,
+      payee: s.beneficiary,
+      amount: s.amount,
+      currency: s.currency,
+      frequency: s.frequency,
+      date: nextRunOnOrAfter(s.nextRun, s.frequency, today),
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(0, limit);
 }
 
 /* ── Needs attention ─────────────────────────────────────────────────────── */
@@ -292,6 +367,8 @@ export interface AttentionItem {
   title: string;
   detail: string;
   href: string;
+  /** The account this concerns; omitted when it's about the customer as a whole. */
+  accountId?: string;
 }
 
 /** End-of-month date for an "MM/YY" expiry string. */
@@ -326,6 +403,7 @@ export function attentionItemsForProfile(
         title: "Payment didn't go through",
         detail: `${t.counterparty || t.description} · see why and retry`,
         href: `/transactions/${t.id}`,
+        accountId: t.accountId,
       });
     }
   }
@@ -338,6 +416,7 @@ export function attentionItemsForProfile(
         title: "Card blocked",
         detail: `${c.name} · ${c.maskedNumber}`,
         href: "/cards",
+        accountId: c.linkedAccountId,
       });
     } else if (c.status === "Expired") {
       items.push({
@@ -346,6 +425,7 @@ export function attentionItemsForProfile(
         title: "Card expired",
         detail: `${c.name} · ${c.maskedNumber}`,
         href: "/cards",
+        accountId: c.linkedAccountId,
       });
     } else {
       const exp = parseExpiry(c.expiry);
@@ -356,6 +436,7 @@ export function attentionItemsForProfile(
           title: "Card expiring soon",
           detail: `${c.name} · expires ${c.expiry}`,
           href: "/cards",
+          accountId: c.linkedAccountId,
         });
       }
     }
@@ -366,6 +447,7 @@ export function attentionItemsForProfile(
         title: "Card ready for pickup",
         detail: c.name,
         href: "/cards",
+        accountId: c.linkedAccountId,
       });
     }
   }
@@ -378,6 +460,7 @@ export function attentionItemsForProfile(
         title: "Account dormant",
         detail: a.name.replace("Personal ", "").replace(" Account", ""),
         href: `/accounts/${a.id}`,
+        accountId: a.id,
       });
     }
   }

@@ -23,6 +23,7 @@ import { SimpleTooltip } from "@/components/ui/tooltip";
 import HeaderBreadcrumbs from "./HeaderBreadcrumbs";
 import LanguageToggle from "./LanguageToggle";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { switchTheme } from "@/lib/theme-transition";
 
 interface TopHeaderProps {
   actor: Actor;
@@ -137,7 +138,10 @@ export default function TopHeader({
           <Button
             variant="ghost"
             size="icon-sm"
-            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            onClick={() => {
+              const next = resolvedTheme === "dark" ? "light" : "dark";
+              switchTheme(next, () => setTheme(next));
+            }}
             aria-label={resolvedTheme === "dark" ? t("header.themeLight", "Switch to light mode") : t("header.themeDark", "Switch to dark mode")}
             className="shrink-0"
           >

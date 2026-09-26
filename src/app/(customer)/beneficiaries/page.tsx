@@ -483,6 +483,14 @@ export default function BeneficiariesPage() {
     setCollapsedSections(new Set(allKeys));
   };
 
+  // "Add someone" from elsewhere (e.g. the dashboard's Pay again) → ?add=1
+  // opens the same form the hub uses.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("add") !== "1") return;
+    setForm(INITIAL_FORM);
+    setFormOpen(true);
+  }, []);
+
   function openAddForType(type: TransactionType) {
     setForm({
       ...INITIAL_FORM,
