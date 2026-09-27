@@ -9,10 +9,18 @@
  * with the Admin Portal shell (section 12.1).
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Sidebar from "./Sidebar";
 import TopHeader from "./TopHeader";
+import { AppSplash } from "./AppSplash";
+import {
+  SPLASH_MAX_MS,
+  SPLASH_MIN_MS,
+  isAppBooted,
+  markAppBooted,
+  splashWorkSettled,
+} from "@/lib/app-splash";
 import { SurfaceProvider } from "@/lib/surface-context";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
 import { getNavigation } from "@/lib/navigation";
@@ -30,6 +38,38 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const hydrated = useSessionHydrated();
+  const ready = hydrated && !!actor && mfaVerified && !!activeProfile && actor.shell !== "admin";
+
+  // First-load splash (see lib/app-splash): up from the first paint until the
+  // session is ready and the screen's fonts and key images have settled —
+  // within SPLASH_MIN_MS..SPLASH_MAX_MS — then it fades out over the app.
+  const [splash, setSplash] = useState<"on" | "leaving" | "off">(() => (isAppBooted() ? "off" : "on"));
+  const splashStart = useRef(0);
+  useEffect(() => {
+    splashStart.current = performance.now();
+  }, []);
+  useEffect(() => {
+    if (splash !== "on" || !ready) return;
+    let done = false;
+    const elapsed = () => performance.now() - splashStart.current;
+    const reveal = () => {
+      if (done) return;
+      done = true;
+      markAppBooted();
+      setSplash("leaving");
+    };
+    const cap = window.setTimeout(reveal, Math.max(0, SPLASH_MAX_MS - elapsed()));
+    splashWorkSettled().then(() => window.setTimeout(reveal, Math.max(0, SPLASH_MIN_MS - elapsed())));
+    return () => {
+      done = true;
+      window.clearTimeout(cap);
+    };
+  }, [splash, ready]);
+  useEffect(() => {
+    if (splash !== "leaving") return;
+    const t = window.setTimeout(() => setSplash("off"), 320);
+    return () => window.clearTimeout(t);
+  }, [splash]);
 
   useEffect(() => {
     if (localStorage.getItem(COLLAPSE_KEY) === "true") setCollapsed(true);
@@ -76,8 +116,9 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
     router.replace("/login");
   }, [signOut, router]);
 
-  if (!hydrated || !actor || !mfaVerified || !activeProfile || actor.shell === "admin") {
-    return null;
+  // `ready` covers these; restated so TypeScript narrows them below.
+  if (!ready || !actor || !activeProfile) {
+    return splash === "off" ? null : <AppSplash leaving={false} />;
   }
 
   const navItems = getNavigation(actor, activeProfile);
@@ -119,6 +160,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
           </div>
         </div>
       </div>
+      {splash !== "off" && <AppSplash leaving={splash === "leaving"} />}
     </SurfaceProvider>
   );
 }

@@ -646,3 +646,13 @@ html.theme-fade *::after {
     color 200ms ease,
     border-color 200ms ease !important;
 }
+
+/* First-load splash (components/layout/AppSplash.tsx): the GCB mark breathes. */
+@keyframes splash-breathe {
+  0%, 100% { opacity: 0.55; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1); }
+}
+.splash-breathe { animation: splash-breathe 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .splash-breathe { animation: none; }
+}

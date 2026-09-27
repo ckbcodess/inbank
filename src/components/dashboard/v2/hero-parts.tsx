@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { LAST_LOGIN_AT } from "@/lib/mock-data";
 import { heroWaveVars, useHeroWave } from "@/lib/hero-wave";
+import { decodeImage, holdSplash } from "@/lib/app-splash";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import {
   SPRING,
@@ -117,6 +118,8 @@ function HeroArt({ map = true }: { map?: boolean }) {
           width={471}
           height={238}
           unoptimized
+          // Above the fold, and the splash already fetched it: load now, not lazily.
+          priority
           className="absolute bottom-[4px] right-[-110px] hidden opacity-35 mix-blend-color-burn sm:block dark:opacity-100"
         />
       )}
@@ -135,9 +138,13 @@ export function HeroSurface({
   /** The dotted map sits bottom-right; drop it where controls would sit on top of it. */
   map?: boolean;
 }) {
-  // The wave tuner's settings (Dev Mode → Tools) arrive as CSS variables here,
-  // so the text, glass controls and art underneath all pick them up.
+  // The wave tuner's settings arrive as CSS variables here, so the text, glass
+  // controls and art underneath all pick them up.
   const wave = useHeroWave();
+  // On first load, the splash waits for the dotted map so the card appears whole.
+  useEffect(() => {
+    if (map) holdSplash(decodeImage(`${ASSETS}/hero-map.svg`));
+  }, [map]);
   return (
     <section
       className={cn(
