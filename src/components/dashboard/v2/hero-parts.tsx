@@ -166,7 +166,7 @@ export function ManageAccountsLink({ className }: { className?: string }) {
     <Link
       href="/accounts"
       className={cn(
-        "relative flex w-fit items-center gap-0.5 rounded-lg py-1.5 text-[14px] leading-none transition-opacity hover:opacity-80 sm:text-[16px]",
+        "relative flex w-fit items-center gap-0.5 rounded-lg py-1.5 text-[13px] leading-none transition-opacity hover:opacity-80 sm:text-[16px]",
         className,
       )}
     >
@@ -179,9 +179,9 @@ export function ManageAccountsLink({ className }: { className?: string }) {
 /* ── Balance ─────────────────────────────────────────────────────────────── */
 
 const HERO_FIGURE = {
-  md: "text-[28px] leading-[32px] sm:text-[32px]",
-  lg: "text-[30px] leading-[32px] sm:text-[36px]",
-  xl: "text-[32px] leading-[36px] sm:text-[44px] sm:leading-[48px]",
+  md: "text-[24px] leading-[28px] sm:text-[32px] sm:leading-[32px]",
+  lg: "text-[26px] leading-[30px] sm:text-[36px] sm:leading-[32px]",
+  xl: "text-[28px] leading-[32px] sm:text-[44px] sm:leading-[48px]",
 } as const;
 
 /** The selected account's balance in hero type, with the eye toggle. */
@@ -211,7 +211,7 @@ export function HeroBalance({
           aria-label={t("dashboard.loadingBalance", "Loading balance")}
         />
       ) : (
-        <span className={cn("tabular tracking-[-0.02em]", HERO_FIGURE[size])}>
+        <span className={cn("tabular whitespace-nowrap tracking-[-0.02em]", HERO_FIGURE[size])}>
           {account.currency} <RevealingAmount amount={account.balance ?? 0} currency="" />
         </span>
       )}
@@ -230,7 +230,7 @@ export function HeroBalance({
 export function HeroUpdated({ updatedAt, className }: { updatedAt: number; className?: string }) {
   const label = useUpdatedLabel(updatedAt);
   return (
-    <span className={cn("relative text-[14px] leading-5 tracking-[-0.005em]", className)} suppressHydrationWarning>
+    <span className={cn("relative text-[12.5px] leading-5 tracking-[-0.005em] sm:text-[14px]", className)} suppressHydrationWarning>
       {label}
     </span>
   );

@@ -7,6 +7,7 @@ import { useAccountPrefs } from "@/lib/accounts-store";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { GcbDashboard, type DashStatus } from "@/components/dashboard/v2/GcbDashboard";
 import { HeroWaveTuner } from "@/components/dashboard/v2/HeroWaveTuner";
+import { FirstRunWelcome } from "@/components/dashboard/v2/FirstRunWelcome";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import {
@@ -125,6 +126,8 @@ function OverviewContent() {
       />
       {/* The hero card has its own floating tuner. */}
       {isHero && <HeroWaveTuner />}
+      {/* Once, right after onboarding or moving from the old internet banking. */}
+      <FirstRunWelcome firstName={data.firstName} />
     </>
   );
 }

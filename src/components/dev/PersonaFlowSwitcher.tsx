@@ -5,6 +5,8 @@
  *
  *   GCB account holder (/activate): pick the demo customer, then a step.
  *   New to GCB (/signup): a step, or straight to linking after sign-up.
+ *   Returning customers: the trusted-device power user, a first-timer on a
+ *   new device, and someone moving from the old internet banking (/migrate).
  *
  * Steps open with `?step=<id>` (see `src/lib/onboarding-steps.ts`). Shown on
  * the entry/onboarding screens only, hidden during a guided tour.
@@ -20,6 +22,8 @@ import { useSession } from "@/lib/session-store";
 import { useTour } from "@/lib/tour-store";
 import { ACTORS } from "@/lib/mock-data";
 import { ONBOARDING_STEPS, parseOnboardingStep } from "@/lib/onboarding-steps";
+import { forgetThisDevice, trustThisDevice } from "@/lib/device-trust";
+import { LEGACY_DEMO_USER_ID, MIGRATION_STEPS, parseMigrationStep } from "@/lib/migration";
 
 const PERSONAS = [
   { id: "multi", label: "Several accounts" },
@@ -29,13 +33,13 @@ const PERSONAS = [
 ] as const;
 type PersonaId = (typeof PERSONAS)[number]["id"];
 
-const ONBOARDING_PATHS = ["/", "/signup", "/activate", "/get-started", "/login", "/mfa", "/forgot-password"];
+const ONBOARDING_PATHS = ["/", "/signup", "/activate", "/get-started", "/login", "/mfa", "/forgot-password", "/migrate"];
 
 function PersonaFlowSwitcherContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { signIn, selectProfile, verifyMfa } = useSession();
+  const { signIn, selectProfile, verifyMfa, signOut } = useSession();
   const activeTourId = useTour((s) => s.activeTourId);
   const [open, setOpen] = useState(false);
 
@@ -59,6 +63,21 @@ function PersonaFlowSwitcherContent() {
   function go(route: string) {
     setOpen(false);
     router.push(route);
+  }
+
+  /** A regular on their own laptop: this browser already trusts them, so login is one tap. */
+  function goPowerUser() {
+    const actor = ACTORS[0];
+    signOut();
+    trustThisDevice(actor);
+    go("/login");
+  }
+
+  /** First internet-banking sign-in, on a device we've never seen: activation, then the welcome. */
+  function goFirstTimer() {
+    signOut();
+    forgetThisDevice();
+    go("/activate?persona=single&step=ghana_card");
   }
 
   function goLinkAfterSignup() {
@@ -102,7 +121,7 @@ function PersonaFlowSwitcherContent() {
             <DialogTitle>Jump to a step</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
               {/* GCB account holder */}
               <section className="flex flex-col gap-2.5">
                 <h3 className="px-2.5 text-[14px] font-medium text-foreground">GCB account holder</h3>
@@ -153,6 +172,45 @@ function PersonaFlowSwitcherContent() {
                       Link Source Account
                     </button>
                   </li>
+                </ol>
+              </section>
+
+              {/* Returning customers */}
+              <section className="flex flex-col gap-2.5">
+                <h3 className="px-2.5 text-[14px] font-medium text-foreground">Returning customers</h3>
+                <div className="h-8" aria-hidden="true" />
+                <ol className="flex flex-col">
+                  <li>
+                    <button
+                      type="button"
+                      onClick={goPowerUser}
+                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
+                    >
+                      <span className="text-[13.5px] text-foreground">Power user · trusted device</span>
+                      <span className="text-[12px] text-muted-foreground">Greeted by name, passkey, no code</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      onClick={goFirstTimer}
+                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
+                    >
+                      <span className="text-[13.5px] text-foreground">First time, new device</span>
+                      <span className="text-[12px] text-muted-foreground">Activation, remember device, welcome</span>
+                    </button>
+                  </li>
+                </ol>
+                <span className="mt-2 px-2.5 text-[12.5px] text-muted-foreground">Moving from old internet banking</span>
+                <ol className="flex flex-col">
+                  {MIGRATION_STEPS.map((s, i) =>
+                    stepRow(
+                      `/migrate?user=${LEGACY_DEMO_USER_ID}&step=${s.id}`,
+                      s.label,
+                      i + 1,
+                      pathname === "/migrate" && parseMigrationStep(searchParams.get("step")) === s.id,
+                    ),
+                  )}
                 </ol>
               </section>
             </div>

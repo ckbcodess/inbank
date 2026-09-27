@@ -28,6 +28,7 @@ import { useSession } from "@/lib/session-store";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { useTheme } from "next-themes";
 import { switchTheme } from "@/lib/theme-transition";
+import { forgetThisDevice, useTrustedDevice } from "@/lib/device-trust";
 import { toast } from "sonner";
 import { PhoneInput } from "@/components/ui/phone-input";
 
@@ -37,6 +38,7 @@ export default function SettingsPage() {
   const { actor } = useSession();
   const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
   const { resolvedTheme, setTheme } = useTheme();
+  const trustedDevice = useTrustedDevice();
 
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
 
@@ -346,6 +348,32 @@ export default function SettingsPage() {
                 >
                   Manage
                 </Button>
+              </div>
+
+              {/* This device — the "Remember this device" choice, visible and reversible. */}
+              <div className="flex items-center justify-between gap-4 py-3.5">
+                <div className="flex flex-col">
+                  <span className="text-[13.5px] font-medium text-foreground">This device</span>
+                  <span className="text-[12px] text-muted-foreground tabular">
+                    {trustedDevice
+                      ? `Remembered until ${new Date(trustedDevice.until).toLocaleDateString("en-GB", { day: "numeric", month: "long" })} — you sign in here without a code.`
+                      : "Not remembered — you'll confirm a code each time you sign in here."}
+                  </span>
+                </div>
+                {trustedDevice && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="text-[12px] h-8 shrink-0"
+                    onClick={() => {
+                      forgetThisDevice();
+                      toast.success("This device will ask for a code next time");
+                    }}
+                  >
+                    Forget this device
+                  </Button>
+                )}
               </div>
 
               {/* Session Inactivity Timeout */}

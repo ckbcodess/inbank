@@ -28,6 +28,8 @@ import SelfieCapture from "@/components/auth/SelfieCapture";
 import ReferralStep from "@/components/auth/ReferralStep";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 import { useSession } from "@/lib/session-store";
+import { Checkbox } from "@/components/ui/checkbox";
+import { TRUST_DAYS, setFirstRun, trustThisDevice } from "@/lib/device-trust";
 import { ACTORS } from "@/lib/mock-data";
 import {
   ACTIVATION_PERSONAS,
@@ -85,6 +87,8 @@ function ActivateContent() {
   // Password & PIN State
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  // Asked alongside the password, where sign-in is being set up. Opt-in.
+  const [rememberDevice, setRememberDevice] = useState(false);
   const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
   const [confirmPinDigits, setConfirmPinDigits] = useState<string[]>(["", "", "", ""]);
   const [errorMsg, setErrorMsg] = useState("");
@@ -253,6 +257,9 @@ function ActivateContent() {
         selectProfile(actor.profiles[0]);
       }
       verifyMfa();
+      if (rememberDevice) trustThisDevice(actor);
+      // First time in internet banking: the dashboard opens with a short welcome.
+      setFirstRun("new");
       router.push("/overview");
     }, 800);
   }
@@ -712,6 +719,21 @@ function ActivateContent() {
             }}
             autoFocus
           />
+
+          <label className="flex items-start gap-3 px-1 text-[13.5px] text-foreground cursor-pointer select-none">
+            <Checkbox
+              checked={rememberDevice}
+              onCheckedChange={(checked) => setRememberDevice(!!checked)}
+              aria-label={`Remember this device for ${TRUST_DAYS} days`}
+              className="mt-0.5"
+            />
+            <span className="flex flex-col gap-0.5">
+              <span>Remember this device for {TRUST_DAYS} days</span>
+              <span className="text-[12.5px] text-muted-foreground">
+                Sign in faster next time, without a code. Only on a device you don&apos;t share.
+              </span>
+            </span>
+          </label>
 
           {errorMsg && (
             <div

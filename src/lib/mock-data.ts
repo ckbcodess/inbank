@@ -145,6 +145,16 @@ export const ACTORS: Actor[] = [
     profiles: [],
     tradeEligible: false,
   },
+  // Appended, not inserted: the login fallback indexes into ACTORS.
+  {
+    id: "u-legacy",
+    name: "Esi Quaye",
+    email: "esi.quaye@example.com",
+    role: "RETAIL_CUSTOMER",
+    shell: "customer",
+    profiles: [RETAIL_PROFILE],
+    tradeEligible: false,
+  },
 ];
 
 export function findActorByEmail(email: string): Actor | undefined {

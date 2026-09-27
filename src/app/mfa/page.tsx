@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
+import { TRUST_DAYS, trustThisDevice } from "@/lib/device-trust";
 
 type MfaState = "entry" | "verifying" | "error" | "resent";
 
@@ -23,7 +24,8 @@ function MfaContent() {
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(""));
   const [state, setState] = useState<MfaState>("entry");
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
-  const [trustDevice, setTrustDevice] = useState(true);
+  // Opt-in: remembering a device on a shared or public computer is a real risk.
+  const [trustDevice, setTrustDevice] = useState(false);
   const hydrated = useSessionHydrated();
 
   useEffect(() => {
@@ -53,6 +55,8 @@ function MfaContent() {
       }
 
       verifyMfa();
+      // Remembered: next time the login screen greets them and skips this code.
+      if (trustDevice && actor.shell !== "admin") trustThisDevice(actor);
 
       if (actor.shell === "admin") {
         router.push("/admin");
@@ -121,14 +125,21 @@ function MfaContent() {
           />
         </div>
 
-        {/* Trust Device Checkbox */}
-        {isNewDevice && (
-          <label className="flex items-center gap-3 px-1 text-[13.5px] text-foreground cursor-pointer select-none">
+        {/* Remember this device — the step that makes the next sign-in fast. Staff never get it. */}
+        {actor.shell !== "admin" && (
+          <label className="flex items-start gap-3 px-1 text-[13.5px] text-foreground cursor-pointer select-none">
             <Checkbox
               checked={trustDevice}
               onCheckedChange={(checked) => setTrustDevice(!!checked)}
+              aria-label={`Remember this device for ${TRUST_DAYS} days`}
+              className="mt-0.5"
             />
-            <span>Trust this browser for 30 days</span>
+            <span className="flex flex-col gap-0.5">
+              <span>Remember this device for {TRUST_DAYS} days</span>
+              <span className="text-[12.5px] text-muted-foreground">
+                Skip this code next time. You can change this in Settings.
+              </span>
+            </span>
           </label>
         )}
 
