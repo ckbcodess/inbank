@@ -17,6 +17,9 @@ import { VirtualCardDetailsView } from "@/components/cards/VirtualCardDetailsVie
 import type { BaselineState } from "@/lib/states";
 import { findCard } from "@/lib/mock-data";
 import { getEffectiveCard, useCardsDevStore } from "@/lib/cards-dev-store";
+import { useSessionHydrated } from "@/lib/session-store";
+import { readyCache } from "@/lib/ready-cache";
+import { useCardAssetsReady } from "@/components/cards/useCardAssetsReady";
 
 const BASELINE_STATES: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 
@@ -37,6 +40,21 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
   }, [id, rawCard, devState]);
 
   const [state, setState] = useState<BaselineState>("populated");
+
+  // Hold the page until the session and this card's artwork are in, so the face never paints bare.
+  const sessionHydrated = useSessionHydrated();
+  if (sessionHydrated) readyCache.session = true;
+  const sessionReady = sessionHydrated || readyCache.session;
+  const assetsReady = useCardAssetsReady(card ? [card] : []);
+  const ready = sessionReady && assetsReady;
+
+  if (!ready) {
+    return (
+      <div className="flex w-full flex-col gap-6" aria-busy="true">
+        <ListSkeleton rows={5} columns={3} />
+      </div>
+    );
+  }
 
   if (!card) {
     return (

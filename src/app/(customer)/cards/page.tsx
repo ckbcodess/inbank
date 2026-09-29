@@ -49,6 +49,7 @@ import {
   type PaymentCard,
 } from "@/lib/mock-data";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
+import { readyCache } from "@/lib/ready-cache";
 import { useCardAssetsReady } from "@/components/cards/useCardAssetsReady";
 import { CardsSkeleton } from "@/components/cards/CardParts";
 import { CardsEmptyIllustration } from "@/components/cards/CardsEmptyIllustration";
@@ -116,13 +117,17 @@ function CardsPageContent() {
   const [notice, setNotice] = useState<string | null>(null);
   // The saved layout is read after mount (never during render), so the server's
   // markup and the first client paint agree and nothing swaps layouts underfoot.
-  const [layout, setLayout] = useState<CardsLayout>(DEFAULT_CARDS_LAYOUT);
-  const [layoutRead, setLayoutRead] = useState(false);
+  const [layout, setLayout] = useState<CardsLayout>(readyCache.layout ?? DEFAULT_CARDS_LAYOUT);
+  const [layoutRead, setLayoutRead] = useState(readyCache.layout !== null);
   useEffect(() => {
-    setLayout(readLayout());
+    const saved = readLayout();
+    readyCache.layout = saved;
+    setLayout(saved);
     setLayoutRead(true);
   }, []);
-  const sessionReady = useSessionHydrated();
+  const sessionHydrated = useSessionHydrated();
+  if (sessionHydrated) readyCache.session = true;
+  const sessionReady = sessionHydrated || readyCache.session;
 
   useEffect(() => {
     if (searchParams.get("created") === "true") {
@@ -208,6 +213,7 @@ function CardsPageContent() {
         value: layout,
         onChange: (val) => {
           setLayout(val as CardsLayout);
+          readyCache.layout = val as CardsLayout;
           try {
             localStorage.setItem(CARDS_LAYOUT_KEY, val);
           } catch {

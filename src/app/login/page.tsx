@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertCircle, Building2, Eye, EyeOff, Fingerprint, ShieldCheck, User } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Fingerprint, ShieldCheck, User } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -101,25 +101,18 @@ function LoginForm() {
             </Link>
           </p>
 
-          {/* Understated Link to switch between Personal and Business */}
-          <button
-            type="button"
-            data-tour={bankingType === "personal" ? "entry-business" : "entry-personal"}
-            onClick={() => handleTypeChange(bankingType === "personal" ? "business" : "personal")}
-            className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
-          >
-            {bankingType === "personal" ? (
-              <>
-                <Building2 size={13.5} strokeWidth={1.8} className="shrink-0" />
-                <span>Switch to Business Banking</span>
-              </>
-            ) : (
-              <>
-                <User size={13.5} strokeWidth={1.8} className="shrink-0" />
-                <span>Switch to Personal Banking</span>
-              </>
-            )}
-          </button>
+          {/* Personal is the front door. Only a business sign-in (reached by link) offers the way back. */}
+          {bankingType === "business" && (
+            <button
+              type="button"
+              data-tour="entry-personal"
+              onClick={() => handleTypeChange("personal")}
+              className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
+            >
+              <User size={13.5} strokeWidth={1.8} className="shrink-0" />
+              <span>Switch to Personal Banking</span>
+            </button>
+          )}
         </div>
       }
     >

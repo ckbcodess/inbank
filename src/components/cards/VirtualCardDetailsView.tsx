@@ -827,8 +827,15 @@ export function VirtualCardDetailsView({
                   style={{ backgroundColor: activeTheme.colorHex }}
                   className={`relative flex-1 min-h-[237px] w-full rounded-[15.75px] overflow-hidden p-[18px] flex flex-col justify-between select-none shadow-xs transition-all duration-200 ${
                     activeTheme.textColor
-                  }`}
+                  } ${isFrozen ? "opacity-60 saturate-50" : ""}`}
                 >
+                  {isFrozen && (
+                    <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
+                      <span className="flex size-16 items-center justify-center rounded-full bg-white/90 text-zinc-900 shadow-md">
+                        <Lock size={26} strokeWidth={1.8} aria-label="Blocked" />
+                      </span>
+                    </div>
+                  )}
                   {/* High-res Card Artwork Background with Expanded Full-Bleed Fill */}
                   <img
                     src={activeTheme.bgImage}
@@ -1042,7 +1049,9 @@ export function VirtualCardDetailsView({
                 <button
                   type="button"
                   onClick={handleOpenPinModal}
-                  className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
+                  disabled={isFrozen}
+                  title={isFrozen ? "Unblock the card to view its PIN" : undefined}
+                  className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-card"
                 >
                   <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
                     <Grid size={17} strokeWidth={1.8} />
@@ -1056,12 +1065,16 @@ export function VirtualCardDetailsView({
                 <button
                   type="button"
                   onClick={() => setActiveModal("freeze")}
-                  className="bg-card border border-[#ebebe9] dark:border-border rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-muted/60 transition-colors shadow-2xs cursor-pointer group"
+                  className={`rounded-[8px] py-2.5 sm:py-3 px-2 sm:px-3 flex items-center justify-center gap-1.5 sm:gap-2 transition-colors shadow-2xs cursor-pointer group ${
+                    isFrozen
+                      ? "bg-primary text-primary-foreground hover:bg-primary-hover"
+                      : "bg-card border border-[#ebebe9] dark:border-border hover:bg-muted/60"
+                  }`}
                 >
-                  <div className="size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center text-[#121212] dark:text-foreground">
+                  <div className={`size-[18px] sm:size-[20px] shrink-0 flex items-center justify-center ${isFrozen ? "" : "text-[#121212] dark:text-foreground"}`}>
                     <Lock size={17} strokeWidth={1.8} />
                   </div>
-                  <span className="text-[13px] sm:text-[14px] font-medium text-[#121212] dark:text-foreground whitespace-nowrap">
+                  <span className={`text-[13px] sm:text-[14px] font-medium whitespace-nowrap ${isFrozen ? "" : "text-[#121212] dark:text-foreground"}`}>
                     {isFrozen ? "Unblock" : "Block"}
                   </span>
                 </button>
@@ -1262,12 +1275,14 @@ export function VirtualCardDetailsView({
             <h3 className="text-[18px] font-medium leading-[26px] tracking-[0.18px] text-[#121212] dark:text-foreground">
               Activity
             </h3>
-            <Link
-              href="/transactions"
-              className="text-[14px] font-normal leading-[20px] tracking-[-0.07px] text-[#121212] dark:text-foreground hover:underline"
-            >
-              View all
-            </Link>
+            {!isInactive && activities.length > 0 && (
+              <Link
+                href="/transactions"
+                className="text-[14px] font-normal leading-[20px] tracking-[-0.07px] text-[#121212] dark:text-foreground hover:underline"
+              >
+                View all
+              </Link>
+            )}
           </div>
 
           {/* Activity List Container or Empty State */}
