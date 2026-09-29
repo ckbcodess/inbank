@@ -246,16 +246,16 @@ export function HeroAccountMenu({
         <button
           type="button"
           onClick={() => setRatesOpen(true)}
-          className={cn(HERO_GLASS_BUTTON, "h-10 w-auto gap-2.5 px-2.5 max-sm:gap-2 max-sm:px-2")}
+          className={cn(HERO_GLASS_BUTTON, "h-10 w-auto gap-2.5 px-2.5 max-sm:h-9 max-sm:gap-1.5 max-sm:px-2")}
           aria-label={`FX Rates. 1 USD is ${usd.mid.toFixed(2)} GHS`}
           title="FX Rates"
         >
           <span className="relative flex shrink-0 items-center">
-            <CurrencyLogo currency="GHS" size={24} showBorder={false} />
-            <CurrencyLogo currency="USD" size={24} showBorder={false} className="-ml-2" />
+            <span className="max-sm:hidden"><CurrencyLogo currency="GHS" size={24} showBorder={false} /></span>
+            <CurrencyLogo currency="USD" size={24} showBorder={false} className="-ml-2 max-sm:ml-0" />
           </span>
-          <span className="tabular text-[14px] tracking-[-0.01em]">USD {usd.mid.toFixed(2)}</span>
-          <RateTrend size={15} strokeWidth={2} className={usd.changePct >= 0 ? "text-emerald-400" : "text-red-400"} />
+          <span className="tabular text-[14px] tracking-[-0.01em] max-sm:text-[13px]"><span className="max-sm:hidden">USD </span>{usd.mid.toFixed(2)}</span>
+          <RateTrend size={15} strokeWidth={2} className={cn(usd.changePct >= 0 ? "text-emerald-400" : "text-red-400")} />
         </button>
         <DropdownMenu>
           <DropdownMenuTrigger

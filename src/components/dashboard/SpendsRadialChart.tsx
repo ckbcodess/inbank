@@ -152,7 +152,7 @@ export function SpendsRadialChart({
   return (
     <div
       className={cn(
-        "flex flex-col justify-between rounded-2xl border border-border bg-card p-4 shadow-none transition-colors sm:p-6",
+        "flex flex-col justify-between gap-3 rounded-2xl border border-border bg-card p-4 shadow-none transition-colors sm:p-5",
         className
       )}
     >
@@ -170,8 +170,8 @@ export function SpendsRadialChart({
       </div>
 
       {/* Semicircle Chart Container */}
-      <div className="relative my-auto flex flex-col items-center justify-center pt-2 pb-0">
-        <div className="relative w-full max-w-[340px] aspect-[400/225] select-none">
+      <div className="relative my-auto flex flex-col items-center justify-center">
+        <div className="relative w-full max-w-[270px] aspect-[400/225] select-none">
           <svg
             viewBox="0 0 400 225"
             className="size-full overflow-visible"
@@ -240,7 +240,7 @@ export function SpendsRadialChart({
       </div>
 
       {/* Top categories — the chart's hover detail, reachable by touch and keyboard too */}
-      <ul className="flex flex-col pt-3">
+      <ul className="flex flex-wrap items-center justify-center gap-x-1 gap-y-0.5">
         {topSlices.map((slice) => {
           const isActive = hoveredCategory?.id === slice.id;
           return (
@@ -253,21 +253,18 @@ export function SpendsRadialChart({
                 onBlur={() => setHoveredCategory(null)}
                 onClick={() => setHoveredCategory(isActive ? null : slice)}
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors cursor-pointer",
+                  "flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-left transition-colors cursor-pointer",
                   isActive ? "bg-muted" : "hover:bg-muted/60",
                 )}
               >
                 <span
-                  className="size-2.5 shrink-0 rounded-full"
+                  className="size-2 shrink-0 rounded-full"
                   style={{ background: isDark ? slice.darkColor : slice.lightColor }}
                   aria-hidden="true"
                 />
-                <span className="flex-1 truncate text-[13px] text-foreground">{slice.label}</span>
+                <span className="truncate text-[12.5px] text-foreground">{slice.label}</span>
                 <span className="tabular text-[12px] text-muted-foreground">
                   {Math.round(slice.proportion * 100)}%
-                </span>
-                <span className="tabular w-[92px] text-right text-[13px] text-foreground">
-                  {showEffectiveAmounts ? fmtAmount(slice.amount) : "GHS ••••"}
                 </span>
               </button>
             </li>
@@ -276,7 +273,7 @@ export function SpendsRadialChart({
       </ul>
 
       {/* Time Range Filter Pills */}
-      <div className="flex w-full items-center gap-2 pt-2">
+      <div className="flex w-full items-center gap-2">
         {SPEND_RANGES.map((rg) => {
           const isActive = selectedRange === rg;
           return (
@@ -289,7 +286,7 @@ export function SpendsRadialChart({
                 setHoveredCategory(null);
               }}
               className={cn(
-                "flex-1 rounded-full py-2 text-[13.5px] tabular transition-colors cursor-pointer text-center outline-none select-none",
+                "flex-1 rounded-full py-1.5 text-[13px] tabular transition-colors cursor-pointer text-center outline-none select-none",
                 isActive
                   ? "bg-foreground text-background shadow-xs"
                   : "border border-border/80 bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"

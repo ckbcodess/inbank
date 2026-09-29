@@ -234,7 +234,7 @@ function CardsPageContent() {
   }
 
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className="flex flex-col gap-8 w-full">
       {/* Dev Mode State Switcher (registers automatically to the top navbar) */}
       <StateSwitcher
         section="13.1"
@@ -371,7 +371,7 @@ function CardsPageContent() {
 
       {(effective === "populated" || effective === "partial-load") && (
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
-          <ul className="divide-y divide-border">
+          <ul className="flex flex-col gap-0.5 p-2">
               {rows.map((card) => {
                 const isNavigating = navigatingCardId === card.id;
                 return (
@@ -380,7 +380,7 @@ function CardsPageContent() {
                       href={`/cards/${card.id}`}
                       onClick={() => setNavigatingCardId(card.id)}
                       className={cn(
-                        "flex items-center justify-between gap-3 sm:gap-4 px-3.5 sm:px-5 py-3.5 sm:py-4 transition-colors hover:bg-muted/40 group",
+                        "flex items-center justify-between gap-3 sm:gap-4 rounded-xl px-3 sm:px-4 py-4 transition-colors hover:bg-muted/50 group",
                         isNavigating && "bg-muted/60"
                       )}
                     >

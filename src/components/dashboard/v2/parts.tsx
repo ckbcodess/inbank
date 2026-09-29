@@ -298,7 +298,7 @@ export function MoneyActions({
           onClick={() => pick(k)}
           aria-haspopup="dialog"
           className={cn(
-            "flex items-center gap-2 px-5 py-3 text-[14px] font-medium leading-none transition-colors cursor-pointer",
+            "flex items-center gap-2 px-5 py-3 text-[14px] font-medium leading-none whitespace-nowrap transition-colors cursor-pointer max-sm:flex-1 max-sm:justify-center max-sm:gap-1.5 max-sm:px-2 max-sm:text-[13px]",
             "rounded-lg",
             primary
               ? "bg-primary text-primary-foreground shadow-xs hover:bg-primary-hover"
@@ -641,9 +641,9 @@ export function Notices({
 
 export function UpcomingList({ items, showAmounts }: { items: UpcomingPayment[]; showAmounts: boolean }) {
   return (
-    <ul className="flex flex-col divide-y divide-border/40">
+    <ul className="flex flex-col">
       {items.map((p) => (
-        <li key={p.id} className="flex items-center gap-3.5 py-3">
+        <li key={p.id} className="flex items-center gap-3.5 py-3.5">
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
             <span className="truncate text-[14px] text-foreground">{p.payee}</span>
             <span className="text-[12px] text-muted-foreground tabular">

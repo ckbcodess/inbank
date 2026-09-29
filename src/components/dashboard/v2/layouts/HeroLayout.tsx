@@ -78,10 +78,10 @@ export function HeroLayout(props: DashViewProps) {
             className="rounded-3xl"
             onOpenFundModal={props.onOpenFundModal}
           />
-          <CardsCard data={data} loading={loading} className="rounded-3xl" onOpenFundModal={props.onOpenFundModal} />
           <PayAgainCard data={data} className="rounded-3xl" />
-          <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
           <AnalyticsCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
+          <CardsCard data={data} loading={loading} className="rounded-3xl" onOpenFundModal={props.onOpenFundModal} />
+          <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
         </AccountScoped>
       </HeroStack>
 

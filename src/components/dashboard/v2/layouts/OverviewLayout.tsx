@@ -65,10 +65,10 @@ export function OverviewLayout(props: DashViewProps) {
             showAmounts={showAmounts}
             onOpenFundModal={props.onOpenFundModal}
           />
-          <CardsCard data={data} loading={loading} onOpenFundModal={props.onOpenFundModal} />
           <PayAgainCard data={data} />
-          <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} />
           <AnalyticsCard data={data} loading={loading} showAmounts={showAmounts} />
+          <CardsCard data={data} loading={loading} onOpenFundModal={props.onOpenFundModal} />
+          <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} />
         </motion.div>
 
         <PromoBanner />

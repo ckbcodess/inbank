@@ -48,7 +48,7 @@ export function HeroSplitLayout(props: DashViewProps) {
         hero={
           // Spacing per Figma 1951:2350: 40px sides and foot (+32px the sheet covers),
           // content sat on the foot; pill 40px above the balance, "Updated" 16px below it.
-          <HeroSurface className="flex flex-col gap-8 rounded-t-3xl px-5 pb-[64px] pt-16 sm:px-10 sm:pb-[72px] sm:pt-[108px] lg:flex-row lg:items-end lg:justify-between">
+          <HeroSurface className="flex flex-col gap-8 rounded-t-3xl px-5 pb-[64px] pt-[60px] sm:px-10 sm:pb-[72px] sm:pt-[88px] lg:flex-row lg:items-end lg:justify-between">
             <HeroAccountMenu data={data} className="absolute right-4 top-4 sm:right-8 sm:top-8" />
             <div className="flex flex-col items-start gap-8 sm:gap-10">
               <AccountSwitcher data={data} onSelect={onSelectAccount} tone="hero" />
@@ -62,14 +62,7 @@ export function HeroSplitLayout(props: DashViewProps) {
               accountId={data.selectedAccountId}
               hasOtherAccounts={hasOtherAccounts}
               tone="hero"
-              className="relative hidden gap-3 sm:flex lg:justify-end"
-            />
-            <MoneyActions
-              accountId={data.selectedAccountId}
-              hasOtherAccounts={hasOtherAccounts}
-              variant="row"
-              tone="hero"
-              className="relative sm:hidden"
+              className="relative gap-3 lg:justify-end"
             />
           </HeroSurface>
         }
@@ -84,10 +77,10 @@ export function HeroSplitLayout(props: DashViewProps) {
             className="rounded-3xl"
             onOpenFundModal={props.onOpenFundModal}
           />
-          <CardsCard data={data} loading={loading} className="rounded-3xl" onOpenFundModal={props.onOpenFundModal} />
           <PayAgainCard data={data} className="rounded-3xl" />
-          <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
           <AnalyticsCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
+          <CardsCard data={data} loading={loading} className="rounded-3xl" onOpenFundModal={props.onOpenFundModal} />
+          <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
         </AccountScoped>
       </HeroStack>
 

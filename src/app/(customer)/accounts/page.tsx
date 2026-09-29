@@ -146,7 +146,7 @@ function AccountRow({
     <li>
       <Link
         href={`/accounts/${account.id}`}
-        className="group flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/40 sm:px-5"
+        className="group flex items-center gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-muted/50 sm:px-4"
       >
         <TileChip tone="onCard">
           {isWallet ? (
@@ -179,7 +179,7 @@ function AccountRow({
           size={20}
           strokeWidth={1.8}
           aria-hidden="true"
-          className="shrink-0 text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
+          className="shrink-0 text-muted-foreground transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground"
         />
       </Link>
     </li>
@@ -188,7 +188,7 @@ function AccountRow({
 
 function SourceRow({ source, onRemove }: { source: LinkedSource; onRemove: () => void }) {
   return (
-    <li className="flex items-center gap-4 py-4 pl-4 pr-2 sm:pl-5 sm:pr-3">
+    <li className="flex items-center gap-4 rounded-xl py-4 pl-3 pr-1 sm:pl-4 sm:pr-2">
       <TileChip tone="onCard">
         {source.type === "momo" ? (
           <Smartphone size={20} strokeWidth={1.8} aria-hidden="true" />
@@ -330,7 +330,7 @@ function AccountsContent() {
   const multiple = accounts.length > 1;
 
   return (
-    <div className="flex flex-col gap-8 animate-in fade-in duration-200">
+    <div className="flex flex-col gap-10 animate-in fade-in duration-200">
       {/* Header */}
       {/* No Add money here — every account has its own Top up on Account Details. */}
       <PageHeader title="Accounts" />
@@ -378,7 +378,7 @@ function AccountsContent() {
       )}
 
       {/* ── Your accounts ── */}
-      <section className="flex flex-col gap-3" aria-labelledby="accounts-heading">
+      <section className="flex flex-col gap-4" aria-labelledby="accounts-heading">
         <SectionHeading
           id="accounts-heading"
           title={multiple ? "Your Accounts" : "Your Account"}
@@ -400,7 +400,7 @@ function AccountsContent() {
           )}
 
           {screenState !== "loading" && screenState !== "error" && (
-              <ul className="divide-y divide-border">
+              <ul className="flex flex-col gap-0.5 p-2">
                 {accounts.map((account) => (
                   <AccountRow
                     key={account.id}
@@ -417,7 +417,7 @@ function AccountsContent() {
 
       {/* ── Sources of funds (linked wallets & cards) ── */}
       {isRetail && screenState !== "error" && (
-        <section className="flex flex-col gap-3" aria-labelledby="sources-heading">
+        <section className="flex flex-col gap-4" aria-labelledby="sources-heading">
           <SectionHeading
             id="sources-heading"
             title="Sources of Funds"
@@ -457,7 +457,7 @@ function AccountsContent() {
             )}
 
             {screenState === "populated" && sources.length > 0 && (
-              <ul className="divide-y divide-border">
+              <ul className="flex flex-col gap-0.5 p-2">
                 {sources.map((source) => (
                   <SourceRow key={source.id} source={source} onRemove={() => setRemoving(source)} />
                 ))}

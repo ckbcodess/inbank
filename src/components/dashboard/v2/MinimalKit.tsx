@@ -314,9 +314,9 @@ export function DotLegend({
   compact?: boolean;
 }) {
   return (
-    <ul className="flex flex-col divide-y divide-border/40">
+    <ul className="flex flex-col">
       {slices.map((s, i) => (
-        <li key={`${s.label}-${i}`} className="flex items-center gap-3 py-3">
+        <li key={`${s.label}-${i}`} className="flex items-center gap-3 py-3.5">
           <span className="size-2.5 shrink-0 rounded-full" style={{ background: s.color }} aria-hidden="true" />
           <span className="flex-1 truncate text-[13.5px] text-foreground">{s.label}</span>
           {!compact && <span className="tabular text-[12px] text-muted-foreground">{pct(s.share)}</span>}
@@ -381,7 +381,7 @@ export function LatestTransactions({
   limit?: number;
 }) {
   return (
-    <ul className="flex flex-col divide-y divide-border/40">
+    <ul className="flex flex-col">
       {txns.slice(0, limit).map((t) => {
         const credit = t.direction === "credit";
         return (
@@ -613,7 +613,7 @@ export function RecentTransactions({
     );
   }
   return (
-    <ul className="flex flex-col divide-y divide-border/40">
+    <ul className="flex flex-col">
       {txns.slice(0, limit).map((t) => {
         const credit = t.direction === "credit";
         const failed = typeof t.state === "string" && t.state.startsWith("failed");
@@ -622,11 +622,11 @@ export function RecentTransactions({
           <li key={t.id}>
             <Link
               href={`/transactions/${t.id}`}
-              className="flex w-full items-center gap-3.5 py-3 text-left transition-colors"
+              className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60"
             >
               <span
                 className={cn(
-                  "flex size-9 shrink-0 items-center justify-center rounded-full",
+                  "flex size-8 shrink-0 items-center justify-center rounded-full",
                   credit ? "bg-success/10 text-success" : "bg-muted text-muted-foreground",
                 )}
               >
@@ -729,11 +729,11 @@ export function CardsMini({
   };
 
   return (
-    <ul className="flex flex-col divide-y divide-border/40">
+    <ul className="flex flex-col">
       {shown.map((c) => {
         const isBlocked = blocked[c.id] ?? c.status === "Blocked";
         return (
-          <li key={c.id} className="flex items-center gap-3 py-3">
+          <li key={c.id} className="flex items-center gap-3 py-3.5">
             <span className="flex h-6 w-9 shrink-0 items-center justify-center rounded-[5px] bg-muted text-[8px] uppercase tracking-wide text-muted-foreground">
               {c.scheme === "Visa" ? "VISA" : "MC"}
             </span>
@@ -791,7 +791,7 @@ export function FxRatesMini() {
   });
   return (
     <div className="flex flex-col gap-3">
-      <ul className="flex flex-col divide-y divide-border/40">
+      <ul className="flex flex-col">
         {rows.map((f) => (
           <li key={f.pair} className="flex items-center justify-between gap-4 py-2.5">
             <span className="text-[13.5px] text-foreground tabular">{f.base} / {f.quote}</span>
