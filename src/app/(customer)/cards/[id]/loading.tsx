@@ -1,6 +1,6 @@
 export default function CardDetailsLoading() {
   return (
-    <div className="flex flex-col gap-6 w-full animate-in fade-in duration-200">
+    <div className="flex flex-col gap-6 w-full">
       {/* Breadcrumb Skeleton */}
       <div className="flex items-center gap-2">
         <div className="h-4 w-12 rounded bg-muted/60 animate-pulse" />

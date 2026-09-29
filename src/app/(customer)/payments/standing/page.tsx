@@ -139,7 +139,7 @@ export default function StandingOrdersPage() {
               description={`No ${filterTab} standing orders found.`}
             />
           ) : (
-            <TrueEmptyState
+            <TrueEmptyState illustration="empty-standing"
               icon={<Repeat size={22} strokeWidth={1.8} />}
               title="No standing orders found"
               description="Automate rent, susu contributions, family stipends, airtime, data or savings transfers."

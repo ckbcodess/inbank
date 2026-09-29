@@ -51,7 +51,7 @@ import {
 import { useSession, useSessionHydrated } from "@/lib/session-store";
 import { readyCache } from "@/lib/ready-cache";
 import { useCardAssetsReady } from "@/components/cards/useCardAssetsReady";
-import { CardsSkeleton } from "@/components/cards/CardParts";
+import { CardsPageSkeleton, CardsSkeleton } from "@/components/cards/CardParts";
 import { CardsEmptyIllustration } from "@/components/cards/CardsEmptyIllustration";
 import { CardsStack } from "@/components/cards/layouts/CardsStack";
 import { CardsCarousel } from "@/components/cards/layouts/CardsCarousel";
@@ -300,6 +300,8 @@ function CardsPageContent() {
     setCreateOpen(false);
   }
 
+  if (!ready) return <CardsPageSkeleton />;
+
   return (
     <div className="flex flex-col gap-8 w-full">
       {/* Dev Mode State Switcher (registers automatically to the top navbar) */}
@@ -435,7 +437,7 @@ function CardsPageContent() {
       )}
 
       {effective === "empty" && (
-        <TrueEmptyState
+        <TrueEmptyState illustration="empty-cards"
           icon={<CardsEmptyIllustration />}
           title="No cards yet"
           description="Get a virtual card instantly, or request a debit or prepaid card and we'll deliver it. It will show up here."

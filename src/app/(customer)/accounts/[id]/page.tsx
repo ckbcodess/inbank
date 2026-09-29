@@ -369,7 +369,7 @@ function RecentTransactionsDialog({
         </DialogHeader>
         <DialogBody>
           {transactions.length === 0 ? (
-            <TrueEmptyState
+            <TrueEmptyState illustration="empty-activity"
               title="No activity on this account yet"
               description="Money in and out of this account will show here."
             />

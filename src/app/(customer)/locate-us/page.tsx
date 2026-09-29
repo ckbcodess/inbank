@@ -290,7 +290,7 @@ export default function LocateUsPage() {
             }
           />
         ) : (
-          <TrueEmptyState
+          <TrueEmptyState illustration="no-results"
             icon={<MapPin size={22} strokeWidth={1.8} />}
             title="No locations found"
             description="Branch and ATM locations will appear here."

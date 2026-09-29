@@ -113,7 +113,7 @@ export function AccountExpensesView({
 
       {(state === "populated" || state === "empty") && isEmpty && (
         <div className="rounded-2xl border border-border bg-card">
-          <TrueEmptyState
+          <TrueEmptyState illustration="empty-chart"
             icon={<PieChart size={22} strokeWidth={1.5} />}
             title={`Nothing spent from this account in the last ${periodLabel}`}
             description="Payments and card spend from this account will show here. Transfers between your own accounts aren't counted."

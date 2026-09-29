@@ -9,6 +9,8 @@
 import type { ReactNode } from "react";
 import { AlertCircle, Inbox, RefreshCw, SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { StateIllustration } from "@/components/states/StateIllustration";
+import type { StateIllustrationId } from "@/lib/state-illustrations";
 
 /** 13.1 Loading — skeleton rows, explicitly not a spinner-only screen. */
 export function ListSkeleton({ rows = 6, columns = 5 }: { rows?: number; columns?: number }) {
@@ -41,16 +43,20 @@ export function TrueEmptyState({
   description,
   action,
   icon,
+  illustration,
 }: {
   title: string;
   description: string;
   action?: ReactNode;
   icon?: ReactNode;
+  /** Registered drawing for this situation; the icon shows until it's been drawn. */
+  illustration?: StateIllustrationId;
 }) {
+  const fallbackIcon = icon ?? <Inbox size={22} strokeWidth={1.5} />;
   return (
     <div className="flex flex-col items-center justify-center px-4 py-14 sm:py-16 text-center">
       <div className="mb-3 text-muted-foreground/60 flex items-center justify-center">
-        {icon ?? <Inbox size={22} strokeWidth={1.5} />}
+        {illustration ? <StateIllustration id={illustration} fallback={fallbackIcon} /> : fallbackIcon}
       </div>
       <p className="text-[14.5px] font-medium text-foreground">{title}</p>
       <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>
@@ -76,7 +82,7 @@ export function FilteredEmptyState({
   return (
     <div className="flex flex-col items-center justify-center px-4 py-14 sm:py-16 text-center">
       <div className="mb-3 text-muted-foreground/60 flex items-center justify-center">
-        <SearchX size={22} strokeWidth={1.5} />
+        <StateIllustration id="no-results" fallback={<SearchX size={22} strokeWidth={1.5} />} />
       </div>
       <p className="text-[14.5px] font-medium text-foreground">No results found</p>
       <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>
@@ -100,7 +106,7 @@ export function ListErrorState({
   return (
     <div className="flex flex-col items-center justify-center px-4 py-14 sm:py-16 text-center">
       <div className="mb-3 text-destructive/80 flex items-center justify-center">
-        <AlertCircle size={22} strokeWidth={1.5} />
+        <StateIllustration id="load-error" fallback={<AlertCircle size={22} strokeWidth={1.5} />} />
       </div>
       <p className="text-[14.5px] font-medium text-foreground">Couldn&apos;t load records</p>
       <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>

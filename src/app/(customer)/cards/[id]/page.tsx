@@ -11,6 +11,7 @@ import Link from "next/link";
 import {
   ChevronRight,
 } from "lucide-react";
+import CardDetailsLoading from "./loading";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
 import { VirtualCardDetailsView } from "@/components/cards/VirtualCardDetailsView";
@@ -48,13 +49,7 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
   const assetsReady = useCardAssetsReady(card ? [card] : []);
   const ready = sessionReady && assetsReady;
 
-  if (!ready) {
-    return (
-      <div className="flex w-full flex-col gap-6" aria-busy="true">
-        <ListSkeleton rows={5} columns={3} />
-      </div>
-    );
-  }
+  if (!ready) return <CardDetailsLoading />;
 
   if (!card) {
     return (
@@ -94,7 +89,7 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
       )}
 
       {state === "empty" && (
-        <TrueEmptyState
+        <TrueEmptyState illustration="empty-activity"
           title="No card activity found"
           description="Transactions made with this card will appear here once authorized."
         />

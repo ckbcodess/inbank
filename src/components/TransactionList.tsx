@@ -1209,7 +1209,7 @@ export default function TransactionList({
       {effective === "error" && <ListErrorState onRetry={() => setState("populated")} />}
 
       {effective === "empty" && (
-        <TrueEmptyState
+        <TrueEmptyState illustration="empty-activity"
           icon={<ArrowLeftRight size={20} strokeWidth={1.7} />}
           title={emptyTitle}
           description={emptyDescription}

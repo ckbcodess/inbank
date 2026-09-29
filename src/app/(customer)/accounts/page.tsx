@@ -443,7 +443,7 @@ function AccountsContent() {
             )}
 
             {screenState === "populated" && sources.length === 0 && (
-              <TrueEmptyState
+              <TrueEmptyState illustration="empty-sources"
                 icon={<Smartphone size={20} strokeWidth={1.7} aria-hidden="true" />}
                 title="No cards or wallets linked"
                 description={

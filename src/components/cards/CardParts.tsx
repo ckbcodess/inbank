@@ -138,3 +138,18 @@ export function CardsSkeleton() {
     </div>
   );
 }
+
+/** The whole /cards page in outline — header, filter, cards. One skeleton for the route
+ *  boundary and the in-page gate, so the handoff between them is invisible. */
+export function CardsPageSkeleton() {
+  return (
+    <div className="flex w-full flex-col gap-8" aria-busy="true">
+      <div className="flex items-center justify-between">
+        <div className="h-7 w-20 rounded-lg bg-muted/60" />
+        <div className="h-9 w-[140px] rounded-lg bg-muted/60" />
+      </div>
+      <div className="h-11 w-[360px] max-w-full rounded-xl bg-muted/60" />
+      <CardsSkeleton />
+    </div>
+  );
+}

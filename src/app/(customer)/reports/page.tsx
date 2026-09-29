@@ -276,7 +276,7 @@ export default function ReportsPage() {
       )}
 
       {effective === "empty" && (
-        <TrueEmptyState
+        <TrueEmptyState illustration="empty-chart"
           icon={<BarChart3 size={20} strokeWidth={1.7} />}
           title="No activity in this period"
           description="There are no records between the dates selected. Widen the date range to see more."

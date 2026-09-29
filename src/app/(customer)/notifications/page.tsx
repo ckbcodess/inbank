@@ -157,7 +157,7 @@ export default function NotificationsPage() {
       )}
 
       {effective === "empty" && (
-        <TrueEmptyState
+        <TrueEmptyState illustration="caught-up"
           icon={<Bell size={20} strokeWidth={1.7} aria-hidden="true" />}
           title="Nothing to catch up on"
           description="You'll be notified here when a payment is submitted, approved, returned, or changes status."

@@ -133,7 +133,7 @@ export default function ApprovalQueuePage() {
       )}
 
       {effective === "empty" && (
-        <TrueEmptyState
+        <TrueEmptyState illustration="caught-up"
           icon={<CheckCircle2 size={20} strokeWidth={1.7} aria-hidden="true" />}
           title="Nothing waiting on you"
           description="When a colleague submits a payment or trade request that needs your approval, it will appear here."

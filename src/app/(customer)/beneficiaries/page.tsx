@@ -1000,7 +1000,7 @@ export default function BeneficiariesPage() {
                 }
               />
             ) : (
-              <TrueEmptyState
+              <TrueEmptyState illustration="empty-people"
                 title={activeTab === "people" ? "No people saved yet" : "No billers saved yet"}
                 description={
                   activeTab === "people"
@@ -1108,7 +1108,7 @@ export default function BeneficiariesPage() {
                 description="No payment groups match your search query."
               />
             ) : (
-              <TrueEmptyState
+              <TrueEmptyState illustration="empty-groups"
                 title="No payment groups created"
                 description="Create a group to distribute transfers or Susu contributions in one step."
                 action={

@@ -637,50 +637,42 @@ export function RequestCardFlow() {
               </>
             ) : (
               <>
-                {/* Scheme Selector */}
+                {/* Card network: Visa / Mastercard */}
                 <div className="flex flex-col gap-2">
                   <label className="text-[14px] font-medium text-foreground">
                     Card network
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {(["Visa", "Mastercard"] as const).map((scheme) => {
-                      const isSelected = cardScheme === scheme;
-                      return (
-                        <button
-                          key={scheme}
-                          type="button"
-                          onClick={() => handleSchemeChange(scheme)}
-                          className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                            isSelected
-                              ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
-                              : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
-                          }`}
-                        >
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <div
-                              className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
-                                isSelected
-                                  ? "border-foreground bg-foreground"
-                                  : "border-muted-foreground/40 bg-transparent"
-                              }`}
-                            >
-                              {isSelected && (
-                                <div className="size-1.5 rounded-full bg-background" />
-                              )}
-                            </div>
-                            <span className="text-[14px] font-medium truncate">{scheme}</span>
-                          </div>
-                          <div className="shrink-0 flex items-center">
+                  <Select
+                    value={cardScheme}
+                    onValueChange={(val) => {
+                      if (val) handleSchemeChange(val as "Visa" | "Mastercard");
+                    }}
+                  >
+                    <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+                      <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
+                        <span className="text-[14.5px] font-medium text-foreground truncate">{cardScheme}</span>
+                        {cardScheme === "Visa" ? (
+                          <VisaLogo className="h-4 w-auto text-foreground" />
+                        ) : (
+                          <MastercardLogo className="h-4.5 w-auto" />
+                        )}
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(["Visa", "Mastercard"] as const).map((scheme) => (
+                        <SelectItem key={scheme} value={scheme}>
+                          <div className="flex w-full items-center justify-between gap-6 py-0.5">
+                            <span className="text-[14px] font-medium text-foreground">{scheme}</span>
                             {scheme === "Visa" ? (
                               <VisaLogo className="h-4 w-auto text-foreground" />
                             ) : (
                               <MastercardLogo className="h-4.5 w-auto" />
                             )}
                           </div>
-                        </button>
-                      );
-                    })}
-                  </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {/* Network Type Selector - Always visible on entry of the page */}
