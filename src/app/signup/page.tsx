@@ -14,6 +14,7 @@ import {
   CreditCard,
   Eye,
   EyeOff,
+  Landmark,
   Smartphone,
 } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
@@ -763,15 +764,11 @@ function SignupContent() {
       {/* STEP 6: Virtual Account Ready */}
       {step === "virtual_account_ready" && (
         <div className="flex flex-col items-center text-center">
-          <div className="relative mb-5 flex size-36 items-center justify-center">
-            <Image
-              src="/images/virtual-account-avatar-transparent.png"
-              alt="Virtual Account Ready"
-              width={144}
-              height={144}
-              className="object-contain drop-shadow-md"
-              priority
-            />
+          <div className="relative mb-6 flex size-24 items-center justify-center rounded-full bg-primary/15 text-foreground shadow-[0_0_60px_20px_color-mix(in_oklch,var(--primary)_18%,transparent)]">
+            <Landmark size={40} strokeWidth={1.5} aria-hidden="true" />
+            <span className="absolute -bottom-0.5 -right-0.5 flex size-7 items-center justify-center rounded-full border-2 border-background bg-success text-white">
+              <Check size={14} strokeWidth={2.4} aria-hidden="true" />
+            </span>
           </div>
 
           <h2 className="text-[22px] tracking-[-0.02em] text-foreground sm:text-[24px]">

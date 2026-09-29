@@ -12,11 +12,9 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle2, ChevronRight, CreditCard, Layers, Loader2, Plus } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { CheckCircle2, CreditCard, Layers, Plus } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -49,11 +47,20 @@ import {
   addCard,
   cardsForProfile,
   formatMoney,
-  type CardStatus,
   type PaymentCard,
 } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
-import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
+import { CardsStack } from "@/components/cards/layouts/CardsStack";
+import { CardsCarousel } from "@/components/cards/layouts/CardsCarousel";
+import { CardsGallery } from "@/components/cards/layouts/CardsGallery";
+import { CardsSpotlight } from "@/components/cards/layouts/CardsSpotlight";
+import {
+  CARDS_LAYOUTS,
+  CARDS_LAYOUT_KEY,
+  CARDS_LAYOUT_LABELS,
+  DEFAULT_CARDS_LAYOUT,
+  type CardsLayout,
+} from "@/lib/cards-layout";
 import {
   CARD_SIMULATION_LABELS,
   getEffectiveCardsForProfile,
@@ -81,12 +88,15 @@ const LIST_STATES: readonly ListState[] = [
   "error",
 ] as const;
 
-const STATUS_VARIANT: Record<CardStatus, "success" | "destructive" | "secondary"> = {
-  Active: "success",
-  Blocked: "destructive",
-  Expired: "secondary",
-  Inactive: "secondary",
-};
+/** Dev Mode's layout pick survives a reload (per browser, a reviewing convenience). */
+function readLayout(): CardsLayout {
+  try {
+    const stored = typeof window !== "undefined" ? localStorage.getItem(CARDS_LAYOUT_KEY) : null;
+    return CARDS_LAYOUTS.includes(stored as CardsLayout) ? (stored as CardsLayout) : DEFAULT_CARDS_LAYOUT;
+  } catch {
+    return DEFAULT_CARDS_LAYOUT;
+  }
+}
 
 function CardsPageContent() {
   const actor = useSession((s) => s.actor);
@@ -96,7 +106,7 @@ function CardsPageContent() {
 
   const [state, setState] = useState<ListState>("populated");
   const [notice, setNotice] = useState<string | null>(null);
-  const [navigatingCardId, setNavigatingCardId] = useState<string | null>(null);
+  const [layout, setLayout] = useState<CardsLayout>(readLayout);
 
   useEffect(() => {
     if (searchParams.get("created") === "true") {
@@ -168,8 +178,21 @@ function CardsPageContent() {
         value: state,
         onChange: (val) => setState(val as ListState),
       },
+      {
+        label: "Cards layout",
+        states: CARDS_LAYOUTS.map((id) => ({ id, label: CARDS_LAYOUT_LABELS[id] })),
+        value: layout,
+        onChange: (val) => {
+          setLayout(val as CardsLayout);
+          try {
+            localStorage.setItem(CARDS_LAYOUT_KEY, val);
+          } catch {
+            // Storage blocked — the pick lasts for this visit only.
+          }
+        },
+      },
     ];
-  }, [devState, allCards, state]);
+  }, [devState, allCards, state, layout]);
 
   const filteredCards = useMemo(() => {
     if (typeFilter === "all") return cards;
@@ -369,71 +392,15 @@ function CardsPageContent() {
         />
       )}
 
-      {(effective === "populated" || effective === "partial-load") && (
-        <div className="rounded-2xl border border-border bg-card overflow-hidden">
-          <ul className="flex flex-col gap-0.5 p-2">
-              {rows.map((card) => {
-                const isNavigating = navigatingCardId === card.id;
-                return (
-                  <li key={card.id}>
-                    <Link
-                      href={`/cards/${card.id}`}
-                      onClick={() => setNavigatingCardId(card.id)}
-                      className={cn(
-                        "flex items-center justify-between gap-3 sm:gap-4 rounded-xl px-3 sm:px-4 py-4 transition-colors hover:bg-muted/50 group",
-                        isNavigating && "bg-muted/60"
-                      )}
-                    >
-                      <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-                        <MiniCardThumbnail card={card} />
-
-                        <div className="flex min-w-0 flex-1 flex-col">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="truncate text-[14px] font-medium text-foreground">{card.name}</span>
-                            {card.deliveryStatus ? (
-                              <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[10.5px] font-medium text-foreground border border-border">
-                                {card.deliveryStatus === "ready_for_pickup"
-                                  ? "Ready for Pickup"
-                                  : card.deliveryStatus === "out_for_delivery"
-                                  ? "Out for Delivery"
-                                  : card.deliveryStatus === "in_transit"
-                                  ? "In Transit"
-                                  : card.deliveryStatus === "delivered"
-                                  ? card.status === "Inactive"
-                                    ? "Needs Activation"
-                                    : "Delivered"
-                                  : "In Production"}
-                              </span>
-                            ) : (
-                              card.status !== "Active" && (
-                                <Badge variant={STATUS_VARIANT[card.status]}>
-                                  {card.status === "Inactive" ? "Needs Activation" : card.status}
-                                </Badge>
-                              )
-                            )}
-                          </div>
-                          <span className="mt-0.5 text-[12px] text-muted-foreground tabular">
-                            {card.type} · {card.maskedNumber}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                        {isNavigating ? (
-                          <Loader2 size={16} className="animate-spin text-foreground shrink-0" />
-                        ) : (
-                          <ChevronRight size={16} strokeWidth={1.8} className="text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
-                        )}
-                      </div>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-
-            {effective === "partial-load" && <PartialLoadFooter />}
-          </div>
-        )}
+      {(effective === "populated" || effective === "partial-load") && rows.length > 0 && (
+        <div className="flex flex-col gap-4">
+          {layout === "stack" && <CardsStack cards={rows} />}
+          {layout === "carousel" && <CardsCarousel cards={rows} />}
+          {layout === "gallery" && <CardsGallery cards={rows} />}
+          {layout === "spotlight" && <CardsSpotlight cards={rows} />}
+          {effective === "partial-load" && <PartialLoadFooter />}
+        </div>
+      )}
 
       {/* CREATE NEW CARD MODAL DIALOG */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>

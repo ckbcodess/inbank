@@ -333,7 +333,21 @@ function AccountsContent() {
     <div className="flex flex-col gap-10 animate-in fade-in duration-200">
       {/* Header */}
       {/* No Add money here — every account has its own Top up on Account Details. */}
-      <PageHeader title="Accounts" />
+      <PageHeader
+        title="Your Accounts"
+        actions={
+          isRetail && screenState !== "loading" && screenState !== "error" ? (
+            <Button
+              type="button"
+              onClick={() => setAddAccountOpen(true)}
+              className="h-9 shrink-0 gap-1.5 rounded-lg px-3.5 text-[13px] font-medium shadow-xs"
+            >
+              <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
+              <span>Add Account</span>
+            </Button>
+          ) : undefined
+        }
+      />
 
       {isRetail ? (
         <StateSwitcher
@@ -377,18 +391,8 @@ function AccountsContent() {
         </div>
       )}
 
-      {/* ── Your accounts ── */}
-      <section className="flex flex-col gap-4" aria-labelledby="accounts-heading">
-        <SectionHeading
-          id="accounts-heading"
-          title={multiple ? "Your Accounts" : "Your Account"}
-          action={
-            isRetail && screenState !== "loading" && screenState !== "error" ? (
-              <SectionAction onClick={() => setAddAccountOpen(true)}>Add Account</SectionAction>
-            ) : undefined
-          }
-        />
-
+      {/* ── Your accounts — the page title is the heading; Add Account sits with it ── */}
+      <section aria-label="Your accounts">
         <div className={LIST}>
           {screenState === "loading" && <ListSkeleton rows={Math.max(accounts.length, 2)} columns={3} />}
 
