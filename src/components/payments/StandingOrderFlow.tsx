@@ -165,6 +165,8 @@ function detectNetworkFromPhone(phone: string): { airtimeNet: string; walletNet:
 
 import { useContextualBack } from "@/lib/contextual-back";
 import { PhoneInput } from "@/components/ui/phone-input";
+import { useOwnWallets } from "./flows/OwnWalletPicker";
+import { formatGhPhone } from "./flows/shared";
 
 export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const router = useRouter();
@@ -174,6 +176,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const auth = useAuthorisation();
   const { groups } = useGroupsStore();
   const savedBeneficiaries = useBeneficiariesStore((s) => s.beneficiaries);
+  const ownWallets = useOwnWallets();
   const storedDefaultId = useAccountPrefs((s) => s.defaultAccountId);
   // Start from the account the customer came from (?from=), else their default.
   const fromParam = useSearchParams().get("from");
@@ -283,6 +286,22 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       list = RECENT_AVATARS.filter((r) => r.rail === rail);
     }
 
+    // Your own wallets / numbers first — a standing order to your own MoMo is a
+    // common one. They replace the static single "self" entry.
+    if (rail === "wallet" || rail === "airtime" || rail === "data") {
+      const own = ownWallets.map<RecentPayeeAvatar>((w) => ({
+        id: `own-${w.id}`,
+        name: `My ${rail === "wallet" ? w.network : "number"}`,
+        bank: w.network,
+        acct: formatGhPhone(w.phone),
+        subtitle: `${formatGhPhone(w.phone)} · ${w.tag}`,
+        initials: "ME",
+        rail,
+        colorBg: "#fef9c3",
+      }));
+      list = [...own, ...list.filter((r) => !r.id.includes("self"))];
+    }
+
     // Merge in any custom saved beneficiaries from user store matching the rail
     const storeMatching = savedBeneficiaries
       .filter((sb) => sb.transactionType === rail)
@@ -315,7 +334,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       }
     }
     return merged;
-  }, [rail, groups, savedBeneficiaries]);
+  }, [rail, groups, savedBeneficiaries, ownWallets]);
 
   /**
    * Selecting a beneficiary immediately fills details AND sets detailsCollapsed to TRUE.

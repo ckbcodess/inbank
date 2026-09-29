@@ -1,9 +1,9 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertCircle, Eye, EyeOff, Fingerprint, ShieldCheck } from "lucide-react";
+import { AlertCircle, Building2, Eye, EyeOff, Fingerprint, ShieldCheck, User } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,19 +19,28 @@ type LoginState = "idle" | "submitting" | "error";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const bankingType = searchParams.get("type") || "personal";
+  const [bankingType, setBankingType] = useState<"personal" | "business">(() => {
+    return searchParams.get("type") === "business" ? "business" : "personal";
+  });
   const { signIn, verifyMfa } = useSession();
   const trusted = useTrustedDevice();
   // "Not you?" switches to the full form for this visit; the device stays trusted.
   const [notYou, setNotYou] = useState(false);
-  // Trust is read from storage after mount; wait a frame so the full form never flashes first.
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [state, setState] = useState<LoginState>("idle");
+
+  function handleTypeChange(nextType: "personal" | "business") {
+    setBankingType(nextType);
+    setEmail("");
+    setPassword("");
+    setState("idle");
+    const params = new URLSearchParams(window.location.search);
+    params.set("type", nextType);
+    router.replace(`/login?${params.toString()}`);
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -66,34 +75,51 @@ function LoginForm() {
     }, 600);
   }
 
-  if (!mounted) {
-    return (
-      <AuthLayout title="Login to GCB Internet Banking" width="compact">
-        {null}
-      </AuthLayout>
-    );
-  }
-
   if (trusted && !notYou) {
     return <ReturningSignIn trusted={trusted} onNotYou={() => setNotYou(true)} />;
   }
 
   return (
     <AuthLayout
-      title="Login to GCB Internet Banking"
+      title={bankingType === "business" ? "Business Internet Banking" : "Login to GCB Internet Banking"}
+      description={
+        bankingType === "business"
+          ? "Sign in with your corporate credentials to manage your business accounts."
+          : undefined
+      }
       width="compact"
       footer={
-        <div className="flex justify-center text-center">
+        <div className="flex flex-col items-center gap-2.5 text-center">
           <p className="text-[13px] text-muted-foreground">
             Don’t have an account?{" "}
             <Link
-              href="/get-started"
+              href={bankingType === "business" ? "/signup/business" : "/get-started"}
               data-tour="login-get-started"
               className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80 active:scale-[0.96]"
             >
-              Register
+              {bankingType === "business" ? "Apply for business account" : "Register"}
             </Link>
           </p>
+
+          {/* Understated Link to switch between Personal and Business */}
+          <button
+            type="button"
+            data-tour={bankingType === "personal" ? "entry-business" : "entry-personal"}
+            onClick={() => handleTypeChange(bankingType === "personal" ? "business" : "personal")}
+            className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
+          >
+            {bankingType === "personal" ? (
+              <>
+                <Building2 size={13.5} strokeWidth={1.8} className="shrink-0" />
+                <span>Switch to Business Banking</span>
+              </>
+            ) : (
+              <>
+                <User size={13.5} strokeWidth={1.8} className="shrink-0" />
+                <span>Switch to Personal Banking</span>
+              </>
+            )}
+          </button>
         </div>
       }
     >
@@ -101,13 +127,17 @@ function LoginForm() {
         {/* Email / User ID Input */}
         <div className="flex flex-col gap-2">
           <Label htmlFor="email" className="text-[13px] font-medium text-foreground">
-            Email or user ID
+            {bankingType === "business" ? "Corporate user ID or email" : "Email or user ID"}
           </Label>
           <Input
             id="email"
             type="text"
             autoComplete="username"
-            placeholder="e.g. ama.serwaa@example.com"
+            placeholder={
+              bankingType === "business"
+                ? "e.g. abena@adinkrafabrics.com"
+                : "e.g. ama.serwaa@example.com"
+            }
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);

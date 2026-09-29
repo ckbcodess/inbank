@@ -194,6 +194,7 @@ export function InternationalWireFlow({
           <CollapsedDetailsBadge
             title={state.wBenName}
             subtitle={`${state.wBank || "Bank"} · SWIFT: ${state.wSwift || "BIC"} · ${state.wIban}`}
+            nameCheck={{ confirmed: false }}
             onChange={() => setCollapsed(false)}
           />
         ) : (

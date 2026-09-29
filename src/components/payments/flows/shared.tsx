@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useRef, useState, useEffect } from "react";
-import { Landmark, AlertCircle, CheckCircle2, Check } from "lucide-react";
+import { Landmark, AlertCircle, CheckCircle2, ShieldCheck, User } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import {
@@ -302,9 +302,9 @@ export function detectTelcoNetwork(phone: string): { telcoName: string; walletNa
 export function getTelcoLogo(networkName?: string): string | null {
   if (!networkName) return null;
   const lower = networkName.toLowerCase();
-  if (lower.includes("mtn")) return "/mtn.png";
-  if (lower.includes("at") || lower.includes("airteltigo")) return "/at.png";
-  if (lower.includes("telecel") || lower.includes("vodafone")) return "/telecel.png";
+  if (lower.includes("mtn")) return "/mtn.svg";
+  if (lower.includes("at") || lower.includes("airteltigo")) return "/at.svg";
+  if (lower.includes("telecel") || lower.includes("vodafone")) return "/telecel.svg";
   return null;
 }
 
@@ -995,47 +995,76 @@ export function ResolvingAccountBadge({
 /* -------------------------------------------------------------------------- */
 /* Subcomponent 8: Collapsed Details Badge                                    */
 /* -------------------------------------------------------------------------- */
+/** Ghana numbers grouped for reading back: 0XX XXX XXXX (or +233 XX XXX XXXX). Anything else as typed. */
+export function formatGhPhone(raw: string): string {
+  const d = raw.replace(/\D/g, "");
+  if (d.length === 10 && d.startsWith("0")) return `${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6)}`;
+  if (d.length === 12 && d.startsWith("233")) return `+233 ${d.slice(3, 5)} ${d.slice(5, 8)} ${d.slice(8)}`;
+  return raw;
+}
+
+function initialsOf(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter((w) => /^[A-Za-z]/.test(w))
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join("");
+}
+
+/**
+ * The recipient, collapsed once chosen — the answer to "is this definitely the
+ * right person?" before money moves.
+ *
+ * `nameCheck` says whether the name came back from the provider's lookup
+ * (name enquiry), and who did it. It only claims what's true: confirmed names
+ * say who confirmed them; unconfirmed ones say so and ask for a check.
+ * Recipients the app already knows (own accounts, cards, groups) pass nothing
+ * and show no status.
+ */
 export function CollapsedDetailsBadge({
   title,
   subtitle,
   icon,
+  nameCheck,
   onChange,
 }: {
   title: string;
   subtitle?: string;
   icon?: React.ReactNode;
+  nameCheck?: { confirmed: boolean; by?: string };
   onChange: () => void;
 }) {
+  const initials = initialsOf(title);
   return (
-    <div className="flex h-[58px] min-h-[58px] items-center justify-between rounded-2xl border border-border/80 bg-card hover:bg-muted/20 px-3.5 py-0 transition-all animate-in fade-in duration-150 ease-out">
-      <div className="flex items-center gap-3 min-w-0">
-        {icon ? (
-          <div className="relative flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground border border-black/5 dark:border-white/10 overflow-hidden p-0">
-            {icon}
-            <span className="absolute bottom-0 right-0 flex size-3 items-center justify-center rounded-full bg-emerald-600 text-white ring-1 ring-background shadow-xs">
-              <Check size={8} strokeWidth={2.5} />
-            </span>
-          </div>
-        ) : (
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-            <Check size={17} strokeWidth={2} className="shrink-0" />
-          </span>
-        )}
-        <div className="flex flex-col min-w-0 text-left gap-0.5">
-          <span className="text-[14.5px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
-            {title}
-          </span>
+    <div className="flex min-h-[58px] items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card px-3.5 py-2.5 transition-colors animate-in fade-in duration-150 ease-out hover:bg-muted/20">
+      <div className="flex min-w-0 items-center gap-3">
+        <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-[12.5px] text-muted-foreground">
+          {icon ?? (initials || <User size={16} strokeWidth={1.8} aria-hidden="true" />)}
+        </span>
+        <div className="flex min-w-0 flex-col gap-0.5 text-left">
+          <span className="truncate text-[14.5px] font-medium leading-tight tracking-[-0.01em] text-foreground">{title}</span>
           {subtitle && (
-            <span className="text-[12.5px] text-muted-foreground font-normal truncate tabular leading-tight">
-              {subtitle}
-            </span>
+            <span className="truncate text-[12.5px] leading-tight text-muted-foreground tabular">{subtitle}</span>
           )}
+          {nameCheck &&
+            (nameCheck.confirmed ? (
+              <span className="flex items-center gap-1 text-[12px] leading-tight text-success">
+                <ShieldCheck size={12} strokeWidth={2} className="shrink-0" aria-hidden="true" />
+                <span className="truncate">Name confirmed{nameCheck.by ? ` by ${nameCheck.by}` : ""}</span>
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 text-[12px] leading-tight text-warning">
+                <AlertCircle size={12} strokeWidth={2} className="shrink-0" aria-hidden="true" />
+                <span className="truncate">Name not confirmed — check the details before you send</span>
+              </span>
+            ))}
         </div>
       </div>
       <button
         type="button"
         onClick={onChange}
-        className="text-[13.5px] font-medium text-foreground hover:underline cursor-pointer ml-3 shrink-0"
+        className="shrink-0 cursor-pointer text-[13.5px] font-medium text-foreground hover:underline"
       >
         Change
       </button>

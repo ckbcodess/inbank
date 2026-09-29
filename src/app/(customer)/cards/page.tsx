@@ -12,7 +12,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle2, ChevronRight, CreditCard, Loader2, Plus } from "lucide-react";
+import { CheckCircle2, ChevronRight, CreditCard, Layers, Loader2, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
+import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import {
   FilteredEmptyState,
   ListErrorState,
@@ -53,6 +54,23 @@ import {
 } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
 import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
+import {
+  CARD_SIMULATION_LABELS,
+  getEffectiveCardsForProfile,
+  useCardsDevStore,
+  type CardSimulationPreset,
+} from "@/lib/cards-dev-store";
+
+const SIMULATION_STATES: readonly CardSimulationPreset[] = [
+  "clean",
+  "out_for_delivery",
+  "ready_for_pickup",
+  "delivered",
+  "in_transit",
+  "in_production",
+  "blocked",
+  "all",
+] as const;
 
 const LIST_STATES: readonly ListState[] = [
   "loading",
@@ -74,6 +92,7 @@ function CardsPageContent() {
   const actor = useSession((s) => s.actor);
   const activeProfile = useSession((s) => s.activeProfile);
   const searchParams = useSearchParams();
+  const devState = useCardsDevStore();
 
   const [state, setState] = useState<ListState>("populated");
   const [notice, setNotice] = useState<string | null>(null);
@@ -109,10 +128,48 @@ function CardsPageContent() {
     [activeProfile],
   );
 
-  const cards = useMemo(() => {
+  const allCards = useMemo(() => {
     void refreshCount;
     return cardsForProfile(activeProfile?.kind);
   }, [activeProfile, refreshCount]);
+
+  const { cards, activeSimulatedCard } = useMemo(() => {
+    return getEffectiveCardsForProfile(
+      activeProfile?.kind ?? "CORPORATE",
+      allCards,
+      devState,
+    );
+  }, [activeProfile, allCards, devState]);
+
+  const devGroups = useMemo<DevStateGroup[]>(() => {
+    const cardOptions = [
+      { id: "auto", label: "Auto (Recommended card for stage)" },
+      ...allCards.map((c) => ({
+        id: c.id,
+        label: `${c.name} (${c.type})`,
+      })),
+    ];
+
+    const screenStateOptions = LIST_STATES.map((s) => ({
+      id: s,
+      label: LIST_STATE_LABEL[s] ?? s,
+    }));
+
+    return [
+      {
+        label: "Apply Stage To Card",
+        states: cardOptions,
+        value: devState.targetCardId || "auto",
+        onChange: (val) => devState.setTargetCardId(val === "auto" ? null : val),
+      },
+      {
+        label: "Screen Baseline State",
+        states: screenStateOptions,
+        value: state,
+        onChange: (val) => setState(val as ListState),
+      },
+    ];
+  }, [devState, allCards, state]);
 
   const filteredCards = useMemo(() => {
     if (typeFilter === "all") return cards;
@@ -181,10 +238,12 @@ function CardsPageContent() {
       {/* Dev Mode State Switcher (registers automatically to the top navbar) */}
       <StateSwitcher
         section="13.1"
-        states={LIST_STATES}
-        value={state}
-        onChange={setState}
-        labels={LIST_STATE_LABEL}
+        label="Card Lifecycle Simulator"
+        states={SIMULATION_STATES}
+        value={devState.simulation}
+        onChange={(val) => devState.setSimulation(val as CardSimulationPreset)}
+        labels={CARD_SIMULATION_LABELS}
+        groups={devGroups}
       />
 
       {/* ── Page Header: Title & Action (no description underneath) ── */}
@@ -201,6 +260,53 @@ function CardsPageContent() {
           </Button>
         }
       />
+
+      {/* Dev Mode Status Notification Banners */}
+      {devState.simulation !== "clean" && devState.simulation !== "all" && activeSimulatedCard && (
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-amber-500/40 bg-amber-500/5 px-4 py-2.5 text-[12.5px]">
+          <div className="flex items-center gap-2 min-w-0">
+            <Layers size={14} className="shrink-0 text-amber-600 dark:text-amber-400" />
+            <span className="font-medium text-foreground">Dev Mode Simulation:</span>
+            <span className="text-muted-foreground truncate">
+              <strong className="font-medium text-foreground">{activeSimulatedCard.name}</strong> is simulated as{" "}
+              <strong className="font-medium text-foreground">{CARD_SIMULATION_LABELS[devState.simulation]}</strong>
+            </span>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <Link
+              href={`/cards/${activeSimulatedCard.id}`}
+              className="text-[12px] font-medium text-foreground hover:underline"
+            >
+              View card details →
+            </Link>
+            <button
+              type="button"
+              onClick={() => devState.resetToClean()}
+              className="text-[12px] text-muted-foreground hover:text-foreground cursor-pointer underline"
+            >
+              Reset to clean
+            </button>
+          </div>
+        </div>
+      )}
+
+      {devState.simulation === "all" && (
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-amber-500/40 bg-amber-500/5 px-4 py-2.5 text-[12.5px]">
+          <div className="flex items-center gap-2 min-w-0">
+            <Layers size={14} className="shrink-0 text-amber-600 dark:text-amber-400" />
+            <span className="text-muted-foreground">
+              Dev Mode: Showing all <strong>{allCards.length}</strong> mock cards across all lifecycle stages.
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => devState.resetToClean()}
+            className="text-[12px] text-muted-foreground hover:text-foreground cursor-pointer underline shrink-0"
+          >
+            Reset to clean (2 cards)
+          </button>
+        </div>
+      )}
 
       {notice && (
         <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3 text-[13px] text-foreground">

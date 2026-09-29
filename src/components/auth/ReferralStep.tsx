@@ -62,8 +62,8 @@ export default function ReferralStep({
   return (
     <div className="flex flex-col gap-6" data-tour={dataTour}>
       <div className="flex justify-center">
-        <div className="flex size-20 items-center justify-center rounded-full bg-primary/15 text-foreground">
-          <PartyPopper size={34} strokeWidth={1.6} aria-hidden="true" />
+        <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-xs">
+          <PartyPopper size={26} strokeWidth={1.8} aria-hidden="true" />
         </div>
       </div>
 

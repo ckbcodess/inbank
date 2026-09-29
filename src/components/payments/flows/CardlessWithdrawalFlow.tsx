@@ -23,6 +23,7 @@ import {
   detectTelcoNetwork,
   getTelcoLogo,
   resolveAccountName,
+  formatGhPhone,
 } from "./shared";
 import { REGISTERED_PHONE } from "../useAuthorisation";
 import { PhoneInput } from "@/components/ui/phone-input";
@@ -134,8 +135,8 @@ export function CardlessWithdrawalFlow({
             title={isSelf ? "Myself (Cardless Code)" : (verifiedName || state.recipientName || `Recipient ${state.recipientPhone}`)}
             subtitle={
               isSelf
-                ? `Self Cash Withdrawal · ${REGISTERED_PHONE}`
-                : `${state.wNetwork || "MTN Mobile Money"} · ${state.recipientPhone}`
+                ? `Self Cash Withdrawal · ${formatGhPhone(REGISTERED_PHONE)}`
+                : `${state.wNetwork || "MTN Mobile Money"} · ${formatGhPhone(state.recipientPhone)}`
             }
             icon={
               !isSelf && getTelcoLogo(state.wNetwork || "") ? (
@@ -148,6 +149,7 @@ export function CardlessWithdrawalFlow({
                 />
               ) : undefined
             }
+            nameCheck={isSelf ? undefined : { confirmed: Boolean(verifiedName), by: state.wNetwork || undefined }}
             onChange={() => setCollapsed(false)}
           />
         ) : (

@@ -111,3 +111,113 @@ export function clearFirstRun() {
     // Storage blocked — nothing to clear.
   }
 }
+
+/* ── Post-onboarding pending modals (over blurred dashboard) ─────────────── */
+
+export interface PendingFundingSource {
+  type: "momo" | "card";
+  operator?: string;
+  momoNumber?: string;
+  cardNumber?: string;
+}
+
+const PENDING_SOURCE_KEY = "nibs-pending-source";
+const PENDING_REFERRAL_KEY = "nibs-pending-referral";
+
+export function setPendingFundingSource(source: PendingFundingSource | null) {
+  try {
+    if (source) localStorage.setItem(PENDING_SOURCE_KEY, JSON.stringify(source));
+    else localStorage.removeItem(PENDING_SOURCE_KEY);
+  } catch {
+    // Storage blocked.
+  }
+}
+
+export function peekPendingFundingSource(): PendingFundingSource | null {
+  try {
+    const raw = localStorage.getItem(PENDING_SOURCE_KEY);
+    return raw ? (JSON.parse(raw) as PendingFundingSource) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function clearPendingFundingSource() {
+  try {
+    localStorage.removeItem(PENDING_SOURCE_KEY);
+  } catch {
+    // Storage blocked.
+  }
+}
+
+export function setPendingReferral(enabled: boolean) {
+  try {
+    if (enabled) localStorage.setItem(PENDING_REFERRAL_KEY, "true");
+    else localStorage.removeItem(PENDING_REFERRAL_KEY);
+  } catch {
+    // Storage blocked.
+  }
+}
+
+export function peekPendingReferral(): boolean {
+  try {
+    return localStorage.getItem(PENDING_REFERRAL_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+export function clearPendingReferral() {
+  try {
+    localStorage.removeItem(PENDING_REFERRAL_KEY);
+  } catch {
+    // Storage blocked.
+  }
+}
+
+/* ── Post-onboarding unfunded state & nudge ───────────────────────────────── */
+
+const SKIPPED_FUNDING_KEY = "nibs-skipped-funding";
+const UNFUNDED_NUDGE_DISMISSED_KEY = "nibs-unfunded-nudge-dismissed";
+
+export function setHasSkippedFunding(skipped: boolean) {
+  try {
+    if (skipped) localStorage.setItem(SKIPPED_FUNDING_KEY, "true");
+    else localStorage.removeItem(SKIPPED_FUNDING_KEY);
+  } catch {
+    // Storage blocked.
+  }
+}
+
+export function peekHasSkippedFunding(): boolean {
+  try {
+    return localStorage.getItem(SKIPPED_FUNDING_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+export function clearHasSkippedFunding() {
+  try {
+    localStorage.removeItem(SKIPPED_FUNDING_KEY);
+  } catch {
+    // Storage blocked.
+  }
+}
+
+export function setUnfundedNudgeDismissed(dismissed: boolean) {
+  try {
+    if (dismissed) localStorage.setItem(UNFUNDED_NUDGE_DISMISSED_KEY, "true");
+    else localStorage.removeItem(UNFUNDED_NUDGE_DISMISSED_KEY);
+  } catch {
+    // Storage blocked.
+  }
+}
+
+export function peekUnfundedNudgeDismissed(): boolean {
+  try {
+    return localStorage.getItem(UNFUNDED_NUDGE_DISMISSED_KEY) === "true";
+  } catch {
+    return false;
+  }
+}

@@ -51,7 +51,9 @@ import {
 import { RecentTransactions, CardsMini, AttentionBand, FxRatesMini, fxPeek } from "./MinimalKit";
 import { SpendsRadialChart } from "@/components/dashboard/SpendsRadialChart";
 import { withFrom } from "@/lib/payment-options";
+import type { PayAgainPayee } from "@/lib/payees";
 import { MoneyActionPicker, type MoneyActionKind } from "./MoneyActionPicker";
+import { UnfundedNudge } from "./UnfundedNudge";
 
 /* ── Types ───────────────────────────────────────────────────────────────── */
 
@@ -71,6 +73,8 @@ export interface DashData {
   /** Everything those standing orders take in the next 30 days. */
   scheduledNext30: number;
   attention: AttentionItem[];
+  /** This customer's regular payees (Pay again). Empty for a brand-new customer. */
+  payAgain: PayAgainPayee[];
 }
 
 export type DashStatus = "ready" | "loading" | "error";
@@ -85,6 +89,7 @@ export interface DashViewProps {
   onToggle: () => void;
   onSelectAccount: (id: string) => void;
   onRefresh: () => void;
+  onOpenFundModal?: () => void;
 }
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
@@ -138,10 +143,10 @@ export function CardHeader({ title, href, cta }: { title: string; href?: string;
   const { t } = useTranslation();
   return (
     <div className="flex items-center justify-between">
-      <span className="text-[15px] font-medium leading-none text-foreground sm:text-[16px]">{title}</span>
+      <span className="text-[14px] font-medium leading-none text-foreground sm:text-[16px]">{title}</span>
       {href && (
         // Taller hit area for a thumb without moving the text.
-        <Link href={href} className="-my-2 py-2 text-[13px] text-muted-foreground transition-colors hover:text-foreground sm:text-[12.5px]">
+        <Link href={href} className="-my-2 py-2 text-[12.5px] text-muted-foreground transition-colors hover:text-foreground">
           {cta ?? t("dashboard.viewAll", "View all")}
         </Link>
       )}
@@ -188,7 +193,7 @@ export function Greeting({ firstName, className }: { firstName: string; classNam
     <h1
       // Quieter on a phone so the balance, not the hello, is the loudest thing on screen.
       className={cn(
-        "text-[20px] font-medium leading-[26px] tracking-[-0.02em] text-foreground sm:text-[26px] sm:leading-[32px]",
+        "text-[18px] font-medium leading-[24px] tracking-[-0.02em] text-foreground sm:text-[26px] sm:leading-[32px]",
         className,
       )}
       suppressHydrationWarning
@@ -264,7 +269,7 @@ export function MoneyActions({
           >
             <span
               className={cn(
-                "flex size-12 items-center justify-center rounded-full transition-[background-color,transform] duration-150 group-active:scale-95",
+                "flex size-11 items-center justify-center rounded-full transition-[background-color,transform] duration-150 group-active:scale-95",
                 primary
                   ? "bg-primary text-primary-foreground group-hover:bg-primary-hover"
                   : hero
@@ -274,7 +279,7 @@ export function MoneyActions({
             >
               <Icon size={18} strokeWidth={1.8} />
             </span>
-            <span className={cn("text-[12.5px] font-medium leading-tight", hero ? "text-[var(--hero-foreground)]" : "text-foreground")}>
+            <span className={cn("text-[12px] font-medium leading-tight", hero ? "text-[var(--hero-foreground)]" : "text-foreground")}>
               {label}
             </span>
           </button>
@@ -352,13 +357,15 @@ export function RefreshControl({
 
 /* ── Account + balance ───────────────────────────────────────────────────── */
 
-function AccountLabel({ account, bare = false }: { account: Account; bare?: boolean }) {
+function AccountLabel({ account, bare = false, full = false }: { account: Account; bare?: boolean; full?: boolean }) {
   const { t } = useTranslation();
   return (
     <>
       {!bare && <Landmark size={17} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />}
       <span>{t(`accounts.type.${account.type}`, account.type)}</span>
-      <span className={cn("tabular", !bare && "text-muted-foreground")}>••••{last4(account.number)}</span>
+      <span className={cn("tabular", !bare && "text-muted-foreground")}>
+        {full ? account.number : `••••${last4(account.number)}`}
+      </span>
     </>
   );
 }
@@ -408,7 +415,7 @@ export function AccountSwitcher({
 
   const hero = tone === "hero";
   const trigger = hero
-    ? "flex w-fit items-center gap-2 rounded-full bg-[color-mix(in_oklch,var(--hero-foreground)_6%,transparent)] relative px-4 py-2.5 text-[15px] leading-none text-[var(--hero-foreground)] outline-none shadow-[inset_0_24px_24px_-12px_rgba(255,255,255,0.1)] transition-colors hover:bg-[color-mix(in_oklch,var(--hero-foreground)_12%,transparent)] sm:text-[16px]"
+    ? "flex w-fit items-center gap-2 rounded-full bg-[color-mix(in_oklch,var(--hero-foreground)_6%,transparent)] relative px-3.5 py-2 text-[13.5px] leading-none text-[var(--hero-foreground)] outline-none shadow-[inset_0_24px_24px_-12px_rgba(255,255,255,0.1)] transition-colors hover:bg-[color-mix(in_oklch,var(--hero-foreground)_12%,transparent)] sm:text-[16px]"
     : "-mx-3 flex w-fit items-center gap-2.5 rounded-lg px-3 py-2 text-[15px] leading-none text-foreground outline-none transition-colors hover:bg-muted";
   const chevron = hero ? "text-[var(--hero-foreground)]" : "text-muted-foreground";
 
@@ -432,7 +439,7 @@ export function AccountSwitcher({
         <AccountLabel account={account} bare={hero} />
         <ChevronDown size={16} strokeWidth={1.8} className={chevron} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align={align} sideOffset={6} className="w-[280px] p-1.5">
+      <DropdownMenuContent align={align} sideOffset={6} className="w-[320px] p-1.5">
         <DropdownMenuRadioGroup value={account.id} onValueChange={(id) => onSelect(id as string)}>
           {data.accounts.map((a) => (
             <DropdownMenuRadioItem
@@ -441,7 +448,7 @@ export function AccountSwitcher({
               closeOnClick
               className="gap-2.5 rounded-lg py-3 pl-3 pr-9 text-[14px]"
             >
-              <AccountLabel account={a} />
+              <AccountLabel account={a} full />
               {a.id === data.defaultAccountId && (
                 <span className="ml-auto text-[12px] text-muted-foreground">{t("common.default", "Default")}</span>
               )}
@@ -597,11 +604,22 @@ export function RefreshFailed({ onRetry }: { onRetry: () => void }) {
   );
 }
 
-/** The error notice and the Needs attention band, in that order, when they apply. */
-export function Notices({ data, status, onRefresh }: Pick<DashViewProps, "data" | "status" | "onRefresh">) {
+/** The error notice, unfunded nudge, and Needs attention band, in that order, when they apply. */
+export function Notices({
+  data,
+  status,
+  onRefresh,
+  onOpenFundModal,
+}: Pick<DashViewProps, "data" | "status" | "onRefresh" | "onOpenFundModal">) {
+  const account = selectedAccount(data);
+  const isUnfunded = (account?.balance ?? 0) === 0 && data.latestTxns.length === 0;
+
   return (
     <>
       {status === "error" && <RefreshFailed onRetry={onRefresh} />}
+      {isUnfunded && onOpenFundModal && (
+        <UnfundedNudge onFundClick={onOpenFundModal} />
+      )}
       <AnimatePresence initial={false}>
         {data.attention.length > 0 && (
           <motion.div
@@ -678,22 +696,6 @@ export function ComingUpCard({
 
 /* ── Pay again (saved payees) ────────────────────────────────────────────── */
 
-/**
- * Saved payees, each deep-linked into its own rail with the recipient prefilled
- * and the selected account as the source — a tap lands on the amount, not on a
- * generic Send screen.
- */
-const PAY_AGAIN = [
-  { name: "Ama Serwaa", detail: "MTN MoMo", rail: "wallet", recipient: "Ama Serwaa Mensah" },
-  { name: "Lester Adjei", detail: "ECG prepaid", rail: "ecg", recipient: "Lester Adjei" },
-  { name: "Kwame Boateng", detail: "GCB Bank", rail: "bank", recipient: "Kwame Boateng" },
-  { name: "Yaa Asantewaa", detail: "MTN Airtime", rail: "airtime", recipient: "Yaa Asantewaa" },
-  { name: "Abena Osei", detail: "Stanbic Bank", rail: "bank", recipient: "Abena Osei" },
-  { name: "Yaw Mensah", detail: "Telecel Cash", rail: "wallet", recipient: "Yaw Mensah" },
-  { name: "Kofi Boateng", detail: "AT Airtime", rail: "airtime", recipient: "Kofi Boateng" },
-  { name: "Home MiFi", detail: "Telecel Data", rail: "data", recipient: "Home Router (MiFi)" },
-] as const;
-
 const AVATAR_TINTS = [
   "bg-[color-mix(in_oklch,var(--cat-1)_18%,transparent)] text-[var(--cat-1)]",
   "bg-[color-mix(in_oklch,var(--cat-3)_18%,transparent)] text-[var(--cat-3)]",
@@ -706,34 +708,46 @@ function initials(name: string): string {
   return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
 }
 
+/**
+ * This customer's regular payees (lib/payees), each deep-linked into its own
+ * rail with the recipient prefilled and the selected account as the source — a
+ * tap lands on the amount, not on a generic Send screen.
+ */
 export function PayAgainCard({ data, className }: { data: DashData; className?: string }) {
   const { t } = useTranslation();
   return (
     <Card className={className}>
       <CardHeader title={t("dashboard.payAgain", "Pay again")} href="/beneficiaries" cta={t("common.manage", "Manage")} />
-      <div className="grid grid-cols-4 gap-x-2 gap-y-6 sm:mt-1 sm:gap-y-7">
-        {PAY_AGAIN.map((p, i) => (
-          <Link
-            key={`${p.rail}-${p.recipient}`}
-            href={withFrom(`/payments/send?rail=${p.rail}&recipient=${encodeURIComponent(p.recipient)}`, data.selectedAccountId)}
-            className="group flex min-w-0 flex-col items-center gap-2.5 text-center sm:gap-3"
-            aria-label={`Pay ${p.name}, ${p.detail}`}
-          >
-            <span
-              className={cn(
-                "flex size-11 items-center justify-center rounded-full text-[13.5px] tracking-[0.02em] transition-transform group-hover:scale-105 sm:size-12 sm:text-[14px]",
-                AVATAR_TINTS[i % AVATAR_TINTS.length],
-              )}
+      {data.payAgain.length === 0 ? (
+        <PanelEmpty
+          text={t("dashboard.payAgainEmpty", "Save the people and bills you pay often, and they'll wait here.")}
+          action={{ label: t("dashboard.addSomeone", "Add someone"), href: "/beneficiaries?add=1" }}
+        />
+      ) : (
+        <div className="grid grid-cols-4 gap-x-2 gap-y-6 sm:mt-1 sm:gap-y-7">
+          {data.payAgain.map((p, i) => (
+            <Link
+              key={p.href}
+              href={withFrom(p.href, data.selectedAccountId)}
+              className="group flex min-w-0 flex-col items-center gap-2.5 text-center sm:gap-3"
+              aria-label={`Pay ${p.name}, ${p.detail}`}
             >
-              {initials(p.name)}
-            </span>
-            <span className="flex w-full min-w-0 flex-col gap-1">
-              <span className="truncate text-[12px] leading-tight text-foreground">{p.name}</span>
-              <span className="truncate text-[11.5px] leading-tight text-muted-foreground">{p.detail}</span>
-            </span>
-          </Link>
-        ))}
-      </div>
+              <span
+                className={cn(
+                  "flex size-11 items-center justify-center rounded-full text-[13.5px] tracking-[0.02em] transition-transform group-hover:scale-105 sm:size-12 sm:text-[14px]",
+                  AVATAR_TINTS[i % AVATAR_TINTS.length],
+                )}
+              >
+                {initials(p.name)}
+              </span>
+              <span className="flex w-full min-w-0 flex-col gap-1">
+                <span className="truncate text-[12px] leading-tight text-foreground">{p.name}</span>
+                <span className="truncate text-[11.5px] leading-tight text-muted-foreground">{p.detail}</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+      )}
     </Card>
   );
 }
@@ -747,14 +761,39 @@ export function ActivityBody({
   loading,
   showAmounts,
   limit = 4,
+  onOpenFundModal,
 }: {
   data: DashData;
   loading: boolean;
   showAmounts: boolean;
   limit?: number;
+  onOpenFundModal?: () => void;
 }) {
   if (loading) return <PanelSkeleton rows={limit} />;
-  if (data.latestTxns.length === 0) return <PanelEmpty text="No activity on this account yet." />;
+  if (data.latestTxns.length === 0) {
+    const account = selectedAccount(data);
+    const isUnfunded = (account?.balance ?? 0) === 0;
+    if (isUnfunded) {
+      return (
+        <div className="flex flex-col items-center justify-center gap-1.5 py-7 text-center px-4">
+          <span className="text-[13.5px] text-foreground font-medium">No activity yet</span>
+          <p className="text-[12.5px] text-muted-foreground max-w-[270px] leading-relaxed">
+            Once you fund your account, all your transfers, deposits, and card transactions will appear here.
+          </p>
+          {onOpenFundModal && (
+            <button
+              type="button"
+              onClick={onOpenFundModal}
+              className="mt-2 text-[12.5px] text-foreground font-medium hover:underline underline-offset-4 cursor-pointer"
+            >
+              Fund your account →
+            </button>
+          )}
+        </div>
+      );
+    }
+    return <PanelEmpty text="No activity on this account yet." />;
+  }
   return <RecentTransactions txns={data.latestTxns} showAmounts={showAmounts} limit={limit} />;
 }
 
@@ -764,24 +803,39 @@ export function ActivityCard({
   showAmounts,
   limit = 4,
   className,
+  onOpenFundModal,
 }: {
   data: DashData;
   loading: boolean;
   showAmounts: boolean;
   limit?: number;
   className?: string;
+  onOpenFundModal?: () => void;
 }) {
   const { t } = useTranslation();
   return (
     <Card className={className}>
       <CardHeader title={t("dashboard.recentActivity", "Recent activity")} href={activityHref(data.selectedAccountId)} />
-      <ActivityBody data={data} loading={loading} showAmounts={showAmounts} limit={limit} />
+      <ActivityBody data={data} loading={loading} showAmounts={showAmounts} limit={limit} onOpenFundModal={onOpenFundModal} />
     </Card>
   );
 }
 
-export function CardsCard({ data, loading, className }: { data: DashData; loading: boolean; className?: string }) {
+export function CardsCard({
+  data,
+  loading,
+  className,
+  onOpenFundModal,
+}: {
+  data: DashData;
+  loading: boolean;
+  className?: string;
+  onOpenFundModal?: () => void;
+}) {
   const { t } = useTranslation();
+  const account = selectedAccount(data);
+  const isUnfunded = (account?.balance ?? 0) === 0;
+
   return (
     <Card className={className}>
       <CardHeader title={t("dashboard.cards", "Cards")} href="/cards" />
@@ -790,7 +844,21 @@ export function CardsCard({ data, loading, className }: { data: DashData; loadin
       ) : data.cards.length === 0 ? (
         <PanelEmpty text="No card on this account." action={{ label: "Request a card", href: "/cards/request" }} />
       ) : (
-        <CardsMini cards={data.cards} />
+        <div className="flex flex-col gap-3">
+          <CardsMini cards={data.cards} />
+          {isUnfunded && onOpenFundModal && (
+            <div className="flex items-center justify-between rounded-xl bg-muted/40 px-3.5 py-2 text-[12px] text-muted-foreground">
+              <span>Card ready · active once funded</span>
+              <button
+                type="button"
+                onClick={onOpenFundModal}
+                className="text-foreground font-medium hover:underline underline-offset-4 cursor-pointer"
+              >
+                Add money
+              </button>
+            </div>
+          )}
+        </div>
       )}
     </Card>
   );
@@ -829,7 +897,7 @@ export function FxBar({ defaultOpen = false, className }: { defaultOpen?: boolea
         className="flex w-full items-center justify-between gap-6 px-4 py-4 cursor-pointer sm:px-6"
         aria-expanded={open}
       >
-        <span className="shrink-0 text-[15px] font-medium leading-none text-foreground sm:text-[16px]">
+        <span className="shrink-0 text-[14px] font-medium leading-none text-foreground sm:text-[16px]">
           {t("dashboard.exchangeRates", "Exchange rates")}
         </span>
         <span className="flex min-w-0 flex-1 items-center justify-end gap-4">

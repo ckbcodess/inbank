@@ -21,7 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/u
 import { useSession } from "@/lib/session-store";
 import { useTour } from "@/lib/tour-store";
 import { ACTORS } from "@/lib/mock-data";
-import { ONBOARDING_STEPS, parseOnboardingStep } from "@/lib/onboarding-steps";
+import { ACTIVATION_STEPS, SIGNUP_STEPS, parseOnboardingStep } from "@/lib/onboarding-steps";
 import { forgetThisDevice, trustThisDevice } from "@/lib/device-trust";
 import { LEGACY_DEMO_USER_ID, MIGRATION_STEPS, parseMigrationStep } from "@/lib/migration";
 
@@ -141,7 +141,7 @@ function PersonaFlowSwitcherContent() {
                   </Select>
                 </div>
                 <ol className="flex flex-col">
-                  {ONBOARDING_STEPS.map((s, i) =>
+                  {ACTIVATION_STEPS.map((s, i) =>
                     stepRow(
                       `/activate?persona=${persona}&step=${s.id}`,
                       s.label,
@@ -157,7 +157,7 @@ function PersonaFlowSwitcherContent() {
                 <h3 className="px-2.5 text-[14px] font-medium text-foreground">New to GCB</h3>
                 <div className="h-8" aria-hidden="true" />
                 <ol className="flex flex-col">
-                  {ONBOARDING_STEPS.map((s, i) =>
+                  {SIGNUP_STEPS.map((s, i) =>
                     stepRow(`/signup?step=${s.id}`, s.label, i + 1, pathname === "/signup" && currentStep === s.id),
                   )}
                   <li>
@@ -167,7 +167,7 @@ function PersonaFlowSwitcherContent() {
                       className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left text-[13.5px] text-foreground transition-colors hover:bg-muted/60 cursor-pointer"
                     >
                       <span className="w-4 shrink-0 text-right text-[12px] text-muted-foreground tabular">
-                        {ONBOARDING_STEPS.length + 1}
+                        {SIGNUP_STEPS.length + 1}
                       </span>
                       Link Source Account
                     </button>

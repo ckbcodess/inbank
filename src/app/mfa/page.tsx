@@ -86,12 +86,14 @@ function MfaContent() {
         isNewDevice ? (
           "We detected a login from an unrecognized browser or device. Enter the code sent to your phone."
         ) : (
-          <span className="flex items-center justify-center gap-1.5">
+          <span className="flex items-center gap-1.5">
             <Smartphone size={14} strokeWidth={1.9} aria-hidden="true" />
             Code sent to {maskedDestination}
           </span>
         )
       }
+      backHref="/login"
+      backLabel="Back to login"
       footer={
         <p className="mt-5 text-center text-[12px] text-muted-foreground">
           Enter any 6 digits to continue · use 000000 to see the error state

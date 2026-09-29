@@ -7,17 +7,48 @@
  * variants in ./layouts only arrange these.
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ChevronRight, Eye, EyeOff, X } from "lucide-react";
+import {
+  ArrowLeftRight,
+  CheckCircle2,
+  ChevronRight,
+  Copy,
+  Eye,
+  EyeOff,
+  FileText,
+  LayoutGrid,
+  MoreVertical,
+  Share2,
+  SlidersHorizontal,
+  TrendingDown,
+  TrendingUp,
+  X,
+} from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
-import { LAST_LOGIN_AT } from "@/lib/mock-data";
+import { useSession } from "@/lib/session-store";
 import { heroWaveVars, useHeroWave } from "@/lib/hero-wave";
 import { decodeImage, holdSplash } from "@/lib/app-splash";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { accountHolderName } from "@/lib/account-holder";
+import { useAccountPrefs } from "@/lib/accounts-store";
+import { useCustomerAccounts } from "@/lib/use-customer-accounts";
+import { CurrencyLogo } from "@/components/ui/currency-logo";
+import { FX_RATES, findFxRate } from "@/lib/mock-data";
+import { FxRatesDialog } from "./FxRatesDialog";
+import { ShareDetailsDialog, groupDigits } from "@/components/accounts/ShareDetailsDialog";
 import {
   SPRING,
   selectedAccount,
@@ -30,18 +61,21 @@ const ASSETS = "/dashboard/hero";
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
 
-function formatLastLogin(iso: string): string {
-  const d = new Date(iso);
+function formatLastLogin(ms: number): string {
+  const d = new Date(ms);
   const date = d.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   const time = d.toLocaleTimeString("en-GB", { hour: "numeric", minute: "2-digit", hour12: true });
   return `${date} ${time}`;
 }
 
+/** This customer's previous sign-in — a quiet security cue. Hidden on their very first. */
 export function LastLogin({ className }: { className?: string }) {
   const { t } = useTranslation();
+  const previous = useSession((s) => s.previousSignIn);
+  if (!previous) return null;
   return (
     <span className={cn("tabular text-[12px] tracking-[-0.01em] text-muted-foreground", className)} suppressHydrationWarning>
-      {t("dashboard.lastLogin", "Last login: {0}", { 0: formatLastLogin(LAST_LOGIN_AT) })}
+      {t("dashboard.lastLogin", "Last login: {0}", { 0: formatLastLogin(previous) })}
     </span>
   );
 }
@@ -160,8 +194,166 @@ export function HeroSurface({
   );
 }
 
-export function ManageAccountsLink({ className }: { className?: string }) {
+const HERO_GLASS_BUTTON = cn(
+  "flex size-10 items-center justify-center rounded-xl",
+  "border border-white/16 bg-white/8 text-[var(--hero-foreground)] backdrop-blur-md",
+  "shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]",
+  "hover:bg-white/14 hover:text-[var(--hero-foreground)] active:scale-95",
+  "aria-expanded:text-[var(--hero-foreground)]",
+  "cursor-pointer outline-none transition-all",
+);
+
+export function HeroAccountMenu({
+  data,
+  className,
+}: {
+  data: DashData;
+  className?: string;
+}) {
+  const router = useRouter();
+  const [shareOpen, setShareOpen] = useState(false);
+  const [ratesOpen, setRatesOpen] = useState(false);
+  const activeProfile = useSession((s) => s.activeProfile);
+  const actor = useSession((s) => s.actor);
+  const { defaultId } = useCustomerAccounts();
+  const setDefaultAccount = useAccountPrefs((s) => s.setDefaultAccount);
+
+  const account = selectedAccount(data);
+  if (!account) return null;
+
+  const usd = findFxRate("USD") ?? FX_RATES[0];
+  const RateTrend = usd.changePct >= 0 ? TrendingUp : TrendingDown;
+  const holderName = accountHolderName(account, activeProfile, actor);
+  const isDefault = account.id === defaultId;
+  const canBeDefault = data.accounts.length > 1 && !isDefault;
+
+  const handleCopyNumber = () => {
+    const cleanNumber = account.number.replace(/\s+/g, "");
+    navigator.clipboard.writeText(cleanNumber);
+    toast.success("Account number copied", {
+      description: `${groupDigits(account.number)} · ${account.name}`,
+    });
+  };
+
+  const handleSetDefault = () => {
+    setDefaultAccount(account.id);
+    toast.success(`${account.name} is now your default`);
+  };
+
+  return (
+    <>
+      <div className={cn("relative z-10 flex items-center gap-2", className)}>
+        <button
+          type="button"
+          onClick={() => setRatesOpen(true)}
+          className={cn(HERO_GLASS_BUTTON, "h-10 w-auto gap-2.5 px-2.5 max-sm:gap-2 max-sm:px-2")}
+          aria-label={`FX Rates. 1 USD is ${usd.mid.toFixed(2)} GHS`}
+          title="FX Rates"
+        >
+          <span className="relative flex shrink-0 items-center">
+            <CurrencyLogo currency="GHS" size={24} showBorder={false} />
+            <CurrencyLogo currency="USD" size={24} showBorder={false} className="-ml-2" />
+          </span>
+          <span className="tabular text-[14px] tracking-[-0.01em]">USD {usd.mid.toFixed(2)}</span>
+          <RateTrend size={15} strokeWidth={2} className={usd.changePct >= 0 ? "text-emerald-400" : "text-red-400"} />
+        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            className={cn(HERO_GLASS_BUTTON, "aria-expanded:bg-white/18")}
+            aria-label={`Account options for ${account.name}`}
+          >
+            <MoreVertical size={18} strokeWidth={1.9} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" sideOffset={6} className="w-[260px] p-1.5">
+            <div className="flex flex-col gap-0.5 px-2.5 py-2">
+              <span className="truncate text-[13px] font-medium text-foreground">{account.name}</span>
+              <span className="text-[12px] text-muted-foreground tabular">
+                {groupDigits(account.number)} · {account.currency}
+              </span>
+            </div>
+
+            <DropdownMenuSeparator />
+
+            {/* Inbound & Sharing */}
+            <DropdownMenuItem onClick={handleCopyNumber} className="gap-2.5 cursor-pointer py-2 px-2.5">
+              <Copy size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+              <span className="text-[13.5px]">Copy account number</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={() => setShareOpen(true)} className="gap-2.5 cursor-pointer py-2 px-2.5">
+              <Share2 size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+              <span className="text-[13.5px]">Share account details</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
+            {/* Records & Activity */}
+            <DropdownMenuItem
+              onClick={() => router.push(`/accounts/${account.id}/requests?type=statement`)}
+              className="gap-2.5 cursor-pointer py-2 px-2.5"
+            >
+              <FileText size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+              <span className="text-[13.5px]">Download e-Statement</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => router.push(`/transactions?account=${account.id}`)}
+              className="gap-2.5 cursor-pointer py-2 px-2.5"
+            >
+              <ArrowLeftRight size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+              <span className="text-[13.5px]">View transactions</span>
+            </DropdownMenuItem>
+
+            {/* Controls */}
+            <DropdownMenuItem
+              onClick={() => router.push(`/accounts/${account.id}`)}
+              className="gap-2.5 cursor-pointer py-2 px-2.5"
+            >
+              <SlidersHorizontal size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+              <span className="text-[13.5px]">Account details & limits</span>
+            </DropdownMenuItem>
+
+            {canBeDefault && (
+              <DropdownMenuItem onClick={handleSetDefault} className="gap-2.5 cursor-pointer py-2 px-2.5">
+                <CheckCircle2 size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+                <span className="text-[13.5px]">Set as default account</span>
+              </DropdownMenuItem>
+            )}
+
+            <DropdownMenuSeparator />
+
+            {/* Global accounts exit */}
+            <DropdownMenuItem
+              onClick={() => router.push("/accounts")}
+              className="gap-2.5 cursor-pointer py-2 px-2.5 text-muted-foreground hover:text-foreground"
+            >
+              <LayoutGrid size={15} strokeWidth={1.8} className="shrink-0" />
+              <span className="text-[13.5px]">Manage all accounts</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      <FxRatesDialog open={ratesOpen} onOpenChange={setRatesOpen} />
+      <ShareDetailsDialog
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        account={account}
+        holderName={holderName}
+      />
+    </>
+  );
+}
+
+export function ManageAccountsLink({
+  data,
+  className,
+}: {
+  data?: DashData;
+  className?: string;
+}) {
   const { t } = useTranslation();
+  if (data) return <HeroAccountMenu data={data} className={className} />;
   return (
     <Link
       href="/accounts"
@@ -326,7 +518,7 @@ export function HeroSheet({ children, className }: { children: React.ReactNode; 
         // Concentric with the rounded-3xl panels inside: outer radius = their radius
         // (--radius × 2.2, as in globals.css) + this padding + the 1px border — all
         // rem-based or fixed, so it holds at any root font size.
-        "relative flex flex-col gap-4 overflow-hidden border border-transparent p-3 sm:gap-6 sm:p-6",
+        "@container relative flex flex-col gap-4 overflow-hidden border border-transparent p-3 sm:gap-6 sm:p-6",
         "rounded-[calc(var(--radius)*2.2+var(--spacing)*3+1px)] sm:rounded-[calc(var(--radius)*2.2+var(--spacing)*6+1px)]",
         className,
       )}
@@ -342,11 +534,14 @@ export function HeroSheet({ children, className }: { children: React.ReactNode; 
   );
 }
 
-/** The hero with the sheet rising 32px over its foot; the hero sits 12px inside the sheet's edge. */
+/**
+ * The hero with the sheet rising 32px over its foot.
+ * Flush with the sheet on smaller viewports; sits 12px inside the sheet's edge on sm+.
+ */
 export function HeroStack({ hero, children }: { hero: React.ReactNode; children: React.ReactNode }) {
   return (
     <div className="flex flex-col">
-      <div className="-mb-8 px-2 sm:px-3">{hero}</div>
+      <div className="-mb-8 px-0 sm:px-3">{hero}</div>
       <HeroSheet>{children}</HeroSheet>
     </div>
   );

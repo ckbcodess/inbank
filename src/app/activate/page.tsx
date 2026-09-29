@@ -73,7 +73,7 @@ function ActivateContent() {
   }, [stepParam]);
   const [ghanaCard, setGhanaCard] = useState(activePersona.ghanaCard);
   const [selectedPrimaryAccountId, setSelectedPrimaryAccountId] = useState<string>(
-    activePersona.accounts.find((a) => a.isPrimaryDefault)?.id ?? activePersona.accounts[0]?.id ?? ""
+    activePersona.accounts.length > 1 ? "" : activePersona.accounts[0]?.id ?? ""
   );
 
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
@@ -98,8 +98,7 @@ function ActivateContent() {
     setActivePersonaKey(key);
     const config = ACTIVATION_PERSONAS[key];
     setGhanaCard(config.ghanaCard);
-    const primaryAcc = config.accounts.find((a) => a.isPrimaryDefault) ?? config.accounts[0];
-    if (primaryAcc) setSelectedPrimaryAccountId(primaryAcc.id);
+    setSelectedPrimaryAccountId(config.accounts.length > 1 ? "" : config.accounts[0]?.id ?? "");
     setErrorMsg("");
   };
 
@@ -117,6 +116,10 @@ function ActivateContent() {
   }, [step, countdown]);
 
   function handleVerifyDetails() {
+    if (isMultiAccount && !selectedPrimaryAccountId) {
+      setErrorMsg("Please select your default account");
+      return;
+    }
     setBusy(true);
     window.setTimeout(() => {
       setDigits(Array(OTP_LENGTH).fill(""));
@@ -145,16 +148,18 @@ function ActivateContent() {
     }, 600);
   }
 
-  // Step Progress Index (out of 9)
+  // Step Progress Index (out of 8)
   const stepNumberMap: Record<Step, number> = {
-    ghana_card: 3,
-    selfie: 4,
-    review_details: 5,
-    otp: 6,
-    password: 7,
-    referral: 8,
-    pin: 9,
-    confirm_pin: 10,
+    ghana_card: 1,
+    selfie: 2,
+    review_details: 3,
+    otp: 4,
+    password: 5,
+    virtual_account_ready: 6,
+    fund_account: 6,
+    referral: 6,
+    pin: 7,
+    confirm_pin: 8,
   };
 
   function handleGhanaCardSubmit(e: React.FormEvent) {
@@ -168,8 +173,7 @@ function ActivateContent() {
     const detected = getPersonaByGhanaCard(ghanaCard);
     if (detected.id !== activePersonaKey) {
       setActivePersonaKey(detected.id);
-      const defaultPrimary = detected.accounts.find((a) => a.isPrimaryDefault) ?? detected.accounts[0];
-      if (defaultPrimary) setSelectedPrimaryAccountId(defaultPrimary.id);
+      setSelectedPrimaryAccountId(detected.accounts.length > 1 ? "" : detected.accounts[0]?.id ?? "");
     }
 
     setErrorMsg("");
@@ -296,18 +300,18 @@ function ActivateContent() {
 
   const selectedPrimaryAccount =
     activePersona.accounts.find((a) => a.id === selectedPrimaryAccountId) ??
-    activePersona.accounts[0];
+    (isMultiAccount ? undefined : activePersona.accounts[0]);
 
   return (
     <AuthLayout
       title={
         step === "ghana_card"
-          ? "Let's Verify Your Account"
+          ? "Let's Verify Your Identity"
           : step === "selfie"
           ? "Selfie Match"
           : step === "review_details"
           ? isMultiAccount
-            ? "Choose Your Primary Account"
+            ? "Select Your Default Account"
             : isJoint
             ? "Review Joint Account Details"
             : "Review Your Details"
@@ -323,12 +327,12 @@ function ActivateContent() {
       }
       description={
         step === "ghana_card"
-          ? "Enter your card number to verify your identity."
+          ? "We’ll securely verify you using your Ghana Card."
           : step === "selfie"
           ? "Center your face in the frame."
           : step === "review_details"
           ? isMultiAccount
-            ? "Select your primary account for everyday banking."
+            ? "Select your default account for everyday banking."
             : isJoint
             ? "Confirm your joint account details."
             : isMobileSync
@@ -350,23 +354,15 @@ function ActivateContent() {
           ? "Set a PIN for all your transactions in the app."
           : "Re-enter your 4-digit PIN to confirm."
       }
+      onBack={handleBackStep}
+      backLabel="Back to previous step"
+      align={step === "referral" ? "center" : "left"}
       stepProgress={{
         current: stepNumberMap[step],
-        total: 10,
+        total: 8,
       }}
       width="compact"
-      footer={
-        <div className="flex justify-center">
-          <button
-            type="button"
-            onClick={handleBackStep}
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-[0.96] cursor-pointer"
-          >
-            <ArrowLeft size={15} strokeWidth={2} />
-            Back to previous step
-          </button>
-        </div>
-      }
+      animateHeight={true}
     >
       {/* STEP 1: Enter Ghana Card */}
       {step === "ghana_card" && (
@@ -490,33 +486,35 @@ function ActivateContent() {
           {isMultiAccount && (
             <div className="space-y-2">
               <label htmlFor="primary-account-select" className="text-[13px] font-medium text-foreground px-0.5">
-                Primary Account
+                Default Account
               </label>
 
               <div data-tour="activate-account-picker">
                 <Select
-                  value={selectedPrimaryAccountId}
+                  value={selectedPrimaryAccountId || undefined}
                   onValueChange={(val) => val && setSelectedPrimaryAccountId(val)}
                 >
                   <SelectTrigger
                     id="primary-account-select"
                     className="h-11 min-h-11 py-2 px-3.5 w-full rounded-xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center justify-between"
                   >
-                    <SelectValue>
-                      <div className="flex items-center gap-2 truncate">
-                        <span className="font-medium text-foreground truncate">
-                          {selectedPrimaryAccount.name}
-                        </span>
-                        <span className="text-muted-foreground font-mono text-[12.5px] shrink-0">
-                          •••• {selectedPrimaryAccount.number.slice(-4)}
-                        </span>
-                        {selectedPrimaryAccount.isJoint && (
-                          <span className="inline-flex items-center gap-1 rounded-md bg-primary/15 px-1.5 py-0.2 text-[10px] font-medium text-foreground shrink-0">
-                            <Users size={10} className="text-primary" />
-                            Joint
+                    <SelectValue placeholder="Select default account">
+                      {selectedPrimaryAccount ? (
+                        <div className="flex items-center gap-2 truncate">
+                          <span className="font-medium text-foreground truncate">
+                            {selectedPrimaryAccount.name}
                           </span>
-                        )}
-                      </div>
+                          <span className="text-muted-foreground font-mono text-[12.5px] shrink-0">
+                            •••• {selectedPrimaryAccount.number.slice(-4)}
+                          </span>
+                          {selectedPrimaryAccount.isJoint && (
+                            <span className="inline-flex items-center gap-1 rounded-md bg-primary/15 px-1.5 py-0.2 text-[10px] font-medium text-foreground shrink-0">
+                              <Users size={10} className="text-primary" />
+                              Joint
+                            </span>
+                          )}
+                        </div>
+                      ) : null}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
@@ -550,7 +548,7 @@ function ActivateContent() {
               </div>
 
               {/* Dynamic Mandate Disclosure if selected account is Joint */}
-              {selectedPrimaryAccount.isJoint && (
+              {selectedPrimaryAccount?.isJoint && (
                 <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-left animate-in fade-in duration-200">
                   <div className="flex items-start gap-2.5">
                     <Users size={15} className="text-primary mt-0.5 shrink-0" />
@@ -572,13 +570,13 @@ function ActivateContent() {
           {!isMultiAccount && (
             <div className="rounded-xl border border-border/80 bg-muted/20 p-4 divide-y divide-border/60">
               <div className="flex items-center justify-between pb-3">
-                <span className="text-[13px] text-muted-foreground">Primary Account</span>
+                <span className="text-[13px] text-muted-foreground">Default Account</span>
                 <div className="text-right">
                   <span className="text-[14px] font-medium text-foreground block">
-                    {selectedPrimaryAccount.name}
+                    {activePersona.accounts[0]?.name}
                   </span>
                   <span className="text-[12.5px] text-muted-foreground font-mono">
-                    •••• {selectedPrimaryAccount.number.slice(-4)}
+                    •••• {activePersona.accounts[0]?.number.slice(-4)}
                   </span>
                 </div>
               </div>
@@ -599,7 +597,7 @@ function ActivateContent() {
             size="lg"
             data-tour="activate-review"
             onClick={handleVerifyDetails}
-            disabled={busy}
+            disabled={busy || (isMultiAccount && !selectedPrimaryAccountId)}
             className="mt-1 h-11 w-full text-[14px]"
           >
             {busy ? (

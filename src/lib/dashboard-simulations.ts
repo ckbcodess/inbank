@@ -5,6 +5,7 @@
  * Keeps page components thin, decoupled, and production-ready for live API swapping.
  */
 
+import { payAgainFor } from "./payees";
 import {
   accountsForProfile,
   transactionsForProfile,
@@ -30,6 +31,7 @@ export type DashboardUsageType =
   | "active"
   | "attention"
   | "new_customer"
+  | "new_unfunded"
   | "salary_surge"
   | "wealth"
   | "empty"
@@ -37,14 +39,15 @@ export type DashboardUsageType =
   | "error";
 
 export const DASHBOARD_USAGE_STATES: readonly DashboardUsageType[] = [
-  "active",
-  "attention",
-  "new_customer",
-  "salary_surge",
-  "wealth",
-  "empty",
-  "loading",
-  "error",
+  "active" as const,
+  "attention" as const,
+  "new_customer" as const,
+  "new_unfunded" as const,
+  "salary_surge" as const,
+  "wealth" as const,
+  "empty" as const,
+  "loading" as const,
+  "error" as const,
 ] as const;
 
 /**
@@ -86,7 +89,8 @@ export const DASHBOARD_LAYOUT_LABELS: Record<DashboardLayout, string> = {
 export const DASHBOARD_STATE_LABELS: Record<DashboardUsageType, string> = {
   active: "Active (Clean Default)",
   attention: "Needs Attention / Alerts",
-  new_customer: "New Customer (Fresh)",
+  new_customer: "New Customer (Funded)",
+  new_unfunded: "New Customer (Unfunded / Skipped)",
   salary_surge: "Salary Day / Inflow",
   wealth: "High Net Worth / Wealth",
   empty: "Empty State (Zero Balance)",
@@ -235,6 +239,52 @@ export function getSimulatedDashboardData({
       attention = [];
       break;
 
+    case "new_unfunded":
+      // Freshly onboarded customer who skipped the Fund Account step (Zero Balance)
+      accounts = [
+        {
+          id: "acc-new-unfunded",
+          name: "Virtual Account",
+          number: "1011 8920 1920",
+          currency: "GHS",
+          balance: 0,
+          available: 0,
+          type: "Savings",
+          status: "Active",
+          profileKind: "RETAIL",
+        },
+      ];
+      cards = [
+        {
+          id: "card-new-unfunded",
+          name: "Visa Virtual Debit",
+          maskedNumber: "•••• 8920",
+          scheme: "Visa",
+          type: "Virtual",
+          balance: 0,
+          currency: "GHS",
+          status: "Active",
+          expiry: "12/28",
+          spendLimit: 2000,
+          linkedAccountId: "acc-new-unfunded",
+          holder: actor.name,
+          fundable: true,
+          isVirtual: true,
+        },
+      ];
+      latestTxns = [];
+      spendByRange = EMPTY_SPEND_BREAKDOWN;
+      attention = [
+        {
+          id: "att-fund-account",
+          title: "Account not funded yet",
+          detail: "Add money via Mobile Money or bank card to start transacting.",
+          href: "#fund-account",
+          tone: "warning",
+        },
+      ];
+      break;
+
     case "salary_surge":
       // Payday / salary inflow spike
       latestTxns = [
@@ -344,5 +394,7 @@ export function getSimulatedDashboardData({
     scheduledNext30: selectedId ? scheduledOutflow(selectedId, today, 30) : 0,
     // Items about another account belong on that account's view.
     attention: attention.filter((i) => !i.accountId || i.accountId === selectedId),
+    // A brand-new (or empty) customer hasn't paid anyone yet.
+    payAgain: usageType === "new_customer" || usageType === "empty" ? [] : payAgainFor(actor.id),
   };
 }

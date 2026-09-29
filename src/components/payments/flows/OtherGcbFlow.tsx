@@ -106,6 +106,7 @@ export function OtherGcbFlow({
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `GCB Account ${state.benAcct}`}
             subtitle={`GCB Bank PLC · ${state.benAcct}`}
+            nameCheck={{ confirmed: Boolean(verifiedName), by: "GCB" }}
             onChange={() => setCollapsed(false)}
           />
         ) : (

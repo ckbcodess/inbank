@@ -27,7 +27,7 @@ export default function AuthHeader() {
   return (
     <header className="fixed top-0 left-0 right-0 z-30 flex h-16 w-full items-center justify-between border-b border-border/40 bg-background/80 px-6 backdrop-blur-md transition-colors lg:px-12">
       {/* Brand Logo & Title */}
-      <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-90">
+      <Link href="/login" className="flex items-center gap-3 transition-opacity hover:opacity-90">
         <div className="flex items-center justify-center shrink-0">
           <GCBLogo className="h-8 w-auto text-foreground" />
         </div>

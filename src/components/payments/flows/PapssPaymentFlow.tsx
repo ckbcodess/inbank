@@ -176,6 +176,7 @@ export function PapssPaymentFlow({
           <CollapsedDetailsBadge
             title={verifiedName || `PAPSS Account (${state.wIban})`}
             subtitle={`${state.wBank || "Bank"} · ${state.wIban} (${state.wCountry || "Africa"})`}
+            nameCheck={{ confirmed: Boolean(verifiedName), by: state.wBank || undefined }}
             onChange={() => setCollapsed(false)}
           />
         ) : (

@@ -65,3 +65,11 @@ Before making changes or implementing new screens, load and follow our persisten
   - Position quick-pick elements (e.g., saved beneficiary avatars, frequent circles) **above** manual form entry sections, separated by clear visual boundaries (`Or enter new details`).
   - Never squeeze circular quick-pick avatars into the middle of form inputs where they compete for visual weight.
   - On selection, collapse manual steps into verified summary badges to keep the screen quiet, focused, and calm.
+
+### 5. Gap Review (Standing Rule — every feature, every session)
+Features built at different times drift apart; a capability added later (e.g. linked MoMo wallets as sources of funds) silently misses flows built earlier (e.g. "Send to myself" stayed tied to the registered number). So:
+- **After adding or changing any capability, trace where else it should appear.** For every new entity or ability (a source of funds, a payee type, an account type, a persona, a device state), list each flow that creates, reads, or acts on that kind of thing — Send & Pay rails, top-ups, standing orders, dashboard pickers, onboarding, Settings, the Demo hub — and check each one either uses it or deliberately doesn't (write down why).
+- **Check the "for myself" paths.** Anything that offers "self" (wallets, airtime/data, cardless, own accounts) must list *all* of the customer's own destinations, not just the registered default.
+- **Check honesty of status.** Ticks, "verified", "confirmed" and badges must reflect real state, never decorate.
+- **Check every persona and state:** single / multi / joint / business, new vs returning vs migrated, trusted vs new device, empty / loading / error.
+- **Report gaps out loud, don't silently fix beyond scope.** Fix what's in scope; add the rest to **Known gaps** in `.ai/EXECUTION.md` and mention them in the reply. Re-scan that list at the start of each session.

@@ -86,6 +86,7 @@ export function ProxyPayFlow({
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || state.pxId}
             subtitle={`Proxy Recipient · ${state.pxId}`}
+            nameCheck={{ confirmed: Boolean(verifiedName), by: "the proxy directory" }}
             onChange={() => setCollapsed(false)}
           />
         ) : (

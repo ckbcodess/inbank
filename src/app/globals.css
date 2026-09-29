@@ -4,6 +4,7 @@
 @variant dark (&:where(.dark, .dark *));
 
 @theme inline {
+  --breakpoint-2xl: 1440px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
@@ -87,6 +88,8 @@
   --tile: #f6f6f5;
   --tile-hover: #eeeeed;
   --tile-border: #ebebe9;
+  /* Hub tile icon (INTERFACE §E): amber-500 on light. */
+  --tile-accent: #f59e0b;
   /* Account Details balance card (Figma 1896:15407) — slate tint over the page. */
   --account-card: rgba(71, 85, 96, 0.1);
   --popover: oklch(1 0 0);
@@ -222,6 +225,7 @@
   --tile: #141414;
   --tile-hover: #262626;
   --tile-border: #292928;
+  --tile-accent: #fdc307;
   --account-card: rgba(148, 163, 184, 0.1);
   --popover: oklch(0.269 0 0);
   --popover-foreground: oklch(0.985 0 0);
@@ -656,3 +660,52 @@ html.theme-fade *::after {
 @media (prefers-reduced-motion: reduce) {
   .splash-breathe { animation: none; }
 }
+
+/* Dashboard responsive 1 / 2 / 3-column container query grid
+   - Mobile (< 640px): 1 column
+   - Tablet & smaller laptops (640px - 1059px): 2 columns
+   - Closing sidebar on smaller laptops (>= 1060px) or larger displays (1440px+): 3 columns */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@container (min-width: 640px) {
+  .dash-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (min-width: 1060px) {
+  .dash-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@supports not (container-type: inline-size) {
+  @media (min-width: 768px) {
+    .dash-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1440px) {
+    .dash-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}
+
+@container (min-width: 1060px) {
+  .dash-grid-lead {
+    grid-column: span 2 / span 2;
+  }
+}
+
+@supports not (container-type: inline-size) {
+  @media (min-width: 1440px) {
+    .dash-grid-lead {
+      grid-column: span 2 / span 2;
+    }
+  }
+}
+

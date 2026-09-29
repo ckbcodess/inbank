@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Actor, Profile } from "./roles";
+import { MIGRATED_DATA } from "./migration";
 
 interface SessionState {
   actor: Actor | null;
@@ -19,6 +20,10 @@ interface SessionState {
   activeProfile: Profile | null;
   /** Set once MFA (S02) has been cleared. */
   mfaVerified: boolean;
+  /** When this actor signed in before this session (ms epoch) — null on their first sign-in. */
+  previousSignIn: number | null;
+  /** Each actor's most recent sign-in on this browser, so "Last login" is theirs. Survives sign-out. */
+  signIns: Record<string, number>;
 
   signIn: (actor: Actor) => void;
   verifyMfa: () => void;
@@ -26,21 +31,44 @@ interface SessionState {
   signOut: () => void;
 }
 
+/**
+ * Demo customers arrive with a plausible history so "Last login" has something
+ * true-to-them to show on a first visit. Esi's is her last sign-in to the old
+ * internet banking; a newly activated customer has none (the line hides).
+ */
+const SEEDED_SIGN_INS: Record<string, number> = {
+  "u-retail": Date.parse("2026-09-24T08:43:00Z"),
+  "u-joint": Date.parse("2026-09-22T19:05:00Z"),
+  "u-joint-either": Date.parse("2026-09-20T12:31:00Z"),
+  "u-abena": Date.parse("2026-09-25T07:58:00Z"),
+  "u-yaw": Date.parse("2026-09-18T16:12:00Z"),
+  "u-legacy": Date.parse(MIGRATED_DATA.lastLegacySignIn),
+};
+
 export const useSession = create<SessionState>()(
   persist(
     (set) => ({
       actor: null,
       activeProfile: null,
       mfaVerified: false,
+      previousSignIn: null,
+      signIns: SEEDED_SIGN_INS,
 
-      signIn: (actor) => set({ actor, mfaVerified: false, activeProfile: null }),
+      signIn: (actor) =>
+        set((s) => ({
+          actor,
+          mfaVerified: false,
+          activeProfile: null,
+          previousSignIn: s.signIns[actor.id] ?? null,
+          signIns: { ...s.signIns, [actor.id]: Date.now() },
+        })),
       verifyMfa: () =>
         set((s) => ({
           mfaVerified: true,
           activeProfile: s.activeProfile ?? s.actor?.profiles[0] ?? null,
         })),
       selectProfile: (profile) => set({ activeProfile: profile }),
-      signOut: () => set({ actor: null, activeProfile: null, mfaVerified: false }),
+      signOut: () => set({ actor: null, activeProfile: null, mfaVerified: false, previousSignIn: null }),
     }),
     { name: "nibs-session" },
   ),

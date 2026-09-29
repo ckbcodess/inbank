@@ -6,7 +6,7 @@
  * Right Column: Spending Limits (Daily & Monthly progress bars) & Recent Activity list.
  */
 
-import { use, useState } from "react";
+import { use, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ChevronRight,
@@ -16,6 +16,7 @@ import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/state
 import { VirtualCardDetailsView } from "@/components/cards/VirtualCardDetailsView";
 import type { BaselineState } from "@/lib/states";
 import { findCard } from "@/lib/mock-data";
+import { getEffectiveCard, useCardsDevStore } from "@/lib/cards-dev-store";
 
 const BASELINE_STATES: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 
@@ -28,7 +29,12 @@ const BASELINE_LABEL: Record<BaselineState, string> = {
 
 export default function CardDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const card = findCard(id);
+  const devState = useCardsDevStore();
+  const rawCard = findCard(id);
+
+  const card = useMemo(() => {
+    return getEffectiveCard(id, rawCard, devState, rawCard?.profileKind);
+  }, [id, rawCard, devState]);
 
   const [state, setState] = useState<BaselineState>("populated");
 

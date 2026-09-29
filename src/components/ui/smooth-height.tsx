@@ -28,12 +28,19 @@ export function SmoothHeight({
 }: SmoothHeightProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState<number | "auto">("auto");
+  const isFirstMeasurement = useRef(true);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
     const observer = new ResizeObserver(([entry]) => {
       if (entry) {
         setHeight(entry.contentRect.height + BLEED * 2);
+        if (isFirstMeasurement.current) {
+          isFirstMeasurement.current = false;
+        } else {
+          setShouldAnimate(true);
+        }
       }
     });
     observer.observe(containerRef.current);
@@ -43,7 +50,7 @@ export function SmoothHeight({
   return (
     <motion.div
       animate={{ height }}
-      transition={{ type: "spring", duration, bounce: 0 }}
+      transition={shouldAnimate ? { type: "spring", duration, bounce: 0 } : { duration: 0 }}
       style={{ margin: -BLEED, padding: BLEED }}
       className={cn("overflow-hidden", className)}
     >

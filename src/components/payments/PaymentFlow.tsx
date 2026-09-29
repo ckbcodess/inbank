@@ -84,6 +84,7 @@ import {
   detectTelcoNetwork,
   normalizeNetworkName,
   getBundlesForNetwork,
+  formatGhPhone,
 } from "./flows/shared";
 import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
 import { useContextualBack } from "@/lib/contextual-back";
@@ -1687,6 +1688,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         if (matched) {
           selectBeneficiary(matched);
         } else {
+          // ?bank= names the recipient's bank (e.g. a payee carried over from the old internet banking).
+          const bankParam = searchParams.get("bank");
+          if (bankParam) setF((p) => ({ ...p, bank: bankParam }));
           handleLookup("benAcct", decoded);
         }
       }
@@ -1808,7 +1812,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       } else if (rail === "wallet" || rail === "momo") {
         successTitle = "Money sent!";
         if (walletCategory === "self") {
-          successMsg = `You’ve sent ${formattedAmount} to your mobile wallet (${f.wPhone}).`;
+          successMsg = `You’ve sent ${formattedAmount} to your ${f.wNetwork || "mobile money"} wallet (${formatGhPhone(f.wPhone)}).`;
         } else {
           successMsg = `You’ve sent ${formattedAmount} to ${recipientDisplayName}. They’ll receive an SMS confirmation shortly.`;
         }
@@ -3148,6 +3152,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                     set("wRef", val);
                   } else set(key, val);
                 }}
+                isSelf={topupCategory === "self"}
                 detailsCollapsed={stage1Collapsed}
                 onToggleCollapsed={setStage1Collapsed}
                 onProceed={() => {
@@ -3183,6 +3188,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                     set("wRef", val);
                   } else set(key, val);
                 }}
+                isSelf={topupCategory === "self"}
                 detailsCollapsed={stage1Collapsed}
                 onToggleCollapsed={setStage1Collapsed}
                 onProceed={() => {

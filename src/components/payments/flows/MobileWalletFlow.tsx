@@ -26,8 +26,9 @@ import {
   detectTelcoNetwork,
   getTelcoLogo,
   resolveAccountName,
+  formatGhPhone,
 } from "./shared";
-import { REGISTERED_PHONE } from "../useAuthorisation";
+import { OwnWalletPicker, REGISTERED_WALLET, useOwnDestination, type OwnWallet } from "./OwnWalletPicker";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 
@@ -88,6 +89,22 @@ export function MobileWalletFlow({
     [accounts, state.fromId]
   );
 
+  // Sending to yourself: any wallet that's yours, not just the registered number.
+  const own = useOwnDestination({
+    isSelf,
+    phone: state.wPhone,
+    apply: (w) => {
+      onChange("wPhone", w.phone);
+      onChange("wNetwork", w.network);
+      onChange("wName", `My ${w.network}`);
+    },
+  });
+  const ownPhone = state.wPhone || REGISTERED_WALLET.phone;
+  const pickOwnWallet = (w: OwnWallet) => {
+    own.pick(w);
+    setCollapsed(true);
+  };
+
   const isPhoneValid = isSelf || isCompleteGhanaMobile(state.wPhone);
   const isNetworkValid = isSelf || Boolean(state.wNetwork);
   const isDetailsEntered = isPhoneValid && isNetworkValid;
@@ -129,10 +146,14 @@ export function MobileWalletFlow({
       {/* 2. Destination (Mobile Wallet) */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
-        {isVerified && isCollapsed ? (
+        {isVerified && isCollapsed && !own.choosing ? (
           <CollapsedDetailsBadge
-            title={isSelf ? (state.wName || "My Own Wallet (Self)") : (verifiedName || state.wName || `Wallet ${state.wPhone}`)}
-            subtitle={`${state.wNetwork || "MTN Mobile Money"} · ${isSelf ? (state.wPhone || REGISTERED_PHONE) : state.wPhone}`}
+            title={isSelf ? `My ${state.wNetwork || REGISTERED_WALLET.network}` : (verifiedName || state.wName || `Wallet ${state.wPhone}`)}
+            subtitle={
+              isSelf
+                ? `${formatGhPhone(ownPhone)} · ${own.selected?.tag ?? "Registered"}`
+                : `${state.wNetwork || "MTN Mobile Money"} · ${formatGhPhone(state.wPhone)}`
+            }
             icon={
               getTelcoLogo(state.wNetwork) ? (
                 <Image
@@ -144,15 +165,19 @@ export function MobileWalletFlow({
                 />
               ) : undefined
             }
+            nameCheck={isSelf ? undefined : { confirmed: Boolean(verifiedName), by: state.wNetwork || undefined }}
             onChange={() => setCollapsed(false)}
           />
         ) : (
           <div className="flex flex-col gap-3">
             {isSelf ? (
-              <div className="flex h-13 items-center justify-between rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
-                <span className="tabular">{state.wPhone || REGISTERED_PHONE}</span>
-                <span className="text-[12px] text-muted-foreground font-normal">Registered Mobile</span>
-              </div>
+              <OwnWalletPicker
+                wallets={own.wallets}
+                selectedPhone={ownPhone}
+                accounts={accounts}
+                onSelect={pickOwnWallet}
+                removedNotice={own.removedNotice}
+              />
             ) : (
               <>
                 <Select

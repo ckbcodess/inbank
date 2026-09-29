@@ -106,6 +106,7 @@ export function WalletToBankFlow({
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `Account ${state.benAcct}`}
             subtitle={`${state.bank || "Bank"} · ${state.benAcct}`}
+            nameCheck={{ confirmed: Boolean(verifiedName), by: state.bank || undefined }}
             onChange={() => setCollapsed(false)}
           />
         ) : (

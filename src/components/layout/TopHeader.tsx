@@ -1,7 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Eye, EyeOff, Layers, LogOut, Menu, Moon, Settings, Sun } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  Bell,
+  ChevronRight,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  Layers,
+  LogOut,
+  Menu,
+  Moon,
+  Settings,
+  Sun,
+} from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
@@ -36,6 +49,7 @@ export default function TopHeader({
   onMenuToggle,
   onSignOut,
 }: TopHeaderProps) {
+  const router = useRouter();
   const { resolvedTheme, setTheme } = useTheme();
   const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
   const { devState } = useDevState();
@@ -74,11 +88,13 @@ export default function TopHeader({
                 </span>
               )}
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64">
+            <DropdownMenuContent align="end" className="w-64 max-h-[80vh] overflow-y-auto">
               <DevStateMenuItems devState={devState} />
             </DropdownMenuContent>
           </DropdownMenu>
         )}
+
+        {/* Global FX Header Ticker */}
 
         {/* FR-22 — notifications */}
         {actor.shell === "customer" && (
@@ -164,23 +180,72 @@ export default function TopHeader({
               <span className="block text-[11px] text-muted-foreground whitespace-nowrap">{ROLE_LABEL[actor.role]}</span>
             </span>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>
-              <span className="block text-[13px] text-foreground">{actor.name}</span>
-              <span className="block text-[12px] font-normal text-muted-foreground">{actor.email}</span>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
+          <DropdownMenuContent align="end" sideOffset={6} className="w-[260px] p-1.5 rounded-2xl">
+            {/* Header: Avatar, Name & Email */}
+            <div className="flex flex-col items-start px-3 pt-3 pb-2.5">
+              <div className="flex size-11 items-center justify-center rounded-full bg-muted border border-border/80 text-foreground font-medium text-[15px] mb-2.5 shadow-2xs">
+                {initials}
+              </div>
+              <span className="text-[14.5px] font-medium text-foreground tracking-[-0.01em]">{actor.name}</span>
+              <span className="text-[12px] text-muted-foreground truncate max-w-full">{actor.email}</span>
+            </div>
+
+            <DropdownMenuSeparator className="my-1" />
+
+            {/* Core Navigation Links */}
             <DropdownMenuItem
-              render={
-                <Link href="/settings" className="flex items-center gap-2.5 w-full">
-                  <Settings size={15} strokeWidth={1.8} />
-                  {t("header.settings", "Settings")}
-                </Link>
-              }
-            />
-            <DropdownMenuItem onClick={onSignOut} className="gap-2.5">
-              <LogOut size={15} strokeWidth={1.8} />
-              {t("header.signOut", "Sign out")}
+              onClick={() => router.push(actor.shell === "customer" ? "/settings?tab=profile" : "/settings")}
+              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
+            >
+              <span>{t("header.profile", "Profile")}</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => router.push(actor.shell === "customer" ? "/notifications" : "/settings?tab=notifications")}
+              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
+            >
+              <span>{t("header.notifications", "Notifications")}</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => router.push(actor.shell === "customer" ? "/settings?tab=security" : "/settings?tab=security")}
+              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
+            >
+              <span>{t("header.security", "Security")}</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => window.open("https://www.gcbbank.com.gh/privacy-policy", "_blank")}
+              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
+            >
+              <span>{t("header.privacy", "Privacy")}</span>
+              <ExternalLink size={14} className="text-muted-foreground/70" strokeWidth={1.8} />
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator className="my-1" />
+
+            {/* Appearance & Logout */}
+            <DropdownMenuItem
+              onClick={() => {
+                const next = resolvedTheme === "dark" ? "light" : "dark";
+                switchTheme(next, () => setTheme(next));
+              }}
+              className="flex items-center justify-between py-2 px-3 cursor-pointer rounded-lg hover:bg-muted/70 transition-colors"
+            >
+              <div className="flex flex-col text-left">
+                <span className="text-[13.5px] font-normal text-foreground">{t("header.appearance", "Appearance")}</span>
+                <span className="text-[11.5px] text-muted-foreground">
+                  {mounted ? (resolvedTheme === "dark" ? "Dark mode" : "Light mode") : "Theme"}
+                </span>
+              </div>
+              <ChevronRight size={15} className="text-muted-foreground/70" strokeWidth={1.8} />
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={onSignOut}
+              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-destructive/10 hover:text-destructive transition-colors mt-0.5"
+            >
+              <span>{t("header.signOut", "Log out")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

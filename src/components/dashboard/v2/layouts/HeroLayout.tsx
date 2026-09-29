@@ -15,7 +15,7 @@ import {
   ActivityCard,
   AnalyticsCard,
   CardsCard,
-  FxBar,
+  ComingUpCard,
   Greeting,
   MoneyActions,
   Notices,
@@ -30,7 +30,7 @@ import {
   HeroSurface,
   HeroUpdated,
   LastLogin,
-  ManageAccountsLink,
+  HeroAccountMenu,
 } from "../hero-parts";
 
 export function HeroLayout(props: DashViewProps) {
@@ -51,7 +51,7 @@ export function HeroLayout(props: DashViewProps) {
       <HeroStack
         hero={
           <HeroSurface className="flex flex-col items-center gap-6 rounded-t-3xl px-4 pb-16 pt-14 sm:pb-28 sm:pt-20">
-            <ManageAccountsLink className="absolute right-4 top-4 sm:right-6 sm:top-6" />
+            <HeroAccountMenu data={data} className="absolute right-4 top-4 sm:right-6 sm:top-6" />
             <AccountSwitcher data={data} onSelect={onSelectAccount} align="center" tone="hero" />
             <div className="flex flex-col items-center gap-4">
               <HeroBalance data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
@@ -68,16 +68,20 @@ export function HeroLayout(props: DashViewProps) {
           className="relative py-2 sm:hidden"
         />
 
-        <Notices data={data} status={status} onRefresh={onRefresh} />
+        <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
 
-        <AccountScoped accountId={data.selectedAccountId} className="grid grid-cols-1 items-stretch gap-3 sm:gap-5 lg:grid-cols-2">
-          <ActivityCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
+        <AccountScoped accountId={data.selectedAccountId} className="dash-grid items-stretch gap-3 sm:gap-5">
+          <ActivityCard
+            data={data}
+            loading={loading}
+            showAmounts={showAmounts}
+            className="rounded-3xl"
+            onOpenFundModal={props.onOpenFundModal}
+          />
+          <CardsCard data={data} loading={loading} className="rounded-3xl" onOpenFundModal={props.onOpenFundModal} />
           <PayAgainCard data={data} className="rounded-3xl" />
-          <CardsCard data={data} loading={loading} className="rounded-3xl" />
+          <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
           <AnalyticsCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
-          <div className="lg:col-span-2">
-            <FxBar className="rounded-3xl" />
-          </div>
         </AccountScoped>
       </HeroStack>
 

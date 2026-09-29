@@ -25,7 +25,6 @@ import {
   CardsCard,
   ComingUpEmpty,
   dayLabel,
-  FxBar,
   Greeting,
   MoneyActions,
   Notices,
@@ -155,7 +154,7 @@ export function TimelineLayout(props: DashViewProps) {
         </div>
       </div>
 
-      <Notices data={data} status={status} onRefresh={onRefresh} />
+      <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
 
       <motion.div
         key={data.selectedAccountId ?? "none"}
@@ -173,7 +172,6 @@ export function TimelineLayout(props: DashViewProps) {
             <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-3 sm:hidden" />
           </Card>
           <CardsCard data={data} loading={loading} />
-          <FxBar />
         </aside>
 
         <Card className="lg:order-1">

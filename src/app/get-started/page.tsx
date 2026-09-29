@@ -71,18 +71,13 @@ export default function GetStartedPage() {
             ? "Select the option that best describes your relationship with GCB."
             : "Choose how to set up your account."
         }
-        stepProgress={
-          screen === 2
-            ? {
-                current: 2,
-                total: 8,
-              }
-            : undefined
-        }
+        onBack={screen === 2 ? () => setScreen(1) : undefined}
+        backHref={screen === 1 ? "/login" : undefined}
+        backLabel={screen === 2 ? "Back to registration options" : "Back to login"}
         width="compact"
         footer={
-          <div className="flex justify-center">
-            {screen === 1 ? (
+          screen === 1 ? (
+            <div className="flex justify-center">
               <p className="text-[13px] text-muted-foreground">
                 Already have an account?{" "}
                 <Link
@@ -92,17 +87,8 @@ export default function GetStartedPage() {
                   Login
                 </Link>
               </p>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setScreen(1)}
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
-              >
-                <ArrowLeft size={15} strokeWidth={2} />
-                Back to previous step
-              </button>
-            )}
-          </div>
+            </div>
+          ) : null
         }
       >
         {screen === 1 ? (
@@ -191,7 +177,7 @@ export default function GetStartedPage() {
               </div>
             </button>
 
-            {/* Step 2 Option 2: Start with a Wallet or Card -> Immediate route to /signup */}
+            {/* Step 2 Option 2: Get an Instant Virtual Wallet -> Immediate route to /signup */}
             <button
               type="button"
               data-tour="gs-walletcard"
@@ -204,7 +190,7 @@ export default function GetStartedPage() {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
-                    Start with a Wallet or Card
+                    Get an Instant Virtual Wallet
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
                     Open an account using a mobile wallet or card.

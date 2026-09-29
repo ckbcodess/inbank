@@ -186,9 +186,13 @@ export default function BusinessSignupPage() {
         icon={headings.icon}
         title={headings.title}
         description={headings.description}
+        align={step === "submitted" || variant === "existingCustomer" ? "center" : "left"}
+        onBack={step !== "submitted" && step !== "company" ? handleBackStep : undefined}
+        backHref={step === "company" && variant !== "existingCustomer" ? "/login" : undefined}
+        backLabel={step === "company" ? "Back to login" : "Back to previous step"}
         width="wide"
         footer={
-          step === "submitted" || (step === "company" && variant === "existingCustomer") ? null : step === "company" ? (
+          step === "company" && variant !== "existingCustomer" ? (
             <div className="mt-5 text-center">
               <p className="text-[13px] text-muted-foreground">
                 Already have an account?{" "}
@@ -200,18 +204,7 @@ export default function BusinessSignupPage() {
                 </Link>
               </p>
             </div>
-          ) : (
-            <div className="mt-5 text-center">
-              <button
-                type="button"
-                onClick={handleBackStep}
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
-              >
-                <ArrowLeft size={15} strokeWidth={2} aria-hidden="true" />
-                Back to previous step
-              </button>
-            </div>
-          )
+          ) : null
         }
       >
         {step !== "submitted" && (

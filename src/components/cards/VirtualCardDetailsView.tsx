@@ -123,6 +123,11 @@ export function VirtualCardDetailsView({
   const [isFrozen, setIsFrozen] = useState(card.status === "Blocked");
   const [showCardDetails, setShowCardDetails] = useState(false);
 
+  useEffect(() => {
+    setCurrentCard(card);
+    setIsFrozen(card.status === "Blocked");
+  }, [card]);
+
   // Dynamic card activity list linked to card ID
   const [activities, setActivities] = useState<CardTransaction[]>(() => getCardTransactions(card.id));
 

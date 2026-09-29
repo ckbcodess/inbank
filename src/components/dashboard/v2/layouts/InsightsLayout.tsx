@@ -19,7 +19,6 @@ import {
   BalanceMeta,
   Card,
   CardHeader,
-  FxBar,
   Greeting,
   MoneyActions,
   Notices,
@@ -104,7 +103,7 @@ export function InsightsLayout(props: DashViewProps) {
   const money = (n: number) => formatMoney(n, currency, showAmounts);
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-10">
+    <div className="@container flex flex-col gap-6 sm:gap-10">
       <div className="flex items-center justify-between gap-4 sm:flex-wrap">
         <Greeting firstName={data.firstName} />
         <div className="flex items-center gap-3 sm:flex-wrap">
@@ -122,7 +121,7 @@ export function InsightsLayout(props: DashViewProps) {
           <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-3 sm:hidden" />
         </div>
 
-        <Notices data={data} status={status} onRefresh={onRefresh} />
+        <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
 
         <motion.div
           key={data.selectedAccountId ?? "none"}
@@ -147,13 +146,11 @@ export function InsightsLayout(props: DashViewProps) {
             <StatTile label="Scheduled · next 30 days" value={money(data.scheduledNext30)} loading={loading} />
           </div>
 
-          <div className="grid grid-cols-1 items-stretch gap-4 sm:gap-6 lg:grid-cols-2">
+          <div className="dash-grid items-stretch gap-4 sm:gap-6">
             <AnalyticsCard data={data} loading={loading} showAmounts={showAmounts} />
             <TopCategories data={data} loading={loading} showAmounts={showAmounts} />
+            <ActivityCard data={data} loading={loading} showAmounts={showAmounts} limit={5} />
           </div>
-
-          <ActivityCard data={data} loading={loading} showAmounts={showAmounts} limit={5} />
-          <FxBar />
         </motion.div>
       </div>
     </div>

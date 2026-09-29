@@ -26,6 +26,10 @@ interface ActionTileProps {
   title: string;
   /** Optional second line — only when the title alone doesn't say what's behind it. */
   description?: string;
+  /** Recognition marks before the chevron — network logos, a card — so tiles differ at a glance. */
+  trailing?: React.ReactNode;
+  /** The hub's amber icon (INTERFACE §E) instead of the neutral one. */
+  accent?: boolean;
   href?: string;
   onClick?: () => void;
   disabled?: boolean;
@@ -37,11 +41,20 @@ interface ActionTileProps {
  * surface; `onCard` is the muted chip for rows on a white card (Accounts,
  * Cards), where a white chip would disappear.
  */
-export function TileChip({ children, tone = "onTile" }: { children: React.ReactNode; tone?: "onTile" | "onCard" }) {
+export function TileChip({
+  children,
+  tone = "onTile",
+  accent = false,
+}: {
+  children: React.ReactNode;
+  tone?: "onTile" | "onCard";
+  accent?: boolean;
+}) {
   return (
     <span
       className={cn(
-        "flex size-[38.5px] shrink-0 items-center justify-center rounded-[12.25px] text-foreground transition-transform duration-150 group-hover:scale-105",
+        "flex size-[38.5px] shrink-0 items-center justify-center rounded-[12.25px] transition-transform duration-150 group-hover:scale-105",
+        accent ? "text-[var(--tile-accent)]" : "text-foreground",
         tone === "onTile"
           ? "border border-black/[0.04] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.03)] dark:border-white/[0.06] dark:bg-[#252525] dark:shadow-none"
           : "bg-muted",
@@ -60,6 +73,8 @@ export function ActionTile({
   leading,
   title,
   description,
+  trailing,
+  accent = false,
   href,
   onClick,
   disabled,
@@ -68,12 +83,13 @@ export function ActionTile({
   const body = (
     <>
       <div className="flex min-w-0 items-center gap-4">
-        <TileChip>{leading ?? (Icon && <Icon size={20} strokeWidth={1.8} aria-hidden="true" />)}</TileChip>
+        <TileChip accent={accent}>{leading ?? (Icon && <Icon size={20} strokeWidth={1.8} aria-hidden="true" />)}</TileChip>
         <span className="flex min-w-0 flex-col gap-0.5">
           <span className="truncate text-[16px] font-medium tracking-[-0.01em] text-foreground">{title}</span>
           {description && <span className="truncate text-[13px] text-muted-foreground">{description}</span>}
         </span>
       </div>
+      {trailing && <span className="ml-auto flex shrink-0 items-center">{trailing}</span>}
       <ChevronRight
         size={20}
         strokeWidth={1.8}

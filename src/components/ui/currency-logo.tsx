@@ -21,6 +21,12 @@ export const CURRENCY_METADATA: Record<string, CurrencyMeta> = {
   GHS: { code: "GHS", name: "Ghanaian Cedi", country: "Ghana", symbol: "GHS" },
   CAD: { code: "CAD", name: "Canadian Dollar", country: "Canada", symbol: "CA$" },
   KES: { code: "KES", name: "Kenyan Shilling", country: "Kenya", symbol: "KSh" },
+  AUD: { code: "AUD", name: "Australian Dollar", country: "Australia", symbol: "A$" },
+  JPY: { code: "JPY", name: "Japanese Yen", country: "Japan", symbol: "¥" },
+  DKK: { code: "DKK", name: "Danish Krone", country: "Denmark", symbol: "kr" },
+  NZD: { code: "NZD", name: "New Zealand Dollar", country: "New Zealand", symbol: "NZ$" },
+  NOK: { code: "NOK", name: "Norwegian Krone", country: "Norway", symbol: "kr" },
+  SEK: { code: "SEK", name: "Swedish Krona", country: "Sweden", symbol: "kr" },
 };
 
 export function getCurrencyMeta(code: string): CurrencyMeta {
@@ -237,6 +243,94 @@ export function CurrencyLogo({
             {/* Maasai Shield Center */}
             <ellipse cx="16" cy="16" rx="4.5" ry="9" fill="#880000" stroke="#FFFFFF" strokeWidth="0.8" />
             <circle cx="16" cy="16" r="1.5" fill="#FFFFFF" />
+          </g>
+        );
+
+      // Japan (JPY)
+      case "JPY":
+      case "JP":
+        return (
+          <g>
+            <rect width="32" height="32" fill="#FFFFFF" />
+            <circle cx="16" cy="16" r="9.5" fill="#BC002D" />
+          </g>
+        );
+
+      // Australia (AUD)
+      case "AUD":
+      case "AU":
+        return (
+          <g>
+            <rect width="32" height="32" fill="#00008B" />
+            {/* Canton */}
+            <rect width="16" height="16" fill="#012169" />
+            <path d="M0,0 L16,16 M16,0 L0,16" stroke="#FFFFFF" strokeWidth="2.5" />
+            <path d="M0,0 L8,8 M16,0 L8,8" stroke="#C8102E" strokeWidth="1" />
+            <path d="M16,16 L8,8 M0,16 L8,8" stroke="#C8102E" strokeWidth="1" />
+            <path d="M8,0 V16 M0,8 H16" stroke="#FFFFFF" strokeWidth="4.5" />
+            <path d="M8,0 V16 M0,8 H16" stroke="#C8102E" strokeWidth="2.5" />
+            {/* Commonwealth Star */}
+            <circle cx="8" cy="24" r="3.2" fill="#FFFFFF" />
+            {/* Southern Cross stars */}
+            <circle cx="24" cy="7" r="1.3" fill="#FFFFFF" />
+            <circle cx="21" cy="14" r="1.3" fill="#FFFFFF" />
+            <circle cx="27" cy="17" r="1.3" fill="#FFFFFF" />
+            <circle cx="24" cy="26" r="1.5" fill="#FFFFFF" />
+            <circle cx="25.5" cy="20" r="0.9" fill="#FFFFFF" />
+          </g>
+        );
+
+      // New Zealand (NZD)
+      case "NZD":
+      case "NZ":
+        return (
+          <g>
+            <rect width="32" height="32" fill="#00247D" />
+            {/* Canton */}
+            <rect width="16" height="16" fill="#012169" />
+            <path d="M0,0 L16,16 M16,0 L0,16" stroke="#FFFFFF" strokeWidth="2.5" />
+            <path d="M8,0 V16 M0,8 H16" stroke="#FFFFFF" strokeWidth="4.5" />
+            <path d="M8,0 V16 M0,8 H16" stroke="#CC142B" strokeWidth="2.5" />
+            {/* 4 Red Stars with White Border */}
+            <circle cx="24" cy="7" r="1.5" fill="#CC142B" stroke="#FFFFFF" strokeWidth="0.8" />
+            <circle cx="20" cy="15" r="1.5" fill="#CC142B" stroke="#FFFFFF" strokeWidth="0.8" />
+            <circle cx="28" cy="17" r="1.5" fill="#CC142B" stroke="#FFFFFF" strokeWidth="0.8" />
+            <circle cx="24" cy="25" r="1.8" fill="#CC142B" stroke="#FFFFFF" strokeWidth="0.8" />
+          </g>
+        );
+
+      // Denmark (DKK)
+      case "DKK":
+      case "DK":
+        return (
+          <g>
+            <rect width="32" height="32" fill="#C60C30" />
+            <rect x="9" y="0" width="4" height="32" fill="#FFFFFF" />
+            <rect x="0" y="14" width="32" height="4" fill="#FFFFFF" />
+          </g>
+        );
+
+      // Norway (NOK)
+      case "NOK":
+      case "NO":
+        return (
+          <g>
+            <rect width="32" height="32" fill="#BA0C2F" />
+            <rect x="8" y="0" width="6" height="32" fill="#FFFFFF" />
+            <rect x="0" y="13" width="32" height="6" fill="#FFFFFF" />
+            <rect x="9.5" y="0" width="3" height="32" fill="#00205B" />
+            <rect x="0" y="14.5" width="32" height="3" fill="#00205B" />
+          </g>
+        );
+
+      // Sweden (SEK)
+      case "SEK":
+      case "SE":
+        return (
+          <g>
+            <rect width="32" height="32" fill="#006AA7" />
+            <rect x="9.5" y="0" width="5" height="32" fill="#FECC00" />
+            <rect x="0" y="13.5" width="32" height="5" fill="#FECC00" />
           </g>
         );
 

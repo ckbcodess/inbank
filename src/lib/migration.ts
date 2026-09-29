@@ -49,13 +49,14 @@ export const MIGRATED_DATA = {
     { name: "Personal Current", number: "•••• 4561" },
     { name: "Savings", number: "•••• 9922" },
   ],
+  // `recipient` is what the payment deep link opens with (number, account or reference); `detail` is what's shown.
   payees: [
-    { name: "Kwabena Asante", detail: "MTN MoMo · 024 •••• 118" },
-    { name: "ECG Prepaid", detail: "Meter •••• 2231" },
-    { name: "Ama Owusu", detail: "Ecobank · •••• 7702" },
-    { name: "Ghana Water", detail: "Account •••• 5510" },
-    { name: "Kojo Mensah", detail: "GCB Bank · •••• 3381" },
-    { name: "DStv", detail: "Smartcard •••• 0917" },
+    { name: "Kwabena Asante", detail: "MTN MoMo · 024 •••• 118", rail: "wallet", recipient: "0244556118" },
+    { name: "ECG Prepaid", detail: "Meter •••• 2231", rail: "ecg", recipient: "04122231" },
+    { name: "Ama Owusu", detail: "Ecobank · •••• 7702", rail: "bank", recipient: "1441007702", bank: "Ecobank Ghana" },
+    { name: "Ghana Water", detail: "Account •••• 5510", rail: "bill", recipient: "GW005510", billerId: "bil-002" },
+    { name: "Kojo Mensah", detail: "GCB Bank · •••• 3381", rail: "bank", recipient: "1023003381", bank: "GCB Bank" },
+    { name: "KNUST fees", detail: "Student ID •••• 4417", rail: "bill", recipient: "20914417", billerId: "bil-008b" },
   ],
   standingOrders: [
     { name: "Rent — Adjei Properties", detail: "GHS 2,500.00 · monthly, 1st" },

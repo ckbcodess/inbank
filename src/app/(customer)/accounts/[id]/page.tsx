@@ -52,16 +52,10 @@ import { useCardLinkReturn } from "@/lib/card-link";
 import PageHeader from "@/components/layout/PageHeader";
 import { ActionTile } from "@/components/ui/action-tile";
 import { ToggleTile } from "@/components/ui/toggle-tile";
+import { ShareDetailsDialog, groupDigits } from "@/components/accounts/ShareDetailsDialog";
 
 const BASELINE: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
-const SWIFT_CODE = "GHCBGHAC";
 const MINI_STATEMENT_SIZE = 10;
-
-/** "1243 5456 6233" — easier to read out and to check against a payslip. */
-function groupDigits(number: string): string {
-  const digits = number.replace(/\s+/g, "");
-  return /^\d+$/.test(digits) ? digits.replace(/(\d{4})(?=\d)/g, "$1 ") : number;
-}
 
 export default function AccountDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -402,77 +396,3 @@ function RecentTransactionsDialog({
   );
 }
 
-/* ── Share account details ─────────────────────────────────────────────────── */
-
-function ShareDetailsDialog({
-  open,
-  onOpenChange,
-  account,
-  holderName,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  account: Account;
-  holderName: string;
-}) {
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
-  const rows: { key: string; label: string; value: string; copy?: string }[] = [
-    { key: "holder", label: "Account holder", value: holderName },
-    { key: "number", label: "Account number", value: groupDigits(account.number), copy: account.number.replace(/\s+/g, "") },
-    { key: "bank", label: "Bank", value: "GCB Bank PLC" },
-    { key: "swift", label: "SWIFT code", value: SWIFT_CODE },
-  ];
-
-  const copy = (key: string, text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey((k) => (k === key ? null : k)), 2000);
-  };
-
-  const copyAll = () => {
-    navigator.clipboard.writeText(rows.map((r) => `${r.label}: ${r.value}`).join("\n"));
-    toast.success("Account details copied", { description: "Paste them into a message to get paid." });
-    onOpenChange(false);
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent size="sm">
-        <DialogHeader>
-          <DialogTitle>Share account details</DialogTitle>
-        </DialogHeader>
-        <DialogBody>
-          <p className="mb-3 text-[13px] text-muted-foreground">Give these to anyone sending money to this account.</p>
-          <dl className="flex flex-col divide-y divide-border/50">
-            {rows.map((r) => (
-              <div key={r.key} className="flex items-center justify-between gap-3 py-3">
-                <dt className="text-[13px] text-muted-foreground">{r.label}</dt>
-                <dd className="flex min-w-0 items-center gap-1.5">
-                  <span className="truncate text-[14px] text-foreground tabular">{r.value}</span>
-                  <button
-                    type="button"
-                    onClick={() => copy(r.key, r.copy ?? r.value)}
-                    className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-                    aria-label={`Copy ${r.label.toLowerCase()}`}
-                  >
-                    {copiedKey === r.key ? (
-                      <Check size={14} strokeWidth={1.9} className="text-success" />
-                    ) : (
-                      <Copy size={14} strokeWidth={1.8} />
-                    )}
-                  </button>
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </DialogBody>
-        <DialogFooter>
-          <Button onClick={copyAll} className="h-10 w-full gap-1.5 rounded-lg text-[13.5px]">
-            <Copy size={15} strokeWidth={1.8} />
-            Copy all
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}

@@ -11,7 +11,6 @@ import {
   ChevronRight,
   CreditCard,
   Smartphone,
-  UserCheck,
   Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -388,7 +387,7 @@ export default function LinkSourceAccountModal({
                   {([
                     {
                       to: "link_new_momo",
-                      icon: UserCheck,
+                      icon: Smartphone,
                       title: "Link Mobile Money Wallet",
                       hint: "Link your mobile money wallet to get started quickly and securely.",
                     },

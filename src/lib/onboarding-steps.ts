@@ -4,7 +4,7 @@
  * `?step=<id>` — the Demo hub uses it to jump anywhere in a flow.
  */
 
-export const ONBOARDING_STEPS = [
+export const ACTIVATION_STEPS = [
   { id: "ghana_card", label: "Ghana Card" },
   { id: "selfie", label: "Selfie Match" },
   { id: "review_details", label: "Review Details" },
@@ -13,6 +13,31 @@ export const ONBOARDING_STEPS = [
   { id: "referral", label: "Referral Code" },
   { id: "pin", label: "Set Your PIN" },
   { id: "confirm_pin", label: "Confirm Your PIN" },
+] as const;
+
+export const SIGNUP_STEPS = [
+  { id: "ghana_card", label: "Ghana Card" },
+  { id: "selfie", label: "Selfie Match" },
+  { id: "review_details", label: "Review Details" },
+  { id: "otp", label: "Confirm Your Code" },
+  { id: "password", label: "Create Your Password" },
+  { id: "virtual_account_ready", label: "Virtual Account" },
+  { id: "fund_account", label: "Fund Account" },
+  { id: "pin", label: "Set Your PIN" },
+  { id: "confirm_pin", label: "Confirm Your PIN" },
+] as const;
+
+export const ONBOARDING_STEPS = [
+  { id: "ghana_card", label: "Ghana Card" },
+  { id: "selfie", label: "Selfie Match" },
+  { id: "review_details", label: "Review Details" },
+  { id: "otp", label: "Confirm Your Code" },
+  { id: "password", label: "Create Your Password" },
+  { id: "virtual_account_ready", label: "Virtual Account" },
+  { id: "fund_account", label: "Fund Account" },
+  { id: "pin", label: "Set Your PIN" },
+  { id: "confirm_pin", label: "Confirm Your PIN" },
+  { id: "referral", label: "Referral Code" },
 ] as const;
 
 export type OnboardingStep = (typeof ONBOARDING_STEPS)[number]["id"];

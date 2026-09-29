@@ -24,6 +24,8 @@ import {
 import { SurfaceProvider } from "@/lib/surface-context";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
 import { getNavigation } from "@/lib/navigation";
+import { cn } from "@/lib/utils";
+import { FxQuickModal } from "@/components/fx/FxQuickModal";
 
 const COLLAPSE_KEY = "nibs-sidebar-collapsed";
 
@@ -155,11 +157,20 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
               className="custom-scrollbar animate-in fade-in flex-1 overflow-y-auto duration-200"
               style={{ scrollbarGutter: "stable" }}
             >
-              <div key={pathname} className="page-stagger mx-auto w-full max-w-[960px] px-4 pt-6 pb-12 sm:px-8 sm:pt-10 sm:pb-14 lg:px-10 lg:pt-12 lg:pb-16 xl:px-10">{children}</div>
+              <div
+                key={pathname}
+                className={cn(
+                  "@container page-stagger mx-auto w-full px-4 pt-6 pb-12 sm:px-8 sm:pt-10 sm:pb-14 lg:px-10 lg:pt-12 lg:pb-16 xl:px-10",
+                  pathname === "/overview" ? "max-w-[1440px]" : "max-w-[960px]",
+                )}
+              >
+                {children}
+              </div>
             </main>
           </div>
         </div>
       </div>
+      <FxQuickModal />
       {splash !== "off" && <AppSplash leaving={splash === "leaving"} />}
     </SurfaceProvider>
   );

@@ -16,12 +16,14 @@ import { ActionTile } from "@/components/ui/action-tile";
 import {
   AccountSwitcher,
   ActivityCard,
+  AnalyticsCard,
   BalanceFigure,
   BalanceMeta,
+  CardsCard,
   ComingUpCard,
-  FxBar,
   Greeting,
   Notices,
+  PayAgainCard,
   RefreshControl,
   SPRING,
   withFrom,
@@ -47,7 +49,7 @@ export function ActionsLayout(props: DashViewProps) {
   ];
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-10">
+    <div className="@container flex flex-col gap-6 sm:gap-10">
       <div className="flex items-center justify-between gap-4">
         <Greeting firstName={data.firstName} />
         <RefreshControl updatedAt={updatedAt} refreshing={loading} onRefresh={onRefresh} />
@@ -60,7 +62,7 @@ export function ActionsLayout(props: DashViewProps) {
           {!loading && <BalanceMeta data={data} showAmounts={showAmounts} updatedAt={updatedAt} />}
         </div>
 
-        <Notices data={data} status={status} onRefresh={onRefresh} />
+        <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {tiles.map((tile) => (
@@ -73,13 +75,18 @@ export function ActionsLayout(props: DashViewProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={SPRING}
-          className="grid grid-cols-1 items-stretch gap-4 sm:gap-6 lg:grid-cols-2"
+          className="dash-grid items-stretch gap-4 sm:gap-6"
         >
+          <ActivityCard
+            data={data}
+            loading={loading}
+            showAmounts={showAmounts}
+            onOpenFundModal={props.onOpenFundModal}
+          />
+          <CardsCard data={data} loading={loading} onOpenFundModal={props.onOpenFundModal} />
+          <PayAgainCard data={data} />
           <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} />
-          <ActivityCard data={data} loading={loading} showAmounts={showAmounts} />
-          <div className="lg:col-span-2">
-            <FxBar />
-          </div>
+          <AnalyticsCard data={data} loading={loading} showAmounts={showAmounts} />
         </motion.div>
       </div>
     </div>

@@ -105,6 +105,9 @@ function MigrateContent() {
   return (
     <AuthLayout
       title={step === "welcome" ? `${TITLES.welcome}, ${firstName}` : TITLES[step]}
+      onBack={step !== "welcome" ? back : undefined}
+      backHref={step === "welcome" ? "/login" : undefined}
+      backLabel={step === "welcome" ? "Back to login" : "Back to previous step"}
       stepProgress={{ current: index + 1, total: MIGRATION_STEPS.length }}
       footer={
         step === "welcome" ? (

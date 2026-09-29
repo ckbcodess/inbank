@@ -146,33 +146,12 @@ export default function ForgotPasswordPage() {
               ? Landmark
               : undefined
       }
+      onBack={stage !== "done" && stage !== "branch" && stage !== "mobile" ? handleBack : undefined}
+      backHref={stage === "mobile" ? "/login" : undefined}
+      backLabel={stage === "mobile" ? "Back to login" : "Back"}
+      align={stage === "done" || stage === "no_match" || stage === "branch" ? "center" : "left"}
       stepProgress={STEP_NUMBER[stage] ? { current: STEP_NUMBER[stage], total: 3 } : undefined}
       width="compact"
-      footer={
-        stage === "done" || stage === "branch" ? undefined : (
-          <div className="flex justify-center">
-            {stage === "mobile" ? (
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <ArrowLeft size={15} strokeWidth={1.9} aria-hidden="true" />
-                Back to login
-              </Link>
-            ) : (
-              <button
-                type="button"
-                onClick={handleBack}
-                disabled={busy}
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer disabled:opacity-50"
-              >
-                <ArrowLeft size={15} strokeWidth={1.9} aria-hidden="true" />
-                Back
-              </button>
-            )}
-          </div>
-        )
-      }
     >
       {stage === "mobile" && (
         <form

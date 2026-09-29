@@ -51,10 +51,10 @@ export interface Tour {
    real screens are identical. */
 const ENTRY_PERSONAL: TourStep = {
   target: "entry-personal",
-  route: "/",
-  title: "Choose Personal banking",
-  body: "Every retail journey starts here. Pick the Personal door.",
-  action: "Click Personal",
+  route: "/login",
+  title: "Personal banking",
+  body: "The default experience is Personal banking.",
+  action: "Notice the Personal selector is selected",
 };
 
 const LOGIN_GET_STARTED: TourStep = {
@@ -93,9 +93,9 @@ export const TOURS: Tour[] = [
       {
         target: "activate-account-picker",
         route: "/activate",
-        title: "Choose Primary Account",
-        body: "Multiple accounts discovered (Personal and Joint). Select your primary operating account.",
-        action: "Select an account and click Confirm and send code",
+        title: "Select Your Default Account",
+        body: "Multiple accounts discovered (Personal and Joint). Select your default account.",
+        action: "Select an account and click Continue",
       },
       {
         target: "activate-otp",
@@ -235,7 +235,7 @@ export const TOURS: Tour[] = [
     badge: "Account opening",
     summary: "New to GCB, opening a full account on the COOS origination portal.",
     icon: "landmark",
-    startRoute: "/",
+    startRoute: "/login",
     steps: [
       ENTRY_PERSONAL,
       LOGIN_GET_STARTED,
@@ -271,7 +271,7 @@ export const TOURS: Tour[] = [
     badge: "Wallet",
     summary: "Registers with Ghana Card, then links a mobile-money wallet.",
     icon: "wallet",
-    startRoute: "/",
+    startRoute: "/login",
     steps: [
       ENTRY_PERSONAL,
       LOGIN_GET_STARTED,
@@ -285,9 +285,9 @@ export const TOURS: Tour[] = [
       {
         target: "gs-walletcard",
         route: "/get-started",
-        title: "Start with a Wallet or Card",
-        body: "Register with Ghana Card and link mobile money. (Wallet and Card split into two options in Pass 2.)",
-        action: "Click Start with a Wallet or Card",
+        title: "Get an Instant Virtual Wallet",
+        body: "Register with Ghana Card and create an instant virtual wallet.",
+        action: "Click Get an Instant Virtual Wallet",
       },
       {
         target: "signup-card",
@@ -349,7 +349,7 @@ export const TOURS: Tour[] = [
     badge: "Card",
     summary: "Registers with Ghana Card, then links a bank card as the funding source.",
     icon: "creditCard",
-    startRoute: "/",
+    startRoute: "/login",
     steps: [
       ENTRY_PERSONAL,
       LOGIN_GET_STARTED,
@@ -363,9 +363,9 @@ export const TOURS: Tour[] = [
       {
         target: "gs-walletcard",
         route: "/get-started",
-        title: "Start with a Wallet or Card",
-        body: "Same entry as Wallet today — a dedicated Card path arrives in Pass 2.",
-        action: "Click Start with a Wallet or Card",
+        title: "Get an Instant Virtual Wallet",
+        body: "Register with Ghana Card and create an instant virtual wallet.",
+        action: "Click Get an Instant Virtual Wallet",
       },
       {
         target: "signup-card",

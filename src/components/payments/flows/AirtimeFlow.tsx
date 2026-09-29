@@ -26,7 +26,9 @@ import {
   getTelcoLogo,
   normalizeNetworkName,
   resolveAccountName,
+  formatGhPhone,
 } from "./shared";
+import { OwnWalletPicker, digitsOf, useOwnDestination } from "./OwnWalletPicker";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 
@@ -53,6 +55,8 @@ interface AirtimeFlowProps {
   onProceed: () => void;
   detailsCollapsed?: boolean;
   onToggleCollapsed?: (collapsed: boolean) => void;
+  /** "My own number": choose from the customer's own lines instead of typing one. */
+  isSelf?: boolean;
 }
 
 export function AirtimeFlow({
@@ -62,6 +66,7 @@ export function AirtimeFlow({
   onProceed,
   detailsCollapsed,
   onToggleCollapsed,
+  isSelf = false,
 }: AirtimeFlowProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
   const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
@@ -86,6 +91,42 @@ export function AirtimeFlow({
   const isNetworkValid = Boolean(state.wNetwork);
   const isValid = Boolean(state.fromId) && isNetworkValid && isPhoneValid && numAmount > 0 && !overBalance;
 
+
+  // "My own number": every line that's yours — registered plus linked wallets' numbers.
+  const own = useOwnDestination({
+    isSelf,
+    phone: state.aPhone,
+    apply: (w) => {
+      onChange("aPhone", digitsOf(w.phone));
+      onChange("wNetwork", normalizeNetworkName(w.network));
+      onChange("benName", "My number");
+    },
+  });
+  const selfBlock =
+    isPhoneValid && isCollapsed && !own.choosing ? (
+      <CollapsedDetailsBadge
+        title="My number"
+        subtitle={`${normalizeNetworkName(state.wNetwork)} · ${formatGhPhone(state.aPhone)} · ${own.selected?.tag ?? "Registered"}`}
+        icon={
+          getTelcoLogo(state.wNetwork) ? (
+            <Image src={getTelcoLogo(state.wNetwork)!} alt="" width={40} height={40} className="size-full rounded-full object-cover" />
+          ) : undefined
+        }
+        onChange={() => setCollapsed(false)}
+      />
+    ) : (
+      <OwnWalletPicker
+        variant="line"
+        wallets={own.wallets}
+        selectedPhone={state.aPhone}
+        accounts={accounts}
+        removedNotice={own.removedNotice}
+        onSelect={(w) => {
+          own.pick(w);
+          setCollapsed(true);
+        }}
+      />
+    );
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
       {/* 1. From Account */}
@@ -98,10 +139,12 @@ export function AirtimeFlow({
       {/* 2. Destination: Network & Phone Number */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
-        {isPhoneValid && isCollapsed ? (
+        {isSelf ? (
+          selfBlock
+        ) : isPhoneValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `Phone ${state.aPhone}`}
-            subtitle={`${state.wNetwork ? normalizeNetworkName(state.wNetwork) : "Mobile Network"} · ${state.aPhone}`}
+            subtitle={`${state.wNetwork ? normalizeNetworkName(state.wNetwork) : "Mobile Network"} · ${formatGhPhone(state.aPhone)}`}
             icon={
               getTelcoLogo(state.wNetwork) ? (
                 <Image
@@ -113,6 +156,7 @@ export function AirtimeFlow({
                 />
               ) : undefined
             }
+            nameCheck={{ confirmed: Boolean(verifiedName), by: state.wNetwork ? normalizeNetworkName(state.wNetwork) : undefined }}
             onChange={() => setCollapsed(false)}
           />
         ) : (

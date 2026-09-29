@@ -2163,6 +2163,7 @@ export interface FxRate {
   pair: string;
   base: string;
   quote: string;
+  currencyName?: string;
   buy: number;
   sell: number;
   mid: number;
@@ -2172,24 +2173,31 @@ export interface FxRate {
 
 /**
  * FR-30 is a *published rates* board — reference data, not a dealing screen.
- * Converting an amount against a published rate is still reference use: it is
- * indicative, it books nothing, and it holds no quote. What stays out is any
- * action that commits the customer to a rate; the actual deal happens in the
- * transaction flow (S14).
+ * Bank of Ghana (BOG) Daily Interbank Foreign Exchange Rates.
+ * Reflects official interbank market fixings.
  */
-export const FX_PUBLISHED_AT = "2026-08-11T08:30:00Z";
-
-/** The signed-in customer's previous session, shown on the dashboard greeting. */
-export const LAST_LOGIN_AT = "2026-08-21T08:43:00Z";
+/**
+ * Prototype stand-in for a daily feed: always today's 08:30 (UTC) fixing, so the
+ * board never reads stale. Replace with the feed's own timestamp.
+ */
+export const FX_PUBLISHED_AT = `${new Date().toISOString().slice(0, 10)}T08:30:00Z`;
+export const BOG_WEIGHTED_MEDIAN_RATE = 11.6600;
 
 export const FX_RATES: FxRate[] = [
-  { pair: "USD/GHS", base: "USD", quote: "GHS", buy: 11.42, sell: 11.68, mid: 11.55, changePct: 0.34 },
-  { pair: "GBP/GHS", base: "GBP", quote: "GHS", buy: 14.55, sell: 14.89, mid: 14.72, changePct: -0.18 },
-  { pair: "EUR/GHS", base: "EUR", quote: "GHS", buy: 12.48, sell: 12.77, mid: 12.63, changePct: 0.11 },
-  { pair: "CHF/GHS", base: "CHF", quote: "GHS", buy: 12.9, sell: 13.24, mid: 13.07, changePct: 0.05 },
-  { pair: "ZAR/GHS", base: "ZAR", quote: "GHS", buy: 0.62, sell: 0.67, mid: 0.645, changePct: -0.42 },
-  { pair: "NGN/GHS", base: "NGN", quote: "GHS", buy: 0.0071, sell: 0.0079, mid: 0.0075, changePct: -1.05 },
-  { pair: "CNY/GHS", base: "CNY", quote: "GHS", buy: 1.58, sell: 1.66, mid: 1.62, changePct: 0.22 },
+  { pair: "USD/GHS", base: "USD", quote: "GHS", currencyName: "US Dollar", buy: 11.6542, sell: 11.6658, mid: 11.6600, changePct: 0.12 },
+  { pair: "GBP/GHS", base: "GBP", quote: "GHS", currencyName: "Pound Sterling", buy: 15.4593, sell: 15.4759, mid: 15.4676, changePct: -0.24 },
+  { pair: "EUR/GHS", base: "EUR", quote: "GHS", currencyName: "Euro", buy: 13.2572, sell: 13.2704, mid: 13.2638, changePct: 0.18 },
+  { pair: "CHF/GHS", base: "CHF", quote: "GHS", currencyName: "Swiss Franc", buy: 14.0156, sell: 14.0282, mid: 14.0219, changePct: 0.08 },
+  { pair: "CAD/GHS", base: "CAD", quote: "GHS", currencyName: "Canadian Dollar", buy: 8.2269, sell: 8.2345, mid: 8.2307, changePct: -0.15 },
+  { pair: "AUD/GHS", base: "AUD", quote: "GHS", currencyName: "Australian Dollar", buy: 8.1872, sell: 8.1960, mid: 8.1916, changePct: 0.32 },
+  { pair: "ZAR/GHS", base: "ZAR", quote: "GHS", currencyName: "South African Rand", buy: 0.7106, sell: 0.7110, mid: 0.7108, changePct: -0.41 },
+  { pair: "CNY/GHS", base: "CNY", quote: "GHS", currencyName: "Chinese Yuan", buy: 1.7366, sell: 1.7379, mid: 1.7373, changePct: 0.05 },
+  { pair: "JPY/GHS", base: "JPY", quote: "GHS", currencyName: "Japanese Yen", buy: 0.0741, sell: 0.0742, mid: 0.0742, changePct: 0.21 },
+  { pair: "NZD/GHS", base: "NZD", quote: "GHS", currencyName: "New Zealand Dollar", buy: 6.9400, sell: 6.9472, mid: 6.9436, changePct: 0.14 },
+  { pair: "DKK/GHS", base: "DKK", quote: "GHS", currencyName: "Danish Krone", buy: 1.7766, sell: 1.7783, mid: 1.7775, changePct: 0.09 },
+  { pair: "NOK/GHS", base: "NOK", quote: "GHS", currencyName: "Norwegian Krone", buy: 1.1350, sell: 1.1363, mid: 1.1357, changePct: -0.11 },
+  { pair: "SEK/GHS", base: "SEK", quote: "GHS", currencyName: "Swedish Krona", buy: 1.1560, sell: 1.1573, mid: 1.1567, changePct: -0.07 },
+  { pair: "NGN/GHS", base: "NGN", quote: "GHS", currencyName: "Nigerian Naira", buy: 0.00876, sell: 0.00878, mid: 0.00877, changePct: -0.85 },
 ];
 
 export function findFxRate(currency: string): FxRate | undefined {

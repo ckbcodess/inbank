@@ -3,6 +3,8 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { ArrowLeft, ChevronLeft } from "lucide-react";
+import Link from "next/link";
 import AuthHeader from "./AuthHeader";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { cn } from "@/lib/utils";
@@ -14,6 +16,14 @@ interface AuthLayoutProps {
   description?: ReactNode;
   descriptionClassName?: string;
   children: ReactNode;
+  /** Alignment of header (title, description, icon): default "left", or "center" for success/informatory states */
+  align?: "left" | "center";
+  /** In-card back handler */
+  onBack?: () => void;
+  /** In-card back link fallback */
+  backHref?: string;
+  /** Label for back button aria-label */
+  backLabel?: string;
   /** Optional icon component */
   icon?: React.ComponentType<{
     size?: number;
@@ -30,8 +40,10 @@ interface AuthLayoutProps {
     current: number;
     total: number;
   };
-  /** Show the GCB Eagle mark at the top of the card */
+  /** Show the GCB Eagle mark at the top of the card (default false to avoid repeating top navbar logo) */
   showLogo?: boolean;
+  /** Animate card height between step transitions. Defaults to false to prevent expanding animations on initial page load. */
+  animateHeight?: boolean;
 }
 
 export default function AuthLayout({
@@ -40,11 +52,16 @@ export default function AuthLayout({
   description,
   descriptionClassName,
   children,
+  align = "left",
+  onBack,
+  backHref,
+  backLabel = "Go back",
   icon: Icon,
   footer,
   width = "default",
   stepProgress,
-  showLogo = true,
+  showLogo = false,
+  animateHeight = false,
 }: AuthLayoutProps) {
   const maxWidthClass =
     width === "wide"
@@ -52,6 +69,10 @@ export default function AuthLayout({
       : width === "compact"
       ? "max-w-[500px]"
       : "max-w-[540px]";
+
+  const hasBack = Boolean(onBack || backHref);
+  const cardClassName =
+    "rounded-[20px] border border-border/80 bg-card/95 px-6 py-8 sm:px-8 sm:py-10 shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden";
 
   return (
     <div className="relative flex min-h-dvh w-full flex-col bg-background text-foreground transition-colors selection:bg-primary/30 selection:text-foreground overflow-x-hidden">
@@ -76,91 +97,140 @@ export default function AuthLayout({
       {/* Main Container - Vertically and horizontally centered in available viewport */}
       <main className="relative z-10 flex min-h-[calc(100dvh-4rem)] w-full items-center justify-center px-4 sm:px-6 py-8 mt-16">
         <div className={`w-full ${maxWidthClass}`}>
-          {/* Central Card with generous breathing room and smooth height morphing */}
-          <motion.div
-            layout
-            transition={{ type: "spring", duration: 0.35, bounce: 0 }}
-            className="rounded-[16px] border border-border/80 bg-card/95 px-6 py-10 sm:px-8 sm:py-12 shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden"
-          >
-            {/* Step Progress Segments */}
-            {stepProgress && (
-              <div className="mb-8 flex items-center gap-2 px-1">
-                {Array.from({ length: stepProgress.total }).map((_, i) => {
-                  const isActive = i + 1 <= stepProgress.current;
-                  const isCurrent = i + 1 === stepProgress.current;
-                  return (
-                    <div
-                      key={i}
-                      className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                        isCurrent
-                          ? "bg-primary"
-                          : isActive
-                          ? "bg-primary/60"
-                          : "bg-muted"
-                      }`}
-                    />
-                  );
-                })}
-              </div>
-            )}
+          {/* Card Inner Content */}
+          {(() => {
+            const cardInner = (
+              <>
+                {/* Step Progress Segments (Full Width across the card) */}
+                {stepProgress && (
+                  <div className="mb-6 flex items-center gap-2 px-0.5">
+                    {Array.from({ length: stepProgress.total }).map((_, i) => {
+                      const isActive = i + 1 <= stepProgress.current;
+                      const isCurrent = i + 1 === stepProgress.current;
+                      return (
+                        <div
+                          key={i}
+                          className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                            isCurrent
+                              ? "bg-primary"
+                              : isActive
+                              ? "bg-primary/60"
+                              : "bg-muted"
+                          }`}
+                        />
+                      );
+                    })}
+                  </div>
+                )}
 
-            {/* GCB Eagle Emblem or Step Icon at Card Top */}
-            {Icon ? (
-              <div className="mb-8 flex justify-center">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-primary shadow-xs">
-                  <Icon size={24} strokeWidth={2} aria-hidden="true" />
-                </div>
-              </div>
-            ) : showLogo ? (
-              <div className="mb-8 flex justify-center">
-                <div className="flex items-center justify-center transition-transform hover:scale-105">
-                  <GCBLogo className="h-10 w-auto text-foreground" />
-                </div>
-              </div>
-            ) : null}
+                {/* In-Card Back Navigation Trigger */}
+                {hasBack && (
+                  <div className="mb-5 flex items-center">
+                    {backHref ? (
+                      <Link
+                        href={backHref}
+                        aria-label={backLabel}
+                        className="group inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95"
+                      >
+                        <div className="flex size-7.5 items-center justify-center rounded-lg border border-border/70 bg-muted/30 transition-colors group-hover:bg-muted group-hover:border-border">
+                          <ChevronLeft size={16} strokeWidth={2.2} className="transition-transform group-hover:-translate-x-0.5" />
+                        </div>
+                        <span>Back</span>
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={onBack}
+                        aria-label={backLabel}
+                        className="group inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95 cursor-pointer"
+                      >
+                        <div className="flex size-7.5 items-center justify-center rounded-lg border border-border/70 bg-muted/30 transition-colors group-hover:bg-muted group-hover:border-border">
+                          <ChevronLeft size={16} strokeWidth={2.2} className="transition-transform group-hover:-translate-x-0.5" />
+                        </div>
+                        <span>Back</span>
+                      </button>
+                    )}
+                  </div>
+                )}
 
-            {/* Dynamic Step Content: Automatically and smoothly morphs height */}
-            <SmoothHeight duration={0.35}>
-              {/* Title & Description */}
-              {(title || description) && (
-                <div className="mb-10 text-center sm:mb-12">
-                  {title && (
-                    <h1
-                      className={cn(
-                        "text-[20px] sm:text-[22px] font-medium tracking-[-0.015em] text-foreground leading-snug",
-                        titleClassName
-                      )}
-                    >
-                      {title}
-                    </h1>
-                  )}
-                  {description && (
-                    <div
-                      className={cn(
-                        "mt-2 text-[13.5px] leading-relaxed text-muted-foreground max-w-[420px] mx-auto",
-                        descriptionClassName
-                      )}
-                    >
-                      {description}
+                {/* Optional Step Icon */}
+                {Icon && (
+                  <div className={cn("mb-6 flex", align === "center" ? "justify-center" : "justify-start")}>
+                    <div className="flex size-11 items-center justify-center rounded-xl bg-primary/15 text-primary shadow-xs">
+                      <Icon size={22} strokeWidth={2} aria-hidden="true" />
                     </div>
-                  )}
-                </div>
-              )}
+                  </div>
+                )}
 
-              {/* Form & Actions */}
-              {children}
-            </SmoothHeight>
-          </motion.div>
+                {/* Optional GCB Logo (only if explicitly enabled) */}
+                {showLogo && (
+                  <div className={cn("mb-6 flex", align === "center" ? "justify-center" : "justify-start")}>
+                    <GCBLogo className="h-9 w-auto text-foreground" />
+                  </div>
+                )}
 
-          {/* Optional Footer Elements — glides smoothly beneath the morphing card */}
+                {/* Title & Description with alignment */}
+                {(title || description) && (
+                  <div
+                    className={cn(
+                      "mb-8",
+                      align === "center" ? "text-center mx-auto max-w-[440px]" : "text-left"
+                    )}
+                  >
+                    {title && (
+                      <h1
+                        className={cn(
+                          "text-[21px] sm:text-[23px] font-medium tracking-[-0.015em] text-foreground leading-snug",
+                          titleClassName
+                        )}
+                      >
+                        {title}
+                      </h1>
+                    )}
+                    {description && (
+                      <div
+                        className={cn(
+                          "mt-1.5 text-[13.5px] leading-relaxed text-muted-foreground",
+                          descriptionClassName
+                        )}
+                      >
+                        {description}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Form & Actions */}
+                {children}
+              </>
+            );
+
+            return animateHeight ? (
+              <motion.div
+                layout
+                transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+                className={cardClassName}
+              >
+                <SmoothHeight duration={0.35}>{cardInner}</SmoothHeight>
+              </motion.div>
+            ) : (
+              <div className={cardClassName}>{cardInner}</div>
+            );
+          })()}
+
+          {/* Optional Footer Elements */}
           {footer && (
-            <motion.div
-              layout
-              transition={{ type: "spring", duration: 0.35, bounce: 0 }}
-              className="mt-5 w-full"
-            >
-              {footer}
-            </motion.div>
+            animateHeight ? (
+              <motion.div
+                layout
+                transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+                className="mt-5 w-full"
+              >
+                {footer}
+              </motion.div>
+            ) : (
+              <div className="mt-5 w-full">{footer}</div>
+            )
           )}
         </div>
       </main>

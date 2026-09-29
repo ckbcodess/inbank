@@ -5,9 +5,12 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "@/lib/session-store";
 import { useAccountPrefs } from "@/lib/accounts-store";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
+import { toast } from "sonner";
 import { GcbDashboard, type DashStatus } from "@/components/dashboard/v2/GcbDashboard";
 import { HeroWaveTuner } from "@/components/dashboard/v2/HeroWaveTuner";
 import { FirstRunWelcome } from "@/components/dashboard/v2/FirstRunWelcome";
+import { QuickFundModal } from "@/components/dashboard/v2/QuickFundModal";
+import { peekHasSkippedFunding, clearHasSkippedFunding } from "@/lib/device-trust";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import {
@@ -41,8 +44,14 @@ function OverviewContent() {
   const activeProfile = useSession((s) => s.activeProfile);
   const defaultAccountId = useAccountPrefs((s) => s.defaultAccountId);
   const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
-  const [usageType, setUsageType] = useState<DashboardUsageType>("active");
+  const [usageType, setUsageType] = useState<DashboardUsageType>(() => {
+    if (typeof window !== "undefined" && peekHasSkippedFunding()) {
+      return "new_unfunded";
+    }
+    return "active";
+  });
   const [layout, setLayout] = useState<DashboardLayout>(readLayout);
+  const [fundModalOpen, setFundModalOpen] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [updatedAt, setUpdatedAt] = useState(() => Date.now());
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -103,6 +112,18 @@ function OverviewContent() {
     router.replace(id === data.defaultAccountId ? pathname : `${pathname}?account=${id}`, { scroll: false });
   };
 
+  const handleFundSuccess = (
+    amount: number,
+    method: "momo" | "card",
+    details: { operator?: string; phone?: string; cardLast4?: string }
+  ) => {
+    clearHasSkippedFunding();
+    setUsageType("new_customer");
+    toast.success(`GHS ${amount.toFixed(2)} deposited successfully!`, {
+      description: `${method === "momo" ? (details.operator || "Mobile Money") : "Card"} deposit added to your account.`,
+    });
+  };
+
   return (
     <>
       <StateSwitcher
@@ -123,11 +144,19 @@ function OverviewContent() {
         onToggle={toggleAmountVisibility}
         onSelectAccount={selectAccount}
         onRefresh={refresh}
+        onOpenFundModal={() => setFundModalOpen(true)}
       />
       {/* The hero card has its own floating tuner. */}
       {isHero && <HeroWaveTuner />}
       {/* Once, right after onboarding or moving from the old internet banking. */}
       <FirstRunWelcome firstName={data.firstName} />
+      {/* Interactive Quick Fund Modal */}
+      <QuickFundModal
+        open={fundModalOpen}
+        onOpenChange={setFundModalOpen}
+        onSuccess={handleFundSuccess}
+        accountName={data.accounts[0]?.name || "Virtual Account"}
+      />
     </>
   );
 }
