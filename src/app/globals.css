@@ -273,7 +273,7 @@
   --sidebar-ring: oklch(0.78 0.15 86.7);
   --primary-gradient-from: #fdc307;
   --primary-gradient-to: #d97706;
-  --hero-surface: #13181b;
+  --hero-surface: #131516;
   /* Mirrors HERO_WAVE_DEFAULTS in src/lib/hero-wave.ts — change both together. */
   --hero-wave: color-mix(in srgb, #455e68 77%, transparent);
   --hero-border: #31353c;

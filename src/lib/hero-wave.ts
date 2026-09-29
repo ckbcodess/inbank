@@ -58,7 +58,7 @@ export interface HeroWaveSettings {
 
 export const HERO_WAVE_DEFAULTS: HeroWaveSettings = {
   // Tuned by the designer in the wave tuner, 2026-09-26.
-  cardDark: "#13181b",
+  cardDark: "#131516",
   cardLight: "#36434e",
   textDark: "#ffffff",
   textLight: "#ffffff",
