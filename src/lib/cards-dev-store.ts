@@ -24,7 +24,7 @@ export type CardLifecycleStage =
   | "expired";
 
 export type CardSimulationPreset =
-  | "clean" // Default: 2 clean active cards
+  | "clean" // Default: 3 active cards — debit, prepaid, virtual
   | "out_for_delivery" // Rider assigned & dispatched
   | "ready_for_pickup" // Ready at branch vault
   | "delivered" // Needs customer PIN activation
@@ -34,7 +34,7 @@ export type CardSimulationPreset =
   | "all"; // Show all mock cards
 
 export const CARD_SIMULATION_LABELS: Record<CardSimulationPreset, string> = {
-  clean: "Default (Clean · 2 Cards)",
+  clean: "Default (Clean · 3 Cards)",
   out_for_delivery: "Out for Delivery (Rider Kofi Assigned)",
   ready_for_pickup: "Ready for Pickup (Branch Vault)",
   delivered: "Delivered (Needs PIN Activation)",
@@ -45,8 +45,8 @@ export const CARD_SIMULATION_LABELS: Record<CardSimulationPreset, string> = {
 };
 
 export const CLEAN_CARD_IDS = {
-  CORPORATE: ["card-003", "card-v01"], // Main Operating (Debit), AWS & SaaS (Virtual)
-  RETAIL: ["card-ret-001", "card-ret-002"], // Everyday Checking (Debit), Online Subscriptions (Prepaid)
+  CORPORATE: ["card-003", "card-001", "card-v01"], // Main Operating (Debit), Corporate Travel (Prepaid), AWS & SaaS (Virtual)
+  RETAIL: ["card-ret-001", "card-ret-002", "card-ret-007"], // Everyday Checking (Debit), Online Subscriptions (Prepaid), Online Shopping (Virtual)
 } as const;
 
 export const SIMULATION_PRESET_CARDS = {
@@ -212,19 +212,7 @@ export function getEffectiveCardsForProfile(
   // 2. CLEAN BASELINE (Default)
   const cleanIds: readonly string[] = CLEAN_CARD_IDS[profileKind];
   const cleanCards = allCards
-    .filter((c) => cleanIds.includes(c.id) || c.id.startsWith("card-new-"))
-    .map((c) => {
-      // In clean mode, ensure retail debit card is in Active status
-      if (c.id === "card-ret-001" && c.status === "Inactive") {
-        return {
-          ...c,
-          status: "Active" as const,
-          deliveryStatus: undefined,
-          deliveryMethod: undefined,
-        };
-      }
-      return c;
-    });
+    .filter((c) => cleanIds.includes(c.id) || c.id.startsWith("card-new-"));
 
   if (simulation === "clean") {
     return { cards: cleanCards, activeSimulatedCard: null };

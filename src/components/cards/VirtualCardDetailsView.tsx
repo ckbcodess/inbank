@@ -53,6 +53,7 @@ import {
 import { useSession } from "@/lib/session-store";
 import { getCardTheme } from "@/components/cards/card-themes";
 import { EmvChip } from "@/components/cards/EmvChip";
+import { ContextChip } from "@/components/layout/ContextChip";
 import { GcbCardLogo } from "@/components/cards/GcbCardLogo";
 import { TiltCard3D } from "@/components/cards/TiltCard3D";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
@@ -475,41 +476,32 @@ export function VirtualCardDetailsView({
         labels={DELIVERY_SIMULATION_LABELS}
       />
 
-      {/* Back Button, Title & Subtitle — the subtitle carries the money line:
-          the card's own balance (prepaid/virtual) or the account a debit card
-          spends from, so every card screen shares one structure. */}
-      <div className="flex flex-col gap-1 min-w-0">
-        <div className="flex items-center gap-3 min-w-0">
-          <button
-            type="button"
-            onClick={handleBackNavigation}
-            className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-            title="Back"
-            aria-label="Back"
-          >
-            <ChevronLeft size={22} strokeWidth={1.8} />
-          </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-tight sm:leading-[28px] tracking-[-0.02em] text-foreground truncate min-w-0">
-            {cardNickname || "Virtual Card"}
-          </h1>
-        </div>
-
-        {!isInactiveDelivery && (
-          <p className="pl-12 text-[14px] text-muted-foreground truncate">
-            {isFundable ? (
-              <>
-                Balance{" "}
-                <span className="tabular text-foreground">
-                  <RevealingAmount amount={currentCard.balance ?? 0} currency={currentCard.currency || "GHS"} />
-                </span>
-              </>
-            ) : linkedAccount ? (
-              <>
-                Spends from {linkedAccount.name}{" "}
-                <span className="tabular">•• {linkedAccount.number.slice(-4)}</span>
-              </>
-            ) : null}
-          </p>
+      {/* Back button, title and one context chip — the card's own balance
+          (prepaid/virtual) or the account a debit card spends from. */}
+      <div className="flex items-center gap-3 min-w-0">
+        <button
+          type="button"
+          onClick={handleBackNavigation}
+          className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+          title="Back"
+          aria-label="Back"
+        >
+          <ChevronLeft size={22} strokeWidth={1.8} />
+        </button>
+        <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-tight sm:leading-[28px] tracking-[-0.02em] text-foreground truncate min-w-0">
+          {cardNickname || "Virtual Card"}
+        </h1>
+        {!isInactiveDelivery && isFundable && (
+          <ContextChip icon={false} title="Card balance">
+            <span className="tabular text-foreground">
+              <RevealingAmount amount={currentCard.balance ?? 0} currency={currentCard.currency || "GHS"} />
+            </span>
+          </ContextChip>
+        )}
+        {!isInactiveDelivery && !isFundable && linkedAccount && (
+          <ContextChip title={`Spends from ${linkedAccount.name} ${linkedAccount.number}`}>
+            {linkedAccount.name} <span className="tabular">•• {linkedAccount.number.slice(-4)}</span>
+          </ContextChip>
         )}
       </div>
 

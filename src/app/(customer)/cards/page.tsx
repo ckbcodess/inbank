@@ -12,7 +12,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle2, CreditCard, Layers, Plus } from "lucide-react";
+import { CheckCircle2, Layers, Plus } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,10 +50,12 @@ import {
   type PaymentCard,
 } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
+import { CardsEmptyIllustration } from "@/components/cards/CardsEmptyIllustration";
 import { CardsStack } from "@/components/cards/layouts/CardsStack";
 import { CardsCarousel } from "@/components/cards/layouts/CardsCarousel";
 import { CardsGallery } from "@/components/cards/layouts/CardsGallery";
 import { CardsSpotlight } from "@/components/cards/layouts/CardsSpotlight";
+import { CardsList } from "@/components/cards/layouts/CardsList";
 import {
   CARDS_LAYOUTS,
   CARDS_LAYOUT_KEY,
@@ -91,8 +93,13 @@ const LIST_STATES: readonly ListState[] = [
 /** Dev Mode's layout pick survives a reload (per browser, a reviewing convenience). */
 function readLayout(): CardsLayout {
   try {
-    const stored = typeof window !== "undefined" ? localStorage.getItem(CARDS_LAYOUT_KEY) : null;
-    return CARDS_LAYOUTS.includes(stored as CardsLayout) ? (stored as CardsLayout) : DEFAULT_CARDS_LAYOUT;
+    const stored =
+      typeof window !== "undefined"
+        ? localStorage.getItem(CARDS_LAYOUT_KEY)
+        : null;
+    return CARDS_LAYOUTS.includes(stored as CardsLayout)
+      ? (stored as CardsLayout)
+      : DEFAULT_CARDS_LAYOUT;
   } catch {
     return DEFAULT_CARDS_LAYOUT;
   }
@@ -120,7 +127,9 @@ function CardsPageContent() {
   // Card Creation Modal States
   const [createOpen, setCreateOpen] = useState(false);
   const [cardName, setCardName] = useState("");
-  const [cardType, setCardType] = useState<"Prepaid" | "Debit" | "Virtual">("Virtual");
+  const [cardType, setCardType] = useState<"Prepaid" | "Debit" | "Virtual">(
+    "Virtual",
+  );
   const [cardScheme, setCardScheme] = useState<"Visa" | "Mastercard">("Visa");
   const [linkedAccId, setLinkedAccId] = useState("");
   const [initialFund, setInitialFund] = useState("500");
@@ -128,7 +137,9 @@ function CardsPageContent() {
   const [isSingleUse, setIsSingleUse] = useState(false);
 
   // Filter state
-  const [typeFilter, setTypeFilter] = useState<"all" | "Virtual" | "Debit" | "Prepaid">("all");
+  const [typeFilter, setTypeFilter] = useState<
+    "all" | "Virtual" | "Debit" | "Prepaid"
+  >("all");
 
   // Trigger state refresh on creation
   const [refreshCount, setRefreshCount] = useState(0);
@@ -170,7 +181,8 @@ function CardsPageContent() {
         label: "Apply Stage To Card",
         states: cardOptions,
         value: devState.targetCardId || "auto",
-        onChange: (val) => devState.setTargetCardId(val === "auto" ? null : val),
+        onChange: (val) =>
+          devState.setTargetCardId(val === "auto" ? null : val),
       },
       {
         label: "Screen Baseline State",
@@ -180,7 +192,10 @@ function CardsPageContent() {
       },
       {
         label: "Cards layout",
-        states: CARDS_LAYOUTS.map((id) => ({ id, label: CARDS_LAYOUT_LABELS[id] })),
+        states: CARDS_LAYOUTS.map((id) => ({
+          id,
+          label: CARDS_LAYOUT_LABELS[id],
+        })),
         value: layout,
         onChange: (val) => {
           setLayout(val as CardsLayout);
@@ -200,14 +215,18 @@ function CardsPageContent() {
   }, [cards, typeFilter]);
 
   const effective: ListState =
-    state === "populated" && typeFilter !== "all" && filteredCards.length === 0 ? "filtered-empty" : state;
+    state === "populated" && typeFilter !== "all" && filteredCards.length === 0
+      ? "filtered-empty"
+      : state;
 
   const rows = effective === "partial-load" ? cards : filteredCards;
 
   function handleCreateCard() {
     if (!cardName.trim()) return;
 
-    const account = availableAccounts.find((a) => a.id === linkedAccId) ?? availableAccounts[0];
+    const account =
+      availableAccounts.find((a) => a.id === linkedAccId) ??
+      availableAccounts[0];
     const lastFour = String(Math.floor(1000 + Math.random() * 9000));
     const prefix = cardScheme === "Visa" ? "4532" : "5412";
     const fullNum = `${prefix} ${Math.floor(1000 + Math.random() * 9000)} ${Math.floor(1000 + Math.random() * 9000)} ${lastFour}`;
@@ -215,8 +234,13 @@ function CardsPageContent() {
 
     const isPrepaid = cardType === "Prepaid";
     const isVirtualCard = cardType === "Virtual";
-    const fundAmount = isPrepaid || isVirtualCard ? Number(initialFund.replace(/,/g, "")) || 0 : null;
-    const limitAmount = isVirtualCard ? Number(spendLimit.replace(/,/g, "")) || 2500 : null;
+    const fundAmount =
+      isPrepaid || isVirtualCard
+        ? Number(initialFund.replace(/,/g, "")) || 0
+        : null;
+    const limitAmount = isVirtualCard
+      ? Number(spendLimit.replace(/,/g, "")) || 2500
+      : null;
 
     const newCard: PaymentCard = {
       id: `card-new-${Date.now()}`,
@@ -244,7 +268,7 @@ function CardsPageContent() {
     setNotice(
       isVirtualCard
         ? `Instant digital ${cardScheme} Virtual Card "${cardName}" created successfully.`
-        : `New ${cardScheme} ${cardType} card "${cardName}" created successfully.`
+        : `New ${cardScheme} ${cardType} card "${cardName}" created successfully.`,
     );
     setTimeout(() => setNotice(null), 5000);
 
@@ -273,52 +297,70 @@ function CardsPageContent() {
       <PageHeader
         title="Cards"
         actions={
-          <Button
-            nativeButton={false}
-            render={<Link href="/cards/request" />}
-            className="h-9 gap-1.5 px-3.5 text-[13px] font-medium rounded-lg shadow-xs shrink-0"
-          >
-            <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-            <span>Request a Card</span>
-          </Button>
+          effective === "empty" ? null : (
+            <Button
+              nativeButton={false}
+              render={<Link href="/cards/request" />}
+              className="h-9 gap-1.5 px-3.5 text-[13px] font-medium rounded-lg shadow-xs shrink-0"
+            >
+              <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
+              <span>Request a Card</span>
+            </Button>
+          )
         }
       />
 
       {/* Dev Mode Status Notification Banners */}
-      {devState.simulation !== "clean" && devState.simulation !== "all" && activeSimulatedCard && (
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-amber-500/40 bg-amber-500/5 px-4 py-2.5 text-[12.5px]">
-          <div className="flex items-center gap-2 min-w-0">
-            <Layers size={14} className="shrink-0 text-amber-600 dark:text-amber-400" />
-            <span className="font-medium text-foreground">Dev Mode Simulation:</span>
-            <span className="text-muted-foreground truncate">
-              <strong className="font-medium text-foreground">{activeSimulatedCard.name}</strong> is simulated as{" "}
-              <strong className="font-medium text-foreground">{CARD_SIMULATION_LABELS[devState.simulation]}</strong>
-            </span>
+      {devState.simulation !== "clean" &&
+        devState.simulation !== "all" &&
+        activeSimulatedCard && (
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-amber-500/40 bg-amber-500/5 px-4 py-2.5 text-[12.5px]">
+            <div className="flex items-center gap-2 min-w-0">
+              <Layers
+                size={14}
+                className="shrink-0 text-amber-600 dark:text-amber-400"
+              />
+              <span className="font-medium text-foreground">
+                Dev Mode Simulation:
+              </span>
+              <span className="text-muted-foreground truncate">
+                <strong className="font-medium text-foreground">
+                  {activeSimulatedCard.name}
+                </strong>{" "}
+                is simulated as{" "}
+                <strong className="font-medium text-foreground">
+                  {CARD_SIMULATION_LABELS[devState.simulation]}
+                </strong>
+              </span>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <Link
+                href={`/cards/${activeSimulatedCard.id}`}
+                className="text-[12px] font-medium text-foreground hover:underline"
+              >
+                View card details →
+              </Link>
+              <button
+                type="button"
+                onClick={() => devState.resetToClean()}
+                className="text-[12px] text-muted-foreground hover:text-foreground cursor-pointer underline"
+              >
+                Reset to clean
+              </button>
+            </div>
           </div>
-          <div className="flex items-center gap-3 shrink-0">
-            <Link
-              href={`/cards/${activeSimulatedCard.id}`}
-              className="text-[12px] font-medium text-foreground hover:underline"
-            >
-              View card details →
-            </Link>
-            <button
-              type="button"
-              onClick={() => devState.resetToClean()}
-              className="text-[12px] text-muted-foreground hover:text-foreground cursor-pointer underline"
-            >
-              Reset to clean
-            </button>
-          </div>
-        </div>
-      )}
+        )}
 
       {devState.simulation === "all" && (
         <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-amber-500/40 bg-amber-500/5 px-4 py-2.5 text-[12.5px]">
           <div className="flex items-center gap-2 min-w-0">
-            <Layers size={14} className="shrink-0 text-amber-600 dark:text-amber-400" />
+            <Layers
+              size={14}
+              className="shrink-0 text-amber-600 dark:text-amber-400"
+            />
             <span className="text-muted-foreground">
-              Dev Mode: Showing all <strong>{allCards.length}</strong> mock cards across all lifecycle stages.
+              Dev Mode: Showing all <strong>{allCards.length}</strong> mock
+              cards across all lifecycle stages.
             </span>
           </div>
           <button
@@ -326,7 +368,7 @@ function CardsPageContent() {
             onClick={() => devState.resetToClean()}
             className="text-[12px] text-muted-foreground hover:text-foreground cursor-pointer underline shrink-0"
           >
-            Reset to clean (2 cards)
+            Reset to clean (3 cards)
           </button>
         </div>
       )}
@@ -376,9 +418,19 @@ function CardsPageContent() {
 
       {effective === "empty" && (
         <TrueEmptyState
-          icon={<CreditCard size={20} strokeWidth={1.7} aria-hidden="true" />}
-          title="No cards issued yet"
-          description="Prepaid, debit and virtual cards issued under this relationship will appear here once active."
+          icon={<CardsEmptyIllustration />}
+          title="No cards yet"
+          description="Get a virtual card instantly, or request a debit or prepaid card and we'll deliver it. It will show up here."
+          action={
+            <Button
+              nativeButton={false}
+              render={<Link href="/cards/request" />}
+              className="h-9 gap-1.5 rounded-lg px-3.5 text-[13px] shadow-xs"
+            >
+              <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
+              <span>Request a Card</span>
+            </Button>
+          }
         />
       )}
 
@@ -388,19 +440,29 @@ function CardsPageContent() {
             setTypeFilter("all");
             setState("populated");
           }}
-          description="No cards match your selected filter. Clear it to see every card on this relationship."
+          description={`You don't have any ${typeFilter.toLowerCase()} cards.`}
+          action={
+            <Link
+              href="/cards/request"
+              className="text-[13px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+            >
+              Request a card
+            </Link>
+          }
         />
       )}
 
-      {(effective === "populated" || effective === "partial-load") && rows.length > 0 && (
-        <div className="flex flex-col gap-4">
-          {layout === "stack" && <CardsStack cards={rows} />}
-          {layout === "carousel" && <CardsCarousel cards={rows} />}
-          {layout === "gallery" && <CardsGallery cards={rows} />}
-          {layout === "spotlight" && <CardsSpotlight cards={rows} />}
-          {effective === "partial-load" && <PartialLoadFooter />}
-        </div>
-      )}
+      {(effective === "populated" || effective === "partial-load") &&
+        rows.length > 0 && (
+          <div className="flex flex-col gap-4">
+            {layout === "stack" && <CardsStack cards={rows} />}
+            {layout === "carousel" && <CardsCarousel cards={rows} />}
+            {layout === "gallery" && <CardsGallery cards={rows} />}
+            {layout === "spotlight" && <CardsSpotlight cards={rows} />}
+            {layout === "list" && <CardsList cards={rows} />}
+            {effective === "partial-load" && <PartialLoadFooter />}
+          </div>
+        )}
 
       {/* CREATE NEW CARD MODAL DIALOG */}
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
@@ -425,13 +487,17 @@ function CardsPageContent() {
                 <Label>Card Type</Label>
                 <Select
                   value={cardType}
-                  onValueChange={(val) => val && setCardType(val as "Virtual" | "Prepaid" | "Debit")}
+                  onValueChange={(val) =>
+                    val && setCardType(val as "Virtual" | "Prepaid" | "Debit")
+                  }
                 >
                   <SelectTrigger className="h-10 w-full">
                     <SelectValue placeholder="Select card type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Virtual">Virtual Card (Instant Digital)</SelectItem>
+                    <SelectItem value="Virtual">
+                      Virtual Card (Instant Digital)
+                    </SelectItem>
                     <SelectItem value="Prepaid">Prepaid Card</SelectItem>
                     <SelectItem value="Debit">Debit Card</SelectItem>
                   </SelectContent>
@@ -442,7 +508,9 @@ function CardsPageContent() {
                 <Label>Network Scheme</Label>
                 <Select
                   value={cardScheme}
-                  onValueChange={(val) => val && setCardScheme(val as "Visa" | "Mastercard")}
+                  onValueChange={(val) =>
+                    val && setCardScheme(val as "Visa" | "Mastercard")
+                  }
                 >
                   <SelectTrigger className="h-10 w-full">
                     <SelectValue placeholder="Select scheme" />
@@ -467,7 +535,8 @@ function CardsPageContent() {
                 <SelectContent>
                   {availableAccounts.map((acc) => (
                     <SelectItem key={acc.id} value={acc.id}>
-                      {acc.name} ({acc.number}) — {formatMoney(acc.available, acc.currency)}
+                      {acc.name} ({acc.number}) —{" "}
+                      {formatMoney(acc.available, acc.currency)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -496,8 +565,12 @@ function CardsPageContent() {
                       <SelectValue placeholder="Select mode" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="recurring">Recurring / Subscription</SelectItem>
-                      <SelectItem value="single">Single Use (Burner)</SelectItem>
+                      <SelectItem value="recurring">
+                        Recurring / Subscription
+                      </SelectItem>
+                      <SelectItem value="single">
+                        Single Use (Burner)
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -519,10 +592,18 @@ function CardsPageContent() {
           </DialogBody>
 
           <DialogFooter>
-            <Button variant="ghost" size="sm" onClick={() => setCreateOpen(false)}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setCreateOpen(false)}
+            >
               Cancel
             </Button>
-            <Button size="sm" disabled={!cardName.trim()} onClick={handleCreateCard}>
+            <Button
+              size="sm"
+              disabled={!cardName.trim()}
+              onClick={handleCreateCard}
+            >
               Issue Card
             </Button>
           </DialogFooter>
@@ -539,5 +620,3 @@ export default function CardsPage() {
     </Suspense>
   );
 }
-
-

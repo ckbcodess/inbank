@@ -12,26 +12,42 @@ export interface CardsLayoutProps {
   cards: PaymentCard[];
 }
 
-const DELIVERY_LABEL: Record<string, string> = {
-  ready_for_pickup: "Ready for pickup",
-  out_for_delivery: "Out for delivery",
-  in_transit: "In transit",
-  in_production: "In production",
-  processing: "Processing",
+type Tone = "active" | "production" | "transit" | "delivery" | "pickup" | "activate" | "blocked" | "expired";
+
+interface StatusNote {
+  label: string;
+  tone: Tone;
+}
+
+const DELIVERY_NOTE: Record<string, StatusNote> = {
+  in_production: { label: "In production", tone: "production" },
+  processing: { label: "Processing", tone: "production" },
+  in_transit: { label: "In transit", tone: "transit" },
+  out_for_delivery: { label: "Out for delivery", tone: "delivery" },
+  ready_for_pickup: { label: "Ready for pickup", tone: "pickup" },
 };
 
-/** Only says something when there is something to say — Active cards stay quiet. */
-export function cardStatusNote(card: PaymentCard): { label: string; alert: boolean } | null {
-  if (card.deliveryStatus) {
-    if (card.deliveryStatus === "delivered") {
-      return card.status === "Inactive" ? { label: "Needs activation", alert: false } : null;
-    }
-    return { label: DELIVERY_LABEL[card.deliveryStatus] ?? "In progress", alert: false };
+/** One hue per state so a row of cards can be scanned without reading. */
+const TONE_CLASS: Record<Tone, string> = {
+  active: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
+  production: "bg-violet-500/10 text-violet-700 dark:text-violet-400",
+  transit: "bg-sky-500/10 text-sky-700 dark:text-sky-400",
+  delivery: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
+  pickup: "bg-teal-500/10 text-teal-700 dark:text-teal-400",
+  activate: "bg-indigo-500/10 text-indigo-700 dark:text-indigo-400",
+  blocked: "bg-red-500/10 text-red-700 dark:text-red-400",
+  expired: "bg-muted text-muted-foreground",
+};
+
+/** Says something only when there is something to say, unless `includeActive` (gallery scanning). */
+export function cardStatusNote(card: PaymentCard, includeActive = false): StatusNote | null {
+  if (card.deliveryStatus && card.deliveryStatus !== "delivered") {
+    return DELIVERY_NOTE[card.deliveryStatus] ?? { label: "In progress", tone: "production" };
   }
-  if (card.status === "Inactive") return { label: "Needs activation", alert: false };
-  if (card.status === "Blocked") return { label: "Blocked", alert: true };
-  if (card.status === "Expired") return { label: "Expired", alert: false };
-  return null;
+  if (card.status === "Inactive") return { label: "Needs activation", tone: "activate" };
+  if (card.status === "Blocked") return { label: "Blocked", tone: "blocked" };
+  if (card.status === "Expired") return { label: "Expired", tone: "expired" };
+  return includeActive ? { label: "Active", tone: "active" } : null;
 }
 
 /** Prepaid and virtual cards carry their own money; debit draws on an account. */
@@ -41,16 +57,22 @@ export function cardFigure(card: PaymentCard): { label: string; value: string } 
   return { label: "Linked account", value: account?.name ?? "—" };
 }
 
-export function StatusPill({ card, className }: { card: PaymentCard; className?: string }) {
-  const note = cardStatusNote(card);
+export function StatusPill({
+  card,
+  className,
+  includeActive,
+}: {
+  card: PaymentCard;
+  className?: string;
+  includeActive?: boolean;
+}) {
+  const note = cardStatusNote(card, includeActive);
   if (!note) return null;
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[10.5px] leading-none",
-        note.alert
-          ? "border-destructive/30 bg-destructive/10 text-destructive"
-          : "border-border bg-muted text-foreground",
+        "inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[11px] leading-none",
+        TONE_CLASS[note.tone],
         className,
       )}
     >

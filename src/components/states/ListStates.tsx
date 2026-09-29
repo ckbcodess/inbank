@@ -66,9 +66,12 @@ export function TrueEmptyState({
 export function FilteredEmptyState({
   onReset,
   description = "No records match the filters you've applied.",
+  action,
 }: {
   onReset: () => void;
   description?: string;
+  /** Optional second door (e.g. "Request a card") shown under Reset. */
+  action?: ReactNode;
 }) {
   return (
     <div className="flex flex-col items-center justify-center px-4 py-14 sm:py-16 text-center">
@@ -81,6 +84,7 @@ export function FilteredEmptyState({
         <RefreshCw size={13} strokeWidth={1.8} />
         Reset filters
       </Button>
+      {action && <div className="mt-2">{action}</div>}
     </div>
   );
 }

@@ -11,6 +11,7 @@
 import { use, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import PageHeader from "@/components/layout/PageHeader";
+import { ContextChip } from "@/components/layout/ContextChip";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { AccountExpensesView } from "@/components/accounts/AccountExpenses";
 import { findAccount } from "@/lib/mock-data";
@@ -42,12 +43,15 @@ export default function AccountExpensesPage({ params }: { params: Promise<{ id: 
 
   return (
     <div className="mx-auto flex w-full max-w-[880px] flex-col gap-8 sm:gap-10">
-      <div className="flex flex-col gap-1">
-        <PageHeader title="My Spends" backTo={{ href: `/accounts/${account.id}`, label: account.name }} />
-        <p className="pl-10 sm:pl-12 text-[13px] text-muted-foreground truncate">
-          {account.name} · <span className="tabular">{account.number}</span>
-        </p>
-      </div>
+      <PageHeader
+        title="My Spends"
+        backTo={{ href: `/accounts/${account.id}`, label: account.name }}
+        badge={
+          <ContextChip title={`${account.name} ${account.number}`}>
+            {account.name} <span className="tabular">•• {account.number.slice(-4)}</span>
+          </ContextChip>
+        }
+      />
 
       <AccountExpensesView
         account={account}
