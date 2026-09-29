@@ -7,9 +7,9 @@ import { Label } from "@/components/ui/label";
 import { PASSWORD_RULES, passwordMeetsRules } from "@/lib/auth-shared";
 
 /**
- * New password + confirm, with the Bank's rules shown up front as a live
- * checklist. Shared by activation and password reset so the two can't enforce
- * different standards.
+ * Password + confirm, with the Bank's rules in one requirements card. Shared by
+ * activation, sign-up, migration and password reset, so they look the same and
+ * can't enforce different standards.
  */
 
 export function newPasswordReady(password: string, confirm: string): boolean {
@@ -22,6 +22,9 @@ interface NewPasswordFieldsProps {
   onPasswordChange: (value: string) => void;
   onConfirmChange: (value: string) => void;
   autoFocus?: boolean;
+  /** Reset flows say "New password"; onboarding says "Password". */
+  passwordLabel?: string;
+  confirmLabel?: string;
 }
 
 export default function NewPasswordFields({
@@ -30,6 +33,8 @@ export default function NewPasswordFields({
   onPasswordChange,
   onConfirmChange,
   autoFocus = false,
+  passwordLabel = "Password",
+  confirmLabel = "Confirm password",
 }: NewPasswordFieldsProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -39,7 +44,7 @@ export default function NewPasswordFields({
     <div className="flex flex-col gap-5">
       <PasswordInput
         id="new-password"
-        label="New password"
+        label={passwordLabel}
         placeholder="Choose a strong password"
         value={password}
         onChange={onPasswordChange}
@@ -48,41 +53,44 @@ export default function NewPasswordFields({
         autoFocus={autoFocus}
       />
 
-      <ul className="grid grid-cols-1 gap-2 text-[12.5px] sm:grid-cols-2" aria-label="Password requirements">
-        {PASSWORD_RULES.map((rule) => {
-          const met = rule.test(password);
-          return (
-            <li key={rule.id} className="flex items-center gap-2">
-              <span
-                className={`flex size-4 items-center justify-center rounded-full transition-colors ${
-                  met ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                }`}
-              >
-                <Check size={11} strokeWidth={3} aria-hidden="true" />
-              </span>
-              <span className={met ? "text-foreground" : "text-muted-foreground"}>
-                {rule.label}
-                <span className="sr-only">{met ? " — met" : " — not yet"}</span>
-              </span>
-            </li>
-          );
-        })}
-      </ul>
-
       <div className="flex flex-col gap-2">
         <PasswordInput
           id="confirm-password"
-          label="Confirm new password"
-          placeholder="Enter it again"
+          label={confirmLabel}
+          placeholder="Re-enter your password"
           value={confirm}
           onChange={onConfirmChange}
           shown={showConfirm}
           onToggle={() => setShowConfirm((s) => !s)}
           invalid={mismatch}
         />
-        {mismatch && (
-          <p className="text-[12.5px] text-destructive">These don&apos;t match yet.</p>
-        )}
+        {mismatch && <p className="text-[12.5px] text-destructive">These don&apos;t match yet.</p>}
+      </div>
+
+      <div className="rounded-2xl border border-border/80 bg-muted/20 p-4">
+        <p className="mb-2.5 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
+          Password Requirements
+        </p>
+        <ul className="grid grid-cols-1 gap-2.5 text-[12.5px] sm:grid-cols-2" aria-label="Password requirements">
+          {PASSWORD_RULES.map((rule) => {
+            const met = rule.test(password);
+            return (
+              <li key={rule.id} className="flex items-center gap-2">
+                <span
+                  className={`flex size-4 items-center justify-center rounded-full text-[10px] transition-colors ${
+                    met ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  <Check size={11} strokeWidth={3} aria-hidden="true" />
+                </span>
+                <span className={met ? "text-foreground font-medium" : "text-muted-foreground"}>
+                  {rule.label}
+                  <span className="sr-only">{met ? " \u2014 met" : " \u2014 not yet"}</span>
+                </span>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </div>
   );

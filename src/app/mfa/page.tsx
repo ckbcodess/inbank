@@ -4,11 +4,11 @@ import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertCircle, Laptop, MapPin, ShieldAlert, ShieldCheck, Smartphone } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
-import { Checkbox } from "@/components/ui/checkbox";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
-import { TRUST_DAYS, trustThisDevice } from "@/lib/device-trust";
+import { trustThisDevice } from "@/lib/device-trust";
+import { RememberDeviceRow } from "@/components/auth/RememberDeviceRow";
 
 type MfaState = "entry" | "verifying" | "error" | "resent";
 
@@ -129,20 +129,11 @@ function MfaContent() {
 
         {/* Remember this device — the step that makes the next sign-in fast. Staff never get it. */}
         {actor.shell !== "admin" && (
-          <label className="flex items-start gap-3 px-1 text-[13.5px] text-foreground cursor-pointer select-none">
-            <Checkbox
-              checked={trustDevice}
-              onCheckedChange={(checked) => setTrustDevice(!!checked)}
-              aria-label={`Remember this device for ${TRUST_DAYS} days`}
-              className="mt-0.5"
-            />
-            <span className="flex flex-col gap-0.5">
-              <span>Remember this device for {TRUST_DAYS} days</span>
-              <span className="text-[12.5px] text-muted-foreground">
-                Skip this code next time. You can change this in Settings.
-              </span>
-            </span>
-          </label>
+          <RememberDeviceRow
+            checked={trustDevice}
+            onCheckedChange={setTrustDevice}
+            hint="Skip this code next time. You can change this in Settings."
+          />
         )}
 
         {state === "verifying" && (

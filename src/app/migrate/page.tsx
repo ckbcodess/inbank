@@ -21,7 +21,8 @@ import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSession } from "@/lib/session-store";
-import { TRUST_DAYS, setFirstRun, trustThisDevice } from "@/lib/device-trust";
+import { setFirstRun, trustThisDevice } from "@/lib/device-trust";
+import { RememberDeviceRow } from "@/components/auth/RememberDeviceRow";
 import {
   LEGACY_DEMO_USER_ID,
   MIGRATED_DATA,
@@ -261,20 +262,7 @@ function MigrateContent() {
               </span>
             </span>
           </label>
-          <label className="flex items-start gap-3 px-1 text-[13.5px] text-foreground cursor-pointer select-none">
-            <Checkbox
-              checked={rememberDevice}
-              onCheckedChange={(c) => setRememberDevice(!!c)}
-              aria-label={`Remember this device for ${TRUST_DAYS} days`}
-              className="mt-0.5"
-            />
-            <span className="flex flex-col gap-0.5">
-              <span>Remember this device for {TRUST_DAYS} days</span>
-              <span className="text-[12.5px] text-muted-foreground">
-                Sign in faster next time, without a code. Only on a device you don&apos;t share.
-              </span>
-            </span>
-          </label>
+          <RememberDeviceRow checked={rememberDevice} onCheckedChange={setRememberDevice} />
           <Button size="lg" onClick={finish} disabled={!acceptTerms || busy} className="h-11 w-full text-[14.5px]">
             {busy ? (
               <>

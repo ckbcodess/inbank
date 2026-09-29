@@ -1,7 +1,8 @@
 /**
  * The shared step list for both onboarding flows (`/activate` for GCB account
  * holders, `/signup` for new-to-GCB). Either page opens on a step via
- * `?step=<id>` — the Demo hub uses it to jump anywhere in a flow.
+ * `?step=<id>` — the Demo hub uses it to jump anywhere in a flow. Neither flow
+ * asks for a referral code: it's offered once, inside the app.
  */
 
 export const ACTIVATION_STEPS = [
@@ -10,7 +11,6 @@ export const ACTIVATION_STEPS = [
   { id: "review_details", label: "Review Details" },
   { id: "otp", label: "Confirm Your Code" },
   { id: "password", label: "Create Your Password" },
-  { id: "referral", label: "Referral Code" },
   { id: "pin", label: "Set Your PIN" },
   { id: "confirm_pin", label: "Confirm Your PIN" },
 ] as const;
@@ -37,7 +37,6 @@ export const ONBOARDING_STEPS = [
   { id: "fund_account", label: "Fund Account" },
   { id: "pin", label: "Set Your PIN" },
   { id: "confirm_pin", label: "Confirm Your PIN" },
-  { id: "referral", label: "Referral Code" },
 ] as const;
 
 export type OnboardingStep = (typeof ONBOARDING_STEPS)[number]["id"];

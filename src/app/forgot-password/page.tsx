@@ -217,6 +217,8 @@ export default function ForgotPasswordPage() {
             onPasswordChange={setPassword}
             onConfirmChange={setConfirm}
             autoFocus
+            passwordLabel="New password"
+            confirmLabel="Confirm new password"
           />
 
           <Button

@@ -25,11 +25,10 @@ import {
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import SelfieCapture from "@/components/auth/SelfieCapture";
-import ReferralStep from "@/components/auth/ReferralStep";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 import { useSession } from "@/lib/session-store";
-import { Checkbox } from "@/components/ui/checkbox";
-import { TRUST_DAYS, setFirstRun, trustThisDevice } from "@/lib/device-trust";
+import { setFirstRun, trustThisDevice } from "@/lib/device-trust";
+import { RememberDeviceRow } from "@/components/auth/RememberDeviceRow";
 import { ACTORS } from "@/lib/mock-data";
 import {
   ACTIVATION_PERSONAS,
@@ -148,7 +147,7 @@ function ActivateContent() {
     }, 600);
   }
 
-  // Step Progress Index (out of 8)
+  // Step Progress Index (out of 7)
   const stepNumberMap: Record<Step, number> = {
     ghana_card: 1,
     selfie: 2,
@@ -157,9 +156,8 @@ function ActivateContent() {
     password: 5,
     virtual_account_ready: 6,
     fund_account: 6,
-    referral: 6,
-    pin: 7,
-    confirm_pin: 8,
+    pin: 6,
+    confirm_pin: 7,
   };
 
   function handleGhanaCardSubmit(e: React.FormEvent) {
@@ -219,7 +217,7 @@ function ActivateContent() {
     setBusy(true);
     window.setTimeout(() => {
       setBusy(false);
-      setStep("referral");
+      setStep("pin");
     }, 600);
   }
 
@@ -276,8 +274,6 @@ function ActivateContent() {
       setStep("pin");
     } else if (step === "pin") {
       setPinDigits(["", "", "", ""]);
-      setStep("referral");
-    } else if (step === "referral") {
       setStep("password");
     } else if (step === "password") {
       setPassword("");
@@ -319,8 +315,6 @@ function ActivateContent() {
           ? "Confirm Your Code"
           : step === "password"
           ? "Create Your Password"
-          : step === "referral"
-          ? `Welcome, ${activePersona.name.split(" ")[0]}!`
           : step === "pin"
           ? "Set Your PIN"
           : "Confirm Your PIN"
@@ -348,18 +342,16 @@ function ActivateContent() {
               }.`
           : step === "password"
           ? "Choose a password you will remember."
-          : step === "referral"
-          ? "Reward the person who referred you by entering their referral code. This step is optional."
           : step === "pin"
           ? "Set a PIN for all your transactions in the app."
           : "Re-enter your 4-digit PIN to confirm."
       }
       onBack={handleBackStep}
       backLabel="Back to previous step"
-      align={step === "referral" ? "center" : "left"}
+      align="left"
       stepProgress={{
         current: stepNumberMap[step],
-        total: 8,
+        total: 7,
       }}
       width="compact"
       animateHeight={true}
@@ -718,20 +710,7 @@ function ActivateContent() {
             autoFocus
           />
 
-          <label className="flex items-start gap-3 px-1 text-[13.5px] text-foreground cursor-pointer select-none">
-            <Checkbox
-              checked={rememberDevice}
-              onCheckedChange={(checked) => setRememberDevice(!!checked)}
-              aria-label={`Remember this device for ${TRUST_DAYS} days`}
-              className="mt-0.5"
-            />
-            <span className="flex flex-col gap-0.5">
-              <span>Remember this device for {TRUST_DAYS} days</span>
-              <span className="text-[12.5px] text-muted-foreground">
-                Sign in faster next time, without a code. Only on a device you don&apos;t share.
-              </span>
-            </span>
-          </label>
+          <RememberDeviceRow checked={rememberDevice} onCheckedChange={setRememberDevice} />
 
           {errorMsg && (
             <div
@@ -764,17 +743,6 @@ function ActivateContent() {
       )}
 
       {/* STEP 6: 4-digit PIN */}
-      {step === "referral" && (
-        <ReferralStep
-          dataTour="activate-referral"
-          onDone={() => {
-            setErrorMsg("");
-            setPinDigits(["", "", "", ""]);
-            setStep("pin");
-          }}
-        />
-      )}
-
       {step === "pin" && (
         <form
           onSubmit={(e) => {
