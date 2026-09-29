@@ -27,7 +27,6 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
-import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -279,17 +278,10 @@ export default function BusinessSignupPage() {
               type="submit"
               variant="default"
               size="lg"
-              disabled={busy || company.name.trim() === "" || company.tin.trim() === ""}
+              disabled={company.name.trim() === "" || company.tin.trim() === ""} loading={busy}
               className="mt-2 h-11 w-full text-[14px]"
             >
-              {busy ? (
-                <>
-                  <AppLoader size={16} className="mr-2" />
-                  Checking…
-                </>
-              ) : (
-                "Continue"
-              )}
+              Continue
             </Button>
           </form>
         )}
@@ -610,17 +602,10 @@ export default function BusinessSignupPage() {
               variant="default"
               size="lg"
               onClick={handleSubmitApplication}
-              disabled={busy}
+              loading={busy}
               className="mt-2 h-11 w-full text-[14px]"
             >
-              {busy ? (
-                <>
-                  <AppLoader size={16} className="mr-2" />
-                  Submitting…
-                </>
-              ) : (
-                "Submit application"
-              )}
+              Submit application
             </Button>
           </div>
         )}

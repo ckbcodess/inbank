@@ -27,7 +27,7 @@ import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import SelfieCapture from "@/components/auth/SelfieCapture";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 import { useSession } from "@/lib/session-store";
-import { setFirstRun, trustThisDevice } from "@/lib/device-trust";
+import { setFirstRun, setPendingReferral, trustThisDevice } from "@/lib/device-trust";
 import { RememberDeviceRow } from "@/components/auth/RememberDeviceRow";
 import { ACTORS } from "@/lib/mock-data";
 import {
@@ -260,7 +260,9 @@ function ActivateContent() {
       }
       verifyMfa();
       if (rememberDevice) trustThisDevice(actor);
-      // First time in internet banking: the dashboard opens with a short welcome.
+      // First time in internet banking: the dashboard opens with a short welcome,
+      // and offers the referral code there (same as new-to-GCB), not mid-flow.
+      setPendingReferral(true);
       setFirstRun("new");
       router.push("/overview");
     }, 800);
@@ -415,17 +417,10 @@ function ActivateContent() {
             variant="default"
             size="lg"
             data-tour="activate-card"
-            disabled={busy}
+            loading={busy}
             className="mt-2 h-11 w-full text-[14px]"
           >
-            {busy ? (
-              <>
-                <AppLoader size={16} className="mr-2" />
-                Verifying...
-              </>
-            ) : (
-              "Continue"
-            )}
+            Continue
           </Button>
         </form>
       )}
@@ -483,7 +478,7 @@ function ActivateContent() {
 
               <div data-tour="activate-account-picker">
                 <Select
-                  value={selectedPrimaryAccountId || undefined}
+                  value={selectedPrimaryAccountId || null}
                   onValueChange={(val) => val && setSelectedPrimaryAccountId(val)}
                 >
                   <SelectTrigger
@@ -589,17 +584,10 @@ function ActivateContent() {
             size="lg"
             data-tour="activate-review"
             onClick={handleVerifyDetails}
-            disabled={busy || (isMultiAccount && !selectedPrimaryAccountId)}
+            disabled={(isMultiAccount && !selectedPrimaryAccountId)} loading={busy}
             className="mt-1 h-11 w-full text-[14px]"
           >
-            {busy ? (
-              <>
-                <AppLoader size={16} className="mr-2" />
-                Sending code...
-              </>
-            ) : (
-              "Continue"
-            )}
+            Continue
           </Button>
 
           <button
@@ -727,17 +715,11 @@ function ActivateContent() {
             variant="default"
             size="lg"
             data-tour="activate-password"
-            disabled={busy || !newPasswordReady(password, confirmPassword)}
+            disabled={!newPasswordReady(password, confirmPassword)}
+            loading={busy}
             className="mt-2 h-11 w-full text-[14px]"
           >
-            {busy ? (
-              <>
-                <AppLoader size={16} className="mr-2" />
-                Saving…
-              </>
-            ) : (
-              "Continue"
-            )}
+            Continue
           </Button>
         </form>
       )}

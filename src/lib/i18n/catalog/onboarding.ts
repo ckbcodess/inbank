@@ -112,7 +112,7 @@ const onboarding: Entry[] = [
   ["Your selfie still didn't match, so we've paused selfie checks for this number. Bring your Ghana Card to any GCB branch and we'll reset your password there.", "Votre selfie ne correspond toujours pas ; nous avons donc suspendu la vérification par selfie pour ce numéro. Présentez votre carte Ghana dans n'importe quelle agence GCB et nous y réinitialiserons votre mot de passe.", "Tu selfie sigue sin coincidir, así que hemos pausado la verificación por selfie para este número. Lleva tu Ghana Card a cualquier sucursal de GCB y allí restableceremos tu contraseña.", "您的自拍仍未通过比对，我们已暂停该号码的自拍验证。请携带加纳身份证前往任一 GCB 网点，我们将在网点为您重置密码。"],
   ["tries left before we ask you to visit a branch", "essais restants avant de vous orienter vers une agence", "intentos restantes antes de pedirte que vayas a una sucursal", "次机会，之后需前往网点办理"],
   ["try left before we ask you to visit a branch", "essai restant avant de vous orienter vers une agence", "intento restante antes de pedirte que vayas a una sucursal", "次机会，之后需前往网点办理"],
-  ["Log in with your new password. Any other devices have been signed out.", "Connectez-vous avec votre nouveau mot de passe. Vos autres appareils ont été déconnectés.", "Inicia sesión con tu nueva contraseña. Se ha cerrado la sesión en tus otros dispositivos.", "请使用新密码登录。您的其他设备已退出登录。"],
+  ["Log in with your new password. Any other devices have been logged out.", "Connectez-vous avec votre nouveau mot de passe. Vos autres appareils ont été déconnectés.", "Inicia sesión con tu nueva contraseña. Se ha cerrado la sesión en tus otros dispositivos.", "请使用新密码登录。您的其他设备已退出登录。"],
   ["Verify it's you", "Confirmez votre identité", "Confirma que eres tú", "验证身份"],
   ["Choose a new password", "Choisissez un nouveau mot de passe", "Elige una nueva contraseña", "设置新密码"],
   ["Password updated", "Mot de passe modifié", "Contraseña actualizada", "密码已更新"],
@@ -133,7 +133,7 @@ const onboarding: Entry[] = [
   ["Both passwords must match.", "Les deux mots de passe doivent correspondre.", "Ambas contraseñas deben coincidir.", "两次输入的密码必须一致。"],
   ["Updating…", "Mise à jour…", "Actualizando…", "正在更新…"],
   ["Update password", "Modifier le mot de passe", "Actualizar contraseña", "更新密码"],
-  ["Your password was changed and every active session was signed out. This reset has been written to the audit log.", "Votre mot de passe a été modifié et toutes les sessions actives ont été fermées. Cette réinitialisation est inscrite au journal d’audit.", "Tu contraseña se cambió y se cerraron todas las sesiones activas. Este cambio quedó registrado en el registro de auditoría.", "您的密码已更改，所有活跃会话均已退出。此次重置已记入审计日志。"],
+  ["Your password was changed and every active session was logged out. This reset has been written to the audit log.", "Votre mot de passe a été modifié et toutes les sessions actives ont été fermées. Cette réinitialisation est inscrite au journal d’audit.", "Tu contraseña se cambió y se cerraron todas las sesiones activas. Este cambio quedó registrado en el registro de auditoría.", "您的密码已更改，所有活跃会话均已退出。此次重置已记入审计日志。"],
   ["Back to login", "Retour à la connexion", "Volver a iniciar sesión", "返回登录"],
   ["For your security, every password reset attempt is recorded with the time and the device used.", "Pour votre sécurité, chaque tentative de réinitialisation est enregistrée avec l’heure et l’appareil utilisé.", "Por tu seguridad, cada intento de restablecimiento se registra con la hora y el dispositivo usado.", "为保障您的安全，每次重置密码的时间和设备都会被记录。"],
 

@@ -433,17 +433,10 @@ export default function SelfieCapture({
               type="button"
               variant="default"
               size="lg"
-              disabled={busy}
+              loading={busy}
               className="h-11 w-full text-[14px]"
             >
-              {busy ? (
-                <>
-                  <AppLoader size={16} className="mr-2" />
-                  Verifying photo...
-                </>
-              ) : (
-                "Verified ✓"
-              )}
+              Verified ✓
             </Button>
             {onRetake && !busy && (
               <button
@@ -497,10 +490,9 @@ export default function SelfieCapture({
             type="button"
             variant="default"
             size="lg"
-            disabled
+            loading
             className="h-11 w-full text-[14px]"
           >
-            <AppLoader size={16} className="mr-2" />
             Preparing camera...
           </Button>
         )}

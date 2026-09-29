@@ -233,15 +233,8 @@ function MigrateContent() {
             onConfirmChange={setConfirm}
             autoFocus
           />
-          <Button type="submit" size="lg" disabled={busy || !newPasswordReady(password, confirm)} className="mt-1 h-11 w-full text-[14.5px]">
-            {busy ? (
-              <>
-                <AppLoader size={16} className="mr-2" />
-                Saving…
-              </>
-            ) : (
-              "Continue"
-            )}
+          <Button type="submit" size="lg" disabled={!newPasswordReady(password, confirm)} loading={busy} className="mt-1 h-11 w-full text-[14.5px]">
+            Continue
           </Button>
         </form>
       )}
@@ -263,15 +256,8 @@ function MigrateContent() {
             </span>
           </label>
           <RememberDeviceRow checked={rememberDevice} onCheckedChange={setRememberDevice} />
-          <Button size="lg" onClick={finish} disabled={!acceptTerms || busy} className="h-11 w-full text-[14.5px]">
-            {busy ? (
-              <>
-                <AppLoader size={16} className="mr-2" />
-                Opening your dashboard…
-              </>
-            ) : (
-              "Go to my dashboard"
-            )}
+          <Button size="lg" onClick={finish} disabled={!acceptTerms} loading={busy} className="h-11 w-full text-[14.5px]">
+            Go to my dashboard
           </Button>
         </div>
       )}

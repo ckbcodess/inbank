@@ -18,6 +18,14 @@ import {
 import { useTheme } from "next-themes";
 import { useEffect, useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { useDevState } from "@/components/providers/DevStateProvider";
 import { DevStateMenuItems } from "@/components/states/DevStateMenuItems";
@@ -57,6 +65,7 @@ export default function TopHeader({
   const { t } = useTranslation();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+  const [logoutOpen, setLogoutOpen] = useState(false);
 
   const initials = actor.name
     .split(" ")
@@ -242,7 +251,7 @@ export default function TopHeader({
             </DropdownMenuItem>
 
             <DropdownMenuItem
-              onClick={onSignOut}
+              onClick={() => setLogoutOpen(true)}
               className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-destructive/10 hover:text-destructive transition-colors mt-0.5"
             >
               <span>{t("header.signOut", "Log out")}</span>
@@ -250,6 +259,34 @@ export default function TopHeader({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      <Dialog open={logoutOpen} onOpenChange={setLogoutOpen}>
+        <DialogContent size="sm">
+          <DialogHeader>
+            <DialogTitle>{t("header.signOutConfirmTitle", "Log out?")}</DialogTitle>
+          </DialogHeader>
+          <DialogBody>
+            <p className="text-[13.5px] leading-relaxed text-muted-foreground">
+              {t("header.signOutConfirmBody", "You’ll need to sign in again to see your accounts.")}
+            </p>
+          </DialogBody>
+          <DialogFooter>
+            <Button variant="ghost" size="sm" onClick={() => setLogoutOpen(false)}>
+              {t("common.cancel", "Cancel")}
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => {
+                setLogoutOpen(false);
+                onSignOut();
+              }}
+            >
+              {t("header.signOut", "Log out")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }

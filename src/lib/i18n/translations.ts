@@ -35,7 +35,7 @@ export const TRANSLATIONS: Record<SupportedLanguage, TranslationDictionary> = {
     "header.themeDark": "Switch to dark mode",
     "header.language": "Language",
     "header.settings": "Settings",
-    "header.signOut": "Sign out",
+    "header.signOut": "Log out",
     "header.locator": "Branch and ATM locator",
 
     // Dashboard

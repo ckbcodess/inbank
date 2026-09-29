@@ -370,17 +370,10 @@ export function QuickFundModal({
                 type="submit"
                 variant="default"
                 size="lg"
-                disabled={busy || !amount}
+                disabled={!amount} loading={busy}
                 className="mt-2 h-11 w-full text-[14px] cursor-pointer"
               >
-                {busy ? (
-                  <>
-                    <AppLoader size={16} className="mr-2" />
-                    <span>Processing…</span>
-                  </>
-                ) : (
-                  <span>Continue</span>
-                )}
+                <span>Continue</span>
               </Button>
             </form>
           )}

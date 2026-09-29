@@ -193,17 +193,10 @@ function LoginForm() {
           type="submit"
           variant="default"
           size="lg"
-          disabled={state === "submitting"}
+          loading={state === "submitting"}
           className="mt-3 h-11 w-full text-[14.5px]"
         >
-          {state === "submitting" ? (
-            <>
-              <AppLoader size={16} className="mr-2" />
-              Logging in...
-            </>
-          ) : (
-            "Login"
-          )}
+          Login
         </Button>
       </form>
     </AuthLayout>
@@ -326,15 +319,8 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
                 </button>
               </div>
             </div>
-            <Button type="submit" size="lg" disabled={busy} className="h-11 w-full text-[14.5px]">
-              {busy ? (
-                <>
-                  <AppLoader size={16} className="mr-2" />
-                  Signing in...
-                </>
-              ) : (
-                "Sign in"
-              )}
+            <Button type="submit" size="lg" loading={busy} className="h-11 w-full text-[14.5px]">
+              Sign in
             </Button>
           </form>
         ) : (

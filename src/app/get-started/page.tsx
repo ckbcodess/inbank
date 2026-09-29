@@ -12,7 +12,6 @@ import {
   Plus,
   UserCheck,
 } from "lucide-react";
-import { AppLoader } from "@/components/ui/loader";
 import AuthLayout from "@/components/auth/AuthLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -236,20 +235,11 @@ export default function GetStartedPage() {
               size="sm"
               data-tour="gs-cos-confirm"
               onClick={executeCoosRedirect}
-              disabled={isRedirecting}
+              loading={isRedirecting}
               className="gap-1.5"
             >
-              {isRedirecting ? (
-                <>
-                  <AppLoader size={14} />
-                  Opening portal...
-                </>
-              ) : (
-                <>
-                  Continue to portal
-                  <ExternalLink className="size-3.5" />
-                </>
-              )}
+              Continue to portal
+              <ExternalLink className="size-3.5" />
             </Button>
           </DialogFooter>
         </DialogContent>

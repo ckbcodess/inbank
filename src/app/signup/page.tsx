@@ -464,17 +464,10 @@ function SignupContent() {
             variant="default"
             size="lg"
             data-tour="signup-card"
-            disabled={busy}
+            loading={busy}
             className="mt-3.5 h-11 w-full text-[14px]"
           >
-            {busy ? (
-              <>
-                <AppLoader size={16} />
-                Verifying...
-              </>
-            ) : (
-              "Continue"
-            )}
+            Continue
           </Button>
         </form>
       )}
@@ -520,17 +513,10 @@ function SignupContent() {
             size="lg"
             data-tour="signup-review"
             onClick={handleVerifyDetails}
-            disabled={busy}
+            loading={busy}
             className="mt-3.5 h-11 w-full text-[14px]"
           >
-            {busy ? (
-              <>
-                <AppLoader size={16} />
-                Sending code...
-              </>
-            ) : (
-              "Continue"
-            )}
+            Continue
           </Button>
         </div>
       )}
@@ -644,17 +630,10 @@ function SignupContent() {
             variant="default"
             size="lg"
             data-tour="signup-password"
-            disabled={busy || !newPasswordReady(password, confirmPassword)}
+            disabled={!newPasswordReady(password, confirmPassword)} loading={busy}
             className="mt-2 h-11 w-full text-[14px]"
           >
-            {busy ? (
-              <>
-                <AppLoader size={16} className="mr-2" />
-                Saving…
-              </>
-            ) : (
-              "Continue"
-            )}
+            Continue
           </Button>
         </form>
       )}
@@ -933,17 +912,10 @@ function SignupContent() {
               type="submit"
               variant="default"
               size="lg"
-              disabled={busy || !fundAmount}
+              disabled={!fundAmount} loading={busy}
               className="h-11 w-full text-[14px]"
             >
-              {busy ? (
-                <>
-                  <AppLoader size={16} className="mr-2" />
-                  Processing…
-                </>
-              ) : (
-                "Continue"
-              )}
+              Continue
             </Button>
             <button
               type="button"

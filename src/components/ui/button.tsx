@@ -4,6 +4,7 @@ import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { AppLoader } from "@/components/ui/loader"
 
 const buttonVariants = cva(
   "group/button relative overflow-hidden inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-colors duration-100 ease-out outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:bg-muted disabled:text-muted-foreground disabled:border-transparent disabled:opacity-60 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 cursor-pointer",
@@ -43,19 +44,44 @@ const buttonVariants = cva(
   }
 )
 
+/**
+ * `loading` turns the button itself into the progress indicator: the label is
+ * replaced by a centred spinner, the button keeps its hue but dims (opacity-70,
+ * unlike the grey of `disabled`) and its width (the label stays in the layout,
+ * hidden), and it ignores clicks until it's done.
+ * Prefer this to a separate spinner or "Saving…" text beside the button.
+ */
 function Button({
   className,
   variant = "default",
   size = "default",
+  loading = false,
+  children,
+  onClick,
   ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & { loading?: boolean }) {
   return (
     <ButtonPrimitive
       data-slot="button"
       data-ripple="true"
-      className={cn(buttonVariants({ variant, size, className }))}
+      aria-busy={loading || undefined}
+      className={cn(buttonVariants({ variant, size, className }), loading && "pointer-events-none opacity-70")}
+      onClick={loading ? (e: React.MouseEvent<HTMLButtonElement>) => e.preventDefault() : onClick}
       {...props}
-    />
+    >
+      {loading ? (
+        <>
+          <span className="invisible inline-flex items-center justify-center gap-[inherit]" aria-hidden="true">
+            {children}
+          </span>
+          <span className="absolute inset-0 flex items-center justify-center">
+            <AppLoader size={18} />
+          </span>
+        </>
+      ) : (
+        children
+      )}
+    </ButtonPrimitive>
   )
 }
 

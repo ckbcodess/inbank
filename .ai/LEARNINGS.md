@@ -128,3 +128,5 @@
 - **`next/image` lazy-loads by default, even when the file is already cached.** Preloading with `new Image().decode()` doesn't make the on-page `<Image>` paint; it still waits for its lazy trigger. Anything above the fold that a splash or reveal waits for needs `priority`.
 - **Don't read-and-clear storage in a mount effect.** React StrictMode runs effects twice in dev: the first run consumes the value and the second sees nothing, so a "show once" UI never shows. Peek on mount, clear on dismiss (see `FirstRunWelcome`).
 - **Base UI `Checkbox` inside a `<label>` gets no accessible name.** Pass `aria-label` (or `aria-labelledby`) explicitly.
+
+- **Loading on buttons**: use `<Button loading={busy}>Label</Button>`, not a spinner plus "Saving…" text. Keep `disabled` for validity only; `loading` handles busy (it keeps the button's colour and blocks clicks). Never remove the label from children: it holds the width.

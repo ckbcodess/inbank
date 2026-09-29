@@ -16,7 +16,6 @@ import { AlertCircle, PartyPopper } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AppLoader } from "@/components/ui/loader";
 import { VerifiedAccountBadge } from "@/components/payments/flows/shared";
 
 /** Prototype directory: branch referral code → branch name. */
@@ -102,15 +101,8 @@ export default function ReferralStep({
           )}
 
           <div className="flex flex-col gap-2.5">
-            <Button type="submit" size="lg" disabled={!referrer || busy} className="h-11 w-full text-[14px]">
-              {busy ? (
-                <>
-                  <AppLoader size={16} className="mr-2" />
-                  Checking…
-                </>
-              ) : (
-                "Apply Code"
-              )}
+            <Button type="submit" size="lg" disabled={!referrer} loading={busy} className="h-11 w-full text-[14px]">
+              Apply Code
             </Button>
             <Button
               type="button"
@@ -134,17 +126,10 @@ export default function ReferralStep({
             variant="outline"
             size="lg"
             onClick={skip}
-            disabled={skipping}
+            loading={skipping}
             className="h-11 w-full text-[14px]"
           >
-            {skipping ? (
-              <>
-                <AppLoader size={16} className="mr-2" />
-                One moment…
-              </>
-            ) : (
-              "Skip & Proceed"
-            )}
+            Skip & Proceed
           </Button>
         </div>
       )}
