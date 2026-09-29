@@ -943,10 +943,12 @@ export function ProceedButton({
   disabled,
   onClick,
   label = "Proceed",
+  loading = false,
 }: {
   disabled: boolean;
   onClick: () => void;
   label?: string;
+  loading?: boolean;
 }) {
   return (
     <div className="pt-2">
@@ -955,6 +957,7 @@ export function ProceedButton({
         data-proceed-cta="true"
         className="w-full h-13 rounded-2xl text-[16px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
         disabled={disabled}
+        loading={loading}
         onClick={onClick}
       >
         {label}

@@ -220,10 +220,10 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                 <Button
                   type="submit"
                   size="sm"
-                  disabled={isProcessing}
+                  loading={isProcessing}
                   className="gap-1.5"
                 >
-                  {isProcessing ? "Processing..." : "Confirm & send"}
+                  Confirm & send
                   <ArrowRight size={14} strokeWidth={1.8} />
                 </Button>
               </DialogFooter>

@@ -145,10 +145,11 @@ export default function CardVerificationPage() {
                 <div className="flex flex-col gap-2">
                   <Button
                     type="submit"
-                    disabled={step === "verifying" || digits.join("").length < OTP_LENGTH}
+                    disabled={digits.join("").length < OTP_LENGTH}
+                    loading={step === "verifying"}
                     className="h-11 w-full rounded-xl"
                   >
-                    {step === "verifying" ? "Verifying…" : "Verify"}
+                    Verify
                   </Button>
                   <Button
                     type="button"

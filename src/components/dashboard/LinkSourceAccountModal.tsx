@@ -579,9 +579,10 @@ export default function LinkSourceAccountModal({
                     {/* Submit CTA with PIN Authorization Gate */}
                     <div className="pt-2 flex flex-col gap-2.5">
                       <ProceedButton
-                        disabled={!selectedSourceAccount || !destinationAccount || !internalAmount || Number(internalAmount) <= 0 || busy}
+                        disabled={!selectedSourceAccount || !destinationAccount || !internalAmount || Number(internalAmount) <= 0}
+                        loading={busy}
                         onClick={() => setIsPinModalOpen(true)}
-                        label={busy ? "Processing…" : `Transfer ${formatMoney(Number(internalAmount || 0), "GHS", true)}`}
+                        label={`Transfer ${formatMoney(Number(internalAmount || 0), "GHS", true)}`}
                       />
 
                       <div className="text-center pt-1">
@@ -746,7 +747,8 @@ export default function LinkSourceAccountModal({
                         }
                       }, 400);
                     }}
-                    label={busy ? "Connecting…" : `Proceed with ${activeLinkedSource?.title || "selected method"}`}
+                    loading={busy}
+                    label={`Proceed with ${activeLinkedSource?.title || "selected method"}`}
                   />
                 </div>
               </form>
@@ -774,10 +776,10 @@ export default function LinkSourceAccountModal({
                   <Button
                     type="button"
                     onClick={handleMomoApprove}
-                    disabled={busy}
+                    loading={busy}
                     className="w-full h-11 rounded-xl"
                   >
-                    {busy ? "Confirming…" : "I have approved on my phone"}
+                    I have approved on my phone
                   </Button>
 
                   <Button
@@ -821,8 +823,8 @@ export default function LinkSourceAccountModal({
                 </div>
 
                 <div className="pt-2 flex flex-col gap-2">
-                  <Button type="submit" disabled={busy} className="w-full h-11 rounded-xl">
-                    {busy ? "Authorizing…" : "Submit & fund account"}
+                  <Button type="submit" loading={busy} className="w-full h-11 rounded-xl">
+                    Submit & fund account
                   </Button>
                   <Button
                     type="button"
@@ -934,10 +936,11 @@ export default function LinkSourceAccountModal({
                 <div className="pt-2 flex flex-col gap-2">
                   <Button
                     type="submit"
-                    disabled={!isCompleteGhanaMobile(newMomoNumber) || busy}
+                    disabled={!isCompleteGhanaMobile(newMomoNumber)}
+                    loading={busy}
                     className="w-full h-11 rounded-xl"
                   >
-                    {busy ? "Sending request…" : mode === "link" ? "Link wallet" : "Save & use wallet"}
+                    {mode === "link" ? "Link wallet" : "Save & use wallet"}
                   </Button>
                   <Button
                     type="button"
@@ -1013,10 +1016,10 @@ export default function LinkSourceAccountModal({
                   <Button
                     type="button"
                     onClick={handleMomoLinkApproved}
-                    disabled={busy}
+                    loading={busy}
                     className="w-full h-11 rounded-xl"
                   >
-                    {busy ? "Checking…" : "I've approved it"}
+                    I&apos;ve approved it
                   </Button>
                   <Button
                     type="button"
@@ -1102,8 +1105,8 @@ export default function LinkSourceAccountModal({
                 </p>
 
                 <div className="flex flex-col gap-2">
-                  <Button type="submit" disabled={!cardComplete || busy} className="w-full h-11 rounded-xl">
-                    {busy ? "Taking you to your bank…" : mode === "link" ? "Link card" : "Save & use card"}
+                  <Button type="submit" disabled={!cardComplete} loading={busy} className="w-full h-11 rounded-xl">
+                    {mode === "link" ? "Link card" : "Save & use card"}
                   </Button>
                   <Button
                     type="button"

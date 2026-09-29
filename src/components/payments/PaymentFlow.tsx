@@ -30,7 +30,6 @@ import {
   Users,
 } from "lucide-react";
 import { toast } from "sonner";
-import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { ActionTile } from "@/components/ui/action-tile";
 import {
@@ -1982,20 +1981,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     return RAIL_LABEL[rail] || "Send Money";
   };
 
-  // Submitting Spinner View — a single calm line while the transaction settles.
-  // The inner wrapper keeps the spinner out of the shell's page-stagger reach
-  // (which only targets one level deep), so animate-spin isn't overridden.
-  if (phase === "submitting") {
-    return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col items-center justify-center py-24 text-center">
-        <div className="flex flex-col items-center gap-3.5">
-          <AppLoader size={36} className="text-muted-foreground" />
-          <p className="text-[15px] text-foreground tracking-[-0.01em]">Processing</p>
-        </div>
-      </div>
-    );
-  }
-
   // Success Receipt View (Figma Node 1384:58655)
   if (phase === "success" && receipt) {
     return (
@@ -3633,12 +3618,14 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 type="button"
                 variant="outline"
                 onClick={() => setStage(1)}
+                disabled={phase === "submitting"}
                 className="flex-1 h-11 rounded-lg text-[14px] font-medium border-border"
               >
                 Back
               </Button>
               <Button
                 type="button"
+                loading={phase === "submitting"}
                 onClick={() => {
                   setPinModalOpen(true);
                 }}
