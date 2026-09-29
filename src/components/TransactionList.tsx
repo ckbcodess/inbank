@@ -51,7 +51,7 @@ import {
   PartialLoadFooter,
   TrueEmptyState,
 } from "@/components/states/ListStates";
-import { LIST_STATE_LABEL, type ListState, type TransactionState } from "@/lib/states";
+import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
 import {
   accountsForProfile,
   findAccount,
@@ -137,31 +137,6 @@ function formatTableDate(dateStr: string): string {
   } catch {
     return dateStr;
   }
-}
-
-function renderStatusIndicator(state: TransactionState) {
-  if (state === "completed") {
-    return (
-      <span className="inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
-        <span className="size-1.5 rounded-full bg-emerald-500/80 shrink-0" />
-        Complete
-      </span>
-    );
-  }
-  if (state.startsWith("failed") || state === "reversed" || state === "disputed") {
-    return (
-      <span className="inline-flex items-center gap-1.5 text-[12.5px] text-[#F04438] dark:text-rose-400">
-        <span className="size-1.5 rounded-full bg-rose-500 shrink-0" />
-        Failed
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center gap-1.5 text-[12.5px] text-[#F79009] dark:text-amber-400">
-      <span className="size-1.5 rounded-full bg-amber-500 shrink-0" />
-      Pending
-    </span>
-  );
 }
 
 function getAmountStyling(t: Transaction) {
@@ -1267,8 +1242,8 @@ export default function TransactionList({
             transition={{ duration: 0.18 }}
             className="flex flex-col gap-4"
           >
-          {/* Mobile High-Density Clean Fintech Transaction List (md:hidden) */}
-          <div className="md:hidden divide-y divide-border/40 rounded-xl border border-border/70 bg-card/40 backdrop-blur-sm overflow-hidden">
+          {/* One list at every breakpoint — the same rows as the dashboard's Recent activity. */}
+          <div className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">
             {paginatedRows.map((t) => {
               const { colorClass, prefix } = getAmountStyling(t);
               const isCredit = t.direction === "credit";
@@ -1279,7 +1254,7 @@ export default function TransactionList({
                 <div
                   key={t.id}
                   onClick={() => router.push(`${detailBase}/${t.id}`)}
-                  className="flex items-center gap-3.5 p-3.5 hover:bg-muted/30 transition-colors cursor-pointer active:bg-muted/50"
+                  className="flex items-center gap-3.5 rounded-lg px-2 py-3 hover:bg-muted/60 transition-colors cursor-pointer active:bg-muted/70"
                 >
                   {/* Direction Anchor Icon */}
                   <div
@@ -1340,66 +1315,6 @@ export default function TransactionList({
                 </div>
               );
             })}
-          </div>
-
-          {/* Desktop 1:1 Clean Data Table (hidden md:block) */}
-          <div className="hidden md:block overflow-x-auto rounded-xl border border-border/70 bg-card/40 backdrop-blur-sm">
-            <table className="w-full border-collapse text-left table-auto">
-              <thead>
-                <tr className="border-b border-border/70 text-[12.5px] font-normal text-muted-foreground bg-muted/15">
-                  <th className="py-3 pl-4 pr-2 text-left font-normal w-[80px]">Date</th>
-                  <th className="py-3 px-3 text-left font-normal">Recipient</th>
-                  <th className="py-3 px-3 text-left font-normal">Account</th>
-                  <th className="py-3 px-3 text-left font-normal">Method</th>
-                  <th className="py-3 px-3 text-right font-normal">Amount</th>
-                  <th className="py-3 px-3 text-left font-normal">Category</th>
-                  <th className="py-3 pl-3 pr-4 text-left font-normal w-[100px]">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/40">
-                {paginatedRows.map((t) => {
-                  const { colorClass, prefix } = getAmountStyling(t);
-                  return (
-                    <tr
-                      key={t.id}
-                      onClick={() => router.push(`${detailBase}/${t.id}`)}
-                      className="hover:bg-muted/25 transition-colors cursor-pointer text-[13px] group"
-                    >
-                      <td className="py-3 pl-4 pr-2 text-left text-muted-foreground text-[12.5px] whitespace-nowrap">
-                        {formatTableDate(t.date)}
-                      </td>
-                      <td className="py-3 px-3 text-left font-normal text-foreground whitespace-nowrap">
-                        {t.counterparty || t.description}
-                      </td>
-                      <td className="py-3 px-3 text-left text-muted-foreground text-[12.5px] whitespace-nowrap">
-                        {formatAccountDisplay(t.accountId)}
-                      </td>
-                      <td className="py-3 px-3 text-left text-muted-foreground text-[12.5px] whitespace-nowrap">
-                        {getPaymentMethodDisplay(t)}
-                      </td>
-                      <td className="py-3 px-3 text-right whitespace-nowrap">
-                        <span className={cn("tabular text-[13px]", colorClass)}>
-                          {prefix}
-                          {t.currency}{" "}
-                          {showAmounts
-                            ? t.amount.toLocaleString("en-US", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })
-                            : "••••••"}
-                        </span>
-                      </td>
-                      <td className="py-3 px-3 text-left text-muted-foreground text-[12.5px] whitespace-nowrap">
-                        {t.category ? CATEGORY_MAP[t.category] || t.category : "—"}
-                      </td>
-                      <td className="py-3 pl-3 pr-4 text-left whitespace-nowrap">
-                        {renderStatusIndicator(t.state)}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
           </div>
 
           {effective === "partial-load" && <PartialLoadFooter />}

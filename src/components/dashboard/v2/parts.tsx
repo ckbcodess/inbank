@@ -193,7 +193,7 @@ export function Greeting({ firstName, className }: { firstName: string; classNam
     <h1
       // Quieter on a phone so the balance, not the hello, is the loudest thing on screen.
       className={cn(
-        "text-[18px] font-medium leading-[24px] tracking-[-0.02em] text-foreground sm:text-[26px] sm:leading-[32px]",
+        "text-[18px] font-medium leading-[24px] tracking-[-0.02em] text-foreground sm:text-[20px] sm:leading-[28px] lg:text-[22px]",
         className,
       )}
       suppressHydrationWarning
