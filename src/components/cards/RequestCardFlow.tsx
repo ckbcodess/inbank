@@ -480,10 +480,9 @@ export function RequestCardFlow() {
         {step === "select-type" && (
           <motion.div
             key="step-select-type"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.22 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             className="w-full max-w-[540px] mx-auto flex flex-col gap-6"
           >
           {/* Header Row: Back Link & Title */}
@@ -557,10 +556,9 @@ export function RequestCardFlow() {
       {step === "details" && (
         <motion.div
           key="step-details"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.22 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
           className="w-full max-w-[540px] mx-auto flex flex-col gap-6"
         >
           {/* Header Row: Back to Step 1 & Title */}
@@ -781,10 +779,9 @@ export function RequestCardFlow() {
       {step === "customize" && (
         <motion.div
           key="step-customize"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.22 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
           className="w-full max-w-[540px] mx-auto flex flex-col items-center gap-6"
         >
           {/* Header Row: Back to Step 2 & Title */}
@@ -947,10 +944,9 @@ export function RequestCardFlow() {
       {step === "review" && (
         <motion.div
           key="step-review"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.22 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
           className="w-full max-w-[540px] mx-auto flex flex-col gap-6"
         >
           {/* Header Row: Back to Customize & Title */}
@@ -1120,10 +1116,9 @@ export function RequestCardFlow() {
       {step === "success" && createdCard && (
         <motion.div
           key="step-success"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.22 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
           className="relative mx-auto flex w-full max-w-[460px] min-h-[65vh] flex-col items-center justify-center gap-8 py-10 px-4 text-center overflow-visible"
         >
           {/* 1. Dynamic Hero Stage: Standalone Eagle -> Morph -> Emerald Check */}

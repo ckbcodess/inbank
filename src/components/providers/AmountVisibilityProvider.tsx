@@ -6,7 +6,8 @@ import "@kitlangton/rolling-number/styles.css";
 
 const STORAGE_KEY = "nibs-show-amounts";
 
-let globalShowAmounts = true;
+/** Hidden until the customer chooses to show them; their choice is remembered. */
+let globalShowAmounts = false;
 
 export function getGlobalShowAmounts(): boolean {
   return globalShowAmounts;
@@ -140,7 +141,7 @@ interface AmountVisibilityContextType {
 const AmountVisibilityContext = createContext<AmountVisibilityContextType | undefined>(undefined);
 
 export function AmountVisibilityProvider({ children }: { children: React.ReactNode }) {
-  const [showAmounts, setShowAmountsState] = useState<boolean>(true);
+  const [showAmounts, setShowAmountsState] = useState<boolean>(false);
 
   useEffect(() => {
     try {
