@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Smartphone } from "lucide-react";
 import {
   Select,
@@ -16,6 +16,7 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   VerifiedAccountBadge,
+  ResolvingAccountBadge,
   CollapsedDetailsBadge,
   BANKS,
   SchedulePaymentSection,
@@ -70,7 +71,21 @@ export function WalletToBankFlow({
   const overBalance = numAmount > walletBalance;
   const isAcctValid = state.benAcct.replace(/\s/g, "").length >= 8;
   const isDetailsValid = Boolean(state.bank) && isAcctValid;
-  const isValid = isDetailsValid && numAmount > 0 && !overBalance;
+
+  // Same beat as the other bank flows: look the account up before asking for anything else.
+  const [resolving, setResolving] = useState(false);
+  useEffect(() => {
+    if (!isDetailsValid) {
+      setResolving(false);
+      return;
+    }
+    setResolving(true);
+    const timer = setTimeout(() => setResolving(false), 250);
+    return () => clearTimeout(timer);
+  }, [isDetailsValid, state.bank, state.benAcct]);
+
+  const isVerified = isDetailsValid && !resolving && Boolean(verifiedName);
+  const isValid = isVerified && numAmount > 0 && !overBalance;
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
@@ -102,7 +117,7 @@ export function WalletToBankFlow({
       {/* 2. Destination Bank Account */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
-        {isDetailsValid && isCollapsed ? (
+        {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `Account ${state.benAcct}`}
             subtitle={`${state.bank || "Bank"} · ${state.benAcct}`}
@@ -143,62 +158,71 @@ export function WalletToBankFlow({
               className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
             />
 
-            {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+            {isDetailsValid && resolving && (
+              <ResolvingAccountBadge message={`Verifying account with ${state.bank}...`} />
+            )}
+
+            {isVerified && <VerifiedAccountBadge name={verifiedName} />}
           </div>
         )}
       </div>
 
-      {/* 3. Amount */}
-      <AmountInput
-        value={state.amount}
-        onChange={(val) => onChange("amount", val)}
-        onFocus={() => {
-          if (isDetailsValid) setCollapsed(true);
-        }}
-        error={
-          overBalance ? (
-            <InsufficientFundsAlert
-              available={walletBalance}
-              currency="GHS"
-            />
-          ) : undefined
-        }
-      />
+      {/* Progressive disclosure: amount and onwards appear once the account is verified. */}
+      {isVerified && (
+        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+        {/* 3. Amount */}
+        <AmountInput
+          value={state.amount}
+          onChange={(val) => onChange("amount", val)}
+          onFocus={() => {
+            if (isVerified) setCollapsed(true);
+          }}
+          error={
+            overBalance ? (
+              <InsufficientFundsAlert
+                available={walletBalance}
+                currency="GHS"
+              />
+            ) : undefined
+          }
+        />
 
-      {/* 4. Narration */}
-      <NarrationInput
-        value={state.narration}
-        onChange={(val) => onChange("narration", val)}
-      />
+        {/* 4. Narration */}
+        <NarrationInput
+          value={state.narration}
+          onChange={(val) => onChange("narration", val)}
+        />
 
-      {/* 5. Transaction Category (Optional) */}
-      <CategorySelect
-        value={state.category}
-        onChange={(val) => onChange("category", val)}
-        defaultCategory="Family & Friends"
-      />
+        {/* 5. Transaction Category (Optional) */}
+        <CategorySelect
+          value={state.category}
+          onChange={(val) => onChange("category", val)}
+          defaultCategory="Family & Friends"
+        />
 
-      {/* 7. Schedule Payment */}
-      <SchedulePaymentSection
-        state={{
-          enabled: state.isScheduled ?? false,
-          startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
-          frequency: state.scheduleFrequency || "once",
-          endDate: state.scheduleEndDate || "",
-        }}
-        onChange={(updates) => {
-          if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
-          if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
-          if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
-          if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
-        }}
-      />
+        {/* 7. Schedule Payment */}
+        <SchedulePaymentSection
+          state={{
+            enabled: state.isScheduled ?? false,
+            startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
+            frequency: state.scheduleFrequency || "once",
+            endDate: state.scheduleEndDate || "",
+          }}
+          onChange={(updates) => {
+            if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
+            if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
+            if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
+            if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
+          }}
+        />
 
-      {/* 8. Proceed CTA */}
-      <ProceedButton
-        disabled={!isValid}
-        onClick={onProceed}
-      />
+        {/* 8. Proceed CTA */}
+        <ProceedButton
+          disabled={!isValid}
+          onClick={onProceed}
+        />
+        </div>
+      )}
     </div>
   );
 }

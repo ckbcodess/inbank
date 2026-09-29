@@ -87,7 +87,7 @@ export default function ProxyIdModal({
       <DialogContent size="md">
         <DialogHeader>
           <DialogTitle>
-            {mode === "edit" ? "Update your proxy ID" : "Create a proxy ID"}
+            {mode === "edit" ? "Update Your Proxy ID" : "Create a Proxy ID"}
           </DialogTitle>
         </DialogHeader>
 

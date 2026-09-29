@@ -78,17 +78,17 @@ export function sendOptions({ hasOtherAccounts }: { hasOtherAccounts: boolean })
       options: [
         {
           id: "momo",
-          title: "Mobile money",
+          title: "Mobile Money",
           hint: "MTN, Telecel, AT",
-          // No category: lands on "Which wallet do you want to send to?" (recent wallets, self or someone else).
+          // No category: lands on "Which wallet do you want to send to?" (recent wallets, self or others).
           href: "/payments/send?rail=wallet",
           icon: Wallet,
         },
-        { id: "gcb", title: "Another GCB account", href: "/payments/send?rail=bank&category=gcb", icon: Landmark },
-        { id: "other-bank", title: "Another bank", href: "/payments/send?rail=bank&category=other", icon: Building2 },
+        { id: "gcb", title: "Another GCB Account", href: "/payments/send?rail=bank&category=gcb", icon: Landmark },
+        { id: "other-bank", title: "Another Bank", href: "/payments/send?rail=bank&category=other", icon: Building2 },
         // Only meaningful with somewhere else of your own to move money to.
         ...(hasOtherAccounts
-          ? [{ id: "own", title: "Between my accounts", href: "/payments/send?rail=bank&category=own", icon: Repeat }]
+          ? [{ id: "own", title: "Between My Accounts", href: "/payments/send?rail=bank&category=own", icon: Repeat }]
           : []),
       ],
     },
@@ -117,8 +117,8 @@ export function topUpOptions(): PaymentOptionGroup[] {
     {
       options: [
         { id: "airtime", title: "Airtime", href: "/payments/send?rail=airtime", icon: Smartphone },
-        { id: "data", title: "Data bundle", href: "/payments/send?rail=data", icon: Wifi },
-        { id: "card", title: "Prepaid card", href: "/payments/send?rail=card-topup", icon: CreditCard },
+        { id: "data", title: "Internet", href: "/payments/send?rail=data", icon: Wifi },
+        { id: "card", title: "Prepaid Card", href: "/payments/send?rail=card-topup", icon: CreditCard },
       ],
     },
   ];

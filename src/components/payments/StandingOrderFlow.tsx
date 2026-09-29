@@ -88,7 +88,7 @@ const STANDING_ORDER_OPTIONS = [
   { id: "proxy" as TransactionType, title: "To Proxy", icon: User },
   { id: "group" as TransactionType, title: "To Group", icon: Users },
   { id: "wallet-to-bank" as TransactionType, title: "Wallet to Bank", icon: ArrowLeftRight },
-  { id: "data" as TransactionType, title: "Data Bundle", icon: Wifi },
+  { id: "data" as TransactionType, title: "Internet", icon: Wifi },
   { id: "airtime" as TransactionType, title: "Airtime", icon: PhoneCall },
 ];
 

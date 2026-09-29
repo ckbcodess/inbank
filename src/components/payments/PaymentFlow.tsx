@@ -159,7 +159,7 @@ const RAIL_LABEL: Record<Rail, string> = {
   swift: "SWIFT Wire Transfer",
   "wallet-to-bank": "Wallet to Bank",
   airtime: "Airtime Top-up",
-  data: "Data Bundle",
+  data: "Internet",
   ecg: "ECG Prepaid",
   bill: "GCB Pay / Bills",
   ghanagov: "Ghana.gov",
@@ -1398,7 +1398,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "proxy") return verifiedAccountName || f.pxId || "Proxy Recipient";
     if (rail === "papss") return f.wBenName || "International Beneficiary";
     if (rail === "group") return f.groupName || "Group Contribution";
-    if (rail === "data") return verifiedAccountName || (f.aPhone ? `Data Bundle (${f.aPhone})` : "Recipient");
+    if (rail === "data") return verifiedAccountName || (f.aPhone ? `Internet (${f.aPhone})` : "Recipient");
     if (rail === "airtime") return verifiedAccountName || (f.aPhone ? `Airtime (${f.aPhone})` : "Recipient");
     if (rail === "card-topup") {
       const card = CARDS.find((c) => c.id === f.cardId);
@@ -1743,7 +1743,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           benCat = "number";
           network = f.wNetwork || "MTN";
           phoneNumber = f.aPhone;
-          detail = `${network} · ${phoneNumber} · ${bundle?.name || "Data Bundle"}`;
+          detail = `${network} · ${phoneNumber} · ${bundle?.name || "Internet bundle"}`;
         } else if (rail === "proxy") {
           txType = "proxy";
           benCat = "person";
@@ -1821,7 +1821,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         successMsg = `You’ve recharged ${f.aPhone || recipientDisplayName} with ${formattedAmount} airtime.`;
       } else if (rail === "data") {
         successTitle = "Bundle activated!";
-        successMsg = `You’ve sent the ${bundle?.name || "data bundle"} to ${f.aPhone || recipientDisplayName}.`;
+        successMsg = `You’ve sent the ${bundle?.name || "internet bundle"} to ${f.aPhone || recipientDisplayName}.`;
       } else if (rail === "ecg") {
         successTitle = "Power recharged!";
         successMsg = `You’ve purchased ${formattedAmount} of electricity units for meter ${f.ecgMeter}.`;
@@ -1887,7 +1887,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         amount: currentAmount,
         fee,
         total: totalDebit,
-        narration: f.bankRef || f.wRef || f.pxRef || (rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Data Bundle") : "Online Payment"),
+        narration: f.bankRef || f.wRef || f.pxRef || (rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Internet") : "Online Payment"),
         rows: [
           ...(isDualMandate
             ? ([
@@ -1914,7 +1914,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         reference: trn,
         date: d.toISOString().slice(0, 10),
         valueDate: d.toISOString().slice(0, 10),
-        description: f.bankRef || f.wRef || f.pxRef || (rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Data Bundle") : "Online Payment"),
+        description: f.bankRef || f.wRef || f.pxRef || (rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Internet") : "Online Payment"),
         counterparty: isOwnTransfer ? (toOwnAccount?.name || "My Account") : rail === "card-topup" ? (cardObj?.name || "Card") : (resolvedName || "Recipient"),
         counterpartyAccount: isOwnTransfer
           ? (toOwnAccount?.number || "")
@@ -1970,13 +1970,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       return "Wallet to Bank Transfer";
     }
     if (rail === "wallet" || rail === "momo") {
-      if (walletCategory === "self") return "Send to My Wallet";
-      if (walletCategory === "other") return "Send to Other Wallets";
+      if (walletCategory === "self") return "Send to Myself";
+      if (walletCategory === "other") return "Send to Others";
       return "Mobile Money Transfer";
     }
     if (rail === "cardless") {
-      if (cardlessCategory === "self") return "Generate Token for self";
-      if (cardlessCategory === "third-party") return "Generate Token for others";
+      if (cardlessCategory === "self") return "Generate Token for Myself";
+      if (cardlessCategory === "third-party") return "Generate Token for Others";
       return "Cardless Withdrawal";
     }
     return RAIL_LABEL[rail] || "Send Money";
@@ -2118,7 +2118,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={22} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
             Which bank do you want to send to?
           </h1>
         </div>
@@ -2230,7 +2230,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={22} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
             Which wallet do you want to send to?
           </h1>
         </div>
@@ -2267,7 +2267,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Card 1: Send to Self */}
           <ActionTile
             icon={Smartphone}
-            title="My Own Wallet (Self)"
+            title="Send to Myself"
             onClick={() => {
               setWalletCategory("self");
               setF((p) => ({
@@ -2287,7 +2287,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Card 2: Send to Others */}
           <ActionTile
             icon={Users}
-            title="Other Mobile Wallets"
+            title="Send to Others"
             onClick={() => {
               setWalletCategory("other");
               setF((p) => ({
@@ -2322,8 +2322,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
-            <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
-              Generate Token
+            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+              Who is this token for?
             </h1>
           </div>
         </div>
@@ -2369,10 +2369,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
         {/* 2 Separate Category Cards matching user uploaded image */}
         <div className="flex flex-col gap-3.5">
-          {/* Card 1: Generate Token for self */}
+          {/* Card 1: Generate Token for myself */}
           <ActionTile
             icon={Smartphone}
-            title="Generate Token for self"
+            title="Generate for Myself"
             onClick={() => {
               setCardlessCategory("self");
               setF((p) => ({
@@ -2392,7 +2392,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Card 2: Generate Token for others */}
           <ActionTile
             icon={Users}
-            title="Generate Token for others"
+            title="Generate for Others"
             onClick={() => {
               setCardlessCategory("third-party");
               setF((p) => ({
@@ -2500,7 +2500,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={22} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
             GCB Pay
           </h1>
         </div>
@@ -2568,8 +2568,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={22} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
-            Proxy payments
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+            Proxy Payments
           </h1>
         </div>
 
@@ -2599,7 +2599,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Transfer to a proxy ID */}
           <ActionTile
             icon={ArrowLeftRight}
-            title="Transfer to a proxy ID"
+            title="Transfer to a Proxy ID"
             onClick={() => {
               setProxyCategory("transfer");
               setF((p) => ({ ...p, pxId: "", benName: "", bankAmount: "", bankRef: "" }));
@@ -2614,7 +2614,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               {/* Update proxy ID */}
               <ActionTile
                 icon={Pencil}
-                title="Update proxy ID"
+                title="Update Proxy ID"
                 onClick={() => {
                   setProxyModalMode("edit");
                   setProxyModalOpen(true);
@@ -2625,7 +2625,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               {/* Deregister proxy ID */}
               <ActionTile
                 leading={<Trash2 size={20} strokeWidth={1.8} className="text-destructive" />}
-                title="Deregister proxy ID"
+                title="Deregister Proxy ID"
                 onClick={() => setProxyDeregisterOpen(true)}
                 className="p-4.5"
               />
@@ -2634,7 +2634,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             /* Create proxy ID (shown once none is registered) */
             <ActionTile
               icon={Plus}
-              title="Create a proxy ID"
+              title="Create a Proxy ID"
               onClick={() => {
                 setProxyModalMode("create");
                 setProxyModalOpen(true);
@@ -2708,8 +2708,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={22} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
-            Group payments
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+            Group Payments
           </h1>
         </div>
 
@@ -2747,7 +2747,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Transfer to group */}
           <ActionTile
             icon={Users}
-            title="Transfer to group"
+            title="Transfer to Group"
             onClick={() => {
               setGroupCategory("transfer");
               setF((p) => ({ ...p, groupName: "", grpAmount: "", grpRef: "" }));
@@ -2760,7 +2760,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Manage group */}
           <ActionTile
             icon={Pencil}
-            title="Manage groups"
+            title="Manage Groups"
             onClick={() => router.push("/beneficiaries?tab=groups")}
             className="p-4.5"
           />
@@ -2783,8 +2783,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={22} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
-            {isData ? "Who is this data bundle for?" : "Who is this airtime for?"}
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+            {isData ? "Who is this internet bundle for?" : "Who is this airtime for?"}
           </h1>
         </div>
 
@@ -2820,7 +2820,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Card 1: Self */}
           <ActionTile
             icon={Smartphone}
-            title="My own number (Self)"
+            title="Send to Myself"
             onClick={() => {
               setTopupCategory("self");
               const selfNum = "0244123821";
@@ -2840,10 +2840,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             className="p-4.5"
           />
 
-          {/* Card 2: Someone else */}
+          {/* Card 2: Others */}
           <ActionTile
             icon={Users}
-            title="Someone else"
+            title="Send to Others"
             onClick={() => {
               setTopupCategory("other");
               setF((p) => ({
@@ -2900,7 +2900,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={22} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
             {getPageTitle()}
           </h1>
         </div>
@@ -3163,7 +3163,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               />
             )}
 
-            {/* Flow 6B: Internet Data Bundle */}
+            {/* Flow 6B: Internet */}
             {rail === "data" && (
               <DataBundleFlow
                 accounts={accounts}

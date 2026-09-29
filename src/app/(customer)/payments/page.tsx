@@ -6,7 +6,7 @@
  * Structure:
  *   - Header: "Send & Pay" with "Manage Beneficiaries" and "Standing Orders" pill buttons
  *   - Send: 6 cards (To Bank, To Wallet, To Proxy, To Group, Wallet to Bank, PAPSS Payments)
- *   - Pay: 4 cards (GCB Pay, Data Bundle, Airtime, Card Top up)
+ *   - Pay: 4 cards (GCB Pay, Internet, Airtime, Card Top up)
  */
 
 import Link from "next/link";
@@ -83,7 +83,7 @@ const PAY_ACTIONS: PaymentAction[] = [
   },
   {
     id: "data",
-    title: "Data Bundle",
+    title: "Internet",
     href: "/payments/send?rail=data",
     icon: Wifi,
   },

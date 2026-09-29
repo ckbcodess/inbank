@@ -62,7 +62,7 @@ const ALL_STATES: readonly TransactionState[] = [
 function getTransactionMethodLabel(t: Transaction): string {
   if (t.paymentMethod === "papss") return "PAPSS Transfer";
   if (t.paymentMethod === "airtime") return "Airtime Purchase";
-  if (t.paymentMethod === "data") return "Data Bundle Purchase";
+  if (t.paymentMethod === "data") return "Internet Purchase";
   if (t.paymentMethod === "wallet-to-bank") return "Wallet to Bank Transfer";
   if (t.paymentMethod === "gip") return "Instant Pay (GIP)";
   if (t.paymentMethod === "ach") return "ACH Direct Credit";

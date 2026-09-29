@@ -100,7 +100,7 @@ const accounts: Entry[] = [
   ["When", "Quand", "Cuándo", "时间"],
   ["PAPSS Transfer", "Virement PAPSS", "Transferencia PAPSS", "PAPSS 转账"],
   ["Airtime Purchase", "Achat de crédit", "Compra de saldo", "购买话费"],
-  ["Data Bundle Purchase", "Achat de forfait data", "Compra de paquete de datos", "购买流量套餐"],
+  ["Internet Purchase", "Achat internet", "Compra de internet", "购买上网流量"],
   ["Wallet to Bank Transfer", "Virement portefeuille vers banque", "Transferencia de billetera a banco", "钱包转银行"],
   ["Instant Pay (GIP)", "Paiement instantané (GIP)", "Pago instantáneo (GIP)", "即时支付（GIP）"],
   ["ACH Direct Credit", "Crédit direct ACH", "Abono directo ACH", "ACH 直接贷记"],

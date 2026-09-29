@@ -264,7 +264,7 @@ export function DataBundleFlow({
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Bundle Selection */}
           <div className="flex flex-col gap-2">
-            <label className="text-[14px] font-medium text-foreground">Data Bundle</label>
+            <label className="text-[14px] font-medium text-foreground">Internet</label>
             <Select
               value={selectedBundle?.id || bundles[0]?.id}
               onValueChange={(val) => {
@@ -283,7 +283,7 @@ export function DataBundleFlow({
               >
                 {!selectedBundle ? (
                   <span className="text-[15px] text-muted-foreground font-normal">
-                    Select data bundle
+                    Select internet bundle
                   </span>
                 ) : (
                   <div className="flex items-center justify-between w-full min-w-0 pr-1.5">
@@ -328,7 +328,7 @@ export function DataBundleFlow({
           <NarrationInput
             value={state.narration}
             onChange={(val) => onChange("narration", val)}
-            placeholder={selectedBundle?.name || "Data bundle"}
+            placeholder={selectedBundle?.name || "Internet bundle"}
           />
 
           {/* 5. Transaction Category */}

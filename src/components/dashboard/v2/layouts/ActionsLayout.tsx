@@ -42,7 +42,7 @@ export function ActionsLayout(props: DashViewProps) {
     { icon: Smartphone, title: t("dashboard.airtimeData", "Airtime & Data"), href: withFrom("/payments/send?rail=airtime", from) },
     // Only meaningful with somewhere else to move money to.
     ...(data.accounts.length > 1
-      ? [{ icon: ArrowLeftRight, title: t("dashboard.betweenAccounts", "Between my accounts"), href: withFrom("/payments/send?category=own", from) }]
+      ? [{ icon: ArrowLeftRight, title: t("dashboard.betweenAccounts", "Between My Accounts"), href: withFrom("/payments/send?category=own", from) }]
       : []),
     { icon: CalendarClock, title: t("dashboard.schedulePayment", "Schedule a payment"), href: withFrom("/payments/standing/new", from) },
     { icon: CreditCard, title: t("dashboard.cards", "Cards"), href: "/cards" },
