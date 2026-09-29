@@ -49,39 +49,68 @@ export function TiltCard3D({
   const colorDodgeSheen = useMotionTemplate`radial-gradient(circle 320px at ${glareX} ${glareY}, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.15) 40%, transparent 75%)`;
   const borderSpecular = useMotionTemplate`radial-gradient(circle 380px at ${glareX} ${glareY}, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.35) 30%, rgba(255,255,255,0.08) 65%, transparent 100%)`;
 
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
+  const pressed = useRef(false);
+
+  const track = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
       if (!cardRef.current) return;
       const rect = cardRef.current.getBoundingClientRect();
 
-      // Calculate position relative to card center from -1 to 1
-      const normalizedX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-      const normalizedY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-
-      x.set(normalizedX);
-      y.set(normalizedY);
+      // Position relative to the card's centre, from -1 to 1 (clamped: a finger can drag past the edge).
+      const clamp = (n: number) => Math.max(-1, Math.min(1, n));
+      x.set(clamp(((e.clientX - rect.left) / rect.width - 0.5) * 2));
+      y.set(clamp(((e.clientY - rect.top) / rect.height - 0.5) * 2));
     },
     [x, y]
   );
 
-  const handleMouseEnter = useCallback(() => {
-    setIsHovered(true);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
+  const release = useCallback(() => {
+    pressed.current = false;
     setIsHovered(false);
     x.set(0);
     y.set(0);
   }, [x, y]);
 
+  // Mouse tilts on hover. Touch and pen tilt while dragging, then spring back on release.
+  const handlePointerEnter = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType === "mouse") setIsHovered(true);
+  }, []);
+
+  const handlePointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (e.pointerType === "mouse") return;
+      pressed.current = true;
+      setIsHovered(true);
+      track(e);
+    },
+    [track]
+  );
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (e.pointerType === "mouse" || pressed.current) track(e);
+    },
+    [track]
+  );
+
+  const handlePointerLeave = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (e.pointerType === "mouse") release();
+    },
+    [release]
+  );
+
   return (
     <TiltContext.Provider value={{ glareX, glareY, springX, springY, isHovered }}>
       <div
         ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        className={`relative select-none cursor-default [perspective:1000px] ${className}`}
+        onPointerEnter={handlePointerEnter}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={release}
+        onPointerCancel={release}
+        onPointerLeave={handlePointerLeave}
+        className={`relative select-none cursor-default touch-pan-y [perspective:1000px] ${className}`}
       >
         <motion.div
           style={{

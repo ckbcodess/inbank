@@ -407,6 +407,8 @@ export function VirtualCardDetailsView({
     setIsFrozen(nextFrozen);
     const newStatus = nextFrozen ? "Blocked" : "Active";
     setCurrentCard((prev) => ({ ...prev, status: newStatus }));
+    // Write through to the shared card store so the Cards page and dashboard agree.
+    setCardStatusInStore(currentCard.id, newStatus);
     if (onUpdateCard) onUpdateCard({ status: newStatus });
     triggerToast(nextFrozen ? "Card blocked. You can unblock it here anytime." : "Card unblocked and active");
     setActiveModal(null);
@@ -419,6 +421,7 @@ export function VirtualCardDetailsView({
     if (!isNaN(d) && d > 0) {
       setDailyLimit(d);
       setCurrentCard((prev) => ({ ...prev, spendLimit: d }));
+      updateCardInStore(currentCard.id, { spendLimit: d });
       if (onUpdateCard) onUpdateCard({ spendLimit: d });
     }
     if (!isNaN(m) && m > 0) {
@@ -433,6 +436,7 @@ export function VirtualCardDetailsView({
     if (tempNickname.trim()) {
       setCardNickname(tempNickname.trim());
       setCurrentCard((prev) => ({ ...prev, name: tempNickname.trim() }));
+      updateCardInStore(currentCard.id, { name: tempNickname.trim() });
       if (onUpdateCard) onUpdateCard({ name: tempNickname.trim() });
       triggerToast("Card nickname updated");
     }

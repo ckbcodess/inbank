@@ -121,3 +121,20 @@ export function RequestTile({ className }: { className?: string }) {
     </Link>
   );
 }
+
+/** Card-shaped placeholders — same footprint as the gallery so nothing shifts when the real cards land. */
+export function CardsSkeleton() {
+  return (
+    <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true" aria-label="Loading cards">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="flex flex-col gap-3">
+          <div className="aspect-[1.586/1] w-full animate-pulse rounded-2xl bg-muted" />
+          <div className="flex items-center justify-between px-1">
+            <div className="h-4 w-28 animate-pulse rounded bg-muted" />
+            <div className="h-6 w-16 animate-pulse rounded-full bg-muted" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}

@@ -37,7 +37,6 @@ import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import {
   FilteredEmptyState,
   ListErrorState,
-  ListSkeleton,
   PartialLoadFooter,
   TrueEmptyState,
 } from "@/components/states/ListStates";
@@ -49,7 +48,9 @@ import {
   formatMoney,
   type PaymentCard,
 } from "@/lib/mock-data";
-import { useSession } from "@/lib/session-store";
+import { useSession, useSessionHydrated } from "@/lib/session-store";
+import { useCardAssetsReady } from "@/components/cards/useCardAssetsReady";
+import { CardsSkeleton } from "@/components/cards/CardParts";
 import { CardsEmptyIllustration } from "@/components/cards/CardsEmptyIllustration";
 import { CardsStack } from "@/components/cards/layouts/CardsStack";
 import { CardsCarousel } from "@/components/cards/layouts/CardsCarousel";
@@ -113,7 +114,15 @@ function CardsPageContent() {
 
   const [state, setState] = useState<ListState>("populated");
   const [notice, setNotice] = useState<string | null>(null);
-  const [layout, setLayout] = useState<CardsLayout>(readLayout);
+  // The saved layout is read after mount (never during render), so the server's
+  // markup and the first client paint agree and nothing swaps layouts underfoot.
+  const [layout, setLayout] = useState<CardsLayout>(DEFAULT_CARDS_LAYOUT);
+  const [layoutRead, setLayoutRead] = useState(false);
+  useEffect(() => {
+    setLayout(readLayout());
+    setLayoutRead(true);
+  }, []);
+  const sessionReady = useSessionHydrated();
 
   useEffect(() => {
     if (searchParams.get("created") === "true") {
@@ -214,8 +223,13 @@ function CardsPageContent() {
     return cards.filter((c) => c.type === typeFilter);
   }, [cards, typeFilter]);
 
-  const effective: ListState =
-    state === "populated" && typeFilter !== "all" && filteredCards.length === 0
+  // Hold everything back until session, saved layout and card artwork are all in.
+  const assetsReady = useCardAssetsReady(cards);
+  const ready = sessionReady && layoutRead && assetsReady;
+
+  const effective: ListState = !ready
+    ? "loading"
+    : state === "populated" && typeFilter !== "all" && filteredCards.length === 0
       ? "filtered-empty"
       : state;
 
@@ -404,9 +418,7 @@ function CardsPageContent() {
       </div>
 
       {effective === "loading" && (
-        <div className="rounded-2xl border border-border bg-card overflow-hidden">
-          <ListSkeleton rows={4} columns={3} />
-        </div>
+        <CardsSkeleton />
       )}
 
       {effective === "error" && (
