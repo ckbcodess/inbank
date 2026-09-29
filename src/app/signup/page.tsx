@@ -833,7 +833,7 @@ function SignupContent() {
                 Fund with Mobile Money Wallet
               </span>
             </div>
-            <ArrowRight size={16} strokeWidth={1.8} className="text-muted-foreground transition-transform group-hover:translate-x-0.5 shrink-0" />
+            <ArrowRight size={16} strokeWidth={1.8} className="text-muted-foreground transition-transform shrink-0" />
           </button>
 
           <button
@@ -853,7 +853,7 @@ function SignupContent() {
                 Fund with a Card
               </span>
             </div>
-            <ArrowRight size={16} strokeWidth={1.8} className="text-muted-foreground transition-transform group-hover:translate-x-0.5 shrink-0" />
+            <ArrowRight size={16} strokeWidth={1.8} className="text-muted-foreground transition-transform shrink-0" />
           </button>
 
           <button

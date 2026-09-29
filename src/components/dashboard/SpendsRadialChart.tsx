@@ -32,20 +32,22 @@ interface CategoryItem {
  * Segment colors assigned by rank (from largest on far-left to smallest on far-right):
  * In Dark Mode:
  *   - Major segments: Mint (#8ef574), Sky Blue (#54c5f8), Warm Yellow (#ffd343), Accent Pink (#ff3366)
- *   - Tail segments on the right edge: Sophisticated muted dark graphite (#4d5055 and #3e4044),
+ *   - Fifth named segment: soft violet; "Other" is the muted graphite (#4d5055),
  *     never bright/white like #cbd5e1 or #e2e8f0.
  * In Light Mode:
  *   - Major segments: Vibrant tones (#86efac, #38bdf8, #facc15, #fb7185)
- *   - Tail segments: Soft lighter neutral gray/slate (#cbd5e1 and #e2e8f0)
+ *   - "Other": soft lighter neutral gray/slate (#cbd5e1)
  */
 const SEGMENT_PALETTE: Array<{ light: string; dark: string }> = [
-  { light: "#86efac", dark: "#8ef574" }, // 1st (largest) - Mint / Light green
-  { light: "#38bdf8", dark: "#54c5f8" }, // 2nd - Sky / Cyan blue
-  { light: "#facc15", dark: "#ffd343" }, // 3rd - Warm golden yellow
-  { light: "#fb7185", dark: "#ff3366" }, // 4th - Accent coral pink
-  { light: "#cbd5e1", dark: "#4d5055" }, // 5th - Muted dark slate (light on light mode, dark slate on dark mode)
-  { light: "#e2e8f0", dark: "#3e4044" }, // 6th (smallest) - Deep graphite (light on light mode, deep graphite on dark mode)
+  { light: "var(--spend-1)", dark: "var(--spend-1)" },
+  { light: "var(--spend-2)", dark: "var(--spend-2)" },
+  { light: "var(--spend-3)", dark: "var(--spend-3)" },
+  { light: "var(--spend-4)", dark: "var(--spend-4)" },
+  { light: "var(--spend-5)", dark: "var(--spend-5)" },
 ];
+
+/** "Other" is always the quiet graphite tail, whatever its position. */
+const OTHER_PALETTE = { light: "var(--spend-other)", dark: "var(--spend-other)" };
 
 export interface SpendsRadialChartProps {
   /** One ledger-derived breakdown per range pill. */
@@ -53,6 +55,8 @@ export interface SpendsRadialChartProps {
   showAmounts?: boolean;
   className?: string;
   defaultRange?: SpendRange;
+  /** Where the card's link goes — the My Spends page of the account these figures belong to. */
+  href?: string;
 }
 
 export function SpendsRadialChart({
@@ -60,6 +64,7 @@ export function SpendsRadialChart({
   showAmounts: propShowAmounts,
   className,
   defaultRange = "1m",
+  href = "/reports",
 }: SpendsRadialChartProps) {
   const [selectedRange, setSelectedRange] = useState<SpendRange>(defaultRange);
   const { showAmounts: contextShowAmounts } = useAmountVisibility();
@@ -125,7 +130,7 @@ export function SpendsRadialChart({
 
   const slices = categories.map((cat, index) => {
     const arc = arcs[cat.id] ?? target[cat.id];
-    const palette = SEGMENT_PALETTE[index % SEGMENT_PALETTE.length];
+    const palette = cat.id === "Other" ? OTHER_PALETTE : SEGMENT_PALETTE[index % SEGMENT_PALETTE.length];
     return {
       ...cat,
       proportion: totalSpend > 0 ? cat.amount / totalSpend : 0,
@@ -136,18 +141,7 @@ export function SpendsRadialChart({
     };
   });
 
-  // The legend ranks this range's biggest categories; colours stay stable.
-  const topSlices = slices
-    .filter((sl) => sl.amount > 0)
-    .sort((a, b) => b.amount - a.amount)
-    .slice(0, 3);
-
   const displayedAmount = hoveredCategory ? hoveredCategory.amount : totalSpend;
-  const displayedLabel = hoveredCategory
-    ? `${hoveredCategory.label} · ${Math.round((hoveredCategory.amount / totalSpend) * 100)}%`
-    : isEmpty
-      ? `No spending · ${RANGE_LABEL[selectedRange]}`
-      : `Spent · ${RANGE_LABEL[selectedRange]}`;
 
   return (
     <div
@@ -159,19 +153,19 @@ export function SpendsRadialChart({
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-[17px] font-medium leading-none tracking-[-0.01em] text-foreground">
-          Analytics
+          My Spends
         </h2>
         <Link
-          href="/reports"
+          href={href}
           className="text-[13px] text-muted-foreground transition-colors hover:text-foreground"
         >
-          View all
+          Details
         </Link>
       </div>
 
       {/* Semicircle Chart Container */}
       <div className="relative my-auto flex flex-col items-center justify-center">
-        <div className="relative w-full max-w-[270px] aspect-[400/225] select-none">
+        <div className="relative w-full max-w-[360px] aspect-[400/225] select-none">
           <svg
             viewBox="0 0 400 225"
             className="size-full overflow-visible"
@@ -202,75 +196,72 @@ export function SpendsRadialChart({
                 <path
                   key={slice.id}
                   d={slice.path}
-                  fill={fillColor}
-                  className="cursor-pointer transition-[opacity,transform,filter] duration-200"
+                  className="cursor-pointer outline-none transition-[opacity,transform,filter] duration-200"
                   style={{
+                    fill: fillColor,
                     opacity: isDimmed ? 0.35 : 1,
                     transformOrigin: `${cx}px ${cy}px`,
                     transform: isHovered ? "scale(1.025)" : "scale(1)",
                     filter: isHovered ? "url(#segment-glow)" : undefined,
                   }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${slice.label}, ${Math.round(slice.proportion * 100)}%`}
+                  aria-pressed={isHovered}
                   onMouseEnter={() => setHoveredCategory(slice)}
                   onMouseLeave={() => setHoveredCategory(null)}
+                  onFocus={() => setHoveredCategory(slice)}
+                  onBlur={() => setHoveredCategory(null)}
+                  onClick={() => setHoveredCategory(isHovered ? null : slice)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setHoveredCategory(isHovered ? null : slice);
+                    }
+                  }}
                 />
               );
             })}
 
             {/* Center Typography — Positioned at optical center of the semicircle above baseline cy */}
-            <text
-              x={cx}
-              y={cy - 40}
-              textAnchor="middle"
-              className="fill-foreground font-sans tabular"
-              style={{ fontSize: "22px", letterSpacing: "-0.015em" }}
-            >
-              {showEffectiveAmounts ? fmtAmount(displayedAmount) : "GHS ••••"}
-            </text>
-            <text
-              x={cx}
-              y={cy - 16}
-              textAnchor="middle"
-              className="fill-muted-foreground font-sans"
-              style={{ fontSize: "13px" }}
-            >
-              {displayedLabel}
-            </text>
+            {/* Just the total, sized to sit well inside the arc. The range is on the pills below;
+                a label appears only to name a hovered category. An empty period says so instead of a bare zero. */}
+            {isEmpty ? (
+              <text
+                x={cx}
+                y={cy - 24}
+                textAnchor="middle"
+                className="fill-muted-foreground font-sans"
+                style={{ fontSize: "21px", letterSpacing: "-0.01em" }}
+              >
+                No spending
+              </text>
+            ) : (
+              <>
+                {/* Above the figure: "You’ve spent" by default, the category's name while one is picked. */}
+                <text
+                  x={cx}
+                  y={cy - 62}
+                  textAnchor="middle"
+                  className="fill-muted-foreground font-sans"
+                  style={{ fontSize: "16px" }}
+                >
+                  {hoveredCategory ? hoveredCategory.label : "You’ve spent"}
+                </text>
+                <text
+                  x={cx}
+                  y={cy - 24}
+                  textAnchor="middle"
+                  className="fill-foreground font-sans tabular"
+                  style={{ fontSize: "24px", letterSpacing: "-0.02em" }}
+                >
+                  {showEffectiveAmounts ? fmtAmount(displayedAmount) : "GHS ••••"}
+                </text>
+              </>
+            )}
           </svg>
         </div>
       </div>
-
-      {/* Top categories — the chart's hover detail, reachable by touch and keyboard too */}
-      <ul className="flex flex-wrap items-center justify-center gap-x-1 gap-y-0.5">
-        {topSlices.map((slice) => {
-          const isActive = hoveredCategory?.id === slice.id;
-          return (
-            <li key={slice.id}>
-              <button
-                type="button"
-                onMouseEnter={() => setHoveredCategory(slice)}
-                onMouseLeave={() => setHoveredCategory(null)}
-                onFocus={() => setHoveredCategory(slice)}
-                onBlur={() => setHoveredCategory(null)}
-                onClick={() => setHoveredCategory(isActive ? null : slice)}
-                className={cn(
-                  "flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-left transition-colors cursor-pointer",
-                  isActive ? "bg-muted" : "hover:bg-muted/60",
-                )}
-              >
-                <span
-                  className="size-2 shrink-0 rounded-full"
-                  style={{ background: isDark ? slice.darkColor : slice.lightColor }}
-                  aria-hidden="true"
-                />
-                <span className="truncate text-[12.5px] text-foreground">{slice.label}</span>
-                <span className="tabular text-[12px] text-muted-foreground">
-                  {Math.round(slice.proportion * 100)}%
-                </span>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
 
       {/* Time Range Filter Pills */}
       <div className="flex w-full items-center gap-2">

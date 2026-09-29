@@ -240,7 +240,7 @@ export default function FxRatesPage() {
                     onClick={handleSwap}
                     aria-label="Swap currencies"
                     title="Swap currencies"
-                    className="size-10 rounded-full border border-border bg-background shadow-xs hover:bg-muted text-muted-foreground hover:text-foreground cursor-pointer transition-transform hover:scale-105 active:scale-95"
+                    className="size-10 rounded-full border border-border bg-background shadow-xs hover:bg-muted text-muted-foreground hover:text-foreground cursor-pointer transition-transform active:scale-95"
                   >
                     <ArrowUpDown size={19} strokeWidth={2.2} aria-hidden="true" />
                   </Button>

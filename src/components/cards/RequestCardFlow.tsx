@@ -527,7 +527,7 @@ export function RequestCardFlow() {
                   className="group w-full p-4 sm:p-4.5 flex items-center justify-between rounded-2xl bg-card hover:bg-muted/30 active:scale-[0.99] border border-border/80 transition-all cursor-pointer text-left gap-4"
                 >
                   <div className="flex items-center gap-3.5 min-w-0">
-                    <div className="size-10 rounded-xl bg-muted/60 flex items-center justify-center shrink-0 text-foreground group-hover:scale-105 transition-transform">
+                    <div className="size-10 rounded-xl bg-muted/60 flex items-center justify-center shrink-0 text-foreground transition-transform">
                       <Icon size={19} strokeWidth={1.8} />
                     </div>
                     <div className="flex flex-col min-w-0">

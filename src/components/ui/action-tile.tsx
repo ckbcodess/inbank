@@ -53,7 +53,7 @@ export function TileChip({
   return (
     <span
       className={cn(
-        "flex size-[38.5px] shrink-0 items-center justify-center rounded-[12.25px] transition-transform duration-150 group-hover:scale-105",
+        "flex size-[38.5px] shrink-0 items-center justify-center rounded-[12.25px] transition-transform duration-150",
         accent ? "text-[var(--tile-accent)]" : "text-foreground",
         tone === "onTile"
           ? "border border-black/[0.04] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.03)] dark:border-white/[0.06] dark:bg-[#252525] dark:shadow-none"
@@ -94,7 +94,7 @@ export function ActionTile({
         size={20}
         strokeWidth={1.8}
         aria-hidden="true"
-        className="shrink-0 text-[#737373] transition-transform duration-150 group-hover:translate-x-0.5 group-hover:text-foreground dark:text-[#999999]"
+        className="shrink-0 text-[#737373] transition-transform duration-150 group-hover:text-foreground dark:text-[#999999]"
       />
     </>
   );

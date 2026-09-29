@@ -835,7 +835,7 @@ function HorizontalScrollStrip({
           <button
             type="button"
             onClick={() => scroll("left")}
-            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 dark:bg-card/90 text-foreground shadow-sm backdrop-blur-md transition-all hover:scale-110 active:scale-95 cursor-pointer -ml-1"
+            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 dark:bg-card/90 text-foreground shadow-sm backdrop-blur-md transition-all active:scale-95 cursor-pointer -ml-1"
             aria-label="Scroll left"
           >
             <ChevronLeft size={16} strokeWidth={2.2} />
@@ -858,7 +858,7 @@ function HorizontalScrollStrip({
           <button
             type="button"
             onClick={() => scroll("right")}
-            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 dark:bg-card/90 text-foreground shadow-sm backdrop-blur-md transition-all hover:scale-110 active:scale-95 cursor-pointer -mr-1"
+            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 dark:bg-card/90 text-foreground shadow-sm backdrop-blur-md transition-all active:scale-95 cursor-pointer -mr-1"
             aria-label="Scroll right"
           >
             <ChevronRight size={16} strokeWidth={2.2} />

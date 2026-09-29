@@ -801,7 +801,7 @@ export function VirtualCardDetailsView({
                   <ChevronRight
                     size={16}
                     strokeWidth={1.8}
-                    className="text-foreground transition-transform group-hover:translate-x-0.5"
+                    className="text-foreground transition-transform"
                   />
                 </div>
               </button>
@@ -1177,7 +1177,7 @@ export function VirtualCardDetailsView({
                       Set limits for this card
                     </span>
                   </div>
-                  <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
+                  <ChevronRight size={18} className="text-[#737373] transition-transform" />
                 </button>
 
                 {/* Item 2: Edit card nickname & account */}
@@ -1197,7 +1197,7 @@ export function VirtualCardDetailsView({
                       Edit card nickname & account
                     </span>
                   </div>
-                  <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
+                  <ChevronRight size={18} className="text-[#737373] transition-transform" />
                 </button>
 
                 {/* Item 3: Reset PIN */}
@@ -1214,7 +1214,7 @@ export function VirtualCardDetailsView({
                       Reset PIN
                     </span>
                   </div>
-                  <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
+                  <ChevronRight size={18} className="text-[#737373] transition-transform" />
                 </button>
 
                 {/* Item 4: Replace card */}
@@ -1231,7 +1231,7 @@ export function VirtualCardDetailsView({
                       Replace card
                     </span>
                   </div>
-                  <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
+                  <ChevronRight size={18} className="text-[#737373] transition-transform" />
                 </button>
 
                 {/* Item 5: Track card delivery (if physical card in fulfillment or delivery simulated) */}
@@ -1249,7 +1249,7 @@ export function VirtualCardDetailsView({
                         Track delivery & fulfillment
                       </span>
                     </div>
-                    <ChevronRight size={18} className="text-[#737373] group-hover:translate-x-0.5 transition-transform" />
+                    <ChevronRight size={18} className="text-[#737373] transition-transform" />
                   </button>
                 )}
               </div>

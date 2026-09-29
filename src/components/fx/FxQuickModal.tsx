@@ -330,7 +330,7 @@ export function FxQuickModal() {
                     type="button"
                     onClick={handleSwap}
                     aria-label="Swap currencies"
-                    className="flex size-7.5 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm transition-transform hover:scale-110 hover:text-foreground active:scale-95 cursor-pointer"
+                    className="flex size-7.5 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm transition-transform hover:text-foreground active:scale-95 cursor-pointer"
                   >
                     <ArrowLeftRight size={13} strokeWidth={2} />
                   </button>

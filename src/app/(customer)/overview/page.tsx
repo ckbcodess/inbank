@@ -10,7 +10,7 @@ import { GcbDashboard, type DashStatus } from "@/components/dashboard/v2/GcbDash
 import { HeroWaveTuner } from "@/components/dashboard/v2/HeroWaveTuner";
 import { FirstRunWelcome } from "@/components/dashboard/v2/FirstRunWelcome";
 import { QuickFundModal } from "@/components/dashboard/v2/QuickFundModal";
-import { peekHasSkippedFunding, clearHasSkippedFunding } from "@/lib/device-trust";
+import { clearHasSkippedFunding } from "@/lib/device-trust";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import {
@@ -44,12 +44,8 @@ function OverviewContent() {
   const activeProfile = useSession((s) => s.activeProfile);
   const defaultAccountId = useAccountPrefs((s) => s.defaultAccountId);
   const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
-  const [usageType, setUsageType] = useState<DashboardUsageType>(() => {
-    if (typeof window !== "undefined" && peekHasSkippedFunding()) {
-      return "new_unfunded";
-    }
-    return "active";
-  });
+  // Opens on the clean Active state; Dev Mode's Data state switches it.
+  const [usageType, setUsageType] = useState<DashboardUsageType>("active");
   const [layout, setLayout] = useState<DashboardLayout>(readLayout);
   const [fundModalOpen, setFundModalOpen] = useState(false);
   const [fetching, setFetching] = useState(false);

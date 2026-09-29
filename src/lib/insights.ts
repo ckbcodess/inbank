@@ -530,13 +530,13 @@ export interface CategorySlice {
  * existing one under colour-blind simulation.
  */
 const SLOT_COLORS = [
-  "var(--cat-1)",
-  "var(--cat-2)",
-  "var(--cat-3)",
-  "var(--cat-4)",
-  "var(--cat-5)",
+  "var(--spend-1)",
+  "var(--spend-2)",
+  "var(--spend-3)",
+  "var(--spend-4)",
+  "var(--spend-5)",
 ];
-const OTHER_COLOR = "var(--cat-other)";
+const OTHER_COLOR = "var(--spend-other)";
 const MAX_SLICES = 5;
 
 export function spendByCategory(

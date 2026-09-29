@@ -545,7 +545,7 @@ export function AttentionBand({ items }: { items: AttentionItem[] }) {
               <ChevronRight
                 size={15}
                 strokeWidth={1.8}
-                className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+                className="shrink-0 text-muted-foreground transition-transform"
               />
             </Link>
           </li>

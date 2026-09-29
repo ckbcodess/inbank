@@ -156,7 +156,7 @@ export function ActionRequiredWidget() {
                   <ChevronRight
                     size={14}
                     strokeWidth={1.8}
-                    className="transition-transform group-hover:translate-x-0.5"
+                    className="transition-transform"
                   />
                 </Link>
               </div>

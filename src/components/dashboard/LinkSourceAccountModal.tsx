@@ -415,7 +415,7 @@ export default function LinkSourceAccountModal({
                         size={20}
                         strokeWidth={2}
                         aria-hidden="true"
-                        className="shrink-0 text-foreground transition-transform group-hover:translate-x-0.5"
+                        className="shrink-0 text-foreground transition-transform"
                       />
                     </button>
                   ))}
@@ -461,7 +461,7 @@ export default function LinkSourceAccountModal({
                     className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all hover:bg-muted/40 cursor-pointer shadow-xs"
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground transition-transform group-hover:scale-105">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground transition-transform">
                         <ArrowLeftRight size={19} strokeWidth={1.8} />
                       </div>
                       <div className="flex flex-col min-w-0">
@@ -477,7 +477,7 @@ export default function LinkSourceAccountModal({
                     <ChevronRight
                       size={18}
                       strokeWidth={1.8}
-                      className="text-muted-foreground/60 transition-transform group-hover:translate-x-0.5 group-hover:text-foreground shrink-0 ml-2"
+                      className="text-muted-foreground/60 transition-transform group-hover:text-foreground shrink-0 ml-2"
                     />
                   </button>
                   )}
@@ -489,7 +489,7 @@ export default function LinkSourceAccountModal({
                     className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all hover:bg-muted/40 cursor-pointer shadow-xs"
                   >
                     <div className="flex items-center gap-3.5 min-w-0">
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground transition-transform group-hover:scale-105">
+                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground transition-transform">
                         <Wallet size={19} strokeWidth={1.8} />
                       </div>
                       <div className="flex flex-col min-w-0">
@@ -505,7 +505,7 @@ export default function LinkSourceAccountModal({
                     <ChevronRight
                       size={18}
                       strokeWidth={1.8}
-                      className="text-muted-foreground/60 transition-transform group-hover:translate-x-0.5 group-hover:text-foreground shrink-0 ml-2"
+                      className="text-muted-foreground/60 transition-transform group-hover:text-foreground shrink-0 ml-2"
                     />
                   </button>
                 </div>

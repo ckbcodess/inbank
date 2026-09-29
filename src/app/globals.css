@@ -141,6 +141,14 @@
   --cat-4: #eda100;
   --cat-5: #e87ba4;
   --cat-other: oklch(0.72 0 0);
+  /* Spend-by-category charts (dashboard My Spends, the account's My Spends, Insights):
+     one palette so a category keeps its colour wherever it appears. */
+  --spend-1: #86efac;
+  --spend-2: #38bdf8;
+  --spend-3: #facc15;
+  --spend-4: #fb7185;
+  --spend-5: #a78bfa;
+  --spend-other: #cbd5e1;
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.439 0 0);
@@ -263,6 +271,12 @@
   --cat-4: #c98500;
   --cat-5: #d55181;
   --cat-other: oklch(0.55 0 0);
+  --spend-1: #8ef574;
+  --spend-2: #54c5f8;
+  --spend-3: #ffd343;
+  --spend-4: #ff3366;
+  --spend-5: #b69cff;
+  --spend-other: #4d5055;
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.708 0 0);
   --sidebar-primary: oklch(0.846 0.172 86.7);

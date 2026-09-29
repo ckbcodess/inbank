@@ -734,7 +734,7 @@ export function PayAgainCard({ data, className }: { data: DashData; className?: 
             >
               <span
                 className={cn(
-                  "flex size-11 items-center justify-center rounded-full text-[13.5px] tracking-[0.02em] transition-transform group-hover:scale-105 sm:size-12 sm:text-[14px]",
+                  "flex size-11 items-center justify-center rounded-full text-[13.5px] tracking-[0.02em] transition-transform sm:size-12 sm:text-[14px]",
                   AVATAR_TINTS[i % AVATAR_TINTS.length],
                 )}
               >
@@ -878,11 +878,16 @@ export function AnalyticsCard({
   if (loading) {
     return (
       <Card className={className}>
-        <div className="h-[260px] animate-pulse rounded-xl bg-muted/60" aria-label="Loading analytics" />
+        <div className="h-[260px] animate-pulse rounded-xl bg-muted/60" aria-label="Loading My Spends" />
       </Card>
     );
   }
-  return <SpendsRadialChart byRange={data.spendByRange} showAmounts={showAmounts} className={className} />;
+  return <SpendsRadialChart
+      byRange={data.spendByRange}
+      showAmounts={showAmounts}
+      className={className}
+      href={data.selectedAccountId ? `/accounts/${data.selectedAccountId}/expenses` : "/accounts"}
+    />;
 }
 
 /** Exchange rates as a collapsible bar (headline pair peeks while closed). */

@@ -104,7 +104,7 @@ export function TotalBalanceCard({ accounts }: TotalBalanceCardProps) {
               <div className="text-right text-[13.5px] font-medium text-foreground tabular">
                 <RevealingAmount amount={acc.balance} currency={acc.currency} />
               </div>
-              <ChevronRight size={15} strokeWidth={1.8} className="text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
+              <ChevronRight size={15} strokeWidth={1.8} className="text-muted-foreground transition-transform group-hover:text-foreground" />
             </div>
           </Link>
         ))}

@@ -178,7 +178,7 @@ export function LiquidityDeck({
             onClick={onOpenTransfer}
             className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-primary text-primary-foreground hover:bg-primary-hover active:scale-[0.97] transition-all shadow-xs group cursor-pointer"
           >
-            <span className="flex size-9 items-center justify-center rounded-full bg-black/10 text-primary-foreground transition-transform group-hover:scale-110">
+            <span className="flex size-9 items-center justify-center rounded-full bg-black/10 text-primary-foreground transition-transform">
               <Send size={16} strokeWidth={2.2} />
             </span>
             <span className="text-[12px] font-medium">Send &amp; Pay</span>
@@ -189,7 +189,7 @@ export function LiquidityDeck({
             onClick={onOpenBillPay}
             className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group cursor-pointer"
           >
-            <span className="flex size-9 items-center justify-center rounded-full bg-muted text-foreground transition-transform group-hover:scale-110">
+            <span className="flex size-9 items-center justify-center rounded-full bg-muted text-foreground transition-transform">
               <Receipt size={16} strokeWidth={2} />
             </span>
             <span className="text-[12px] font-medium text-foreground">Pay Bills</span>
@@ -200,7 +200,7 @@ export function LiquidityDeck({
             onClick={onOpenBillPay}
             className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group cursor-pointer"
           >
-            <span className="flex size-9 items-center justify-center rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 transition-transform group-hover:scale-110">
+            <span className="flex size-9 items-center justify-center rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 transition-transform">
               <Smartphone size={16} strokeWidth={2} />
             </span>
             <span className="text-[12px] font-medium text-foreground">Airtime/Data</span>
@@ -211,7 +211,7 @@ export function LiquidityDeck({
             onClick={onOpenTopUp}
             className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group cursor-pointer"
           >
-            <span className="flex size-9 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 transition-transform group-hover:scale-110">
+            <span className="flex size-9 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 transition-transform">
               <CreditCard size={16} strokeWidth={2} />
             </span>
             <span className="text-[12px] font-medium text-foreground">Top Up Card</span>
@@ -222,7 +222,7 @@ export function LiquidityDeck({
               href="/payments/bulk"
               className="hidden sm:flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group"
             >
-              <span className="flex size-9 items-center justify-center rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 transition-transform group-hover:scale-110">
+              <span className="flex size-9 items-center justify-center rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 transition-transform">
                 <Layers size={16} strokeWidth={2} />
               </span>
               <span className="text-[12px] font-medium text-foreground">Bulk Payroll</span>
@@ -232,7 +232,7 @@ export function LiquidityDeck({
               href="/payments"
               className="hidden sm:flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group"
             >
-              <span className="flex size-9 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 transition-transform group-hover:scale-110">
+              <span className="flex size-9 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 transition-transform">
                 <Sparkles size={16} strokeWidth={2} />
               </span>
               <span className="text-[12px] font-medium text-foreground">More Services</span>

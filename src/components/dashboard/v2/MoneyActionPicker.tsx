@@ -82,7 +82,7 @@ export function MoneyActionPicker({
                     size={16}
                     strokeWidth={1.8}
                     aria-hidden="true"
-                    className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+                    className="shrink-0 text-muted-foreground transition-transform"
                   />
                 </Link>
               </li>

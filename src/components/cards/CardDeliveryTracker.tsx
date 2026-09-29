@@ -298,7 +298,7 @@ export function CardDeliveryTracker({
           </div>
           <ChevronRight
             size={18}
-            className="text-muted-foreground group-hover:translate-x-0.5 group-hover:text-foreground transition-all"
+            className="text-muted-foreground group-hover:text-foreground transition-all"
           />
         </button>
       )}

@@ -71,7 +71,7 @@ export function FocusLayout(props: DashViewProps) {
 
   const elsewhere = [
     { label: t("dashboard.cards", "Cards"), href: "/cards" },
-    { label: t("dashboard.analytics", "Analytics"), href: "/reports" },
+    { label: t("dashboard.mySpends", "My Spends"), href: data.selectedAccountId ? `/accounts/${data.selectedAccountId}/expenses` : "/accounts" },
     { label: t("dashboard.exchangeRates", "Exchange rates"), href: "/fx-rates" },
     { label: t("dashboard.accounts", "Accounts"), href: "/accounts" },
   ];

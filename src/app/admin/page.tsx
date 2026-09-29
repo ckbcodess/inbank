@@ -120,7 +120,7 @@ function QueueLink({
         <span className="text-[13.5px] text-foreground">{label}</span>
         <span className="text-[12px] text-muted-foreground">{hint}</span>
       </span>
-      <ChevronRight size={17} strokeWidth={2} aria-hidden="true" className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground" />
+      <ChevronRight size={17} strokeWidth={2} aria-hidden="true" className="shrink-0 text-muted-foreground transition-transform group-hover:text-foreground" />
     </Link>
   );
 }

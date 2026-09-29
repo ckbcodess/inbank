@@ -117,7 +117,7 @@ export default function GetStartedPage() {
               <ChevronRight
                 size={20}
                 strokeWidth={2.2}
-                className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"
+                className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:text-foreground"
               />
             </button>
 
@@ -145,7 +145,7 @@ export default function GetStartedPage() {
               <ChevronRight
                 size={20}
                 strokeWidth={2.2}
-                className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"
+                className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:text-foreground"
               />
             </button>
           </div>
@@ -172,7 +172,7 @@ export default function GetStartedPage() {
                 </div>
               </div>
 
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:translate-x-1 group-hover:text-foreground">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:text-foreground">
                 <ExternalLink size={18} strokeWidth={2} />
               </div>
             </button>
@@ -201,7 +201,7 @@ export default function GetStartedPage() {
               <ChevronRight
                 size={20}
                 strokeWidth={2.2}
-                className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"
+                className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:text-foreground"
               />
             </button>
           </div>

@@ -113,7 +113,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                   data-ripple="true"
                   className="relative flex size-[52px] sm:size-[54px] items-center justify-center overflow-hidden rounded-2xl border border-border/80 bg-muted/40 text-foreground shadow-2xs transition-[background-color,border-color] duration-150 group-hover:bg-muted group-hover:border-border"
                 >
-                  <Icon size={19} strokeWidth={1.8} className="transition-transform group-hover:scale-105" />
+                  <Icon size={19} strokeWidth={1.8} className="transition-transform" />
                 </div>
                 <span className="text-[12px] font-normal leading-tight text-foreground truncate max-w-full px-1">
                   {action.label}

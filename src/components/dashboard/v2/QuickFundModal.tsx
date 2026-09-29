@@ -200,7 +200,7 @@ export function QuickFundModal({
                     Fund with Mobile Money Wallet
                   </span>
                 </div>
-                <ArrowRight size={16} strokeWidth={1.8} className="text-muted-foreground transition-transform group-hover:translate-x-0.5 shrink-0" />
+                <ArrowRight size={16} strokeWidth={1.8} className="text-muted-foreground transition-transform shrink-0" />
               </button>
 
               <button
@@ -220,7 +220,7 @@ export function QuickFundModal({
                     Fund with a Card
                   </span>
                 </div>
-                <ArrowRight size={16} strokeWidth={1.8} className="text-muted-foreground transition-transform group-hover:translate-x-0.5 shrink-0" />
+                <ArrowRight size={16} strokeWidth={1.8} className="text-muted-foreground transition-transform shrink-0" />
               </button>
             </div>
           )}
