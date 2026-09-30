@@ -570,8 +570,10 @@ select {
   40%, 80% { transform: translateX(8px); }
 }
 
-.animate-pin-shake {
-  animation: pin-shake 0.35s ease-in-out;
+@media (prefers-reduced-motion: no-preference) {
+  .animate-pin-shake {
+    animation: pin-shake 0.35s ease-in-out;
+  }
 }
 
 /* Slight nudge shake — amount field at its ceiling. Gentler than pin-shake:
@@ -723,3 +725,13 @@ html.theme-fade *::after {
   }
 }
 
+
+
+/* Eagle backdrop: a slow, small float. Off unless enabled in the Eagle studio. */
+@keyframes eagle-drift {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -10px, 0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .eagle-drift { animation: eagle-drift 9s ease-in-out infinite; }
+}

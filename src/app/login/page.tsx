@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AlertCircle, Eye, EyeOff, Fingerprint, ShieldCheck, User } from "lucide-react";
@@ -15,6 +15,10 @@ import { useTrustedDevice, type TrustedDevice } from "@/lib/device-trust";
 import { findLegacyUser } from "@/lib/migration";
 
 type LoginState = "idle" | "submitting" | "error";
+
+/** Same field as the rest of the app. */
+const FIELD = "h-11 text-[14.5px]";
+const LABEL = "text-[12px] text-muted-foreground";
 
 function LoginForm() {
   const router = useRouter();
@@ -31,6 +35,23 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [state, setState] = useState<LoginState>("idle");
+  const [passkeyReady, setPasskeyReady] = useState(false);
+  const [passkeyBusy, setPasskeyBusy] = useState(false);
+
+  // Only offer a passkey where this browser can actually use one.
+  useEffect(() => {
+    setPasskeyReady(typeof window !== "undefined" && "PublicKeyCredential" in window);
+  }, []);
+
+  function signInWithPasskey() {
+    setPasskeyBusy(true);
+    // Stand-in for the platform prompt (Touch ID, Windows Hello, a phone nearby).
+    window.setTimeout(() => {
+      signIn(bankingType === "business" ? ACTORS[5] : ACTORS[0]);
+      verifyMfa();
+      router.push("/overview");
+    }, 1100);
+  }
 
   function handleTypeChange(nextType: "personal" | "business") {
     setBankingType(nextType);
@@ -81,12 +102,8 @@ function LoginForm() {
 
   return (
     <AuthLayout
-      title={bankingType === "business" ? "Business Internet Banking" : "Login to GCB Internet Banking"}
-      description={
-        bankingType === "business"
-          ? "Sign in with your corporate credentials to manage your business accounts."
-          : undefined
-      }
+      vAlign="center"
+      title={bankingType === "business" ? "GCB Business Internet Banking" : "Log in to GCB Internet Banking"}
       width="compact"
       footer={
         <div className="flex flex-col items-center gap-2.5 text-center">
@@ -116,10 +133,10 @@ function LoginForm() {
         </div>
       }
     >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         {/* Email / User ID Input */}
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="email" className="text-[13px] font-medium text-foreground">
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="email" className={LABEL}>
             {bankingType === "business" ? "Corporate user ID or email" : "Email or user ID"}
           </Label>
           <Input
@@ -136,15 +153,15 @@ function LoginForm() {
               setEmail(e.target.value);
               if (state === "error") setState("idle");
             }}
-            className="h-11 px-3.5 text-[14px]"
+            className={FIELD}
             required
           />
         </div>
 
         {/* Password Input */}
-        <div className="flex flex-col gap-2">
+        <div className={`flex flex-col gap-1 ${state === "error" ? "animate-pin-shake" : ""}`}>
           <div className="flex items-center justify-between">
-            <Label htmlFor="password" className="text-[13px] font-medium text-foreground">
+            <Label htmlFor="password" className={LABEL}>
               Password
             </Label>
             <Link
@@ -165,14 +182,14 @@ function LoginForm() {
                 setPassword(e.target.value);
                 if (state === "error") setState("idle");
               }}
-              className="h-11 px-3.5 pr-11 text-[14px]"
+              className={`${FIELD} pr-9`}
               required
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? "Hide password" : "Show password"}
-              className="absolute right-2 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/50 cursor-pointer"
+              className="absolute right-0 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/50 cursor-pointer"
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
@@ -194,10 +211,32 @@ function LoginForm() {
           variant="default"
           size="lg"
           loading={state === "submitting"}
-          className="mt-3 h-11 w-full text-[14.5px]"
+          className="mt-1 h-12 w-full text-[14.5px]"
         >
-          Login
+          Sign in
         </Button>
+
+        {passkeyReady && (
+          <>
+            <div className="flex items-center gap-3 text-[12px] text-muted-foreground" aria-hidden="true">
+              <span className="h-px flex-1 bg-border" />
+              or
+              <span className="h-px flex-1 bg-border" />
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              loading={passkeyBusy}
+              disabled={state === "submitting"}
+              onClick={signInWithPasskey}
+              className="h-12 w-full gap-2 text-[14.5px]"
+            >
+              <Fingerprint size={17} strokeWidth={1.8} aria-hidden="true" />
+              Sign in with a passkey
+            </Button>
+          </>
+        )}
       </form>
     </AuthLayout>
   );
@@ -248,6 +287,7 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
 
   return (
     <AuthLayout
+      vAlign="center"
       title={`Welcome back, ${firstName}`}
       width="compact"
       footer={
@@ -293,8 +333,8 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
             }}
             className="flex flex-col gap-5"
           >
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="returning-password" className="text-[13px] font-medium text-foreground">
+            <div className="flex flex-col gap-1">
+              <Label htmlFor="returning-password" className={LABEL}>
                 Password
               </Label>
               <div className="relative">
@@ -306,14 +346,14 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-11 px-3.5 pr-11 text-[14px]"
+                  className={`${FIELD} pr-9`}
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-2 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground cursor-pointer"
+                  className="absolute right-0 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground cursor-pointer"
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>

@@ -93,7 +93,10 @@ export default function OtpInput({
   }
 
   return (
-    <div className="flex items-center justify-center gap-2 sm:gap-2.5" onPaste={handlePaste}>
+    <div
+      className={`flex items-center justify-center gap-2 sm:gap-2.5 ${invalid ? "animate-pin-shake" : ""}`}
+      onPaste={handlePaste}
+    >
       {Array.from({ length }, (_, i) => {
         const showSeparator = length === 6 && i === 3;
         return (

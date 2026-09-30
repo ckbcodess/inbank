@@ -3,12 +3,13 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowLeft, ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import AuthHeader from "./AuthHeader";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { cn } from "@/lib/utils";
 import { SmoothHeight } from "@/components/ui/smooth-height";
+import EagleBackdrop from "@/components/brand/EagleBackdrop";
 
 interface AuthLayoutProps {
   title?: string;
@@ -44,6 +45,12 @@ interface AuthLayoutProps {
   showLogo?: boolean;
   /** Animate card height between step transitions. Defaults to false to prevent expanding animations on initial page load. */
   animateHeight?: boolean;
+  /** "quiet" drops the banner and card chrome: content sits directly on the page. "card" is the older boxed look. "hybrid" (default) is the quiet layout (fixed column, top anchored, plain back chevron) inside the card, over the banner, without the eagle. */
+  variant?: "card" | "quiet" | "hybrid";
+  /** Quiet only. "top" (default) keeps multi-step titles fixed; "center" suits short single-screen pages like login. */
+  vAlign?: "top" | "center";
+  /** Quiet only. Faint dotted golden eagle behind the content. */
+  eagle?: boolean;
 }
 
 export default function AuthLayout({
@@ -62,25 +69,33 @@ export default function AuthLayout({
   stepProgress,
   showLogo = false,
   animateHeight = false,
+  variant = "hybrid",
+  vAlign = "top",
+  eagle = false,
 }: AuthLayoutProps) {
-  const maxWidthClass =
-    width === "wide"
+  const quiet = variant === "quiet"; // no banner, no card
+  const newLayout = variant !== "card"; // the new column, back placement and anchoring
+  // Quiet screens share one column width so steps never jump sideways.
+  const maxWidthClass = newLayout
+    ? "max-w-[500px]"
+    : width === "wide"
       ? "max-w-[620px]"
       : width === "compact"
       ? "max-w-[500px]"
       : "max-w-[540px]";
 
   const hasBack = Boolean(onBack || backHref);
-  const cardClassName =
-    "rounded-[20px] border border-border/80 bg-card/95 px-6 py-8 sm:px-8 sm:py-10 shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden";
+  const cardClassName = quiet
+    ? "px-1 py-6 sm:py-10"
+    : "rounded-[20px] border border-border/80 bg-card/95 px-6 py-8 sm:px-8 sm:py-10 shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden";
 
   return (
-    <div className="relative flex min-h-dvh w-full flex-col bg-background text-foreground transition-colors selection:bg-primary/30 selection:text-foreground overflow-x-hidden">
+    <div data-auth-quiet={newLayout ? "" : undefined} className="relative flex min-h-dvh w-full flex-col bg-background text-foreground transition-colors selection:bg-primary/30 selection:text-foreground overflow-x-hidden">
       {/* Top Fixed Header */}
       <AuthHeader />
 
       {/* Decorative Brand Hero Banner Background */}
-      <div className="absolute top-16 inset-x-0 h-[240px] sm:h-[280px] lg:h-[300px] overflow-hidden pointer-events-none z-0">
+      {!quiet && <div className="absolute top-16 inset-x-0 h-[240px] sm:h-[280px] lg:h-[300px] overflow-hidden pointer-events-none z-0">
         <Image
           src="/images/auth-banner.png"
           alt="GCB Internet Banking"
@@ -92,18 +107,56 @@ export default function AuthLayout({
         <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-transparent to-black/20 dark:from-black/70 dark:via-black/40 dark:to-black/80" />
         {/* Fade smoothly into page background */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
-      </div>
+      </div>}
+
+      {quiet && eagle && <EagleBackdrop />}
 
       {/* Main Container - Vertically and horizontally centered in available viewport */}
-      <main className="relative z-10 flex min-h-[calc(100dvh-4rem)] w-full items-center justify-center px-4 sm:px-6 py-8 mt-16">
+      <main
+        className={cn(
+          "relative z-10 flex min-h-[calc(100dvh-4rem)] w-full justify-center px-4 sm:px-6 py-8 mt-16",
+          // Quiet screens anchor to the top so the title never jumps when a step's height changes.
+          newLayout && vAlign === "top" ? "items-start pt-10 sm:pt-[12vh]" : "items-center"
+        )}
+      >
         <div className={`w-full ${maxWidthClass}`}>
           {/* Card Inner Content */}
           {(() => {
             const cardInner = (
               <>
+                {/* In-Card Back Navigation Trigger */}
+                {hasBack && (
+                  <div className={newLayout ? (stepProgress ? "mb-6 -ml-1 flex items-center" : "mb-10 -ml-1 flex items-center") : "mb-5 flex items-center"}>
+                    {backHref ? (
+                      <Link
+                        href={backHref}
+                        aria-label={backLabel}
+                        className="group inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95"
+                      >
+                        <div className={newLayout ? "flex size-7 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground" : "flex size-7.5 items-center justify-center rounded-lg border border-border/70 bg-muted/30 transition-colors group-hover:bg-muted group-hover:border-border"}>
+                          <ChevronLeft size={16} strokeWidth={2.2} className="transition-transform" />
+                        </div>
+                        <span>Back</span>
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={onBack}
+                        aria-label={backLabel}
+                        className="group inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95 cursor-pointer"
+                      >
+                        <div className={newLayout ? "flex size-7 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground" : "flex size-7.5 items-center justify-center rounded-lg border border-border/70 bg-muted/30 transition-colors group-hover:bg-muted group-hover:border-border"}>
+                          <ChevronLeft size={16} strokeWidth={2.2} className="transition-transform" />
+                        </div>
+                        <span>Back</span>
+                      </button>
+                    )}
+                  </div>
+                )}
+
                 {/* Step Progress Segments (Full Width across the card) */}
                 {stepProgress && (
-                  <div className="mb-6 flex items-center gap-2 px-0.5">
+                  <div className={cn("flex items-center gap-2 px-0.5", newLayout ? "mb-8" : "mb-6")}>
                     {Array.from({ length: stepProgress.total }).map((_, i) => {
                       const isActive = i + 1 <= stepProgress.current;
                       const isCurrent = i + 1 === stepProgress.current;
@@ -120,36 +173,6 @@ export default function AuthLayout({
                         />
                       );
                     })}
-                  </div>
-                )}
-
-                {/* In-Card Back Navigation Trigger */}
-                {hasBack && (
-                  <div className="mb-5 flex items-center">
-                    {backHref ? (
-                      <Link
-                        href={backHref}
-                        aria-label={backLabel}
-                        className="group inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95"
-                      >
-                        <div className="flex size-7.5 items-center justify-center rounded-lg border border-border/70 bg-muted/30 transition-colors group-hover:bg-muted group-hover:border-border">
-                          <ChevronLeft size={16} strokeWidth={2.2} className="transition-transform" />
-                        </div>
-                        <span>Back</span>
-                      </Link>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={onBack}
-                        aria-label={backLabel}
-                        className="group inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95 cursor-pointer"
-                      >
-                        <div className="flex size-7.5 items-center justify-center rounded-lg border border-border/70 bg-muted/30 transition-colors group-hover:bg-muted group-hover:border-border">
-                          <ChevronLeft size={16} strokeWidth={2.2} className="transition-transform" />
-                        </div>
-                        <span>Back</span>
-                      </button>
-                    )}
                   </div>
                 )}
 
