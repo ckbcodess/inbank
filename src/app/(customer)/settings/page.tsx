@@ -148,7 +148,7 @@ export default function SettingsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="fullname" className="text-[12.5px] text-muted-foreground">
+                <Label htmlFor="fullname" className="text-[12.5px] text-foreground">
                   Full Legal Name
                 </Label>
                 <Input
@@ -161,7 +161,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="email" className="text-[12.5px] text-muted-foreground">
+                <Label htmlFor="email" className="text-[12.5px] text-foreground">
                   Registered Email
                 </Label>
                 <Input
@@ -175,7 +175,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="phone" className="text-[12.5px] text-muted-foreground">
+                <Label htmlFor="phone" className="text-[12.5px] text-foreground">
                   Primary Mobile Phone
                 </Label>
                 <PhoneInput
@@ -188,7 +188,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="ghana-card" className="text-[12.5px] text-muted-foreground flex items-center justify-between">
+                <Label htmlFor="ghana-card" className="text-[12.5px] text-foreground flex items-center justify-between">
                   <span>Ghana Card Number (NIA)</span>
                   <span className="text-[10.5px] text-emerald-600 dark:text-emerald-400 font-medium">Verified</span>
                 </Label>
@@ -196,13 +196,13 @@ export default function SettingsPage() {
                   id="ghana-card"
                   value={ghanaCard}
                   disabled
-                  className="h-10 text-[13px] font-mono bg-muted/30"
+                  className="h-10 text-[13px] bg-muted/30"
                 />
               </div>
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="address" className="text-[12.5px] text-muted-foreground">
+              <Label htmlFor="address" className="text-[12.5px] text-foreground">
                 Residential / Operating Address
               </Label>
               <Input
@@ -226,7 +226,7 @@ export default function SettingsPage() {
                       Active
                     </Badge>
                   </div>
-                  <span className="text-[12px] text-muted-foreground font-mono">{proxyId}</span>
+                  <span className="text-[12px] text-muted-foreground">{proxyId}</span>
                 </div>
               </div>
               <Button
@@ -262,7 +262,7 @@ export default function SettingsPage() {
 
             <div className="flex flex-col gap-3.5 max-w-md">
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="curr-pass" className="text-[12.5px] text-muted-foreground">
+                <Label htmlFor="curr-pass" className="text-[12.5px] text-foreground">
                   Current Password
                 </Label>
                 <Input
@@ -275,7 +275,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="new-pass" className="text-[12.5px] text-muted-foreground">
+                <Label htmlFor="new-pass" className="text-[12.5px] text-foreground">
                   New Password
                 </Label>
                 <Input
@@ -288,7 +288,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="conf-pass" className="text-[12.5px] text-muted-foreground">
+                <Label htmlFor="conf-pass" className="text-[12.5px] text-foreground">
                   Confirm New Password
                 </Label>
                 <Input

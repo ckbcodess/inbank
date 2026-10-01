@@ -177,11 +177,7 @@ export function getSimulatedDashboardData({
 
     case "attention":
       // Demonstrates the Needs Attention band with 1-click remedies
-      // Pinned to the default account, so switching away shows them leave.
-      attention = DEMO_ATTENTION_ITEMS.map((i) => ({
-        ...i,
-        accountId: resolveDefaultAccountId(baseAccounts, defaultAccountId) ?? undefined,
-      }));
+      attention = DEMO_ATTENTION_ITEMS;
       break;
 
     case "new_customer":
@@ -244,7 +240,7 @@ export function getSimulatedDashboardData({
       accounts = [
         {
           id: "acc-new-unfunded",
-          name: "Virtual Account",
+          name: "Virtual Wallet",
           number: "1011 8920 1920",
           currency: "GHS",
           balance: 0,
@@ -393,7 +389,10 @@ export function getSimulatedDashboardData({
     upcoming: selectedId ? upcomingPayments(selectedId, today, 4) : [],
     scheduledNext30: selectedId ? scheduledOutflow(selectedId, today, 30) : 0,
     // Items about another account belong on that account's view.
-    attention: attention.filter((i) => !i.accountId || i.accountId === selectedId),
+    attention:
+      usageType === "attention"
+        ? DEMO_ATTENTION_ITEMS
+        : attention.filter((i) => !i.accountId || i.accountId === selectedId),
     // A brand-new (or empty) customer hasn't paid anyone yet.
     payAgain: usageType === "new_customer" || usageType === "empty" ? [] : payAgainFor(actor.id),
   };

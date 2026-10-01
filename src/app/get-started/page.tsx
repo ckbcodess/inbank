@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  ArrowLeft,
   ChevronRight,
   CreditCard,
   ExternalLink,
@@ -62,8 +61,8 @@ export default function GetStartedPage() {
       <AuthLayout
         title={
           screen === 1
-            ? "How Would You Like to Register?"
-            : "How Would You Like to Proceed?"
+            ? "How Will You Like to Register?"
+            : "How Will You Like to Proceed?"
         }
         description={
           screen === 1
@@ -155,17 +154,17 @@ export default function GetStartedPage() {
               type="button"
               data-tour="gs-cos"
               onClick={handleChooseCoos}
-              className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
               <div className="flex items-center gap-3.5">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <Landmark size={18} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[15px] font-medium text-foreground">
+                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
                     Open a GCB Account
                   </span>
-                  <span className="text-[13px] text-muted-foreground mt-0.5">
+                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
                     Open a new bank account online.
                   </span>
                 </div>
@@ -176,7 +175,7 @@ export default function GetStartedPage() {
               </div>
             </button>
 
-            {/* Step 2 Option 2: Get an Instant Virtual Wallet -> Immediate route to /signup */}
+            {/* Step 2 Option 2: Get a Virtual Wallet -> Immediate route to /signup */}
             <button
               type="button"
               data-tour="gs-walletcard"
@@ -189,10 +188,10 @@ export default function GetStartedPage() {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
-                    Get an Instant Virtual Wallet
+                    Get a Virtual Wallet
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
-                    Open an account using a mobile wallet or card.
+                    Fund with mobile money or any bank card.
                   </span>
                 </div>
               </div>

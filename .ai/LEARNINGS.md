@@ -130,3 +130,5 @@
 - **Base UI `Checkbox` inside a `<label>` gets no accessible name.** Pass `aria-label` (or `aria-labelledby`) explicitly.
 
 - **Loading on buttons**: use `<Button loading={busy}>Label</Button>`, not a spinner plus "Saving…" text. Keep `disabled` for validity only; `loading` handles busy (it keeps the button's colour and blocks clicks). Never remove the label from children: it holds the width.
+
+- **Alerts are toasts.** Never render an inline error/success banner; use `toast.*` from Sonner or `<AlertToast when message />` for state-driven messages. Field hints and the wrong-PIN shake stay inline.

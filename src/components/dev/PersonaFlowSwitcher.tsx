@@ -22,7 +22,7 @@ import { useSession } from "@/lib/session-store";
 import { useTour } from "@/lib/tour-store";
 import { ACTORS } from "@/lib/mock-data";
 import { ACTIVATION_STEPS, SIGNUP_STEPS, parseOnboardingStep } from "@/lib/onboarding-steps";
-import { forgetThisDevice, trustThisDevice } from "@/lib/device-trust";
+import { forgetThisDevice, setFirstRun, setPendingFundPrompt, setPendingReferral, trustThisDevice } from "@/lib/device-trust";
 import { LEGACY_DEMO_USER_ID, MIGRATION_STEPS, parseMigrationStep } from "@/lib/migration";
 
 const PERSONAS = [
@@ -33,7 +33,7 @@ const PERSONAS = [
 ] as const;
 type PersonaId = (typeof PERSONAS)[number]["id"];
 
-const ONBOARDING_PATHS = ["/", "/signup", "/activate", "/get-started", "/login", "/mfa", "/forgot-password", "/migrate"];
+const ONBOARDING_PATHS = ["/", "/signup", "/activate", "/get-started", "/login", "/mfa", "/forgot-password", "/migrate", "/overview"];
 
 function PersonaFlowSwitcherContent() {
   const router = useRouter();
@@ -63,6 +63,33 @@ function PersonaFlowSwitcherContent() {
   function go(route: string) {
     setOpen(false);
     router.push(route);
+  }
+
+  function triggerWelcome(stage: "all" | "referral" | "ready" | "fund" | "source") {
+    setOpen(false);
+    const currentActor = useSession.getState().actor;
+    if (!currentActor) {
+      const actor = ACTORS[0];
+      signIn(actor);
+      if (actor.profiles.length > 0) selectProfile(actor.profiles[0]);
+      verifyMfa();
+    }
+    setFirstRun("new");
+    if (stage === "all" || stage === "referral") {
+      setPendingReferral(true);
+    }
+    if (stage === "all" || stage === "ready" || stage === "fund") {
+      setPendingFundPrompt(true);
+    }
+    const targetUrl = `/overview?welcome=${stage}`;
+    router.push(targetUrl);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("open-welcome-flow", {
+          detail: { stage, kind: "new" },
+        })
+      );
+    }
   }
 
   /** A regular on their own laptop: this browser already trusts them, so login is one tap. */
@@ -104,6 +131,25 @@ function PersonaFlowSwitcherContent() {
     </li>
   );
 
+  const postStepRow = (stage: "all" | "referral" | "ready" | "fund" | "source", label: string, n: number) => {
+    const active = pathname === "/overview" && searchParams.get("welcome") === stage;
+    return (
+      <li key={stage}>
+        <button
+          type="button"
+          onClick={() => triggerWelcome(stage)}
+          className={cn(
+            "flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left text-[13.5px] transition-colors cursor-pointer",
+            active ? "bg-muted text-foreground" : "text-foreground hover:bg-muted/60",
+          )}
+        >
+          <span className="w-4 shrink-0 text-right text-[12px] text-muted-foreground tabular">{n}</span>
+          {label}
+        </button>
+      </li>
+    );
+  };
+
   return (
     <>
       <button
@@ -116,12 +162,12 @@ function PersonaFlowSwitcherContent() {
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent size="xl">
+        <DialogContent size="xl" className="sm:max-w-[920px]">
           <DialogHeader>
             <DialogTitle>Jump to a step</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {/* GCB account holder */}
               <section className="flex flex-col gap-2.5">
                 <h3 className="px-2.5 text-[14px] font-medium text-foreground">GCB account holder</h3>
@@ -172,6 +218,28 @@ function PersonaFlowSwitcherContent() {
                       Link Source Account
                     </button>
                   </li>
+                </ol>
+              </section>
+
+              {/* Post-onboarding cards */}
+              <section className="flex flex-col gap-2.5">
+                <div className="flex items-center justify-between px-2.5">
+                  <h3 className="text-[14px] font-medium text-foreground">Post-onboarding cards</h3>
+                </div>
+                <div className="flex h-8 items-center px-2.5">
+                  <button
+                    type="button"
+                    onClick={() => triggerWelcome("all")}
+                    className="text-[12px] font-medium text-foreground hover:underline cursor-pointer"
+                  >
+                    Play full sequence →
+                  </button>
+                </div>
+                <ol className="flex flex-col">
+                  {postStepRow("ready", "Fund Account Prompt", 1)}
+                  {postStepRow("fund", "Quick Fund Modal", 2)}
+                  {postStepRow("source", "Save Funding Source", 3)}
+                  {postStepRow("referral", "Referral Code", 4)}
                 </ol>
               </section>
 

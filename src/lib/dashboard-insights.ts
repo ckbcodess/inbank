@@ -7,6 +7,7 @@
  * identity scale (`--cat-1..5`, `--cat-other`) in globals.css.
  */
 
+import { frequencyLabel, orderTitle } from "@/lib/standing-display";
 import { roundMoney, sumMoney } from "./money";
 import {
   accountsForProfile,
@@ -302,18 +303,21 @@ export interface UpcomingPayment {
   amount: number;
   currency: string;
   frequency: InstructionFrequency;
+  /** "Monthly", "Every 10 days"...: how the frequency reads. */
+  frequencyLabel: string;
   /** ISO date of the next run on or after today. */
   date: string;
 }
 
-const MONTHS_PER: Partial<Record<InstructionFrequency, number>> = { Monthly: 1, Quarterly: 3, Yearly: 12 };
+const MONTHS_PER: Partial<Record<InstructionFrequency, number>> = { Monthly: 1, Quarterly: 3, "Half Yearly": 6, Yearly: 12 };
 const DAYS_PER: Partial<Record<InstructionFrequency, number>> = { Daily: 1, Weekly: 7 };
 
 /** Roll a schedule forward from its stored run date to the first run on/after `today`. */
-function nextRunOnOrAfter(iso: string, frequency: InstructionFrequency, today: string): string {
+function nextRunOnOrAfter(iso: string, frequency: InstructionFrequency, today: string, intervalDays = 1): string {
+  if (frequency === "Once") return iso; // a one-off never rolls forward
   const d = new Date(`${iso}T00:00:00Z`);
   const months = MONTHS_PER[frequency];
-  const days = DAYS_PER[frequency] ?? 0;
+  const days = frequency === "Custom" ? Math.max(1, intervalDays) : (DAYS_PER[frequency] ?? 0);
   // Bounded so a malformed date can never spin forever.
   for (let i = 0; i < 2000 && d.toISOString().slice(0, 10) < today; i++) {
     if (months) d.setUTCMonth(d.getUTCMonth() + months);
@@ -331,12 +335,14 @@ export function scheduledOutflow(accountId: string, today: string, days = 30): n
   const amounts: number[] = [];
   for (const s of STANDING_INSTRUCTIONS) {
     if (s.accountId !== accountId || s.status !== "Active") continue;
-    let run = nextRunOnOrAfter(s.nextRun, s.frequency, today);
+    let run = nextRunOnOrAfter(s.nextRun, s.frequency, today, s.intervalDays);
+    if (s.frequency === "Once" && run < today) continue;
     for (let i = 0; i < 400 && run < end; i++) {
       amounts.push(s.amount);
       // The day after this run, rolled forward to the next one.
       const after = new Date(new Date(`${run}T00:00:00Z`).getTime() + DAY_MS).toISOString().slice(0, 10);
-      run = nextRunOnOrAfter(run, s.frequency, after);
+      if (s.frequency === "Once") break;
+      run = nextRunOnOrAfter(run, s.frequency, after, s.intervalDays);
     }
   }
   return sumMoney(amounts);
@@ -347,12 +353,14 @@ export function upcomingPayments(accountId: string, today: string, limit = 3): U
   return STANDING_INSTRUCTIONS.filter((s) => s.accountId === accountId && s.status === "Active")
     .map((s) => ({
       id: s.id,
-      payee: s.beneficiary,
+      payee: orderTitle(s),
       amount: s.amount,
       currency: s.currency,
       frequency: s.frequency,
-      date: nextRunOnOrAfter(s.nextRun, s.frequency, today),
+      frequencyLabel: frequencyLabel(s),
+      date: nextRunOnOrAfter(s.nextRun, s.frequency, today, s.intervalDays),
     }))
+    .filter((p) => p.frequency !== "Once" || p.date >= today)
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, limit);
 }

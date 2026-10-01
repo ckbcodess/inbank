@@ -47,6 +47,9 @@ export interface PaymentOptionGroup {
   options: PaymentOption[];
 }
 
+/** Fired by the Top-Up picker's "My Account" choice; the dashboard answers by opening its add-money flow. */
+export const OPEN_FUND_EVENT = "open-fund-modal";
+
 /** Append `from=<account>` so a flow opens on the account the customer is looking at. */
 export function withFrom(href: string, accountId: string | null): string {
   if (!accountId) return href;

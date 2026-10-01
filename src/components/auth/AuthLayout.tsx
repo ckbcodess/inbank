@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
@@ -10,6 +10,7 @@ import { GCBLogo } from "@/components/ui/GCBLogo";
 import { cn } from "@/lib/utils";
 import { SmoothHeight } from "@/components/ui/smooth-height";
 import EagleBackdrop from "@/components/brand/EagleBackdrop";
+import { AUTH_LOOK_LABEL, useAuthLayoutStore } from "@/lib/auth-layout-store";
 
 interface AuthLayoutProps {
   title?: string;
@@ -69,10 +70,22 @@ export default function AuthLayout({
   stepProgress,
   showLogo = false,
   animateHeight = false,
-  variant = "hybrid",
+  variant: variantProp = "hybrid",
   vAlign = "top",
-  eagle = false,
+  eagle: eagleProp = false,
 }: AuthLayoutProps) {
+  // Test switch: the saved look overrides the page's variant. Read after mount to avoid a hydration mismatch.
+  const look = useAuthLayoutStore((s) => s.look);
+  const cycleLook = useAuthLayoutStore((s) => s.cycle);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    void useAuthLayoutStore.persist.rehydrate();
+    setMounted(true);
+  }, []);
+  const variant: NonNullable<AuthLayoutProps["variant"]> = !mounted
+    ? variantProp
+    : look === "new" ? "quiet" : look === "classic" ? "card" : "hybrid";
+  const eagle = mounted && look === "new" ? true : eagleProp;
   const quiet = variant === "quiet"; // no banner, no card
   const newLayout = variant !== "card"; // the new column, back placement and anchoring
   // Quiet screens share one column width so steps never jump sideways.
@@ -89,6 +102,7 @@ export default function AuthLayout({
     ? "px-1 py-6 sm:py-10"
     : "rounded-[20px] border border-border/80 bg-card/95 px-6 py-8 sm:px-8 sm:py-10 shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden";
 
+
   return (
     <div data-auth-quiet={newLayout ? "" : undefined} className="relative flex min-h-dvh w-full flex-col bg-background text-foreground transition-colors selection:bg-primary/30 selection:text-foreground overflow-x-hidden">
       {/* Top Fixed Header */}
@@ -100,13 +114,9 @@ export default function AuthLayout({
           src="/images/auth-banner.png"
           alt="GCB Internet Banking"
           fill
-          className="object-cover object-center opacity-90"
+          className="object-cover object-center"
           priority
         />
-        {/* Gold to dark overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-transparent to-black/20 dark:from-black/70 dark:via-black/40 dark:to-black/80" />
-        {/* Fade smoothly into page background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background" />
       </div>}
 
       {quiet && eagle && <EagleBackdrop />}
@@ -178,7 +188,7 @@ export default function AuthLayout({
 
                 {/* Optional Step Icon */}
                 {Icon && (
-                  <div className={cn("mb-6 flex", align === "center" ? "justify-center" : "justify-start")}>
+                  <div className={cn("mb-6 flex", align === "center" ? "justify-center" : "justify-start sm:justify-center")}>
                     <div className="flex size-11 items-center justify-center rounded-xl bg-primary/15 text-primary shadow-xs">
                       <Icon size={22} strokeWidth={2} aria-hidden="true" />
                     </div>
@@ -187,7 +197,7 @@ export default function AuthLayout({
 
                 {/* Optional GCB Logo (only if explicitly enabled) */}
                 {showLogo && (
-                  <div className={cn("mb-6 flex", align === "center" ? "justify-center" : "justify-start")}>
+                  <div className={cn("mb-6 flex", align === "center" ? "justify-center" : "justify-start sm:justify-center")}>
                     <GCBLogo className="h-9 w-auto text-foreground" />
                   </div>
                 )}
@@ -197,7 +207,7 @@ export default function AuthLayout({
                   <div
                     className={cn(
                       "mb-8",
-                      align === "center" ? "text-center mx-auto max-w-[440px]" : "text-left"
+                      align === "center" ? "text-center mx-auto max-w-[440px]" : "text-left sm:text-center sm:mx-auto sm:max-w-[440px]"
                     )}
                   >
                     {title && (
@@ -213,7 +223,7 @@ export default function AuthLayout({
                     {description && (
                       <div
                         className={cn(
-                          "mt-1.5 text-[13.5px] leading-relaxed text-muted-foreground",
+                          "mt-1.5 text-[13.5px] leading-relaxed text-balance text-muted-foreground",
                           descriptionClassName
                         )}
                       >
@@ -257,6 +267,14 @@ export default function AuthLayout({
           )}
         </div>
       </main>
+
+      <button
+        type="button"
+        onClick={cycleLook}
+        className="fixed bottom-4 right-4 z-50 rounded-full border border-border bg-card/95 px-3 py-1.5 text-[12px] text-muted-foreground shadow-sm backdrop-blur transition-colors hover:text-foreground active:scale-95 cursor-pointer"
+      >
+        Layout: {AUTH_LOOK_LABEL[mounted ? look : "hybrid"]}
+      </button>
     </div>
   );
 }

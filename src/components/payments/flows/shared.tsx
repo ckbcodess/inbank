@@ -1,7 +1,9 @@
 "use client";
 
+import { AlertToast } from "@/components/ui/alert-toast";
 import React, { useMemo, useRef, useState, useEffect } from "react";
-import { Landmark, AlertCircle, CheckCircle2, ShieldCheck, User } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeftRight, Landmark, AlertCircle, CheckCircle2, ShieldCheck, Smartphone, User } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import {
@@ -364,13 +366,13 @@ export function getBundlesForNetwork(networkName?: string): BundleItem[] {
 }
 
 export const GHANAIAN_NAMES = [
-  "Ama Serwaa Mensah",
+  "Ransford Gyasi",
   "Kwame Boateng",
   "Kofi Osei Asante",
   "Akua Mansah",
   "Efua Addo Mensah",
   "Nana Yaw Osei",
-  "Tsotsoo Mills Naa",
+  "Samuel Quartey",
   "Abena Danso",
   "Esi Sutherland",
   "Kwadwo Appiah",
@@ -386,15 +388,15 @@ export const ACCOUNT_RESOLUTIONS: Record<string, string> = {
   "0231 4455 8890": "Accra Fabrics Ltd",
   "01234567890": "Akua Mansah",
   "1234567890": "Akua Mansah",
-  "0123456789012": "Tsotsoo Mills Naa",
-  "0244123456": "Ama Serwaa Mensah",
-  "0244 123 456": "Ama Serwaa Mensah",
+  "0123456789012": "Samuel Quartey",
+  "0244123456": "Ransford Gyasi",
+  "0244 123 456": "Ransford Gyasi",
   "0201987654": "Kwame Boateng",
   "0201 987 654": "Kwame Boateng",
   "0559220118": "Yaa Asantewaa",
   "0559 220 118": "Yaa Asantewaa",
-  "0271445900": "Efua Mensah",
-  "0271 445 900": "Efua Mensah",
+  "0271445900": "Esther Appiah",
+  "0271 445 900": "Esther Appiah",
   "1023445566": "Kofi Osei",
   "1023 4455 66": "Kofi Osei",
   "0277456789": "Kofi Boateng",
@@ -413,7 +415,7 @@ export function resolveAccountName(number: string, fallback: string = ""): strin
   for (let i = 0; i < clean.length; i++) {
     hash = (hash * 31 + clean.charCodeAt(i)) % GHANAIAN_NAMES.length;
   }
-  return GHANAIAN_NAMES[Math.abs(hash)] || "Ama Serwaa Mensah";
+  return GHANAIAN_NAMES[Math.abs(hash)] || "Ransford Gyasi";
 }
 
 export function detectNetwork(phone: string): string {
@@ -423,6 +425,20 @@ export function detectNetwork(phone: string): string {
 
 export const RATES: Record<string, number> = {
   USD: 15.4,
+  CHF: 17.5,
+  SEK: 1.45,
+  NOK: 1.42,
+  DKK: 2.24,
+  NZD: 9.3,
+  INR: 0.185,
+  BRL: 2.8,
+  MXN: 0.8,
+  SGD: 11.5,
+  HKD: 1.98,
+  KRW: 0.0115,
+  TRY: 0.45,
+  SAR: 4.1,
+  QAR: 4.23,
   GBP: 19.8,
   EUR: 16.7,
   CAD: 11.2,
@@ -530,6 +546,75 @@ export function FromAccountSelector({
           ))}
         </SelectContent>
       </Select>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Two-way amount: what you send (GHS) and what they get (their currency)      */
+/* -------------------------------------------------------------------------- */
+const asNumber = (v: string) => Number(String(v).replace(/[^0-9.]/g, "")) || 0;
+
+/**
+ * "You send" and "Recipient gets", linked by the rate. Whichever box the customer
+ * types in is the source of truth and keeps exactly what they typed; the other is
+ * worked out from it. (Deriving both from one stored value rewrote the box under
+ * their fingers: typing 22 became 22.02.) Typing GHS rounds the recipient's amount
+ * down, so they are never promised more than was paid.
+ *
+ * `ghs` is "" while the foreign box is the source; `onChange` always gets both.
+ */
+export function DualAmountFields({
+  foreign,
+  ghs,
+  rate,
+  foreignCurrency,
+  sendCurrency = "GHS",
+  onChange,
+  onFocus,
+  hasError,
+}: {
+  foreign: string;
+  ghs: string;
+  rate: number;
+  foreignCurrency: string;
+  sendCurrency?: string;
+  onChange: (next: { foreign: string; ghs: string }) => void;
+  onFocus?: () => void;
+  hasError?: boolean;
+}) {
+  const numForeign = asNumber(foreign);
+  const ghsShown = ghs !== "" ? ghs : numForeign > 0 ? String(Math.round(numForeign * rate * 100) / 100) : "";
+
+  return (
+    <div className="relative grid grid-cols-1 items-center gap-3 md:grid-cols-2">
+      <AmountInput
+        value={ghsShown}
+        onChange={(val) => {
+          const n = asNumber(val);
+          const recipientGets = n > 0 && rate > 0 ? String(Math.floor((n / rate) * 100 + 1e-9) / 100) : "";
+          onChange({ ghs: val, foreign: recipientGets });
+        }}
+        currency={sendCurrency}
+        label="You Send"
+        onFocus={onFocus}
+        hasError={hasError}
+      />
+
+      <div className="absolute left-1/2 top-[calc(50%+14px)] z-10 hidden -translate-x-1/2 -translate-y-1/2 md:flex">
+        <div className="flex size-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm">
+          <ArrowLeftRight size={15} strokeWidth={2} />
+        </div>
+      </div>
+
+      <AmountInput
+        value={foreign}
+        onChange={(val) => onChange({ foreign: val, ghs: "" })}
+        currency={foreignCurrency}
+        label="Recipient Gets"
+        onFocus={onFocus}
+        hasError={hasError}
+      />
     </div>
   );
 }
@@ -926,13 +1011,13 @@ export function InsufficientFundsAlert({
   available: number;
   currency?: string;
 }) {
+  // Said once through the shared Toaster (no inline banner); the field itself already reads as invalid.
   return (
-    <div className="flex items-start gap-2.5 rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-[12.5px] text-destructive animate-in fade-in duration-150 ease-out">
-      <AlertCircle size={15} className="mt-0.5 shrink-0 text-destructive" />
-      <div>
-        <span className="font-semibold">Insufficient funds.</span> Transfer amount exceeds your available balance ({formatMoney(available, currency, true)}).
-      </div>
-    </div>
+    <AlertToast
+      when
+      message="Insufficient funds"
+      description={`Transfer amount exceeds your available balance (${formatMoney(available, currency, true)}).`}
+    />
   );
 }
 
@@ -1162,7 +1247,7 @@ export function SchedulePaymentSection({
         <div className="flex flex-col gap-3 pt-2 border-t border-border/60 animate-in fade-in slide-in-from-top-1 duration-150">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-muted-foreground">Execution Date</label>
+              <label className="text-[13px] font-medium text-foreground">Execution Date</label>
               <input
                 type="date"
                 value={state.startDate}
@@ -1172,7 +1257,7 @@ export function SchedulePaymentSection({
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-muted-foreground">Frequency</label>
+              <label className="text-[13px] font-medium text-foreground">Frequency</label>
               <Select
                 value={state.frequency}
                 onValueChange={(val) => onChange({ frequency: (val || "once") as ScheduleFrequency })}
@@ -1196,3 +1281,114 @@ export function SchedulePaymentSection({
 }
 
 
+
+
+/* ── Shared dropdowns: every flow picks a network, bank or payment method the same way ─────────── */
+
+/** Mobile network / wallet provider picker, with the operator's logo in the trigger and in every option. */
+export function NetworkSelect({
+  value,
+  onChange,
+  options,
+  placeholder = "Select Network",
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  options: readonly string[];
+  placeholder?: string;
+}) {
+  const logo = getTelcoLogo(value);
+  return (
+    <Select value={value} onValueChange={(val) => val && onChange(val)}>
+      <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+        <div className="flex items-center gap-3">
+          {logo ? (
+            <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/5 bg-muted/60 p-0 dark:border-white/10">
+              <Image src={logo} alt={value} width={40} height={40} className="size-full rounded-full object-cover" />
+            </span>
+          ) : (
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+              <Smartphone size={17} strokeWidth={1.8} />
+            </span>
+          )}
+          <span className={cn("text-[14.5px]", value ? "font-medium text-foreground" : "font-normal text-muted-foreground")}>
+            {value || placeholder}
+          </span>
+        </div>
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((n) => {
+          const optionLogo = getTelcoLogo(n);
+          return (
+            <SelectItem key={n} value={n}>
+              <div className="flex items-center gap-3">
+                {optionLogo && (
+                  <span className="flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted/60 p-0">
+                    <Image src={optionLogo} alt={n} width={40} height={40} className="size-full rounded-full object-cover" />
+                  </span>
+                )}
+                <span>{n}</span>
+              </div>
+            </SelectItem>
+          );
+        })}
+      </SelectContent>
+    </Select>
+  );
+}
+
+/** Bank picker. */
+export function BankSelect({
+  value,
+  onChange,
+  options = BANKS,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  options?: readonly string[];
+}) {
+  return (
+    <Select value={value} onValueChange={(val) => val && onChange(val)}>
+      <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+        <SelectValue placeholder="Select Bank" />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((b) => (
+          <SelectItem key={b} value={b}>
+            {b}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}
+
+/** Payment method picker for other-bank transfers: name and description on the left, fee and speed on the right. */
+export function PaymentMethodSelect({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const selected = PAYMENT_METHODS.find((m) => m.id === value);
+  return (
+    <Select value={value} onValueChange={(val) => val && onChange(val)}>
+      <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+        <span className={cn("truncate text-[15px] font-normal", selected ? "text-foreground" : "text-muted-foreground")}>
+          {selected ? selected.name : "Select payment method"}
+        </span>
+      </SelectTrigger>
+      <SelectContent>
+        {PAYMENT_METHODS.map((m) => (
+          <SelectItem key={m.id} value={m.id} label={m.name}>
+            <div className="flex w-full items-center justify-between gap-4 py-0.5">
+              <div className="flex flex-col text-left">
+                <span className="font-medium text-foreground">{m.name}</span>
+                <span className="text-[12px] font-normal text-muted-foreground">{m.description}</span>
+              </div>
+              <div className="shrink-0 text-right">
+                <span className="tabular block text-[13px] font-medium text-foreground">{m.feeText}</span>
+                <span className="text-[11.5px] font-normal text-muted-foreground">{m.speed}</span>
+              </div>
+            </div>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}

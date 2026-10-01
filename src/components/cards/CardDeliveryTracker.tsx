@@ -391,7 +391,7 @@ export function CardDeliveryTrackerModal({
             <div className="flex flex-col items-center justify-center py-4 text-center gap-8">
               {/* Huge Bold Pickup Code */}
               <div className="flex flex-col items-center gap-4">
-                <span className="text-[46px] sm:text-[48px] font-mono font-medium tracking-[4px] text-foreground tabular-nums select-all">
+                <span className="text-[46px] sm:text-[48px] font-medium tracking-[4px] text-foreground tabular-nums select-all">
                   {pickupCode}
                 </span>
 
@@ -414,7 +414,7 @@ export function CardDeliveryTrackerModal({
             <div className="flex flex-col items-center justify-center py-4 text-center gap-6">
               {/* Huge Bold Handover Code */}
               <div className="flex flex-col items-center gap-3">
-                <span className="text-[46px] sm:text-[48px] font-mono font-medium tracking-[6px] text-foreground tabular-nums select-all">
+                <span className="text-[46px] sm:text-[48px] font-medium tracking-[6px] text-foreground tabular-nums select-all">
                   {card.deliveryCode || card.pickupCode || "8419"}
                 </span>
 

@@ -20,7 +20,7 @@ const RAIL_BREADCRUMB_LABELS: Record<string, string> = {
   "card-topup": "Card Top up",
   ecg: "ECG Prepaid",
   ghanagov: "Ghana.gov",
-  swift: "SWIFT Wire Transfer",
+  swift: "Outside Ghana",
   qr: "QR Payment",
   cardless: "Cardless Withdrawal",
 };
@@ -185,7 +185,7 @@ export default function HeaderBreadcrumbs() {
 
     // If not found in known dict, check if it's an ID segment (e.g. acc-01, card-02, tx-99)
     if (!label) {
-      if (/^acc-|^acct-|^card-|^tx-|^usr-|^batch-|^lc-|^app-/i.test(segment)) {
+      if (/^acc-|^acct-|^card-|^tx-|^usr-|^batch-|^lc-|^app-|^si-|^so-/i.test(segment)) {
         const parent = segments[index - 1];
         if (parent === "accounts") label = "Account Details";
         else if (parent === "cards") label = "Card Details";
@@ -193,6 +193,7 @@ export default function HeaderBreadcrumbs() {
         else if (parent === "administration") label = "User Details";
         else if (parent === "trade") label = "Application Details";
         else if (parent === "bulk") label = "Batch Details";
+        else if (parent === "standing") label = "Detail";
         else label = "Details";
       } else {
         // Capitalize segment as fallback

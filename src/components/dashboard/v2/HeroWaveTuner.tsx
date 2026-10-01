@@ -110,7 +110,7 @@ function TunerPanel() {
         ["glowDark", "Container glow · dark"],
         ["glowLight", "Container glow · light"],
       ] as const).map(([key, label]) => (
-        <label key={key} className="flex items-center justify-between gap-3 text-[12.5px] text-muted-foreground">
+        <label key={key} className="flex items-center justify-between gap-3 text-[12.5px] text-foreground">
           {label}
           <span className="flex items-center gap-2">
             <span className="tabular text-foreground">{wave[key]}</span>

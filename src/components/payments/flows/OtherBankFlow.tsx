@@ -3,11 +3,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import {
   FromAccountSelector,
@@ -20,10 +15,11 @@ import {
   ResolvingAccountBadge,
   CollapsedDetailsBadge,
   OTHER_BANKS,
-  PAYMENT_METHODS,
   SchedulePaymentSection,
   ScheduleFrequency,
   resolveAccountName,
+  BankSelect,
+  PaymentMethodSelect,
 } from "./shared";
 
 export interface OtherBankFormState {
@@ -98,10 +94,6 @@ export function OtherBankFlow({
 
   const isVerified = isDetailsValid && !resolving && Boolean(verifiedName);
 
-  const selectedPaymentMethod = useMemo(() => {
-    return PAYMENT_METHODS.find((m) => m.id === (state.paymentMethod || "gip"));
-  }, [state.paymentMethod]);
-
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
   const isValid = Boolean(state.fromId) && isVerified && numAmount > 0 && !overBalance;
@@ -127,21 +119,7 @@ export function OtherBankFlow({
           />
         ) : (
           <div className="flex flex-col gap-3">
-            <Select
-              value={state.bank || ""}
-              onValueChange={(val) => val && onChange("bank", val)}
-            >
-              <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                <SelectValue placeholder="Select Bank" />
-              </SelectTrigger>
-              <SelectContent>
-                {OTHER_BANKS.map((b) => (
-                  <SelectItem key={b} value={b}>
-                    {b}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <BankSelect value={state.bank || ""} onChange={(val) => onChange("bank", val)} options={OTHER_BANKS} />
 
             <input
               type="text"
@@ -176,38 +154,7 @@ export function OtherBankFlow({
           {/* 3. Payment Method */}
           <div className="flex flex-col gap-2">
             <label className="text-[14px] font-medium text-foreground">Payment Method</label>
-            <Select
-              value={state.paymentMethod || "gip"}
-              onValueChange={(val) => val && onChange("paymentMethod", val)}
-            >
-              <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                {selectedPaymentMethod ? (
-                  <span className="truncate text-[15px] font-normal text-foreground">
-                    {selectedPaymentMethod.name}
-                  </span>
-                ) : (
-                  <span className="truncate text-[15px] font-normal text-muted-foreground">
-                    Select payment method
-                  </span>
-                )}
-              </SelectTrigger>
-              <SelectContent>
-                {PAYMENT_METHODS.map((m) => (
-                  <SelectItem key={m.id} value={m.id} label={m.name}>
-                    <div className="flex items-center justify-between w-full gap-4 py-0.5">
-                      <div className="flex flex-col text-left">
-                        <span className="font-medium text-foreground">{m.name}</span>
-                        <span className="text-[12px] text-muted-foreground font-normal">{m.description}</span>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <span className="text-[13px] font-medium text-foreground tabular block">{m.feeText}</span>
-                        <span className="text-[11.5px] text-muted-foreground font-normal">{m.speed}</span>
-                      </div>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <PaymentMethodSelect value={state.paymentMethod || "gip"} onChange={(val) => onChange("paymentMethod", val)} />
           </div>
 
           {/* 4. Amount */}

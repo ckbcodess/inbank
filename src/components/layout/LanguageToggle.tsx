@@ -38,7 +38,7 @@ export default function LanguageToggle({
         >
           <Globe size={16} strokeWidth={1.8} className="shrink-0" />
           {showLabel && (
-            <span className="font-mono text-[11.5px] tracking-wide text-foreground">
+            <span className="text-[11.5px] tracking-wide text-foreground">
               {current.shortLabel}
             </span>
           )}

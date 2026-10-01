@@ -22,8 +22,6 @@ import {
   ArrowDownLeft,
   ArrowLeftRight,
   ArrowUpRight,
-  Check,
-  Copy,
   Eye,
   EyeOff,
   Files,
@@ -52,7 +50,7 @@ import { useCardLinkReturn } from "@/lib/card-link";
 import PageHeader from "@/components/layout/PageHeader";
 import { ActionTile } from "@/components/ui/action-tile";
 import { ToggleTile } from "@/components/ui/toggle-tile";
-import { ShareDetailsDialog, groupDigits } from "@/components/accounts/ShareDetailsDialog";
+import { ShareDetailsDialog } from "@/components/accounts/ShareDetailsDialog";
 
 const BASELINE: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 const MINI_STATEMENT_SIZE = 10;
@@ -317,7 +315,7 @@ function ActivityRow({ t }: { t: Transaction }) {
     <li>
       <Link
         href={`/transactions/${t.id}`}
-        className="flex items-center gap-3.5 rounded-lg px-2 py-2.5 transition-colors hover:bg-muted/50"
+        className="flex items-center gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-muted/50 sm:px-4"
       >
         <span
           className={cn(
@@ -374,7 +372,7 @@ function RecentTransactionsDialog({
               description="Money in and out of this account will show here."
             />
           ) : (
-            <ul className="-mx-2 flex flex-col">
+            <ul className="-mx-2 flex flex-col gap-0.5">
               {transactions.map((t) => (
                 <ActivityRow key={t.id} t={t} />
               ))}

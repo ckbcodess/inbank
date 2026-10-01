@@ -299,7 +299,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
               <div className="flex flex-col divide-y divide-border/60 text-[13px]">
                 <div className="flex justify-between py-2">
                   <span className="text-muted-foreground">Reference</span>
-                  <span className="font-mono text-foreground">{selectedTx.reference}</span>
+                  <span className="text-foreground">{selectedTx.reference}</span>
                 </div>
                 <div className="flex justify-between py-2">
                   <span className="text-muted-foreground">Category</span>

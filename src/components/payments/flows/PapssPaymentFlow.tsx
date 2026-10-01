@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ArrowLeftRight } from "lucide-react";
 import { Account } from "@/lib/mock-data";
 import {
   Select,
@@ -12,7 +11,6 @@ import {
 } from "@/components/ui/select";
 import {
   FromAccountSelector,
-  AmountInput,
   NarrationInput,
   CategorySelect,
   InsufficientFundsAlert,
@@ -23,6 +21,7 @@ import {
   ScheduleFrequency,
   resolveAccountName,
   RATES,
+  DualAmountFields,
 } from "./shared";
 
 const PAPSS_COUNTRIES = [
@@ -43,6 +42,8 @@ export interface PapssPaymentFormState {
   wIban: string;
   wBenName: string;
   wForeign: string;
+  /** What they typed in "You send", or "" when the recipient's box is the source. */
+  wGhs: string;
   wPurpose: string;
   category: string;
   saveBeneficiary?: boolean;
@@ -142,7 +143,9 @@ export function PapssPaymentFlow({
 
   const rate = RATES[state.wCurrency] ?? 0.0098;
   const numForeign = Number(state.wForeign.replace(/[^0-9.]/g, "")) || 0;
-  const ghsEquivalent = Math.round(numForeign * rate * 100) / 100;
+  const ghsEquivalent = state.wGhs
+    ? Number(state.wGhs.replace(/[^0-9.]/g, "")) || 0
+    : Math.round(numForeign * rate * 100) / 100;
   const fee = 25.0; // PAPSS standard fee
   const totalGhs = ghsEquivalent + fee;
   const overBalance = totalGhs > (fromAccount?.available ?? 0);
@@ -251,44 +254,21 @@ export function PapssPaymentFlow({
           <div className="flex flex-col gap-2">
             <label className="text-[14px] font-medium text-foreground">Transfer Amount</label>
 
-            <div className="relative grid grid-cols-1 md:grid-cols-2 gap-3 items-center">
-              {/* You Send (GHS) */}
-              <AmountInput
-                value={String(ghsEquivalent)}
-                onChange={(val) => {
-                  const numVal = Number(val.replace(/[^0-9.]/g, "")) || 0;
-                  const foreignVal = rate > 0 ? Math.round((numVal / rate) * 100) / 100 : 0;
-                  onChange("wForeign", foreignVal > 0 ? String(foreignVal) : "");
-                }}
-                currency={fromAccount?.currency || "GHS"}
-                label="You Send"
-                onFocus={() => {
-                  if (isDestinationValid) setCollapsed(true);
-                }}
-                hasError={overBalance}
-              />
-
-              {/* Central Switcher Indicator */}
-              <div className="hidden md:flex absolute left-1/2 top-[calc(50%+14px)] -translate-x-1/2 -translate-y-1/2 z-10">
-                <div
-                  className="flex size-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm"
-                >
-                  <ArrowLeftRight size={15} strokeWidth={2} />
-                </div>
-              </div>
-
-              {/* Recipient Gets (Foreign Currency) */}
-              <AmountInput
-                value={state.wForeign}
-                onChange={(val) => onChange("wForeign", val)}
-                currency={state.wCurrency || "NGN"}
-                label="Recipient Gets"
-                onFocus={() => {
-                  if (isDestinationValid) setCollapsed(true);
-                }}
-                hasError={overBalance}
-              />
-            </div>
+            <DualAmountFields
+              foreign={state.wForeign}
+              ghs={state.wGhs}
+              rate={rate}
+              foreignCurrency={state.wCurrency || "NGN"}
+              sendCurrency={fromAccount?.currency || "GHS"}
+              onChange={({ foreign, ghs }) => {
+                onChange("wForeign", foreign);
+                onChange("wGhs", ghs);
+              }}
+              onFocus={() => {
+                if (isDestinationValid) setCollapsed(true);
+              }}
+              hasError={overBalance}
+            />
 
             {/* Exchange rate display underneath fields */}
             <div className="flex items-center justify-end px-1 pt-0.5 text-[12.5px] text-muted-foreground font-medium">

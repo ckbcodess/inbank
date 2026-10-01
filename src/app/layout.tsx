@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { DM_Sans, Geist_Mono } from "next/font/google";
+import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { AmountVisibilityProvider } from "@/components/providers/AmountVisibilityProvider";
@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 
 import { DevStateProvider } from "@/components/providers/DevStateProvider";
 import PersonaFlowSwitcher from "@/components/dev/PersonaFlowSwitcher";
+import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import TourOverlay from "@/components/dev/TourOverlay";
 import { AndroidRippleProvider } from "@/components/providers/AndroidRippleProvider";
 
@@ -17,11 +18,10 @@ import { RouteLoadingProvider } from "@/components/providers/RouteLoadingProvide
 import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 import { NavHistoryTracker } from "@/components/layout/NavHistoryTracker";
 
-const dmSans = DM_Sans({
+const openSans = Open_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
 });
-const geistMono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "GCB Bank — Internet Banking",
@@ -37,7 +37,7 @@ const LANGUAGE_BOOT_SCRIPT = `try{var l=localStorage.getItem("gcb-language");if(
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn(dmSans.variable, geistMono.variable, "font-sans")}>
+    <html lang="en" suppressHydrationWarning className={cn(openSans.variable, "font-sans")}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: LANGUAGE_BOOT_SCRIPT }} />
       </head>
@@ -52,9 +52,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <DevStateProvider>
                       <Toaster position="top-right" style={{ zIndex: 999999 }} />
                       {children}
-                      <Suspense fallback={null}>
-                        <PersonaFlowSwitcher />
-                      </Suspense>
+                      {SHOW_DEMO_TOOLS && (
+                        <Suspense fallback={null}>
+                          <PersonaFlowSwitcher />
+                        </Suspense>
+                      )}
                       <TourOverlay />
                     </DevStateProvider>
                   </AndroidRippleProvider>

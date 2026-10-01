@@ -40,7 +40,7 @@ export default function DevStatePanel() {
             <span className="hidden max-w-[180px] truncate sm:inline">· {active.label}</span>
           )}
           {devState.section && (
-            <span className="rounded bg-amber-500/20 px-1 py-0.5 font-mono text-[10px]">
+            <span className="rounded bg-amber-500/20 px-1 py-0.5 text-[10px]">
               {devState.section}
             </span>
           )}

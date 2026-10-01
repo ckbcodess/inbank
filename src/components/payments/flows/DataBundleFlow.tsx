@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useState, useMemo } from "react";
 import { Account, formatMoney } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
-import { Smartphone } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -28,6 +27,7 @@ import {
   normalizeNetworkName,
   resolveAccountName,
   formatGhPhone,
+  NetworkSelect,
 } from "./shared";
 import { OwnWalletPicker, digitsOf, useOwnDestination } from "./OwnWalletPicker";
 import { PhoneInput } from "@/components/ui/phone-input";
@@ -170,67 +170,17 @@ export function DataBundleFlow({
           />
         ) : (
           <div className="flex flex-col gap-3">
-            <Select
+            <NetworkSelect
               value={state.wNetwork ? normalizeNetworkName(state.wNetwork) : ""}
-              onValueChange={(val) => {
-                if (val) {
-                  onChange("wNetwork", val);
-                  const newBundles = getBundlesForNetwork(val);
-                  if (newBundles && newBundles.length > 0) {
-                    onChange("bundleId", newBundles[0].id);
-                  }
+              onChange={(val) => {
+                onChange("wNetwork", val);
+                const newBundles = getBundlesForNetwork(val);
+                if (newBundles && newBundles.length > 0) {
+                  onChange("bundleId", newBundles[0].id);
                 }
               }}
-            >
-              <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
-                {state.wNetwork && getTelcoLogo(state.wNetwork) ? (
-                  <div className="flex items-center gap-3">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden border border-black/5 dark:border-white/10 p-0">
-                      <Image
-                        src={getTelcoLogo(state.wNetwork)!}
-                        alt={state.wNetwork}
-                        width={40}
-                        height={40}
-                        className="size-full object-cover rounded-full"
-                      />
-                    </span>
-                    <span className="text-[14.5px] font-medium text-foreground">{normalizeNetworkName(state.wNetwork)}</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-3">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-                      <Smartphone size={17} strokeWidth={1.8} />
-                    </span>
-                    <span className="text-[14px] text-muted-foreground font-normal">
-                      Select Network
-                    </span>
-                  </div>
-                )}
-              </SelectTrigger>
-              <SelectContent>
-                {TELCO_NETWORKS.map((n) => {
-                  const logo = getTelcoLogo(n);
-                  return (
-                    <SelectItem key={n} value={n}>
-                      <div className="flex items-center gap-3">
-                        {logo && (
-                          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden p-0">
-                            <Image
-                              src={logo}
-                              alt={n}
-                              width={40}
-                              height={40}
-                              className="size-full object-cover rounded-full"
-                            />
-                          </span>
-                        )}
-                        <span>{n}</span>
-                      </div>
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
+              options={TELCO_NETWORKS}
+            />
 
             <PhoneInput
               value={state.aPhone}

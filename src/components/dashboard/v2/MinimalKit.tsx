@@ -103,7 +103,7 @@ export function Eyebrow({
   return (
     <span
       className={cn(
-        "text-[11px] uppercase tracking-[0.16em] text-muted-foreground",
+        "text-[12px] text-muted-foreground",
         className,
       )}
     >

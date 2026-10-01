@@ -127,7 +127,7 @@ export const SEED_BENEFICIARIES: BeneficiaryRecord[] = [
   // ── Mobile Wallets ─────────────────────────────────────────────
   {
     id: "ben-w1",
-    name: "Ama Serwaa Mensah",
+    name: "Ransford Gyasi",
     transactionType: "wallet",
     category: "person",
     network: "MTN Mobile Money",
@@ -160,7 +160,7 @@ export const SEED_BENEFICIARIES: BeneficiaryRecord[] = [
   },
   {
     id: "ben-w4",
-    name: "Efua Mensah",
+    name: "Esther Appiah",
     transactionType: "wallet",
     category: "person",
     network: "AT Money",
@@ -195,7 +195,7 @@ export const SEED_BENEFICIARIES: BeneficiaryRecord[] = [
   },
   {
     id: "ben-px2",
-    name: "Ama Serwaa (Alias)",
+    name: "Ransford Gyasi (Alias)",
     transactionType: "proxy",
     category: "person",
     proxyType: "alias",

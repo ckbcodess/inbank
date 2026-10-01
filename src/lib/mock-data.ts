@@ -21,7 +21,7 @@ const RETAIL_PROFILE: Profile = {
 const JOINT_PROFILE: Profile = {
   id: "prof-joint",
   kind: "RETAIL",
-  name: "Kwame & Efua Mensah (Joint)",
+  name: "Samuel Quartey & Esther Appiah (Joint)",
   reference: "JOINT-8844",
 };
 
@@ -39,8 +39,8 @@ const CORPORATE_PROFILE: Profile = {
 export const ACTORS: Actor[] = [
   {
     id: "u-retail",
-    name: "Ama Serwaa",
-    email: "ama.serwaa@example.com",
+    name: "Ransford Gyasi",
+    email: "ransford.gyasi@example.com",
     role: "RETAIL_CUSTOMER",
     shell: "customer",
     profiles: [RETAIL_PROFILE],
@@ -48,8 +48,8 @@ export const ACTORS: Actor[] = [
   },
   {
     id: "u-joint",
-    name: "Kwame Mensah",
-    email: "kwame.joint@example.com",
+    name: "Samuel Quartey",
+    email: "samuel.quartey@example.com",
     role: "RETAIL_CUSTOMER",
     shell: "customer",
     profiles: [RETAIL_PROFILE, JOINT_PROFILE],
@@ -57,8 +57,8 @@ export const ACTORS: Actor[] = [
   },
   {
     id: "u-joint-either",
-    name: "Kojo Appiah",
-    email: "kojo.appiah@example.com",
+    name: "Elias Ayettey",
+    email: "elias.ayettey@example.com",
     role: "RETAIL_CUSTOMER",
     shell: "customer",
     profiles: [RETAIL_PROFILE],
@@ -88,8 +88,8 @@ export const ACTORS: Actor[] = [
     email: "yaw.oppong@example.com",
     role: "RETAIL_CUSTOMER",
     shell: "customer",
-    profiles: [RETAIL_PROFILE, CORPORATE_PROFILE],
-    tradeEligible: true,
+    profiles: [RETAIL_PROFILE],
+    tradeEligible: false,
   },
   {
     id: "u-dual",
@@ -97,16 +97,16 @@ export const ACTORS: Actor[] = [
     email: "kwame.boateng@example.com",
     role: "CORPORATE_MAKER",
     shell: "customer",
-    profiles: [RETAIL_PROFILE, CORPORATE_PROFILE],
+    profiles: [CORPORATE_PROFILE],
     tradeEligible: true,
   },
   {
     id: "u-approver",
-    name: "Efua Mensah",
-    email: "efua.mensah@example.com",
+    name: "Esther Appiah",
+    email: "esther.appiah@example.com",
     role: "CORPORATE_APPROVER",
     shell: "customer",
-    profiles: [RETAIL_PROFILE, CORPORATE_PROFILE],
+    profiles: [CORPORATE_PROFILE],
     tradeEligible: true,
   },
   {
@@ -148,8 +148,8 @@ export const ACTORS: Actor[] = [
   // Appended, not inserted: the login fallback indexes into ACTORS.
   {
     id: "u-legacy",
-    name: "Esi Quaye",
-    email: "esi.quaye@example.com",
+    name: "Justice Oduro",
+    email: "justice.oduro@example.com",
     role: "RETAIL_CUSTOMER",
     shell: "customer",
     profiles: [RETAIL_PROFILE],
@@ -159,7 +159,7 @@ export const ACTORS: Actor[] = [
 
 export function findActorByEmail(email: string): Actor | undefined {
   const norm = email.trim().toLowerCase();
-  if (norm === "kwame.mensah@example.com" || norm === "kwame.joint@example.com") {
+  if (norm === "samuel.quartey@example.com" || norm === "samuel.quartey@example.com") {
     return ACTORS.find((a) => a.id === "u-joint");
   }
   return ACTORS.find((a) => a.email.toLowerCase() === norm);
@@ -212,7 +212,7 @@ export const ACCOUNTS: Account[] = [
     status: "Active",
     profileKind: "RETAIL",
     isJoint: true,
-    jointHolders: ["Kwame Mensah", "Efua Mensah"],
+    jointHolders: ["Samuel Quartey", "Esther Appiah"],
     mandate: "Both to sign",
   },
   {
@@ -226,7 +226,7 @@ export const ACCOUNTS: Account[] = [
     status: "Active",
     profileKind: "RETAIL",
     isJoint: true,
-    jointHolders: ["Kojo Appiah", "Akosua Appiah"],
+    jointHolders: ["Elias Ayettey", "Akosua Appiah"],
     mandate: "Either to sign",
   },
   {
@@ -1592,7 +1592,7 @@ export const CARDS: PaymentCard[] = [
     currency: "GHS",
     balance: 12_450.0,
     linkedAccountId: "acc-001",
-    holder: "Ama Serwaa",
+    holder: "Ransford Gyasi",
     expiry: "09/28",
     status: "Active",
     fundable: true,
@@ -1626,7 +1626,7 @@ export const CARDS: PaymentCard[] = [
     currency: "GHS",
     balance: null,
     linkedAccountId: "acc-001",
-    holder: "Ama Serwaa",
+    holder: "Ransford Gyasi",
     expiry: "11/29",
     status: "Active",
     fundable: false,
@@ -1683,7 +1683,7 @@ export const CARDS: PaymentCard[] = [
     currency: "GHS",
     balance: null,
     linkedAccountId: "acc-001",
-    holder: "Ama Serwaa",
+    holder: "Ransford Gyasi",
     expiry: "11/29",
     status: "Inactive",
     fundable: false,
@@ -1730,7 +1730,7 @@ export const CARDS: PaymentCard[] = [
     currency: "GHS",
     balance: null,
     linkedAccountId: "acc-ret-002",
-    holder: "Efua Mensah",
+    holder: "Esther Appiah",
     expiry: "12/28",
     status: "Active",
     fundable: false,
@@ -1748,7 +1748,7 @@ export const CARDS: PaymentCard[] = [
     currency: "GHS",
     balance: 2_450.0,
     linkedAccountId: "acc-ret-001",
-    holder: "Ama Serwaa",
+    holder: "Ransford Gyasi",
     expiry: "08/29",
     status: "Active",
     fundable: true,
@@ -1767,7 +1767,7 @@ export const CARDS: PaymentCard[] = [
     balance: 300.0,
     spendLimit: 1_500.0,
     linkedAccountId: "acc-ret-001",
-    holder: "Ama Serwaa",
+    holder: "Ransford Gyasi",
     expiry: "03/29",
     status: "Active",
     fundable: true,
@@ -1787,7 +1787,7 @@ export const CARDS: PaymentCard[] = [
     currency: "GHS",
     balance: null,
     linkedAccountId: "acc-ret-001",
-    holder: "Ama Serwaa",
+    holder: "Ransford Gyasi",
     expiry: "09/30",
     status: "Inactive",
     fundable: false,
@@ -1810,7 +1810,7 @@ export const CARDS: PaymentCard[] = [
     currency: "USD",
     balance: 850.0,
     linkedAccountId: "acc-ret-001",
-    holder: "Ama Serwaa",
+    holder: "Ransford Gyasi",
     expiry: "05/29",
     status: "Inactive",
     fundable: true,
@@ -1865,7 +1865,7 @@ export const CARDS: PaymentCard[] = [
     currency: "GHS",
     balance: null,
     linkedAccountId: "acc-personal",
-    holder: "Tsotsoo Mills",
+    holder: "Ransford Gyasi",
     expiry: "11/30",
     status: "Inactive",
     fundable: false,
@@ -1897,7 +1897,7 @@ export const CARDS: PaymentCard[] = [
     currency: "USD",
     balance: 500.0,
     linkedAccountId: "acc-ret-001",
-    holder: "Ama Serwaa",
+    holder: "Ransford Gyasi",
     expiry: "10/29",
     status: "Inactive",
     fundable: true,
@@ -2304,7 +2304,7 @@ export const BILLERS: Biller[] = [
   { id: "bil-007c", name: "Showmax Ghana", category: "Subscriptions", reference: "Mobile number" },
 ];
 
-export type InstructionFrequency = "Daily" | "Weekly" | "Monthly" | "Quarterly" | "Yearly";
+export type InstructionFrequency = "Once" | "Daily" | "Weekly" | "Custom" | "Monthly" | "Quarterly" | "Half Yearly" | "Yearly";
 
 export interface StandingInstruction {
   id: string;
@@ -2313,8 +2313,20 @@ export interface StandingInstruction {
   amount: number;
   currency: string;
   frequency: InstructionFrequency;
+  /** With frequency "Custom": run again after this many days. */
+  intervalDays?: number;
   nextRun: string;
+  /** When it first ran (or will). Older orders use nextRun. */
+  startDate?: string;
+  /** Last payment, when the order has an end date. */
+  endDate?: string;
   status: "Active" | "Paused";
+  /** What the customer calls it. The primary label everywhere. */
+  shortName?: string;
+  /** "To Bank", "To Wallet", "Airtime"...: the kind of payment. */
+  transactionType?: string;
+  /** What appears on each payment's statement line. */
+  narration?: string;
 }
 
 export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
@@ -2327,6 +2339,8 @@ export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
     frequency: "Monthly",
     nextRun: "2026-09-01",
     status: "Active",
+    shortName: "Office rent",
+    transactionType: "To Bank",
   },
   {
     id: "si-002",
@@ -2337,6 +2351,8 @@ export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
     frequency: "Quarterly",
     nextRun: "2026-10-01",
     status: "Active",
+    shortName: "Fleet premium",
+    transactionType: "To Bank",
   },
   {
     id: "si-003",
@@ -2347,6 +2363,8 @@ export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
     frequency: "Monthly",
     nextRun: "2026-09-05",
     status: "Paused",
+    shortName: "Cleaning",
+    transactionType: "To Bank",
   },
   // Retail
   {
@@ -2358,6 +2376,8 @@ export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
     frequency: "Monthly",
     nextRun: "2026-08-28",
     status: "Active",
+    shortName: "Home electricity",
+    transactionType: "To Bank",
   },
   {
     id: "si-r02",
@@ -2368,6 +2388,8 @@ export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
     frequency: "Monthly",
     nextRun: "2026-09-30",
     status: "Active",
+    shortName: "Rent contribution",
+    transactionType: "To Wallet",
   },
   {
     id: "si-r03",
@@ -2378,16 +2400,20 @@ export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
     frequency: "Monthly",
     nextRun: "2026-09-26",
     status: "Active",
+    shortName: "DSTV",
+    transactionType: "To Bank",
   },
   {
     id: "si-r04",
-    beneficiary: "Ama Serwaa Mensah — Upkeep",
+    beneficiary: "Ransford Gyasi — Upkeep",
     accountId: "acc-ret-002",
     amount: 500,
     currency: "GHS",
     frequency: "Weekly",
     nextRun: "2026-09-19",
     status: "Active",
+    shortName: "Ama's upkeep",
+    transactionType: "To Wallet",
   },
   {
     id: "si-r05",
@@ -2398,21 +2424,54 @@ export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
     frequency: "Monthly",
     nextRun: "2026-10-05",
     status: "Active",
+    shortName: "Education plan",
+    transactionType: "To Bank",
   },
 ];
 
 let standingSeq = STANDING_INSTRUCTIONS.length;
 
+/* Standing orders survive a refresh: the list is mirrored to this browser's storage (there is no backend). */
+const STANDING_KEY = "nibs-standing-orders";
+const STANDING_SEED: StandingInstruction[] = STANDING_INSTRUCTIONS.map((s) => ({ ...s }));
+
+function persistStanding(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(STANDING_KEY, JSON.stringify(STANDING_INSTRUCTIONS));
+  } catch {
+    /* storage unavailable: keep working in memory */
+  }
+}
+
+if (typeof window !== "undefined") {
+  try {
+    const raw = window.localStorage.getItem(STANDING_KEY);
+    const stored = raw ? (JSON.parse(raw) as unknown) : null;
+    if (Array.isArray(stored)) STANDING_INSTRUCTIONS.splice(0, STANDING_INSTRUCTIONS.length, ...(stored as StandingInstruction[]));
+  } catch {
+    /* ignore a corrupt entry */
+  }
+}
+
+/** Back to the seeded orders (demo reset). */
+export function resetStandingInstructions(): void {
+  STANDING_INSTRUCTIONS.splice(0, STANDING_INSTRUCTIONS.length, ...STANDING_SEED.map((s) => ({ ...s })));
+  persistStanding();
+}
+
 /** Pause or resume a standing instruction (mutates in place, like fundCard). */
 export function setStandingStatus(id: string, status: "Active" | "Paused"): void {
   const si = STANDING_INSTRUCTIONS.find((s) => s.id === id);
   if (si) si.status = status;
+  persistStanding();
 }
 
 /** Permanently cancel (remove) a standing instruction. */
 export function cancelStandingInstruction(id: string): void {
   const i = STANDING_INSTRUCTIONS.findIndex((s) => s.id === id);
   if (i >= 0) STANDING_INSTRUCTIONS.splice(i, 1);
+  persistStanding();
 }
 
 /** Create a new instruction, or update an existing one when `id` is supplied. */
@@ -2421,12 +2480,14 @@ export function saveStandingInstruction(input: Omit<StandingInstruction, "id"> &
     const si = STANDING_INSTRUCTIONS.find((s) => s.id === input.id);
     if (si) {
       Object.assign(si, input);
+      persistStanding();
       return si;
     }
   }
   standingSeq += 1;
   const created: StandingInstruction = { ...input, id: `si-${String(standingSeq).padStart(3, "0")}` };
   STANDING_INSTRUCTIONS.unshift(created);
+  persistStanding();
   return created;
 }
 
@@ -2520,7 +2581,7 @@ export const AUDIT_EVENTS: AuditEvent[] = [
   {
     id: "aud-002",
     timestamp: "2026-08-11T08:58:03Z",
-    actor: "Ama Serwaa",
+    actor: "Ransford Gyasi",
     role: "Corporate Maker",
     action: "Submitted payment for approval",
     target: "TXN-2026-0001",
@@ -2540,7 +2601,7 @@ export const AUDIT_EVENTS: AuditEvent[] = [
   {
     id: "aud-004",
     timestamp: "2026-08-10T15:02:10Z",
-    actor: "Ama Serwaa",
+    actor: "Ransford Gyasi",
     role: "Corporate Admin",
     action: "Changed user limits",
     target: "Yaw Boateng · Daily limit GHS 50,000 → GHS 25,000",
@@ -2550,7 +2611,7 @@ export const AUDIT_EVENTS: AuditEvent[] = [
   {
     id: "aud-005",
     timestamp: "2026-08-09T14:41:55Z",
-    actor: "Ama Serwaa",
+    actor: "Ransford Gyasi",
     role: "Corporate Admin",
     action: "Blocked card",
     target: "Payroll Prepaid •••• 6654 · Reason: reported lost by holder",

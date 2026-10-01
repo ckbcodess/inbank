@@ -1,9 +1,10 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { AlertToast } from "@/components/ui/alert-toast";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertCircle, Eye, EyeOff, Fingerprint, ShieldCheck, User } from "lucide-react";
+import { Eye, EyeOff, Fingerprint, ShieldCheck, User } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +19,7 @@ type LoginState = "idle" | "submitting" | "error";
 
 /** Same field as the rest of the app. */
 const FIELD = "h-11 text-[14.5px]";
-const LABEL = "text-[12px] text-muted-foreground";
+const LABEL = "text-[12px] text-foreground";
 
 function LoginForm() {
   const router = useRouter();
@@ -35,23 +36,6 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [state, setState] = useState<LoginState>("idle");
-  const [passkeyReady, setPasskeyReady] = useState(false);
-  const [passkeyBusy, setPasskeyBusy] = useState(false);
-
-  // Only offer a passkey where this browser can actually use one.
-  useEffect(() => {
-    setPasskeyReady(typeof window !== "undefined" && "PublicKeyCredential" in window);
-  }, []);
-
-  function signInWithPasskey() {
-    setPasskeyBusy(true);
-    // Stand-in for the platform prompt (Touch ID, Windows Hello, a phone nearby).
-    window.setTimeout(() => {
-      signIn(bankingType === "business" ? ACTORS[5] : ACTORS[0]);
-      verifyMfa();
-      router.push("/overview");
-    }, 1100);
-  }
 
   function handleTypeChange(nextType: "personal" | "business") {
     setBankingType(nextType);
@@ -107,17 +91,6 @@ function LoginForm() {
       width="compact"
       footer={
         <div className="flex flex-col items-center gap-2.5 text-center">
-          <p className="text-[13px] text-muted-foreground">
-            Don’t have an account?{" "}
-            <Link
-              href={bankingType === "business" ? "/signup/business" : "/get-started"}
-              data-tour="login-get-started"
-              className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80 active:scale-[0.96]"
-            >
-              {bankingType === "business" ? "Apply for business account" : "Register"}
-            </Link>
-          </p>
-
           {/* Personal is the front door. Only a business sign-in (reached by link) offers the way back. */}
           {bankingType === "business" && (
             <button
@@ -146,7 +119,7 @@ function LoginForm() {
             placeholder={
               bankingType === "business"
                 ? "e.g. abena@adinkrafabrics.com"
-                : "e.g. ama.serwaa@example.com"
+                : "e.g. ransford.gyasi@example.com"
             }
             value={email}
             onChange={(e) => {
@@ -160,17 +133,9 @@ function LoginForm() {
 
         {/* Password Input */}
         <div className={`flex flex-col gap-1 ${state === "error" ? "animate-pin-shake" : ""}`}>
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password" className={LABEL}>
-              Password
-            </Label>
-            <Link
-              href="/forgot-password"
-              className="text-[12.5px] font-medium text-muted-foreground hover:text-foreground"
-            >
-              Forgot password?
-            </Link>
-          </div>
+          <Label htmlFor="password" className={LABEL}>
+            Password
+          </Label>
           <div className="relative">
             <Input
               id="password"
@@ -196,15 +161,14 @@ function LoginForm() {
           </div>
         </div>
 
-        {state === "error" && (
-          <div
-            role="alert"
-            className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3 text-[13px] text-destructive"
-          >
-            <AlertCircle size={15} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
-            <span>The email or password entered is incorrect. Please try again.</span>
-          </div>
-        )}
+        <Link
+          href="/forgot-password"
+          className="-mt-3 self-end text-[12.5px] text-muted-foreground underline underline-offset-4 hover:text-foreground"
+        >
+          Forgot password?
+        </Link>
+
+        <AlertToast when={state === "error"} message="The email or password entered is incorrect. Please try again." />
 
         <Button
           type="submit"
@@ -216,27 +180,15 @@ function LoginForm() {
           Sign in
         </Button>
 
-        {passkeyReady && (
-          <>
-            <div className="flex items-center gap-3 text-[12px] text-muted-foreground" aria-hidden="true">
-              <span className="h-px flex-1 bg-border" />
-              or
-              <span className="h-px flex-1 bg-border" />
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="lg"
-              loading={passkeyBusy}
-              disabled={state === "submitting"}
-              onClick={signInWithPasskey}
-              className="h-12 w-full gap-2 text-[14.5px]"
-            >
-              <Fingerprint size={17} strokeWidth={1.8} aria-hidden="true" />
-              Sign in with a passkey
-            </Button>
-          </>
-        )}
+        <Button
+          nativeButton={false}
+          render={<Link href={bankingType === "business" ? "/signup/business" : "/get-started"} data-tour="login-get-started" />}
+          variant="outline"
+          size="lg"
+          className="h-12 w-full text-[14.5px]"
+        >
+          {bankingType === "business" ? "Don’t have an account? Apply for business account" : "Don’t have an account? Register"}
+        </Button>
       </form>
     </AuthLayout>
   );

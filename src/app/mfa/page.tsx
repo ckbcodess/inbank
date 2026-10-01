@@ -1,14 +1,14 @@
 "use client";
 
+import { AlertToast } from "@/components/ui/alert-toast";
+import { InlineError } from "@/components/ui/inline-error";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertCircle, Laptop, MapPin, ShieldAlert, ShieldCheck, Smartphone } from "lucide-react";
+import { Laptop, MapPin, ShieldAlert, ShieldCheck } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
-import { trustThisDevice } from "@/lib/device-trust";
-import { RememberDeviceRow } from "@/components/auth/RememberDeviceRow";
 
 type MfaState = "entry" | "verifying" | "error" | "resent";
 
@@ -25,7 +25,6 @@ function MfaContent() {
   const [state, setState] = useState<MfaState>("entry");
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
   // Opt-in: remembering a device on a shared or public computer is a real risk.
-  const [trustDevice, setTrustDevice] = useState(false);
   const hydrated = useSessionHydrated();
 
   useEffect(() => {
@@ -56,7 +55,6 @@ function MfaContent() {
 
       verifyMfa();
       // Remembered: next time the login screen greets them and skips this code.
-      if (trustDevice && actor.shell !== "admin") trustThisDevice(actor);
 
       if (actor.shell === "admin") {
         router.push("/admin");
@@ -84,12 +82,9 @@ function MfaContent() {
       title={isNewDevice ? "New device authorization" : "Verify your identity"}
       description={
         isNewDevice ? (
-          "We detected a login from an unrecognized browser or device. Enter the code sent to your phone."
+          <>We detected a login from an unrecognized browser or device.<br />A 6-digit code has been sent to {maskedDestination}. Please enter the code below.</>
         ) : (
-          <span className="flex items-center gap-1.5">
-            <Smartphone size={14} strokeWidth={1.9} aria-hidden="true" />
-            Code sent to {maskedDestination}
-          </span>
+          <>A 6-digit code has been sent to {maskedDestination}.<br />Please enter the code below.</>
         )
       }
       backHref="/login"
@@ -127,14 +122,26 @@ function MfaContent() {
           />
         </div>
 
-        {/* Remember this device — the step that makes the next sign-in fast. Staff never get it. */}
-        {actor.shell !== "admin" && (
-          <RememberDeviceRow
-            checked={trustDevice}
-            onCheckedChange={setTrustDevice}
-            hint="Skip this code next time. You can change this in Settings."
-          />
-        )}
+        {/* Recovery path */}
+        <div className="flex flex-col items-center gap-5">
+          <button
+            type="button"
+            disabled={countdown > 0}
+            onClick={() => {
+              setCountdown(RESEND_SECONDS);
+              setState("resent");
+            }}
+            className="text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:text-muted-foreground disabled:no-underline disabled:cursor-default cursor-pointer"
+          >
+            {countdown > 0 ? (
+              <>
+                Resend code in <span className="tabular">{countdown}s</span>
+              </>
+            ) : (
+              "Resend code"
+            )}
+          </button>
+        </div>
 
         {state === "verifying" && (
           <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
@@ -143,43 +150,11 @@ function MfaContent() {
           </div>
         )}
 
-        {state === "error" && (
-          <div
-            role="alert"
-            className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3.5 text-[13px] text-destructive"
-          >
-            <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
-            <span>The code entered is incorrect or has expired. Request a new code below.</span>
-          </div>
-        )}
+        <InlineError message={state === "error" && "That code is incorrect or has expired. Request a new one below."} className="-mt-3" />
 
-        {state === "resent" && (
-          <p className="rounded-xl bg-muted px-3.5 py-3 text-center text-[13px] text-muted-foreground">
-            A new verification code has been sent to your phone.
-          </p>
-        )}
+        <AlertToast when={state === "resent"} kind="success" message={`A new verification code has been sent to your phone.`} />
       </form>
 
-      {/* Recovery path */}
-      <div className="mt-6 flex flex-col items-center gap-2 border-t border-border pt-5">
-        <button
-          type="button"
-          disabled={countdown > 0}
-          onClick={() => {
-            setCountdown(RESEND_SECONDS);
-            setState("resent");
-          }}
-          className="text-[13px] text-foreground underline-offset-4 hover:underline disabled:text-muted-foreground disabled:no-underline cursor-pointer"
-        >
-          {countdown > 0 ? (
-            <>
-              Resend code in <span className="tabular">{countdown}s</span>
-            </>
-          ) : (
-            "Resend code"
-          )}
-        </button>
-      </div>
     </AuthLayout>
   );
 }

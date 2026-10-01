@@ -752,7 +752,7 @@ export default function TransactionMonitoringPage() {
             <div className="flex-1 overflow-y-auto px-5 py-4 space-y-6">
               {/* 1. Date Range */}
               <div>
-                <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                <label className="text-[12px] font-medium uppercase tracking-wider text-foreground block mb-2.5">
                   Date Range
                 </label>
                 <div className="flex flex-wrap gap-1.5">
@@ -816,7 +816,7 @@ export default function TransactionMonitoringPage() {
 
               {/* 2. Flow / Direction */}
               <div>
-                <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                <label className="text-[12px] font-medium uppercase tracking-wider text-foreground block mb-2.5">
                   Flow / Direction
                 </label>
                 <div className="flex flex-wrap gap-1.5">
@@ -847,7 +847,7 @@ export default function TransactionMonitoringPage() {
 
               {/* 3. Status */}
               <div>
-                <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                <label className="text-[12px] font-medium uppercase tracking-wider text-foreground block mb-2.5">
                   Status
                 </label>
                 <div className="flex flex-wrap gap-1.5">
@@ -889,7 +889,7 @@ export default function TransactionMonitoringPage() {
 
               {/* 4. Channel */}
               <div>
-                <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                <label className="text-[12px] font-medium uppercase tracking-wider text-foreground block mb-2.5">
                   Channel
                 </label>
                 <div className="flex flex-wrap gap-1.5">
@@ -920,7 +920,7 @@ export default function TransactionMonitoringPage() {
 
               {/* 5. Payment Method */}
               <div>
-                <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                <label className="text-[12px] font-medium uppercase tracking-wider text-foreground block mb-2.5">
                   Payment Method
                 </label>
                 <div className="flex flex-wrap gap-1.5">
@@ -951,7 +951,7 @@ export default function TransactionMonitoringPage() {
 
               {/* 6. Category */}
               <div>
-                <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+                <label className="text-[12px] font-medium uppercase tracking-wider text-foreground block mb-2.5">
                   Category
                 </label>
                 <div className="flex flex-wrap gap-1.5">

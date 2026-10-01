@@ -62,6 +62,8 @@ export interface PaymentSuccessScreenProps {
   customActionCards?: SuccessActionCard[];
   /** Custom schedule handler if standard schedule card is used */
   onSchedulePayment?: () => void;
+  /** Leave out the Schedule Payment card (e.g. the payment already is a standing order). */
+  hideSchedule?: boolean;
   /** Cardless withdrawal token payload if generated via cardless rail */
   cardlessToken?: CardlessTokenDetails;
   /** Name of the beneficiary to display in the toast notification */
@@ -200,6 +202,7 @@ export function PaymentSuccessScreen({
   onPrimaryAction,
   primaryActionLabel = "Back to Overview",
   showSaveBeneficiary = true,
+  hideSchedule = false,
   saveBeneficiaryLabel = "Save as beneficiary?",
   initialSaveBeneficiary = false,
   onSaveBeneficiaryChange,
@@ -384,7 +387,7 @@ export function PaymentSuccessScreen({
     },
   ];
 
-  const actionCards = (customActionCards || defaultActionCards).map((card) => {
+  const actionCards = (customActionCards || defaultActionCards.filter((c) => !(hideSchedule && c.id === "schedule"))).map((card) => {
     if ((card.id === "receipt" || card.id === "download") && !card.onClick) {
       return {
         ...card,

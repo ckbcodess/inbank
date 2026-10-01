@@ -31,11 +31,11 @@ const SEED_GROUPS: PaymentGroup[] = [
     splitType: "equal",
     createdAt: "2026-07-01",
     members: [
-      { id: "m-1", name: "Ama Serwaa Mensah", destination: "0244 123 456", type: "wallet", networkOrBank: "MTN Mobile Money", defaultAmount: 500 },
+      { id: "m-1", name: "Ransford Gyasi", destination: "0244 123 456", type: "wallet", networkOrBank: "MTN Mobile Money", defaultAmount: 500 },
       { id: "m-2", name: "Kwame Boateng", destination: "0201 987 654", type: "wallet", networkOrBank: "Telecel Cash", defaultAmount: 500 },
       { id: "m-3", name: "Yaa Asantewaa", destination: "0559 220 118", type: "wallet", networkOrBank: "MTN Mobile Money", defaultAmount: 500 },
       { id: "m-4", name: "Kofi Osei", destination: "1023 4455 66", type: "bank", networkOrBank: "GCB Bank", defaultAmount: 500 },
-      { id: "m-5", name: "Efua Mensah", destination: "0271 445 900", type: "wallet", networkOrBank: "AT Money", defaultAmount: 500 },
+      { id: "m-5", name: "Esther Appiah", destination: "0271 445 900", type: "wallet", networkOrBank: "AT Money", defaultAmount: 500 },
     ],
   },
   {

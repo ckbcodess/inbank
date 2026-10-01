@@ -56,7 +56,7 @@ The app uses **Geist Sans** (`--font-sans`) and **Geist Mono** (`--font-mono`).
 | Row Primary Text / Item Title | `text-[14px] text-foreground` |
 | Body Text / Table Cells / Inputs | `text-[13px] text-foreground` |
 | Meta / Caption / Helper Text | `text-[12px] text-muted-foreground` |
-| Uppercase Group Header | `text-[11px] uppercase tracking-wider text-muted-foreground` |
+| Group label | `text-[12px] text-muted-foreground`, sentence case (no all caps, no letter-spacing) |
 | Long-form Paragraphs | Add `leading-relaxed` |
 
 ---
@@ -253,8 +253,8 @@ When designing any feature that consumes saved or configured entities (e.g., Ben
   `.premium-card` elevation) — never cards inside cards.
 - **One loud thing per screen: the number.** The primary figure is large and thin
   (`text-[40px]`–`[76px]`, `tracking-[-0.02em]`, `.tabular`). Everything else is quiet.
-- **Tiny tracked eyebrows** label sections: `text-[11px] uppercase tracking-[0.14em]
-  text-muted-foreground`. Use for micro-labels above content.
+- **Quiet labels, sentence case.** Micro-labels above content are `text-[12px] text-muted-foreground` in
+  sentence case. No all-caps, no letter-spaced eyebrows: they read as amateur and add density.
 - **Type weight:** headings, section titles, labels and buttons are **medium** —
   apply `font-medium` (500). Body copy and numbers stay **normal** (400). Semibold (600)
   and bold (700) remain banned. The base-layer `font-weight: inherit` cap in globals.css is
@@ -294,6 +294,30 @@ The dashboard kit at `src/components/dashboard/v2/MinimalKit.tsx` is the canonic
 source of these primitives — `BalanceHeadline`, `TrendChart`, `Eyebrow`, `SectionHeader`,
 `Panel`, `AccountsDisclosure`, `AttentionBand`, `AllocationBar`/`DotLegend`. Reuse and
 extend these rather than reinventing a denser pattern.
+
+### D2. Forms: progressive disclosure (Send & Pay pattern — required for every new form)
+Whenever we build a form (transfers, beneficiaries, onboarding, settings, anything that
+collects input), use the pattern the Send & Pay flows already use. Never dump every
+field on screen at once.
+1. **One block at a time.** Show only the first block. The next block fades in
+   (`animate-in fade-in slide-in-from-top-2 duration-200 ease-out`) once the previous one
+   is valid. A field that depends on a choice appears after the choice (e.g. SWIFT code and
+   bank address after a bank is picked; address after name and account).
+2. **Collapse what's done.** When the person moves on (e.g. focuses the amount), the
+   completed identity block folds into a `CollapsedDetailsBadge` with a **Change** action,
+   so the screen stays short and the next step is the only thing asking for attention.
+3. **Optional fields hide behind one text link** ("Add email or contact number"). It
+   opens in place, and stays open if a value already exists.
+4. **Money comes after the destination.** Amount appears once the recipient is valid;
+   charges, narration, category and schedule appear once there is an amount; **Proceed**
+   is always last and stays disabled until the whole form is valid.
+5. **A choice that changes which fields apply hides the ones that no longer do** (e.g.
+   cash pickup has no bank or account number).
+6. **No silent defaults on a destination** (bank, recipient, account). When a parent choice
+   changes (country), clear the selections that depended on it.
+7. **Reference implementations:** `InternationalWireFlow` (Outside Ghana), `WalletToBankFlow`
+   and the Other Bank flow in `src/components/payments/flows/`. Reuse their shared pieces
+   (`CollapsedDetailsBadge`, `ProceedButton`, `AmountInput`) instead of inventing new ones.
 
 ### E. Phone scale (below `sm`, ~360–430px)
 The dashboard is the reference (`src/components/dashboard/v2/parts.tsx` + `layouts/`).

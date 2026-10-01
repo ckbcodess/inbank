@@ -610,7 +610,7 @@ export default function BeneficiariesPage() {
     return (
       <li
         key={b.id}
-        className="flex items-center justify-between gap-4 px-5 py-3.5 transition-colors hover:bg-muted/30"
+        className="flex items-center justify-between gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-muted/50 sm:px-4"
       >
         <div className="flex min-w-0 flex-1 items-center gap-3.5">
           <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted/70 text-foreground text-[13px] font-medium select-none">
@@ -696,7 +696,7 @@ export default function BeneficiariesPage() {
     return (
       <li
         key={g.id}
-        className="flex items-center justify-between gap-4 px-5 py-3.5 transition-colors hover:bg-muted/30 cursor-pointer"
+        className="flex items-center justify-between gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-muted/50 cursor-pointer sm:px-4"
         onClick={() => {
           setEditingGroup(g);
           setEditGroupModalOpen(true);
@@ -1081,7 +1081,7 @@ export default function BeneficiariesPage() {
 
                     {/* Collapsible Rows */}
                     {!isCollapsed && (
-                      <ul className="divide-y divide-border">
+                      <ul className="flex flex-col gap-0.5 p-2">
                         {items.map(renderBeneficiaryRow)}
                       </ul>
                     )}
@@ -1091,8 +1091,8 @@ export default function BeneficiariesPage() {
             </div>
           ) : (
             /* ── Flat List ─────────────────────────────────────────────────────── */
-            <div className="rounded-2xl border border-border/80 dark:border-white/[0.1] bg-card overflow-hidden shadow-xs">
-              <ul className="divide-y divide-border">
+            <div className="rounded-2xl border border-border bg-card">
+              <ul className="flex flex-col gap-0.5 p-2">
                 {filteredList.map(renderBeneficiaryRow)}
               </ul>
             </div>
@@ -1123,8 +1123,8 @@ export default function BeneficiariesPage() {
               />
             )
           ) : (
-            <div className="rounded-2xl border border-border/80 dark:border-white/[0.1] bg-card overflow-hidden shadow-xs">
-              <ul className="divide-y divide-border">
+            <div className="rounded-2xl border border-border bg-card">
+              <ul className="flex flex-col gap-0.5 p-2">
                 {filteredGroups.map(renderGroupRow)}
               </ul>
             </div>
@@ -1149,7 +1149,7 @@ export default function BeneficiariesPage() {
           <DialogBody>
             {/* Step 1: Destination Rail (Dropdown) */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[12.5px] text-muted-foreground">
+              <label className="text-[12.5px] text-foreground">
                 Payment Rail
               </label>
               <Select
@@ -1195,7 +1195,7 @@ export default function BeneficiariesPage() {
             {form.transactionType === "wallet" && (
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-muted-foreground">
+                  <label className="text-[12.5px] font-medium text-foreground">
                     Network Provider
                   </label>
                   <Select
@@ -1216,7 +1216,7 @@ export default function BeneficiariesPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-muted-foreground">
+                  <label className="text-[12.5px] font-medium text-foreground">
                     Wallet Phone Number
                   </label>
                   <PhoneInput
@@ -1233,7 +1233,7 @@ export default function BeneficiariesPage() {
             {form.transactionType === "bank" && (
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-muted-foreground">
+                  <label className="text-[12.5px] font-medium text-foreground">
                     Destination Bank
                   </label>
                   <Select
@@ -1254,7 +1254,7 @@ export default function BeneficiariesPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-muted-foreground">
+                  <label className="text-[12.5px] font-medium text-foreground">
                     Account Number
                   </label>
                   <input
@@ -1272,7 +1272,7 @@ export default function BeneficiariesPage() {
             {form.transactionType === "bill" && (
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-muted-foreground">
+                  <label className="text-[12.5px] font-medium text-foreground">
                     Bill / Service Provider
                   </label>
                   <Select
@@ -1325,7 +1325,7 @@ export default function BeneficiariesPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-muted-foreground">
+                  <label className="text-[12.5px] font-medium text-foreground">
                     {billerRefLabel}
                   </label>
                   <input
@@ -1343,7 +1343,7 @@ export default function BeneficiariesPage() {
             {form.transactionType === "airtime" && (
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-muted-foreground">
+                  <label className="text-[12.5px] font-medium text-foreground">
                     Network Provider
                   </label>
                   <Select
@@ -1364,7 +1364,7 @@ export default function BeneficiariesPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-muted-foreground">
+                  <label className="text-[12.5px] font-medium text-foreground">
                     Phone Number
                   </label>
                   <PhoneInput
@@ -1380,7 +1380,7 @@ export default function BeneficiariesPage() {
             {/* Proxy Pay Rail */}
             {form.transactionType === "proxy" && (
               <div className="flex flex-col gap-1.5">
-                <label className="text-[12.5px] font-medium text-muted-foreground">
+                <label className="text-[12.5px] font-medium text-foreground">
                   Proxy Identifier
                 </label>
                 <div className="relative flex items-center">
@@ -1406,7 +1406,7 @@ export default function BeneficiariesPage() {
               <div className="flex flex-col gap-3">
                 <div className="grid grid-cols-2 gap-2.5">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[12.5px] font-medium text-muted-foreground">Country</label>
+                    <label className="text-[12.5px] font-medium text-foreground">Country</label>
                     <Select
                       value={form.country}
                       onValueChange={(val) => {
@@ -1429,7 +1429,7 @@ export default function BeneficiariesPage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[12.5px] font-medium text-muted-foreground">Bank</label>
+                    <label className="text-[12.5px] font-medium text-foreground">Bank</label>
                     <Select
                       value={form.bankName}
                       onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
@@ -1450,18 +1450,18 @@ export default function BeneficiariesPage() {
 
                 <div className="grid grid-cols-2 gap-2.5">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[12.5px] font-medium text-muted-foreground">SWIFT / BIC Code</label>
+                    <label className="text-[12.5px] font-medium text-foreground">SWIFT / BIC Code</label>
                     <input
                       type="text"
                       value={form.swiftBic}
                       onChange={(e) => setForm((p) => ({ ...p, swiftBic: e.target.value.toUpperCase() }))}
                       placeholder="e.g. BARCGB22"
-                      className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground uppercase tracking-wider tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all font-mono"
+                      className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground uppercase tracking-wider tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
                     />
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[12.5px] font-medium text-muted-foreground">IBAN / Account Number</label>
+                    <label className="text-[12.5px] font-medium text-foreground">IBAN / Account Number</label>
                     <input
                       type="text"
                       value={form.accountNumber}
@@ -1473,7 +1473,7 @@ export default function BeneficiariesPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-muted-foreground">Recipient Physical Address</label>
+                  <label className="text-[12.5px] font-medium text-foreground">Recipient Physical Address</label>
                   <input
                     type="text"
                     value={form.address}
@@ -1489,7 +1489,7 @@ export default function BeneficiariesPage() {
             {form.transactionType === "papss" && (
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[12.5px] font-medium text-muted-foreground">Destination Country</label>
+                  <label className="text-[12.5px] font-medium text-foreground">Destination Country</label>
                   <Select
                     value={form.country}
                     onValueChange={(val) => {
@@ -1540,7 +1540,7 @@ export default function BeneficiariesPage() {
 
             {/* Step 3: Beneficiary Legal Name / Biller Nickname */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[12.5px] font-medium text-muted-foreground">
+              <label className="text-[12.5px] font-medium text-foreground">
                 {activeTab === "billers" ? "Biller Name" : "Beneficiary Full Name"}
               </label>
               <input
@@ -1554,7 +1554,7 @@ export default function BeneficiariesPage() {
 
             {/* Step 4: Optional Nickname / Reference */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[12.5px] text-muted-foreground">
+              <label className="text-[12.5px] text-foreground">
                 Nickname / Note <span className="text-[11px] text-muted-foreground/60">(optional)</span>
               </label>
               <input

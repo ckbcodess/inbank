@@ -9,10 +9,11 @@
  * - Search bar removed
  */
 
+import { toast } from "sonner";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle2, Layers, Plus } from "lucide-react";
+import { Layers, Plus } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -114,7 +115,6 @@ function CardsPageContent() {
   const devState = useCardsDevStore();
 
   const [state, setState] = useState<ListState>("populated");
-  const [notice, setNotice] = useState<string | null>(null);
   // The saved layout is read after mount (never during render), so the server's
   // markup and the first client paint agree and nothing swaps layouts underfoot.
   const [layout, setLayout] = useState<CardsLayout>(readyCache.layout ?? DEFAULT_CARDS_LAYOUT);
@@ -132,9 +132,7 @@ function CardsPageContent() {
   useEffect(() => {
     if (searchParams.get("created") === "true") {
       const name = searchParams.get("name") || "New Card";
-      setNotice(`Card "${name}" requested and issued successfully.`);
-      const timer = setTimeout(() => setNotice(null), 6000);
-      return () => clearTimeout(timer);
+      toast.success(`Card "${name}" requested and issued successfully.`);
     }
   }, [searchParams]);
 
@@ -285,12 +283,11 @@ function CardsPageContent() {
 
     addCard(newCard);
     setRefreshCount((c) => c + 1);
-    setNotice(
+    toast.success(
       isVirtualCard
         ? `Instant digital ${cardScheme} Virtual Card "${cardName}" created successfully.`
         : `New ${cardScheme} ${cardType} card "${cardName}" created successfully.`,
     );
-    setTimeout(() => setNotice(null), 5000);
 
     // Reset Form
     setCardName("");
@@ -392,13 +389,6 @@ function CardsPageContent() {
           >
             Reset to clean (3 cards)
           </button>
-        </div>
-      )}
-
-      {notice && (
-        <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3 text-[13px] text-foreground">
-          <CheckCircle2 size={16} className="shrink-0 text-emerald-500" />
-          <span>{notice}</span>
         </div>
       )}
 

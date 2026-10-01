@@ -39,6 +39,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { InlineError } from "@/components/ui/inline-error";
+
 import { Input } from "@/components/ui/input";
 import {
   accountsForProfile,
@@ -273,20 +275,24 @@ export function VirtualCardDetailsView({
   const [activationPin, setActivationPin] = useState("");
   const [activationPinConfirm, setActivationPinConfirm] = useState("");
 
+  const [activationError, setActivationError] = useState("");
+
   const handleActivateCard = (e: React.FormEvent) => {
     e.preventDefault();
     if (activationCvv.trim().length !== 3) {
-      toast.error("Please enter the 3-digit CVV from the back of your card.");
+      setActivationError("Enter the 3-digit CVV from the back of your card.");
       return;
     }
     if (activationPin.length !== 4) {
-      toast.error("PIN must be 4 digits.");
+      setActivationError("Your PIN must be 4 digits.");
       return;
     }
     if (activationPin !== activationPinConfirm) {
-      toast.error("PINs do not match. Please check and re-enter.");
+      setActivationError("PINs don’t match. Check and re-enter them.");
+      setActivationPinConfirm("");
       return;
     }
+    setActivationError("");
 
     setCurrentCard((prev) => ({ ...prev, status: "Active" }));
     setCardStatusInStore(currentCard.id, "Active");
@@ -564,7 +570,7 @@ export function VirtualCardDetailsView({
                           CARD HOLDER
                         </span>
                         <span className="text-[14px] sm:text-[15.5px] font-medium leading-[20px] tracking-tight uppercase">
-                          {effectiveCard.holder || actor?.name || "TSOTSOO MILLS"}
+                          {effectiveCard.holder || actor?.name || "RANSFORD GYASI"}
                         </span>
                       </div>
 
@@ -572,7 +578,7 @@ export function VirtualCardDetailsView({
                         <span className="text-[10px] sm:text-[10.5px] font-medium opacity-60 leading-[14px] uppercase tracking-wider">
                           EXP
                         </span>
-                        <span className="text-[14px] sm:text-[15.5px] font-medium leading-[20px] tracking-tight font-mono">
+                        <span className="text-[14px] sm:text-[15.5px] font-medium leading-[20px] tracking-tight">
                           {effectiveCard.expiry || "09/30"}
                         </span>
                       </div>
@@ -883,7 +889,7 @@ export function VirtualCardDetailsView({
                           handleCopy(displayFullNumber.replace(/\s/g, ""), "Card Number");
                         }
                       }}
-                      className={`font-mono text-[18px] sm:text-[22px] tracking-wider leading-[24px] whitespace-nowrap select-none ${
+                      className={`text-[18px] sm:text-[22px] tracking-wider leading-[24px] whitespace-nowrap select-none ${
                         showCardDetails
                           ? "cursor-pointer hover:opacity-85 transition-opacity"
                           : "cursor-default"
@@ -910,7 +916,7 @@ export function VirtualCardDetailsView({
                     {showCardDetails ? (
                       <button
                         type="button"
-                        onClick={() => handleCopy(card.holder || "TSOTSOO MILLS", "Cardholder Name")}
+                        onClick={() => handleCopy(card.holder || "RANSFORD GYASI", "Cardholder Name")}
                         className="flex flex-col gap-0.5 text-left group cursor-pointer hover:opacity-80 transition-opacity min-w-0"
                         title="Click to copy cardholder name"
                       >
@@ -918,7 +924,7 @@ export function VirtualCardDetailsView({
                           CARD HOLDER
                         </span>
                         <span className="text-[15px] sm:text-[16px] font-medium leading-[22px] tracking-[-0.05px] uppercase truncate max-w-[140px] sm:max-w-[170px]">
-                          {card.holder || "TSOTSOO MILLS"}
+                          {card.holder || "RANSFORD GYASI"}
                         </span>
                       </button>
                     ) : (
@@ -927,7 +933,7 @@ export function VirtualCardDetailsView({
                           CARD HOLDER
                         </span>
                         <span className="text-[15px] sm:text-[16px] font-medium leading-[22px] tracking-[-0.05px] uppercase truncate max-w-[140px] sm:max-w-[170px]">
-                          {card.holder || "TSOTSOO MILLS"}
+                          {card.holder || "RANSFORD GYASI"}
                         </span>
                       </div>
                     )}
@@ -943,7 +949,7 @@ export function VirtualCardDetailsView({
                           <span className="text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
                             EXP
                           </span>
-                          <span className="text-[14px] sm:text-[15px] font-medium leading-[22px] tracking-[-0.05px] font-mono">
+                          <span className="text-[14px] sm:text-[15px] font-medium leading-[22px] tracking-[-0.05px]">
                             {displayExpiry}
                           </span>
                         </button>
@@ -952,7 +958,7 @@ export function VirtualCardDetailsView({
                           <span className="text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
                             EXP
                           </span>
-                          <span className="text-[14px] sm:text-[15px] font-medium leading-[22px] tracking-[-0.05px] font-mono">
+                          <span className="text-[14px] sm:text-[15px] font-medium leading-[22px] tracking-[-0.05px]">
                             {displayExpiry}
                           </span>
                         </div>
@@ -968,7 +974,7 @@ export function VirtualCardDetailsView({
                           <span className="text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
                             CVV
                           </span>
-                          <span className="text-[14px] sm:text-[15px] font-medium leading-[22px] tracking-[-0.05px] font-mono">
+                          <span className="text-[14px] sm:text-[15px] font-medium leading-[22px] tracking-[-0.05px]">
                             {displayCvv}
                           </span>
                         </button>
@@ -977,7 +983,7 @@ export function VirtualCardDetailsView({
                           <span className="text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
                             CVV
                           </span>
-                          <span className="text-[14px] sm:text-[15px] font-medium leading-[22px] tracking-[-0.05px] font-mono">
+                          <span className="text-[14px] sm:text-[15px] font-medium leading-[22px] tracking-[-0.05px]">
                             •••
                           </span>
                         </div>
@@ -1475,7 +1481,7 @@ export function VirtualCardDetailsView({
                 {["4", "8", "2", "1"].map((digit, idx) => (
                   <div
                     key={idx}
-                    className="size-12 rounded-xl bg-muted border border-border flex items-center justify-center text-[22px] font-medium font-mono text-foreground shadow-inner"
+                    className="size-12 rounded-xl bg-muted border border-border flex items-center justify-center text-[22px] font-medium text-foreground shadow-inner"
                   >
                     {digit}
                   </div>
@@ -1806,8 +1812,8 @@ export function VirtualCardDetailsView({
                   maxLength={3}
                   placeholder="e.g. 842"
                   value={activationCvv}
-                  onChange={(e) => setActivationCvv(e.target.value.replace(/\D/g, ""))}
-                  className="h-10 text-[13.5px] font-mono tracking-wider"
+                  onChange={(e) => { setActivationCvv(e.target.value.replace(/\D/g, "")); setActivationError(""); }}
+                  className="h-10 text-[13.5px] tracking-wider"
                   required
                 />
                 <span className="text-[11.5px] text-muted-foreground">
@@ -1827,8 +1833,8 @@ export function VirtualCardDetailsView({
                     maxLength={4}
                     placeholder="••••"
                     value={activationPin}
-                    onChange={(e) => setActivationPin(e.target.value.replace(/\D/g, ""))}
-                    className="h-10 text-[13.5px] font-mono text-center tracking-widest"
+                    onChange={(e) => { setActivationPin(e.target.value.replace(/\D/g, "")); setActivationError(""); }}
+                    className="h-10 text-[13.5px] text-center tracking-widest"
                     required
                   />
                 </div>
@@ -1842,8 +1848,8 @@ export function VirtualCardDetailsView({
                     maxLength={4}
                     placeholder="••••"
                     value={activationPinConfirm}
-                    onChange={(e) => setActivationPinConfirm(e.target.value.replace(/\D/g, ""))}
-                    className="h-10 text-[13.5px] font-mono text-center tracking-widest"
+                    onChange={(e) => { setActivationPinConfirm(e.target.value.replace(/\D/g, "")); setActivationError(""); }}
+                    className="h-10 text-[13.5px] text-center tracking-widest"
                     required
                   />
                 </div>
@@ -1851,6 +1857,7 @@ export function VirtualCardDetailsView({
               <span className="text-[11.5px] text-muted-foreground block -mt-1">
                 This PIN will be required for ATM cash withdrawals and point-of-sale transactions.
               </span>
+              <InlineError message={activationError} className="text-left" />
             </DialogBody>
 
             <DialogFooter>

@@ -14,7 +14,7 @@ const common: Entry[] = [
   ["state model are not built in this pass.", "modèle d’états ne sont pas encore réalisés.", "modelo de estados aún no están construidos.", "状态模型尚未在此阶段实现。"],
   ["PAPSS Payment", "Paiement PAPSS", "Pago PAPSS", "PAPSS 付款"],
   ["Airtime Top-up", "Recharge de crédit", "Recarga de saldo", "话费充值"],
-  ["SWIFT Wire Transfer", "Virement SWIFT", "Transferencia SWIFT", "SWIFT 电汇"],
+  ["Outside Ghana", "Hors du Ghana", "Fuera de Ghana", "加纳境外"],
   ["QR Payment", "Paiement QR", "Pago con QR", "二维码支付"],
   ["Send Money", "Envoyer de l’argent", "Enviar dinero", "转账"],
   ["New", "Nouveau", "Nuevo", "新"],

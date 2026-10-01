@@ -67,7 +67,7 @@ function Slider({
   const setLook = useEagleStore((s) => s.setLook);
   const write = (n: number) => (isLookKey(k) ? setLook(theme, { [k]: n }) : set({ [k]: n }));
   return (
-    <label className="grid grid-cols-[92px_1fr_46px] items-center gap-2 text-[12px] text-muted-foreground">
+    <label className="grid grid-cols-[92px_1fr_46px] items-center gap-2 text-[12px] text-foreground">
       {label}
       <input
         type="range"
@@ -91,7 +91,7 @@ function LookColor({ label, k }: { label: string; k: "color" | "litColor" | "hot
   const value = useEagleStore((s) => lookFor(s.config, theme)[k]);
   const setLook = useEagleStore((s) => s.setLook);
   return (
-    <label className="grid grid-cols-[92px_1fr] items-center gap-2 text-[12px] text-muted-foreground">
+    <label className="grid grid-cols-[92px_1fr] items-center gap-2 text-[12px] text-foreground">
       {label}
       <span className="flex items-center gap-2">
         <input
@@ -143,7 +143,7 @@ function Toggle({ label, k }: { label: string; k: "visible" | "flip" | "fade" | 
   const value = useEagleStore((s) => s.config[k]);
   const set = useEagleStore((s) => s.set);
   return (
-    <label className="flex items-center justify-between text-[12px] text-muted-foreground">
+    <label className="flex items-center justify-between text-[12px] text-foreground">
       {label}
       <input type="checkbox" checked={value} onChange={(e) => set({ [k]: e.target.checked })} className="accent-primary" />
     </label>

@@ -52,7 +52,7 @@ function ScheduledRow({ p, showAmounts }: { p: UpcomingPayment; showAmounts: boo
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="truncate text-[14px] text-foreground">{p.payee}</span>
         <span className="text-[12px] text-muted-foreground tabular">
-          {dayLabel(p.date)} · {p.frequency}
+          {dayLabel(p.date)} · {p.frequencyLabel}
         </span>
       </span>
       <span className="shrink-0 tabular text-[14px] text-muted-foreground">

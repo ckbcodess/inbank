@@ -8,9 +8,27 @@ import { useAmountVisibility } from "@/components/providers/AmountVisibilityProv
 import { toast } from "sonner";
 import { GcbDashboard, type DashStatus } from "@/components/dashboard/v2/GcbDashboard";
 import { HeroWaveTuner } from "@/components/dashboard/v2/HeroWaveTuner";
+import { OPEN_FUND_EVENT } from "@/lib/payment-options";
+import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import { FirstRunWelcome } from "@/components/dashboard/v2/FirstRunWelcome";
 import { QuickFundModal } from "@/components/dashboard/v2/QuickFundModal";
-import { clearHasSkippedFunding } from "@/lib/device-trust";
+import { SaveSourcePrompt, sourceFromFunding, useIsLinked } from "@/components/dashboard/v2/SaveSourcePrompt";
+import {
+  clearHasSkippedFunding,
+  peekVerifiedMobile,
+  setFirstRun,
+  setPendingFundPrompt,
+  setPendingReferral,
+  type PendingFundingSource,
+} from "@/lib/device-trust";
+import { ChevronDown, Sparkles } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import {
@@ -48,6 +66,9 @@ function OverviewContent() {
   const [usageType, setUsageType] = useState<DashboardUsageType>("active");
   const [layout, setLayout] = useState<DashboardLayout>(readLayout);
   const [fundModalOpen, setFundModalOpen] = useState(false);
+  // Asked after a later top-up (the first one is asked inside FirstRunWelcome).
+  const [saveSource, setSaveSource] = useState<PendingFundingSource | null>(null);
+  const saveSourceLinked = useIsLinked(saveSource);
   const [fetching, setFetching] = useState(false);
   const [updatedAt, setUpdatedAt] = useState(() => Date.now());
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -59,6 +80,13 @@ function OverviewContent() {
 
   useEffect(() => () => {
     if (timer.current) clearTimeout(timer.current);
+  }, []);
+
+  // "Top up → My Account" in the action picker asks the dashboard to open the add-money flow.
+  useEffect(() => {
+    const open = () => setFundModalOpen(true);
+    window.addEventListener(OPEN_FUND_EVENT, open);
+    return () => window.removeEventListener(OPEN_FUND_EVENT, open);
   }, []);
 
   const isHero = layout === "hero" || layout === "hero-split";
@@ -108,7 +136,7 @@ function OverviewContent() {
     router.replace(id === data.defaultAccountId ? pathname : `${pathname}?account=${id}`, { scroll: false });
   };
 
-  const handleFundSuccess = (
+  const applyFunding = (
     amount: number,
     method: "momo" | "card",
     details: { operator?: string; phone?: string; cardLast4?: string }
@@ -118,6 +146,34 @@ function OverviewContent() {
     toast.success(`GHS ${amount.toFixed(2)} deposited successfully!`, {
       description: `${method === "momo" ? (details.operator || "Mobile Money") : "Card"} deposit added to your account.`,
     });
+  };
+
+  const handleFundSuccess = (
+    amount: number,
+    method: "momo" | "card",
+    details: { operator?: string; phone?: string; cardLast4?: string }
+  ) => {
+    applyFunding(amount, method, details);
+    setSaveSource(sourceFromFunding(method, details));
+  };
+
+  const triggerPostOnboarding = (
+    stage: "all" | "referral" | "ready" | "fund" | "source"
+  ) => {
+    setFirstRun("new");
+    if (stage === "all" || stage === "referral") {
+      setPendingReferral(true);
+    }
+    if (stage === "all" || stage === "ready" || stage === "fund") {
+      setPendingFundPrompt(true);
+    }
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("open-welcome-flow", {
+          detail: { stage, kind: "new" },
+        })
+      );
+    }
   };
 
   return (
@@ -145,14 +201,66 @@ function OverviewContent() {
       {/* The hero card has its own floating tuner. */}
       {isHero && <HeroWaveTuner />}
       {/* Once, right after onboarding or moving from the old internet banking. */}
-      <FirstRunWelcome firstName={data.firstName} />
+      <FirstRunWelcome firstName={data.firstName} onFunded={applyFunding} />
       {/* Interactive Quick Fund Modal */}
       <QuickFundModal
         open={fundModalOpen}
         onOpenChange={setFundModalOpen}
         onSuccess={handleFundSuccess}
-        accountName={data.accounts[0]?.name || "Virtual Account"}
+        registeredPhone={fundModalOpen ? peekVerifiedMobile() : undefined}
+        accountName={data.accounts[0]?.name || "Virtual Wallet"}
       />
+      {saveSource && !saveSourceLinked && (
+        <SaveSourcePrompt source={saveSource} onDone={() => setSaveSource(null)} />
+      )}
+
+      {SHOW_DEMO_TOOLS && (
+        <>
+        {/* Session helper: button to bring up post-onboarding cards for editing (easily removed after session) */}
+        <div className="fixed bottom-5 right-5 z-40">
+          <DropdownMenu>
+            <DropdownMenuTrigger className="flex h-9 cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-3.5 text-[13px] font-medium text-foreground shadow-lg transition-colors hover:bg-muted outline-none">
+              <Sparkles size={14} className="text-muted-foreground" aria-hidden="true" />
+              <span>Post-Onboarding Cards</span>
+              <ChevronDown size={13} className="text-muted-foreground" aria-hidden="true" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem
+                className="cursor-pointer text-[13px] font-medium"
+                onClick={() => triggerPostOnboarding("all")}
+              >
+                Play Full Sequence →
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="cursor-pointer text-[13px]"
+                onClick={() => triggerPostOnboarding("ready")}
+              >
+                1. Fund Account Prompt
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer text-[13px]"
+                onClick={() => triggerPostOnboarding("fund")}
+              >
+                2. Quick Fund Modal
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer text-[13px]"
+                onClick={() => triggerPostOnboarding("source")}
+              >
+                3. Save Funding Source
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer text-[13px]"
+                onClick={() => triggerPostOnboarding("referral")}
+              >
+                4. Referral Code
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        </>
+      )}
     </>
   );
 }

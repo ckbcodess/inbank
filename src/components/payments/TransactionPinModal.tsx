@@ -15,8 +15,10 @@
  *   • Seamless fallback to 6-digit SMS OTP with resend timer
  */
 
+import { AlertToast } from "@/components/ui/alert-toast";
+import { InlineError } from "@/components/ui/inline-error";
 import React, { useRef, useEffect, useState } from "react";
-import { Lock, Smartphone, KeyRound, AlertCircle } from "lucide-react";
+import { Lock, Smartphone, KeyRound } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -178,17 +180,7 @@ export default function TransactionPinModal({
               </div>
 
               {/* Error Message */}
-              {auth.state === "error" && (
-                <div
-                  role="alert"
-                  className="mt-4 flex flex-col items-center justify-center gap-1 text-center animate-in fade-in duration-150"
-                >
-                  <p className="flex items-center justify-center gap-1.5 text-[13px] text-destructive font-medium">
-                    <AlertCircle size={14} strokeWidth={2} className="shrink-0" />
-                    <span>The PIN entered is incorrect. Please try again.</span>
-                  </p>
-                </div>
-              )}
+              <InlineError message={auth.state === "error" && "That PIN is incorrect. Please try again."} className="mt-4" />
 
               {/* Secondary Switch to SMS OTP */}
               <div className="mt-10 sm:mt-12 flex items-center justify-center">
@@ -231,21 +223,9 @@ export default function TransactionPinModal({
                 />
               </div>
 
-              {auth.state === "error" && (
-                <p
-                  role="alert"
-                  className="mt-3 flex items-center justify-center gap-1.5 text-[13px] text-destructive animate-in fade-in duration-150"
-                >
-                  <AlertCircle size={14} strokeWidth={2} className="shrink-0" />
-                  <span>That code isn&apos;t right or has expired. Request a new one below.</span>
-                </p>
-              )}
+              <InlineError message={auth.state === "error" && "That code isn’t right or has expired. Request a new one below."} className="mt-4" />
 
-              {auth.state === "resent" && (
-                <p className="mt-3 rounded-lg bg-muted px-3 py-1.5 text-center text-[12px] text-muted-foreground animate-in fade-in duration-150">
-                  A new 6-digit code has been sent to {phone}.
-                </p>
-              )}
+              <AlertToast when={auth.state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${phone}.`} />
 
               <div className="mt-7 flex flex-col items-center gap-2.5">
                 <button

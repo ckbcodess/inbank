@@ -84,7 +84,7 @@ export function InteractiveCardsHub({
       <div className="flex items-center justify-between pb-3 border-b border-border/60">
         <div className="flex items-center gap-2">
           <h2 className="text-[15px] font-medium text-foreground">Cards &amp; Wallets</h2>
-          <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-foreground font-mono">
+          <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-foreground">
             {cards.length}
           </span>
         </div>
@@ -154,7 +154,7 @@ export function InteractiveCardsHub({
 
           {/* Middle: Card Number (Masked or Unmasked) */}
           <div className="my-2 z-10 flex items-center justify-between">
-            <span className="font-mono text-[15px] sm:text-[16px] tracking-wider font-medium">
+            <span className="text-[15px] sm:text-[16px] tracking-wider font-medium">
               {isRevealed
                 ? `4111 8820 9410 ${currentCard.maskedNumber.slice(-4)}`
                 : `•••• •••• •••• ${currentCard.maskedNumber.slice(-4)}`}
@@ -170,7 +170,7 @@ export function InteractiveCardsHub({
           </div>
 
           {/* Bottom Row: Expiry, CVV & Scheme */}
-          <div className="flex items-end justify-between text-[11px] font-mono z-10 opacity-90">
+          <div className="flex items-end justify-between text-[11px] z-10 opacity-90">
             <div className="flex gap-4">
               <div>
                 <span className="text-[9px] uppercase tracking-wider block opacity-70">Expires</span>
@@ -236,7 +236,7 @@ export function InteractiveCardsHub({
       <div className="mt-3.5 pt-3 border-t border-border/60 text-[11.5px]">
         <div className="flex justify-between items-center text-muted-foreground mb-1">
           <span>Monthly Spend Limit</span>
-          <span className="font-mono text-foreground font-medium">GHS 2,450 / 10,000</span>
+          <span className="text-foreground font-medium">GHS 2,450 / 10,000</span>
         </div>
         <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
           <div className="h-full bg-primary rounded-full" style={{ width: "24.5%" }} />

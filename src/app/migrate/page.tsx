@@ -10,10 +10,11 @@
  * hub; `?user=` carries the old user ID from the login screen.
  */
 
+import { InlineError } from "@/components/ui/inline-error";
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertCircle, ArrowLeftRight, CalendarClock, Check, KeyRound, Landmark, Users } from "lucide-react";
+import { ArrowLeftRight, CalendarClock, Check, KeyRound, Landmark, Users } from "lucide-react";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
@@ -21,8 +22,7 @@ import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSession } from "@/lib/session-store";
-import { setFirstRun, trustThisDevice } from "@/lib/device-trust";
-import { RememberDeviceRow } from "@/components/auth/RememberDeviceRow";
+import { setFirstRun } from "@/lib/device-trust";
 import {
   LEGACY_DEMO_USER_ID,
   MIGRATED_DATA,
@@ -61,7 +61,6 @@ function MigrateContent() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
-  const [rememberDevice, setRememberDevice] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const index = MIGRATION_STEPS.findIndex((s) => s.id === step);
@@ -92,7 +91,6 @@ function MigrateContent() {
     window.setTimeout(() => {
       signIn(actor);
       verifyMfa();
-      if (rememberDevice) trustThisDevice(actor);
       setFirstRun("migrated");
       router.push("/overview");
     }, 700);
@@ -157,7 +155,7 @@ function MigrateContent() {
       {step === "verify" && (
         <div className="flex flex-col gap-6">
           <p className="text-center text-[14px] text-muted-foreground">
-            We&apos;ve sent a 6-digit code to the phone on your account, ending <span className="tabular">118</span>.
+            A 6-digit code has been sent to the phone on your account, ending <span className="tabular">118</span>.<br />Please enter the code below.
           </p>
           <OtpInput
             value={digits}
@@ -175,12 +173,7 @@ function MigrateContent() {
               <span>Checking…</span>
             </div>
           )}
-          {codeError && (
-            <div role="alert" className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3.5 text-[13px] text-destructive">
-              <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
-              <span>That code didn&apos;t match. Check the latest message and try again.</span>
-            </div>
-          )}
+          <InlineError message={codeError && "That code didn’t match. Check the latest message and try again."} />
         </div>
       )}
 
@@ -234,7 +227,7 @@ function MigrateContent() {
             autoFocus
           />
           <Button type="submit" size="lg" disabled={!newPasswordReady(password, confirm)} loading={busy} className="mt-1 h-11 w-full text-[14.5px]">
-            Continue
+            Proceed
           </Button>
         </form>
       )}
@@ -255,7 +248,6 @@ function MigrateContent() {
               </span>
             </span>
           </label>
-          <RememberDeviceRow checked={rememberDevice} onCheckedChange={setRememberDevice} />
           <Button size="lg" onClick={finish} disabled={!acceptTerms} loading={busy} className="h-11 w-full text-[14.5px]">
             Go to my dashboard
           </Button>

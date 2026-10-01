@@ -79,7 +79,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
   // Mobile Wallet payees
   {
     id: "rec-w1",
-    name: "Ama Serwaa Mensah",
+    name: "Ransford Gyasi",
     bank: "MTN Mobile Money",
     acct: "0244 123 456",
     initials: "AS",
@@ -127,7 +127,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
   },
   {
     id: "rec-px2",
-    name: "Ama Serwaa",
+    name: "Ransford Gyasi",
     bank: "Proxy ID",
     acct: "@ama.serwaa",
     initials: "AS",
@@ -159,7 +159,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
   },
   {
     id: "rec-air-1",
-    name: "Ama Serwaa",
+    name: "Ransford Gyasi",
     bank: "MTN Mobile Money",
     acct: "0244 123 456",
     initials: "AS",
@@ -231,7 +231,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
   },
   {
     id: "rec-dat-3",
-    name: "Ama Serwaa",
+    name: "Ransford Gyasi",
     bank: "MTN Mobile Money",
     acct: "0244 123 456",
     initials: "AS",
@@ -295,11 +295,14 @@ export function HorizontalScrollStrip({
     });
   };
 
+  // Fade the cards out under the chevrons with a mask, so the fade is transparency, not a colour to match.
+  const fade = `linear-gradient(to right, transparent 0, #000 ${canScrollLeft ? 56 : 0}px, #000 calc(100% - ${canScrollRight ? 56 : 0}px), transparent 100%)`;
+
   return (
     <div className={`relative w-full ${className}`}>
-      {/* Contextual Left Chevron with gradient mask */}
+      {/* Contextual left chevron */}
       {canScrollLeft && (
-        <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center pr-5 pl-0 bg-gradient-to-r from-card via-card/70 to-transparent dark:from-card dark:via-card/40 dark:to-transparent pointer-events-none animate-in fade-in duration-200">
+        <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center pl-0 pointer-events-none animate-in fade-in duration-200">
           <button
             type="button"
             onClick={() => scroll("left")}
@@ -316,13 +319,14 @@ export function HorizontalScrollStrip({
         ref={scrollRef}
         onScroll={checkScroll}
         className="flex items-center gap-3 overflow-x-auto pb-1.5 scrollbar-none scroll-smooth"
+        style={{ maskImage: fade, WebkitMaskImage: fade }}
       >
         {children}
       </div>
 
-      {/* Contextual Right Smart Chevron with gradient mask */}
+      {/* Contextual right chevron */}
       {canScrollRight && (
-        <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center pl-6 pr-0 bg-gradient-to-l from-card via-card/70 to-transparent dark:from-card dark:via-card/40 dark:to-transparent pointer-events-none animate-in fade-in duration-200">
+        <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center pr-0 pointer-events-none animate-in fade-in duration-200">
           <button
             type="button"
             onClick={() => scroll("right")}

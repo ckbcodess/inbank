@@ -168,7 +168,7 @@ export function ScanAndPayFlow({
                         <span className="text-lg shrink-0">{m.icon}</span>
                         <div className="flex flex-col min-w-0">
                           <span className="text-[12.5px] font-medium text-foreground truncate">{m.name}</span>
-                          <span className="text-[11px] text-muted-foreground font-mono">{m.code}</span>
+                          <span className="text-[11px] text-muted-foreground">{m.code}</span>
                         </div>
                       </button>
                     ))}
@@ -181,7 +181,7 @@ export function ScanAndPayFlow({
             {activeTab === "manual" && !isMerchantSelected && (
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="merchant-id" className="text-[13px] text-muted-foreground">
+                  <Label htmlFor="merchant-id" className="text-[13px] text-foreground">
                     Merchant Terminal / PayCode ID
                   </Label>
                   <div className="flex gap-2">
@@ -190,7 +190,7 @@ export function ScanAndPayFlow({
                       value={state.qrCode}
                       onChange={(e) => onChange("qrCode", e.target.value.toUpperCase())}
                       placeholder="e.g. GCB-QR-88210"
-                      className="h-11 font-mono uppercase"
+                      className="h-11 uppercase"
                     />
                     <Button
                       type="button"
@@ -221,7 +221,7 @@ export function ScanAndPayFlow({
                       <span className="text-[14px] font-medium text-foreground">{state.qrMerchant}</span>
                       <CheckCircle2 size={14} strokeWidth={1.9} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
                     </div>
-                    <span className="text-[11.5px] text-muted-foreground font-mono">
+                    <span className="text-[11.5px] text-muted-foreground">
                       Terminal: {state.qrCode || "Universal QR Verified"}
                     </span>
                   </div>

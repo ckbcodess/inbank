@@ -557,7 +557,7 @@ export default function TransactionList({
 
       {/* ── Page Header: Title & Export Action (no description underneath) ── */}
       <div className="flex items-center justify-between gap-3 w-full">
-        <h1 className="text-[20px] sm:text-[24px] lg:text-[26px] font-medium leading-[26px] sm:leading-[32px] tracking-[-0.02em] text-foreground truncate">
+        <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
           Transactions
         </h1>
         <Button
@@ -969,7 +969,7 @@ export default function TransactionList({
           <div className="flex-1 overflow-y-auto px-5 py-4 space-y-6">
             {/* 1. Date Range */}
             <div>
-              <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+              <label className="text-[12px] font-medium uppercase tracking-wider text-foreground block mb-2.5">
                 Date Range
               </label>
               <div className="flex flex-wrap gap-1.5">
@@ -1033,7 +1033,7 @@ export default function TransactionList({
 
             {/* 2. Status */}
             <div>
-              <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+              <label className="text-[12px] font-medium uppercase tracking-wider text-foreground block mb-2.5">
                 Status
               </label>
               <div className="flex flex-wrap gap-1.5">
@@ -1075,7 +1075,7 @@ export default function TransactionList({
 
             {/* 3. Payment Method */}
             <div>
-              <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+              <label className="text-[12px] font-medium uppercase tracking-wider text-foreground block mb-2.5">
                 Payment Method
               </label>
               <div className="flex flex-wrap gap-1.5">
@@ -1108,7 +1108,7 @@ export default function TransactionList({
 
             {/* 4. Category */}
             <div>
-              <label className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground block mb-2.5">
+              <label className="text-[12px] font-medium uppercase tracking-wider text-foreground block mb-2.5">
                 Category
               </label>
               <div className="flex flex-wrap gap-1.5">
@@ -1254,7 +1254,7 @@ export default function TransactionList({
                 <div
                   key={t.id}
                   onClick={() => router.push(`${detailBase}/${t.id}`)}
-                  className="flex items-center gap-3.5 rounded-lg px-2 py-3 hover:bg-muted/60 transition-colors cursor-pointer active:bg-muted/70"
+                  className="flex items-center gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-muted/50 cursor-pointer active:bg-muted/70 sm:px-4"
                 >
                   {/* Direction Anchor Icon */}
                   <div

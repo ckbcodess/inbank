@@ -25,9 +25,8 @@
  */
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CheckCircle2, Landmark, ScanFace } from "lucide-react";
+import { CheckCircle2, Landmark, ScanFace } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
@@ -180,7 +179,7 @@ export default function ForgotPasswordPage() {
             disabled={!mobileValid} loading={busy}
             className="mt-2 h-11 w-full text-[14px]"
           >
-            Continue
+            Proceed
           </Button>
         </form>
       )}

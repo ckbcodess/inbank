@@ -24,7 +24,7 @@ function payHref(rail: Rail, recipient: string, extra: Record<string, string> = 
 
 /** The demo customer's regulars (matched by name against the flows' saved payees). */
 const DEFAULT_PAYEES: PayAgainPayee[] = [
-  { name: "Ama Serwaa", detail: "MTN MoMo", href: payHref("wallet", "Ama Serwaa Mensah") },
+  { name: "Ransford Gyasi", detail: "MTN MoMo", href: payHref("wallet", "Ransford Gyasi") },
   { name: "Lester Adjei", detail: "ECG prepaid", href: payHref("ecg", "Lester Adjei") },
   { name: "Kwame Boateng", detail: "GCB Bank", href: payHref("bank", "Kwame Boateng") },
   { name: "Yaa Asantewaa", detail: "MTN Airtime", href: payHref("airtime", "Yaa Asantewaa") },

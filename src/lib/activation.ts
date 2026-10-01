@@ -157,13 +157,13 @@ export const ACTIVATION_PERSONAS: Record<
 > = {
   multi: {
     id: "multi",
-    name: "Kwame Mensah",
+    name: "Samuel Quartey",
     tag: "Multi-Account Holder",
     description: "Customer with Personal, Joint, and Savings accounts — selects primary account",
     ghanaCard: "GHA-998877665-1",
-    holderName: "Kwame Mensah",
+    holderName: "Samuel Quartey",
     phone: "+233 24 555 9812",
-    email: "kwame.mensah@example.com",
+    email: "samuel.quartey@example.com",
     actorId: "u-joint",
     accounts: [
       {
@@ -183,7 +183,7 @@ export const ACTIVATION_PERSONAS: Record<
         currency: "GHS",
         balance: 245800.0,
         isJoint: true,
-        jointHolders: ["Kwame Mensah", "Efua Mensah"],
+        jointHolders: ["Samuel Quartey", "Esther Appiah"],
         mandate: "Both to sign (2 of 2)",
       },
       {
@@ -206,13 +206,13 @@ export const ACTIVATION_PERSONAS: Record<
   },
   single: {
     id: "single",
-    name: "Ama Serwaa",
+    name: "Ransford Gyasi",
     tag: "Single Account",
     description: "Existing retail customer with one savings account",
     ghanaCard: "GHA-0123456789-0",
-    holderName: "Ama Serwaa",
+    holderName: "Ransford Gyasi",
     phone: "+233 24 123 4567",
-    email: "ama.serwaa@example.com",
+    email: "ransford.gyasi@example.com",
     actorId: "u-retail",
     accounts: [
       {
@@ -228,13 +228,13 @@ export const ACTIVATION_PERSONAS: Record<
   },
   joint: {
     id: "joint",
-    name: "Kwame Mensah",
+    name: "Samuel Quartey",
     tag: "Multi-Account (with Joint)",
     description: "Customer with Personal and Joint accounts",
     ghanaCard: "GHA-998877665-1",
-    holderName: "Kwame Mensah",
+    holderName: "Samuel Quartey",
     phone: "+233 24 555 9812",
-    email: "kwame.mensah@example.com",
+    email: "samuel.quartey@example.com",
     actorId: "u-joint",
     accounts: [
       {
@@ -254,7 +254,7 @@ export const ACTIVATION_PERSONAS: Record<
         currency: "GHS",
         balance: 245800.0,
         isJoint: true,
-        jointHolders: ["Kwame Mensah", "Efua Mensah"],
+        jointHolders: ["Samuel Quartey", "Esther Appiah"],
         mandate: "Both to sign (2 of 2)",
       },
     ],
@@ -316,9 +316,9 @@ export interface DemoIdentifier {
 }
 
 export const DEMO_IDENTIFIERS: readonly DemoIdentifier[] = [
-  { value: "GHA-0123456789-0", outcome: "Single Account · Ama Serwaa", alreadyEnrolled: false, personaKey: "single" },
+  { value: "GHA-0123456789-0", outcome: "Single Account · Ransford Gyasi", alreadyEnrolled: false, personaKey: "single" },
   { value: "GHA-998877665-1", outcome: "Multi-Account · Kwame Boateng (Pick Primary)", alreadyEnrolled: false, personaKey: "multi" },
-  { value: "GHA-001234567-9", outcome: "Joint Account · Kwame & Efua Mensah", alreadyEnrolled: false, personaKey: "joint" },
+  { value: "GHA-001234567-9", outcome: "Joint Account · Samuel Quartey & Esther Appiah", alreadyEnrolled: false, personaKey: "joint" },
   { value: "GHA-554433221-0", outcome: "Mobile Sync · Abena Osei", alreadyEnrolled: false, personaKey: "mobile_sync" },
   { value: "3300 1122 5566", outcome: "Already activated", alreadyEnrolled: true },
 ];

@@ -33,6 +33,10 @@ interface ActionTileProps {
   href?: string;
   onClick?: () => void;
   disabled?: boolean;
+  /** Phone layout for two tiles per row: chip and label stay side by side, the label may wrap, no chevron. */
+  compactOnMobile?: boolean;
+  /** Draw the icon straight on the tile, with no chip behind it (used with the two-tone hub icons). */
+  bareIcon?: boolean;
   className?: string;
 }
 
@@ -78,14 +82,22 @@ export function ActionTile({
   href,
   onClick,
   disabled,
+  compactOnMobile = false,
+  bareIcon = false,
   className,
 }: ActionTileProps) {
   const body = (
     <>
-      <div className="flex min-w-0 items-center gap-4">
-        <TileChip accent={accent}>{leading ?? (Icon && <Icon size={20} strokeWidth={1.8} aria-hidden="true" />)}</TileChip>
+      <div className={cn("flex min-w-0 items-center gap-4", compactOnMobile && "max-sm:gap-3")}>
+        {bareIcon && Icon ? (
+          <span className="flex size-[38.5px] shrink-0 items-center justify-center text-foreground">
+            <Icon size={24} strokeWidth={1.6} aria-hidden="true" />
+          </span>
+        ) : (
+          <TileChip accent={accent}>{leading ?? (Icon && <Icon size={20} strokeWidth={1.8} aria-hidden="true" />)}</TileChip>
+        )}
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className="truncate text-[16px] font-medium tracking-[-0.01em] text-foreground">{title}</span>
+          <span className={cn("truncate text-[16px] font-medium tracking-[-0.01em] text-foreground", compactOnMobile && "max-sm:line-clamp-2 max-sm:whitespace-normal max-sm:text-[14px] max-sm:leading-[1.25]")}>{title}</span>
           {description && <span className="truncate text-[13px] text-muted-foreground">{description}</span>}
         </span>
       </div>
@@ -94,14 +106,14 @@ export function ActionTile({
         size={20}
         strokeWidth={1.8}
         aria-hidden="true"
-        className="shrink-0 text-[#737373] transition-transform duration-150 group-hover:text-foreground dark:text-[#999999]"
+        className={cn("shrink-0 text-[#737373] transition-transform duration-150 group-hover:text-foreground dark:text-[#999999]", compactOnMobile && "max-sm:hidden")}
       />
     </>
   );
 
   if (href && !disabled) {
     return (
-      <Link href={href} className={cn(TILE, className)}>
+      <Link href={href} className={cn(TILE, compactOnMobile && "max-sm:p-3.5", className)}>
         {body}
       </Link>
     );
@@ -114,6 +126,7 @@ export function ActionTile({
       disabled={disabled}
       className={cn(
         TILE,
+        compactOnMobile && "max-sm:p-3.5",
         "cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[var(--tile)] disabled:active:scale-100",
         className,
       )}

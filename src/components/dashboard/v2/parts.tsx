@@ -620,14 +620,14 @@ export function Notices({
       {isUnfunded && onOpenFundModal && (
         <UnfundedNudge onFundClick={onOpenFundModal} />
       )}
-      <AnimatePresence initial={false}>
+      <AnimatePresence>
         {data.attention.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={SPRING}
-            className="overflow-hidden"
+            key="attention-band"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
           >
             <AttentionBand items={data.attention} />
           </motion.div>
@@ -647,7 +647,7 @@ export function UpcomingList({ items, showAmounts }: { items: UpcomingPayment[];
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
             <span className="truncate text-[14px] text-foreground">{p.payee}</span>
             <span className="text-[12px] text-muted-foreground tabular">
-              {dayLabel(p.date)} · {p.frequency}
+              {dayLabel(p.date)} · {p.frequencyLabel}
             </span>
           </span>
           <span className="shrink-0 tabular text-[14px] text-foreground">

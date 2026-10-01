@@ -12,10 +12,10 @@
  * `topUpCardId`, the same way the cards panel already does).
  */
 
+import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import {
   ArrowLeftRight,
-  CheckCircle2,
   Receipt,
   SlidersHorizontal,
 } from "lucide-react";
@@ -72,7 +72,6 @@ export function QuickActionBar({
   const { showAmounts } = useAmountVisibility();
 
   const [activeModal, setActiveModal] = useState<ModalType>(null);
-  const [notice, setNotice] = useState<string | null>(null);
 
   const [transferFrom, setTransferFrom] = useState("");
   const [transferTo, setTransferTo] = useState("");
@@ -100,8 +99,7 @@ export function QuickActionBar({
   }, [requestedCardId, accounts, onTopUpHandled]);
 
   function triggerNotice(msg: string) {
-    setNotice(msg);
-    setTimeout(() => setNotice(null), 5000);
+    toast.success(msg);
   }
 
   function handleExecuteTransfer() {
@@ -181,12 +179,6 @@ export function QuickActionBar({
         </div>
       </section>
 
-      {notice && (
-        <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/60 px-4 py-3 text-[13px] text-foreground">
-          <CheckCircle2 size={16} strokeWidth={1.8} className="shrink-0 text-emerald-500" />
-          <span className="flex-1">{notice}</span>
-        </div>
-      )}
 
       {/* Top up a card — FR-33 */}
       <Dialog open={activeModal === "top-up"} onOpenChange={(open) => !open && setActiveModal(null)}>

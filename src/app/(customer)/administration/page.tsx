@@ -30,7 +30,7 @@ const LIST_STATES: readonly ListState[] = [
 
 const USERS = [
   { id: "user-1", name: "Kwame Boateng", email: "kwame.boateng@example.com", role: "Maker", status: "Active", access: "Payments, Trade" },
-  { id: "user-2", name: "Efua Mensah", email: "efua.mensah@example.com", role: "Approver", status: "Active", access: "Payments, Trade, Approvals" },
+  { id: "user-2", name: "Esther Appiah", email: "esther.appiah@example.com", role: "Approver", status: "Active", access: "Payments, Trade, Approvals" },
   { id: "user-3", name: "Yaw Oppong", email: "yaw.oppong@example.com", role: "Corporate Admin", status: "Active", access: "Full access" },
   { id: "user-4", name: "Adjoa Frimpong", email: "adjoa.frimpong@example.com", role: "Viewer", status: "Suspended", access: "View only" },
 ];

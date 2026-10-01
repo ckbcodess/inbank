@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ArrowLeftRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { PAPSS_COUNTRY_NAMES, type Country } from "@/lib/countries";
+import { CountryPicker } from "./CountryPicker";
 import { Account } from "@/lib/mock-data";
 import {
   Select,
@@ -12,7 +15,6 @@ import {
 } from "@/components/ui/select";
 import {
   FromAccountSelector,
-  AmountInput,
   NarrationInput,
   CategorySelect,
   InsufficientFundsAlert,
@@ -21,20 +23,8 @@ import {
   SchedulePaymentSection,
   ScheduleFrequency,
   RATES,
+  DualAmountFields,
 } from "./shared";
-
-const SWIFT_COUNTRIES = [
-  { name: "United States", currency: "USD" },
-  { name: "United Kingdom", currency: "GBP" },
-  { name: "Germany (Eurozone)", currency: "EUR" },
-  { name: "France (Eurozone)", currency: "EUR" },
-  { name: "Canada", currency: "CAD" },
-  { name: "China", currency: "CNY" },
-  { name: "United Arab Emirates", currency: "AED" },
-  { name: "Australia", currency: "AUD" },
-  { name: "Japan", currency: "JPY" },
-  { name: "South Africa", currency: "ZAR" },
-];
 
 export interface InternationalWireFormState {
   fromId: string;
@@ -45,6 +35,16 @@ export interface InternationalWireFormState {
   wIban: string;
   wBenName: string;
   wForeign: string;
+  /** What they typed in "You send", or "" when the recipient's box is the source. */
+  wGhs: string;
+  /** The kind of bank code they have for the recipient: "swift", "sort" or "iban". The code itself is wSwift. */
+  wMode: string;
+  wBankAddress: string;
+  wBenEmail: string;
+  wBenPhone: string;
+  wBenAddress: string;
+  /** Who pays the charges: "shared", "sender" or "recipient". */
+  wCharges: string;
   wPurpose: string;
   category: string;
   saveBeneficiary?: boolean;
@@ -62,6 +62,61 @@ interface InternationalWireFlowProps {
   onProceed: () => void;
   detailsCollapsed?: boolean;
   onToggleCollapsed?: (collapsed: boolean) => void;
+  /** Switch to the PAPSS flow for this African country. */
+  onUsePapss?: (countryName: string, currency: string) => void;
+}
+
+/** Mode of delivery is the kind of bank code they have; each has its own shape. */
+const CODE_TYPES = [
+  {
+    id: "swift",
+    label: "Swift code",
+    hint: "8 or 11 letters and numbers",
+    placeholder: "e.g. CHASUS33",
+    clean: (v: string) => v.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 11),
+    valid: (v: string) => v.length === 8 || v.length === 11,
+  },
+  {
+    id: "sort",
+    label: "Sort code",
+    hint: "6 digits",
+    placeholder: "e.g. 123456",
+    clean: (v: string) => v.replace(/\D/g, "").slice(0, 6),
+    valid: (v: string) => v.length === 6,
+  },
+  {
+    id: "iban",
+    label: "IBAN",
+    hint: "Up to 34 letters and numbers",
+    placeholder: "e.g. GB29NWBK60161331926819",
+    clean: (v: string) => v.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 34),
+    valid: (v: string) => v.length >= 15 && v.length <= 34,
+  },
+];
+
+export const CODE_TYPE_LABELS: Record<string, string> = Object.fromEntries(CODE_TYPES.map((c) => [c.id, c.label]));
+
+export const CHARGE_OPTIONS = [
+  { id: "shared", label: "Shared", note: "You pay GCB's fee. The recipient's bank may deduct its own." },
+  { id: "sender", label: "I pay all charges", note: "The recipient gets the full amount." },
+  { id: "recipient", label: "Recipient pays", note: "GCB's fee is taken out of the amount sent." },
+];
+
+const INPUT =
+  "h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all";
+const TRIGGER =
+  "h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none";
+
+function Field({ label, optional, children }: { label: string; optional?: boolean; children: React.ReactNode }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span className="text-[12.5px] text-muted-foreground">
+        {label}
+        {optional && " (optional)"}
+      </span>
+      {children}
+    </div>
+  );
 }
 
 const INTERNATIONAL_BANKS_BY_COUNTRY: Record<string, string[]> = {
@@ -84,7 +139,7 @@ const INTERNATIONAL_BANKS_BY_COUNTRY: Record<string, string[]> = {
     "Standard Chartered",
     "Santander UK",
   ],
-  "Germany (Eurozone)": [
+  "Germany": [
     "Deutsche Bank",
     "Commerzbank",
     "KfW",
@@ -92,7 +147,7 @@ const INTERNATIONAL_BANKS_BY_COUNTRY: Record<string, string[]> = {
     "Landesbank Baden-Württemberg",
     "HypoVereinsbank",
   ],
-  "France (Eurozone)": [
+  "France": [
     "BNP Paribas",
     "Crédit Agricole",
     "Société Générale",
@@ -146,8 +201,10 @@ export function InternationalWireFlow({
   onProceed,
   detailsCollapsed,
   onToggleCollapsed,
+  onUsePapss,
 }: InternationalWireFlowProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
+  const [showOptional, setShowOptional] = useState(false);
   const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
 
   const setCollapsed = (val: boolean) => {
@@ -155,8 +212,10 @@ export function InternationalWireFlow({
     onToggleCollapsed?.(val);
   };
 
-  const currentCountry = state.wCountry || "United States";
-  const availableBanks = INTERNATIONAL_BANKS_BY_COUNTRY[currentCountry] || INTERNATIONAL_BANKS_BY_COUNTRY["United States"];
+  const currentCountry = state.wCountry;
+  const availableBanks = INTERNATIONAL_BANKS_BY_COUNTRY[currentCountry] ?? [];
+  const codeType = CODE_TYPES.find((c) => c.id === state.wMode);
+  const [papssFor, setPapssFor] = useState<Country | null>(null);
 
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
@@ -165,15 +224,29 @@ export function InternationalWireFlow({
 
   const rate = RATES[state.wCurrency] ?? 15.4;
   const numForeign = Number(state.wForeign.replace(/[^0-9.]/g, "")) || 0;
-  const ghsEquivalent = Math.round(numForeign * rate * 100) / 100;
+  const ghsEquivalent = state.wGhs
+    ? Number(state.wGhs.replace(/[^0-9.]/g, "")) || 0
+    : Math.round(numForeign * rate * 100) / 100;
   const fee = 50.0; // SWIFT Wire standard fee
-  const totalGhs = ghsEquivalent + fee;
+  // "Recipient pays" takes the fee out of the amount, so nothing is added on top.
+  const totalGhs = state.wCharges === "recipient" ? ghsEquivalent : ghsEquivalent + fee;
   const overBalance = totalGhs > (fromAccount?.available ?? 0);
+
+  // Each block appears once the one before it is done.
+  const accountOk = state.wIban.trim().length >= 6;
+  const nameOk = state.wBenName.trim().length >= 3;
+  const optionalOpen = showOptional || Boolean(state.wBenEmail || state.wBenPhone);
+  const emailOk = !state.wBenEmail.trim() || /^\S+@\S+\.\S+$/.test(state.wBenEmail.trim());
+  const codeOk = Boolean(codeType?.valid(state.wSwift));
+  const bankDetailsOk =
+    codeOk && Boolean(state.wBank.trim()) && state.wBankAddress.trim().length >= 3;
 
   const isDestinationValid =
     state.wBenName.trim().length >= 3 &&
-    state.wIban.trim().length >= 6 &&
-    Boolean(state.wBank);
+    state.wBenAddress.trim().length >= 3 &&
+    emailOk &&
+    accountOk &&
+    bankDetailsOk;
 
   const isValid =
     Boolean(state.fromId) && isDestinationValid && numForeign > 0 && !overBalance;
@@ -187,88 +260,222 @@ export function InternationalWireFlow({
         onChange={(id) => onChange("fromId", id)}
       />
 
-      {/* 2. Recipient & Destination Details */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">SWIFT Beneficiary Details</label>
-        {isDestinationValid && isCollapsed ? (
+      {/* 2. Where it's going, and who gets it */}
+      {isDestinationValid && isCollapsed ? (
+        <div className="flex flex-col gap-2">
+          <label className="text-[14px] font-medium text-foreground">Beneficiary</label>
           <CollapsedDetailsBadge
             title={state.wBenName}
-            subtitle={`${state.wBank || "Bank"} · SWIFT: ${state.wSwift || "BIC"} · ${state.wIban}`}
-            nameCheck={{ confirmed: false }}
+            subtitle={`${state.wBank} · ${state.wSwift} · ${state.wIban}`}
             onChange={() => setCollapsed(false)}
           />
-        ) : (
+        </div>
+      ) : (
+        <>
           <div className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 gap-3">
-              <Select
-                value={currentCountry}
-                onValueChange={(val) => {
-                  const found = SWIFT_COUNTRIES.find((c) => c.name === val);
-                  if (found) {
-                    onChange("wCountry", found.name);
-                    onChange("wCurrency", found.currency);
-                    const newBanks = INTERNATIONAL_BANKS_BY_COUNTRY[found.name] || [];
-                    onChange("wBank", newBanks[0] || "");
-                  }
-                }}
-              >
-                <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                  <SelectValue placeholder="Select country" />
-                </SelectTrigger>
-                <SelectContent>
-                  {SWIFT_COUNTRIES.map((c) => (
-                    <SelectItem key={c.name} value={c.name}>
-                      {c.name} ({c.currency})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <label className="text-[14px] font-medium text-foreground">Destination</label>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field label="Country">
+                <CountryPicker
+                  value={currentCountry}
+                  onSelect={(country) => {
+                    onChange("wCountry", country.name);
+                    onChange("wCurrency", country.currency);
+                    // A different country means different banks; never carry one over.
+                    onChange("wBank", "");
+                    onChange("wSwift", "");
+                    if (PAPSS_COUNTRY_NAMES[country.code]) setPapssFor(country);
+                  }}
+                />
+              </Field>
 
-              <Select
-                value={state.wBank}
-                onValueChange={(val) => val && onChange("wBank", val)}
-              >
-                <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                  <SelectValue placeholder="Select receiving bank" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableBanks.map((bank) => (
-                    <SelectItem key={bank} value={bank}>
-                      {bank}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Field label="Mode of delivery">
+                <Select
+                  value={state.wMode}
+                  onValueChange={(val) => {
+                    if (!val) return;
+                    onChange("wMode", val);
+                    onChange("wSwift", "");
+                  }}
+                >
+                  <SelectTrigger className={TRIGGER}>
+                    <SelectValue placeholder="Select mode of delivery" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CODE_TYPES.map((m) => (
+                      <SelectItem key={m.id} value={m.id} label={m.label}>
+                        <span className="flex flex-col">
+                          <span>{m.label}</span>
+                          <span className="text-[12px] text-muted-foreground">{m.hint}</span>
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <input
-                type="text"
-                value={state.wSwift}
-                onChange={(e) => onChange("wSwift", e.target.value.toUpperCase())}
-                placeholder="SWIFT / BIC Code (e.g. CHASUS33)"
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all uppercase tracking-wider"
-              />
-
-              <input
-                type="text"
-                value={state.wIban}
-                onChange={(e) => onChange("wIban", e.target.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase())}
-                placeholder="Account number or IBAN"
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular uppercase"
-              />
-            </div>
-
-            <input
-              type="text"
-              value={state.wBenName}
-              onChange={(e) => onChange("wBenName", e.target.value)}
-              placeholder="Enter legal name of recipient"
-              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
-            />
+            {codeType && (
+              <div className="animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+                <Field label={codeType.label}>
+                  <input
+                    type="text"
+                    value={state.wSwift}
+                    onChange={(e) => onChange("wSwift", codeType.clean(e.target.value))}
+                    placeholder={codeType.placeholder}
+                    className={`${INPUT} tabular uppercase tracking-wider placeholder:normal-case placeholder:tracking-normal`}
+                  />
+                </Field>
+                <p className="px-1 pt-1.5 text-[12.5px] text-muted-foreground">{codeType.hint}</p>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+
+          {codeOk && currentCountry && (
+            <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+              <label className="text-[14px] font-medium text-foreground">Beneficiary bank</label>
+              <Field label="Bank">
+                {availableBanks.length > 0 ? (
+                  <Select value={state.wBank} onValueChange={(val) => val && onChange("wBank", val)}>
+                    <SelectTrigger className={TRIGGER}>
+                      <SelectValue placeholder="Select beneficiary bank" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableBanks.map((bank) => (
+                        <SelectItem key={bank} value={bank}>
+                          {bank}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <input
+                    type="text"
+                    value={state.wBank}
+                    onChange={(e) => onChange("wBank", e.target.value)}
+                    placeholder="Enter beneficiary bank"
+                    className={INPUT}
+                  />
+                )}
+              </Field>
+
+              <Field label="Bank address">
+                <input
+                  type="text"
+                  value={state.wBankAddress}
+                  onChange={(e) => onChange("wBankAddress", e.target.value)}
+                  placeholder="Enter address"
+                  className={INPUT}
+                />
+              </Field>
+            </div>
+          )}
+
+          {bankDetailsOk && (
+            <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+              <label className="text-[14px] font-medium text-foreground">Beneficiary details</label>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field label="Account number">
+                  <input
+                    type="text"
+                    value={state.wIban}
+                    onChange={(e) => onChange("wIban", e.target.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase())}
+                    placeholder="Enter beneficiary account number"
+                    className={`${INPUT} tabular uppercase placeholder:normal-case`}
+                  />
+                </Field>
+                <Field label="Name">
+                  <input
+                    type="text"
+                    value={state.wBenName}
+                    onChange={(e) => onChange("wBenName", e.target.value)}
+                    placeholder="Legal name of recipient"
+                    className={INPUT}
+                  />
+                </Field>
+              </div>
+
+              {accountOk && nameOk && (
+                <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+                  <Field label="Address">
+                    <input
+                      type="text"
+                      value={state.wBenAddress}
+                      onChange={(e) => onChange("wBenAddress", e.target.value)}
+                      placeholder="Enter beneficiary address"
+                      className={INPUT}
+                    />
+                  </Field>
+
+                  {optionalOpen ? (
+                    <div className="grid gap-3 animate-in fade-in duration-150 ease-out sm:grid-cols-2">
+                      <Field label="Email address" optional>
+                        <input
+                          type="email"
+                          value={state.wBenEmail}
+                          onChange={(e) => onChange("wBenEmail", e.target.value)}
+                          placeholder="Enter email address"
+                          className={INPUT}
+                        />
+                      </Field>
+                      <Field label="Contact number" optional>
+                        <input
+                          type="tel"
+                          value={state.wBenPhone}
+                          onChange={(e) => onChange("wBenPhone", e.target.value.replace(/[^0-9+\s]/g, ""))}
+                          placeholder="Enter contact number"
+                          className={`${INPUT} tabular`}
+                        />
+                      </Field>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setShowOptional(true)}
+                      className="cursor-pointer self-start text-[13.5px] text-muted-foreground hover:text-foreground hover:underline underline-offset-4"
+                    >
+                      Add email or contact number
+                    </button>
+                  )}
+                  {!emailOk && (
+                    <p className="text-[12.5px] text-warning">That email address doesn&apos;t look right.</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
+
+      <Dialog open={papssFor !== null} onOpenChange={(open) => !open && setPapssFor(null)}>
+        <DialogContent size="sm" className="p-0">
+          <DialogHeader onClose={() => setPapssFor(null)}>
+            <DialogTitle>PAPSS is available for this transfer</DialogTitle>
+          </DialogHeader>
+          <div className="px-5 py-5 sm:px-6">
+            <DialogDescription className="text-[14px] leading-relaxed text-muted-foreground">
+              Send money across Africa quickly and conveniently in local African currencies.
+            </DialogDescription>
+          </div>
+          <DialogFooter className="flex-row gap-2.5 px-5 pb-5 sm:px-6">
+            <Button type="button" variant="outline" onClick={() => setPapssFor(null)} className="h-11 flex-1 text-[14px]">
+              Not now
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                const name = papssFor ? PAPSS_COUNTRY_NAMES[papssFor.code] : undefined;
+                const currency = papssFor?.currency ?? "";
+                setPapssFor(null);
+                if (name) onUsePapss?.(name, currency);
+              }}
+              className="h-11 flex-1 text-[14px]"
+            >
+              Use PAPSS
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Progressive Disclosure: Only reveal Foreign Amount & onwards after wire details are entered */}
       {isDestinationValid && (
@@ -277,44 +484,21 @@ export function InternationalWireFlow({
           <div className="flex flex-col gap-2">
             <label className="text-[14px] font-medium text-foreground">Transfer Amount</label>
 
-            <div className="relative grid grid-cols-1 md:grid-cols-2 gap-3 items-center">
-              {/* You Send (GHS) */}
-              <AmountInput
-                value={String(ghsEquivalent)}
-                onChange={(val) => {
-                  const numVal = Number(val.replace(/[^0-9.]/g, "")) || 0;
-                  const foreignVal = rate > 0 ? Math.round((numVal / rate) * 100) / 100 : 0;
-                  onChange("wForeign", foreignVal > 0 ? String(foreignVal) : "");
-                }}
-                currency={fromAccount?.currency || "GHS"}
-                label="You Send"
-                onFocus={() => {
-                  if (isDestinationValid) setCollapsed(true);
-                }}
-                hasError={overBalance}
-              />
-
-              {/* Central Switcher Indicator */}
-              <div className="hidden md:flex absolute left-1/2 top-[calc(50%+14px)] -translate-x-1/2 -translate-y-1/2 z-10">
-                <div
-                  className="flex size-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm"
-                >
-                  <ArrowLeftRight size={15} strokeWidth={2} />
-                </div>
-              </div>
-
-              {/* Recipient Gets (Foreign Currency) */}
-              <AmountInput
-                value={state.wForeign}
-                onChange={(val) => onChange("wForeign", val)}
-                currency={state.wCurrency || "USD"}
-                label="Recipient Gets"
-                onFocus={() => {
-                  if (isDestinationValid) setCollapsed(true);
-                }}
-                hasError={overBalance}
-              />
-            </div>
+            <DualAmountFields
+              foreign={state.wForeign}
+              ghs={state.wGhs}
+              rate={rate}
+              foreignCurrency={state.wCurrency || "USD"}
+              sendCurrency={fromAccount?.currency || "GHS"}
+              onChange={({ foreign, ghs }) => {
+                onChange("wForeign", foreign);
+                onChange("wGhs", ghs);
+              }}
+              onFocus={() => {
+                if (isDestinationValid) setCollapsed(true);
+              }}
+              hasError={overBalance}
+            />
 
             {/* Exchange rate display underneath fields */}
             <div className="flex items-center justify-end px-1 pt-0.5 text-[12.5px] text-muted-foreground font-medium">
@@ -332,11 +516,33 @@ export function InternationalWireFlow({
             )}
           </div>
 
+          {numForeign > 0 && (
+            <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+          {/* Who pays the charges */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[14px] font-medium text-foreground">Charges</label>
+            <Select value={state.wCharges} onValueChange={(val) => val && onChange("wCharges", val)}>
+              <SelectTrigger className={TRIGGER}>
+                <SelectValue placeholder="Who pays for the charges" />
+              </SelectTrigger>
+              <SelectContent>
+                {CHARGE_OPTIONS.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="px-1 text-[12.5px] text-muted-foreground">
+              {CHARGE_OPTIONS.find((c) => c.id === state.wCharges)?.note}
+            </p>
+          </div>
+
           {/* 4. Narration / Purpose of Payment */}
           <NarrationInput
             value={state.wPurpose}
             onChange={(val) => onChange("wPurpose", val)}
-            label="Purpose of Payment"
+            label="Transaction narration"
             placeholder="e.g. Commercial invoice, tuition fee, investment"
           />
 
@@ -369,6 +575,8 @@ export function InternationalWireFlow({
             onClick={onProceed}
             label="Proceed"
           />
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -43,6 +43,20 @@ export default function OtpInput({
   const revealTimer = useRef<number | undefined>(undefined);
   useEffect(() => () => window.clearTimeout(revealTimer.current), []);
 
+  // When a wrong code or PIN is cleared, put the cursor back in the first box
+  // (once the boxes are enabled again) so the customer can just start typing.
+  const hadValue = useRef(false);
+  const needsFocus = useRef(false);
+  useEffect(() => {
+    const has = value.some(Boolean);
+    if (hadValue.current && !has) needsFocus.current = true;
+    hadValue.current = has;
+    if (needsFocus.current && !disabled) {
+      needsFocus.current = false;
+      inputsRef.current[0]?.focus();
+    }
+  }, [value, disabled]);
+
   function reveal(index: number | null) {
     window.clearTimeout(revealTimer.current);
     setRevealed(index);

@@ -69,7 +69,7 @@ export const TOURS: Tour[] = [
   /* 1 ── Existing customer, Multi-Account (Primary Account Picker) ────────── */
   {
     id: "existing-multi",
-    name: "Kwame Mensah",
+    name: "Samuel Quartey",
     title: "Existing customer · multi-account",
     badge: "Primary Picker",
     summary: "Multiple accounts found (Personal & Joint) — select primary operating account.",
@@ -80,7 +80,7 @@ export const TOURS: Tour[] = [
         target: "activate-card",
         route: "/activate",
         title: "Enter the Ghana Card",
-        body: "Identity is matched against NIA records. Kwame's demo card is prefilled.",
+        body: "Identity is matched against NIA records. Samuel's demo card is prefilled.",
         action: "Click Continue",
       },
       {
@@ -108,7 +108,7 @@ export const TOURS: Tour[] = [
         target: "activate-password",
         route: "/activate",
         title: "Create a password",
-        body: "Set a password with minimum 12 characters, upper, lower, numbers and symbols. Tick Remember this device to skip the code next time.",
+        body: "Set a password with minimum 8 characters, upper, lower, numbers and symbols.",
         action: "Click Save password and continue",
       },
       {
@@ -121,10 +121,10 @@ export const TOURS: Tour[] = [
     ],
   },
 
-  /* 3 ── Existing customer, Single Account (Ama Serwaa) ───────────────────── */
+  /* 3 ── Existing customer, Single Account (Ransford Gyasi) ───────────────────── */
   {
     id: "existing-not-activated",
-    name: "Ama Serwaa",
+    name: "Ransford Gyasi",
     title: "Existing customer · single account",
     badge: "Single Account",
     summary: "Already banks with GCB, switching internet banking on for the first time.",
@@ -172,7 +172,7 @@ export const TOURS: Tour[] = [
         target: "activate-password",
         route: "/activate",
         title: "Create a password",
-        body: "Set a password with minimum 12 characters, upper, lower, numbers and symbols. Tick Remember this device to skip the code next time.",
+        body: "Set a password with minimum 8 characters, upper, lower, numbers and symbols.",
         action: "Click Save password and continue",
       },
       {
@@ -207,7 +207,7 @@ export const TOURS: Tour[] = [
         target: "mfa-otp",
         route: "/mfa",
         title: "Enter the code",
-        body: "Type any 6 digits — it auto-verifies, you can trust this browser for 30 days, and you land on the dashboard.",
+        body: "Type any 6 digits — it auto-verifies, and you land on the dashboard.",
         action: "Enter any 6 digits to finish",
       },
     ],
@@ -252,10 +252,10 @@ export const TOURS: Tour[] = [
   /* 4 ── New customer, start with a Wallet ────────────────────────────────── */
   {
     id: "new-wallet",
-    name: "Tsotsoo Mills",
+    name: "Ransford Gyasi",
     title: "New customer · start with Wallet",
     badge: "Wallet",
-    summary: "Registers with Ghana Card, then links a mobile-money wallet.",
+    summary: "Registers with Ghana Card, then funds the account from a mobile-money wallet on the dashboard.",
     icon: "wallet",
     startRoute: "/login",
     steps: [
@@ -271,9 +271,9 @@ export const TOURS: Tour[] = [
       {
         target: "gs-walletcard",
         route: "/get-started",
-        title: "Get an Instant Virtual Wallet",
+        title: "Get a Virtual Wallet",
         body: "Register with Ghana Card and create an instant virtual wallet.",
-        action: "Click Get an Instant Virtual Wallet",
+        action: "Click Get a Virtual Wallet",
       },
       {
         target: "signup-card",
@@ -307,14 +307,14 @@ export const TOURS: Tour[] = [
         target: "signup-password",
         route: "/signup",
         title: "Set a password",
-        body: "Set a password with minimum 12 characters, upper, lower, numbers and symbols. Tick Remember this device to skip the code next time.",
+        body: "Set a password with minimum 8 characters, upper, lower, numbers and symbols.",
         action: "Click Proceed",
       },
       {
         target: "signup-pin",
         route: "/signup",
         title: "Create a PIN",
-        body: "The 4-digit PIN authorises payments. This finishes registration and lands on linking a wallet.",
+        body: "The 4-digit PIN authorises payments. This finishes registration and lands on your dashboard, where you add the referral code (optional), make your first deposit and choose whether to save the wallet.",
         action: "Click Proceed",
       },
     ],
@@ -323,10 +323,10 @@ export const TOURS: Tour[] = [
   /* 5 ── New customer, start with a Card ──────────────────────────────────── */
   {
     id: "new-card",
-    name: "Tsotsoo Mills",
+    name: "Ransford Gyasi",
     title: "New customer · start with Card",
     badge: "Card",
-    summary: "Registers with Ghana Card, then links a bank card as the funding source.",
+    summary: "Registers with Ghana Card, then funds the account with a bank card on the dashboard.",
     icon: "creditCard",
     startRoute: "/login",
     steps: [
@@ -342,9 +342,9 @@ export const TOURS: Tour[] = [
       {
         target: "gs-walletcard",
         route: "/get-started",
-        title: "Get an Instant Virtual Wallet",
+        title: "Get a Virtual Wallet",
         body: "Register with Ghana Card and create an instant virtual wallet.",
-        action: "Click Get an Instant Virtual Wallet",
+        action: "Click Get a Virtual Wallet",
       },
       {
         target: "signup-card",
@@ -378,14 +378,14 @@ export const TOURS: Tour[] = [
         target: "signup-password",
         route: "/signup",
         title: "Set a password",
-        body: "Set a password with minimum 12 characters, upper, lower, numbers and symbols. Tick Remember this device to skip the code next time.",
+        body: "Set a password with minimum 8 characters, upper, lower, numbers and symbols.",
         action: "Click Proceed",
       },
       {
         target: "signup-pin",
         route: "/signup",
         title: "Create a PIN",
-        body: "The 4-digit PIN authorises payments. This finishes registration and lands on linking a card.",
+        body: "The 4-digit PIN authorises payments. This finishes registration and lands on your dashboard, where you add the referral code (optional), make your first deposit and choose whether to save the card.",
         action: "Click Proceed",
       },
     ],

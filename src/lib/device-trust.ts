@@ -123,6 +123,7 @@ export interface PendingFundingSource {
 
 const PENDING_SOURCE_KEY = "nibs-pending-source";
 const PENDING_REFERRAL_KEY = "nibs-pending-referral";
+const PENDING_FUND_KEY = "nibs-pending-fund";
 
 export function setPendingFundingSource(source: PendingFundingSource | null) {
   try {
@@ -219,5 +220,50 @@ export function peekUnfundedNudgeDismissed(): boolean {
     return localStorage.getItem(UNFUNDED_NUDGE_DISMISSED_KEY) === "true";
   } catch {
     return false;
+  }
+}
+
+/* ── First deposit, offered right after the referral code (new-to-GCB only) ── */
+
+export function setPendingFundPrompt(enabled: boolean) {
+  try {
+    if (enabled) localStorage.setItem(PENDING_FUND_KEY, "true");
+    else localStorage.removeItem(PENDING_FUND_KEY);
+  } catch {
+    // Storage blocked.
+  }
+}
+
+export function peekPendingFundPrompt(): boolean {
+  try {
+    return localStorage.getItem(PENDING_FUND_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+export function clearPendingFundPrompt() {
+  setPendingFundPrompt(false);
+}
+
+/* ── The mobile number confirmed during sign-up ─────────────────────────────
+   Used as the pre-filled wallet number when funding: using it needs no new code,
+   anything else has to be confirmed by SMS first. Local form, e.g. "0241234567". */
+
+const VERIFIED_MOBILE_KEY = "nibs-verified-mobile";
+
+export function setVerifiedMobile(local: string) {
+  try {
+    localStorage.setItem(VERIFIED_MOBILE_KEY, local);
+  } catch {
+    // Storage blocked.
+  }
+}
+
+export function peekVerifiedMobile(): string | undefined {
+  try {
+    return localStorage.getItem(VERIFIED_MOBILE_KEY) ?? undefined;
+  } catch {
+    return undefined;
   }
 }

@@ -3,11 +3,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Smartphone } from "lucide-react";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import {
   AmountInput,
@@ -22,6 +17,7 @@ import {
   SchedulePaymentSection,
   ScheduleFrequency,
   resolveAccountName,
+  BankSelect,
 } from "./shared";
 
 export interface WalletToBankFormState {
@@ -126,21 +122,7 @@ export function WalletToBankFlow({
           />
         ) : (
           <div className="flex flex-col gap-3">
-            <Select
-              value={state.bank || ""}
-              onValueChange={(val) => val && onChange("bank", val)}
-            >
-              <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                <SelectValue placeholder="Select Bank" />
-              </SelectTrigger>
-              <SelectContent>
-                {BANKS.map((b) => (
-                  <SelectItem key={b} value={b}>
-                    {b}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <BankSelect value={state.bank || ""} onChange={(val) => onChange("bank", val)} options={BANKS} />
 
             <input
               type="text"

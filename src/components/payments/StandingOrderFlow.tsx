@@ -12,7 +12,9 @@
  *   5. Real-time name resolution with GhIPSS / Network verification badge.
  *   6. High vertical-padding AmountInput with balance guard.
  *   7. Dedicated recurring schedule options (Frequency, First Run, End Condition).
- *   8. Review summary with fee breakdown and Transaction PIN modal authorization.
+ *   8. Progressive disclosure: recipient first; amount once the recipient is verified; then the
+ *      schedule and name as one-line summaries (sensible defaults) that open on "Change".
+ *   9. Review summary with fee breakdown and Transaction PIN modal authorization.
  */
 
 import React, { useEffect, useMemo, useState } from "react";
@@ -44,9 +46,12 @@ import {
   formatMoney,
   saveStandingInstruction,
   recordTransaction,
+  type SpendCategory,
   type InstructionFrequency,
 } from "@/lib/mock-data";
 import { useGroupsStore } from "@/lib/groups-store";
+import { FREQUENCY_OPTIONS, frequencyLabel } from "@/lib/standing-display";
+import { cn } from "@/lib/utils";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import { useSession } from "@/lib/session-store";
 import { resolveDefaultAccountId, useAccountPrefs } from "@/lib/accounts-store";
@@ -57,11 +62,14 @@ import {
   FromAccountSelector,
   AmountInput,
   CategorySelect,
+  NarrationInput,
   InsufficientFundsAlert,
   ProceedButton,
   VerifiedAccountBadge,
   CollapsedDetailsBadge,
-  BANKS,
+  BankSelect,
+  NetworkSelect,
+  PaymentMethodSelect,
   PAYMENT_METHODS,
   getPaymentMethodName,
   resolveAccountName,
@@ -117,23 +125,6 @@ const NETWORK_DATA_PACKAGES: Record<string, { id: string; name: string; price: s
   ],
 };
 
-const CATEGORIES = [
-  { id: "susu", label: "Susu Contribution", defaultName: "Monthly Susu" },
-  { id: "rent", label: "Rent & Housing", defaultName: "Monthly Rent" },
-  { id: "education", label: "School Fees & Tuition", defaultName: "School Fees" },
-  { id: "utilities", label: "Utilities (Power / Water)", defaultName: "Utility Bill" },
-  { id: "family", label: "Family Support & Allowance", defaultName: "Family Allowance" },
-  { id: "bills", label: "General Subscriptions & Bills", defaultName: "Recurring Bill" },
-  { id: "savings", label: "Savings & Investments", defaultName: "Monthly Savings" },
-];
-
-const FREQUENCIES: InstructionFrequency[] = [
-  "Daily",
-  "Weekly",
-  "Monthly",
-  "Quarterly",
-  "Yearly",
-];
 
 function detectNetworkFromPhone(phone: string): { airtimeNet: string; walletNet: string } | null {
   let clean = phone.replace(/[^0-9]/g, "");
@@ -192,6 +183,8 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
   const [pinModalOpen, setPinModalOpen] = useState(false);
   const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  // Progressive disclosure: everything after the recipient stays hidden until the recipient is real.
+  const [revealed, setRevealed] = useState(false);
 
   // Form State
   const [f, setF] = useState({
@@ -205,9 +198,11 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     groupName: "",
     dataPackageId: "mtn-2",
     amount: "",
-    category: "bills",
+    category: "Bills",
     nickname: "",
-    frequency: "Monthly" as InstructionFrequency,
+    narration: "",
+    frequency: "" as InstructionFrequency | "",
+    intervalDays: "",
     firstRun: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
     endCondition: "indefinite" as "indefinite" | "date",
     endDate: "",
@@ -248,7 +243,6 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   }, [accounts, f.fromId]);
 
   const railConfig = STANDING_ORDER_OPTIONS.find((t) => t.id === rail) ?? STANDING_ORDER_OPTIONS[0];
-  const selectedCat = CATEGORIES.find((c) => c.id === f.category) ?? CATEGORIES[0];
 
   const currentPackages = useMemo(() => {
     return NETWORK_DATA_PACKAGES[f.network] || NETWORK_DATA_PACKAGES["MTN Ghana"];
@@ -370,7 +364,6 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
           if (pkgs.length > 0) {
             set("dataPackageId", pkgs[0].id);
             set("amount", pkgs[0].price);
-            set("nickname", `Monthly ${item.bank.split(" ")[0]} Data`);
           }
         }
       }
@@ -392,7 +385,6 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             if (pkgs.length > 0) {
               set("dataPackageId", pkgs[0].id);
               set("amount", pkgs[0].price);
-              set("nickname", `Monthly ${detected.airtimeNet.split(" ")[0]} Data`);
             }
           }
         }
@@ -424,10 +416,20 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       isDestinationValid &&
       numAmount > 0 &&
       !overBalance &&
+      f.nickname.trim().length > 0 &&
       Boolean(f.frequency) &&
+      (f.frequency !== "Custom" || Number(f.intervalDays) >= 1) &&
       Boolean(f.firstRun)
     );
-  }, [f.fromId, isDestinationValid, numAmount, overBalance, f.frequency, f.firstRun]);
+  }, [f.fromId, isDestinationValid, numAmount, overBalance, f.nickname, f.frequency, f.intervalDays, f.firstRun]);
+
+  // The rest of the form appears once the recipient is verified, and stays put while it is being edited
+  // (so amount doesn't flicker away on every keystroke). It hides again if the recipient is cleared.
+  const recipientReady = isDestinationValid && (rail === "group" || rail === "proxy" || (!resolving && Boolean(resolvedName)));
+  useEffect(() => {
+    if (recipientReady) setRevealed(true);
+    else if (!isDestinationValid) setRevealed(false);
+  }, [recipientReady, isDestinationValid]);
 
   // Fee Calculation
   const feeAmount = useMemo(() => {
@@ -441,18 +443,28 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   }, [rail, f.bank, f.paymentMethod]);
 
   const totalPerCycle = numAmount + feeAmount;
+  const orderName = f.nickname.trim();
+  const intervalDays = Math.max(1, Number(f.intervalDays) || 1);
+  const frequencyText = f.frequency ? frequencyLabel({ frequency: f.frequency, intervalDays }) : "";
 
-  const handleAuthorize = () => {
-    if (!auth.verify()) return;
+  const handleAuthorize = (code?: string) => {
+    // The PIN modal keeps the entered code itself and hands it back; verify() here has no digits of its own.
+    if (!auth.verify(code)) return;
     const newId = `SO-${Date.now().toString().slice(-6)}`;
     saveStandingInstruction({
       id: newId,
-      beneficiary: f.nickname || (rail === "group" ? f.groupName : resolvedName) || "Standing Order",
+      beneficiary: (rail === "group" ? f.groupName : resolvedName) || "Standing Order",
+      shortName: orderName,
+      transactionType: railConfig.title,
+      narration: f.narration.trim() || undefined,
       accountId: f.fromId,
       amount: numAmount,
       currency: "GHS",
-      frequency: f.frequency,
+      frequency: f.frequency || "Monthly",
+      intervalDays: f.frequency === "Custom" ? intervalDays : undefined,
       nextRun: f.firstRun,
+      startDate: f.firstRun,
+      endDate: f.frequency !== "Once" && f.endCondition === "date" && f.endDate ? f.endDate : undefined,
       status: "Active",
     });
 
@@ -488,7 +500,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       reference: newId,
       date: new Date().toISOString().slice(0, 10),
       valueDate: new Date().toISOString().slice(0, 10),
-      description: `Standing Order — ${f.nickname || "Scheduled Transfer"}`,
+      description: `Standing Order — ${orderName}`,
       counterparty: resolvedName || f.destination || f.proxyId || f.groupName || "Beneficiary",
       counterpartyAccount: f.destination || f.proxyId || "",
       accountId: fromAccount?.id || "acc-ret-001",
@@ -501,7 +513,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       paymentMethod: "ach",
       channel: "Internet Banking",
       profileKind: "RETAIL",
-      category: "Bills",
+      category: f.category as SpendCategory,
     });
 
     setCreatedId(newId);
@@ -513,6 +525,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     setRail(null);
     setScreen("form");
     setDetailsCollapsed(false);
+    setRevealed(false);
     setF({
       fromId: initialFromId,
       destination: "",
@@ -524,9 +537,11 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       groupName: "",
       dataPackageId: "mtn-2",
       amount: "",
-      category: "bills",
+      category: "Bills",
       nickname: "",
-      frequency: "Monthly",
+      narration: "",
+      frequency: "",
+      intervalDays: "",
       firstRun: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
       endCondition: "indefinite",
       endDate: "",
@@ -554,7 +569,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
           >
             <ChevronLeft size={22} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[24px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
             Select a standing order
           </h1>
         </div>
@@ -570,19 +585,18 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                 onClick={() => {
                   setRail(opt.id);
                   setDetailsCollapsed(false);
+                  setRevealed(false);
                   setScreen("form");
                   if (opt.id === "data") {
                     set("network", "MTN Ghana");
                     set("dataPackageId", "mtn-2");
                     set("amount", "100");
-                    set("nickname", "Monthly MTN Data");
-                    set("category", "bills");
+                    set("category", "Bills");
                   } else if (opt.id === "airtime") {
                     set("network", "MTN Ghana");
-                    set("nickname", "Monthly Airtime");
-                    set("category", "bills");
+                    set("category", "Bills");
                   } else {
-                    set("nickname", opt.title + " Recurring");
+                    set("nickname", "");
                   }
                 }}
               />
@@ -600,7 +614,8 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     const receiptRows: Array<[string, React.ReactNode]> = [
       ["Reference ID", createdId],
       ["Beneficiary", resolvedName || f.destination || f.proxyId || f.groupName],
-      ["Schedule Frequency", `${f.frequency} · First run ${formatDate(f.firstRun)}`],
+      ["Short name", orderName],
+      ["Schedule Frequency", `${frequencyText} · First run ${formatDate(f.firstRun)}`],
       ["Debit Account", `${fromAccount?.name} (•••${fromAccount?.number.slice(-4)})`],
       ["Total per Execution", formatMoney(totalPerCycle, "GHS", true)],
     ];
@@ -608,7 +623,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     return (
       <PaymentSuccessScreen
         title="Standing order set up"
-        message={`We’ll automatically send ${formatMoney(numAmount, "GHS", true)} ${f.frequency.toLowerCase()} for “${f.nickname}”.`}
+        message={`We’ll automatically send ${formatMoney(numAmount, "GHS", true)} ${f.frequency === "Once" ? "once" : frequencyText.toLowerCase()} for “${orderName}”.`}
         transactionId={createdId}
         receiptRows={receiptRows}
         onViewReceipt={() => router.push(`/transactions/${createdId}`)}
@@ -620,6 +635,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
         }}
         primaryActionLabel="Back to Overview"
         showSaveBeneficiary={false}
+        hideSchedule
       />
     );
   }
@@ -628,6 +644,32 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
    * SCREEN 3: Review Stage
    * ========================================================================= */
   if (screen === "review") {
+    const detail =
+      rail === "bank" || rail === "wallet-to-bank"
+        ? `${f.bank} · ${f.destination}`
+        : rail === "wallet"
+          ? `${f.walletNetwork} · ${f.destination}`
+          : rail === "proxy"
+            ? f.proxyId
+            : rail === "group"
+              ? ""
+              : `${f.network} · ${f.destination}`;
+    const reviewRows: Array<[string, string]> = [
+      ["Short name", orderName],
+      ["Type", railConfig.title],
+      ["To", (rail === "group" ? f.groupName : resolvedName) || f.destination || f.proxyId],
+      ...(detail ? ([["Account", detail]] as Array<[string, string]>) : []),
+      ["From", fromAccount?.name ?? ""],
+      ["Frequency", frequencyText],
+      [f.frequency === "Once" ? "Payment date" : "First payment", formatDate(f.firstRun)],
+      ...(f.frequency === "Once" ? [] : ([["Ends", f.endCondition === "date" && f.endDate ? formatDate(f.endDate) : "Until cancelled"]] as Array<[string, string]>)),
+      ...(rail === "bank" && !f.bank.includes("GCB") ? ([["Payment method", getPaymentMethodName(f.paymentMethod)]] as Array<[string, string]>) : []),
+      ["Category", f.category],
+      ...(f.narration.trim() ? ([["Narration", f.narration.trim()]] as Array<[string, string]>) : []),
+      ["Amount", formatMoney(numAmount, "GHS", true)],
+      ["Fee", feeAmount === 0 ? "Free" : formatMoney(feeAmount, "GHS", true)],
+      ["Total per payment", formatMoney(totalPerCycle, "GHS", true)],
+    ];
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
         {/* Header with back button */}
@@ -640,82 +682,20 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
           >
             <ChevronLeft size={22} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
             Review Standing Order
           </h1>
         </div>
 
         <div className="flex flex-col gap-5">
-          {/* Main Review Card */}
-          <div className="flex flex-col divide-y divide-border/80 rounded-2xl border border-border/80 bg-card p-5 text-[14px]">
-            <div className="flex items-center justify-between pb-3.5">
-              <span className="text-muted-foreground">Order Type</span>
-              <span className="font-medium text-foreground">{railConfig.title} Standing Order</span>
-            </div>
-            <div className="flex items-center justify-between py-3.5">
-              <span className="text-muted-foreground">Beneficiary</span>
-              <div className="flex flex-col text-right">
-                <span className="font-semibold text-foreground">
-                  {resolvedName || f.destination || f.proxyId || f.groupName}
-                </span>
-                <span className="text-[12.5px] text-muted-foreground">
-                  {rail === "bank" || rail === "wallet-to-bank"
-                    ? `${f.bank} · ${f.destination}`
-                    : rail === "wallet"
-                    ? `${f.walletNetwork} · ${f.destination}`
-                    : rail === "proxy"
-                    ? `Proxy: ${f.proxyId}`
-                    : rail === "group"
-                    ? f.groupName
-                    : `${f.network} · ${f.destination}`}
-                </span>
+          {/* Review: label on the left, value on the right, one line each, no dividers */}
+          <div className="flex flex-col rounded-2xl border border-border bg-card p-2 text-[14px]">
+            {reviewRows.map(([label, value]) => (
+              <div key={label} className="flex items-center justify-between gap-6 rounded-xl px-3 py-3.5">
+                <span className="shrink-0 text-muted-foreground">{label}</span>
+                <span className="tabular min-w-0 truncate text-right text-foreground">{value}</span>
               </div>
-            </div>
-            <div className="flex items-center justify-between py-3.5">
-              <span className="text-muted-foreground">Sending From</span>
-              <div className="flex flex-col text-right">
-                <span className="font-medium text-foreground">{fromAccount?.name}</span>
-                <span className="text-[12.5px] text-muted-foreground tabular">{fromAccount?.number}</span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between py-3.5">
-              <span className="text-muted-foreground">Frequency &amp; Start</span>
-              <div className="flex flex-col text-right">
-                <span className="font-medium text-foreground">{f.frequency}</span>
-                <span className="text-[12.5px] text-muted-foreground tabular">
-                  First run {formatDate(f.firstRun)}{" "}
-                  {f.endCondition === "date" && f.endDate ? `· Ends ${formatDate(f.endDate)}` : "· Until cancelled"}
-                </span>
-              </div>
-            </div>
-            {rail === "bank" && !f.bank.includes("GCB") && (
-              <div className="flex items-center justify-between py-3.5">
-                <span className="text-muted-foreground">Payment Method</span>
-                <span className="font-medium text-foreground">{getPaymentMethodName(f.paymentMethod)}</span>
-              </div>
-            )}
-            <div className="flex items-center justify-between py-3.5">
-              <span className="text-muted-foreground">Category</span>
-              <span className="font-medium text-foreground">{selectedCat.label}</span>
-            </div>
-            <div className="flex items-center justify-between py-3.5">
-              <span className="text-muted-foreground">Transfer Amount</span>
-              <span className="font-semibold text-foreground tabular">
-                {formatMoney(numAmount, "GHS", true)}
-              </span>
-            </div>
-            <div className="flex items-center justify-between py-3.5">
-              <span className="text-muted-foreground">Clearing Fee</span>
-              <span className="text-muted-foreground tabular">
-                {feeAmount === 0 ? "GHS 0.00 (Free)" : formatMoney(feeAmount, "GHS", true)}
-              </span>
-            </div>
-            <div className="flex items-center justify-between pt-3.5">
-              <span className="text-foreground font-semibold">Total Debit per Cycle</span>
-              <span className="text-[18px] font-bold text-foreground tabular">
-                {formatMoney(totalPerCycle, "GHS", true)}
-              </span>
-            </div>
+            ))}
           </div>
 
           <div className="flex gap-3 pt-2">
@@ -741,9 +721,9 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
         <TransactionPinModal
           open={pinModalOpen}
           onOpenChange={setPinModalOpen}
-          onSuccess={() => {
+          onSuccess={(code) => {
             setPinModalOpen(false);
-            handleAuthorize();
+            handleAuthorize(code);
           }}
         />
       </div>
@@ -765,7 +745,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
         >
           <ChevronLeft size={22} strokeWidth={1.8} />
         </button>
-        <h1 className="text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+        <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
           {railConfig.title} Standing Order
         </h1>
       </div>
@@ -834,48 +814,18 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {/* TO BANK / WALLET TO BANK */}
               {(rail === "bank" || rail === "wallet-to-bank") && (
                 <>
-                  <Select
+                  <BankSelect
                     value={f.bank}
-                    onValueChange={(val) => {
-                      if (val) {
-                        set("bank", val);
-                        if (val.includes("GCB")) set("paymentMethod", "");
-                        else if (!f.paymentMethod) set("paymentMethod", "gip");
-                      }
+                    onChange={(val) => {
+                      set("bank", val);
+                      if (val.includes("GCB")) set("paymentMethod", "");
+                      else if (!f.paymentMethod) set("paymentMethod", "gip");
                     }}
-                  >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                      <SelectValue placeholder="Select Bank" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {BANKS.map((b) => (
-                        <SelectItem key={b} value={b}>
-                          {b}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  />
 
                   {/* Payment Method for Other Local Banks */}
                   {!f.bank.includes("GCB") && (
-                    <Select
-                      value={f.paymentMethod || "gip"}
-                      onValueChange={(val) => val && set("paymentMethod", val)}
-                    >
-                      <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                        <SelectValue placeholder="Select Payment Method" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {PAYMENT_METHODS.map((method) => (
-                          <SelectItem key={method.id} value={method.id} label={method.name}>
-                            <div className="flex items-center justify-between w-full gap-4">
-                              <span className="font-medium">{method.name}</span>
-                              <span className="text-[12px] text-muted-foreground">{method.speed}</span>
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <PaymentMethodSelect value={f.paymentMethod || "gip"} onChange={(val) => set("paymentMethod", val)} />
                   )}
 
                   <input
@@ -892,21 +842,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {/* TO MOBILE WALLET */}
               {rail === "wallet" && (
                 <>
-                  <Select
-                    value={f.walletNetwork}
-                    onValueChange={(val) => val && set("walletNetwork", val)}
-                  >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                      <SelectValue placeholder="Select Wallet Provider" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {WALLET_NETWORKS.map((n) => (
-                        <SelectItem key={n} value={n}>
-                          {n}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <NetworkSelect value={f.walletNetwork} onChange={(val) => set("walletNetwork", val)} options={WALLET_NETWORKS} />
 
                   <PhoneInput
                     value={f.destination}
@@ -985,10 +921,10 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {/* DATA BUNDLE */}
               {rail === "data" && (
                 <>
-                  <Select
+                  <NetworkSelect
                     value={f.network}
-                    onValueChange={(newNet) => {
-                      if (!newNet) return;
+                    options={AIRTIME_NETWORKS}
+                    onChange={(newNet) => {
                       set("network", newNet);
                       const pkgs = NETWORK_DATA_PACKAGES[newNet] || [];
                       if (pkgs.length > 0) {
@@ -996,18 +932,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                         set("amount", pkgs[0].price);
                       }
                     }}
-                  >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                      <SelectValue placeholder="Select network operator" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {AIRTIME_NETWORKS.map((n) => (
-                        <SelectItem key={n} value={n}>
-                          {n}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  />
 
                   <PhoneInput
                     value={f.destination}
@@ -1046,21 +971,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {/* AIRTIME */}
               {rail === "airtime" && (
                 <>
-                  <Select
-                    value={f.network}
-                    onValueChange={(val) => val && set("network", val)}
-                  >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
-                      <SelectValue placeholder="Select network" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {AIRTIME_NETWORKS.map((n) => (
-                        <SelectItem key={n} value={n}>
-                          {n}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <NetworkSelect value={f.network} onChange={(val) => set("network", val)} options={AIRTIME_NETWORKS} />
 
                   <PhoneInput
                     value={f.destination}
@@ -1086,124 +997,157 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
           )}
         </div>
 
-        {/* 4. Amount Input */}
-        <AmountInput
-          value={f.amount}
-          onChange={(val) => set("amount", val)}
-          onFocus={() => {
-            if (isDestinationValid) setDetailsCollapsed(true);
-          }}
-          error={
-            overBalance ? (
-              <InsufficientFundsAlert available={fromAccount?.available ?? 0} currency="GHS" />
-            ) : undefined
-          }
-        />
+        {/* Everything below appears once the recipient is verified */}
+        {revealed && (
+          <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-1 duration-200">
+            {/* 4. Amount Input */}
+            <AmountInput
+              value={f.amount}
+              onChange={(val) => set("amount", val)}
+              onFocus={() => {
+                if (isDestinationValid) setDetailsCollapsed(true);
+              }}
+              error={
+                overBalance ? (
+                  <InsufficientFundsAlert available={fromAccount?.available ?? 0} currency="GHS" />
+                ) : undefined
+              }
+            />
 
-        {/* 5. Schedule & Frequency Section */}
-        <div className="flex flex-col gap-4 rounded-2xl border border-border/80 bg-card p-4.5">
-          <label className="text-[14px] font-medium text-foreground">Schedule &amp; Frequency</label>
+            {numAmount > 0 && !overBalance && (
+              <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-1 duration-200">
+                {/* 5. Short name and category */}
+                <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="so-short-name" className="text-[14px] font-medium text-foreground">
+                      Short name
+                    </label>
+                    <input
+                      id="so-short-name"
+                      type="text"
+                      value={f.nickname}
+                      onChange={(e) => set("nickname", e.target.value)}
+                      placeholder="e.g. Monthly rent, Susu"
+                      className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none transition-all focus:border-ring focus:ring-1 focus:ring-ring/30"
+                    />
+                  </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[13px] font-medium text-muted-foreground">Frequency</span>
-              <Select
-                value={f.frequency}
-                onValueChange={(val) => val && set("frequency", val as InstructionFrequency)}
-              >
-                <SelectTrigger className="h-12 w-full rounded-xl border border-border/80 bg-background text-[14px]">
-                  <SelectValue placeholder="Select frequency" />
-                </SelectTrigger>
-                <SelectContent>
-                  {FREQUENCIES.map((freq) => (
-                    <SelectItem key={freq} value={freq}>
-                      {freq}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                  <CategorySelect
+                    value={f.category}
+                    onChange={(val) => set("category", val)}
+                  />
+                </div>
 
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[13px] font-medium text-muted-foreground">First Run Date</span>
-              <input
-                type="date"
-                value={f.firstRun}
-                min={new Date().toISOString().slice(0, 10)}
-                onChange={(e) => set("firstRun", e.target.value)}
-                className="h-12 w-full rounded-xl border border-border/80 bg-background px-3 text-[14px] text-foreground outline-none focus:border-ring tabular"
-              />
-            </div>
-          </div>
+                <NarrationInput value={f.narration} onChange={(val) => set("narration", val)} />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[13px] font-medium text-muted-foreground">End Condition</span>
-              <Select
-                value={f.endCondition}
-                onValueChange={(val) => val && set("endCondition", val as "indefinite" | "date")}
-              >
-                <SelectTrigger className="h-12 w-full rounded-xl border border-border/80 bg-background text-[14px]">
-                  <SelectValue placeholder="Select end condition" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="indefinite">Until I cancel</SelectItem>
-                  <SelectItem value="date">Specific end date</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                {/* 6. Frequency */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-[14px] font-medium text-foreground">Frequency</label>
+                  <Select
+                    value={f.frequency}
+                    onValueChange={(val) => val && set("frequency", val as InstructionFrequency)}
+                  >
+                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                      <span className={cn("truncate", !f.frequency && "text-muted-foreground")}>{FREQUENCY_OPTIONS.find((o) => o.id === f.frequency)?.label ?? "Select frequency"}</span>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {FREQUENCY_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.id} value={opt.id} label={opt.label}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
 
-            {f.endCondition === "date" ? (
-              <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
-                <span className="text-[13px] font-medium text-muted-foreground">Final Date</span>
-                <input
-                  type="date"
-                  value={f.endDate}
-                  min={f.firstRun}
-                  onChange={(e) => set("endDate", e.target.value)}
-                  className="h-12 w-full rounded-xl border border-border/80 bg-background px-3 text-[14px] text-foreground outline-none focus:border-ring tabular"
-                />
-              </div>
-            ) : (
-              <div className="flex items-center text-[12.5px] text-muted-foreground pt-5">
-                <span>Runs continuously until you pause or cancel it.</span>
+                  {f.frequency === "Custom" && (
+                    <div className="flex items-center gap-3 animate-in fade-in duration-150">
+                      <span className="text-[13px] text-muted-foreground">Repeat after</span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        aria-label="Number of days"
+                        value={f.intervalDays}
+                        onChange={(e) => set("intervalDays", e.target.value.replace(/[^0-9]/g, "").slice(0, 3))}
+                        className="tabular h-11 w-20 rounded-xl border border-border/80 bg-card px-3 text-center text-[15px] text-foreground outline-none focus:border-ring"
+                      />
+                      <span className="text-[13px] text-muted-foreground">days</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Everything else waits for a frequency (and the days, when it is every X days) */}
+                {f.frequency && (f.frequency !== "Custom" || Number(f.intervalDays) >= 1) && (
+                  <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-1 duration-200">
+                  {/* 7. First run, and when it stops */}
+                  <div className={cn("grid grid-cols-1 gap-3.5", f.frequency !== "Once" && "sm:grid-cols-2")}>
+                    <div className="flex flex-col gap-2">
+                      <label htmlFor="so-first-run" className="text-[14px] font-medium text-foreground">
+                        {f.frequency === "Once" ? "Payment date" : "First payment"}
+                      </label>
+                      <input
+                        id="so-first-run"
+                        type="date"
+                        value={f.firstRun}
+                        min={new Date().toISOString().slice(0, 10)}
+                        onChange={(e) => set("firstRun", e.target.value)}
+                        className="tabular h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring"
+                      />
+                    </div>
+
+                    {f.frequency !== "Once" && (
+                      <div className="flex flex-col gap-2">
+                        <label className="text-[14px] font-medium text-foreground">Ends</label>
+                        <Select
+                          value={f.endCondition}
+                          onValueChange={(val) => val && set("endCondition", val as "indefinite" | "date")}
+                        >
+                          <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                            <span className="truncate">{f.endCondition === "date" ? "On a date" : "Until I cancel"}</span>
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="indefinite" label="Until I cancel">
+                              Until I cancel
+                            </SelectItem>
+                            <SelectItem value="date" label="On a date">
+                              On a date
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                  </div>
+
+                  {f.frequency !== "Once" && f.endCondition === "date" && (
+                    <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-150">
+                      <label htmlFor="so-end-date" className="text-[14px] font-medium text-foreground">
+                        Last payment
+                      </label>
+                      <input
+                        id="so-end-date"
+                        type="date"
+                        value={f.endDate}
+                        min={f.firstRun}
+                        onChange={(e) => set("endDate", e.target.value)}
+                        className="tabular h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring"
+                      />
+                    </div>
+                  )}
+
+                  {/* 8. Action Button */}
+                  <ProceedButton
+                    disabled={!isFormValid}
+                    onClick={() => {
+                      setDetailsCollapsed(true);
+                      setScreen("review");
+                    }}
+                    label="Continue to Review"
+                  />
+                  </div>
+                )}
               </div>
             )}
           </div>
-        </div>
-
-        {/* 6. Purpose / Nickname & Category */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <div className="flex flex-col gap-2">
-            <label className="text-[14px] font-medium text-foreground">Standing Order Nickname</label>
-            <input
-              type="text"
-              value={f.nickname}
-              onChange={(e) => set("nickname", e.target.value)}
-              placeholder="e.g. Monthly Rent, Susu"
-              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
-            />
-          </div>
-
-          <CategorySelect
-            value={f.category}
-            onChange={(val) => {
-              set("category", val);
-              const cat = CATEGORIES.find((c) => c.id === val);
-              if (cat && !f.nickname) set("nickname", cat.defaultName);
-            }}
-          />
-        </div>
-
-        {/* 8. Action Button */}
-        <ProceedButton
-          disabled={!isFormValid}
-          onClick={() => {
-            setDetailsCollapsed(true);
-            setScreen("review");
-          }}
-          label="Continue to Review"
-        />
+        )}
       </div>
 
       <CreateGroupModal

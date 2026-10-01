@@ -9,10 +9,8 @@ import {
   Eye,
   EyeOff,
   Layers,
-  LogOut,
   Menu,
   Moon,
-  Settings,
   Sun,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -35,7 +33,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -92,7 +89,7 @@ export default function TopHeader({
               <Layers size={13} strokeWidth={2} className="shrink-0" />
               <span className="hidden sm:inline whitespace-nowrap">Dev Mode</span>
               {devState.section && (
-                <span className="rounded bg-amber-500/20 px-1 py-0.5 text-[10px] font-mono shrink-0">
+                <span className="rounded bg-amber-500/20 px-1 py-0.5 text-[10px] shrink-0">
                   {devState.section}
                 </span>
               )}

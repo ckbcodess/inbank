@@ -45,7 +45,7 @@ export function DevStateMenuItems({ devState }: { devState: DevStateData }) {
     <>
       <DropdownMenuLabel className="flex items-center justify-between text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
         <span>{devState.label ?? "Dev Mode States"}</span>
-        {devState.section && <span className="font-mono">{devState.section}</span>}
+        {devState.section && <span>{devState.section}</span>}
       </DropdownMenuLabel>
       <DropdownMenuSeparator />
       <OptionList states={devState.states} value={devState.value} onChange={devState.onChange} />

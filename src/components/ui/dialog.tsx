@@ -31,7 +31,7 @@ function DialogOverlay({
     <DialogPrimitive.Backdrop
       data-slot="dialog-overlay"
       className={cn(
-        "fixed inset-0 isolate z-50 bg-black/60 dark:bg-black/75 duration-150 backdrop-blur-md supports-backdrop-filter:backdrop-blur-md data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0",
+        "fixed inset-0 isolate z-50 bg-black/60 dark:bg-black/75 backdrop-blur-md supports-backdrop-filter:backdrop-blur-md",
         className
       )}
       {...props}
@@ -71,7 +71,7 @@ function DialogContent({
         className={cn(
           size === "full"
             ? "fixed inset-0 z-50 flex flex-col w-full h-full bg-card dark:bg-[#181818] text-foreground overflow-y-auto"
-            : "fixed top-1/2 left-1/2 z-50 flex flex-col w-full -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border/60 dark:border-white/[0.1] outline-none shadow-2xl duration-100 bg-card dark:bg-[#181818] text-foreground overflow-hidden max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:border-t max-sm:border-border/80 max-sm:max-h-[92vh]",
+            : "fixed top-1/2 left-1/2 z-50 flex flex-col w-full -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border/60 dark:border-white/[0.1] outline-none shadow-2xl bg-card dark:bg-[#181818] text-foreground overflow-hidden max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:border-t max-sm:border-border/80 max-sm:max-h-[92vh]",
           sizeClasses[size],
           className
         )}

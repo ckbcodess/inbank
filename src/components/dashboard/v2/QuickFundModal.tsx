@@ -1,20 +1,15 @@
 "use client";
 
+import { AlertToast } from "@/components/ui/alert-toast";
+import { InlineError } from "@/components/ui/inline-error";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
-  AlertCircle,
   ArrowRight,
-  Check,
   CheckCircle2,
-  ChevronDown,
   ChevronLeft,
   CreditCard,
-  PhoneCall,
   Smartphone,
-  Sparkles,
-  Wallet,
-  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,25 +23,72 @@ import {
 } from "@/components/ui/select";
 import OtpInput from "@/components/auth/OtpInput";
 import { AppLoader } from "@/components/ui/loader";
-import { cn } from "@/lib/utils";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { displayGhanaMobile, toNationalDigits } from "@/lib/phone";
+import { maskMobile } from "@/lib/auth-shared";
 
 interface QuickFundModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: (amount: number, method: "momo" | "card", details: { operator?: string; phone?: string; cardLast4?: string }) => void;
   accountName?: string;
+  /** The number confirmed at sign-up. Pre-filled; using it needs no code, any other number is confirmed by SMS first. */
+  registeredPhone?: string;
 }
 
+type FundDetails = { operator?: string; phone?: string; cardLast4?: string };
+
+/** The dashboard's standalone top-up dialog. */
 export function QuickFundModal({
   open,
   onOpenChange,
   onSuccess,
-  accountName = "Virtual Account",
+  registeredPhone,
 }: QuickFundModalProps) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="md" className="p-0 overflow-hidden">
+        {/* Mounted only while open, so every opening starts from the method picker. */}
+        {open && (
+          <QuickFundFlow
+            variant="modal"
+            registeredPhone={registeredPhone}
+            onSuccess={onSuccess}
+            onFinish={() => onOpenChange(false)}
+          />
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/**
+ * The top-up steps (method, details, confirm, done) without a dialog around them,
+ * so the post-onboarding flow can run them inside its own persistent card.
+ * Must render inside a Dialog (it uses DialogTitle).
+ */
+export function QuickFundFlow({
+  variant,
+  registeredPhone,
+  onSuccess,
+  onFinish,
+  onBack,
+}: {
+  /** "modal" brings its own header and padding; "split" or "inline" fits directly in cards/welcome flows. */
+  variant: "modal" | "split" | "inline";
+  registeredPhone?: string;
+  onSuccess: (amount: number, method: "momo" | "card", details: FundDetails) => void;
+  /** Called after onSuccess, when they tap Continue on the receipt. */
+  onFinish: () => void;
+  /** Optional back handler for when user is at the initial selection stage */
+  onBack?: () => void;
+}) {
   const [stage, setStage] = useState<"select" | "form" | "otp" | "ussd" | "success">("select");
   const [method, setMethod] = useState<"momo" | "card">("momo");
   const [operator, setOperator] = useState<"MTN" | "Telecel" | "AT">("MTN");
-  const [phone, setPhone] = useState("024 123 4567");
+  const [phone, setPhone] = useState(registeredPhone ?? "0241234567");
+  const usingRegistered =
+    !!registeredPhone && toNationalDigits(phone) === toNationalDigits(registeredPhone);
   const [cardNumber, setCardNumber] = useState("4111 2222 3333 4444");
   const [cardExpiry, setCardExpiry] = useState("12/28");
   const [cardCvv, setCardCvv] = useState("123");
@@ -55,16 +97,6 @@ export function QuickFundModal({
   const [countdown, setCountdown] = useState(30);
   const [busy, setBusy] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-
-  // Reset when dialog opens
-  useEffect(() => {
-    if (open) {
-      setStage("select");
-      setErrorMsg("");
-      setBusy(false);
-      setOtpDigits(Array(6).fill(""));
-    }
-  }, [open]);
 
   // Countdown timer for OTP
   useEffect(() => {
@@ -95,6 +127,11 @@ export function QuickFundModal({
     if (method === "momo") {
       window.setTimeout(() => {
         setBusy(false);
+        if (usingRegistered) {
+          // Already confirmed at sign-up: straight to the network approval.
+          setStage("ussd");
+          return;
+        }
         setOtpDigits(Array(6).fill(""));
         setCountdown(30);
         setStage("otp");
@@ -127,57 +164,57 @@ export function QuickFundModal({
     const parsedAmt = parseFloat(amount) || 100;
     onSuccess(parsedAmt, method, {
       operator: method === "momo" ? operator : undefined,
-      phone: method === "momo" ? phone : undefined,
+      phone: method === "momo" ? displayGhanaMobile(phone) : undefined,
       cardLast4: method === "card" ? cardNumber.replace(/\s/g, "").slice(-4) : undefined,
     });
-    onOpenChange(false);
+    onFinish();
   }
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent size="md" className="p-0 overflow-hidden">
-        <DialogHeader>
-          <div className="flex items-center gap-2">
-            {stage !== "select" && stage !== "success" && (
-              <button
-                type="button"
-                onClick={() => {
-                  if (stage === "otp" || stage === "ussd") {
-                    setStage("form");
-                  } else {
-                    setStage("select");
-                  }
-                }}
-                className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1 mr-1"
-                aria-label="Back"
-              >
-                <ChevronLeft size={18} strokeWidth={2} />
-              </button>
-            )}
-            <DialogTitle>
-              {stage === "select" && "Fund Your Virtual Account"}
-              {stage === "form" && (method === "momo" ? "Fund with Mobile Money" : "Fund with a Card")}
-              {stage === "otp" && "Confirm Mobile Number"}
-              {stage === "ussd" && "Approve on Your Phone"}
-              {stage === "success" && "Deposit Completed"}
-            </DialogTitle>
-          </div>
-        </DialogHeader>
+  const back =
+    stage !== "select" && stage !== "success" ? (
+      <button
+        type="button"
+        onClick={() => {
+          if (stage === "otp" || stage === "ussd") {
+            setStage("form");
+          } else {
+            setStage("select");
+          }
+        }}
+        className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1 mr-1"
+        aria-label="Back"
+      >
+        <ChevronLeft size={18} strokeWidth={2} />
+      </button>
+    ) : stage === "select" && onBack ? (
+      <button
+        type="button"
+        onClick={onBack}
+        className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1 mr-1"
+        aria-label="Back"
+      >
+        <ChevronLeft size={18} strokeWidth={2} />
+      </button>
+    ) : null;
 
-        <DialogBody className="px-6 pb-6 pt-4">
+  const title =
+    stage === "select"
+      ? "Fund account"
+      : stage === "form"
+        ? method === "momo"
+          ? "Mobile Money"
+          : "Card deposit"
+        : stage === "otp"
+          ? "Confirm mobile number"
+          : stage === "ussd"
+            ? "Approve on phone"
+            : "Deposit completed";
+
+  const body = (
+    <>
           {stage === "otp" && (
             <p className="text-[13.5px] text-muted-foreground mb-4 leading-relaxed">
-              Enter the 6-digit verification code sent to +233 {phone.replace(/^0/, "")}.
-            </p>
-          )}
-          {stage === "ussd" && (
-            <p className="text-[13.5px] text-muted-foreground mb-4 leading-relaxed">
-              Please check your phone for the network prompt to approve the transaction.
-            </p>
-          )}
-          {stage === "success" && (
-            <p className="text-[13.5px] text-muted-foreground mb-4 leading-relaxed">
-              Your funds have been deposited and are available immediately.
+              Enter the 6-digit code sent to <span className="font-medium text-foreground">{maskMobile(displayGhanaMobile(phone))}</span>.
             </p>
           )}
           {/* STAGE 0: SELECT PAYMENT METHOD */}
@@ -236,21 +273,14 @@ export function QuickFundModal({
                     <Label htmlFor="quickFundPhone" className="text-[13px] text-foreground">
                       Mobile Number
                     </Label>
-                    <div className="flex items-center rounded-xl border border-border/80 bg-card overflow-hidden focus-within:ring-2 focus-within:ring-ring">
-                      <div className="flex items-center gap-1.5 px-3 py-2 bg-muted/30 border-r border-border/60 text-[13px] font-medium text-foreground select-none shrink-0">
-                        <span className="text-[15px]">🇬🇭</span>
-                        <span>+233</span>
-                        <ChevronDown size={13} className="text-muted-foreground ml-0.5" />
-                      </div>
-                      <Input
-                        id="quickFundPhone"
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="border-0 shadow-none focus-visible:ring-0 h-10 text-[14px] font-mono rounded-none"
-                        required
-                      />
-                    </div>
+                    <PhoneInput id="quickFundPhone" value={phone} onValueChange={setPhone} required />
+                    {registeredPhone && (
+                      <p className="px-0.5 text-[12.5px] text-muted-foreground">
+                        {usingRegistered
+                          ? "The number you registered with."
+                          : "Not your registered number, so we'll text a code to confirm it's yours."}
+                      </p>
+                    )}
                   </div>
 
                   {/* Telco Selector */}
@@ -308,7 +338,7 @@ export function QuickFundModal({
                       id="quickFundCard"
                       value={cardNumber}
                       onChange={(e) => setCardNumber(e.target.value)}
-                      className="h-10 font-mono text-[14px]"
+                      className="h-10 text-[14px] rounded-xl"
                       required
                     />
                   </div>
@@ -319,7 +349,7 @@ export function QuickFundModal({
                         id="quickFundExp"
                         value={cardExpiry}
                         onChange={(e) => setCardExpiry(e.target.value)}
-                        className="h-10 font-mono text-[14px]"
+                        className="h-10 text-[14px] rounded-xl"
                         required
                       />
                     </div>
@@ -331,7 +361,7 @@ export function QuickFundModal({
                         maxLength={3}
                         value={cardCvv}
                         onChange={(e) => setCardCvv(e.target.value)}
-                        className="h-10 font-mono text-[14px]"
+                        className="h-10 text-[14px] rounded-xl"
                         required
                       />
                     </div>
@@ -343,7 +373,7 @@ export function QuickFundModal({
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="quickFundAmt" className="text-[13px] text-foreground">Amount</Label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[13.5px] font-mono text-muted-foreground">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 z-10 text-[13.5px] text-muted-foreground pointer-events-none select-none font-medium">
                     GHS
                   </span>
                   <Input
@@ -353,18 +383,13 @@ export function QuickFundModal({
                     step="any"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="h-11 pl-14 text-[15px] font-medium bg-card"
+                    className="h-11 pl-14 text-[15px] font-medium bg-card rounded-xl"
                     required
                   />
                 </div>
               </div>
 
-              {errorMsg && (
-                <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3 text-[13px] text-destructive">
-                  <AlertCircle size={15} className="mt-0.5 shrink-0" />
-                  <span>{errorMsg}</span>
-                </div>
-              )}
+              <AlertToast when={errorMsg} message={errorMsg} />
 
               <Button
                 type="submit"
@@ -401,12 +426,7 @@ export function QuickFundModal({
                 </div>
               )}
 
-              {errorMsg && (
-                <div className="w-full flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[13px] text-destructive">
-                  <AlertCircle size={15} className="mt-0.5 shrink-0" />
-                  <span>{errorMsg}</span>
-                </div>
-              )}
+              <InlineError message={errorMsg} />
 
               <div className="flex items-center justify-between w-full pt-1 text-[13px]">
                 <button
@@ -431,18 +451,20 @@ export function QuickFundModal({
           {/* STAGE 3: USSD PROMPT */}
           {stage === "ussd" && (
             <div className="flex flex-col items-center text-center gap-4 py-4">
-              <div className="relative flex size-20 items-center justify-center rounded-full bg-primary/15 text-foreground animate-pulse">
-                <Smartphone size={34} strokeWidth={1.8} />
+              <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-2xs">
+                <Smartphone size={24} strokeWidth={1.8} />
               </div>
-              <div className="flex flex-col gap-1.5">
-                <h4 className="text-[17px] text-foreground tracking-[-0.01em]">Approval Required</h4>
-                <p className="text-[13px] text-muted-foreground max-w-[320px]">
-                  A payment request of <span className="text-foreground font-medium">GHS {parseFloat(amount).toFixed(2)}</span> has been sent to your phone. Enter your Mobile Money PIN on your device to authorize.
+              <div className="flex flex-col gap-1">
+                <span className="tabular-nums text-[20px] font-medium tracking-tight text-foreground">
+                  GHS {parseFloat(amount).toFixed(2)}
+                </span>
+                <p className="text-[13.5px] text-muted-foreground">
+                  Enter your Mobile Money PIN on your phone to approve.
                 </p>
               </div>
-              <div className="flex items-center gap-2 rounded-full bg-muted/50 px-4 py-2 text-[12.5px] text-muted-foreground">
+              <div className="flex items-center gap-2 pt-2 text-[12.5px] text-muted-foreground">
                 <AppLoader size={14} />
-                <span>Waiting for your network authorization…</span>
+                <span>Waiting for approval…</span>
               </div>
             </div>
           )}
@@ -450,16 +472,16 @@ export function QuickFundModal({
           {/* STAGE 4: SUCCESS */}
           {stage === "success" && (
             <div className="flex flex-col items-center text-center gap-4 py-4">
-              <div className="flex size-16 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-                <CheckCircle2 size={36} strokeWidth={1.9} />
+              <div className="flex size-14 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-2xs">
+                <CheckCircle2 size={24} strokeWidth={1.9} />
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="text-[18px] text-foreground tracking-[-0.01em]">
-                  GHS {parseFloat(amount).toFixed(2)} Deposited!
+                <h4 className="tabular-nums text-[20px] font-medium tracking-tight text-foreground">
+                  GHS {parseFloat(amount).toFixed(2)} deposited
                 </h4>
-                <p className="text-[13px] text-muted-foreground max-w-[320px]">
-                  Your account is now funded and ready for all banking actions, transfers, and card payments.
+                <p className="text-[13.5px] text-muted-foreground">
+                  Available in your account now.
                 </p>
               </div>
 
@@ -468,15 +490,36 @@ export function QuickFundModal({
                 variant="default"
                 size="lg"
                 onClick={handleFinish}
-                className="mt-3 h-11 w-full text-[14px] cursor-pointer"
+                className="mt-3 h-10.5 w-full text-[13.5px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
               >
-                <span>Back to Dashboard</span>
-                <ArrowRight size={16} strokeWidth={1.8} className="ml-1.5" />
+                <span>Continue</span>
               </Button>
             </div>
           )}
-        </DialogBody>
-      </DialogContent>
-    </Dialog>
+    </>
+  );
+
+  if (variant === "split" || variant === "inline") {
+    return (
+      <div className="flex flex-col gap-5">
+        <div className="flex items-center gap-2">
+          {back}
+          <DialogTitle className="text-[20px] font-medium tracking-tight text-foreground sm:text-[22px]">{title}</DialogTitle>
+        </div>
+        <div>{body}</div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <DialogHeader>
+        <div className="flex items-center gap-2">
+          {back}
+          <DialogTitle>{title}</DialogTitle>
+        </div>
+      </DialogHeader>
+      <DialogBody className="px-6 pb-6 pt-4">{body}</DialogBody>
+    </>
   );
 }

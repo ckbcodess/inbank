@@ -9,9 +9,10 @@
  * Demo: any 6 digits verify; 000000 shows the error state.
  */
 
+import { InlineError } from "@/components/ui/inline-error";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, CheckCircle2, CreditCard, Lock } from "lucide-react";
+import { CheckCircle2, CreditCard, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AppLoader } from "@/components/ui/loader";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
@@ -132,15 +133,7 @@ export default function CardVerificationPage() {
                   invalid={step === "error"}
                 />
 
-                {step === "error" && (
-                  <div
-                    role="alert"
-                    className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3 text-[13px] text-destructive"
-                  >
-                    <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
-                    <span>That code didn&apos;t match. Check the latest message from your bank and try again.</span>
-                  </div>
-                )}
+                <InlineError message={step === "error" && "That code didn’t match. Check the latest message from your bank and try again."} />
 
                 <div className="flex flex-col gap-2">
                   <Button

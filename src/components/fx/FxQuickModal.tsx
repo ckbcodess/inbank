@@ -255,7 +255,7 @@ export function FxQuickModal() {
                 <div className="flex flex-col rounded-xl border border-border/80 bg-muted/30 p-3 transition-colors focus-within:border-foreground/30 focus-within:bg-card">
                   <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                     <span>You convert</span>
-                    <span className="tabular font-mono text-[10.5px]">Available balance</span>
+                    <span className="tabular text-[10.5px]">Available balance</span>
                   </div>
                   <div className="mt-1 flex items-center justify-between gap-3">
                     <div className="relative flex min-w-0 flex-1 items-center">
@@ -493,18 +493,18 @@ export function FxQuickModal() {
                         </div>
 
                         {/* Buying Rate */}
-                        <div className="col-span-3 text-right tabular text-foreground font-mono text-[12px]">
+                        <div className="col-span-3 text-right tabular text-foreground text-[12px]">
                           {formatFourDecimals(r.buy)}
                         </div>
 
                         {/* Selling Rate */}
-                        <div className="col-span-2 text-right tabular text-foreground font-mono text-[12px]">
+                        <div className="col-span-2 text-right tabular text-foreground text-[12px]">
                           {formatFourDecimals(r.sell)}
                         </div>
 
                         {/* Mid Rate & 24h Trend */}
                         <div className="col-span-3 flex flex-col items-end leading-tight pl-1">
-                          <span className="tabular font-medium text-foreground font-mono text-[12px]">
+                          <span className="tabular font-medium text-foreground text-[12px]">
                             {formatFourDecimals(r.mid)}
                           </span>
                           <span

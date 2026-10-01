@@ -77,7 +77,7 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
                       </span>
                       <div className="min-w-0">
                         <p className="truncate text-[13px] font-medium text-foreground">{acc.name}</p>
-                        <p className="flex items-center gap-1.5 text-[11.5px] font-mono text-muted-foreground">
+                        <p className="flex items-center gap-1.5 text-[11.5px] text-muted-foreground">
                           <span>{acc.name.toLowerCase().includes(acc.type.toLowerCase()) ? acc.number : `${acc.type} · ${acc.number}`}</span>
                           <CopyAccountNumberButton number={acc.number} />
                         </p>
@@ -96,10 +96,10 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
                     <span className="text-[10.5px] font-medium uppercase tracking-wider text-muted-foreground block">
                       Available Balance
                     </span>
-                    <div className="text-2xl font-medium font-mono tracking-tight text-foreground tabular mt-0.5">
+                    <div className="text-2xl font-medium tracking-tight text-foreground tabular mt-0.5">
                       {formatMoney(acc.available, acc.currency, showAmounts)}
                     </div>
-                    <p className="text-[11px] text-muted-foreground font-mono mt-0.5">
+                    <p className="text-[11px] text-muted-foreground mt-0.5">
                       {localEquivalent !== null
                         ? `≈ ${formatMoney(localEquivalent, "GHS", showAmounts)}`
                         : held > 0.01

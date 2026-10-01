@@ -12,8 +12,10 @@
  * - Backward-compatible compact variant for inline forms
  */
 
+import { AlertToast } from "@/components/ui/alert-toast";
+import { InlineError } from "@/components/ui/inline-error";
 import React, { useRef, useEffect } from "react";
-import { AlertCircle, ShieldCheck, KeyRound, Smartphone } from "lucide-react";
+import { ShieldCheck, KeyRound, Smartphone } from "lucide-react";
 import OtpInput from "@/components/auth/OtpInput";
 import { REGISTERED_PHONE, type AuthMethod, type AuthState, PIN_LENGTH } from "./useAuthorisation";
 import { cn } from "@/lib/utils";
@@ -150,25 +152,9 @@ export function AuthorisePanel({
           />
         )}
 
-        {state === "error" && (
-          <p
-            role="alert"
-            className="flex items-start gap-2 rounded-xl bg-destructive/10 p-3 text-[13px] text-destructive animate-in fade-in duration-150"
-          >
-            <AlertCircle size={15} strokeWidth={1.9} className="mt-0.5 shrink-0" aria-hidden="true" />
-            <span>
-              {isPin
-                ? "The PIN entered is incorrect. Please try again."
-                : "That code isn't right or has expired. Request a new one below."}
-            </span>
-          </p>
-        )}
+        <InlineError message={state === "error" && (isPin ? "That PIN is incorrect. Please try again." : "That code isn’t right or has expired. Request a new one below.")} />
 
-        {state === "resent" && (
-          <p className="rounded-xl bg-muted p-2.5 text-center text-[13px] text-muted-foreground animate-in fade-in duration-150">
-            A new 6-digit code has been sent to {REGISTERED_PHONE}.
-          </p>
-        )}
+        <AlertToast when={state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${REGISTERED_PHONE}.`} />
 
         {/* Alternative authentication option & resend affordance */}
         <div className="flex flex-col items-center gap-2.5 pt-1">
@@ -294,20 +280,7 @@ export function AuthorisePanel({
           </div>
 
           {/* Error Message */}
-          {state === "error" && (
-            <div
-              role="alert"
-              className="mt-6 flex flex-col items-center justify-center gap-1 text-center animate-in fade-in duration-150"
-            >
-              <p className="flex items-center justify-center gap-1.5 text-[13.5px] font-medium text-destructive">
-                <AlertCircle size={15} strokeWidth={2} className="shrink-0" />
-                <span>The PIN entered is incorrect. Please try again.</span>
-              </p>
-              <p className="text-[12px] text-muted-foreground">
-                Enter any 4-digit PIN other than 0000 to authorize
-              </p>
-            </div>
-          )}
+          <InlineError message={state === "error" && "That PIN is incorrect. Please try again."} />
 
           {/* Bottom Switch to OTP Action */}
           {onMethodChange && (
@@ -380,21 +353,9 @@ export function AuthorisePanel({
             />
           </div>
 
-          {state === "error" && (
-            <p
-              role="alert"
-              className="mt-4 flex items-center justify-center gap-1.5 text-[13px] text-destructive animate-in fade-in duration-150"
-            >
-              <AlertCircle size={15} strokeWidth={1.9} className="shrink-0" aria-hidden="true" />
-              <span>That code isn&apos;t right or has expired. Request a new one below.</span>
-            </p>
-          )}
+          <InlineError message={state === "error" && "That code isn’t right or has expired. Request a new one below."} />
 
-          {state === "resent" && (
-            <p className="mt-4 rounded-xl bg-muted px-3 py-2 text-center text-[13px] text-muted-foreground animate-in fade-in duration-150">
-              A new 6-digit code has been sent to {REGISTERED_PHONE}.
-            </p>
-          )}
+          <AlertToast when={state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${REGISTERED_PHONE}.`} />
 
           <div className="mt-8 flex flex-col items-center gap-3">
             <button

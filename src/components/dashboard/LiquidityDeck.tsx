@@ -95,7 +95,7 @@ export function LiquidityDeck({
           </div>
 
           {/* Currency Pill Switcher */}
-          <div className="flex items-center gap-1 rounded-xl bg-muted/80 p-1 border border-border/60 text-[11px] font-mono">
+          <div className="flex items-center gap-1 rounded-xl bg-muted/80 p-1 border border-border/60 text-[11px]">
             {(["GHS", "USD", "EUR", "GBP"] as const).map((curr) => (
               <button
                 key={curr}
@@ -117,7 +117,7 @@ export function LiquidityDeck({
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
           <div>
             <div className="flex items-baseline gap-2">
-              <span className="text-[32px] md:text-[38px] font-medium text-foreground tracking-tight font-mono">
+              <span className="text-[32px] md:text-[38px] font-medium text-foreground tracking-tight">
                 {showAmounts ? (
                   <>
                     <span className="text-[20px] md:text-[24px] text-muted-foreground mr-1.5 font-normal">
@@ -145,7 +145,7 @@ export function LiquidityDeck({
           </div>
 
           {/* Mini Cashflow Pill */}
-          <div className="flex items-center gap-2 bg-muted/50 border border-border/70 rounded-2xl p-2.5 text-[12px] font-mono">
+          <div className="flex items-center gap-2 bg-muted/50 border border-border/70 rounded-2xl p-2.5 text-[12px]">
             <div className="flex items-center gap-1.5 pr-2.5 border-r border-border">
               <span className="flex size-5 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
                 <ArrowDownLeft size={12} strokeWidth={2.5} />

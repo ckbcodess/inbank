@@ -69,7 +69,7 @@ import { AirtimeFlow } from "./flows/AirtimeFlow";
 import { DataBundleFlow } from "./flows/DataBundleFlow";
 import { CardTopUpFlow } from "./flows/CardTopUpFlow";
 import { BillsPaymentFlow } from "./flows/BillsPaymentFlow";
-import { InternationalWireFlow } from "./flows/InternationalWireFlow";
+import { InternationalWireFlow, CHARGE_OPTIONS, CODE_TYPE_LABELS } from "./flows/InternationalWireFlow";
 import { PapssPaymentFlow } from "./flows/PapssPaymentFlow";
 import { CardlessWithdrawalFlow } from "./flows/CardlessWithdrawalFlow";
 import { GroupPaymentFlow } from "./flows/GroupPaymentFlow";
@@ -155,7 +155,7 @@ const RAIL_LABEL: Record<Rail, string> = {
   group: "To Group",
   momo: "Mobile Money",
   papss: "PAPSS Payment",
-  swift: "SWIFT Wire Transfer",
+  swift: "Outside Ghana",
   "wallet-to-bank": "Wallet to Bank",
   airtime: "Airtime Top-up",
   data: "Internet",
@@ -228,7 +228,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
   // Mobile Wallet payees
   {
     id: "rec-w1",
-    name: "Ama Serwaa Mensah",
+    name: "Ransford Gyasi",
     bank: "MTN Mobile Money",
     acct: "0244 123 456",
     initials: "AS",
@@ -267,7 +267,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
   },
   {
     id: "rec-px2",
-    name: "Ama Serwaa",
+    name: "Ransford Gyasi",
     bank: "Proxy ID",
     acct: "@ama.serwaa",
     initials: "AS",
@@ -299,7 +299,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
   },
   {
     id: "rec-air-1",
-    name: "Ama Serwaa",
+    name: "Ransford Gyasi",
     bank: "MTN Mobile Money",
     acct: "0244 123 456",
     initials: "AS",
@@ -371,7 +371,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
   },
   {
     id: "rec-dat-3",
-    name: "Ama Serwaa",
+    name: "Ransford Gyasi",
     bank: "MTN Mobile Money",
     acct: "0244 123 456",
     initials: "AS",
@@ -634,7 +634,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
   // 5. Healthcare
   {
     id: "rec-bill-hlth1",
-    name: "Ama Serwaa (NHIS)",
+    name: "Ransford Gyasi (NHIS)",
     bank: "National Health Insurance (NHIS)",
     acct: "NHIS-9920148",
     initials: "NHIS",
@@ -711,13 +711,13 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
 ];
 
 const GHANAIAN_NAMES = [
-  "Ama Serwaa Mensah",
+  "Ransford Gyasi",
   "Kwame Boateng",
   "Kofi Osei Asante",
   "Akua Mansah",
   "Efua Addo Mensah",
   "Nana Yaw Osei",
-  "Tsotsoo Mills Naa",
+  "Samuel Quartey",
   "Abena Danso",
   "Esi Sutherland",
   "Kwadwo Appiah",
@@ -733,15 +733,15 @@ const ACCOUNT_RESOLUTIONS: Record<string, string> = {
   "0231 4455 8890": "Accra Fabrics Ltd",
   "01234567890": "Akua Mansah",
   "1234567890": "Akua Mansah",
-  "0123456789012": "Tsotsoo Mills Naa",
-  "0244123456": "Ama Serwaa Mensah",
-  "0244 123 456": "Ama Serwaa Mensah",
+  "0123456789012": "Samuel Quartey",
+  "0244123456": "Ransford Gyasi",
+  "0244 123 456": "Ransford Gyasi",
   "0201987654": "Kwame Boateng",
   "0201 987 654": "Kwame Boateng",
   "0559220118": "Yaa Asantewaa",
   "0559 220 118": "Yaa Asantewaa",
-  "0271445900": "Efua Mensah",
-  "0271 445 900": "Efua Mensah",
+  "0271445900": "Esther Appiah",
+  "0271 445 900": "Esther Appiah",
   "1023445566": "Kofi Osei",
   "1023 4455 66": "Kofi Osei",
   "0277456789": "Kofi Boateng",
@@ -760,7 +760,7 @@ function resolveAccountName(number: string, fallback: string = ""): string {
   for (let i = 0; i < clean.length; i++) {
     hash = (hash * 31 + clean.charCodeAt(i)) % GHANAIAN_NAMES.length;
   }
-  return GHANAIAN_NAMES[Math.abs(hash)] || "Ama Serwaa Mensah";
+  return GHANAIAN_NAMES[Math.abs(hash)] || "Ransford Gyasi";
 }
 
 type Phase = "form" | "submitting" | "success";
@@ -1001,6 +1001,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     wCurrency: "NGN",
     wForeign: "",
     wPurpose: "Goods purchased",
+    wGhs: "",
+    wMode: "",
+    wBankAddress: "",
+    wBenEmail: "",
+    wBenPhone: "",
+    wBenAddress: "",
+    wCharges: "shared",
     wireRef: "",
     cardlessType: "self" as "self" | "third-party",
   });
@@ -1275,6 +1282,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       case "qr":
         return num(f.qrAmount);
       case "papss":
+      case "swift":
         return num(f.wForeign);
       default:
         return 0;
@@ -1316,8 +1324,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   }, [rail, bankCategory, f.paymentMethod]);
 
   const rate = RATES[f.wCurrency] ?? 1;
-  const papssGhs = roundMoney(num(f.wForeign) * rate);
-  const totalDebit = rail === "papss" ? sumMoney([papssGhs, fee]) : sumMoney([currentAmount, fee]);
+  // PAPSS and Outside Ghana both quote in the recipient's currency and debit in GHS.
+  const isForeign = rail === "papss" || rail === "swift";
+  // When the customer typed the GHS amount, debit exactly that, not the rounded-down foreign amount times the rate.
+  const papssGhs = f.wGhs ? roundMoney(num(f.wGhs)) : roundMoney(num(f.wForeign) * rate);
+  // "Recipient pays" takes GCB's fee out of the amount sent, so nothing is added on top.
+  const feeOnTop = rail === "swift" && f.wCharges === "recipient" ? 0 : fee;
+  const totalDebit = isForeign ? sumMoney([papssGhs, feeOnTop]) : sumMoney([currentAmount, fee]);
 
   // Live external name enquiry / account verification result
   const verifiedAccountName = useMemo(() => {
@@ -1395,7 +1408,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       return verifiedAccountName || f.wName || (f.wPhone ? `Wallet ${f.wPhone}` : "Recipient");
     }
     if (rail === "proxy") return verifiedAccountName || f.pxId || "Proxy Recipient";
-    if (rail === "papss") return f.wBenName || "International Beneficiary";
+    if (isForeign) return f.wBenName || "International Beneficiary";
     if (rail === "group") return f.groupName || "Group Contribution";
     if (rail === "data") return verifiedAccountName || (f.aPhone ? `Internet (${f.aPhone})` : "Recipient");
     if (rail === "airtime") return verifiedAccountName || (f.aPhone ? `Airtime (${f.aPhone})` : "Recipient");
@@ -1418,6 +1431,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     return f.benName || "Recipient";
   }, [
     rail,
+    isForeign,
     bankCategory,
     walletCategory,
     toOwnAccount,
@@ -1452,6 +1466,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "proxy") return "Proxy ID";
     if (rail === "group") return "Split Type";
     if (rail === "qr") return "Terminal / Merchant ID";
+    if (rail === "swift") return "Account / IBAN";
     return "Account";
   }, [rail, biller?.reference]);
 
@@ -1470,8 +1485,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "proxy") return f.pxId;
     if (rail === "group") return selectedGroupObj ? `${selectedGroupObj.members.length} members (${selectedGroupObj.splitType === "equal" ? `GHS ${selectedGroupObj.defaultPerMemberAmount} each` : "Custom"})` : "Group";
     if (rail === "qr") return f.qrRef || "Verified GCB QR";
+    if (rail === "swift") return f.wIban;
     return f.benAcct;
-  }, [bankCategory, toOwnAccount?.number, rail, f.benAcct, f.wPhone, f.aPhone, f.ecgMeter, f.billRef, f.govRef, f.pxId, f.cardId, selectedGroupObj, f.qrRef]);
+  }, [bankCategory, toOwnAccount?.number, rail, f.wIban, f.benAcct, f.wPhone, f.aPhone, f.ecgMeter, f.billRef, f.govRef, f.pxId, f.cardId, selectedGroupObj, f.qrRef]);
 
   const reviewInstitutionLabel = useMemo(() => {
     if (rail === "card-topup") return "Card Details";
@@ -1493,8 +1509,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "bill") return biller?.name || "Biller";
     if (rail === "ecg") return "Electricity Company of Ghana";
     if (rail === "ghanagov") return f.govService || "Ghana.gov";
+    if (rail === "swift") return f.wBank;
     return "";
-  }, [rail, f.bank, f.wNetwork, biller?.name, f.govService, f.cardId]);
+  }, [rail, f.wBank, f.bank, f.wNetwork, biller?.name, f.govService, f.cardId]);
 
   const handleLookup = (key: keyof typeof f, rawVal: string) => {
     set(key, rawVal);
@@ -1550,7 +1567,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     } else if (categoryParam === "self") {
       setWalletCategory("self");
       setStage1Collapsed(true);
-      setF((p) => ({ ...p, wPhone: "0244123821", wName: "Ama Serwaa Mensah", wNetwork: "MTN Mobile Money" }));
+      setF((p) => ({ ...p, wPhone: "0244123821", wName: "Ransford Gyasi", wNetwork: "MTN Mobile Money" }));
     } else if (categoryParam === "international" || r === "swift") {
       setBankCategory("international");
       setRail("swift");
@@ -1747,7 +1764,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           txType = "proxy";
           benCat = "person";
           detail = `Proxy · ${f.pxId}`;
-        } else if (rail === "papss") {
+        } else if (isForeign) {
           txType = "papss";
           benCat = "person";
           bankName = f.wBank || "International Bank";
@@ -1783,7 +1800,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         });
       }
 
-      const formattedAmount = formatMoney(currentAmount, rail === "papss" ? f.wCurrency : "GHS", true);
+      const formattedAmount = formatMoney(currentAmount, isForeign ? f.wCurrency : "GHS", true);
       const recipientDisplayName = resolvedName || f.benName || f.wName || "recipient";
 
       let successTitle = "Payment sent!";
@@ -1791,7 +1808,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
       if (isDualMandate) {
         successTitle = "Awaiting approval";
-        successMsg = `Your transfer of ${formattedAmount} is authorized. We’ve notified Efua Mensah to review and approve.`;
+        successMsg = `Your transfer of ${formattedAmount} is authorized. We’ve notified Esther Appiah to review and approve.`;
       } else if (f.isScheduled) {
         successTitle = "Payment scheduled";
         const freqText = f.scheduleFrequency === "once" ? "one-off" : f.scheduleFrequency.toLowerCase();
@@ -1891,7 +1908,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           ...(isDualMandate
             ? ([
                 ["Signing Mandate", "Both to Sign (Dual Authorization)"],
-                ["Co-Signatory Status", "Pending approval by Efua Mensah"],
+                ["Co-Signatory Status", "Pending approval by Esther Appiah"],
               ] as [string, string][])
             : account?.isJoint
             ? ([
@@ -1933,7 +1950,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           ? f.govRef
           : f.benAcct,
         accountId: account?.id || "acc-ret-001",
-        currency: rail === "papss" ? f.wCurrency : "GHS",
+        currency: isForeign ? f.wCurrency : "GHS",
         amount: currentAmount,
         fee,
         direction: "debit",
@@ -2037,6 +2054,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             wBank: "",
             wCountry: "",
             wForeign: "",
+            wGhs: "",
+            wMode: "",
+            wBankAddress: "",
+            wBenEmail: "",
+            wBenPhone: "",
+            wBenAddress: "",
+            wCharges: "shared",
             wireRef: "",
           }));
           auth.reset();
@@ -2187,11 +2211,11 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Card 4: International */}
           <ActionTile
             icon={Globe}
-            title="International (SWIFT)"
+            title="Outside Ghana"
             onClick={() => {
               setBankCategory("international");
               setRail("swift");
-              setF((p) => ({ ...p, wCountry: "United States", wCurrency: "USD", wBenName: "", wIban: "", wBank: "", wSwift: "", wForeign: "", wireRef: "" }));
+              setF((p) => ({ ...p, wCountry: "", wCurrency: "USD", wBenName: "", wIban: "", wBank: "", wSwift: "", wForeign: "", wGhs: "", wMode: "", wBankAddress: "", wBenEmail: "", wBenPhone: "", wBenAddress: "", wCharges: "shared", wireRef: "" }));
               setStage(1);
               setStage1Collapsed(false);
             }}
@@ -2258,7 +2282,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setF((p) => ({
                 ...p,
                 wPhone: "0244123821",
-                wName: "Ama Serwaa Mensah",
+                wName: "Ransford Gyasi",
                 wNetwork: "MTN Mobile Money",
                 wAmount: "",
                 wRef: "",
@@ -2418,7 +2442,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <div className="flex items-center justify-between pt-1 border-t border-border/50">
                 <div className="flex flex-col">
                   <span className="text-[11px] uppercase tracking-wider text-muted-foreground">Token Code</span>
-                  <span className="text-[18px] font-mono font-bold tracking-wider text-foreground">782-419</span>
+                  <span className="text-[18px] font-bold tracking-wider text-foreground">782-419</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -2450,7 +2474,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <div className="flex items-center justify-between pt-1 border-t border-border/50">
                 <div className="flex flex-col">
                   <span className="text-[11px] uppercase tracking-wider text-muted-foreground">Token Code</span>
-                  <span className="text-[18px] font-mono font-bold tracking-wider text-foreground">309-881</span>
+                  <span className="text-[18px] font-bold tracking-wider text-foreground">309-881</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -3268,13 +3292,20 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 accounts={accounts}
                 state={{
                   fromId: f.fromId,
-                  wCountry: f.wCountry || "United States",
+                  wCountry: f.wCountry,
                   wCurrency: f.wCurrency || "USD",
                   wBank: f.wBank,
                   wSwift: f.wSwift,
                   wIban: f.wIban,
                   wBenName: f.wBenName,
                   wForeign: f.wForeign,
+                  wGhs: f.wGhs,
+                  wMode: f.wMode,
+                  wBankAddress: f.wBankAddress,
+                  wBenEmail: f.wBenEmail,
+                  wBenPhone: f.wBenPhone,
+                  wBenAddress: f.wBenAddress,
+                  wCharges: f.wCharges,
                   wPurpose: f.wPurpose || "Commercial invoice",
                   category: f.category,
                   saveBeneficiary: f.saveBeneficiary,
@@ -3287,6 +3318,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 onChange={(key, val) => set(key, val)}
                 detailsCollapsed={stage1Collapsed}
                 onToggleCollapsed={setStage1Collapsed}
+                onUsePapss={(countryName, currency) => {
+                  setRail("papss");
+                  setF((p) => ({ ...p, wCountry: countryName, wCurrency: currency, wBank: "", wIban: "", wBenName: "", wForeign: "" }));
+                  setStage(1);
+                  setStage1Collapsed(false);
+                }}
                 onProceed={() => {
                   auth.reset();
                   setStage1Collapsed(true);
@@ -3307,6 +3344,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   wIban: f.wIban,
                   wBenName: f.wBenName,
                   wForeign: f.wForeign,
+                  wGhs: f.wGhs,
                   wPurpose: f.wPurpose || "Trade settlement",
                   category: f.category,
                   saveBeneficiary: f.saveBeneficiary,
@@ -3498,6 +3536,27 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   </div>
                 )}
 
+                {/* Outside Ghana: the details they entered that the rows above don't cover */}
+                {rail === "swift" &&
+                  [
+                    ["Country", f.wCountry],
+                    [CODE_TYPE_LABELS[f.wMode] ?? "Bank code", f.wSwift],
+                    ["Bank address", f.wBankAddress],
+                    ["Beneficiary address", f.wBenAddress],
+                    ["Email", f.wBenEmail],
+                    ["Contact", f.wBenPhone],
+                    ["Charges", CHARGE_OPTIONS.find((c) => c.id === f.wCharges)?.label ?? ""],
+                  ]
+                    .filter(([, value]) => value)
+                    .map(([label, value]) => (
+                      <div key={label} className="flex items-center justify-between gap-4 px-4 py-3 w-full">
+                        <span className="text-[13.5px] text-muted-foreground shrink-0">{label}</span>
+                        <span className="text-[13.5px] font-normal text-foreground text-right truncate max-w-[260px]">
+                          {value}
+                        </span>
+                      </div>
+                    ))}
+
                 {/* Payment Method Row */}
                 {((rail === "bank" && bankCategory === "other") || rail === "ach") && f.paymentMethod && (
                   <div className="flex items-center justify-between px-4 py-3 w-full">
@@ -3575,18 +3634,21 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                     <div className="flex items-center justify-between px-4 py-3 w-full">
                       <span className="text-[13.5px] text-muted-foreground">Transfer Amount</span>
                       <span className="text-[13.5px] text-foreground tabular">
-                        {formatMoney(currentAmount, rail === "papss" ? f.wCurrency : "GHS", true)}
+                        {formatMoney(currentAmount, isForeign ? f.wCurrency : "GHS", true)}
                       </span>
                     </div>
                     {feeDetails.feeAmount > 0 && (
                       <div className="flex items-center justify-between px-4 py-3 w-full">
-                        <span className="text-[13.5px] text-muted-foreground">{feeDetails.feeName || "Transfer Fee"}</span>
+                        <span className="text-[13.5px] text-muted-foreground">
+                          {feeDetails.feeName || "Transfer Fee"}
+                          {rail === "swift" && f.wCharges === "recipient" ? " (taken from the amount)" : ""}
+                        </span>
                         <span className="text-[13.5px] text-foreground tabular">
                           {formatMoney(feeDetails.feeAmount, "GHS", true)}
                         </span>
                       </div>
                     )}
-                    {rail === "papss" && (
+                    {isForeign && (
                       <div className="flex items-center justify-between px-4 py-3 w-full">
                         <span className="text-[13.5px] text-muted-foreground">Exchange Rate</span>
                         <span className="text-[13.5px] text-foreground tabular">1 {f.wCurrency} = {rate} GHS</span>

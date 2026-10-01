@@ -21,6 +21,7 @@ import services from "./services";
 import business from "./business";
 import admin from "./admin";
 import data from "./data";
+import recent from "./recent";
 
 const ALL: Entry[][] = [
   common,
@@ -34,6 +35,7 @@ const ALL: Entry[][] = [
   business,
   admin,
   data,
+  recent,
 ];
 
 const COLUMN: Record<Exclude<SupportedLanguage, "en">, 1 | 2 | 3> = { fr: 1, es: 2, zh: 3 };

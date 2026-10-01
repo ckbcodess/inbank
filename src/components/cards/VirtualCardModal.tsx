@@ -1,7 +1,8 @@
 "use client";
 
+import { toast } from "sonner";
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, X, Check, Lock, ShieldAlert, RefreshCw } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Lock, ShieldAlert, RefreshCw } from "lucide-react";
 import {
   Dialog,
   DialogBody,
@@ -53,7 +54,6 @@ export function VirtualCardView({
   const [adjustingLimit, setAdjustingLimit] = useState(false);
   const [limitInput, setLimitInput] = useState("");
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
 
   // Security channel states
   const [showSecurityModal, setShowSecurityModal] = useState(false);
@@ -97,8 +97,7 @@ export function VirtualCardView({
         onAdjustLimit(activeCard.id, val);
       }
       activeCard.spendLimit = val;
-      setNotice(`Spending limit updated to ${formatMoney(val, activeCard.currency ?? "USD")}`);
-      setTimeout(() => setNotice(null), 3000);
+      toast.success(`Spending limit updated to ${formatMoney(val, activeCard.currency ?? "USD")}`);
     }
     setAdjustingLimit(false);
   };
@@ -107,8 +106,7 @@ export function VirtualCardView({
     const next = !isFrozen;
     setIsFrozen(next);
     activeCard.status = next ? "Blocked" : "Active";
-    setNotice(next ? "Card blocked. New payments stop until you unblock it." : "Card unblocked and active.");
-    setTimeout(() => setNotice(null), 3000);
+    toast.success(next ? "Card blocked. New payments stop until you unblock it." : "Card unblocked and active.");
     setShowMoreMenu(false);
   };
 
@@ -222,13 +220,6 @@ export function VirtualCardView({
         </div>
       </div>
 
-      {/* Notice Toast */}
-      {notice && (
-        <div className="mt-3 flex items-center justify-center gap-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 px-3 py-1.5 text-[12px] text-emerald-700 dark:text-emerald-300">
-          <Check size={14} />
-          <span>{notice}</span>
-        </div>
-      )}
 
       {/* Card Details Key-Value List */}
       <div className="mt-5 space-y-3.5 text-[13.5px]">
@@ -338,8 +329,7 @@ export function VirtualCardView({
           <button
             type="button"
             onClick={() => {
-              setNotice("Replacement request submitted.");
-              setTimeout(() => setNotice(null), 3000);
+              toast.success("Replacement request submitted.");
               setShowMoreMenu(false);
             }}
             className="flex items-center gap-2.5 px-4 py-2.5 text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-rose-600 dark:text-rose-400 cursor-pointer"

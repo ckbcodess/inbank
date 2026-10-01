@@ -26,7 +26,7 @@ const BASELINE_STATES: readonly BaselineState[] = ["loading", "empty", "populate
 
 const CUSTOMER_USERS = [
   { id: "u1", name: "Kwame Boateng", role: "Maker", status: "Active" },
-  { id: "u2", name: "Efua Mensah", role: "Approver", status: "Active" },
+  { id: "u2", name: "Esther Appiah", role: "Approver", status: "Active" },
   { id: "u3", name: "Yaw Oppong", role: "Corporate Admin", status: "Active" },
   { id: "u4", name: "Adjoa Frimpong", role: "Viewer", status: "Suspended" },
 ];

@@ -33,7 +33,7 @@ interface SessionState {
 
 /**
  * Demo customers arrive with a plausible history so "Last login" has something
- * true-to-them to show on a first visit. Esi's is her last sign-in to the old
+ * true-to-them to show on a first visit. Justice's is their last sign-in to the old
  * internet banking; a newly activated customer has none (the line hides).
  */
 const SEEDED_SIGN_INS: Record<string, number> = {

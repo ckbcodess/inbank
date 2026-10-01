@@ -1,12 +1,11 @@
 "use client";
 
+import { AlertToast } from "@/components/ui/alert-toast";
 import Image from "next/image";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { parseOnboardingStep, type OnboardingStep } from "@/lib/onboarding-steps";
 import {
-  AlertCircle,
-  ArrowLeft,
   Check,
   User,
   Users,
@@ -23,12 +22,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import AuthLayout from "@/components/auth/AuthLayout";
+import { maskEmail, maskMobile } from "@/lib/auth-shared";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import SelfieCapture from "@/components/auth/SelfieCapture";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 import { useSession } from "@/lib/session-store";
-import { setFirstRun, setPendingReferral, trustThisDevice } from "@/lib/device-trust";
-import { RememberDeviceRow } from "@/components/auth/RememberDeviceRow";
+import { setFirstRun, setPendingReferral } from "@/lib/device-trust";
 import { ACTORS } from "@/lib/mock-data";
 import {
   ACTIVATION_PERSONAS,
@@ -87,10 +86,12 @@ function ActivateContent() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   // Asked alongside the password, where sign-in is being set up. Opt-in.
-  const [rememberDevice, setRememberDevice] = useState(false);
   const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
   const [confirmPinDigits, setConfirmPinDigits] = useState<string[]>(["", "", "", ""]);
   const [errorMsg, setErrorMsg] = useState("");
+  // PIN confirmation: one retry on a mismatch, then back to the start.
+  const [pinMisses, setPinMisses] = useState(0);
+  const [pinNote, setPinNote] = useState("");
 
   // Sync state when persona parameter or selection changes
   const applyPersona = (key: "single" | "multi" | "joint" | "mobile_sync") => {
@@ -154,8 +155,6 @@ function ActivateContent() {
     review_details: 3,
     otp: 4,
     password: 5,
-    virtual_account_ready: 6,
-    fund_account: 6,
     pin: 6,
     confirm_pin: 7,
   };
@@ -236,6 +235,15 @@ function ActivateContent() {
     }, 500);
   }
 
+  function restartPin(note = "") {
+    setPinMisses(0);
+    setPinDigits(["", "", "", ""]);
+    setConfirmPinDigits(["", "", "", ""]);
+    setErrorMsg("");
+    setPinNote(note);
+    setStep("pin");
+  }
+
   function handleConfirmPinSubmit(incomingConfirmPin?: string) {
     const confirmPin = incomingConfirmPin ?? confirmPinDigits.join("");
     if (confirmPin.length < 4 || busy) {
@@ -244,7 +252,12 @@ function ActivateContent() {
     }
     const originalPin = pinDigits.join("");
     if (originalPin.length === 4 && confirmPin !== originalPin) {
-      setErrorMsg("PINs do not match. Please try again.");
+      if (pinMisses + 1 >= 2) {
+        restartPin("Those didn’t match twice, so let’s start again. Choose a PIN you’ll remember.");
+        return;
+      }
+      setPinMisses(pinMisses + 1);
+      setErrorMsg("PINs don’t match. Try again.");
       setConfirmPinDigits(["", "", "", ""]);
       return;
     }
@@ -259,7 +272,6 @@ function ActivateContent() {
         selectProfile(actor.profiles[0]);
       }
       verifyMfa();
-      if (rememberDevice) trustThisDevice(actor);
       // First time in internet banking: the dashboard opens with a short welcome,
       // and offers the referral code there (same as new-to-GCB), not mid-flow.
       setPendingReferral(true);
@@ -336,12 +348,8 @@ function ActivateContent() {
             : "Confirm your details match your account records."
           : step === "otp"
           ? isJoint
-            ? `6-digit code sent to ${activePersona.phone}. Co-signatory notice sent to ${activePersona.coSignatoryPhone}.`
-            : `6-digit code sent via ${
-                otpTarget === "sms"
-                  ? `SMS to ${activePersona.phone}`
-                  : `email to ${activePersona.email}`
-              }.`
+            ? <>A 6-digit code has been sent to {maskMobile(activePersona.phone)}.<br />Please enter the code below. A notice has also gone to {maskMobile(activePersona.coSignatoryPhone ?? "")}.</>
+            : <>A 6-digit code has been sent to {otpTarget === "sms" ? maskMobile(activePersona.phone) : maskEmail(activePersona.email)}.<br />Please enter the code below.</>
           : step === "password"
           ? "Choose a password you will remember."
           : step === "pin"
@@ -400,28 +408,32 @@ function ActivateContent() {
               value={ghanaCard}
               onChange={(e) => setGhanaCard(e.target.value)}
               placeholder="e.g. GHA-0123456789-0"
-              className="h-11 font-mono text-[14.5px] uppercase tracking-wider"
+              className="h-11 text-[14.5px] uppercase"
               autoFocus
             />
           </div>
 
-          {errorMsg && (
-            <div className="flex items-start gap-2.5 rounded-xl bg-destructive/10 p-3.5 text-[13px] text-destructive">
-              <AlertCircle size={16} className="mt-0.5 shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
+          <AlertToast when={errorMsg} message={errorMsg} />
 
-          <Button
-            type="submit"
-            variant="default"
-            size="lg"
-            data-tour="activate-card"
-            loading={busy}
-            className="mt-2 h-11 w-full text-[14px]"
-          >
-            Continue
-          </Button>
+          <div className="mt-4 flex flex-col gap-4">
+            <Button
+              type="submit"
+              variant="default"
+              size="lg"
+              data-tour="activate-card"
+              loading={busy}
+              className="h-11 w-full text-[14px]"
+            >
+              Proceed
+            </Button>
+            <p className="text-center text-[12.5px] leading-5 text-muted-foreground">
+              Tapping ‘Proceed’ means you agree to our{" "}
+              <a href="#" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Terms</a>{" "}
+              and{" "}
+              <a href="#" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Privacy Policy</a>.
+            </p>
+          </div>
+
         </form>
       )}
 
@@ -457,7 +469,7 @@ function ActivateContent() {
                 <span className="text-[14px] font-medium text-foreground block truncate">
                   {activePersona.holderName}
                 </span>
-                <span className="text-[12px] text-muted-foreground font-mono">
+                <span className="text-[12px] text-muted-foreground">
                   {activePersona.ghanaCard}
                 </span>
               </div>
@@ -491,7 +503,7 @@ function ActivateContent() {
                           <span className="font-medium text-foreground truncate">
                             {selectedPrimaryAccount.name}
                           </span>
-                          <span className="text-muted-foreground font-mono text-[12.5px] shrink-0">
+                          <span className="text-muted-foreground text-[12.5px] shrink-0">
                             •••• {selectedPrimaryAccount.number.slice(-4)}
                           </span>
                           {selectedPrimaryAccount.isJoint && (
@@ -524,7 +536,7 @@ function ActivateContent() {
                               </span>
                             )}
                           </div>
-                          <span className="text-[12px] text-muted-foreground font-mono shrink-0">
+                          <span className="text-[12px] text-muted-foreground shrink-0">
                             •••• {acc.number.slice(-4)}
                           </span>
                         </div>
@@ -562,7 +574,7 @@ function ActivateContent() {
                   <span className="text-[14px] font-medium text-foreground block">
                     {activePersona.accounts[0]?.name}
                   </span>
-                  <span className="text-[12.5px] text-muted-foreground font-mono">
+                  <span className="text-[12.5px] text-muted-foreground">
                     •••• {activePersona.accounts[0]?.number.slice(-4)}
                   </span>
                 </div>
@@ -587,7 +599,7 @@ function ActivateContent() {
             disabled={(isMultiAccount && !selectedPrimaryAccountId)} loading={busy}
             className="mt-1 h-11 w-full text-[14px]"
           >
-            Continue
+            Proceed
           </Button>
 
           <button
@@ -623,31 +635,14 @@ function ActivateContent() {
             />
           </div>
 
-          {isJoint && (
-            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3.5 text-[12.5px] text-muted-foreground">
-              <span className="font-medium text-foreground">Joint mandate notice:</span> Notice sent to co-holder Efua ({activePersona.coSignatoryPhone}).
-            </div>
-          )}
-
-          {busy && (
-            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
-              <AppLoader size={16} />
-              <span>Verifying code...</span>
-            </div>
-          )}
-
           {errorMsg && (
-            <div
-              role="alert"
-              className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3.5 text-[13px] text-destructive"
-            >
-              <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
+            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+              {errorMsg}
+            </p>
           )}
 
           {/* Recovery path */}
-          <div className="mt-2 flex flex-col items-center gap-2 border-t border-border pt-4">
+          <div className="flex flex-col items-center gap-5">
             <button
               type="button"
               disabled={countdown > 0}
@@ -655,7 +650,7 @@ function ActivateContent() {
                 setCountdown(RESEND_SECONDS);
                 setErrorMsg("");
               }}
-              className="text-[13px] text-foreground underline-offset-4 hover:underline disabled:text-muted-foreground disabled:no-underline cursor-pointer"
+              className="text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:text-muted-foreground disabled:no-underline disabled:cursor-default cursor-pointer"
             >
               {countdown > 0 ? (
                 <>
@@ -673,11 +668,26 @@ function ActivateContent() {
                 setCountdown(RESEND_SECONDS);
                 setErrorMsg("");
               }}
-              className="text-center text-[12.5px] text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
+              className="text-center text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:text-muted-foreground disabled:no-underline disabled:cursor-default cursor-pointer"
             >
               Send to {otpTarget === "sms" ? "email instead" : "SMS instead"}
             </button>
           </div>
+
+          {isJoint && (
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3.5 text-[12.5px] text-muted-foreground">
+              <span className="font-medium text-foreground">Joint mandate notice:</span> Notice sent to co-holder Esther ({activePersona.coSignatoryPhone}).
+            </div>
+          )}
+
+          {busy && (
+            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+              <AppLoader size={16} />
+              <span>Verifying code...</span>
+            </div>
+          )}
+
+
         </form>
       )}
 
@@ -698,17 +708,7 @@ function ActivateContent() {
             autoFocus
           />
 
-          <RememberDeviceRow checked={rememberDevice} onCheckedChange={setRememberDevice} />
-
-          {errorMsg && (
-            <div
-              role="alert"
-              className="flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3.5 text-[13px] text-destructive"
-            >
-              <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
+          <AlertToast when={errorMsg} message={errorMsg} />
 
           <Button
             type="submit"
@@ -719,7 +719,7 @@ function ActivateContent() {
             loading={busy}
             className="mt-2 h-11 w-full text-[14px]"
           >
-            Continue
+            Proceed
           </Button>
         </form>
       )}
@@ -739,6 +739,7 @@ function ActivateContent() {
               onChange={(next) => {
                 setPinDigits(next);
                 if (errorMsg) setErrorMsg("");
+                if (pinNote) setPinNote("");
               }}
               length={4}
               mask
@@ -749,6 +750,15 @@ function ActivateContent() {
             />
           </div>
 
+          {errorMsg && (
+            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+              {errorMsg}
+            </p>
+          )}
+          {!errorMsg && pinNote && (
+            <p className="-mt-3 text-center text-[13px] text-muted-foreground">{pinNote}</p>
+          )}
+
           {busy && (
             <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
               <AppLoader size={16} />
@@ -756,15 +766,6 @@ function ActivateContent() {
             </div>
           )}
 
-          {errorMsg && (
-            <div
-              role="alert"
-              className="w-full flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3.5 text-[13px] text-destructive"
-            >
-              <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
         </form>
       )}
 
@@ -793,6 +794,12 @@ function ActivateContent() {
             />
           </div>
 
+          {errorMsg && (
+            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+              {errorMsg}
+            </p>
+          )}
+
           {busy && (
             <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
               <AppLoader size={16} />
@@ -800,15 +807,6 @@ function ActivateContent() {
             </div>
           )}
 
-          {errorMsg && (
-            <div
-              role="alert"
-              className="w-full flex items-start gap-2.5 rounded-xl bg-destructive/10 px-4 py-3.5 text-[13px] text-destructive"
-            >
-              <AlertCircle size={16} strokeWidth={1.9} aria-hidden="true" className="mt-0.5 shrink-0" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
         </form>
       )}
     </AuthLayout>

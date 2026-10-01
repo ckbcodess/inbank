@@ -53,7 +53,7 @@ export const STATE_ILLUSTRATIONS = {
 
   // Moments: one-time milestones, modals and interstitials
   "moment-welcome": { placement: "moment", brief: "First-run welcome. Warm, the biggest one.", drawn: false },
-  "moment-account-ready": { placement: "moment", brief: "Virtual account / GCB account is ready.", drawn: false },
+  "moment-account-ready": { placement: "moment", brief: "Virtual wallet / GCB account is ready.", drawn: false },
   "moment-migration-welcome": { placement: "moment", brief: "Welcome for migrating customers.", drawn: false },
 
   // Card delivery journey

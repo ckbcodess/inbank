@@ -15,7 +15,6 @@
 import { useCallback, useRef, useState } from "react";
 import Link from "next/link";
 import {
-  ArrowLeft,
   Building2,
   Check,
   CheckCircle2,
@@ -248,7 +247,7 @@ export default function BusinessSignupPage() {
                 value={company.tin}
                 onChange={(e) => setCompany((c) => ({ ...c, tin: e.target.value }))}
                 placeholder="C0099887766"
-                className="h-11 font-mono text-[14.5px] uppercase tracking-wider tabular"
+                className="h-11 text-[14.5px] uppercase tabular"
                 required
               />
             </div>
@@ -281,7 +280,7 @@ export default function BusinessSignupPage() {
               disabled={company.name.trim() === "" || company.tin.trim() === ""} loading={busy}
               className="mt-2 h-11 w-full text-[14px]"
             >
-              Continue
+              Proceed
             </Button>
           </form>
         )}
@@ -365,7 +364,7 @@ export default function BusinessSignupPage() {
                 value={contact.ghanaCard}
                 onChange={(e) => setContact((c) => ({ ...c, ghanaCard: e.target.value }))}
                 placeholder="GHA-0123456789-0"
-                className="h-11 font-mono text-[14.5px] uppercase tracking-wider tabular"
+                className="h-11 text-[14.5px] uppercase tabular"
                 required
               />
             </div>
@@ -405,7 +404,7 @@ export default function BusinessSignupPage() {
               disabled={contact.name.trim() === "" || contact.ghanaCard.trim() === "" || !isCompleteGhanaMobile(contact.mobile) || contact.email.trim() === ""}
               className="mt-2 h-11 w-full text-[14px]"
             >
-              Continue
+              Proceed
             </Button>
           </form>
         )}
@@ -466,7 +465,7 @@ export default function BusinessSignupPage() {
               disabled={effectiveSignatories.length === 0}
               className="mt-2 h-11 w-full text-[14px]"
             >
-              Continue
+              Proceed
             </Button>
             {effectiveSignatories.length === 0 && (
               <p className="text-center text-[12.5px] text-muted-foreground">
@@ -536,7 +535,7 @@ export default function BusinessSignupPage() {
               disabled={!allDocsAttached}
               className="mt-2 h-11 w-full text-[14px]"
             >
-              Continue
+              Proceed
             </Button>
             {!allDocsAttached && (
               <p className="text-center text-[12.5px] text-muted-foreground">
@@ -614,7 +613,7 @@ export default function BusinessSignupPage() {
         {step === "submitted" && (
           <div className="flex flex-col gap-6">
             <div className="rounded-2xl border border-border bg-muted/30 p-5 text-center">
-              <p className="text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
+              <p className="text-[12px] font-medium uppercase text-muted-foreground">
                 Application reference
               </p>
               <p className="mt-1.5 text-[20px] font-medium text-foreground tabular">{reference}</p>

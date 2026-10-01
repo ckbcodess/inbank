@@ -10,10 +10,11 @@
  */
 
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Wallet } from "lucide-react";
 import { Modal } from "@/components/ui/dialog";
 import { TileChip } from "@/components/ui/action-tile";
 import {
+  OPEN_FUND_EVENT,
   billOptions,
   sendOptions,
   topUpOptions,
@@ -58,8 +59,35 @@ export function MoneyActionPicker({
 }) {
   const groups = groupsFor(kind, hasOtherAccounts);
 
+  const fundAccount = () => {
+    onOpenChange(false);
+    window.dispatchEvent(new Event(OPEN_FUND_EVENT));
+  };
+
   return (
     <Modal open={open} onOpenChange={onOpenChange} title={TITLE[kind]} size="sm" bodyClassName="gap-5 pb-6">
+      {/* Topping up your own account comes first: it's what "top up" means before anything else. */}
+      {kind === "topup" && (
+        <ul className="-mx-2 -mb-2 flex flex-col">
+          <li>
+            <button
+              type="button"
+              onClick={fundAccount}
+              className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-muted/60 active:bg-muted"
+            >
+              <TileChip tone="onCard">
+                <Wallet size={18} strokeWidth={1.8} aria-hidden="true" />
+              </TileChip>
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="truncate text-[14.5px] font-medium text-foreground">My Account</span>
+                <span className="truncate text-[12.5px] text-muted-foreground">Mobile money or any bank card</span>
+              </span>
+              <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+            </button>
+          </li>
+        </ul>
+      )}
+
       {groups.map((group, i) => (
         <section key={group.label ?? i} className="flex flex-col gap-1">
           {group.label && <h3 className="pb-1 text-[12px] text-muted-foreground">{group.label}</h3>}

@@ -441,7 +441,7 @@ export function RequestCardFlow() {
       balance: numericFund,
       spendLimit: cardType === "Virtual" ? 5000 : null,
       linkedAccountId: selectedAccount?.id ?? "acc-001",
-      holder: actor?.name ?? "Ama Serwaa",
+      holder: actor?.name ?? "Ransford Gyasi",
       expiry: "09/30",
       status: isPhysical ? "Inactive" : "Active",
       fundable: isFundable,
@@ -496,7 +496,7 @@ export function RequestCardFlow() {
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
-            <h1 className="text-[24px] font-medium leading-tight tracking-[-0.02em] text-foreground">
+            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
               Request a Card
             </h1>
           </div>
@@ -573,7 +573,7 @@ export function RequestCardFlow() {
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
-            <h1 className="text-[24px] font-medium leading-tight tracking-[-0.02em] text-foreground">
+            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
               {isReplacement ? "Replace" : "Configure"} {cardType.toLowerCase()} card
             </h1>
           </div>
@@ -794,7 +794,7 @@ export function RequestCardFlow() {
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
-            <h1 className="text-[24px] font-medium leading-tight tracking-[-0.02em] text-foreground">
+            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
               Customize card
             </h1>
           </div>
@@ -852,7 +852,7 @@ export function RequestCardFlow() {
                       CARD HOLDER
                     </span>
                     <span className="text-[15px] sm:text-[17px] font-medium leading-[22px] tracking-tight uppercase">
-                      {actor?.name ?? "TSOTSOO MILLS"}
+                      {actor?.name ?? "RANSFORD GYASI"}
                     </span>
                   </div>
 
@@ -860,7 +860,7 @@ export function RequestCardFlow() {
                     <span className="text-[10.5px] sm:text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
                       EXP
                     </span>
-                    <span className="text-[15px] sm:text-[17px] font-medium leading-[22px] tracking-tight font-mono">
+                    <span className="text-[15px] sm:text-[17px] font-medium leading-[22px] tracking-tight">
                       09/28
                     </span>
                   </div>
@@ -959,7 +959,7 @@ export function RequestCardFlow() {
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
-            <h1 className="text-[24px] font-medium leading-tight tracking-[-0.02em] text-foreground">
+            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
               {isReplacement ? "Review replacement" : "Review request"}
             </h1>
           </div>
@@ -982,7 +982,7 @@ export function RequestCardFlow() {
                 <span className="text-[7.5px] font-medium truncate max-w-[40px]">
                   {cardType}
                 </span>
-                <span className="text-[6.5px] font-mono opacity-80">••••</span>
+                <span className="text-[6.5px] opacity-80">••••</span>
               </div>
             </div>
             <div className="flex flex-col min-w-0">
@@ -1021,7 +1021,7 @@ export function RequestCardFlow() {
             <div className="p-4 flex items-center justify-between gap-4">
               <span className="text-[13.5px] text-muted-foreground">Cardholder</span>
               <span className="text-[14px] font-medium text-foreground">
-                {actor?.name ?? "Ama Serwaa"}
+                {actor?.name ?? "Ransford Gyasi"}
               </span>
             </div>
 

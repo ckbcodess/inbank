@@ -1,5 +1,6 @@
 "use client";
 
+import { InlineError } from "@/components/ui/inline-error";
 import { useEffect, useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -685,7 +686,7 @@ export default function LinkSourceAccountModal({
                               <span className="text-[14px] font-medium text-foreground">
                                 {source.title}
                               </span>
-                              <span className="text-[12px] text-muted-foreground font-mono">
+                              <span className="text-[12px] text-muted-foreground">
                                 {source.subtitle}
                               </span>
                             </div>
@@ -817,7 +818,7 @@ export default function LinkSourceAccountModal({
                     value={threeDsCode}
                     onChange={(e) => setThreeDsCode(e.target.value)}
                     placeholder="123456"
-                    className="h-11 w-full rounded-xl border border-border bg-card px-3.5 font-mono text-[14px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                    className="h-11 w-full rounded-xl border border-border bg-card px-3.5 text-[14px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
                     required
                   />
                 </div>
@@ -980,11 +981,7 @@ export default function LinkSourceAccountModal({
                     <span>Verifying code…</span>
                   </div>
                 )}
-                {momoCodeError && (
-                  <p role="alert" className="text-[13px] text-destructive">
-                    That code didn&apos;t match. Check the latest SMS and try again.
-                  </p>
-                )}
+                <InlineError message={momoCodeError && "That code didn’t match. Check the latest SMS and try again."} />
                 <Button
                   type="button"
                   variant="ghost"
@@ -1056,7 +1053,7 @@ export default function LinkSourceAccountModal({
                       )
                     }
                     placeholder="4000 1234 5678 9010"
-                    className="h-11 w-full rounded-xl border border-border bg-card px-3 font-mono tabular text-[14px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                    className="h-11 w-full rounded-xl border border-border bg-card px-3 tabular text-[14px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
                     required
                   />
                 </div>

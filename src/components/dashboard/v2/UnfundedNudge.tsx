@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Smartphone, Wallet, X, Zap } from "lucide-react";
+import { ArrowRight, Wallet, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   peekUnfundedNudgeDismissed,
@@ -26,61 +26,45 @@ export function UnfundedNudge({ onFundClick, className }: UnfundedNudgeProps) {
   return (
     <div
       role="region"
-      aria-label="Account activation nudge"
-      className={`relative flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6 ${
+      aria-label="Wallet funding nudge"
+      className={`relative flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-6 ${
         className ?? ""
       }`}
     >
-      <div className="flex items-start gap-4">
-        <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-foreground sm:size-12">
-          <Wallet size={22} strokeWidth={1.8} />
+      <div className="flex min-w-0 items-center gap-4 pr-8 sm:pr-0">
+        <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+          <Wallet size={20} strokeWidth={1.9} aria-hidden="true" />
         </div>
 
-        <div className="flex flex-col gap-1 pr-6 sm:pr-0">
-          <div className="flex items-center gap-2">
-            <h3 className="text-[15px] tracking-[-0.01em] text-foreground sm:text-[16px]">
-              Activate your account with an initial deposit
-            </h3>
-            <span className="hidden items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground sm:inline-flex">
-              <Zap size={11} strokeWidth={2} />
-              <span>Instant</span>
-            </span>
-          </div>
-          <p className="text-[13px] leading-relaxed text-muted-foreground max-w-[560px]">
-            Your virtual account and Visa card are ready. Add funds via Mobile Money or a bank card to unlock instant transfers, payments, and online shopping.
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <h3 className="text-[15.5px] tracking-[-0.01em] text-foreground sm:text-[16.5px]">
+            Fund your wallet to get started
+          </h3>
+          <p className="text-[13px] leading-relaxed text-muted-foreground sm:text-[13.5px]">
+            Deposit via Mobile Money or card to activate transfers and payments.
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-3 self-end sm:self-center shrink-0">
+      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+        <Button
+          type="button"
+          onClick={onFundClick}
+          className="h-11 flex-1 cursor-pointer px-5 text-[14px] active:scale-[0.97] transition-transform duration-150 sm:flex-none"
+        >
+          <span>Fund Wallet</span>
+          <ArrowRight size={15} strokeWidth={1.8} className="ml-1.5" />
+        </Button>
+
         <button
           type="button"
           onClick={handleDismiss}
-          className="cursor-pointer text-[13px] text-muted-foreground transition-colors hover:text-foreground hover:underline underline-offset-4 px-2 py-1.5"
+          aria-label="Dismiss notification"
+          className="absolute right-3.5 top-3.5 flex size-8 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:static"
         >
-          Remind me later
+          <X size={15} strokeWidth={1.8} />
         </button>
-
-        <Button
-          type="button"
-          variant="default"
-          size="sm"
-          onClick={onFundClick}
-          className="h-10 px-4 text-[13.5px] cursor-pointer"
-        >
-          <span>Fund Account</span>
-          <ArrowRight size={15} strokeWidth={1.8} className="ml-1.5" />
-        </Button>
       </div>
-
-      <button
-        type="button"
-        onClick={handleDismiss}
-        aria-label="Dismiss notification"
-        className="absolute right-3.5 top-3.5 flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer sm:hidden"
-      >
-        <X size={15} strokeWidth={1.8} />
-      </button>
     </div>
   );
 }

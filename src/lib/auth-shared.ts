@@ -17,7 +17,7 @@ export function maskMobile(raw: string): string {
   return `+${country} ${network} *** *${last}`;
 }
 
-/** "ama.serwaa@example.com" → "am•••••@example.com" — mirrors the MFA screen. */
+/** "ransford.gyasi@example.com" → "am•••••@example.com" — mirrors the MFA screen. */
 export function maskEmail(raw: string): string {
   return raw.replace(/(.{2}).*(@.*)/, "$1•••••$2");
 }
@@ -32,7 +32,7 @@ export interface PasswordRule {
 
 /** Mirrors the strength rules the Bank enforces server-side. */
 export const PASSWORD_RULES: readonly PasswordRule[] = [
-  { id: "length", label: "At least 12 characters", test: (pw) => pw.length >= 12 },
+  { id: "length", label: "At least 8 characters", test: (pw) => pw.length >= 8 },
   { id: "case", label: "Upper and lower case", test: (pw) => /[A-Z]/.test(pw) && /[a-z]/.test(pw) },
   { id: "number", label: "A number", test: (pw) => /\d/.test(pw) },
   { id: "symbol", label: "A symbol", test: (pw) => /[^A-Za-z0-9]/.test(pw) },
