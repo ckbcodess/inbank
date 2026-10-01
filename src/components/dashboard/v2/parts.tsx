@@ -237,7 +237,7 @@ export function MoneyActions({
   const [kind, setKind] = useState<MoneyActionKind>("send");
   const actions: { kind: MoneyActionKind; icon: typeof Send; label: string; primary: boolean }[] = [
     { kind: "send", icon: Send, label: t("dashboard.sendMoney", "Send Money"), primary: true },
-    { kind: "bill", icon: Receipt, label: t("dashboard.payBill", "Pay Bill"), primary: false },
+    { kind: "bill", icon: Receipt, label: t("dashboard.payBill", "GCB Pay"), primary: false },
     { kind: "topup", icon: Download, label: t("dashboard.topUp", "Top-Up"), primary: false },
   ];
   const hero = tone === "hero";

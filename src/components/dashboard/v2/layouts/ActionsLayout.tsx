@@ -38,7 +38,7 @@ export function ActionsLayout(props: DashViewProps) {
 
   const tiles = [
     { icon: Send, title: t("dashboard.sendMoney", "Send Money"), href: withFrom("/payments/send", from) },
-    { icon: Receipt, title: t("dashboard.payBill", "Pay Bill"), href: withFrom("/payments/bills", from) },
+    { icon: Receipt, title: t("dashboard.payBill", "GCB Pay"), href: withFrom("/payments/bills", from) },
     { icon: Smartphone, title: t("dashboard.airtimeData", "Airtime & Data"), href: withFrom("/payments/send?rail=airtime", from) },
     // Only meaningful with somewhere else to move money to.
     ...(data.accounts.length > 1
