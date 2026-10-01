@@ -21,12 +21,12 @@ import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
-  ArrowRight,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
   CreditCard,
   Smartphone,
+  X,
 } from "lucide-react";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -338,19 +338,16 @@ export function FirstRunWelcome({
     goTo("success");
   };
 
-  const handleOpenChange = (open: boolean) => {
-    if (open) return;
-    if (step === "referral") {
-      clearPendingReferral();
-      close();
-    } else if (step === "method" || step === "momo-choice" || step === "form" || step === "otp") {
-      clearPendingFundPrompt();
-      skipFunding();
-    } else if (step === "source") {
-      goTo("referral");
-    } else {
-      close();
-    }
+  // The X is a deliberate exit from the whole sequence. A stray click outside the card or Esc
+  // does nothing: skipping a funding or referral step has to be chosen with its own button.
+  // Once the request is with the network (waiting for phone approval, or a payment being
+  // submitted) it can't be cancelled from here, so the X waits until it resolves.
+  const moneyInFlight = step === "ussd" || busy;
+
+  const handleClose = () => {
+    if (moneyInFlight) return;
+    if (!fundingSucceededRef.current) setHasSkippedFunding(true);
+    close();
   };
 
   const sourceToUse: PendingFundingSource = pendingSource || {
@@ -360,11 +357,21 @@ export function FirstRunWelcome({
   };
 
   return (
-    <Dialog open onOpenChange={handleOpenChange}>
+    <Dialog open onOpenChange={() => {}}>
       <DialogContent
         size="lg"
         className="overflow-hidden sm:max-w-[812px] p-2.5 sm:p-3 border border-border/80 bg-card dark:bg-[#181818] shadow-2xl sm:rounded-[20px]"
       >
+        <button
+          type="button"
+          onClick={handleClose}
+          disabled={moneyInFlight}
+          aria-label={moneyInFlight ? "Close (available once your payment finishes)" : "Close"}
+          title={moneyInFlight ? "Available once your payment finishes" : undefined}
+          className="absolute right-4 top-4 z-20 flex size-8 cursor-pointer items-center justify-center rounded-full border border-border/60 bg-card/85 text-foreground backdrop-blur transition-colors hover:bg-card active:scale-[0.94] disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100"
+        >
+          <X size={15} strokeWidth={1.9} aria-hidden="true" />
+        </button>
         <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)] min-h-[440px] max-h-[calc(92vh-2rem)] overflow-hidden">
           {/* Left Column: Interactive sliding view */}
           <div className="relative flex flex-col justify-between overflow-hidden p-5 sm:px-6 sm:py-7 min-h-[440px] min-w-0">
@@ -464,7 +471,7 @@ export function FirstRunWelcome({
                               Fund with Mobile Money Wallet
                             </span>
                           </div>
-                          <ArrowRight
+                          <ChevronRight
                             size={16}
                             strokeWidth={1.8}
                             className="text-muted-foreground transition-transform group-hover:translate-x-0.5 shrink-0"
@@ -488,7 +495,7 @@ export function FirstRunWelcome({
                               Fund with a Card
                             </span>
                           </div>
-                          <ArrowRight
+                          <ChevronRight
                             size={16}
                             strokeWidth={1.8}
                             className="text-muted-foreground transition-transform group-hover:translate-x-0.5 shrink-0"
