@@ -266,8 +266,8 @@ const recent: Entry[] = [
   ["Refresh failed", "Échec de l’actualisation", "Error al actualizar", "刷新失败"],
   ["Trend", "Tendance", "Tendencia", "走势"],
   ["US dollar weighted median", "Médiane pondérée du dollar US", "Mediana ponderada del dólar estadounidense", "美元加权中位价"],
-  ["From Bank of Ghana · {0}", "Source : Banque du Ghana · {0}", "De Bank of Ghana · {0}", "来源：加纳银行 · {0}"],
-  ["From Bank of Ghana ·", "Source : Banque du Ghana ·", "De Bank of Ghana ·", "来源：加纳银行 ·"],
+  ["Updated {0}", "Mis à jour le {0}", "Actualizado el {0}", "更新于 {0}"],
+  ["Updated", "Mis à jour le", "Actualizado el", "更新于"],
   ["Ghana.gov", "Ghana.gov", "Ghana.gov", "Ghana.gov"],
 
   // ── Standing orders ──

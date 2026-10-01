@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Today's Bank of Ghana rates, one tap from the hero card. A reference sheet:
+ * Today's rates, one tap from the hero card. A reference sheet:
  * the customer reads a rate and leaves. Buy/sell are spelled out because the
  * bank buys foreign currency from you at one and sells it to you at the other.
  */
@@ -63,7 +63,7 @@ export function FxRatesDialog({ open, onOpenChange }: { open: boolean; onOpenCha
           </div>
         </DialogBody>
         <DialogFooter className="justify-between">
-          <p className="text-[13px] text-muted-foreground tabular">From Bank of Ghana · {formatDate(FX_PUBLISHED_AT)}</p>
+          <p className="text-[13px] text-muted-foreground tabular">Updated {formatDate(FX_PUBLISHED_AT)}</p>
           <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/fx-rates" />}>
             All rates
           </Button>

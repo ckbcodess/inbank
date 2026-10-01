@@ -276,7 +276,7 @@ export function FxRatesWidget() {
       {/* Symmetrical Footer */}
       <div className="flex items-center justify-center gap-1.5 border-t border-border/50 pt-3 text-[12px] text-muted-foreground">
         <RefreshCw size={12} strokeWidth={1.8} />
-        <span>Updated 2 mins ago · Bank of Ghana mid-rate</span>
+        <span>Updated 2 mins ago</span>
       </div>
     </div>
   );

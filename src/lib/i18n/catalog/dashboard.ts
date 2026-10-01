@@ -130,7 +130,7 @@ const dashboard: Entry[] = [
   ["+1.8% in period", "+1,8 % sur la période", "+1,8 % en el periodo", "期间 +1.8%"],
   ["High: {0}", "Haut : {0}", "Máximo: {0}", "最高：{0}"],
   ["High:", "Haut :", "Máximo:", "最高："],
-  ["Updated 2 mins ago · Bank of Ghana mid-rate", "Mis à jour il y a 2 min · Taux moyen de la Banque du Ghana", "Actualizado hace 2 min · Tipo medio del Banco de Ghana", "2 分钟前更新 · 加纳银行中间价"],
+  ["Updated 2 mins ago", "Mis à jour il y a 2 min", "Actualizado hace 2 min", "2 分钟前更新"],
   ["No cards active", "Aucune carte active", "No hay tarjetas activas", "暂无生效卡片"],
   ["Request a physical or instant virtual card", "Demandez une carte physique ou une carte virtuelle instantanée", "Solicita una tarjeta física o una virtual al instante", "申请实体卡或即时虚拟卡"],
   ["Order Card", "Commander une carte", "Pedir tarjeta", "申请卡片"],
