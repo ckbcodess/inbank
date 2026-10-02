@@ -1072,25 +1072,27 @@ function SaveSourcePane({
  * Hardened against flicker & layout repaint:
  * 1. React.memo prevents unnecessary re-renders when parent states change.
  * 2. `unoptimized` prevents Next.js image loader re-triggering.
- * 3. `[transform:translateZ(0)]` & `[backface-visibility:hidden]` promote to a dedicated GPU compositing layer.
+ * 3. The panel is clipped with `clip-path` (not just `overflow-hidden` + radius). A child on its own
+ *    GPU layer ignores a rounded `overflow-hidden` and shows square corners past the curve; clip-path
+ *    clips composited children too. So no `translateZ` hacks on the children.
  */
 const PersistentSplitArt = memo(function PersistentSplitArt() {
   return (
     <div
       aria-hidden="true"
-      className="relative hidden overflow-hidden rounded-xl sm:block min-h-[440px] min-w-0 select-none [transform:translateZ(0)] [backface-visibility:hidden]"
+      className="relative isolate hidden overflow-hidden rounded-xl sm:block min-h-[440px] min-w-0 select-none [clip-path:inset(0_round_12px)]"
       style={{
         background:
           "radial-gradient(ellipse at center, #ffd400 0%, #ffbb00 100%)",
       }}
     >
-      <div className="absolute left-[79px] top-[98px] h-[538px] w-[625px] rounded-[8px] border-8 border-[#2a2a2a] overflow-hidden shadow-2xl bg-[#141414] [transform:translateZ(0)] [backface-visibility:hidden]">
+      <div className="absolute left-[79px] top-[98px] h-[538px] w-[625px] rounded-[8px] border-8 border-[#2a2a2a] overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.22)] bg-[#141414]">
         <Image
           src="/welcome-dashboard-preview.png"
           alt=""
           width={625}
           height={538}
-          className="size-full object-cover object-left-top pointer-events-none select-none [transform:translateZ(0)]"
+          className="size-full object-cover object-left-top pointer-events-none select-none"
           priority
           unoptimized
         />

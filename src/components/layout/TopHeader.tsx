@@ -9,9 +9,13 @@ import {
   Eye,
   EyeOff,
   Layers,
+  Lock,
+  LogOut,
   Menu,
   Moon,
+  ShieldCheck,
   Sun,
+  User,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState, Suspense } from "react";
@@ -181,10 +185,14 @@ export default function TopHeader({
             <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-medium text-primary-foreground">
               {initials}
             </span>
-            <span className="hidden text-left leading-tight sm:block whitespace-nowrap">
-              <span className="block text-[13px] font-medium text-foreground whitespace-nowrap">{actor.name}</span>
-              <span className="block text-[11px] text-muted-foreground whitespace-nowrap">{ROLE_LABEL[actor.role]}</span>
-            </span>
+            {/* Customers get the avatar alone (the name is in the menu and the greeting, and a full name
+                pinned to every page leaks on shared screens). Staff need to see who and in what role. */}
+            {actor.shell === "admin" && (
+              <span className="hidden text-left leading-tight sm:block whitespace-nowrap">
+                <span className="block text-[13px] font-medium text-foreground whitespace-nowrap">{actor.name}</span>
+                <span className="block text-[11px] text-muted-foreground whitespace-nowrap">{ROLE_LABEL[actor.role]}</span>
+              </span>
+            )}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={6} className="w-[260px] p-1.5 rounded-2xl">
             {/* Header: Avatar, Name & Email */}
@@ -203,28 +211,40 @@ export default function TopHeader({
               onClick={() => router.push(actor.shell === "customer" ? "/settings?tab=profile" : "/settings")}
               className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
             >
-              <span>{t("header.profile", "Profile")}</span>
+              <span className="flex items-center gap-3">
+                <User size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.profile", "Profile")}</span>
+              </span>
             </DropdownMenuItem>
 
             <DropdownMenuItem
               onClick={() => router.push(actor.shell === "customer" ? "/notifications" : "/settings?tab=notifications")}
               className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
             >
-              <span>{t("header.notifications", "Notifications")}</span>
+              <span className="flex items-center gap-3">
+                <Bell size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.notifications", "Notifications")}</span>
+              </span>
             </DropdownMenuItem>
 
             <DropdownMenuItem
               onClick={() => router.push(actor.shell === "customer" ? "/settings?tab=security" : "/settings?tab=security")}
               className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
             >
-              <span>{t("header.security", "Security")}</span>
+              <span className="flex items-center gap-3">
+                <ShieldCheck size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.security", "Security")}</span>
+              </span>
             </DropdownMenuItem>
 
             <DropdownMenuItem
               onClick={() => window.open("https://www.gcbbank.com.gh/privacy-policy", "_blank")}
               className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
             >
-              <span>{t("header.privacy", "Privacy")}</span>
+              <span className="flex items-center gap-3">
+                <Lock size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.privacy", "Privacy")}</span>
+              </span>
               <ExternalLink size={14} className="text-muted-foreground/70" strokeWidth={1.8} />
             </DropdownMenuItem>
 
@@ -238,11 +258,18 @@ export default function TopHeader({
               }}
               className="flex items-center justify-between py-2 px-3 cursor-pointer rounded-lg hover:bg-muted/70 transition-colors"
             >
-              <div className="flex flex-col text-left">
-                <span className="text-[13.5px] font-normal text-foreground">{t("header.appearance", "Appearance")}</span>
-                <span className="text-[11.5px] text-muted-foreground">
-                  {mounted ? (resolvedTheme === "dark" ? "Dark mode" : "Light mode") : "Theme"}
-                </span>
+              <div className="flex items-center gap-3 text-left">
+                {mounted && resolvedTheme === "dark" ? (
+                  <Moon size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                ) : (
+                  <Sun size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                )}
+                <div className="flex flex-col">
+                  <span className="text-[13.5px] font-normal text-foreground">{t("header.appearance", "Appearance")}</span>
+                  <span className="text-[11.5px] text-muted-foreground">
+                    {mounted ? (resolvedTheme === "dark" ? "Dark mode" : "Light mode") : "Theme"}
+                  </span>
+                </div>
               </div>
               <ChevronRight size={15} className="text-muted-foreground/70" strokeWidth={1.8} />
             </DropdownMenuItem>
@@ -251,7 +278,10 @@ export default function TopHeader({
               onClick={() => setLogoutOpen(true)}
               className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-destructive/10 hover:text-destructive transition-colors mt-0.5"
             >
-              <span>{t("header.signOut", "Log out")}</span>
+              <span className="flex items-center gap-3">
+                <LogOut size={16} strokeWidth={1.8} className="shrink-0 opacity-70" aria-hidden="true" />
+                <span>{t("header.signOut", "Log out")}</span>
+              </span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

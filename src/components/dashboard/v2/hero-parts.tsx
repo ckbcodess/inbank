@@ -264,9 +264,9 @@ export function HeroAccountMenu({
           >
             <MoreVertical size={18} strokeWidth={1.9} />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" sideOffset={6} className="w-[260px] p-1.5">
-            <div className="flex flex-col gap-0.5 px-2.5 py-2">
-              <span className="truncate text-[13px] font-medium text-foreground">{account.name}</span>
+          <DropdownMenuContent align="end" sideOffset={6} className="w-[272px] rounded-2xl p-1.5">
+            <div className="flex flex-col gap-0.5 px-3 pb-2.5 pt-2.5">
+              <span className="truncate text-[14.5px] tracking-[-0.01em] text-foreground">{account.name}</span>
               <span className="text-[12px] text-muted-foreground tabular">
                 {groupDigits(account.number)} · {account.currency}
               </span>
@@ -275,13 +275,13 @@ export function HeroAccountMenu({
             <DropdownMenuSeparator />
 
             {/* Inbound & Sharing */}
-            <DropdownMenuItem onClick={handleCopyNumber} className="gap-2.5 cursor-pointer py-2 px-2.5">
-              <Copy size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+            <DropdownMenuItem onClick={handleCopyNumber} className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70">
+              <Copy size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
               <span className="text-[13.5px]">Copy account number</span>
             </DropdownMenuItem>
 
-            <DropdownMenuItem onClick={() => setShareOpen(true)} className="gap-2.5 cursor-pointer py-2 px-2.5">
-              <Share2 size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+            <DropdownMenuItem onClick={() => setShareOpen(true)} className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70">
+              <Share2 size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
               <span className="text-[13.5px]">Share account details</span>
             </DropdownMenuItem>
 
@@ -290,32 +290,32 @@ export function HeroAccountMenu({
             {/* Records & Activity */}
             <DropdownMenuItem
               onClick={() => router.push(`/accounts/${account.id}/requests?type=statement`)}
-              className="gap-2.5 cursor-pointer py-2 px-2.5"
+              className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
             >
-              <FileText size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+              <FileText size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
               <span className="text-[13.5px]">Download e-Statement</span>
             </DropdownMenuItem>
 
             <DropdownMenuItem
               onClick={() => router.push(`/transactions?account=${account.id}`)}
-              className="gap-2.5 cursor-pointer py-2 px-2.5"
+              className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
             >
-              <ArrowLeftRight size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+              <ArrowLeftRight size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
               <span className="text-[13.5px]">View transactions</span>
             </DropdownMenuItem>
 
             {/* Controls */}
             <DropdownMenuItem
               onClick={() => router.push(`/accounts/${account.id}`)}
-              className="gap-2.5 cursor-pointer py-2 px-2.5"
+              className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
             >
-              <SlidersHorizontal size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+              <SlidersHorizontal size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
               <span className="text-[13.5px]">Account details & limits</span>
             </DropdownMenuItem>
 
             {canBeDefault && (
-              <DropdownMenuItem onClick={handleSetDefault} className="gap-2.5 cursor-pointer py-2 px-2.5">
-                <CheckCircle2 size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+              <DropdownMenuItem onClick={handleSetDefault} className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70">
+                <CheckCircle2 size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
                 <span className="text-[13.5px]">Set as default account</span>
               </DropdownMenuItem>
             )}
@@ -325,10 +325,11 @@ export function HeroAccountMenu({
             {/* Global accounts exit */}
             <DropdownMenuItem
               onClick={() => router.push("/accounts")}
-              className="gap-2.5 cursor-pointer py-2 px-2.5 text-muted-foreground hover:text-foreground"
+              className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
             >
-              <LayoutGrid size={15} strokeWidth={1.8} className="shrink-0" />
-              <span className="text-[13.5px]">Manage all accounts</span>
+              <LayoutGrid size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
+              <span className="flex-1 text-[13.5px]">Manage all accounts</span>
+              <ChevronRight size={15} strokeWidth={1.8} className="shrink-0 text-muted-foreground/70" aria-hidden="true" />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -40,6 +40,7 @@ Before making changes or implementing new screens, load and follow our persisten
 - **Radius System**: Panels are `rounded-2xl`, insets are `rounded-xl`, controls and tiles are `rounded-lg`.
 - **Mobile-Aligned Action Hub Cards**: 2-column grid (`gap-4`), `rounded-[16px]`, with dedicated `surface/on-card` fills (`#f6f6f5` light / `#1e1e1e` dark) and amber badge accents.
 - **Standard Page Skeleton**: Root container with `flex flex-col gap-5`, `<PageHeader>`, `<StateSwitcher>`, and content panel `rounded-2xl border border-border bg-card`.
+- **Route Loading Skeletons**: Every route segment gets a `loading.tsx` that renders a content-shaped skeleton from `@/components/states/PageSkeletons` (`ListPageSkeleton` is the default; `HubPageSkeleton`, `DetailPageSkeleton`, `FormPageSkeleton`, `DashboardSkeleton` for the others). The shell stays; only the content area swaps. A new route with its own layout adds its own `loading.tsx`; never ship a route that shows a blank area while it loads, and never use a spinner in place of a skeleton.
 - **5 Mandatory List States**: Always import and handle `ListSkeleton`, `TrueEmptyState`, `FilteredEmptyState`, `ListErrorState`, and `PartialLoadFooter` from `@/components/states/ListStates`.
 
 ### 2. Learnings & Architectural Invariants ([`.ai/LEARNINGS.md`](file:///.ai/LEARNINGS.md))
