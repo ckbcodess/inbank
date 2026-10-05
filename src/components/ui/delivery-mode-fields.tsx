@@ -7,7 +7,7 @@
  */
 
 import { BranchCombobox } from "@/components/ui/branch-combobox";
-import { SmoothCollapse } from "@/components/ui/smooth-height";
+import { SmoothHeight } from "@/components/ui/smooth-height";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { GCB_BRANCHES, type DeliveryMethod, type GcbBranch } from "@/lib/mock-data";
 
@@ -53,15 +53,15 @@ export function DeliveryModeFields({
           onClick={() => onChange({ method: "BRANCH_PICKUP" })}
           className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
             value.method === "BRANCH_PICKUP"
-              ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
-              : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
+              ? "border-field-border-focus bg-field text-foreground"
+              : "border-field-border bg-field hover:bg-field-hover text-foreground"
           }`}
         >
           <div
             className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
               value.method === "BRANCH_PICKUP"
-                ? "border-foreground bg-foreground"
-                : "border-muted-foreground/40 bg-transparent"
+                ? "border-field-border-focus bg-field-border-focus"
+                : "border-field-border bg-transparent"
             }`}
           >
             {value.method === "BRANCH_PICKUP" && (
@@ -81,15 +81,15 @@ export function DeliveryModeFields({
           onClick={() => onChange({ method: "DELIVERY" })}
           className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
             value.method === "DELIVERY"
-              ? "border-foreground bg-muted/40 dark:bg-muted/20 ring-1 ring-foreground/20 text-foreground shadow-xs"
-              : "border-border/80 bg-card hover:bg-muted/20 text-foreground"
+              ? "border-field-border-focus bg-field text-foreground"
+              : "border-field-border bg-field hover:bg-field-hover text-foreground"
           }`}
         >
           <div
             className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
               value.method === "DELIVERY"
-                ? "border-foreground bg-foreground"
-                : "border-muted-foreground/40 bg-transparent"
+                ? "border-field-border-focus bg-field-border-focus"
+                : "border-field-border bg-transparent"
             }`}
           >
             {value.method === "DELIVERY" && (
@@ -105,68 +105,75 @@ export function DeliveryModeFields({
         </button>
       </div>
 
-      <SmoothCollapse open={value.method === "BRANCH_PICKUP"} className="w-full">
-        <div className="flex flex-col gap-2 pt-1">
-          <label className="text-[14px] font-medium text-foreground">
-            Pickup branch
-          </label>
-          <BranchCombobox
-            value={value.branch}
-            onChange={(branch) => onChange({ branch })}
-            branches={GCB_BRANCHES}
-          />
-        </div>
-      </SmoothCollapse>
-
-      <SmoothCollapse open={value.method === "DELIVERY"} className="w-full">
-        <div className="flex flex-col gap-3.5 pt-1">
-          <div className="flex flex-col gap-2">
+      {/* One height-animated region for both modes, so the two panels swap inside it. Two separate collapses left an
+          exiting panel and its flex gap behind, and the layout jumped when the exit finished. */}
+      <SmoothHeight className="w-full">
+        {value.method === "BRANCH_PICKUP" && (
+          <div key="branch" className="animate-in fade-in">
+          <div className="flex flex-col gap-2 pt-1">
             <label className="text-[14px] font-medium text-foreground">
-              Recipient name
+              Pickup branch
             </label>
-            <input
-              type="text"
-              value={value.recipientName}
-              onChange={(e) => onChange({ recipientName: e.target.value })}
-              placeholder="Full name"
-              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground/60"
+            <BranchCombobox
+              value={value.branch}
+              onChange={(branch) => onChange({ branch })}
+              branches={GCB_BRANCHES}
             />
           </div>
-          <div className="flex flex-col gap-2">
-            <label className="text-[14px] font-medium text-foreground">
-              Delivery address
-            </label>
-            <input
-              type="text"
-              value={value.address}
-              onChange={(e) => onChange({ address: e.target.value })}
-              placeholder="Street or digital address"
-              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground/60"
-            />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        )}
+        {value.method === "DELIVERY" && (
+          <div key="delivery" className="animate-in fade-in">
+          <div className="flex flex-col gap-3.5 pt-1">
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] font-medium text-foreground">City</label>
+              <label className="text-[14px] font-medium text-foreground">
+                Recipient name
+              </label>
               <input
                 type="text"
-                value={value.city}
-                onChange={(e) => onChange({ city: e.target.value })}
-                placeholder="City"
+                value={value.recipientName}
+                onChange={(e) => onChange({ recipientName: e.target.value })}
+                placeholder="Full name"
                 className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground/60"
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] font-medium text-foreground">Phone</label>
-              <PhoneInput
-                value={value.phone}
-                onValueChange={(phone) => onChange({ phone })}
-                aria-label="Delivery phone number"
-                className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
+              <label className="text-[14px] font-medium text-foreground">
+                Delivery address
+              </label>
+              <input
+                type="text"
+                value={value.address}
+                onChange={(e) => onChange({ address: e.target.value })}
+                placeholder="Street or digital address"
+                className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground/60"
               />
             </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex flex-col gap-2">
+                <label className="text-[14px] font-medium text-foreground">City</label>
+                <input
+                  type="text"
+                  value={value.city}
+                  onChange={(e) => onChange({ city: e.target.value })}
+                  placeholder="City"
+                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground/60"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-[14px] font-medium text-foreground">Phone</label>
+                <PhoneInput
+                  value={value.phone}
+                  onValueChange={(phone) => onChange({ phone })}
+                  aria-label="Delivery phone number"
+                  className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-      </SmoothCollapse>
+          </div>
+        )}
+      </SmoothHeight>
     </>
   );
 }

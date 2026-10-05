@@ -155,10 +155,10 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
           setOpen(true);
           inputRef.current?.focus();
         }}
-        className={`h-13 px-4 w-full rounded-2xl border bg-card text-left transition-all shadow-none flex items-center gap-3 cursor-text ${
+        className={`h-13 px-4 w-full rounded-2xl border text-left transition-all shadow-none flex items-center gap-3 cursor-text ${
           open
-            ? "border-ring ring-1 ring-ring/30"
-            : "border-border/80 hover:bg-muted/20"
+            ? "border-field-border-focus bg-field-focus"
+            : "border-field-border bg-field hover:bg-field-hover"
         }`}
       >
         <MapPin size={18} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />

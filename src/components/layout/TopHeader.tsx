@@ -69,7 +69,7 @@ function LanguageSelect() {
         aria-label={t("header.language", "Language")}
         value={language}
         onChange={(e) => setLanguage(e.target.value as typeof language)}
-        className="h-9 cursor-pointer appearance-none rounded-lg border border-field-border bg-field py-0 pl-3 pr-8 text-[13px] text-foreground outline-none transition-colors duration-hover hover:bg-field-hover focus-visible:border-field-border-focus"
+        className="h-9 cursor-pointer appearance-none rounded-lg border border-transparent bg-foreground/5 dark:bg-foreground/8 py-0 pl-3 pr-8 text-[13px] text-foreground outline-none transition-colors duration-hover hover:bg-foreground/8 dark:hover:bg-foreground/12 focus-visible:border-field-border-focus"
       >
         {languages.map((lang) => (
           <option key={lang.code} value={lang.code}>
@@ -95,7 +95,7 @@ function ThemeSegmented() {
   }
 
   return (
-    <div role="radiogroup" aria-label="Theme" className="flex items-center gap-0.5 rounded-full bg-chip p-0.5">
+    <div role="radiogroup" aria-label="Theme" className="flex items-center gap-0.5 rounded-full bg-foreground/5 dark:bg-foreground/8 p-0.5">
       {THEME_CHOICES.map(({ value, label, Icon }) => (
         <SimpleTooltip key={value} content={label} side="top" delay={0}>
           <button

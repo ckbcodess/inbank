@@ -178,7 +178,7 @@
   --field-hover: #f5f5f5;
   --field-focus: #ffffff;
   --field-border: #ebebeb;
-  --field-border-focus: #8a8a8a;
+  --field-border-focus: #292929;
   /* Dropdown menus. */
   --menu: #ffffff;
   --menu-item-hover: #f5f5f5;
@@ -353,7 +353,7 @@
   --field-hover: #1c1c1c;
   --field-focus: #181818;
   --field-border: #292929;
-  --field-border-focus: #424242;
+  --field-border-focus: #969696;
   --menu: #1a1a1a;
   --menu-item-hover: #282828;
   --device-frame: #2a2a2a;

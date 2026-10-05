@@ -365,6 +365,10 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
     null in production, and `hydrateColorTuner` does nothing in production, so saved tuner colours never apply there.
   - The header is lighter: the language switch and the theme switch moved into the profile menu (Light / Dark / System and
     EN / FR / ES / ZH rows). The sign-in screens keep their own header controls.
+  - Focus border re-tuned: `--field-border-focus` is `#292929` in light and `#969696` in dark. The delivery cards and the
+    branch combobox now use the field tokens, so the tuner edits them.
+  - Every route has a skeleton shaped like its page now (dashboard hero-split, account detail, accounts, settings,
+    transactions, receipt, Send & Pay hub). Change a page's layout and its skeleton in `PageSkeletons.tsx` with it.
   - Not tokenised, on purpose: card artwork colours (`card-themes.ts`), flag and currency marks (`currency-logo.tsx`), the
     white GCB logo mark on cards, white/black overlays on photos and cards (`bg-white/20`, `text-white`), the unused
     `VirtualCardModal`, the sandbox dashboard page, and the hero-wave and eagle tuners' own defaults.

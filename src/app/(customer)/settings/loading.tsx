@@ -1,5 +1,5 @@
-import { FormPageSkeleton } from "@/components/states/PageSkeletons";
+import { SettingsPageSkeleton } from "@/components/states/PageSkeletons";
 
 export default function Loading() {
-  return <FormPageSkeleton fields={5} />;
+  return <SettingsPageSkeleton />;
 }

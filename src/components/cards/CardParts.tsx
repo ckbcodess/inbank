@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { accountsForProfile, formatMoney, type PaymentCard } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { Bone } from "@/components/states/PageSkeletons";
 
 export interface CardsLayoutProps {
   cards: PaymentCard[];
@@ -111,10 +112,10 @@ export function CardsSkeleton() {
     <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true" aria-label="Loading cards">
       {Array.from({ length: 3 }).map((_, i) => (
         <div key={i} className="flex flex-col gap-3">
-          <div className="aspect-[1.586/1] w-full skeleton-shimmer rounded-2xl bg-muted" />
+          <Bone className="aspect-[1.586/1] w-full rounded-2xl" />
           <div className="flex items-center justify-between px-1">
-            <div className="h-4 w-28 skeleton-shimmer rounded bg-muted" />
-            <div className="h-6 w-16 skeleton-shimmer rounded-full bg-muted" />
+            <Bone className="h-4 w-28" />
+            <Bone className="h-6 w-16 rounded-full" />
           </div>
         </div>
       ))}
@@ -128,10 +129,10 @@ export function CardsPageSkeleton() {
   return (
     <div className="flex w-full flex-col gap-8" aria-busy="true">
       <div className="flex items-center justify-between">
-        <div className="h-7 w-20 rounded-lg bg-muted/60" />
-        <div className="h-9 w-[140px] rounded-lg bg-muted/60" />
+        <Bone className="h-7 w-20 rounded-lg" />
+        <Bone className="h-9 w-[140px] rounded-lg" />
       </div>
-      <div className="h-11 w-[360px] max-w-full rounded-xl bg-muted/60" />
+      <Bone className="h-11 w-[360px] max-w-full rounded-xl" />
       <CardsSkeleton />
     </div>
   );
