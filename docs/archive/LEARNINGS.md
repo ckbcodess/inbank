@@ -132,3 +132,5 @@
 - **Loading on buttons**: use `<Button loading={busy}>Label</Button>`, not a spinner plus "Saving…" text. Keep `disabled` for validity only; `loading` handles busy (it keeps the button's colour and blocks clicks). Never remove the label from children: it holds the width.
 
 - **Alerts are toasts.** Never render an inline error/success banner; use `toast.*` from Sonner or `<AlertToast when message />` for state-driven messages. Field hints and the wrong-PIN shake stay inline.
+
+- **Theme controls never decide "next" from their own state (2026-10-03).** The class on `<html>` is the truth; `resolvedTheme` and local `useState` lag it (a view transition flips the class a frame late) and the login `AuthHeader` used to toggle the class without telling next-themes, so after sign-in the header believed "light" while the page was dark and the first click did nothing. Use `toggleTheme(setTheme)` / `switchTheme()` from `@/lib/theme-transition` (reads the DOM, tracks a switch in flight, a second click takes over) and always persist through next-themes' `setTheme`. Never guard a theme button with `resolvedTheme !== x`.

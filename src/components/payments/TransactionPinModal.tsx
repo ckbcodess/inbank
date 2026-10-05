@@ -12,7 +12,7 @@
  *   • Real keyboard & mobile numeric input support with auto-submit on 4th digit
  *   • Error shake animation and friendly warning
  *   • Secondary action: "Request OTP via SMS instead"
- *   • Seamless fallback to 6-digit SMS OTP with resend timer
+ *   • Seamless fallback to 6-digit SMS OTP with resend timer and a shortcode option
  */
 
 import { AlertToast } from "@/components/ui/alert-toast";
@@ -31,6 +31,7 @@ import {
   PIN_LENGTH,
   REGISTERED_PHONE,
 } from "./useAuthorisation";
+import { OtpHelp } from "./OtpHelp";
 import { cn } from "@/lib/utils";
 
 export interface TransactionPinModalProps {
@@ -207,7 +208,7 @@ export default function TransactionPinModal({
 
               <p className="mt-2 text-[13px] text-muted-foreground max-w-xs">
                 A 6-digit one-time code was sent to{" "}
-                <span className="font-medium text-foreground tabular">{phone}</span>
+                <span className="font-medium text-foreground tabular whitespace-nowrap">{phone}</span>
               </p>
 
               <div className="mt-8 flex justify-center w-full">
@@ -228,20 +229,7 @@ export default function TransactionPinModal({
               <AlertToast when={auth.state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${phone}.`} />
 
               <div className="mt-7 flex flex-col items-center gap-2.5">
-                <button
-                  type="button"
-                  disabled={auth.resend > 0}
-                  onClick={auth.requestResend}
-                  className="text-[13px] text-foreground hover:underline disabled:text-muted-foreground disabled:no-underline cursor-pointer"
-                >
-                  {auth.resend > 0 ? (
-                    <>
-                      Resend code in <span className="tabular font-medium">{auth.resend}s</span>
-                    </>
-                  ) : (
-                    "Resend SMS Code"
-                  )}
-                </button>
+                <OtpHelp resend={auth.resend} onResend={auth.requestResend} />
 
                 <button
                   type="button"

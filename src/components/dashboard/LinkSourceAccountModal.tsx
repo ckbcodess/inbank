@@ -403,7 +403,7 @@ export default function LinkSourceAccountModal({
                       key={opt.to}
                       type="button"
                       onClick={() => setScreen(opt.to)}
-                      className="group flex items-center gap-4 rounded-2xl bg-[var(--tile)] p-4 text-left transition-colors hover:bg-[var(--tile-hover)] cursor-pointer"
+                      className="group flex items-center gap-4 rounded-2xl border border-[var(--tile-border)] bg-transparent p-4 text-left transition-colors hover:bg-muted/50 cursor-pointer"
                     >
                       <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
                         <opt.icon size={17} strokeWidth={1.9} aria-hidden="true" />

@@ -255,6 +255,8 @@ const accounts: Entry[] = [
   ["We couldn't load this account. Your money hasn't moved — try again.", "Impossible de charger ce compte. Votre argent n’a pas bougé — réessayez.", "No pudimos cargar esta cuenta. Tu dinero no se ha movido; inténtalo de nuevo.", "无法加载此账户。您的资金没有变动，请重试。"],
   // Accounts page — sections and quiet actions
   ["Your Accounts", "Vos comptes", "Tus cuentas", "您的账户"],
+  ["My Accounts", "Mes comptes", "Mis cuentas", "我的账户"],
+  ["My accounts", "Mes comptes", "Mis cuentas", "我的账户"],
   ["Your Account", "Votre compte", "Tu cuenta", "您的账户"],
   ["Linked Wallets & Cards", "Portefeuilles et cartes liés", "Billeteras y tarjetas vinculadas", "已关联的钱包和卡"],
   ["Sources of Funds", "Sources de fonds", "Fuentes de fondos", "资金来源"],

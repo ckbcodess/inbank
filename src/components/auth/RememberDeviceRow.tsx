@@ -11,7 +11,7 @@ import { TRUST_DAYS } from "@/lib/device-trust";
 export function RememberDeviceRow({
   checked,
   onCheckedChange,
-  hint = "Sign in faster next time, without a code. Only on a device you don\u2019t share.",
+  hint = "Log in faster next time, without a code. Only on a device you don\u2019t share.",
 }: {
   checked: boolean;
   onCheckedChange: (checked: boolean) => void;

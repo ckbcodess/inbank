@@ -35,7 +35,7 @@ interface ToggleTileProps {
 }
 
 const TILE =
-  "group flex min-h-[72.5px] w-full items-center justify-between gap-4 rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4 text-left";
+  "group flex min-h-[72.5px] w-full items-center justify-between gap-4 rounded-[16px] border border-[var(--tile-border)] bg-transparent p-4 text-left";
 const ROW = "group flex w-full items-center justify-between gap-4 px-1 py-2 text-left";
 
 export function ToggleTile({
@@ -79,7 +79,7 @@ export function ToggleTile({
       className={cn(
         frame,
         "cursor-pointer",
-        variant === "tile" && "transition-colors duration-150 hover:bg-[var(--tile-hover)]",
+        variant === "tile" && "transition-colors duration-150 hover:bg-muted/50",
       )}
     >
       {body}

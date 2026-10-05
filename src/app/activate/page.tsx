@@ -427,7 +427,7 @@ function ActivateContent() {
               Proceed
             </Button>
             <p className="text-center text-[12.5px] leading-5 text-muted-foreground">
-              Tapping ‘Proceed’ means you agree to our{" "}
+              By continuing, you agree to our{" "}
               <a href="#" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Terms</a>{" "}
               and{" "}
               <a href="#" className="text-foreground underline decoration-border underline-offset-4 hover:decoration-foreground">Privacy Policy</a>.

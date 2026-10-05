@@ -3,7 +3,6 @@
 /** Shared pieces for the four Cards layouts, so they can't drift apart. */
 
 import Link from "next/link";
-import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { accountsForProfile, formatMoney, type PaymentCard } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
@@ -103,22 +102,6 @@ export function CardDetails({ card }: { card: PaymentCard }) {
         Manage
       </Button>
     </div>
-  );
-}
-
-/** In-flow shortcut to the same request flow the header button opens. */
-export function RequestTile({ className }: { className?: string }) {
-  return (
-    <Link
-      href="/cards/request"
-      className={cn(
-        "flex aspect-[1.586/1] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border text-muted-foreground transition-colors hover:border-foreground/30 hover:bg-muted/40 hover:text-foreground",
-        className,
-      )}
-    >
-      <Plus size={18} strokeWidth={1.8} aria-hidden="true" />
-      <span className="text-[13px]">Request a card</span>
-    </Link>
   );
 }
 

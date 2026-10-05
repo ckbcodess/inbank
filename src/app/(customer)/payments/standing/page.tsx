@@ -9,7 +9,7 @@
 
 import Link from "next/link";
 import { ChevronRight, Plus, Repeat } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { TrueEmptyState } from "@/components/states/ListStates";
 import PageHeader from "@/components/layout/PageHeader";
 import { STANDING_INSTRUCTIONS, findAccount, formatMoney, type StandingInstruction } from "@/lib/mock-data";
@@ -73,10 +73,10 @@ export default function StandingOrdersPage() {
         title="Standing Orders"
         backTo={{ href: "/payments", label: "Payments" }}
         actions={
-          <Link href="/payments/standing/new" className={buttonVariants()}>
+          <Button nativeButton={false} render={<Link href="/payments/standing/new" />}>
             <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-            Add New Standing Order
-          </Link>
+            New standing order
+          </Button>
         }
       />
 

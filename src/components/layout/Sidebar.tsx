@@ -155,7 +155,7 @@ export default function Sidebar({
               aria-label={label}
               className={`relative flex size-9 items-center justify-center rounded-lg transition-all duration-150 ${
                 active
-                  ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+                  ? "bg-primary text-primary-foreground"
                   : "surface-interactive text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -175,12 +175,12 @@ export default function Sidebar({
           indent ? "ml-2.5" : ""
         } ${
           active
-            ? "bg-primary text-primary-foreground shadow-sm shadow-primary/20"
+            ? "bg-primary text-primary-foreground"
             : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
         }`}
       >
         <Icon size={17} strokeWidth={active ? 2.1 : 1.8} className="shrink-0" />
-        <span className="leading-none whitespace-nowrap truncate">{label}</span>
+        <span className="leading-normal whitespace-nowrap truncate">{label}</span>
       </Link>
     );
   };
@@ -211,7 +211,9 @@ export default function Sidebar({
     >
       {/* Header */}
       <div
-        className={`flex h-14 flex-shrink-0 items-center border-b border-border ${
+        // Below sm the page card is edge to edge; from sm up it sits inside 12px (14px at lg) of padding and a 1px
+        // border, so the header takes the same offset to put its divider on the same line as the top bar's.
+        className={`flex h-14 flex-shrink-0 items-center border-b border-border sm:h-[calc(3.5rem+13px)] sm:pt-[13px] lg:h-[calc(3.5rem+15px)] lg:pt-[15px] ${
           collapsed ? "justify-center px-0" : "justify-between px-3.5"
         }`}
       >
@@ -298,7 +300,7 @@ export default function Sidebar({
                     }`}
                   >
                     <DropIcon size={17} strokeWidth={1.8} className="shrink-0" />
-                    <span className="leading-none whitespace-nowrap truncate">
+                    <span className="leading-normal whitespace-nowrap truncate">
                       {name === "More Services" ? t("nav.moreServices", name) : name}
                     </span>
                     <ChevronDown

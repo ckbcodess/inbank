@@ -23,7 +23,7 @@ import { useTour } from "@/lib/tour-store";
 import { ACTORS } from "@/lib/mock-data";
 import { ACTIVATION_STEPS, SIGNUP_STEPS, parseOnboardingStep } from "@/lib/onboarding-steps";
 import { forgetThisDevice, setFirstRun, setPendingFundPrompt, setPendingReferral, trustThisDevice } from "@/lib/device-trust";
-import { LEGACY_DEMO_USER_ID, MIGRATION_STEPS, parseMigrationStep } from "@/lib/migration";
+import { LEGACY_DEMO_MOBILE, MIGRATION_STEPS, parseMigrationStep } from "@/lib/migration";
 
 const PERSONAS = [
   { id: "multi", label: "Several accounts" },
@@ -273,7 +273,7 @@ function PersonaFlowSwitcherContent() {
                 <ol className="flex flex-col">
                   {MIGRATION_STEPS.map((s, i) =>
                     stepRow(
-                      `/migrate?user=${LEGACY_DEMO_USER_ID}&step=${s.id}`,
+                      `/migrate?user=${LEGACY_DEMO_MOBILE}&step=${s.id}`,
                       s.label,
                       i + 1,
                       pathname === "/migrate" && parseMigrationStep(searchParams.get("step")) === s.id,

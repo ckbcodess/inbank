@@ -16,6 +16,7 @@ import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
 import { VirtualCardDetailsView } from "@/components/cards/VirtualCardDetailsView";
 import type { BaselineState } from "@/lib/states";
+import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import { findCard } from "@/lib/mock-data";
 import { getEffectiveCard, useCardsDevStore } from "@/lib/cards-dev-store";
 import { useSessionHydrated } from "@/lib/session-store";
@@ -41,6 +42,18 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
   }, [id, rawCard, devState]);
 
   const [state, setState] = useState<BaselineState>("populated");
+  // The page-level states also sit in the card page's own Dev Mode groups, so every state is reachable from one menu.
+  const pageStateGroup = useMemo<DevStateGroup[]>(
+    () => [
+      {
+        label: "Page state",
+        states: BASELINE_STATES.map((id) => ({ id, label: BASELINE_LABEL[id] })),
+        value: state,
+        onChange: (v) => setState(v as BaselineState),
+      },
+    ],
+    [state],
+  );
 
   // Hold the page until the session and this card's artwork are in, so the face never paints bare.
   const sessionHydrated = useSessionHydrated();
@@ -95,7 +108,7 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
         />
       )}
 
-      {state === "populated" && <VirtualCardDetailsView card={card} />}
+      {state === "populated" && <VirtualCardDetailsView card={card} extraDevGroups={pageStateGroup} />}
     </div>
   );
 }

@@ -4,7 +4,7 @@
  * S06 Accounts — accounts and sources of funds, kept apart.
  *
  * Two sections, never one list:
- * 1. **Your Accounts** — where money lives. Accounts aren't opened here:
+ * 1. **My Accounts** — where money lives. Accounts aren't opened here:
  *    "Add Account" brings on one the customer already holds (selfie match to
  *    the Ghana Card → pick from the accounts in their name). The default shows
  *    as a badge; it's changed on Account Details. No balances on this list.
@@ -23,6 +23,7 @@
  */
 
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -58,6 +59,7 @@ import AddAccountDialog from "@/components/accounts/AddAccountDialog";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
 import PageHeader from "@/components/layout/PageHeader";
 import { TileChip } from "@/components/ui/action-tile";
+import { getTelcoLogo } from "@/components/payments/flows/shared";
 import {
   ACCOUNTS_SCENARIOS,
   findScenario,
@@ -187,15 +189,23 @@ function AccountRow({
 }
 
 function SourceRow({ source, onRemove }: { source: LinkedSource; onRemove: () => void }) {
+  // A mobile-money wallet wears its operator's mark; a wallet we have no mark for keeps the phone icon.
+  const logo = source.type === "momo" ? getTelcoLogo(source.title) : null;
   return (
     <li className="flex items-center gap-4 rounded-xl py-4 pl-3 pr-1 sm:pl-4 sm:pr-2">
-      <TileChip tone="onCard">
-        {source.type === "momo" ? (
-          <Smartphone size={20} strokeWidth={1.8} aria-hidden="true" />
-        ) : (
-          <CreditCard size={20} strokeWidth={1.8} aria-hidden="true" />
-        )}
-      </TileChip>
+      {logo ? (
+        <span className="flex size-[38.5px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/5 dark:border-white/10">
+          <Image src={logo} alt="" width={40} height={40} className="size-full rounded-full object-cover" />
+        </span>
+      ) : (
+        <TileChip tone="onCard">
+          {source.type === "momo" ? (
+            <Smartphone size={20} strokeWidth={1.8} aria-hidden="true" />
+          ) : (
+            <CreditCard size={20} strokeWidth={1.8} aria-hidden="true" />
+          )}
+        </TileChip>
+      )}
       <span className="flex min-w-0 flex-1 flex-col gap-1">
         <span className="truncate text-[15px] font-medium tracking-[-0.01em] text-foreground">{source.title}</span>
         <span className="truncate text-[13px] text-muted-foreground tabular">{source.subtitle}</span>
@@ -334,7 +344,7 @@ function AccountsContent() {
       {/* Header */}
       {/* No Add money here — every account has its own Top up on Account Details. */}
       <PageHeader
-        title="Your Accounts"
+        title="My Accounts"
         actions={
           isRetail && screenState !== "loading" && screenState !== "error" ? (
             <Button
@@ -391,8 +401,8 @@ function AccountsContent() {
         </div>
       )}
 
-      {/* ── Your accounts — the page title is the heading; Add Account sits with it ── */}
-      <section aria-label="Your accounts">
+      {/* ── My accounts — the page title is the heading; Add Account sits with it ── */}
+      <section aria-label="My accounts">
         <div className={LIST}>
           {screenState === "loading" && <ListSkeleton rows={Math.max(accounts.length, 2)} columns={3} />}
 

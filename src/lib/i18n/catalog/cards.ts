@@ -3,6 +3,9 @@ import type { Entry } from "./types";
 /** Cards list, card detail, request/replace flow, delivery tracking, virtual cards. */
 const cards: Entry[] = [
   ["Loading", "Chargement", "Cargando", "加载中"],
+  ["Manage card", "Gérer la carte", "Administrar tarjeta", "管理卡片"],
+  ["Card details", "Détails de la carte", "Datos de la tarjeta", "卡片详情"],
+  ["Name on card", "Nom sur la carte", "Nombre en la tarjeta", "卡上姓名"],
   ["Empty", "Vide", "Vacío", "空"],
   ["Populated", "Rempli", "Con datos", "有数据"],
   ["Error", "Erreur", "Error", "错误"],

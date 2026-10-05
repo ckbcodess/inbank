@@ -1,24 +1,10 @@
-# NIBS Cursor Rules & AI Context Protocol
+# NIBS: Cursor entry point
 
-Before starting any task in this codebase:
+All project memory lives in agents/ and is shared with every other agent on this repo.
 
-1. Interface & Design Tokens (.ai/INTERFACE.md):
-- Follow strict semantic design tokens (bg-card, bg-muted, text-foreground, text-muted-foreground, border-border, bg-primary, var(--active-bg), var(--active-border)). No raw hex/Tailwind colors.
-- Zero-bold rule: globals.css caps font-weight. Headings use size and letter-spacing (tracking-[-0.01em]), never font-bold or font-semibold.
-- Always apply the .tabular class to money, dates, account numbers, percentages, and rates.
-- Icons: Lucide only with size={15} to size={18} and strokeWidth={1.7} to strokeWidth={1.9}.
-- Containers: Panels rounded-2xl, insets rounded-xl, controls/tiles rounded-lg.
-- Page skeleton: flex flex-col gap-5 with PageHeader and StateSwitcher.
-- List states: Always handle ListSkeleton, TrueEmptyState, FilteredEmptyState, ListErrorState, PartialLoadFooter from @/components/states/ListStates.
+Before any task:
+1. Read agents/AGENTS.md: how to work here, which file wins, how to record what you learn.
+2. Read agents/CONSTITUTION.md: the permanent design, product and engineering rules.
+3. Follow the reading order in agents/AGENTS.md for agents/PATTERNS.md, agents/PRODUCT.md and agents/WORKING_LOG.md.
 
-2. Architecture & Learnings (.ai/LEARNINGS.md):
-- Dual-shell isolation: (customer) and admin share ONLY /login and /mfa. Never cross-import components between them.
-- Session hydration: Use useSessionHydrated() from @/lib/session-store to avoid premature redirects to /login.
-- Currency math: Always use roundMoney(), sumMoney(), multiplyMoney() from @/lib/money.
-- Navigation: Derive links from actor role in src/lib/navigation.ts. Never hardcode sidebar links.
-- Link buttons: Use <Button nativeButton={false} render={<Link href="..." />}>.
-
-3. Task & Decision Tracking (.ai/EXECUTION.md):
-- Read .ai/EXECUTION.md to understand the current milestone and active tasks.
-- Keep .ai/EXECUTION.md updated with completed checklist items, recent decisions, and next steps.
-- Append newly discovered framework quirks, gotchas, or rules to .ai/LEARNINGS.md.
+Don't add rules to this file. Record discoveries in agents/WORKING_LOG.md.

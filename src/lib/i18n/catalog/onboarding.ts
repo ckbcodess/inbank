@@ -169,7 +169,6 @@ const onboarding: Entry[] = [
   ["Verify your identity", "Vérifiez votre identité", "Verifica tu identidad", "验证您的身份"],
   ["We detected a login from an unrecognized browser or device. Enter the code sent to your phone.", "Nous avons détecté une connexion depuis un navigateur ou un appareil inconnu. Saisissez le code envoyé sur votre téléphone.", "Detectamos un inicio de sesión desde un navegador o dispositivo desconocido. Introduce el código enviado a tu teléfono.", "我们检测到来自未识别浏览器或设备的登录。请输入发送到您手机的验证码。"],
   ["Code sent to", "Code envoyé au", "Código enviado a", "验证码已发送至"],
-  ["Enter any 6 digits to continue · use 000000 to see the error state", "Saisissez 6 chiffres pour continuer · 000000 affiche l’état d’erreur", "Introduce 6 dígitos cualquiera para continuar · usa 000000 para ver el error", "输入任意 6 位数字继续 · 输入 000000 可查看错误状态"],
   ["Trust this browser for 30 days", "Faire confiance à ce navigateur pendant 30 jours", "Confiar en este navegador durante 30 días", "30 天内信任此浏览器"],
   ["The code entered is incorrect or has expired. Request a new code below.", "Le code saisi est incorrect ou a expiré. Demandez-en un nouveau ci-dessous.", "El código no es correcto o ha caducado. Solicita uno nuevo abajo.", "验证码错误或已过期，请在下方重新获取。"],
   ["A new verification code has been sent to your phone.", "Un nouveau code de vérification a été envoyé sur votre téléphone.", "Se ha enviado un nuevo código de verificación a tu teléfono.", "新的验证码已发送到您的手机。"],

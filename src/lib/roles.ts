@@ -35,6 +35,8 @@ export interface Actor {
   id: string;
   name: string;
   email: string;
+  /** Registered mobile, local form ("0241234567"). It is the sign-in ID. */
+  phone: string;
   role: Role;
   shell: Shell;
   /**

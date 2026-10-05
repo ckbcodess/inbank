@@ -4,7 +4,7 @@
 
 import Link from "next/link";
 import { CardFace } from "@/components/cards/CardFace";
-import { RequestTile, StatusPill, type CardsLayoutProps } from "@/components/cards/CardParts";
+import { StatusPill, type CardsLayoutProps } from "@/components/cards/CardParts";
 
 export function CardsGallery({ cards }: CardsLayoutProps) {
   return (
@@ -20,9 +20,6 @@ export function CardsGallery({ cards }: CardsLayoutProps) {
           </div>
         </Link>
       ))}
-      <div className="flex flex-col gap-3">
-        <RequestTile />
-      </div>
     </div>
   );
 }

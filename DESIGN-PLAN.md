@@ -1,9 +1,9 @@
 # NIBS Design Completion Plan — Retail & Corporate
 
 > A simple, phased plan for finishing the internet-banking design across the two
-> customer segments. Companion to [`.ai/EXECUTION.md`](.ai/EXECUTION.md) (living
-> tracker), [`.ai/INTERFACE.md`](.ai/INTERFACE.md) (design system), and
-> [`DESIGN-LANGUAGE.md`](DESIGN-LANGUAGE.md).
+> customer segments. Companion to [`agents/WORKING_LOG.md`](agents/WORKING_LOG.md) (open
+> items), [`agents/CONSTITUTION.md`](agents/CONSTITUTION.md) (design system), and
+> [`agents/PATTERNS.md`](agents/PATTERNS.md).
 >
 > **Last updated:** 2026-08-25
 
@@ -38,7 +38,7 @@ Administration) which carry the heavier control and multi-user logic.
 A screen is done only when all of these hold — this is the acceptance checklist,
 not a suggestion:
 
-- [ ] Uses the standard page skeleton (`PageHeader` + content panel) from `.ai/INTERFACE.md §5`.
+- [ ] Uses the standard page skeleton (`PageHeader` + content panel) from `agents/PATTERNS.md` §1.
 - [ ] Semantic tokens only — no raw hex, no ad-hoc Tailwind colors, no `font-bold`/`font-semibold`.
 - [ ] All numbers, dates, refs carry `.tabular`.
 - [ ] Lucide icons at `size 15–18`, `strokeWidth 1.7–1.9`.
@@ -65,7 +65,7 @@ not a suggestion:
 - FX **conversion / exchange** action flow (not just the rates table) is unconfirmed.
 - Payments variety (Internal / ACH / Wire / Instant) needs an audit — is each rail represented and distinct?
 - Cross-segment QA: several shared screens have not been verified under a *retail* profile as well as corporate.
-- Full 5-state + Light/Dark sweep not yet run across all routes (per EXECUTION.md quality checklist).
+- Full 5-state + Light/Dark sweep not yet run across all routes (see `agents/WORKING_LOG.md`).
 
 ---
 
@@ -74,7 +74,7 @@ not a suggestion:
 ### Phase 0 — Baseline & audit (0.5–1 day)
 - Run `tsc` / `eslint` / `next build` to get a clean starting line.
 - Walk every route in **both** a retail and a corporate profile; log per-screen gaps against the §2 checklist.
-- Produce a short gap list; fold it into `.ai/EXECUTION.md`.
+- Produce a short gap list; fold it into `agents/WORKING_LOG.md`.
 
 ### Phase 1 — Finish the shared retail surfaces (they also serve corporate)
 1. **Statements & Documents** — build the missing `/statements` page (list + download, 5 states).
@@ -120,5 +120,5 @@ Phase 3  Quality sweep (5 states, Light/Dark, copy)
 Phase 4  Onboarding end-to-end
 ```
 
-Update `.ai/EXECUTION.md` checkboxes as each item lands; append any new quirks to
-`.ai/LEARNINGS.md`.
+Record what lands and any new quirks in
+`agents/WORKING_LOG.md` (see `agents/AGENTS.md`).

@@ -61,6 +61,7 @@ import {
 } from "@/lib/device-trust";
 import ReferralStep from "@/components/auth/ReferralStep";
 import { SourceSummary, sourceFromFunding, useSaveSource } from "./SaveSourcePrompt";
+import { SPRING } from "@/lib/motion";
 
 type FundDetails = { operator?: string; phone?: string; cardLast4?: string };
 
@@ -87,7 +88,7 @@ const slideVariants: Variants = {
     x: 0,
     opacity: 1,
     transition: {
-      x: { type: "spring", stiffness: 400, damping: 32 },
+      x: SPRING.snappy,
       opacity: { duration: 0.18, ease: "easeOut" as const },
     },
   },

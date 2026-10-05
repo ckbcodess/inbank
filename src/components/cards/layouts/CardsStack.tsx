@@ -5,7 +5,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { CardFace } from "@/components/cards/CardFace";
-import { CardDetails, RequestTile, StatusPill, type CardsLayoutProps } from "@/components/cards/CardParts";
+import { CardDetails, StatusPill, type CardsLayoutProps } from "@/components/cards/CardParts";
+import { SPRING } from "@/lib/motion";
 
 /** Card height as a share of its width (1 / 1.586). */
 const CARD_H = 63.05;
@@ -35,7 +36,7 @@ export function CardsStack({ cards }: CardsLayoutProps) {
               initial={false}
               animate={{ y: `${slot * PEEK}%`, scale: 1 }}
               whileHover={isFront ? undefined : { y: `${slot * PEEK - 3}%` }}
-              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              transition={SPRING.gentle}
               style={{ zIndex: slot }}
               className="absolute inset-x-0 top-0 block cursor-pointer text-left"
             >
@@ -51,7 +52,6 @@ export function CardsStack({ cards }: CardsLayoutProps) {
       </div>
 
       <CardDetails card={active} />
-      <RequestTile className="aspect-auto h-14 flex-row" />
     </div>
   );
 }

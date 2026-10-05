@@ -14,17 +14,19 @@
  */
 
 import { ACTORS } from "./mock-data";
+import { toLocalMobile } from "./phone";
 import type { Actor } from "./roles";
 
-/** Old internet-banking user IDs the login screen recognises (case-insensitive). */
-const LEGACY_USER_IDS: Record<string, string> = {
-  EQUAYE01: "u-legacy",
+/** The registered mobile of the demo customer who is still on the old internet banking. */
+export const LEGACY_DEMO_MOBILE = "0551234118";
+
+/** Mobile numbers the login screen recognises as old internet-banking customers. */
+const LEGACY_MOBILES: Record<string, string> = {
+  [LEGACY_DEMO_MOBILE]: "u-legacy",
 };
 
-export const LEGACY_DEMO_USER_ID = "EQUAYE01";
-
-export function findLegacyUser(userId: string): Actor | undefined {
-  const actorId = LEGACY_USER_IDS[userId.trim().toUpperCase()];
+export function findLegacyUser(mobile: string): Actor | undefined {
+  const actorId = LEGACY_MOBILES[toLocalMobile(mobile)];
   return actorId ? ACTORS.find((a) => a.id === actorId) : undefined;
 }
 

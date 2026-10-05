@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { CardFace } from "@/components/cards/CardFace";
 import { TiltCard3D } from "@/components/cards/TiltCard3D";
-import { CardDetails, RequestTile, StatusPill, type CardsLayoutProps } from "@/components/cards/CardParts";
+import { CardDetails, StatusPill, type CardsLayoutProps } from "@/components/cards/CardParts";
 import { cn } from "@/lib/utils";
 
 export function CardsSpotlight({ cards }: CardsLayoutProps) {
@@ -49,7 +49,6 @@ export function CardsSpotlight({ cards }: CardsLayoutProps) {
             </button>
           );
         })}
-        <RequestTile className="aspect-auto h-14 min-w-[160px] shrink-0 flex-row lg:min-w-0" />
       </div>
     </div>
   );

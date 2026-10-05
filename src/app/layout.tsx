@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 
 import { DevStateProvider } from "@/components/providers/DevStateProvider";
 import PersonaFlowSwitcher from "@/components/dev/PersonaFlowSwitcher";
+import { MotionProvider } from "@/components/providers/MotionProvider";
 import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import TourOverlay from "@/components/dev/TourOverlay";
 import { AndroidRippleProvider } from "@/components/providers/AndroidRippleProvider";
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="antialiased">
         <NavHistoryTracker />
         <ThemeProvider>
+          <MotionProvider>
           <LanguageProvider>
             <RouteLoadingProvider>
               <TooltipProvider delay={350} closeDelay={100} timeout={300}>
@@ -64,6 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </TooltipProvider>
             </RouteLoadingProvider>
           </LanguageProvider>
+          </MotionProvider>
         </ThemeProvider>
       </body>
     </html>

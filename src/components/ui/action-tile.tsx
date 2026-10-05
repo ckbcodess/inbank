@@ -41,13 +41,11 @@ interface ActionTileProps {
 }
 
 /**
- * The tile's icon chip. `onTile` (default) is the white chip on the grey tile
- * surface; `onCard` is the muted chip for rows on a white card (Accounts,
- * Cards), where a white chip would disappear.
+ * The tile's icon holder: the icon alone, with no chip behind it, in a fixed box so labels line up. `tone` is
+ * kept so existing callers still compile; it no longer changes anything.
  */
 export function TileChip({
   children,
-  tone = "onTile",
   accent = false,
 }: {
   children: React.ReactNode;
@@ -57,11 +55,8 @@ export function TileChip({
   return (
     <span
       className={cn(
-        "flex size-[38.5px] shrink-0 items-center justify-center rounded-[12.25px] transition-transform duration-150",
+        "flex size-[38.5px] shrink-0 items-center justify-center transition-transform duration-150",
         accent ? "text-[var(--tile-accent)]" : "text-foreground",
-        tone === "onTile"
-          ? "border border-black/[0.04] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.03)] dark:border-white/[0.06] dark:bg-[#252525] dark:shadow-none"
-          : "bg-muted",
       )}
     >
       {children}
@@ -70,7 +65,7 @@ export function TileChip({
 }
 
 const TILE =
-  "group flex w-full items-center justify-between gap-4 rounded-[16px] border border-[var(--tile-border)] bg-[var(--tile)] p-4 text-left transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99]";
+  "group flex w-full items-center justify-between gap-4 rounded-[16px] bg-[var(--tile)] p-4 text-left transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99]";
 
 export function ActionTile({
   icon: Icon,

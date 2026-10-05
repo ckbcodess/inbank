@@ -13,14 +13,48 @@ import { flushSync } from "react-dom";
 
 export type ThemeName = "light" | "dark";
 
-type ViewTransition = { ready: Promise<void>; updateCallbackDone: Promise<void>; finished: Promise<void> };
+type ViewTransition = {
+  ready: Promise<void>;
+  updateCallbackDone: Promise<void>;
+  finished: Promise<void>;
+  skipTransition?: () => void;
+};
 type ViewTransitionDocument = Document & { startViewTransition?: (update: () => void) => ViewTransition };
 
 let clearFade: number | undefined;
+/** The theme a switch in flight is heading to. The class only flips a frame into a view transition. */
+let pendingTarget: ThemeName | null = null;
+let activeTransition: ViewTransition | null = null;
+
+/**
+ * The theme the page is showing, or about to show. The class on <html> is the
+ * truth — a control's own React state can lag behind it (or never have heard of
+ * it), and deciding "next" from that is what made a click do nothing.
+ */
+export function currentTheme(): ThemeName {
+  return pendingTarget ?? (document.documentElement.classList.contains("dark") ? "dark" : "light");
+}
+
+/** Flips light ↔ dark from whatever the page is really showing. `persist` receives the new theme. */
+export function toggleTheme(persist: (next: ThemeName) => void) {
+  const next: ThemeName = currentTheme() === "dark" ? "light" : "dark";
+  switchTheme(next, () => persist(next));
+}
 
 /** Applies `next` via `persist` (e.g. next-themes' setTheme) with a quick cross-fade. */
 export function switchTheme(next: ThemeName, persist: () => void) {
   const root = document.documentElement;
+
+  // Already showing it: no animation, but still sync the stored choice.
+  if (currentTheme() === next) {
+    persist();
+    return;
+  }
+
+  // A second click mid-fade takes over: finish the first one at once.
+  activeTransition?.skipTransition?.();
+  pendingTarget = next;
+
   let committed = false;
   const commit = () => {
     if (committed) return;
@@ -31,6 +65,9 @@ export function switchTheme(next: ThemeName, persist: () => void) {
     root.style.colorScheme = next;
     persist();
   };
+  const settle = () => {
+    if (pendingTarget === next) pendingTarget = null;
+  };
 
   const doc = document as ViewTransitionDocument;
   if (doc.startViewTransition) {
@@ -39,7 +76,14 @@ export function switchTheme(next: ThemeName, persist: () => void) {
     // step with the page fade — freeze them so everything moves as one.
     root.classList.add("theme-switching");
     const transition = doc.startViewTransition(() => flushSync(commit));
-    const release = () => root.classList.remove("theme-switching");
+    activeTransition = transition;
+    const release = () => {
+      if (activeTransition === transition) {
+        activeTransition = null;
+        root.classList.remove("theme-switching");
+      }
+      settle();
+    };
     // If the transition is skipped or times out, still switch — quietly.
     transition.ready.catch(() => {});
     transition.updateCallbackDone.catch(commit);
@@ -52,6 +96,7 @@ export function switchTheme(next: ThemeName, persist: () => void) {
 
   root.classList.add("theme-fade");
   commit();
+  settle();
   window.clearTimeout(clearFade);
   clearFade = window.setTimeout(() => root.classList.remove("theme-fade"), 260);
 }

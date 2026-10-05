@@ -9,6 +9,8 @@ import { AppLoader } from "@/components/ui/loader";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
+import { maskEmail, maskMobile } from "@/lib/auth-shared";
+import { displayGhanaMobile } from "@/lib/phone";
 
 type MfaState = "entry" | "verifying" | "error" | "resent";
 
@@ -24,6 +26,7 @@ function MfaContent() {
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(""));
   const [state, setState] = useState<MfaState>("entry");
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
+  const [target, setTarget] = useState<"sms" | "email">("sms");
   // Opt-in: remembering a device on a shared or public computer is a real risk.
   const hydrated = useSessionHydrated();
 
@@ -74,7 +77,7 @@ function MfaContent() {
 
   if (!hydrated || !actor) return null;
 
-  const maskedDestination = actor.email.replace(/(.{2}).*(@.*)/, "$1•••••$2");
+  const maskedDestination = target === "sms" ? maskMobile(displayGhanaMobile(actor.phone)) : maskEmail(actor.email);
 
   return (
     <AuthLayout
@@ -89,11 +92,6 @@ function MfaContent() {
       }
       backHref="/login"
       backLabel="Back to login"
-      footer={
-        <p className="mt-5 text-center text-[12px] text-muted-foreground">
-          Enter any 6 digits to continue · use 000000 to see the error state
-        </p>
-      }
     >
       {/* New Device Information Card (if applicable) */}
       {isNewDevice && (
@@ -123,7 +121,7 @@ function MfaContent() {
         </div>
 
         {/* Recovery path */}
-        <div className="flex flex-col items-center gap-5">
+        <div className="flex flex-wrap items-center justify-center gap-x-2 text-[13px]">
           <button
             type="button"
             disabled={countdown > 0}
@@ -131,15 +129,28 @@ function MfaContent() {
               setCountdown(RESEND_SECONDS);
               setState("resent");
             }}
-            className="text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:text-muted-foreground disabled:no-underline disabled:cursor-default cursor-pointer"
+            className="cursor-pointer text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:cursor-default disabled:text-muted-foreground disabled:no-underline"
           >
             {countdown > 0 ? (
               <>
-                Resend code in <span className="tabular">{countdown}s</span>
+                Resend in <span className="tabular">{countdown}s</span>
               </>
             ) : (
               "Resend code"
             )}
+          </button>
+          <span className="text-muted-foreground/60" aria-hidden="true">·</span>
+          <button
+            type="button"
+            onClick={() => {
+              setTarget(target === "sms" ? "email" : "sms");
+              setCountdown(RESEND_SECONDS);
+              setDigits(Array(CODE_LENGTH).fill(""));
+              setState("resent");
+            }}
+            className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Send to {target === "sms" ? "email instead" : "SMS instead"}
           </button>
         </div>
 
@@ -152,7 +163,7 @@ function MfaContent() {
 
         <InlineError message={state === "error" && "That code is incorrect or has expired. Request a new one below."} className="-mt-3" />
 
-        <AlertToast when={state === "resent"} kind="success" message={`A new verification code has been sent to your phone.`} />
+        <AlertToast when={state === "resent"} kind="success" message={`A new verification code has been sent to ${maskedDestination}.`} />
       </form>
 
     </AuthLayout>

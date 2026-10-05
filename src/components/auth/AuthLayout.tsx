@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { SmoothHeight } from "@/components/ui/smooth-height";
 import EagleBackdrop from "@/components/brand/EagleBackdrop";
 import { AUTH_LOOK_LABEL, useAuthLayoutStore } from "@/lib/auth-layout-store";
+import { SPRING } from "@/lib/motion";
 
 interface AuthLayoutProps {
   title?: string;
@@ -241,7 +242,7 @@ export default function AuthLayout({
             return animateHeight ? (
               <motion.div
                 layout
-                transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+                transition={SPRING.settle}
                 className={cardClassName}
               >
                 <SmoothHeight duration={0.35}>{cardInner}</SmoothHeight>
@@ -256,7 +257,7 @@ export default function AuthLayout({
             animateHeight ? (
               <motion.div
                 layout
-                transition={{ type: "spring", duration: 0.35, bounce: 0 }}
+                transition={SPRING.settle}
                 className="mt-5 w-full"
               >
                 {footer}

@@ -337,3 +337,19 @@ Desktop values are unchanged; these apply below `sm` only.
   (a screen can't scan itself).
 - Header links like "View all" keep a taller hit area (`-my-2 py-2`) so they're thumb-sized
   without shifting the text.
+
+## 10. Motion (tokens, not numbers)
+All new motion uses the tokens in `globals.css` (CSS) and `src/lib/motion.ts` (Framer Motion and JS). Pick by *purpose*:
+
+| Purpose | CSS | JS (seconds) | Use for |
+|---|---|---|---|
+| press | `duration-press` (100ms) | `DURATION.press` | feedback while a finger or cursor is down (scale on tap) |
+| hover | `duration-hover` (150ms) | `DURATION.hover` | hover and small state changes (colour, border) |
+| reveal | `duration-reveal` (250ms) | `DURATION.reveal` | something appearing or disappearing in place (fade, expand) |
+| move | `duration-move` (500ms) | `DURATION.move` | a larger thing travelling or turning (the card flip, a sheet) |
+| entrance | `duration-entrance` (900ms) | `DURATION.entrance` | a number or bar settling in after the page loads (the daily limit bar) |
+
+- **Easing:** `ease-settle` (`EASE.settle`) for anything that settles, fast start and a long soft landing. `ease-out` for plain fades. Springs: `SPRING.settle` first (never overshoots), `SPRING.snappy` for tabs and slides, `SPRING.gentle` for stacks.
+- **Reduced motion is handled once.** `globals.css` zeroes transitions and the shared `animate-in/out` for `prefers-reduced-motion: reduce`, and `MotionProvider` (in the root layout) does the same for every Framer Motion animation. Never add per-component reduced-motion code, and don't override it with `!important` durations.
+- **Don't invent durations.** No `duration-[…]`, no hand-written `cubic-bezier(…)` or `{ type: "spring", … }` in components: if a purpose is missing, add a token here, in `globals.css`, and in `motion.ts` together.
+- The older `duration-150/200/300` classes still exist across the app; they move to tokens whenever a screen is touched. Skeleton pulses and spinners are status, not decoration, and keep running.

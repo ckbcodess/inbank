@@ -129,7 +129,7 @@ export const DEMO_SIGNUP_MOBILE = "+233201234567";
 let signupSequence = 0;
 
 /** Builds the fresh identity + account a completed signup produces. */
-export function buildNewRetailActor(record: NiaRecord, email: string): Actor {
+export function buildNewRetailActor(record: NiaRecord, email: string, phone: string): Actor {
   signupSequence += 1;
   const profile: Profile = {
     id: `prof-signup-${signupSequence}`,
@@ -142,6 +142,7 @@ export function buildNewRetailActor(record: NiaRecord, email: string): Actor {
     id: `u-signup-${signupSequence}`,
     name: `${record.firstName} ${record.lastName}`,
     email,
+    phone,
     role: "RETAIL_CUSTOMER",
     shell: "customer",
     profiles: [profile],

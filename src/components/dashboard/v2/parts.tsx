@@ -54,6 +54,7 @@ import { withFrom } from "@/lib/payment-options";
 import type { PayAgainPayee } from "@/lib/payees";
 import { MoneyActionPicker, type MoneyActionKind } from "./MoneyActionPicker";
 import { UnfundedNudge } from "./UnfundedNudge";
+import { SPRING as MOTION_SPRING } from "@/lib/motion";
 
 /* ── Types ───────────────────────────────────────────────────────────────── */
 
@@ -94,7 +95,7 @@ export interface DashViewProps {
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
 
-export const SPRING = { type: "spring", duration: 0.35, bounce: 0 } as const;
+export const SPRING = MOTION_SPRING.settle;
 
 export { withFrom };
 

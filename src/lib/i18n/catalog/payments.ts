@@ -75,6 +75,7 @@ const payments: Entry[] = [
   ["Resumed — {0} is active.", "Réactivé — {0} est actif.", "Reanudada: {0} está activa.", "已恢复——{0} 已生效。"],
   ["Cancelled{0}. It won't run again.", "Annulé{0}. Il ne s’exécutera plus.", "Cancelada{0}. No se volverá a ejecutar.", "已取消{0}。将不再执行。"],
   ["Add New Standing Order", "Ajouter un ordre permanent", "Añadir orden permanente", "新增定期转账"],
+  ["New standing order", "Nouvel ordre permanent", "Nueva orden permanente", "新增定期转账"],
   ["All Orders ({0})", "Tous les ordres ({0})", "Todas las órdenes ({0})", "全部 ({0})"],
   ["All Orders (", "Tous les ordres (", "Todas las órdenes (", "全部 ("],
   ["Active ({0})", "Actifs ({0})", "Activas ({0})", "生效中 ({0})"],

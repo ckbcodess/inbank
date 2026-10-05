@@ -5,6 +5,7 @@
  * can be exercised directly from the UI.
  */
 
+import { toLocalMobile } from "./phone";
 import type { Actor, Profile } from "./roles";
 import type { TransactionKind, TransactionState, TradeApprovalState } from "./states";
 import { getGlobalShowAmounts } from "@/components/providers/AmountVisibilityProvider";
@@ -41,6 +42,7 @@ export const ACTORS: Actor[] = [
     id: "u-retail",
     name: "Ransford Gyasi",
     email: "ransford.gyasi@example.com",
+    phone: "0244123821",
     role: "RETAIL_CUSTOMER",
     shell: "customer",
     profiles: [RETAIL_PROFILE],
@@ -50,6 +52,7 @@ export const ACTORS: Actor[] = [
     id: "u-joint",
     name: "Samuel Quartey",
     email: "samuel.quartey@example.com",
+    phone: "0244200311",
     role: "RETAIL_CUSTOMER",
     shell: "customer",
     profiles: [RETAIL_PROFILE, JOINT_PROFILE],
@@ -59,6 +62,7 @@ export const ACTORS: Actor[] = [
     id: "u-joint-either",
     name: "Elias Ayettey",
     email: "elias.ayettey@example.com",
+    phone: "0244200312",
     role: "RETAIL_CUSTOMER",
     shell: "customer",
     profiles: [RETAIL_PROFILE],
@@ -68,6 +72,7 @@ export const ACTORS: Actor[] = [
     id: "u-abena",
     name: "Abena Osei (Mobile App)",
     email: "abena.osei@example.com",
+    phone: "0551200313",
     role: "RETAIL_CUSTOMER",
     shell: "customer",
     profiles: [RETAIL_PROFILE],
@@ -77,6 +82,7 @@ export const ACTORS: Actor[] = [
     id: "u-kofi",
     name: "Kofi Mensah (COOS)",
     email: "kofi.mensah@example.com",
+    phone: "0201200314",
     role: "RETAIL_CUSTOMER",
     shell: "customer",
     profiles: [RETAIL_PROFILE],
@@ -86,6 +92,7 @@ export const ACTORS: Actor[] = [
     id: "u-yaw",
     name: "Yaw Oppong (New Device)",
     email: "yaw.oppong@example.com",
+    phone: "0541200315",
     role: "RETAIL_CUSTOMER",
     shell: "customer",
     profiles: [RETAIL_PROFILE],
@@ -95,6 +102,7 @@ export const ACTORS: Actor[] = [
     id: "u-dual",
     name: "Kwame Boateng",
     email: "kwame.boateng@example.com",
+    phone: "0244300411",
     role: "CORPORATE_MAKER",
     shell: "customer",
     profiles: [CORPORATE_PROFILE],
@@ -104,6 +112,7 @@ export const ACTORS: Actor[] = [
     id: "u-approver",
     name: "Esther Appiah",
     email: "esther.appiah@example.com",
+    phone: "0244300412",
     role: "CORPORATE_APPROVER",
     shell: "customer",
     profiles: [CORPORATE_PROFILE],
@@ -113,6 +122,7 @@ export const ACTORS: Actor[] = [
     id: "u-corpadmin",
     name: "Yaw Oppong (Corporate Admin)",
     email: "yaw.corp@example.com",
+    phone: "0541300413",
     role: "CORPORATE_ADMIN",
     shell: "customer",
     profiles: [CORPORATE_PROFILE],
@@ -122,6 +132,7 @@ export const ACTORS: Actor[] = [
     id: "u-tradeofficer",
     name: "Nana Addo",
     email: "nana.addo@bank.internal",
+    phone: "0244400511",
     role: "TRADE_OFFICER",
     shell: "admin",
     profiles: [],
@@ -131,6 +142,7 @@ export const ACTORS: Actor[] = [
     id: "u-ops",
     name: "Abena Owusu",
     email: "abena.owusu@bank.internal",
+    phone: "0244400512",
     role: "OPERATIONS_USER",
     shell: "admin",
     profiles: [],
@@ -140,6 +152,7 @@ export const ACTORS: Actor[] = [
     id: "u-bankadmin",
     name: "Kofi Asante",
     email: "kofi.asante@bank.internal",
+    phone: "0244400513",
     role: "BANK_ADMIN",
     shell: "admin",
     profiles: [],
@@ -150,6 +163,7 @@ export const ACTORS: Actor[] = [
     id: "u-legacy",
     name: "Justice Oduro",
     email: "justice.oduro@example.com",
+    phone: "0551234118",
     role: "RETAIL_CUSTOMER",
     shell: "customer",
     profiles: [RETAIL_PROFILE],
@@ -157,12 +171,10 @@ export const ACTORS: Actor[] = [
   },
 ];
 
-export function findActorByEmail(email: string): Actor | undefined {
-  const norm = email.trim().toLowerCase();
-  if (norm === "samuel.quartey@example.com" || norm === "samuel.quartey@example.com") {
-    return ACTORS.find((a) => a.id === "u-joint");
-  }
-  return ACTORS.find((a) => a.email.toLowerCase() === norm);
+/** Sign-in is by registered mobile; any common way of typing it matches. */
+export function findActorByPhone(phone: string): Actor | undefined {
+  const local = toLocalMobile(phone);
+  return local ? ACTORS.find((a) => a.phone === local) : undefined;
 }
 
 /* ── Accounts ──────────────────────────────────────────────────────────────── */

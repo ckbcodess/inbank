@@ -2,7 +2,7 @@
  * Registry of every illustrated state. One entry per *situation*, not per screen.
  *
  * To ship a drawing: export it as `public/illustrations/<id>.svg` (see the spec in
- * `.ai/STATES.md`), then flip `drawn` to true. Until then the screen keeps its
+ * `docs/STATES.md`), then flip `drawn` to true. Until then the screen keeps its
  * existing icon, so nothing breaks or 404s while the set is being drawn.
  */
 

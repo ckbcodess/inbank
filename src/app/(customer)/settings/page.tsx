@@ -356,8 +356,8 @@ export default function SettingsPage() {
                   <span className="text-[13.5px] font-medium text-foreground">This device</span>
                   <span className="text-[12px] text-muted-foreground tabular">
                     {trustedDevice
-                      ? `Remembered until ${new Date(trustedDevice.until).toLocaleDateString("en-GB", { day: "numeric", month: "long" })} — you sign in here without a code.`
-                      : "Not remembered — you'll confirm a code each time you sign in here."}
+                      ? `Remembered until ${new Date(trustedDevice.until).toLocaleDateString("en-GB", { day: "numeric", month: "long" })} — you log in here without a code.`
+                      : "Not remembered — you'll confirm a code each time you log in here."}
                   </span>
                 </div>
                 {trustedDevice && (
@@ -491,7 +491,7 @@ export default function SettingsPage() {
                 <div className="flex items-center gap-1 border border-border rounded-lg p-0.5 bg-muted/20">
                   <button
                     type="button"
-                    onClick={() => resolvedTheme !== "light" && switchTheme("light", () => setTheme("light"))}
+                    onClick={() => switchTheme("light", () => setTheme("light"))}
                     className={`flex items-center gap-1.5 px-3 py-1 text-[12px] rounded-md transition-colors cursor-pointer ${
                       resolvedTheme === "light" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"
                     }`}
@@ -501,7 +501,7 @@ export default function SettingsPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => resolvedTheme !== "dark" && switchTheme("dark", () => setTheme("dark"))}
+                    onClick={() => switchTheme("dark", () => setTheme("dark"))}
                     className={`flex items-center gap-1.5 px-3 py-1 text-[12px] rounded-md transition-colors cursor-pointer ${
                       resolvedTheme === "dark" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"
                     }`}

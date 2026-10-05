@@ -4,13 +4,13 @@
 
 import { useRef, useState } from "react";
 import { CardFace } from "@/components/cards/CardFace";
-import { CardDetails, RequestTile, type CardsLayoutProps } from "@/components/cards/CardParts";
+import { CardDetails, type CardsLayoutProps } from "@/components/cards/CardParts";
 import { cn } from "@/lib/utils";
 
 export function CardsCarousel({ cards }: CardsLayoutProps) {
   const track = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
-  const slides = cards.length + 1; // the last slide is "Request a card"
+  const slides = cards.length;
   const active = cards[Math.min(index, cards.length - 1)];
 
   const onScroll = () => {
@@ -40,9 +40,6 @@ export function CardsCarousel({ cards }: CardsLayoutProps) {
             <CardFace card={card} className="shadow-lg" />
           </div>
         ))}
-        <div className="w-[82vw] max-w-[440px] shrink-0 snap-center sm:w-[440px]">
-          <RequestTile />
-        </div>
       </div>
 
       <div className="flex items-center justify-center gap-2" role="tablist" aria-label="Cards">
@@ -52,7 +49,7 @@ export function CardsCarousel({ cards }: CardsLayoutProps) {
             type="button"
             role="tab"
             aria-selected={i === index}
-            aria-label={i < cards.length ? cards[i].name : "Request a card"}
+            aria-label={cards[i].name}
             onClick={() => goTo(i)}
             className={cn(
               "h-1.5 cursor-pointer rounded-full transition-all",
@@ -62,11 +59,9 @@ export function CardsCarousel({ cards }: CardsLayoutProps) {
         ))}
       </div>
 
-      {index < cards.length && (
-        <div className="mx-auto w-full max-w-[460px]">
-          <CardDetails card={active} />
-        </div>
-      )}
+      <div className="mx-auto w-full max-w-[460px]">
+        <CardDetails card={active} />
+      </div>
     </div>
   );
 }

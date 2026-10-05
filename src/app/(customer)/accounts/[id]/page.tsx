@@ -93,7 +93,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
 
   if (!account) {
     return (
-      <div className="mx-auto flex w-full max-w-[560px] flex-col gap-3">
+      <div className="mx-auto flex w-full max-w-[440px] flex-col gap-3">
         <PageHeader title="Account not found" backTo={{ href: "/accounts", label: "Accounts" }} />
         <p className="pl-11 text-[13px] text-muted-foreground">
           This account isn&apos;t available under the current banking relationship.
@@ -112,7 +112,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
   const canBeDefault = choosable && !isDefault;
 
   return (
-    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-10 sm:gap-12">
+    <div className="mx-auto flex w-full max-w-[440px] flex-col gap-10 sm:gap-12">
       <PageHeader
         title={account.name}
         backTo={{ href: "/accounts", label: "Accounts" }}
@@ -169,16 +169,21 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
             </div>
           </div>
 
+          {/* Most used first: what happened, then what to set up or ask for, then the one setting. Even spacing throughout. */}
           <nav aria-label="Account options" className="flex flex-col gap-4">
-            <ActionTile href={`/accounts/${account.id}/expenses`} icon={PieChart} title="My Spends" />
-            <ActionTile onClick={() => setRecentOpen(true)} icon={ArrowLeftRight} title="Last 10 Transactions" />
-            <ActionTile href="/payments/standing" icon={Repeat} title="Standing Orders" />
-            <ActionTile
-              href={`/accounts/${account.id}/requests`}
-              icon={Files}
-              title="Place a Request"
-              description="Statements, cheque books, bank letters"
-            />
+            <div className="flex flex-col gap-4">
+              <ActionTile onClick={() => setRecentOpen(true)} icon={ArrowLeftRight} title="Last 10 Transactions" />
+              <ActionTile href={`/accounts/${account.id}/expenses`} icon={PieChart} title="My Spends" />
+            </div>
+            <div className="flex flex-col gap-4">
+              <ActionTile href="/payments/standing" icon={Repeat} title="Standing Orders" />
+              <ActionTile
+                href={`/accounts/${account.id}/requests`}
+                icon={Files}
+                title="Place a Request"
+                description="Statements, cheque books, bank letters"
+              />
+            </div>
             {/* The card's badge shows which account is the default; this is only the way to make it one. */}
             {canBeDefault && (
               <ToggleTile

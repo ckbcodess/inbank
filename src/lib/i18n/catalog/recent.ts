@@ -16,17 +16,17 @@ const recent: Entry[] = [
   ["Dark mode", "Mode sombre", "Modo oscuro", "深色模式"],
   ["Light mode", "Mode clair", "Modo claro", "浅色模式"],
   ["Log out?", "Se déconnecter ?", "¿Cerrar sesión?", "确定退出登录？"],
-  ["You’ll need to sign in again to see your accounts.", "Vous devrez vous reconnecter pour voir vos comptes.", "Tendrás que iniciar sesión de nuevo para ver tus cuentas.", "您需要重新登录才能查看账户。"],
+  ["You’ll need to log in again to see your accounts.", "Vous devrez vous reconnecter pour voir vos comptes.", "Tendrás que iniciar sesión de nuevo para ver tus cuentas.", "您需要重新登录才能查看账户。"],
   ["Loading your dashboard", "Chargement de votre tableau de bord", "Cargando tu panel", "正在加载您的主页"],
   ["Detail", "Détail", "Detalle", "详情"],
   ["Go back", "Retour", "Volver", "返回"],
 
-  // ── Sign-in ──
+  // ── Log in ──
   ["GCB Business Internet Banking", "Banque en ligne GCB Entreprises", "Banca en línea GCB Empresas", "GCB 企业网上银行"],
   ["Log in to GCB Internet Banking", "Connexion à la banque en ligne GCB", "Inicia sesión en la banca en línea de GCB", "登录 GCB 网上银行"],
   ["Switch to Personal Banking", "Passer à la banque des particuliers", "Cambiar a Banca personal", "切换到个人银行"],
   ["Corporate user ID or email", "Identifiant ou e-mail professionnel", "ID de usuario corporativo o correo", "企业用户 ID 或邮箱"],
-  ["Sign in", "Se connecter", "Iniciar sesión", "登录"],
+  ["Log in", "Se connecter", "Iniciar sesión", "登录"],
   ["Don’t have an account? Apply for business account", "Pas de compte ? Demandez un compte entreprise", "¿No tienes cuenta? Solicita una cuenta empresarial", "还没有账户？申请企业账户"],
   ["Don’t have an account? Register", "Pas de compte ? Inscrivez-vous", "¿No tienes cuenta? Regístrate", "还没有账户？立即注册"],
   ["Welcome back, {0}", "Bon retour, {0}", "Te damos la bienvenida de nuevo, {0}", "欢迎回来，{0}"],
@@ -34,12 +34,12 @@ const recent: Entry[] = [
   ["Trusted device until {0}", "Appareil de confiance jusqu’au {0}", "Dispositivo de confianza hasta el {0}", "受信任设备，有效期至 {0}"],
   ["Trusted device until", "Appareil de confiance jusqu’au", "Dispositivo de confianza hasta el", "受信任设备，有效期至"],
   ["Use your fingerprint, face or device PIN", "Utilisez votre empreinte, votre visage ou le code de l’appareil", "Usa tu huella, tu rostro o el PIN del dispositivo", "使用指纹、面部或设备 PIN"],
-  ["Sign in with passkey", "Se connecter avec une clé d’accès", "Iniciar sesión con llave de acceso", "使用通行密钥登录"],
+  ["Log in with passkey", "Se connecter avec une clé d’accès", "Iniciar sesión con llave de acceso", "使用通行密钥登录"],
   ["Use password instead", "Utiliser le mot de passe", "Usar contraseña", "改用密码"],
   ["Back to registration options", "Retour aux options d’inscription", "Volver a las opciones de registro", "返回注册选项"],
   ["Remember this device for {0} days", "Mémoriser cet appareil pendant {0} jours", "Recordar este dispositivo durante {0} días", "记住此设备 {0} 天"],
   ["Remember this device for", "Mémoriser cet appareil pendant", "Recordar este dispositivo durante", "记住此设备"],
-  ["Sign in faster next time, without a code. Only on a device you don’t share.", "Connectez-vous plus vite la prochaine fois, sans code. Uniquement sur un appareil que vous ne partagez pas.", "Inicia sesión más rápido la próxima vez, sin código. Solo en un dispositivo que no compartas.", "下次无需验证码即可更快登录。仅限您不与他人共用的设备。"],
+  ["Log in faster next time, without a code. Only on a device you don’t share.", "Connectez-vous plus vite la prochaine fois, sans code. Uniquement sur un appareil que vous ne partagez pas.", "Inicia sesión más rápido la próxima vez, sin código. Solo en un dispositivo que no compartas.", "下次无需验证码即可更快登录。仅限您不与他人共用的设备。"],
 
   // ── One-time codes ──
   ["A 6-digit code has been sent to", "Un code à 6 chiffres a été envoyé au", "Se ha enviado un código de 6 dígitos a", "6 位验证码已发送至"],
@@ -69,7 +69,7 @@ const recent: Entry[] = [
   ["PINs don’t match. Try again.", "Les PIN ne correspondent pas. Réessayez.", "Los PIN no coinciden. Inténtalo de nuevo.", "两次 PIN 不一致，请重试。"],
   ["PINs don’t match. Check and re-enter them.", "Les PIN ne correspondent pas. Vérifiez et saisissez-les à nouveau.", "Los PIN no coinciden. Revísalos y vuelve a introducirlos.", "两次 PIN 不一致，请检查后重新输入。"],
   ["Saving your PIN…", "Enregistrement de votre PIN…", "Guardando tu PIN…", "正在保存您的 PIN…"],
-  ["Tapping ‘Proceed’ means you agree to our", "En appuyant sur « Continuer », vous acceptez nos", "Al pulsar «Continuar» aceptas nuestros", "点击“继续”即表示您同意我们的"],
+  ["By continuing, you agree to our", "En continuant, vous acceptez nos", "Al continuar, aceptas nuestros", "继续即表示您同意我们的"],
   ["Terms", "Conditions", "Términos", "条款"],
   ["and", "et", "y", "和"],
   ["Privacy Policy", "Politique de confidentialité", "Política de privacidad", "隐私政策"],
@@ -115,7 +115,7 @@ const recent: Entry[] = [
   ["Your saved payees and standing orders", "Vos bénéficiaires enregistrés et ordres permanents", "Tus beneficiarios guardados y órdenes permanentes", "您已保存的收款人和定期转账"],
   ["Your transaction PIN", "Votre PIN de transaction", "Tu PIN de transacción", "您的交易 PIN"],
   ["What's new", "Nouveautés", "Novedades", "新功能"],
-  ["A clearer dashboard, faster payments to saved payees, and passkey sign-in on your own devices.", "Un tableau de bord plus clair, des paiements plus rapides vers vos bénéficiaires enregistrés et la connexion par clé d’accès sur vos appareils.", "Un panel más claro, pagos más rápidos a tus beneficiarios guardados e inicio de sesión con llave de acceso en tus dispositivos.", "更清晰的主页、向已保存收款人更快付款，以及在您自己的设备上使用通行密钥登录。"],
+  ["A clearer dashboard, faster payments to saved payees, and passkey login on your own devices.", "Un tableau de bord plus clair, des paiements plus rapides vers vos bénéficiaires enregistrés et la connexion par clé d’accès sur vos appareils.", "Un panel más claro, pagos más rápidos a tus beneficiarios guardados e inicio de sesión con llave de acceso en tus dispositivos.", "更清晰的主页、向已保存收款人更快付款，以及在您自己的设备上使用通行密钥登录。"],
   ["Get started", "Commencer", "Empezar", "开始"],
   ["Here's what we brought across from your old internet banking (last used", "Voici ce que nous avons repris de votre ancienne banque en ligne (dernière utilisation :", "Esto es lo que hemos traído de tu antigua banca en línea (último uso:", "以下是我们从您旧网上银行迁移过来的内容（上次使用："],
   ["Saved payees", "Bénéficiaires enregistrés", "Beneficiarios guardados", "已保存的收款人"],
@@ -125,7 +125,7 @@ const recent: Entry[] = [
   ["Looks right", "C’est correct", "Todo correcto", "核对无误"],
   ["Old passwords can't be moved across safely, so choose a new one for the new internet banking.", "Les anciens mots de passe ne peuvent pas être transférés en toute sécurité : choisissez-en un nouveau pour la nouvelle banque en ligne.", "Las contraseñas antiguas no se pueden trasladar de forma segura, así que elige una nueva para la nueva banca en línea.", "旧密码无法安全迁移，请为新的网上银行设置一个新密码。"],
   ["I accept the updated Terms of Use", "J’accepte les conditions d’utilisation mises à jour", "Acepto los Términos de uso actualizados", "我接受更新后的使用条款"],
-  ["The main change: you can now sign in with a passkey on devices you choose to remember.", "Le principal changement : vous pouvez désormais vous connecter avec une clé d’accès sur les appareils que vous choisissez de mémoriser.", "El cambio principal: ahora puedes iniciar sesión con una llave de acceso en los dispositivos que elijas recordar.", "主要变化：您现在可以在选择记住的设备上使用通行密钥登录。"],
+  ["The main change: you can now log in with a passkey on devices you choose to remember.", "Le principal changement : vous pouvez désormais vous connecter avec une clé d’accès sur les appareils que vous choisissez de mémoriser.", "El cambio principal: ahora puedes iniciar sesión con una llave de acceso en los dispositivos que elijas recordar.", "主要变化：您现在可以在选择记住的设备上使用通行密钥登录。"],
   ["Go to my dashboard", "Aller à mon tableau de bord", "Ir a mi panel", "前往我的主页"],
 
   // ── Accounts & wallets ──
@@ -323,8 +323,8 @@ const recent: Entry[] = [
 
   // ── Settings: this device ──
   ["This device", "Cet appareil", "Este dispositivo", "此设备"],
-  ["Remembered until {0} — you sign in here without a code.", "Mémorisé jusqu’au {0} — vous vous connectez ici sans code.", "Recordado hasta el {0}: inicias sesión aquí sin código.", "已记住至 {0} — 在此设备登录无需验证码。"],
-  ["Not remembered — you'll confirm a code each time you sign in here.", "Non mémorisé — vous confirmerez un code à chaque connexion ici.", "No recordado: confirmarás un código cada vez que inicies sesión aquí.", "未记住 — 每次在此设备登录都需确认验证码。"],
+  ["Remembered until {0} — you log in here without a code.", "Mémorisé jusqu’au {0} — vous vous connectez ici sans code.", "Recordado hasta el {0}: inicias sesión aquí sin código.", "已记住至 {0} — 在此设备登录无需验证码。"],
+  ["Not remembered — you'll confirm a code each time you log in here.", "Non mémorisé — vous confirmerez un code à chaque connexion ici.", "No recordado: confirmarás un código cada vez que inicies sesión aquí.", "未记住 — 每次在此设备登录都需确认验证码。"],
   ["This device will ask for a code next time", "Cet appareil demandera un code la prochaine fois", "Este dispositivo pedirá un código la próxima vez", "下次此设备将要求输入验证码"],
   ["Forget this device", "Oublier cet appareil", "Olvidar este dispositivo", "忘记此设备"],
 

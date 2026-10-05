@@ -8,7 +8,7 @@
  * - 4 circular 56px indicator dots (56x56 px, 32px gap)
  * - Automatic confirmation on 4th digit
  * - "Request OTP via SMS instead" secondary action
- * - Fallback / secondary 6-digit OTP view with resend timer
+ * - Fallback / secondary 6-digit OTP view with resend timer and a shortcode option
  * - Backward-compatible compact variant for inline forms
  */
 
@@ -18,6 +18,7 @@ import React, { useRef, useEffect } from "react";
 import { ShieldCheck, KeyRound, Smartphone } from "lucide-react";
 import OtpInput from "@/components/auth/OtpInput";
 import { REGISTERED_PHONE, type AuthMethod, type AuthState, PIN_LENGTH } from "./useAuthorisation";
+import { OtpHelp } from "./OtpHelp";
 import { cn } from "@/lib/utils";
 
 export interface AuthorisePanelProps {
@@ -158,22 +159,7 @@ export function AuthorisePanel({
 
         {/* Alternative authentication option & resend affordance */}
         <div className="flex flex-col items-center gap-2.5 pt-1">
-          {!isPin && (
-            <button
-              type="button"
-              disabled={resend > 0}
-              onClick={onResend}
-              className="text-[13px] text-foreground font-medium hover:underline disabled:text-muted-foreground disabled:no-underline cursor-pointer"
-            >
-              {resend > 0 ? (
-                <>
-                  Resend code in <span className="tabular font-medium">{resend}s</span>
-                </>
-              ) : (
-                "Resend SMS Code"
-              )}
-            </button>
-          )}
+          {!isPin && <OtpHelp resend={resend} onResend={onResend} />}
 
           {onMethodChange && (
             <button
@@ -333,7 +319,7 @@ export function AuthorisePanel({
 
           <p className="mt-2 text-[13.5px] text-muted-foreground max-w-xs">
             A 6-digit one-time code was sent to{" "}
-            <span className="font-medium text-foreground tabular">{REGISTERED_PHONE}</span>
+            <span className="font-medium text-foreground tabular whitespace-nowrap">{REGISTERED_PHONE}</span>
           </p>
 
           <div className="mt-10 flex justify-center w-full">
@@ -358,20 +344,7 @@ export function AuthorisePanel({
           <AlertToast when={state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${REGISTERED_PHONE}.`} />
 
           <div className="mt-8 flex flex-col items-center gap-3">
-            <button
-              type="button"
-              disabled={resend > 0}
-              onClick={onResend}
-              className="text-[13.5px] text-foreground font-medium hover:underline disabled:text-muted-foreground disabled:no-underline cursor-pointer"
-            >
-              {resend > 0 ? (
-                <>
-                  Resend code in <span className="tabular font-medium">{resend}s</span>
-                </>
-              ) : (
-                "Resend SMS Code"
-              )}
-            </button>
+            <OtpHelp resend={resend} onResend={onResend} />
 
             {onMethodChange && (
               <button

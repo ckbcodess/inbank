@@ -7,7 +7,7 @@
  * make it across. So the flow shows continuity before it asks for anything, and
  * asks only for what can't carry over: a code to prove it's them, a new
  * password, and agreement to the updated terms. Opens on `?step=` for the Demo
- * hub; `?user=` carries the old user ID from the login screen.
+ * hub; `?user=` carries the old customer's mobile number from the login screen.
  */
 
 import { InlineError } from "@/components/ui/inline-error";
@@ -24,7 +24,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useSession } from "@/lib/session-store";
 import { setFirstRun } from "@/lib/device-trust";
 import {
-  LEGACY_DEMO_USER_ID,
+  LEGACY_DEMO_MOBILE,
   MIGRATED_DATA,
   MIGRATION_STEPS,
   findLegacyUser,
@@ -45,8 +45,8 @@ function MigrateContent() {
   const searchParams = useSearchParams();
   const { signIn, verifyMfa } = useSession();
 
-  const userId = searchParams.get("user") ?? LEGACY_DEMO_USER_ID;
-  const actor = findLegacyUser(userId) ?? findLegacyUser(LEGACY_DEMO_USER_ID)!;
+  const mobile = searchParams.get("user") ?? LEGACY_DEMO_MOBILE;
+  const actor = findLegacyUser(mobile) ?? findLegacyUser(LEGACY_DEMO_MOBILE)!;
   const firstName = actor.name.split(" ")[0];
 
   const [step, setStep] = useState<MigrationStep>(() => parseMigrationStep(searchParams.get("step")) ?? "welcome");
@@ -116,10 +116,6 @@ function MigrateContent() {
               Back to login
             </Link>
           </p>
-        ) : step === "verify" ? (
-          <p className="text-center text-[12px] text-muted-foreground">
-            Enter any 6 digits to continue · use 000000 to see the error state
-          </p>
         ) : undefined
       }
     >
@@ -144,7 +140,7 @@ function MigrateContent() {
           </div>
           <div className="flex flex-col gap-3 px-1">
             <span className="text-[13px] text-muted-foreground">What&apos;s new</span>
-            <span className="text-[14px] text-foreground">A clearer dashboard, faster payments to saved payees, and passkey sign-in on your own devices.</span>
+            <span className="text-[14px] text-foreground">A clearer dashboard, faster payments to saved payees, and passkey login on your own devices.</span>
           </div>
           <Button size="lg" onClick={next} className="h-11 w-full text-[14.5px]">
             Get started
@@ -244,7 +240,7 @@ function MigrateContent() {
             <span className="flex flex-col gap-1">
               <span>I accept the updated Terms of Use</span>
               <span className="text-[12.5px] text-muted-foreground">
-                The main change: you can now sign in with a passkey on devices you choose to remember.
+                The main change: you can now log in with a passkey on devices you choose to remember.
               </span>
             </span>
           </label>

@@ -3,7 +3,7 @@
 /**
  * Transaction Authorisation State Machine.
  * Default: 4-digit Transaction PIN created during customer onboarding.
- * Secondary / Alternative: 6-digit SMS / Email OTP.
+ * Secondary / Alternative: 6-digit one-time code, by SMS or by shortcode.
  */
 
 import { useEffect, useState } from "react";
@@ -12,6 +12,8 @@ import { OTP_LENGTH } from "@/components/auth/OtpInput";
 export const PIN_LENGTH = 4;
 export const RESEND_SECONDS = 30;
 export const REGISTERED_PHONE = "0244 ••• 821";
+/** USSD shortcode that shows a one-time code on the phone. Placeholder until the real code is issued. */
+export const OTP_SHORTCODE = "*711*5#";
 
 export type AuthMethod = "pin" | "otp";
 export type AuthState = "entry" | "error" | "resent";

@@ -7,22 +7,16 @@ import { Button } from "@/components/ui/button";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import LanguageToggle from "@/components/layout/LanguageToggle";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
-import { switchTheme } from "@/lib/theme-transition";
+import { useTheme } from "next-themes";
+import { toggleTheme } from "@/lib/theme-transition";
 
 export default function AuthHeader() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  // Through next-themes, like every other theme control, so the choice is stored
+  // and the app's idea of the theme matches what's on screen after sign-in.
+  const { resolvedTheme, setTheme } = useTheme();
   const { t } = useTranslation();
-
-  useEffect(() => {
-    if (document.documentElement.classList.contains("dark")) {
-      setTheme("dark");
-    }
-  }, []);
-
-  function toggleTheme() {
-    const next = theme === "light" ? "dark" : "light";
-    switchTheme(next, () => setTheme(next));
-  }
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-30 flex h-16 w-full items-center justify-between border-b border-border/40 bg-background/80 px-6 backdrop-blur-md transition-colors lg:px-12">
@@ -45,11 +39,11 @@ export default function AuthHeader() {
           type="button"
           variant="ghost"
           size="icon-sm"
-          onClick={toggleTheme}
+          onClick={() => toggleTheme(setTheme)}
           aria-label={t("header.themeLight", "Toggle color theme")}
           className="rounded-full text-muted-foreground"
         >
-          {theme === "light" ? (
+          {!mounted || resolvedTheme !== "dark" ? (
             <Sun size={18} strokeWidth={1.8} />
           ) : (
             <Moon size={18} strokeWidth={1.8} />

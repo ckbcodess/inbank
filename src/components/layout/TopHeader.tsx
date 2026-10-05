@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Bell,
-  ChevronRight,
   ExternalLink,
   Eye,
   EyeOff,
@@ -12,9 +11,11 @@ import {
   Lock,
   LogOut,
   Menu,
+  Monitor,
   Moon,
   ShieldCheck,
   Sun,
+  SunMoon,
   User,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -45,12 +46,51 @@ import { SimpleTooltip } from "@/components/ui/tooltip";
 import HeaderBreadcrumbs from "./HeaderBreadcrumbs";
 import LanguageToggle from "./LanguageToggle";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
-import { switchTheme } from "@/lib/theme-transition";
+import { switchTheme, toggleTheme } from "@/lib/theme-transition";
 
 interface TopHeaderProps {
   actor: Actor;
   onMenuToggle: () => void;
   onSignOut: () => void;
+}
+
+const THEME_CHOICES = [
+  { value: "light", label: "Light", Icon: Sun },
+  { value: "dark", label: "Dark", Icon: Moon },
+  { value: "system", label: "System", Icon: Monitor },
+] as const;
+
+/** Three-way theme switch. Sits in a plain div, not a menu item, so choosing doesn't close the menu. */
+function ThemeSegmented() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const active = mounted ? (theme ?? "light") : "light";
+
+  function choose(value: (typeof THEME_CHOICES)[number]["value"]) {
+    const target = value === "system" ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : value;
+    switchTheme(target, () => setTheme(value));
+  }
+
+  return (
+    <div role="radiogroup" aria-label="Theme" className="flex items-center gap-0.5 rounded-full bg-muted p-0.5">
+      {THEME_CHOICES.map(({ value, label, Icon }) => (
+        <button
+          key={value}
+          type="button"
+          role="radio"
+          aria-checked={active === value}
+          aria-label={label}
+          onClick={() => choose(value)}
+          className={`flex size-7 cursor-pointer items-center justify-center rounded-full transition-colors duration-hover ${
+            active === value ? "bg-card text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <Icon size={14} strokeWidth={1.8} aria-hidden="true" />
+        </button>
+      ))}
+    </div>
+  );
 }
 
 export default function TopHeader({
@@ -159,10 +199,7 @@ export default function TopHeader({
           <Button
             variant="ghost"
             size="icon-sm"
-            onClick={() => {
-              const next = resolvedTheme === "dark" ? "light" : "dark";
-              switchTheme(next, () => setTheme(next));
-            }}
+            onClick={() => toggleTheme(setTheme)}
             aria-label={resolvedTheme === "dark" ? t("header.themeLight", "Switch to light mode") : t("header.themeDark", "Switch to dark mode")}
             className="shrink-0"
           >
@@ -195,13 +232,15 @@ export default function TopHeader({
             )}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={6} className="w-[260px] p-1.5 rounded-2xl">
-            {/* Header: Avatar, Name & Email */}
-            <div className="flex flex-col items-start px-3 pt-3 pb-2.5">
-              <div className="flex size-11 items-center justify-center rounded-full bg-muted border border-border/80 text-foreground font-medium text-[15px] mb-2.5 shadow-2xs">
+            {/* Header: Avatar beside Name & Email */}
+            <div className="flex items-center gap-3 px-3 pt-3 pb-2.5">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-muted border border-border/80 text-foreground font-medium text-[15px] shadow-2xs">
                 {initials}
               </div>
-              <span className="text-[14.5px] font-medium text-foreground tracking-[-0.01em]">{actor.name}</span>
-              <span className="text-[12px] text-muted-foreground truncate max-w-full">{actor.email}</span>
+              <div className="flex min-w-0 flex-col">
+                <span className="truncate text-[14.5px] font-medium text-foreground tracking-[-0.01em]">{actor.name}</span>
+                <span className="truncate text-[12px] text-muted-foreground">{actor.email}</span>
+              </div>
             </div>
 
             <DropdownMenuSeparator className="my-1" />
@@ -250,36 +289,23 @@ export default function TopHeader({
 
             <DropdownMenuSeparator className="my-1" />
 
-            {/* Appearance & Logout */}
-            <DropdownMenuItem
-              onClick={() => {
-                const next = resolvedTheme === "dark" ? "light" : "dark";
-                switchTheme(next, () => setTheme(next));
-              }}
-              className="flex items-center justify-between py-2 px-3 cursor-pointer rounded-lg hover:bg-muted/70 transition-colors"
-            >
-              <div className="flex items-center gap-3 text-left">
-                {mounted && resolvedTheme === "dark" ? (
-                  <Moon size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
-                ) : (
-                  <Sun size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
-                )}
-                <div className="flex flex-col">
-                  <span className="text-[13.5px] font-normal text-foreground">{t("header.appearance", "Appearance")}</span>
-                  <span className="text-[11.5px] text-muted-foreground">
-                    {mounted ? (resolvedTheme === "dark" ? "Dark mode" : "Light mode") : "Theme"}
-                  </span>
-                </div>
-              </div>
-              <ChevronRight size={15} className="text-muted-foreground/70" strokeWidth={1.8} />
-            </DropdownMenuItem>
+            {/* Theme: Light / Dark / System */}
+            <div className="flex items-center justify-between gap-3 px-3 py-2">
+              <span className="flex items-center gap-3 text-[13.5px] text-foreground">
+                <SunMoon size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.theme", "Theme")}</span>
+              </span>
+              <ThemeSegmented />
+            </div>
+
+            <DropdownMenuSeparator className="my-1" />
 
             <DropdownMenuItem
               onClick={() => setLogoutOpen(true)}
-              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-destructive/10 hover:text-destructive transition-colors mt-0.5"
+              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
             >
               <span className="flex items-center gap-3">
-                <LogOut size={16} strokeWidth={1.8} className="shrink-0 opacity-70" aria-hidden="true" />
+                <LogOut size={16} strokeWidth={1.8} className="shrink-0" aria-hidden="true" />
                 <span>{t("header.signOut", "Log out")}</span>
               </span>
             </DropdownMenuItem>
@@ -294,7 +320,7 @@ export default function TopHeader({
           </DialogHeader>
           <DialogBody>
             <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-              {t("header.signOutConfirmBody", "You’ll need to sign in again to see your accounts.")}
+              {t("header.signOutConfirmBody", "You’ll need to log in again to see your accounts.")}
             </p>
           </DialogBody>
           <DialogFooter>

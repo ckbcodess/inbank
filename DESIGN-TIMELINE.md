@@ -4,8 +4,8 @@
 > production-ready Figma frames.
 >
 > Companion to [`DESIGN-PLAN.md`](DESIGN-PLAN.md) (phasing of the coded prototype),
-> [`.ai/INTERFACE.md`](.ai/INTERFACE.md) (design system rules) and
-> [`.ai/EXECUTION.md`](.ai/EXECUTION.md) (living tracker).
+> [`agents/CONSTITUTION.md`](agents/CONSTITUTION.md) (design system rules) and
+> [`agents/WORKING_LOG.md`](agents/WORKING_LOG.md) (open items).
 >
 > **Baseline date:** 2026-08-26 · **Target completion:** 2026-12-04 (single designer)
 > or 2026-10-30 (two designers)
@@ -68,7 +68,7 @@ rather than guessed:
 - **Action flow** = entry → review → authorise (OTP / soft token) → success. **4 frames.**
   Failure and pending are drawn **once** in Foundations and reused.
 - **List surface** = loaded + true-empty + filtered-empty + error + loading. **5 frames**
-  (the mandatory 5 states from `.ai/INTERFACE.md`).
+  (the mandatory 5 states from `agents/PATTERNS.md` §2).
 - **Detail surface** = 1–2 frames.
 - Rails or products that add a genuinely different decision carry **+1 or +2** — PAPSS adds
   a country and FX-disclosure step, Group Transfers adds a recipient builder, Loans add an
@@ -355,9 +355,9 @@ Two rules that override any brief on this project:
 ## 8. Tracking
 
 - Progress is measured in **frames accepted against §3**, never frames drawn.
-- Update `.ai/EXECUTION.md` at each milestone (M0–M8) with what landed and what slipped.
+- Record in `agents/WORKING_LOG.md` at each milestone (M0–M8) with what landed and what slipped.
 - Log every new constraint or quirk (Figma variable-mode limits, component API decisions)
-  in `.ai/LEARNINGS.md`.
+  in `agents/WORKING_LOG.md`.
 - Weekly status is three numbers: **frames accepted / frames planned / open decisions**.
 
 ---
