@@ -103,7 +103,7 @@ export function CardFace({
 
       {blocked && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="flex size-[18cqw] items-center justify-center rounded-full bg-white/90 text-zinc-900 shadow-md">
+          <span className="flex size-[18cqw] items-center justify-center rounded-full bg-white/90 text-primary-foreground shadow-md">
             <Lock
               className="size-[8cqw]"
               strokeWidth={1.8}

@@ -51,7 +51,7 @@ export function FxRatesDialog({ open, onOpenChange }: { open: boolean; onOpenCha
                     <span className="text-right text-[14px] text-foreground tabular">{rateText(r.buy)}</span>
                     <span className="text-right text-[14px] text-foreground tabular">{rateText(r.sell)}</span>
                     <span
-                      className={`flex items-center justify-end gap-1 text-[13px] tabular ${r.changePct >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-destructive"}`}
+                      className={`flex items-center justify-end gap-1 text-[13px] tabular ${r.changePct >= 0 ? "text-success-text" : "text-destructive"}`}
                     >
                       <Trend size={13} strokeWidth={1.9} aria-hidden="true" />
                       {Math.abs(r.changePct).toFixed(2)}%

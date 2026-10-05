@@ -32,9 +32,9 @@ interface ProxyIdModalProps {
 }
 
 const inputCls =
-  "h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all";
+  "h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all";
 const selectCls =
-  "h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] pl-3.5 pr-10 text-[14px] text-foreground";
+  "h-11 w-full rounded-xl border border-field-border bg-field pl-3.5 pr-10 text-[14px] text-foreground";
 const labelCls = "text-[12.5px] text-muted-foreground";
 
 export default function ProxyIdModal({
@@ -116,7 +116,7 @@ export default function ProxyIdModal({
                 value={value}
                 onValueChange={setValue}
                 aria-label="Phone number"
-                className="h-11 rounded-xl border-border/80 bg-muted/40 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30"
+                className="h-11 rounded-xl border-field-border bg-field focus-within:border-field-border-focus focus-within:ring-0"
                 autoFocus
               />
             ) : (

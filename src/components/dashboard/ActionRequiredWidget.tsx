@@ -147,7 +147,7 @@ export function ActionRequiredWidget() {
                     type="button"
                     onClick={(e) => handleResolveItem(e, item.id, item.title)}
                     title="Mark completed"
-                    className="flex size-7.5 items-center justify-center rounded-lg text-muted-foreground opacity-60 hover:opacity-100 hover:bg-muted hover:text-emerald-600 active:scale-[0.96] transition-transform cursor-pointer"
+                    className="flex size-7.5 items-center justify-center rounded-lg text-muted-foreground opacity-60 hover:opacity-100 hover:bg-muted hover:text-success-text active:scale-[0.96] transition-transform cursor-pointer"
                   >
                     <Check size={14} strokeWidth={2} />
                   </button>

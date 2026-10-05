@@ -527,7 +527,7 @@ export function FromAccountSelector({
     <div className="flex flex-col gap-2">
       <label className="text-[14px] font-medium text-foreground">{label}</label>
       <Select value={value} onValueChange={(val) => val && onChange(val)}>
-        <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+        <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center">
           <AccountSelectTriggerContent
             account={selected}
             placeholder={placeholder}
@@ -814,12 +814,12 @@ export function AmountInput({
         onClick={handleClick}
         onAnimationEnd={() => setNudge(false)}
         className={cn(
-          "relative flex h-[68px] min-h-[68px] w-full items-center justify-center rounded-2xl border bg-card transition-colors px-4",
+          "relative flex h-[68px] min-h-[68px] w-full items-center justify-center rounded-2xl border bg-field transition-colors px-4",
           nudge && "animate-amount-shake",
-          disabled ? "bg-muted/30 cursor-not-allowed opacity-80" : "hover:bg-muted/10 cursor-text",
+          disabled ? "bg-muted/30 cursor-not-allowed opacity-80" : "hover:bg-field-hover cursor-text",
           isError
             ? "border-destructive/70 focus-within:border-destructive focus-within:ring-1 focus-within:ring-destructive/30"
-            : "border-border/80 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30"
+            : "border-field-border focus-within:border-field-border-focus focus-within:bg-field-focus focus-within:ring-0"
         )}
       >
         <div className="inline-flex items-center justify-center gap-2.5">
@@ -940,7 +940,7 @@ export function NarrationInput({
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+        className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all"
       />
     </div>
   );
@@ -972,12 +972,12 @@ export function CategorySelect({
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
         <label className="text-[14px] font-medium text-foreground">{label}</label>
-        <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-full">
+        <span className="text-[11px] font-medium text-pill-success-text bg-pill-success px-2 py-0.5 rounded-full">
           Pre-selected for Insights
         </span>
       </div>
       <Select value={currentValue} onValueChange={(val) => onChange(val || "")}>
-        <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+        <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
           <SelectValue placeholder="Select category" />
         </SelectTrigger>
         <SelectContent>
@@ -1057,10 +1057,10 @@ export function ProceedButton({
 export function VerifiedAccountBadge({ name }: { name: string }) {
   if (!name) return null;
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-[13px] text-foreground animate-in fade-in duration-150">
-      <CheckCircle2 size={14} strokeWidth={1.9} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+    <div className="flex items-center gap-2 rounded-xl border border-success/20 bg-success/5 px-3 py-2 text-[13px] text-foreground animate-in fade-in duration-150">
+      <CheckCircle2 size={14} strokeWidth={1.9} className="text-success-text shrink-0" />
       <span className="font-medium text-foreground">{name}</span>
-      <span className="text-[11.5px] text-emerald-600 dark:text-emerald-400 ml-auto font-medium">
+      <span className="text-[11.5px] text-success-text ml-auto font-medium">
         Verified
       </span>
     </div>
@@ -1125,7 +1125,7 @@ export function CollapsedDetailsBadge({
 }) {
   const initials = initialsOf(title);
   return (
-    <div className="flex min-h-[58px] items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card px-3.5 py-2.5 transition-colors animate-in fade-in duration-150 ease-out hover:bg-muted/20">
+    <div className="flex min-h-[58px] items-center justify-between gap-3 rounded-2xl border border-field-border bg-field px-3.5 py-2.5 transition-colors animate-in fade-in duration-150 ease-out hover:bg-field-hover">
       <div className="flex min-w-0 items-center gap-3">
         <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-[12.5px] text-muted-foreground">
           {icon ?? (initials || <User size={16} strokeWidth={1.8} aria-hidden="true" />)}
@@ -1196,7 +1196,7 @@ export function SaveBeneficiaryCheckbox({
             value={nickname || ""}
             onChange={(e) => onNicknameChange(e.target.value)}
             placeholder="Beneficiary nickname (optional)"
-            className="h-11 w-full rounded-xl border border-border/80 bg-card px-3.5 text-[14px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground"
+            className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground"
           />
         </div>
       )}
@@ -1239,7 +1239,7 @@ export function SchedulePaymentSection({
             onChange={(e) => onChange({ enabled: e.target.checked })}
             className="sr-only peer"
           />
-          <div className="w-11 h-6 bg-muted-foreground/25 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary dark:border-gray-600"></div>
+          <div className="w-11 h-6 bg-muted-foreground/25 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
         </label>
       </div>
 
@@ -1253,7 +1253,7 @@ export function SchedulePaymentSection({
                 value={state.startDate}
                 min={new Date().toISOString().split("T")[0]}
                 onChange={(e) => onChange({ startDate: e.target.value })}
-                className="h-11 w-full rounded-xl border border-border/80 bg-background px-3 text-[14px] text-foreground outline-none focus:border-ring tabular"
+                className="h-11 w-full rounded-xl border border-field-border bg-field px-3 text-[14px] text-foreground outline-none focus:border-field-border-focus tabular"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -1262,7 +1262,7 @@ export function SchedulePaymentSection({
                 value={state.frequency}
                 onValueChange={(val) => onChange({ frequency: (val || "once") as ScheduleFrequency })}
               >
-                <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 bg-background text-[14px]">
+                <SelectTrigger className="h-11 w-full rounded-xl border border-field-border bg-field text-[14px]">
                   <SelectValue placeholder="Select frequency" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1300,7 +1300,7 @@ export function NetworkSelect({
   const logo = getTelcoLogo(value);
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+      <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center">
         <div className="flex items-center gap-3">
           {logo ? (
             <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/5 bg-muted/60 p-0 dark:border-white/10">
@@ -1349,7 +1349,7 @@ export function BankSelect({
 }) {
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+      <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
         <SelectValue placeholder="Select Bank" />
       </SelectTrigger>
       <SelectContent>
@@ -1368,7 +1368,7 @@ export function PaymentMethodSelect({ value, onChange }: { value: string; onChan
   const selected = PAYMENT_METHODS.find((m) => m.id === value);
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+      <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
         <span className={cn("truncate text-[15px] font-normal", selected ? "text-foreground" : "text-muted-foreground")}>
           {selected ? selected.name : "Select payment method"}
         </span>

@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import CardDetailsLoading from "./loading";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
-import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
+import { ListErrorState, TrueEmptyState } from "@/components/states/ListStates";
 import { VirtualCardDetailsView } from "@/components/cards/VirtualCardDetailsView";
 import type { BaselineState } from "@/lib/states";
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
@@ -92,7 +92,7 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
         />
       )}
 
-      {state === "loading" && <ListSkeleton rows={5} columns={3} />}
+      {state === "loading" && <CardDetailsLoading />}
 
       {state === "error" && (
         <ListErrorState

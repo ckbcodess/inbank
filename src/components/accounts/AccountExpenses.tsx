@@ -249,7 +249,7 @@ export function AccountExpensesView({
 
 function ViewTabs({ value, onChange }: { value: ExpenseView; onChange: (v: ExpenseView) => void }) {
   return (
-    <div className="flex items-center rounded-xl bg-muted p-1" role="group" aria-label="Group expenses by">
+    <div className="flex items-center rounded-xl bg-chip p-1" role="group" aria-label="Group expenses by">
       {(["category", "type"] as const).map((v) => {
         const isActive = value === v;
         return (
@@ -260,7 +260,7 @@ function ViewTabs({ value, onChange }: { value: ExpenseView; onChange: (v: Expen
             onClick={() => onChange(v)}
             className={cn(
               "whitespace-nowrap rounded-lg px-3.5 py-1.5 text-[13px] transition-colors cursor-pointer",
-              isActive ? "bg-card text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground",
+              isActive ? "bg-chip-selected text-chip-selected-foreground shadow-xs" : "text-chip-foreground hover:text-chip-selected-foreground",
             )}
           >
             {VIEW_LABEL[v]}

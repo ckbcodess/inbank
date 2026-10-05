@@ -40,38 +40,49 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
-  --color-input: var(--input);
+  --color-focus-ring: var(--focus-ring);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-chip: var(--chip);
+  --color-chip-selected: var(--chip-selected);
+  --color-chip-selected-foreground: var(--chip-selected-foreground);
+  --color-chip-foreground: var(--chip-foreground);
+  --color-pill-success: var(--pill-success);
+  --color-pill-success-text: var(--pill-success-text);
+  --color-pill-info: var(--pill-info);
+  --color-pill-info-text: var(--pill-info-text);
+  --color-pill-warning: var(--pill-warning);
+  --color-pill-warning-text: var(--pill-warning-text);
+  --color-pill-destructive: var(--pill-destructive);
+  --color-pill-destructive-text: var(--pill-destructive-text);
+  --color-pill-neutral: var(--pill-neutral);
+  --color-pill-neutral-text: var(--pill-neutral-text);
+  --color-info: var(--info);
+  --color-success-text: var(--success-text);
+  --color-warning-text: var(--warning-text);
+  --color-destructive-text: var(--destructive-text);
+  --color-info-text: var(--info-text);
+  --color-tile: var(--tile);
+  --color-tile-hover: var(--tile-hover);
+  --color-field: var(--field);
+  --color-field-hover: var(--field-hover);
+  --color-field-focus: var(--field-focus);
+  --color-field-border: var(--field-border);
+  --color-field-border-focus: var(--field-border-focus);
+  --color-menu: var(--menu);
+  --color-menu-item-hover: var(--menu-item-hover);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
-  --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
@@ -88,11 +99,6 @@
   --color-surface-1: var(--surface-1);
   --color-surface-2: var(--surface-2);
   --color-surface-3: var(--surface-3);
-  --color-surface-4: var(--surface-4);
-  --color-surface-5: var(--surface-5);
-  --color-surface-6: var(--surface-6);
-  --color-surface-7: var(--surface-7);
-  --color-surface-8: var(--surface-8);
   --shadow-surface-1: var(--shadow-1);
   --shadow-surface-2: var(--shadow-2);
   --shadow-surface-3: var(--shadow-3);
@@ -106,39 +112,103 @@
 :root {
   /*
    * Neutral palette is FIXED product-wide (the `neutral` scale, pure grey).
-   * The accent is the GCB amber (--primary, #F9C632) and the tokens derived from it
-   * (--ring, --sidebar-primary, --sidebar-ring, --chart-1). There is no per-tenant accent.
+   * The accent is the GCB amber (--primary, #F9C632) and the token derived from it (--ring).
+   * There is no per-tenant accent.
    */
   --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --foreground: #2e2e2e;
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
   /* Tile surface tokens. Hub tiles are filled with --tile, with no stroke, and --tile-hover on hover; the fill also
      serves the empty PIN dots. Single source for both modes so a change reflects everywhere. */
   --tile: #f6f6f5;
   --tile-hover: #eeeeed;
-  --tile-border: #ebebe9;
   /* Hub tile icon (INTERFACE §E): amber-500 on light. */
   --tile-accent: #f59e0b;
   /* Account Details balance card (Figma 1896:15407) — slate tint over the page. */
   --account-card: rgba(71, 85, 96, 0.1);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
   /* GCB Bank PLC brand amber: #F9C632 */
   --primary: #F9C632;
-  --primary-hover: #E5B62E;
-  --primary-foreground: oklch(0.145 0 0);
-  /* Icons on the amber round actions of the card page: dark brown, the same in both modes. */
-  --action-icon: #321800;
+  --primary-hover: #fedb71;
+  --primary-foreground: #321800;
   /* Outline of the two-tone Send & Pay icons (the amber parts are --duo-accent). */
   --duo-outline: #475560;
+  /* The soft highlight that sweeps across a loading skeleton. */
+  --skeleton-shine: oklch(1 0 0 / 60%);
   /* The two circles of the Mastercard mark, wherever a card shows its network. */
   --mc-red: #eb001b;
   --mc-orange: #f79e1b;
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
+  --mc-overlap: #ff5f00;
+  /* The ring drawn around a button or link reached with the keyboard. Follows --ring until set. */
+  --focus-ring: var(--ring);
+  /* Chips: the grey rail of a segmented filter, the chip that is selected, and the text on each. */
+  --chip: oklch(0.97 0 0);
+  --chip-selected: oklch(1 0 0);
+  --chip-selected-foreground: oklch(0.145 0 0);
+  --chip-foreground: oklch(0.556 0 0);
+  /* Status pills ("Active", "Blocked", "Default"): a tint and the text on it. They follow the status colours until set. */
+  --pill-success: color-mix(in oklch, var(--success) 12%, transparent);
+  --pill-success-text: var(--success-text);
+  --pill-info: #54545421;
+  --pill-info-text: #383838;
+  --pill-warning: #ffaa001f;
+  --pill-warning-text: #704000;
+  --pill-destructive: color-mix(in oklch, var(--destructive) 12%, transparent);
+  --pill-destructive-text: var(--destructive-text);
+  --pill-neutral: var(--muted);
+  --pill-neutral-text: var(--accent-foreground);
+  /* Initials circles on payees and billers: the same pastel in both modes, with dark ink on top. */
+  --avatar-teal: #f1f8f9;
+  --avatar-sand: #ebe8de;
+  --avatar-green: #e0eedd;
+  --avatar-lilac: #f5ebf7;
+  --avatar-yellow: #fef9c3;
+  --avatar-red: #fee2e2;
+  --avatar-blue: #dbeafe;
+  --avatar-lemon: #fef08a;
+  --avatar-pink: #fce7f3;
+  /* Status colours as text: darker than the fills on light, lighter on dark, so they read on either surface. */
+  --info: oklch(0.6 0.19 255);
+  --success-text: oklch(0.5 0.14 150);
+  --warning-text: oklch(0.52 0.13 65);
+  --destructive-text: oklch(0.5 0.2 27);
+  --info-text: oklch(0.5 0.19 255);
+  /* Input fields, text areas, selects and the PIN boxes. */
+  --field: #ffffff;
+  --field-hover: #f5f5f5;
+  --field-focus: #ffffff;
+  --field-border: #ebebeb;
+  --field-border-focus: #8a8a8a;
+  /* Dropdown menus. */
+  --menu: #ffffff;
+  --menu-item-hover: #f5f5f5;
+  /* The phone mock-up in the welcome card is dark in both modes. */
+  --device-frame: #2a2a2a;
+  --device-screen: #141414;
+  /* Dashboard promo banners (gold, green, blue) and the total balance card: three stops each. */
+  --banner-gold-1: #fefbf2;
+  --banner-gold-2: #fbf3db;
+  --banner-gold-3: #f7e8bd;
+  --banner-green-1: #f0fbf5;
+  --banner-green-2: #e2f7ec;
+  --banner-green-3: #cbf0dc;
+  --banner-blue-1: #f0f6ff;
+  --banner-blue-2: #e1eeff;
+  --banner-blue-3: #cfe2fe;
+  --balance-card-1: #f6bf36;
+  --balance-card-2: #f5ba2f;
+  --balance-card-3: #e8ab1c;
+  /* The four tints behind the suggestions on the dashboard: a fill and the text on it. */
+  --tint-teal-bg: #f1f8f9;
+  --tint-teal-text: #0d4f5b;
+  --tint-sand-bg: #ebe8de;
+  --tint-sand-text: #544d32;
+  --tint-green-bg: #e0eedd;
+  --tint-green-text: #2c532f;
+  --tint-plum-bg: #e7dce8;
+  --tint-plum-text: #5a2e5d;
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted-foreground: #8a8a8a;
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
@@ -146,19 +216,8 @@
   --success: oklch(0.62 0.15 150);
   --warning: oklch(0.72 0.16 75);
   --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
   --ring: oklch(0.78 0.15 86.7);
-  --chart-1: #F9C632;
-  --chart-2: oklch(0.75 0.16 80);
-  --chart-3: oklch(0.65 0.15 72);
-  --chart-4: oklch(0.55 0.13 65);
-  --chart-5: oklch(0.45 0.11 58);
   /* Secondary chart palette (complementary warm hue) */
-  --chart-secondary-1: oklch(0.66 0.136 97.117);
-  --chart-secondary-2: oklch(0.76 0.163 107.117);
-  --chart-secondary-3: oklch(0.56 0.114 89.117);
-  --chart-secondary-4: oklch(0.84 0.187 113.117);
-  --chart-secondary-5: oklch(0.5 0.103 83.117);
   /*
    * Categorical data-viz palette — encodes IDENTITY (which category), not
    * magnitude. The --chart-* ramp above is a single blue hue and is a
@@ -187,23 +246,13 @@
   --spend-5: #a78bfa;
   --spend-other: #cbd5e1;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.439 0 0);
-  --sidebar-primary: #F9C632;
-  --sidebar-primary-foreground: oklch(0.145 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.78 0.15 86.7);
   /* Brand gradient: deep amber → brighter golden glow at bottom */
-  --primary-gradient-from: #F9C632;
-  --primary-gradient-to: #f59e0b;
   /* Dashboard hero panel (Figma 1945:5108): a slate card with white type here; near-black with white type in dark. */
   --hero-surface: #36434e;
   /* The card is flat; the slow waves of light that drift across it are its gradient.
      Mirrors HERO_WAVE_DEFAULTS in src/lib/hero-wave.ts — change both together. */
   --hero-wave: color-mix(in srgb, #b1c3d2 59%, transparent);
-  --hero-border: #2c3740;
+  --hero-border: #8d9aa5;
   --hero-foreground: #ffffff;
   /* Multiplied onto whatever is behind the account pill, so it tints to match. */
   --hero-pill-shadow: #7d8a94;
@@ -219,7 +268,6 @@
   /* Uniform interaction tokens — derived from --primary so they follow the brand color */
   --hover: oklch(0 0 0 / 4%);
   --ripple-color: currentColor;
-  --ripple-opacity: 0.04;
   /* ── Single source for button/trigger/menu hover intensity ──
      --hover-overlay : neutral hover/highlight strength (ghost, outline, select,
                        dropdown items, toggles, triggers).
@@ -232,9 +280,6 @@
   --active-bg: color-mix(in oklch, var(--primary) 15%, transparent);
   --active-border: oklch(0.65 0.16 75);
   --surface: oklch(0.985 0 0);
-  --surface-raised: oklch(1 0 0);
-  --glass-bg: oklch(1 0 0 / 70%);
-  --glass-border: oklch(0 0 0 / 8%);
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-premium: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
@@ -242,13 +287,8 @@
 
   /* Fluid Functionalism Surfaces (Light Mode) */
   --surface-1: #FAFAFA;
-  --surface-2: #FCFCFC;
+  --surface-2: #FFFFFF;
   --surface-3: #FFFFFF;
-  --surface-4: #FFFFFF;
-  --surface-5: #FFFFFF;
-  --surface-6: #FFFFFF;
-  --surface-7: #FFFFFF;
-  --surface-8: #FFFFFF;
   --shadow-color: rgb(0 0 0 / 0.06);
   --shadow-1: 0 0 0 1px var(--shadow-color);
   --shadow-2: 0 0 0 1px var(--shadow-color), 0 1px 1px -0.5px var(--shadow-color);
@@ -265,26 +305,79 @@
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: #181818;
-  --card-foreground: oklch(0.985 0 0);
   --tile: #141414;
-  --tile-hover: #262626;
-  --tile-border: #292928;
+  --tile-hover: #212121;
   --tile-accent: #F9C632;
-  --account-card: rgba(148, 163, 184, 0.1);
+  --account-card: #93a7ba14;
   --popover: oklch(0.269 0 0);
-  --popover-foreground: oklch(0.985 0 0);
   --primary: #F9C632;
   --primary-hover: #E5B62E;
-  --primary-foreground: oklch(0.145 0 0);
-  /* Icons on the amber round actions of the card page: dark brown, the same in both modes. */
-  --action-icon: #321800;
+  --primary-foreground: #321800;
   /* Outline of the two-tone Send & Pay icons (the amber parts are --duo-accent). */
-  --duo-outline: #475560;
+  --duo-outline: #52606b;
+  --skeleton-shine: oklch(1 0 0 / 7%);
   /* The two circles of the Mastercard mark, wherever a card shows its network. */
   --mc-red: #eb001b;
   --mc-orange: #f79e1b;
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
+  --mc-overlap: #ff5f00;
+  --focus-ring: var(--ring);
+  --chip: #1a1a1a;
+  --chip-selected: #303030;
+  --chip-selected-foreground: oklch(0.985 0 0);
+  --chip-foreground: #6e6e6e;
+  --pill-success: #002e0d;
+  --pill-success-text: #20df69;
+  --pill-info: #2e2e2e99;
+  --pill-info-text: #c7c7c7;
+  --pill-warning: #ffc80029;
+  --pill-warning-text: #f9c632;
+  --pill-destructive: color-mix(in oklch, var(--destructive) 20%, transparent);
+  --pill-destructive-text: var(--destructive-text);
+  --pill-neutral: var(--muted);
+  --pill-neutral-text: var(--accent-foreground);
+  --avatar-teal: #f1f8f9;
+  --avatar-sand: #ebe8de;
+  --avatar-green: #e0eedd;
+  --avatar-lilac: #f5ebf7;
+  --avatar-yellow: #fef9c3;
+  --avatar-red: #fee2e2;
+  --avatar-blue: #dbeafe;
+  --avatar-lemon: #fef08a;
+  --avatar-pink: #fce7f3;
+  --info: oklch(0.72 0.15 255);
+  --success-text: oklch(0.78 0.15 150);
+  --warning-text: oklch(0.82 0.14 85);
+  --destructive-text: oklch(0.75 0.16 22);
+  --info-text: oklch(0.78 0.12 250);
+  --field: #181818;
+  --field-hover: #1c1c1c;
+  --field-focus: #181818;
+  --field-border: #292929;
+  --field-border-focus: #424242;
+  --menu: #1a1a1a;
+  --menu-item-hover: #282828;
+  --device-frame: #2a2a2a;
+  --device-screen: #141414;
+  --banner-gold-1: #211a0c;
+  --banner-gold-2: #191409;
+  --banner-gold-3: #130f07;
+  --banner-green-1: #0d2118;
+  --banner-green-2: #091711;
+  --banner-green-3: #07110c;
+  --banner-blue-1: #0d1a2d;
+  --banner-blue-2: #091220;
+  --banner-blue-3: #060d17;
+  --balance-card-1: #211a0c;
+  --balance-card-2: #191409;
+  --balance-card-3: #141008;
+  --tint-teal-bg: #1a2d32;
+  --tint-teal-text: #7ee2f3;
+  --tint-sand-bg: #312e25;
+  --tint-sand-text: #e4d8a5;
+  --tint-green-bg: #203222;
+  --tint-green-text: #a0e4a7;
+  --tint-plum-bg: #342436;
+  --tint-plum-text: #e9b6ec;
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.371 0 0);
@@ -294,18 +387,7 @@
   --success: oklch(0.68 0.15 150);
   --warning: oklch(0.78 0.15 75);
   --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.78 0.15 86.7);
-  --chart-1: #F9C632;
-  --chart-2: oklch(0.75 0.16 80);
-  --chart-3: oklch(0.65 0.15 72);
-  --chart-4: oklch(0.55 0.13 65);
-  --chart-5: oklch(0.45 0.11 58);
-  --chart-secondary-1: oklch(0.7 0.144 97.117);
-  --chart-secondary-2: oklch(0.8 0.172 107.117);
-  --chart-secondary-3: oklch(0.6 0.123 89.117);
-  --chart-secondary-4: oklch(0.88 0.196 113.117);
-  --chart-secondary-5: oklch(0.54 0.111 83.117);
+  --ring: #f9c632;
   /* Same eight hue families, re-stepped for the dark surface — a selected dark
      palette, not an automatic flip. All five clear 3:1 on #171717. */
   --cat-1: #3987e5;
@@ -320,23 +402,13 @@
   --spend-4: #ff3366;
   --spend-5: #b69cff;
   --spend-other: #4d5055;
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.708 0 0);
-  --sidebar-primary: #F9C632;
-  --sidebar-primary-foreground: oklch(0.145 0 0);
-  --sidebar-accent: oklch(0.371 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.78 0.15 86.7);
-  --primary-gradient-from: #F9C632;
-  --primary-gradient-to: #d97706;
   --hero-surface: #131516;
   /* Mirrors HERO_WAVE_DEFAULTS in src/lib/hero-wave.ts — change both together. */
   --hero-wave: color-mix(in srgb, #455e68 77%, transparent);
-  --hero-border: #31353c;
+  --hero-border: #1e2224;
   --hero-foreground: #ffffff;
   --hero-pill-shadow: #000000;
-  --sheet-rim: rgb(255 255 255 / 0.5);
+  --sheet-rim: #c5d6dd80;
   /* Dashboard app promo (Figma 1945:5548): gold radial stops + the lenticular sheen. */
   --promo-gold-1: #f9c632;
   --promo-gold-2: #f5bc19;
@@ -347,27 +419,18 @@
   /* Uniform interaction tokens — derived from --primary so they follow the brand color */
   --hover: oklch(1 0 0 / 5%);
   --ripple-color: currentColor;
-  --ripple-opacity: 0.06;
   /* Dark-mode hover intensity */
   --hover-overlay: 8%;
   --hover-fill: 85%;
   --hover-mix-color: #000;
   --active-bg: color-mix(in oklch, var(--primary) 18%, transparent);
   --active-border: oklch(0.78 0.15 86.7);
-  --surface: oklch(0.113 0 0);
-  --surface-raised: oklch(0.187 0 0);
-  --glass-bg: oklch(0.187 0 0 / 60%);
-  --glass-border: oklch(1 0 0 / 10%);
+  --surface: #080808;
 
   /* Fluid Functionalism Surfaces (Dark Mode) */
   --surface-1: #171717;
-  --surface-2: #1B1B1B;
-  --surface-3: #1F1F1F;
-  --surface-4: #232323;
-  --surface-5: #272727;
-  --surface-6: #2B2B2B;
-  --surface-7: #2F2F2F;
-  --surface-8: #333333;
+  --surface-2: #1F1F1F;
+  --surface-3: #272727;
   --dm-hi-base: rgba(255,255,255,0.01);
   --dm-hi-mid: rgba(255,255,255,0.02);
   --dm-hi-high: rgba(255,255,255,0.04);
@@ -418,12 +481,6 @@ html.i18n-pending body {
   h1, h2, h3, h4, h5, h6, p, span, a, label, td, th, li, dt, dd {
     font-weight: inherit;
   }
-}
-
-.glass {
-  background-color: var(--glass-bg);
-  backdrop-filter: blur(12px) saturate(180%);
-  border: 1px solid var(--glass-border);
 }
 
 .premium-card {
@@ -887,3 +944,20 @@ input[type="number"] {
 }
 
 
+
+
+/* Loading skeletons: a soft highlight crosses each grey block. Still for people who ask for less motion. */
+@layer components {
+  .skeleton-shimmer { position: relative; overflow: hidden; }
+}
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--skeleton-shine), transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .skeleton-shimmer::after { animation: skeleton-shimmer 1.6s ease-in-out infinite; }
+}
+@keyframes skeleton-shimmer { to { transform: translateX(100%); } }

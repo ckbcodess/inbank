@@ -143,13 +143,13 @@ function getAmountStyling(t: Transaction) {
   const isFailed = t.state.startsWith("failed") || t.state === "reversed" || t.state === "disputed";
   if (isFailed) {
     return {
-      colorClass: "text-[#F04438] dark:text-rose-400 font-normal",
+      colorClass: "text-destructive-text font-normal",
       prefix: t.direction === "debit" ? "− " : "+ ",
     };
   }
   if (t.direction === "credit" && t.state === "completed") {
     return {
-      colorClass: "text-[#12B76A] dark:text-emerald-400 font-normal",
+      colorClass: "text-success-text font-normal",
       prefix: "+ ",
     };
   }
@@ -582,7 +582,7 @@ export default function TransactionList({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by reference ID,  recipient ...."
-          className="w-full h-11 sm:h-12 pl-11 pr-10 rounded-xl border border-border/70 bg-card/40 text-[13.5px] sm:text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-colors"
+          className="w-full h-11 sm:h-12 pl-11 pr-10 rounded-xl border border-field-border bg-field text-[13.5px] sm:text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-ring focus:border-field-border-focus transition-colors"
         />
         {query && (
           <button
@@ -616,7 +616,7 @@ export default function TransactionList({
                   >
                     <div className="flex items-center gap-1.5 truncate">
                       {isAccountActive ? (
-                        <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
+                        <span className="size-1.5 rounded-full bg-success shrink-0" />
                       ) : (
                         <Landmark size={13} className="shrink-0 text-muted-foreground" />
                       )}
@@ -699,7 +699,7 @@ export default function TransactionList({
                 >
                   <div className="flex items-center gap-1.5 truncate">
                     {isAccountActive ? (
-                      <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
+                      <span className="size-1.5 rounded-full bg-success shrink-0" />
                     ) : (
                       <Landmark size={13} className="shrink-0 text-muted-foreground" />
                     )}
@@ -748,7 +748,7 @@ export default function TransactionList({
                 >
                   <div className="flex items-center gap-1.5 truncate">
                     {isDateActive && (
-                      <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
+                      <span className="size-1.5 rounded-full bg-success shrink-0" />
                     )}
                     <SelectValue placeholder="All Dates">
                       {(val: string) => {
@@ -1015,7 +1015,7 @@ export default function TransactionList({
                       type="date"
                       value={dateFrom}
                       onChange={(e) => setDateFrom(e.target.value)}
-                      className="w-full h-8 rounded-md border border-border bg-background px-2 text-[12px] text-foreground outline-none focus:border-ring tabular"
+                      className="w-full h-8 rounded-md border border-field-border bg-field px-2 text-[12px] text-foreground outline-none focus:border-field-border-focus tabular"
                     />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -1024,7 +1024,7 @@ export default function TransactionList({
                       type="date"
                       value={dateTo}
                       onChange={(e) => setDateTo(e.target.value)}
-                      className="w-full h-8 rounded-md border border-border bg-background px-2 text-[12px] text-foreground outline-none focus:border-ring tabular"
+                      className="w-full h-8 rounded-md border border-field-border bg-field px-2 text-[12px] text-foreground outline-none focus:border-field-border-focus tabular"
                     />
                   </div>
                 </div>
@@ -1059,10 +1059,10 @@ export default function TransactionList({
                         className={cn(
                           "size-1.5 rounded-full shrink-0",
                           st.id === "completed"
-                            ? "bg-emerald-500"
+                            ? "bg-success"
                             : st.id === "pending"
-                            ? "bg-amber-500"
-                            : "bg-rose-500",
+                            ? "bg-warning"
+                            : "bg-destructive",
                           isSelected && "bg-background"
                         )}
                       />
@@ -1176,7 +1176,7 @@ export default function TransactionList({
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="h-8 rounded-lg border border-border bg-background px-2.5 text-[12.5px] text-foreground outline-none focus:border-ring tabular"
+              className="h-8 rounded-lg border border-field-border bg-field px-2.5 text-[12.5px] text-foreground outline-none focus:border-field-border-focus tabular"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -1185,7 +1185,7 @@ export default function TransactionList({
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="h-8 rounded-lg border border-border bg-background px-2.5 text-[12.5px] text-foreground outline-none focus:border-ring tabular"
+              className="h-8 rounded-lg border border-field-border bg-field px-2.5 text-[12.5px] text-foreground outline-none focus:border-field-border-focus tabular"
             />
           </div>
           {(dateFrom || dateTo) && (
@@ -1261,7 +1261,7 @@ export default function TransactionList({
                     className={cn(
                       "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
                       isCredit
-                        ? "bg-emerald-500/10 text-[#12B76A] dark:text-emerald-400"
+                        ? "bg-success/10 text-success-text"
                         : "bg-muted text-muted-foreground"
                     )}
                   >
@@ -1299,11 +1299,11 @@ export default function TransactionList({
                         : "••••••"}
                     </span>
                     {isFailed ? (
-                      <span className="text-[11.5px] text-[#F04438] dark:text-rose-400 font-normal">
+                      <span className="text-[11.5px] text-destructive-text font-normal">
                         Failed
                       </span>
                     ) : isPending ? (
-                      <span className="text-[11.5px] text-[#F79009] dark:text-amber-400 font-normal">
+                      <span className="text-[11.5px] text-warning-text font-normal">
                         Pending
                       </span>
                     ) : (

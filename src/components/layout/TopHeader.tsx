@@ -6,6 +6,7 @@ import {
   Bell,
   ExternalLink,
   Eye,
+  Globe,
   EyeOff,
   Layers,
   Lock,
@@ -44,9 +45,8 @@ import {
 import { ROLE_LABEL, type Actor } from "@/lib/roles";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import HeaderBreadcrumbs from "./HeaderBreadcrumbs";
-import LanguageToggle from "./LanguageToggle";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
-import { switchTheme, toggleTheme } from "@/lib/theme-transition";
+import { switchTheme } from "@/lib/theme-transition";
 
 interface TopHeaderProps {
   actor: Actor;
@@ -59,6 +59,33 @@ const THEME_CHOICES = [
   { value: "dark", label: "Dark", Icon: Moon },
   { value: "system", label: "System", Icon: Monitor },
 ] as const;
+
+/** The language switch: short codes in the same pill as the theme switch. Sits in a plain div so choosing does not close the menu. */
+function LanguageSegmented() {
+  const { language, setLanguage, languages, t } = useTranslation();
+  return (
+    <div role="radiogroup" aria-label={t("header.language", "Language")} className="flex items-center gap-0.5 rounded-full bg-chip p-0.5">
+      {languages.map((lang) => (
+        <button
+          key={lang.code}
+          type="button"
+          role="radio"
+          aria-checked={language === lang.code}
+          aria-label={lang.nativeName}
+          title={lang.nativeName}
+          onClick={() => setLanguage(lang.code)}
+          className={`flex h-7 min-w-7 cursor-pointer items-center justify-center rounded-full px-1.5 text-[11px] leading-none transition-colors duration-hover ${
+            language === lang.code
+              ? "bg-chip-selected text-chip-selected-foreground shadow-xs font-medium"
+              : "text-chip-foreground hover:text-chip-selected-foreground"
+          }`}
+        >
+          {lang.shortLabel}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 /** Three-way theme switch. Sits in a plain div, not a menu item, so choosing doesn't close the menu. */
 function ThemeSegmented() {
@@ -73,7 +100,7 @@ function ThemeSegmented() {
   }
 
   return (
-    <div role="radiogroup" aria-label="Theme" className="flex items-center gap-0.5 rounded-full bg-muted p-0.5">
+    <div role="radiogroup" aria-label="Theme" className="flex items-center gap-0.5 rounded-full bg-chip p-0.5">
       {THEME_CHOICES.map(({ value, label, Icon }) => (
         <button
           key={value}
@@ -83,7 +110,7 @@ function ThemeSegmented() {
           aria-label={label}
           onClick={() => choose(value)}
           className={`flex size-7 cursor-pointer items-center justify-center rounded-full transition-colors duration-hover ${
-            active === value ? "bg-card text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
+            active === value ? "bg-chip-selected text-chip-selected-foreground shadow-xs" : "text-chip-foreground hover:text-chip-selected-foreground"
           }`}
         >
           <Icon size={14} strokeWidth={1.8} aria-hidden="true" />
@@ -99,7 +126,6 @@ export default function TopHeader({
   onSignOut,
 }: TopHeaderProps) {
   const router = useRouter();
-  const { resolvedTheme, setTheme } = useTheme();
   const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
   const { devState } = useDevState();
   const captureMode = useCaptureMode();
@@ -129,11 +155,11 @@ export default function TopHeader({
         {/* Dev Mode Dropdown Menu — hidden in capture mode so it stays out of Figma captures */}
         {devState && !captureMode && (
           <DropdownMenu>
-            <DropdownMenuTrigger className="h-8 gap-1.5 rounded-lg border border-dashed border-amber-500/50 bg-amber-500/10 px-2.5 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 hover:text-amber-800 dark:hover:text-amber-200 text-[12px] font-medium transition-colors flex items-center outline-none cursor-pointer whitespace-nowrap shrink-0">
+            <DropdownMenuTrigger className="h-8 gap-1.5 rounded-lg border border-dashed border-warning/50 bg-warning/10 px-2.5 text-warning-text hover:bg-warning/20 hover:text-warning-text dark:hover:text-warning-text text-[12px] font-medium transition-colors flex items-center outline-none cursor-pointer whitespace-nowrap shrink-0">
               <Layers size={13} strokeWidth={2} className="shrink-0" />
               <span className="hidden sm:inline whitespace-nowrap">Dev Mode</span>
               {devState.section && (
-                <span className="rounded bg-amber-500/20 px-1 py-0.5 text-[10px] shrink-0">
+                <span className="rounded bg-warning/20 px-1 py-0.5 text-[10px] shrink-0">
                   {devState.section}
                 </span>
               )}
@@ -187,32 +213,10 @@ export default function TopHeader({
             {mounted && showAmounts ? (
               <Eye size={16} strokeWidth={1.9} />
             ) : (
-              <EyeOff size={16} strokeWidth={1.9} className="text-amber-600 dark:text-amber-400" />
+              <EyeOff size={16} strokeWidth={1.9} className="text-warning-text" />
             )}
           </Button>
         </SimpleTooltip>
-
-        <SimpleTooltip
-          content={resolvedTheme === "dark" ? t("header.themeLight", "Switch to light mode") : t("header.themeDark", "Switch to dark mode")}
-          side="bottom"
-        >
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => toggleTheme(setTheme)}
-            aria-label={resolvedTheme === "dark" ? t("header.themeLight", "Switch to light mode") : t("header.themeDark", "Switch to dark mode")}
-            className="shrink-0"
-          >
-            {mounted && resolvedTheme === "dark" ? (
-              <Sun size={16} strokeWidth={1.9} />
-            ) : (
-              <Moon size={16} strokeWidth={1.9} />
-            )}
-          </Button>
-        </SimpleTooltip>
-
-        {/* Global Language Selector */}
-        <LanguageToggle />
 
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -231,7 +235,7 @@ export default function TopHeader({
               </span>
             )}
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" sideOffset={6} className="w-[260px] p-1.5 rounded-2xl">
+          <DropdownMenuContent align="end" sideOffset={6} className="w-[300px] p-1.5 rounded-2xl">
             {/* Header: Avatar beside Name & Email */}
             <div className="flex items-center gap-3 px-3 pt-3 pb-2.5">
               <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-muted border border-border/80 text-foreground font-medium text-[15px] shadow-2xs">
@@ -296,6 +300,15 @@ export default function TopHeader({
                 <span>{t("header.theme", "Theme")}</span>
               </span>
               <ThemeSegmented />
+            </div>
+
+            {/* Language */}
+            <div className="flex items-center justify-between gap-3 px-3 py-2">
+              <span className="flex items-center gap-3 text-[13.5px] text-foreground">
+                <Globe size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.language", "Language")}</span>
+              </span>
+              <LanguageSegmented />
             </div>
 
             <DropdownMenuSeparator className="my-1" />

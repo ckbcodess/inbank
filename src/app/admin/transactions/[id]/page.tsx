@@ -97,16 +97,16 @@ export default function OpsTransactionDetailsPage({ params }: { params: Promise<
 
       {/* Exception stays attached to its transaction context (section 7) */}
       {(txn.state === "failed-single" || txn.state === "failed-bulk" || txn.state === "disputed") && (
-        <section className="rounded-2xl border border-amber-500/40 bg-amber-500/5 p-5">
+        <section className="rounded-2xl border border-warning/40 bg-warning/5 p-5">
           <div className="flex items-start gap-3">
             <AlertTriangle
               size={17}
               strokeWidth={1.8}
               aria-hidden="true"
-              className="mt-px shrink-0 text-amber-600 dark:text-amber-400"
+              className="mt-px shrink-0 text-warning-text"
             />
             <div>
-              <p className="text-[14px] text-amber-700 dark:text-amber-400">Exception attached</p>
+              <p className="text-[14px] text-warning-text">Exception attached</p>
               <p className="mt-1.5 text-[13px] leading-relaxed text-foreground/90">
                 {txn.failureReason ?? "This transaction is flagged for operational review."}
               </p>

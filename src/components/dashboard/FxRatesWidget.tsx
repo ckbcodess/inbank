@@ -115,7 +115,7 @@ export function FxRatesWidget() {
 
           {/* From Input */}
           <div className="relative w-full">
-            <div className="flex w-full items-center justify-between rounded-xl border border-border bg-muted/40 px-4 py-2.5 transition-colors focus-within:border-primary">
+            <div className="flex w-full items-center justify-between rounded-xl border border-field-border bg-field px-4 py-2.5 transition-colors focus-within:border-field-border-focus focus-within:bg-field-focus">
               <input
                 type="number"
                 min="0"
@@ -246,8 +246,8 @@ export function FxRatesWidget() {
             <svg className="h-full w-full overflow-visible" viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
               <defs>
                 <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#f6bf36" stopOpacity="0.4" />
-                  <stop offset="100%" stopColor="#f6bf36" stopOpacity="0.0" />
+                  <stop offset="0%" style={{ stopColor: "var(--primary)" }} stopOpacity="0.4" />
+                  <stop offset="100%" style={{ stopColor: "var(--primary)" }} stopOpacity="0.0" />
                 </linearGradient>
               </defs>
               <path
@@ -257,7 +257,7 @@ export function FxRatesWidget() {
               <path
                 d={pathD}
                 fill="none"
-                stroke="#f6bf36"
+                style={{ stroke: "var(--primary)" }}
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -267,7 +267,7 @@ export function FxRatesWidget() {
 
           <div className="flex w-full items-center justify-between text-[11px] text-muted-foreground">
             <span className="tabular">Low: {minVal.toFixed(2)}</span>
-            <span className="text-emerald-600 dark:text-emerald-400 font-medium">+1.8% in period</span>
+            <span className="text-success-text font-medium">+1.8% in period</span>
             <span className="tabular">High: {maxVal.toFixed(2)}</span>
           </div>
         </div>

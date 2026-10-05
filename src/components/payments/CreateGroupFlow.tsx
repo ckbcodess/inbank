@@ -312,7 +312,7 @@ export default function CreateGroupFlow({
               maxLength={50}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter narration"
-              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
             />
           </div>
 
@@ -327,7 +327,7 @@ export default function CreateGroupFlow({
               maxLength={120}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter narration"
-              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
             />
           </div>
 
@@ -371,14 +371,14 @@ export default function CreateGroupFlow({
                     value={customName}
                     onChange={(e) => setCustomName(e.target.value)}
                     placeholder="Full name"
-                    className="h-11 w-full rounded-xl border border-border/80 bg-card px-3.5 text-[14px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 placeholder:text-muted-foreground/60 transition-all"
+                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 placeholder:text-muted-foreground/60 transition-all"
                   />
                   <input
                     type="text"
                     value={customDest}
                     onChange={(e) => setCustomDest(e.target.value)}
                     placeholder="Phone or Account Number"
-                    className="h-11 w-full rounded-xl border border-border/80 bg-card px-3.5 text-[14px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 placeholder:text-muted-foreground/60 transition-all"
+                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 placeholder:text-muted-foreground/60 transition-all"
                   />
                 </div>
 
@@ -429,7 +429,7 @@ export default function CreateGroupFlow({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search contacts"
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card pl-11 pr-10 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                className="h-13 w-full rounded-2xl border border-field-border bg-field pl-11 pr-10 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
               />
               {search && (
                 <button
@@ -517,15 +517,15 @@ export default function CreateGroupFlow({
       {step === 2 && (
         <div className="flex flex-col gap-6">
           {/* Segmented Tab Pill: [ Equal Split | Custom Amounts ] */}
-          <div className="rounded-2xl bg-muted/40 p-1 border border-border/80 flex items-center gap-1">
+          <div className="rounded-2xl bg-chip p-1 border border-border/80 flex items-center gap-1">
             <button
               type="button"
               onClick={() => setSplitType("equal")}
               className={cn(
                 "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition-all cursor-pointer",
                 splitType === "equal"
-                  ? "bg-card text-foreground shadow-xs border border-border/60"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-chip-selected text-chip-selected-foreground shadow-xs border border-border/60"
+                  : "text-chip-foreground hover:text-chip-selected-foreground"
               )}
             >
               Equal Split
@@ -536,8 +536,8 @@ export default function CreateGroupFlow({
               className={cn(
                 "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition-all cursor-pointer",
                 splitType === "custom"
-                  ? "bg-card text-foreground shadow-xs border border-border/60"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-chip-selected text-chip-selected-foreground shadow-xs border border-border/60"
+                  : "text-chip-foreground hover:text-chip-selected-foreground"
               )}
             >
               Custom Amounts
@@ -577,7 +577,7 @@ export default function CreateGroupFlow({
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5 shrink-0 bg-card border border-border/80 rounded-xl px-3 py-1.5 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 transition-all">
+                    <div className="flex items-center gap-1.5 shrink-0 bg-field border border-field-border rounded-xl px-3 py-1.5 focus-within:border-field-border-focus focus-within:ring-0 transition-all">
                       <span className="text-[12.5px] font-medium text-muted-foreground select-none">GHS</span>
                       <input
                         type="text"

@@ -88,7 +88,7 @@ export function WalletToBankFlow({
       {/* 1. Source Mobile Wallet */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Source Mobile Wallet</label>
-        <div className="flex items-center justify-between h-[58px] min-h-[58px] px-3.5 w-full rounded-2xl border border-border/80 bg-card gap-3">
+        <div className="flex items-center justify-between h-[58px] min-h-[58px] px-3.5 w-full rounded-2xl border border-field-border bg-field gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
               <Smartphone size={17} strokeWidth={1.8} />
@@ -137,7 +137,7 @@ export function WalletToBankFlow({
                 }
               }}
               placeholder="Enter account number"
-              className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+              className="numorainput h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all tabular"
             />
 
             {isDetailsValid && resolving && (

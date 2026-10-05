@@ -145,7 +145,7 @@ export function FxPulse() {
           </div>
           <p className="mt-1.5 text-[11.5px] text-muted-foreground tabular">
             {direction === "to-ghs" ? "Bank buys" : "Bank sells"} at {appliedRate.toFixed(4)} ·{" "}
-            <span className={rate.changePct >= 0 ? "text-emerald-600 dark:text-emerald-400 font-medium" : "text-destructive font-medium"}>
+            <span className={rate.changePct >= 0 ? "text-success-text font-medium" : "text-destructive font-medium"}>
               <RateTrend size={11} strokeWidth={2} aria-hidden="true" className="inline align-[-1px]" />{" "}
               {rate.changePct >= 0 ? "+" : "−"}
               {Math.abs(rate.changePct).toFixed(2)}%

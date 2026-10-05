@@ -28,14 +28,14 @@ const DELIVERY_NOTE: Record<string, StatusNote> = {
 
 /** One hue per state so a row of cards can be scanned without reading. */
 const TONE_CLASS: Record<Tone, string> = {
-  active: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
-  production: "bg-violet-500/10 text-violet-700 dark:text-violet-400",
-  transit: "bg-sky-500/10 text-sky-700 dark:text-sky-400",
-  delivery: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
-  pickup: "bg-teal-500/10 text-teal-700 dark:text-teal-400",
-  activate: "bg-indigo-500/10 text-indigo-700 dark:text-indigo-400",
-  blocked: "bg-red-500/10 text-red-700 dark:text-red-400",
-  expired: "bg-muted text-muted-foreground",
+  active: "bg-pill-success text-pill-success-text",
+  production: "bg-pill-info text-pill-info-text",
+  transit: "bg-pill-info text-pill-info-text",
+  delivery: "bg-pill-warning text-pill-warning-text",
+  pickup: "bg-pill-success text-pill-success-text",
+  activate: "bg-pill-info text-pill-info-text",
+  blocked: "bg-pill-destructive text-pill-destructive-text",
+  expired: "bg-pill-neutral text-pill-neutral-text",
 };
 
 /** Says something only when there is something to say, unless `includeActive` (gallery scanning). */
@@ -70,7 +70,7 @@ export function StatusPill({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[11px] leading-none",
+        "inline-flex shrink-0 items-center rounded-full px-2.5 py-1 text-[11px] font-medium leading-none",
         TONE_CLASS[note.tone],
         className,
       )}
@@ -111,10 +111,10 @@ export function CardsSkeleton() {
     <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true" aria-label="Loading cards">
       {Array.from({ length: 3 }).map((_, i) => (
         <div key={i} className="flex flex-col gap-3">
-          <div className="aspect-[1.586/1] w-full animate-pulse rounded-2xl bg-muted" />
+          <div className="aspect-[1.586/1] w-full skeleton-shimmer rounded-2xl bg-muted" />
           <div className="flex items-center justify-between px-1">
-            <div className="h-4 w-28 animate-pulse rounded bg-muted" />
-            <div className="h-6 w-16 animate-pulse rounded-full bg-muted" />
+            <div className="h-4 w-28 skeleton-shimmer rounded bg-muted" />
+            <div className="h-6 w-16 skeleton-shimmer rounded-full bg-muted" />
           </div>
         </div>
       ))}

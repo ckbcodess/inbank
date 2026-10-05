@@ -33,14 +33,14 @@ export default function DevStatePanel() {
   return (
     <div className="fixed bottom-5 right-5 z-50">
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex h-8 cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-amber-500/50 bg-amber-500/10 px-2.5 text-[12px] font-medium text-amber-700 outline-none transition-colors hover:bg-amber-500/20 hover:text-amber-800 dark:text-amber-300 dark:hover:text-amber-200">
+        <DropdownMenuTrigger className="flex h-8 cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-warning/50 bg-warning/10 px-2.5 text-[12px] font-medium text-warning-text outline-none transition-colors hover:bg-warning/20 hover:text-warning-text dark:hover:text-warning-text">
           <Layers size={13} strokeWidth={2} />
           <span>Dev Mode</span>
           {active && (
             <span className="hidden max-w-[180px] truncate sm:inline">· {active.label}</span>
           )}
           {devState.section && (
-            <span className="rounded bg-amber-500/20 px-1 py-0.5 text-[10px]">
+            <span className="rounded bg-warning/20 px-1 py-0.5 text-[10px]">
               {devState.section}
             </span>
           )}

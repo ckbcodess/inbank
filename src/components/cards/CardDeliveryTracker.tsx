@@ -156,7 +156,7 @@ export function CardDeliveryTracker({
         <h3 className="text-[17px] font-medium text-foreground tracking-[-0.01em]">
           Delivery Progress
         </h3>
-        <span className="rounded-full bg-[#fef3eb] dark:bg-amber-950/50 px-3 py-0.5 text-[12px] font-medium text-[#b54708] dark:text-amber-400">
+        <span className="rounded-full bg-pill-warning px-3 py-0.5 text-[12px] font-medium text-pill-warning-text">
           {isReadyForPickup ? "Ready" : "Pending"}
         </span>
       </div>
@@ -177,7 +177,7 @@ export function CardDeliveryTracker({
                     "absolute left-[13px] top-[26px] bottom-0 w-[2px] transition-colors",
                     isCompleted && idx < currentStepIndex
                       ? "bg-primary"
-                      : "bg-[#e5e5e5] dark:bg-border"
+                      : "bg-border"
                   )}
                 />
               )}
@@ -188,7 +188,7 @@ export function CardDeliveryTracker({
                   "size-7 rounded-full flex items-center justify-center shrink-0 transition-all z-10 select-none",
                   isCompleted
                     ? "bg-primary text-primary-foreground font-medium"
-                    : "bg-[#f5f5f5] dark:bg-muted text-muted-foreground text-[12px] border border-border"
+                    : "bg-muted text-muted-foreground text-[12px] border border-border"
                 )}
               >
                 {isCompleted ? (
@@ -261,7 +261,7 @@ export function CardDeliveryTracker({
                 <span className="text-[14.5px] font-medium text-foreground truncate">
                   {card.courierRider.name}
                 </span>
-                <span className="text-[10.5px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium border border-emerald-500/20">
+                <span className="text-[10.5px] px-1.5 py-0.5 rounded-full bg-pill-success text-pill-success-text font-medium border border-success/20">
                   Rider
                 </span>
               </div>
@@ -286,7 +286,7 @@ export function CardDeliveryTracker({
         <button
           type="button"
           onClick={onShowPickupCode}
-          className="w-full rounded-2xl bg-[#f6f6f5] dark:bg-muted/70 hover:bg-[#ededec] dark:hover:bg-muted transition-colors p-4 flex items-center justify-between gap-3 text-left cursor-pointer group"
+          className="w-full rounded-2xl bg-tile dark:bg-muted/70 hover:bg-tile-hover dark:hover:bg-muted transition-colors p-4 flex items-center justify-between gap-3 text-left cursor-pointer group"
         >
           <div className="flex items-center gap-3">
             <div className="text-foreground shrink-0">
@@ -373,7 +373,7 @@ export function CardDeliveryTrackerModal({
           <button
             type="button"
             onClick={handleClose}
-            className="flex size-9 items-center justify-center rounded-full bg-[#f6f6f5] dark:bg-muted text-muted-foreground hover:text-foreground hover:bg-[#ededec] dark:hover:bg-muted/80 transition-colors cursor-pointer"
+            className="flex size-9 items-center justify-center rounded-full bg-tile dark:bg-muted text-muted-foreground hover:text-foreground hover:bg-tile-hover dark:hover:bg-muted/80 transition-colors cursor-pointer"
             aria-label="Close dialog"
           >
             <X size={18} strokeWidth={2} />
@@ -396,7 +396,7 @@ export function CardDeliveryTrackerModal({
                 </span>
 
                 {/* Instruction Paragraph */}
-                <p className="text-[14px] text-[#747472] dark:text-muted-foreground max-w-[380px] leading-[22px]">
+                <p className="text-[14px] text-muted-foreground max-w-[380px] leading-[22px]">
                   When your card arrives at{" "}
                   <span className="text-foreground font-medium">{branchName}</span>, present your
                   Ghana Card and pickup code to collect it.
@@ -404,7 +404,7 @@ export function CardDeliveryTrackerModal({
               </div>
 
               {/* Operating Hours & Support metadata */}
-              <div className="flex flex-col items-center gap-2 text-[15px] font-medium text-[#a1a1a1] dark:text-muted-foreground/80">
+              <div className="flex flex-col items-center gap-2 text-[15px] font-medium text-muted-foreground dark:text-muted-foreground/80">
                 <span>Hours: Mon - Fri (8:00 AM - 5:00 PM)</span>
                 <span>Branch Support: 030 4222 422</span>
               </div>

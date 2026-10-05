@@ -19,7 +19,7 @@ export function SummaryCard({
 
   const toneClass =
     tone === "warning"
-      ? "text-amber-600 dark:text-amber-400"
+      ? "text-warning-text"
       : tone === "destructive"
         ? "text-destructive"
         : "text-foreground";

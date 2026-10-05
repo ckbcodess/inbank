@@ -24,7 +24,7 @@ export function MobilePromoBanner() {
       id: "mobile-app",
       title: "Banking made easier, wherever you are.",
       containerClass:
-        "border-amber-300/50 bg-gradient-to-br from-[#fefbf2] via-[#fbf3db] to-[#f7e8bd] dark:from-[#211a0c] dark:via-[#191409] dark:to-[#130f07] dark:border-amber-500/20",
+        "border-warning/50 bg-gradient-to-br from-[var(--banner-gold-1)] via-[var(--banner-gold-2)] to-[var(--banner-gold-3)] dark:border-warning/20",
       content: (
         <>
           <div className="relative z-10 flex flex-col justify-between min-h-[175px] max-w-[62%]">
@@ -68,11 +68,11 @@ export function MobilePromoBanner() {
       id: "fixed-deposit",
       title: "Grow your wealth with 14.5% p.a. Fixed Deposit",
       containerClass:
-        "border-emerald-300/50 bg-gradient-to-br from-[#f0fbf5] via-[#e2f7ec] to-[#cbf0dc] dark:from-[#0d2118] dark:via-[#091711] dark:to-[#07110c] dark:border-emerald-500/20",
+        "border-success/50 bg-gradient-to-br from-[var(--banner-green-1)] via-[var(--banner-green-2)] to-[var(--banner-green-3)] dark:border-success/20",
       content: (
         <div className="relative z-10 flex flex-col justify-between min-h-[175px] w-full">
           <div className="flex flex-col gap-1">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-300 w-fit">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-pill-success border border-success/20 px-2.5 py-0.5 text-[11px] font-medium text-pill-success-text w-fit">
               <Sparkles size={12} strokeWidth={1.8} /> High Yield Savings
             </div>
             <h3 className="mt-1 text-[17px] font-medium leading-snug tracking-tight text-foreground sm:text-[19px]">
@@ -86,7 +86,7 @@ export function MobilePromoBanner() {
             <button
               type="button"
               onClick={() => setShowCalculator(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-700 dark:bg-emerald-600 px-3.5 py-2 text-[12.5px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform cursor-pointer"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-success px-3.5 py-2 text-[12.5px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform cursor-pointer"
             >
               <Calculator size={14} strokeWidth={1.8} />
               <span>Calculate Returns</span>
@@ -106,11 +106,11 @@ export function MobilePromoBanner() {
       id: "remittances",
       title: "Instant diaspora transfers at zero markup",
       containerClass:
-        "border-blue-300/50 bg-gradient-to-br from-[#f0f6ff] via-[#e1eeff] to-[#cfe2fe] dark:from-[#0d1a2d] dark:via-[#091220] dark:to-[#060d17] dark:border-blue-500/20",
+        "border-info/50 bg-gradient-to-br from-[var(--banner-blue-1)] via-[var(--banner-blue-2)] to-[var(--banner-blue-3)] dark:border-info/20",
       content: (
         <div className="relative z-10 flex flex-col justify-between min-h-[175px] w-full">
           <div className="flex flex-col gap-1">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 px-2.5 py-0.5 text-[11px] font-medium text-blue-700 dark:text-blue-300 w-fit">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-pill-info border border-info/20 px-2.5 py-0.5 text-[11px] font-medium text-pill-info-text w-fit">
               <Globe size={12} strokeWidth={1.8} /> Global Payments
             </div>
             <h3 className="mt-1 text-[17px] font-medium leading-snug tracking-tight text-foreground sm:text-[19px]">
@@ -123,7 +123,7 @@ export function MobilePromoBanner() {
           <div className="mt-3 flex items-center gap-2.5">
             <Link
               href="/payments/send"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-700 dark:bg-blue-600 px-3.5 py-2 text-[12.5px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-info px-3.5 py-2 text-[12.5px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform"
             >
               <span>Send Money Now</span>
               <ArrowRight size={13} strokeWidth={1.8} />
@@ -145,7 +145,7 @@ export function MobilePromoBanner() {
         {/* Top Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-2.5 py-0.5 text-[11.5px] font-medium text-amber-700 dark:text-amber-300">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-warning/25 bg-pill-warning px-2.5 py-0.5 text-[11.5px] font-medium text-pill-warning-text">
               <Sparkles size={12} strokeWidth={1.8} />
               Featured
             </span>
@@ -217,7 +217,7 @@ export function MobilePromoBanner() {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-[13px] font-medium text-foreground">Deposit amount (GHS)</label>
-              <div className="flex items-center rounded-xl border border-border bg-muted/40 px-3.5 py-2 focus-within:border-primary">
+              <div className="flex items-center rounded-xl border border-field-border bg-field px-3.5 py-2 focus-within:border-field-border-focus focus-within:bg-field-focus">
                 <span className="text-[14px] font-medium text-muted-foreground mr-2">GHS</span>
                 <input
                   type="number"
@@ -251,14 +251,14 @@ export function MobilePromoBanner() {
             </div>
 
             {/* Earnings Result Card */}
-            <div className="rounded-xl bg-emerald-500/10 p-3.5 dark:bg-emerald-500/15 border border-emerald-500/20">
+            <div className="rounded-xl bg-success/10 p-3.5 dark:bg-success/15 border border-success/20">
               <div className="flex justify-between text-[13px] text-muted-foreground">
                 <span>Estimated interest</span>
-                <span className="font-medium text-emerald-600 dark:text-emerald-400 tabular">
+                <span className="font-medium text-success-text tabular">
                   +GHS {estimatedReturn.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
-              <div className="mt-2 flex justify-between border-t border-emerald-500/20 pt-2 text-[14px] font-medium text-foreground">
+              <div className="mt-2 flex justify-between border-t border-success/20 pt-2 text-[14px] font-medium text-foreground">
                 <span>Total at maturity</span>
                 <span className="tabular">
                   GHS {totalMaturity.toLocaleString("en-GH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}

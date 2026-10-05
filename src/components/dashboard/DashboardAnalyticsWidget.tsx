@@ -26,56 +26,56 @@ export function DashboardAnalyticsWidget() {
     "1w": {
       trend: "↓ 1.4% vs last week",
       categories: [
-        { label: "Groceries", percentage: 38, color: "#2a78d6", amount: 1140 },
-        { label: "Shopping", percentage: 22, color: "#eb6834", amount: 660 },
-        { label: "Cash & MoMo", percentage: 15, color: "#1baf7a", amount: 450 },
-        { label: "Transport", percentage: 11, color: "#eda100", amount: 330 },
-        { label: "Utilities", percentage: 8, color: "#e87ba4", amount: 240 },
-        { label: "Other", percentage: 6, color: "#a4a4a4", amount: 180 },
+        { label: "Groceries", percentage: 38, color: "var(--cat-1)", amount: 1140 },
+        { label: "Shopping", percentage: 22, color: "var(--cat-2)", amount: 660 },
+        { label: "Cash & MoMo", percentage: 15, color: "var(--cat-3)", amount: 450 },
+        { label: "Transport", percentage: 11, color: "var(--cat-4)", amount: 330 },
+        { label: "Utilities", percentage: 8, color: "var(--cat-5)", amount: 240 },
+        { label: "Other", percentage: 6, color: "var(--cat-other)", amount: 180 },
       ],
     },
     "1m": {
       trend: "↓ 4.8% vs last month",
       categories: [
-        { label: "Groceries", percentage: 34, color: "#2a78d6", amount: 3400 },
-        { label: "Shopping", percentage: 18, color: "#eb6834", amount: 1800 },
-        { label: "Cash & MoMo", percentage: 16, color: "#1baf7a", amount: 1600 },
-        { label: "Transport", percentage: 12, color: "#eda100", amount: 1200 },
-        { label: "Utilities", percentage: 10, color: "#e87ba4", amount: 1000 },
-        { label: "Other", percentage: 10, color: "#a4a4a4", amount: 1000 },
+        { label: "Groceries", percentage: 34, color: "var(--cat-1)", amount: 3400 },
+        { label: "Shopping", percentage: 18, color: "var(--cat-2)", amount: 1800 },
+        { label: "Cash & MoMo", percentage: 16, color: "var(--cat-3)", amount: 1600 },
+        { label: "Transport", percentage: 12, color: "var(--cat-4)", amount: 1200 },
+        { label: "Utilities", percentage: 10, color: "var(--cat-5)", amount: 1000 },
+        { label: "Other", percentage: 10, color: "var(--cat-other)", amount: 1000 },
       ],
     },
     "3m": {
       trend: "↑ 2.1% vs prev quarter",
       categories: [
-        { label: "Groceries", percentage: 31, color: "#2a78d6", amount: 9300 },
-        { label: "Shopping", percentage: 19, color: "#eb6834", amount: 5700 },
-        { label: "Cash & MoMo", percentage: 15, color: "#1baf7a", amount: 4500 },
-        { label: "Transport", percentage: 13, color: "#eda100", amount: 3900 },
-        { label: "Utilities", percentage: 11, color: "#e87ba4", amount: 3300 },
-        { label: "Other", percentage: 11, color: "#a4a4a4", amount: 3300 },
+        { label: "Groceries", percentage: 31, color: "var(--cat-1)", amount: 9300 },
+        { label: "Shopping", percentage: 19, color: "var(--cat-2)", amount: 5700 },
+        { label: "Cash & MoMo", percentage: 15, color: "var(--cat-3)", amount: 4500 },
+        { label: "Transport", percentage: 13, color: "var(--cat-4)", amount: 3900 },
+        { label: "Utilities", percentage: 11, color: "var(--cat-5)", amount: 3300 },
+        { label: "Other", percentage: 11, color: "var(--cat-other)", amount: 3300 },
       ],
     },
     "6m": {
       trend: "↓ 1.9% vs prev 6m",
       categories: [
-        { label: "Groceries", percentage: 33, color: "#2a78d6", amount: 18150 },
-        { label: "Shopping", percentage: 16, color: "#eb6834", amount: 8800 },
-        { label: "Cash & MoMo", percentage: 14, color: "#1baf7a", amount: 7700 },
-        { label: "Transport", percentage: 12, color: "#eda100", amount: 6600 },
-        { label: "Utilities", percentage: 10, color: "#e87ba4", amount: 5500 },
-        { label: "Other", percentage: 15, color: "#a4a4a4", amount: 8250 },
+        { label: "Groceries", percentage: 33, color: "var(--cat-1)", amount: 18150 },
+        { label: "Shopping", percentage: 16, color: "var(--cat-2)", amount: 8800 },
+        { label: "Cash & MoMo", percentage: 14, color: "var(--cat-3)", amount: 7700 },
+        { label: "Transport", percentage: 12, color: "var(--cat-4)", amount: 6600 },
+        { label: "Utilities", percentage: 10, color: "var(--cat-5)", amount: 5500 },
+        { label: "Other", percentage: 15, color: "var(--cat-other)", amount: 8250 },
       ],
     },
     "1y": {
       trend: "↓ 3.2% vs last year",
       categories: [
-        { label: "Groceries", percentage: 32, color: "#2a78d6", amount: 4800 },
-        { label: "Shopping", percentage: 15, color: "#eb6834", amount: 2250 },
-        { label: "Cash & MoMo", percentage: 14, color: "#1baf7a", amount: 2100 },
-        { label: "Transport", percentage: 12, color: "#eda100", amount: 1800 },
-        { label: "Utilities", percentage: 10, color: "#e87ba4", amount: 1500 },
-        { label: "Other", percentage: 18, color: "#a4a4a4", amount: 2700 },
+        { label: "Groceries", percentage: 32, color: "var(--cat-1)", amount: 4800 },
+        { label: "Shopping", percentage: 15, color: "var(--cat-2)", amount: 2250 },
+        { label: "Cash & MoMo", percentage: 14, color: "var(--cat-3)", amount: 2100 },
+        { label: "Transport", percentage: 12, color: "var(--cat-4)", amount: 1800 },
+        { label: "Utilities", percentage: 10, color: "var(--cat-5)", amount: 1500 },
+        { label: "Other", percentage: 18, color: "var(--cat-other)", amount: 2700 },
       ],
     },
   };
@@ -187,7 +187,7 @@ export function DashboardAnalyticsWidget() {
                       cy="85"
                       r={radius}
                       fill="none"
-                      stroke={slice.color}
+                      style={{ stroke: slice.color }}
                       strokeWidth={isHovered ? 19 : 15}
                       strokeDasharray={slice.strokeDasharray}
                       strokeDashoffset={slice.strokeDashoffset}

@@ -115,17 +115,17 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
       {/* ── Returned for clarification — WARNING tone, recoverable.
              Compare with the destructive treatment of a rejection below. ── */}
       {state === "returned-for-clarification" && (
-        <div className="rounded-2xl border border-amber-500/40 bg-amber-500/5 p-5">
+        <div className="rounded-2xl border border-warning/40 bg-warning/5 p-5">
           <div className="flex items-start gap-3">
             <MessageSquareWarning
               size={18}
               strokeWidth={1.8}
               aria-hidden="true"
-              className="mt-px shrink-0 text-amber-600 dark:text-amber-400"
+              className="mt-px shrink-0 text-warning-text"
             />
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <p className="text-[14px] text-amber-700 dark:text-amber-400">
+                <p className="text-[14px] text-warning-text">
                   Returned to submitter for clarification
                 </p>
                 <Badge variant="warning">Awaiting response</Badge>
@@ -136,7 +136,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                 v{currentVersion.version}.
               </p>
               {clarificationNote && (
-                <blockquote className="mt-3 rounded-lg border-l-2 border-amber-500/50 bg-background/60 px-3.5 py-2.5 text-[13px] text-foreground">
+                <blockquote className="mt-3 rounded-lg border-l-2 border-warning/50 bg-background/60 px-3.5 py-2.5 text-[13px] text-foreground">
                   {clarificationNote}
                 </blockquote>
               )}
@@ -154,7 +154,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
           className={`flex items-start gap-3 rounded-2xl border p-5 ${
             outcome === "rejected"
               ? "border-destructive/30 bg-destructive/5"
-              : "border-emerald-500/30 bg-emerald-500/5"
+              : "border-success/30 bg-success/5"
           }`}
         >
           {outcome === "rejected" ? (
@@ -164,7 +164,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
               size={17}
               strokeWidth={1.8}
               aria-hidden="true"
-              className="mt-px shrink-0 text-emerald-600 dark:text-emerald-400"
+              className="mt-px shrink-0 text-success-text"
             />
           )}
           <div>
@@ -186,15 +186,15 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
 
       {/* Documents missing — blocks the decision (13.5) */}
       {state === "documents-incomplete" && (
-        <div className="flex items-start gap-3 rounded-2xl border border-amber-500/40 bg-amber-500/5 p-5">
+        <div className="flex items-start gap-3 rounded-2xl border border-warning/40 bg-warning/5 p-5">
           <FileWarning
             size={17}
             strokeWidth={1.8}
             aria-hidden="true"
-            className="mt-px shrink-0 text-amber-600 dark:text-amber-400"
+            className="mt-px shrink-0 text-warning-text"
           />
           <div>
-            <p className="text-[14px] text-amber-700 dark:text-amber-400">
+            <p className="text-[14px] text-warning-text">
               {missingDocs.length} required document{missingDocs.length === 1 ? "" : "s"} not attached
             </p>
             <p className="mt-1.5 text-[13px] leading-relaxed text-foreground/90">
@@ -249,7 +249,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             {VERSION_DIFF.map((row) => (
               <li
                 key={row.field}
-                className={`px-5 py-3 ${row.changed ? "bg-amber-500/5" : ""}`}
+                className={`px-5 py-3 ${row.changed ? "bg-warning/5" : ""}`}
               >
                 <p className="mb-1.5 text-[12px] text-muted-foreground">{row.field}</p>
                 <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-4">
@@ -266,11 +266,11 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                     size={14}
                     strokeWidth={1.8}
                     aria-hidden="true"
-                    className={row.changed ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground/40"}
+                    className={row.changed ? "text-warning-text" : "text-muted-foreground/40"}
                   />
                   <span
                     className={`text-[13px] tabular ${
-                      row.changed ? "text-emerald-700 dark:text-emerald-400" : "text-muted-foreground"
+                      row.changed ? "text-success-text" : "text-muted-foreground"
                     }`}
                   >
                     {row.current}
@@ -316,7 +316,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                         size={15}
                         strokeWidth={1.8}
                         aria-hidden="true"
-                        className={isMissing ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground"}
+                        className={isMissing ? "text-warning-text" : "text-muted-foreground"}
                       />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-[13px] text-foreground">{d.name}</span>
@@ -375,7 +375,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
           <Button
             variant="outline"
             onClick={() => setReturnOpen(true)}
-            className="border-amber-500/40 text-amber-700 hover:bg-amber-500/10 dark:text-amber-400"
+            className="border-warning/40 text-warning-text hover:bg-warning/10"
           >
             <MessageSquareWarning size={15} strokeWidth={1.9} aria-hidden="true" />
             Return for clarification

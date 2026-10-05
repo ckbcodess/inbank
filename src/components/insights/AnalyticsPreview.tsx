@@ -18,7 +18,7 @@ const CashflowChart = dynamic(
   () => import("./CashflowChart").then((m) => m.CashflowChart),
   {
     ssr: false,
-    loading: () => <div className="h-[260px] w-full animate-pulse rounded-xl bg-muted/30" />,
+    loading: () => <div className="h-[260px] w-full skeleton-shimmer rounded-xl bg-muted/30" />,
   }
 );
 

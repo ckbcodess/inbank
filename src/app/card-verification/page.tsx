@@ -78,7 +78,7 @@ export default function CardVerificationPage() {
             </div>
           ) : step === "verified" ? (
             <div className="flex flex-col items-center gap-3 py-4 text-center" role="status">
-              <div className="flex size-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <div className="flex size-12 items-center justify-center rounded-2xl bg-success/10 text-success-text">
                 <CheckCircle2 size={26} strokeWidth={1.8} aria-hidden="true" />
               </div>
               <h1 className="text-[18px] tracking-[-0.01em]">Card verified</h1>

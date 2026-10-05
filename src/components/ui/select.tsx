@@ -92,10 +92,9 @@ function SelectTrigger({
       data-size={size}
       data-active={isActive ? "true" : undefined}
       className={cn(
-        "flex w-full items-center justify-between gap-2 rounded-xl border border-input bg-background px-3.5 py-2 text-[14.5px] text-foreground transition-colors outline-none select-none",
-        "focus:outline-none focus:border-foreground focus-visible:outline-none focus-visible:border-foreground focus:ring-0 focus-visible:ring-0",
-        "dark:focus:border-white/80 dark:focus-visible:border-white/80",
-        "disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-0 data-placeholder:text-muted-foreground data-[size=default]:min-h-11 data-[size=sm]:min-h-8 data-[size=sm]:rounded-lg *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-white/[0.07] dark:border-white/[0.12] dark:text-foreground cursor-pointer",
+        "flex w-full items-center justify-between gap-2 rounded-xl border border-field-border bg-background hover:bg-field-hover px-3.5 py-2 text-[14.5px] text-foreground transition-colors outline-none select-none",
+        "focus:outline-none focus-visible:outline-none focus-visible:border-field-border-focus focus:ring-0 focus-visible:ring-0",
+        "disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-0 data-placeholder:text-muted-foreground data-[size=default]:min-h-11 data-[size=sm]:min-h-8 data-[size=sm]:rounded-lg *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-field dark:text-foreground cursor-pointer",
         isActive &&
           "border-foreground/35 bg-muted/65 text-foreground font-medium dark:border-white/30 dark:bg-muted/40 shadow-xs",
         className
@@ -173,7 +172,7 @@ function SelectContent({
           data-slot="select-content"
           data-align-trigger={alignItemWithTrigger}
           className={cn(
-            "isolate z-50 max-h-[min(var(--available-height,22rem),22rem)] min-w-(--anchor-width) w-max max-w-[min(calc(100vw-2rem),26rem)] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-xl p-1.5 text-popover-foreground shadow-2xl border border-border dark:border-[#333] duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 relative bg-popover dark:bg-[#1a1a1a] dark:text-[#f3f3f3] **:data-[slot$=-item]:focus:bg-accent dark:**:data-[slot$=-item]:focus:bg-[#282828] **:data-[slot$=-item]:data-highlighted:bg-accent dark:**:data-[slot$=-item]:data-highlighted:bg-[#282828] **:data-[slot$=-separator]:bg-foreground/5",
+            "isolate z-50 max-h-[min(var(--available-height,22rem),22rem)] min-w-(--anchor-width) w-max max-w-[min(calc(100vw-2rem),26rem)] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-xl p-1.5 text-foreground shadow-2xl border border-border duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 relative bg-menu **:data-[slot$=-item]:focus:bg-menu-item-hover **:data-[slot$=-item]:data-highlighted:bg-menu-item-hover **:data-[slot$=-separator]:bg-foreground/5",
             className
           )}
           {...props}
@@ -209,7 +208,7 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg py-2 pr-8 pl-2.5 text-[13.5px] text-foreground outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-highlighted:bg-accent data-highlighted:text-accent-foreground dark:text-[#f0f0f0] dark:hover:bg-[#282828] dark:focus:bg-[#282828] dark:data-highlighted:bg-[#282828] data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
+        "relative flex w-full cursor-pointer items-center justify-between gap-3 rounded-lg py-2 pr-8 pl-2.5 text-[13.5px] text-foreground outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-highlighted:bg-accent data-highlighted:text-accent-foreground dark:text-foreground dark:hover:bg-menu-item-hover dark:focus:bg-menu-item-hover dark:data-highlighted:bg-menu-item-hover data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
         className
       )}
       {...props}

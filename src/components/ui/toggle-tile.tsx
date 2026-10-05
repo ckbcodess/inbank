@@ -35,7 +35,7 @@ interface ToggleTileProps {
 }
 
 const TILE =
-  "group flex min-h-[72.5px] w-full items-center justify-between gap-4 rounded-[16px] border border-[var(--tile-border)] bg-transparent p-4 text-left";
+  "group flex min-h-[72.5px] w-full items-center justify-between gap-4 rounded-[16px] border border-[var(--border)] bg-transparent p-4 text-left";
 const ROW = "group flex w-full items-center justify-between gap-4 px-1 py-2 text-left";
 
 export function ToggleTile({

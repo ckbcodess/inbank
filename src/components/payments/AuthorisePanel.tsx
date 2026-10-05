@@ -183,7 +183,7 @@ export function AuthorisePanel({
         </div>
 
         <div className="flex items-center justify-center gap-2 pt-1 text-[12px] text-muted-foreground">
-          <ShieldCheck size={14} strokeWidth={1.8} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <ShieldCheck size={14} strokeWidth={1.8} className="shrink-0 text-success-text" />
           <span>Secured by End-to-End Encryption · Never share your PIN or OTP</span>
         </div>
       </div>
@@ -258,7 +258,7 @@ export function AuthorisePanel({
                       ? "border-2 border-destructive/70 bg-destructive/10 dark:bg-destructive/15"
                       : isFilled
                       ? "bg-foreground dark:bg-white scale-100 shadow-xs"
-                      : "bg-[#f0f0ee] border border-[#e4e4e2] dark:bg-[var(--tile)] dark:border-transparent"
+                      : "bg-tile border border-border dark:bg-[var(--tile)] dark:border-transparent"
                   )}
                 />
               );
@@ -274,7 +274,7 @@ export function AuthorisePanel({
               <button
                 type="button"
                 onClick={() => onMethodChange("otp")}
-                className="group flex items-center justify-center gap-2 text-[13.5px] font-normal sm:font-medium text-[#747472] hover:text-foreground dark:text-[#999999] dark:hover:text-white transition-colors cursor-pointer"
+                className="group flex items-center justify-center gap-2 text-[13.5px] font-normal sm:font-medium text-muted-foreground hover:text-foreground dark:hover:text-white transition-colors cursor-pointer"
               >
                 {/* 14x14 Phone Icon matching Figma Vector */}
                 <svg
@@ -283,7 +283,7 @@ export function AuthorisePanel({
                   viewBox="0 0 14 14"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-                  className="shrink-0 text-[#a3a29f] group-hover:text-foreground dark:text-[#747472] dark:group-hover:text-white transition-colors"
+                  className="shrink-0 text-muted-foreground group-hover:text-foreground dark:group-hover:text-white transition-colors"
                   aria-hidden="true"
                 >
                   <path
@@ -350,7 +350,7 @@ export function AuthorisePanel({
               <button
                 type="button"
                 onClick={() => onMethodChange("pin")}
-                className="mt-2 flex items-center justify-center gap-2 text-[13.5px] text-[#747472] hover:text-foreground dark:text-[#999999] dark:hover:text-white transition-colors cursor-pointer"
+                className="mt-2 flex items-center justify-center gap-2 text-[13.5px] text-muted-foreground hover:text-foreground dark:hover:text-white transition-colors cursor-pointer"
               >
                 <KeyRound size={14} strokeWidth={1.8} />
                 <span>Use 4-digit Transaction PIN instead</span>

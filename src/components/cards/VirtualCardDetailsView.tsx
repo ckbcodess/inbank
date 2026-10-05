@@ -63,6 +63,7 @@ import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { toast } from "sonner";
 import { ActionTile } from "@/components/ui/action-tile";
+import { RoundAction } from "@/components/ui/round-action";
 import { KeypadIcon } from "@/components/ui/keypad-icon";
 import { cn } from "@/lib/utils";
 import { useContextualBack } from "@/lib/contextual-back";
@@ -110,48 +111,6 @@ export interface VirtualCardDetailsViewProps {
   initialTab?: string;
   /** Dev Mode: extra state groups from the route (the page-level loading / empty / error states). */
   extraDevGroups?: DevStateGroup[];
-}
-
-/** A quick action on the card: a round button with its label underneath. The one row of "do it now". */
-function RoundAction({
-  icon: Icon,
-  label,
-  href,
-  onClick,
-  disabled,
-  title,
-}: {
-  icon: React.ComponentType<{ size?: number; strokeWidth?: number; "aria-hidden"?: boolean | "true" | "false" }>;
-  label: string;
-  href?: string;
-  onClick?: () => void;
-  disabled?: boolean;
-  title?: string;
-}) {
-  const body = (
-    <>
-      <span
-        className={cn(
-          "flex size-14 items-center justify-center rounded-full transition-[background-color,transform] duration-hover ease-settle group-active:scale-95",
-          "bg-primary text-[var(--action-icon)] group-hover:bg-primary-hover",
-        )}
-      >
-        <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
-      </span>
-      <span className="text-[13px] text-foreground">{label}</span>
-    </>
-  );
-  const cls =
-    "group flex cursor-pointer flex-col items-center gap-2 outline-none disabled:cursor-not-allowed disabled:opacity-45";
-  return href ? (
-    <Link href={href} title={title} className={cls}>
-      {body}
-    </Link>
-  ) : (
-    <button type="button" onClick={onClick} disabled={disabled} title={title} className={cls}>
-      {body}
-    </button>
-  );
 }
 
 /** A row in the card's list: the app's default tile (as on Account Details), with the current value before the chevron. */
@@ -831,15 +790,15 @@ export function VirtualCardDetailsView({
 
                   <div className="space-y-2.5 pt-1 text-[13px] text-muted-foreground">
                     <div className="flex items-start gap-2.5">
-                      <Check size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                      <Check size={16} className="text-success-text shrink-0 mt-0.5" />
                       <span>Set your 4-digit PIN for ATM cash withdrawals and POS retail purchases</span>
                     </div>
                     <div className="flex items-start gap-2.5">
-                      <Check size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                      <Check size={16} className="text-success-text shrink-0 mt-0.5" />
                       <span>Unlock daily spend limits, card blocking, and balance management</span>
                     </div>
                     <div className="flex items-start gap-2.5">
-                      <Check size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                      <Check size={16} className="text-success-text shrink-0 mt-0.5" />
                       <span>Enable contactless tap-to-pay and online merchant payments</span>
                     </div>
                   </div>
@@ -914,7 +873,7 @@ export function VirtualCardDetailsView({
   ) : fundsAccount ? (
     <Link
       href={`/accounts/${fundsAccount.id}`}
-      className="group mx-auto flex h-8 max-w-full items-center justify-center gap-2 text-[14px] outline-none"
+      className="group mx-auto flex h-8 max-w-full items-center justify-center gap-2 rounded-md text-[14px] outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <span className="text-muted-foreground">Linked to</span>
       <span className="truncate text-foreground group-hover:underline group-hover:underline-offset-4">{fundsAccount.name}</span>
@@ -1335,7 +1294,7 @@ export function VirtualCardDetailsView({
                       <span className="text-[14.5px] font-medium text-foreground truncate">
                         {effectiveCard.courierRider.name}
                       </span>
-                      <span className="text-[10.5px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium border border-emerald-500/20">
+                      <span className="text-[10.5px] px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text font-medium border border-success/20">
                         Rider Assigned
                       </span>
                     </div>
@@ -1494,7 +1453,7 @@ export function VirtualCardDetailsView({
                 <select
                   value={topUpSourceAccountId}
                   onChange={(e) => setTopUpSourceAccountId(e.target.value)}
-                  className="w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 py-2.5 text-[13.5px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                  className="w-full rounded-xl border border-border/80 dark:border-field-border bg-muted/40 dark:bg-field px-3 py-2.5 text-[13.5px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
                 >
                   {availableAccounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
@@ -1861,8 +1820,8 @@ export function VirtualCardDetailsView({
           </DialogHeader>
 
           <DialogBody>
-            <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 text-[12.5px] flex items-start gap-2.5">
-              <AlertTriangle size={18} className="shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
+            <div className="p-3.5 rounded-xl bg-warning/10 dark:bg-warning/40 border border-warning/30 text-warning-text text-[12.5px] flex items-start gap-2.5">
+              <AlertTriangle size={18} className="shrink-0 text-warning-text mt-0.5" />
               <span>
                 Once you submit the replacement, this card (•••• {maskedLast4}) is blocked
                 {isFundable ? " and its balance moves to the new card" : ""}. Next, check the

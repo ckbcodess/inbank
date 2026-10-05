@@ -275,7 +275,7 @@ export function MoneyActions({
                   ? "bg-primary text-primary-foreground group-hover:bg-primary-hover"
                   : hero
                     ? HERO_GLASS
-                    : "border border-[var(--tile-border)] bg-[var(--tile)] text-foreground group-hover:bg-[var(--tile-hover)]",
+                    : "border border-[var(--border)] bg-[var(--tile)] text-foreground group-hover:bg-[var(--tile-hover)]",
               )}
             >
               <Icon size={18} strokeWidth={1.8} />
@@ -498,7 +498,7 @@ export function BalanceFigure({
   return (
     <div className={cn("flex items-center gap-2 sm:gap-4", className)}>
       {loading ? (
-        <span className="h-[34px] w-56 animate-pulse rounded-lg bg-muted/60 sm:w-64" aria-label="Loading balance" />
+        <span className="h-[34px] w-56 skeleton-shimmer rounded-lg bg-muted/60 sm:w-64" aria-label="Loading balance" />
       ) : (
         <span className={cn("tabular leading-none tracking-[0.01em] text-foreground", FIGURE_SIZE[size])}>
           {/* A smaller currency code on a phone lets the digits carry the line. */}
@@ -879,7 +879,7 @@ export function AnalyticsCard({
   if (loading) {
     return (
       <Card className={className}>
-        <div className="h-[260px] animate-pulse rounded-xl bg-muted/60" aria-label="Loading My Spends" />
+        <div className="h-[260px] skeleton-shimmer rounded-xl bg-muted/60" aria-label="Loading My Spends" />
       </Card>
     );
   }

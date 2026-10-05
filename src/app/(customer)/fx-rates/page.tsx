@@ -181,7 +181,7 @@ export default function FxRatesPage() {
               {/* Stacked Pills with Overlap Swap */}
               <div className="flex flex-col w-full">
                 {/* Top Input Card */}
-                <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3.5 sm:px-5 sm:py-4 shadow-xs transition-colors focus-within:border-foreground/30">
+                <div className="flex items-center justify-between rounded-2xl border border-field-border bg-field px-4 py-3.5 sm:px-5 sm:py-4 shadow-xs transition-colors focus-within:border-field-border-focus focus-within:bg-field-focus">
                   <div className="relative flex-1 min-w-0 flex items-center pr-3">
                     <span
                       aria-hidden="true"
@@ -317,7 +317,7 @@ export default function FxRatesPage() {
                       </div>
                       <span
                         className={`mt-0.5 inline-flex items-center gap-1 text-[11.5px] tabular font-medium ${
-                          up ? "text-[var(--pay-cash,#17c858)]" : "text-destructive"
+                          up ? "text-success-text" : "text-destructive"
                         }`}
                       >
                         {up ? (
@@ -377,7 +377,7 @@ export default function FxRatesPage() {
                         <td className="px-4 py-3.5 text-right">
                           <span
                             className={`inline-flex items-center justify-end gap-1 tabular font-medium ${
-                              up ? "text-[var(--pay-cash,#17c858)]" : "text-destructive"
+                              up ? "text-success-text" : "text-destructive"
                             }`}
                           >
                             {up ? (

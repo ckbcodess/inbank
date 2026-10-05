@@ -59,7 +59,7 @@ export default function ReturnForClarificationDialog({
       <DialogContent size="md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <MessageSquareWarning size={18} strokeWidth={1.9} className="text-amber-600 dark:text-amber-400" />
+            <MessageSquareWarning size={18} strokeWidth={1.9} className="text-warning-text" />
             <span>Return for clarification</span>
           </DialogTitle>
         </DialogHeader>
@@ -102,7 +102,7 @@ export default function ReturnForClarificationDialog({
                     />
                     <span className="flex-1">{doc.name}</span>
                     {doc.status === "missing" && (
-                      <span className="text-[12px] text-amber-600 dark:text-amber-400">Missing</span>
+                      <span className="text-[12px] text-warning-text">Missing</span>
                     )}
                   </label>
                 ))}

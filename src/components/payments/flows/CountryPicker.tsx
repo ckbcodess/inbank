@@ -56,7 +56,7 @@ export function CountryPicker({
         onClick={() => setOpen(true)}
         className={
           triggerClassName ??
-          "flex h-13 w-full cursor-pointer items-center gap-3 rounded-2xl border border-border/80 bg-card px-4 text-left text-[15px] transition-colors hover:bg-muted/30"
+          "flex h-13 w-full cursor-pointer items-center gap-3 rounded-2xl border border-field-border bg-field px-4 text-left text-[15px] transition-colors hover:bg-field-hover"
         }
       >
         {selected && <CountryFlag code={selected.code} size={24} />}
@@ -92,7 +92,7 @@ export function CountryPicker({
                 placeholder="Search"
                 aria-label="Search countries"
                 autoComplete="off"
-                className="h-11 w-full rounded-xl border border-border/80 bg-card pl-10 pr-3 text-[14.5px] text-foreground outline-none transition-all focus:border-ring focus:ring-1 focus:ring-ring/30"
+                className="h-11 w-full rounded-xl border border-field-border bg-field pl-10 pr-3 text-[14.5px] text-foreground outline-none transition-all focus:border-field-border-focus focus:ring-0"
               />
             </div>
           </div>

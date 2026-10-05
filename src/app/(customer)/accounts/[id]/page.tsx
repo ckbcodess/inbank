@@ -49,6 +49,7 @@ import LinkSourceAccountModal, { type ModalScreen } from "@/components/dashboard
 import { useCardLinkReturn } from "@/lib/card-link";
 import PageHeader from "@/components/layout/PageHeader";
 import { ActionTile } from "@/components/ui/action-tile";
+import { RoundAction } from "@/components/ui/round-action";
 import { ToggleTile } from "@/components/ui/toggle-tile";
 import { ShareDetailsDialog } from "@/components/accounts/ShareDetailsDialog";
 
@@ -153,19 +154,9 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
         <>
           <div className="flex flex-col gap-6">
             <BalanceCard account={account} isDefault={isDefault} />
-            <div className="flex gap-4 sm:gap-6">
-              <Button onClick={() => setFundOpen(true)} className="h-11 flex-1 gap-2 rounded-lg text-[14px] drop-shadow-sm">
-                <Plus size={18} strokeWidth={1.9} aria-hidden="true" />
-                Top up
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setShareOpen(true)}
-                className="h-11 flex-1 gap-2 rounded-lg bg-card text-[14px]"
-              >
-                <Share size={17} strokeWidth={1.8} aria-hidden="true" />
-                Share details
-              </Button>
+            <div className="flex w-full items-start justify-evenly">
+              <RoundAction icon={Plus} label="Top up" onClick={() => setFundOpen(true)} />
+              <RoundAction icon={Share} label="Share details" onClick={() => setShareOpen(true)} />
             </div>
           </div>
 

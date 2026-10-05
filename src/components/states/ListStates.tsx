@@ -21,7 +21,7 @@ export function ListSkeleton({ rows = 6, columns = 5 }: { rows?: number; columns
           {Array.from({ length: columns }).map((_, c) => (
             <div
               key={c}
-              className="h-3.5 rounded-md bg-muted/60 animate-pulse"
+              className="skeleton-shimmer h-3.5 rounded-md bg-muted/60"
               style={{
                 width: c === 0 ? "22%" : c === columns - 1 ? "12%" : "16%",
                 animationDelay: `${(r * columns + c) * 40}ms`,

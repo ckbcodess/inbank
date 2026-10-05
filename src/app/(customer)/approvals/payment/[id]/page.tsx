@@ -105,13 +105,13 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
           className={`flex items-start gap-3 rounded-2xl border p-5 ${
             outcome === "rejected"
               ? "border-destructive/30 bg-destructive/5"
-              : "border-emerald-500/30 bg-emerald-500/5"
+              : "border-success/30 bg-success/5"
           }`}
         >
           {outcome === "rejected" ? (
             <XCircle size={17} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0 text-destructive" />
           ) : (
-            <CheckCircle2 size={17} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0 text-emerald-600 dark:text-emerald-400" />
+            <CheckCircle2 size={17} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0 text-success-text" />
           )}
           <div>
             <p className="text-[14px] text-foreground">

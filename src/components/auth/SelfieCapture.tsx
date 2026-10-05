@@ -332,11 +332,11 @@ export default function SelfieCapture({
         <div
           className={`relative flex size-48 sm:size-56 items-center justify-center overflow-hidden rounded-full border-4 transition-colors duration-200 bg-muted/40 shadow-inner ${
             capturedImage
-              ? "border-emerald-500/80"
+              ? "border-success/80"
               : facePosition === "centered"
-              ? "border-emerald-500 ring-4 ring-emerald-500/20"
+              ? "border-success ring-4 ring-success/20"
               : facePosition === "off_center" || facePosition === "too_close"
-              ? "border-amber-500/80 ring-4 ring-amber-500/15"
+              ? "border-warning/80 ring-4 ring-warning/15"
               : "border-primary/40"
           }`}
         >
@@ -350,7 +350,7 @@ export default function SelfieCapture({
               {/* A camera snapshot (data URL) — nothing for the optimiser to do. */}
               <Image src={capturedImage} alt="Captured selfie" fill unoptimized className="object-cover" />
               <div className="absolute inset-0 flex items-center justify-center bg-black/15">
-                <div className="flex size-11 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm">
+                <div className="flex size-11 items-center justify-center rounded-full bg-success text-white shadow-sm">
                   <Check size={22} strokeWidth={2.8} />
                 </div>
               </div>
@@ -368,9 +368,9 @@ export default function SelfieCapture({
               <div
                 className={`pointer-events-none absolute inset-3 rounded-full border-2 transition-all duration-200 ${
                   facePosition === "centered"
-                    ? "border-emerald-400/90 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
+                    ? "border-success/90 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
                     : facePosition === "off_center" || facePosition === "too_close"
-                    ? "border-amber-400/80 border-dashed"
+                    ? "border-warning/80 border-dashed"
                     : "border-white/40 border-dashed"
                 }`}
               />
@@ -403,19 +403,19 @@ export default function SelfieCapture({
           <div
             className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-medium transition-all duration-150 animate-in fade-in ${
               facePosition === "centered"
-                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                ? "bg-success/10 text-success-text"
                 : facePosition === "off_center" || facePosition === "too_close"
-                ? "bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                ? "bg-warning/10 text-warning-text"
                 : "bg-muted text-muted-foreground"
             }`}
           >
             {facePosition === "centered" ? (
-              <Check size={13} strokeWidth={2.5} className="text-emerald-600 dark:text-emerald-400" />
+              <Check size={13} strokeWidth={2.5} className="text-success-text" />
             ) : (
               <div
                 className={`size-1.5 rounded-full ${
                   facePosition === "off_center" || facePosition === "too_close"
-                    ? "bg-amber-500 animate-pulse"
+                    ? "bg-warning animate-pulse"
                     : "bg-muted-foreground"
                 }`}
               />

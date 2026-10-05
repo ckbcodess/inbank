@@ -35,9 +35,9 @@ export function PhoneInput({
     <div
       data-slot="phone-input"
       className={cn(
-        "flex h-11 w-full items-center gap-2 rounded-lg border border-input bg-transparent px-3.5 text-[14px] transition-colors outline-none",
-        "focus-within:outline-none focus-within:border-foreground focus-within:ring-0",
-        "dark:border-white/[0.12] dark:bg-white/[0.07] dark:focus-within:border-white/80 dark:focus-within:bg-white/[0.10]",
+        "flex h-11 w-full items-center gap-2 rounded-lg border border-field-border bg-field px-3.5 text-[14px] transition-colors outline-none",
+        "focus-within:outline-none focus-within:border-field-border-focus focus-within:ring-0",
+        "hover:bg-field-hover focus-within:bg-field-focus",
         "has-aria-invalid:border-destructive has-aria-invalid:ring-0",
         disabled && "pointer-events-none opacity-50",
         className

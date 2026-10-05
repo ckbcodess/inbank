@@ -361,7 +361,7 @@ export function FirstRunWelcome({
     <Dialog open onOpenChange={() => {}}>
       <DialogContent
         size="lg"
-        className="overflow-hidden sm:max-w-[812px] p-2.5 sm:p-3 border border-border/80 bg-card dark:bg-[#181818] shadow-2xl sm:rounded-[20px]"
+        className="overflow-hidden sm:max-w-[812px] p-2.5 sm:p-3 border border-border/80 bg-card shadow-2xl sm:rounded-[20px]"
       >
         <button
           type="button"
@@ -670,7 +670,7 @@ export function FirstRunWelcome({
                                   step="any"
                                   value={amount}
                                   onChange={(e) => setAmount(e.target.value)}
-                                  className="h-10.5 pl-14 text-[14.5px] font-medium bg-card border-border/80 rounded-xl"
+                                  className="h-10.5 pl-14 text-[14.5px] font-medium rounded-xl"
                                   required
                                   autoFocus
                                 />
@@ -802,7 +802,7 @@ export function FirstRunWelcome({
                                   step="any"
                                   value={amount}
                                   onChange={(e) => setAmount(e.target.value)}
-                                  className="h-10.5 pl-14 text-[14.5px] font-medium bg-card border-border/80 rounded-xl"
+                                  className="h-10.5 pl-14 text-[14.5px] font-medium rounded-xl"
                                   required
                                 />
                               </div>
@@ -865,7 +865,7 @@ export function FirstRunWelcome({
                                 step="any"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
-                                className="h-10.5 pl-14 text-[14.5px] font-medium bg-card border-border/80 rounded-xl"
+                                className="h-10.5 pl-14 text-[14.5px] font-medium rounded-xl"
                                 required
                               />
                             </div>
@@ -982,7 +982,7 @@ export function FirstRunWelcome({
                 {step === "success" && (
                   <div className="flex flex-1 flex-col justify-between h-full py-2">
                     <div className="flex flex-col items-center text-center gap-4 pt-6">
-                      <div className="flex size-14 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-2xs">
+                      <div className="flex size-14 items-center justify-center rounded-2xl bg-success/15 text-success-text shadow-2xs">
                         <CheckCircle2 size={28} strokeWidth={1.9} />
                       </div>
 
@@ -1087,7 +1087,7 @@ const PersistentSplitArt = memo(function PersistentSplitArt() {
           "radial-gradient(ellipse at center, #ffd400 0%, #ffbb00 100%)",
       }}
     >
-      <div className="absolute left-[79px] top-[98px] h-[538px] w-[625px] rounded-[8px] border-8 border-[#2a2a2a] overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.22)] bg-[#141414]">
+      <div className="absolute left-[79px] top-[98px] h-[538px] w-[625px] rounded-[8px] border-8 border-[var(--device-frame)] overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.22)] bg-[var(--device-screen)]">
         <Image
           src="/welcome-dashboard-preview.png"
           alt=""

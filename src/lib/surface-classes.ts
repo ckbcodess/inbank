@@ -14,15 +14,20 @@
  * Tailwind to detect and emit the utility.
  */
 
+/**
+ * Eight elevation levels, three surface colours: the page raise (levels 1 and 2), a floating layer such as a menu,
+ * popover or sheet (3 and 4), and one stacked on another (5 to 8). Light mode is white from level 3 up, so more
+ * colours would never have shown.
+ */
 export const SURFACE_BG: Record<number, string> = {
   1: "bg-surface-1",
-  2: "bg-surface-2",
-  3: "bg-surface-3",
-  4: "bg-surface-4",
-  5: "bg-surface-5",
-  6: "bg-surface-6",
-  7: "bg-surface-7",
-  8: "bg-surface-8",
+  2: "bg-surface-1",
+  3: "bg-surface-2",
+  4: "bg-surface-2",
+  5: "bg-surface-3",
+  6: "bg-surface-3",
+  7: "bg-surface-3",
+  8: "bg-surface-3",
 };
 
 export const SURFACE_SHADOW: Record<number, string> = {

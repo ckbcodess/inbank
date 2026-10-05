@@ -321,10 +321,10 @@ export default function LocateUsPage() {
                     <span
                       className={`text-[11px] font-medium px-2 py-0.5 rounded-md shrink-0 uppercase tracking-wider ${
                         loc.type === "branch"
-                          ? "bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                          ? "bg-warning/10 text-warning-text"
                           : loc.type === "atm"
-                          ? "bg-blue-500/10 text-blue-700 dark:text-blue-400"
-                          : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                          ? "bg-info/10 text-info-text"
+                          : "bg-success/10 text-success-text"
                       }`}
                     >
                       {loc.type === "branch" ? "Branch" : loc.type === "atm" ? "ATM" : "Deposit"}
@@ -362,8 +362,8 @@ export default function LocateUsPage() {
 
                 {/* Actions Footer */}
                 <div className="flex items-center justify-between gap-2 pt-4 mt-3 border-t border-border/60">
-                  <div className="flex items-center gap-1.5 text-[11.5px] text-emerald-600 dark:text-emerald-400">
-                    <span className="size-2 rounded-full bg-emerald-500" />
+                  <div className="flex items-center gap-1.5 text-[11.5px] text-success-text">
+                    <span className="size-2 rounded-full bg-success" />
                     <span>Open for Service</span>
                   </div>
 

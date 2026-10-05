@@ -108,7 +108,7 @@ export function ProxyPayFlow({
                   }
                 }}
                 placeholder="kwame.b"
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card pl-9 pr-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                className="h-13 w-full rounded-2xl border border-field-border bg-field pl-9 pr-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all"
               />
             </div>
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}

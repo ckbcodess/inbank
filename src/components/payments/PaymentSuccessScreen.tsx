@@ -116,19 +116,19 @@ function GcbEagleEmblem({ className, idPrefix = "gcb-eagle" }: { className?: str
         fillRule="evenodd"
         clipRule="evenodd"
         d={pathG}
-        className="fill-[#1e293b] dark:fill-[#F6F6F5] transition-colors"
+        className="fill-foreground transition-colors"
       />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
         d={pathC}
-        className="fill-[#1e293b] dark:fill-[#F6F6F5] transition-colors"
+        className="fill-foreground transition-colors"
       />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
         d={pathB}
-        className="fill-[#1e293b] dark:fill-[#F6F6F5] transition-colors"
+        className="fill-foreground transition-colors"
       />
 
       {/* Soaring Golden Eagle */}
@@ -136,7 +136,7 @@ function GcbEagleEmblem({ className, idPrefix = "gcb-eagle" }: { className?: str
         fillRule="evenodd"
         clipRule="evenodd"
         d={pathEagle}
-        fill="#F6BF36"
+        className="fill-primary"
       />
 
       {/* Specular White Sheen Passing Across the Eagle */}
@@ -443,14 +443,14 @@ export function PaymentSuccessScreen({
                 initial={{ scale: 0.85, opacity: 0.45 }}
                 animate={{ scale: 1.55, opacity: 0 }}
                 transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-                className="pointer-events-none absolute inset-0 rounded-full border border-[#04C500]/40"
+                className="pointer-events-none absolute inset-0 rounded-full border border-success/40"
               />
               <motion.div
                 key={`pulse-ring-2-${burstKey}`}
                 initial={{ scale: 0.85, opacity: 0.25 }}
                 animate={{ scale: 2.0, opacity: 0 }}
                 transition={{ duration: 1.1, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-                className="pointer-events-none absolute inset-0 rounded-full border border-[#04C500]/20"
+                className="pointer-events-none absolute inset-0 rounded-full border border-success/20"
               />
             </>
           )}
@@ -490,7 +490,7 @@ export function PaymentSuccessScreen({
                   damping: 22,
                   mass: 0.85,
                 }}
-                className="group relative z-10 flex size-[100px] sm:size-[108px] items-center justify-center rounded-full bg-gradient-to-br from-[#039600] to-[#04C500] text-white shadow-[0_4px_16px_rgba(0,0,0,0.08)] ring-1 ring-white/20 select-none overflow-hidden"
+                className="group relative z-10 flex size-[100px] sm:size-[108px] items-center justify-center rounded-full bg-gradient-to-br from-success to-success text-white shadow-[0_4px_16px_rgba(0,0,0,0.08)] ring-1 ring-white/20 select-none overflow-hidden"
               >
                 {/* Static top highlight for depth — no loop, the badge settles still. */}
                 <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/25 to-transparent" />
@@ -565,10 +565,10 @@ export function PaymentSuccessScreen({
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-          className="w-full max-w-[460px] rounded-[14px] border border-amber-500/30 bg-amber-500/5 p-4 flex flex-col gap-3 shadow-xs text-left"
+          className="w-full max-w-[460px] rounded-[14px] border border-warning/30 bg-warning/5 p-4 flex flex-col gap-3 shadow-xs text-left"
         >
-          <div className="flex items-center justify-between border-b border-amber-500/20 pb-2">
-            <span className="text-[12.5px] font-medium text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+          <div className="flex items-center justify-between border-b border-warning/20 pb-2">
+            <span className="text-[12.5px] font-medium text-warning-text flex items-center gap-1.5">
               <Sparkles size={13} />
               <span>ATM Withdrawal Voucher</span>
             </span>
@@ -605,7 +605,7 @@ export function PaymentSuccessScreen({
           initial={{ opacity: 0, y: -8, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -8 }}
-          className="w-full max-w-[460px] rounded-[10px] bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-center py-2.5 px-3 text-[13.5px]"
+          className="w-full max-w-[460px] rounded-[10px] bg-success/10 border border-success/20 text-success-text text-center py-2.5 px-3 text-[13.5px]"
         >
           🎉 Thank you! Your feedback helps us improve GCB Internet Banking.
         </motion.div>
@@ -617,7 +617,7 @@ export function PaymentSuccessScreen({
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="flex items-center justify-between px-[18px] py-[16px] rounded-[14px] border border-[#ebebe9] dark:border-border bg-[#f6f6f5] dark:bg-card w-full max-w-[460px] shadow-xs"
+          className="flex items-center justify-between px-[18px] py-[16px] rounded-[14px] border border-border dark:border-border bg-tile dark:bg-card w-full max-w-[460px] shadow-xs"
         >
           <span className="text-[14px] font-normal text-foreground">{saveBeneficiaryLabel}</span>
           <motion.button
@@ -660,7 +660,7 @@ export function PaymentSuccessScreen({
                 type="button"
                 onClick={card.onClick}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-3.5 rounded-[12px] border border-[#ebebe9] dark:border-border bg-[#f6f6f5] dark:bg-card py-4 px-2.5 hover:bg-muted/50 active:scale-[0.98] transition-all cursor-pointer group text-center shadow-xs",
+                  "flex flex-col items-center justify-center gap-3.5 rounded-[12px] border border-border dark:border-border bg-tile dark:bg-card py-4 px-2.5 hover:bg-muted/50 active:scale-[0.98] transition-all cursor-pointer group text-center shadow-xs",
                   card.active && "border-primary ring-1 ring-primary/40 bg-muted/25"
                 )}
               >
@@ -689,7 +689,7 @@ export function PaymentSuccessScreen({
           <button
             type="button"
             onClick={onSecondaryAction}
-            className="flex-1 rounded-[8px] border border-[#ebebe9] dark:border-border bg-card px-5 py-3 text-[14px] font-medium text-foreground hover:bg-muted/60 active:scale-[0.99] transition-all cursor-pointer text-center shadow-xs"
+            className="flex-1 rounded-[8px] border border-border dark:border-border bg-card px-5 py-3 text-[14px] font-medium text-foreground hover:bg-muted/60 active:scale-[0.99] transition-all cursor-pointer text-center shadow-xs"
           >
             {secondaryActionLabel}
           </button>

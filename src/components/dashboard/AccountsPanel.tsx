@@ -31,7 +31,7 @@ function CopyAccountNumberButton({ number }: { number: string }) {
         aria-label="Copy account number"
       >
         {copied ? (
-          <Check size={11} strokeWidth={2.2} className="text-emerald-600 dark:text-emerald-400" />
+          <Check size={11} strokeWidth={2.2} className="text-success-text" />
         ) : (
           <Copy size={11} strokeWidth={1.8} />
         )}

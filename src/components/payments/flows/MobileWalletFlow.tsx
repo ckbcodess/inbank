@@ -96,10 +96,7 @@ export function MobileWalletFlow({
     },
   });
   const ownPhone = state.wPhone || REGISTERED_WALLET.phone;
-  const pickOwnWallet = (w: OwnWallet) => {
-    own.pick(w);
-    setCollapsed(true);
-  };
+  const pickOwnWallet = (w: OwnWallet) => own.pick(w);
 
   const isPhoneValid = isSelf || isCompleteGhanaMobile(state.wPhone);
   const isNetworkValid = isSelf || Boolean(state.wNetwork);
@@ -142,7 +139,7 @@ export function MobileWalletFlow({
       {/* 2. Destination (Mobile Wallet) */}
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
-        {isVerified && isCollapsed && !own.choosing ? (
+        {!isSelf && isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={isSelf ? `My ${state.wNetwork || REGISTERED_WALLET.network}` : (verifiedName || state.wName || `Wallet ${state.wPhone}`)}
             subtitle={
@@ -196,7 +193,7 @@ export function MobileWalletFlow({
                     }
                   }}
                   aria-label="Mobile number"
-                  className="h-13 rounded-2xl border-border/80 bg-card px-4 text-[15px] focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 dark:border-border/80 dark:bg-card dark:focus-within:bg-card"
+                  className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
                 />
               </>
             )}

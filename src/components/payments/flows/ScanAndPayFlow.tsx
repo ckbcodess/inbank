@@ -128,10 +128,10 @@ export function ScanAndPayFlow({
             {/* Viewfinder Scanner Tab */}
             {activeTab === "camera" && !isMerchantSelected && (
               <div className="flex flex-col gap-3">
-                <div className="relative flex aspect-video w-full flex-col items-center justify-center overflow-hidden rounded-xl border border-border bg-[#111] text-white">
+                <div className="relative flex aspect-video w-full flex-col items-center justify-center overflow-hidden rounded-xl border border-border bg-primary-foreground text-white">
                   {/* Viewfinder Target Box */}
-                  <div className="relative size-44 rounded-2xl border-2 border-dashed border-amber-400/80 bg-white/5 flex items-center justify-center">
-                    <div className="absolute inset-x-2 top-0 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent animate-pulse shadow-[0_0_8px_#f59e0b]" />
+                  <div className="relative size-44 rounded-2xl border-2 border-dashed border-warning/80 bg-white/5 flex items-center justify-center">
+                    <div className="absolute inset-x-2 top-0 h-0.5 bg-gradient-to-r from-transparent via-warning to-transparent animate-pulse shadow-[0_0_8px_#f59e0b]" />
                     <Camera size={28} className="text-white/40" />
                   </div>
 
@@ -140,7 +140,7 @@ export function ScanAndPayFlow({
                     type="button"
                     onClick={() => setFlashlight(!flashlight)}
                     className={`absolute bottom-3 right-3 flex size-8 items-center justify-center rounded-full transition-colors cursor-pointer ${
-                      flashlight ? "bg-amber-400 text-black" : "bg-white/10 text-white hover:bg-white/20"
+                      flashlight ? "bg-warning text-black" : "bg-white/10 text-white hover:bg-white/20"
                     }`}
                     aria-label="Toggle flashlight"
                   >
@@ -211,15 +211,15 @@ export function ScanAndPayFlow({
 
             {/* Resolved Merchant Confirmation Banner */}
             {isMerchantSelected && (
-              <div className="flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3.5">
+              <div className="flex items-center justify-between rounded-xl border border-success/20 bg-success/5 p-3.5">
                 <div className="flex items-center gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-success/10 text-success-text shrink-0">
                     <Store size={20} strokeWidth={1.8} />
                   </div>
                   <div className="flex flex-col">
                     <div className="flex items-center gap-1.5">
                       <span className="text-[14px] font-medium text-foreground">{state.qrMerchant}</span>
-                      <CheckCircle2 size={14} strokeWidth={1.9} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <CheckCircle2 size={14} strokeWidth={1.9} className="text-success-text shrink-0" />
                     </div>
                     <span className="text-[11.5px] text-muted-foreground">
                       Terminal: {state.qrCode || "Universal QR Verified"}

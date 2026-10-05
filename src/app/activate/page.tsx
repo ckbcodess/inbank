@@ -475,7 +475,7 @@ function ActivateContent() {
               </div>
             </div>
 
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 shrink-0">
+            <span className="inline-flex items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-[11px] font-medium text-pill-success-text shrink-0">
               <Check size={12} strokeWidth={2.5} />
               Verified
             </span>
@@ -495,7 +495,7 @@ function ActivateContent() {
                 >
                   <SelectTrigger
                     id="primary-account-select"
-                    className="h-11 min-h-11 py-2 px-3.5 w-full rounded-xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center justify-between"
+                    className="h-11 min-h-11 py-2 px-3.5 w-full rounded-xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center justify-between"
                   >
                     <SelectValue placeholder="Select default account">
                       {selectedPrimaryAccount ? (

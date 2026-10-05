@@ -383,7 +383,7 @@ export function QuickFundFlow({
                     step="any"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    className="h-11 pl-14 text-[15px] font-medium bg-card rounded-xl"
+                    className="h-11 pl-14 text-[15px] font-medium rounded-xl"
                     required
                   />
                 </div>
@@ -472,7 +472,7 @@ export function QuickFundFlow({
           {/* STAGE 4: SUCCESS */}
           {stage === "success" && (
             <div className="flex flex-col items-center text-center gap-4 py-4">
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shadow-2xs">
+              <div className="flex size-14 items-center justify-center rounded-2xl bg-success/15 text-success-text shadow-2xs">
                 <CheckCircle2 size={24} strokeWidth={1.9} />
               </div>
 

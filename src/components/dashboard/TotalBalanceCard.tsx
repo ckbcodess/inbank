@@ -25,7 +25,7 @@ export function TotalBalanceCard({ accounts }: TotalBalanceCardProps) {
   return (
     <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card shadow-xs transition-colors">
       {/* Top Banner (Yellow Header in light mode, Obsidian Gold in dark mode) */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#f6bf36] via-[#f5ba2f] to-[#e8ab1c] text-[#121212] px-4.5 sm:px-6 pt-5 sm:pt-7 pb-4 sm:pb-5 dark:from-[#211a0c] dark:via-[#191409] dark:to-[#141008] dark:text-neutral-100 dark:border-b dark:border-amber-500/20">
+      <div className="relative overflow-hidden bg-gradient-to-br from-[var(--balance-card-1)] via-[var(--balance-card-2)] to-[var(--balance-card-3)] text-primary-foreground px-4.5 sm:px-6 pt-5 sm:pt-7 pb-4 sm:pb-5 dark:text-foreground dark:border-b dark:border-warning/20">
         {/* Background Eagle Graphic Watermark */}
         <div className="pointer-events-none absolute -top-8 -right-4 h-[200px] w-[280px] select-none opacity-25 mix-blend-color-burn dark:opacity-10 dark:mix-blend-screen dark:invert">
           <Image
@@ -92,7 +92,7 @@ export function TotalBalanceCard({ accounts }: TotalBalanceCardProps) {
                 <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="text-[13.5px] font-medium text-foreground">{acc.name}</span>
                   {acc.isJoint && (
-                    <span className="rounded-md border border-amber-500/25 bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-300">
+                    <span className="rounded-md border border-warning/25 bg-warning/10 px-1.5 py-0.5 text-[10px] font-medium text-warning-text">
                       Joint
                     </span>
                   )}

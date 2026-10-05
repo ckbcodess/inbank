@@ -36,7 +36,7 @@ export function MiniCardThumbnail({ card, className }: MiniCardThumbnailProps) {
 
       {/* Top Row: Mini EMV Chip / Contact element */}
       <div className="relative z-10 flex items-center justify-between">
-        <div className="size-2 rounded-[2px] bg-amber-400/90 border border-amber-600/40 shadow-2xs" />
+        <div className="size-2 rounded-[2px] bg-warning/90 border border-warning/40 shadow-2xs" />
       </div>
 
       {/* Bottom Row: Clean Scheme Brand Logo */}

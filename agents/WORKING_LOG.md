@@ -295,12 +295,81 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
   Mastercard circles use `--mc-red` / `--mc-orange`; the two-tone icon outline uses `--duo-outline` (via
   `.duo-outline`); the dark shell background is the `--surface` token; delivery-tracker and dashboard card amber
   chips use `bg-primary`.
-- **Gap:** 66 raw hex colours remain in components, besides the sandbox page: PaymentSuccessScreen (9), PaymentFlow
-  (9), CardDeliveryTracker (7), RequestCardFlow (6), TransactionList (5), AuthorisePanel (4), TourOverlay (4),
-  SuggestedForYouCard (4), MobilePromoBanner (3), VirtualCardModal (3), and a few single ones. Each needs a token
-  chosen, so they were left. The sandbox dashboard page is a throwaway and is untouched. The logo SVG files were
-  not checked for the old amber.
-
+- **Decision:** every colour in the components is a token now, and the colour tuner finds all of them itself.
+  - New tokens: status text (`--success-text`, `--warning-text`, `--destructive-text`, `--info-text`) and `--info`; fields
+    (`--field`, `--field-hover`, `--field-border`, `--field-border-focus`, used by Input, PhoneInput, Textarea, Select,
+    the PIN boxes); menus (`--menu*`); the device frame; the three promo banners and the balance card (three stops each);
+    the avatar tints (`--tint-*-bg`, plus `-text` for four); the Mastercard marks.
+  - Tailwind palette classes (emerald, amber, rose, blue and their kin) became `success`, `warning`, `destructive` and
+    `info`; tile greys became `tile`, `tile-hover`, `tile-border`; the `dark:bg-white/[0.07]` field look became the field
+    tokens. A `dark:` class that repeated the plain one was dropped. Shade differences are gone: one token per meaning.
+  - The tuner reads every custom property defined on `:root` / `.dark` that the browser can read as a colour, so a new
+    token appears with no list to update. See-through ones get an opacity slider.
+  - Payee and biller initials circles use `--avatar-*` (a pastel in both modes, dark ink on top), separate from the
+    `--tint-*` pairs that flip for the dashboard suggestions. They briefly shared one set, which turned the teal, sand and
+    green avatars dark-on-dark in dark mode; fixed.
+  - The hand-built field and dropdown boxes (the 58px selects, the 48px phone and text fields, About 90 class strings in
+    27 files: account pickers, network pickers, group and request forms, the "for myself" dropdown) now use the field
+    tokens too, so the tuner's field fill, border and focus border move every input and dropdown together. Their focus
+    ring became the field focus border. Read-only info boxes of the same height keep the card colours.
+  - Field hover and focus are separate tokens: `--field-hover` (a faint wash on hover, now a visible grey on light, a
+    faint white on dark) and `--field-focus` (the fill while typing). Both apply to Input, PhoneInput, Textarea, the
+    select trigger, the PIN boxes and the hand-built field boxes. A dropdown's own menu rows hover with
+    `--menu-item-hover`.
+  - A second sweep caught the fields the height filter missed: the amount box (`AmountInput`, now with the field fill,
+    border, hover and focus fill), the search boxes, the date picker, the admin and transaction filters, and the group
+    forms. The badge and checkbox focus styles were left as they were.
+  - Pruned: 42 tokens gone. Unused: the five `--chart-*` and five `--chart-secondary-*`, the eight `--sidebar-*`, the brand
+    gradient pair, `--surface-raised`, the glass pair and the `.glass` helper, `--ripple-opacity`, `--avatar-plum`.
+    Merged into the one that stays (same values, or close enough): `--input` into `--border`, `--tile-border` and
+    `--menu-border` into `--border`, `--secondary` into `--muted`, `--secondary-foreground` into `--accent-foreground`,
+    `--card-foreground`, `--popover-foreground` and `--menu-foreground` into `--foreground`, and four avatar tints
+    (sky into blue, mint into green, violet into lilac, amber into yellow). The eight elevation surfaces became three
+    (`--surface-1` page raise, `--surface-2` floating layer, `--surface-3` stacked); levels 1 to 8 still exist and map onto
+    them in `surface-classes.ts`, with the colours of the levels that were actually reached (3 and 5) kept as they were.
+  - Candidates left alone: `--cat-*` and `--spend-*` are two category palettes for different charts (merging changes
+    one chart's colours); `--balance-card-*` and `--banner-gold-*` share their dark stops.
+  - Amount fields: besides the shared `AmountInput`, the amount boxes in the onboarding funding card, Quick Fund, the FX
+    converter, the FX rates page, and the dashboard deposit and pay-a-biller boxes had their own card or muted fills and
+    now use the field fill, border and focus like every other input.
+  - The field tokens (`--field`, `--field-hover`, `--field-focus`, `--field-border`, `--field-border-focus`) are opaque colours
+    now. They were see-through (a 4 to 12% wash), and the tuner keeps a token's opacity when you pick a new colour, so changing
+    the hue of a 4% hover looked like nothing happening. Opaque means the colour you pick is the colour you see.
+  - Chips and pills have their own tokens. Chips (the segmented filters on Cards, Insights, Beneficiaries, Approvals, account
+    expenses, the liquidity deck, the group forms and the theme switch): `--chip` (rail), `--chip-selected`,
+    `--chip-selected-foreground`, `--chip-foreground`. Status pills: `--pill-{success,info,warning,destructive,neutral}` and
+    `-text`, defaulting to the status colours (derived with `color-mix`, so they follow `--success` etc. until set). Used by
+    `Badge` (new `info` variant), the card status pill, and the hand-built "Default", "Corporate", "Personal" and "Verified"
+    pills. Icon circles in the liquidity deck still use the status colours. The rails that were 40 to 80% grey are now the full
+    `--chip`, and the selected chip in a few places is the dark `--chip-selected` instead of the card colour.
+  - A dropdown trigger shows its dark focus border only for keyboard focus (`focus-visible`). It used to show it on any focus,
+    so after a mouse pick (focus returns to the trigger) it looked stuck in focus.
+  - Colour tuner "where is this used": tap a token's name and the page scrolls to an element that uses it, with a pink
+    outline and "--token - 2 of 9"; tap again for the next. Uses are read from the stylesheet (every rule that sets a
+    property from `var(--token)`), plus tokens built from it (tapping `--success` also finds the pills). It only sees
+    what is on the page you are on, and states like hover are found by their class, so they may not look different.
+  - New `--focus-ring` token (starts as `--ring`) for the keyboard ring on the round actions and the Linked-to link.
+  - Dark values set by Ransford (pasted from the tuner): field `#181818`, field border `#292929`, hover `#1c1c1c`, focus
+    `#181818`, focus border `#424242`, tile hover `#212121`, ring `#f9c632`, duo outline `#52606b`, hero border `#1e2224`,
+    account card `#93a7ba14`, sheet rim `#c5d6dd80`, surface `#080808`. If the hero tuner's defaults
+    (`HERO_WAVE_DEFAULTS`) carry the hero border, they may need the same change.
+  - `RoundAction` (the round amber button with its label under it) is a shared component now (`components/ui/round-action.tsx`).
+    The card page and the account detail page both use it: Account Details has Top up and Share details as two round
+    actions, spread evenly, in place of the filled and outlined buttons.
+  - Token values set by Ransford (pasted from the tuner): light `--pill-info`, `--pill-info-text`, `--pill-warning`,
+    `--pill-warning-text`, `--foreground #2e2e2e`, `--muted-foreground #8a8a8a`, `--primary-foreground #321800`, field
+    focus border `#8a8a8a`, primary hover `#fedb71`, hero border `#8d9aa5`; dark chips (`#1a1a1a`, `#303030`, text `#6e6e6e`),
+    dark pills (success `#002e0d` / `#20df69`, info `#2e2e2e99` / `#c7c7c7`, warning `#ffc80029` / `#f9c632`) and
+    `--primary-foreground #321800`. `--action-icon` was the same colour as `--primary-foreground`, so it is gone.
+  - The colour tuner is development only: the layout mounts it only when `SHOW_DEMO_TOOLS` is true, the component returns
+    null in production, and `hydrateColorTuner` does nothing in production, so saved tuner colours never apply there.
+  - The header is lighter: the language switch and the theme switch moved into the profile menu (Light / Dark / System and
+    EN / FR / ES / ZH rows). The sign-in screens keep their own header controls.
+  - Not tokenised, on purpose: card artwork colours (`card-themes.ts`), flag and currency marks (`currency-logo.tsx`), the
+    white GCB logo mark on cards, white/black overlays on photos and cards (`bg-white/20`, `text-white`), the unused
+    `VirtualCardModal`, the sandbox dashboard page, and the hero-wave and eagle tuners' own defaults.
+- **Gap:** this was a bulk rewrite and was not looked at in a browser: check status colours (green, amber, red, blue),
+  the promo banners, avatar tints, inputs in dark mode, and the select menu once in each theme.
 - **Decision:** the card page's round actions are spread across the card's width (`justify-between`, 360px), like
   the Wise reference, instead of clustered in the middle.
 - **Discovery:** a **Colour tuner** dev tool (`ColorTuner`, store in `src/lib/color-tuner.ts`) is mounted in the root
@@ -319,6 +388,20 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
   empty row of the same height.
 - **Gap:** an inactive card no longer shows the "Needs Activation" badge on its face (the shared face has none); the
   page's Activate button and delivery banner say it. The inactive delivery hero still draws its own card.
+
+- **Decision:** loading skeletons shimmer: `.skeleton-shimmer` (a soft highlight sweeping each bone, `--skeleton-shine`,
+  still under `prefers-reduced-motion`) now drives every `Bone` in `PageSkeletons`, replacing the pulse. This reverses
+  the old "pulse only" rule in that file. The card detail skeleton was rebuilt to mirror the new page (back arrow and
+  name, card, caption, three round actions, five tiles), and the Dev Mode "Loading" state now shows it too.
+- **Note:** every loading skeleton now shimmers: `Bone`, the cards and list skeletons, the transaction detail, the dashboard
+  and insights placeholders. The pulses left are status, not skeletons: the camera dot, the link-source icons, the scan line,
+  and the blank full-screen Suspense fallbacks on login, mfa and activate.
+
+- **Decision:** "for myself" (Send to myself, Airtime and Data "My own number") is a dropdown, not a radio rail. The
+  registered number is already chosen, so the usual case needs no tap; any linked wallet is one pick away, and "Add
+  another of your numbers" (or "Link another wallet") is the last item. It no longer collapses into a summary after a
+  pick, and the amount and later fields show as soon as the default is in. The removed-wallet notice still shows.
+- **Gap:** cardless withdrawal's "for myself" still offers only the registered number, not the linked wallets.
 
 ---
 

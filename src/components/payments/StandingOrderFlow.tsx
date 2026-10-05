@@ -268,7 +268,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             .slice(0, 2)
             .toUpperCase() || "GP",
         rail: "group",
-        colorBg: "#fef3c7",
+        colorBg: "var(--avatar-yellow)",
       }));
     }
 
@@ -291,7 +291,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
         subtitle: `${formatGhPhone(w.phone)} · ${w.tag}`,
         initials: "ME",
         rail,
-        colorBg: "#fef9c3",
+        colorBg: "var(--avatar-yellow)",
       }));
       list = [...own, ...list.filter((r) => !r.id.includes("self"))];
     }
@@ -314,7 +314,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             .slice(0, 2)
             .toUpperCase() || "BN",
         rail: rail as string,
-        colorBg: "#e0eedd",
+        colorBg: "var(--avatar-green)",
       }));
 
     // Deduplicate by account/phone number
@@ -834,7 +834,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     value={f.destination}
                     onChange={(e) => set("destination", e.target.value.replace(/[^0-9]/g, ""))}
                     placeholder="Enter account number"
-                    className="numorainput h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                    className="numorainput h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all tabular"
                   />
                 </>
               )}
@@ -848,7 +848,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     value={f.destination}
                     onValueChange={handlePhoneChange}
                     aria-label="Mobile or wallet number"
-                    className="h-13 rounded-2xl border-border/80 bg-card px-4 text-[15px] focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 dark:border-border/80 dark:bg-card dark:focus-within:bg-card"
+                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
                   />
                 </>
               )}
@@ -867,7 +867,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       set("proxyId", cleaned ? `@${cleaned}` : "");
                     }}
                     placeholder="kwame.b"
-                    className="h-13 w-full rounded-2xl border border-border/80 bg-card pl-9 pr-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                    className="h-13 w-full rounded-2xl border border-field-border bg-field pl-9 pr-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all tabular"
                   />
                 </div>
               )}
@@ -901,7 +901,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       }
                     }}
                   >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                    <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
                       <SelectValue placeholder="Select group" />
                     </SelectTrigger>
                     <SelectContent>
@@ -938,7 +938,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     value={f.destination}
                     onValueChange={handlePhoneChange}
                     aria-label="Phone number"
-                    className="h-13 rounded-2xl border-border/80 bg-card px-4 text-[15px] focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 dark:border-border/80 dark:bg-card dark:focus-within:bg-card"
+                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
                   />
 
                   <Select
@@ -954,7 +954,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       if (open && isDestinationValid) setDetailsCollapsed(true);
                     }}
                   >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                    <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
                       <SelectValue placeholder="Select monthly bundle" />
                     </SelectTrigger>
                     <SelectContent>
@@ -977,7 +977,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     value={f.destination}
                     onValueChange={handlePhoneChange}
                     aria-label="Phone number"
-                    className="h-13 rounded-2xl border-border/80 bg-card px-4 text-[15px] focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 dark:border-border/80 dark:bg-card dark:focus-within:bg-card"
+                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
                   />
                 </>
               )}
@@ -1028,7 +1028,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       value={f.nickname}
                       onChange={(e) => set("nickname", e.target.value)}
                       placeholder="e.g. Monthly rent, Susu"
-                      className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none transition-all focus:border-ring focus:ring-1 focus:ring-ring/30"
+                      className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none transition-all focus:border-field-border-focus focus:ring-0"
                     />
                   </div>
 
@@ -1047,7 +1047,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     value={f.frequency}
                     onValueChange={(val) => val && set("frequency", val as InstructionFrequency)}
                   >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                    <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
                       <span className={cn("truncate", !f.frequency && "text-muted-foreground")}>{FREQUENCY_OPTIONS.find((o) => o.id === f.frequency)?.label ?? "Select frequency"}</span>
                     </SelectTrigger>
                     <SelectContent>
@@ -1068,7 +1068,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                         aria-label="Number of days"
                         value={f.intervalDays}
                         onChange={(e) => set("intervalDays", e.target.value.replace(/[^0-9]/g, "").slice(0, 3))}
-                        className="tabular h-11 w-20 rounded-xl border border-border/80 bg-card px-3 text-center text-[15px] text-foreground outline-none focus:border-ring"
+                        className="tabular h-11 w-20 rounded-xl border border-field-border bg-field px-3 text-center text-[15px] text-foreground outline-none focus:border-field-border-focus"
                       />
                       <span className="text-[13px] text-muted-foreground">days</span>
                     </div>
@@ -1090,7 +1090,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                         value={f.firstRun}
                         min={new Date().toISOString().slice(0, 10)}
                         onChange={(e) => set("firstRun", e.target.value)}
-                        className="tabular h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring"
+                        className="tabular h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus"
                       />
                     </div>
 
@@ -1101,7 +1101,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                           value={f.endCondition}
                           onValueChange={(val) => val && set("endCondition", val as "indefinite" | "date")}
                         >
-                          <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                          <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
                             <span className="truncate">{f.endCondition === "date" ? "On a date" : "Until I cancel"}</span>
                           </SelectTrigger>
                           <SelectContent>
@@ -1128,7 +1128,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                         value={f.endDate}
                         min={f.firstRun}
                         onChange={(e) => set("endDate", e.target.value)}
-                        className="tabular h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring"
+                        className="tabular h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus"
                       />
                     </div>
                   )}

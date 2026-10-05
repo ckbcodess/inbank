@@ -95,7 +95,7 @@ export function LiquidityDeck({
           </div>
 
           {/* Currency Pill Switcher */}
-          <div className="flex items-center gap-1 rounded-xl bg-muted/80 p-1 border border-border/60 text-[11px]">
+          <div className="flex items-center gap-1 rounded-xl bg-chip p-1 border border-border/60 text-[11px]">
             {(["GHS", "USD", "EUR", "GBP"] as const).map((curr) => (
               <button
                 key={curr}
@@ -103,8 +103,8 @@ export function LiquidityDeck({
                 onClick={() => setSelectedCurrency(curr)}
                 className={`rounded-lg px-2 py-0.5 transition-all ${
                   selectedCurrency === curr
-                    ? "bg-background text-foreground font-medium shadow-xs"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-chip-selected text-chip-selected-foreground font-medium shadow-xs"
+                    : "text-chip-foreground hover:text-chip-selected-foreground"
                 }`}
               >
                 {curr}
@@ -137,7 +137,7 @@ export function LiquidityDeck({
             <p className="text-[12px] text-muted-foreground mt-1">
               Across <strong className="text-foreground">{accounts.length}</strong> active account{accounts.length === 1 ? "" : "s"}
               {heldGhs > 0.01 && (
-                <span className="ml-1.5 text-amber-600 dark:text-amber-400">
+                <span className="ml-1.5 text-warning-text">
                   · ({formatMoney(heldGhs, "GHS", showAmounts)} in transit)
                 </span>
               )}
@@ -147,23 +147,23 @@ export function LiquidityDeck({
           {/* Mini Cashflow Pill */}
           <div className="flex items-center gap-2 bg-muted/50 border border-border/70 rounded-2xl p-2.5 text-[12px]">
             <div className="flex items-center gap-1.5 pr-2.5 border-r border-border">
-              <span className="flex size-5 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+              <span className="flex size-5 items-center justify-center rounded-full bg-success/10 text-success-text">
                 <ArrowDownLeft size={12} strokeWidth={2.5} />
               </span>
               <div>
                 <span className="text-[10px] text-muted-foreground block font-sans">Inflow</span>
-                <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+                <span className="text-success-text font-medium">
                   + {formatMoney(monthlyInflow, "GHS", showAmounts)}
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-1.5 pl-1">
-              <span className="flex size-5 items-center justify-center rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400">
+              <span className="flex size-5 items-center justify-center rounded-full bg-destructive/10 text-destructive-text">
                 <ArrowUpRight size={12} strokeWidth={2.5} />
               </span>
               <div>
                 <span className="text-[10px] text-muted-foreground block font-sans">Outflow</span>
-                <span className="text-rose-600 dark:text-rose-400 font-medium">
+                <span className="text-destructive-text font-medium">
                   − {formatMoney(monthlyOutflow, "GHS", showAmounts)}
                 </span>
               </div>
@@ -200,7 +200,7 @@ export function LiquidityDeck({
             onClick={onOpenBillPay}
             className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group cursor-pointer"
           >
-            <span className="flex size-9 items-center justify-center rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 transition-transform">
+            <span className="flex size-9 items-center justify-center rounded-full bg-info/10 text-info-text transition-transform">
               <Smartphone size={16} strokeWidth={2} />
             </span>
             <span className="text-[12px] font-medium text-foreground">Airtime/Data</span>
@@ -211,7 +211,7 @@ export function LiquidityDeck({
             onClick={onOpenTopUp}
             className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group cursor-pointer"
           >
-            <span className="flex size-9 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 transition-transform">
+            <span className="flex size-9 items-center justify-center rounded-full bg-success/10 text-success-text transition-transform">
               <CreditCard size={16} strokeWidth={2} />
             </span>
             <span className="text-[12px] font-medium text-foreground">Top Up Card</span>
@@ -222,7 +222,7 @@ export function LiquidityDeck({
               href="/payments/bulk"
               className="hidden sm:flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group"
             >
-              <span className="flex size-9 items-center justify-center rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 transition-transform">
+              <span className="flex size-9 items-center justify-center rounded-full bg-info/10 text-info-text transition-transform">
                 <Layers size={16} strokeWidth={2} />
               </span>
               <span className="text-[12px] font-medium text-foreground">Bulk Payroll</span>
@@ -232,7 +232,7 @@ export function LiquidityDeck({
               href="/payments"
               className="hidden sm:flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group"
             >
-              <span className="flex size-9 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 transition-transform">
+              <span className="flex size-9 items-center justify-center rounded-full bg-info/10 text-info-text transition-transform">
                 <Sparkles size={16} strokeWidth={2} />
               </span>
               <span className="text-[12px] font-medium text-foreground">More Services</span>

@@ -77,15 +77,15 @@ export default function TradeOfficerWorkstationPage({ params }: { params: Promis
       </section>
 
       {/* Exception flags */}
-      <section className="rounded-2xl border border-amber-500/40 bg-amber-500/5 p-5">
+      <section className="rounded-2xl border border-warning/40 bg-warning/5 p-5">
         <div className="flex items-start gap-3">
           <AlertTriangle
             size={17}
             strokeWidth={1.8}
-            className="mt-px shrink-0 text-amber-600 dark:text-amber-400"
+            className="mt-px shrink-0 text-warning-text"
           />
           <div>
-            <p className="text-[14px] text-amber-700 dark:text-amber-400">Exception flags</p>
+            <p className="text-[14px] text-warning-text">Exception flags</p>
             <ul className="mt-2 flex flex-col gap-1.5 text-[13px] text-foreground/90">
               <li>Commercial invoice quantity does not match bill of lading</li>
               <li>Certificate of origin not provided</li>

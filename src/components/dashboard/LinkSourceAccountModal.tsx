@@ -403,7 +403,7 @@ export default function LinkSourceAccountModal({
                       key={opt.to}
                       type="button"
                       onClick={() => setScreen(opt.to)}
-                      className="group flex items-center gap-4 rounded-2xl border border-[var(--tile-border)] bg-transparent p-4 text-left transition-colors hover:bg-muted/50 cursor-pointer"
+                      className="group flex items-center gap-4 rounded-2xl border border-[var(--border)] bg-transparent p-4 text-left transition-colors hover:bg-muted/50 cursor-pointer"
                     >
                       <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
                         <opt.icon size={17} strokeWidth={1.9} aria-hidden="true" />
@@ -606,7 +606,7 @@ export default function LinkSourceAccountModal({
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "internal_success" && (
               <div className="flex flex-col items-center gap-4 text-center py-2">
-                <div className="flex size-14 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <div className="flex size-14 items-center justify-center rounded-2xl bg-success/10 text-success-text">
                   <CheckCircle2 size={32} strokeWidth={1.8} />
                 </div>
 
@@ -640,7 +640,7 @@ export default function LinkSourceAccountModal({
                   </div>
                   <div className="flex justify-between py-0.5 text-muted-foreground">
                     <span>Status:</span>
-                    <span className="font-medium text-emerald-600 dark:text-emerald-400">Completed</span>
+                    <span className="font-medium text-success-text">Completed</span>
                   </div>
                 </div>
 
@@ -845,7 +845,7 @@ export default function LinkSourceAccountModal({
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "funding_success" && (
               <div className="flex flex-col items-center gap-4 text-center py-2">
-                <div className="flex size-14 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <div className="flex size-14 items-center justify-center rounded-2xl bg-success/10 text-success-text">
                   <CheckCircle2 size={32} strokeWidth={1.8} />
                 </div>
 
@@ -875,7 +875,7 @@ export default function LinkSourceAccountModal({
                   </div>
                   <div className="flex justify-between py-0.5 text-muted-foreground">
                     <span>Status:</span>
-                    <span className="font-medium text-emerald-600 dark:text-emerald-400">Completed</span>
+                    <span className="font-medium text-success-text">Completed</span>
                   </div>
                 </div>
 
@@ -909,7 +909,7 @@ export default function LinkSourceAccountModal({
                   </label>
                   {/* Same provider picker as Send & Pay → Mobile Wallet, with logos. */}
                   <Select value={newMomoOperator} onValueChange={(v) => v && setNewMomoOperator(v as NetworkOperator)}>
-                    <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+                    <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center">
                       <div className="flex items-center gap-3">
                         <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden border border-black/5 dark:border-white/10 p-0">
                           {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -141,11 +141,11 @@ export function InteractiveCardsHub({
 
             <div className="flex items-center gap-1.5">
               {isBlocked ? (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[10.5px] font-medium border border-rose-500/30">
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-pill-destructive text-pill-destructive-text text-[10.5px] font-medium border border-destructive/30">
                   <Lock size={10} /> Frozen
                 </span>
               ) : (
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10.5px] font-medium border border-emerald-500/30">
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text text-[10.5px] font-medium border border-success/30">
                   <Sparkles size={10} /> Active
                 </span>
               )}
@@ -196,7 +196,7 @@ export function InteractiveCardsHub({
           size="sm"
           onClick={toggleCardBlock}
           className={`h-9 text-[12.5px] gap-1.5 rounded-xl ${
-            isBlocked ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""
+            isBlocked ? "bg-success hover:bg-success text-white" : ""
           }`}
         >
           {isBlocked ? (

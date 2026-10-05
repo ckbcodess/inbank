@@ -129,7 +129,7 @@ export function DeliveryModeFields({
               value={value.recipientName}
               onChange={(e) => onChange({ recipientName: e.target.value })}
               placeholder="Full name"
-              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground/60"
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -141,7 +141,7 @@ export function DeliveryModeFields({
               value={value.address}
               onChange={(e) => onChange({ address: e.target.value })}
               placeholder="Street or digital address"
-              className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground/60"
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -152,7 +152,7 @@ export function DeliveryModeFields({
                 value={value.city}
                 onChange={(e) => onChange({ city: e.target.value })}
                 placeholder="City"
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+                className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground/60"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -161,7 +161,7 @@ export function DeliveryModeFields({
                 value={value.phone}
                 onValueChange={(phone) => onChange({ phone })}
                 aria-label="Delivery phone number"
-                className="h-13 rounded-2xl border-border/80 bg-card px-4 text-[15px] focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 dark:border-border/80 dark:bg-card dark:focus-within:bg-card"
+                className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
               />
             </div>
           </div>

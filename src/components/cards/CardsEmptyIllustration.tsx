@@ -21,7 +21,7 @@ export function CardsEmptyIllustration() {
         className="absolute left-[30px] top-[22px] flex aspect-[1.586/1] w-[140px] flex-col justify-between rounded-xl p-3 shadow-lg"
         style={{ backgroundColor: front }}
       >
-        <div className="h-4 w-6 rounded-[4px] bg-amber-300/90" />
+        <div className="h-4 w-6 rounded-[4px] bg-warning/90" />
         <div className="flex flex-col gap-1.5">
           <div className="h-1.5 w-20 rounded-full bg-white/35" />
           <div className="h-1.5 w-10 rounded-full bg-white/20" />

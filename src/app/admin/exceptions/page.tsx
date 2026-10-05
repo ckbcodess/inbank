@@ -53,7 +53,7 @@ export default function ExceptionsPage() {
 
       <section className="rounded-2xl border border-border bg-card">
         <div className="flex items-center gap-2 border-b border-border px-5 py-4">
-          <AlertTriangle size={16} strokeWidth={1.8} aria-hidden="true" className="text-amber-600 dark:text-amber-400" />
+          <AlertTriangle size={16} strokeWidth={1.8} aria-hidden="true" className="text-warning-text" />
           <h2 className="text-[15px] text-foreground">{exceptions.length} open exceptions</h2>
         </div>
 

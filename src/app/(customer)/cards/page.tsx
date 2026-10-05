@@ -333,11 +333,11 @@ function CardsPageContent() {
       {devState.simulation !== "clean" &&
         devState.simulation !== "all" &&
         activeSimulatedCard && (
-          <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-amber-500/40 bg-amber-500/5 px-4 py-2.5 text-[12.5px]">
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-4 py-2.5 text-[12.5px]">
             <div className="flex items-center gap-2 min-w-0">
               <Layers
                 size={14}
-                className="shrink-0 text-amber-600 dark:text-amber-400"
+                className="shrink-0 text-warning-text"
               />
               <span className="font-medium text-foreground">
                 Dev Mode Simulation:
@@ -371,11 +371,11 @@ function CardsPageContent() {
         )}
 
       {devState.simulation === "all" && (
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-amber-500/40 bg-amber-500/5 px-4 py-2.5 text-[12.5px]">
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-4 py-2.5 text-[12.5px]">
           <div className="flex items-center gap-2 min-w-0">
             <Layers
               size={14}
-              className="shrink-0 text-amber-600 dark:text-amber-400"
+              className="shrink-0 text-warning-text"
             />
             <span className="text-muted-foreground">
               Dev Mode: Showing all <strong>{allCards.length}</strong> mock
@@ -393,7 +393,7 @@ function CardsPageContent() {
       )}
 
       {/* Segmented Controls Filter (styled exactly like Payments Page) */}
-      <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-muted p-1">
+      <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-chip p-1">
         {(["all", "Virtual", "Debit", "Prepaid"] as const).map((t) => {
           const isActive = typeFilter === t;
           const label = t === "all" ? "All Cards" : t;
@@ -405,8 +405,8 @@ function CardsPageContent() {
               aria-pressed={isActive}
               className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 sm:px-4 sm:py-2 text-[12.5px] sm:text-[13px] whitespace-nowrap transition-all cursor-pointer ${
                 isActive
-                  ? "bg-background text-foreground shadow-sm font-medium"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
+                  : "text-chip-foreground hover:text-chip-selected-foreground"
               }`}
             >
               {label}

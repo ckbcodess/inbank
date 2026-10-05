@@ -111,31 +111,17 @@ export function DataBundleFlow({
       onChange("benName", "My number");
     },
   });
-  const selfBlock =
-    isPhoneValid && isCollapsed && !own.choosing ? (
-      <CollapsedDetailsBadge
-        title="My number"
-        subtitle={`${normalizeNetworkName(state.wNetwork)} · ${formatGhPhone(state.aPhone)} · ${own.selected?.tag ?? "Registered"}`}
-        icon={
-          getTelcoLogo(state.wNetwork) ? (
-            <Image src={getTelcoLogo(state.wNetwork)!} alt="" width={40} height={40} className="size-full rounded-full object-cover" />
-          ) : undefined
-        }
-        onChange={() => setCollapsed(false)}
-      />
-    ) : (
-      <OwnWalletPicker
-        variant="line"
-        wallets={own.wallets}
-        selectedPhone={state.aPhone}
-        accounts={accounts}
-        removedNotice={own.removedNotice}
-        onSelect={(w) => {
-          own.pick(w);
-          setCollapsed(true);
-        }}
-      />
-    );
+  // "My own number" is a dropdown with the registered line already chosen: nothing to collapse.
+  const selfBlock = (
+    <OwnWalletPicker
+      variant="line"
+      wallets={own.wallets}
+      selectedPhone={state.aPhone}
+      accounts={accounts}
+      removedNotice={own.removedNotice}
+      onSelect={own.pick}
+    />
+  );
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
       {/* 1. From Account */}
@@ -201,7 +187,7 @@ export function DataBundleFlow({
                 }
               }}
               aria-label="Phone number"
-              className="h-13 rounded-2xl border-border/80 bg-card px-4 text-[15px] focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 dark:border-border/80 dark:bg-card dark:focus-within:bg-card"
+              className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
             />
 
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}

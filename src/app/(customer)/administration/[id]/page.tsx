@@ -156,7 +156,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
                   </p>
                   {/* 13.7: the reason is stated explicitly — never a silent grey-out */}
                   {locked && (
-                    <p className="mt-1 flex items-start gap-1.5 text-[12.5px] text-amber-700 dark:text-amber-400">
+                    <p className="mt-1 flex items-start gap-1.5 text-[12.5px] text-warning-text">
                       <Info size={13} strokeWidth={1.9} aria-hidden="true" className="mt-px shrink-0" />
                       {reason}
                     </p>

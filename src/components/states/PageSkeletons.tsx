@@ -9,7 +9,7 @@
  *
  * Rules:
  * - Match the destination's layout, not a generic spinner. Pick the variant closest to the page.
- * - Pulse only; no shimmer sweeps. Pulsing stops under `prefers-reduced-motion`.
+ * - Every bone has a soft shimmer sweep (`.skeleton-shimmer`). It stops under `prefers-reduced-motion`.
  * - Say it once for assistive tech (`role="status"` + one sr-only line); the bones are `aria-hidden`.
  * - No text in a skeleton: nothing to translate, nothing to go stale.
  *
@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 
 /** One grey block. Everything below is built from these. */
 export function Bone({ className, style }: { className?: string; style?: CSSProperties }) {
-  return <div aria-hidden="true" className={cn("rounded-md bg-muted/60 motion-safe:animate-pulse", className)} style={style} />;
+  return <div aria-hidden="true" className={cn("skeleton-shimmer rounded-md bg-muted/60", className)} style={style} />;
 }
 
 /** The page frame: same vertical rhythm as a real page (`gap-5`), announced once to screen readers. */

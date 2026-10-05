@@ -108,7 +108,7 @@ export function CardTopUpFlow({
               }
             }}
           >
-            <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-border/80 bg-card text-left shadow-none flex items-center">
+            <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-field-border bg-field text-left shadow-none flex items-center">
               {!selectedCard ? (
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">

@@ -177,7 +177,7 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
               className="rounded-lg h-8 px-3 text-[13px] border-border/80"
             >
               {copied ? (
-                <Check size={14} className="text-emerald-600 dark:text-emerald-400" />
+                <Check size={14} className="text-success-text" />
               ) : (
                 <Share size={14} strokeWidth={1.8} />
               )}
@@ -232,7 +232,7 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
             <span
               className={cn(
                 "text-[34px] sm:text-[40px] tracking-[-0.03em] tabular-nums numorainput",
-                isCredit ? "text-emerald-600 dark:text-emerald-400" : "text-foreground"
+                isCredit ? "text-success-text" : "text-foreground"
               )}
             >
               {isCredit ? "+" : "-"}
@@ -261,7 +261,7 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
                   aria-label="Copy reference"
                 >
                   {copied ? (
-                    <Check size={13} className="text-emerald-600 dark:text-emerald-400" />
+                    <Check size={13} className="text-success-text" />
                   ) : (
                     <Copy size={13} strokeWidth={1.8} />
                   )}
@@ -505,7 +505,7 @@ function Band({
   children: React.ReactNode;
 }) {
   const toneClasses = {
-    warning: "border-amber-500/30 bg-amber-500/5 text-amber-700 dark:text-amber-400",
+    warning: "border-warning/30 bg-warning/5 text-warning-text",
     destructive: "border-destructive/30 bg-destructive/5 text-destructive",
     neutral: "border-border bg-muted/40 text-foreground",
   }[tone];

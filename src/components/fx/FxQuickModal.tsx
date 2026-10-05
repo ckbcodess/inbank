@@ -252,7 +252,7 @@ export function FxQuickModal() {
               {/* Conversion Inputs */}
               <div className="relative flex flex-col gap-2">
                 {/* "You Convert" Container */}
-                <div className="flex flex-col rounded-xl border border-border/80 bg-muted/30 p-3 transition-colors focus-within:border-foreground/30 focus-within:bg-card">
+                <div className="flex flex-col rounded-xl border border-field-border bg-field p-3 transition-colors focus-within:border-field-border-focus focus-within:bg-field-focus">
                   <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                     <span>You convert</span>
                     <span className="tabular text-[10.5px]">Available balance</span>
@@ -438,7 +438,7 @@ export function FxQuickModal() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Filter currencies (e.g. USD, EUR, GBP)..."
-                  className="h-8.5 w-full rounded-lg border border-border/70 bg-card pl-8 pr-3 text-[12.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-border transition-colors"
+                  className="h-8.5 w-full rounded-lg border border-field-border bg-field pl-8 pr-3 text-[12.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-border transition-colors"
                 />
               </div>
 

@@ -235,7 +235,7 @@ export default function AddAccountDialog({
                         "flex items-center gap-4 rounded-[16px] border p-4 text-left transition-colors",
                         selected
                           ? "border-foreground bg-transparent"
-                          : "border-[var(--tile-border)] bg-transparent hover:bg-muted/50",
+                          : "border-[var(--border)] bg-transparent hover:bg-muted/50",
                         already ? "cursor-default opacity-60 hover:bg-transparent" : "cursor-pointer",
                       )}
                     >
@@ -274,7 +274,7 @@ export default function AddAccountDialog({
           {view === "move" && picked && wallet && (
             <div className="flex flex-col gap-5">
               {/* From → to, with the amount, so nothing moves unseen. */}
-              <div className="flex items-center gap-3 rounded-[16px] border border-[var(--tile-border)] bg-transparent p-4">
+              <div className="flex items-center gap-3 rounded-[16px] border border-[var(--border)] bg-transparent p-4">
                 <span className="flex min-w-0 flex-1 flex-col items-start gap-1">
                   <span className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
                     <Wallet size={14} strokeWidth={1.8} aria-hidden="true" />

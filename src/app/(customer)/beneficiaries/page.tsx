@@ -628,7 +628,7 @@ export default function BeneficiariesPage() {
                 <CheckCircle2
                   size={13}
                   strokeWidth={2}
-                  className="shrink-0 text-emerald-600 dark:text-emerald-400"
+                  className="shrink-0 text-success-text"
                   aria-label="Verified"
                 />
               ) : (
@@ -812,7 +812,7 @@ export default function BeneficiariesPage() {
 
       {/* 3 Major Segmented Tabs: People, Billers, Groups (Figma Node 1374:35963) */}
       <div className="flex items-center justify-between">
-        <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-muted p-1">
+        <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-chip p-1">
           <button
             type="button"
             onClick={() => {
@@ -821,8 +821,8 @@ export default function BeneficiariesPage() {
             }}
             className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
               activeTab === "people"
-                ? "bg-background text-foreground shadow-sm font-medium"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
+                : "text-chip-foreground hover:text-chip-selected-foreground"
             }`}
           >
             <span>People</span>
@@ -839,8 +839,8 @@ export default function BeneficiariesPage() {
             }}
             className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
               activeTab === "billers"
-                ? "bg-background text-foreground shadow-sm font-medium"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
+                : "text-chip-foreground hover:text-chip-selected-foreground"
             }`}
           >
             <span>Billers</span>
@@ -857,8 +857,8 @@ export default function BeneficiariesPage() {
             }}
             className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
               activeTab === "groups"
-                ? "bg-background text-foreground shadow-sm font-medium"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
+                : "text-chip-foreground hover:text-chip-selected-foreground"
             }`}
           >
             <span>Groups</span>
@@ -886,7 +886,7 @@ export default function BeneficiariesPage() {
               ? "Search by utility provider, meter number, or network..."
               : "Search by group title, description, or member name..."
           }
-          className="w-full h-12 pl-11 pr-10 rounded-xl border border-border/70 bg-card/40 text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-colors"
+          className="w-full h-12 pl-11 pr-10 rounded-xl border border-field-border bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-ring focus:border-field-border-focus transition-colors"
         />
         {query && (
           <button
@@ -917,11 +917,11 @@ export default function BeneficiariesPage() {
                     isActive={isTypeActive}
                     onClear={isTypeActive ? () => setTypeFilter("all") : undefined}
                     clearLabel="Clear method filter"
-                    className="h-9.5 w-auto shrink-0 min-w-[145px] text-[12.5px] rounded-xl border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] shadow-xs"
+                    className="h-9.5 w-auto shrink-0 min-w-[145px] text-[12.5px] rounded-xl border-border/80 dark:border-field-border bg-muted/40 dark:bg-field shadow-xs"
                   >
                     <div className="flex items-center gap-1.5 truncate">
                       {isTypeActive && (
-                        <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
+                        <span className="size-1.5 rounded-full bg-success shrink-0" />
                       )}
                       <SelectValue placeholder="All Methods">
                         {(val: string) => {
@@ -947,7 +947,7 @@ export default function BeneficiariesPage() {
             <Select value={groupBy} onValueChange={(val) => setGroupBy(val as GroupByOption)}>
               <SelectTrigger
                 size="sm"
-                className="h-9.5 w-auto shrink-0 min-w-[145px] text-[12.5px] rounded-xl border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] shadow-xs"
+                className="h-9.5 w-auto shrink-0 min-w-[145px] text-[12.5px] rounded-xl border-border/80 dark:border-field-border bg-muted/40 dark:bg-field shadow-xs"
               >
                 <SelectValue placeholder="Group by">
                   {(val: string) => {
@@ -1159,7 +1159,7 @@ export default function BeneficiariesPage() {
                   setForm((p) => ({ ...p, transactionType: val as TransactionType }));
                 }}
               >
-                <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px] shadow-xs">
+                <SelectTrigger className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[13.5px] shadow-xs">
                   <div className="flex items-center gap-2.5 truncate">
                     {(() => {
                       const meta = TYPE_CONFIG[form.transactionType] || TYPE_CONFIG.bank;
@@ -1202,7 +1202,7 @@ export default function BeneficiariesPage() {
                     value={form.network}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, network: val }))}
                   >
-                    <SelectTrigger className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px] shadow-xs">
+                    <SelectTrigger className="h-11 rounded-xl border border-field-border bg-field px-3.5 text-[13.5px] shadow-xs">
                       <SelectValue placeholder="Select network" />
                     </SelectTrigger>
                     <SelectContent>
@@ -1223,7 +1223,7 @@ export default function BeneficiariesPage() {
                     value={form.phoneNumber}
                     onValueChange={(v) => setForm((p) => ({ ...p, phoneNumber: v }))}
                     aria-label="Wallet phone number"
-                    className="h-11 rounded-xl border-border/80 bg-muted/40 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 shadow-xs"
+                    className="h-11 rounded-xl border-field-border bg-field focus-within:border-field-border-focus focus-within:ring-0 shadow-xs"
                   />
                 </div>
               </div>
@@ -1240,7 +1240,7 @@ export default function BeneficiariesPage() {
                     value={form.bankName}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
                   >
-                    <SelectTrigger className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px] shadow-xs">
+                    <SelectTrigger className="h-11 rounded-xl border border-field-border bg-field px-3.5 text-[13.5px] shadow-xs">
                       <SelectValue placeholder="Select destination bank" />
                     </SelectTrigger>
                     <SelectContent className="max-h-56">
@@ -1262,7 +1262,7 @@ export default function BeneficiariesPage() {
                     value={form.accountNumber}
                     onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
                     placeholder={form.bankName === "GCB Bank" ? "13-digit GCB Account" : "Recipient account number"}
-                    className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all shadow-xs"
+                    className="h-11 rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all shadow-xs"
                   />
                 </div>
               </div>
@@ -1294,7 +1294,7 @@ export default function BeneficiariesPage() {
                       });
                     }}
                   >
-                    <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px]">
+                    <SelectTrigger className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[13.5px]">
                       <SelectValue placeholder="Select bill / utility provider" />
                     </SelectTrigger>
                     <SelectContent className="max-h-72">
@@ -1333,7 +1333,7 @@ export default function BeneficiariesPage() {
                     value={form.billerReference}
                     onChange={(e) => setForm((p) => ({ ...p, billerReference: e.target.value }))}
                     placeholder={billerRefPlaceholder}
-                    className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
                   />
                 </div>
               </div>
@@ -1350,7 +1350,7 @@ export default function BeneficiariesPage() {
                     value={form.network}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, network: val }))}
                   >
-                    <SelectTrigger className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px]">
+                    <SelectTrigger className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[13.5px]">
                       <SelectValue placeholder="Select network provider" />
                     </SelectTrigger>
                     <SelectContent>
@@ -1371,7 +1371,7 @@ export default function BeneficiariesPage() {
                     value={form.phoneNumber}
                     onValueChange={(v) => setForm((p) => ({ ...p, phoneNumber: v }))}
                     aria-label="Phone number to top up"
-                    className="h-11 rounded-xl border-border/80 bg-muted/40 focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30"
+                    className="h-11 rounded-xl border-field-border bg-field focus-within:border-field-border-focus focus-within:ring-0"
                   />
                 </div>
               </div>
@@ -1395,7 +1395,7 @@ export default function BeneficiariesPage() {
                       setForm((p) => ({ ...p, proxyId: cleaned ? `@${cleaned}` : "" }));
                     }}
                     placeholder="kwame.b"
-                    className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] pl-8 pr-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                    className="h-11 w-full rounded-xl border border-field-border bg-field pl-8 pr-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
                   />
                 </div>
               </div>
@@ -1415,7 +1415,7 @@ export default function BeneficiariesPage() {
                         setForm((p) => ({ ...p, country: val, bankName: defaultBank }));
                       }}
                     >
-                      <SelectTrigger className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px]">
+                      <SelectTrigger className="h-11 rounded-xl border border-field-border bg-field px-3 text-[13px]">
                         <SelectValue placeholder="Country" />
                       </SelectTrigger>
                       <SelectContent className="max-h-56">
@@ -1434,7 +1434,7 @@ export default function BeneficiariesPage() {
                       value={form.bankName}
                       onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
                     >
-                      <SelectTrigger className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px]">
+                      <SelectTrigger className="h-11 rounded-xl border border-field-border bg-field px-3 text-[13px]">
                         <SelectValue placeholder="Select bank" />
                       </SelectTrigger>
                       <SelectContent className="max-h-56">
@@ -1456,7 +1456,7 @@ export default function BeneficiariesPage() {
                       value={form.swiftBic}
                       onChange={(e) => setForm((p) => ({ ...p, swiftBic: e.target.value.toUpperCase() }))}
                       placeholder="e.g. BARCGB22"
-                      className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground uppercase tracking-wider tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                      className="h-11 rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground uppercase tracking-wider tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
                     />
                   </div>
 
@@ -1467,7 +1467,7 @@ export default function BeneficiariesPage() {
                       value={form.accountNumber}
                       onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
                       placeholder="GB29 BARC 2020 1555"
-                      className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                      className="h-11 rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
                     />
                   </div>
                 </div>
@@ -1479,7 +1479,7 @@ export default function BeneficiariesPage() {
                     value={form.address}
                     onChange={(e) => setForm((p) => ({ ...p, address: e.target.value }))}
                     placeholder="Street, City, Postal Code"
-                    className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                    className="h-11 rounded-xl border border-field-border bg-field px-3.5 text-[13.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
                   />
                 </div>
               </div>
@@ -1498,7 +1498,7 @@ export default function BeneficiariesPage() {
                       setForm((p) => ({ ...p, country: val, bankName: defaultBank }));
                     }}
                   >
-                    <SelectTrigger className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[13px]">
+                    <SelectTrigger className="h-11 rounded-xl border border-field-border bg-field px-3.5 text-[13px]">
                       <SelectValue placeholder="Select African destination" />
                     </SelectTrigger>
                     <SelectContent className="max-h-56">
@@ -1516,7 +1516,7 @@ export default function BeneficiariesPage() {
                     value={form.bankName}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
                   >
-                    <SelectTrigger className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px]">
+                    <SelectTrigger className="h-11 rounded-xl border border-field-border bg-field px-3 text-[13px]">
                       <SelectValue placeholder="Select bank" />
                     </SelectTrigger>
                     <SelectContent className="max-h-56">
@@ -1532,7 +1532,7 @@ export default function BeneficiariesPage() {
                     value={form.accountNumber}
                     onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
                     placeholder="Account / IBAN"
-                    className="h-11 rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                    className="h-11 rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
                   />
                 </div>
               </div>
@@ -1548,7 +1548,7 @@ export default function BeneficiariesPage() {
                 value={form.name}
                 onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                 placeholder={activeTab === "billers" ? "e.g. ECG PowerApp" : "e.g. Kojo Mensah"}
-                className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
               />
             </div>
 
@@ -1562,7 +1562,7 @@ export default function BeneficiariesPage() {
                 value={form.nickname}
                 onChange={(e) => setForm((p) => ({ ...p, nickname: e.target.value }))}
                 placeholder="e.g. Landlord, Monthly Groceries"
-                className="h-11 w-full rounded-xl border border-border/80 dark:border-white/[0.12] bg-muted/40 dark:bg-white/[0.07] px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all"
+                className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
               />
             </div>
           </DialogBody>

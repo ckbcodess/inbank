@@ -52,7 +52,7 @@ export default function StandingOrderDetailPage() {
       <div className="flex flex-col gap-8">
         <PageHeader title="Standing Order" backTo={back} />
         <div className="mx-auto flex w-full max-w-[560px] flex-col items-start gap-4 px-1">
-          <CheckCircle2 size={22} strokeWidth={1.8} className="text-emerald-500" aria-hidden="true" />
+          <CheckCircle2 size={22} strokeWidth={1.8} className="text-success-text" aria-hidden="true" />
           <div className="flex flex-col gap-1">
             <span className="text-[18px] text-foreground">Cancelled</span>
             <span className="text-[13.5px] text-muted-foreground">{cancelled} won&apos;t be paid again. You can set it up again anytime.</span>
@@ -167,7 +167,7 @@ export default function StandingOrderDetailPage() {
               &quot;{si.beneficiary}&quot; will stop running. You can set it up again anytime.
             </p>
             <div className="flex items-start gap-3 rounded-xl border border-border bg-muted/40 p-3 text-[12.5px] text-muted-foreground">
-              <AlertTriangle size={15} strokeWidth={1.8} className="mt-0.5 shrink-0 text-amber-500" aria-hidden="true" />
+              <AlertTriangle size={15} strokeWidth={1.8} className="mt-0.5 shrink-0 text-warning-text" aria-hidden="true" />
               <span>If you just want to pause it temporarily, use Pause instead.</span>
             </div>
           </DialogBody>

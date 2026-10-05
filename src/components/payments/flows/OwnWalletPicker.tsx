@@ -6,14 +6,16 @@
  * funds — so paying yourself never means retyping a number, and never quietly
  * narrows to the registered line.
  *
- * Used by the mobile wallet flow ("Send to myself") and by Airtime and Data
- * ("My own number"). "Link another …" opens the same link modal as Accounts
- * (one store, one flow), and what it links is selected straight away.
+ * Shown as a dropdown with the registered one already chosen, so the usual case needs no tap and
+ * any other of your numbers is one pick away. Used by the mobile wallet flow ("Send to myself") and
+ * by Airtime and Data ("My own number"). "Add another …" is the last item and opens the same link
+ * modal as Accounts (one store, one flow); what it links is selected straight away.
  */
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { AlertCircle, Check, Plus } from "lucide-react";
+import { AlertCircle, Plus } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import type { Account } from "@/lib/mock-data";
 import { useLinkedSources, type NetworkOperator } from "@/lib/accounts-store";
@@ -55,11 +57,9 @@ export function useOwnWallets(): OwnWallet[] {
 /**
  * The "for myself" choice for a flow.
  *
- * - `choosing`: with 2+ own destinations, the picker shows until one is picked
- *   (the registered one is pre-selected, and filled in so a payment always
- *   carries it).
+ * - The registered one is pre-selected, and filled in so a payment always carries it.
  * - If the chosen one stops being yours mid-payment (unlinked in another tab),
- *   it falls back to the registered one, reopens the picker and sets `removedNotice`.
+ *   it falls back to the registered one and sets `removedNotice`.
  */
 export function useOwnDestination({
   isSelf,
@@ -72,7 +72,6 @@ export function useOwnDestination({
   apply: (wallet: OwnWallet) => void;
 }) {
   const wallets = useOwnWallets();
-  const [picked, setPicked] = useState(false);
   const [removedNotice, setRemovedNotice] = useState(false);
   const selected = wallets.find((w) => digitsOf(w.phone) === digitsOf(phone));
 
@@ -90,7 +89,6 @@ export function useOwnDestination({
     } else if (!wallets.some((w) => digitsOf(w.phone) === digitsOf(phone))) {
       // The chosen wallet was unlinked: never send to a wallet that's no longer yours.
       applyRef.current(registered);
-      setPicked(false);
       setRemovedNotice(true);
     }
   }, [isSelf, phone, wallets]);
@@ -98,15 +96,16 @@ export function useOwnDestination({
   return {
     wallets,
     selected,
-    choosing: isSelf && wallets.length > 1 && !picked,
     removedNotice,
     pick: (wallet: OwnWallet) => {
       applyRef.current(wallet);
-      setPicked(true);
       setRemovedNotice(false);
     },
   };
 }
+
+/** Chosen from the dropdown to link another number instead of picking one. */
+const ADD_ANOTHER = "__add_another__";
 
 export function OwnWalletPicker({
   wallets,
@@ -122,11 +121,23 @@ export function OwnWalletPicker({
   onSelect: (wallet: OwnWallet) => void;
   /** `wallet`: MoMo wallets (Send to myself). `line`: your phone numbers (Airtime, Data). */
   variant?: "wallet" | "line";
-  /** The previously chosen wallet was unlinked — say why the selection changed. */
+  /** The previously chosen wallet was unlinked: say why the selection changed. */
   removedNotice?: boolean;
 }) {
   const [linkOpen, setLinkOpen] = useState(false);
   const line = variant === "line";
+  // The registered one is the default, so an empty or unknown phone shows it.
+  const current = wallets.find((w) => digitsOf(w.phone) === digitsOf(selectedPhone)) ?? wallets[0];
+  const nameOf = (w: OwnWallet) => (line ? normalizeNetworkName(w.network) : w.network);
+
+  const mark = (w: OwnWallet, size: string) => {
+    const logo = getTelcoLogo(w.network);
+    return (
+      <span className={cn("flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted", size)}>
+        {logo && <Image src={logo} alt="" width={40} height={40} className="size-full rounded-full object-cover" />}
+      </span>
+    );
+  };
 
   return (
     <>
@@ -136,58 +147,58 @@ export function OwnWalletPicker({
           That {line ? "number" : "wallet"} is no longer linked, so we&apos;ve switched to your registered one. Choose again below.
         </p>
       )}
-      <div
-        role="radiogroup"
-        aria-label={line ? "Your numbers" : "Your wallets"}
-        className="flex flex-col divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/80 bg-card"
+
+      <Select
+        value={current?.id}
+        onValueChange={(id) => {
+          if (id === ADD_ANOTHER) {
+            setLinkOpen(true);
+            return;
+          }
+          const next = wallets.find((w) => w.id === id);
+          if (next) onSelect(next);
+        }}
       >
-        {wallets.map((w) => {
-          const selected = digitsOf(w.phone) === digitsOf(selectedPhone);
-          const logo = getTelcoLogo(w.network);
-          return (
-            <button
-              key={w.id}
-              type="button"
-              role="radio"
-              aria-checked={selected}
-              onClick={() => onSelect(w)}
-              className={cn(
-                "flex items-center gap-3 px-3.5 py-3 text-left transition-colors cursor-pointer",
-                selected ? "bg-muted/40" : "hover:bg-muted/20",
-              )}
-            >
-              <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted">
-                {logo && <Image src={logo} alt="" width={40} height={40} className="size-full rounded-full object-cover" />}
-              </span>
-              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="truncate text-[14px] text-foreground">{line ? normalizeNetworkName(w.network) : w.network}</span>
+        <SelectTrigger
+          aria-label={line ? "Your numbers" : "Your wallets"}
+          className="flex h-[58px] min-h-[58px] w-full cursor-pointer items-center rounded-2xl border border-field-border bg-field px-3.5 py-0 text-left shadow-none transition-colors hover:bg-field-hover"
+        >
+          {current && (
+            <div className="flex min-w-0 items-center gap-3">
+              {mark(current, "size-9")}
+              <span className="flex min-w-0 flex-col gap-0.5">
+                <span className="truncate text-[14px] text-foreground">{nameOf(current)}</span>
                 <span className="truncate text-[12.5px] text-muted-foreground tabular">
-                  {formatGhPhone(w.phone)} · {w.tag}
+                  {formatGhPhone(current.phone)} · {current.tag}
                 </span>
               </span>
-              <span
-                className={cn(
-                  "flex size-5 shrink-0 items-center justify-center rounded-full border",
-                  selected ? "border-primary bg-primary text-primary-foreground" : "border-border",
-                )}
-                aria-hidden="true"
-              >
-                {selected && <Check size={12} strokeWidth={2.5} />}
+            </div>
+          )}
+        </SelectTrigger>
+        <SelectContent>
+          {wallets.map((w) => (
+            <SelectItem key={w.id} value={w.id}>
+              <div className="flex items-center gap-3">
+                {mark(w, "size-8")}
+                <span className="flex min-w-0 flex-col gap-0.5">
+                  <span className="truncate text-[14px] text-foreground">{nameOf(w)}</span>
+                  <span className="truncate text-[12.5px] text-muted-foreground tabular">
+                    {formatGhPhone(w.phone)} · {w.tag}
+                  </span>
+                </span>
+              </div>
+            </SelectItem>
+          ))}
+          <SelectItem value={ADD_ANOTHER}>
+            <div className="flex items-center gap-3">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-dashed border-border text-muted-foreground">
+                <Plus size={15} strokeWidth={1.8} aria-hidden="true" />
               </span>
-            </button>
-          );
-        })}
-        <button
-          type="button"
-          onClick={() => setLinkOpen(true)}
-          className="flex items-center gap-3 px-3.5 py-3 text-left text-[14px] text-foreground transition-colors hover:bg-muted/20 cursor-pointer"
-        >
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-dashed border-border text-muted-foreground">
-            <Plus size={16} strokeWidth={1.8} aria-hidden="true" />
-          </span>
-          {line ? "Add another of your numbers" : "Link another wallet"}
-        </button>
-      </div>
+              <span className="text-[14px] text-foreground">{line ? "Add another of your numbers" : "Link another wallet"}</span>
+            </div>
+          </SelectItem>
+        </SelectContent>
+      </Select>
 
       <LinkSourceAccountModal
         mode="link"

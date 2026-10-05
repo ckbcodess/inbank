@@ -409,7 +409,7 @@ export default function TransactionMonitoringPage() {
                 >
                   <div className="flex items-center gap-1.5 truncate">
                     {datePreset !== "all" ? (
-                      <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
+                      <span className="size-1.5 rounded-full bg-success shrink-0" />
                     ) : (
                       <Calendar size={13} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
                     )}
@@ -482,7 +482,7 @@ export default function TransactionMonitoringPage() {
               >
                 <div className="flex items-center gap-1.5 truncate">
                   {datePreset !== "all" ? (
-                    <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
+                    <span className="size-1.5 rounded-full bg-success shrink-0" />
                   ) : (
                     <Calendar size={13} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
                   )}
@@ -630,7 +630,7 @@ export default function TransactionMonitoringPage() {
               >
                 <div className="flex items-center gap-1.5 truncate">
                   {directionFilter !== "all" && (
-                    <span className="size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 shrink-0" />
+                    <span className="size-1.5 rounded-full bg-success shrink-0" />
                   )}
                   <SelectValue placeholder="All Flows" />
                 </div>
@@ -693,7 +693,7 @@ export default function TransactionMonitoringPage() {
                   type="date"
                   value={dateFrom}
                   onChange={(e) => setDateFrom(e.target.value)}
-                  className="h-8 rounded-lg border border-border bg-background px-2.5 text-[12.5px] text-foreground outline-none focus:border-ring tabular"
+                  className="h-8 rounded-lg border border-field-border bg-field px-2.5 text-[12.5px] text-foreground outline-none focus:border-field-border-focus tabular"
                 />
               </div>
               <div className="flex items-center gap-2">
@@ -702,7 +702,7 @@ export default function TransactionMonitoringPage() {
                   type="date"
                   value={dateTo}
                   onChange={(e) => setDateTo(e.target.value)}
-                  className="h-8 rounded-lg border border-border bg-background px-2.5 text-[12.5px] text-foreground outline-none focus:border-ring tabular"
+                  className="h-8 rounded-lg border border-field-border bg-field px-2.5 text-[12.5px] text-foreground outline-none focus:border-field-border-focus tabular"
                 />
               </div>
               {(dateFrom || dateTo) && (
@@ -798,7 +798,7 @@ export default function TransactionMonitoringPage() {
                         type="date"
                         value={dateFrom}
                         onChange={(e) => setDateFrom(e.target.value)}
-                        className="w-full h-8 rounded-md border border-border bg-background px-2 text-[12px] text-foreground outline-none focus:border-ring tabular"
+                        className="w-full h-8 rounded-md border border-field-border bg-field px-2 text-[12px] text-foreground outline-none focus:border-field-border-focus tabular"
                       />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -807,7 +807,7 @@ export default function TransactionMonitoringPage() {
                         type="date"
                         value={dateTo}
                         onChange={(e) => setDateTo(e.target.value)}
-                        className="w-full h-8 rounded-md border border-border bg-background px-2 text-[12px] text-foreground outline-none focus:border-ring tabular"
+                        className="w-full h-8 rounded-md border border-field-border bg-field px-2 text-[12px] text-foreground outline-none focus:border-field-border-focus tabular"
                       />
                     </div>
                   </div>
@@ -873,10 +873,10 @@ export default function TransactionMonitoringPage() {
                           className={cn(
                             "size-1.5 rounded-full shrink-0",
                             st.id === "completed"
-                              ? "bg-emerald-500"
+                              ? "bg-success"
                               : st.id === "pending"
-                              ? "bg-amber-500"
-                              : "bg-rose-500",
+                              ? "bg-warning"
+                              : "bg-destructive",
                             isSelected && "bg-background"
                           )}
                         />

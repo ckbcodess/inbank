@@ -103,8 +103,10 @@ here. Never fall back to dense, boxed layouts.
   `text-muted-foreground`, `border-border`, `bg-primary`, `text-primary-foreground`,
   `text-destructive`, `var(--active-bg)` / `var(--active-border)`, `var(--surface)`, and the
   surface tokens `--tile`, `--tile-hover`, `--tile-border`, `--tile-accent`, `--hero-*` and
-  `--account-card` (as `bg-[var(--tile)]`). If a colour is missing, add a token to `globals.css` for
-  **both** themes. Never hardcode it.
+  `--account-card` (as `bg-[var(--tile)]`), and for the rest: `bg-tile`, `bg-field` / `border-field-border` for inputs,
+  `bg-menu` for dropdowns, and `text-success-text` / `-warning-text` / `-destructive-text` / `-info-text` for status text
+  (`success`, `warning`, `destructive`, `info` for fills). If a colour is missing, add a token to `globals.css` for
+  **both** themes. Never hardcode it, and never use Tailwind palette colours (`text-emerald-600`).
 - **Light and dark come from the tokens.** No `dark:` workarounds where a token would do.
 - **Primary is GCB amber** (`#F9C632`, hover `#E5B62E`) with dark text on top.
 - **Amber is never text on a light surface,** because it fails contrast. Use amber for filled

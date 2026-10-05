@@ -273,7 +273,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
             <DialogBody>
               <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border/60">
                 <div className={`flex size-10 items-center justify-center rounded-full shrink-0 ${
-                  selectedTx.direction === "debit" ? "bg-red-500/10 text-red-500" : "bg-emerald-500/10 text-emerald-600"
+                  selectedTx.direction === "debit" ? "bg-destructive/10 text-destructive-text" : "bg-success/10 text-success-text"
                 }`}>
                   {selectedTx.direction === "debit" ? <ArrowUpRight size={20} /> : <ArrowDownLeft size={20} />}
                 </div>
@@ -290,7 +290,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                   GHS {selectedTx.amount.toFixed(2)}
                 </span>
                 <span className="mt-1.5 inline-flex items-center gap-1.5 text-[12px] text-muted-foreground">
-                  <span className="size-1.5 rounded-full bg-emerald-500/80 shrink-0" />
+                  <span className="size-1.5 rounded-full bg-success/80 shrink-0" />
                   {selectedTx.status}
                 </span>
               </div>

@@ -89,7 +89,7 @@ export default function ApprovalQueuePage() {
 
       {/* Filter and Search Ribbon */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-muted/60 p-1">
+        <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-chip p-1">
           {(["all", "payment", "trade"] as const).map((t) => {
             const isActive = typeFilter === t;
             return (
@@ -100,8 +100,8 @@ export default function ApprovalQueuePage() {
                 aria-pressed={isActive}
                 className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-3.5 py-1.5 text-[13px] capitalize transition-all cursor-pointer ${
                   isActive
-                    ? "bg-background text-foreground shadow-xs font-medium"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-chip-selected text-chip-selected-foreground shadow-xs font-medium"
+                    : "text-chip-foreground hover:text-chip-selected-foreground"
                 }`}
               >
                 {t}

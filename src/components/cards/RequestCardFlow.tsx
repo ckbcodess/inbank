@@ -74,11 +74,11 @@ function MastercardLogo({ className = "h-5 w-auto" }: { className?: string }) {
       className={className}
       aria-label="Mastercard"
     >
-      <circle cx="12" cy="12" r="11" fill="#EB001B" />
-      <circle cx="24" cy="12" r="11" fill="#F79E1B" fillOpacity="0.95" />
+      <circle cx="12" cy="12" r="11" className="fill-[var(--mc-red)]" />
+      <circle cx="24" cy="12" r="11" className="fill-[var(--mc-orange)]" fillOpacity="0.95" />
       <path
         d="M18 4.223A10.96 10.96 0 0 0 13.633 12 10.96 10.96 0 0 0 18 19.777 10.96 10.96 0 0 0 22.367 12 10.96 10.96 0 0 0 18 4.223Z"
-        fill="#FF5F00"
+        className="fill-[var(--mc-overlap)]"
       />
     </svg>
   );
@@ -143,19 +143,19 @@ function GcbEagleEmblem({ className, idPrefix = "gcb-card-eagle" }: { className?
         fillRule="evenodd"
         clipRule="evenodd"
         d={pathG}
-        className="fill-[#1e293b] dark:fill-[#F6F6F5] transition-colors"
+        className="fill-foreground transition-colors"
       />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
         d={pathC}
-        className="fill-[#1e293b] dark:fill-[#F6F6F5] transition-colors"
+        className="fill-foreground transition-colors"
       />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
         d={pathB}
-        className="fill-[#1e293b] dark:fill-[#F6F6F5] transition-colors"
+        className="fill-foreground transition-colors"
       />
 
       {/* Soaring Golden Eagle */}
@@ -163,7 +163,7 @@ function GcbEagleEmblem({ className, idPrefix = "gcb-card-eagle" }: { className?
         fillRule="evenodd"
         clipRule="evenodd"
         d={pathEagle}
-        fill="#F6BF36"
+        className="fill-primary"
       />
 
       {/* Specular White Sheen Passing Across the Eagle */}
@@ -599,7 +599,7 @@ export function RequestCardFlow() {
                 placeholder="How the card shows up in the app"
                 value={cardName}
                 onChange={(e) => setCardName(e.target.value)}
-                className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all placeholder:text-muted-foreground/60"
+                className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground/60"
               />
             </div>
 
@@ -646,7 +646,7 @@ export function RequestCardFlow() {
                       if (val) handleSchemeChange(val as "Visa" | "Mastercard");
                     }}
                   >
-                    <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+                    <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center">
                       <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
                         <span className="text-[14.5px] font-medium text-foreground truncate">{cardScheme}</span>
                         {cardScheme === "Visa" ? (
@@ -684,7 +684,7 @@ export function RequestCardFlow() {
                       if (val) setNetworkType(val);
                     }}
                   >
-                    <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-border/80 bg-card hover:bg-muted/20 text-left cursor-pointer transition-colors shadow-none flex items-center">
+                    <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center">
                       <div className="flex flex-col min-w-0 text-left flex-1">
                         <span
                           className={`text-[14.5px] font-medium truncate leading-tight ${
@@ -918,7 +918,7 @@ export function RequestCardFlow() {
                           <Check
                             size={15}
                             strokeWidth={2.6}
-                            className={isDarkIcon ? "text-zinc-950" : "text-white"}
+                            className={isDarkIcon ? "text-primary-foreground" : "text-white"}
                           />
                         </motion.div>
                       )}
@@ -1140,14 +1140,14 @@ export function RequestCardFlow() {
                     initial={{ scale: 0.85, opacity: 0.45 }}
                     animate={{ scale: 1.55, opacity: 0 }}
                     transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-                    className="pointer-events-none absolute inset-0 rounded-full border border-[#04C500]/40"
+                    className="pointer-events-none absolute inset-0 rounded-full border border-success/40"
                   />
                   <motion.div
                     key={`pulse-ring-2-${burstKey}`}
                     initial={{ scale: 0.85, opacity: 0.25 }}
                     animate={{ scale: 2.0, opacity: 0 }}
                     transition={{ duration: 1.1, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-                    className="pointer-events-none absolute inset-0 rounded-full border border-[#04C500]/20"
+                    className="pointer-events-none absolute inset-0 rounded-full border border-success/20"
                   />
                 </>
               )}
@@ -1186,7 +1186,7 @@ export function RequestCardFlow() {
                       damping: 22,
                       mass: 0.85,
                     }}
-                    className="group relative z-10 flex size-[100px] sm:size-[108px] items-center justify-center rounded-full bg-gradient-to-br from-[#039600] to-[#04C500] text-white shadow-[0_4px_16px_rgba(0,0,0,0.08)] ring-1 ring-white/20 select-none overflow-hidden"
+                    className="group relative z-10 flex size-[100px] sm:size-[108px] items-center justify-center rounded-full bg-gradient-to-br from-success to-success text-white shadow-[0_4px_16px_rgba(0,0,0,0.08)] ring-1 ring-white/20 select-none overflow-hidden"
                   >
                     <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/25 to-transparent" />
 

@@ -382,7 +382,7 @@ function SignupContent() {
                   <span className="tabular text-[12px] text-muted-foreground">{ghanaCard}</span>
                 </div>
               </div>
-              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400">
+              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-pill-success px-2 py-0.5 text-[11px] font-medium text-pill-success-text">
                 <Check size={12} strokeWidth={2.5} />
                 Verified
               </span>
@@ -390,7 +390,7 @@ function SignupContent() {
             <div className="space-y-1.5">
               <Label htmlFor="reviewTitle" className="text-[13.5px] font-medium text-foreground">Title</Label>
               <Select value={title} onValueChange={(val) => val && setTitle(val)}>
-                <SelectTrigger id="reviewTitle" className="h-11 w-full rounded-lg border border-input bg-transparent px-3.5 text-left text-[14px] shadow-none flex items-center justify-between">
+                <SelectTrigger id="reviewTitle" className="h-11 w-full rounded-lg border border-border bg-transparent px-3.5 text-left text-[14px] shadow-none flex items-center justify-between">
                   <span className={title ? undefined : "text-muted-foreground/60"}>{title || "Select title"}</span>
                 </SelectTrigger>
                 <SelectContent>

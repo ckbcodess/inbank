@@ -603,7 +603,7 @@ function AccountsContent() {
 
 export default function AccountsPage() {
   return (
-    <Suspense fallback={<div className="min-h-[400px] animate-pulse rounded-2xl bg-muted/20" />}>
+    <Suspense fallback={<div className="min-h-[400px] skeleton-shimmer rounded-2xl bg-muted/20" />}>
       <AccountsContent />
     </Suspense>
   );

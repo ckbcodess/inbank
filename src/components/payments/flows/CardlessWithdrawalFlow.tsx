@@ -180,7 +180,7 @@ export function CardlessWithdrawalFlow({
                       }
                     }}
                     aria-label="Phone number"
-                    className="h-13 rounded-2xl border-border/80 bg-card px-4 text-[15px] focus-within:border-ring focus-within:ring-1 focus-within:ring-ring/30 dark:border-border/80 dark:bg-card dark:focus-within:bg-card"
+                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
                   />
                 </div>
 

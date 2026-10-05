@@ -55,8 +55,8 @@ const KIND_META: Record<
   { label: string; icon: React.ElementType; className: string }
 > = {
   submission: { label: "Submitted", icon: Send, className: "text-muted-foreground" },
-  approval: { label: "Approved", icon: CheckCircle2, className: "text-[var(--pay-cash,#17c858)]" },
-  rejection: { label: "Returned", icon: TriangleAlert, className: "text-amber-500" },
+  approval: { label: "Approved", icon: CheckCircle2, className: "text-success-text" },
+  rejection: { label: "Returned", icon: TriangleAlert, className: "text-warning-text" },
   status: { label: "Status", icon: XCircle, className: "text-muted-foreground" },
 };
 

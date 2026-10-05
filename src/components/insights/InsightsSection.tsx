@@ -42,7 +42,7 @@ const CashflowChart = dynamic(
   () => import("./CashflowChart").then((m) => m.CashflowChart),
   {
     ssr: false,
-    loading: () => <div className="h-[260px] w-full animate-pulse rounded-xl bg-muted/30" />,
+    loading: () => <div className="h-[260px] w-full skeleton-shimmer rounded-xl bg-muted/30" />,
   }
 );
 
@@ -50,7 +50,7 @@ const SpendByCategory = dynamic(
   () => import("./SpendByCategory").then((m) => m.SpendByCategory),
   {
     ssr: false,
-    loading: () => <div className="h-[260px] w-full animate-pulse rounded-xl bg-muted/30" />,
+    loading: () => <div className="h-[260px] w-full skeleton-shimmer rounded-xl bg-muted/30" />,
   }
 );
 
@@ -64,7 +64,7 @@ function GrainSwitch({ value, onChange }: { value: Grain; onChange: (next: Grain
     <div
       role="group"
       aria-label="Period"
-      className="inline-flex w-fit flex-wrap rounded-xl bg-muted p-1"
+      className="inline-flex w-fit flex-wrap rounded-xl bg-chip p-1"
     >
       {GRAINS.map((grain) => (
         <button
@@ -74,8 +74,8 @@ function GrainSwitch({ value, onChange }: { value: Grain; onChange: (next: Grain
           aria-pressed={value === grain}
           className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
             value === grain
-              ? "bg-background text-foreground shadow-sm font-medium"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
+              : "text-chip-foreground hover:text-chip-selected-foreground"
           }`}
         >
           {GRAIN_LABEL[grain]}

@@ -190,7 +190,7 @@ export default function SettingsPage() {
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="ghana-card" className="text-[12.5px] text-foreground flex items-center justify-between">
                   <span>Ghana Card Number (NIA)</span>
-                  <span className="text-[10.5px] text-emerald-600 dark:text-emerald-400 font-medium">Verified</span>
+                  <span className="text-[10.5px] text-success-text font-medium">Verified</span>
                 </Label>
                 <Input
                   id="ghana-card"
@@ -222,7 +222,7 @@ export default function SettingsPage() {
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
                     <span className="text-[13.5px] font-medium text-foreground">Proxy Pay ID</span>
-                    <Badge variant="outline" className="text-[10.5px] border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
+                    <Badge variant="outline" className="text-[10.5px] border-success/30 text-success-text">
                       Active
                     </Badge>
                   </div>
@@ -331,7 +331,7 @@ export default function SettingsPage() {
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
                     <span className="text-[13.5px] font-medium text-foreground">Two-Factor Authentication (MFA)</span>
-                    <Badge variant="outline" className="text-[10.5px] border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
+                    <Badge variant="outline" className="text-[10.5px] border-success/30 text-success-text">
                       Enabled
                     </Badge>
                   </div>

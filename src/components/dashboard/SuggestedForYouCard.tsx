@@ -32,28 +32,28 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
       name: "Kofi",
       detail: "MTN Airtime",
       phone: "+233 24 456 7890",
-      bg: "bg-[#f1f8f9] dark:bg-[#1a2d32] text-[#0d4f5b] dark:text-[#7ee2f3]",
+      bg: "bg-[var(--tint-teal-bg)] text-[var(--tint-teal-text)]",
     },
     {
       initial: "L",
       name: "Lester",
       detail: "ECG",
       phone: "Account #019284-A",
-      bg: "bg-[#ebe8de] dark:bg-[#312e25] text-[#544d32] dark:text-[#e4d8a5]",
+      bg: "bg-[var(--tint-sand-bg)] text-[var(--tint-sand-text)]",
     },
     {
       initial: "A",
       name: "Ama",
       detail: "St Marys School",
       phone: "Student ID: SM-2026-91",
-      bg: "bg-[#e0eedd] dark:bg-[#203222] text-[#2c532f] dark:text-[#a0e4a7]",
+      bg: "bg-[var(--tint-green-bg)] text-[var(--tint-green-text)]",
     },
     {
       initial: "M",
       name: "Kofi",
       detail: "MTN Momo",
       phone: "+233 55 123 4567",
-      bg: "bg-[#e7dce8] dark:bg-[#342436] text-[#5a2e5d] dark:text-[#e9b6ec]",
+      bg: "bg-[var(--tint-plum-bg)] text-[var(--tint-plum-text)]",
     },
   ]);
 
@@ -169,7 +169,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">Amount (GHS)</label>
-                  <div className="flex items-center rounded-xl border border-border bg-muted/40 px-3.5 py-2 focus-within:border-primary">
+                  <div className="flex items-center rounded-xl border border-field-border bg-field px-3.5 py-2 focus-within:border-field-border-focus focus-within:bg-field-focus">
                     <span className="text-[14px] font-medium text-muted-foreground mr-2">GHS</span>
                     <input
                       type="number"
@@ -203,7 +203,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                 </div>
 
                 <div className="rounded-xl bg-muted/40 p-3 text-[12px] text-muted-foreground flex items-center gap-2">
-                  <ShieldCheck size={16} className="text-emerald-600 shrink-0" />
+                  <ShieldCheck size={16} className="text-success-text shrink-0" />
                   <span>Zero transaction fees applied for instant wallet transfers.</span>
                 </div>
               </DialogBody>

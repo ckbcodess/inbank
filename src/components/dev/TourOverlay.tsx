@@ -136,7 +136,7 @@ export default function TourOverlay() {
       {/* Focus ring around the control to click */}
       {rect && (
         <div
-          className="pointer-events-none fixed rounded-lg border-2 border-[#F2B200] transition-all duration-150 ease-out"
+          className="pointer-events-none fixed rounded-lg border-2 border-primary transition-all duration-150 ease-out"
           style={{
             top: rect.top - RING_PAD,
             left: rect.left - RING_PAD,
@@ -165,7 +165,7 @@ export default function TourOverlay() {
         )}
 
         <div className="flex items-start justify-between gap-2">
-          <span className="text-[10.5px] font-semibold uppercase tracking-wide text-[#B27B00] dark:text-[#F2B200]">
+          <span className="text-[10.5px] font-semibold uppercase tracking-wide text-warning-text">
             <span className="tabular">Step {stepIndex + 1} of {total}</span> · {tour.title}
           </span>
           <button
@@ -180,7 +180,7 @@ export default function TourOverlay() {
 
         {/* On the first step, orient the tester to the whole journey */}
         {stepIndex === 0 && (
-          <p className="mt-1.5 rounded-lg bg-[#FFFBF0] px-2 py-1.5 text-[11.5px] leading-snug text-muted-foreground dark:bg-[#F2B200]/10">
+          <p className="mt-1.5 rounded-lg bg-warning/10 px-2 py-1.5 text-[11.5px] leading-snug text-muted-foreground dark:bg-primary/10">
             {tour.summary}
           </p>
         )}
@@ -192,7 +192,7 @@ export default function TourOverlay() {
 
         {/* The concrete next click */}
         <div className="mt-2 flex items-start gap-1.5 rounded-lg bg-muted/50 px-2 py-1.5 text-[12px] text-foreground">
-          <MousePointerClick size={13} className="mt-0.5 shrink-0 text-[#B27B00] dark:text-[#F2B200]" />
+          <MousePointerClick size={13} className="mt-0.5 shrink-0 text-warning-text" />
           <span>{step.action}</span>
         </div>
 

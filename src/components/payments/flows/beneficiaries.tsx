@@ -28,7 +28,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0231 4455 8890",
     initials: "KB",
     rail: "bank",
-    colorBg: "#f1f8f9",
+    colorBg: "var(--avatar-teal)",
   },
   {
     id: "rec-b2",
@@ -37,7 +37,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "1089 3322 1100",
     initials: "AO",
     rail: "bank",
-    colorBg: "#ebe8de",
+    colorBg: "var(--avatar-sand)",
   },
   {
     id: "rec-b3",
@@ -46,7 +46,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0142 8899 0011",
     initials: "AF",
     rail: "bank",
-    colorBg: "#e0eedd",
+    colorBg: "var(--avatar-green)",
   },
   {
     id: "rec-b4",
@@ -55,7 +55,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0102 3344 5566",
     initials: "JA",
     rail: "bank",
-    colorBg: "#f5ebf7",
+    colorBg: "var(--avatar-lilac)",
   },
   {
     id: "rec-b5",
@@ -64,7 +64,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0788 3312 0091",
     initials: "KS",
     rail: "bank",
-    colorBg: "#fef9c3",
+    colorBg: "var(--avatar-yellow)",
   },
   {
     id: "rec-b6",
@@ -73,7 +73,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0661 9902 3345",
     initials: "VM",
     rail: "bank",
-    colorBg: "#dbeafe",
+    colorBg: "var(--avatar-blue)",
   },
 
   // Mobile Wallet payees
@@ -84,7 +84,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0244 123 456",
     initials: "AS",
     rail: "wallet",
-    colorBg: "#fef9c3",
+    colorBg: "var(--avatar-yellow)",
   },
   {
     id: "rec-w2",
@@ -93,7 +93,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0201 987 654",
     initials: "YM",
     rail: "wallet",
-    colorBg: "#fee2e2",
+    colorBg: "var(--avatar-red)",
   },
   {
     id: "rec-w3",
@@ -102,7 +102,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0277 456 789",
     initials: "KB",
     rail: "wallet",
-    colorBg: "#dbeafe",
+    colorBg: "var(--avatar-blue)",
   },
   {
     id: "rec-w4",
@@ -111,7 +111,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0559 220 118",
     initials: "YA",
     rail: "wallet",
-    colorBg: "#f5ebf7",
+    colorBg: "var(--avatar-lilac)",
   },
 
   // Proxy payees
@@ -123,7 +123,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "KB",
     rail: "proxy",
     subtitle: "@kwame.b",
-    colorBg: "#f1f8f9",
+    colorBg: "var(--avatar-teal)",
   },
   {
     id: "rec-px2",
@@ -133,7 +133,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "AS",
     rail: "proxy",
     subtitle: "@ama.serwaa",
-    colorBg: "#dbeafe",
+    colorBg: "var(--avatar-blue)",
   },
   {
     id: "rec-px3",
@@ -143,7 +143,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "KA",
     rail: "proxy",
     subtitle: "Ghana Card ID",
-    colorBg: "#fef9c3",
+    colorBg: "var(--avatar-yellow)",
   },
 
   // Airtime payees
@@ -155,7 +155,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "ME",
     rail: "airtime",
     subtitle: "0244 123 821",
-    colorBg: "#fef9c3",
+    colorBg: "var(--avatar-yellow)",
   },
   {
     id: "rec-air-1",
@@ -165,7 +165,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "AS",
     rail: "airtime",
     subtitle: "0244 123 456",
-    colorBg: "#dbeafe",
+    colorBg: "var(--avatar-blue)",
   },
   {
     id: "rec-air-2",
@@ -175,7 +175,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "KB",
     rail: "airtime",
     subtitle: "0201 987 654",
-    colorBg: "#fee2e2",
+    colorBg: "var(--avatar-red)",
   },
   {
     id: "rec-air-3",
@@ -185,7 +185,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "KB",
     rail: "airtime",
     subtitle: "0277 456 789",
-    colorBg: "#e0eedd",
+    colorBg: "var(--avatar-green)",
   },
   {
     id: "rec-air-4",
@@ -195,7 +195,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "YA",
     rail: "airtime",
     subtitle: "0559 220 118",
-    colorBg: "#f5ebf7",
+    colorBg: "var(--avatar-lilac)",
   },
 
   // Data Bundle payees
@@ -207,7 +207,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "ME",
     rail: "data",
     subtitle: "0244 123 821",
-    colorBg: "#fef9c3",
+    colorBg: "var(--avatar-yellow)",
   },
   {
     id: "rec-dat-1",
@@ -217,7 +217,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "HR",
     rail: "data",
     subtitle: "0201 987 654",
-    colorBg: "#fee2e2",
+    colorBg: "var(--avatar-red)",
   },
   {
     id: "rec-dat-2",
@@ -227,7 +227,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "IP",
     rail: "data",
     subtitle: "0277 456 789",
-    colorBg: "#e0eedd",
+    colorBg: "var(--avatar-green)",
   },
   {
     id: "rec-dat-3",
@@ -237,7 +237,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "AS",
     rail: "data",
     subtitle: "0244 123 456",
-    colorBg: "#dbeafe",
+    colorBg: "var(--avatar-blue)",
   },
   {
     id: "rec-dat-4",
@@ -247,7 +247,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "KB",
     rail: "data",
     subtitle: "0559 220 118",
-    colorBg: "#f5ebf7",
+    colorBg: "var(--avatar-lilac)",
   },
 ];
 
@@ -306,7 +306,7 @@ export function HorizontalScrollStrip({
           <button
             type="button"
             onClick={() => scroll("left")}
-            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 dark:bg-card/90 text-foreground shadow-sm backdrop-blur-md transition-all active:scale-95 cursor-pointer -ml-1"
+            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 text-foreground shadow-sm backdrop-blur-md transition-all active:scale-95 cursor-pointer -ml-1"
             aria-label="Scroll left"
           >
             <ChevronLeft size={16} strokeWidth={2.2} />
@@ -330,7 +330,7 @@ export function HorizontalScrollStrip({
           <button
             type="button"
             onClick={() => scroll("right")}
-            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 dark:bg-card/90 text-foreground shadow-sm backdrop-blur-md transition-all active:scale-95 cursor-pointer -mr-1"
+            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 text-foreground shadow-sm backdrop-blur-md transition-all active:scale-95 cursor-pointer -mr-1"
             aria-label="Scroll right"
           >
             <ChevronRight size={16} strokeWidth={2.2} />
@@ -362,8 +362,8 @@ export function RailBeneficiaryStrip({
             title={`Select ${item.name} (${item.subtitle || item.bank || item.acct})`}
           >
             <span
-              className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-[#111] transition-transform group-hover:scale-105 shadow-xs border border-black/5 dark:border-white/10"
-              style={{ backgroundColor: item.colorBg || "#f1f8f9" }}
+              className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-transform group-hover:scale-105 shadow-xs border border-black/5 dark:border-white/10"
+              style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
             >
               {item.initials}
             </span>

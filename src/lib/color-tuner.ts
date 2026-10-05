@@ -21,73 +21,68 @@ export interface TunerGroup {
   tokens: TunerToken[];
 }
 
-/** Opaque tokens only: the picker has no alpha. Derived tokens (the active wash, hover mixes) follow these. */
-export const TUNER_GROUPS: TunerGroup[] = [
-  {
-    label: "Brand",
-    tokens: [
-      { id: "primary", label: "Primary (amber)" },
-      { id: "primary-hover", label: "Primary hover" },
-      { id: "primary-foreground", label: "On primary" },
-      { id: "action-icon", label: "Icon on round actions" },
-      { id: "ring", label: "Focus ring" },
-      { id: "active-border", label: "Selected border" },
-      { id: "tile-accent", label: "Tile accent" },
-    ],
-  },
-  {
-    label: "Surfaces",
-    tokens: [
-      { id: "background", label: "Background" },
-      { id: "surface", label: "Page surface" },
-      { id: "card", label: "Card" },
-      { id: "tile", label: "Tile" },
-      { id: "tile-hover", label: "Tile hover" },
-      { id: "popover", label: "Menus" },
-      { id: "muted", label: "Muted fill" },
-      { id: "border", label: "Border" },
-      { id: "sidebar", label: "Sidebar" },
-    ],
-  },
-  {
-    label: "Text",
-    tokens: [
-      { id: "foreground", label: "Text" },
-      { id: "muted-foreground", label: "Secondary text" },
-    ],
-  },
-  {
-    label: "Status",
-    tokens: [
-      { id: "success", label: "Success" },
-      { id: "warning", label: "Warning" },
-      { id: "destructive", label: "Destructive" },
-    ],
-  },
-  {
-    label: "Icons and marks",
-    tokens: [
-      { id: "duo-outline", label: "Two-tone icon outline" },
-      { id: "mc-red", label: "Mastercard red" },
-      { id: "mc-orange", label: "Mastercard orange" },
-    ],
-  },
-  {
-    label: "Charts",
-    tokens: [
-      { id: "cat-1", label: "Category 1" },
-      { id: "cat-2", label: "Category 2" },
-      { id: "cat-3", label: "Category 3" },
-      { id: "cat-4", label: "Category 4" },
-      { id: "cat-5", label: "Category 5" },
-      { id: "spend-1", label: "Spend 1" },
-      { id: "spend-2", label: "Spend 2" },
-      { id: "spend-3", label: "Spend 3" },
-      { id: "spend-4", label: "Spend 4" },
-      { id: "spend-5", label: "Spend 5" },
-    ],
-  },
+/** First match wins. */
+const GROUP_RULES: [string, RegExp][] = [
+  ["Chips and pills", /^(chip|pill-)/],
+  ["Text", /(^foreground$|-foreground$)/],
+  ["Brand", /^(primary|ring|focus-ring|active-|action-icon|tile-accent|promo-)/],
+  ["Status", /^(success|warning|destructive|info)/],
+  ["Fields and menus", /^(field|menu|input$)/],
+  ["Borders", /(^border$|-border$|-border-focus$|^duo-outline$)/],
+  ["Tints and banners", /^(tint-|banner-)/],
+  ["Charts", /^(chart|cat-|spend-)/],
+  ["Marks", /^(mc-|duo-)/],
+  ["Dashboard hero", /^(hero|sheet|balance-card|account-card)/],
+  ["Surfaces", /^(background|surface|card|popover|muted|secondary|accent|tile|sidebar|glass|device|skeleton)/],
 ];
+const SKIP = /^(color-|tw-|font|radius|shadow|dur-|breakpoint|animate|ease|sidebar-width|ripple)/;
+
+function humanize(id: string): string {
+  const words = id.replace(/-/g, " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+/** Every custom property the stylesheet defines on :root or .dark, whatever file it came from. */
+function stylesheetVariableNames(): Set<string> {
+  const names = new Set<string>();
+  const visit = (rules: CSSRuleList) => {
+    for (const rule of Array.from(rules)) {
+      const style = (rule as CSSStyleRule).style;
+      const selector = (rule as CSSStyleRule).selectorText;
+      if (style && selector && /(^|,\s*)(:root|html\.dark|\.dark|html:root)(\s*,|$)/.test(selector)) {
+        for (let i = 0; i < style.length; i++) if (style[i].startsWith("--")) names.add(style[i].slice(2));
+      }
+      const inner = (rule as CSSGroupingRule).cssRules;
+      if (inner) visit(inner);
+    }
+  };
+  for (const sheet of Array.from(document.styleSheets)) {
+    if ((sheet.ownerNode as HTMLElement | null)?.id === STYLE_ID) continue;
+    try {
+      visit(sheet.cssRules);
+    } catch {
+      // A sheet from another origin can't be read: nothing of ours.
+    }
+  }
+  return names;
+}
+
+/** All the colour tokens, grouped. A variable counts when the browser can read its value as a colour. */
+export function discoverTunerGroups(): TunerGroup[] {
+  const el = document.getElementById(STYLE_ID) as HTMLStyleElement | null;
+  if (el) el.disabled = true;
+  const cs = getComputedStyle(document.documentElement);
+  const groups = new Map<string, TunerToken[]>();
+  for (const id of Array.from(stylesheetVariableNames()).sort()) {
+    if (SKIP.test(id)) continue;
+    if (!parseColor(cs.getPropertyValue(`--${id}`).trim())) continue;
+    const label = GROUP_RULES.find(([, re]) => re.test(id))?.[0] ?? "Other";
+    groups.set(label, [...(groups.get(label) ?? []), { id, label: humanize(id) }]);
+  }
+  if (el) el.disabled = false;
+  const order = [...GROUP_RULES.map(([l]) => l), "Other"];
+  return order.filter((l) => groups.has(l)).map((l) => ({ label: l, tokens: groups.get(l)! }));
+}
 
 type Overrides = Record<TunerTheme, Record<string, string>>;
 
@@ -143,7 +138,7 @@ function persist() {
 
 /** Reads the saved overrides once and puts them on the page. Safe to call more than once. */
 export function hydrateColorTuner() {
-  if (hydrated || typeof window === "undefined") return;
+  if (process.env.NODE_ENV === "production" || hydrated || typeof window === "undefined") return;
   hydrated = true;
   try {
     const raw = localStorage.getItem(KEY);
@@ -202,23 +197,22 @@ export function tunerExport(): string {
   return [block(":root", overrides.light), block(".dark", overrides.dark)].filter(Boolean).join("\n\n");
 }
 
-/** Reads each token's value from the stylesheet itself, with the overrides switched off. */
-export function readTunerDefaults(): Record<string, string> {
+/** Each token's value as #rrggbb or #rrggbbaa, read from the stylesheet with the overrides switched off. */
+export function readTunerDefaults(ids: string[]): Record<string, string> {
   const el = document.getElementById(STYLE_ID) as HTMLStyleElement | null;
   if (el) el.disabled = true;
   const cs = getComputedStyle(document.documentElement);
   const out: Record<string, string> = {};
-  for (const group of TUNER_GROUPS) {
-    for (const t of group.tokens) out[t.id] = cssToHex(cs.getPropertyValue(`--${t.id}`).trim()) ?? "#000000";
-  }
+  for (const id of ids) out[id] = parseColor(cs.getPropertyValue(`--${id}`).trim()) ?? "#000000";
   if (el) el.disabled = false;
   return out;
 }
 
-/** Any CSS colour (hex, oklch, rgb) to #rrggbb, through a canvas. Null if the browser can't read it. */
-export function cssToHex(css: string): string | null {
+/** Any CSS colour (hex, oklch, rgb, color-mix) to #rrggbb, or #rrggbbaa when it is see-through. Null if unreadable. */
+export function parseColor(css: string): string | null {
   if (!css) return null;
   if (/^#[0-9a-f]{6}$/i.test(css)) return css.toLowerCase();
+  if (/^#[0-9a-f]{8}$/i.test(css)) return css.toLowerCase().endsWith("ff") ? css.slice(0, 7).toLowerCase() : css.toLowerCase();
   const canvas = document.createElement("canvas");
   canvas.width = canvas.height = 1;
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
@@ -229,8 +223,9 @@ export function cssToHex(css: string): string | null {
   if (ctx.fillStyle === sentinel && css.toLowerCase() !== sentinel) return null;
   ctx.clearRect(0, 0, 1, 1);
   ctx.fillRect(0, 0, 1, 1);
-  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
-  return "#" + [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("");
+  const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
+  const hex = [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("");
+  return "#" + hex + (a < 255 ? a.toString(16).padStart(2, "0") : "");
 }
 
 function subscribe(l: () => void) {
@@ -244,4 +239,164 @@ export function useTunerOverrides(): Overrides {
 
 export function useTunerOpen(): boolean {
   return useSyncExternalStore(subscribe, () => open, () => false);
+}
+
+/* ── Where is a token used? ────────────────────────────────────────────────────
+   Tap a token in the panel and the page scrolls to an element that uses it, with an outline around it. Tap again for the
+   next one. "Uses" is read from the stylesheet itself: every rule that sets a property from `var(--token)` gives a selector,
+   and tokens defined from another token (a pill from a status colour) count too. */
+
+const OUTLINE_ID = "nibs-token-locator";
+const lastLocated = new Map<string, number>();
+let outlineTimer: number | undefined;
+
+/** A selector without its states and pseudo-elements, so `.hover\:bg-x:hover` finds the elements that carry the class. */
+function plainSelector(selector: string): string {
+  return selector.replace(/(?<!\\)::?[a-zA-Z-]+(\([^)]*\))?/g, "").trim();
+}
+
+function buildUsage(names: Set<string>) {
+  const usage = new Map<string, Set<string>>();
+  const dependents = new Map<string, Set<string>>();
+  const add = (map: Map<string, Set<string>>, key: string, value: string) => {
+    if (!map.has(key)) map.set(key, new Set());
+    map.get(key)!.add(value);
+  };
+  const visit = (rules: CSSRuleList) => {
+    for (const rule of Array.from(rules)) {
+      const style = (rule as CSSStyleRule).style;
+      const selector = (rule as CSSStyleRule).selectorText;
+      if (style && selector) {
+        const isTokenBlock = /(^|,\s*)(:root|html\.dark|\.dark|html:root)(\s*,|$)/.test(selector);
+        for (let i = 0; i < style.length; i++) {
+          const prop = style[i];
+          const refs = style.getPropertyValue(prop).match(/var\(--[a-z0-9-]+/g);
+          if (!refs) continue;
+          for (const ref of refs) {
+            const name = ref.slice(6);
+            if (!names.has(name)) continue;
+            if (prop.startsWith("--")) {
+              if (isTokenBlock) add(dependents, name, prop.slice(2));
+            } else {
+              add(usage, name, selector);
+            }
+          }
+        }
+      }
+      const inner = (rule as CSSGroupingRule).cssRules;
+      if (inner) visit(inner);
+    }
+  };
+  for (const sheet of Array.from(document.styleSheets)) {
+    if ((sheet.ownerNode as HTMLElement | null)?.id === STYLE_ID) continue;
+    try {
+      visit(sheet.cssRules);
+    } catch {
+      // Another origin's sheet: not ours.
+    }
+  }
+  return { usage, dependents };
+}
+
+function isShown(el: Element): boolean {
+  const rect = el.getBoundingClientRect();
+  if (rect.width < 2 || rect.height < 2) return false;
+  const style = getComputedStyle(el);
+  return style.visibility !== "hidden" && style.display !== "none" && style.opacity !== "0";
+}
+
+function outline(el: Element, label: string) {
+  document.getElementById(OUTLINE_ID)?.remove();
+  window.clearTimeout(outlineTimer);
+  const rect = el.getBoundingClientRect();
+  const box = document.createElement("div");
+  box.id = OUTLINE_ID;
+  Object.assign(box.style, {
+    position: "fixed",
+    left: `${rect.left - 4}px`,
+    top: `${rect.top - 4}px`,
+    width: `${rect.width + 8}px`,
+    height: `${rect.height + 8}px`,
+    border: "2px solid #ff2d95",
+    borderRadius: "10px",
+    boxShadow: "0 0 0 4px rgba(255,45,149,0.25)",
+    pointerEvents: "none",
+    zIndex: "2147483000",
+    transition: "opacity 300ms",
+  } as Partial<CSSStyleDeclaration>);
+  const tag = document.createElement("div");
+  tag.textContent = label;
+  Object.assign(tag.style, {
+    position: "absolute",
+    left: "-2px",
+    top: "-26px",
+    background: "#ff2d95",
+    color: "#fff",
+    font: "12px/1 system-ui, sans-serif",
+    padding: "5px 8px",
+    borderRadius: "6px",
+    whiteSpace: "nowrap",
+  } as Partial<CSSStyleDeclaration>);
+  box.appendChild(tag);
+  document.body.appendChild(box);
+  outlineTimer = window.setTimeout(() => {
+    box.style.opacity = "0";
+    window.setTimeout(() => box.remove(), 320);
+  }, 3000);
+}
+
+/** Scrolls to an element that uses the token and outlines it. Repeat taps move on to the next one. Null if none is on screen. */
+export function locateToken(id: string, allTokenIds: string[]): { index: number; total: number } | null {
+  const names = new Set(allTokenIds);
+  const { usage, dependents } = buildUsage(names);
+
+  // The token and every token built from it, however many steps away.
+  const family = new Set<string>([id]);
+  const queue = [id];
+  while (queue.length) {
+    for (const child of dependents.get(queue.shift()!) ?? []) {
+      if (!family.has(child)) {
+        family.add(child);
+        queue.push(child);
+      }
+    }
+  }
+
+  const found = new Set<Element>();
+  const collect = (selector: string) => {
+    try {
+      document.querySelectorAll(selector).forEach((el) => found.add(el));
+    } catch {
+      // A selector this browser can't take once its states are stripped: skip it.
+    }
+  };
+  for (const token of family) {
+    for (const selector of usage.get(token) ?? []) {
+      for (const part of selector.split(",")) {
+        const plain = plainSelector(part);
+        if (plain) collect(plain);
+      }
+    }
+    collect(`[style*="var(--${token})"]`);
+  }
+
+  const shown = Array.from(found).filter(
+    (el) => !el.closest("[data-color-tuner]") && el !== document.body && el !== document.documentElement && isShown(el),
+  );
+  if (shown.length === 0) return null;
+
+  // What is on screen now comes first, then the rest, each in page order.
+  const inView = (el: Element) => {
+    const r = el.getBoundingClientRect();
+    return r.bottom > 0 && r.top < window.innerHeight && r.right > 0 && r.left < window.innerWidth;
+  };
+  shown.sort((a, b) => Number(inView(b)) - Number(inView(a)));
+
+  const next = ((lastLocated.get(id) ?? -1) + 1) % shown.length;
+  lastLocated.set(id, next);
+  const target = shown[next];
+  target.scrollIntoView({ block: "center", inline: "center", behavior: "smooth" });
+  // Outline after the scroll has settled, so the box lands on the element.
+  window.setTimeout(() => outline(target, `--${id} · ${next + 1} of ${shown.length}`), 450);
+  return { index: next + 1, total: shown.length };
 }

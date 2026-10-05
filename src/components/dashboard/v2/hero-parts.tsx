@@ -255,7 +255,7 @@ export function HeroAccountMenu({
             <CurrencyLogo currency="USD" size={24} showBorder={false} className="-ml-2 max-sm:ml-0" />
           </span>
           <span className="tabular text-[14px] tracking-[-0.01em] max-sm:text-[13px]"><span className="max-sm:hidden">USD </span>{usd.mid.toFixed(2)}</span>
-          <RateTrend size={15} strokeWidth={2} className={cn(usd.changePct >= 0 ? "text-emerald-400" : "text-red-400")} />
+          <RateTrend size={15} strokeWidth={2} className={cn(usd.changePct >= 0 ? "text-success-text" : "text-destructive-text")} />
         </button>
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -400,7 +400,7 @@ export function HeroBalance({
     <div className={cn("relative flex items-center gap-2", className)}>
       {loading ? (
         <span
-          className="h-[32px] w-56 animate-pulse rounded-lg bg-[color-mix(in_oklch,var(--hero-foreground)_15%,transparent)] sm:w-72"
+          className="h-[32px] w-56 skeleton-shimmer rounded-lg bg-[color-mix(in_oklch,var(--hero-foreground)_15%,transparent)] sm:w-72"
           aria-label={t("dashboard.loadingBalance", "Loading balance")}
         />
       ) : (

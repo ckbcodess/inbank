@@ -196,7 +196,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0231 4455 8890",
     initials: "KB",
     rail: "bank",
-    colorBg: "#f1f8f9",
+    colorBg: "var(--avatar-teal)",
   },
   {
     id: "rec-b2",
@@ -205,7 +205,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "1089 3322 1100",
     initials: "AO",
     rail: "bank",
-    colorBg: "#ebe8de",
+    colorBg: "var(--avatar-sand)",
   },
   {
     id: "rec-b3",
@@ -214,7 +214,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0142 8899 0011",
     initials: "AF",
     rail: "bank",
-    colorBg: "#e0eedd",
+    colorBg: "var(--avatar-green)",
   },
   {
     id: "rec-b4",
@@ -223,7 +223,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0102 3344 5566",
     initials: "JA",
     rail: "bank",
-    colorBg: "#f5ebf7",
+    colorBg: "var(--avatar-lilac)",
   },
 
   // Mobile Wallet payees
@@ -234,7 +234,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0244 123 456",
     initials: "AS",
     rail: "wallet",
-    colorBg: "#fef9c3",
+    colorBg: "var(--avatar-yellow)",
   },
   {
     id: "rec-w2",
@@ -243,7 +243,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0201 987 654",
     initials: "YM",
     rail: "wallet",
-    colorBg: "#fee2e2",
+    colorBg: "var(--avatar-red)",
   },
   {
     id: "rec-w3",
@@ -252,7 +252,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     acct: "0277 456 789",
     initials: "KB",
     rail: "wallet",
-    colorBg: "#dbeafe",
+    colorBg: "var(--avatar-blue)",
   },
 
   // Proxy payees
@@ -264,7 +264,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "KB",
     rail: "proxy",
     subtitle: "@kwame.b",
-    colorBg: "#f1f8f9",
+    colorBg: "var(--avatar-teal)",
   },
   {
     id: "rec-px2",
@@ -274,7 +274,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "AS",
     rail: "proxy",
     subtitle: "@ama.serwaa",
-    colorBg: "#dbeafe",
+    colorBg: "var(--avatar-blue)",
   },
   {
     id: "rec-px3",
@@ -284,7 +284,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "KA",
     rail: "proxy",
     subtitle: "Ghana Card ID",
-    colorBg: "#fef9c3",
+    colorBg: "var(--avatar-yellow)",
   },
 
   // Airtime payees
@@ -296,7 +296,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "ME",
     rail: "airtime",
     subtitle: "0244 123 821",
-    colorBg: "#fef9c3",
+    colorBg: "var(--avatar-yellow)",
   },
   {
     id: "rec-air-1",
@@ -306,7 +306,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "AS",
     rail: "airtime",
     subtitle: "0244 123 456",
-    colorBg: "#dbeafe",
+    colorBg: "var(--avatar-blue)",
   },
   {
     id: "rec-air-2",
@@ -316,7 +316,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "KB",
     rail: "airtime",
     subtitle: "0201 987 654",
-    colorBg: "#fee2e2",
+    colorBg: "var(--avatar-red)",
   },
   {
     id: "rec-air-3",
@@ -326,7 +326,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "KB",
     rail: "airtime",
     subtitle: "0277 456 789",
-    colorBg: "#e0eedd",
+    colorBg: "var(--avatar-green)",
   },
   {
     id: "rec-air-4",
@@ -336,7 +336,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "YA",
     rail: "airtime",
     subtitle: "0559 220 118",
-    colorBg: "#f5ebf7",
+    colorBg: "var(--avatar-lilac)",
   },
 
   // Data Bundle payees
@@ -348,7 +348,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "ME",
     rail: "data",
     subtitle: "0244 123 821",
-    colorBg: "#fef9c3",
+    colorBg: "var(--avatar-yellow)",
   },
   {
     id: "rec-dat-1",
@@ -358,7 +358,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "HR",
     rail: "data",
     subtitle: "0201 987 654",
-    colorBg: "#fee2e2",
+    colorBg: "var(--avatar-red)",
   },
   {
     id: "rec-dat-2",
@@ -368,7 +368,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "IP",
     rail: "data",
     subtitle: "0277 456 789",
-    colorBg: "#e0eedd",
+    colorBg: "var(--avatar-green)",
   },
   {
     id: "rec-dat-3",
@@ -378,7 +378,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "AS",
     rail: "data",
     subtitle: "0244 123 456",
-    colorBg: "#dbeafe",
+    colorBg: "var(--avatar-blue)",
   },
   {
     id: "rec-dat-4",
@@ -388,7 +388,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "KB",
     rail: "data",
     subtitle: "0559 220 118",
-    colorBg: "#f5ebf7",
+    colorBg: "var(--avatar-lilac)",
   },
 
   // PAPSS International payees
@@ -401,7 +401,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     rail: "papss",
     country: "Nigeria",
     subtitle: "NGN · Nigeria",
-    colorBg: "#dcfce7",
+    colorBg: "var(--avatar-green)",
   },
   {
     id: "rec-papss2",
@@ -412,7 +412,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     rail: "papss",
     country: "Côte d'Ivoire",
     subtitle: "XOF · Côte d'Ivoire",
-    colorBg: "#fee2e2",
+    colorBg: "var(--avatar-red)",
   },
   {
     id: "rec-papss3",
@@ -423,7 +423,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     rail: "papss",
     country: "Kenya",
     subtitle: "KES · Kenya",
-    colorBg: "#e0f2fe",
+    colorBg: "var(--avatar-blue)",
   },
   {
     id: "rec-papss4",
@@ -434,7 +434,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     rail: "papss",
     country: "South Africa",
     subtitle: "ZAR · South Africa",
-    colorBg: "#fef3c7",
+    colorBg: "var(--avatar-yellow)",
   },
 
   // ECG Prepaid payees
@@ -446,7 +446,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "ECG",
     rail: "ecg",
     subtitle: "Meter: P-8839210",
-    colorBg: "#fef3c7",
+    colorBg: "var(--avatar-yellow)",
   },
   {
     id: "rec-ecg2",
@@ -456,7 +456,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "ECG",
     rail: "ecg",
     subtitle: "Meter: P-9921405",
-    colorBg: "#fef08a",
+    colorBg: "var(--avatar-lemon)",
   },
 
   // Ghana.gov payees
@@ -468,7 +468,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "DV",
     rail: "ghanagov",
     subtitle: "DVLA-2026-9901",
-    colorBg: "#e0f2fe",
+    colorBg: "var(--avatar-blue)",
   },
   {
     id: "rec-gov2",
@@ -478,7 +478,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "GRA",
     rail: "ghanagov",
     subtitle: "TIN-9088214-G",
-    colorBg: "#fef9c3",
+    colorBg: "var(--avatar-yellow)",
   },
   {
     id: "rec-gov3",
@@ -488,7 +488,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     initials: "PP",
     rail: "ghanagov",
     subtitle: "PASS-882109",
-    colorBg: "#fce7f3",
+    colorBg: "var(--avatar-pink)",
   },
 
   // Bills (GCB Pay One-Tap Beneficiaries categorized by Pay Type)
@@ -503,7 +503,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-001",
     category: "Bills & Utilities",
     subtitle: "Meter: P-8839210",
-    colorBg: "#fef3c7",
+    colorBg: "var(--avatar-yellow)",
   },
   {
     id: "rec-bill2",
@@ -515,7 +515,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-002",
     category: "Bills & Utilities",
     subtitle: "Acct: GW-440291",
-    colorBg: "#e0f2fe",
+    colorBg: "var(--avatar-blue)",
   },
   {
     id: "rec-bill-ut3",
@@ -527,7 +527,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-002b",
     category: "Bills & Utilities",
     subtitle: "Meter: NED-552019",
-    colorBg: "#fef08a",
+    colorBg: "var(--avatar-lemon)",
   },
 
   // 2. Subscriptions
@@ -541,7 +541,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-006",
     category: "Subscriptions",
     subtitle: "Smartcard: 1029384812",
-    colorBg: "#f3e8ff",
+    colorBg: "var(--avatar-lilac)",
   },
   {
     id: "rec-bill-tv2",
@@ -553,7 +553,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-007",
     category: "Subscriptions",
     subtitle: "Smartcard: 0219883421",
-    colorBg: "#e0f2fe",
+    colorBg: "var(--avatar-blue)",
   },
   {
     id: "rec-bill-tv3",
@@ -565,7 +565,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-007b",
     category: "Subscriptions",
     subtitle: "IUC: 20993841",
-    colorBg: "#fee2e2",
+    colorBg: "var(--avatar-red)",
   },
 
   // 3. Education
@@ -579,7 +579,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-008",
     category: "Education",
     subtitle: "ID: UG-10928341",
-    colorBg: "#dbeafe",
+    colorBg: "var(--avatar-blue)",
   },
   {
     id: "rec-bill-edu2",
@@ -591,7 +591,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-008b",
     category: "Education",
     subtitle: "Student ID: KN-8839210",
-    colorBg: "#fef3c7",
+    colorBg: "var(--avatar-yellow)",
   },
   {
     id: "rec-bill-edu3",
@@ -603,7 +603,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-008c",
     category: "Education",
     subtitle: "Index: WAEC-002914",
-    colorBg: "#e0eedd",
+    colorBg: "var(--avatar-green)",
   },
 
   // 4. Government Services
@@ -617,7 +617,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-004",
     category: "Government Services",
     subtitle: "TIN: TIN-9088214-G",
-    colorBg: "#fef9c3",
+    colorBg: "var(--avatar-yellow)",
   },
   {
     id: "rec-bill-gov2",
@@ -629,7 +629,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-004c",
     category: "Government Services",
     subtitle: "Licence: DVLA-2026-9901",
-    colorBg: "#e0f2fe",
+    colorBg: "var(--avatar-blue)",
   },
 
   // 5. Healthcare
@@ -643,7 +643,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-009",
     category: "Healthcare",
     subtitle: "Card: NHIS-9920148",
-    colorBg: "#fee2e2",
+    colorBg: "var(--avatar-red)",
   },
   {
     id: "rec-bill-hlth2",
@@ -655,7 +655,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-009b",
     category: "Healthcare",
     subtitle: "Folder: KBTH-88210-P",
-    colorBg: "#fce7f3",
+    colorBg: "var(--avatar-pink)",
   },
 
   // 6. Giving & Donations
@@ -681,7 +681,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-010b",
     category: "Giving & Donations",
     subtitle: "Member ID: ACI-883921",
-    colorBg: "#fef3c7",
+    colorBg: "var(--avatar-yellow)",
   },
 
   // 7. Others
@@ -695,7 +695,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-003",
     category: "Others",
     subtitle: "Line: 0244 123 456",
-    colorBg: "#fef08a",
+    colorBg: "var(--avatar-lemon)",
   },
   {
     id: "rec-bill6",
@@ -707,7 +707,7 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
     billerId: "bil-005",
     category: "Others",
     subtitle: "Policy: POL-882109-SIC",
-    colorBg: "#dcfce7",
+    colorBg: "var(--avatar-green)",
   },
 ];
 
@@ -831,11 +831,11 @@ function HorizontalScrollStrip({
     <div className={`relative w-full ${className}`}>
       {/* Contextual Left Chevron with gradient mask */}
       {canScrollLeft && (
-        <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center pr-5 pl-0 bg-gradient-to-r from-card via-card/70 to-transparent dark:from-card dark:via-card/40 dark:to-transparent pointer-events-none animate-in fade-in duration-200">
+        <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center pr-5 pl-0 bg-gradient-to-r from-card via-card/70 to-transparent dark:via-card/40 pointer-events-none animate-in fade-in duration-200">
           <button
             type="button"
             onClick={() => scroll("left")}
-            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 dark:bg-card/90 text-foreground shadow-sm backdrop-blur-md transition-all active:scale-95 cursor-pointer -ml-1"
+            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 text-foreground shadow-sm backdrop-blur-md transition-all active:scale-95 cursor-pointer -ml-1"
             aria-label="Scroll left"
           >
             <ChevronLeft size={16} strokeWidth={2.2} />
@@ -854,11 +854,11 @@ function HorizontalScrollStrip({
 
       {/* Contextual Right Smart Chevron with gradient mask */}
       {canScrollRight && (
-        <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center pl-6 pr-0 bg-gradient-to-l from-card via-card/70 to-transparent dark:from-card dark:via-card/40 dark:to-transparent pointer-events-none animate-in fade-in duration-200">
+        <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center pl-6 pr-0 bg-gradient-to-l from-card via-card/70 to-transparent dark:via-card/40 pointer-events-none animate-in fade-in duration-200">
           <button
             type="button"
             onClick={() => scroll("right")}
-            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 dark:bg-card/90 text-foreground shadow-sm backdrop-blur-md transition-all active:scale-95 cursor-pointer -mr-1"
+            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 text-foreground shadow-sm backdrop-blur-md transition-all active:scale-95 cursor-pointer -mr-1"
             aria-label="Scroll right"
           >
             <ChevronRight size={16} strokeWidth={2.2} />
@@ -890,8 +890,8 @@ function RailBeneficiaryStrip({
             title={`Select ${item.name} (${item.subtitle || item.bank || item.acct})`}
           >
             <span
-              className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-[#111] transition-transform group-hover:scale-105 shadow-xs border border-black/5 dark:border-white/10"
-              style={{ backgroundColor: item.colorBg || "#f1f8f9" }}
+              className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-transform group-hover:scale-105 shadow-xs border border-black/5 dark:border-white/10"
+              style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
             >
               {item.initials}
             </span>
@@ -2143,8 +2143,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <span
-                className="flex size-14 items-center justify-center rounded-full text-[20px] text-[#111] transition-transform group-hover:scale-105"
-                style={{ backgroundColor: item.colorBg || "#f1f8f9" }}
+                className="flex size-14 items-center justify-center rounded-full text-[20px] text-primary-foreground transition-transform group-hover:scale-105"
+                style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
               >
                 {item.initials}
               </span>
@@ -2255,8 +2255,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <span
-                className="flex size-14 items-center justify-center rounded-full text-[20px] text-[#111] transition-transform group-hover:scale-105"
-                style={{ backgroundColor: item.colorBg || "#f1f8f9" }}
+                className="flex size-14 items-center justify-center rounded-full text-[20px] text-primary-foreground transition-transform group-hover:scale-105"
+                style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
               >
                 {item.initials}
               </span>
@@ -2360,8 +2360,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <span
-                className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-[#111] transition-transform group-hover:scale-105 shadow-xs border border-black/5 dark:border-white/10"
-                style={{ backgroundColor: item.colorBg || "#f1f8f9" }}
+                className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-transform group-hover:scale-105 shadow-xs border border-black/5 dark:border-white/10"
+                style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
               >
                 {item.initials}
               </span>
@@ -2432,7 +2432,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             <div className="flex flex-col p-4 rounded-[16px] border border-border/80 bg-card shadow-xs gap-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-warning/10 text-warning-text border border-warning/20">
                     Self Withdrawal
                   </span>
                   <span className="text-[12px] text-muted-foreground">Expires in 18 hrs</span>
@@ -2464,7 +2464,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             <div className="flex flex-col p-4 rounded-[16px] border border-border/80 bg-card shadow-xs gap-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-info/10 text-info-text border border-info/20">
                     Kofi Boateng (0244123456)
                   </span>
                   <span className="text-[12px] text-muted-foreground">Expires in 22 hrs</span>
@@ -2525,8 +2525,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <span
-                className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-[#111] transition-transform group-hover:scale-105 shadow-xs border border-black/5 dark:border-white/10"
-                style={{ backgroundColor: item.colorBg || "#fef3c7" }}
+                className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-transform group-hover:scale-105 shadow-xs border border-black/5 dark:border-white/10"
+                style={{ backgroundColor: item.colorBg || "var(--avatar-yellow)" }}
               >
                 {item.initials}
               </span>
@@ -2587,7 +2587,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         {myProxy ? (
           <div className="flex items-center justify-between rounded-2xl border border-border bg-muted/30 px-4 py-3">
             <div className="flex items-center gap-3">
-              <span className="flex size-9 items-center justify-center rounded-full bg-[#FEF3D6] text-[#B27B00] dark:bg-[#F2B200]/20 dark:text-[#F2B200]">
+              <span className="flex size-9 items-center justify-center rounded-full bg-warning/10 text-warning-text dark:bg-primary/20">
                 <User size={17} strokeWidth={1.8} />
               </span>
               <div className="flex flex-col">
@@ -2742,7 +2742,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 }
                 className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
               >
-                <span className="flex size-14 items-center justify-center rounded-full bg-[#fef9c3] text-[16px] font-medium text-[#111] transition-transform group-hover:scale-105">
+                <span className="flex size-14 items-center justify-center rounded-full bg-primary/20 text-[16px] font-medium text-primary-foreground transition-transform group-hover:scale-105">
                   {g.name.slice(0, 2).toUpperCase()}
                 </span>
                 <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
@@ -2808,8 +2808,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <span
-                className="flex size-14 items-center justify-center rounded-full text-[18px] text-[#111] transition-transform group-hover:scale-105"
-                style={{ backgroundColor: item.colorBg || "#f1f8f9" }}
+                className="flex size-14 items-center justify-center rounded-full text-[18px] text-primary-foreground transition-transform group-hover:scale-105"
+                style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
               >
                 {item.initials}
               </span>
@@ -2919,7 +2919,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           <button
             type="button"
             aria-label="Help & Information"
-            className="flex size-7 items-center justify-center rounded-full bg-[#f2b200] text-black font-semibold text-[13px] shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
+            className="flex size-7 items-center justify-center rounded-full bg-primary text-black font-semibold text-[13px] shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
           >
             ?
           </button>
@@ -3592,7 +3592,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 {f.saveBeneficiary && (
                   <div className="flex items-center justify-between px-4 py-3 w-full">
                     <span className="text-[13.5px] text-muted-foreground">Save Beneficiary</span>
-                    <span className="text-[13.5px] font-normal text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                    <span className="text-[13.5px] font-normal text-success-text flex items-center gap-1.5">
                       <CheckCircle2 size={14} strokeWidth={1.9} className="shrink-0" />
                       <span>Yes {f.beneficiaryNickname ? `(“${f.beneficiaryNickname}”)` : ""}</span>
                     </span>

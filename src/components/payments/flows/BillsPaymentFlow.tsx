@@ -172,7 +172,7 @@ export function BillsPaymentFlow({
                   value={state.ecgMeter}
                   onChange={(e) => onChange("ecgMeter", e.target.value)}
                   placeholder="Enter meter number"
-                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all tabular"
                 />
               </>
             ) : state.subType === "ghanagov" ? (
@@ -181,7 +181,7 @@ export function BillsPaymentFlow({
                   value={state.govService || ""}
                   onValueChange={(val) => val && onChange("govService", val)}
                 >
-                  <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                  <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
                     <SelectValue placeholder="Select government agency" />
                   </SelectTrigger>
                   <SelectContent>
@@ -198,7 +198,7 @@ export function BillsPaymentFlow({
                   value={state.govRef}
                   onChange={(e) => onChange("govRef", e.target.value)}
                   placeholder="Enter PRN or invoice number"
-                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all tabular"
                 />
               </>
             ) : (
@@ -207,7 +207,7 @@ export function BillsPaymentFlow({
                   value={state.billerId || selectedBiller?.id || ""}
                   onValueChange={(val) => val && onChange("billerId", val)}
                 >
-                  <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+                  <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
                     <SelectValue placeholder="Select Biller" />
                   </SelectTrigger>
                   <SelectContent>
@@ -224,7 +224,7 @@ export function BillsPaymentFlow({
                   value={state.billRef}
                   onChange={(e) => onChange("billRef", e.target.value)}
                   placeholder={selectedBiller ? `Enter ${selectedBiller.reference.toLowerCase()}` : "Enter account or reference number"}
-                  className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular"
+                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all tabular"
                 />
               </>
             )}

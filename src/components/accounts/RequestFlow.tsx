@@ -481,7 +481,7 @@ export default function RequestFlow({ account }: { account: Account }) {
 /* ── Fields — the Send & Pay form controls ─────────────────────────────── */
 
 const INPUT =
-  "h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground outline-none focus:border-ring focus:ring-1 focus:ring-ring/30 transition-all tabular";
+  "h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all tabular";
 
 function Field({ label, htmlFor, children }: { label: string; htmlFor?: string; children: React.ReactNode }) {
   return (
@@ -517,7 +517,7 @@ function FlowSelect({
   const selected = options.find((o) => o.id === value);
   return (
     <Select value={value ?? ""} onValueChange={(v) => v && onChange(v)}>
-      <SelectTrigger className="h-13 w-full rounded-2xl border border-border/80 bg-card px-4 text-[15px] text-foreground shadow-none">
+      <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
         {selected ? (
           <span className="truncate text-[15px] font-normal text-foreground">{selected.name}</span>
         ) : (
@@ -602,7 +602,7 @@ function Stepper({
   const btn =
     "flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-xl text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent";
   return (
-    <div className="flex h-13 w-full items-center justify-between rounded-2xl border border-border/80 bg-card px-2">
+    <div className="flex h-13 w-full items-center justify-between rounded-2xl border border-field-border bg-field px-2">
       <button
         type="button"
         onClick={() => onChange(Math.max(min, value - 1))}
