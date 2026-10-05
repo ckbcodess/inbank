@@ -840,10 +840,14 @@ export function RequestCardFlow() {
                 </div>
 
                 {/* Middle Row: Gold EMV Chip with Metallic Sheen + Contactless Waves */}
-                <div className="relative z-10 my-auto py-2 flex items-center gap-3.5">
-                  <EmvChip />
-                  <Wifi size={22} strokeWidth={2.4} className="rotate-90 opacity-85 shrink-0 transition-colors duration-300" />
-                </div>
+                {cardType === "Virtual" ? (
+                  <div className="my-auto" aria-hidden="true" />
+                ) : (
+                  <div className="relative z-10 my-auto py-2 flex items-center gap-3.5">
+                    <EmvChip />
+                    <Wifi size={22} strokeWidth={2.4} className="rotate-90 opacity-85 shrink-0 transition-colors duration-300" />
+                  </div>
+                )}
 
                 {/* Bottom Row: CARD HOLDER (Left), EXP (Center), VISA/Mastercard (Right) */}
                 <div className="relative z-10 flex items-end justify-between whitespace-nowrap gap-4 transition-colors duration-300">
@@ -868,8 +872,8 @@ export function RequestCardFlow() {
                   <div className="shrink-0 flex items-end justify-end pl-2">
                     {cardScheme === "Mastercard" ? (
                       <div className="flex -space-x-2 items-center drop-shadow-xs pb-0.5">
-                        <div className="size-6 sm:size-7 rounded-full bg-[#eb001b]/95" />
-                        <div className="size-6 sm:size-7 rounded-full bg-[#f79e1b]/95" />
+                        <div className="size-6 sm:size-7 rounded-full bg-[var(--mc-red)]/95" />
+                        <div className="size-6 sm:size-7 rounded-full bg-[var(--mc-orange)]/95" />
                       </div>
                     ) : (
                       <span className="font-sans text-[26px] sm:text-[32px] font-black italic tracking-tighter leading-none opacity-95 drop-shadow-xs">
@@ -975,7 +979,7 @@ export function RequestCardFlow() {
                 className="absolute inset-0 size-full object-cover pointer-events-none select-none"
               />
               <div className="relative z-10 flex items-center justify-between">
-                <span className="text-[6.5px] font-medium uppercase opacity-90">GCB</span>
+                <GcbCardLogo themeId={selectedTheme.id} className="h-3 w-auto shrink-0" />
                 <span className="text-[6px] font-medium uppercase opacity-80">{cardType}</span>
               </div>
               <div className="relative z-10 flex items-end justify-between">

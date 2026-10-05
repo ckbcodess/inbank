@@ -17,7 +17,7 @@ export function CardsSpotlight({ cards }: CardsLayoutProps) {
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-center rounded-2xl bg-muted/50 px-4 py-10 sm:px-10 sm:py-14">
           <TiltCard3D className="w-full max-w-[480px]">
-            <CardFace card={active} className="rounded-[20px] shadow-xl" />
+            <CardFace card={active} className="rounded-[20px]" />
           </TiltCard3D>
         </div>
         <CardDetails card={active} />
@@ -39,10 +39,10 @@ export function CardsSpotlight({ cards }: CardsLayoutProps) {
               )}
             >
               <div className="w-[76px] shrink-0">
-                <CardFace card={card} className="rounded-lg shadow-sm" />
+                <CardFace card={card} className="rounded-lg" />
               </div>
               <div className="flex min-w-0 flex-col gap-1">
-                <span className="truncate text-[13.5px] text-foreground">{card.name}</span>
+                <span className="truncate text-[13.5px] font-medium text-foreground">{card.name}</span>
                 <span className="tabular text-[12px] text-muted-foreground">{card.maskedNumber}</span>
                 <StatusPill card={card} className="w-fit" />
               </div>

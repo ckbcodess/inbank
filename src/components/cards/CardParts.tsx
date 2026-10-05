@@ -86,7 +86,7 @@ export function CardDetails({ card }: { card: PaymentCard }) {
     <div className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-card p-4 sm:p-5">
       <div className="flex min-w-0 flex-col gap-1">
         <div className="flex items-center gap-2">
-          <span className="truncate text-[15px] text-foreground">{card.name}</span>
+          <span className="truncate text-[15px] font-medium text-foreground">{card.name}</span>
           <StatusPill card={card} />
         </div>
         <span className="tabular text-[12px] text-muted-foreground">

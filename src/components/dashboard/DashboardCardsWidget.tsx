@@ -125,15 +125,15 @@ export function DashboardCardsWidget() {
                   style={{ background: card.gradient }}
                 >
                   {/* Chip */}
-                  <div className="h-2 w-2.5 rounded-xs bg-[#f9c632]/90" />
+                  <div className="h-2 w-2.5 rounded-xs bg-primary/90" />
                   {/* Network logo */}
                   <div className="flex justify-end">
                     {card.network === "VISA" ? (
                       <span className="text-[8.5px] font-bold tracking-tight text-white">VISA</span>
                     ) : (
                       <div className="flex items-center -space-x-1">
-                        <div className="size-2 rounded-full bg-[#eb001b]/90" />
-                        <div className="size-2 rounded-full bg-[#f79e1b]/90" />
+                        <div className="size-2 rounded-full bg-[var(--mc-red)]/90" />
+                        <div className="size-2 rounded-full bg-[var(--mc-orange)]/90" />
                       </div>
                     )}
                   </div>
@@ -195,7 +195,7 @@ export function DashboardCardsWidget() {
                   className="relative flex h-[34px] w-[52px] shrink-0 flex-col justify-between overflow-hidden rounded-md p-1 shadow-xs"
                   style={{ background: managingCard.gradient }}
                 >
-                  <div className="h-2 w-2.5 rounded-xs bg-[#f9c632]/90" />
+                  <div className="h-2 w-2.5 rounded-xs bg-primary/90" />
                   <div className="text-[8px] font-medium text-white text-right">{managingCard.network}</div>
                 </div>
                 <div>

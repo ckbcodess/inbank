@@ -176,7 +176,7 @@ export function CardDeliveryTracker({
                   className={cn(
                     "absolute left-[13px] top-[26px] bottom-0 w-[2px] transition-colors",
                     isCompleted && idx < currentStepIndex
-                      ? "bg-[#ffbc04]"
+                      ? "bg-primary"
                       : "bg-[#e5e5e5] dark:bg-border"
                   )}
                 />
@@ -187,7 +187,7 @@ export function CardDeliveryTracker({
                 className={cn(
                   "size-7 rounded-full flex items-center justify-center shrink-0 transition-all z-10 select-none",
                   isCompleted
-                    ? "bg-[#ffbc04] text-[#121212] font-medium"
+                    ? "bg-primary text-primary-foreground font-medium"
                     : "bg-[#f5f5f5] dark:bg-muted text-muted-foreground text-[12px] border border-border"
                 )}
               >

@@ -11,6 +11,7 @@
  *   Receipt: Full transaction receipt with Share, Repeat, and Done actions.
  */
 
+import { GCBLogo } from "@/components/ui/GCBLogo";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -2184,7 +2185,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
           {/* Card 2: Other GCB Accounts */}
           <ActionTile
-            leading={<span className="text-[13px] font-medium">GCB</span>}
+            leading={<GCBLogo className="h-7 w-auto" />}
             title="Other GCB Accounts"
             onClick={() => {
               setBankCategory("gcb");

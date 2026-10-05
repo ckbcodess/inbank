@@ -105,10 +105,9 @@
 
 :root {
   /*
-   * Neutral palette is FIXED product-wide (the `neutral` scale — pure gray).
-   * Accent tokens (--primary, --ring, --sidebar-primary/-ring, --chart-*) are
-   * the indigo fallback below and get overridden per-tenant by the accent CSS
-   * injected in the root layout. See src/lib/theme/accent.ts.
+   * Neutral palette is FIXED product-wide (the `neutral` scale, pure grey).
+   * The accent is the GCB amber (--primary, #F9C632) and the tokens derived from it
+   * (--ring, --sidebar-primary, --sidebar-ring, --chart-1). There is no per-tenant accent.
    */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -125,10 +124,17 @@
   --account-card: rgba(71, 85, 96, 0.1);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  /* GCB Bank PLC brand accent — iconic Amber / Gold (#fdc307) */
-  --primary: oklch(0.846 0.172 86.7);
-  --primary-hover: #FDB900;
+  /* GCB Bank PLC brand amber: #F9C632 */
+  --primary: #F9C632;
+  --primary-hover: #E5B62E;
   --primary-foreground: oklch(0.145 0 0);
+  /* Icons on the amber round actions of the card page: dark brown, the same in both modes. */
+  --action-icon: #321800;
+  /* Outline of the two-tone Send & Pay icons (the amber parts are --duo-accent). */
+  --duo-outline: #475560;
+  /* The two circles of the Mastercard mark, wherever a card shows its network. */
+  --mc-red: #eb001b;
+  --mc-orange: #f79e1b;
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -142,7 +148,7 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.78 0.15 86.7);
-  --chart-1: oklch(0.846 0.172 86.7);
+  --chart-1: #F9C632;
   --chart-2: oklch(0.75 0.16 80);
   --chart-3: oklch(0.65 0.15 72);
   --chart-4: oklch(0.55 0.13 65);
@@ -183,14 +189,14 @@
   --radius: 0.625rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.439 0 0);
-  --sidebar-primary: oklch(0.846 0.172 86.7);
+  --sidebar-primary: #F9C632;
   --sidebar-primary-foreground: oklch(0.145 0 0);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.78 0.15 86.7);
   /* Brand gradient: deep amber → brighter golden glow at bottom */
-  --primary-gradient-from: #fdc307;
+  --primary-gradient-from: #F9C632;
   --primary-gradient-to: #f59e0b;
   /* Dashboard hero panel (Figma 1945:5108): a slate card with white type here; near-black with white type in dark. */
   --hero-surface: #36434e;
@@ -255,8 +261,7 @@
 }
 
 .dark {
-  /* Neutral palette FIXED (neutral scale, dark mode). Accent = indigo fallback,
-     overridden per-tenant by injected accent CSS. */
+  /* Neutral palette FIXED (neutral scale, dark mode). The accent is the same GCB amber as light mode. */
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: #181818;
@@ -264,13 +269,20 @@
   --tile: #141414;
   --tile-hover: #262626;
   --tile-border: #292928;
-  --tile-accent: #fdc307;
+  --tile-accent: #F9C632;
   --account-card: rgba(148, 163, 184, 0.1);
   --popover: oklch(0.269 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.846 0.172 86.7);
-  --primary-hover: #FDB900;
+  --primary: #F9C632;
+  --primary-hover: #E5B62E;
   --primary-foreground: oklch(0.145 0 0);
+  /* Icons on the amber round actions of the card page: dark brown, the same in both modes. */
+  --action-icon: #321800;
+  /* Outline of the two-tone Send & Pay icons (the amber parts are --duo-accent). */
+  --duo-outline: #475560;
+  /* The two circles of the Mastercard mark, wherever a card shows its network. */
+  --mc-red: #eb001b;
+  --mc-orange: #f79e1b;
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -284,7 +296,7 @@
   --border: oklch(0.269 0 0);
   --input: oklch(0.269 0 0);
   --ring: oklch(0.78 0.15 86.7);
-  --chart-1: oklch(0.846 0.172 86.7);
+  --chart-1: #F9C632;
   --chart-2: oklch(0.75 0.16 80);
   --chart-3: oklch(0.65 0.15 72);
   --chart-4: oklch(0.55 0.13 65);
@@ -310,13 +322,13 @@
   --spend-other: #4d5055;
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.708 0 0);
-  --sidebar-primary: oklch(0.846 0.172 86.7);
+  --sidebar-primary: #F9C632;
   --sidebar-primary-foreground: oklch(0.145 0 0);
   --sidebar-accent: oklch(0.371 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
   --sidebar-ring: oklch(0.78 0.15 86.7);
-  --primary-gradient-from: #fdc307;
+  --primary-gradient-from: #F9C632;
   --primary-gradient-to: #d97706;
   --hero-surface: #131516;
   /* Mirrors HERO_WAVE_DEFAULTS in src/lib/hero-wave.ts — change both together. */
@@ -768,7 +780,10 @@ html.theme-fade *::after {
 }
 
 /* Two-tone hub icons: the amber parts, recolourable through --duo-accent. */
-.duo-fill { fill: var(--duo-accent, #fdc307); }
+.duo-fill { fill: var(--duo-accent, #F9C632); }
+/* The outline of the same icons: a token, since SVG attributes cannot read variables. */
+.duo-outline { stroke: var(--duo-outline); }
+.duo-outline-fill { fill: var(--duo-outline); }
 
 /* Remove default number input spinner buttons globally */
 input[type="number"]::-webkit-inner-spin-button,

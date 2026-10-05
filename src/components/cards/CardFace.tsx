@@ -41,7 +41,7 @@ export function CardFace({
     <div
       style={{ backgroundColor: theme.colorHex }}
       className={cn(
-        "relative aspect-[1.586/1] w-full select-none overflow-hidden rounded-2xl shadow-md ring-1 ring-inset ring-black/10 [container-type:inline-size] dark:ring-white/15",
+        "relative aspect-[1.586/1] w-full select-none overflow-hidden rounded-2xl ring-1 ring-inset ring-black/10 [container-type:inline-size] dark:ring-white/15",
         theme.textColor,
         dimmed && "opacity-60 saturate-50",
         className,
@@ -65,14 +65,17 @@ export function CardFace({
             </span>
           </div>
 
-          <div className="flex items-center gap-[3cqw]">
-            <EmvChip className="w-[12cqw]! sm:w-[12cqw]!" />
-            <Wifi
-              strokeWidth={2.2}
-              className="size-[5.4cqw] rotate-90 opacity-85"
-              aria-hidden="true"
-            />
-          </div>
+          {/* A virtual card is never held, so it has no chip and no contactless mark. */}
+          {!(card.type === "Virtual" || card.isVirtual) && (
+            <div className="flex items-center gap-[3cqw]">
+              <EmvChip className="w-[12cqw]! sm:w-[12cqw]!" />
+              <Wifi
+                strokeWidth={2.2}
+                className="size-[5.4cqw] rotate-90 opacity-85"
+                aria-hidden="true"
+              />
+            </div>
+          )}
 
           <div className="flex items-end justify-between">
             <span className="tabular text-[4.6cqw] leading-none tracking-[0.06em]">
@@ -80,16 +83,16 @@ export function CardFace({
             </span>
             {card.scheme === "Mastercard" ? (
               <div
-                className="flex -space-x-[2.4cqw] items-center"
+                className="flex -space-x-[1.8cqw] items-center"
                 aria-label="Mastercard"
               >
-                <div className="size-[7cqw] rounded-full bg-[#eb001b]/95" />
-                <div className="size-[7cqw] rounded-full bg-[#f79e1b]/95" />
+                <div className="size-[5.4cqw] rounded-full bg-[var(--mc-red)]/95" />
+                <div className="size-[5.4cqw] rounded-full bg-[var(--mc-orange)]/95" />
               </div>
             ) : (
               <span
                 aria-label="Visa"
-                className="font-sans text-[8cqw] font-black italic leading-none tracking-tighter opacity-95"
+                className="font-sans text-[6cqw] font-black italic leading-none tracking-tighter opacity-95"
               >
                 VISA
               </span>

@@ -101,7 +101,7 @@ export function ActionTile({
         size={20}
         strokeWidth={1.8}
         aria-hidden="true"
-        className={cn("shrink-0 text-[#737373] transition-transform duration-150 group-hover:text-foreground dark:text-[#999999]", compactOnMobile && "max-sm:hidden")}
+        className={cn("shrink-0 text-muted-foreground transition-transform duration-150 group-hover:text-foreground", compactOnMobile && "max-sm:hidden")}
       />
     </>
   );

@@ -10,12 +10,11 @@ import {
   Building2,
   ChevronLeft,
   ChevronRight,
-  Clock,
   CreditCard,
+  RefreshCw,
   Globe,
   Key,
   PlusCircle,
-  Lock,
   Sparkles,
   Truck,
   Check,
@@ -24,7 +23,6 @@ import {
   Bike,
   Phone,
   Copy,
-  Hash,
   Gauge,
   ArrowLeftRight,
   ShieldAlert,
@@ -54,7 +52,7 @@ import {
   updateCard as updateCardInStore,
 } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
-import { getCardTheme } from "@/components/cards/card-themes";
+import { CardFace, themeForCard } from "@/components/cards/CardFace";
 import { EmvChip } from "@/components/cards/EmvChip";
 import { GcbCardLogo } from "@/components/cards/GcbCardLogo";
 import { TiltCard3D } from "@/components/cards/TiltCard3D";
@@ -67,7 +65,6 @@ import { toast } from "sonner";
 import { ActionTile } from "@/components/ui/action-tile";
 import { KeypadIcon } from "@/components/ui/keypad-icon";
 import { cn } from "@/lib/utils";
-import { roundMoney } from "@/lib/money";
 import { useContextualBack } from "@/lib/contextual-back";
 import { SmoothCollapse } from "@/components/ui/smooth-height";
 
@@ -136,7 +133,7 @@ function RoundAction({
       <span
         className={cn(
           "flex size-14 items-center justify-center rounded-full transition-[background-color,transform] duration-hover ease-settle group-active:scale-95",
-          "bg-[var(--tile)] text-foreground group-hover:bg-[var(--tile-hover)]",
+          "bg-primary text-[var(--action-icon)] group-hover:bg-primary-hover",
         )}
       >
         <Icon size={20} strokeWidth={1.8} aria-hidden="true" />
@@ -208,6 +205,9 @@ function DetailLine({ label, value, onCopy }: { label: string; value: string; on
     </div>
   );
 }
+
+/** How long the card details stay on screen after the PIN. */
+const DETAILS_SECONDS = 15;
 
 export function VirtualCardDetailsView({
   card,
@@ -476,6 +476,31 @@ export function VirtualCardDetailsView({
   // Card Activation Authorization State (Requires 4-digit PIN before showing Activation Modal)
   const [activateAuthOpen, setActivateAuthOpen] = useState(false);
 
+  // Card details (number, expiry, security code) are shown only after the PIN (or a one-time code) is entered.
+  const [detailsAuthOpen, setDetailsAuthOpen] = useState(false);
+  const handleDetailsAuthSuccess = () => {
+    setDetailsAuthOpen(false);
+    setDetailsCountdown(DETAILS_SECONDS);
+    setActiveModal("details");
+  };
+  // ...and they close themselves after a short while, like the PIN view, with the seconds left shown.
+  const [detailsCountdown, setDetailsCountdown] = useState(DETAILS_SECONDS);
+  useEffect(() => {
+    if (activeModal !== "details") return;
+    const interval = setInterval(() => {
+      setDetailsCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setActiveModal(null);
+          toast.info("Card details closed automatically for security.");
+          return DETAILS_SECONDS;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [activeModal]);
+
   const handleOpenActivate = () => {
     setActivateAuthOpen(true);
   };
@@ -697,96 +722,15 @@ export function VirtualCardDetailsView({
       effectiveCard.status === "Inactive"
   );
 
-  const cardThemeId =
-    effectiveCard.colorTheme ||
-    (effectiveCard.type === "Virtual"
-      ? "blue"
-      : effectiveCard.type === "Prepaid"
-      ? "maroon"
-      : "gold");
-  const activeTheme = getCardTheme(cardThemeId);
+  // The same theme the Cards page picks, so the card looks the same on both.
+  const activeTheme = themeForCard(effectiveCard);
 
-  const cardNode = (() => {
-      const isDarkText =
-        activeTheme.textColor.includes("121212") ||
-        activeTheme.textColor.includes("zinc-950") ||
-        activeTheme.textColor.includes("082f49");
-      const badgeClass = isDarkText
-        ? "bg-black/15 text-[#082f49] border-black/10"
-        : "bg-white/20 text-white border-white/20";
-      // A hairline rim of light: brightest where the top-left edge catches it, gone by the middle, a faint
-      // shadow line at the bottom. Drawn as a gradient border (a masked 1px ring), and it brightens on hover.
-      const rim = (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[5] rounded-[20px] p-px opacity-80 transition-opacity duration-hover group-hover:opacity-100"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.12) 38%, rgba(255,255,255,0) 62%, rgba(0,0,0,0.14) 100%)",
-            // Keep only the 1px ring: mask the padding box out of the border box. (Set in this order: the
-            // `mask` shorthand resets `mask-composite`.)
-            WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-            mask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-            WebkitMaskComposite: "xor",
-            maskComposite: "exclude",
-          }}
-        />
-      );
-      const schemeMark =
-        effectiveCard.scheme === "Mastercard" ? (
-          <div className="flex -space-x-1.5 items-center drop-shadow-xs">
-            <div className="size-4.5 rounded-full bg-[#eb001b]/95" />
-            <div className="size-4.5 rounded-full bg-[#f79e1b]/95" />
-          </div>
-        ) : (
-          <span className="font-bold italic text-[17px] tracking-tighter font-sans drop-shadow-xs leading-none">VISA</span>
-        );
-      return (
-        <div className="group relative mx-auto aspect-[1.586/1] w-full max-w-[360px]">
-          <div
-            style={{ backgroundColor: activeTheme.colorHex }}
-            className={`absolute inset-0 overflow-hidden rounded-[20px] p-5 sm:p-6 flex flex-col justify-between select-none shadow-xs [clip-path:inset(0_round_20px)] ${
-              activeTheme.textColor
-            } ${isFrozen ? "opacity-60 saturate-50" : ""}`}
-          >
-            {isFrozen && (
-              <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
-                <span className="flex size-16 items-center justify-center rounded-full bg-white/90 text-zinc-900 shadow-md">
-                  <Lock size={26} strokeWidth={1.8} aria-label="Blocked" />
-                </span>
-              </div>
-            )}
-            <img
-              src={activeTheme.bgImage}
-              alt=""
-              className="absolute -inset-[3px] w-[calc(100%+6px)] h-[calc(100%+6px)] max-w-none object-cover scale-[1.03] pointer-events-none select-none"
-            />
-            {rim}
-
-            <div className="relative z-10 flex items-center justify-between">
-              <GcbCardLogo themeId={activeTheme.id} className="h-8 sm:h-9 w-auto drop-shadow-xs shrink-0" />
-              <div className="flex items-center gap-2">
-                {isInactive ? (
-                  <span className={`backdrop-blur-xs px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${badgeClass}`}>
-                    Needs Activation
-                  </span>
-                ) : isFrozen ? (
-                  <span className={`backdrop-blur-xs px-2.5 py-0.5 rounded-full text-[11px] font-medium border ${badgeClass}`}>
-                    Blocked
-                  </span>
-                ) : null}
-                <span className="text-[14px] tracking-wide opacity-90">{effectiveCard.type}</span>
-              </div>
-            </div>
-
-            <div className="relative z-10 flex items-end justify-between gap-3">
-              <span className="tabular text-[16px] tracking-wider">•••• {maskedLast4}</span>
-              <div className="flex h-5 shrink-0 items-center">{schemeMark}</div>
-            </div>
-          </div>
-        </div>
-      );
-  })();
+  // The shared card face, the same one the Cards page draws, with the block state applied.
+  const cardNode = (
+    <div className="relative mx-auto w-full max-w-[360px]">
+      <CardFace card={{ ...effectiveCard, status: isFrozen ? "Blocked" : effectiveCard.status }} />
+    </div>
+  );
 
   // Under the round actions: where the card is in its delivery, one tap to the tracker.
   const deliveryBannerNode = (
@@ -845,22 +789,21 @@ export function VirtualCardDetailsView({
               ) : (
                 <div className="flex w-full flex-col">
                   <div className="flex flex-col gap-3">
-                  <div className="flex w-full items-start justify-center gap-x-10">
-                    {/* A card that holds money leads with Top Up. Every card then has details and activity, and a
-                        debit card (which holds none) ends with its PIN. */}
-                    {isFundable && (
+                  <div className="mx-auto flex w-full max-w-[360px] items-start justify-between">
+                    {/* The first action follows the money: a card that holds some leads with Top Up, a debit card (which
+                        holds none) with its PIN. Details and activity then follow on every card, in the same order. */}
+                    {isFundable ? (
                       <RoundAction
                         icon={PlusCircle}
                         label="Top Up"
                         href={`/payments/send?rail=card-topup&cardId=${currentCard.id}`}
                         title="Top up card balance"
                       />
+                    ) : (
+                      hasPin && <RoundAction icon={KeypadIcon} label="Show PIN" onClick={handleOpenPinModal} disabled={isFrozen} />
                     )}
-                    <RoundAction icon={Hash} label="Card details" onClick={() => setActiveModal("details")} />
+                    <RoundAction icon={CreditCard} label="View Details" onClick={() => setDetailsAuthOpen(true)} />
                     <RoundAction icon={ArrowLeftRight} label="Activity" onClick={() => setActiveModal("activity")} />
-                    {!isFundable && hasPin && (
-                      <RoundAction icon={KeypadIcon} label="Show PIN" onClick={handleOpenPinModal} disabled={isFrozen} />
-                    )}
                   </div>
                   {isFrozen && !isFundable && hasPin && (
                     <p className="text-center text-[12px] text-muted-foreground">Unblock the card to view its PIN</p>
@@ -933,7 +876,6 @@ export function VirtualCardDetailsView({
               </div>
   );
 
-  const limitRemaining = dailyLimit === null ? null : Math.max(0, roundMoney(dailyLimit - dailySpent));
   const limitNode = (
     <ManageRow
       icon={Gauge}
@@ -952,48 +894,39 @@ export function VirtualCardDetailsView({
   const fundsAccount = availableAccounts.find((a) => a.id === currentCard.linkedAccountId);
   const funds = currentCard.balance ?? 0;
   const fundsCurrency = currentCard.currency || "GHS";
-  // The limit is in GHS: it only holds the number down when the money is in GHS too.
-  const limitHolds = limitRemaining !== null && fundsCurrency === "GHS" && limitRemaining < funds;
-  const spendable = limitHolds ? (limitRemaining as number) : funds;
+  // One quiet line under the card, the way Wise captions its card: what it is, then the figure. A card that holds
+  // money says what is available; a debit card says which account it is linked to, and is the way to it.
   const availableNode = isInactive ? null : isFundable ? (
-    <div className="flex flex-col items-center gap-1 text-center">
-      <span className="flex h-9 items-center text-[13px] text-muted-foreground">Available to spend</span>
-      <span className="relative -mt-1.5 text-[20px] leading-tight tracking-[-0.02em] text-foreground tabular">
-        <RevealingAmount amount={spendable} currency={fundsCurrency} />
-        {/* Beside the amount it hides, hung off its right edge so the amount itself stays centred. */}
-        <button
-          type="button"
-          onClick={toggleAmountVisibility}
-          aria-label={showAmounts ? "Hide balances" : "Show balances"}
-          className="absolute left-full top-1/2 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors duration-hover hover:text-foreground"
-        >
-          {showAmounts ? <EyeOff size={16} strokeWidth={1.8} aria-hidden="true" /> : <Eye size={16} strokeWidth={1.8} aria-hidden="true" />}
-        </button>
+    <div className="flex h-8 items-center justify-center gap-2 text-[14px]">
+      <span className="text-muted-foreground">Balance</span>
+      <span className="tabular font-medium text-foreground">
+        <RevealingAmount amount={funds} currency={fundsCurrency} />
       </span>
-      {limitHolds && (
-        <span className="text-[13px] text-muted-foreground">
-          Daily limit applies · <RevealingAmount amount={funds} currency={fundsCurrency} /> on the card
-        </span>
-      )}
+      <button
+        type="button"
+        onClick={toggleAmountVisibility}
+        aria-label={showAmounts ? "Hide balances" : "Show balances"}
+        className="-mx-1.5 flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors duration-hover hover:text-foreground"
+      >
+        {showAmounts ? <EyeOff size={15} strokeWidth={1.8} aria-hidden="true" /> : <Eye size={15} strokeWidth={1.8} aria-hidden="true" />}
+      </button>
     </div>
   ) : fundsAccount ? (
     <Link
       href={`/accounts/${fundsAccount.id}`}
-      className="group mx-auto flex max-w-full flex-col items-center gap-1 text-center outline-none"
+      className="group mx-auto flex h-8 max-w-full items-center justify-center gap-2 text-[14px] outline-none"
     >
-      <span className="flex h-9 items-center text-[13px] text-muted-foreground">Linked to</span>
-      <span className="-mt-1.5 flex max-w-full items-center gap-1">
-        <span className="text-[20px] leading-tight tracking-[-0.02em] text-foreground group-hover:underline group-hover:underline-offset-4">
-          {fundsAccount.name}
-        </span>
-        <ChevronRight size={18} strokeWidth={1.8} className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" aria-hidden="true" />
-      </span>
+      <span className="text-muted-foreground">Linked to</span>
+      <span className="truncate text-foreground group-hover:underline group-hover:underline-offset-4">{fundsAccount.name}</span>
+      <ChevronRight size={15} strokeWidth={1.8} className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" aria-hidden="true" />
     </Link>
-  ) : null;
+  ) : (
+    <div className="h-8" aria-hidden="true" />
+  );
   const cardBlock = (
-    <div className="flex flex-col gap-8">
-      {availableNode}
+    <div className="flex flex-col gap-3">
       {cardNode}
+      {availableNode}
     </div>
   );
 
@@ -1021,7 +954,7 @@ export function VirtualCardDetailsView({
     ) : null;
   const tReset = hasPin ? <ManageRow icon={Key} title="Reset PIN" onClick={() => setActiveModal("reset-pin")} /> : null;
   const tReplace = (
-    <ManageRow icon={CreditCard} title="Replace card" description="Lost, damaged or expired" onClick={() => setActiveModal("replace")} />
+    <ManageRow icon={RefreshCw} title="Replace card" description="Lost, damaged or expired" onClick={() => setActiveModal("replace")} />
   );
   const tBlock = (
     <ManageRow
@@ -1071,7 +1004,7 @@ export function VirtualCardDetailsView({
                       className={cn(
                         "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
                         isCredit
-                          ? "bg-emerald-500/10 text-[#12B76A] dark:text-emerald-400"
+                          ? "bg-success/10 text-success"
                           : "bg-muted text-muted-foreground"
                       )}
                     >
@@ -1099,18 +1032,18 @@ export function VirtualCardDetailsView({
                       <span
                         className={cn(
                           "tabular text-[14px] font-normal",
-                          isCredit ? "text-[#12B76A] dark:text-emerald-400" : "text-foreground"
+                          isCredit ? "text-success" : "text-foreground"
                         )}
                       >
                         {isCredit ? "+ " : "− "}
                         <RevealingAmount amount={item.amount} currency={currentCard.currency || "GHS"} />
                       </span>
                       {isFailed ? (
-                        <span className="text-[11.5px] text-[#F04438] dark:text-rose-400 font-normal">
+                        <span className="text-[11.5px] text-destructive font-normal">
                           Failed
                         </span>
                       ) : isPending ? (
-                        <span className="text-[11.5px] text-[#F79009] dark:text-amber-400 font-normal">
+                        <span className="text-[11.5px] text-warning font-normal">
                           Pending
                         </span>
                       ) : (
@@ -1145,7 +1078,7 @@ export function VirtualCardDetailsView({
   // Large screens only (lg and up); below that every layout is the single column. Chosen in Dev Mode.
   // `pin`: the card sits at the top and the actions at the bottom, so this column ends where its neighbour ends.
   const faceAndActions = (pin: boolean) => (
-    <div className={`flex flex-col gap-6 ${pin ? "lg:justify-between" : "lg:sticky lg:top-6"}`}>
+    <div className={`flex flex-col gap-9 ${pin ? "lg:justify-between" : "lg:sticky lg:top-6"}`}>
       {cardBlock}
       {controlsNode}
     </div>
@@ -1172,7 +1105,7 @@ export function VirtualCardDetailsView({
       </div>
     ) : cardLayout === "b" ? (
       <div className="grid w-full gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
-        <div className="flex flex-col gap-6 lg:sticky lg:top-6">
+        <div className="flex flex-col gap-9 lg:sticky lg:top-6">
           {cardBlock}
           {controlsNode}
         </div>
@@ -1189,7 +1122,7 @@ export function VirtualCardDetailsView({
       </div>
     ) : cardLayout === "d" ? (
       <div className="flex w-full flex-col gap-8">
-        <div className="mx-auto flex w-full max-w-[440px] flex-col gap-6">
+        <div className="mx-auto flex w-full max-w-[440px] flex-col gap-9">
           {cardBlock}
           {controlsNode}
         </div>
@@ -1206,7 +1139,7 @@ export function VirtualCardDetailsView({
       </div>
     ) : (
       <div className="flex w-full flex-col gap-10">
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-9">
           {cardBlock}
           {controlsNode}
         </div>
@@ -1325,8 +1258,8 @@ export function VirtualCardDetailsView({
                       <div className="shrink-0 flex items-end justify-end pl-2">
                         {effectiveCard.scheme === "Mastercard" ? (
                           <div className="flex -space-x-2 items-center drop-shadow-xs pb-0.5">
-                            <div className="size-5 sm:size-6 rounded-full bg-[#eb001b]/95" />
-                            <div className="size-5 sm:size-6 rounded-full bg-[#f79e1b]/95" />
+                            <div className="size-5 sm:size-6 rounded-full bg-[var(--mc-red)]/95" />
+                            <div className="size-5 sm:size-6 rounded-full bg-[var(--mc-orange)]/95" />
                           </div>
                         ) : (
                           <span className="font-sans text-[22px] sm:text-[26px] font-black italic tracking-tighter leading-none opacity-95 drop-shadow-xs">
@@ -1635,13 +1568,8 @@ export function VirtualCardDetailsView({
                 ))}
               </div>
 
-              <div className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full font-medium mt-1">
-                <Clock size={13} className="animate-pulse" />
-                <span>Closing in {pinCountdown}s</span>
-              </div>
-
-              <p className="text-[12px] text-muted-foreground mt-1">
-                This window will close automatically for your security. Do not share your PIN.
+              <p className="tabular text-[12px] text-muted-foreground">
+                Closes automatically in {pinCountdown}s for your security
               </p>
             </div>
           </DialogBody>
@@ -1667,6 +1595,14 @@ export function VirtualCardDetailsView({
         open={pinAuthOpen}
         onOpenChange={setPinAuthOpen}
         onSuccess={handlePinAuthSuccess}
+      />
+
+      {/* The PIN gate in front of the card details */}
+      <TransactionPinModal
+        open={detailsAuthOpen}
+        onOpenChange={setDetailsAuthOpen}
+        onSuccess={handleDetailsAuthSuccess}
+        title="Authorize Card Details"
       />
 
       {/* Security Authorization PIN Modal for Card Activation */}
@@ -1767,6 +1703,9 @@ export function VirtualCardDetailsView({
                 onCopy={() => handleCopy(displayCvv, effectiveCard.scheme === "Mastercard" ? "CVC" : "CVV")}
               />
             </div>
+            <p className="tabular pt-1 text-center text-[12px] text-muted-foreground">
+              Closes automatically in {detailsCountdown}s for your security
+            </p>
           </DialogBody>
         </DialogContent>
       </Dialog>

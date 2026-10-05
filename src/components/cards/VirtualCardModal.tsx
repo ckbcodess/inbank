@@ -180,7 +180,7 @@ export function VirtualCardView({
 
           {/* Network Logo: Mastercard */}
           <div className="flex items-center -space-x-2">
-            <div className="size-6.5 rounded-full bg-[#EB001B]" />
+            <div className="size-6.5 rounded-full bg-[var(--mc-red)]" />
             <div className="size-6.5 rounded-full bg-[#FF5F00] opacity-90" />
           </div>
         </div>

@@ -37,7 +37,7 @@ export function CardsCarousel({ cards }: CardsLayoutProps) {
       >
         {cards.map((card) => (
           <div key={card.id} className="w-[82vw] max-w-[440px] shrink-0 snap-center sm:w-[440px]">
-            <CardFace card={card} className="shadow-lg" />
+            <CardFace card={card} />
           </div>
         ))}
       </div>

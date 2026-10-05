@@ -106,7 +106,7 @@ here. Never fall back to dense, boxed layouts.
   `--account-card` (as `bg-[var(--tile)]`). If a colour is missing, add a token to `globals.css` for
   **both** themes. Never hardcode it.
 - **Light and dark come from the tokens.** No `dark:` workarounds where a token would do.
-- **Primary is GCB amber** (`oklch(0.846 0.172 86.7)`, about `#fdc307`) with dark text on top.
+- **Primary is GCB amber** (`#F9C632`, hover `#E5B62E`) with dark text on top.
 - **Amber is never text on a light surface,** because it fails contrast. Use amber for filled
   buttons and badges (with dark text), icon accents (`--tile-accent`, duotone fills) and dark-mode
   accents. Text links use `text-foreground` with an underline, or `text-muted-foreground` turning to

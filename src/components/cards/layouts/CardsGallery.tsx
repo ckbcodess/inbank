@@ -12,10 +12,10 @@ export function CardsGallery({ cards }: CardsLayoutProps) {
       {cards.map((card) => (
         <Link key={card.id} href={`/cards/${card.id}`} className="group flex flex-col gap-3">
           <div className="transition-transform duration-300 ease-out group-hover:-translate-y-1">
-            <CardFace card={card} className="shadow-lg" />
+            <CardFace card={card} />
           </div>
           <div className="flex items-center justify-between gap-3 px-1">
-            <span className="truncate text-[14px] text-foreground">{card.name}</span>
+            <span className="truncate text-[14px] font-medium text-foreground">{card.name}</span>
             <StatusPill card={card} includeActive />
           </div>
         </Link>

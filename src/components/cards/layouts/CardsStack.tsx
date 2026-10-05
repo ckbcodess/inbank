@@ -40,7 +40,7 @@ export function CardsStack({ cards }: CardsLayoutProps) {
               style={{ zIndex: slot }}
               className="absolute inset-x-0 top-0 block cursor-pointer text-left"
             >
-              <CardFace card={card} className="shadow-lg" />
+              <CardFace card={card} />
               {!isFront && (
                 <span className="pointer-events-none absolute right-[6.5%] top-[6%]">
                   <StatusPill card={card} />

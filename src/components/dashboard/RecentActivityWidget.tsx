@@ -210,7 +210,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                   className={cn(
                     "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
                     isCredit
-                      ? "bg-emerald-500/10 text-[#12B76A] dark:text-emerald-400"
+                      ? "bg-success/10 text-success"
                       : "bg-muted text-muted-foreground"
                   )}
                 >
@@ -236,18 +236,18 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                   <span
                     className={cn(
                       "tabular text-[14px] font-normal",
-                      isCredit ? "text-[#12B76A] dark:text-emerald-400" : "text-foreground"
+                      isCredit ? "text-success" : "text-foreground"
                     )}
                   >
                     {isDebit ? "− " : "+ "}
                     <RevealingAmount amount={item.amount} currency="GHS" />
                   </span>
                   {isFailed ? (
-                    <span className="text-[11.5px] text-[#F04438] dark:text-rose-400 font-normal">
+                    <span className="text-[11.5px] text-destructive font-normal">
                       Failed
                     </span>
                   ) : isPending ? (
-                    <span className="text-[11.5px] text-[#F79009] dark:text-amber-400 font-normal">
+                    <span className="text-[11.5px] text-warning font-normal">
                       Pending
                     </span>
                   ) : (

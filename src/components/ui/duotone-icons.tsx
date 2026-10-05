@@ -1,15 +1,13 @@
 /**
- * Two-tone icons for the Send & Pay hub: a slate outline (#475560) with amber parts
+ * Two-tone icons for the Send & Pay hub: a slate outline (--duo-outline) with amber parts
  * drawn inside. Hand-drawn on a 24px grid so they read as one set. They take the same props as a
  * Lucide icon, so they can be passed anywhere an icon component is expected.
  */
 
 import type { ReactNode } from "react";
 
-// The amber parts use the `duo-fill` class (globals.css), which follows --duo-accent so a tile can
-// recolour them (white on an amber hover). CSS variables do not work in SVG fill attributes.
-/** The outline colour of every icon in the set. */
-const OUTLINE = "#475560";
+// The amber parts use the `duo-fill` class and the outline uses `duo-outline` (globals.css): CSS variables do
+// not work in SVG paint attributes, so both are classes. `--duo-accent` lets a tile recolour the amber parts.
 
 interface DuotoneProps {
   size?: number;
@@ -25,11 +23,10 @@ function icon(draw: () => ReactNode) {
       width={size}
       height={size}
       fill="none"
-      stroke={OUTLINE}
       strokeWidth={strokeWidth}
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={className}
+      className={className ? `duo-outline ${className}` : "duo-outline"}
       aria-hidden={rest["aria-hidden"] ?? true}
     >
       {draw()}
@@ -50,7 +47,7 @@ export const DuoWallet = icon(() => (
     <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H17v3" />
     <rect x="3" y="7.5" width="18" height="12" rx="3" />
     <rect x="13.5" y="11.5" width="7.5" height="4" rx="2" className="duo-fill" />
-    <circle cx="16.2" cy="13.5" r=".6" fill={OUTLINE} stroke="none" />
+    <circle cx="16.2" cy="13.5" r=".6" className="duo-outline-fill" stroke="none" />
   </>
 ));
 

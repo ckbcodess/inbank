@@ -249,24 +249,20 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
   isn't checked for a corporate card, which may have a different cap.
 - **Gap:** the wide layouts A–E now use the flat list, and the old "tiles stretch to match the column"
   behaviour is gone, so columns may end on different lines. Not eyeballed at any width.
-- **Decision:** the card detail page leads with a headline above the card. A prepaid or virtual card shows
-  **Available to spend** (its balance, held down by what the daily limit still allows; "Daily limit applies ·
-  GHS 5,000 on the card" appears only when the limit is the constraint). A debit card holds no money, so it
-  shows **Linked to** the account name, and tapping it opens the account page. Because that is
-  the same link as the old Account button, a debit card has two round actions (Details, Show PIN) and a
-  prepaid or virtual one has three (Top Up added). Under the card, one list of the app's default tile (`ActionTile`, as on Account Details, 16px apart), no group labels: Daily
-  spending limit ("GHS 5,000 a day" or Not set), Card activity, Card nickname, Reset PIN,
-  Block card (Unblock when blocked), Replace card ("Lost, damaged or expired"). Delete card was tried and
-  removed. The Linked account row and its picker were removed, so a card's account can't be changed from this page.
-- **Discovery:** the sidebar header's divider lines up with the top bar's only because `Sidebar.tsx` adds the
-  shell's padding (12px at sm, 14px at lg, plus the card's 1px border) to its own header. If the padding in
-  `CustomerShell` / `AdminShell` changes, change it there too.
-- **Assumption:** the daily limit is in GHS, so it only holds the available figure down for GHS balances.
+- **Decision:** the card detail page has one quiet caption line beneath the card (as Wise does), not a headline above
+  it. A prepaid or virtual card says **Balance** and the card's real balance, with the hide-amounts eye. A debit card
+  holds no money, so it says **Linked to** the account name, and tapping it opens the account page. Because that is
+  the same link as the old Account button, a debit card has no Account action. The round actions follow the money
+  (see below). Under them, one list of tiles, no group labels: Daily spending limit ("GHS 5,000 a day" or Not set),
+  Card nickname, Show PIN (prepaid only), Reset PIN (physical only), Block card (Unblock when blocked), Replace card.
+  Delete card was tried and removed. The Linked account row and its picker were removed, so a card's account can't be
+  changed from this page. The caption was "Available to spend" (balance held down by the daily limit) and was
+  renamed Balance, so it now shows the real balance; the limit stays visible as its own row.
 - **Decision:** Details lives only on the round action, and Block only in the list, so no control appears twice.
   The Track delivery row went because the banner under the actions opens the same tracker.
 - **Gap:** the wide layouts (B, C, D, E) show the full activity list instead of the preview. Linked account
   offers every account of the profile, whatever its currency. New strings are not in the FR/ES/ZH catalogs.
-- **Decision:** the card no longer flips. Full number, expiry and CVV/CVC are in a **Card details** sheet
+- **Decision:** the card no longer flips. Full number, expiry and CVV/CVC are in a **Card details** sheet (opened by the **View Details** action, behind the same PIN-or-code gate as payments; it closes itself after 15 seconds, with the seconds shown, like the PIN view)
   (tap to copy), opened from the "Details" round action only. No PIN or code gates it, same as the flip had.
 - **Gap:** "Daily limit", "Card activity" and most other strings on this page aren't in the FR/ES/ZH
   catalogs (only "Manage card" was added).
@@ -277,16 +273,52 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
   caller changes with it: Send & Pay hub, Account Details, the accounts list, Add account, the toggle tile and
   the card detail list. Look at each once.
 - **Decision:** round actions follow the money. A card that holds some (prepaid, virtual) leads with **Top Up**,
-  then **Card details**, **Activity**. A debit card shows **Card details**, **Activity**, **Show PIN**. Options
+  then **View Details**, **Activity**. A debit card leads with **Show PIN**, then **View Details**, **Activity**,
+  so the first slot is the only one that changes and the last two never move. Options
   that don't apply are hidden, not disabled: a virtual card has no PIN, so it has no Show PIN and no Reset PIN.
   Prepaid keeps Show PIN as a list row, since its third action is Top Up. The list, in order: Daily spending
   limit, Card nickname, Show PIN (prepaid only), Reset PIN (physical only), Block card, Replace card. Nothing
   appears both as a round action and a row. Block stays in the list by choice; for a lost or stolen card it is
   the most urgent step, so move it up if the list ever feels slow in that moment.
+- **Decision:** the icons on the amber round actions of the card page are `#321800` in both modes (`--action-icon`).
+  Dark brown on amber reads well in either mode. The Send & Pay two-tone icons keep their amber.
 - **Decision:** linked mobile-money wallets on the accounts page show the operator's logo (`getTelcoLogo`, the
   same marks as the send flows) instead of a phone icon.
 - **Gap:** `CreateGroupFlow` and `EditGroupModal` still show a plain phone icon for wallet members; they could
   take the operator logo from the member's network.
+
+- **Decision:** the GCB amber is `#F9C632` (was `#fdc307`), hover `#E5B62E`. It is set once in `globals.css` and
+  flows through `--primary`, `--chart-1`, `--sidebar-primary`, the brand gradient start, the dark `--tile-accent`
+  and the GCB logo's eagle default. CONSTITUTION §4 updated to match.
+- **Decision:** raw colours turned into tokens: the tile chevron uses `text-muted-foreground`; activity amounts use
+  `text-success` / `text-destructive` / `text-warning` in the card page and the dashboard activity widget; the
+  Mastercard circles use `--mc-red` / `--mc-orange`; the two-tone icon outline uses `--duo-outline` (via
+  `.duo-outline`); the dark shell background is the `--surface` token; delivery-tracker and dashboard card amber
+  chips use `bg-primary`.
+- **Gap:** 66 raw hex colours remain in components, besides the sandbox page: PaymentSuccessScreen (9), PaymentFlow
+  (9), CardDeliveryTracker (7), RequestCardFlow (6), TransactionList (5), AuthorisePanel (4), TourOverlay (4),
+  SuggestedForYouCard (4), MobilePromoBanner (3), VirtualCardModal (3), and a few single ones. Each needs a token
+  chosen, so they were left. The sandbox dashboard page is a throwaway and is untouched. The logo SVG files were
+  not checked for the old amber.
+
+- **Decision:** the card page's round actions are spread across the card's width (`justify-between`, 360px), like
+  the Wise reference, instead of clustered in the middle.
+- **Discovery:** a **Colour tuner** dev tool (`ColorTuner`, store in `src/lib/color-tuner.ts`) is mounted in the root
+  layout under `SHOW_DEMO_TOOLS`. The palette button sits bottom right, left of the wave tuner. It edits about 35
+  opaque tokens live for the theme on screen (light and dark kept separately), writes them into one `<style>`
+  (`html:not(.dark)` and `html.dark`, so light can't beat dark), saves them in `nibs-color-tuner`, and "Copy CSS"
+  gives the changed tokens in `globals.css` shape to bake in. Tokens with alpha (`--account-card`, `--hero-*`
+  mixes) are not in it. Edits survive a reload until "Reset all".
+
+- **Decision:** the card on the detail page is now the shared `CardFace`, the one the Cards page draws (chip, contactless
+  mark, same type sizes), with the block state applied. It used its own hand-built face, so the two never matched. The
+  theme comes from one rule (`themeForCard`); the detail page used to fall back to gold for a debit card with no
+  theme, the Cards page to black.
+- **Decision:** the caption under the card is a fixed 32px row for both kinds of card (Balance or Linked to), so the
+  actions and list sit at the same height whichever card is open. A debit card whose account can't be found keeps an
+  empty row of the same height.
+- **Gap:** an inactive card no longer shows the "Needs Activation" badge on its face (the shared face has none); the
+  page's Activate button and delivery banner say it. The inactive delivery hero still draws its own card.
 
 ---
 

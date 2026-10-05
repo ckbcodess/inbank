@@ -31,7 +31,7 @@ export function CardsList({ cards }: CardsLayoutProps) {
                   <MiniCardThumbnail card={card} />
                   <div className="flex min-w-0 flex-1 flex-col">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="truncate text-[14px] text-foreground">{card.name}</span>
+                      <span className="truncate text-[14px] font-medium text-foreground">{card.name}</span>
                       <StatusPill card={card} />
                     </div>
                     <span className="tabular mt-0.5 text-[12px] text-muted-foreground">

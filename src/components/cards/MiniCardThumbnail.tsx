@@ -47,8 +47,8 @@ export function MiniCardThumbnail({ card, className }: MiniCardThumbnailProps) {
           </span>
         ) : (
           <div className="flex -space-x-1 drop-shadow-xs">
-            <div className="size-2 rounded-full bg-[#eb001b]/95" />
-            <div className="size-2 rounded-full bg-[#f79e1b]/95" />
+            <div className="size-2 rounded-full bg-[var(--mc-red)]/95" />
+            <div className="size-2 rounded-full bg-[var(--mc-orange)]/95" />
           </div>
         )}
       </div>
