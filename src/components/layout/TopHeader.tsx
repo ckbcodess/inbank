@@ -4,16 +4,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Bell,
-  ExternalLink,
+  ChevronDown,
   Eye,
   Globe,
   EyeOff,
   Layers,
-  Lock,
   LogOut,
   Menu,
   Monitor,
   Moon,
+  Settings,
   ShieldCheck,
   Sun,
   SunMoon,
@@ -60,29 +60,24 @@ const THEME_CHOICES = [
   { value: "system", label: "System", Icon: Monitor },
 ] as const;
 
-/** The language switch: short codes in the same pill as the theme switch. Sits in a plain div so choosing does not close the menu. */
-function LanguageSegmented() {
+/** The language picker: a native select, so choosing works inside the menu without closing it or opening a second popup. */
+function LanguageSelect() {
   const { language, setLanguage, languages, t } = useTranslation();
   return (
-    <div role="radiogroup" aria-label={t("header.language", "Language")} className="flex items-center gap-0.5 rounded-full bg-chip p-0.5">
-      {languages.map((lang) => (
-        <button
-          key={lang.code}
-          type="button"
-          role="radio"
-          aria-checked={language === lang.code}
-          aria-label={lang.nativeName}
-          title={lang.nativeName}
-          onClick={() => setLanguage(lang.code)}
-          className={`flex h-7 min-w-7 cursor-pointer items-center justify-center rounded-full px-1.5 text-[11px] leading-none transition-colors duration-hover ${
-            language === lang.code
-              ? "bg-chip-selected text-chip-selected-foreground shadow-xs font-medium"
-              : "text-chip-foreground hover:text-chip-selected-foreground"
-          }`}
-        >
-          {lang.shortLabel}
-        </button>
-      ))}
+    <div className="relative">
+      <select
+        aria-label={t("header.language", "Language")}
+        value={language}
+        onChange={(e) => setLanguage(e.target.value as typeof language)}
+        className="h-9 cursor-pointer appearance-none rounded-lg border border-field-border bg-field py-0 pl-3 pr-8 text-[13px] text-foreground outline-none transition-colors duration-hover hover:bg-field-hover focus-visible:border-field-border-focus"
+      >
+        {languages.map((lang) => (
+          <option key={lang.code} value={lang.code}>
+            {lang.nativeName}
+          </option>
+        ))}
+      </select>
+      <ChevronDown size={14} strokeWidth={1.8} aria-hidden="true" className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
     </div>
   );
 }
@@ -102,19 +97,20 @@ function ThemeSegmented() {
   return (
     <div role="radiogroup" aria-label="Theme" className="flex items-center gap-0.5 rounded-full bg-chip p-0.5">
       {THEME_CHOICES.map(({ value, label, Icon }) => (
-        <button
-          key={value}
-          type="button"
-          role="radio"
-          aria-checked={active === value}
-          aria-label={label}
-          onClick={() => choose(value)}
-          className={`flex size-7 cursor-pointer items-center justify-center rounded-full transition-colors duration-hover ${
-            active === value ? "bg-chip-selected text-chip-selected-foreground shadow-xs" : "text-chip-foreground hover:text-chip-selected-foreground"
-          }`}
-        >
-          <Icon size={14} strokeWidth={1.8} aria-hidden="true" />
-        </button>
+        <SimpleTooltip key={value} content={label} side="top" delay={0}>
+          <button
+              type="button"
+            role="radio"
+            aria-checked={active === value}
+            aria-label={label}
+            onClick={() => choose(value)}
+            className={`flex size-8 cursor-pointer items-center justify-center rounded-full transition-colors duration-hover ${
+              active === value ? "bg-chip-selected text-chip-selected-foreground shadow-xs" : "text-chip-foreground hover:text-chip-selected-foreground"
+            }`}
+          >
+            <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
+          </button>
+        </SimpleTooltip>
       ))}
     </div>
   );
@@ -235,7 +231,7 @@ export default function TopHeader({
               </span>
             )}
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" sideOffset={6} className="w-[300px] p-1.5 rounded-2xl">
+          <DropdownMenuContent align="end" sideOffset={6} className="w-[280px] p-1.5 rounded-2xl bg-menu/90! dark:bg-menu/60! backdrop-blur-3xl">
             {/* Header: Avatar beside Name & Email */}
             <div className="flex items-center gap-3 px-3 pt-3 pb-2.5">
               <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-muted border border-border/80 text-foreground font-medium text-[15px] shadow-2xs">
@@ -261,12 +257,12 @@ export default function TopHeader({
             </DropdownMenuItem>
 
             <DropdownMenuItem
-              onClick={() => router.push(actor.shell === "customer" ? "/notifications" : "/settings?tab=notifications")}
+              onClick={() => router.push("/settings")}
               className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
             >
               <span className="flex items-center gap-3">
-                <Bell size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
-                <span>{t("header.notifications", "Notifications")}</span>
+                <Settings size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                <span>{t("header.settings", "Settings")}</span>
               </span>
             </DropdownMenuItem>
 
@@ -278,17 +274,6 @@ export default function TopHeader({
                 <ShieldCheck size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.security", "Security")}</span>
               </span>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-              onClick={() => window.open("https://www.gcbbank.com.gh/privacy-policy", "_blank")}
-              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
-            >
-              <span className="flex items-center gap-3">
-                <Lock size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
-                <span>{t("header.privacy", "Privacy")}</span>
-              </span>
-              <ExternalLink size={14} className="text-muted-foreground/70" strokeWidth={1.8} />
             </DropdownMenuItem>
 
             <DropdownMenuSeparator className="my-1" />
@@ -308,7 +293,7 @@ export default function TopHeader({
                 <Globe size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.language", "Language")}</span>
               </span>
-              <LanguageSegmented />
+              <LanguageSelect />
             </div>
 
             <DropdownMenuSeparator className="my-1" />
@@ -322,6 +307,22 @@ export default function TopHeader({
                 <span>{t("header.signOut", "Log out")}</span>
               </span>
             </DropdownMenuItem>
+
+            <DropdownMenuSeparator className="my-1" />
+
+            <div className="px-3 py-2 text-[12px] text-muted-foreground">
+              <span className="flex items-center gap-3">
+                {[
+                  { key: "privacy", label: t("header.privacy", "Privacy"), href: "https://www.gcbbank.com.gh/privacy-policy" },
+                  { key: "terms", label: t("header.terms", "Terms"), href: "https://www.gcbbank.com.gh" },
+                  { key: "copyright", label: t("header.copyright", "Copyright"), href: "https://www.gcbbank.com.gh" },
+                ].map((l) => (
+                  <a key={l.key} href={l.href} target="_blank" rel="noopener noreferrer" className="transition-colors duration-hover hover:text-foreground">
+                    {l.label}
+                  </a>
+                ))}
+              </span>
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
