@@ -123,7 +123,7 @@
   --foreground: #2e2e2e;
   --card: #fafafa;
   /* Card surface for auth & onboarding screens (distinct from in-app --card). */
-  --card-auth: oklch(1 0 0);
+  --card-auth: #ffffff;
   --auth-card: var(--card-auth);
   /* Nested card items inside containers (such as onboarding option cards). */
   --card-item: #fafafa;
@@ -184,9 +184,9 @@
   --destructive-text: oklch(0.5 0.2 27);
   --info-text: oklch(0.5 0.19 255);
   /* Input fields, text areas, selects and the PIN boxes. */
-  --field: #ffffff;
+  --field: #f9f9f9;
   --field-hover: #f5f5f5;
-  --field-focus: #ffffff;
+  --field-focus: #f9f9f9;
   --field-border: #ebebeb;
   --field-border-focus: #8a8a8a;
   /* Dropdown menus. */
