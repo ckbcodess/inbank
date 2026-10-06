@@ -1,47 +1,38 @@
 "use client";
 
-import { AlertToast } from "@/components/ui/alert-toast";
 import { InlineError } from "@/components/ui/inline-error";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Laptop, MapPin, ShieldAlert, ShieldCheck } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
 import AuthLayout from "@/components/auth/AuthLayout";
-import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
+import OtpInput from "@/components/auth/OtpInput";
+import { PIN_LENGTH } from "@/components/payments/useAuthorisation";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
-import { maskEmail, maskMobile } from "@/lib/auth-shared";
-import { displayGhanaMobile } from "@/lib/phone";
 
-type MfaState = "entry" | "verifying" | "error" | "resent";
+type PinState = "entry" | "verifying" | "error";
 
-const CODE_LENGTH = OTP_LENGTH;
-const RESEND_SECONDS = 30;
-
-function MfaContent() {
+/**
+ * The step after the password: the customer's transaction PIN, not a texted code. It is the same PIN that
+ * authorises payments, so there is nothing new to remember and no SMS to wait for. Sign-in is recoverable,
+ * so it verifies on the last digit (a payment never does).
+ */
+function PinContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isNewDevice = searchParams.get("device") === "new";
 
   const { actor, verifyMfa } = useSession();
-  const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(""));
-  const [state, setState] = useState<MfaState>("entry");
-  const [countdown, setCountdown] = useState(RESEND_SECONDS);
-  const [target, setTarget] = useState<"sms" | "email">("sms");
-  // Opt-in: remembering a device on a shared or public computer is a real risk.
+  const [digits, setDigits] = useState<string[]>(Array(PIN_LENGTH).fill(""));
+  const [state, setState] = useState<PinState>("entry");
   const hydrated = useSessionHydrated();
 
   useEffect(() => {
     if (hydrated && !actor) router.replace("/login");
   }, [hydrated, actor, router]);
 
-  useEffect(() => {
-    if (countdown <= 0) return;
-    const t = window.setTimeout(() => setCountdown((c) => c - 1), 1000);
-    return () => window.clearTimeout(t);
-  }, [countdown]);
-
-  const code = digits.join("");
-  const complete = code.length === CODE_LENGTH && digits.every(Boolean);
+  const pin = digits.join("");
+  const complete = pin.length === PIN_LENGTH && digits.every(Boolean);
 
   function handleVerify(e?: React.FormEvent) {
     if (e) e.preventDefault();
@@ -49,25 +40,19 @@ function MfaContent() {
     setState("verifying");
 
     window.setTimeout(() => {
-      // Any 6 digits verify except 000000, which demonstrates the error path.
-      if (code === "000000") {
+      // Any 4 digits verify except 0000, which demonstrates the error path.
+      if (pin === "0000") {
         setState("error");
-        setDigits(Array(CODE_LENGTH).fill(""));
+        setDigits(Array(PIN_LENGTH).fill(""));
         return;
       }
 
       verifyMfa();
-      // Remembered: next time the login screen greets them and skips this code.
-
-      if (actor.shell === "admin") {
-        router.push("/admin");
-      } else {
-        router.push("/overview");
-      }
-    }, 700);
+      router.push(actor.shell === "admin" ? "/admin" : "/overview");
+    }, 600);
   }
 
-  // Auto-verify when all digits are entered
+  // Verify as soon as the last digit lands.
   useEffect(() => {
     if (complete && state === "entry" && actor) {
       handleVerify();
@@ -77,17 +62,15 @@ function MfaContent() {
 
   if (!hydrated || !actor) return null;
 
-  const maskedDestination = target === "sms" ? maskMobile(displayGhanaMobile(actor.phone)) : maskEmail(actor.email);
-
   return (
     <AuthLayout
       icon={isNewDevice ? ShieldAlert : ShieldCheck}
       title={isNewDevice ? "New device authorization" : "Verify Your Identity"}
       description={
         isNewDevice ? (
-          <>We detected a login from an unrecognized browser or device.<br />A 6-digit code has been sent to {maskedDestination}. Please enter the code below.</>
+          <>We detected a login from an unrecognized browser or device.<br />Enter your 4-digit transaction PIN to continue.</>
         ) : (
-          <>A 6-digit code has been sent to {maskedDestination}.<br />Please enter the code below.</>
+          <>Enter your 4-digit transaction PIN to continue.</>
         )
       }
       backHref="/login"
@@ -107,65 +90,31 @@ function MfaContent() {
         </div>
       )}
 
-      <form onSubmit={handleVerify} className="flex flex-col gap-6">
-        <div data-tour="mfa-otp">
+      <form onSubmit={handleVerify} className="flex flex-col items-center gap-6">
+        <div data-tour="mfa-pin">
           <OtpInput
             value={digits}
             onChange={(next) => {
               setDigits(next);
               if (state === "error") setState("entry");
             }}
+            length={PIN_LENGTH}
+            mask
+            autoFocus
             disabled={state === "verifying"}
             invalid={state === "error"}
           />
         </div>
 
-        {/* Recovery path */}
-        <div className="flex flex-wrap items-center justify-center gap-x-2 text-[13px]">
-          <button
-            type="button"
-            disabled={countdown > 0}
-            onClick={() => {
-              setCountdown(RESEND_SECONDS);
-              setState("resent");
-            }}
-            className="cursor-pointer text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:cursor-default disabled:text-muted-foreground disabled:no-underline"
-          >
-            {countdown > 0 ? (
-              <>
-                Resend in <span className="tabular">{countdown}s</span>
-              </>
-            ) : (
-              "Resend code"
-            )}
-          </button>
-          <span className="text-muted-foreground/60" aria-hidden="true">·</span>
-          <button
-            type="button"
-            onClick={() => {
-              setTarget(target === "sms" ? "email" : "sms");
-              setCountdown(RESEND_SECONDS);
-              setDigits(Array(CODE_LENGTH).fill(""));
-              setState("resent");
-            }}
-            className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Send to {target === "sms" ? "email instead" : "SMS instead"}
-          </button>
-        </div>
-
         {state === "verifying" && (
           <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
             <AppLoader size={16} />
-            <span>Verifying code...</span>
+            <span>Checking PIN...</span>
           </div>
         )}
 
-        <InlineError message={state === "error" && "That code is incorrect or has expired. Request a new one below."} className="-mt-3" />
-
-        <AlertToast when={state === "resent"} kind="success" message={`A new verification code has been sent to ${maskedDestination}.`} />
+        <InlineError message={state === "error" && "That PIN is incorrect. Please try again."} className="-mt-3" />
       </form>
-
     </AuthLayout>
   );
 }
@@ -173,7 +122,7 @@ function MfaContent() {
 export default function MfaPage() {
   return (
     <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
-      <MfaContent />
+      <PinContent />
     </Suspense>
   );
 }

@@ -91,9 +91,6 @@ export default function GetStartedPage() {
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
                     GCB Account Holder
                   </span>
-                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
-                    Link your existing account.
-                  </span>
                 </div>
               </div>
 
@@ -118,9 +115,6 @@ export default function GetStartedPage() {
                 <div className="flex flex-col">
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
                     New to GCB
-                  </span>
-                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
-                    Open an account with a card or mobile wallet.
                   </span>
                 </div>
               </div>
@@ -160,9 +154,6 @@ export default function GetStartedPage() {
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
                     Open a GCB Account
                   </span>
-                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
-                    Open a new bank account online.
-                  </span>
                 </div>
               </div>
 
@@ -185,9 +176,6 @@ export default function GetStartedPage() {
                 <div className="flex flex-col">
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
                     Create a Payment Profile
-                  </span>
-                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
-                    Fund with mobile money or any bank card.
                   </span>
                 </div>
               </div>

@@ -34,6 +34,7 @@ function LoginForm() {
   const [notYou, setNotYou] = useState(false);
 
   const [mobile, setMobile] = useState("");
+  const [country, setCountry] = useState("GH");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [state, setState] = useState<LoginState>("idle");
@@ -41,6 +42,7 @@ function LoginForm() {
   function handleTypeChange(nextType: "personal" | "business") {
     setBankingType(nextType);
     setMobile("");
+    setCountry("GH");
     setPassword("");
     setState("idle");
     const params = new URLSearchParams(window.location.search);
@@ -119,6 +121,12 @@ function LoginForm() {
               id="mobile"
               autoComplete="username"
               value={mobile}
+              country={country}
+              onCountryChange={(code) => {
+                setCountry(code);
+                setMobile("");
+                if (state === "error") setState("idle");
+              }}
               onValueChange={(v) => {
                 setMobile(v);
                 if (state === "error") setState("idle");
