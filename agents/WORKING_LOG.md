@@ -375,6 +375,8 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
     transactions, receipt, Send & Pay hub). Change a page's layout and its skeleton in `PageSkeletons.tsx` with it.
   - Decision: onboarding cards share one rhythm in `AuthLayout`: `py-10 sm:py-14` card padding and `mb-8 sm:mb-10` under
     the title. `padY` and `headerGap` props override it per screen. Not yet seen on the long signup and activate steps.
+  - Decision: the trusted-device "Welcome back" screen asks for the password again, not the PIN (reverses the earlier
+    PIN-for-returning decision). The PIN now only authorises payments.
   - Decision: the passkey option is gone from the returning-customer sign-in (it was a stand-in with nothing enrolled).
     Bring it back only with real enrolment.
   - Override: the Demo hub (`PersonaFlowSwitcher`) now ships in the live build, behind `SHOW_DEMO_HUB` in

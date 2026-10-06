@@ -128,7 +128,7 @@ Open questions live in [WORKING_LOG.md](WORKING_LOG.md), not here.
 | **Payment group** | A saved set of several recipients, such as a susu circle or a family pool. |
 | **Proxy ID** | A phone number or Ghana Card alias linked to an account. Customers can create, update and deregister their own. |
 | **Standing order** | A recurring or one-off scheduled instruction. Its **Short name** is the main label. Frequencies: Once, Daily, Weekly, Every X days, Monthly, Quarterly, Half Yearly, Yearly. It has an optional narration. |
-| **Transaction PIN** | A 4-digit PIN. It authorises payments, and on a trusted device it also signs the customer back in. |
+| **Transaction PIN** | A 4-digit PIN. It authorises payments. |
 | **One-time code (OTP)** | A 6-digit SMS code used for new-device sign-in, onboarding, and as the alternative way to authorise a payment. There is a USSD shortcode fallback. |
 | **Ghana Card** | The national ID. Onboarding and recovery match a selfie against it (the NIA service). |
 | **Card types** | **Debit** cards spend from a linked account and have no balance of their own. **Prepaid** and **virtual** cards hold a balance. Cards are **blocked or unblocked** (never "frozen"). |
@@ -158,7 +158,7 @@ Open questions live in [WORKING_LOG.md](WORKING_LOG.md), not here.
   password is new.
 - **Signing in:**
   - The full form is mobile number + password, then a code on a new device.
-  - On a trusted device, a returning customer enters their 4-digit PIN.
+  - On a trusted device, a returning customer is greeted by name and enters their password. No one-time code.
   - Forgot password: mobile → selfie → new password. After 3 selfie misses, the customer is sent to a
     branch.
 - **Send & Pay:** hub → chooser (a question) → progressive form → review → authorise → receipt, with

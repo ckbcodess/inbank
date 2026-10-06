@@ -1,7 +1,6 @@
 "use client";
 
 import { AlertToast } from "@/components/ui/alert-toast";
-import { InlineError } from "@/components/ui/inline-error";
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -11,8 +10,6 @@ import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
 import AuthLayout from "@/components/auth/AuthLayout";
-import OtpInput from "@/components/auth/OtpInput";
-import { PIN_LENGTH } from "@/components/payments/useAuthorisation";
 import { useSession } from "@/lib/session-store";
 import { ACTORS, findActorByPhone } from "@/lib/mock-data";
 import { toLocalMobile } from "@/lib/phone";
@@ -207,14 +204,15 @@ export default function LoginPage() {
 
 /**
  * The fast path for someone on their own, trusted device: greeted by name and
- * asked for their 4-digit PIN, the same one that authorises payments. No password
- * and no one-time code — the device itself is the second factor. "Use another account" drops back to the full form.
+ * asked for their password. No mobile number to retype and no one-time code — the
+ * device itself is the second factor. "Use another account" drops back to the full form.
  */
 function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotYou: () => void }) {
   const router = useRouter();
   const { signIn, verifyMfa } = useSession();
-  const [pin, setPin] = useState<string[]>(Array(PIN_LENGTH).fill(""));
-  const [pinState, setPinState] = useState<"entry" | "checking" | "error">("entry");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const firstName = trusted.name.split(" ")[0];
   const initials = trusted.name
@@ -232,17 +230,10 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
     router.push("/overview");
   }
 
-  function submitPin(code: string) {
-    setPinState("checking");
-    window.setTimeout(() => {
-      // Any 4 digits sign in except 0000, which demonstrates the error path.
-      if (code === "0000") {
-        setPin(Array(PIN_LENGTH).fill(""));
-        setPinState("error");
-        return;
-      }
-      finish();
-    }, 500);
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitting(true);
+    window.setTimeout(finish, 600);
   }
 
   return (
@@ -277,32 +268,43 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
           </span>
         </div>
 
-        <div className="flex flex-col items-center gap-5">
-          <span className="text-[14px] text-foreground">Enter your 4-digit PIN</span>
-          <OtpInput
-            value={pin}
-            onChange={(next) => {
-              setPin(next);
-              if (pinState === "error") setPinState("entry");
-            }}
-            length={PIN_LENGTH}
-            mask
-            autoFocus
-            disabled={pinState === "checking"}
-            invalid={pinState === "error"}
-            onComplete={submitPin}
-          />
-          <InlineError message={pinState === "error" && "That PIN is incorrect. Please try again."} />
-          <div className="flex flex-col items-center gap-3">
-            <button
-              type="button"
-              onClick={onNotYou}
-              className="cursor-pointer text-[13px] text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="returning-password" className={LABEL}>
+              Password
+            </Label>
+            <div className="relative">
+              <Input
+                id="returning-password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                placeholder="Enter your password"
+                autoFocus
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={`${FIELD} pr-9`}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-0 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/50 cursor-pointer"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            <Link
+              href="/forgot-password"
+              className="mt-1 self-end text-[12.5px] text-foreground underline underline-offset-4 hover:text-foreground/70"
             >
-              Forgot your PIN?
-            </button>
+              Forgot password?
+            </Link>
           </div>
-        </div>
+          <Button type="submit" variant="default" size="lg" loading={submitting} className="h-11 sm:h-11.5 w-full text-[14.5px]">
+            Log in
+          </Button>
+        </form>
       </div>
     </AuthLayout>
   );
