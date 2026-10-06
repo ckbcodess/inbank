@@ -271,9 +271,9 @@ export const TOURS: Tour[] = [
       {
         target: "gs-walletcard",
         route: "/get-started",
-        title: "Get a Virtual Wallet",
+        title: "Create a Payment Profile",
         body: "Register with Ghana Card and create an instant virtual wallet.",
-        action: "Click Get a Virtual Wallet",
+        action: "Click Create a Payment Profile",
       },
       {
         target: "signup-card",
@@ -342,9 +342,9 @@ export const TOURS: Tour[] = [
       {
         target: "gs-walletcard",
         route: "/get-started",
-        title: "Get a Virtual Wallet",
+        title: "Create a Payment Profile",
         body: "Register with Ghana Card and create an instant virtual wallet.",
-        action: "Click Get a Virtual Wallet",
+        action: "Click Create a Payment Profile",
       },
       {
         target: "signup-card",

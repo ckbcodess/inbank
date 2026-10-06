@@ -5,8 +5,7 @@ import { InlineError } from "@/components/ui/inline-error";
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff, Fingerprint, ShieldCheck, User } from "lucide-react";
-import { AppLoader } from "@/components/ui/loader";
+import { Eye, EyeOff, ShieldCheck, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
@@ -111,83 +110,88 @@ function LoginForm() {
         </div>
       }
     >
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        {/* Mobile number */}
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="mobile" className={LABEL}>
-            Mobile number
-          </Label>
-          <PhoneInput
-            id="mobile"
-            autoComplete="username"
-            value={mobile}
-            onValueChange={(v) => {
-              setMobile(v);
-              if (state === "error") setState("idle");
-            }}
-            className={FIELD}
-            required
-          />
-        </div>
-
-        {/* Password Input */}
-        <div className={`flex flex-col gap-1 ${state === "error" ? "animate-pin-shake" : ""}`}>
-          <Label htmlFor="password" className={LABEL}>
-            Password
-          </Label>
-          <div className="relative">
-            <Input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              autoComplete="current-password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
+      <form onSubmit={handleSubmit} className="flex flex-col">
+        {/* Fields Group */}
+        <div className="flex flex-col gap-4">
+          {/* Mobile number */}
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="mobile" className={LABEL}>
+              Mobile number
+            </Label>
+            <PhoneInput
+              id="mobile"
+              autoComplete="username"
+              value={mobile}
+              onValueChange={(v) => {
+                setMobile(v);
                 if (state === "error") setState("idle");
               }}
-              className={`${FIELD} pr-9`}
+              className={FIELD}
               required
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-              className="absolute right-0 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/50 cursor-pointer"
+          </div>
+
+          {/* Password Input */}
+          <div className={`flex flex-col gap-1.5 ${state === "error" ? "animate-pin-shake" : ""}`}>
+            <Label htmlFor="password" className={LABEL}>
+              Password
+            </Label>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (state === "error") setState("idle");
+                }}
+                className={`${FIELD} pr-9`}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-0 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/50 cursor-pointer"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            <Link
+              href="/forgot-password"
+              className="mt-1 self-end text-[12.5px] text-foreground underline underline-offset-4 hover:text-foreground/70"
             >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
+              Forgot password?
+            </Link>
           </div>
         </div>
 
-        <Link
-          href="/forgot-password"
-          className="-mt-3 self-end text-[12.5px] text-muted-foreground underline underline-offset-4 hover:text-foreground"
-        >
-          Forgot password?
-        </Link>
-
         <AlertToast when={state === "error"} message="The mobile number or password entered is incorrect. Please try again." />
 
-        <Button
-          type="submit"
-          variant="default"
-          size="lg"
-          loading={state === "submitting"}
-          className="mt-1 h-12 w-full text-[14.5px]"
-        >
-          Log in
-        </Button>
+        {/* Action Buttons Group */}
+        <div className="mt-6 flex flex-col gap-2.5">
+          <Button
+            type="submit"
+            variant="default"
+            size="lg"
+            loading={state === "submitting"}
+            className="h-11 sm:h-11.5 w-full text-[14.5px]"
+          >
+            Log in
+          </Button>
 
-        <Button
-          nativeButton={false}
-          render={<Link href={bankingType === "business" ? "/signup/business" : "/get-started"} data-tour="login-get-started" />}
-          variant="outline"
-          size="lg"
-          className="h-12 w-full text-[14.5px]"
-        >
-          {bankingType === "business" ? "Don’t have an account? Apply for business account" : "Don’t have an account? Register"}
-        </Button>
+          <Button
+            nativeButton={false}
+            render={<Link href={bankingType === "business" ? "/signup/business" : "/get-started"} data-tour="login-get-started" />}
+            variant="outline"
+            size="lg"
+            className="h-11 sm:h-11.5 w-full text-[14.5px]"
+          >
+            {bankingType === "business" ? "Don’t have an account? Apply for business account" : "Don’t have an account? Register"}
+          </Button>
+        </div>
       </form>
     </AuthLayout>
   );
@@ -203,14 +207,12 @@ export default function LoginPage() {
 
 /**
  * The fast path for someone on their own, trusted device: greeted by name and
- * asked for their 4-digit PIN, the same one that authorises payments. A passkey
- * is the one-tap alternative. No password and no one-time code — the device
- * itself is the second factor. "Use another account" drops back to the full form.
+ * asked for their 4-digit PIN, the same one that authorises payments. No password
+ * and no one-time code — the device itself is the second factor. "Use another account" drops back to the full form.
  */
 function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotYou: () => void }) {
   const router = useRouter();
   const { signIn, verifyMfa } = useSession();
-  const [mode, setMode] = useState<"pin" | "passkey">("pin");
   const [pin, setPin] = useState<string[]>(Array(PIN_LENGTH).fill(""));
   const [pinState, setPinState] = useState<"entry" | "checking" | "error">("entry");
 
@@ -241,12 +243,6 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
       }
       finish();
     }, 500);
-  }
-
-  function signInWithPasskey() {
-    setMode("passkey");
-    // Stand-in for the platform prompt (Touch ID, Windows Hello, a phone nearby).
-    window.setTimeout(finish, 1100);
   }
 
   return (
@@ -281,49 +277,32 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
           </span>
         </div>
 
-        {mode === "passkey" ? (
-          <div role="status" className="flex flex-col items-center gap-3 py-4 text-center">
-            <Fingerprint size={32} strokeWidth={1.5} className="text-primary" aria-hidden="true" />
-            <span className="text-[14px] text-foreground">Confirm it&apos;s you</span>
-            <span className="text-[13px] text-muted-foreground">Use your fingerprint, face or device PIN</span>
-            <AppLoader size={16} />
+        <div className="flex flex-col items-center gap-5">
+          <span className="text-[14px] text-foreground">Enter your 4-digit PIN</span>
+          <OtpInput
+            value={pin}
+            onChange={(next) => {
+              setPin(next);
+              if (pinState === "error") setPinState("entry");
+            }}
+            length={PIN_LENGTH}
+            mask
+            autoFocus
+            disabled={pinState === "checking"}
+            invalid={pinState === "error"}
+            onComplete={submitPin}
+          />
+          <InlineError message={pinState === "error" && "That PIN is incorrect. Please try again."} />
+          <div className="flex flex-col items-center gap-3">
+            <button
+              type="button"
+              onClick={onNotYou}
+              className="cursor-pointer text-[13px] text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
+            >
+              Forgot your PIN?
+            </button>
           </div>
-        ) : (
-          <div className="flex flex-col items-center gap-5">
-            <span className="text-[14px] text-foreground">Enter your 4-digit PIN</span>
-            <OtpInput
-              value={pin}
-              onChange={(next) => {
-                setPin(next);
-                if (pinState === "error") setPinState("entry");
-              }}
-              length={PIN_LENGTH}
-              mask
-              autoFocus
-              disabled={pinState === "checking"}
-              invalid={pinState === "error"}
-              onComplete={submitPin}
-            />
-            <InlineError message={pinState === "error" && "That PIN is incorrect. Please try again."} />
-            <div className="flex flex-col items-center gap-3">
-              <button
-                type="button"
-                onClick={signInWithPasskey}
-                className="flex cursor-pointer items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <Fingerprint size={14} strokeWidth={1.8} aria-hidden="true" />
-                <span>Use passkey instead</span>
-              </button>
-              <button
-                type="button"
-                onClick={onNotYou}
-                className="cursor-pointer text-[13px] text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground"
-              >
-                Forgot your PIN?
-              </button>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </AuthLayout>
   );

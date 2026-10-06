@@ -61,7 +61,7 @@ export default function CardVerificationPage() {
   if (!hydrated) return <div className="min-h-dvh bg-background" />;
 
   return (
-    <div className="flex min-h-dvh w-full flex-col bg-muted/40 text-foreground">
+    <div data-auth-shell className="flex min-h-dvh w-full flex-col bg-muted/40 text-foreground">
       <header className="flex h-14 items-center justify-center gap-2 border-b border-border bg-card px-4 text-[13px] text-muted-foreground">
         <Lock size={14} strokeWidth={1.9} aria-hidden="true" />
         Secure card verification

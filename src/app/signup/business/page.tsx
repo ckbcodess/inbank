@@ -418,7 +418,7 @@ export default function BusinessSignupPage() {
               Administration.
             </p>
 
-            <label className="flex cursor-pointer items-start gap-3.5 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-primary/40">
+            <label className="flex cursor-pointer items-start gap-3.5 rounded-2xl border border-border bg-card-item p-4 transition-colors hover:border-primary/40">
               <Checkbox
                 checked={contactIsSignatory}
                 onCheckedChange={(checked) => setContactIsSignatory(!!checked)}
@@ -435,7 +435,7 @@ export default function BusinessSignupPage() {
             </label>
 
             {signatories.map((sig) => (
-              <div key={sig.id} className="flex items-center gap-3.5 rounded-2xl border border-border bg-card p-4">
+              <div key={sig.id} className="flex items-center gap-3.5 rounded-2xl border border-border bg-card-item p-4">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
                   <Users size={18} strokeWidth={1.8} aria-hidden="true" />
                 </span>
@@ -489,7 +489,7 @@ export default function BusinessSignupPage() {
                 <div
                   key={doc.id}
                   className={`flex items-center gap-3.5 rounded-2xl border p-4 transition-colors ${
-                    filename ? "border-primary/40 bg-primary/5" : "border-border bg-card"
+                    filename ? "border-primary/40 bg-primary/5" : "border-border bg-card-item"
                   }`}
                 >
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
@@ -670,7 +670,7 @@ function ReviewSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-5">
+    <div className="rounded-2xl border border-border bg-card-item p-5">
       <div className="mb-3.5 flex items-center justify-between">
         <p className="text-[13.5px] font-medium text-foreground">{title}</p>
         <button

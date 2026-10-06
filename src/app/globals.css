@@ -84,6 +84,10 @@
   --color-primary-hover: var(--primary-hover);
   --color-popover: var(--popover);
   --color-card: var(--card);
+  --color-card-auth: var(--card-auth);
+  --color-auth-card: var(--auth-card);
+  --color-card-item: var(--card-item);
+  --color-card-inner: var(--card-inner);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -118,6 +122,12 @@
   --background: oklch(1 0 0);
   --foreground: #2e2e2e;
   --card: #fafafa;
+  /* Card surface for auth & onboarding screens (distinct from in-app --card). */
+  --card-auth: oklch(1 0 0);
+  --auth-card: var(--card-auth);
+  /* Nested card items inside containers (such as onboarding option cards). */
+  --card-item: #fafafa;
+  --card-inner: var(--card-item);
   /* Tile surface tokens. Hub tiles are filled with --tile, with no stroke, and --tile-hover on hover; the fill also
      serves the empty PIN dots. Single source for both modes so a change reflects everywhere. */
   --tile: #f6f6f5;
@@ -305,6 +315,10 @@
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: #181818;
+  --card-auth: #181818;
+  --auth-card: var(--card-auth);
+  --card-item: #212121;
+  --card-inner: var(--card-item);
   --tile: #141414;
   --tile-hover: #212121;
   --tile-accent: #F9C632;
@@ -506,6 +520,11 @@ html.i18n-pending body {
 }
 .surface-interactive:active {
   background-color: var(--hover);
+}
+
+/* Auth & Onboarding shell: reassign --card so all nested card utilities use the auth card token */
+[data-auth-shell] {
+  --card: var(--card-auth);
 }
 
 /* Eliminate active scale-down / shrink across all clickable elements */

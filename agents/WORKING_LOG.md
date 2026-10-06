@@ -80,8 +80,6 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - An unrecognised number signs in as the default persona, so the "incorrect" error never shows.
 - Settings copy doesn't mention the PIN. The returning-user and trusted-device copy mentions neither
   email nor mobile.
-- The passkey is a stand-in. It's shown with nothing enrolled, so it isn't honest until enrolment
-  exists.
 - The PIN error message lost its demo hint ("any 4 digits except 0000").
 
 **Onboarding**
@@ -154,8 +152,8 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - **Dashboard:** Hero split is the default. Delete the Overview, Focus, Timeline, Insights, Actions and
   Hero layouts once confirmed. Until then they still have circular mobile actions and row dividers.
 - **Auth:** Hybrid is the default. Remove the look-switch chip and `auth-layout-store`, then the `quiet`
-  and `card` variants and `EagleBackdrop` / `EagleStudio`, once Hybrid is confirmed. Still open from
-  that work: should onboarding card tops line up with the centred login card?
+  and `card` variants and `EagleBackdrop` / `EagleStudio`, once Hybrid is confirmed. (Resolved: all auth
+  and onboarding cards are vertically centred by default, eliminating card jumps).
 - **Dead or unreachable code:**
   - `FxQuickModal` and its store
   - the `nibs-pending-source` helpers
@@ -186,6 +184,12 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 ---
 
 ## Inbox
+
+### 2026-10-06
+- **Decision:** Split auth/onboarding cards into their own `--card-auth` / `--auth-card` tokens (light `oklch(1 0 0)`, dark `#181818`), aliased to each other. AuthLayout and card-verification scope `--card: var(--card-auth)` via `[data-auth-shell]`, and AuthLayout uses `bg-card-auth/95`. Nested cards on the onboarding card (option cards in `/get-started`, signatories in `/signup/business`) use `--card-item` / `--card-inner` (light `#fafafa`, dark `#212121`), ensuring visual separation and independent tuning from the outer card.
+- **Decision:** Rebalanced auth card and form rhythm. In `/login`, grouped credentials (`gap-4`) and action buttons into a tight group (`gap-2.5` between Log in and Register) separated by `mt-6` from fields, eliminating the 24px gap between primary and secondary actions and the `-mt-3` margin hack. In `AuthLayout`, trimmed card padding to `px-6 py-7 sm:px-8 sm:py-8.5` and dynamic title margin (`mb-6` without description, `mb-7` with). In `/get-started`, tightened options list to `gap-3` and internal card padding to `p-4.5 sm:p-5`.
+- **Decision:** Standardised vertical centering across all auth/onboarding screens by defaulting `AuthLayout`'s `vAlign` to `"center"` with scroll-safe `my-auto` on the card container. Resolves the vertical card jump between `/login` (which was centered) and `/get-started` or other onboarding routes (which were top-anchored at `pt-[12vh]`).
+- **Decision:** Moved "Already have an account? Login" on `/get-started` inside the card body (below the registration options) instead of rendering in the external layout footer.
 
 ### 2026-10-03
 - **Decision:** Project memory moved into `agents/`, which is now the only source of truth.
@@ -369,6 +373,13 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
     branch combobox now use the field tokens, so the tuner edits them.
   - Every route has a skeleton shaped like its page now (dashboard hero-split, account detail, accounts, settings,
     transactions, receipt, Send & Pay hub). Change a page's layout and its skeleton in `PageSkeletons.tsx` with it.
+  - Decision: onboarding cards share one rhythm in `AuthLayout`: `py-10 sm:py-14` card padding and `mb-8 sm:mb-10` under
+    the title. `padY` and `headerGap` props override it per screen. Not yet seen on the long signup and activate steps.
+  - Decision: the passkey option is gone from the returning-customer sign-in (it was a stand-in with nothing enrolled).
+    Bring it back only with real enrolment.
+  - Override: the Demo hub (`PersonaFlowSwitcher`) now ships in the live build, behind `SHOW_DEMO_HUB` in
+    `src/lib/demo-tools.ts`. The colour tuner and Post-Onboarding Cards stay dev-only. CONSTITUTION §10 still says
+    prototype scaffolding never reaches production; update it if this is permanent.
   - Not tokenised, on purpose: card artwork colours (`card-themes.ts`), flag and currency marks (`currency-logo.tsx`), the
     white GCB logo mark on cards, white/black overlays on photos and cards (`bg-white/20`, `text-white`), the unused
     `VirtualCardModal`, the sandbox dashboard page, and the hero-wave and eagle tuners' own defaults.

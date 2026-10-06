@@ -53,6 +53,10 @@ interface AuthLayoutProps {
   vAlign?: "top" | "center";
   /** Quiet only. Faint dotted golden eagle behind the content. */
   eagle?: boolean;
+  /** Vertical padding of the card, as Tailwind `py-*` classes. Defaults to `py-10 sm:py-14`, the shared onboarding rhythm. */
+  padY?: string;
+  /** Space under the title block, as a Tailwind `mb-*` class. Defaults to `mb-8 sm:mb-10`. */
+  headerGap?: string;
 }
 
 export default function AuthLayout({
@@ -72,8 +76,10 @@ export default function AuthLayout({
   showLogo = false,
   animateHeight = false,
   variant: variantProp = "hybrid",
-  vAlign = "top",
+  vAlign = "center",
   eagle: eagleProp = false,
+  padY,
+  headerGap,
 }: AuthLayoutProps) {
   // Test switch: the saved look overrides the page's variant. Read after mount to avoid a hydration mismatch.
   const look = useAuthLayoutStore((s) => s.look);
@@ -100,12 +106,16 @@ export default function AuthLayout({
 
   const hasBack = Boolean(onBack || backHref);
   const cardClassName = quiet
-    ? "px-1 py-6 sm:py-10"
-    : "rounded-[20px] border border-border/80 bg-card/95 px-6 py-8 sm:px-8 sm:py-10 shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden";
+    ? cn("px-1", padY ?? "py-10 sm:py-14")
+    : cn("rounded-[20px] border border-border/80 bg-card-auth/95 px-6 sm:px-8", padY ?? "py-10 sm:py-14", "shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden");
 
 
   return (
-    <div data-auth-quiet={newLayout ? "" : undefined} className="relative flex min-h-dvh w-full flex-col bg-background text-foreground transition-colors selection:bg-primary/30 selection:text-foreground overflow-x-hidden">
+    <div
+      data-auth-shell
+      data-auth-quiet={newLayout ? "" : undefined}
+      className="relative flex min-h-dvh w-full flex-col bg-background text-foreground transition-colors selection:bg-primary/30 selection:text-foreground overflow-x-hidden"
+    >
       {/* Top Fixed Header */}
       <AuthHeader />
 
@@ -130,7 +140,7 @@ export default function AuthLayout({
           newLayout && vAlign === "top" ? "items-start pt-10 sm:pt-[12vh]" : "items-center"
         )}
       >
-        <div className={`w-full ${maxWidthClass}`}>
+        <div className={`w-full my-auto ${maxWidthClass}`}>
           {/* Card Inner Content */}
           {(() => {
             const cardInner = (
@@ -207,7 +217,7 @@ export default function AuthLayout({
                 {(title || description) && (
                   <div
                     className={cn(
-                      "mb-8",
+                      headerGap ?? "mb-8 sm:mb-10",
                       align === "center" ? "text-center mx-auto max-w-[440px]" : "text-left sm:text-center sm:mx-auto sm:max-w-[440px]"
                     )}
                   >
@@ -272,7 +282,7 @@ export default function AuthLayout({
       <button
         type="button"
         onClick={cycleLook}
-        className="fixed bottom-4 right-4 z-50 rounded-full border border-border bg-card/95 px-3 py-1.5 text-[12px] text-muted-foreground shadow-sm backdrop-blur transition-colors hover:text-foreground active:scale-95 cursor-pointer"
+        className="fixed bottom-4 right-4 z-50 rounded-full border border-border bg-card-auth/95 px-3 py-1.5 text-[12px] text-muted-foreground shadow-sm backdrop-blur transition-colors hover:text-foreground active:scale-95 cursor-pointer"
       >
         Layout: {AUTH_LOOK_LABEL[mounted ? look : "hybrid"]}
       </button>

@@ -82,7 +82,7 @@ function MfaContent() {
   return (
     <AuthLayout
       icon={isNewDevice ? ShieldAlert : ShieldCheck}
-      title={isNewDevice ? "New device authorization" : "Verify your identity"}
+      title={isNewDevice ? "New device authorization" : "Verify Your Identity"}
       description={
         isNewDevice ? (
           <>We detected a login from an unrecognized browser or device.<br />A 6-digit code has been sent to {maskedDestination}. Please enter the code below.</>

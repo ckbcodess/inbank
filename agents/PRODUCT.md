@@ -158,7 +158,7 @@ Open questions live in [WORKING_LOG.md](WORKING_LOG.md), not here.
   password is new.
 - **Signing in:**
   - The full form is mobile number + password, then a code on a new device.
-  - On a trusted device, a returning customer enters their 4-digit PIN (or uses a passkey).
+  - On a trusted device, a returning customer enters their 4-digit PIN.
   - Forgot password: mobile → selfie → new password. After 3 selfie misses, the customer is sent to a
     branch.
 - **Send & Pay:** hub → chooser (a question) → progressive form → review → authorise → receipt, with

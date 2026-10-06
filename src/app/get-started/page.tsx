@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ChevronRight,
-  CreditCard,
   ExternalLink,
   Landmark,
   Plus,
@@ -73,30 +72,16 @@ export default function GetStartedPage() {
         backHref={screen === 1 ? "/login" : undefined}
         backLabel={screen === 2 ? "Back to registration options" : "Back to login"}
         width="compact"
-        footer={
-          screen === 1 ? (
-            <div className="flex justify-center">
-              <p className="text-[13px] text-muted-foreground">
-                Already have an account?{" "}
-                <Link
-                  href="/login"
-                  className="font-medium text-foreground underline underline-offset-4 hover:text-foreground"
-                >
-                  Login
-                </Link>
-              </p>
-            </div>
-          ) : null
-        }
       >
         {screen === 1 ? (
-          <div className="flex flex-col gap-3.5">
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3">
             {/* Option 1: GCB Account Holder -> Immediate route to /activate */}
             <button
               type="button"
               data-tour="gs-existing"
               onClick={handleChooseExisting}
-              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
               <div className="flex items-center gap-3.5">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -124,7 +109,7 @@ export default function GetStartedPage() {
               type="button"
               data-tour="gs-new"
               onClick={handleChooseNew}
-              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
               <div className="flex items-center gap-3.5">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -147,14 +132,25 @@ export default function GetStartedPage() {
               />
             </button>
           </div>
+
+            <p className="text-center text-[13px] text-muted-foreground">
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80"
+              >
+                Login
+              </Link>
+            </p>
+          </div>
         ) : (
-          <div className="flex flex-col gap-3.5">
+          <div className="flex flex-col gap-3">
             {/* Step 2 Option 1: Open a GCB Account -> Immediate COOS modal */}
             <button
               type="button"
               data-tour="gs-cos"
               onClick={handleChooseCoos}
-              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
               <div className="flex items-center gap-3.5">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -175,20 +171,20 @@ export default function GetStartedPage() {
               </div>
             </button>
 
-            {/* Step 2 Option 2: Get a Virtual Wallet -> Immediate route to /signup */}
+            {/* Step 2 Option 2: Create a Payment Profile -> Immediate route to /signup */}
             <button
               type="button"
               data-tour="gs-walletcard"
               onClick={handleChooseWalletCard}
-              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card p-5 sm:p-5.5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
               <div className="flex items-center gap-3.5">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <CreditCard size={18} strokeWidth={2} />
+                  <Plus size={18} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
-                    Get a Virtual Wallet
+                    Create a Payment Profile
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
                     Fund with mobile money or any bank card.
