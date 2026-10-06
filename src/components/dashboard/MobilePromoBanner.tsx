@@ -192,7 +192,7 @@ export function MobilePromoBanner() {
                 type="button"
                 onClick={() => setCurrentSlide(idx)}
                 aria-label={`Go to slide ${idx + 1}`}
-                className={`rounded-full transition-all duration-200 cursor-pointer ${
+                className={`rounded-full transition-[width,height,background-color] duration-200 cursor-pointer ${
                   currentSlide === idx
                     ? "h-1.5 w-4 bg-foreground"
                     : "size-1.5 bg-muted-foreground/35 hover:bg-muted-foreground"

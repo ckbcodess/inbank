@@ -35,7 +35,7 @@ const REFERRAL_BRANCHES: Record<string, string> = {
 export default function ReferralStep({
   onDone,
   dataTour,
-  skipLabel = "Go to Dashboard",
+  skipLabel = "Skip",
 }: {
   /** Called with the applied code, or null when skipped. */
   onDone: (code: string | null) => void;

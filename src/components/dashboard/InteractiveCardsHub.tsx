@@ -101,7 +101,7 @@ export function InteractiveCardsHub({
               key={c.id}
               type="button"
               onClick={() => setActiveCardIndex(i)}
-              className={`px-3 py-1 text-[11.5px] rounded-xl font-medium transition-all ${
+              className={`px-3 py-1 text-[11.5px] rounded-xl font-medium transition ${
                 activeCardIndex === i
                   ? "bg-primary text-primary-foreground shadow-xs"
                   : "bg-muted text-muted-foreground hover:text-foreground"
@@ -117,7 +117,7 @@ export function InteractiveCardsHub({
       <div className="pt-2">
         <div
           style={{ backgroundColor: theme.colorHex }}
-          className={`relative overflow-hidden rounded-2xl p-4.5 shadow-md transition-all duration-300 min-h-[170px] flex flex-col justify-between ${theme.textColor} ${
+          className={`relative overflow-hidden rounded-2xl p-4.5 shadow-md transition duration-300 min-h-[170px] flex flex-col justify-between ${theme.textColor} ${
             isBlocked ? "opacity-75 saturate-50" : ""
           }`}
         >

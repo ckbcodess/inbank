@@ -105,7 +105,7 @@ function ThemeSegmented() {
             aria-label={label}
             onClick={() => choose(value)}
             className={`flex size-8 cursor-pointer items-center justify-center rounded-full transition-colors duration-hover ${
-              active === value ? "bg-chip-selected text-chip-selected-foreground shadow-xs" : "text-chip-foreground hover:text-chip-selected-foreground"
+              active === value ? "bg-chip-selected text-chip-selected-foreground shadow-xs dark:bg-background" : "text-chip-foreground hover:text-chip-selected-foreground"
             }`}
           >
             <Icon size={16} strokeWidth={1.8} aria-hidden="true" />

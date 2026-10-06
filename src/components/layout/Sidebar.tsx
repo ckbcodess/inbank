@@ -153,7 +153,7 @@ export default function Sidebar({
               href={item.path}
               onClick={onClose}
               aria-label={label}
-              className={`relative flex size-9 items-center justify-center rounded-lg transition-all duration-150 ${
+              className={`relative flex size-9 items-center justify-center rounded-lg transition duration-150 ${
                 active
                   ? "bg-primary text-primary-foreground"
                   : "surface-interactive text-muted-foreground hover:text-foreground"
@@ -171,7 +171,7 @@ export default function Sidebar({
         key={item.key}
         href={item.path}
         onClick={onClose}
-        className={`relative flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium transition-all duration-150 ${
+        className={`relative flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium transition duration-150 ${
           indent ? "ml-2.5" : ""
         } ${
           active
@@ -295,7 +295,7 @@ export default function Sidebar({
                     type="button"
                     onClick={() => setOpenGroups((p) => ({ ...p, [name]: !open }))}
                     aria-expanded={open}
-                    className={`relative flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium transition-all duration-150 cursor-pointer hover:bg-muted/50 hover:text-foreground ${
+                    className={`relative flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium transition duration-150 cursor-pointer hover:bg-muted/50 hover:text-foreground ${
                       hasActiveChild && !open ? "text-foreground" : "text-muted-foreground"
                     }`}
                   >

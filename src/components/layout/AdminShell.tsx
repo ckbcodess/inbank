@@ -14,7 +14,6 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Sidebar from "./Sidebar";
 import TopHeader from "./TopHeader";
-import { SurfaceProvider } from "@/lib/surface-context";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
 import { getNavigation } from "@/lib/navigation";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
@@ -62,7 +61,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const navItems = getNavigation(actor);
 
   return (
-    <SurfaceProvider value={1}>
+    <>
       <div className="flex h-dvh overflow-hidden bg-[var(--surface)]">
         {sidebarOpen && (
           <div
@@ -97,6 +96,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </div>
         </div>
       </div>
-    </SurfaceProvider>
+    </>
   );
 }

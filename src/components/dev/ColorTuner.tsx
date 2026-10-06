@@ -138,12 +138,12 @@ function TunerPanel() {
         />
       </label>
 
-      {groups.map((group, gi) => {
+      {groups.map((group) => {
         const tokens = q ? group.tokens.filter((t) => t.id.includes(q) || t.label.toLowerCase().includes(q)) : group.tokens;
         if (tokens.length === 0) return null;
         const changed = group.tokens.filter((t) => t.id in mine).length;
         return (
-          <details key={group.label} open={q ? true : gi === 0} className="group/section">
+          <details key={group.label} open={q ? true : undefined} className="group/section">
             <summary className="flex cursor-pointer list-none items-center justify-between border-b border-border pb-1.5 text-[12px] text-muted-foreground [&::-webkit-details-marker]:hidden">
               <span>
                 {group.label} <span className="tabular opacity-70">{group.tokens.length}</span>
@@ -226,7 +226,7 @@ function ColorRow({
           type="button"
           onClick={onLocate}
           title="Show where this is used on the page"
-          className="flex min-w-0 cursor-pointer flex-col rounded-md text-left outline-none transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-focus-ring"
+          className="flex min-w-0 cursor-pointer flex-col rounded-md text-left outline-none transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring"
         >
           <span className={cn("truncate text-[12.5px]", changed ? "text-foreground" : "text-muted-foreground")}>{label}</span>
           <span className="flex items-center gap-1 truncate text-[11px] text-muted-foreground/70">

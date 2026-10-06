@@ -155,7 +155,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
           setOpen(true);
           inputRef.current?.focus();
         }}
-        className={`h-13 px-4 w-full rounded-2xl border text-left transition-all shadow-none flex items-center gap-3 cursor-text ${
+        className={`h-13 px-4 w-full rounded-2xl border text-left transition shadow-none flex items-center gap-3 cursor-text ${
           open
             ? "border-field-border-focus bg-field-focus"
             : "border-field-border bg-field hover:bg-field-hover"

@@ -117,7 +117,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
                 type="button"
                 onClick={() => setRole(r)}
                 aria-pressed={role === r}
-                className={`rounded-lg border px-3 py-1.5 text-[12.5px] transition-all ${
+                className={`rounded-lg border px-3 py-1.5 text-[12.5px] transition ${
                   role === r
                     ? "border-primary bg-[var(--active-bg)] text-foreground"
                     : "border-border bg-background text-muted-foreground hover:text-foreground"

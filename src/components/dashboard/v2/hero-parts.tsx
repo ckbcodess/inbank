@@ -26,7 +26,6 @@ import {
   SlidersHorizontal,
   TrendingDown,
   TrendingUp,
-  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -53,7 +52,6 @@ import {
   SPRING,
   selectedAccount,
   useUpdatedLabel,
-  usePromoDismissal,
   type DashData,
 } from "./parts";
 
@@ -200,7 +198,7 @@ const HERO_GLASS_BUTTON = cn(
   "shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]",
   "hover:bg-white/14 hover:text-[var(--hero-foreground)] active:scale-95",
   "aria-expanded:text-[var(--hero-foreground)]",
-  "cursor-pointer outline-none transition-all",
+  "cursor-pointer outline-none transition",
 );
 
 export function HeroAccountMenu({
@@ -400,7 +398,7 @@ export function HeroBalance({
     <div className={cn("relative flex items-center gap-2", className)}>
       {loading ? (
         <span
-          className="h-[32px] w-56 skeleton-shimmer rounded-lg bg-[color-mix(in_oklch,var(--hero-foreground)_15%,transparent)] sm:w-72"
+          className="h-[28px] w-56 skeleton-shimmer sm:h-[44px] rounded-lg bg-[color-mix(in_oklch,var(--hero-foreground)_15%,transparent)] sm:w-72"
           aria-label={t("dashboard.loadingBalance", "Loading balance")}
         />
       ) : (
@@ -571,61 +569,3 @@ export function AccountScoped({
   );
 }
 
-/* ── Promo ───────────────────────────────────────────────────────────────── */
-
-/**
- * The app-download banner as designed: gold panel, QR code, phone in hand.
- * Hidden on a phone (a QR code can't be scanned by the screen showing it) and
- * dismissible, sharing the dismissal with the other layouts' banner.
- */
-export function HeroPromo() {
-  const { t } = useTranslation();
-  const [dismissed, dismiss] = usePromoDismissal();
-  if (dismissed !== false) return null;
-
-  return (
-    <div className="relative hidden rounded-2xl border border-border bg-card p-6 sm:block">
-      <div
-        className="relative h-[294px] overflow-hidden rounded-2xl text-primary-foreground"
-        style={{
-          // The Figma fill: an ellipse ~74% × 50% of the panel, four gold stops.
-          background:
-            "radial-gradient(74.4% 50% at 50.6% 50%, var(--promo-gold-1) 0%, var(--promo-gold-2) 50%, var(--promo-gold-3) 75%, var(--promo-gold-4) 100%)",
-        }}
-      >
-        {/* The design's "pattern refraction" shader needs WebGPU; this is its look in CSS —
-            110px lenses at 45°, bright through the middle, a faint seam at each edge. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "repeating-linear-gradient(135deg, var(--promo-shade) 0px, transparent 26px, var(--promo-sheen) 56px, transparent 88px, var(--promo-shade) 110px)",
-          }}
-        />
-        <h3 className="absolute left-9 top-12 w-[295px] text-[28px] leading-[38px] tracking-[-0.035em]">
-          {t("dashboard.promoTitle", "Banking made easier, wherever you are.")}
-        </h3>
-        <div className="absolute left-9 top-[167px] size-[189px] overflow-hidden rounded-xl">
-          <Image alt={t("dashboard.promoScan", "Scan to get the GCB mobile app")} src={`${ASSETS}/promo-qr-1.png`} fill sizes="189px" className="object-cover" />
-          <Image alt="" src={`${ASSETS}/promo-qr-2.png`} fill sizes="189px" className="object-cover" />
-        </div>
-        <Image
-          alt=""
-          src="/promo-phone.png"
-          width={255}
-          height={302}
-          className="pointer-events-none absolute left-[356px] top-[30px] hidden h-[302px] w-[255px] object-cover md:block"
-        />
-        <button
-          type="button"
-          onClick={dismiss}
-          className="absolute right-4 top-4 flex size-8 items-center justify-center rounded-full opacity-70 transition-opacity hover:opacity-100 cursor-pointer"
-          aria-label={t("common.dismiss", "Dismiss")}
-        >
-          <X size={17} strokeWidth={1.8} />
-        </button>
-      </div>
-    </div>
-  );
-}

@@ -6,13 +6,13 @@
  * top-up from the dashboard, so both ask the same way and save the same record.
  */
 
-import Image from "next/image";
-import { CreditCard } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLinkedSources, type NetworkOperator } from "@/lib/accounts-store";
 import type { PendingFundingSource } from "@/lib/device-trust";
+import { SourceMark } from "@/components/ui/source-mark";
+import { operatorFromName } from "@/lib/operators";
 
 export function sourceFromFunding(
   method: "momo" | "card",
@@ -69,29 +69,10 @@ export function useSaveSource(source: PendingFundingSource, onDone: () => void) 
 /** The wallet or card just used, and what saving it does. */
 export function SourceSummary({ source }: { source: PendingFundingSource }) {
   const { title, subtitle } = describe(source);
-  const isMomo = source.type === "momo";
   return (
     <div className="flex flex-col gap-4 text-left">
       <div className="flex items-center gap-3.5 rounded-xl border border-border/80 bg-muted/30 p-3.5 text-left">
-        <div className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-card">
-          {isMomo ? (
-            <Image
-              src={
-                source.operator?.includes("MTN")
-                  ? "/mtn.svg"
-                  : source.operator?.includes("Telecel")
-                  ? "/telecel.svg"
-                  : "/at.svg"
-              }
-              alt={source.operator || "Operator"}
-              width={24}
-              height={24}
-              className="object-contain"
-            />
-          ) : (
-            <CreditCard size={20} strokeWidth={1.8} className="text-foreground" />
-          )}
-        </div>
+        <SourceMark type={source.type} operator={operatorFromName(source.operator)} title={title} />
         <div className="min-w-0 flex-1">
           <p className="truncate text-[14px] tracking-[-0.01em] text-foreground">{title}</p>
           <p className="tabular truncate text-[12.5px] text-muted-foreground">{subtitle}</p>

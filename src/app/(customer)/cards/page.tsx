@@ -9,6 +9,7 @@
  * - Search bar removed
  */
 
+import { CARD_SCHEMES, type CardScheme } from "@/lib/card-schemes";
 import { toast } from "sonner";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -142,7 +143,7 @@ function CardsPageContent() {
   const [cardType, setCardType] = useState<"Prepaid" | "Debit" | "Virtual">(
     "Virtual",
   );
-  const [cardScheme, setCardScheme] = useState<"Visa" | "Mastercard">("Visa");
+  const [cardScheme, setCardScheme] = useState<CardScheme>("Visa");
   const [linkedAccId, setLinkedAccId] = useState("");
   const [initialFund, setInitialFund] = useState("500");
   const [spendLimit, setSpendLimit] = useState("2500");
@@ -403,7 +404,7 @@ function CardsPageContent() {
               type="button"
               onClick={() => setTypeFilter(t)}
               aria-pressed={isActive}
-              className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 sm:px-4 sm:py-2 text-[12.5px] sm:text-[13px] whitespace-nowrap transition-all cursor-pointer ${
+              className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 sm:px-4 sm:py-2 text-[12.5px] sm:text-[13px] whitespace-nowrap transition cursor-pointer ${
                 isActive
                   ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
                   : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -519,15 +520,18 @@ function CardsPageContent() {
                 <Select
                   value={cardScheme}
                   onValueChange={(val) =>
-                    val && setCardScheme(val as "Visa" | "Mastercard")
+                    val && setCardScheme(val as CardScheme)
                   }
                 >
                   <SelectTrigger className="h-10 w-full">
                     <SelectValue placeholder="Select scheme" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Visa">Visa</SelectItem>
-                    <SelectItem value="Mastercard">Mastercard</SelectItem>
+                    {CARD_SCHEMES.map((scheme) => (
+                      <SelectItem key={scheme} value={scheme}>
+                        {scheme}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

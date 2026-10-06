@@ -46,7 +46,7 @@ export default function BulkUploadPage() {
     <div className="flex flex-col gap-5">
       <PageHeader
         title="Bulk Payments"
-        backTo={{ href: "/payments", label: "Payments" }}
+        backTo={{ href: "/payments", label: "Send & Pay" }}
       />
 
       <StateSwitcher section="13.8" states={BULK_STATES} value={state} onChange={setState} />

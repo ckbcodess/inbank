@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState, useMemo } from "react";
 import { Account } from "@/lib/mock-data";
 import {
@@ -18,7 +17,7 @@ import {
   SchedulePaymentSection,
   ScheduleFrequency,
   detectTelcoNetwork,
-  getTelcoLogo,
+  operatorBadgeIcon,
   normalizeNetworkName,
   resolveAccountName,
   formatGhPhone,
@@ -127,17 +126,7 @@ export function AirtimeFlow({
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `Phone ${state.aPhone}`}
             subtitle={`${state.wNetwork ? normalizeNetworkName(state.wNetwork) : "Mobile Network"} · ${formatGhPhone(state.aPhone)}`}
-            icon={
-              getTelcoLogo(state.wNetwork) ? (
-                <Image
-                  src={getTelcoLogo(state.wNetwork)!}
-                  alt={state.wNetwork || ""}
-                  width={40}
-                  height={40}
-                  className="size-full object-cover rounded-full"
-                />
-              ) : undefined
-            }
+            icon={operatorBadgeIcon(state.wNetwork || "")}
             nameCheck={{ confirmed: Boolean(verifiedName), by: state.wNetwork ? normalizeNetworkName(state.wNetwork) : undefined }}
             onChange={() => setCollapsed(false)}
           />

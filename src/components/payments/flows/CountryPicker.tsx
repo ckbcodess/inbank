@@ -1,24 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Image from "next/image";
 import { ChevronRight, Search } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { COUNTRIES, findCountryByName, type Country } from "@/lib/countries";
-
-export function CountryFlag({ code, size = 28 }: { code: string; size?: number }) {
-  return (
-    <Image
-      src={`/flags/${code}.svg`}
-      alt=""
-      width={size}
-      height={size}
-      unoptimized
-      className="shrink-0 rounded-full border border-border/60 object-cover"
-      style={{ width: size, height: size }}
-    />
-  );
-}
+import { CountryFlag } from "@/components/ui/country-flag";
 
 /**
  * "Select destination country": a trigger that opens every country, A to Z, with search.
@@ -92,7 +78,7 @@ export function CountryPicker({
                 placeholder="Search"
                 aria-label="Search countries"
                 autoComplete="off"
-                className="h-11 w-full rounded-xl border border-field-border bg-field pl-10 pr-3 text-[14.5px] text-foreground outline-none transition-all focus:border-field-border-focus focus:ring-0"
+                className="h-11 w-full rounded-xl border border-field-border bg-field pl-10 pr-3 text-[14.5px] text-foreground outline-none transition focus:border-field-border-focus focus:ring-0"
               />
             </div>
           </div>

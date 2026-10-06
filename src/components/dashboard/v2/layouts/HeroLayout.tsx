@@ -20,12 +20,12 @@ import {
   MoneyActions,
   Notices,
   PayAgainCard,
+  PromoBanner,
   type DashViewProps,
 } from "../parts";
 import {
   AccountScoped,
   HeroBalance,
-  HeroPromo,
   HeroStack,
   HeroSurface,
   HeroUpdated,
@@ -78,14 +78,14 @@ export function HeroLayout(props: DashViewProps) {
             className="rounded-3xl"
             onOpenFundModal={props.onOpenFundModal}
           />
-          <PayAgainCard data={data} className="rounded-3xl" />
+          <PayAgainCard data={data} loading={loading} className="rounded-3xl" />
           <AnalyticsCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
           <CardsCard data={data} loading={loading} className="rounded-3xl" onOpenFundModal={props.onOpenFundModal} />
           <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
         </AccountScoped>
       </HeroStack>
 
-      <HeroPromo />
+      <PromoBanner />
     </div>
   );
 }

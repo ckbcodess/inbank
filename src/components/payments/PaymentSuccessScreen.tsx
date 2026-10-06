@@ -660,7 +660,7 @@ export function PaymentSuccessScreen({
                 type="button"
                 onClick={card.onClick}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-3.5 rounded-[12px] border border-border dark:border-border bg-tile dark:bg-card py-4 px-2.5 hover:bg-muted/50 active:scale-[0.98] transition-all cursor-pointer group text-center shadow-xs",
+                  "flex flex-col items-center justify-center gap-3.5 rounded-[12px] border border-border dark:border-border bg-tile dark:bg-card py-4 px-2.5 hover:bg-muted/50 active:scale-[0.98] transition cursor-pointer group text-center shadow-xs",
                   card.active && "border-primary ring-1 ring-primary/40 bg-muted/25"
                 )}
               >
@@ -689,7 +689,7 @@ export function PaymentSuccessScreen({
           <button
             type="button"
             onClick={onSecondaryAction}
-            className="flex-1 rounded-[8px] border border-border dark:border-border bg-card px-5 py-3 text-[14px] font-medium text-foreground hover:bg-muted/60 active:scale-[0.99] transition-all cursor-pointer text-center shadow-xs"
+            className="flex-1 rounded-[8px] border border-border dark:border-border bg-card px-5 py-3 text-[14px] font-medium text-foreground hover:bg-muted/60 active:scale-[0.99] transition cursor-pointer text-center shadow-xs"
           >
             {secondaryActionLabel}
           </button>
@@ -697,7 +697,7 @@ export function PaymentSuccessScreen({
         <button
           type="button"
           onClick={onPrimaryAction}
-          className="relative overflow-hidden flex-1 rounded-[8px] bg-primary hover:bg-primary-hover text-primary-foreground px-5 py-3 text-[14px] font-medium active:scale-[0.99] transition-all cursor-pointer text-center shadow-xs"
+          className="relative overflow-hidden flex-1 rounded-[8px] bg-primary hover:bg-primary-hover text-primary-foreground px-5 py-3 text-[14px] font-medium active:scale-[0.99] transition cursor-pointer text-center shadow-xs"
         >
           {/* Single light sweep as the button arrives — then it stays still */}
           <motion.div

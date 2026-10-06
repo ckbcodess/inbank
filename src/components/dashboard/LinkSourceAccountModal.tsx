@@ -6,10 +6,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   ArrowLeftRight,
-  Check,
   CheckCircle2,
   ChevronLeft,
-  ChevronRight,
   CreditCard,
   Smartphone,
   Wallet,
@@ -31,14 +29,18 @@ import {
   AmountInput,
   NarrationInput,
   ProceedButton,
-  getTelcoLogo,
+  OperatorSelect,
 } from "@/components/payments/flows/shared";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { AppLoader } from "@/components/ui/loader";
 import { displayGhanaMobile, isCompleteGhanaMobile } from "@/lib/phone";
+import { ActionTile } from "@/components/ui/action-tile";
 import { cardNetwork, useCardLink } from "@/lib/card-link";
+import { useCardPayment } from "@/lib/card-payment";
+import { OPERATORS } from "@/lib/operators";
+import { SourceMark } from "@/components/ui/source-mark";
+import { CheckBadge } from "@/components/ui/check-badge";
 
 interface LinkSourceAccountModalProps {
   isOpen: boolean;
@@ -55,6 +57,10 @@ interface LinkSourceAccountModalProps {
   onLinked?: (source: LinkedSource) => void;
   /** Preselect this source on open — the card just linked via the bank's page. */
   initialSourceId?: string;
+  /** Back from the bank's page after a card payment: the amount that was being added. */
+  initialAmount?: string;
+  /** Back from the bank's page after a card payment: the account the money was going to. */
+  initialDestinationId?: string;
   /**
    * Straight after new-to-GCB sign-up: the link choice reads "Link Source
    * Account" with the mobile app's tiles (yellow icon, title, two-line hint).
@@ -62,19 +68,12 @@ interface LinkSourceAccountModalProps {
   onboarding?: boolean;
 }
 
-const OPERATOR_NAME: Record<NetworkOperator, string> = {
-  MTN: "MTN Mobile Money",
-  Telecel: "Telecel Cash",
-  AT: "AT Money",
-};
-
 export type ModalScreen =
   | "choice"
   | "internal_transfer"
   | "internal_success"
   | "linked_source_select"
   | "momo_waiting"
-  | "card_3ds"
   | "funding_success"
   | "link_new_momo"
   | "link_momo_pending"
@@ -91,11 +90,14 @@ export default function LinkSourceAccountModal({
   mode = "fund",
   onLinked,
   initialSourceId,
+  initialAmount,
+  initialDestinationId,
   onboarding = false,
 }: LinkSourceAccountModalProps) {
   const router = useRouter();
   const pathname = usePathname();
   const startCardLink = useCardLink((s) => s.start);
+  const startCardPayment = useCardPayment((s) => s.start);
   const modalId = useId();
   const activeProfile = useSession((s) => s.activeProfile);
   const allAccounts = useMemo(
@@ -117,10 +119,10 @@ export default function LinkSourceAccountModal({
   // account, or the default), and changeable in each form with the same
   // "To Account" dropdown Send & Pay uses.
   const [destinationId, setDestinationId] = useState<string>(
-    targetAccountProp?.id ?? fundableAccounts[0]?.id ?? ""
+    initialDestinationId ?? targetAccountProp?.id ?? fundableAccounts[0]?.id ?? ""
   );
   useEffect(() => {
-    if (isOpen) setDestinationId(targetAccountProp?.id ?? fundableAccounts[0]?.id ?? "");
+    if (isOpen) setDestinationId(initialDestinationId ?? targetAccountProp?.id ?? fundableAccounts[0]?.id ?? "");
     // Re-seed only when the modal opens or the entry point changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, targetAccountProp?.id]);
@@ -182,15 +184,13 @@ export default function LinkSourceAccountModal({
   const cardComplete =
     cardDigits.length >= 15 && /^(0[1-9]|1[0-2])\/\d{2}$/.test(newCardExpiry) && newCardCvv.length >= 3;
 
-  // Simulated OTP
-  const [threeDsCode, setThreeDsCode] = useState("");
-
   // Reopening after the bank's card page lands on the requested screen with the
   // new card selected, instead of wherever the modal was left.
   useEffect(() => {
     if (!isOpen) return;
     setScreen(startScreen);
     if (initialSourceId) setSelectedSourceId(initialSourceId);
+    if (initialAmount) setLinkedAmount(initialAmount);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
@@ -233,7 +233,7 @@ export default function LinkSourceAccountModal({
       if (activeLinkedSource?.type === "momo") {
         setScreen("momo_waiting");
       } else {
-        setScreen("card_3ds");
+        startLinkedCardPayment();
       }
     }, 400);
   }
@@ -246,13 +246,31 @@ export default function LinkSourceAccountModal({
     }, 900);
   }
 
-  function handle3dsSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setTimeout(() => {
-      setBusy(false);
-      setScreen("funding_success");
-    }, 700);
+  // A linked card is charged by the card's own bank on its page (3-D Secure), which sends the customer back to
+  // whichever page opened this. That page reopens the modal on the receipt (or on this form after a cancel),
+  // using what travels in `context`. Only the last four digits make the trip.
+  function startLinkedCardPayment() {
+    if (!activeLinkedSource || !destinationAccount) return;
+    const digits = activeLinkedSource.maskedNumber?.replace(/\D/g, "") ?? "";
+    const amount = Number(linkedAmount) || 0;
+    startCardPayment({
+      flow: "linked-source-fund",
+      amount,
+      currency: "GHS",
+      last4: digits.slice(-4),
+      network: /union/i.test(activeLinkedSource.title)
+        ? "UnionPay"
+        : /master/i.test(activeLinkedSource.title)
+          ? "Mastercard"
+          : /visa/i.test(activeLinkedSource.title)
+            ? "Visa"
+            : cardNetwork(digits),
+      merchant: "GCB Bank PLC",
+      description: `Top up ${destinationAccount.name}`,
+      returnTo: `${pathname}${window.location.search}`,
+      context: { sourceId: activeLinkedSource.id, destinationId: destinationAccount.id, amount: linkedAmount },
+    });
+    router.push("/card-verification");
   }
 
   // The operator sends an approval prompt to the phone; linking waits for the
@@ -288,7 +306,7 @@ export default function LinkSourceAccountModal({
     const newSource: LinkedSource = {
       id: `src-momo-${Date.now()}`,
       type: "momo",
-      title: OPERATOR_NAME[newMomoOperator],
+      title: OPERATORS[newMomoOperator].wallet,
       subtitle: displayGhanaMobile(newMomoNumber),
       operator: newMomoOperator,
       maskedNumber: displayGhanaMobile(newMomoNumber),
@@ -347,7 +365,7 @@ export default function LinkSourceAccountModal({
                         setScreen("link_new_momo");
                       } else if (screen === "link_new_momo" || screen === "link_new_card") {
                         setScreen(linkBackScreen);
-                      } else if (screen === "momo_waiting" || screen === "card_3ds") {
+                      } else if (screen === "momo_waiting") {
                         setScreen("linked_source_select");
                       } else {
                         setScreen("choice");
@@ -366,7 +384,6 @@ export default function LinkSourceAccountModal({
                 {screen === "internal_success" && "Transfer completed"}
                 {screen === "linked_source_select" && "From linked wallet or card"}
                 {screen === "momo_waiting" && "Mobile authorization"}
-                {screen === "card_3ds" && "Card authorization"}
                 {screen === "funding_success" && "Money added"}
                 {(screen === "link_new_momo" || screen === "link_momo_pending") && "Link new mobile wallet"}
                 {screen === "link_momo_code" && "Confirm Your Code"}
@@ -399,116 +416,41 @@ export default function LinkSourceAccountModal({
                       hint: "Link your bank card to get started quickly and securely.",
                     },
                   ] as const).map((opt) => (
-                    <button
-                      key={opt.to}
-                      type="button"
-                      onClick={() => setScreen(opt.to)}
-                      className="group flex items-center gap-4 rounded-2xl border border-[var(--border)] bg-transparent p-4 text-left transition-colors hover:bg-muted/50 cursor-pointer"
-                    >
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                        <opt.icon size={17} strokeWidth={1.9} aria-hidden="true" />
-                      </span>
-                      <span className="flex min-w-0 flex-1 flex-col gap-1">
-                        <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">{opt.title}</span>
-                        <span className="text-[14px] leading-snug text-muted-foreground">{opt.hint}</span>
-                      </span>
-                      <ChevronRight
-                        size={20}
-                        strokeWidth={2}
-                        aria-hidden="true"
-                        className="shrink-0 text-foreground transition-transform"
-                      />
-                    </button>
+                    <ActionTile key={opt.to} icon={opt.icon} title={opt.title} description={opt.hint} onClick={() => setScreen(opt.to)} />
                   ))}
                 </div>
               </div>
             )}
 
             {screen === "link_choice" && !onboarding && (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-4">
                 {([
                   { to: "link_new_momo", icon: Smartphone, title: "Mobile money wallet", hint: "MTN MoMo, Telecel Cash or AT Money" },
-                  { to: "link_new_card", icon: CreditCard, title: "Bank card", hint: "A Visa or Mastercard debit card from any bank" },
+                  { to: "link_new_card", icon: CreditCard, title: "Bank card", hint: "A Visa, Mastercard or UnionPay debit card from any bank" },
                 ] as const).map((opt) => (
-                  <button
-                    key={opt.to}
-                    type="button"
-                    onClick={() => setScreen(opt.to)}
-                    className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all hover:bg-muted/40 cursor-pointer shadow-xs"
-                  >
-                    <div className="flex items-center gap-3.5 min-w-0">
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
-                        <opt.icon size={18} strokeWidth={1.8} />
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-[14.5px] font-medium text-foreground">{opt.title}</span>
-                        <span className="text-[12.5px] text-muted-foreground truncate mt-0.5">{opt.hint}</span>
-                      </div>
-                    </div>
-                    <ChevronRight size={18} strokeWidth={1.8} className="text-muted-foreground/60 shrink-0 ml-2" />
-                  </button>
+                  <ActionTile key={opt.to} icon={opt.icon} title={opt.title} description={opt.hint} onClick={() => setScreen(opt.to)} />
                 ))}
               </div>
             )}
 
             {screen === "choice" && (
               <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-3 pt-1">
-                  {/* Option 1: Transfer between accounts — only with another account to move from */}
+                <div className="flex flex-col gap-4 pt-1">
+                  {/* Transfer between accounts: only with another account to move from */}
                   {canTransferBetween && (
-                  <button
-                    type="button"
-                    onClick={() => setScreen("internal_transfer")}
-                    className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all hover:bg-muted/40 cursor-pointer shadow-xs"
-                  >
-                    <div className="flex items-center gap-3.5 min-w-0">
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground transition-transform">
-                        <ArrowLeftRight size={19} strokeWidth={1.8} />
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-[14.5px] font-medium text-foreground">
-                          Transfer between accounts
-                        </span>
-                        <span className="text-[12.5px] text-muted-foreground truncate mt-0.5">
-                          Move money from your other GCB accounts instantly.
-                        </span>
-                      </div>
-                    </div>
-
-                    <ChevronRight
-                      size={18}
-                      strokeWidth={1.8}
-                      className="text-muted-foreground/60 transition-transform group-hover:text-foreground shrink-0 ml-2"
+                    <ActionTile
+                      icon={ArrowLeftRight}
+                      title="Transfer between accounts"
+                      description="Move money from your other GCB accounts instantly."
+                      onClick={() => setScreen("internal_transfer")}
                     />
-                  </button>
                   )}
-
-                  {/* Option 2: From linked mobile wallet or card */}
-                  <button
-                    type="button"
+                  <ActionTile
+                    icon={Wallet}
+                    title="From linked mobile wallet or card"
+                    description="Fund using your linked MTN MoMo, Telecel Cash, or Visa/Mastercard."
                     onClick={() => setScreen("linked_source_select")}
-                    className="group flex items-center justify-between rounded-2xl border border-border/80 bg-card p-4 text-left transition-all hover:bg-muted/40 cursor-pointer shadow-xs"
-                  >
-                    <div className="flex items-center gap-3.5 min-w-0">
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground transition-transform">
-                        <Wallet size={19} strokeWidth={1.8} />
-                      </div>
-                      <div className="flex flex-col min-w-0">
-                        <span className="text-[14.5px] font-medium text-foreground">
-                          From linked mobile wallet or card
-                        </span>
-                        <span className="text-[12.5px] text-muted-foreground truncate mt-0.5">
-                          Fund using your linked MTN MoMo, Telecel Cash, or Visa/Mastercard.
-                        </span>
-                      </div>
-                    </div>
-
-                    <ChevronRight
-                      size={18}
-                      strokeWidth={1.8}
-                      className="text-muted-foreground/60 transition-transform group-hover:text-foreground shrink-0 ml-2"
-                    />
-                  </button>
+                  />
                 </div>
 
                 <div className="pt-2 flex justify-center">
@@ -668,20 +610,14 @@ export default function LinkSourceAccountModal({
                           key={source.id}
                           type="button"
                           onClick={() => setSelectedSourceId(source.id)}
-                          className={`flex items-center justify-between rounded-2xl border p-3.5 text-left transition-all cursor-pointer ${
+                          className={`flex items-center justify-between rounded-2xl border p-3.5 text-left transition cursor-pointer ${
                             isSelected
-                              ? "border-foreground bg-muted/60"
-                              : "border-border/80 bg-card hover:bg-muted/30"
+                              ? "border-field-border-focus bg-field"
+                              : "border-field-border bg-field hover:bg-field-hover"
                           }`}
                         >
                           <div className="flex items-center gap-3">
-                            <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
-                              {source.type === "momo" ? (
-                                <Smartphone size={17} strokeWidth={1.8} />
-                              ) : (
-                                <CreditCard size={17} strokeWidth={1.8} />
-                              )}
-                            </div>
+                            <SourceMark type={source.type} operator={source.operator} title={source.title} />
                             <div className="flex flex-col">
                               <span className="text-[14px] font-medium text-foreground">
                                 {source.title}
@@ -693,9 +629,7 @@ export default function LinkSourceAccountModal({
                           </div>
 
                           {isSelected && (
-                            <div className="flex size-5 shrink-0 items-center justify-center rounded-full bg-foreground text-background">
-                              <Check size={12} strokeWidth={2.5} />
-                            </div>
+                            <CheckBadge />
                           )}
                         </button>
                       );
@@ -744,7 +678,7 @@ export default function LinkSourceAccountModal({
                         if (activeLinkedSource?.type === "momo") {
                           setScreen("momo_waiting");
                         } else {
-                          setScreen("card_3ds");
+                          startLinkedCardPayment();
                         }
                       }, 400);
                     }}
@@ -794,50 +728,6 @@ export default function LinkSourceAccountModal({
                   </Button>
                 </div>
               </div>
-            )}
-
-            {/* ════════════════════════════════════════════════════════════════════
-                SCREEN 6: CARD 3D SECURE
-                ════════════════════════════════════════════════════════════════════ */}
-            {screen === "card_3ds" && (
-              <form onSubmit={handle3dsSubmit} className="flex flex-col gap-4">
-                <div className="rounded-2xl border border-border/80 bg-muted/30 p-3.5 text-[12.5px] text-muted-foreground">
-                  <p className="font-medium text-foreground">Card 3D Secure Authentication</p>
-                  <p className="mt-0.5">
-                    Enter test code (e.g. 123456) to authenticate {formatMoney(Number(linkedAmount || 0), "GHS", true)}.
-                  </p>
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor={`${modalId}-otp3ds`} className="text-[13px] font-medium text-foreground">
-                    One-time password (OTP)
-                  </label>
-                  <input
-                    id={`${modalId}-otp3ds`}
-                    type="password"
-                    value={threeDsCode}
-                    onChange={(e) => setThreeDsCode(e.target.value)}
-                    placeholder="123456"
-                    className="h-11 w-full rounded-xl border border-border bg-card px-3.5 text-[14px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
-                    required
-                  />
-                </div>
-
-                <div className="pt-2 flex flex-col gap-2">
-                  <Button type="submit" loading={busy} className="w-full h-11 rounded-xl">
-                    Submit & fund account
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setScreen("linked_source_select")}
-                    className="text-[13px] text-muted-foreground"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </form>
             )}
 
             {/* ════════════════════════════════════════════════════════════════════
@@ -907,31 +797,7 @@ export default function LinkSourceAccountModal({
                   <label className="text-[13px] font-medium text-foreground">
                     Network operator
                   </label>
-                  {/* Same provider picker as Send & Pay → Mobile Wallet, with logos. */}
-                  <Select value={newMomoOperator} onValueChange={(v) => v && setNewMomoOperator(v as NetworkOperator)}>
-                    <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center">
-                      <div className="flex items-center gap-3">
-                        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden border border-black/5 dark:border-white/10 p-0">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={getTelcoLogo(OPERATOR_NAME[newMomoOperator])!} alt="" className="size-full object-cover rounded-full" />
-                        </span>
-                        <span className="text-[14.5px] font-medium text-foreground">{OPERATOR_NAME[newMomoOperator]}</span>
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(["MTN", "Telecel", "AT"] as const).map((op) => (
-                        <SelectItem key={op} value={op} label={OPERATOR_NAME[op]}>
-                          <div className="flex items-center gap-3">
-                            <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted/60 overflow-hidden p-0">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={getTelcoLogo(OPERATOR_NAME[op])!} alt="" className="size-full object-cover rounded-full" />
-                            </span>
-                            <span>{OPERATOR_NAME[op]}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <OperatorSelect value={newMomoOperator} onChange={setNewMomoOperator} />
                 </div>
 
                 <div className="pt-2 flex flex-col gap-2">
@@ -1053,7 +919,7 @@ export default function LinkSourceAccountModal({
                       )
                     }
                     placeholder="4000 1234 5678 9010"
-                    className="h-11 w-full rounded-xl border border-border bg-card px-3 tabular text-[14px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                    className="h-11 w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 tabular text-[14px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
                     required
                   />
                 </div>
@@ -1074,7 +940,7 @@ export default function LinkSourceAccountModal({
                         setNewCardExpiry(d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d);
                       }}
                       placeholder="MM/YY"
-                      className="h-11 w-full rounded-xl border border-border bg-card px-3 tabular text-[14px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                      className="h-11 w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 tabular text-[14px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
                       required
                     />
                   </div>
@@ -1091,7 +957,7 @@ export default function LinkSourceAccountModal({
                       value={newCardCvv}
                       onChange={(e) => setNewCardCvv(e.target.value.replace(/\D/g, ""))}
                       placeholder="•••"
-                      className="h-11 w-full rounded-xl border border-border bg-card px-3 tabular text-[14px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                      className="h-11 w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 tabular text-[14px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
                       required
                     />
                   </div>

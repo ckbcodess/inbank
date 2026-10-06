@@ -41,7 +41,6 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-sans);
   --color-ring: var(--ring);
-  --color-focus-ring: var(--focus-ring);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
@@ -88,6 +87,7 @@
   --color-auth-card: var(--auth-card);
   --color-card-item: var(--card-item);
   --color-card-inner: var(--card-inner);
+  --color-modal: var(--modal);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -100,17 +100,8 @@
   --sidebar-width-collapsed: 56px;
 
   /* Fluid Functionalism Elevated Surface theme mappings */
-  --color-surface-1: var(--surface-1);
-  --color-surface-2: var(--surface-2);
-  --color-surface-3: var(--surface-3);
-  --shadow-surface-1: var(--shadow-1);
-  --shadow-surface-2: var(--shadow-2);
   --shadow-surface-3: var(--shadow-3);
-  --shadow-surface-4: var(--shadow-4);
   --shadow-surface-5: var(--shadow-5);
-  --shadow-surface-6: var(--shadow-6);
-  --shadow-surface-7: var(--shadow-7);
-  --shadow-surface-8: var(--shadow-8);
 }
 
 :root {
@@ -128,6 +119,8 @@
   /* Nested card items inside containers (such as onboarding option cards). */
   --card-item: #fafafa;
   --card-inner: var(--card-item);
+  /* Every modal and dialog surface. Starts at the onboarding card colour; tune it on its own. */
+  --modal: #ffffff;
   /* Tile surface tokens. Hub tiles are filled with --tile, with no stroke, and --tile-hover on hover; the fill also
      serves the empty PIN dots. Single source for both modes so a change reflects everywhere. */
   --tile: #f6f6f5;
@@ -136,7 +129,7 @@
   --tile-accent: #f59e0b;
   /* Account Details balance card (Figma 1896:15407) — slate tint over the page. */
   --account-card: rgba(71, 85, 96, 0.1);
-  --popover: oklch(1 0 0);
+  --popover: var(--menu);
   /* GCB Bank PLC brand amber: #F9C632 */
   --primary: #F9C632;
   --primary-hover: #fedb71;
@@ -150,7 +143,6 @@
   --mc-orange: #f79e1b;
   --mc-overlap: #ff5f00;
   /* The ring drawn around a button or link reached with the keyboard. Follows --ring until set. */
-  --focus-ring: var(--ring);
   /* Chips: the grey rail of a segmented filter, the chip that is selected, and the text on each. */
   --chip: oklch(0.97 0 0);
   --chip-selected: oklch(1 0 0);
@@ -188,7 +180,7 @@
   --field-hover: #f5f5f5;
   --field-focus: #f9f9f9;
   --field-border: #ebebeb;
-  --field-border-focus: #8a8a8a;
+  --field-border-focus: #cca128;
   /* Dropdown menus. */
   --menu: #ffffff;
   --menu-item-hover: #f5f5f5;
@@ -268,13 +260,6 @@
   --hero-pill-shadow: #7d8a94;
   /* The pointer-following rim light on the dashboard sheet. */
   --sheet-rim: rgb(17 20 21 / 0.3);
-  /* Dashboard app promo (Figma 1945:5548): gold radial stops + the lenticular sheen. */
-  --promo-gold-1: #f9c632;
-  --promo-gold-2: #f5bc19;
-  --promo-gold-3: #f2b60d;
-  --promo-gold-4: #f0b100;
-  --promo-sheen: rgb(255 255 255 / 0.13);
-  --promo-shade: rgb(128 36 40 / 0.05);
   /* Uniform interaction tokens — derived from --primary so they follow the brand color */
   --hover: oklch(0 0 0 / 4%);
   --ripple-color: currentColor;
@@ -295,19 +280,10 @@
   --shadow-premium: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
 
-  /* Fluid Functionalism Surfaces (Light Mode) */
-  --surface-1: #FAFAFA;
-  --surface-2: #FFFFFF;
-  --surface-3: #FFFFFF;
+  /* Elevation shadows (Light Mode). Floating layers take their colour from --menu, dialogs and sheets from --modal. */
   --shadow-color: rgb(0 0 0 / 0.06);
-  --shadow-1: 0 0 0 1px var(--shadow-color);
-  --shadow-2: 0 0 0 1px var(--shadow-color), 0 1px 1px -0.5px var(--shadow-color);
   --shadow-3: 0 0 0 1px var(--shadow-color), 0 1px 1px -0.5px var(--shadow-color), 0 3px 3px -1.5px var(--shadow-color);
-  --shadow-4: 0 0 0 1px var(--shadow-color), 0 1px 1px -0.5px var(--shadow-color), 0 3px 3px -1.5px var(--shadow-color), 0 6px 6px -3px var(--shadow-color);
   --shadow-5: 0 0 0 1px var(--shadow-color), 0 1px 1px -0.5px var(--shadow-color), 0 3px 3px -1.5px var(--shadow-color), 0 6px 6px -3px var(--shadow-color), 0 12px 12px -6px var(--shadow-color);
-  --shadow-6: 0 0 0 1px var(--shadow-color), 0 1px 1px -0.5px var(--shadow-color), 0 3px 3px -1.5px var(--shadow-color), 0 6px 6px -3px var(--shadow-color), 0 12px 12px -6px var(--shadow-color), 0 24px 24px -12px var(--shadow-color);
-  --shadow-7: 0 0 0 1px var(--shadow-color), 0 1px 1px -0.5px var(--shadow-color), 0 3px 3px -1.5px var(--shadow-color), 0 6px 6px -3px var(--shadow-color), 0 12px 12px -6px var(--shadow-color), 0 24px 24px -12px var(--shadow-color), 0 48px 48px -24px var(--shadow-color);
-  --shadow-8: 0 0 0 1px var(--shadow-color), 0 1px 1px -0.5px var(--shadow-color), 0 3px 3px -1.5px var(--shadow-color), 0 6px 6px -3px var(--shadow-color), 0 12px 12px -6px var(--shadow-color), 0 24px 24px -12px var(--shadow-color), 0 48px 48px -24px var(--shadow-color), 0 96px 96px -48px var(--shadow-color);
 }
 
 .dark {
@@ -319,11 +295,12 @@
   --auth-card: var(--card-auth);
   --card-item: #212121;
   --card-inner: var(--card-item);
-  --tile: #141414;
-  --tile-hover: #212121;
+  --modal: #181818;
+  --tile: #161616;
+  --tile-hover: #1c1c1c;
   --tile-accent: #F9C632;
   --account-card: #93a7ba14;
-  --popover: oklch(0.269 0 0);
+  --popover: var(--menu);
   --primary: #F9C632;
   --primary-hover: #E5B62E;
   --primary-foreground: #321800;
@@ -334,7 +311,6 @@
   --mc-red: #eb001b;
   --mc-orange: #f79e1b;
   --mc-overlap: #ff5f00;
-  --focus-ring: var(--ring);
   --chip: #1a1a1a;
   --chip-selected: #303030;
   --chip-selected-foreground: oklch(0.985 0 0);
@@ -367,7 +343,7 @@
   --field-hover: #1c1c1c;
   --field-focus: #181818;
   --field-border: #292929;
-  --field-border-focus: #f9c632;
+  --field-border-focus: #916f12;
   --menu: #1a1a1a;
   --menu-item-hover: #282828;
   --device-frame: #2a2a2a;
@@ -423,13 +399,6 @@
   --hero-foreground: #ffffff;
   --hero-pill-shadow: #000000;
   --sheet-rim: #c5d6dd80;
-  /* Dashboard app promo (Figma 1945:5548): gold radial stops + the lenticular sheen. */
-  --promo-gold-1: #f9c632;
-  --promo-gold-2: #f5bc19;
-  --promo-gold-3: #f2b60d;
-  --promo-gold-4: #f0b100;
-  --promo-sheen: rgb(255 255 255 / 0.13);
-  --promo-shade: rgb(128 36 40 / 0.05);
   /* Uniform interaction tokens — derived from --primary so they follow the brand color */
   --hover: oklch(1 0 0 / 5%);
   --ripple-color: currentColor;
@@ -441,10 +410,7 @@
   --active-border: oklch(0.78 0.15 86.7);
   --surface: #080808;
 
-  /* Fluid Functionalism Surfaces (Dark Mode) */
-  --surface-1: #171717;
-  --surface-2: #1F1F1F;
-  --surface-3: #272727;
+  /* Elevation shadows (Dark Mode) */
   --dm-hi-base: rgba(255,255,255,0.01);
   --dm-hi-mid: rgba(255,255,255,0.02);
   --dm-hi-high: rgba(255,255,255,0.04);
@@ -453,14 +419,8 @@
   --dm-ring-mid: rgba(255,255,255,0.04);
   --dm-ring-high: rgba(255,255,255,0.06);
   --dm-drop: rgba(0,0,0,0.18);
-  --shadow-1: inset 0 0 0 1px var(--dm-ring-base);
-  --shadow-2: inset 0 1px 0 0 var(--dm-hi-base), inset 0 0 0 1px var(--dm-ring-base), 0 1px 1px -0.5px var(--dm-drop);
   --shadow-3: inset 0 1px 0 0 var(--dm-hi-mid), inset 0 0 0 1px var(--dm-ring-base), 0 0 0 1px rgba(0,0,0,0.12), 0 1px 1px -0.5px var(--dm-drop), 0 3px 3px -1.5px var(--dm-drop);
-  --shadow-4: inset 0 1px 0 0 var(--dm-hi-mid), inset 0 0 0 1px var(--dm-ring-mid), 0 0 0 1px rgba(0,0,0,0.14), 0 1px 1px -0.5px var(--dm-drop), 0 3px 3px -1.5px var(--dm-drop), 0 6px 6px -3px var(--dm-drop);
   --shadow-5: inset 0 1px 0 0 var(--dm-hi-high), inset 0 0 0 1px var(--dm-ring-mid), 0 0 0 1px rgba(0,0,0,0.16), 0 1px 1px -0.5px var(--dm-drop), 0 3px 3px -1.5px var(--dm-drop), 0 6px 6px -3px var(--dm-drop), 0 12px 12px -6px var(--dm-drop);
-  --shadow-6: inset 0 1px 0 0 var(--dm-hi-high), inset 0 0 0 1px var(--dm-ring-high), 0 0 0 1px rgba(0,0,0,0.18), 0 1px 1px -0.5px var(--dm-drop), 0 3px 3px -1.5px var(--dm-drop), 0 6px 6px -3px var(--dm-drop), 0 12px 12px -6px var(--dm-drop), 0 24px 24px -12px var(--dm-drop);
-  --shadow-7: inset 0 1px 0 0 var(--dm-hi-peak), inset 0 0 0 1px var(--dm-ring-high), 0 0 0 1px rgba(0,0,0,0.20), 0 1px 1px -0.5px var(--dm-drop), 0 3px 3px -1.5px var(--dm-drop), 0 6px 6px -3px var(--dm-drop), 0 12px 12px -6px var(--dm-drop), 0 24px 24px -12px var(--dm-drop), 0 48px 48px -24px var(--dm-drop);
-  --shadow-8: inset 0 1px 0 0 var(--dm-hi-peak), inset 0 0 0 1px var(--dm-ring-high), 0 0 0 1px rgba(0,0,0,0.22), 0 1px 1px -0.5px var(--dm-drop), 0 3px 3px -1.5px var(--dm-drop), 0 6px 6px -3px var(--dm-drop), 0 12px 12px -6px var(--dm-drop), 0 24px 24px -12px var(--dm-drop), 0 48px 48px -24px var(--dm-drop), 0 96px 96px -48px var(--dm-drop);
 }
 
 
@@ -494,6 +454,13 @@ html.i18n-pending body {
   /* Cap font weights globally — no semibold or bold on text */
   h1, h2, h3, h4, h5, h6, p, span, a, label, td, th, li, dt, dd {
     font-weight: inherit;
+  }
+  /* Headings break evenly; short text never leaves a single word on its last line. */
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+  p, li, dd, figcaption {
+    text-wrap: pretty;
   }
 }
 
@@ -980,3 +947,13 @@ input[type="number"] {
   .skeleton-shimmer::after { animation: skeleton-shimmer 1.6s ease-in-out infinite; }
 }
 @keyframes skeleton-shimmer { to { transform: translateX(100%); } }
+
+/* Right after a modal closes, focus goes back to the control that opened it. Keep its ring off until the person
+   moves with the keyboard again (see lib/focus-ring.ts). The ring vars are set on the control, or on its children
+   for group-focus-visible rings, so zeroing them removes the ring and leaves every other shadow alone. */
+html[data-hide-focus-ring] :focus-visible,
+html[data-hide-focus-ring] :focus-visible * {
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+  outline-color: transparent !important;
+}

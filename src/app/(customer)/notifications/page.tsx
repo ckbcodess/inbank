@@ -145,7 +145,7 @@ export default function NotificationsPage() {
 
       {effective === "loading" && (
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
-          <ListSkeleton rows={5} columns={3} />
+          <ListSkeleton rows={5} />
         </div>
       )}
 

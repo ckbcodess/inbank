@@ -136,7 +136,7 @@ export default function TourOverlay() {
       {/* Focus ring around the control to click */}
       {rect && (
         <div
-          className="pointer-events-none fixed rounded-lg border-2 border-primary transition-all duration-150 ease-out"
+          className="pointer-events-none fixed rounded-lg border-2 border-primary transition-[top,left,width,height] duration-150 ease-out"
           style={{
             top: rect.top - RING_PAD,
             left: rect.left - RING_PAD,

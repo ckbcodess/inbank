@@ -37,7 +37,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
-import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
+import { ListErrorState, TrueEmptyState } from "@/components/states/ListStates";
 import type { BaselineState } from "@/lib/states";
 import { findAccount, formatDate, transactionsForAccount, type Account, type Transaction } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
@@ -47,11 +47,13 @@ import { useAccountPrefs } from "@/lib/accounts-store";
 import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import LinkSourceAccountModal, { type ModalScreen } from "@/components/dashboard/LinkSourceAccountModal";
 import { useCardLinkReturn } from "@/lib/card-link";
+import { useCardPaymentReturn } from "@/lib/card-payment";
 import PageHeader from "@/components/layout/PageHeader";
 import { ActionTile } from "@/components/ui/action-tile";
 import { RoundAction } from "@/components/ui/round-action";
 import { ToggleTile } from "@/components/ui/toggle-tile";
 import { ShareDetailsDialog } from "@/components/accounts/ShareDetailsDialog";
+import { AccountDetailBody } from "@/components/states/PageSkeletons";
 
 const BASELINE: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 const MINI_STATEMENT_SIZE = 10;
@@ -70,7 +72,27 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
   const [fundOpen, setFundOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [recentOpen, setRecentOpen] = useState(false);
-  const [fundResume, setFundResume] = useState<{ screen: ModalScreen; sourceId?: string } | null>(null);
+  const [fundResume, setFundResume] = useState<{
+    screen: ModalScreen;
+    sourceId?: string;
+    amount?: string;
+    destinationId?: string;
+  } | null>(null);
+
+  // Back from the bank's 3-D Secure page after adding money from a linked card: the receipt, or the form again.
+  useCardPaymentReturn("linked-source-fund", ({ status, payment }) => {
+    const ctx = payment.context ?? {};
+    setFundResume({
+      screen: status === "approved" ? "funding_success" : "linked_source_select",
+      sourceId: ctx.sourceId,
+      amount: ctx.amount,
+      destinationId: ctx.destinationId,
+    });
+    setFundOpen(true);
+    if (status !== "approved") {
+      toast("Payment not completed", { description: "Your bank didn’t approve it, so nothing was taken. You can try again." });
+    }
+  });
 
   // Back from the bank's card page (Add money → new card): reopen with the card.
   useCardLinkReturn((result) => {
@@ -95,7 +117,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
   if (!account) {
     return (
       <div className="mx-auto flex w-full max-w-[440px] flex-col gap-3">
-        <PageHeader title="Account not found" backTo={{ href: "/accounts", label: "Accounts" }} />
+        <PageHeader title="Account not found" backTo={{ href: "/accounts", label: "My Accounts" }} />
         <p className="pl-11 text-[13px] text-muted-foreground">
           This account isn&apos;t available under the current banking relationship.
         </p>
@@ -113,10 +135,10 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
   const canBeDefault = choosable && !isDefault;
 
   return (
-    <div className="mx-auto flex w-full max-w-[440px] flex-col gap-10 sm:gap-12">
+    <div className="mx-auto flex w-full max-w-[440px] flex-col gap-10 sm:gap-12 lg:max-w-[1000px]">
       <PageHeader
         title={account.name}
-        backTo={{ href: "/accounts", label: "Accounts" }}
+        backTo={{ href: "/accounts", label: "My Accounts" }}
         badge={
           account.isJoint ? (
             <Badge variant="outline" title={account.mandate ? `Mandate: ${account.mandate}` : undefined}>
@@ -139,7 +161,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
         }
       />
 
-      {state === "loading" && <ListSkeleton rows={5} columns={3} />}
+      {state === "loading" && <AccountDetailBody />}
 
       {state === "error" && (
         <div className="rounded-2xl border border-border bg-card">
@@ -151,8 +173,9 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
       )}
 
       {(state === "populated" || state === "empty") && (
-        <>
-          <div className="flex flex-col gap-6">
+        // Two columns from lg: the card and its two actions on the left, the options on the right. One column below.
+        <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start lg:gap-6">
+          <div className="flex flex-col gap-6 lg:mx-auto lg:w-[78%]">
             <BalanceCard account={account} isDefault={isDefault} />
             <div className="flex w-full items-start justify-evenly">
               <RoundAction icon={Plus} label="Top up" onClick={() => setFundOpen(true)} />
@@ -188,7 +211,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
               />
             )}
           </nav>
-        </>
+        </div>
       )}
 
       <div className="pt-2 opacity-40 transition-opacity hover:opacity-100">
@@ -203,6 +226,8 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
         }}
         initialScreen={fundResume?.screen}
         initialSourceId={fundResume?.sourceId}
+        initialAmount={fundResume?.amount}
+        initialDestinationId={fundResume?.destinationId}
         targetAccount={account}
       />
       <ShareDetailsDialog open={shareOpen} onOpenChange={setShareOpen} account={account} holderName={holderName} />

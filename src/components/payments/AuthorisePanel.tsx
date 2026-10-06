@@ -253,7 +253,7 @@ export function AuthorisePanel({
                 <div
                   key={i}
                   className={cn(
-                    "size-14 rounded-full transition-all duration-150 flex items-center justify-center",
+                    "size-14 rounded-full transition duration-150 flex items-center justify-center",
                     state === "error"
                       ? "border-2 border-destructive/70 bg-destructive/10 dark:bg-destructive/15"
                       : isFilled

@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { NetworkLogo } from "@/components/cards/NetworkLogo";
 import type { PaymentCard } from "@/lib/mock-data";
 import { getCardTheme } from "@/components/cards/card-themes";
 import { cn } from "@/lib/utils";
@@ -9,7 +10,6 @@ export interface MiniCardThumbnailProps {
 }
 
 export function MiniCardThumbnail({ card, className }: MiniCardThumbnailProps) {
-  const isVisa = card.scheme === "Visa";
   const isBlocked = card.status === "Blocked";
 
   const themeId =
@@ -41,16 +41,7 @@ export function MiniCardThumbnail({ card, className }: MiniCardThumbnailProps) {
 
       {/* Bottom Row: Clean Scheme Brand Logo */}
       <div className="relative z-10 flex items-end justify-end leading-none mt-auto">
-        {isVisa ? (
-          <span className="font-sans text-[8px] font-black italic tracking-tighter drop-shadow-xs opacity-95">
-            VISA
-          </span>
-        ) : (
-          <div className="flex -space-x-1 drop-shadow-xs">
-            <div className="size-2 rounded-full bg-[var(--mc-red)]/95" />
-            <div className="size-2 rounded-full bg-[var(--mc-orange)]/95" />
-          </div>
-        )}
+        <NetworkLogo scheme={card.scheme} className="h-2" />
       </div>
     </div>
   );

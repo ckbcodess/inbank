@@ -19,7 +19,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type NetworkOperator = "MTN" | "Telecel" | "AT";
+export type { Operator as NetworkOperator } from "@/lib/operators";
+import type { Operator as NetworkOperator } from "@/lib/operators";
 
 export interface LinkedSource {
   id: string;

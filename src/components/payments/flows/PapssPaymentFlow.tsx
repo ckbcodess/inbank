@@ -238,7 +238,7 @@ export function PapssPaymentFlow({
                 }
               }}
               placeholder="Enter account number or IBAN"
-              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all tabular"
+              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
             />
 
             {/* Verified badge */}

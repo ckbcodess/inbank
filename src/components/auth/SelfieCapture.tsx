@@ -366,7 +366,7 @@ export default function SelfieCapture({
               />
               {/* Dynamic face centering target ring */}
               <div
-                className={`pointer-events-none absolute inset-3 rounded-full border-2 transition-all duration-200 ${
+                className={`pointer-events-none absolute inset-3 rounded-full border-2 transition duration-200 ${
                   facePosition === "centered"
                     ? "border-success/90 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
                     : facePosition === "off_center" || facePosition === "too_close"
@@ -401,7 +401,7 @@ export default function SelfieCapture({
         {/* Real-time centering guidance banner */}
         {!capturedImage && cameraState === "ready" && (
           <div
-            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-medium transition-all duration-150 animate-in fade-in ${
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-medium transition duration-150 animate-in fade-in ${
               facePosition === "centered"
                 ? "bg-success/10 text-success-text"
                 : facePosition === "off_center" || facePosition === "too_close"

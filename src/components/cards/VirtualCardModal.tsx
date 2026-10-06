@@ -1,5 +1,6 @@
 "use client";
 
+import { NetworkLogo } from "@/components/cards/NetworkLogo";
 import { toast } from "sonner";
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, X, Lock, ShieldAlert, RefreshCw } from "lucide-react";
@@ -179,10 +180,7 @@ export function VirtualCardView({
           </div>
 
           {/* Network Logo: Mastercard */}
-          <div className="flex items-center -space-x-2">
-            <div className="size-6.5 rounded-full bg-[var(--mc-red)]" />
-            <div className="size-6.5 rounded-full bg-[#FF5F00] opacity-90" />
-          </div>
+          <NetworkLogo scheme="Mastercard" className="h-6.5" />
         </div>
 
         {/* Middle & Bottom Content of Card Graphic */}

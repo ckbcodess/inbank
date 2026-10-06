@@ -172,7 +172,7 @@ export function BillsPaymentFlow({
                   value={state.ecgMeter}
                   onChange={(e) => onChange("ecgMeter", e.target.value)}
                   placeholder="Enter meter number"
-                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all tabular"
+                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
                 />
               </>
             ) : state.subType === "ghanagov" ? (
@@ -198,7 +198,7 @@ export function BillsPaymentFlow({
                   value={state.govRef}
                   onChange={(e) => onChange("govRef", e.target.value)}
                   placeholder="Enter PRN or invoice number"
-                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all tabular"
+                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
                 />
               </>
             ) : (
@@ -224,7 +224,7 @@ export function BillsPaymentFlow({
                   value={state.billRef}
                   onChange={(e) => onChange("billRef", e.target.value)}
                   placeholder={selectedBiller ? `Enter ${selectedBiller.reference.toLowerCase()}` : "Enter account or reference number"}
-                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all tabular"
+                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
                 />
               </>
             )}

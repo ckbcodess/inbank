@@ -834,7 +834,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     value={f.destination}
                     onChange={(e) => set("destination", e.target.value.replace(/[^0-9]/g, ""))}
                     placeholder="Enter account number"
-                    className="numorainput h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all tabular"
+                    className="numorainput h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
                   />
                 </>
               )}
@@ -867,7 +867,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       set("proxyId", cleaned ? `@${cleaned}` : "");
                     }}
                     placeholder="kwame.b"
-                    className="h-13 w-full rounded-2xl border border-field-border bg-field pl-9 pr-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all tabular"
+                    className="h-13 w-full rounded-2xl border border-field-border bg-field pl-9 pr-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
                   />
                 </div>
               )}
@@ -1028,7 +1028,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       value={f.nickname}
                       onChange={(e) => set("nickname", e.target.value)}
                       placeholder="e.g. Monthly rent, Susu"
-                      className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none transition-all focus:border-field-border-focus focus:ring-0"
+                      className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none transition focus:border-field-border-focus focus:ring-0"
                     />
                   </div>
 

@@ -185,7 +185,7 @@ export function CardDeliveryTracker({
               {/* Node indicator */}
               <div
                 className={cn(
-                  "size-7 rounded-full flex items-center justify-center shrink-0 transition-all z-10 select-none",
+                  "size-7 rounded-full flex items-center justify-center shrink-0 transition z-10 select-none",
                   isCompleted
                     ? "bg-primary text-primary-foreground font-medium"
                     : "bg-muted text-muted-foreground text-[12px] border border-border"
@@ -298,7 +298,7 @@ export function CardDeliveryTracker({
           </div>
           <ChevronRight
             size={18}
-            className="text-muted-foreground group-hover:text-foreground transition-all"
+            className="text-muted-foreground group-hover:text-foreground transition"
           />
         </button>
       )}

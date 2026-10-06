@@ -65,7 +65,7 @@ export function TileChip({
 }
 
 const TILE =
-  "group flex w-full items-center justify-between gap-4 rounded-[16px] bg-[var(--tile)] p-4 text-left transition-all duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99]";
+  "group flex w-full items-center justify-between gap-4 rounded-[16px] bg-[var(--tile)] p-4 text-left transition duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99]";
 
 export function ActionTile({
   icon: Icon,
@@ -93,7 +93,7 @@ export function ActionTile({
         )}
         <span className="flex min-w-0 flex-col gap-0.5">
           <span className={cn("truncate text-[16px] font-medium tracking-[-0.01em] text-foreground", compactOnMobile && "max-sm:line-clamp-2 max-sm:whitespace-normal max-sm:text-[14px] max-sm:leading-[1.25]")}>{title}</span>
-          {description && <span className="truncate text-[13px] text-muted-foreground">{description}</span>}
+          {description && <span className="text-[13px] leading-snug text-muted-foreground">{description}</span>}
         </span>
       </div>
       {trailing && <span className="ml-auto flex shrink-0 items-center">{trailing}</span>}
@@ -108,7 +108,7 @@ export function ActionTile({
 
   if (href && !disabled) {
     return (
-      <Link href={href} className={cn(TILE, compactOnMobile && "max-sm:p-3.5", className)}>
+      <Link href={href} onClick={onClick} className={cn(TILE, compactOnMobile && "max-sm:p-3.5", className)}>
         {body}
       </Link>
     );

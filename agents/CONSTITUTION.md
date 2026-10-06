@@ -104,7 +104,7 @@ here. Never fall back to dense, boxed layouts.
   `text-destructive`, `var(--active-bg)` / `var(--active-border)`, `var(--surface)`, and the
   surface tokens `--tile`, `--tile-hover`, `--tile-border`, `--tile-accent`, `--hero-*` and
   `--account-card` (as `bg-[var(--tile)]`), and for the rest: `bg-tile`, `bg-field` / `border-field-border` for inputs,
-  `bg-menu` for dropdowns, and `text-success-text` / `-warning-text` / `-destructive-text` / `-info-text` for status text
+  `bg-menu` for dropdowns, `bg-modal` for every modal and dialog (its own token, not the card colour), and `text-success-text` / `-warning-text` / `-destructive-text` / `-info-text` for status text
   (`success`, `warning`, `destructive`, `info` for fills). If a colour is missing, add a token to `globals.css` for
   **both** themes. Never hardcode it, and never use Tailwind palette colours (`text-emerald-600`).
 - **Light and dark come from the tokens.** No `dark:` workarounds where a token would do.

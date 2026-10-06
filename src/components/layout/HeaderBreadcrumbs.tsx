@@ -5,48 +5,50 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BackLink } from "@/components/layout/BackLink";
 
+/** The full name of each Send & Pay flow, as the person knows it, never a clipped form of it. */
 const RAIL_BREADCRUMB_LABELS: Record<string, string> = {
   bill: "GCB Pay",
-  bank: "Send to Bank",
-  ach: "Send to Bank",
-  wallet: "Send to Wallet",
-  momo: "Send to Wallet",
-  "wallet-to-bank": "Wallet to Bank",
-  proxy: "To Proxy",
-  group: "To Group",
+  bank: "Bank Transfer",
+  ach: "Bank Transfer",
+  wallet: "Mobile Money Transfer",
+  momo: "Mobile Money Transfer",
+  "wallet-to-bank": "Wallet to Bank Transfer",
+  proxy: "Proxy Payments",
+  group: "Group Payments",
   papss: "PAPSS Payment",
   airtime: "Airtime Top-up",
-  data: "Internet",
-  "card-topup": "Card Top up",
+  data: "Internet Bundle",
+  "card-topup": "Card Top-up",
   ecg: "ECG Prepaid",
-  ghanagov: "Ghana.gov",
-  swift: "Outside Ghana",
+  ghanagov: "Ghana.gov Payment",
+  swift: "Outside Ghana Transfer",
   qr: "QR Payment",
   cardless: "Cardless Withdrawal",
 };
 
+/** A route segment, by name. The label is the page's own name in full. */
 const ROUTE_LABELS: Record<string, string> = {
-  overview: "Dashboard",
-  accounts: "Accounts",
+  overview: "Home",
+  accounts: "My Accounts",
   statement: "Statement",
   expenses: "My Spends",
   requests: "Place a Request",
   payments: "Send & Pay",
   send: "Send Money",
   standing: "Standing Orders",
-  new: "New",
   payees: "Beneficiaries",
   beneficiaries: "Beneficiaries",
+  bills: "GCB Pay",
   bulk: "Bulk Payments",
   cards: "Cards",
   transactions: "Transactions",
   trade: "Trade Finance",
   approvals: "Approvals",
-  payment: "Payment Approval",
   reports: "Reports",
   administration: "Administration",
   notifications: "Notifications",
-  "fx-rates": "FX Rates",
+  "fx-rates": "Foreign Exchange Rates",
+  "locate-us": "Locate Us",
   admin: "Admin",
   customers: "Customers",
   audit: "Audit Log",
@@ -54,6 +56,29 @@ const ROUTE_LABELS: Record<string, string> = {
   "fee-concessions": "Fee Concessions",
   settings: "Settings",
 };
+
+/** What a record page under each list is called: "Account Details", never a bare "Details". */
+const DETAIL_LABELS: Record<string, string> = {
+  accounts: "Account Details",
+  cards: "Card Details",
+  transactions: "Transaction Details",
+  administration: "User Details",
+  trade: "Application Details",
+  bulk: "Batch Correction",
+  standing: "Standing Order Details",
+  customers: "Customer Details",
+};
+
+/** A "new" page under each list is named for what it creates. */
+const NEW_LABELS: Record<string, string> = {
+  standing: "New Standing Order",
+  trade: "New Trade Request",
+  groups: "Create Group",
+};
+
+/** Under Cards, "request" is the Request a Card flow (or its replacement variant). */
+const CARDS_REQUEST_LABEL = "Request a Card";
+const CARDS_REPLACE_LABEL = "Replace a Card";
 
 interface Crumb {
   label: string;
@@ -134,7 +159,7 @@ export default function HeaderBreadcrumbs() {
 
   const rail = searchParams.get("rail") ?? "";
 
-  // Dedicated handling for Groups routes under Beneficiaries: Beneficiaries > Create group / Beneficiaries > Edit group
+  // Dedicated handling for Groups routes under Beneficiaries: Beneficiaries > Create Group / Beneficiaries > Edit Group
   const isBeneficiariesGroups =
     (segments[0]?.toLowerCase() === "beneficiaries" && segments[1]?.toLowerCase() === "groups") ||
     segments[0]?.toLowerCase() === "groups";
@@ -153,13 +178,13 @@ export default function HeaderBreadcrumbs() {
 
     if (isCreate) {
       groupCrumbs.push({
-        label: "Create group",
+        label: "Create Group",
         href: "/beneficiaries/groups/new",
         isLast: true,
       });
     } else if (isEdit) {
       groupCrumbs.push({
-        label: "Edit group",
+        label: "Edit Group",
         href: pathname,
         isLast: true,
       });
@@ -168,36 +193,60 @@ export default function HeaderBreadcrumbs() {
     return <BreadcrumbView list={groupCrumbs} />;
   }
 
+  // An approval is one page, named for what is being approved. Its "payment" or "trade" segment is not a page.
+  if (segments[0] === "approvals" && (segments[1] === "payment" || segments[1] === "trade") && segments.length > 2) {
+    return (
+      <BreadcrumbView
+        list={[
+          { label: "Approvals", href: "/approvals", isLast: false },
+          {
+            label: segments[1] === "payment" ? "Payment Approval" : "Trade Approval",
+            href: pathname,
+            isLast: true,
+          },
+        ]}
+      />
+    );
+  }
+
   const crumbs: Crumb[] = [];
   let currentPath = "";
 
   segments.forEach((segment, index) => {
     currentPath += `/${segment}`;
     const isLast = index === segments.length - 1;
+    const key = segment.toLowerCase();
+    const parent = segments[index - 1]?.toLowerCase();
 
-    // Check if known route label
-    let label = ROUTE_LABELS[segment.toLowerCase()];
+    let label = ROUTE_LABELS[key];
 
-    // Override "send" segment when a rail param is present
-    if (segment.toLowerCase() === "send" && rail && RAIL_BREADCRUMB_LABELS[rail]) {
+    // Send Money names itself after the rail it is on.
+    if (key === "send" && rail && RAIL_BREADCRUMB_LABELS[rail]) {
       label = RAIL_BREADCRUMB_LABELS[rail];
     }
 
-    // If not found in known dict, check if it's an ID segment (e.g. acc-01, card-02, tx-99)
+    // Under Cards, "request" is the Request a Card flow.
+    if (key === "request" && parent === "cards") {
+      label = searchParams.get("replace") ? CARDS_REPLACE_LABEL : CARDS_REQUEST_LABEL;
+    }
+
+    // "new" is named for what it creates.
+    if (key === "new") {
+      label = (parent && NEW_LABELS[parent]) || "New";
+    }
+
     if (!label) {
-      if (/^acc-|^acct-|^card-|^tx-|^usr-|^batch-|^lc-|^app-|^si-|^so-/i.test(segment)) {
-        const parent = segments[index - 1];
-        if (parent === "accounts") label = "Account Details";
-        else if (parent === "cards") label = "Card Details";
-        else if (parent === "transactions") label = "Transaction Details";
-        else if (parent === "administration") label = "User Details";
-        else if (parent === "trade") label = "Application Details";
-        else if (parent === "bulk") label = "Batch Details";
-        else if (parent === "standing") label = "Detail";
-        else label = "Details";
+      const isRecordId = /\d/.test(segment) || /^(acc|acct|card|tx|usr|batch|lc|app|si|so|cust)-/i.test(segment);
+      if (isRecordId && parent && DETAIL_LABELS[parent]) {
+        label = DETAIL_LABELS[parent];
+      } else if (isRecordId) {
+        label = "Details";
       } else {
-        // Capitalize segment as fallback
-        label = segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, " ");
+        // Anything unlisted reads as a title: "locate-us" becomes "Locate Us".
+        label = segment
+          .split("-")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ");
       }
     }
 

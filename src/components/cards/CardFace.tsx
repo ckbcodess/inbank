@@ -8,7 +8,8 @@
  * lights up the chip and logo sheen.
  */
 
-import { Lock, Wifi } from "lucide-react";
+import { NetworkLogo } from "@/components/cards/NetworkLogo";
+import { Ban, Wifi } from "lucide-react";
 import type { PaymentCard } from "@/lib/mock-data";
 import { getCardTheme } from "@/components/cards/card-themes";
 import { EmvChip } from "@/components/cards/EmvChip";
@@ -81,22 +82,7 @@ export function CardFace({
             <span className="tabular text-[4.6cqw] leading-none tracking-[0.06em]">
               {card.maskedNumber}
             </span>
-            {card.scheme === "Mastercard" ? (
-              <div
-                className="flex -space-x-[1.8cqw] items-center"
-                aria-label="Mastercard"
-              >
-                <div className="size-[5.4cqw] rounded-full bg-[var(--mc-red)]/95" />
-                <div className="size-[5.4cqw] rounded-full bg-[var(--mc-orange)]/95" />
-              </div>
-            ) : (
-              <span
-                aria-label="Visa"
-                className="font-sans text-[6cqw] font-black italic leading-none tracking-tighter opacity-95"
-              >
-                VISA
-              </span>
-            )}
+            <NetworkLogo scheme={card.scheme} className={card.scheme === "Visa" ? "h-[4.6cqw]" : card.scheme === "GH-Link" ? "h-[5cqw]" : "h-[6.4cqw]"} />
           </div>
         </div>
       </div>
@@ -104,7 +90,7 @@ export function CardFace({
       {blocked && (
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="flex size-[18cqw] items-center justify-center rounded-full bg-white/90 text-primary-foreground shadow-md">
-            <Lock
+            <Ban
               className="size-[8cqw]"
               strokeWidth={1.8}
               aria-label="Blocked"

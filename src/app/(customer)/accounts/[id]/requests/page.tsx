@@ -15,7 +15,7 @@ export default function AccountRequestsPage({ params }: { params: Promise<{ id: 
   const account = findAccount(id);
 
   if (!account) {
-    return <PageHeader title="Account not found" backTo={{ href: "/accounts", label: "Accounts" }} />;
+    return <PageHeader title="Account not found" backTo={{ href: "/accounts", label: "My Accounts" }} />;
   }
 
   return (

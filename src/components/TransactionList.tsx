@@ -582,7 +582,7 @@ export default function TransactionList({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by reference ID,  recipient ...."
-          className="w-full h-11 sm:h-12 pl-11 pr-10 rounded-xl border border-field-border bg-field text-[13.5px] sm:text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-ring focus:border-field-border-focus transition-colors"
+          className="w-full h-11 sm:h-12 pl-11 pr-10 rounded-xl border border-field-border bg-field text-[13.5px] sm:text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-0 focus:border-field-border-focus focus:bg-field-focus transition-colors"
         />
         {query && (
           <button
@@ -1204,7 +1204,7 @@ export default function TransactionList({
       )}
 
       {/* List States Handling */}
-      {effective === "loading" && <ListSkeleton rows={8} columns={7} />}
+      {effective === "loading" && <ListSkeleton rows={8} />}
 
       {effective === "error" && <ListErrorState onRetry={() => setState("populated")} />}
 

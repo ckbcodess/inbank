@@ -23,7 +23,6 @@
  */
 
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -32,7 +31,6 @@ import {
   CheckCircle2,
   ChevronRight,
   Clock,
-  CreditCard,
   Landmark,
   MoreHorizontal,
   Plus,
@@ -59,7 +57,7 @@ import AddAccountDialog from "@/components/accounts/AddAccountDialog";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
 import PageHeader from "@/components/layout/PageHeader";
 import { TileChip } from "@/components/ui/action-tile";
-import { getTelcoLogo } from "@/components/payments/flows/shared";
+import { SourceMark } from "@/components/ui/source-mark";
 import {
   ACCOUNTS_SCENARIOS,
   findScenario,
@@ -69,6 +67,8 @@ import {
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import LinkSourceAccountModal from "@/components/dashboard/LinkSourceAccountModal";
 import { useCardLinkReturn } from "@/lib/card-link";
+import { useCardPaymentReturn } from "@/lib/card-payment";
+import { AccountsPageSkeleton } from "@/components/states/PageSkeletons";
 
 type ScreenState = "populated" | "loading" | "error" | "sources-error";
 
@@ -189,23 +189,9 @@ function AccountRow({
 }
 
 function SourceRow({ source, onRemove }: { source: LinkedSource; onRemove: () => void }) {
-  // A mobile-money wallet wears its operator's mark; a wallet we have no mark for keeps the phone icon.
-  const logo = source.type === "momo" ? getTelcoLogo(source.title) : null;
   return (
     <li className="flex items-center gap-4 rounded-xl py-4 pl-3 pr-1 sm:pl-4 sm:pr-2">
-      {logo ? (
-        <span className="flex size-[38.5px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/5 dark:border-white/10">
-          <Image src={logo} alt="" width={40} height={40} className="size-full rounded-full object-cover" />
-        </span>
-      ) : (
-        <TileChip tone="onCard">
-          {source.type === "momo" ? (
-            <Smartphone size={20} strokeWidth={1.8} aria-hidden="true" />
-          ) : (
-            <CreditCard size={20} strokeWidth={1.8} aria-hidden="true" />
-          )}
-        </TileChip>
-      )}
+      <SourceMark type={source.type} operator={source.operator} title={source.title} />
       <span className="flex min-w-0 flex-1 flex-col gap-1">
         <span className="truncate text-[15px] font-medium tracking-[-0.01em] text-foreground">{source.title}</span>
         <span className="truncate text-[13px] text-muted-foreground tabular">{source.subtitle}</span>
@@ -249,6 +235,25 @@ function AccountsContent() {
   // Onboarding, step after linking: "You're almost there…" → fund now or skip.
   const [fundPrompt, setFundPrompt] = useState<LinkedSource | null>(null);
   const [fundWith, setFundWith] = useState<LinkedSource | null>(null);
+  // Back from the bank's 3-D Secure page after adding money from a linked card: the receipt, or the form again.
+  const [fundResume, setFundResume] = useState<{
+    screen: "funding_success" | "linked_source_select";
+    sourceId?: string;
+    amount?: string;
+    destinationId?: string;
+  } | null>(null);
+  useCardPaymentReturn("linked-source-fund", ({ status, payment }) => {
+    const ctx = payment.context ?? {};
+    setFundResume({
+      screen: status === "approved" ? "funding_success" : "linked_source_select",
+      sourceId: ctx.sourceId,
+      amount: ctx.amount,
+      destinationId: ctx.destinationId,
+    });
+    if (status !== "approved") {
+      toast("Payment not completed", { description: "Your bank didn’t approve it, so nothing was taken. You can try again." });
+    }
+  });
   const [removing, setRemoving] = useState<LinkedSource | null>(null);
   const [selfieMatch, setSelfieMatch] = useState<"match" | "no-match">("match");
   const [addAccountOpen, setAddAccountOpen] = useState(false);
@@ -404,7 +409,7 @@ function AccountsContent() {
       {/* ── My accounts — the page title is the heading; Add Account sits with it ── */}
       <section aria-label="My accounts">
         <div className={LIST}>
-          {screenState === "loading" && <ListSkeleton rows={Math.max(accounts.length, 2)} columns={3} />}
+          {screenState === "loading" && <ListSkeleton rows={Math.max(accounts.length, 2)} />}
 
           {screenState === "error" && (
             <ListErrorState
@@ -443,7 +448,7 @@ function AccountsContent() {
           />
 
           <div className={LIST}>
-            {screenState === "loading" && <ListSkeleton rows={2} columns={3} />}
+            {screenState === "loading" && <ListSkeleton rows={2} />}
 
             {screenState === "sources-error" && (
               <ListErrorState
@@ -543,11 +548,16 @@ function AccountsContent() {
 
       {/* "Fund My Account Now" — Add money on the default account, the new source preselected */}
       <LinkSourceAccountModal
-        key={`fund-${fundWith?.id ?? "none"}`}
-        isOpen={fundWith !== null}
-        onClose={() => setFundWith(null)}
-        initialScreen="linked_source_select"
-        initialSourceId={fundWith?.id}
+        key={`fund-${fundWith?.id ?? "none"}-${fundResume?.screen ?? "none"}`}
+        isOpen={fundWith !== null || fundResume !== null}
+        onClose={() => {
+          setFundWith(null);
+          setFundResume(null);
+        }}
+        initialScreen={fundResume?.screen ?? "linked_source_select"}
+        initialSourceId={fundResume?.sourceId ?? fundWith?.id}
+        initialAmount={fundResume?.amount}
+        initialDestinationId={fundResume?.destinationId}
         targetAccount={defaultAccount}
         accounts={accounts}
       />
@@ -603,7 +613,7 @@ function AccountsContent() {
 
 export default function AccountsPage() {
   return (
-    <Suspense fallback={<div className="min-h-[400px] skeleton-shimmer rounded-2xl bg-muted/20" />}>
+    <Suspense fallback={<AccountsPageSkeleton />}>
       <AccountsContent />
     </Suspense>
   );

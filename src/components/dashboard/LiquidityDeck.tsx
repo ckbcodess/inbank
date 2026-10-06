@@ -101,7 +101,7 @@ export function LiquidityDeck({
                 key={curr}
                 type="button"
                 onClick={() => setSelectedCurrency(curr)}
-                className={`rounded-lg px-2 py-0.5 transition-all ${
+                className={`rounded-lg px-2 py-0.5 transition ${
                   selectedCurrency === curr
                     ? "bg-chip-selected text-chip-selected-foreground font-medium shadow-xs"
                     : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -176,7 +176,7 @@ export function LiquidityDeck({
           <button
             type="button"
             onClick={onOpenTransfer}
-            className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-primary text-primary-foreground hover:bg-primary-hover active:scale-[0.97] transition-all shadow-xs group cursor-pointer"
+            className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-primary text-primary-foreground hover:bg-primary-hover active:scale-[0.97] transition shadow-xs group cursor-pointer"
           >
             <span className="flex size-9 items-center justify-center rounded-full bg-black/10 text-primary-foreground transition-transform">
               <Send size={16} strokeWidth={2.2} />
@@ -187,7 +187,7 @@ export function LiquidityDeck({
           <button
             type="button"
             onClick={onOpenBillPay}
-            className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group cursor-pointer"
+            className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group cursor-pointer"
           >
             <span className="flex size-9 items-center justify-center rounded-full bg-muted text-foreground transition-transform">
               <Receipt size={16} strokeWidth={2} />
@@ -198,7 +198,7 @@ export function LiquidityDeck({
           <button
             type="button"
             onClick={onOpenBillPay}
-            className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group cursor-pointer"
+            className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group cursor-pointer"
           >
             <span className="flex size-9 items-center justify-center rounded-full bg-info/10 text-info-text transition-transform">
               <Smartphone size={16} strokeWidth={2} />
@@ -209,7 +209,7 @@ export function LiquidityDeck({
           <button
             type="button"
             onClick={onOpenTopUp}
-            className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group cursor-pointer"
+            className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group cursor-pointer"
           >
             <span className="flex size-9 items-center justify-center rounded-full bg-success/10 text-success-text transition-transform">
               <CreditCard size={16} strokeWidth={2} />
@@ -220,7 +220,7 @@ export function LiquidityDeck({
           {isCorporate ? (
             <Link
               href="/payments/bulk"
-              className="hidden sm:flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group"
+              className="hidden sm:flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group"
             >
               <span className="flex size-9 items-center justify-center rounded-full bg-info/10 text-info-text transition-transform">
                 <Layers size={16} strokeWidth={2} />
@@ -230,7 +230,7 @@ export function LiquidityDeck({
           ) : (
             <Link
               href="/payments"
-              className="hidden sm:flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition-all group"
+              className="hidden sm:flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group"
             >
               <span className="flex size-9 items-center justify-center rounded-full bg-info/10 text-info-text transition-transform">
                 <Sparkles size={16} strokeWidth={2} />

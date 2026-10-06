@@ -266,7 +266,7 @@ export default function ReportsPage() {
         </Button>
       </div>
 
-      {effective === "loading" && <ListSkeleton rows={6} columns={5} />}
+      {effective === "loading" && <ListSkeleton rows={6} />}
 
       {effective === "error" && (
         <ListErrorState

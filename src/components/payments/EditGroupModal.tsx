@@ -340,7 +340,7 @@ export default function EditGroupModal({
                   }}
                   placeholder="e.g. Family Susu"
                   className={cn(
-                    "h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all",
+                    "h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition",
                     errors.name && "border-destructive focus:border-destructive focus:ring-destructive/30"
                   )}
                 />
@@ -360,7 +360,7 @@ export default function EditGroupModal({
                   maxLength={120}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Optional description or circle purpose"
-                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                 />
               </div>
             </div>
@@ -377,7 +377,7 @@ export default function EditGroupModal({
                   type="button"
                   onClick={() => setSplitType("equal")}
                   className={cn(
-                    "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition-all cursor-pointer",
+                    "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition cursor-pointer",
                     splitType === "equal"
                       ? "bg-chip-selected text-chip-selected-foreground shadow-xs border border-border/60"
                       : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -389,7 +389,7 @@ export default function EditGroupModal({
                   type="button"
                   onClick={() => setSplitType("custom")}
                   className={cn(
-                    "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition-all cursor-pointer",
+                    "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition cursor-pointer",
                     splitType === "custom"
                       ? "bg-chip-selected text-chip-selected-foreground shadow-xs border border-border/60"
                       : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -406,7 +406,7 @@ export default function EditGroupModal({
                 </label>
                 <div
                   className={cn(
-                    "h-13 w-full rounded-2xl border border-field-border bg-field px-4 flex items-center gap-2 focus-within:border-field-border-focus focus-within:ring-0 transition-all",
+                    "h-13 w-full rounded-2xl border border-field-border bg-field px-4 flex items-center gap-2 focus-within:border-field-border-focus focus-within:ring-0 transition",
                     errors.amount && "border-destructive focus-within:border-destructive"
                   )}
                 >
@@ -462,7 +462,7 @@ export default function EditGroupModal({
                       type="button"
                       onClick={() => setAddMode("saved")}
                       className={cn(
-                        "flex-1 py-1.5 rounded-lg text-[12px] font-medium transition-all cursor-pointer",
+                        "flex-1 py-1.5 rounded-lg text-[12px] font-medium transition cursor-pointer",
                         addMode === "saved"
                           ? "bg-primary text-primary-foreground shadow-xs"
                           : "text-muted-foreground hover:text-foreground"
@@ -474,7 +474,7 @@ export default function EditGroupModal({
                       type="button"
                       onClick={() => setAddMode("custom")}
                       className={cn(
-                        "flex-1 py-1.5 rounded-lg text-[12px] font-medium transition-all cursor-pointer",
+                        "flex-1 py-1.5 rounded-lg text-[12px] font-medium transition cursor-pointer",
                         addMode === "custom"
                           ? "bg-primary text-primary-foreground shadow-xs"
                           : "text-muted-foreground hover:text-foreground"
@@ -497,7 +497,7 @@ export default function EditGroupModal({
                           value={savedSearch}
                           onChange={(e) => setSavedSearch(e.target.value)}
                           placeholder="Search saved contacts to add..."
-                          className="h-10 w-full pl-9 pr-7 rounded-xl border border-field-border bg-field text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+                          className="h-10 w-full pl-9 pr-7 rounded-xl border border-field-border bg-field text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                         />
                         {savedSearch && (
                           <button
@@ -563,7 +563,7 @@ export default function EditGroupModal({
                         value={customName}
                         onChange={(e) => setCustomName(e.target.value)}
                         placeholder="Recipient full name"
-                        className="h-10 w-full rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+                        className="h-10 w-full rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                       />
 
                       <div className="flex items-center gap-2">
@@ -572,7 +572,7 @@ export default function EditGroupModal({
                           value={customDest}
                           onChange={(e) => setCustomDest(e.target.value)}
                           placeholder="Account or Phone number"
-                          className="h-10 flex-1 rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+                          className="h-10 flex-1 rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                         />
 
                         <select
@@ -628,7 +628,7 @@ export default function EditGroupModal({
                     value={searchMember}
                     onChange={(e) => setSearchMember(e.target.value)}
                     placeholder="Search members in this group..."
-                    className="h-11 w-full pl-9.5 pr-8 rounded-xl border border-field-border bg-field text-[13.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+                    className="h-11 w-full pl-9.5 pr-8 rounded-xl border border-field-border bg-field text-[13.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                   />
                   {searchMember && (
                     <button

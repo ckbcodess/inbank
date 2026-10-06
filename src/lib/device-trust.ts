@@ -6,10 +6,12 @@
  * When someone ticks "Remember this device" after proving it's them (a one-time
  * code at sign-in, or finishing activation / migration), this browser remembers
  * who they are for TRUST_DAYS. Next time the login screen greets them by name,
- * offers passkey sign-in, and skips the one-time code. They can see and revoke
+ * asks for their password only, and skips the one-time code. They can see and revoke
  * it in Settings, and "Not you?" on the login screen never signs anyone in.
  *
- * Prototype only: a real bank binds this to a device key held server-side.
+ * Prototype only: a real bank binds this to a device key held server-side. It is held for the browser session,
+ * not for TRUST_DAYS, so a fresh visit opens on the ordinary log-in form; the Demo hub's "Welcome back" entry
+ * switches it on for the visit.
  */
 
 import { useSyncExternalStore } from "react";
@@ -35,7 +37,7 @@ let cache: TrustedDevice | null | undefined;
 function read(): TrustedDevice | null {
   if (cache !== undefined) return cache;
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = sessionStorage.getItem(KEY);
     const parsed = raw ? (JSON.parse(raw) as TrustedDevice) : null;
     cache = parsed && parsed.until > Date.now() ? parsed : null;
   } catch {
@@ -47,8 +49,8 @@ function read(): TrustedDevice | null {
 function write(value: TrustedDevice | null) {
   cache = value;
   try {
-    if (value) localStorage.setItem(KEY, JSON.stringify(value));
-    else localStorage.removeItem(KEY);
+    if (value) sessionStorage.setItem(KEY, JSON.stringify(value));
+    else sessionStorage.removeItem(KEY);
   } catch {
     // Storage blocked — trust lasts for this visit only.
   }

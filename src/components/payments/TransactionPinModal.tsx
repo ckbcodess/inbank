@@ -168,7 +168,7 @@ export default function TransactionPinModal({
                     <div
                       key={i}
                       className={cn(
-                        "size-5 sm:size-6 rounded-full transition-all duration-150 flex items-center justify-center",
+                        "size-5 sm:size-6 rounded-full transition duration-150 flex items-center justify-center",
                         auth.state === "error"
                           ? "border-2 border-destructive/70 bg-destructive/10"
                           : isFilled

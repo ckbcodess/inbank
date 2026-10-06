@@ -5,6 +5,7 @@
  * can be exercised directly from the UI.
  */
 
+import type { CardScheme } from "@/lib/card-schemes";
 import { toLocalMobile } from "./phone";
 import type { Actor, Profile } from "./roles";
 import type { TransactionKind, TransactionState, TradeApprovalState } from "./states";
@@ -1522,7 +1523,7 @@ export interface PaymentCard {
   fullNumber?: string;
   cvv?: string;
   type: CardType;
-  scheme: "Visa" | "Mastercard";
+  scheme: CardScheme;
   networkType?: string;
   currency: string;
   /** Prepaid/Virtual cards carry their own balance; debit cards draw on the linked account. */

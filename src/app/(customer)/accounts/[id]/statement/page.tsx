@@ -33,7 +33,7 @@ export default function StatementConfigurationPage({ params }: { params: Promise
   const [maxAmount, setMaxAmount] = useState("");
 
   if (!account) {
-    return <PageHeader title="Account not found" backTo={{ href: "/accounts", label: "Accounts" }} />;
+    return <PageHeader title="Account not found" backTo={{ href: "/accounts", label: "My Accounts" }} />;
   }
 
   const rows = transactionsForAccount(account.id).filter((t) => {
@@ -48,12 +48,12 @@ export default function StatementConfigurationPage({ params }: { params: Promise
       <PageHeader
         title="Statement"
         description={`${account.name} · ${account.number}`}
-        backTo={{ href: `/accounts/${account.id}`, label: "Account details" }}
+        backTo={{ href: `/accounts/${account.id}`, label: "Account Details" }}
       />
 
       <StateSwitcher section="13.9" states={BASELINE_STATES} value={pageState} onChange={setPageState} />
 
-      {pageState === "loading" && <ListSkeleton rows={5} columns={4} />}
+      {pageState === "loading" && <ListSkeleton rows={5} />}
 
       {pageState === "error" && (
         <ListErrorState

@@ -33,7 +33,7 @@ const PERSONAS = [
 ] as const;
 type PersonaId = (typeof PERSONAS)[number]["id"];
 
-const ONBOARDING_PATHS = ["/", "/signup", "/activate", "/get-started", "/login", "/mfa", "/forgot-password", "/migrate", "/overview"];
+const ONBOARDING_PATHS = ["/", "/signup", "/activate", "/get-started", "/select-banking", "/login", "/mfa", "/forgot-password", "/migrate", "/overview"];
 
 function PersonaFlowSwitcherContent() {
   const router = useRouter();
@@ -98,6 +98,13 @@ function PersonaFlowSwitcherContent() {
     signOut();
     trustThisDevice(actor);
     go("/login");
+  }
+
+  /** The ordinary log-in screen. This browser forgets any trusted device first, so it opens on the full form. */
+  function goLogin(type: "personal" | "business") {
+    signOut();
+    forgetThisDevice();
+    go(type === "business" ? "/login?type=business" : "/login");
   }
 
   /** First internet-banking sign-in, on a device we've never seen: activation, then the welcome. */
@@ -236,10 +243,10 @@ function PersonaFlowSwitcherContent() {
                   </button>
                 </div>
                 <ol className="flex flex-col">
-                  {postStepRow("ready", "Fund Account Prompt", 1)}
-                  {postStepRow("fund", "Quick Fund Modal", 2)}
-                  {postStepRow("source", "Save Funding Source", 3)}
-                  {postStepRow("referral", "Referral Code", 4)}
+                  {postStepRow("referral", "Referral Code", 1)}
+                  {postStepRow("ready", "Fund Account Prompt", 2)}
+                  {postStepRow("fund", "Quick Fund Modal", 3)}
+                  {postStepRow("source", "Save Funding Source", 4)}
                 </ol>
               </section>
 
@@ -251,11 +258,45 @@ function PersonaFlowSwitcherContent() {
                   <li>
                     <button
                       type="button"
+                      onClick={() => {
+                        signOut();
+                        forgetThisDevice();
+                        go("/select-banking");
+                      }}
+                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
+                    >
+                      <span className="text-[13.5px] text-foreground">Choose personal or business</span>
+                      <span className="text-[12px] text-muted-foreground">The old landing screen</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      onClick={() => goLogin("personal")}
+                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
+                    >
+                      <span className="text-[13.5px] text-foreground">Personal banking log in</span>
+                      <span className="text-[12px] text-muted-foreground">The front door</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      onClick={() => goLogin("business")}
+                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
+                    >
+                      <span className="text-[13.5px] text-foreground">Business banking log in</span>
+                      <span className="text-[12px] text-muted-foreground">With the way back to personal</span>
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
                       onClick={goPowerUser}
                       className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
                     >
-                      <span className="text-[13.5px] text-foreground">Power user · trusted device</span>
-                      <span className="text-[12px] text-muted-foreground">Greeted by name, passkey, no code</span>
+                      <span className="text-[13.5px] text-foreground">Welcome back screen</span>
+                      <span className="text-[12px] text-muted-foreground">Trusted device, greeted by name, password only</span>
                     </button>
                   </li>
                   <li>

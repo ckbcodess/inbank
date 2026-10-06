@@ -27,7 +27,7 @@ export default function PageHeader({ title, badge, actions, backTo }: PageHeader
             <button
               type="button"
               onClick={backTo.onClick}
-              className="flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+              className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer after:absolute after:-inset-1 after:content-['']"
               title={`Back to ${backTo.label}`}
               aria-label={`Back to ${backTo.label}`}
             >
@@ -36,7 +36,7 @@ export default function PageHeader({ title, badge, actions, backTo }: PageHeader
           ) : (
             <BackLink
               href={backTo.href}
-              className="flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+              className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer after:absolute after:-inset-1 after:content-['']"
               title={`Back to ${backTo.label}`}
             >
               <ChevronLeft size={20} strokeWidth={1.8} />

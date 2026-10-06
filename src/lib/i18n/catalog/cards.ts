@@ -2,6 +2,8 @@ import type { Entry } from "./types";
 
 /** Cards list, card detail, request/replace flow, delivery tracking, virtual cards. */
 const cards: Entry[] = [
+  ["Daily limits", "Limites quotidiennes", "Límites diarios", "每日限额"],
+  ["Daily limit (GHS)", "Limite quotidienne (GHS)", "Límite diario (GHS)", "每日限额（GHS）"],
   ["Loading", "Chargement", "Cargando", "加载中"],
   ["Manage card", "Gérer la carte", "Administrar tarjeta", "管理卡片"],
   ["Card details", "Détails de la carte", "Datos de la tarjeta", "卡片详情"],

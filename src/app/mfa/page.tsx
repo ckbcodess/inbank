@@ -1,21 +1,22 @@
 "use client";
 
-import { InlineError } from "@/components/ui/inline-error";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Laptop, MapPin, ShieldAlert, ShieldCheck } from "lucide-react";
+import { Laptop, MapPin } from "lucide-react";
+import { AlertToast } from "@/components/ui/alert-toast";
+import { InlineError } from "@/components/ui/inline-error";
 import { AppLoader } from "@/components/ui/loader";
 import AuthLayout from "@/components/auth/AuthLayout";
-import OtpInput from "@/components/auth/OtpInput";
-import { PIN_LENGTH } from "@/components/payments/useAuthorisation";
+import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
+import { OtpHelp } from "@/components/payments/OtpHelp";
+import { PIN_LENGTH, REGISTERED_PHONE, useAuthorisation } from "@/components/payments/useAuthorisation";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
 
-type PinState = "entry" | "verifying" | "error";
-
 /**
- * The step after the password: the customer's transaction PIN, not a texted code. It is the same PIN that
- * authorises payments, so there is nothing new to remember and no SMS to wait for. Sign-in is recoverable,
- * so it verifies on the last digit (a payment never does).
+ * The step after the password. It runs on the same authorisation as Send & Pay (`useAuthorisation`): the
+ * transaction PIN by default, a one-time code by SMS or shortcode as the way past a forgotten PIN. Sign-in is
+ * recoverable, so it verifies on the last digit (a payment never does). Kept quiet on purpose: one heading, the
+ * boxes, one link.
  */
 function PinContent() {
   const router = useRouter();
@@ -23,60 +24,38 @@ function PinContent() {
   const isNewDevice = searchParams.get("device") === "new";
 
   const { actor, verifyMfa } = useSession();
-  const [digits, setDigits] = useState<string[]>(Array(PIN_LENGTH).fill(""));
-  const [state, setState] = useState<PinState>("entry");
+  const auth = useAuthorisation();
+  const [verifying, setVerifying] = useState(false);
   const hydrated = useSessionHydrated();
+  const usingPin = auth.method === "pin";
 
   useEffect(() => {
     if (hydrated && !actor) router.replace("/login");
   }, [hydrated, actor, router]);
 
-  const pin = digits.join("");
-  const complete = pin.length === PIN_LENGTH && digits.every(Boolean);
-
-  function handleVerify(e?: React.FormEvent) {
-    if (e) e.preventDefault();
-    if (!complete || !actor || state === "verifying") return;
-    setState("verifying");
-
+  function handleComplete(code: string) {
+    if (!actor || verifying || !auth.verify(code)) return;
+    setVerifying(true);
     window.setTimeout(() => {
-      // Any 4 digits verify except 0000, which demonstrates the error path.
-      if (pin === "0000") {
-        setState("error");
-        setDigits(Array(PIN_LENGTH).fill(""));
-        return;
-      }
-
       verifyMfa();
       router.push(actor.shell === "admin" ? "/admin" : "/overview");
-    }, 600);
+    }, 500);
   }
-
-  // Verify as soon as the last digit lands.
-  useEffect(() => {
-    if (complete && state === "entry" && actor) {
-      handleVerify();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [complete, state, actor]);
 
   if (!hydrated || !actor) return null;
 
+  const title = !usingPin ? "Enter Your Code" : isNewDevice ? "Confirm It’s You" : "Enter Your PIN";
+  const description = !usingPin ? (
+    <>
+      We sent a 6-digit code to <span className="tabular whitespace-nowrap text-foreground">{REGISTERED_PHONE}</span>
+    </>
+  ) : isNewDevice ? (
+    "We don’t recognise this browser."
+  ) : undefined;
+
   return (
-    <AuthLayout
-      icon={isNewDevice ? ShieldAlert : ShieldCheck}
-      title={isNewDevice ? "New device authorization" : "Verify Your Identity"}
-      description={
-        isNewDevice ? (
-          <>We detected a login from an unrecognized browser or device.<br />Enter your 4-digit transaction PIN to continue.</>
-        ) : (
-          <>Enter your 4-digit transaction PIN to continue.</>
-        )
-      }
-      backHref="/login"
-      backLabel="Back to login"
-    >
-      {/* New Device Information Card (if applicable) */}
+    <AuthLayout title={title} description={description} backHref="/login" backLabel="Back to login">
+      {/* New device: what we saw, so the person can tell if it was them. */}
       {isNewDevice && (
         <div data-tour="mfa-device-info" className="mb-6 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-left space-y-2.5">
           <div className="flex items-center gap-2.5 text-[13.5px] font-medium text-foreground">
@@ -90,31 +69,71 @@ function PinContent() {
         </div>
       )}
 
-      <form onSubmit={handleVerify} className="flex flex-col items-center gap-6">
+      <div className="flex flex-col items-center gap-6">
         <div data-tour="mfa-pin">
-          <OtpInput
-            value={digits}
-            onChange={(next) => {
-              setDigits(next);
-              if (state === "error") setState("entry");
-            }}
-            length={PIN_LENGTH}
-            mask
-            autoFocus
-            disabled={state === "verifying"}
-            invalid={state === "error"}
-          />
+          {usingPin ? (
+            <OtpInput
+              key="pin"
+              value={auth.pin}
+              onChange={auth.setPin}
+              length={PIN_LENGTH}
+              mask
+              autoFocus
+              disabled={verifying}
+              invalid={auth.state === "error"}
+              onComplete={(code) => window.setTimeout(() => handleComplete(code), 150)}
+            />
+          ) : (
+            <OtpInput
+              key="otp"
+              value={auth.otp}
+              onChange={auth.setOtp}
+              length={OTP_LENGTH}
+              autoFocus
+              disabled={verifying}
+              invalid={auth.state === "error"}
+              onComplete={(code) => window.setTimeout(() => handleComplete(code), 150)}
+            />
+          )}
         </div>
 
-        {state === "verifying" && (
-          <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+        <InlineError
+          message={
+            auth.state === "error" &&
+            (usingPin
+              ? "That PIN isn’t right. Try again, or get a code by SMS instead."
+              : "That code isn’t right or has expired. Resend it below.")
+          }
+          className="-mt-3"
+        />
+        <AlertToast when={auth.state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${REGISTERED_PHONE}.`} />
+
+        {verifying ? (
+          <div className="flex items-center justify-center gap-2 text-[13.5px] text-muted-foreground">
             <AppLoader size={16} />
-            <span>Checking PIN...</span>
+            <span>Signing you in...</span>
+          </div>
+        ) : usingPin ? (
+          <button
+            type="button"
+            onClick={() => auth.setMethod("otp")}
+            className="cursor-pointer text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80"
+          >
+            Get a code by SMS instead
+          </button>
+        ) : (
+          <div className="flex flex-col items-center gap-3">
+            <OtpHelp resend={auth.resend} onResend={auth.requestResend} />
+            <button
+              type="button"
+              onClick={() => auth.setMethod("pin")}
+              className="cursor-pointer text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80"
+            >
+              Use your PIN instead
+            </button>
           </div>
         )}
-
-        <InlineError message={state === "error" && "That PIN is incorrect. Please try again."} className="-mt-3" />
-      </form>
+      </div>
     </AuthLayout>
   );
 }

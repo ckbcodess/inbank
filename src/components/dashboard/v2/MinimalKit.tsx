@@ -10,6 +10,7 @@
  * hide-amounts toggle and uses semantic tokens only.
  */
 
+import { NetworkLogo } from "@/components/cards/NetworkLogo";
 import Link from "next/link";
 import { useId, useState } from "react";
 import {
@@ -734,8 +735,8 @@ export function CardsMini({
         const isBlocked = blocked[c.id] ?? c.status === "Blocked";
         return (
           <li key={c.id} className="flex items-center gap-3 py-3.5">
-            <span className="flex h-6 w-9 shrink-0 items-center justify-center rounded-[5px] bg-muted text-[8px] uppercase tracking-wide text-muted-foreground">
-              {c.scheme === "Visa" ? "VISA" : "MC"}
+            <span className="flex h-6 w-9 shrink-0 items-center justify-center rounded-[5px] bg-muted text-foreground">
+              <NetworkLogo scheme={c.scheme} className="h-2.5" />
             </span>
             <span className="flex min-w-0 flex-1 flex-col gap-0.5">
               <span className="truncate text-[13.5px] text-foreground">{c.name}</span>

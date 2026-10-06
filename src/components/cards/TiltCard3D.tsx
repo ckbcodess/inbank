@@ -93,6 +93,15 @@ export function TiltCard3D({
     [track]
   );
 
+  // A mouse click must not end the hover: only a finger or pen lifting does. (Releasing on mouse-up used to switch the
+  // spotlight off until the pointer left the card and came back.)
+  const handlePointerEnd = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (e.pointerType !== "mouse") release();
+    },
+    [release]
+  );
+
   const handlePointerLeave = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
       if (e.pointerType === "mouse") release();
@@ -107,8 +116,8 @@ export function TiltCard3D({
         onPointerEnter={handlePointerEnter}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
-        onPointerUp={release}
-        onPointerCancel={release}
+        onPointerUp={handlePointerEnd}
+        onPointerCancel={handlePointerEnd}
         onPointerLeave={handlePointerLeave}
         className={`relative select-none cursor-default touch-pan-y [perspective:1000px] ${className}`}
       >

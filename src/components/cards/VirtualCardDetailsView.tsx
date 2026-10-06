@@ -1,7 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { NetworkLogo } from "@/components/cards/NetworkLogo";
+import { securityCodeLabel } from "@/lib/card-schemes";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
@@ -25,10 +27,9 @@ import {
   Copy,
   Gauge,
   ArrowLeftRight,
-  ShieldAlert,
-  ShieldCheck,
+  CheckCircle2,
   Eye,
-  EyeOff,
+  EyeOff, Ban,
 } from "lucide-react";
 import {
   Dialog,
@@ -222,24 +223,6 @@ export function VirtualCardDetailsView({
   // "live" / "card" are the real numbers; "custom" asks for an amount.
   const [spentSim, setSpentSim] = useState("live");
   const [limitSim, setLimitSim] = useState("card");
-  // Dev Mode: the large-screen arrangement of the card page (below lg it is always one column).
-  const [cardLayout, setCardLayoutState] = useState<"single" | "a" | "b" | "c" | "d" | "e">("single");
-  useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem("nibs-card-layout");
-      if (saved && ["single", "a", "b", "c", "d", "e"].includes(saved)) setCardLayoutState(saved as typeof cardLayout);
-    } catch {
-      /* private mode: stay on the default */
-    }
-  }, []);
-  const setCardLayout = useCallback((next: "single" | "a" | "b" | "c" | "d" | "e") => {
-    setCardLayoutState(next);
-    try {
-      window.localStorage.setItem("nibs-card-layout", next);
-    } catch {
-      /* ignore */
-    }
-  }, []);
   const [spentCustom, setSpentCustom] = useState(0);
   const [limitCustom, setLimitCustom] = useState(0);
   const dailySpent = spentSim === "live" ? liveSpent : spentSim === "custom" ? spentCustom : Number(spentSim);
@@ -367,7 +350,7 @@ export function VirtualCardDetailsView({
 
   // Modals state
   const [activeModal, setActiveModal] = useState<
-    "details" | "pin" | "freeze" | "limits" | "controls" | "reset-pin" | "edit-nickname" | "replace" | "top-up" | "tracking" | "activate" | "activity" | null
+    "details" | "pin" | "limits" | "controls" | "reset-pin" | "edit-nickname" | "replace" | "top-up" | "tracking" | "activate" | "activity" | null
   >(null);
   const [initialTrackerView, setInitialTrackerView] = useState<"timeline" | "pickup-code">("timeline");
 
@@ -437,6 +420,8 @@ export function VirtualCardDetailsView({
 
   // Card details (number, expiry, security code) are shown only after the PIN (or a one-time code) is entered.
   const [detailsAuthOpen, setDetailsAuthOpen] = useState(false);
+  // Blocking is instant (it only ever makes the card safer); unblocking asks for the PIN first.
+  const [unblockAuthOpen, setUnblockAuthOpen] = useState(false);
   const handleDetailsAuthSuccess = () => {
     setDetailsAuthOpen(false);
     setDetailsCountdown(DETAILS_SECONDS);
@@ -545,7 +530,7 @@ export function VirtualCardDetailsView({
     // Write through to the shared card store so the Cards page and dashboard agree.
     setCardStatusInStore(currentCard.id, newStatus);
     if (onUpdateCard) onUpdateCard({ status: newStatus });
-    triggerToast(nextFrozen ? "Card blocked. You can unblock it here anytime." : "Card unblocked and active");
+    triggerToast(nextFrozen ? "Card blocked. Unblocking it will ask for your PIN." : "Card unblocked and active");
     setActiveModal(null);
   };
 
@@ -624,19 +609,6 @@ export function VirtualCardDetailsView({
         onChange: (v) => setActivitySim(v as typeof activitySim),
       },
       {
-        label: "Large-screen layout",
-        states: [
-          { id: "single", label: "Single column (default)" },
-          { id: "a", label: "A · card left, options right" },
-          { id: "b", label: "B · activity on the page" },
-          { id: "c", label: "C · three columns" },
-          { id: "d", label: "D · card on top" },
-          { id: "e", label: "E · boxed activity pane" },
-        ],
-        value: cardLayout,
-        onChange: (v) => setCardLayout(v as typeof cardLayout),
-      },
-      {
         label: "Spent today",
         states: [
           { id: "live", label: "Live" },
@@ -672,7 +644,7 @@ export function VirtualCardDetailsView({
         },
       },
     ],
-    [extraDevGroups, typeSim, statusSim, activitySim, cardLayout, setCardLayout, spentSim, limitSim, spentCustom, limitCustom, dailySpent, dailyLimit],
+    [extraDevGroups, typeSim, statusSim, activitySim, spentSim, limitSim, spentCustom, limitCustom, dailySpent, dailyLimit],
   );
   const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
   const isInactive = effectiveCard.status === "Inactive";
@@ -686,7 +658,7 @@ export function VirtualCardDetailsView({
 
   // The shared card face, the same one the Cards page draws, with the block state applied.
   const cardNode = (
-    <div className="relative mx-auto w-full max-w-[360px]">
+    <div className="relative mx-auto w-full max-w-[360px] lg:w-[78%] lg:max-w-none">
       <CardFace card={{ ...effectiveCard, status: isFrozen ? "Blocked" : effectiveCard.status }} />
     </div>
   );
@@ -748,7 +720,7 @@ export function VirtualCardDetailsView({
               ) : (
                 <div className="flex w-full flex-col">
                   <div className="flex flex-col gap-3">
-                  <div className="mx-auto flex w-full max-w-[360px] items-start justify-between">
+                  <div className="mx-auto flex w-full max-w-[360px] items-start justify-between lg:w-[78%] lg:max-w-none">
                     {/* The first action follows the money: a card that holds some leads with Top Up, a debit card (which
                         holds none) with its PIN. Details and activity then follow on every card, in the same order. */}
                     {isFundable ? (
@@ -762,7 +734,11 @@ export function VirtualCardDetailsView({
                       hasPin && <RoundAction icon={KeypadIcon} label="Show PIN" onClick={handleOpenPinModal} disabled={isFrozen} />
                     )}
                     <RoundAction icon={CreditCard} label="View Details" onClick={() => setDetailsAuthOpen(true)} />
-                    <RoundAction icon={ArrowLeftRight} label="Activity" onClick={() => setActiveModal("activity")} />
+                    <RoundAction
+                      icon={isFrozen ? CheckCircle2 : Ban}
+                      label={isFrozen ? "Unblock card" : "Block card"}
+                      onClick={() => (isFrozen ? setUnblockAuthOpen(true) : handleToggleFreeze())}
+                    />
                   </div>
                   {isFrozen && !isFundable && hasPin && (
                     <p className="text-center text-[12px] text-muted-foreground">Unblock the card to view its PIN</p>
@@ -838,7 +814,7 @@ export function VirtualCardDetailsView({
   const limitNode = (
     <ManageRow
       icon={Gauge}
-      title="Daily spending limit"
+      title="Daily limits"
       value={dailyLimit === null ? "Not set" : `GHS ${dailyLimit.toLocaleString()} a day`}
       onClick={() => {
         setTempDaily(dailyLimit === null ? "" : String(dailyLimit));
@@ -873,7 +849,7 @@ export function VirtualCardDetailsView({
   ) : fundsAccount ? (
     <Link
       href={`/accounts/${fundsAccount.id}`}
-      className="group mx-auto flex h-8 max-w-full items-center justify-center gap-2 rounded-md text-[14px] outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="group mx-auto flex h-8 max-w-full items-center justify-center gap-2 rounded-md text-[14px] outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <span className="text-muted-foreground">Linked to</span>
       <span className="truncate text-foreground group-hover:underline group-hover:underline-offset-4">{fundsAccount.name}</span>
@@ -900,9 +876,9 @@ export function VirtualCardDetailsView({
       }}
     />
   );
-  // A card that holds money keeps Show PIN in the list (its third round action is Top Up); a debit card has it up top.
+  // Show PIN is in the list on every card with a PIN. A debit card also has it as its first round action.
   const tShowPin =
-    hasPin && isFundable ? (
+    hasPin ? (
       <ManageRow
         icon={KeypadIcon}
         title="Show PIN"
@@ -915,14 +891,8 @@ export function VirtualCardDetailsView({
   const tReplace = (
     <ManageRow icon={RefreshCw} title="Replace card" description="Lost, damaged or expired" onClick={() => setActiveModal("replace")} />
   );
-  const tBlock = (
-    <ManageRow
-      icon={isFrozen ? ShieldCheck : ShieldAlert}
-      title={isFrozen ? "Unblock card" : "Block card"}
-      description={isFrozen ? "Start using this card again" : "Lock it for now. You can unblock it anytime"}
-      onClick={() => setActiveModal("freeze")}
-    />
-  );
+  // Card activity is a row here; blocking is one of the round actions (the quickest thing to do if a card goes missing).
+  const tActivity = <ManageRow icon={ArrowLeftRight} title="Card activity" onClick={() => setActiveModal("activity")} />;
 
   const activityListNode = (
     <>
@@ -1019,92 +989,26 @@ export function VirtualCardDetailsView({
     </>
   );
 
-  /** The activity on the page itself, for the wide layouts that have room for it. */
-  const activityPanel = (boxed: boolean) => (
-    <section className={boxed ? "flex flex-col gap-3 rounded-2xl border border-border bg-card p-4" : "flex flex-col gap-3"}>
-      <div className="flex items-center justify-between gap-3">
-        <h2 className="text-[16px] tracking-[-0.01em] text-foreground">Card activity</h2>
-        {activities.length > 0 && (
-          <Link href="/transactions" className="text-[13.5px] text-muted-foreground transition-colors hover:text-foreground hover:underline">
-            View all
-          </Link>
-        )}
+  // Two columns from lg: the card, its caption and the round actions on the left, the list of options on the right.
+  // The card is 78% of its column on every card page, the account card too, so it keeps one size and one proportion
+  // to the list beside it.
+  // Below lg it is one column.
+  const layoutNode = (
+    <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start lg:gap-6">
+      <div className="flex flex-col gap-9">
+        {cardBlock}
+        {controlsNode}
       </div>
-      {activityListNode}
-    </section>
-  );
-
-  // Large screens only (lg and up); below that every layout is the single column. Chosen in Dev Mode.
-  // `pin`: the card sits at the top and the actions at the bottom, so this column ends where its neighbour ends.
-  const faceAndActions = (pin: boolean) => (
-    <div className={`flex flex-col gap-9 ${pin ? "lg:justify-between" : "lg:sticky lg:top-6"}`}>
-      {cardBlock}
-      {controlsNode}
+      <div className="flex flex-col gap-4">
+        {tActivity}
+        {limitNode}
+        {tNickname}
+        {tShowPin}
+        {tReset}
+        {tReplace}
+      </div>
     </div>
   );
-  // One list, no group labels: the limit and the nickname first, then security, ending with the steps that go
-  // furthest (block, replace). Activity and card details are always round actions, so they are not repeated here.
-  const manageNode = () => (
-    <div className="flex flex-col gap-4">
-      {limitNode}
-      {tNickname}
-      {tShowPin}
-      {tReset}
-      {tBlock}
-      {tReplace}
-    </div>
-  );
-  const wideMax = cardLayout === "c" || cardLayout === "e" ? "lg:max-w-[1200px]" : cardLayout === "single" ? "" : "lg:max-w-[1000px]";
-
-  const layoutNode =
-    cardLayout === "a" ? (
-      <div className="grid w-full gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-stretch">
-        {faceAndActions(true)}
-        {manageNode()}
-      </div>
-    ) : cardLayout === "b" ? (
-      <div className="grid w-full gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
-        <div className="flex flex-col gap-9 lg:sticky lg:top-6">
-          {cardBlock}
-          {controlsNode}
-        </div>
-        <div className="flex flex-col gap-8">
-          {activityPanel(false)}
-          {manageNode()}
-        </div>
-      </div>
-    ) : cardLayout === "c" ? (
-      <div className="grid w-full gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)_minmax(0,1fr)] lg:items-start">
-        {faceAndActions(false)}
-        {manageNode()}
-        {activityPanel(false)}
-      </div>
-    ) : cardLayout === "d" ? (
-      <div className="flex w-full flex-col gap-8">
-        <div className="mx-auto flex w-full max-w-[440px] flex-col gap-9">
-          {cardBlock}
-          {controlsNode}
-        </div>
-        <div className="grid w-full gap-6 lg:grid-cols-2 lg:items-start">
-          {manageNode()}
-          {activityPanel(false)}
-        </div>
-      </div>
-    ) : cardLayout === "e" ? (
-      <div className="grid w-full gap-6 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,0.7fr)_minmax(0,1.2fr)] lg:items-start">
-        {faceAndActions(false)}
-        {manageNode()}
-        {activityPanel(true)}
-      </div>
-    ) : (
-      <div className="flex w-full flex-col gap-10">
-        <div className="flex flex-col gap-9">
-          {cardBlock}
-          {controlsNode}
-        </div>
-        {manageNode()}
-      </div>
-    );
 
   const detailBody = isInactive ? (
     <div className="flex w-full flex-col gap-6">
@@ -1117,7 +1021,7 @@ export function VirtualCardDetailsView({
   );
 
   return (
-    <div className={`mx-auto flex w-full max-w-[440px] flex-col gap-10 sm:gap-12 ${wideMax}`}>
+    <div className={`mx-auto flex w-full max-w-[440px] flex-col gap-10 sm:gap-12 lg:max-w-[1000px]`}>
       {/* Dev Mode Toolbar State Switcher for Delivery Tracking Simulation */}
       <StateSwitcher
         section="13.9 - Delivery Tracking"
@@ -1215,16 +1119,10 @@ export function VirtualCardDetailsView({
                       </div>
 
                       <div className="shrink-0 flex items-end justify-end pl-2">
-                        {effectiveCard.scheme === "Mastercard" ? (
-                          <div className="flex -space-x-2 items-center drop-shadow-xs pb-0.5">
-                            <div className="size-5 sm:size-6 rounded-full bg-[var(--mc-red)]/95" />
-                            <div className="size-5 sm:size-6 rounded-full bg-[var(--mc-orange)]/95" />
-                          </div>
-                        ) : (
-                          <span className="font-sans text-[22px] sm:text-[26px] font-black italic tracking-tighter leading-none opacity-95 drop-shadow-xs">
-                            VISA
-                          </span>
-                        )}
+                        <NetworkLogo
+                          scheme={effectiveCard.scheme}
+                          className={effectiveCard.scheme === "Visa" ? "h-4 sm:h-5 drop-shadow-xs" : "h-6 sm:h-7 drop-shadow-xs"}
+                        />
                       </div>
                     </div>
                   </div>
@@ -1453,7 +1351,7 @@ export function VirtualCardDetailsView({
                 <select
                   value={topUpSourceAccountId}
                   onChange={(e) => setTopUpSourceAccountId(e.target.value)}
-                  className="w-full rounded-xl border border-border/80 dark:border-field-border bg-muted/40 dark:bg-field px-3 py-2.5 text-[13.5px] text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                  className="w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 py-2.5 text-[13.5px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
                 >
                   {availableAccounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
@@ -1572,46 +1470,29 @@ export function VirtualCardDetailsView({
         title="Authorize Activation"
       />
 
-      {/* 3. Block Card Confirmation Modal */}
-      <Dialog open={activeModal === "freeze"} onOpenChange={(open) => !open && setActiveModal(null)}>
-        <DialogContent size="sm">
-          <DialogHeader>
-            <DialogTitle>{isFrozen ? "Unblock card?" : "Block card?"}</DialogTitle>
-          </DialogHeader>
-
-          <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
-            {isFrozen
-              ? "Payments and withdrawals on this card will work again straight away."
-              : "New payments, online purchases and ATM withdrawals on this card stop until you unblock it. You can unblock it here anytime."}
-          </div>
-
-          <DialogFooter>
-            <Button variant="ghost" size="sm" onClick={() => setActiveModal(null)}>
-              Cancel
-            </Button>
-            <Button
-              variant={isFrozen ? "default" : "destructive"}
-              size="sm"
-              onClick={handleToggleFreeze}
-            >
-              {isFrozen ? "Unblock card" : "Block card"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Unblocking is authorised with the PIN. Blocking has no pop-up at all. */}
+      <TransactionPinModal
+        open={unblockAuthOpen}
+        onOpenChange={setUnblockAuthOpen}
+        onSuccess={() => {
+          setUnblockAuthOpen(false);
+          handleToggleFreeze();
+        }}
+        title="Authorize Unblock"
+      />
 
       {/* 4. Set Limits Modal */}
       <Dialog open={activeModal === "limits"} onOpenChange={(open) => !open && setActiveModal(null)}>
         <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle>Daily spending limit</DialogTitle>
+            <DialogTitle>Daily limits</DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSaveLimits}>
             <DialogBody>
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="daily-limit-input" className="text-[12.5px] font-medium text-foreground">
-                  Daily spending limit (GHS)
+                  Daily limit (GHS)
                 </label>
                 <Input
                   id="daily-limit-input"
@@ -1657,9 +1538,9 @@ export function VirtualCardDetailsView({
               />
               <DetailLine label="Expiry" value={displayExpiry} onCopy={() => handleCopy(displayExpiry, "Expiry Date")} />
               <DetailLine
-                label={effectiveCard.scheme === "Mastercard" ? "CVC" : "CVV"}
+                label={securityCodeLabel(effectiveCard.scheme)}
                 value={displayCvv}
-                onCopy={() => handleCopy(displayCvv, effectiveCard.scheme === "Mastercard" ? "CVC" : "CVV")}
+                onCopy={() => handleCopy(displayCvv, securityCodeLabel(effectiveCard.scheme))}
               />
             </div>
             <p className="tabular pt-1 text-center text-[12px] text-muted-foreground">

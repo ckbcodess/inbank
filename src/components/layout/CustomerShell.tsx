@@ -21,7 +21,6 @@ import {
   markAppBooted,
   splashWorkSettled,
 } from "@/lib/app-splash";
-import { SurfaceProvider } from "@/lib/surface-context";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
 import { getNavigation } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
@@ -126,7 +125,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
   const navItems = getNavigation(actor, activeProfile);
 
   return (
-    <SurfaceProvider value={1}>
+    <>
       <div className="flex h-dvh overflow-hidden bg-[var(--surface)]">
         {sidebarOpen && (
           <div
@@ -172,6 +171,6 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
       </div>
       <FxQuickModal />
       {splash !== "off" && <AppSplash leaving={splash === "leaving"} />}
-    </SurfaceProvider>
+    </>
   );
 }

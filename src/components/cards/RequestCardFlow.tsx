@@ -7,7 +7,6 @@ import { useContextualBack } from "@/lib/contextual-back";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
-  ChevronRight,
   CreditCard,
   Wallet,
   Sparkles,
@@ -42,62 +41,12 @@ import { DeliveryModeFields } from "@/components/ui/delivery-mode-fields";
 import { CARD_THEMES, type CardTheme } from "@/components/cards/card-themes";
 import { TiltCard3D } from "@/components/cards/TiltCard3D";
 import { EmvChip } from "@/components/cards/EmvChip";
+import { ActionTile } from "@/components/ui/action-tile";
+import { NetworkChip, NetworkLogo } from "@/components/cards/NetworkLogo";
+import { CARD_SCHEMES, NETWORK_TIERS, type CardScheme } from "@/lib/card-schemes";
 import { GcbCardLogo } from "@/components/cards/GcbCardLogo";
 import TransactionPinModal from "@/components/payments/TransactionPinModal";
 import { toast } from "sonner";
-
-// Visa Official Vector Logo
-function VisaLogo({ className = "h-4 w-auto" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 39 13"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      aria-label="Visa"
-    >
-      <path
-        d="M14.545 0.282L9.537 11.718H6.264L3.818 2.518C3.67 1.942 3.525 1.724 3.072 1.48C2.33 1.08 1.09 0.702 0 0.463L0.068 0.282H5.518C6.216 0.282 6.837 0.742 6.993 1.543L8.32 8.575L11.602 0.282H14.545ZM27.355 7.957C27.368 4.931 23.109 4.766 23.138 3.42C23.148 3.01 23.548 2.569 24.444 2.454C24.887 2.397 26.115 2.348 27.38 2.932L27.902 0.54C27.186 0.282 26.265 0.05 25.109 0.05C22.062 0.05 19.92 1.637 19.902 3.905C19.873 5.589 21.41 6.529 22.584 7.094C23.789 7.676 24.195 8.048 24.189 8.571C24.179 9.369 23.218 9.728 22.334 9.742C20.764 9.766 19.845 9.336 19.124 9.006L18.583 11.492C19.349 11.839 20.771 12.14 22.241 12.158C25.438 12.158 27.34 10.612 27.355 7.957ZM35.438 11.718H38.297L35.807 0.282H33.16C32.568 0.282 32.066 0.623 31.848 1.139L27.202 11.718H30.434L31.082 9.967H35.032L35.438 11.718ZM31.977 7.551L33.606 3.167L34.54 7.551H31.977ZM19.263 0.282L16.714 11.718H13.629L16.178 0.282H19.263Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
-// Mastercard Official Vector Logo
-function MastercardLogo({ className = "h-5 w-auto" }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 36 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      aria-label="Mastercard"
-    >
-      <circle cx="12" cy="12" r="11" className="fill-[var(--mc-red)]" />
-      <circle cx="24" cy="12" r="11" className="fill-[var(--mc-orange)]" fillOpacity="0.95" />
-      <path
-        d="M18 4.223A10.96 10.96 0 0 0 13.633 12 10.96 10.96 0 0 0 18 19.777 10.96 10.96 0 0 0 22.367 12 10.96 10.96 0 0 0 18 4.223Z"
-        className="fill-[var(--mc-overlap)]"
-      />
-    </svg>
-  );
-}
-
-const VISA_NETWORK_TYPES = [
-  { id: "Classic", label: "Classic", description: "Standard electronic transactions" },
-  { id: "Gold", label: "Gold", description: "Enhanced limits & global purchase protection" },
-  { id: "Platinum", label: "Platinum", description: "Premium lifestyle privileges & travel perks" },
-  { id: "Signature", label: "Signature", description: "High-tier concierge & luxury benefits" },
-  { id: "Infinite", label: "Infinite", description: "Ultra-exclusive bespoke banking" },
-] as const;
-
-const MASTERCARD_NETWORK_TYPES = [
-  { id: "MChip Classic", label: "MChip Classic", description: "Standard EMV Chip & contactless" },
-  { id: "MChip Gold", label: "MChip Gold", description: "Travel assistance & higher withdrawal" },
-  { id: "MChip Platinum", label: "MChip Platinum", description: "Global lounge access & priority support" },
-  { id: "World Elite", label: "World Elite", description: "Bespoke executive & international privileges" },
-] as const;
 
 // GCB Iconic Soaring Golden Eagle Emblem (Standalone with Specular White Sheen Mask)
 function GcbEagleEmblem({ className, idPrefix = "gcb-card-eagle" }: { className?: string; idPrefix?: string }) {
@@ -300,11 +249,11 @@ export function RequestCardFlow() {
   );
   const [cardName, setCardName] = useState(() => replacing?.name ?? "");
   const [fundAmount, setFundAmount] = useState("");
-  const [cardScheme, setCardScheme] = useState<"Visa" | "Mastercard">(() => replacing?.scheme ?? "Visa");
+  const [cardScheme, setCardScheme] = useState<CardScheme>(() => replacing?.scheme ?? "Visa");
   const [networkType, setNetworkType] = useState<string>(() => {
     if (!replacing || replacing.type === "Virtual") return "";
     // Older cards may not record a tier; fall back to the network's base tier.
-    const tiers = replacing.scheme === "Mastercard" ? MASTERCARD_NETWORK_TYPES : VISA_NETWORK_TYPES;
+    const tiers = NETWORK_TIERS[replacing.scheme] ?? NETWORK_TIERS.Visa;
     return tiers.some((t) => t.id === replacing.networkType)
       ? (replacing.networkType as string)
       : tiers[0].id;
@@ -315,7 +264,7 @@ export function RequestCardFlow() {
     return CARD_THEMES.find((t) => t.id === id) ?? CARD_THEMES[1];
   });
 
-  function handleSchemeChange(scheme: "Visa" | "Mastercard") {
+  function handleSchemeChange(scheme: CardScheme) {
     setCardScheme(scheme);
     setNetworkType("");
   }
@@ -502,50 +451,29 @@ export function RequestCardFlow() {
           </div>
 
           {/* List of Card Types */}
-          <div className="flex flex-col gap-3 w-full">
-            {CARD_TYPE_OPTIONS.map((opt) => {
-              const Icon = opt.icon;
-              return (
-                <button
-                  key={opt.type}
-                  type="button"
-                  onClick={() => {
-                    setCardType(opt.type);
-                    setCardName("");
-                    setFundAmount("");
-                    setCardScheme("Visa");
-                    setNetworkType("");
-                    setDeliveryMethod(null);
-                    setSelectedBranch(null);
-                    setRecipientName(actor?.name ?? "");
-                    setDeliveryAddress("");
-                    setDeliveryCity("");
-                    setDeliveryPhone("+233 24 412 3456");
-                    setStep("details");
-                  }}
-                  className="group w-full p-4 sm:p-4.5 flex items-center justify-between rounded-2xl bg-card hover:bg-muted/30 active:scale-[0.99] border border-border/80 transition-all cursor-pointer text-left gap-4"
-                >
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    <div className="size-10 rounded-xl bg-muted/60 flex items-center justify-center shrink-0 text-foreground transition-transform">
-                      <Icon size={19} strokeWidth={1.8} />
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className="text-[15px] font-medium text-foreground tracking-[-0.01em]">
-                        {opt.title}
-                      </span>
-                      <span className="text-[13px] text-muted-foreground mt-0.5 truncate">
-                        {opt.description}
-                      </span>
-                    </div>
-                  </div>
-                  <ChevronRight
-                    size={18}
-                    strokeWidth={1.8}
-                    className="text-muted-foreground group-hover:text-foreground transition-colors shrink-0"
-                  />
-                </button>
-              );
-            })}
+          <div className="flex flex-col gap-4 w-full">
+            {CARD_TYPE_OPTIONS.map((opt) => (
+              <ActionTile
+                key={opt.type}
+                icon={opt.icon}
+                title={opt.title}
+                description={opt.description}
+                onClick={() => {
+                  setCardType(opt.type);
+                  setCardName("");
+                  setFundAmount("");
+                  setCardScheme("Visa");
+                  setNetworkType("");
+                  setDeliveryMethod(null);
+                  setSelectedBranch(null);
+                  setRecipientName(actor?.name ?? "");
+                  setDeliveryAddress("");
+                  setDeliveryCity("");
+                  setDeliveryPhone("+233 24 412 3456");
+                  setStep("details");
+                }}
+              />
+            ))}
           </div>
         </motion.div>
       )}
@@ -599,7 +527,7 @@ export function RequestCardFlow() {
                 placeholder="How the card shows up in the app"
                 value={cardName}
                 onChange={(e) => setCardName(e.target.value)}
-                className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground/60"
+                className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition placeholder:text-muted-foreground/60"
               />
             </div>
 
@@ -635,7 +563,7 @@ export function RequestCardFlow() {
               </>
             ) : (
               <>
-                {/* Card network: Visa / Mastercard */}
+                {/* Card network: Visa, Mastercard, GH-Link, UnionPay */}
                 <div className="flex flex-col gap-2">
                   <label className="text-[14px] font-medium text-foreground">
                     Card network
@@ -643,29 +571,21 @@ export function RequestCardFlow() {
                   <Select
                     value={cardScheme}
                     onValueChange={(val) => {
-                      if (val) handleSchemeChange(val as "Visa" | "Mastercard");
+                      if (val) handleSchemeChange(val as CardScheme);
                     }}
                   >
                     <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center">
-                      <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
+                      <div className="flex min-w-0 flex-1 items-center gap-2.5">
+                        <NetworkChip scheme={cardScheme} />
                         <span className="text-[14.5px] font-medium text-foreground truncate">{cardScheme}</span>
-                        {cardScheme === "Visa" ? (
-                          <VisaLogo className="h-4 w-auto text-foreground" />
-                        ) : (
-                          <MastercardLogo className="h-4.5 w-auto" />
-                        )}
                       </div>
                     </SelectTrigger>
                     <SelectContent>
-                      {(["Visa", "Mastercard"] as const).map((scheme) => (
+                      {CARD_SCHEMES.map((scheme) => (
                         <SelectItem key={scheme} value={scheme}>
-                          <div className="flex w-full items-center justify-between gap-6 py-0.5">
+                          <div className="flex items-center gap-2.5 py-0.5">
+                            <NetworkChip scheme={scheme} />
                             <span className="text-[14px] font-medium text-foreground">{scheme}</span>
-                            {scheme === "Visa" ? (
-                              <VisaLogo className="h-4 w-auto text-foreground" />
-                            ) : (
-                              <MastercardLogo className="h-4.5 w-auto" />
-                            )}
                           </div>
                         </SelectItem>
                       ))}
@@ -695,13 +615,13 @@ export function RequestCardFlow() {
                         </span>
                         {networkType && (
                           <span className="text-[12px] text-muted-foreground truncate leading-tight mt-0.5">
-                            {(cardScheme === "Visa" ? VISA_NETWORK_TYPES : MASTERCARD_NETWORK_TYPES).find((t) => t.id === networkType)?.description ?? "Card tier"}
+                            {NETWORK_TIERS[cardScheme].find((t) => t.id === networkType)?.description ?? "Card tier"}
                           </span>
                         )}
                       </div>
                     </SelectTrigger>
                     <SelectContent>
-                      {(cardScheme === "Visa" ? VISA_NETWORK_TYPES : MASTERCARD_NETWORK_TYPES).map((opt) => (
+                      {NETWORK_TIERS[cardScheme].map((opt) => (
                         <SelectItem key={opt.id} value={opt.id}>
                           <div className="flex flex-col min-w-0 py-0.5 text-left">
                             <span className="text-[14px] font-medium text-foreground">{opt.label}</span>
@@ -870,16 +790,10 @@ export function RequestCardFlow() {
                   </div>
 
                   <div className="shrink-0 flex items-end justify-end pl-2">
-                    {cardScheme === "Mastercard" ? (
-                      <div className="flex -space-x-2 items-center drop-shadow-xs pb-0.5">
-                        <div className="size-6 sm:size-7 rounded-full bg-[var(--mc-red)]/95" />
-                        <div className="size-6 sm:size-7 rounded-full bg-[var(--mc-orange)]/95" />
-                      </div>
-                    ) : (
-                      <span className="font-sans text-[26px] sm:text-[32px] font-black italic tracking-tighter leading-none opacity-95 drop-shadow-xs">
-                        VISA
-                      </span>
-                    )}
+                    <NetworkLogo
+                      scheme={cardScheme}
+                      className={cardScheme === "Visa" ? "h-5 sm:h-6 drop-shadow-xs" : "h-7 sm:h-8 drop-shadow-xs"}
+                    />
                   </div>
                 </div>
               </motion.div>
@@ -899,7 +813,7 @@ export function RequestCardFlow() {
                     aria-label={`Select ${theme.name} card color`}
                     aria-pressed={isSelected}
                     onClick={() => setSelectedTheme(theme)}
-                    className={`relative size-9 sm:size-10 rounded-full cursor-pointer flex items-center justify-center transition-all duration-200 border border-black/10 dark:border-white/15 ${
+                    className={`relative size-9 sm:size-10 rounded-full cursor-pointer flex items-center justify-center transition duration-200 border border-black/10 dark:border-white/15 ${
                       isSelected
                         ? "ring-2 ring-foreground ring-offset-2 ring-offset-background scale-105 shadow-sm"
                         : "hover:scale-105 opacity-90 hover:opacity-100"
@@ -1267,7 +1181,7 @@ export function RequestCardFlow() {
               <button
                 type="button"
                 onClick={() => router.push(`/cards/${createdCard.id}`)}
-                className="relative overflow-hidden w-full rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground px-5 py-3.5 text-[14.5px] font-medium active:scale-[0.99] transition-all cursor-pointer text-center shadow-xs"
+                className="relative overflow-hidden w-full rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground px-5 py-3.5 text-[14.5px] font-medium active:scale-[0.99] transition cursor-pointer text-center shadow-xs"
               >
                 {/* Single light sweep as the button arrives */}
                 <motion.div

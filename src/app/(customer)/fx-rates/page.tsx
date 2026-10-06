@@ -149,7 +149,7 @@ export default function FxRatesPage() {
         labels={BASELINE_LABEL}
       />
 
-      {state === "loading" && <ListSkeleton rows={6} columns={5} />}
+      {state === "loading" && <ListSkeleton rows={6} />}
 
       {state === "error" && (
         <ListErrorState

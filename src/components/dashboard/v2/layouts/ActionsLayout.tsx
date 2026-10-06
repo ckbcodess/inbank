@@ -83,7 +83,7 @@ export function ActionsLayout(props: DashViewProps) {
             showAmounts={showAmounts}
             onOpenFundModal={props.onOpenFundModal}
           />
-          <PayAgainCard data={data} />
+          <PayAgainCard data={data} loading={loading} />
           <AnalyticsCard data={data} loading={loading} showAmounts={showAmounts} />
           <CardsCard data={data} loading={loading} onOpenFundModal={props.onOpenFundModal} />
           <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} />

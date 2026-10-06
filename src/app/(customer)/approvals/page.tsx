@@ -98,7 +98,7 @@ export default function ApprovalQueuePage() {
                 type="button"
                 onClick={() => setTypeFilter(t)}
                 aria-pressed={isActive}
-                className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-3.5 py-1.5 text-[13px] capitalize transition-all cursor-pointer ${
+                className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-3.5 py-1.5 text-[13px] capitalize transition cursor-pointer ${
                   isActive
                     ? "bg-chip-selected text-chip-selected-foreground shadow-xs font-medium"
                     : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -121,7 +121,7 @@ export default function ApprovalQueuePage() {
 
       {effective === "loading" && (
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
-          <ListSkeleton rows={4} columns={5} />
+          <ListSkeleton rows={4} />
         </div>
       )}
 

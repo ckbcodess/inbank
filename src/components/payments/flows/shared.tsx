@@ -2,8 +2,7 @@
 
 import { AlertToast } from "@/components/ui/alert-toast";
 import React, { useMemo, useRef, useState, useEffect } from "react";
-import Image from "next/image";
-import { ArrowLeftRight, Landmark, AlertCircle, CheckCircle2, ShieldCheck, Smartphone, User } from "lucide-react";
+import { ArrowLeftRight, Landmark, AlertCircle, CheckCircle2, ShieldCheck, User } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +14,8 @@ import {
 } from "@/components/ui/select";
 import { Account, formatMoney } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { OperatorLogo } from "@/components/ui/operator-logo";
+import { OPERATORS, OPERATOR_IDS, operatorFromName, telcoName, type Operator } from "@/lib/operators";
 import { formatValueForDisplay, FormatOn, ThousandStyle } from "numora";
 import { TextMorph } from "torph/react";
 
@@ -274,8 +275,10 @@ export function getDetailedFeeBreakdown({
   };
 }
 
-export const NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money", "GCB Wallet"];
-export const TELCO_NETWORKS = ["MTN Ghana", "Telecel Ghana", "AT Ghana"] as const;
+/** Wallet names, then the bank's own wallet. The networks come from `lib/operators.ts`. */
+export const NETWORKS = [...OPERATOR_IDS.map((id) => OPERATORS[id].wallet), "GCB Wallet"];
+/** The lines a number can be on. */
+export const TELCO_NETWORKS: readonly string[] = OPERATOR_IDS.map((id) => OPERATORS[id].telco);
 
 export function normalizeGhanaPhone(phone: string): string {
   let clean = phone.replace(/[\s-]/g, "");
@@ -290,33 +293,25 @@ export function normalizeGhanaPhone(phone: string): string {
 export function detectTelcoNetwork(phone: string): { telcoName: string; walletName: string } | null {
   const clean = normalizeGhanaPhone(phone);
   if (/^0(24|54|55|59|25)/.test(clean)) {
-    return { telcoName: "MTN Ghana", walletName: "MTN Mobile Money" };
+    return { telcoName: OPERATORS.MTN.telco, walletName: OPERATORS.MTN.wallet };
   }
   if (/^0(20|50)/.test(clean)) {
-    return { telcoName: "Telecel Ghana", walletName: "Telecel Cash" };
+    return { telcoName: OPERATORS.Telecel.telco, walletName: OPERATORS.Telecel.wallet };
   }
   if (/^0(27|57|26|56)/.test(clean)) {
-    return { telcoName: "AT Ghana", walletName: "AT Money" };
+    return { telcoName: OPERATORS.AT.telco, walletName: OPERATORS.AT.wallet };
   }
   return null;
 }
 
-export function getTelcoLogo(networkName?: string): string | null {
-  if (!networkName) return null;
-  const lower = networkName.toLowerCase();
-  if (lower.includes("mtn")) return "/mtn.svg";
-  if (lower.includes("at") || lower.includes("airteltigo")) return "/at.svg";
-  if (lower.includes("telecel") || lower.includes("vodafone")) return "/telecel.svg";
-  return null;
+/** The line a name belongs to ("MTN Mobile Money" and "MTN" both become "MTN Ghana"). */
+export function normalizeNetworkName(name?: string): string {
+  return telcoName(name);
 }
 
-export function normalizeNetworkName(name?: string): string {
-  if (!name) return "MTN Ghana";
-  const lower = name.toLowerCase();
-  if (lower.includes("mtn")) return "MTN Ghana";
-  if (lower.includes("telecel") || lower.includes("vodafone")) return "Telecel Ghana";
-  if (lower.includes("at") || lower.includes("airteltigo")) return "AT Ghana";
-  return name;
+/** What the collapsed details badge shows for a network: its round mark, or nothing when it isn't one of ours. */
+export function operatorBadgeIcon(name?: string | null): React.ReactNode {
+  return operatorFromName(name) ? <OperatorLogo name={name} size={36} className="border-0" /> : undefined;
 }
 
 export type BundleItem = { id: string; name: string; val: string; price: number; network: string };
@@ -940,7 +935,7 @@ export function NarrationInput({
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+        className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition"
       />
     </div>
   );
@@ -1196,7 +1191,7 @@ export function SaveBeneficiaryCheckbox({
             value={nickname || ""}
             onChange={(e) => onNicknameChange(e.target.value)}
             placeholder="Beneficiary nickname (optional)"
-            className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground"
+            className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition placeholder:text-muted-foreground"
           />
         </div>
       )}
@@ -1224,7 +1219,7 @@ export function SchedulePaymentSection({
   onChange: (updates: Partial<ScheduleState>) => void;
 }) {
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-border/80 bg-card p-4 transition-all">
+    <div className="flex flex-col gap-3 rounded-2xl border border-border/80 bg-card p-4 transition">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <span className="text-[14px] font-medium text-foreground">Schedule Payment</span>
@@ -1239,7 +1234,7 @@ export function SchedulePaymentSection({
             onChange={(e) => onChange({ enabled: e.target.checked })}
             className="sr-only peer"
           />
-          <div className="w-11 h-6 bg-muted-foreground/25 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+          <div className="w-11 h-6 bg-muted-foreground/25 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition peer-checked:bg-primary"></div>
         </label>
       </div>
 
@@ -1297,43 +1292,50 @@ export function NetworkSelect({
   options: readonly string[];
   placeholder?: string;
 }) {
-  const logo = getTelcoLogo(value);
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
       <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center">
         <div className="flex items-center gap-3">
-          {logo ? (
-            <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/5 bg-muted/60 p-0 dark:border-white/10">
-              <Image src={logo} alt={value} width={40} height={40} className="size-full rounded-full object-cover" />
-            </span>
-          ) : (
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-              <Smartphone size={17} strokeWidth={1.8} />
-            </span>
-          )}
+          <OperatorLogo name={value} size={36} />
           <span className={cn("text-[14.5px]", value ? "font-medium text-foreground" : "font-normal text-muted-foreground")}>
             {value || placeholder}
           </span>
         </div>
       </SelectTrigger>
       <SelectContent>
-        {options.map((n) => {
-          const optionLogo = getTelcoLogo(n);
-          return (
-            <SelectItem key={n} value={n}>
-              <div className="flex items-center gap-3">
-                {optionLogo && (
-                  <span className="flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted/60 p-0">
-                    <Image src={optionLogo} alt={n} width={40} height={40} className="size-full rounded-full object-cover" />
-                  </span>
-                )}
-                <span>{n}</span>
-              </div>
-            </SelectItem>
-          );
-        })}
+        {options.map((n) => (
+          <SelectItem key={n} value={n}>
+            <div className="flex items-center gap-3">
+              {operatorFromName(n) && <OperatorLogo name={n} size={28} />}
+              <span>{n}</span>
+            </div>
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
+  );
+}
+
+/**
+ * The same picker for code that holds a network id ("MTN") rather than a name: the dashboard's fund flows and the
+ * Link a wallet form. It is `NetworkSelect` underneath, so it can never drift from the Send & Pay one.
+ */
+export function OperatorSelect({
+  value,
+  onChange,
+}: {
+  value: Operator;
+  onChange: (value: Operator) => void;
+}) {
+  return (
+    <NetworkSelect
+      value={OPERATORS[value].wallet}
+      onChange={(name) => {
+        const op = operatorFromName(name);
+        if (op) onChange(op);
+      }}
+      options={OPERATOR_IDS.map((id) => OPERATORS[id].wallet)}
+    />
   );
 }
 

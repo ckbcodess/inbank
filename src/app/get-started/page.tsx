@@ -81,7 +81,7 @@ export default function GetStartedPage() {
               type="button"
               data-tour="gs-existing"
               onClick={handleChooseExisting}
-              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
               <div className="flex items-center gap-3.5">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -97,7 +97,7 @@ export default function GetStartedPage() {
               <ChevronRight
                 size={20}
                 strokeWidth={2.2}
-                className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:text-foreground"
+                className="shrink-0 text-foreground/70 transition duration-200 group-hover:text-foreground"
               />
             </button>
 
@@ -106,7 +106,7 @@ export default function GetStartedPage() {
               type="button"
               data-tour="gs-new"
               onClick={handleChooseNew}
-              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
               <div className="flex items-center gap-3.5">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -122,7 +122,7 @@ export default function GetStartedPage() {
               <ChevronRight
                 size={20}
                 strokeWidth={2.2}
-                className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:text-foreground"
+                className="shrink-0 text-foreground/70 transition duration-200 group-hover:text-foreground"
               />
             </button>
           </div>
@@ -144,7 +144,7 @@ export default function GetStartedPage() {
               type="button"
               data-tour="gs-cos"
               onClick={handleChooseCoos}
-              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
               <div className="flex items-center gap-3.5">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -154,10 +154,13 @@ export default function GetStartedPage() {
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
                     Open a GCB Account
                   </span>
+                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
+                    Open a new bank account online.
+                  </span>
                 </div>
               </div>
 
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition-all duration-200 group-hover:text-foreground">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition duration-200 group-hover:text-foreground">
                 <ExternalLink size={18} strokeWidth={2} />
               </div>
             </button>
@@ -167,7 +170,7 @@ export default function GetStartedPage() {
               type="button"
               data-tour="gs-walletcard"
               onClick={handleChooseWalletCard}
-              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition-all duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
               <div className="flex items-center gap-3.5">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -177,13 +180,16 @@ export default function GetStartedPage() {
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
                     Create a Payment Profile
                   </span>
+                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
+                    Fund with mobile money or any bank card.
+                  </span>
                 </div>
               </div>
 
               <ChevronRight
                 size={20}
                 strokeWidth={2.2}
-                className="shrink-0 text-foreground/70 transition-all duration-200 group-hover:text-foreground"
+                className="shrink-0 text-foreground/70 transition duration-200 group-hover:text-foreground"
               />
             </button>
           </div>

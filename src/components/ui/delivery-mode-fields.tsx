@@ -51,7 +51,7 @@ export function DeliveryModeFields({
         <button
           type="button"
           onClick={() => onChange({ method: "BRANCH_PICKUP" })}
-          className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
+          className={`p-3.5 sm:p-4 rounded-2xl border text-left transition cursor-pointer flex items-center gap-3 ${
             value.method === "BRANCH_PICKUP"
               ? "border-field-border-focus bg-field text-foreground"
               : "border-field-border bg-field hover:bg-field-hover text-foreground"
@@ -79,7 +79,7 @@ export function DeliveryModeFields({
         <button
           type="button"
           onClick={() => onChange({ method: "DELIVERY" })}
-          className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
+          className={`p-3.5 sm:p-4 rounded-2xl border text-left transition cursor-pointer flex items-center gap-3 ${
             value.method === "DELIVERY"
               ? "border-field-border-focus bg-field text-foreground"
               : "border-field-border bg-field hover:bg-field-hover text-foreground"
@@ -107,7 +107,7 @@ export function DeliveryModeFields({
 
       {/* One height-animated region for both modes, so the two panels swap inside it. Two separate collapses left an
           exiting panel and its flex gap behind, and the layout jumped when the exit finished. */}
-      <SmoothHeight className="w-full">
+      <SmoothHeight className="w-full" overflowWhenIdle="visible">
         {value.method === "BRANCH_PICKUP" && (
           <div key="branch" className="animate-in fade-in">
           <div className="flex flex-col gap-2 pt-1">
@@ -134,7 +134,7 @@ export function DeliveryModeFields({
                 value={value.recipientName}
                 onChange={(e) => onChange({ recipientName: e.target.value })}
                 placeholder="Full name"
-                className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground/60"
+                className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition placeholder:text-muted-foreground/60"
               />
             </div>
             <div className="flex flex-col gap-2">
@@ -146,7 +146,7 @@ export function DeliveryModeFields({
                 value={value.address}
                 onChange={(e) => onChange({ address: e.target.value })}
                 placeholder="Street or digital address"
-                className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground/60"
+                className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition placeholder:text-muted-foreground/60"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -157,7 +157,7 @@ export function DeliveryModeFields({
                   value={value.city}
                   onChange={(e) => onChange({ city: e.target.value })}
                   placeholder="City"
-                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all placeholder:text-muted-foreground/60"
+                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition placeholder:text-muted-foreground/60"
                 />
               </div>
               <div className="flex flex-col gap-2">

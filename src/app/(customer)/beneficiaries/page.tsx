@@ -819,7 +819,7 @@ export default function BeneficiariesPage() {
               setActiveTab("people");
               setTypeFilter("all");
             }}
-            className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
+            className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition cursor-pointer ${
               activeTab === "people"
                 ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
                 : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -837,7 +837,7 @@ export default function BeneficiariesPage() {
               setActiveTab("billers");
               setTypeFilter("all");
             }}
-            className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
+            className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition cursor-pointer ${
               activeTab === "billers"
                 ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
                 : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -855,7 +855,7 @@ export default function BeneficiariesPage() {
               setActiveTab("groups");
               setTypeFilter("all");
             }}
-            className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition-all cursor-pointer ${
+            className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition cursor-pointer ${
               activeTab === "groups"
                 ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
                 : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -886,7 +886,7 @@ export default function BeneficiariesPage() {
               ? "Search by utility provider, meter number, or network..."
               : "Search by group title, description, or member name..."
           }
-          className="w-full h-12 pl-11 pr-10 rounded-xl border border-field-border bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-1 focus:ring-ring focus:border-field-border-focus transition-colors"
+          className="w-full h-12 pl-11 pr-10 rounded-xl border border-field-border bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-0 focus:border-field-border-focus focus:bg-field-focus transition-colors"
         />
         {query && (
           <button
@@ -1262,7 +1262,7 @@ export default function BeneficiariesPage() {
                     value={form.accountNumber}
                     onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
                     placeholder={form.bankName === "GCB Bank" ? "13-digit GCB Account" : "Recipient account number"}
-                    className="h-11 rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all shadow-xs"
+                    className="h-11 rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition shadow-xs"
                   />
                 </div>
               </div>
@@ -1333,7 +1333,7 @@ export default function BeneficiariesPage() {
                     value={form.billerReference}
                     onChange={(e) => setForm((p) => ({ ...p, billerReference: e.target.value }))}
                     placeholder={billerRefPlaceholder}
-                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                   />
                 </div>
               </div>
@@ -1395,7 +1395,7 @@ export default function BeneficiariesPage() {
                       setForm((p) => ({ ...p, proxyId: cleaned ? `@${cleaned}` : "" }));
                     }}
                     placeholder="kwame.b"
-                    className="h-11 w-full rounded-xl border border-field-border bg-field pl-8 pr-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+                    className="h-11 w-full rounded-xl border border-field-border bg-field pl-8 pr-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                   />
                 </div>
               </div>
@@ -1456,7 +1456,7 @@ export default function BeneficiariesPage() {
                       value={form.swiftBic}
                       onChange={(e) => setForm((p) => ({ ...p, swiftBic: e.target.value.toUpperCase() }))}
                       placeholder="e.g. BARCGB22"
-                      className="h-11 rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground uppercase tracking-wider tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+                      className="h-11 rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground uppercase tracking-wider tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                     />
                   </div>
 
@@ -1467,7 +1467,7 @@ export default function BeneficiariesPage() {
                       value={form.accountNumber}
                       onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
                       placeholder="GB29 BARC 2020 1555"
-                      className="h-11 rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+                      className="h-11 rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                     />
                   </div>
                 </div>
@@ -1479,7 +1479,7 @@ export default function BeneficiariesPage() {
                     value={form.address}
                     onChange={(e) => setForm((p) => ({ ...p, address: e.target.value }))}
                     placeholder="Street, City, Postal Code"
-                    className="h-11 rounded-xl border border-field-border bg-field px-3.5 text-[13.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+                    className="h-11 rounded-xl border border-field-border bg-field px-3.5 text-[13.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                   />
                 </div>
               </div>
@@ -1532,7 +1532,7 @@ export default function BeneficiariesPage() {
                     value={form.accountNumber}
                     onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
                     placeholder="Account / IBAN"
-                    className="h-11 rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+                    className="h-11 rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                   />
                 </div>
               </div>
@@ -1548,7 +1548,7 @@ export default function BeneficiariesPage() {
                 value={form.name}
                 onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                 placeholder={activeTab === "billers" ? "e.g. ECG PowerApp" : "e.g. Kojo Mensah"}
-                className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+                className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
               />
             </div>
 
@@ -1562,7 +1562,7 @@ export default function BeneficiariesPage() {
                 value={form.nickname}
                 onChange={(e) => setForm((p) => ({ ...p, nickname: e.target.value }))}
                 placeholder="e.g. Landlord, Monthly Groceries"
-                className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+                className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
               />
             </div>
           </DialogBody>

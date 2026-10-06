@@ -30,6 +30,7 @@ import {
   type DashData,
   type DashViewProps,
 } from "../parts";
+import { Bone } from "@/components/states/PageSkeletons";
 
 function StatTile({
   label,
@@ -47,7 +48,7 @@ function StatTile({
     <div className="flex items-center justify-between gap-3 px-4 py-3.5 sm:flex-col sm:items-start sm:justify-start sm:rounded-2xl sm:border sm:border-border sm:bg-card sm:p-5">
       <span className="text-[13px] text-muted-foreground sm:text-[12.5px]">{label}</span>
       {loading ? (
-        <span className="h-5 w-24 skeleton-shimmer rounded-md bg-muted/60 sm:h-6 sm:w-32" />
+        <Bone className="h-5 w-24 sm:h-6 sm:w-32" />
       ) : (
         <span className={`tabular shrink-0 text-[15px] leading-none tracking-[-0.01em] sm:text-[22px] ${tone === "positive" ? "text-success" : "text-foreground"}`}>
           {value}

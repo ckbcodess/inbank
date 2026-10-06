@@ -13,12 +13,13 @@ import { insightTotals, cashflowSeries, type ProfileKind } from "@/lib/insights"
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { CASHFLOW_CONFIG } from "./CashflowChart";
 import { exactMoney } from "./chart-format";
+import { Bone } from "@/components/states/PageSkeletons";
 
 const CashflowChart = dynamic(
   () => import("./CashflowChart").then((m) => m.CashflowChart),
   {
     ssr: false,
-    loading: () => <div className="h-[260px] w-full skeleton-shimmer rounded-xl bg-muted/30" />,
+    loading: () => <Bone className="h-[260px] w-full rounded-xl bg-muted/30" />,
   }
 );
 

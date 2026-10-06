@@ -66,7 +66,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
 
   if (!item || item.type !== "payment") {
     return (
-      <PageHeader title="Approval not found" backTo={{ href: "/approvals", label: "Approval queue" }} />
+      <PageHeader title="Approval not found" backTo={{ href: "/approvals", label: "Approvals" }} />
     );
   }
 
@@ -85,7 +85,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
       <PageHeader
         title="Payment approval"
         description={`${item.reference} · submitted by ${item.submittedBy}`}
-        backTo={{ href: "/approvals", label: "Approval queue" }}
+        backTo={{ href: "/approvals", label: "Approvals" }}
       />
 
       <StateSwitcher

@@ -25,7 +25,7 @@ export interface TunerGroup {
 const GROUP_RULES: [string, RegExp][] = [
   ["Chips and pills", /^(chip|pill-)/],
   ["Text", /(^foreground$|-foreground$)/],
-  ["Brand", /^(primary|ring|focus-ring|active-|action-icon|tile-accent|promo-)/],
+  ["Brand", /^(primary|ring|active-|action-icon|tile-accent)/],
   ["Status", /^(success|warning|destructive|info)/],
   ["Fields and menus", /^(field|menu|input$)/],
   ["Borders", /(^border$|-border$|-border-focus$|^duo-outline$)/],
@@ -33,7 +33,7 @@ const GROUP_RULES: [string, RegExp][] = [
   ["Charts", /^(chart|cat-|spend-)/],
   ["Marks", /^(mc-|duo-)/],
   ["Dashboard hero", /^(hero|sheet|balance-card|account-card)/],
-  ["Surfaces", /^(background|surface|card|popover|muted|secondary|accent|tile|sidebar|glass|device|skeleton|auth-card)/],
+  ["Surfaces", /^(background|surface|card|modal|popover|muted|secondary|accent|tile|sidebar|glass|device|skeleton|auth-card)/],
 ];
 const SKIP = /^(color-|tw-|font|radius|shadow|dur-|breakpoint|animate|ease|sidebar-width|ripple)/;
 

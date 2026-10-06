@@ -6,9 +6,31 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { hideFocusRingUntilNextMove } from "@/lib/focus-ring"
 
-function Dialog({ ...props }: DialogPrimitive.Root.Props) {
-  return <DialogPrimitive.Root data-slot="dialog" {...props} />
+function Dialog({ onOpenChange, open, ...props }: DialogPrimitive.Root.Props) {
+  // Whichever way a modal closes (its own buttons, Esc, or the page setting `open` to false), keep the focus ring
+  // off the control that gets focus back until the person moves with the keyboard again.
+  const wasOpen = React.useRef(false)
+  React.useEffect(() => {
+    if (open) wasOpen.current = true
+    else if (wasOpen.current) {
+      wasOpen.current = false
+      hideFocusRingUntilNextMove()
+    }
+  }, [open])
+
+  return (
+    <DialogPrimitive.Root
+      data-slot="dialog"
+      open={open}
+      onOpenChange={(next, details) => {
+        if (!next) hideFocusRingUntilNextMove()
+        onOpenChange?.(next, details)
+      }}
+      {...props}
+    />
+  )
 }
 
 function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
@@ -70,8 +92,8 @@ function DialogContent({
         data-slot="dialog-content"
         className={cn(
           size === "full"
-            ? "fixed inset-0 z-50 flex flex-col w-full h-full bg-card text-foreground overflow-y-auto"
-            : "fixed top-1/2 left-1/2 z-50 flex flex-col w-full -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border/60 dark:border-white/[0.1] outline-none shadow-2xl bg-card text-foreground overflow-hidden max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:border-t max-sm:border-border/80 max-sm:max-h-[92vh]",
+            ? "fixed inset-0 z-50 flex flex-col w-full h-full bg-modal text-foreground overflow-y-auto"
+            : "fixed top-1/2 left-1/2 z-50 flex flex-col w-full -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border/60 dark:border-white/[0.1] outline-none shadow-2xl bg-modal text-foreground overflow-hidden max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:max-w-none max-sm:rounded-t-2xl max-sm:rounded-b-none max-sm:border-t max-sm:border-border/80 max-sm:max-h-[92vh]",
           sizeClasses[size],
           className
         )}
@@ -91,7 +113,7 @@ function DialogContent({
             render={
               <button
                 type="button"
-                className="absolute top-3.5 right-4 sm:right-6 flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
+                className="absolute top-3.5 right-4 sm:right-6 flex size-7 items-center justify-center rounded-full bg-muted after:absolute after:-inset-2 after:content-[''] text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
                 aria-label="Close"
               >
                 <X size={15} strokeWidth={1.8} />
@@ -134,7 +156,7 @@ function DialogHeader({
           <button
             type="button"
             onClick={onClose}
-            className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer ml-3"
+            className="relative flex size-7 shrink-0 items-center justify-center rounded-full bg-muted after:absolute after:-inset-2 after:content-[''] text-muted-foreground hover:text-foreground transition-colors cursor-pointer ml-3"
             aria-label="Close"
           >
             <X size={15} strokeWidth={1.8} />
@@ -144,7 +166,7 @@ function DialogHeader({
             render={
               <button
                 type="button"
-                className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer ml-3"
+                className="relative flex size-7 shrink-0 items-center justify-center rounded-full bg-muted after:absolute after:-inset-2 after:content-[''] text-muted-foreground hover:text-foreground transition-colors cursor-pointer ml-3"
                 aria-label="Close"
               >
                 <X size={15} strokeWidth={1.8} />
@@ -182,7 +204,7 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        "flex items-center justify-end gap-2 px-5 sm:px-6 py-3.5 border-t border-border/60 bg-muted/20 shrink-0",
+        "flex items-center justify-end gap-2 px-5 sm:px-6 py-3.5 border-t border-border/60 shrink-0",
         className
       )}
       {...props}

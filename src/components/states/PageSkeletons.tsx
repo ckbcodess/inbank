@@ -51,13 +51,13 @@ function Panel({ children, className }: { children: ReactNode; className?: strin
   return <div className={cn("rounded-2xl border border-border bg-card", className)}>{children}</div>;
 }
 
-/** Rows of avatar + two lines + trailing figure, the shape of most lists in the app. */
-function RowBones({ rows, className }: { rows: number; className?: string }) {
+/** Rows of avatar + two lines + trailing figure, the shape of most lists in the app. `avatar={false}` for rows that start with text. */
+export function RowBones({ rows, avatar = true, className }: { rows: number; avatar?: boolean; className?: string }) {
   return (
     <div className={cn("divide-y divide-border/60", className)}>
       {Array.from({ length: rows }).map((_, i) => (
         <div key={i} className="flex items-center gap-3.5 px-4 py-3.5">
-          <Bone className="size-10 shrink-0 rounded-full" style={{ animationDelay: `${i * 60}ms` }} />
+          {avatar && <Bone className="size-10 shrink-0 rounded-full" style={{ animationDelay: `${i * 60}ms` }} />}
           <div className="flex min-w-0 flex-1 flex-col gap-2">
             <Bone className="h-3.5 w-2/5" style={{ animationDelay: `${i * 60}ms` }} />
             <Bone className="h-3 w-1/4" style={{ animationDelay: `${i * 60}ms` }} />
@@ -183,15 +183,11 @@ export function DashboardSkeleton() {
   );
 }
 
-/** One account: the card, the two round actions, then the option tiles. A single narrow column. */
-export function AccountDetailSkeleton() {
+/** The account page below its header: the card and two round actions, then the option tiles (side by side from lg). */
+export function AccountDetailBody() {
   return (
-    <Frame className="mx-auto max-w-[440px] gap-10 sm:gap-12">
-      <div className="flex items-center gap-2.5">
-        <Bone className="size-9 rounded-lg" />
-        <Bone className="h-7 w-44 rounded-lg" />
-      </div>
-      <div className="flex flex-col gap-6">
+    <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start lg:gap-6">
+      <div className="flex flex-col gap-6 lg:mx-auto lg:w-[78%]">
         <Bone className="h-[248px] w-full rounded-xl" />
         <div className="flex w-full items-start justify-evenly">
           {[0, 1].map((i) => (
@@ -213,6 +209,19 @@ export function AccountDetailSkeleton() {
           <Bone className="h-[72px] rounded-[16px]" />
         </div>
       </div>
+    </div>
+  );
+}
+
+/** One account: back and title, then the body. One narrow column, two from lg. */
+export function AccountDetailSkeleton() {
+  return (
+    <Frame className="mx-auto max-w-[440px] gap-10 sm:gap-12 lg:max-w-[1000px]">
+      <div className="flex items-center gap-2.5">
+        <Bone className="size-9 rounded-lg" />
+        <Bone className="h-7 w-44 rounded-lg" />
+      </div>
+      <AccountDetailBody />
     </Frame>
   );
 }

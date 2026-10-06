@@ -103,7 +103,7 @@ export const CHARGE_OPTIONS = [
 ];
 
 const INPUT =
-  "h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all";
+  "h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition";
 const TRIGGER =
   "h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none";
 

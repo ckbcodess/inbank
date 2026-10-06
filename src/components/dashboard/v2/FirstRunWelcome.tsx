@@ -7,13 +7,13 @@
  * Implements the 1:1 Figma Showcase split-art design (node 5858:70291) persistently:
  * - Persistent right-hand gold split art with embedded dashboard preview throughout all steps
  * - Seamless directional horizontal sliding on the left column (/better-ui spring animation)
- *   1. Welcome: "Welcome to GCB, {firstName}!"
- *   2. Method: Choose between Mobile Money and Card
- *   3. Form: Required input fields with live validation
- *   4. Verification: Instant USSD push simulation / SMS OTP
- *   5. Success: Deposit receipt confirmation
- *   6. Source: "Save this wallet?" for 1-tap top-ups
- *   7. Referral: Optional branch referral code
+ *   1. Referral: Optional branch referral code (asked before any money moves)
+ *   2. Welcome: "Welcome to GCB, {firstName}!" with Fund account or Skip for now
+ *   3. Method: Choose between Mobile Money and Card
+ *   4. Form: Required input fields with live validation
+ *   5. Verification: Instant USSD push simulation / SMS OTP
+ *   6. Success: Deposit receipt confirmation
+ *   7. Source: "Save this wallet?" for 1-tap top-ups
  */
 
 import { memo, useEffect, useRef, useState } from "react";
@@ -23,19 +23,12 @@ import { motion, AnimatePresence, type Variants } from "framer-motion";
 import {
   CheckCircle2,
   ChevronLeft,
-  ChevronRight,
   CreditCard,
   Smartphone,
   X,
 } from "lucide-react";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -62,6 +55,11 @@ import {
 import ReferralStep from "@/components/auth/ReferralStep";
 import { SourceSummary, sourceFromFunding, useSaveSource } from "./SaveSourcePrompt";
 import { SPRING } from "@/lib/motion";
+import { cardNetwork } from "@/lib/card-link";
+import { useCardPayment, useCardPaymentReturn } from "@/lib/card-payment";
+import { AmountInput, OperatorSelect } from "@/components/payments/flows/shared";
+import { OperatorLogo } from "@/components/ui/operator-logo";
+import { ActionTile } from "@/components/ui/action-tile";
 
 type FundDetails = { operator?: string; phone?: string; cardLast4?: string };
 
@@ -75,6 +73,10 @@ type FlowStep =
   | "success"
   | "source"
   | "referral";
+
+/** The money flows' field look (Send & Pay, Add money): rounded-2xl, 14px medium labels, the shared AmountInput. */
+const FUND_FIELD = "h-13 rounded-2xl px-4 text-[15px]";
+const FUND_LABEL = "text-[14px] font-medium text-foreground";
 
 const BUTTON =
   "h-10.5 w-full text-[14px] font-medium active:scale-[0.96] transition-transform duration-150 cursor-pointer";
@@ -120,6 +122,7 @@ export function FirstRunWelcome({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const startCardPayment = useCardPayment((s) => s.start);
   const [kind, setKind] = useState<FirstRunKind | null>(null);
 
   // Flow & Animation State
@@ -147,6 +150,8 @@ export function FirstRunWelcome({
   const [busy, setBusy] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [pendingSource, setPendingSource] = useState<PendingFundingSource | null>(null);
+  // Referral comes first; funding follows it when this run includes the fund prompt.
+  const [fundNext, setFundNext] = useState(false);
 
   const fundingSucceededRef = useRef(false);
 
@@ -196,7 +201,10 @@ export function FirstRunWelcome({
     setKind(targetKind);
     fundingSucceededRef.current = false;
     setSlideDirection("forward");
-    if (targetStage === "all" || targetStage === "ready") {
+    setFundNext(targetStage === "all" || targetStage === "ready");
+    if (targetStage === "all") {
+      setStep("referral");
+    } else if (targetStage === "ready") {
       setStep("welcome");
     } else if (targetStage === "fund") {
       setStep("method");
@@ -234,10 +242,11 @@ export function FirstRunWelcome({
     } else if (k === "new") {
       const fund = peekPendingFundPrompt();
       const ref = peekPendingReferral();
-      if (fund) {
-        setStep("welcome");
-      } else if (ref) {
+      setFundNext(fund);
+      if (ref) {
         setStep("referral");
+      } else if (fund) {
+        setStep("welcome");
       } else {
         clearFirstRun();
         setKind(null);
@@ -259,6 +268,26 @@ export function FirstRunWelcome({
     return () => window.removeEventListener("open-welcome-flow", handleTrigger);
   }, []);
 
+  // Back from the bank's 3-D Secure page after funding with a card. Declared after the effects above so it
+  // has the last word on the step: the receipt when approved, the card form again when it wasn't.
+  useCardPaymentReturn("welcome-fund", ({ status, payment }) => {
+    setKind("new");
+    setMethod("card");
+    setAmount(String(payment.amount));
+    setSlideDirection("forward");
+    if (status === "approved") {
+      const details = { cardLast4: payment.last4 };
+      fundingSucceededRef.current = true;
+      onFunded?.(payment.amount, "card", details);
+      clearPendingFundPrompt();
+      setPendingSource(sourceFromFunding("card", details));
+      setStep("success");
+    } else {
+      setErrorMsg("Your bank didn\u2019t approve this payment, so nothing was taken. You can try again.");
+      setStep("form");
+    }
+  });
+
   if (!kind) return null;
 
   const close = () => {
@@ -277,7 +306,7 @@ export function FirstRunWelcome({
   const skipFunding = () => {
     setHasSkippedFunding(true);
     clearPendingFundPrompt();
-    goTo("referral");
+    close();
   };
 
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -303,10 +332,19 @@ export function FirstRunWelcome({
         goTo("otp");
       }, 400);
     } else {
-      window.setTimeout(() => {
-        setBusy(false);
-        handleFinalizeDeposit();
-      }, 600);
+      // The card's own bank approves it on its page (3-D Secure), then sends the customer back here.
+      const digits = cardNumber.replace(/\D/g, "");
+      startCardPayment({
+        flow: "welcome-fund",
+        amount: parsedAmt,
+        currency: "GHS",
+        last4: digits.slice(-4),
+        network: cardNetwork(digits),
+        merchant: "GCB Bank PLC",
+        description: "Fund your GCB account",
+        returnTo: `${pathname}${window.location.search}`,
+      });
+      window.setTimeout(() => router.push("/card-verification"), 500);
     }
   };
 
@@ -361,7 +399,7 @@ export function FirstRunWelcome({
     <Dialog open onOpenChange={() => {}}>
       <DialogContent
         size="lg"
-        className="overflow-hidden sm:max-w-[812px] p-2.5 sm:p-3 border border-border/80 bg-card shadow-2xl sm:rounded-[20px]"
+        className="overflow-hidden sm:max-w-[812px] p-2.5 sm:p-3 border border-border/80 bg-modal shadow-2xl sm:rounded-[20px]"
       >
         <button
           type="button"
@@ -446,9 +484,10 @@ export function FirstRunWelcome({
                         Select how you&apos;d like to deposit funds into your virtual wallet.
                       </p>
 
-                      <div className="flex flex-col gap-3 pt-1">
-                        <button
-                          type="button"
+                      <div className="flex flex-col gap-4 pt-1">
+                        <ActionTile
+                          icon={Smartphone}
+                          title="Fund with Mobile Money Wallet"
                           onClick={() => {
                             setErrorMsg("");
                             setMethod("momo");
@@ -462,46 +501,16 @@ export function FirstRunWelcome({
                               goTo("form");
                             }
                           }}
-                          className="group flex w-full items-center justify-between rounded-2xl border border-border/80 bg-card p-4 transition-all hover:border-primary/60 hover:bg-muted/40 hover:shadow-xs active:scale-[0.96] cursor-pointer"
-                        >
-                          <div className="flex items-center gap-3.5 sm:gap-4">
-                            <div className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground shrink-0 shadow-xs">
-                              <Smartphone size={20} strokeWidth={2} />
-                            </div>
-                            <span className="text-[14px] font-medium text-foreground tracking-[-0.01em] sm:text-[14.5px]">
-                              Fund with Mobile Money Wallet
-                            </span>
-                          </div>
-                          <ChevronRight
-                            size={16}
-                            strokeWidth={1.8}
-                            className="text-muted-foreground transition-transform group-hover:translate-x-0.5 shrink-0"
-                          />
-                        </button>
-
-                        <button
-                          type="button"
+                        />
+                        <ActionTile
+                          icon={CreditCard}
+                          title="Fund with a Card"
                           onClick={() => {
                             setErrorMsg("");
                             setMethod("card");
                             goTo("form");
                           }}
-                          className="group flex w-full items-center justify-between rounded-2xl border border-border/80 bg-card p-4 transition-all hover:border-primary/60 hover:bg-muted/40 hover:shadow-xs active:scale-[0.96] cursor-pointer"
-                        >
-                          <div className="flex items-center gap-3.5 sm:gap-4">
-                            <div className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground shrink-0 shadow-xs">
-                              <CreditCard size={20} strokeWidth={2} />
-                            </div>
-                            <span className="text-[14px] font-medium text-foreground tracking-[-0.01em] sm:text-[14.5px]">
-                              Fund with a Card
-                            </span>
-                          </div>
-                          <ChevronRight
-                            size={16}
-                            strokeWidth={1.8}
-                            className="text-muted-foreground transition-transform group-hover:translate-x-0.5 shrink-0"
-                          />
-                        </button>
+                        />
                       </div>
                     </div>
 
@@ -538,21 +547,7 @@ export function FirstRunWelcome({
 
                       {/* Verified Number Tile (Matches screenshot 1:1) */}
                       <div className="flex items-center gap-3.5 rounded-2xl border border-border/80 bg-muted/20 p-3.5 text-left sm:p-4">
-                        <div className="flex size-11 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-card">
-                          <Image
-                            src={
-                              operator === "Telecel"
-                                ? "/telecel.svg"
-                                : operator === "AT"
-                                ? "/at.svg"
-                                : "/mtn.svg"
-                            }
-                            alt={operator}
-                            width={24}
-                            height={24}
-                            className="object-contain"
-                          />
-                        </div>
+                        <OperatorLogo operator={operator} size={44} />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-[14px] font-medium tracking-[-0.01em] text-foreground sm:text-[14.5px]">
                             {operator} Wallet
@@ -629,21 +624,7 @@ export function FirstRunWelcome({
                           /* ── Branch 1: Same verified number (NO phone field, NO network field) ── */
                           <div className="flex flex-col gap-4">
                             <div className="flex items-center gap-3 rounded-2xl border border-border/80 bg-muted/20 p-3 sm:p-3.5 text-left">
-                              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-card">
-                                <Image
-                                  src={
-                                    operator === "Telecel"
-                                      ? "/telecel.svg"
-                                      : operator === "AT"
-                                      ? "/at.svg"
-                                      : "/mtn.svg"
-                                  }
-                                  alt={operator}
-                                  width={22}
-                                  height={22}
-                                  className="object-contain"
-                                />
-                              </div>
+                              <OperatorLogo operator={operator} size={44} />
                               <div className="min-w-0 flex-1">
                                 <p className="truncate text-[13.5px] font-medium tracking-[-0.01em] text-foreground">
                                   {operator} Wallet
@@ -655,41 +636,21 @@ export function FirstRunWelcome({
                             </div>
 
                             {/* Amount Input */}
-                            <div className="flex flex-col gap-1.5">
-                              <Label htmlFor="momoAmt" className="text-[12.5px] font-medium text-foreground">
-                                Amount
-                              </Label>
-                              <div className="relative">
-                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 z-10 text-[13.5px] text-muted-foreground font-medium pointer-events-none select-none">
-                                  GHS
-                                </span>
-                                <Input
-                                  id="momoAmt"
-                                  type="number"
-                                  min="1"
-                                  step="any"
-                                  value={amount}
-                                  onChange={(e) => setAmount(e.target.value)}
-                                  className="h-10.5 pl-14 text-[14.5px] font-medium rounded-xl"
-                                  required
-                                  autoFocus
-                                />
-                              </div>
-                            </div>
+                            <AmountInput value={amount} onChange={setAmount} currency="GHS" label="Amount" />
                           </div>
                         ) : (
                           /* ── Branch 2: Different number (HAS phone field + network selector + Amount) ── */
                           <div className="flex flex-col gap-3.5">
                             {/* Mobile Number input */}
                             <div className="flex flex-col gap-1.5">
-                              <Label htmlFor="momoPhone" className="text-[12.5px] font-medium text-foreground">
+                              <Label htmlFor="momoPhone" className={FUND_LABEL}>
                                 Mobile Number
                               </Label>
                               <PhoneInput
                                 id="momoPhone"
                                 value={phone}
                                 onValueChange={handleCustomPhoneChange}
-                                className="h-10.5 bg-card border-border/80 rounded-xl"
+                                className={FUND_FIELD}
                                 required
                                 autoFocus
                               />
@@ -700,144 +661,45 @@ export function FirstRunWelcome({
 
                             {/* Network Provider Selector */}
                             <div className="flex flex-col gap-1.5">
-                              <Label className="text-[12.5px] font-medium text-foreground">
+                              <Label className={FUND_LABEL}>
                                 Network Provider
                               </Label>
-                              <Select
-                                value={operator}
-                                onValueChange={(val) => setOperator(val as "MTN" | "Telecel" | "AT")}
-                              >
-                                <SelectTrigger className="h-10.5 w-full bg-card border-border/80">
-                                  <div className="flex items-center gap-2.5">
-                                    <div className="flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted/40">
-                                      {operator === "MTN" && (
-                                        <Image
-                                          src="/mtn.svg"
-                                          alt="MTN"
-                                          width={24}
-                                          height={24}
-                                          className="size-6 object-contain"
-                                        />
-                                      )}
-                                      {operator === "Telecel" && (
-                                        <Image
-                                          src="/telecel.svg"
-                                          alt="Telecel"
-                                          width={24}
-                                          height={24}
-                                          className="size-6 object-contain"
-                                        />
-                                      )}
-                                      {operator === "AT" && (
-                                        <Image
-                                          src="/at.svg"
-                                          alt="AT"
-                                          width={24}
-                                          height={24}
-                                          className="size-6 object-contain"
-                                        />
-                                      )}
-                                    </div>
-                                    <span className="text-[13.5px] text-foreground font-medium">
-                                      {operator === "MTN" && "MTN Mobile Money"}
-                                      {operator === "Telecel" && "Telecel Cash"}
-                                      {operator === "AT" && "AT Money"}
-                                    </span>
-                                  </div>
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="MTN">
-                                    <div className="flex items-center gap-2.5 py-0.5">
-                                      <Image
-                                        src="/mtn.svg"
-                                        alt="MTN"
-                                        width={22}
-                                        height={22}
-                                        className="size-5.5 object-contain"
-                                      />
-                                      <span>MTN Mobile Money</span>
-                                    </div>
-                                  </SelectItem>
-                                  <SelectItem value="Telecel">
-                                    <div className="flex items-center gap-2.5 py-0.5">
-                                      <Image
-                                        src="/telecel.svg"
-                                        alt="Telecel"
-                                        width={22}
-                                        height={22}
-                                        className="size-5.5 object-contain"
-                                      />
-                                      <span>Telecel Cash</span>
-                                    </div>
-                                  </SelectItem>
-                                  <SelectItem value="AT">
-                                    <div className="flex items-center gap-2.5 py-0.5">
-                                      <Image
-                                        src="/at.svg"
-                                        alt="AT"
-                                        width={22}
-                                        height={22}
-                                        className="size-5.5 object-contain"
-                                      />
-                                      <span>AT Money</span>
-                                    </div>
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
+                              <OperatorSelect value={operator} onChange={setOperator} />
                             </div>
 
                             {/* Amount Input */}
-                            <div className="flex flex-col gap-1.5">
-                              <Label htmlFor="momoAmtCustom" className="text-[12.5px] font-medium text-foreground">
-                                Amount
-                              </Label>
-                              <div className="relative">
-                                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 z-10 text-[13.5px] text-muted-foreground font-medium pointer-events-none select-none">
-                                  GHS
-                                </span>
-                                <Input
-                                  id="momoAmtCustom"
-                                  type="number"
-                                  min="1"
-                                  step="any"
-                                  value={amount}
-                                  onChange={(e) => setAmount(e.target.value)}
-                                  className="h-10.5 pl-14 text-[14.5px] font-medium rounded-xl"
-                                  required
-                                />
-                              </div>
-                            </div>
+                            <AmountInput value={amount} onChange={setAmount} currency="GHS" label="Amount" />
                           </div>
                         )
                       ) : (
                         <div className="flex flex-col gap-3.5">
                           <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="cardNum" className="text-[12.5px] font-medium text-foreground">
+                            <Label htmlFor="cardNum" className={FUND_LABEL}>
                               Card Number
                             </Label>
                             <Input
                               id="cardNum"
                               value={cardNumber}
                               onChange={(e) => setCardNumber(e.target.value)}
-                              className="h-10.5 text-[14px] bg-card border-border/80 rounded-xl"
+                              className={FUND_FIELD}
                               required
                             />
                           </div>
                           <div className="grid grid-cols-2 gap-2.5">
                             <div className="flex flex-col gap-1.5">
-                              <Label htmlFor="cardExp" className="text-[12.5px] font-medium text-foreground">
+                              <Label htmlFor="cardExp" className={FUND_LABEL}>
                                 Expiry
                               </Label>
                               <Input
                                 id="cardExp"
                                 value={cardExpiry}
                                 onChange={(e) => setCardExpiry(e.target.value)}
-                                className="h-10.5 text-[14px] bg-card border-border/80 rounded-xl"
+                                className={FUND_FIELD}
                                 required
                               />
                             </div>
                             <div className="flex flex-col gap-1.5">
-                              <Label htmlFor="cardCvv" className="text-[12.5px] font-medium text-foreground">
+                              <Label htmlFor="cardCvv" className={FUND_LABEL}>
                                 CVV
                               </Label>
                               <Input
@@ -845,31 +707,12 @@ export function FirstRunWelcome({
                                 maxLength={3}
                                 value={cardCvv}
                                 onChange={(e) => setCardCvv(e.target.value)}
-                                className="h-10.5 text-[14px] bg-card border-border/80 rounded-xl"
+                                className={FUND_FIELD}
                                 required
                               />
                             </div>
                           </div>
-                          <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="cardAmt" className="text-[12.5px] font-medium text-foreground">
-                              Amount
-                            </Label>
-                            <div className="relative">
-                              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 z-10 text-[13.5px] text-muted-foreground font-medium pointer-events-none select-none">
-                                GHS
-                              </span>
-                              <Input
-                                id="cardAmt"
-                                type="number"
-                                min="1"
-                                step="any"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                                className="h-10.5 pl-14 text-[14.5px] font-medium rounded-xl"
-                                required
-                              />
-                            </div>
-                          </div>
+                          <AmountInput value={amount} onChange={setAmount} currency="GHS" label="Amount" />
                         </div>
                       )}
 
@@ -949,7 +792,13 @@ export function FirstRunWelcome({
                                 : "text-foreground font-medium underline underline-offset-4 hover:text-foreground/80 cursor-pointer"
                             )}
                           >
-                            {countdown > 0 ? `Resend in ${countdown}s` : "Resend code"}
+                            {countdown > 0 ? (
+                    <>
+                      Resend in <span className="tabular">{countdown}s</span>
+                    </>
+                  ) : (
+                    "Resend code"
+                  )}
                           </button>
                         </div>
                       </div>
@@ -1012,16 +861,17 @@ export function FirstRunWelcome({
                 {step === "source" && (
                   <SaveSourcePane
                     source={sourceToUse}
-                    onDone={() => goTo("referral")}
+                    onDone={close}
                   />
                 )}
 
-                {/* STEP 7: REFERRAL */}
+                {/* STEP 1: REFERRAL (asked first) */}
                 {step === "referral" && (
                   <ReferralStep
                     onDone={() => {
                       clearPendingReferral();
-                      close();
+                      if (fundNext) goTo("welcome");
+                      else close();
                     }}
                     dataTour="dashboard-referral"
                   />

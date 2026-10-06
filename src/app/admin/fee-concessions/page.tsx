@@ -98,7 +98,7 @@ export default function FeeConcessionsPage() {
 
       {effective === "loading" && (
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
-          <ListSkeleton rows={4} columns={5} />
+          <ListSkeleton rows={4} />
         </div>
       )}
 

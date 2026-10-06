@@ -11,6 +11,7 @@
 
 import Link from "next/link";
 import { ChevronRight, Wallet } from "lucide-react";
+import { ActionTile } from "@/components/ui/action-tile";
 import { Modal } from "@/components/ui/dialog";
 import {
   OPEN_FUND_EVENT,
@@ -20,18 +21,6 @@ import {
   withFrom,
   type PaymentOptionGroup,
 } from "@/lib/payment-options";
-
-/** One choice: a bordered tile with a gold-tinted icon, so the picker matches the funding options. */
-const ROW =
-  "group flex w-full items-center gap-3.5 rounded-2xl border border-border/80 bg-card p-3.5 text-left transition-all duration-150 hover:border-primary/60 hover:bg-muted/40 active:scale-[0.98]";
-
-function OptionIcon({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-foreground">
-      {children}
-    </span>
-  );
-}
 
 export type MoneyActionKind = "send" | "bill" | "topup";
 
@@ -76,42 +65,25 @@ export function MoneyActionPicker({
   };
 
   return (
-    <Modal open={open} onOpenChange={onOpenChange} title={TITLE[kind]} size="sm" bodyClassName="gap-2.5 pb-5">
+    <Modal open={open} onOpenChange={onOpenChange} title={TITLE[kind]} size="sm" bodyClassName="gap-4 pb-5">
       {/* Topping up your own account comes first: it's what "top up" means before anything else. */}
       {kind === "topup" && (
-        <button type="button" onClick={fundAccount} className={`${ROW} cursor-pointer`}>
-          <OptionIcon>
-            <Wallet size={18} strokeWidth={1.8} aria-hidden="true" />
-          </OptionIcon>
-          <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="truncate text-[14.5px] tracking-[-0.01em] text-foreground">My Account</span>
-            <span className="truncate text-[12.5px] text-muted-foreground">Mobile money or any bank card</span>
-          </span>
-          <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
-        </button>
+        <ActionTile icon={Wallet} title="My Account" description="Mobile money or any bank card" onClick={fundAccount} />
       )}
 
       {groups.map((group, i) => (
-        <section key={group.label ?? i} className="flex flex-col gap-2.5">
+        <section key={group.label ?? i} className="flex flex-col gap-4">
           {group.label && <h3 className="text-[12px] text-muted-foreground">{group.label}</h3>}
-          <ul className="flex flex-col gap-2.5">
+          <ul className="flex flex-col gap-4">
             {group.options.map((o) => (
               <li key={o.id}>
-                <Link href={withFrom(o.href, accountId)} onClick={() => onOpenChange(false)} className={ROW}>
-                  <OptionIcon>
-                    <o.icon size={18} strokeWidth={1.8} aria-hidden="true" />
-                  </OptionIcon>
-                  <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                    <span className="truncate text-[14.5px] tracking-[-0.01em] text-foreground">{o.title}</span>
-                    {o.hint && <span className="truncate text-[12.5px] text-muted-foreground">{o.hint}</span>}
-                  </span>
-                  <ChevronRight
-                    size={16}
-                    strokeWidth={1.8}
-                    aria-hidden="true"
-                    className="shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
-                  />
-                </Link>
+                <ActionTile
+                  href={withFrom(o.href, accountId)}
+                  onClick={() => onOpenChange(false)}
+                  icon={o.icon}
+                  title={o.title}
+                  description={o.hint}
+                />
               </li>
             ))}
           </ul>

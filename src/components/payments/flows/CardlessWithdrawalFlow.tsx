@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState, useMemo, useEffect, useLayoutEffect, useRef } from "react";
 import { Account } from "@/lib/mock-data";
 import {
@@ -16,7 +15,7 @@ import {
   ResolvingAccountBadge,
   NETWORKS,
   detectTelcoNetwork,
-  getTelcoLogo,
+  operatorBadgeIcon,
   resolveAccountName,
   formatGhPhone,
   NetworkSelect,
@@ -134,17 +133,7 @@ export function CardlessWithdrawalFlow({
                 ? `Self Cash Withdrawal · ${formatGhPhone(REGISTERED_PHONE)}`
                 : `${state.wNetwork || "MTN Mobile Money"} · ${formatGhPhone(state.recipientPhone)}`
             }
-            icon={
-              !isSelf && getTelcoLogo(state.wNetwork || "") ? (
-                <Image
-                  src={getTelcoLogo(state.wNetwork || "")!}
-                  alt={state.wNetwork || ""}
-                  width={40}
-                  height={40}
-                  className="size-full object-cover rounded-full"
-                />
-              ) : undefined
-            }
+            icon={!isSelf ? operatorBadgeIcon(state.wNetwork || "") : undefined}
             nameCheck={isSelf ? undefined : { confirmed: Boolean(verifiedName), by: state.wNetwork || undefined }}
             onChange={() => setCollapsed(false)}
           />

@@ -17,7 +17,7 @@ import { useLinkedSources, type LinkedSource } from "@/lib/accounts-store";
 export interface PendingCard {
   last4: string;
   expiry: string;
-  network: "Visa" | "Mastercard" | "Card";
+  network: "Visa" | "Mastercard" | "UnionPay" | "Card";
   /** Where to send the customer once their bank is done with them. */
   returnTo: string;
   /** Linked from Add money — reopen it with the new card selected. */
@@ -42,6 +42,7 @@ interface CardLinkState {
 export function cardNetwork(digits: string): PendingCard["network"] {
   if (/^4/.test(digits)) return "Visa";
   if (/^(5[1-5]|2[2-7])/.test(digits)) return "Mastercard";
+  if (/^62/.test(digits)) return "UnionPay";
   return "Card";
 }
 

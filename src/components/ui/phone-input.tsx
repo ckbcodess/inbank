@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
+import { CountryFlag } from "@/components/ui/country-flag";
 import { ChevronDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatNationalMobile, toLocalMobile } from "@/lib/phone";
@@ -41,20 +41,6 @@ const PICKER_COUNTRIES = [{ code: GHANA, name: "Ghana" }, ...COUNTRIES.map(({ co
   a.name.localeCompare(b.name),
 );
 
-function Flag({ code, size = 20 }: { code: string; size?: number }) {
-  return (
-    <Image
-      src={`/flags/${code}.svg`}
-      alt=""
-      width={size}
-      height={size}
-      unoptimized
-      className="shrink-0 rounded-full border border-border/60 object-cover"
-      style={{ width: size, height: size }}
-    />
-  );
-}
-
 function CountryDropdown({
   country,
   onChange,
@@ -85,7 +71,7 @@ function CountryDropdown({
         aria-label={`Country: ${selected?.name ?? "Ghana"}. Change country`}
         className="-ml-1 flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-md px-1 outline-none transition-colors hover:bg-foreground/5 focus-visible:bg-foreground/5"
       >
-        <Flag code={country} />
+        <CountryFlag code={country} size={20} />
         <span className="tabular text-muted-foreground">+{dialCodeFor(country)}</span>
         <ChevronDown size={14} strokeWidth={1.8} className="text-muted-foreground" aria-hidden="true" />
       </PopoverTrigger>
@@ -123,7 +109,7 @@ function CountryDropdown({
                     c.code === country && "bg-muted/70",
                   )}
                 >
-                  <Flag code={c.code} size={22} />
+                  <CountryFlag code={c.code} size={22} />
                   <span className="flex-1 truncate text-foreground">{c.name}</span>
                   <span className="tabular text-muted-foreground">+{dialCodeFor(c.code)}</span>
                 </button>

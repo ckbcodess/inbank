@@ -3,9 +3,8 @@
 import { AlertToast } from "@/components/ui/alert-toast";
 import { InlineError } from "@/components/ui/inline-error";
 import { useState, useEffect } from "react";
-import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 import {
-  ArrowRight,
   CheckCircle2,
   ChevronLeft,
   CreditCard,
@@ -15,17 +14,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select";
 import OtpInput from "@/components/auth/OtpInput";
 import { AppLoader } from "@/components/ui/loader";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { displayGhanaMobile, toNationalDigits } from "@/lib/phone";
 import { maskMobile } from "@/lib/auth-shared";
+import { AmountInput, OperatorSelect } from "@/components/payments/flows/shared";
+import { cardNetwork } from "@/lib/card-link";
+import { useCardPayment } from "@/lib/card-payment";
+import { ActionTile } from "@/components/ui/action-tile";
 
 interface QuickFundModalProps {
   open: boolean;
@@ -34,9 +31,18 @@ interface QuickFundModalProps {
   accountName?: string;
   /** The number confirmed at sign-up. Pre-filled; using it needs no code, any other number is confirmed by SMS first. */
   registeredPhone?: string;
+  /** Back from the bank's 3-D Secure page: open on the receipt, or on the card form after a cancel. */
+  resume?: FundResume | null;
 }
 
+/** The money flows' field look (Send & Pay, Add money): rounded-2xl, 14px medium labels, the shared AmountInput. */
+const FUND_FIELD = "h-13 rounded-2xl px-4 text-[15px]";
+const FUND_LABEL = "text-[14px] font-medium text-foreground";
+
 type FundDetails = { operator?: string; phone?: string; cardLast4?: string };
+
+/** What the bank's page decided, when a card payment comes back to this flow. */
+export type FundResume = { status: "approved" | "cancelled"; amount: number; cardLast4: string };
 
 /** The dashboard's standalone top-up dialog. */
 export function QuickFundModal({
@@ -44,6 +50,7 @@ export function QuickFundModal({
   onOpenChange,
   onSuccess,
   registeredPhone,
+  resume,
 }: QuickFundModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -53,6 +60,7 @@ export function QuickFundModal({
           <QuickFundFlow
             variant="modal"
             registeredPhone={registeredPhone}
+            resume={resume}
             onSuccess={onSuccess}
             onFinish={() => onOpenChange(false)}
           />
@@ -70,6 +78,7 @@ export function QuickFundModal({
 export function QuickFundFlow({
   variant,
   registeredPhone,
+  resume,
   onSuccess,
   onFinish,
   onBack,
@@ -77,14 +86,21 @@ export function QuickFundFlow({
   /** "modal" brings its own header and padding; "split" or "inline" fits directly in cards/welcome flows. */
   variant: "modal" | "split" | "inline";
   registeredPhone?: string;
+  /** Back from the bank's 3-D Secure page: open on the receipt, or on the card form after a cancel. */
+  resume?: FundResume | null;
   onSuccess: (amount: number, method: "momo" | "card", details: FundDetails) => void;
   /** Called after onSuccess, when they tap Continue on the receipt. */
   onFinish: () => void;
   /** Optional back handler for when user is at the initial selection stage */
   onBack?: () => void;
 }) {
-  const [stage, setStage] = useState<"select" | "form" | "otp" | "ussd" | "success">("select");
-  const [method, setMethod] = useState<"momo" | "card">("momo");
+  const router = useRouter();
+  const pathname = usePathname();
+  const startCardPayment = useCardPayment((s) => s.start);
+  const [stage, setStage] = useState<"select" | "form" | "otp" | "ussd" | "success">(
+    resume ? (resume.status === "approved" ? "success" : "form") : "select",
+  );
+  const [method, setMethod] = useState<"momo" | "card">(resume ? "card" : "momo");
   const [operator, setOperator] = useState<"MTN" | "Telecel" | "AT">("MTN");
   const [phone, setPhone] = useState(registeredPhone ?? "0241234567");
   const usingRegistered =
@@ -92,11 +108,13 @@ export function QuickFundFlow({
   const [cardNumber, setCardNumber] = useState("4111 2222 3333 4444");
   const [cardExpiry, setCardExpiry] = useState("12/28");
   const [cardCvv, setCardCvv] = useState("123");
-  const [amount, setAmount] = useState("100");
+  const [amount, setAmount] = useState(resume ? String(resume.amount) : "100");
   const [otpDigits, setOtpDigits] = useState<string[]>(Array(6).fill(""));
   const [countdown, setCountdown] = useState(30);
   const [busy, setBusy] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState(
+    resume?.status === "cancelled" ? "Your bank didn’t approve this payment, so nothing was taken. You can try again." : "",
+  );
 
   // Countdown timer for OTP
   useEffect(() => {
@@ -137,11 +155,19 @@ export function QuickFundFlow({
         setStage("otp");
       }, 500);
     } else {
-      // Direct card deposit simulation
-      window.setTimeout(() => {
-        setBusy(false);
-        setStage("success");
-      }, 800);
+      // The card's own bank approves it on its page (3-D Secure), then sends the customer back here.
+      const digits = cardNumber.replace(/\D/g, "");
+      startCardPayment({
+        flow: "quick-fund",
+        amount: parsedAmt,
+        currency: "GHS",
+        last4: digits.slice(-4),
+        network: cardNetwork(digits),
+        merchant: "GCB Bank PLC",
+        description: "Fund your GCB account",
+        returnTo: `${pathname}${window.location.search}`,
+      });
+      window.setTimeout(() => router.push("/card-verification"), 500);
     }
   }
 
@@ -165,7 +191,7 @@ export function QuickFundFlow({
     onSuccess(parsedAmt, method, {
       operator: method === "momo" ? operator : undefined,
       phone: method === "momo" ? displayGhanaMobile(phone) : undefined,
-      cardLast4: method === "card" ? cardNumber.replace(/\s/g, "").slice(-4) : undefined,
+      cardLast4: method === "card" ? resume?.cardLast4 ?? cardNumber.replace(/\s/g, "").slice(-4) : undefined,
     });
     onFinish();
   }
@@ -219,46 +245,25 @@ export function QuickFundFlow({
           )}
           {/* STAGE 0: SELECT PAYMENT METHOD */}
           {stage === "select" && (
-            <div className="flex flex-col gap-3.5 pt-1">
-              <button
-                type="button"
+            <div className="flex flex-col gap-4 pt-1">
+              <ActionTile
+                icon={Smartphone}
+                title="Fund with Mobile Money Wallet"
                 onClick={() => {
                   setErrorMsg("");
                   setMethod("momo");
                   setStage("form");
                 }}
-                className="group flex w-full items-center justify-between rounded-2xl border border-border/80 bg-card p-4 transition-all hover:border-primary/60 hover:bg-muted/30 cursor-pointer sm:p-5"
-              >
-                <div className="flex items-center gap-3.5 sm:gap-4">
-                  <div className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground shrink-0 shadow-xs">
-                    <Smartphone size={20} strokeWidth={2} />
-                  </div>
-                  <span className="text-[14px] font-medium text-foreground tracking-[-0.01em] sm:text-[14.5px]">
-                    Fund with Mobile Money Wallet
-                  </span>
-                </div>
-                <ArrowRight size={16} strokeWidth={1.8} className="text-muted-foreground transition-transform shrink-0" />
-              </button>
-
-              <button
-                type="button"
+              />
+              <ActionTile
+                icon={CreditCard}
+                title="Fund with a Card"
                 onClick={() => {
                   setErrorMsg("");
                   setMethod("card");
                   setStage("form");
                 }}
-                className="group flex w-full items-center justify-between rounded-2xl border border-border/80 bg-card p-4 transition-all hover:border-primary/60 hover:bg-muted/30 cursor-pointer sm:p-5"
-              >
-                <div className="flex items-center gap-3.5 sm:gap-4">
-                  <div className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground shrink-0 shadow-xs">
-                    <CreditCard size={20} strokeWidth={2} />
-                  </div>
-                  <span className="text-[14px] font-medium text-foreground tracking-[-0.01em] sm:text-[14.5px]">
-                    Fund with a Card
-                  </span>
-                </div>
-                <ArrowRight size={16} strokeWidth={1.8} className="text-muted-foreground transition-transform shrink-0" />
-              </button>
+              />
             </div>
           )}
 
@@ -270,10 +275,10 @@ export function QuickFundFlow({
                 <div className="flex flex-col gap-3.5">
                   {/* Phone Input with +233 */}
                   <div className="flex flex-col gap-1.5">
-                    <Label htmlFor="quickFundPhone" className="text-[13px] text-foreground">
+                    <Label htmlFor="quickFundPhone" className={FUND_LABEL}>
                       Mobile Number
                     </Label>
-                    <PhoneInput id="quickFundPhone" value={phone} onValueChange={setPhone} required />
+                    <PhoneInput id="quickFundPhone" value={phone} onValueChange={setPhone} className={FUND_FIELD} required />
                     {registeredPhone && (
                       <p className="px-0.5 text-[12.5px] text-muted-foreground">
                         {usingRegistered
@@ -285,83 +290,42 @@ export function QuickFundFlow({
 
                   {/* Telco Selector */}
                   <div className="flex flex-col gap-1.5">
-                    <Label className="text-[13px] text-foreground">Network Provider</Label>
-                    <Select value={operator} onValueChange={(val) => setOperator(val as "MTN" | "Telecel" | "AT")}>
-                      <SelectTrigger className="h-11 w-full bg-card">
-                        <div className="flex items-center gap-2.5">
-                          <div className="flex size-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted/40">
-                            {operator === "MTN" && (
-                              <Image src="/mtn.svg" alt="MTN" width={24} height={24} className="size-6 object-contain" />
-                            )}
-                            {operator === "Telecel" && (
-                              <Image src="/telecel.svg" alt="Telecel" width={24} height={24} className="size-6 object-contain" />
-                            )}
-                            {operator === "AT" && (
-                              <Image src="/at.svg" alt="AT" width={24} height={24} className="size-6 object-contain" />
-                            )}
-                          </div>
-                          <span className="text-[13.5px] text-foreground font-medium">
-                            {operator === "MTN" && "MTN Mobile Money"}
-                            {operator === "Telecel" && "Telecel Cash"}
-                            {operator === "AT" && "AT Money"}
-                          </span>
-                        </div>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="MTN">
-                          <div className="flex items-center gap-2.5 py-0.5">
-                            <Image src="/mtn.svg" alt="MTN" width={22} height={22} className="size-5 object-contain" />
-                            <span>MTN Mobile Money</span>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="Telecel">
-                          <div className="flex items-center gap-2.5 py-0.5">
-                            <Image src="/telecel.svg" alt="Telecel" width={22} height={22} className="size-5 object-contain" />
-                            <span>Telecel Cash</span>
-                          </div>
-                        </SelectItem>
-                        <SelectItem value="AT">
-                          <div className="flex items-center gap-2.5 py-0.5">
-                            <Image src="/at.svg" alt="AT" width={22} height={22} className="size-5 object-contain" />
-                            <span>AT Money</span>
-                          </div>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label className={FUND_LABEL}>Network Provider</Label>
+                    <OperatorSelect value={operator} onChange={setOperator} />
                   </div>
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
                   <div className="flex flex-col gap-1.5">
-                    <Label htmlFor="quickFundCard" className="text-[13px] text-foreground">Card number</Label>
+                    <Label htmlFor="quickFundCard" className={FUND_LABEL}>Card number</Label>
                     <Input
                       id="quickFundCard"
                       value={cardNumber}
                       onChange={(e) => setCardNumber(e.target.value)}
-                      className="h-10 text-[14px] rounded-xl"
+                      className={FUND_FIELD}
                       required
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1.5">
-                      <Label htmlFor="quickFundExp" className="text-[13px] text-foreground">Expiry</Label>
+                      <Label htmlFor="quickFundExp" className={FUND_LABEL}>Expiry</Label>
                       <Input
                         id="quickFundExp"
                         value={cardExpiry}
                         onChange={(e) => setCardExpiry(e.target.value)}
-                        className="h-10 text-[14px] rounded-xl"
+                        className={FUND_FIELD}
                         required
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <Label htmlFor="quickFundCvv" className="text-[13px] text-foreground">CVV</Label>
+                      <Label htmlFor="quickFundCvv" className={FUND_LABEL}>CVV</Label>
                       <Input
                         id="quickFundCvv"
                         type="password"
                         maxLength={3}
                         value={cardCvv}
                         onChange={(e) => setCardCvv(e.target.value)}
-                        className="h-10 text-[14px] rounded-xl"
+                        className={FUND_FIELD}
                         required
                       />
                     </div>
@@ -370,24 +334,7 @@ export function QuickFundFlow({
               )}
 
               {/* Amount & Chips */}
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="quickFundAmt" className="text-[13px] text-foreground">Amount</Label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 z-10 text-[13.5px] text-muted-foreground pointer-events-none select-none font-medium">
-                    GHS
-                  </span>
-                  <Input
-                    id="quickFundAmt"
-                    type="number"
-                    min="1"
-                    step="any"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    className="h-11 pl-14 text-[15px] font-medium rounded-xl"
-                    required
-                  />
-                </div>
-              </div>
+              <AmountInput value={amount} onChange={setAmount} currency="GHS" label="Amount" />
 
               <AlertToast when={errorMsg} message={errorMsg} />
 
@@ -442,7 +389,13 @@ export function QuickFundFlow({
                   onClick={() => setCountdown(30)}
                   className="text-muted-foreground hover:text-foreground underline underline-offset-4 cursor-pointer disabled:opacity-50"
                 >
-                  {countdown > 0 ? `Resend in ${countdown}s` : "Resend code"}
+                  {countdown > 0 ? (
+                    <>
+                      Resend in <span className="tabular">{countdown}s</span>
+                    </>
+                  ) : (
+                    "Resend code"
+                  )}
                 </button>
               </div>
             </div>

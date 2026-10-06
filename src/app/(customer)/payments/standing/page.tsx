@@ -71,7 +71,7 @@ export default function StandingOrdersPage() {
     <div className="flex flex-col gap-10">
       <PageHeader
         title="Standing Orders"
-        backTo={{ href: "/payments", label: "Payments" }}
+        backTo={{ href: "/payments", label: "Send & Pay" }}
         actions={
           <Button nativeButton={false} render={<Link href="/payments/standing/new" />}>
             <Plus size={15} strokeWidth={1.9} aria-hidden="true" />

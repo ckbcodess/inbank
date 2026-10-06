@@ -18,12 +18,10 @@ import {
   ChevronDown,
   ChevronRight,
   Receipt,
-  QrCode,
   Send,
   Download,
   RefreshCw,
   Landmark,
-  X,
   AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -55,6 +53,8 @@ import type { PayAgainPayee } from "@/lib/payees";
 import { MoneyActionPicker, type MoneyActionKind } from "./MoneyActionPicker";
 import { UnfundedNudge } from "./UnfundedNudge";
 import { SPRING as MOTION_SPRING } from "@/lib/motion";
+import { Bone } from "@/components/states/PageSkeletons";
+import Image from "next/image";
 
 /* ── Types ───────────────────────────────────────────────────────────────── */
 
@@ -172,10 +172,10 @@ export function PanelEmpty({ text, action }: { text: string; action?: { label: s
   );
 }
 
-export function PanelSkeleton({ rows }: { rows: number }) {
+export function PanelSkeleton({ rows, avatar = true }: { rows: number; avatar?: boolean }) {
   return (
     <div className="-mx-4">
-      <ListSkeleton rows={rows} columns={3} />
+      <ListSkeleton rows={rows} avatar={avatar} />
     </div>
   );
 }
@@ -498,7 +498,7 @@ export function BalanceFigure({
   return (
     <div className={cn("flex items-center gap-2 sm:gap-4", className)}>
       {loading ? (
-        <span className="h-[34px] w-56 skeleton-shimmer rounded-lg bg-muted/60 sm:w-64" aria-label="Loading balance" />
+        <Bone className="h-[34px] w-56 rounded-lg sm:w-64" />
       ) : (
         <span className={cn("tabular leading-none tracking-[0.01em] text-foreground", FIGURE_SIZE[size])}>
           {/* A smaller currency code on a phone lets the digits carry the line. */}
@@ -685,7 +685,7 @@ export function ComingUpCard({
     <Card className={className}>
       <CardHeader title={t("dashboard.comingUp", "Coming up")} href="/payments/standing" cta={t("common.manage", "Manage")} />
       {loading ? (
-        <PanelSkeleton rows={3} />
+        <PanelSkeleton rows={3} avatar={false} />
       ) : data.upcoming.length === 0 ? (
         <ComingUpEmpty accountId={data.selectedAccountId} />
       ) : (
@@ -714,12 +714,25 @@ function initials(name: string): string {
  * rail with the recipient prefilled and the selected account as the source — a
  * tap lands on the amount, not on a generic Send screen.
  */
-export function PayAgainCard({ data, className }: { data: DashData; className?: string }) {
+export function PayAgainCard({ data, loading = false, className }: { data: DashData; loading?: boolean; className?: string }) {
   const { t } = useTranslation();
   return (
     <Card className={className}>
       <CardHeader title={t("dashboard.payAgain", "Pay again")} href="/beneficiaries" cta={t("common.manage", "Manage")} />
-      {data.payAgain.length === 0 ? (
+      {loading ? (
+        // The same four-across grid of avatars with a name and a detail under each.
+        <div className="grid grid-cols-4 gap-x-2 gap-y-6 sm:mt-1 sm:gap-y-7">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="flex min-w-0 flex-col items-center gap-2.5 sm:gap-3">
+              <Bone className="size-11 rounded-full sm:size-12" style={{ animationDelay: `${i * 50}ms` }} />
+              <div className="flex w-full flex-col items-center gap-1.5">
+                <Bone className="h-3 w-4/5" style={{ animationDelay: `${i * 50}ms` }} />
+                <Bone className="h-2.5 w-3/5" style={{ animationDelay: `${i * 50}ms` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : data.payAgain.length === 0 ? (
         <PanelEmpty
           text={t("dashboard.payAgainEmpty", "Save the people and bills you pay often, and they'll wait here.")}
           action={{ label: t("dashboard.addSomeone", "Add someone"), href: "/beneficiaries?add=1" }}
@@ -877,10 +890,30 @@ export function AnalyticsCard({
   className?: string;
 }) {
   if (loading) {
+    // The card as it will be: its own title, the half-ring with its hole, and the three range pills.
     return (
-      <Card className={className}>
-        <div className="h-[260px] skeleton-shimmer rounded-xl bg-muted/60" aria-label="Loading My Spends" />
-      </Card>
+      <div
+        role="status"
+        aria-busy="true"
+        className={cn("flex flex-col justify-between gap-3 rounded-2xl border border-border bg-card p-4 shadow-none sm:p-5", className)}
+      >
+        <span className="sr-only">Loading</span>
+        <div className="flex items-center justify-between">
+          <h2 className="text-[17px] font-medium leading-none tracking-[-0.01em] text-foreground">My Spends</h2>
+          <span className="text-[13px] text-muted-foreground">Details</span>
+        </div>
+        <div className="relative my-auto flex flex-col items-center justify-center">
+          <div className="relative aspect-[400/225] w-full max-w-[360px]">
+            <Bone className="absolute inset-x-0 top-0 h-[88.9%] rounded-t-full rounded-b-none" />
+            <div className="absolute inset-x-[20%] bottom-[11.1%] h-[53.3%] rounded-t-full bg-card" />
+          </div>
+        </div>
+        <div className="flex w-full items-center gap-2">
+          {[0, 1, 2].map((i) => (
+            <Bone key={i} className="h-[31px] flex-1 rounded-full" style={{ animationDelay: `${i * 60}ms` }} />
+          ))}
+        </div>
+      </div>
     );
   }
   return <SpendsRadialChart
@@ -936,70 +969,24 @@ export function FxBar({ defaultOpen = false, className }: { defaultOpen?: boolea
 
 /* ── Promo banner ────────────────────────────────────────────────────────── */
 
-const PROMO_DISMISSED_KEY = "nibs-dash-promo-dismissed";
-
 /**
- * The app-download banner. Dismissed once, gone for this browser. Hidden on a
- * phone: a QR code can't be scanned by the screen it's shown on.
+ * The app-download ad, drawn as one picture (`public/images/Container.png`): the line, the phone, the QR code. The
+ * customer can't close it. Hidden on a phone: a QR code can't be scanned by the screen it's shown on.
  */
-/** Shared by every promo variant: `dismissed` is null until storage is checked, so a dismissed banner never flashes. */
-export function usePromoDismissal(): [dismissed: boolean | null, dismiss: () => void] {
-  const [dismissed, setDismissed] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    try {
-      setDismissed(localStorage.getItem(PROMO_DISMISSED_KEY) === "1");
-    } catch {
-      setDismissed(false);
-    }
-  }, []);
-
-  const dismiss = () => {
-    setDismissed(true);
-    try {
-      localStorage.setItem(PROMO_DISMISSED_KEY, "1");
-    } catch {
-      // Storage blocked — it stays hidden for this visit only.
-    }
-  };
-
-  return [dismissed, dismiss];
-}
-
-export function PromoBanner() {
-  const { t } = useTranslation();
-  const [dismissed, dismiss] = usePromoDismissal();
-  if (dismissed !== false) return null;
-
+export function PromoBanner({ className }: { className?: string }) {
   return (
-    <div
-      className="relative hidden overflow-hidden rounded-2xl p-8 text-primary-foreground sm:block"
-      style={{
-        background:
-          "radial-gradient(130% 130% at 15% 15%, var(--primary-hover), color-mix(in oklch, var(--primary) 88%, black))",
-      }}
-    >
-      <button
-        type="button"
-        onClick={dismiss}
-        className="absolute right-4 top-4 flex size-8 items-center justify-center rounded-full opacity-70 transition-opacity hover:opacity-100 cursor-pointer"
-        aria-label={t("common.dismiss", "Dismiss")}
-      >
-        <X size={17} strokeWidth={1.8} />
-      </button>
-      <div className="relative flex flex-col gap-6">
-        <h3 className="max-w-[280px] text-[26px] leading-[1.15] tracking-[-0.01em]">
-          {t("dashboard.promoTitle", "Banking made easier, wherever you are.")}
-        </h3>
-        <div className="flex items-center gap-4">
-          <span className="flex size-[92px] items-center justify-center rounded-xl bg-[color-mix(in_oklch,var(--primary-foreground)_10%,transparent)]">
-            <QrCode size={64} strokeWidth={1.4} />
-          </span>
-          <span className="text-[13px] opacity-80 leading-snug max-w-[150px]">
-            {t("dashboard.promoScan", "Scan to get the GCB mobile app")}
-          </span>
-        </div>
-      </div>
+    <div className={cn("hidden sm:block", className)}>
+      <Image
+        src="/images/Container.png"
+        alt="Banking made easier, wherever you are. Scan the QR code to get the GCB mobile app."
+        width={2760}
+        height={737}
+        // The ad spans the dashboard, about 1380px wide at most. Next re-encodes at quality 75 by default, which
+        // softens a picture with fine text; keep it high.
+        sizes="(min-width: 1440px) 1380px, calc(100vw - 96px)"
+        quality={95}
+        className="h-auto w-full rounded-2xl"
+      />
     </div>
   );
 }

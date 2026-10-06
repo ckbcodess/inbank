@@ -159,7 +159,7 @@ export function RouteLoadingProvider({ children }: { children?: React.ReactNode 
           style={{ opacity: loading ? 1 : 0 }}
         >
           <div
-            className="h-full bg-primary shadow-[0_0_8px_rgba(253,195,7,0.7)] transition-all ease-out"
+            className="h-full bg-primary shadow-[0_0_8px_rgba(253,195,7,0.7)] transition-[width] ease-out"
             style={{
               width: `${progress}%`,
               transitionDuration: progress === 100 ? "180ms" : "280ms",

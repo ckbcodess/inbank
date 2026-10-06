@@ -13,20 +13,14 @@
  */
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
 import { AlertCircle, Plus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
 import type { Account } from "@/lib/mock-data";
-import { useLinkedSources, type NetworkOperator } from "@/lib/accounts-store";
+import { useLinkedSources } from "@/lib/accounts-store";
 import LinkSourceAccountModal from "@/components/dashboard/LinkSourceAccountModal";
-import { formatGhPhone, getTelcoLogo, normalizeNetworkName } from "./shared";
-
-const WALLET_NAME: Record<NetworkOperator, string> = {
-  MTN: "MTN Mobile Money",
-  Telecel: "Telecel Cash",
-  AT: "AT Money",
-};
+import { formatGhPhone, normalizeNetworkName } from "./shared";
+import { OperatorLogo } from "@/components/ui/operator-logo";
+import { OPERATORS } from "@/lib/operators";
 
 /** The wallet on the customer's registered number (the demo customer's MTN line). */
 export const REGISTERED_WALLET = { phone: "0244123821", network: "MTN Mobile Money" } as const;
@@ -48,7 +42,7 @@ export function useOwnWallets(): OwnWallet[] {
     const registered: OwnWallet = { id: "registered", tag: "Registered", ...REGISTERED_WALLET };
     const linked = sources
       .filter((s) => s.type === "momo" && s.operator)
-      .map<OwnWallet>((s) => ({ id: s.id, phone: s.maskedNumber, network: WALLET_NAME[s.operator!], tag: "Linked" }))
+      .map<OwnWallet>((s) => ({ id: s.id, phone: s.maskedNumber, network: OPERATORS[s.operator!].wallet, tag: "Linked" }))
       .filter((w) => digitsOf(w.phone) !== digitsOf(registered.phone));
     return [registered, ...linked];
   }, [sources]);
@@ -130,15 +124,6 @@ export function OwnWalletPicker({
   const current = wallets.find((w) => digitsOf(w.phone) === digitsOf(selectedPhone)) ?? wallets[0];
   const nameOf = (w: OwnWallet) => (line ? normalizeNetworkName(w.network) : w.network);
 
-  const mark = (w: OwnWallet, size: string) => {
-    const logo = getTelcoLogo(w.network);
-    return (
-      <span className={cn("flex shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted", size)}>
-        {logo && <Image src={logo} alt="" width={40} height={40} className="size-full rounded-full object-cover" />}
-      </span>
-    );
-  };
-
   return (
     <>
       {removedNotice && (
@@ -165,7 +150,7 @@ export function OwnWalletPicker({
         >
           {current && (
             <div className="flex min-w-0 items-center gap-3">
-              {mark(current, "size-9")}
+              <OperatorLogo name={current.network} size={36} />
               <span className="flex min-w-0 flex-col gap-0.5">
                 <span className="truncate text-[14px] text-foreground">{nameOf(current)}</span>
                 <span className="truncate text-[12.5px] text-muted-foreground tabular">
@@ -179,7 +164,7 @@ export function OwnWalletPicker({
           {wallets.map((w) => (
             <SelectItem key={w.id} value={w.id}>
               <div className="flex items-center gap-3">
-                {mark(w, "size-8")}
+                <OperatorLogo name={w.network} size={32} />
                 <span className="flex min-w-0 flex-col gap-0.5">
                   <span className="truncate text-[14px] text-foreground">{nameOf(w)}</span>
                   <span className="truncate text-[12.5px] text-muted-foreground tabular">
@@ -208,7 +193,7 @@ export function OwnWalletPicker({
         onClose={() => setLinkOpen(false)}
         onLinked={(source) => {
           if (source.type === "momo" && source.operator) {
-            onSelect({ id: source.id, phone: source.maskedNumber, network: WALLET_NAME[source.operator], tag: "Linked" });
+            onSelect({ id: source.id, phone: source.maskedNumber, network: OPERATORS[source.operator].wallet, tag: "Linked" });
           }
         }}
       />

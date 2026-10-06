@@ -137,7 +137,7 @@ export function WalletToBankFlow({
                 }
               }}
               placeholder="Enter account number"
-              className="numorainput h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition-all tabular"
+              className="numorainput h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
             />
 
             {isDetailsValid && resolving && (

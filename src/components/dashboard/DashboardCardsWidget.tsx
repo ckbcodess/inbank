@@ -1,3 +1,4 @@
+import { NetworkLogo } from "@/components/cards/NetworkLogo";
 import { useState } from "react";
 import Link from "next/link";
 import { Lock, Smartphone, Globe, ChevronRight } from "lucide-react";
@@ -128,14 +129,7 @@ export function DashboardCardsWidget() {
                   <div className="h-2 w-2.5 rounded-xs bg-primary/90" />
                   {/* Network logo */}
                   <div className="flex justify-end">
-                    {card.network === "VISA" ? (
-                      <span className="text-[8.5px] font-bold tracking-tight text-white">VISA</span>
-                    ) : (
-                      <div className="flex items-center -space-x-1">
-                        <div className="size-2 rounded-full bg-[var(--mc-red)]/90" />
-                        <div className="size-2 rounded-full bg-[var(--mc-orange)]/90" />
-                      </div>
-                    )}
+                    <NetworkLogo scheme={card.network === "VISA" ? "Visa" : "Mastercard"} className="h-2 text-white" />
                   </div>
                 </div>
 

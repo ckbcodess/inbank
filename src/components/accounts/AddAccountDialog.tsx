@@ -22,7 +22,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Check, CheckCircle2, ChevronLeft, Landmark, MapPin, ScanFace, Wallet } from "lucide-react";
+import { ArrowRight, CheckCircle2, ChevronLeft, Landmark, MapPin, ScanFace, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -31,6 +31,7 @@ import { TileChip } from "@/components/ui/action-tile";
 import { cn } from "@/lib/utils";
 import { findAccount, formatMoney, type Account } from "@/lib/mock-data";
 import { useAccountPrefs } from "@/lib/accounts-store";
+import { CheckBadge } from "@/components/ui/check-badge";
 
 type Step = "confirm" | "selfie" | "no_match" | "branch" | "choose" | "move" | "done";
 
@@ -255,9 +256,7 @@ export default function AddAccountDialog({
                           Added
                         </Badge>
                       ) : selected ? (
-                        <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-foreground text-background">
-                          <Check size={12} strokeWidth={2.5} aria-hidden="true" />
-                        </span>
+                        <CheckBadge />
                       ) : null}
                     </button>
                   );

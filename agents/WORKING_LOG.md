@@ -377,6 +377,31 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
     the title. `padY` and `headerGap` props override it per screen. Not yet seen on the long signup and activate steps.
   - Decision: the trusted-device "Welcome back" screen asks for the password again, not the PIN (reverses the earlier
     PIN-for-returning decision). The PIN now only authorises payments.
+  - Decision: the step after the password (`/mfa`) reuses the Send & Pay authorisation (`useAuthorisation` plus
+    `AuthorisePanel`): PIN by default, one-time code by SMS or shortcode as the alternative and the way past a
+    forgotten PIN. Trusted-device memory lives in `sessionStorage`, so a fresh visit opens on the full log-in form.
+    The Demo hub has Choose personal or business, Personal log in, Business log in and Welcome back entries.
+    The chooser is `/select-banking` (restored from before `/` started redirecting to `/login`); the app does not link to it.
+  - Decision: every flow that charges or links a card hands off to `/card-verification`, the mock bank 3-D Secure page
+    (`lib/card-payment.ts` for payments, `lib/card-link.ts` for linking). Quick fund, the welcome fund step and Add
+    money from a linked card return to where they left off (receipt on approval, form on cancel). Cardless top-ups from
+    the customer's own account have no 3DS.
+  - Decision: onboarding order is referral, then the fund prompt, then save-source. Card networks are Visa, Mastercard,
+    GH-Link and UnionPay (`lib/card-schemes.ts`, one `NetworkLogo`); the GH-Link and UnionPay marks are placeholders.
+  - Decision: the card page is two columns from `lg` (card, caption and round actions left; the option list right), one
+    column below. The Dev Mode layout picker and the other five arrangements are deleted; the skeleton mirrors it.
+  - Override: a debit card shows Show PIN twice, as its first round action and as a row in the list, at Ransford's request
+    (CONSTITUTION §9: never two controls that do the same thing). Prepaid and virtual cards have it in the list only.
+  - Decision: loading states are one set of bones (`PageSkeletons.tsx`). `ListSkeleton` in `ListStates.tsx` renders the same
+    rows as the route's `loading.tsx`, and the account page's in-page loading uses `AccountDetailBody`, so a loading state
+    turned on in Dev Mode can't show an older shape than the real one. Draw new skeletons there, not inline.
+  - Decision: shared pieces live in one file each (`operators.ts` and `OperatorLogo`, `SourceMark`, `CheckBadge`,
+    `NetworkLogo` and `NetworkChip`, `CountryFlag`, `ActionTile`). Use them; don't rebuild a picker, mark or tile inline.
+  - Decision: `--surface-1/2/3` are gone. Only `--surface-2` was ever reached (menus and popovers) and nothing used the
+    other two, so floating layers now read `--menu` (popover and tooltip alias it) and dialogs and sheets read `--modal`.
+    Elevation levels still drive the shadow.
+  - Decision: `--modal` is the one token for modal and dialog surfaces (starts at the onboarding card colour).
+  - Decision: breadcrumbs use each flow's full name (`HeaderBreadcrumbs.tsx`); the header crumb for the dashboard is Home.
   - Decision: the passkey option is gone from the returning-customer sign-in (it was a stand-in with nothing enrolled).
     Bring it back only with real enrolment.
   - Override: the Demo hub (`PersonaFlowSwitcher`) now ships in the live build, behind `SHOW_DEMO_HUB` in

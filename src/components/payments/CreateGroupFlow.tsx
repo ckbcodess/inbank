@@ -312,7 +312,7 @@ export default function CreateGroupFlow({
               maxLength={50}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter narration"
-              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
             />
           </div>
 
@@ -327,7 +327,7 @@ export default function CreateGroupFlow({
               maxLength={120}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter narration"
-              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
             />
           </div>
 
@@ -371,14 +371,14 @@ export default function CreateGroupFlow({
                     value={customName}
                     onChange={(e) => setCustomName(e.target.value)}
                     placeholder="Full name"
-                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 placeholder:text-muted-foreground/60 transition-all"
+                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 placeholder:text-muted-foreground/60 transition"
                   />
                   <input
                     type="text"
                     value={customDest}
                     onChange={(e) => setCustomDest(e.target.value)}
                     placeholder="Phone or Account Number"
-                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 placeholder:text-muted-foreground/60 transition-all"
+                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 placeholder:text-muted-foreground/60 transition"
                   />
                 </div>
 
@@ -429,7 +429,7 @@ export default function CreateGroupFlow({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search contacts"
-                className="h-13 w-full rounded-2xl border border-field-border bg-field pl-11 pr-10 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition-all"
+                className="h-13 w-full rounded-2xl border border-field-border bg-field pl-11 pr-10 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
               />
               {search && (
                 <button
@@ -479,7 +479,7 @@ export default function CreateGroupFlow({
                     {/* Selection Indicator */}
                     <div
                       className={cn(
-                        "flex size-5 shrink-0 items-center justify-center rounded-full border transition-all",
+                        "flex size-5 shrink-0 items-center justify-center rounded-full border transition",
                         isSelected
                           ? "border-primary bg-primary text-primary-foreground"
                           : "border-muted-foreground/30 bg-transparent"
@@ -522,7 +522,7 @@ export default function CreateGroupFlow({
               type="button"
               onClick={() => setSplitType("equal")}
               className={cn(
-                "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition-all cursor-pointer",
+                "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition cursor-pointer",
                 splitType === "equal"
                   ? "bg-chip-selected text-chip-selected-foreground shadow-xs border border-border/60"
                   : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -534,7 +534,7 @@ export default function CreateGroupFlow({
               type="button"
               onClick={() => setSplitType("custom")}
               className={cn(
-                "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition-all cursor-pointer",
+                "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition cursor-pointer",
                 splitType === "custom"
                   ? "bg-chip-selected text-chip-selected-foreground shadow-xs border border-border/60"
                   : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -577,7 +577,7 @@ export default function CreateGroupFlow({
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5 shrink-0 bg-field border border-field-border rounded-xl px-3 py-1.5 focus-within:border-field-border-focus focus-within:ring-0 transition-all">
+                    <div className="flex items-center gap-1.5 shrink-0 bg-field border border-field-border rounded-xl px-3 py-1.5 focus-within:border-field-border-focus focus-within:ring-0 transition">
                       <span className="text-[12.5px] font-medium text-muted-foreground select-none">GHS</span>
                       <input
                         type="text"

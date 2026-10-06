@@ -34,7 +34,7 @@ export default function AccountExpensesPage({ params }: { params: Promise<{ id: 
   const [state, setState] = useState<BaselineState>("populated");
 
   if (!account) {
-    return <PageHeader title="Account not found" backTo={{ href: "/accounts", label: "Accounts" }} />;
+    return <PageHeader title="Account not found" backTo={{ href: "/accounts", label: "My Accounts" }} />;
   }
 
   const setPeriod = (p: ExpensePeriod) => {

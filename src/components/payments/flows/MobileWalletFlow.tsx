@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Account } from "@/lib/mock-data";
 import {
@@ -19,7 +18,7 @@ import {
   SchedulePaymentSection,
   ScheduleFrequency,
   detectTelcoNetwork,
-  getTelcoLogo,
+  operatorBadgeIcon,
   resolveAccountName,
   formatGhPhone,
   NetworkSelect,
@@ -147,17 +146,7 @@ export function MobileWalletFlow({
                 ? `${formatGhPhone(ownPhone)} · ${own.selected?.tag ?? "Registered"}`
                 : `${state.wNetwork || "MTN Mobile Money"} · ${formatGhPhone(state.wPhone)}`
             }
-            icon={
-              getTelcoLogo(state.wNetwork) ? (
-                <Image
-                  src={getTelcoLogo(state.wNetwork)!}
-                  alt={state.wNetwork || ""}
-                  width={40}
-                  height={40}
-                  className="size-full object-cover rounded-full"
-                />
-              ) : undefined
-            }
+            icon={operatorBadgeIcon(state.wNetwork || "")}
             nameCheck={isSelf ? undefined : { confirmed: Boolean(verifiedName), by: state.wNetwork || undefined }}
             onChange={() => setCollapsed(false)}
           />

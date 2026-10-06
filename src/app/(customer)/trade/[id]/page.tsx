@@ -43,7 +43,7 @@ export default function TradeDetailsPage({ params }: { params: Promise<{ id: str
       <PageHeader
         title="Documentary collection — cotton import"
         description={`${id.toUpperCase()} · Shenzhen Textile Group`}
-        backTo={{ href: "/trade", label: "Trade" }}
+        backTo={{ href: "/trade", label: "Trade Finance" }}
       />
 
       <StateSwitcher section="13.6" states={TRADE_STATES} value={state} onChange={setState} />

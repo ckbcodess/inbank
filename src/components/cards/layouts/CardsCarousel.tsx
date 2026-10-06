@@ -52,7 +52,7 @@ export function CardsCarousel({ cards }: CardsLayoutProps) {
             aria-label={cards[i].name}
             onClick={() => goTo(i)}
             className={cn(
-              "h-1.5 cursor-pointer rounded-full transition-all",
+              "h-1.5 cursor-pointer rounded-full transition-[width,background-color]",
               i === index ? "w-5 bg-foreground" : "w-1.5 bg-border hover:bg-muted-foreground/50",
             )}
           />

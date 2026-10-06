@@ -102,7 +102,7 @@ export function ExpandableSearch({
             placeholder={placeholder}
             aria-label={label}
             className={cn(
-              "h-9 rounded-xl border border-field-border bg-field pl-9 pr-8 text-[13px] text-foreground shadow-sm outline-none transition-all placeholder:text-muted-foreground focus:border-field-border-focus focus:ring-0",
+              "h-9 rounded-xl border border-field-border bg-field pl-9 pr-8 text-[13px] text-foreground shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-field-border-focus focus:ring-0",
               inputWidthClassName
             )}
           />
@@ -125,7 +125,7 @@ export function ExpandableSearch({
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="flex size-9 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/70 active:scale-95 transition-all cursor-pointer"
+            className="flex size-9 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/70 active:scale-95 transition cursor-pointer"
             aria-label={label}
           >
             <Search size={18} strokeWidth={1.8} />

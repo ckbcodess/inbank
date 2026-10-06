@@ -11,7 +11,8 @@ import { HeroWaveTuner } from "@/components/dashboard/v2/HeroWaveTuner";
 import { OPEN_FUND_EVENT } from "@/lib/payment-options";
 import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import { FirstRunWelcome } from "@/components/dashboard/v2/FirstRunWelcome";
-import { QuickFundModal } from "@/components/dashboard/v2/QuickFundModal";
+import { QuickFundModal, type FundResume } from "@/components/dashboard/v2/QuickFundModal";
+import { useCardPaymentReturn } from "@/lib/card-payment";
 import { SaveSourcePrompt, sourceFromFunding, useIsLinked } from "@/components/dashboard/v2/SaveSourcePrompt";
 import {
   clearHasSkippedFunding,
@@ -66,6 +67,12 @@ function OverviewContent() {
   const [usageType, setUsageType] = useState<DashboardUsageType>("active");
   const [layout, setLayout] = useState<DashboardLayout>(readLayout);
   const [fundModalOpen, setFundModalOpen] = useState(false);
+  // Back from the bank's 3-D Secure page after funding with a card: reopen on the receipt, or on the form.
+  const [fundResume, setFundResume] = useState<FundResume | null>(null);
+  useCardPaymentReturn("quick-fund", ({ status, payment }) => {
+    setFundResume({ status, amount: payment.amount, cardLast4: payment.last4 });
+    setFundModalOpen(true);
+  });
   // Asked after a later top-up (the first one is asked inside FirstRunWelcome).
   const [saveSource, setSaveSource] = useState<PendingFundingSource | null>(null);
   const saveSourceLinked = useIsLinked(saveSource);
@@ -205,7 +212,11 @@ function OverviewContent() {
       {/* Interactive Quick Fund Modal */}
       <QuickFundModal
         open={fundModalOpen}
-        onOpenChange={setFundModalOpen}
+        onOpenChange={(next) => {
+          setFundModalOpen(next);
+          if (!next) setFundResume(null);
+        }}
+        resume={fundResume}
         onSuccess={handleFundSuccess}
         registeredPhone={fundModalOpen ? peekVerifiedMobile() : undefined}
         accountName={data.accounts[0]?.name || "Virtual Wallet"}
@@ -234,27 +245,27 @@ function OverviewContent() {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="cursor-pointer text-[13px]"
+                onClick={() => triggerPostOnboarding("referral")}
+              >
+                1. Referral Code
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer text-[13px]"
                 onClick={() => triggerPostOnboarding("ready")}
               >
-                1. Fund Account Prompt
+                2. Fund Account Prompt
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="cursor-pointer text-[13px]"
                 onClick={() => triggerPostOnboarding("fund")}
               >
-                2. Quick Fund Modal
+                3. Quick Fund Modal
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="cursor-pointer text-[13px]"
                 onClick={() => triggerPostOnboarding("source")}
               >
-                3. Save Funding Source
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="cursor-pointer text-[13px]"
-                onClick={() => triggerPostOnboarding("referral")}
-              >
-                4. Referral Code
+                4. Save Funding Source
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

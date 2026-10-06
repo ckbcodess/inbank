@@ -75,7 +75,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
   const [clarificationNote, setClarificationNote] = useState("");
 
   if (!item || item.type !== "trade") {
-    return <PageHeader title="Approval not found" backTo={{ href: "/approvals", label: "Approval queue" }} />;
+    return <PageHeader title="Approval not found" backTo={{ href: "/approvals", label: "Approvals" }} />;
   }
 
   const currentVersion = TRADE_VERSIONS[TRADE_VERSIONS.length - 1];
@@ -98,7 +98,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
       <PageHeader
         title="Trade approval"
         description={`${item.reference} · submitted by ${item.submittedBy}`}
-        backTo={{ href: "/approvals", label: "Approval queue" }}
+        backTo={{ href: "/approvals", label: "Approvals" }}
       />
 
       <StateSwitcher

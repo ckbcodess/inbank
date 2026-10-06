@@ -184,7 +184,7 @@ export default function AuthLayout({
                       return (
                         <div
                           key={i}
-                          className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                          className={`h-1.5 flex-1 rounded-full transition duration-300 ${
                             isCurrent
                               ? "bg-primary"
                               : isActive

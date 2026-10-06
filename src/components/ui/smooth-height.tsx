@@ -2,7 +2,6 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
 
 /**
  * Room around the clip box so focus rings / shadows on edge-to-edge children
@@ -15,6 +14,11 @@ interface SmoothHeightProps {
   children: React.ReactNode;
   className?: string;
   duration?: number;
+  /**
+   * What happens to content that spills outside the box once the height has settled. The box always clips while
+   * it is resizing. Pass "visible" when a child opens a menu or list that must not be cut off (a combobox).
+   */
+  overflowWhenIdle?: "hidden" | "visible";
 }
 
 /**
@@ -25,7 +29,9 @@ export function SmoothHeight({
   children,
   className,
   duration = 0.32,
+  overflowWhenIdle = "hidden",
 }: SmoothHeightProps) {
+  const [animating, setAnimating] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState<number | "auto">("auto");
   const isFirstMeasurement = useRef(true);
@@ -51,8 +57,14 @@ export function SmoothHeight({
     <motion.div
       animate={{ height }}
       transition={shouldAnimate ? { type: "spring", duration, bounce: 0 } : { duration: 0 }}
-      style={{ margin: -BLEED, padding: BLEED }}
-      className={cn("overflow-hidden", className)}
+      onAnimationStart={() => setAnimating(true)}
+      onAnimationComplete={() => setAnimating(false)}
+      style={{
+        margin: -BLEED,
+        padding: BLEED,
+        overflow: overflowWhenIdle === "visible" && !animating ? "visible" : "hidden",
+      }}
+      className={className}
     >
       <div ref={containerRef}>{children}</div>
     </motion.div>

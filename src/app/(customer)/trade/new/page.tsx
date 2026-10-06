@@ -58,7 +58,7 @@ export default function TradeTypeSelectionPage() {
       <PageHeader
         title="New trade request"
         description="Choose the instrument — the request form changes to match it."
-        backTo={{ href: "/trade", label: "Trade" }}
+        backTo={{ href: "/trade", label: "Trade Finance" }}
       />
 
       <StateSwitcher section="13.6" states={TRADE_STATES} value={state} onChange={setState} />

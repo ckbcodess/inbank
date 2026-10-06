@@ -121,7 +121,7 @@ export default function AuditLogPage() {
 
       {effective === "loading" && (
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
-          <ListSkeleton rows={6} columns={4} />
+          <ListSkeleton rows={6} />
         </div>
       )}
 
