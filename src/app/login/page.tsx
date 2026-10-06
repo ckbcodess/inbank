@@ -241,18 +241,6 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
       vAlign="center"
       title={`Welcome back, ${firstName}`}
       width="compact"
-      footer={
-        <p className="text-center text-[13px] text-muted-foreground">
-          Not {firstName}?{" "}
-          <button
-            type="button"
-            onClick={onNotYou}
-            className="text-foreground underline underline-offset-4 hover:text-foreground/80 cursor-pointer"
-          >
-            Use another account
-          </button>
-        </p>
-      }
     >
       <div className="flex flex-col gap-6">
         <div className="flex items-center gap-3 rounded-2xl border border-border bg-muted/20 px-4 py-3.5">
@@ -305,6 +293,17 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
             Log in
           </Button>
         </form>
+
+        <p className="text-center text-[13px] text-muted-foreground">
+          Not {firstName}?{" "}
+          <button
+            type="button"
+            onClick={onNotYou}
+            className="text-foreground underline underline-offset-4 hover:text-foreground/80 cursor-pointer"
+          >
+            Use another account
+          </button>
+        </p>
       </div>
     </AuthLayout>
   );
