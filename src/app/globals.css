@@ -139,12 +139,39 @@
   --primary-foreground: #321800;
   /* Outline of the two-tone Send & Pay icons (the amber parts are --duo-accent). */
   --duo-outline: #475560;
-  /* Glass icon (components/ui/glass-icon.tsx): gradient top to bottom, plus the lit and shaded edges. */
-  --glass-light: #fff0bf;
-  --glass-mid: #ffc423;
-  --glass-dark: #a35f00;
-  --glass-shine: #ffffff;
-  --glass-shade: #5c3300;
+  /* Icon tones (Send & Pay icon styles). light, mid and dark are the glass gradient (top, middle, bottom);
+     ink is the line colour for outline and duotone icons, picked to read on a tile in this theme. */
+  --icon-amber-light: #ffffff;
+  --icon-amber-mid: #ffc423;
+  --icon-amber-dark: #2e2200;
+  --icon-amber-ink: #ffc423;
+  --icon-blue-light: #d6e6ff;
+  --icon-blue-mid: #4f8cff;
+  --icon-blue-dark: #1d3fae;
+  --icon-blue-ink: #2f62d6;
+  --icon-green-light: #d7f5e2;
+  --icon-green-mid: #34c27a;
+  --icon-green-dark: #0e6b3e;
+  --icon-green-ink: #1b8a55;
+  --icon-violet-light: #e7dcff;
+  --icon-violet-mid: #8b6cf0;
+  --icon-violet-dark: #3f1fa8;
+  --icon-violet-ink: #6a47d8;
+  --icon-rose-light: #ffdbe4;
+  --icon-rose-mid: #f2587f;
+  --icon-rose-dark: #9b1a40;
+  --icon-rose-ink: #d63a62;
+  --icon-teal-light: #d0f3f0;
+  --icon-teal-mid: #1fb5ad;
+  --icon-teal-dark: #0b6661;
+  --icon-teal-ink: #12908a;
+  --icon-slate-light: #e1f0fe;
+  --icon-slate-mid: #6f8995;
+  --icon-slate-dark: #00408a;
+  --icon-slate-ink: #2f4b60;
+  /* The edges of every glass icon, whatever its tone. */
+  --glass-shine: #d2a970;
+  --glass-shade: #240e00;
   /* The soft highlight that sweeps across a loading skeleton. */
   --skeleton-shine: oklch(1 0 0 / 60%);
   /* The two circles of the Mastercard mark, wherever a card shows its network. */
@@ -316,12 +343,39 @@
   --primary-foreground: #321800;
   /* Outline of the two-tone Send & Pay icons (the amber parts are --duo-accent). */
   --duo-outline: #52606b;
-  /* Glass icon (components/ui/glass-icon.tsx): gradient top to bottom, plus the lit and shaded edges. */
-  --glass-light: #fff0bf;
-  --glass-mid: #ffc423;
-  --glass-dark: #a35f00;
+  /* Icon tones (Send & Pay icon styles). light, mid and dark are the glass gradient (top, middle, bottom);
+     ink is the line colour for outline and duotone icons, picked to read on a tile in this theme. */
+  --icon-amber-light: #ffe799;
+  --icon-amber-mid: #564124;
+  --icon-amber-dark: #a26716;
+  --icon-amber-ink: #f2dca1;
+  --icon-blue-light: #d6e6ff;
+  --icon-blue-mid: #4f8cff;
+  --icon-blue-dark: #1d3fae;
+  --icon-blue-ink: #7aa7ff;
+  --icon-green-light: #d7f5e2;
+  --icon-green-mid: #34c27a;
+  --icon-green-dark: #0e6b3e;
+  --icon-green-ink: #5fd89b;
+  --icon-violet-light: #e7dcff;
+  --icon-violet-mid: #8b6cf0;
+  --icon-violet-dark: #3f1fa8;
+  --icon-violet-ink: #a690ff;
+  --icon-rose-light: #ffdbe4;
+  --icon-rose-mid: #f2587f;
+  --icon-rose-dark: #9b1a40;
+  --icon-rose-ink: #ff8aa8;
+  --icon-teal-light: #d0f3f0;
+  --icon-teal-mid: #1fb5ad;
+  --icon-teal-dark: #0b6661;
+  --icon-teal-ink: #5fd8d1;
+  --icon-slate-light: #d2dae1;
+  --icon-slate-mid: #192f43;
+  --icon-slate-dark: #1f2933;
+  --icon-slate-ink: #9fb0bd;
+  /* The edges of every glass icon, whatever its tone. */
   --glass-shine: #ffffff;
-  --glass-shade: #5c3300;
+  --glass-shade: #ff4000;
   --skeleton-shine: oklch(1 0 0 / 7%);
   /* The two circles of the Mastercard mark, wherever a card shows its network. */
   --mc-red: #eb001b;

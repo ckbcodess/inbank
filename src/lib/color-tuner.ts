@@ -33,6 +33,7 @@ const GROUP_RULES: [string, RegExp][] = [
   ["Charts", /^(chart|cat-|spend-)/],
   ["Marks", /^(mc-|duo-)/],
   ["Dashboard hero", /^(hero|sheet|balance-card|account-card)/],
+  ["Icons", /^(icon-|glass-)/],
   ["Surfaces", /^(background|surface|card|modal|popover|muted|secondary|accent|tile|sidebar|glass|device|skeleton|auth-card)/],
 ];
 const SKIP = /^(color-|tw-|font|radius|shadow|dur-|breakpoint|animate|ease|sidebar-width|ripple)/;
