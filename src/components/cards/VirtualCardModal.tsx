@@ -286,15 +286,15 @@ export function VirtualCardView({
             </button>
           </div>
           <label className="flex items-center justify-between cursor-pointer">
-            <span>Online checkout</span>
+            <span>Online Checkout</span>
             <input type="checkbox" checked={onlineEnabled} onChange={(e) => setOnlineEnabled(e.target.checked)} className="size-4 rounded" />
           </label>
           <label className="flex items-center justify-between cursor-pointer">
-            <span>ATM cash withdrawal</span>
+            <span>ATM Cash Withdrawal</span>
             <input type="checkbox" checked={atmEnabled} onChange={(e) => setAtmEnabled(e.target.checked)} className="size-4 rounded" />
           </label>
           <label className="flex items-center justify-between cursor-pointer">
-            <span>International usage</span>
+            <span>International Usage</span>
             <input type="checkbox" checked={intlEnabled} onChange={(e) => setIntlEnabled(e.target.checked)} className="size-4 rounded" />
           </label>
         </div>

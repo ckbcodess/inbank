@@ -455,6 +455,11 @@ const recent: Entry[] = [
   ["SWIFT / BIC Code", "Code SWIFT / BIC", "Código SWIFT / BIC", "SWIFT / BIC 代码"],
   ["Short Name", "Nom court", "Nombre corto", "简称"],
   ["Transaction Narration", "Libellé de la transaction", "Concepto de la transacción", "交易备注"],
+  ["After Every X Number of Days", "Tous les X jours", "Cada X días", "每隔 X 天"],
+  ["Doesn't Match", "Ne correspond pas", "No coincide", "不一致"],
+  ["I Pay All Charges", "Je prends tous les frais en charge", "Yo pago todos los gastos", "由我承担全部费用"],
+  ["On a Date", "À une date", "En una fecha", "指定日期"],
+  ["Recipient Pays", "Le bénéficiaire paie", "Paga el destinatario", "由收款人承担"],
 ];
 
 export default recent;

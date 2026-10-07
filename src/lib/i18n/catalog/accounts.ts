@@ -414,6 +414,16 @@ const accounts: Entry[] = [
   ["Maximum Amount", "Montant maximum", "Importe máximo", "最高金额"],
   ["Minimum Amount", "Montant minimum", "Importe mínimo", "最低金额"],
   ["Number of Booklets", "Nombre de chéquiers", "Número de talonarios", "支票簿数量"],
+  ["Account Confirmation", "Attestation de compte", "Confirmación de cuenta", "账户确认函"],
+  ["Choose Dates", "Choisir les dates", "Elegir fechas", "选择日期"],
+  ["Collect at a Branch", "Retrait en agence", "Recoger en una sucursal", "到网点领取"],
+  ["Last 12 Months", "12 derniers mois", "Últimos 12 meses", "最近 12 个月"],
+  ["Last 3 Months", "3 derniers mois", "Últimos 3 meses", "最近 3 个月"],
+  ["Last 6 Months", "6 derniers mois", "Últimos 6 meses", "最近 6 个月"],
+  ["Proof of Funds", "Justificatif de fonds", "Prueba de fondos", "资金证明"],
+  ["Something Else", "Autre chose", "Otro motivo", "其他"],
+  ["Swift Code", "Code SWIFT", "Código SWIFT", "SWIFT 代码"],
+  ["Visa or Embassy", "Visa ou ambassade", "Visado o embajada", "签证或使馆"],
 ];
 
 export default accounts;

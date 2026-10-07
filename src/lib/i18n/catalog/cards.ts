@@ -361,6 +361,10 @@ const cards: Entry[] = [
   ["Source Account", "Compte source", "Cuenta de origen", "来源账户"],
   ["Top Up Amount (GHS)", "Montant de la recharge (GHS)", "Importe de recarga (GHS)", "充值金额（GHS）"],
   ["Usage Mode", "Mode d’utilisation", "Modo de uso", "使用方式"],
+  ["ATM Cash Withdrawal", "Retrait au GAB", "Retiro en cajero", "ATM 取款"],
+  ["ATM Cash Withdrawals", "Retraits au GAB", "Retiros en cajero", "ATM 取款"],
+  ["International Usage", "Utilisation à l’étranger", "Uso internacional", "境外使用"],
+  ["Online Checkout", "Paiement en ligne", "Pago en línea", "线上支付"],
 ];
 
 export default cards;

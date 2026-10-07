@@ -151,6 +151,8 @@ const common: Entry[] = [
   ["Grouped by method", "Groupé par moyen", "Agrupado por método", "按方式分组"],
   ["Card Type", "Type de carte", "Tipo de tarjeta", "卡片类型"],
   ["Wallet Phone Number", "Numéro de téléphone du portefeuille", "Número de teléfono de la billetera", "钱包手机号"],
+  ["Flat List", "Liste simple", "Lista simple", "平铺列表"],
+  ["Grouped by Method", "Groupé par moyen", "Agrupado por método", "按方式分组"],
 ];
 
 export default common;

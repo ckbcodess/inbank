@@ -268,6 +268,7 @@ const services: Entry[] = [
   ["Pickup Branch", "Agence de retrait", "Sucursal de recogida", "领取网点"],
   ["Primary Mobile Phone", "Mobile principal", "Móvil principal", "主要手机号"],
   ["Residential / Operating Address", "Adresse de résidence / d’activité", "Dirección de residencia / actividad", "居住/经营地址"],
+  ["Status Changes", "Changements de statut", "Cambios de estado", "状态变更"],
 ];
 
 export default services;

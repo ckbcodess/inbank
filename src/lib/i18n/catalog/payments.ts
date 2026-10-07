@@ -693,6 +693,9 @@ const payments: Entry[] = [
   ["Transaction Category", "Catégorie de la transaction", "Categoría de la transacción", "交易类别"],
   ["Withdrawal Amount", "Montant du retrait", "Importe del retiro", "取款金额"],
   ["You Send", "Vous envoyez", "Envías", "您转出"],
+  ["Save as Beneficiary", "Enregistrer comme bénéficiaire", "Guardar como beneficiario", "保存为收款人"],
+  ["Save as Beneficiary?", "Enregistrer comme bénéficiaire ?", "¿Guardar como beneficiario?", "保存为收款人？"],
+  ["Until I Cancel", "Jusqu’à ce que j’annule", "Hasta que la cancele", "直至我取消"],
 ];
 
 export default payments;

@@ -1280,7 +1280,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const isForeign = rail === "papss" || rail === "swift";
   // When the customer typed the GHS amount, debit exactly that, not the rounded-down foreign amount times the rate.
   const papssGhs = f.wGhs ? roundMoney(num(f.wGhs)) : roundMoney(num(f.wForeign) * rate);
-  // "Recipient pays" takes GCB's fee out of the amount sent, so nothing is added on top.
+  // "Recipient Pays" takes GCB's fee out of the amount sent, so nothing is added on top.
   const feeOnTop = rail === "swift" && f.wCharges === "recipient" ? 0 : fee;
   const totalDebit = isForeign ? sumMoney([papssGhs, feeOnTop]) : sumMoney([currentAmount, fee]);
 

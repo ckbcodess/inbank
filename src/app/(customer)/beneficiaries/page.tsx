@@ -925,8 +925,8 @@ export default function BeneficiariesPage() {
             <div role="group" aria-label="View" className="inline-flex items-center rounded-xl bg-chip p-1">
               {(
                 [
-                  { value: "none", label: "Flat list", Icon: List },
-                  { value: "type", label: "Grouped by method", Icon: LayoutGrid },
+                  { value: "none", label: "Flat List", Icon: List },
+                  { value: "type", label: "Grouped by Method", Icon: LayoutGrid },
                 ] as const
               ).map(({ value, label, Icon }) => {
                 const on = groupBy === value;

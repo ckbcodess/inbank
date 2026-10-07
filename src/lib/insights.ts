@@ -42,7 +42,7 @@ export const GRAIN_LABEL: Record<Grain, string> = {
 const GRAIN_WINDOW: Record<Grain, { buckets: number; caption: string }> = {
   daily: { buckets: 14, caption: "Last 14 days" },
   weekly: { buckets: 12, caption: "Last 12 weeks" },
-  monthly: { buckets: 12, caption: "Last 12 months" },
+  monthly: { buckets: 12, caption: "Last 12 Months" },
 };
 
 export function grainCaption(grain: Grain): string {
@@ -221,12 +221,12 @@ const MODELS: Record<ProfileKind, ProfileModel> = {
     categories: [
       { category: "Payroll", perMonth: 1, min: 268_000, max: 302_000, dayOfMonth: 25, channels: ["Bank transfers"] },
       { category: "Suppliers", perMonth: 16, min: 4_200, max: 46_000, channels: ["Bank transfers", "Bank transfers", "Mobile money"] },
-      { category: "Trade & imports", perMonth: 2, min: 42_000, max: 128_000, channels: ["Cross-border"] },
-      { category: "Rent & facilities", perMonth: 1, min: 17_800, max: 18_900, dayOfMonth: 1, channels: ["Bank transfers"] },
+      { category: "Trade & Imports", perMonth: 2, min: 42_000, max: 128_000, channels: ["Cross-border"] },
+      { category: "Rent & Facilities", perMonth: 1, min: 17_800, max: 18_900, dayOfMonth: 1, channels: ["Bank transfers"] },
       { category: "Utilities", perMonth: 4, min: 900, max: 4_800, channels: ["Bills & airtime"] },
       { category: "Travel", perMonth: 6, min: 1_100, max: 9_600, channels: ["Card payments"] },
-      { category: "Taxes & levies", perMonth: 1, min: 22_000, max: 46_000, dayOfMonth: 15, channels: ["Bank transfers"] },
-      { category: "Bank charges", perMonth: 10, min: 25, max: 480, channels: ["Bank fees"] },
+      { category: "Taxes & Levies", perMonth: 1, min: 22_000, max: 46_000, dayOfMonth: 15, channels: ["Bank transfers"] },
+      { category: "Bank Charges", perMonth: 10, min: 25, max: 480, channels: ["Bank fees"] },
     ],
     // Spread across more, smaller receipts than a handful of large ones, so the
     // daily view is not mostly empty bars.

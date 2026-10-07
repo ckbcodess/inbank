@@ -100,7 +100,7 @@ export default function ProxyIdModal({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="phone">Phone number</SelectItem>
+                <SelectItem value="phone">Phone Number</SelectItem>
                 <SelectItem value="ghana-card">Ghana Card</SelectItem>
               </SelectContent>
             </Select>

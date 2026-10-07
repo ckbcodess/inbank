@@ -67,7 +67,7 @@ const KIND_OPTIONS: { value: NotificationKind; label: string }[] = [
   { value: "submission", label: "Submissions" },
   { value: "approval", label: "Approvals" },
   { value: "rejection", label: "Rejections" },
-  { value: "status", label: "Status changes" },
+  { value: "status", label: "Status Changes" },
 ];
 
 const CHANNELS = [

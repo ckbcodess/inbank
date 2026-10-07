@@ -1560,7 +1560,7 @@ export function VirtualCardDetailsView({
               <div className="flex items-center gap-3">
                 <Globe size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
-                  <span className="font-medium text-foreground">Online checkout</span>
+                  <span className="font-medium text-foreground">Online Checkout</span>
                   <span className="text-[11.5px] text-muted-foreground">E-commerce & web transactions</span>
                 </div>
               </div>
@@ -1579,7 +1579,7 @@ export function VirtualCardDetailsView({
               <div className="flex items-center gap-3">
                 <Globe size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
-                  <span className="font-medium text-foreground">International usage</span>
+                  <span className="font-medium text-foreground">International Usage</span>
                   <span className="text-[11.5px] text-muted-foreground">Cross-border foreign exchange payments</span>
                 </div>
               </div>
@@ -1598,7 +1598,7 @@ export function VirtualCardDetailsView({
               <div className="flex items-center gap-3">
                 <CreditCard size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
-                  <span className="font-medium text-foreground">ATM cash withdrawals</span>
+                  <span className="font-medium text-foreground">ATM Cash Withdrawals</span>
                   <span className="text-[11.5px] text-muted-foreground">Physical terminal cash access</span>
                 </div>
               </div>

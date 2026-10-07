@@ -1193,7 +1193,7 @@ export function SaveBeneficiaryCheckbox({
   onChange,
   nickname,
   onNicknameChange,
-  label = "Save as beneficiary",
+  label = "Save as Beneficiary",
 }: {
   checked: boolean;
   onChange: (checked: boolean) => void;

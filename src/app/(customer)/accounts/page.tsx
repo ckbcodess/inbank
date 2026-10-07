@@ -316,7 +316,7 @@ function AccountsContent() {
               label: "Add Account selfie",
               states: [
                 { id: "match", label: "Matches Ghana Card" },
-                { id: "no-match", label: "Doesn't match" },
+                { id: "no-match", label: "Doesn't Match" },
               ],
               value: selfieMatch,
               onChange: (v: string) => setSelfieMatch(v as "match" | "no-match"),

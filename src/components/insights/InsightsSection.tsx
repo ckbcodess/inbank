@@ -163,7 +163,7 @@ export function InsightsSection({ profileKind }: { profileKind: ProfileKind }) {
               <SelectValue placeholder="All accounts" />
             </SelectTrigger>
             <SelectContent align="end">
-              <SelectItem value={ALL_ACCOUNTS}>All accounts</SelectItem>
+              <SelectItem value={ALL_ACCOUNTS}>All Accounts</SelectItem>
               {accounts.map((acc) => (
                 <SelectItem key={acc.id} value={acc.id}>
                   {acc.name}

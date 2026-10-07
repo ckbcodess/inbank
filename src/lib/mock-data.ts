@@ -408,15 +408,15 @@ export function findAccount(id: string): Account | undefined {
 export const CORPORATE_CATEGORIES = [
   "Payroll",
   "Suppliers",
-  "Trade & imports",
-  "Rent & facilities",
+  "Trade & Imports",
+  "Rent & Facilities",
   "Utilities",
   "Travel",
-  "Taxes & levies",
-  "Bank charges",
+  "Taxes & Levies",
+  "Bank Charges",
   "Fees",
   "Transport",
-  "Airtime & data",
+  "Airtime & Data",
 ] as const;
 
 export const RETAIL_CATEGORIES = [
@@ -609,7 +609,7 @@ export const TRANSACTIONS: Transaction[] = [
     tradeId: "trade-0417",
     failureReason:
       "Returned by bank operations — commercial invoice does not match the bill of lading quantity.",
-    category: "Trade & imports",
+    category: "Trade & Imports",
     profileKind: "CORPORATE",
   },
   {
@@ -740,7 +740,7 @@ export const TRANSACTIONS: Transaction[] = [
     state: "completed",
     channel: "Internet Banking",
     paymentMethod: "papss",
-    category: "Trade & imports",
+    category: "Trade & Imports",
     profileKind: "CORPORATE",
   },
   {
@@ -796,7 +796,7 @@ export const TRANSACTIONS: Transaction[] = [
     state: "completed",
     channel: "Mobile Banking",
     paymentMethod: "airtime",
-    category: "Airtime & data",
+    category: "Airtime & Data",
     profileKind: "CORPORATE",
   },
   {
@@ -984,7 +984,7 @@ export const TRANSACTIONS: Transaction[] = [
     state: "completed",
     channel: "Mobile Banking",
     paymentMethod: "airtime",
-    category: "Airtime & data",
+    category: "Airtime & Data",
     profileKind: "RETAIL",
   },
   {
@@ -1003,7 +1003,7 @@ export const TRANSACTIONS: Transaction[] = [
     state: "completed",
     channel: "Internet Banking",
     paymentMethod: "gip",
-    category: "Rent & facilities",
+    category: "Rent & Facilities",
     profileKind: "RETAIL",
   },
   {
@@ -1154,7 +1154,7 @@ export const TRANSACTIONS: Transaction[] = [
     state: "completed",
     channel: "Mobile Banking",
     paymentMethod: "airtime",
-    category: "Airtime & data",
+    category: "Airtime & Data",
     profileKind: "RETAIL",
   },
   {

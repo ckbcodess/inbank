@@ -50,9 +50,9 @@ export interface PaymentSuccessScreenProps {
   onPrimaryAction: () => void;
   /** Label for primary button */
   primaryActionLabel?: string;
-  /** Whether to display the "Save as beneficiary?" toggle row */
+  /** Whether to display the "Save as Beneficiary?" toggle row */
   showSaveBeneficiary?: boolean;
-  /** Custom label for the toggle (defaults to "Save as beneficiary?") */
+  /** Custom label for the toggle (defaults to "Save as Beneficiary?") */
   saveBeneficiaryLabel?: string;
   /** Initial state of the toggle */
   initialSaveBeneficiary?: boolean;
@@ -203,7 +203,7 @@ export function PaymentSuccessScreen({
   primaryActionLabel = "Back to Overview",
   showSaveBeneficiary = true,
   hideSchedule = false,
-  saveBeneficiaryLabel = "Save as beneficiary?",
+  saveBeneficiaryLabel = "Save as Beneficiary?",
   initialSaveBeneficiary = false,
   onSaveBeneficiaryChange,
   customActionCards,

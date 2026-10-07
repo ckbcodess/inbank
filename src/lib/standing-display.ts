@@ -5,7 +5,7 @@ export const FREQUENCY_OPTIONS: Array<{ id: InstructionFrequency; label: string 
   { id: "Once", label: "Once" },
   { id: "Daily", label: "Daily" },
   { id: "Weekly", label: "Weekly" },
-  { id: "Custom", label: "After Every X number of days" },
+  { id: "Custom", label: "After Every X Number of Days" },
   { id: "Monthly", label: "Monthly" },
   { id: "Quarterly", label: "Quarterly" },
   { id: "Half Yearly", label: "Half Yearly" },

@@ -178,7 +178,7 @@ const ICON_STYLES = ["outline", "glass", "duotone", "duotone-glass"] as const;
 const ICON_STYLE_LABELS: Record<IconStyle, string> = { outline: "Outline", glass: "Glass", duotone: "Duotone", "duotone-glass": "Duotone glass" };
 const ICON_PALETTE_STATES = [
   { id: "brand", label: "GCB amber" },
-  { id: "function", label: "By function" },
+  { id: "function", label: "By Function" },
 ];
 
 function ActionSection({

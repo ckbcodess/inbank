@@ -70,7 +70,7 @@ interface InternationalWireFlowProps {
 const CODE_TYPES = [
   {
     id: "swift",
-    label: "Swift code",
+    label: "Swift Code",
     hint: "8 or 11 letters and numbers",
     placeholder: "e.g. CHASUS33",
     clean: (v: string) => v.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 11),
@@ -78,7 +78,7 @@ const CODE_TYPES = [
   },
   {
     id: "sort",
-    label: "Sort code",
+    label: "Sort Code",
     hint: "6 digits",
     placeholder: "e.g. 123456",
     clean: (v: string) => v.replace(/\D/g, "").slice(0, 6),
@@ -98,8 +98,8 @@ export const CODE_TYPE_LABELS: Record<string, string> = Object.fromEntries(CODE_
 
 export const CHARGE_OPTIONS = [
   { id: "shared", label: "Shared", note: "You pay GCB's fee. The recipient's bank may deduct its own." },
-  { id: "sender", label: "I pay all charges", note: "The recipient gets the full amount." },
-  { id: "recipient", label: "Recipient pays", note: "GCB's fee is taken out of the amount sent." },
+  { id: "sender", label: "I Pay All Charges", note: "The recipient gets the full amount." },
+  { id: "recipient", label: "Recipient Pays", note: "GCB's fee is taken out of the amount sent." },
 ];
 
 const INPUT =
@@ -228,7 +228,7 @@ export function InternationalWireFlow({
     ? Number(state.wGhs.replace(/[^0-9.]/g, "")) || 0
     : Math.round(numForeign * rate * 100) / 100;
   const fee = 50.0; // SWIFT Wire standard fee
-  // "Recipient pays" takes the fee out of the amount, so nothing is added on top.
+  // "Recipient Pays" takes the fee out of the amount, so nothing is added on top.
   const totalGhs = state.wCharges === "recipient" ? ghsEquivalent : ghsEquivalent + fee;
   const overBalance = totalGhs > (fromAccount?.available ?? 0);
 

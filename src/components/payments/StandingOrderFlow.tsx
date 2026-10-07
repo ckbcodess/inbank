@@ -1100,13 +1100,13 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                           onValueChange={(val) => val && set("endCondition", val as "indefinite" | "date")}
                         >
                           <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
-                            <span className="truncate">{f.endCondition === "date" ? "On a date" : "Until I cancel"}</span>
+                            <span className="truncate">{f.endCondition === "date" ? "On a Date" : "Until I Cancel"}</span>
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="indefinite" label="Until I cancel">
+                            <SelectItem value="indefinite" label="Until I Cancel">
                               Until I cancel
                             </SelectItem>
-                            <SelectItem value="date" label="On a date">
+                            <SelectItem value="date" label="On a Date">
                               On a date
                             </SelectItem>
                           </SelectContent>

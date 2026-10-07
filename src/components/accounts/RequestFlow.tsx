@@ -44,10 +44,10 @@ import { ProceedButton } from "@/components/payments/flows/shared";
 export type RequestKind = "statement" | "cheque-book" | "letter";
 
 const PERIODS = [
-  { id: "3m", label: "Last 3 months" },
-  { id: "6m", label: "Last 6 months" },
-  { id: "12m", label: "Last 12 months" },
-  { id: "custom", label: "Choose dates" },
+  { id: "3m", label: "Last 3 Months" },
+  { id: "6m", label: "Last 6 Months" },
+  { id: "12m", label: "Last 12 Months" },
+  { id: "custom", label: "Choose Dates" },
 ] as const;
 
 const LEAVES = [
@@ -57,10 +57,10 @@ const LEAVES = [
 ] as const;
 
 const LETTER_PURPOSES = [
-  { id: "confirmation", label: "Account confirmation", hint: "Confirms the account is yours and active" },
-  { id: "funds", label: "Proof of funds", hint: "Includes your available balance" },
-  { id: "visa", label: "Visa or embassy", hint: "Includes your balance and account history" },
-  { id: "other", label: "Something else", hint: "A general letter, to whom it may concern" },
+  { id: "confirmation", label: "Account Confirmation", hint: "Confirms the account is yours and active" },
+  { id: "funds", label: "Proof of Funds", hint: "Includes your available balance" },
+  { id: "visa", label: "Visa or Embassy", hint: "Includes your balance and account history" },
+  { id: "other", label: "Something Else", hint: "A general letter, to whom it may concern" },
 ] as const;
 
 type Delivery = "email" | "branch";
@@ -574,7 +574,7 @@ function DeliveryField({
           },
           {
             id: "branch",
-            name: "Collect at a branch",
+            name: "Collect at a Branch",
             description: "Stamped paper copy",
             fee: formatMoney(fees.branch.fee, "GHS", true),
             speed: fees.branch.ready,
