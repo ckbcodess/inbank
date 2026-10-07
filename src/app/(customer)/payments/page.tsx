@@ -209,8 +209,8 @@ export default function SendAndPayPage() {
   const palette = useIconStyle((s) => s.palette);
   const setStyle = useIconStyle((s) => s.setStyle);
   const setPalette = useIconStyle((s) => s.setPalette);
-  // Scaffolding: production builds always show the plain outline icons.
-  const look = SHOW_DEMO_TOOLS ? `${stored}-${palette}` : "outline-brand";
+  // Scaffolding: production builds always show the default look, duotone glass in GCB amber.
+  const look = SHOW_DEMO_TOOLS ? `${stored}-${palette}` : "duotone-glass-brand";
   const iconStates = useMemo(() => ICON_STYLES, []);
   const paletteGroups = useMemo<DevStateGroup[]>(
     () => [{ label: "Icon colour", states: ICON_PALETTE_STATES, value: palette, onChange: (v) => setPalette(v as IconPalette) }],
