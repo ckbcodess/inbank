@@ -14,21 +14,20 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   ArrowLeftRight,
-  CheckCircle2,
   ChevronRight,
   Copy,
   Eye,
   EyeOff,
-  FileText,
   LayoutGrid,
+  FileText,
   MoreVertical,
   Share2,
-  SlidersHorizontal,
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { useSession } from "@/lib/session-store";
 import { heroWaveVars, useHeroWave } from "@/lib/hero-wave";
@@ -42,8 +41,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { accountHolderName } from "@/lib/account-holder";
-import { useAccountPrefs } from "@/lib/accounts-store";
-import { useCustomerAccounts } from "@/lib/use-customer-accounts";
 import { CurrencyLogo } from "@/components/ui/currency-logo";
 import { FX_RATES, findFxRate } from "@/lib/mock-data";
 import { FxRatesDialog } from "./FxRatesDialog";
@@ -122,11 +119,11 @@ function HeroArt({ map = true }: { map?: boolean }) {
     // Behind the content: the surface is isolated, so -z-10 still sits above its fill.
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 -z-10 [--hero-card:var(--wave-card-light)] [--hero-wave:var(--wave-color-light)] dark:[--hero-card:var(--wave-card-dark)] dark:[--hero-wave:var(--wave-color-dark)]"
+      className="pointer-events-none absolute inset-0 -z-10 [contain:paint] [--hero-card:var(--wave-card-light)] [--hero-wave:var(--wave-color-light)] dark:[--hero-card:var(--wave-card-dark)] dark:[--hero-wave:var(--wave-color-dark)]"
       style={{ background: "var(--hero-card, var(--hero-surface))" }}
     >
       <div
-        className="hero-wave-a absolute -left-[20%] h-[95%] rounded-[50%] will-change-transform"
+        className="hero-wave-a absolute -left-[20%] h-[95%] rounded-[50%] will-change-transform [backface-visibility:hidden]"
         style={{
           background: WAVE_FILL,
           bottom: "calc(var(--wave-lift) - 95%)",
@@ -134,7 +131,7 @@ function HeroArt({ map = true }: { map?: boolean }) {
         }}
       />
       <div
-        className="hero-wave-b absolute -right-[15%] h-[85%] rounded-[50%] will-change-transform"
+        className="hero-wave-b absolute -right-[15%] h-[85%] rounded-[50%] will-change-transform [backface-visibility:hidden]"
         style={{
           background: WAVE_FILL,
           bottom: "calc(var(--wave-lift) - 100%)",
@@ -177,8 +174,22 @@ export function HeroSurface({
   useEffect(() => {
     if (map) holdSplash(decodeImage(`${ASSETS}/hero-map.svg`));
   }, [map]);
+  // The two waves drift forever. Off screen (scrolled past, or another tab) nobody sees them, but the browser still
+  // repaints the blended layers and the glass buttons over them, which is where the flicker comes from.
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) el.removeAttribute("data-hero-offscreen");
+      else el.setAttribute("data-hero-offscreen", "");
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   return (
     <section
+      ref={ref}
       className={cn(
         "relative isolate overflow-hidden border border-[var(--hero-border)] bg-[var(--hero-surface)] text-[var(--hero-foreground)]",
         "[--hero-foreground:var(--wave-text-light)] dark:[--hero-foreground:var(--wave-text-dark)]",
@@ -192,14 +203,8 @@ export function HeroSurface({
   );
 }
 
-const HERO_GLASS_BUTTON = cn(
-  "flex size-10 items-center justify-center rounded-xl",
-  "border border-white/16 bg-white/8 text-[var(--hero-foreground)] backdrop-blur-md",
-  "shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]",
-  "hover:bg-white/14 hover:text-[var(--hero-foreground)] active:scale-95",
-  "aria-expanded:text-[var(--hero-foreground)]",
-  "cursor-pointer outline-none transition",
-);
+/** What the hero's glass buttons add to the `glass` Button variant: the squarer corner and the inner top light. */
+const HERO_GLASS_EXTRA = "rounded-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] active:scale-95";
 
 export function HeroAccountMenu({
   data,
@@ -213,8 +218,6 @@ export function HeroAccountMenu({
   const [ratesOpen, setRatesOpen] = useState(false);
   const activeProfile = useSession((s) => s.activeProfile);
   const actor = useSession((s) => s.actor);
-  const { defaultId } = useCustomerAccounts();
-  const setDefaultAccount = useAccountPrefs((s) => s.setDefaultAccount);
 
   const account = selectedAccount(data);
   if (!account) return null;
@@ -222,8 +225,6 @@ export function HeroAccountMenu({
   const usd = findFxRate("USD") ?? FX_RATES[0];
   const RateTrend = usd.changePct >= 0 ? TrendingUp : TrendingDown;
   const holderName = accountHolderName(account, activeProfile, actor);
-  const isDefault = account.id === defaultId;
-  const canBeDefault = data.accounts.length > 1 && !isDefault;
 
   const handleCopyNumber = () => {
     const cleanNumber = account.number.replace(/\s+/g, "");
@@ -233,45 +234,38 @@ export function HeroAccountMenu({
     });
   };
 
-  const handleSetDefault = () => {
-    setDefaultAccount(account.id);
-    toast.success(`${account.name} is now your default`);
-  };
-
   return (
     <>
       <div className={cn("relative z-10 flex items-center gap-2", className)}>
-        <button
+        <Button
           type="button"
+          variant="glass"
           onClick={() => setRatesOpen(true)}
-          className={cn(HERO_GLASS_BUTTON, "h-10 w-auto gap-2.5 px-2.5 max-sm:h-9 max-sm:gap-1.5 max-sm:px-2")}
+          className={cn(HERO_GLASS_EXTRA, "h-10 gap-2.5 px-2.5 max-sm:h-9 max-sm:gap-1.5 max-sm:px-2")}
           aria-label={`FX Rates. 1 USD is ${usd.mid.toFixed(2)} GHS`}
           title="FX Rates"
         >
           <span className="relative flex shrink-0 items-center">
-            <span className="max-sm:hidden"><CurrencyLogo currency="GHS" size={24} showBorder={false} /></span>
-            <CurrencyLogo currency="USD" size={24} showBorder={false} className="-ml-2 max-sm:ml-0" />
+            <span className="max-sm:hidden"><CurrencyLogo currency="GHS" size={20} showBorder={false} /></span>
+            <CurrencyLogo currency="USD" size={20} showBorder={false} className="-ml-1.5 max-sm:ml-0" />
           </span>
           <span className="tabular text-[14px] tracking-[-0.01em] max-sm:text-[13px]"><span className="max-sm:hidden">USD </span>{usd.mid.toFixed(2)}</span>
-          <RateTrend size={15} strokeWidth={2} className={cn(usd.changePct >= 0 ? "text-success-text" : "text-destructive-text")} />
-        </button>
+          <RateTrend size={15} strokeWidth={2} className={cn("size-[15px]", usd.changePct >= 0 ? "text-success-text" : "text-destructive-text")} />
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger
-            className={cn(HERO_GLASS_BUTTON, "aria-expanded:bg-white/18")}
-            aria-label={`Account options for ${account.name}`}
+            render={
+              <Button
+                variant="glass"
+                size="icon-lg"
+                className={cn(HERO_GLASS_EXTRA, "aria-expanded:bg-white/18")}
+                aria-label={`Account options for ${account.name}`}
+              />
+            }
           >
-            <MoreVertical size={18} strokeWidth={1.9} />
+            <MoreVertical size={18} strokeWidth={1.9} className="size-[18px]" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" sideOffset={6} className="w-[272px] rounded-2xl p-1.5">
-            <div className="flex flex-col gap-0.5 px-3 pb-2.5 pt-2.5">
-              <span className="truncate text-[14.5px] tracking-[-0.01em] text-foreground">{account.name}</span>
-              <span className="text-[12px] text-muted-foreground tabular">
-                {groupDigits(account.number)} · {account.currency}
-              </span>
-            </div>
-
-            <DropdownMenuSeparator />
-
+          <DropdownMenuContent align="end" sideOffset={6} className="w-[240px] rounded-2xl p-1.5">
             {/* Inbound & Sharing */}
             <DropdownMenuItem onClick={handleCopyNumber} className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70">
               <Copy size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
@@ -302,32 +296,12 @@ export function HeroAccountMenu({
               <span className="text-[13.5px]">View transactions</span>
             </DropdownMenuItem>
 
-            {/* Controls */}
-            <DropdownMenuItem
-              onClick={() => router.push(`/accounts/${account.id}`)}
-              className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
-            >
-              <SlidersHorizontal size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-              <span className="text-[13.5px]">Account details & limits</span>
-            </DropdownMenuItem>
-
-            {canBeDefault && (
-              <DropdownMenuItem onClick={handleSetDefault} className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70">
-                <CheckCircle2 size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-                <span className="text-[13.5px]">Set as default account</span>
-              </DropdownMenuItem>
-            )}
-
-            <DropdownMenuSeparator />
-
-            {/* Global accounts exit */}
             <DropdownMenuItem
               onClick={() => router.push("/accounts")}
               className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
             >
-              <LayoutGrid size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
-              <span className="flex-1 text-[13.5px]">Manage all accounts</span>
-              <ChevronRight size={15} strokeWidth={1.8} className="shrink-0 text-muted-foreground/70" aria-hidden="true" />
+              <LayoutGrid size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+              <span className="text-[13.5px]">View all accounts</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

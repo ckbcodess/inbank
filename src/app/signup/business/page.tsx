@@ -225,7 +225,7 @@ export default function BusinessSignupPage() {
         {step === "company" && variant !== "existingCustomer" && (
           <form onSubmit={handleCompanySubmit} className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="companyName" className="text-[13.5px] font-medium text-foreground">
+              <Label htmlFor="companyName" className="text-[13px] font-medium text-foreground">
                 Registered business name
               </Label>
               <Input
@@ -239,7 +239,7 @@ export default function BusinessSignupPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="tin" className="text-[13.5px] font-medium text-foreground">
+              <Label htmlFor="tin" className="text-[13px] font-medium text-foreground">
                 Taxpayer Identification Number (TIN)
               </Label>
               <Input
@@ -253,14 +253,14 @@ export default function BusinessSignupPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="businessType" className="text-[13.5px] font-medium text-foreground">
+              <Label htmlFor="businessType" className="text-[13px] font-medium text-foreground">
                 Business type
               </Label>
               <Select
                 value={company.businessType}
                 onValueChange={(v) => v && setCompany((c) => ({ ...c, businessType: v }))}
               >
-                <SelectTrigger id="businessType" className="h-11 w-full text-[14px]">
+                <SelectTrigger id="businessType" className="h-11 w-full text-[15px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -325,7 +325,7 @@ export default function BusinessSignupPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="contactName" className="text-[13.5px] font-medium text-foreground">
+                <Label htmlFor="contactName" className="text-[13px] font-medium text-foreground">
                   Full name
                 </Label>
                 <Input
@@ -337,11 +337,11 @@ export default function BusinessSignupPage() {
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="contactRole" className="text-[13.5px] font-medium text-foreground">
+                <Label htmlFor="contactRole" className="text-[13px] font-medium text-foreground">
                   Your role
                 </Label>
                 <Select value={contact.role} onValueChange={(v) => v && setContact((c) => ({ ...c, role: v }))}>
-                  <SelectTrigger id="contactRole" className="h-11 w-full text-[14px]">
+                  <SelectTrigger id="contactRole" className="h-11 w-full text-[15px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -356,7 +356,7 @@ export default function BusinessSignupPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="contactGhanaCard" className="text-[13.5px] font-medium text-foreground">
+              <Label htmlFor="contactGhanaCard" className="text-[13px] font-medium text-foreground">
                 Ghana Card number
               </Label>
               <Input
@@ -371,7 +371,7 @@ export default function BusinessSignupPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="contactMobile" className="text-[13.5px] font-medium text-foreground">
+                <Label htmlFor="contactMobile" className="text-[13px] font-medium text-foreground">
                   Mobile number
                 </Label>
                 <PhoneInput
@@ -383,7 +383,7 @@ export default function BusinessSignupPage() {
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="contactEmail" className="text-[13.5px] font-medium text-foreground">
+                <Label htmlFor="contactEmail" className="text-[13px] font-medium text-foreground">
                   Email
                 </Label>
                 <Input
@@ -713,7 +713,7 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
           className="h-11 text-[14.5px]"
         />
         <Select value={role} onValueChange={(v) => v && setRole(v)}>
-          <SelectTrigger aria-label="Signatory role" className="h-11 w-full text-[14px]">
+          <SelectTrigger aria-label="Signatory role" className="h-11 w-full text-[15px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -728,7 +728,7 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
       <PhoneInput
         value={mobile}
         onValueChange={setMobile}
-        className="text-[14.5px]"
+        className="text-[15px]"
         aria-label="Signatory mobile number"
       />
       <div className="flex gap-2">

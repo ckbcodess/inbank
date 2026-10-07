@@ -83,6 +83,7 @@
   --color-primary-hover: var(--primary-hover);
   --color-popover: var(--popover);
   --color-card: var(--card);
+  --color-panel: var(--panel);
   --color-card-auth: var(--card-auth);
   --color-auth-card: var(--auth-card);
   --color-card-item: var(--card-item);
@@ -107,12 +108,14 @@
 :root {
   /*
    * Neutral palette is FIXED product-wide (the `neutral` scale, pure grey).
-   * The accent is the GCB amber (--primary, #F9C632) and the token derived from it (--ring).
+   * The accent is the GCB amber (--primary, #FFC423) and the token derived from it (--ring).
    * There is no per-tenant accent.
    */
   --background: oklch(1 0 0);
   --foreground: #2e2e2e;
   --card: #fafafa;
+  /* Dashboard panels (Recent activity, Cards, Accounts...). Follows the page background; tune on its own. */
+  --panel: var(--background);
   /* Card surface for auth & onboarding screens (distinct from in-app --card). */
   --card-auth: #ffffff;
   --auth-card: var(--card-auth);
@@ -130,12 +133,18 @@
   /* Account Details balance card (Figma 1896:15407) — slate tint over the page. */
   --account-card: rgba(71, 85, 96, 0.1);
   --popover: var(--menu);
-  /* GCB Bank PLC brand amber: #F9C632 */
-  --primary: #F9C632;
-  --primary-hover: #fedb71;
+  /* GCB Bank PLC brand amber: #FFC423 */
+  --primary: #FFC423;
+  --primary-hover: #ffd966;
   --primary-foreground: #321800;
   /* Outline of the two-tone Send & Pay icons (the amber parts are --duo-accent). */
   --duo-outline: #475560;
+  /* Glass icon (components/ui/glass-icon.tsx): gradient top to bottom, plus the lit and shaded edges. */
+  --glass-light: #fff0bf;
+  --glass-mid: #ffc423;
+  --glass-dark: #a35f00;
+  --glass-shine: #ffffff;
+  --glass-shade: #5c3300;
   /* The soft highlight that sweeps across a loading skeleton. */
   --skeleton-shine: oklch(1 0 0 / 60%);
   /* The two circles of the Mastercard mark, wherever a card shows its network. */
@@ -213,7 +222,7 @@
   --muted-foreground: #8a8a8a;
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: #df2a69;
   --destructive-foreground: oklch(1 0 0);
   --success: oklch(0.62 0.15 150);
   --warning: oklch(0.72 0.16 75);
@@ -291,21 +300,28 @@
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: #181818;
+  --panel: #181818;
   --card-auth: #181818;
   --auth-card: var(--card-auth);
   --card-item: #212121;
   --card-inner: var(--card-item);
-  --modal: #181818;
-  --tile: #161616;
+  --modal: #121212;
+  --tile: #171717;
   --tile-hover: #1c1c1c;
-  --tile-accent: #F9C632;
+  --tile-accent: #FFC423;
   --account-card: #93a7ba14;
   --popover: var(--menu);
-  --primary: #F9C632;
-  --primary-hover: #E5B62E;
+  --primary: #FFC423;
+  --primary-hover: #EBB420;
   --primary-foreground: #321800;
   /* Outline of the two-tone Send & Pay icons (the amber parts are --duo-accent). */
   --duo-outline: #52606b;
+  /* Glass icon (components/ui/glass-icon.tsx): gradient top to bottom, plus the lit and shaded edges. */
+  --glass-light: #fff0bf;
+  --glass-mid: #ffc423;
+  --glass-dark: #a35f00;
+  --glass-shine: #ffffff;
+  --glass-shade: #5c3300;
   --skeleton-shine: oklch(1 0 0 / 7%);
   /* The two circles of the Mastercard mark, wherever a card shows its network. */
   --mc-red: #eb001b;
@@ -320,7 +336,7 @@
   --pill-info: #2e2e2e99;
   --pill-info-text: #c7c7c7;
   --pill-warning: #ffc80029;
-  --pill-warning-text: #f9c632;
+  --pill-warning-text: #ffc423;
   --pill-destructive: color-mix(in oklch, var(--destructive) 20%, transparent);
   --pill-destructive-text: var(--destructive-text);
   --pill-neutral: var(--muted);
@@ -337,7 +353,7 @@
   --info: oklch(0.72 0.15 255);
   --success-text: oklch(0.78 0.15 150);
   --warning-text: oklch(0.82 0.14 85);
-  --destructive-text: oklch(0.75 0.16 22);
+  --destructive-text: #fe5d6d;
   --info-text: oklch(0.78 0.12 250);
   --field: #181818;
   --field-hover: #1c1c1c;
@@ -372,12 +388,12 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.371 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.637 0.237 25.331);
+  --destructive: #fe5d6d;
   --destructive-foreground: oklch(1 0 0);
   --success: oklch(0.68 0.15 150);
   --warning: oklch(0.78 0.15 75);
   --border: oklch(0.269 0 0);
-  --ring: #f9c632;
+  --ring: #ffc423;
   /* Same eight hue families, re-stepped for the dark surface — a selected dark
      palette, not an automatic flip. All five clear 3:1 on #171717. */
   --cat-1: #3987e5;
@@ -450,6 +466,7 @@ html.i18n-pending body {
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
   /* Cap font weights globally — no semibold or bold on text */
   h1, h2, h3, h4, h5, h6, p, span, a, label, td, th, li, dt, dd {
@@ -720,6 +737,11 @@ select {
 @media (prefers-reduced-motion: reduce) {
   .hero-wave-a, .hero-wave-b { animation: none; }
 }
+/* Scrolled out of view: stop repainting the drifting waves (hero-parts.tsx). */
+[data-hero-offscreen] .hero-wave-a,
+[data-hero-offscreen] .hero-wave-b {
+  animation-play-state: paused;
+}
 
 /* Dashboard sheet rim light (hero-parts.tsx): registered so its strength eases. */
 @property --rim-o {
@@ -823,7 +845,7 @@ html.theme-fade *::after {
 }
 
 /* Two-tone hub icons: the amber parts, recolourable through --duo-accent. */
-.duo-fill { fill: var(--duo-accent, #F9C632); }
+.duo-fill { fill: var(--duo-accent, #FFC423); }
 /* The outline of the same icons: a token, since SVG attributes cannot read variables. */
 .duo-outline { stroke: var(--duo-outline); }
 .duo-outline-fill { fill: var(--duo-outline); }
@@ -956,4 +978,14 @@ html[data-hide-focus-ring] :focus-visible * {
   --tw-ring-shadow: 0 0 #0000 !important;
   --tw-ring-offset-shadow: 0 0 #0000 !important;
   outline-color: transparent !important;
+}
+
+/* @kitlangton/rolling-number (the balance roll) ships `.rn-ink { will-change: transform }`
+   and never releases it, so every settled digit stays on its own GPU layer. Its antialiased
+   edges then composite grayscale over the hero's textured background and read as a grainy
+   fringe. The roll is a short, infrequent animation, so a permanent layer buys nothing at
+   rest — drop the promotion and let settled numbers paint straight into the backdrop (crisp).
+   Scoped under .rn-root and left unlayered so it beats the library's own unlayered rule. */
+.rn-root .rn-ink {
+  will-change: auto;
 }

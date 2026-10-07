@@ -32,9 +32,9 @@ interface ProxyIdModalProps {
 }
 
 const inputCls =
-  "h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition";
+  "h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition";
 const selectCls =
-  "h-11 w-full rounded-xl border border-field-border bg-field pl-3.5 pr-10 text-[14px] text-foreground";
+  "h-11 w-full rounded-xl border border-field-border bg-field pl-3.5 pr-10 text-[15px] text-foreground";
 const labelCls = "text-[12.5px] text-muted-foreground";
 
 export default function ProxyIdModal({

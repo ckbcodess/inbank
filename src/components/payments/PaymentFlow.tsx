@@ -61,6 +61,7 @@ import { roundMoney, sumMoney } from "@/lib/money";
 import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
 import TransactionPinModal from "./TransactionPinModal";
 import { REGISTERED_PHONE, useAuthorisation } from "./useAuthorisation";
+import { groupAvatarTint } from "./flows/beneficiaries";
 import { OwnAccountFlow } from "./flows/OwnAccountFlow";
 import { OtherGcbFlow } from "./flows/OtherGcbFlow";
 import { OtherBankFlow } from "./flows/OtherBankFlow";
@@ -890,7 +891,7 @@ function RailBeneficiaryStrip({
             title={`Select ${item.name} (${item.subtitle || item.bank || item.acct})`}
           >
             <span
-              className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-transform group-hover:scale-105 shadow-xs border border-black/5 dark:border-white/10"
+              className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85] shadow-xs border border-black/5 dark:border-white/10"
               style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
             >
               {item.initials}
@@ -2143,7 +2144,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <span
-                className="flex size-14 items-center justify-center rounded-full text-[20px] text-primary-foreground transition-transform group-hover:scale-105"
+                className="flex size-14 items-center justify-center rounded-full text-[20px] text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
                 style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
               >
                 {item.initials}
@@ -2255,7 +2256,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <span
-                className="flex size-14 items-center justify-center rounded-full text-[20px] text-primary-foreground transition-transform group-hover:scale-105"
+                className="flex size-14 items-center justify-center rounded-full text-[20px] text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
                 style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
               >
                 {item.initials}
@@ -2360,7 +2361,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <span
-                className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-transform group-hover:scale-105 shadow-xs border border-black/5 dark:border-white/10"
+                className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85] shadow-xs border border-black/5 dark:border-white/10"
                 style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
               >
                 {item.initials}
@@ -2525,7 +2526,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <span
-                className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-transform group-hover:scale-105 shadow-xs border border-black/5 dark:border-white/10"
+                className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85] shadow-xs border border-black/5 dark:border-white/10"
                 style={{ backgroundColor: item.colorBg || "var(--avatar-yellow)" }}
               >
                 {item.initials}
@@ -2742,7 +2743,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 }
                 className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
               >
-                <span className="flex size-14 items-center justify-center rounded-full bg-primary/20 text-[16px] font-medium text-primary-foreground transition-transform group-hover:scale-105">
+                <span
+                  className="flex size-14 items-center justify-center rounded-full text-[20px] text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
+                  style={{ backgroundColor: groupAvatarTint(g.id) }}
+                >
                   {g.name.slice(0, 2).toUpperCase()}
                 </span>
                 <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
@@ -2808,7 +2812,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <span
-                className="flex size-14 items-center justify-center rounded-full text-[18px] text-primary-foreground transition-transform group-hover:scale-105"
+                className="flex size-14 items-center justify-center rounded-full text-[18px] text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
                 style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
               >
                 {item.initials}
@@ -3682,7 +3686,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 variant="outline"
                 onClick={() => setStage(1)}
                 disabled={phase === "submitting"}
-                className="flex-1 h-11 rounded-lg text-[14px] font-medium border-border"
+                className="flex-1 h-11 rounded-lg text-[14px] border-border"
               >
                 Back
               </Button>
@@ -3692,7 +3696,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 onClick={() => {
                   setPinModalOpen(true);
                 }}
-                className="flex-1 h-11 rounded-lg text-[14px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+                className="flex-1 h-11 rounded-lg text-[14px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
               >
                 {f.isScheduled ? "Proceed & Schedule" : "Proceed to Pay"}
               </Button>

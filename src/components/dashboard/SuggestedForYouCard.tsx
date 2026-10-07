@@ -134,7 +134,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
               className="group relative flex flex-col items-center gap-2 text-center cursor-pointer focus:outline-none overflow-hidden rounded-xl p-1"
             >
               <div
-                className={`flex size-[52px] sm:size-[54px] items-center justify-center rounded-full text-[19px] font-medium transition-transform duration-150 group-hover:scale-105 ${b.bg}`}
+                className={`flex size-[52px] sm:size-[54px] items-center justify-center rounded-full text-[19px] font-medium transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85] ${b.bg}`}
               >
                 {b.initial}
               </div>

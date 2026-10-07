@@ -132,7 +132,7 @@ export function DataBundleFlow({
 
       {/* 2. Destination: Network & Phone Number */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
+        <label className="text-[13px] font-medium text-foreground">Recipient Details</label>
         {isSelf ? (
           selfBlock
         ) : isPhoneValid && isCollapsed ? (
@@ -189,7 +189,7 @@ export function DataBundleFlow({
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Bundle Selection */}
           <div className="flex flex-col gap-2">
-            <label className="text-[14px] font-medium text-foreground">Internet</label>
+            <label className="text-[13px] font-medium text-foreground">Internet</label>
             <Select
               value={selectedBundle?.id || bundles[0]?.id}
               onValueChange={(val) => {
@@ -241,10 +241,7 @@ export function DataBundleFlow({
             </Select>
             {overBalance && (
               <div className="animate-in fade-in slide-in-from-top-1 duration-150">
-                <InsufficientFundsAlert
-                  available={fromAccount?.available ?? 0}
-                  currency={fromAccount?.currency || "GHS"}
-                />
+                <InsufficientFundsAlert />
               </div>
             )}
           </div>

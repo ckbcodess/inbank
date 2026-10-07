@@ -148,7 +148,7 @@ export default function SettingsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="fullname" className="text-[12.5px] text-foreground">
+                <Label htmlFor="fullname" className="text-[13px] font-medium text-foreground">
                   Full Legal Name
                 </Label>
                 <Input
@@ -161,7 +161,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="email" className="text-[12.5px] text-foreground">
+                <Label htmlFor="email" className="text-[13px] font-medium text-foreground">
                   Registered Email
                 </Label>
                 <Input
@@ -175,20 +175,20 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="phone" className="text-[12.5px] text-foreground">
+                <Label htmlFor="phone" className="text-[13px] font-medium text-foreground">
                   Primary Mobile Phone
                 </Label>
                 <PhoneInput
                   id="phone"
                   value={phone}
                   onValueChange={setPhone}
-                  className="h-10 text-[13px]"
+                  className="h-10 text-[15px]"
                   required
                 />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="ghana-card" className="text-[12.5px] text-foreground flex items-center justify-between">
+                <Label htmlFor="ghana-card" className="text-[13px] font-medium text-foreground flex items-center justify-between">
                   <span>Ghana Card Number (NIA)</span>
                   <span className="text-[10.5px] text-success-text font-medium">Verified</span>
                 </Label>
@@ -196,13 +196,13 @@ export default function SettingsPage() {
                   id="ghana-card"
                   value={ghanaCard}
                   disabled
-                  className="h-10 text-[13px] bg-muted/30"
+                  className="h-10 text-[15px] bg-muted/30"
                 />
               </div>
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="address" className="text-[12.5px] text-foreground">
+              <Label htmlFor="address" className="text-[13px] font-medium text-foreground">
                 Residential / Operating Address
               </Label>
               <Input
@@ -262,7 +262,7 @@ export default function SettingsPage() {
 
             <div className="flex flex-col gap-3.5 max-w-md">
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="curr-pass" className="text-[12.5px] text-foreground">
+                <Label htmlFor="curr-pass" className="text-[13px] font-medium text-foreground">
                   Current Password
                 </Label>
                 <Input
@@ -275,7 +275,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="new-pass" className="text-[12.5px] text-foreground">
+                <Label htmlFor="new-pass" className="text-[13px] font-medium text-foreground">
                   New Password
                 </Label>
                 <Input
@@ -288,7 +288,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="conf-pass" className="text-[12.5px] text-foreground">
+                <Label htmlFor="conf-pass" className="text-[13px] font-medium text-foreground">
                   Confirm New Password
                 </Label>
                 <Input
@@ -385,7 +385,7 @@ export default function SettingsPage() {
                   </span>
                 </div>
                 <Select value={sessionTimeout} onValueChange={(val) => { if (val) setSessionTimeout(val); }}>
-                  <SelectTrigger className="w-32 h-8 text-[12px]">
+                  <SelectTrigger className="w-32 h-8 text-[15px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

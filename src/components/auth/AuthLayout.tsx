@@ -122,7 +122,7 @@ export default function AuthLayout({
       {/* Decorative Brand Hero Banner Background */}
       {!quiet && <div className="absolute top-16 inset-x-0 h-[240px] sm:h-[280px] lg:h-[300px] overflow-hidden pointer-events-none z-0">
         <Image
-          src="/images/auth-banner.png"
+          src="/images/auth-banner.webp"
           alt="GCB Internet Banking"
           fill
           className="object-cover object-center"

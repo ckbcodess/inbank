@@ -99,7 +99,7 @@ export function OwnAccountFlow({
 
       {/* 2. To Account */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">To Account</label>
+        <label className="text-[13px] font-medium text-foreground">To Account</label>
         {isDetailsValid && isCollapsed && toAccount ? (
           <CollapsedDetailsBadge
             title={toAccount.name}
@@ -121,13 +121,8 @@ export function OwnAccountFlow({
               {accounts
                 .filter((a) => a.id !== state.fromId)
                 .map((a) => (
-                  <SelectItem key={a.id} value={a.id}>
-                    <div className="flex items-center justify-between w-full gap-4">
-                      <span>{a.name} ({a.number})</span>
-                      <span className="font-medium text-muted-foreground tabular">
-                        {formatMoney(a.available, a.currency, true)}
-                      </span>
-                    </div>
+                  <SelectItem key={a.id} value={a.id} className="py-2.5">
+                    <AccountSelectTriggerContent account={a} />
                   </SelectItem>
                 ))}
             </SelectContent>
@@ -153,10 +148,7 @@ export function OwnAccountFlow({
             }}
             error={
               overBalance ? (
-                <InsufficientFundsAlert
-                  available={fromAccount?.available ?? 0}
-                  currency={fromAccount?.currency || "GHS"}
-                />
+                <InsufficientFundsAlert />
               ) : undefined
             }
           />

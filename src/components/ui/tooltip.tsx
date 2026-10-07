@@ -74,6 +74,8 @@ function SimpleTooltip({
   align = "center",
   sideOffset = 6,
   delay,
+  disabled = false,
+  triggerClassName,
 }: {
   content: React.ReactNode;
   children: React.ReactElement;
@@ -81,6 +83,10 @@ function SimpleTooltip({
   align?: "center" | "start" | "end";
   sideOffset?: number;
   delay?: number;
+  /** Keep the tooltip's wrapper in place but never open it, so a trigger doesn't remount when its tooltip switches off. */
+  disabled?: boolean;
+  /** Classes for the wrapper put around a component child (default `inline-flex`). */
+  triggerClassName?: string;
 }) {
   if (!content) return children;
 
@@ -90,11 +96,11 @@ function SimpleTooltip({
     typeof children.type === "string" ? (
       children
     ) : (
-      <span className="inline-flex">{children}</span>
+      <span className={cn("inline-flex", triggerClassName)}>{children}</span>
     );
 
   const tooltipElement = (
-    <Tooltip>
+    <Tooltip disabled={disabled}>
       <TooltipTrigger render={trigger} />
       <TooltipContent side={side} align={align} sideOffset={sideOffset}>
         {content}

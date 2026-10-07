@@ -105,9 +105,9 @@ export function QuickFundFlow({
   const [phone, setPhone] = useState(registeredPhone ?? "0241234567");
   const usingRegistered =
     !!registeredPhone && toNationalDigits(phone) === toNationalDigits(registeredPhone);
-  const [cardNumber, setCardNumber] = useState("4111 2222 3333 4444");
-  const [cardExpiry, setCardExpiry] = useState("12/28");
-  const [cardCvv, setCardCvv] = useState("123");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
   const [amount, setAmount] = useState(resume ? String(resume.amount) : "100");
   const [otpDigits, setOtpDigits] = useState<string[]>(Array(6).fill(""));
   const [countdown, setCountdown] = useState(30);
@@ -157,6 +157,11 @@ export function QuickFundFlow({
     } else {
       // The card's own bank approves it on its page (3-D Secure), then sends the customer back here.
       const digits = cardNumber.replace(/\D/g, "");
+      if (digits.length < 15 || !/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardExpiry.trim()) || cardCvv.replace(/\D/g, "").length < 3) {
+        setBusy(false);
+        setErrorMsg("Check the card number, expiry (MM/YY) and security code, then try again.");
+        return;
+      }
       startCardPayment({
         flow: "quick-fund",
         amount: parsedAmt,
@@ -300,6 +305,7 @@ export function QuickFundFlow({
                     <Label htmlFor="quickFundCard" className={FUND_LABEL}>Card number</Label>
                     <Input
                       id="quickFundCard"
+                      placeholder="4000 1234 5678 9010"
                       value={cardNumber}
                       onChange={(e) => setCardNumber(e.target.value)}
                       className={FUND_FIELD}
@@ -311,6 +317,7 @@ export function QuickFundFlow({
                       <Label htmlFor="quickFundExp" className={FUND_LABEL}>Expiry</Label>
                       <Input
                         id="quickFundExp"
+                        placeholder="MM/YY"
                         value={cardExpiry}
                         onChange={(e) => setCardExpiry(e.target.value)}
                         className={FUND_FIELD}
@@ -321,6 +328,7 @@ export function QuickFundFlow({
                       <Label htmlFor="quickFundCvv" className={FUND_LABEL}>CVV</Label>
                       <Input
                         id="quickFundCvv"
+                        placeholder="•••"
                         type="password"
                         maxLength={3}
                         value={cardCvv}

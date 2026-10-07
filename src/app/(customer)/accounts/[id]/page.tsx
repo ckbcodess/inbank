@@ -15,7 +15,7 @@
  *     transactions list filtered to this account — one tap further).
  */
 
-import { use, useState } from "react";
+import { use, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -37,6 +37,8 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
+import type { DevStateGroup } from "@/components/providers/DevStateProvider";
+import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import { ListErrorState, TrueEmptyState } from "@/components/states/ListStates";
 import type { BaselineState } from "@/lib/states";
 import { findAccount, formatDate, transactionsForAccount, type Account, type Transaction } from "@/lib/mock-data";
@@ -58,6 +60,34 @@ import { AccountDetailBody } from "@/components/states/PageSkeletons";
 const BASELINE: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 const MINI_STATEMENT_SIZE = 10;
 
+/* Dev Mode: each group overrides one thing on the account being shown. "real" leaves it as the data has it. */
+type DevStatus = "real" | "Active" | "Dormant";
+type DevOwnership = "real" | "sole" | "joint-either" | "joint-both";
+type DevDefault = "real" | "default" | "not-default";
+type DevBalance = "real" | "zero" | "low";
+
+const DEV_STATUS: { id: DevStatus; label: string }[] = [
+  { id: "real", label: "As is" },
+  { id: "Active", label: "Active" },
+  { id: "Dormant", label: "Dormant" },
+];
+const DEV_OWNERSHIP: { id: DevOwnership; label: string }[] = [
+  { id: "real", label: "As is" },
+  { id: "sole", label: "Sole holder" },
+  { id: "joint-either", label: "Joint, either to sign" },
+  { id: "joint-both", label: "Joint, both to sign" },
+];
+const DEV_DEFAULT: { id: DevDefault; label: string }[] = [
+  { id: "real", label: "As is" },
+  { id: "default", label: "Default account" },
+  { id: "not-default", label: "Not the default" },
+];
+const DEV_BALANCE: { id: DevBalance; label: string }[] = [
+  { id: "real", label: "As is" },
+  { id: "zero", label: "Zero balance" },
+  { id: "low", label: "Low balance (GHS 12.40)" },
+];
+
 export default function AccountDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const activeProfile = useSession((s) => s.activeProfile);
@@ -66,9 +96,45 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
   // rare, and the list rows stay one-tap-one-destination.
   const { accounts: customerAccounts, defaultId } = useCustomerAccounts();
   // The customer's own copy first: it carries a wallet balance that moved in.
-  const account = customerAccounts.find((a) => a.id === id) ?? findAccount(id);
+  const realAccount = customerAccounts.find((a) => a.id === id) ?? findAccount(id);
   const setDefaultAccount = useAccountPrefs((s) => s.setDefaultAccount);
   const [state, setState] = useState<BaselineState>("populated");
+  const [devStatus, setDevStatus] = useState<DevStatus>("real");
+  const [devOwnership, setDevOwnership] = useState<DevOwnership>("real");
+  const [devDefault, setDevDefault] = useState<DevDefault>("real");
+  const [devBalance, setDevBalance] = useState<DevBalance>("real");
+  const devGroups = useMemo<DevStateGroup[] | undefined>(
+    () =>
+      SHOW_DEMO_TOOLS
+        ? [
+            { label: "Account status", states: DEV_STATUS, value: devStatus, onChange: (v) => setDevStatus(v as DevStatus) },
+            { label: "Ownership", states: DEV_OWNERSHIP, value: devOwnership, onChange: (v) => setDevOwnership(v as DevOwnership) },
+            { label: "Default", states: DEV_DEFAULT, value: devDefault, onChange: (v) => setDevDefault(v as DevDefault) },
+            { label: "Balance", states: DEV_BALANCE, value: devBalance, onChange: (v) => setDevBalance(v as DevBalance) },
+          ]
+        : undefined,
+    [devStatus, devOwnership, devDefault, devBalance],
+  );
+  const account = useMemo<Account | undefined>(() => {
+    if (!realAccount) return realAccount;
+    const next: Account = { ...realAccount };
+    if (devStatus !== "real") next.status = devStatus;
+    if (devOwnership === "sole") {
+      next.isJoint = false;
+      next.mandate = undefined;
+    } else if (devOwnership !== "real") {
+      next.isJoint = true;
+      next.mandate = devOwnership === "joint-both" ? "Both to sign" : "Either to sign";
+    }
+    if (devBalance === "zero") {
+      next.balance = 0;
+      next.available = 0;
+    } else if (devBalance === "low") {
+      next.balance = 12.4;
+      next.available = 12.4;
+    }
+    return next;
+  }, [realAccount, devStatus, devOwnership, devBalance]);
   const [fundOpen, setFundOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [recentOpen, setRecentOpen] = useState(false);
@@ -130,8 +196,11 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
   const dormant = account.status === "Dormant";
   // "Default" only means something when there's more than one account to pick from,
   // and a dormant account can't be one.
-  const choosable = !dormant && customerAccounts.length > 1 && customerAccounts.some((a) => a.id === account.id);
-  const isDefault = choosable && account.id === defaultId;
+  const choosable =
+    devDefault !== "real"
+      ? !dormant
+      : !dormant && customerAccounts.length > 1 && customerAccounts.some((a) => a.id === account.id);
+  const isDefault = choosable && (devDefault === "real" ? account.id === defaultId : devDefault === "default");
   const canBeDefault = choosable && !isDefault;
 
   return (
@@ -215,7 +284,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
       )}
 
       <div className="pt-2 opacity-40 transition-opacity hover:opacity-100">
-        <StateSwitcher section="13.9 baseline" states={BASELINE} value={state} onChange={setState} />
+        <StateSwitcher section="13.9 baseline" label="Screen state" states={BASELINE} value={state} onChange={setState} groups={devGroups} />
       </div>
 
       <LinkSourceAccountModal
@@ -255,16 +324,13 @@ function HeaderPill({ onClick, children }: { onClick: () => void; children: Reac
 
 function BalanceCard({ account, isDefault }: { account: Account; isDefault: boolean }) {
   const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
-  const facts: [string, string][] = [
-    ["Type", account.type],
-    ["Currency", account.currency],
-    ["Status", account.status],
-  ];
+  // Type and currency are already on the card, and "Active" is the expected state: only a status that needs attention is said.
+  const needsAttention = account.status !== "Active";
 
   return (
     <section
       aria-label="Balance"
-      className="relative flex min-h-[248px] flex-col justify-between gap-6 overflow-hidden rounded-xl border border-border bg-[var(--account-card)] p-6"
+      className="relative flex min-h-[220px] flex-col justify-between gap-10 overflow-hidden rounded-xl border border-border bg-[var(--account-card)] p-6"
     >
       {/* Decorative dot map (Figma 1896:15434) */}
       <Image
@@ -277,12 +343,18 @@ function BalanceCard({ account, isDefault }: { account: Account; isDefault: bool
         className="pointer-events-none absolute -right-[207.7px] top-[8.68px] h-[343.429px] w-[430.279px] max-w-none select-none dark:opacity-40"
       />
 
-      {isDefault && <Badge className="absolute right-6 top-6">Default</Badge>}
+      {isDefault && <Badge variant="brand" className="absolute right-6 top-6">Default</Badge>}
 
       <div className="relative flex flex-col gap-2 text-[14px] leading-5 tracking-[-0.005em] text-muted-foreground">
         <span className="flex items-center gap-1">
           <Landmark size={15} strokeWidth={1.8} aria-hidden="true" />
           {account.type}
+          {needsAttention && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span className="text-warning-text">{account.status}</span>
+            </>
+          )}
         </span>
         <span className="tabular">{account.number.replace(/\s+/g, "")}</span>
       </div>
@@ -297,7 +369,7 @@ function BalanceCard({ account, isDefault }: { account: Account; isDefault: bool
         <button
           type="button"
           onClick={toggleAmountVisibility}
-          className="rounded-md p-1 text-foreground transition-colors hover:bg-background/60 cursor-pointer"
+          className="-ml-1 flex size-10 shrink-0 items-center justify-center rounded-full text-foreground transition-colors hover:bg-background/60 cursor-pointer"
           aria-label={showAmounts ? "Hide balance" : "Show balance"}
           aria-pressed={!showAmounts}
           title={showAmounts ? "Hide balance" : "Show balance"}
@@ -305,22 +377,6 @@ function BalanceCard({ account, isDefault }: { account: Account; isDefault: bool
           {showAmounts ? <Eye size={18} strokeWidth={1.8} /> : <EyeOff size={18} strokeWidth={1.8} />}
         </button>
       </div>
-
-      <dl className="relative flex gap-8">
-        {facts.map(([label, value]) => (
-          <div key={label} className="flex flex-col gap-2">
-            <dt className="text-[12px] leading-5 text-muted-foreground">{label}</dt>
-            <dd
-              className={cn(
-                "text-[16px] leading-6 tracking-[-0.005em]",
-                label === "Status" && value !== "Active" ? "text-warning" : "text-foreground",
-              )}
-            >
-              {value}
-            </dd>
-          </div>
-        ))}
-      </dl>
     </section>
   );
 }

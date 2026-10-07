@@ -20,6 +20,7 @@ import Link from "next/link";
 import { CheckCircle2, ChevronRight, FileText, Send } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { ExpandableSearch } from "@/components/ui/expandable-search";
+import { AppliedFilters, FilterPanel, type FilterGroup } from "@/components/ui/filter-panel";
 import { Badge } from "@/components/ui/badge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import {
@@ -75,6 +76,20 @@ export default function ApprovalQueuePage() {
     setState("populated");
   }
 
+  const filterGroups: FilterGroup[] = [
+    {
+      id: "type",
+      kind: "single",
+      label: "Type",
+      options: [
+        { value: "payment", label: "Payment" },
+        { value: "trade", label: "Trade" },
+      ],
+      value: typeFilter,
+      onChange: (v) => setTypeFilter(v as TypeFilter),
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-5">
       <PageHeader title="Approvals" />
@@ -89,25 +104,9 @@ export default function ApprovalQueuePage() {
 
       {/* Filter and Search Ribbon */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-chip p-1">
-          {(["all", "payment", "trade"] as const).map((t) => {
-            const isActive = typeFilter === t;
-            return (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setTypeFilter(t)}
-                aria-pressed={isActive}
-                className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-3.5 py-1.5 text-[13px] capitalize transition cursor-pointer ${
-                  isActive
-                    ? "bg-chip-selected text-chip-selected-foreground shadow-xs font-medium"
-                    : "text-chip-foreground hover:text-chip-selected-foreground"
-                }`}
-              >
-                {t}
-              </button>
-            );
-          })}
+        <div className="flex flex-wrap items-center gap-2">
+          <FilterPanel groups={filterGroups} onClear={() => setTypeFilter("all")} align="start" />
+          <AppliedFilters groups={filterGroups} />
         </div>
 
         <ExpandableSearch

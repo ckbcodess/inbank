@@ -174,7 +174,7 @@ export function PapssPaymentFlow({
 
       {/* 2. Recipient & Destination Details */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">PAPSS Beneficiary Details</label>
+        <label className="text-[13px] font-medium text-foreground">PAPSS Beneficiary Details</label>
         {isDestinationValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || `PAPSS Account (${state.wIban})`}
@@ -252,7 +252,7 @@ export function PapssPaymentFlow({
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount Section: You Send (GHS) vs Recipient Gets (Foreign) with switcher */}
           <div className="flex flex-col gap-2">
-            <label className="text-[14px] font-medium text-foreground">Transfer Amount</label>
+            <label className="text-[13px] font-medium text-foreground">Transfer Amount</label>
 
             <DualAmountFields
               foreign={state.wForeign}
@@ -278,10 +278,7 @@ export function PapssPaymentFlow({
             {/* Row-level error alert below the entire row */}
             {overBalance && (
               <div className="mt-1 animate-in fade-in slide-in-from-top-1 duration-150">
-                <InsufficientFundsAlert
-                  available={fromAccount?.available ?? 0}
-                  currency={fromAccount?.currency || "GHS"}
-                />
+                <InsufficientFundsAlert />
               </div>
             )}
           </div>

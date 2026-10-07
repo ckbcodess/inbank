@@ -327,7 +327,7 @@ export default function EditGroupModal({
             <div className="flex flex-col gap-4">
               {/* Group Name */}
               <div className="flex flex-col gap-2">
-                <label className="text-[14px] font-medium text-foreground">
+                <label className="text-[13px] font-medium text-foreground">
                   Group Name <span className="text-destructive">*</span>
                 </label>
                 <input
@@ -351,7 +351,7 @@ export default function EditGroupModal({
 
               {/* Description */}
               <div className="flex flex-col gap-2">
-                <label className="text-[14px] font-medium text-foreground">
+                <label className="text-[13px] font-medium text-foreground">
                   Description <span className="text-muted-foreground font-normal">(optional)</span>
                 </label>
                 <input
@@ -367,7 +367,7 @@ export default function EditGroupModal({
 
             {/* Split Type & Amount Configuration */}
             <div className="flex flex-col gap-3 pt-2">
-              <label className="text-[14px] font-medium text-foreground">
+              <label className="text-[13px] font-medium text-foreground">
                 Contribution Rule
               </label>
 
@@ -401,7 +401,7 @@ export default function EditGroupModal({
 
               {/* Amount per person */}
               <div className="flex flex-col gap-2 mt-1">
-                <label className="text-[13.5px] font-medium text-foreground">
+                <label className="text-[13px] font-medium text-foreground">
                   {splitType === "equal" ? "Amount per Person" : "Baseline Amount"}
                 </label>
                 <div
@@ -497,7 +497,7 @@ export default function EditGroupModal({
                           value={savedSearch}
                           onChange={(e) => setSavedSearch(e.target.value)}
                           placeholder="Search saved contacts to add..."
-                          className="h-10 w-full pl-9 pr-7 rounded-xl border border-field-border bg-field text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                          className="h-10 w-full pl-9 pr-7 rounded-xl border border-field-border bg-field text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                         />
                         {savedSearch && (
                           <button
@@ -563,7 +563,7 @@ export default function EditGroupModal({
                         value={customName}
                         onChange={(e) => setCustomName(e.target.value)}
                         placeholder="Recipient full name"
-                        className="h-10 w-full rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                        className="h-10 w-full rounded-xl border border-field-border bg-field px-3 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                       />
 
                       <div className="flex items-center gap-2">
@@ -572,7 +572,7 @@ export default function EditGroupModal({
                           value={customDest}
                           onChange={(e) => setCustomDest(e.target.value)}
                           placeholder="Account or Phone number"
-                          className="h-10 flex-1 rounded-xl border border-field-border bg-field px-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                          className="h-10 flex-1 rounded-xl border border-field-border bg-field px-3 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                         />
 
                         <select
@@ -628,7 +628,7 @@ export default function EditGroupModal({
                     value={searchMember}
                     onChange={(e) => setSearchMember(e.target.value)}
                     placeholder="Search members in this group..."
-                    className="h-11 w-full pl-9.5 pr-8 rounded-xl border border-field-border bg-field text-[13.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                    className="h-11 w-full pl-9.5 pr-8 rounded-xl border border-field-border bg-field text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                   />
                   {searchMember && (
                     <button

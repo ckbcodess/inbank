@@ -876,9 +876,10 @@ export function VirtualCardDetailsView({
       }}
     />
   );
-  // Show PIN is in the list on every card with a PIN. A debit card also has it as its first round action.
+  // A debit card has Show PIN as its first round action, so it isn't repeated here. A card that holds a balance
+  // leads with Top Up instead, which makes this row its only way in.
   const tShowPin =
-    hasPin ? (
+    hasPin && isFundable ? (
       <ManageRow
         icon={KeypadIcon}
         title="Show PIN"
@@ -1064,8 +1065,8 @@ export function VirtualCardDetailsView({
                   <img
                     src={
                       effectiveCard.type === "Prepaid"
-                        ? "/images/cards/faded-card-prepaid.png"
-                        : "/images/cards/faded-card-debit.png"
+                        ? "/images/cards/faded-card-prepaid.webp"
+                        : "/images/cards/faded-card-debit.webp"
                     }
                     alt={`${effectiveCard.type} Card in Production`}
                     className="w-full h-auto object-contain drop-shadow-md rounded-[20px]"
@@ -1222,7 +1223,7 @@ export function VirtualCardDetailsView({
                   <Button
                     type="button"
                     onClick={handleOpenActivate}
-                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px] font-medium"
+                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px]"
                   >
                     Activate Card
                   </Button>
@@ -1233,7 +1234,7 @@ export function VirtualCardDetailsView({
                       setInitialTrackerView("pickup-code");
                       setActiveModal("tracking");
                     }}
-                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px] font-medium"
+                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px]"
                   >
                     Show Pickup Code
                   </Button>
@@ -1243,7 +1244,7 @@ export function VirtualCardDetailsView({
                   <Button
                     type="button"
                     onClick={handleOpenActivate}
-                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px] font-medium"
+                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px]"
                   >
                     Activate Card
                   </Button>
@@ -1254,7 +1255,7 @@ export function VirtualCardDetailsView({
                       setInitialTrackerView("timeline");
                       setActiveModal("tracking");
                     }}
-                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px] font-medium"
+                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px]"
                   >
                     Track Delivery
                   </Button>
@@ -1264,7 +1265,7 @@ export function VirtualCardDetailsView({
                   <Button
                     type="button"
                     onClick={handleOpenActivate}
-                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px] font-medium"
+                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px]"
                   >
                     Activate Card
                   </Button>
@@ -1275,7 +1276,7 @@ export function VirtualCardDetailsView({
                       setInitialTrackerView("pickup-code");
                       setActiveModal("tracking");
                     }}
-                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px] font-medium"
+                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px]"
                   >
                     Show Delivery Code
                   </Button>
@@ -1287,7 +1288,7 @@ export function VirtualCardDetailsView({
                     setInitialTrackerView("timeline");
                     setActiveModal("tracking");
                   }}
-                  className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px] font-medium"
+                  className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px]"
                 >
                   Track Delivery Progress
                 </Button>
@@ -1347,11 +1348,11 @@ export function VirtualCardDetailsView({
 
               {/* Source Account */}
               <div className="space-y-1.5">
-                <label className="text-[12px] font-medium text-foreground">Fund from Account</label>
+                <label className="text-[13px] font-medium text-foreground">Fund from Account</label>
                 <select
                   value={topUpSourceAccountId}
                   onChange={(e) => setTopUpSourceAccountId(e.target.value)}
-                  className="w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 py-2.5 text-[13.5px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
+                  className="w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 py-2.5 text-[15px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
                 >
                   {availableAccounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
@@ -1363,7 +1364,7 @@ export function VirtualCardDetailsView({
 
               {/* Top Up Amount */}
               <div className="space-y-1.5">
-                <label className="text-[12px] font-medium text-foreground">Top Up Amount (GHS)</label>
+                <label className="text-[13px] font-medium text-foreground">Top Up Amount (GHS)</label>
                 <Input
                   type="number"
                   min="1"
@@ -1491,7 +1492,7 @@ export function VirtualCardDetailsView({
           <form onSubmit={handleSaveLimits}>
             <DialogBody>
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="daily-limit-input" className="text-[12.5px] font-medium text-foreground">
+                <label htmlFor="daily-limit-input" className="text-[13px] font-medium text-foreground">
                   Daily limit (GHS)
                 </label>
                 <Input
@@ -1633,12 +1634,12 @@ export function VirtualCardDetailsView({
 
           <DialogBody>
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="new-pin-input" className="text-[12.5px] font-medium text-foreground">New 4-Digit PIN</label>
+              <label htmlFor="new-pin-input" className="text-[13px] font-medium text-foreground">New 4-Digit PIN</label>
               <Input id="new-pin-input" type="password" maxLength={4} placeholder="••••" className="h-10 tracking-widest text-[16px]" />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="confirm-pin-input" className="text-[12.5px] font-medium text-foreground">Confirm New PIN</label>
+              <label htmlFor="confirm-pin-input" className="text-[13px] font-medium text-foreground">Confirm New PIN</label>
               <Input id="confirm-pin-input" type="password" maxLength={4} placeholder="••••" className="h-10 tracking-widest text-[16px]" />
             </div>
           </DialogBody>
@@ -1670,7 +1671,7 @@ export function VirtualCardDetailsView({
           <form onSubmit={handleSaveNickname}>
             <DialogBody>
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="card-nickname-input" className="text-[12.5px] font-medium text-foreground">Card Nickname</label>
+                <label htmlFor="card-nickname-input" className="text-[13px] font-medium text-foreground">Card Nickname</label>
                 <Input
                   id="card-nickname-input"
                   value={tempNickname}
@@ -1737,7 +1738,7 @@ export function VirtualCardDetailsView({
             <DialogBody className="space-y-4">
               {/* CVV Input */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="card-cvv-input" className="text-[12.5px] font-medium text-foreground">
+                <label htmlFor="card-cvv-input" className="text-[13px] font-medium text-foreground">
                   3-Digit CVV Security Code
                 </label>
                 <Input
@@ -1758,7 +1759,7 @@ export function VirtualCardDetailsView({
               {/* Set 4-digit PIN */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="card-pin-input" className="text-[12.5px] font-medium text-foreground">
+                  <label htmlFor="card-pin-input" className="text-[13px] font-medium text-foreground">
                     Set 4-Digit Card PIN
                   </label>
                   <Input
@@ -1773,7 +1774,7 @@ export function VirtualCardDetailsView({
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="card-pin-confirm-input" className="text-[12.5px] font-medium text-foreground">
+                  <label htmlFor="card-pin-confirm-input" className="text-[13px] font-medium text-foreground">
                     Confirm 4-Digit PIN
                   </label>
                   <Input

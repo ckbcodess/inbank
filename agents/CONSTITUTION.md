@@ -108,7 +108,7 @@ here. Never fall back to dense, boxed layouts.
   (`success`, `warning`, `destructive`, `info` for fills). If a colour is missing, add a token to `globals.css` for
   **both** themes. Never hardcode it, and never use Tailwind palette colours (`text-emerald-600`).
 - **Light and dark come from the tokens.** No `dark:` workarounds where a token would do.
-- **Primary is GCB amber** (`#F9C632`, hover `#E5B62E`) with dark text on top.
+- **Primary is GCB amber** (`#FFC423`, hover `#EBB420`) with dark text on top.
 - **Amber is never text on a light surface,** because it fails contrast. Use amber for filled
   buttons and badges (with dark text), icon accents (`--tile-accent`, duotone fills) and dark-mode
   accents. Text links use `text-foreground` with an underline, or `text-muted-foreground` turning to
@@ -146,9 +146,10 @@ here. Never fall back to dense, boxed layouts.
 | Hero figure | `text-[40px]`–`[76px]`, `tracking-[-0.02em]`, regular, `.tabular` |
 | Section / panel heading | `text-[16px] font-medium` (14px under `sm` where space is tight) |
 | Row primary text | `text-[14px] text-foreground` |
-| Body, table cells, inputs | `text-[13px] text-foreground` |
-| Meta, captions, micro-labels | `text-[12px] text-muted-foreground`, sentence case |
-| Form labels | `text-foreground` (never muted) |
+| Body, table cells | `text-[13px] text-foreground` |
+| Form input values (`Input`, `Textarea`, select triggers) | `text-[15px] text-foreground`. The value is bigger than its label. |
+| Form labels | `text-[13px] font-medium text-foreground` (never muted) |
+| Meta, captions, micro-labels, field helper text | `text-[12px] text-muted-foreground`, sentence case |
 | Long-form paragraphs | add `leading-relaxed` |
 
 ## 6. Shape and spacing

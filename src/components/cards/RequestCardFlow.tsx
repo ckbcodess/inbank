@@ -518,7 +518,7 @@ export function RequestCardFlow() {
 
             {/* Card Nickname - Universal for all card types */}
             <div className="flex flex-col gap-2">
-              <label htmlFor="card-name-input" className="text-[14px] font-medium text-foreground">
+              <label htmlFor="card-name-input" className="text-[13px] font-medium text-foreground">
                 Card nickname
               </label>
               <input
@@ -555,7 +555,7 @@ export function RequestCardFlow() {
                     type="button"
                     disabled={!isDetailsValid}
                     onClick={() => setStep("customize")}
-                    className="w-full h-12 rounded-xl text-[14px] font-medium"
+                    className="w-full h-12 rounded-xl text-[14px]"
                   >
                     Continue
                   </Button>
@@ -565,7 +565,7 @@ export function RequestCardFlow() {
               <>
                 {/* Card network: Visa, Mastercard, GH-Link, UnionPay */}
                 <div className="flex flex-col gap-2">
-                  <label className="text-[14px] font-medium text-foreground">
+                  <label className="text-[13px] font-medium text-foreground">
                     Card network
                   </label>
                   <Select
@@ -595,7 +595,7 @@ export function RequestCardFlow() {
 
                 {/* Network Type Selector - Always visible on entry of the page */}
                 <div className="flex flex-col gap-2">
-                  <label className="text-[14px] font-medium text-foreground">
+                  <label className="text-[13px] font-medium text-foreground">
                     Network type
                   </label>
                   <Select
@@ -680,7 +680,7 @@ export function RequestCardFlow() {
                         type="button"
                         disabled={!isDetailsValid}
                         onClick={() => setStep("customize")}
-                        className="w-full h-12 rounded-xl text-[14px] font-medium"
+                        className="w-full h-12 rounded-xl text-[14px]"
                       >
                         Continue
                       </Button>
@@ -847,7 +847,7 @@ export function RequestCardFlow() {
               <Button
                 type="button"
                 onClick={() => setStep("review")}
-                className="w-full h-12 rounded-xl text-[14px] font-medium"
+                className="w-full h-12 rounded-xl text-[14px]"
               >
                 Continue
               </Button>
@@ -1012,7 +1012,7 @@ export function RequestCardFlow() {
             <Button
               type="button"
               onClick={() => setAuthModalOpen(true)}
-              className="w-full h-12 rounded-xl text-[14.5px] font-medium cursor-pointer"
+              className="w-full h-12 rounded-xl text-[14.5px] cursor-pointer"
             >
               Authorize
             </Button>

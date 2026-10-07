@@ -109,7 +109,7 @@ export function OtherBankFlow({
 
       {/* 2. Destination Bank & Account Number */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
+        <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
         {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `Account ${state.benAcct}`}
@@ -153,7 +153,7 @@ export function OtherBankFlow({
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Payment Method */}
           <div className="flex flex-col gap-2">
-            <label className="text-[14px] font-medium text-foreground">Payment Method</label>
+            <label className="text-[13px] font-medium text-foreground">Payment Method</label>
             <PaymentMethodSelect value={state.paymentMethod || "gip"} onChange={(val) => onChange("paymentMethod", val)} />
           </div>
 
@@ -166,10 +166,7 @@ export function OtherBankFlow({
             }}
             error={
               overBalance ? (
-                <InsufficientFundsAlert
-                  available={fromAccount?.available ?? 0}
-                  currency={fromAccount?.currency || "GHS"}
-                />
+                <InsufficientFundsAlert />
               ) : undefined
             }
           />

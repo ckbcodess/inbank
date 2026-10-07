@@ -43,7 +43,7 @@ export function DeliveryModeFields({
 }) {
   return (
     <>
-      <label className="text-[14px] font-medium text-foreground">
+      <label className="text-[13px] font-medium text-foreground">
         Mode of delivery
       </label>
 
@@ -111,7 +111,7 @@ export function DeliveryModeFields({
         {value.method === "BRANCH_PICKUP" && (
           <div key="branch" className="animate-in fade-in">
           <div className="flex flex-col gap-2 pt-1">
-            <label className="text-[14px] font-medium text-foreground">
+            <label className="text-[13px] font-medium text-foreground">
               Pickup branch
             </label>
             <BranchCombobox
@@ -126,7 +126,7 @@ export function DeliveryModeFields({
           <div key="delivery" className="animate-in fade-in">
           <div className="flex flex-col gap-3.5 pt-1">
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] font-medium text-foreground">
+              <label className="text-[13px] font-medium text-foreground">
                 Recipient name
               </label>
               <input
@@ -138,7 +138,7 @@ export function DeliveryModeFields({
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-[14px] font-medium text-foreground">
+              <label className="text-[13px] font-medium text-foreground">
                 Delivery address
               </label>
               <input
@@ -151,7 +151,7 @@ export function DeliveryModeFields({
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="flex flex-col gap-2">
-                <label className="text-[14px] font-medium text-foreground">City</label>
+                <label className="text-[13px] font-medium text-foreground">City</label>
                 <input
                   type="text"
                   value={value.city}
@@ -161,7 +161,7 @@ export function DeliveryModeFields({
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-[14px] font-medium text-foreground">Phone</label>
+                <label className="text-[13px] font-medium text-foreground">Phone</label>
                 <PhoneInput
                   value={value.phone}
                   onValueChange={(phone) => onChange({ phone })}

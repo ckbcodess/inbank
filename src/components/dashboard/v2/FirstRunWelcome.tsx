@@ -141,9 +141,9 @@ export function FirstRunWelcome({
     !isCustomNumber &&
     !!registeredPhone &&
     toNationalDigits(phone) === toNationalDigits(registeredPhone);
-  const [cardNumber, setCardNumber] = useState("4111 2222 3333 4444");
-  const [cardExpiry, setCardExpiry] = useState("12/28");
-  const [cardCvv, setCardCvv] = useState("123");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvv, setCardCvv] = useState("");
   const [amount, setAmount] = useState("100");
   const [otpDigits, setOtpDigits] = useState<string[]>(Array(6).fill(""));
   const [countdown, setCountdown] = useState(30);
@@ -334,6 +334,11 @@ export function FirstRunWelcome({
     } else {
       // The card's own bank approves it on its page (3-D Secure), then sends the customer back here.
       const digits = cardNumber.replace(/\D/g, "");
+      if (digits.length < 15 || !/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardExpiry.trim()) || cardCvv.replace(/\D/g, "").length < 3) {
+        setBusy(false);
+        setErrorMsg("Check the card number, expiry (MM/YY) and security code, then try again.");
+        return;
+      }
       startCardPayment({
         flow: "welcome-fund",
         amount: parsedAmt,
@@ -679,6 +684,7 @@ export function FirstRunWelcome({
                             </Label>
                             <Input
                               id="cardNum"
+                              placeholder="4000 1234 5678 9010"
                               value={cardNumber}
                               onChange={(e) => setCardNumber(e.target.value)}
                               className={FUND_FIELD}
@@ -692,6 +698,7 @@ export function FirstRunWelcome({
                               </Label>
                               <Input
                                 id="cardExp"
+                                placeholder="MM/YY"
                                 value={cardExpiry}
                                 onChange={(e) => setCardExpiry(e.target.value)}
                                 className={FUND_FIELD}
@@ -704,6 +711,7 @@ export function FirstRunWelcome({
                               </Label>
                               <Input
                                 id="cardCvv"
+                                placeholder="•••"
                                 maxLength={3}
                                 value={cardCvv}
                                 onChange={(e) => setCardCvv(e.target.value)}
@@ -939,7 +947,7 @@ const PersistentSplitArt = memo(function PersistentSplitArt() {
     >
       <div className="absolute left-[79px] top-[98px] h-[538px] w-[625px] rounded-[8px] border-8 border-[var(--device-frame)] overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.22)] bg-[var(--device-screen)]">
         <Image
-          src="/welcome-dashboard-preview.png"
+          src="/welcome-dashboard-preview.webp"
           alt=""
           width={625}
           height={538}

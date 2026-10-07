@@ -122,7 +122,7 @@ export default function ReferralStep({
             type="submit"
             disabled={!referrer}
             loading={busy}
-            className="h-10.5 w-full text-[14px] font-medium active:scale-[0.96] transition-transform duration-150 cursor-pointer"
+            className="h-10.5 w-full text-[14px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
           >
             Apply Code
           </Button>
@@ -131,7 +131,7 @@ export default function ReferralStep({
             type="button"
             disabled={skipping}
             onClick={() => setEntering(true)}
-            className="h-10.5 w-full text-[14px] font-medium active:scale-[0.96] transition-transform duration-150 cursor-pointer"
+            className="h-10.5 w-full text-[14px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
           >
             Enter Referral Code
           </Button>
@@ -141,7 +141,7 @@ export default function ReferralStep({
           variant="outline"
           disabled={busy || skipping}
           onClick={skip}
-          className="h-10.5 w-full text-[14px] font-medium active:scale-[0.96] transition-transform duration-150 cursor-pointer"
+          className="h-10.5 w-full text-[14px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
         >
           {skipLabel}
         </Button>

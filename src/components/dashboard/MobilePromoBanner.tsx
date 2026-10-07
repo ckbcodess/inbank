@@ -54,7 +54,7 @@ export function MobilePromoBanner() {
           </div>
           <div className="pointer-events-none absolute -bottom-3 -right-2 h-[190px] w-[140px] sm:h-[200px] sm:w-[155px]">
             <Image
-              src="/images/dashboard/phone-app-mockup.png"
+              src="/images/dashboard/phone-app-mockup.webp"
               alt="InBank Mobile App Preview"
               width={200}
               height={240}

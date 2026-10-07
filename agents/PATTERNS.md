@@ -77,9 +77,19 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
 - **Examples:** `admin/fee-concessions/page.tsx`.
 
 ### 4. Search and filter toolbar
-- **Structure:** `flex flex-wrap items-center gap-3 border-b border-border px-4 py-3`.
+- **Structure:** the search field, then one `FilterPanel` button beside it (or on the left, with
+  `ExpandableSearch` on the right, when search is the collapsed icon). `AppliedFilters` sits under
+  the row and renders nothing until a filter is on.
   - The search input has a 15px Lucide `Search` icon inside, `pl-9`, and an `aria-label`.
-  - Filter chips are `<Button variant={active ? "secondary" : "ghost"} size="sm">`.
+  - One `FilterGroup[]` per page drives both the panel and the chips. A group is `single` (one
+    choice or Any) or `multi` (none means Any). Fields that need more, like a custom date range, go
+    in `extra`.
+  - A group with up to four short options renders as a segmented row beside its label; anything
+    longer wraps as chips under it. The panel is the same popover on phone and desktop.
+  - The button shows how many groups are on. "Clear all filters" appears only when one is.
+- **Don't:** put filter dropdowns or pills straight in the toolbar, or build a separate mobile sheet.
+- **Examples:** `components/TransactionList.tsx` (most groups, custom date range),
+  `app/(customer)/locate-us/page.tsx` (small page), `components/ui/filter-panel.tsx`.
 - **Behavior:** filters, tabs and periods live in the URL and update with `router.replace`, never
   `push`, so they don't become Back steps.
 

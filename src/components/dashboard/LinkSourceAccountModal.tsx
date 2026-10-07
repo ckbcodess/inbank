@@ -426,7 +426,7 @@ export default function LinkSourceAccountModal({
               <div className="flex flex-col gap-4">
                 {([
                   { to: "link_new_momo", icon: Smartphone, title: "Mobile money wallet", hint: "MTN MoMo, Telecel Cash or AT Money" },
-                  { to: "link_new_card", icon: CreditCard, title: "Bank card", hint: "A Visa, Mastercard or UnionPay debit card from any bank" },
+                  { to: "link_new_card", icon: CreditCard, title: "Bank card", hint: "Visa, Mastercard or UnionPay" },
                 ] as const).map((opt) => (
                   <ActionTile key={opt.to} icon={opt.icon} title={opt.title} description={opt.hint} onClick={() => setScreen(opt.to)} />
                 ))}
@@ -599,7 +599,7 @@ export default function LinkSourceAccountModal({
               <form onSubmit={handleLinkedSourceSubmit} className="flex flex-col gap-5">
                 {/* List of Saved Methods */}
                 <div className="flex flex-col gap-2.5">
-                  <label className="text-[14px] font-medium text-foreground">
+                  <label className="text-[13px] font-medium text-foreground">
                     Payment Method
                   </label>
                   <div className="flex flex-col gap-2">
@@ -919,7 +919,7 @@ export default function LinkSourceAccountModal({
                       )
                     }
                     placeholder="4000 1234 5678 9010"
-                    className="h-11 w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 tabular text-[14px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
+                    className="h-11 w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 tabular text-[15px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
                     required
                   />
                 </div>
@@ -940,7 +940,7 @@ export default function LinkSourceAccountModal({
                         setNewCardExpiry(d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d);
                       }}
                       placeholder="MM/YY"
-                      className="h-11 w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 tabular text-[14px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
+                      className="h-11 w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 tabular text-[15px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
                       required
                     />
                   </div>
@@ -957,7 +957,7 @@ export default function LinkSourceAccountModal({
                       value={newCardCvv}
                       onChange={(e) => setNewCardCvv(e.target.value.replace(/\D/g, ""))}
                       placeholder="•••"
-                      className="h-11 w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 tabular text-[14px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
+                      className="h-11 w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 tabular text-[15px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
                       required
                     />
                   </div>

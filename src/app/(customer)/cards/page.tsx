@@ -4,7 +4,7 @@
  * Cards (list) — BRD FR-33 / FR-34 & New Card Creation Flow.
  * Matches exact design layout from reference screenshot:
  * - Top header with "+ Create Card" action
- * - Filter pills: All Cards, Virtual Cards, Prepaid, Debit
+ * - One Filters button (card type), with the applied filter shown beside it
  * - Clean cards list with thumbnail graphics
  * - Search bar removed
  */
@@ -17,6 +17,7 @@ import { useSearchParams } from "next/navigation";
 import { Layers, Plus } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
+import { AppliedFilters, FilterPanel, type FilterGroup } from "@/components/ui/filter-panel";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -240,6 +241,21 @@ function CardsPageContent() {
 
   const rows = effective === "partial-load" ? cards : filteredCards;
 
+  const filterGroups: FilterGroup[] = [
+    {
+      id: "type",
+      kind: "single",
+      label: "Card type",
+      options: [
+        { value: "Virtual", label: "Virtual" },
+        { value: "Debit", label: "Debit" },
+        { value: "Prepaid", label: "Prepaid" },
+      ],
+      value: typeFilter,
+      onChange: (v) => setTypeFilter(v as typeof typeFilter),
+    },
+  ];
+
   function handleCreateCard() {
     if (!cardName.trim()) return;
 
@@ -321,7 +337,7 @@ function CardsPageContent() {
             <Button
               nativeButton={false}
               render={<Link href="/cards/request" />}
-              className="h-9 gap-1.5 px-3.5 text-[13px] font-medium rounded-lg shadow-xs shrink-0"
+              className="h-9 gap-1.5 px-3.5 text-[13px] rounded-lg shadow-xs shrink-0"
             >
               <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
               <span>Request a Card</span>
@@ -393,27 +409,9 @@ function CardsPageContent() {
         </div>
       )}
 
-      {/* Segmented Controls Filter (styled exactly like Payments Page) */}
-      <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-chip p-1">
-        {(["all", "Virtual", "Debit", "Prepaid"] as const).map((t) => {
-          const isActive = typeFilter === t;
-          const label = t === "all" ? "All Cards" : t;
-          return (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTypeFilter(t)}
-              aria-pressed={isActive}
-              className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 sm:px-4 sm:py-2 text-[12.5px] sm:text-[13px] whitespace-nowrap transition cursor-pointer ${
-                isActive
-                  ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
-                  : "text-chip-foreground hover:text-chip-selected-foreground"
-              }`}
-            >
-              {label}
-            </button>
-          );
-        })}
+      <div className="flex flex-wrap items-center gap-2">
+        <FilterPanel groups={filterGroups} onClear={() => setTypeFilter("all")} align="start" />
+        <AppliedFilters groups={filterGroups} />
       </div>
 
       {effective === "loading" && (

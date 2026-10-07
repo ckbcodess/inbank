@@ -69,7 +69,7 @@ function LanguageSelect() {
         aria-label={t("header.language", "Language")}
         value={language}
         onChange={(e) => setLanguage(e.target.value as typeof language)}
-        className="h-9 cursor-pointer appearance-none rounded-lg border border-field-border bg-field py-0 pl-3 pr-8 text-[13px] text-foreground outline-none transition-colors duration-hover hover:bg-field-hover focus-visible:border-field-border-focus focus-visible:bg-field-focus"
+        className="h-9 cursor-pointer appearance-none rounded-lg border border-field-border bg-field py-0 pl-3 pr-8 text-[15px] text-foreground outline-none transition-colors duration-hover hover:bg-field-hover focus-visible:border-field-border-focus focus-visible:bg-field-focus"
       >
         {languages.map((lang) => (
           <option key={lang.code} value={lang.code}>
@@ -231,7 +231,7 @@ export default function TopHeader({
               </span>
             )}
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" sideOffset={6} className="w-[280px] p-1.5 rounded-2xl bg-menu/90! dark:bg-menu/60! backdrop-blur-3xl">
+          <DropdownMenuContent align="end" sideOffset={6} className="w-[280px] p-1.5 rounded-2xl bg-menu/97! dark:bg-menu/92! backdrop-blur-3xl">
             {/* Header: Avatar beside Name & Email */}
             <div className="flex items-center gap-3 px-3 pt-3 pb-2.5">
               <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-muted border border-border/80 text-foreground font-medium text-[15px] shadow-2xs">

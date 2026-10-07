@@ -96,7 +96,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
     {
       id: "act-5",
       title: "Transfer to Savings",
-      subtitle: "08 Aug 2026 · Personal Savings Account",
+      subtitle: "08 Aug 2026 · Savings Account",
       amount: 2000.0,
       direction: "credit",
       status: "Completed",

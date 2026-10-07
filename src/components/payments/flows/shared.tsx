@@ -1,8 +1,8 @@
 "use client";
 
-import { AlertToast } from "@/components/ui/alert-toast";
+import { InlineError } from "@/components/ui/inline-error";
 import React, { useMemo, useRef, useState, useEffect } from "react";
-import { ArrowLeftRight, Landmark, AlertCircle, CheckCircle2, ShieldCheck, User } from "lucide-react";
+import { ArrowLeftRight, Landmark, AlertCircle, CheckCircle2, User } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import {
@@ -520,7 +520,7 @@ export function FromAccountSelector({
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[14px] font-medium text-foreground">{label}</label>
+      <label className="text-[13px] font-medium text-foreground">{label}</label>
       <Select value={value} onValueChange={(val) => val && onChange(val)}>
         <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center">
           <AccountSelectTriggerContent
@@ -530,13 +530,8 @@ export function FromAccountSelector({
         </SelectTrigger>
         <SelectContent>
           {accounts.map((a) => (
-            <SelectItem key={a.id} value={a.id}>
-              <div className="flex items-center justify-between w-full gap-4">
-                <span>{a.name} ({a.number})</span>
-                <span className="font-medium text-muted-foreground tabular">
-                  {formatMoney(a.available, a.currency, true)}
-                </span>
-              </div>
+            <SelectItem key={a.id} value={a.id} className="py-2.5">
+              <AccountSelectTriggerContent account={a} />
             </SelectItem>
           ))}
         </SelectContent>
@@ -804,7 +799,7 @@ export function AmountInput({
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[14px] font-medium text-foreground">{label}</label>
+      <label className="text-[13px] font-medium text-foreground">{label}</label>
       <div
         onClick={handleClick}
         onAnimationEnd={() => setNudge(false)}
@@ -925,7 +920,7 @@ export function NarrationInput({
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[14px] font-medium text-foreground">{label}</label>
+      <label className="text-[13px] font-medium text-foreground">{label}</label>
       <input
         type="text"
         data-field="narration"
@@ -966,7 +961,7 @@ export function CategorySelect({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
-        <label className="text-[14px] font-medium text-foreground">{label}</label>
+        <label className="text-[13px] font-medium text-foreground">{label}</label>
         <span className="text-[11px] font-medium text-pill-success-text bg-pill-success px-2 py-0.5 rounded-full">
           Pre-selected for Insights
         </span>
@@ -999,19 +994,12 @@ export function CategorySelect({
 /* -------------------------------------------------------------------------- */
 /* Subcomponent 5: Insufficient Funds Alert                                   */
 /* -------------------------------------------------------------------------- */
-export function InsufficientFundsAlert({
-  available,
-  currency = "GHS",
-}: {
-  available: number;
-  currency?: string;
-}) {
-  // Said once through the shared Toaster (no inline banner); the field itself already reads as invalid.
+export function InsufficientFundsAlert() {
+  // Sits right under the amount field (it's about what was just typed), not in a toast.
   return (
-    <AlertToast
-      when
-      message="Insufficient funds"
-      description={`Transfer amount exceeds your available balance (${formatMoney(available, currency, true)}).`}
+    <InlineError
+      message="Exceeds your current balance."
+      className="text-left"
     />
   );
 }
@@ -1035,7 +1023,7 @@ export function ProceedButton({
       <Button
         type="button"
         data-proceed-cta="true"
-        className="w-full h-13 rounded-2xl text-[16px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
+        className="w-full h-13 rounded-2xl text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
         disabled={disabled}
         loading={loading}
         onClick={onClick}
@@ -1100,8 +1088,8 @@ function initialsOf(name: string): string {
  * right person?" before money moves.
  *
  * `nameCheck` says whether the name came back from the provider's lookup
- * (name enquiry), and who did it. It only claims what's true: confirmed names
- * say who confirmed them; unconfirmed ones say so and ask for a check.
+ * (name enquiry), and who did it. It only claims what's true: a confirmed name gets a quiet tick
+ * (its tooltip says who confirmed it); an unconfirmed one says so and asks for a check.
  * Recipients the app already knows (own accounts, cards, groups) pass nothing
  * and show no status.
  */
@@ -1126,22 +1114,25 @@ export function CollapsedDetailsBadge({
           {icon ?? (initials || <User size={16} strokeWidth={1.8} aria-hidden="true" />)}
         </span>
         <div className="flex min-w-0 flex-col gap-0.5 text-left">
-          <span className="truncate text-[14.5px] font-medium leading-tight tracking-[-0.01em] text-foreground">{title}</span>
+          <span className="flex min-w-0 items-center gap-1.5">
+            <span className="truncate text-[14.5px] font-medium leading-tight tracking-[-0.01em] text-foreground">{title}</span>
+            {nameCheck?.confirmed && (
+              <span className="shrink-0 text-success-text" title={`Name confirmed${nameCheck.by ? ` by ${nameCheck.by}` : ""}`}>
+                <CheckCircle2 size={14} strokeWidth={1.8} aria-hidden="true" />
+                <span className="sr-only">Name confirmed{nameCheck.by ? ` by ${nameCheck.by}` : ""}</span>
+              </span>
+            )}
+          </span>
           {subtitle && (
             <span className="truncate text-[12.5px] leading-tight text-muted-foreground tabular">{subtitle}</span>
           )}
           {nameCheck &&
-            (nameCheck.confirmed ? (
-              <span className="flex items-center gap-1 text-[12px] leading-tight text-success">
-                <ShieldCheck size={12} strokeWidth={2} className="shrink-0" aria-hidden="true" />
-                <span className="truncate">Name confirmed{nameCheck.by ? ` by ${nameCheck.by}` : ""}</span>
-              </span>
-            ) : (
+            !nameCheck.confirmed && (
               <span className="flex items-center gap-1 text-[12px] leading-tight text-warning">
                 <AlertCircle size={12} strokeWidth={2} className="shrink-0" aria-hidden="true" />
                 <span className="truncate">Name not confirmed — check the details before you send</span>
               </span>
-            ))}
+            )}
         </div>
       </div>
       <button
@@ -1191,7 +1182,7 @@ export function SaveBeneficiaryCheckbox({
             value={nickname || ""}
             onChange={(e) => onNicknameChange(e.target.value)}
             placeholder="Beneficiary nickname (optional)"
-            className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition placeholder:text-muted-foreground"
+            className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition placeholder:text-muted-foreground"
           />
         </div>
       )}
@@ -1248,7 +1239,7 @@ export function SchedulePaymentSection({
                 value={state.startDate}
                 min={new Date().toISOString().split("T")[0]}
                 onChange={(e) => onChange({ startDate: e.target.value })}
-                className="h-11 w-full rounded-xl border border-field-border bg-field px-3 text-[14px] text-foreground outline-none focus:border-field-border-focus tabular"
+                className="h-11 w-full rounded-xl border border-field-border bg-field px-3 text-[15px] text-foreground outline-none focus:border-field-border-focus tabular"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -1257,7 +1248,7 @@ export function SchedulePaymentSection({
                 value={state.frequency}
                 onValueChange={(val) => onChange({ frequency: (val || "once") as ScheduleFrequency })}
               >
-                <SelectTrigger className="h-11 w-full rounded-xl border border-field-border bg-field text-[14px]">
+                <SelectTrigger className="h-11 w-full rounded-xl border border-field-border bg-field text-[15px]">
                   <SelectValue placeholder="Select frequency" />
                 </SelectTrigger>
                 <SelectContent>

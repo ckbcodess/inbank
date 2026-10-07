@@ -2,6 +2,7 @@ import type { Entry } from "./types";
 
 /** Cards list, card detail, request/replace flow, delivery tracking, virtual cards. */
 const cards: Entry[] = [
+  ["Visa, Mastercard or UnionPay", "Visa, Mastercard ou UnionPay", "Visa, Mastercard o UnionPay", "Visa、Mastercard 或银联"],
   ["Daily limits", "Limites quotidiennes", "Límites diarios", "每日限额"],
   ["Daily limit (GHS)", "Limite quotidienne (GHS)", "Límite diario (GHS)", "每日限额（GHS）"],
   ["Loading", "Chargement", "Cargando", "加载中"],

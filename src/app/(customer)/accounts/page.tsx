@@ -35,6 +35,7 @@ import {
   MoreHorizontal,
   Plus,
   Smartphone,
+  Trash2,
   Wallet,
   X,
 } from "lucide-react";
@@ -160,7 +161,7 @@ function AccountRow({
         <span className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="flex flex-wrap items-center gap-1.5">
             <span className="truncate text-[15px] font-medium tracking-[-0.01em] text-foreground">{account.name}</span>
-            {showDefault && isDefault && <Badge>Default</Badge>}
+            {showDefault && isDefault && <Badge variant="brand">Default</Badge>}
             {account.isJoint && <Badge variant="outline">Joint</Badge>}
             {dormant && <Badge variant="warning">Dormant</Badge>}
           </span>
@@ -197,7 +198,8 @@ function SourceRow({ source, onRemove }: { source: LinkedSource; onRemove: () =>
         <span className="truncate text-[13px] text-muted-foreground tabular">{source.subtitle}</span>
       </span>
       <RowMenu label={`More actions for ${source.title}`}>
-        <DropdownMenuItem onClick={onRemove} className="text-[13px]">
+        <DropdownMenuItem onClick={onRemove} className="gap-2.5 text-[13px]">
+          <Trash2 size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
           Remove
         </DropdownMenuItem>
       </RowMenu>
@@ -355,7 +357,7 @@ function AccountsContent() {
             <Button
               type="button"
               onClick={() => setAddAccountOpen(true)}
-              className="h-9 shrink-0 gap-1.5 rounded-lg px-3.5 text-[13px] font-medium shadow-xs"
+              className="h-9 shrink-0 gap-1.5 rounded-lg px-3.5 text-[13px] shadow-xs"
             >
               <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
               <span>Add Account</span>

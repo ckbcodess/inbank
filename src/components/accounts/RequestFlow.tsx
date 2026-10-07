@@ -458,14 +458,14 @@ export default function RequestFlow({ account }: { account: Account }) {
               type="button"
               variant="outline"
               onClick={() => setPhase("details")}
-              className="h-11 flex-1 rounded-lg border-border text-[14px] font-medium"
+              className="h-11 flex-1 rounded-lg border-border text-[14px]"
             >
               Back
             </Button>
             <Button
               type="button"
               onClick={() => setPinOpen(true)}
-              className="h-11 flex-1 rounded-lg bg-primary text-[14px] font-medium text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+              className="h-11 flex-1 rounded-lg bg-primary text-[14px] text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
             >
               Submit request
             </Button>
@@ -486,7 +486,7 @@ const INPUT =
 function Field({ label, htmlFor, children }: { label: string; htmlFor?: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-      <label htmlFor={htmlFor} className="text-[14px] font-medium text-foreground">
+      <label htmlFor={htmlFor} className="text-[13px] font-medium text-foreground">
         {label}
       </label>
       {children}

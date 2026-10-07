@@ -168,7 +168,7 @@ export const ACTIVATION_PERSONAS: Record<
     accounts: [
       {
         id: "acc-current-1",
-        name: "Personal Current Account",
+        name: "Current Account",
         number: "1001 4821 4561",
         type: "Current",
         currency: "GHS",
@@ -177,7 +177,7 @@ export const ACTIVATION_PERSONAS: Record<
       },
       {
         id: "acc-joint-1",
-        name: "Joint Premier Savings",
+        name: "Joint Savings Account",
         number: "3300 8844 9922",
         type: "Savings",
         currency: "GHS",
@@ -188,7 +188,7 @@ export const ACTIVATION_PERSONAS: Record<
       },
       {
         id: "acc-savings-2",
-        name: "Reserve High-Yield Savings",
+        name: "Savings Account",
         number: "3300 1122 5566",
         type: "Savings",
         currency: "GHS",
@@ -196,7 +196,7 @@ export const ACTIVATION_PERSONAS: Record<
       },
       {
         id: "acc-fx-1",
-        name: "USD Foreign Currency Account",
+        name: "Foreign Currency Account",
         number: "7700 9944 1092",
         type: "Foreign Currency",
         currency: "USD",
@@ -217,7 +217,7 @@ export const ACTIVATION_PERSONAS: Record<
     accounts: [
       {
         id: "acc-savings-1",
-        name: "Reserve High-Yield Savings",
+        name: "Savings Account",
         number: "3300 1122 5566",
         type: "Savings",
         currency: "GHS",
@@ -239,7 +239,7 @@ export const ACTIVATION_PERSONAS: Record<
     accounts: [
       {
         id: "acc-current-1",
-        name: "Personal Current Account",
+        name: "Current Account",
         number: "1001 4821 4561",
         type: "Current",
         currency: "GHS",
@@ -248,7 +248,7 @@ export const ACTIVATION_PERSONAS: Record<
       },
       {
         id: "acc-joint-1",
-        name: "Joint Premier Savings",
+        name: "Joint Savings Account",
         number: "3300 8844 9922",
         type: "Savings",
         currency: "GHS",
@@ -273,7 +273,7 @@ export const ACTIVATION_PERSONAS: Record<
     accounts: [
       {
         id: "acc-mobile-1",
-        name: "Personal Current Account",
+        name: "Current Account",
         number: "1001 4821 4821",
         type: "Current",
         currency: "GHS",
@@ -282,7 +282,7 @@ export const ACTIVATION_PERSONAS: Record<
       },
       {
         id: "acc-mobile-2",
-        name: "Smart Goal Savings",
+        name: "Savings Account",
         number: "3300 4455 9012",
         type: "Savings",
         currency: "GHS",
@@ -340,7 +340,7 @@ export function matchIdentity(identifier: string, mobile: string): ActivationMat
     actor,
     maskedMobile: maskMobile(persona.phone),
     maskedEmail: maskEmail(persona.email),
-    accountLabel: persona.accounts[0] ? `${persona.accounts[0].name} ···· ${persona.accounts[0].number.slice(-4)}` : "Reserve Savings ···· 5566",
+    accountLabel: persona.accounts[0] ? `${persona.accounts[0].name} ···· ${persona.accounts[0].number.slice(-4)}` : "Savings Account ···· 5566",
     alreadyEnrolled: known.alreadyEnrolled,
     persona,
   };

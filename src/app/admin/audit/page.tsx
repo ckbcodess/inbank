@@ -18,8 +18,8 @@ import { useMemo, useState } from "react";
 import { Lock, ShieldCheck } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { ExpandableSearch } from "@/components/ui/expandable-search";
+import { AppliedFilters, FilterPanel, type FilterGroup } from "@/components/ui/filter-panel";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import {
   FilteredEmptyState,
@@ -42,10 +42,9 @@ const LIST_STATES: readonly ListState[] = [
 
 type ChannelFilter = "all" | "Internet Banking" | "Admin Portal";
 
-const CHANNELS: { key: ChannelFilter; label: string }[] = [
-  { key: "all", label: "All channels" },
-  { key: "Internet Banking", label: "Internet Banking" },
-  { key: "Admin Portal", label: "Admin Portal" },
+const CHANNEL_OPTIONS = [
+  { value: "Internet Banking", label: "Internet Banking" },
+  { value: "Admin Portal", label: "Admin Portal" },
 ];
 
 export default function AuditLogPage() {
@@ -79,6 +78,17 @@ export default function AuditLogPage() {
     setState("populated");
   }
 
+  const filterGroups: FilterGroup[] = [
+    {
+      id: "channel",
+      kind: "single",
+      label: "Channel",
+      options: CHANNEL_OPTIONS,
+      value: channel,
+      onChange: (v) => setChannel(v as ChannelFilter),
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
@@ -96,18 +106,9 @@ export default function AuditLogPage() {
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar flex-nowrap pb-1 sm:pb-0">
-          {CHANNELS.map((c) => (
-            <Button
-              key={c.key}
-              variant={channel === c.key ? "secondary" : "ghost"}
-              size="sm"
-              onClick={() => setChannel(c.key)}
-              className="shrink-0 whitespace-nowrap h-8 px-3 rounded-lg text-[13px]"
-            >
-              {c.label}
-            </Button>
-          ))}
+        <div className="flex flex-wrap items-center gap-2">
+          <FilterPanel groups={filterGroups} onClear={() => setChannel("all")} align="start" />
+          <AppliedFilters groups={filterGroups} />
         </div>
 
         <ExpandableSearch

@@ -6,7 +6,6 @@ import type { Entry } from "./types";
  * Names, merchants, addresses and references stay untranslated on purpose.
  */
 const data: Entry[] = [
-  ["Joint Family Savings", "Épargne familiale jointe", "Ahorro familiar conjunto", "家庭联名储蓄"],
   ["Either to sign", "Signature d’un seul titulaire", "Firma indistinta", "任一方签字"],
   ["Corporate Current Account", "Compte courant entreprise", "Cuenta corriente empresarial", "企业活期账户"],
   ["Payroll Account", "Compte de paie", "Cuenta de nómina", "工资账户"],
@@ -63,7 +62,8 @@ const data: Entry[] = [
   ["Field Logistics Prepaid", "Prépayée logistique terrain", "Prepago de logística de campo", "外勤物流预付卡"],
   ["Executive Premier Card", "Carte Premier direction", "Tarjeta Premier ejecutiva", "高管尊享卡"],
   ["Personal Banking", "Banque des particuliers", "Banca personal", "个人银行"],
-  ["Personal Savings Account", "Compte épargne personnel", "Cuenta de ahorro personal", "个人储蓄账户"],
+  ["Joint Savings Account", "Compte épargne joint", "Cuenta de ahorro conjunta", "联名储蓄账户"],
+  ["Joint Current Account", "Compte courant joint", "Cuenta corriente conjunta", "联名活期账户"],
   ["Quarterly supplier settlement", "Règlement trimestriel des fournisseurs", "Liquidación trimestral a proveedores", "季度供应商结算"],
   ["POS Card", "Carte TPE", "Tarjeta TPV", "POS 卡"],
   ["Mon - Fri: 8:30 AM - 5:00 PM, Sat: 9:00 AM - 2:00 PM", "Lun.–ven. : 8 h 30 – 17 h, sam. : 9 h – 14 h", "Lun.–vie.: 8:30–17:00, sáb.: 9:00–14:00", "周一至周五：8:30–17:00，周六：9:00–14:00"],

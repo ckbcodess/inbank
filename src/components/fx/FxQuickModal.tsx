@@ -438,7 +438,7 @@ export function FxQuickModal() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Filter currencies (e.g. USD, EUR, GBP)..."
-                  className="h-8.5 w-full rounded-lg border border-field-border bg-field pl-8 pr-3 text-[12.5px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-border transition-colors"
+                  className="h-8.5 w-full rounded-lg border border-field-border bg-field pl-8 pr-3 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-border transition-colors"
                 />
               </div>
 

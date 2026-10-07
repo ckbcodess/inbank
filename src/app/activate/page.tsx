@@ -400,7 +400,7 @@ function ActivateContent() {
 
           {/* Card Input Field */}
           <div className="flex flex-col gap-2">
-            <Label htmlFor="ghana-card" className="text-[13.5px] font-medium text-foreground">
+            <Label htmlFor="ghana-card" className="text-[13px] font-medium text-foreground">
               Ghana Card number
             </Label>
             <Input

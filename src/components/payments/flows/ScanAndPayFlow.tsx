@@ -252,6 +252,11 @@ export function ScanAndPayFlow({
               value={state.amount}
               onChange={(val: string) => onChange("amount", val)}
               currency="GHS"
+              error={
+                hasInsufficientFunds ? (
+                  <InsufficientFundsAlert />
+                ) : undefined
+              }
             />
 
             <NarrationInput
@@ -259,13 +264,6 @@ export function ScanAndPayFlow({
               onChange={(val: string) => onChange("narration", val)}
               placeholder="e.g. Counter Checkout / Table 4"
             />
-
-            {hasInsufficientFunds && (
-              <InsufficientFundsAlert
-                available={fromAccount ? fromAccount.available : 0}
-                currency={fromAccount ? fromAccount.currency : "GHS"}
-              />
-            )}
 
             <ProceedButton
               disabled={!canProceed}

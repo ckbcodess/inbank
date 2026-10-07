@@ -78,7 +78,7 @@ export function CountryPicker({
                 placeholder="Search"
                 aria-label="Search countries"
                 autoComplete="off"
-                className="h-11 w-full rounded-xl border border-field-border bg-field pl-10 pr-3 text-[14.5px] text-foreground outline-none transition focus:border-field-border-focus focus:ring-0"
+                className="h-11 w-full rounded-xl border border-field-border bg-field pl-10 pr-3 text-[15px] text-foreground outline-none transition focus:border-field-border-focus focus:ring-0"
               />
             </div>
           </div>

@@ -140,6 +140,15 @@ const common: Entry[] = [
   ["Delivery phone number", "Téléphone pour la livraison", "Teléfono para la entrega", "收货人电话"],
   ["Debit card", "Carte de débit", "Tarjeta de débito", "借记卡"],
   ["{0} debit card", "Carte de débit {0}", "Tarjeta de débito {0}", "{0} 借记卡"],
+  ["Any", "Tous", "Cualquiera", "不限"],
+  ["Clear all filters", "Effacer tous les filtres", "Borrar todos los filtros", "清除所有筛选"],
+  ["Applied filters", "Filtres appliqués", "Filtros aplicados", "已应用的筛选"],
+  ["Remove filter: {0}", "Retirer le filtre : {0}", "Quitar filtro: {0}", "移除筛选：{0}"],
+  ["Card type", "Type de carte", "Tipo de tarjeta", "卡片类型"],
+  ["Credit", "Crédit", "Crédito", "入账"],
+  ["View", "Affichage", "Vista", "视图"],
+  ["Flat list", "Liste simple", "Lista simple", "平铺列表"],
+  ["Grouped by method", "Groupé par moyen", "Agrupado por método", "按方式分组"],
 ];
 
 export default common;

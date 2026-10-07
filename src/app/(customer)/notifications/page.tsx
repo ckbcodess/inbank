@@ -27,6 +27,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AppliedFilters, FilterPanel, type FilterGroup } from "@/components/ui/filter-panel";
 import PageHeader from "@/components/layout/PageHeader";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -62,12 +63,11 @@ const KIND_META: Record<
 
 type KindFilter = NotificationKind | "all";
 
-const FILTERS: { key: KindFilter; label: string }[] = [
-  { key: "all", label: "All" },
-  { key: "submission", label: "Submissions" },
-  { key: "approval", label: "Approvals" },
-  { key: "rejection", label: "Rejections" },
-  { key: "status", label: "Status changes" },
+const KIND_OPTIONS: { value: NotificationKind; label: string }[] = [
+  { value: "submission", label: "Submissions" },
+  { value: "approval", label: "Approvals" },
+  { value: "rejection", label: "Rejections" },
+  { value: "status", label: "Status changes" },
 ];
 
 const CHANNELS = [
@@ -99,6 +99,17 @@ export default function NotificationsPage() {
 
   const unread = NOTIFICATIONS.filter((n) => !n.read && !readIds.includes(n.id)).length;
 
+  const filterGroups: FilterGroup[] = [
+    {
+      id: "kind",
+      kind: "single",
+      label: "Type",
+      options: KIND_OPTIONS,
+      value: filter,
+      onChange: (v) => setFilter(v as KindFilter),
+    },
+  ];
+
   function markRead(id: string) {
     setReadIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
   }
@@ -115,19 +126,10 @@ export default function NotificationsPage() {
       />
 
       {/* Filter and Action Bar */}
-      <div className="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar flex-nowrap">
-        <div className="flex items-center gap-1.5 shrink-0">
-          {FILTERS.map((f) => (
-            <Button
-              key={f.key}
-              variant={filter === f.key ? "secondary" : "ghost"}
-              size="sm"
-              onClick={() => setFilter(f.key)}
-              className="shrink-0 whitespace-nowrap h-8 px-3 rounded-lg text-[13px]"
-            >
-              {f.label}
-            </Button>
-          ))}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <FilterPanel groups={filterGroups} onClear={() => setFilter("all")} align="start" />
+          <AppliedFilters groups={filterGroups} />
         </div>
 
         {unread > 0 && (

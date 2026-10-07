@@ -19,6 +19,22 @@ export interface RecentPayeeAvatar {
   subtitle?: string;
 }
 
+const GROUP_AVATAR_TINTS = [
+  "var(--avatar-teal)",
+  "var(--avatar-sand)",
+  "var(--avatar-green)",
+  "var(--avatar-lilac)",
+  "var(--avatar-blue)",
+  "var(--avatar-pink)",
+] as const;
+
+/** A group's avatar fill: one of the shared pastel tokens, chosen from its id so a group keeps its colour everywhere. */
+export function groupAvatarTint(id: string): string {
+  let hash = 0;
+  for (const ch of id) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+  return GROUP_AVATAR_TINTS[hash % GROUP_AVATAR_TINTS.length];
+}
+
 export const RECENT_AVATARS: RecentPayeeAvatar[] = [
   // Bank payees
   {
@@ -362,7 +378,7 @@ export function RailBeneficiaryStrip({
             title={`Select ${item.name} (${item.subtitle || item.bank || item.acct})`}
           >
             <span
-              className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-transform group-hover:scale-105 shadow-xs border border-black/5 dark:border-white/10"
+              className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85] shadow-xs border border-black/5 dark:border-white/10"
               style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
             >
               {item.initials}

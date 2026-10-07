@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Input } from "@/components/ui/input";
+import { AppliedFilters, FilterPanel, type FilterGroup } from "@/components/ui/filter-panel";
 import { FilteredEmptyState, TrueEmptyState } from "@/components/states/ListStates";
 
 export interface BranchLocation {
@@ -174,6 +175,10 @@ const LOCATIONS: BranchLocation[] = [
   },
 ];
 
+const CITY_OPTIONS = Array.from(new Set(LOCATIONS.map((l) => l.city)))
+  .sort((a, b) => a.localeCompare(b))
+  .map((city) => ({ value: city, label: city }));
+
 export default function LocateUsPage() {
   const [query, setQuery] = useState("");
   const [filterType, setFilterType] = useState<"all" | "branch" | "atm" | "deposit">("all");
@@ -195,6 +200,34 @@ export default function LocateUsPage() {
     });
   }, [query, filterType, selectedCity]);
 
+  const filterGroups: FilterGroup[] = [
+    {
+      id: "type",
+      kind: "single",
+      label: "Type",
+      options: [
+        { value: "branch", label: "Branches" },
+        { value: "atm", label: "24/7 ATMs" },
+        { value: "deposit", label: "Cash Deposit" },
+      ],
+      value: filterType,
+      onChange: (v) => setFilterType(v as typeof filterType),
+    },
+    {
+      id: "city",
+      kind: "single",
+      label: "City",
+      options: CITY_OPTIONS,
+      value: selectedCity,
+      onChange: setSelectedCity,
+    },
+  ];
+
+  function clearFilters() {
+    setFilterType("all");
+    setSelectedCity("all");
+  }
+
   return (
     <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto py-2">
       <PageHeader
@@ -203,85 +236,41 @@ export default function LocateUsPage() {
       />
 
       {/* ── Search & Filter Controls ── */}
-      <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-        {/* Search Bar */}
-        <div className="relative flex-1 max-w-md">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search branch name, suburb, city, or service..."
-            className="pl-9 pr-8 h-10 text-[13px] bg-card border-border"
-          />
-          {query && (
-            <button
-              type="button"
-              onClick={() => setQuery("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              aria-label="Clear search"
-            >
-              <X size={15} />
-            </button>
-          )}
-        </div>
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-2">
+          {/* Search Bar */}
+          <div className="relative flex-1 max-w-md">
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search branch name, suburb, city, or service..."
+              className="pl-9 pr-8 h-10 text-[13px] bg-card border-border"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label="Clear search"
+              >
+                <X size={15} />
+              </button>
+            )}
+          </div>
 
-        {/* Type Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-          <button
-            type="button"
-            onClick={() => setFilterType("all")}
-            className={`px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-colors cursor-pointer shrink-0 ${
-              filterType === "all"
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            All ({LOCATIONS.length})
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterType("branch")}
-            className={`px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-colors cursor-pointer shrink-0 ${
-              filterType === "branch"
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Branches
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterType("atm")}
-            className={`px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-colors cursor-pointer shrink-0 ${
-              filterType === "atm"
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            24/7 ATMs
-          </button>
-          <button
-            type="button"
-            onClick={() => setFilterType("deposit")}
-            className={`px-3 py-1.5 rounded-lg text-[12.5px] font-medium transition-colors cursor-pointer shrink-0 ${
-              filterType === "deposit"
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Cash Deposit
-          </button>
+          <FilterPanel groups={filterGroups} onClear={clearFilters} className="h-10" />
         </div>
+        <AppliedFilters groups={filterGroups} />
       </div>
 
       {/* ── Locations Grid ── */}
       {filteredLocations.length === 0 ? (
-        query || selectedCity !== "All" || filterType !== "all" ? (
+        query || selectedCity !== "all" || filterType !== "all" ? (
           <FilteredEmptyState
             onReset={() => {
               setQuery("");
-              setSelectedCity("All");
-              setFilterType("all");
+              clearFilters();
             }}
             description={
               query

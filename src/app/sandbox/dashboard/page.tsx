@@ -337,8 +337,8 @@ export default function FigmaDesignFidelityDashboard() {
 
                 <div className="divide-y divide-[#f8f9fa]">
                   {[
-                    { name: "Personal Savings Account", type: "Savings", num: "4001 9922 1100", amount: "GHS 12,340.00" },
-                    { name: "Personal Current Account", type: "Current", num: "4001 9922 3344", amount: "GHS 5,730.50" },
+                    { name: "Savings Account", type: "Savings", num: "4001 9922 1100", amount: "GHS 12,340.00" },
+                    { name: "Current Account", type: "Current", num: "4001 9922 3344", amount: "GHS 5,730.50" },
                     { name: "Investment Pot", type: "Fixed Deposit", num: "4001 9922 8899", amount: "GHS 0.00" },
                   ].map(acc => (
                     <div key={acc.name} className="p-4 flex items-center justify-between hover:bg-[#fafafa] transition-colors">
@@ -664,7 +664,7 @@ export default function FigmaDesignFidelityDashboard() {
               {[
                 { title: "Supermarket Purchase — Melcom", desc: "11 Aug 2026 · Melcom Stores", amount: "GHS 480.00", dir: "debit", status: "Completed" },
                 { title: "Monthly Salary Credit", desc: "10 Aug 2026 · Employer Ltd", amount: "GHS 12,500.00", dir: "credit", status: "Completed" },
-                { title: "Transfer to Savings", desc: "08 Aug 2026 · Personal Savings Account", amount: "GHS 2,000.00", dir: "credit", status: "Completed" },
+                { title: "Transfer to Savings", desc: "08 Aug 2026 · Savings Account", amount: "GHS 2,000.00", dir: "credit", status: "Completed" },
                 { title: "Online Merchant — Amazon Checkout", desc: "07 Aug 2026 · Amazon Pay", amount: "GHS 340.50", dir: "debit", status: "Completed" },
                 { title: "Mobile Money Cashout — MTN MoMo", desc: "06 Aug 2026 · MTN MoMo Agent", amount: "GHS 150.00", dir: "debit", status: "Completed" },
               ].map(t => {

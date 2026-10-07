@@ -302,7 +302,7 @@ export default function CreateGroupFlow({
         <div className="flex flex-col gap-5">
           {/* Group Name * */}
           <div className="flex flex-col gap-2">
-            <label className="text-[14px] font-medium text-foreground">
+            <label className="text-[13px] font-medium text-foreground">
               Group Name <span className="text-destructive">*</span>
             </label>
             <input
@@ -318,7 +318,7 @@ export default function CreateGroupFlow({
 
           {/* Description (optional) */}
           <div className="flex flex-col gap-2">
-            <label className="text-[14px] font-medium text-foreground">
+            <label className="text-[13px] font-medium text-foreground">
               Description <span className="text-muted-foreground font-normal">(optional)</span>
             </label>
             <input
@@ -371,14 +371,14 @@ export default function CreateGroupFlow({
                     value={customName}
                     onChange={(e) => setCustomName(e.target.value)}
                     placeholder="Full name"
-                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 placeholder:text-muted-foreground/60 transition"
+                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 placeholder:text-muted-foreground/60 transition"
                   />
                   <input
                     type="text"
                     value={customDest}
                     onChange={(e) => setCustomDest(e.target.value)}
                     placeholder="Phone or Account Number"
-                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[14px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 placeholder:text-muted-foreground/60 transition"
+                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 placeholder:text-muted-foreground/60 transition"
                   />
                 </div>
 
@@ -555,7 +555,7 @@ export default function CreateGroupFlow({
           ) : (
             /* Custom Amounts List */
             <div className="flex flex-col gap-3">
-              <label className="text-[14px] font-medium text-foreground">
+              <label className="text-[13px] font-medium text-foreground">
                 Individual Contribution Amounts
               </label>
               <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/50 max-h-[320px] overflow-y-auto">

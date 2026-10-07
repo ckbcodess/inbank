@@ -101,7 +101,7 @@ export function OtherGcbFlow({
 
       {/* 2. Destination (GCB Account) */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
+        <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
         {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `GCB Account ${state.benAcct}`}
@@ -150,10 +150,7 @@ export function OtherGcbFlow({
             }}
             error={
               overBalance ? (
-                <InsufficientFundsAlert
-                  available={fromAccount?.available ?? 0}
-                  currency={fromAccount?.currency || "GHS"}
-                />
+                <InsufficientFundsAlert />
               ) : undefined
             }
           />

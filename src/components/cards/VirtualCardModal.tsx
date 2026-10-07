@@ -255,7 +255,7 @@ export function VirtualCardView({
       {/* Adjust Limit Form overlay when active */}
       {adjustingLimit && (
         <div className="mt-4 flex flex-col gap-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-3.5">
-          <label htmlFor="card-view-limit-input" className="text-[12.5px] font-medium text-slate-700 dark:text-slate-300">
+          <label htmlFor="card-view-limit-input" className="text-[13px] font-medium text-foreground">
             New Monthly Limit ({activeCard.currency ?? "USD"})
           </label>
           <div className="flex items-center gap-2">
@@ -343,7 +343,7 @@ export function VirtualCardView({
         <Button
           variant="outline"
           onClick={handleToggleUnhide}
-          className="h-10 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] font-medium text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
+          className="h-10 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
         >
           {unhidden ? "Hide" : "Unhide"}
         </Button>
@@ -351,7 +351,7 @@ export function VirtualCardView({
         <Button
           variant="outline"
           onClick={handleStartAdjustLimit}
-          className="h-10 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] font-medium text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
+          className="h-10 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
         >
           Adjust Limit
         </Button>
@@ -362,7 +362,7 @@ export function VirtualCardView({
             setShowMoreMenu((prev) => !prev);
             setAdjustingLimit(false);
           }}
-          className="h-10 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] font-medium text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
+          className="h-10 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
         >
           More
         </Button>

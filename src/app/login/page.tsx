@@ -19,7 +19,7 @@ import { findLegacyUser } from "@/lib/migration";
 type LoginState = "idle" | "submitting" | "error";
 
 /** Same field as the rest of the app. */
-const FIELD = "h-11 text-[14.5px]";
+const FIELD = "h-11 text-[15px]";
 const LABEL = "text-[12px] text-foreground";
 
 function LoginForm() {

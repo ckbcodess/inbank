@@ -313,7 +313,7 @@ function SignupContent() {
       {step === "ghana_card" && (
         <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="ghanaCard" className="text-[13.5px] font-medium text-foreground">
+            <Label htmlFor="ghanaCard" className="text-[13px] font-medium text-foreground">
               Ghana Card number
             </Label>
             <Input
@@ -388,9 +388,9 @@ function SignupContent() {
               </span>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="reviewTitle" className="text-[13.5px] font-medium text-foreground">Title</Label>
+              <Label htmlFor="reviewTitle" className="text-[13px] font-medium text-foreground">Title</Label>
               <Select value={title} onValueChange={(val) => val && setTitle(val)}>
-                <SelectTrigger id="reviewTitle" className="h-11 w-full rounded-lg border border-border bg-transparent px-3.5 text-left text-[14px] shadow-none flex items-center justify-between">
+                <SelectTrigger id="reviewTitle" className="h-11 w-full rounded-lg border border-border bg-transparent px-3.5 text-left text-[15px] shadow-none flex items-center justify-between">
                   <span className={title ? undefined : "text-muted-foreground/60"}>{title || "Select title"}</span>
                 </SelectTrigger>
                 <SelectContent>
@@ -401,7 +401,7 @@ function SignupContent() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="reviewEmail" className="text-[13.5px] font-medium text-foreground">Email Address</Label>
+              <Label htmlFor="reviewEmail" className="text-[13px] font-medium text-foreground">Email Address</Label>
               <Input
                 id="reviewEmail"
                 type="email"
@@ -414,7 +414,7 @@ function SignupContent() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="reviewMobile" className="text-[13.5px] font-medium text-foreground">Mobile Number</Label>
+              <Label htmlFor="reviewMobile" className="text-[13px] font-medium text-foreground">Mobile Number</Label>
               <PhoneInput id="reviewMobile" value={mobile} onValueChange={setMobile} />
               <p className="px-0.5 text-[12.5px] text-muted-foreground">We will send a code to verify this number.</p>
             </div>

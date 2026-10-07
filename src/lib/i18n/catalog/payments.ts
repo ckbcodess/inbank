@@ -629,7 +629,6 @@ const payments: Entry[] = [
   ["Food", "Alimentation", "Comida", "餐饮"],
   ["Household", "Maison", "Hogar", "家居"],
   ["Insufficient funds.", "Solde insuffisant.", "Fondos insuficientes.", "余额不足。"],
-  ["Transfer amount exceeds your available balance (", "Le montant dépasse votre solde disponible (", "El importe supera tu saldo disponible (", "转账金额超过您的可用余额（"],
   ["Verifying account holder details...", "Vérification du titulaire du compte…", "Verificando los datos del titular…", "正在验证账户持有人信息…"],
   ["Save as beneficiary", "Enregistrer comme bénéficiaire", "Guardar como beneficiario", "保存为收款人"],
   ["Beneficiary nickname (optional)", "Surnom du bénéficiaire (facultatif)", "Alias del beneficiario (opcional)", "收款人昵称（选填）"],

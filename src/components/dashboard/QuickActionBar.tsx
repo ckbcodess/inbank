@@ -341,7 +341,7 @@ export function QuickActionBar({
                 <SelectContent>
                   {BILLERS.map((b) => (
                     <SelectItem key={b.id} value={b.id}>
-                      {b.name} ({b.category})
+                      {b.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

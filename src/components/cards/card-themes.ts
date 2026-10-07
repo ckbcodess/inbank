@@ -18,7 +18,7 @@ export const CARD_THEMES: readonly CardTheme[] = [
   {
     id: "gold",
     name: "GCB Golden Sun",
-    bgImage: "/images/cards/card-gold.png",
+    bgImage: "/images/cards/card-gold.webp",
     colorHex: "#f5be18",
     cardGradient: "from-[#ffe033] via-[#f5be18] to-[#d99b00]",
     sphereStyle: {
@@ -33,7 +33,7 @@ export const CARD_THEMES: readonly CardTheme[] = [
   {
     id: "silver",
     name: "Slate Silver",
-    bgImage: "/images/cards/card-silver.png",
+    bgImage: "/images/cards/card-silver.webp",
     colorHex: "#64748b",
     cardGradient: "from-[#94a3b8] via-[#475569] to-[#1e293b]",
     sphereStyle: {
@@ -48,7 +48,7 @@ export const CARD_THEMES: readonly CardTheme[] = [
   {
     id: "black",
     name: "Obsidian Black",
-    bgImage: "/images/cards/card-black.png",
+    bgImage: "/images/cards/card-black.webp",
     colorHex: "#18181b",
     cardGradient: "from-[#27272a] via-[#18181b] to-[#09090b]",
     sphereStyle: {
@@ -63,7 +63,7 @@ export const CARD_THEMES: readonly CardTheme[] = [
   {
     id: "blue",
     name: "Azure Cyan Blue",
-    bgImage: "/images/cards/card-blue.png",
+    bgImage: "/images/cards/card-blue.webp",
     colorHex: "#0284c7",
     cardGradient: "from-[#38bdf8] via-[#0284c7] to-[#0369a1]",
     sphereStyle: {
@@ -78,7 +78,7 @@ export const CARD_THEMES: readonly CardTheme[] = [
   {
     id: "maroon",
     name: "Crimson Maroon",
-    bgImage: "/images/cards/card-maroon.png",
+    bgImage: "/images/cards/card-maroon.webp",
     colorHex: "#991b1b",
     cardGradient: "from-[#dc2626] via-[#991b1b] to-[#450a0a]",
     sphereStyle: {
@@ -93,7 +93,7 @@ export const CARD_THEMES: readonly CardTheme[] = [
   {
     id: "emerald",
     name: "Neon Emerald",
-    bgImage: "/images/cards/card-emerald.png",
+    bgImage: "/images/cards/card-emerald.webp",
     colorHex: "#10b981",
     cardGradient: "from-[#34d399] via-[#10b981] to-[#064e3b]",
     sphereStyle: {

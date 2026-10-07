@@ -138,6 +138,20 @@ export default function Sidebar({
   // (open when a child is active).
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const [isSidebarHovered, setIsSidebarHovered] = useState(false);
+  // True while the width is animating after a toggle. The pointer is still over the sidebar when it was just
+  // collapsed by clicking inside it, and the "expand" hint must not flash in during that closing animation.
+  const [resizing, setResizing] = useState(false);
+  // After a toggle the browser can leave the hover flag stale (the sidebar shrinks out from under a still pointer
+  // and no mouseleave arrives), which brought the expand icon in once the animation ended. So hover only counts
+  // again after the pointer actually moves over the sidebar.
+  const [pointerSeen, setPointerSeen] = useState(true);
+  const toggleCollapse = () => {
+    setResizing(true);
+    setPointerSeen(false);
+    window.setTimeout(() => setResizing(false), 260);
+    onToggleCollapse?.();
+  };
+  const showExpandHint = collapsed && isSidebarHovered && pointerSeen && !resizing;
 
   // A single nav link — shared by flat groups and dropdown children.
   const renderNavLink = (item: NavItem, indent = false) => {
@@ -145,43 +159,40 @@ export default function Sidebar({
     const active = isItemActive(item, pathname, items);
     const label = t(`nav.${item.key}`, item.label);
 
-    if (collapsed) {
-      return (
-        <SimpleTooltip key={item.key} content={label} side="right" sideOffset={12}>
-          <div className="w-full flex justify-center">
-            <Link
-              href={item.path}
-              onClick={onClose}
-              aria-label={label}
-              className={`relative flex size-9 items-center justify-center rounded-lg transition duration-150 ${
-                active
-                  ? "bg-primary text-primary-foreground"
-                  : "surface-interactive text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <Icon size={17} strokeWidth={active ? 2.1 : 1.8} />
-            </Link>
-          </div>
-        </SimpleTooltip>
-      );
-    }
-
+    // One markup for both states, so the icon never moves and the label is only clipped as the sidebar narrows
+    // (the old collapsed branch was a different element, so everything popped at the first frame).
     return (
-      <Link
+      <SimpleTooltip
         key={item.key}
-        href={item.path}
-        onClick={onClose}
-        className={`relative flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium transition duration-150 ${
-          indent ? "ml-2.5" : ""
-        } ${
-          active
-            ? "bg-primary text-primary-foreground"
-            : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-        }`}
+        content={label}
+        side="right"
+        sideOffset={12}
+        disabled={!collapsed}
+        triggerClassName="flex w-full"
       >
-        <Icon size={17} strokeWidth={active ? 2.1 : 1.8} className="shrink-0" />
-        <span className="leading-normal whitespace-nowrap truncate">{label}</span>
-      </Link>
+        <Link
+          href={item.path}
+          onClick={onClose}
+          aria-label={collapsed ? label : undefined}
+          className={`relative flex h-9 items-center gap-2.5 overflow-hidden rounded-lg px-2.5 text-[13px] font-medium transition duration-150 ${
+            indent ? "ml-2.5 w-[calc(100%-0.625rem)]" : "w-full"
+          } ${
+            active
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+          }`}
+        >
+          <Icon size={17} strokeWidth={active ? 2.1 : 1.8} className="shrink-0" />
+          {/* A fixed max width (not min-w-0 truncation) so the ellipsis can't move while the sidebar animates. */}
+          <span
+            className={`max-w-[11rem] shrink-0 truncate leading-normal whitespace-nowrap transition-opacity duration-150 ${
+              collapsed ? "opacity-0" : "opacity-100"
+            }`}
+          >
+            {label}
+          </span>
+        </Link>
+      </SimpleTooltip>
     );
   };
 
@@ -203,73 +214,70 @@ export default function Sidebar({
        parent re-render read as a flicker. */
     <aside
       onMouseEnter={() => setIsSidebarHovered(true)}
+      onMouseMove={() => !pointerSeen && setPointerSeen(true)}
       onMouseLeave={() => setIsSidebarHovered(false)}
       className={`fixed inset-y-0 left-0 z-40 flex shrink-0 flex-col bg-[var(--surface)] transition-[width,transform] duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)] lg:relative lg:z-20 lg:translate-x-0 ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       }`}
       style={{ width: collapsed ? 56 : 224 }}
     >
-      {/* Header */}
+      {/* Header: the same elements in both states. The mark stays put (it is the expand button when collapsed),
+          and the brand name and collapse button are clipped by the header as the sidebar narrows. */}
       <div
         // Below sm the page card is edge to edge; from sm up it sits inside 12px (14px at lg) of padding and a 1px
-        // border, so the header takes the same offset to put its divider on the same line as the top bar's.
-        className={`flex h-14 flex-shrink-0 items-center border-b border-border sm:h-[calc(3.5rem+13px)] sm:pt-[13px] lg:h-[calc(3.5rem+15px)] lg:pt-[15px] ${
-          collapsed ? "justify-center px-0" : "justify-between px-3.5"
-        }`}
+        // border, so the header takes the same offset (in rem, like that padding) to put its divider on the same line as the top bar's.
+        className="flex h-14 flex-shrink-0 items-center gap-2.5 overflow-hidden pl-3.5 pr-[0.768rem] sm:h-[calc(3.5rem+0.75rem+1px)] sm:pt-[calc(0.75rem+1px)] lg:h-[calc(3.5rem+0.875rem+1px)] lg:pt-[calc(0.875rem+1px)]"
       >
-        {collapsed ? (
-          <SimpleTooltip content="Expand sidebar" side="right" sideOffset={12}>
-            <button
-              type="button"
-              onClick={onToggleCollapse}
-              className="relative hidden size-9 flex-shrink-0 items-center justify-center rounded-lg hover:bg-muted/70 text-muted-foreground hover:text-foreground transition-colors lg:flex cursor-pointer overflow-hidden"
-              aria-label="Expand sidebar"
+        <SimpleTooltip content="Expand sidebar" side="right" sideOffset={12} disabled={!collapsed}>
+          <button
+            type="button"
+            onClick={collapsed ? toggleCollapse : undefined}
+            tabIndex={collapsed ? 0 : -1}
+            aria-label={collapsed ? "Expand sidebar" : brandLabel}
+            className={`relative flex size-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg text-muted-foreground transition-colors ${
+              collapsed ? "cursor-pointer hover:bg-muted/70 hover:text-foreground" : "pointer-events-none"
+            }`}
+          >
+            <span
+              className={`absolute inset-0 flex items-center justify-center transition-opacity duration-150 ease-in-out ${
+                showExpandHint ? "opacity-0" : "opacity-100"
+              }`}
             >
-              <span
-                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-150 ease-in-out ${
-                  isSidebarHovered ? "opacity-0 pointer-events-none" : "opacity-100"
-                }`}
-              >
-                {shell === "admin" ? (
-                  <ShieldCheck size={18} strokeWidth={2.1} className="text-primary" />
-                ) : (
-                  <GCBLogo className="h-6 w-auto shrink-0" />
-                )}
-              </span>
-              <span
-                className={`absolute inset-0 flex items-center justify-center transition-opacity duration-150 ease-in-out pointer-events-none ${
-                  isSidebarHovered ? "opacity-100" : "opacity-0"
-                }`}
-              >
-                <PanelLeftOpen
-                  className="size-[17.5px] text-muted-foreground group-hover:text-foreground"
-                  strokeWidth={1.8}
-                />
-              </span>
-            </button>
-          </SimpleTooltip>
-        ) : (
-          <>
-            <div className="flex min-w-0 items-center gap-2.5">
               {shell === "admin" ? (
-                <ShieldCheck size={20} strokeWidth={2.1} className="flex-shrink-0 text-primary" />
+                <ShieldCheck size={18} strokeWidth={2.1} className="text-primary" />
               ) : (
-                <GCBLogo className="h-7 w-auto shrink-0" />
+                <GCBLogo className="h-6 w-auto shrink-0" />
               )}
-              <span className="truncate text-[14px] font-medium leading-tight tracking-tight text-foreground">
-                {brandLabel}
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={onToggleCollapse}
-              className="hidden lg:flex size-9 flex-shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted/70 hover:text-foreground transition-colors cursor-pointer"
-              aria-label="Collapse sidebar"
+            </span>
+            <span
+              className={`pointer-events-none absolute inset-0 flex items-center justify-center transition-opacity duration-150 ease-in-out ${
+                showExpandHint ? "opacity-100" : "opacity-0"
+              }`}
             >
-              <PanelLeftClose className="size-[17.5px]" strokeWidth={1.8} />
-            </button>
-          </>
-        )}
+              <PanelLeftOpen className="size-[17.5px]" strokeWidth={1.8} />
+            </span>
+          </button>
+        </SimpleTooltip>
+        <span
+          className={`min-w-0 max-w-[9rem] shrink-0 truncate text-[14px] font-medium leading-tight tracking-tight text-foreground transition-opacity duration-150 ${
+            collapsed ? "opacity-0" : "opacity-100"
+          }`}
+          aria-hidden={collapsed}
+        >
+          {brandLabel}
+        </span>
+        <button
+          type="button"
+          onClick={toggleCollapse}
+          tabIndex={collapsed ? -1 : 0}
+          className={`ml-auto hidden size-9 flex-shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-[color,background-color,opacity] duration-150 hover:bg-muted/70 hover:text-foreground lg:flex ${
+            collapsed ? "pointer-events-none opacity-0" : "cursor-pointer opacity-100"
+          }`}
+          aria-label="Collapse sidebar"
+          aria-hidden={collapsed}
+        >
+          <PanelLeftClose className="size-[17.5px]" strokeWidth={1.8} />
+        </button>
 
         <Button variant="ghost" size="icon-sm" onClick={onClose} className="lg:hidden" aria-label="Close menu">
           <X size={16} />
@@ -277,7 +285,10 @@ export default function Sidebar({
       </div>
 
       {/* Navigation */}
-      <nav className={`flex-1 overflow-y-auto overflow-x-hidden py-2.5 ${collapsed ? "px-1.5" : "px-2.5"}`}>
+      {/* The side padding is what centres the icons when collapsed (4rem wide): 0.768rem + the link's 0.625rem
+          padding + half the 17px icon = 2rem, the middle of the sidebar. The header's pl-3.5 centres the mark on the
+          same line. The root font is 14px, so these are rem values, not px. */}
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-[0.768rem] py-2.5">
         <div className="flex flex-col gap-0.5">
           {groups.map((grp, gi) => {
             const hasActiveChild = grp.items.some((i) => isItemActive(i, pathname, items));
@@ -323,9 +334,8 @@ export default function Sidebar({
             return (
               <div
                 key={grp.name ?? `g-${gi}`}
-                className={`flex flex-col gap-0.5 ${!collapsed && gi > 0 ? "mt-3" : ""}`}
+                className={`flex flex-col gap-0.5 ${gi > 0 ? "mt-3" : ""}`}
               >
-                {collapsed && gi > 0 && <div className="mx-1.5 my-2 h-px bg-border" aria-hidden />}
                 {grp.items.map((item) => renderNavLink(item))}
               </div>
             );

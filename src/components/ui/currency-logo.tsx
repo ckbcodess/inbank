@@ -369,7 +369,7 @@ export function CurrencyLogo({
         viewBox="0 0 32 32"
         width={size}
         height={size}
-        className="block shrink-0"
+        className="block size-full shrink-0"
       >
         <defs>
           <clipPath id={clipId}>

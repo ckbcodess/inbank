@@ -204,7 +204,7 @@ export interface Account {
 export const ACCOUNTS: Account[] = [
   {
     id: "acc-personal",
-    name: "Personal Current Account",
+    name: "Current Account",
     number: "1001 4821 4561",
     type: "Current",
     currency: "GHS",
@@ -216,7 +216,7 @@ export const ACCOUNTS: Account[] = [
   },
   {
     id: "acc-joint",
-    name: "Joint Premier Savings",
+    name: "Joint Savings Account",
     number: "3300 8844 9922",
     type: "Savings",
     currency: "GHS",
@@ -230,7 +230,7 @@ export const ACCOUNTS: Account[] = [
   },
   {
     id: "acc-joint-either",
-    name: "Joint Family Savings",
+    name: "Joint Savings Account",
     number: "3300 7711 2233",
     type: "Savings",
     currency: "GHS",
@@ -288,7 +288,7 @@ export const ACCOUNTS: Account[] = [
   },
   {
     id: "acc-ret-001",
-    name: "Personal Savings Account",
+    name: "Savings Account",
     number: "4001 9922 1100",
     type: "Savings",
     currency: "GHS",
@@ -299,7 +299,7 @@ export const ACCOUNTS: Account[] = [
   },
   {
     id: "acc-ret-002",
-    name: "Personal Current Account",
+    name: "Current Account",
     number: "4001 9922 4561",
     type: "Current",
     currency: "GHS",
@@ -322,7 +322,7 @@ export const ACCOUNTS: Account[] = [
   },
   {
     id: "acc-ret-dormant",
-    name: "Education Savings",
+    name: "Savings Account",
     number: "4001 9922 7730",
     type: "Savings",
     currency: "GHS",
@@ -334,7 +334,7 @@ export const ACCOUNTS: Account[] = [
   },
   {
     id: "acc-ret-new",
-    name: "Personal Savings Account",
+    name: "Savings Account",
     number: "4001 9931 0214",
     type: "Savings",
     currency: "GHS",
@@ -347,7 +347,7 @@ export const ACCOUNTS: Account[] = [
   // what "Add Account" on /accounts finds after the selfie check.
   {
     id: "acc-ret-home",
-    name: "Home Project Savings",
+    name: "Joint Savings Account",
     number: "4001 9945 1187",
     type: "Savings",
     currency: "GHS",
@@ -355,11 +355,13 @@ export const ACCOUNTS: Account[] = [
     available: 12_600.0,
     status: "Active",
     profileKind: "RETAIL",
+    isJoint: true,
+    mandate: "Either to sign",
     scenarioOnly: true,
   },
   {
     id: "acc-ret-salary",
-    name: "Salary Current Account",
+    name: "Joint Current Account",
     number: "4001 9952 3309",
     type: "Current",
     currency: "GHS",
@@ -367,6 +369,8 @@ export const ACCOUNTS: Account[] = [
     available: 2_145.75,
     status: "Active",
     profileKind: "RETAIL",
+    isJoint: true,
+    mandate: "Either to sign",
     scenarioOnly: true,
   },
 ];
@@ -1120,7 +1124,7 @@ export const TRANSACTIONS: Transaction[] = [
     date: "2026-07-25",
     valueDate: "2026-07-25",
     description: "Inter-Account Transfer to Savings",
-    counterparty: "Personal Savings Account",
+    counterparty: "Savings Account",
     counterpartyAccount: "4001 9922 1100",
     accountId: "acc-ret-001",
     currency: "GHS",

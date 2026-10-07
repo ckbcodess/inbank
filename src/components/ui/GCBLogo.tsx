@@ -9,13 +9,13 @@ interface GCBLogoProps extends React.SVGProps<SVGSVGElement> {
 
 /**
  * Official GCB Bank PLC Brand Logo mark.
- * Eagle uses the brand amber (#F9C632), while wordmark respects theme foreground (currentColor / text-foreground).
+ * Eagle uses the brand amber (#FFC423), while wordmark respects theme foreground (currentColor / text-foreground).
  * In dark mode, GCB text is pure white.
  */
 export function GCBLogo({
   className = "size-8",
   showWordmark = true,
-  eagleColor = "#F9C632",
+  eagleColor = "#FFC423",
   wordmarkColor = "currentColor",
   ...props
 }: GCBLogoProps) {

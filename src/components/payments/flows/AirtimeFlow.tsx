@@ -119,7 +119,7 @@ export function AirtimeFlow({
 
       {/* 2. Destination: Network & Phone Number */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Recipient Details</label>
+        <label className="text-[13px] font-medium text-foreground">Recipient Details</label>
         {isSelf ? (
           selfBlock
         ) : isPhoneValid && isCollapsed ? (
@@ -172,10 +172,7 @@ export function AirtimeFlow({
             }}
             error={
               overBalance ? (
-                <InsufficientFundsAlert
-                  available={fromAccount?.available ?? 0}
-                  currency={fromAccount?.currency || "GHS"}
-                />
+                <InsufficientFundsAlert />
               ) : undefined
             }
           />

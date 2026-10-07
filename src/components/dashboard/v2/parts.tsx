@@ -10,7 +10,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Eye,
@@ -25,6 +24,8 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { RoundAction } from "@/components/ui/round-action";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { formatMoney, type Account, type Transaction, type PaymentCard } from "@/lib/mock-data";
 import { roundMoney } from "@/lib/money";
@@ -40,10 +41,8 @@ import { ListSkeleton } from "@/components/states/ListStates";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { RecentTransactions, CardsMini, AttentionBand, FxRatesMini, fxPeek } from "./MinimalKit";
@@ -134,7 +133,7 @@ export function dayLabel(iso: string): string {
 export function Card({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     // Phone: 16px inside a 16px gutter, so rows keep their width; desktop keeps the roomier 24px.
-    <div className={cn("flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 sm:gap-6 sm:p-6", className)}>
+    <div className={cn("flex flex-col gap-3 rounded-2xl border border-border bg-panel p-4 sm:gap-6 sm:p-6", className)}>
       {children}
     </div>
   );
@@ -260,30 +259,24 @@ export function MoneyActions({
   if (variant === "row") {
     return (
       <div className={cn("grid grid-cols-3 gap-2", className)}>
-        {actions.map(({ kind: k, icon: Icon, label, primary }) => (
-          <button
+        {actions.map(({ kind: k, icon, label, primary }) => (
+          <RoundAction
             key={k}
-            type="button"
+            icon={icon}
+            label={label}
+            size="sm"
+            fill
+            popup
             onClick={() => pick(k)}
-            aria-haspopup="dialog"
-            className="group flex flex-col items-center gap-2 text-center cursor-pointer"
-          >
-            <span
-              className={cn(
-                "flex size-11 items-center justify-center rounded-full transition-[background-color,transform] duration-150 group-active:scale-95",
-                primary
-                  ? "bg-primary text-primary-foreground group-hover:bg-primary-hover"
-                  : hero
-                    ? HERO_GLASS
-                    : "border border-[var(--border)] bg-[var(--tile)] text-foreground group-hover:bg-[var(--tile-hover)]",
-              )}
-            >
-              <Icon size={18} strokeWidth={1.8} />
-            </span>
-            <span className={cn("text-[12px] font-medium leading-tight", hero ? "text-[var(--hero-foreground)]" : "text-foreground")}>
-              {label}
-            </span>
-          </button>
+            chipClassName={
+              primary
+                ? undefined
+                : hero
+                  ? HERO_GLASS
+                  : "border border-[var(--border)] bg-[var(--tile)] text-foreground group-hover:bg-[var(--tile-hover)]"
+            }
+            labelClassName={cn("text-[12px] font-semibold", hero && "text-[var(--hero-foreground)]")}
+          />
         ))}
         {picker}
       </div>
@@ -293,24 +286,19 @@ export function MoneyActions({
   return (
     <div className={cn("flex flex-wrap items-center gap-3", className)}>
       {actions.map(({ kind: k, icon: Icon, label, primary }) => (
-        <button
+        <Button
           key={k}
           type="button"
+          variant={primary ? "default" : hero ? "glass" : "outline"}
           onClick={() => pick(k)}
           aria-haspopup="dialog"
           className={cn(
-            "flex items-center gap-2 px-5 py-3 text-[14px] font-medium leading-none whitespace-nowrap transition-colors cursor-pointer max-sm:flex-1 max-sm:justify-center max-sm:gap-1.5 max-sm:px-2 max-sm:text-[13px]",
-            "rounded-lg",
-            primary
-              ? "bg-primary text-primary-foreground shadow-xs hover:bg-primary-hover"
-              : hero
-                ? HERO_GLASS
-                : "border border-border bg-card text-foreground hover:bg-muted",
+            "h-auto gap-2 px-5 py-3 text-[14px] leading-none shadow-xs max-sm:flex-1 max-sm:gap-1.5 max-sm:px-2 max-sm:text-[13px]",
           )}
         >
-          <Icon size={17} strokeWidth={1.8} />
+          <Icon size={17} strokeWidth={1.8} className="size-[17px]" />
           {label}
-        </button>
+        </Button>
       ))}
       {picker}
     </div>
@@ -394,7 +382,7 @@ function PillShadow() {
 
 /**
  * The account label. With several accounts it opens a menu to switch (closes on
- * pick) with "Account details" at the foot; with one, it links to its details.
+ * pick); with one, it links to its details.
  * Switching rescopes the dashboard only — it never changes the default.
  */
 export function AccountSwitcher({
@@ -410,7 +398,6 @@ export function AccountSwitcher({
   tone?: "plain" | "hero";
 }) {
   const { t } = useTranslation();
-  const router = useRouter();
   const account = selectedAccount(data);
   if (!account) return null;
 
@@ -456,14 +443,6 @@ export function AccountSwitcher({
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => router.push(`/accounts/${account.id}`)}
-          className="justify-between rounded-lg px-3 py-3 text-[14px] text-muted-foreground cursor-pointer"
-        >
-          {t("dashboard.accountDetails", "Account details")}
-          <ChevronRight size={15} strokeWidth={1.8} />
-        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -895,7 +874,7 @@ export function AnalyticsCard({
       <div
         role="status"
         aria-busy="true"
-        className={cn("flex flex-col justify-between gap-3 rounded-2xl border border-border bg-card p-4 shadow-none sm:p-5", className)}
+        className={cn("flex flex-col justify-between gap-3 rounded-2xl border border-border bg-panel p-4 shadow-none sm:p-5", className)}
       >
         <span className="sr-only">Loading</span>
         <div className="flex items-center justify-between">

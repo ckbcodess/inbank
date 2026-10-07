@@ -709,7 +709,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             </Button>
             <Button
               type="button"
-              className="flex-1 h-13 rounded-2xl text-[16px] font-medium bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+              className="flex-1 h-13 rounded-2xl text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
               onClick={() => setPinModalOpen(true)}
             >
               Authorize &amp; Schedule
@@ -788,7 +788,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
         {/* 3. Beneficiary Details Card */}
         <div className="flex flex-col gap-2">
-          <label className="text-[14px] font-medium text-foreground">Beneficiary Details</label>
+          <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
 
           {isDestinationValid && detailsCollapsed ? (
             <CollapsedDetailsBadge
@@ -1009,7 +1009,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               }}
               error={
                 overBalance ? (
-                  <InsufficientFundsAlert available={fromAccount?.available ?? 0} currency="GHS" />
+                  <InsufficientFundsAlert />
                 ) : undefined
               }
             />
@@ -1019,7 +1019,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                 {/* 5. Short name and category */}
                 <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="so-short-name" className="text-[14px] font-medium text-foreground">
+                    <label htmlFor="so-short-name" className="text-[13px] font-medium text-foreground">
                       Short name
                     </label>
                     <input
@@ -1042,7 +1042,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
                 {/* 6. Frequency */}
                 <div className="flex flex-col gap-2">
-                  <label className="text-[14px] font-medium text-foreground">Frequency</label>
+                  <label className="text-[13px] font-medium text-foreground">Frequency</label>
                   <Select
                     value={f.frequency}
                     onValueChange={(val) => val && set("frequency", val as InstructionFrequency)}
@@ -1081,7 +1081,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   {/* 7. First run, and when it stops */}
                   <div className={cn("grid grid-cols-1 gap-3.5", f.frequency !== "Once" && "sm:grid-cols-2")}>
                     <div className="flex flex-col gap-2">
-                      <label htmlFor="so-first-run" className="text-[14px] font-medium text-foreground">
+                      <label htmlFor="so-first-run" className="text-[13px] font-medium text-foreground">
                         {f.frequency === "Once" ? "Payment date" : "First payment"}
                       </label>
                       <input
@@ -1096,7 +1096,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
                     {f.frequency !== "Once" && (
                       <div className="flex flex-col gap-2">
-                        <label className="text-[14px] font-medium text-foreground">Ends</label>
+                        <label className="text-[13px] font-medium text-foreground">Ends</label>
                         <Select
                           value={f.endCondition}
                           onValueChange={(val) => val && set("endCondition", val as "indefinite" | "date")}
@@ -1119,7 +1119,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
                   {f.frequency !== "Once" && f.endCondition === "date" && (
                     <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-150">
-                      <label htmlFor="so-end-date" className="text-[14px] font-medium text-foreground">
+                      <label htmlFor="so-end-date" className="text-[13px] font-medium text-foreground">
                         Last payment
                       </label>
                       <input

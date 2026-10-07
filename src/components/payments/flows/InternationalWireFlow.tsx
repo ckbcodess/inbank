@@ -263,7 +263,7 @@ export function InternationalWireFlow({
       {/* 2. Where it's going, and who gets it */}
       {isDestinationValid && isCollapsed ? (
         <div className="flex flex-col gap-2">
-          <label className="text-[14px] font-medium text-foreground">Beneficiary</label>
+          <label className="text-[13px] font-medium text-foreground">Beneficiary</label>
           <CollapsedDetailsBadge
             title={state.wBenName}
             subtitle={`${state.wBank} · ${state.wSwift} · ${state.wIban}`}
@@ -273,7 +273,7 @@ export function InternationalWireFlow({
       ) : (
         <>
           <div className="flex flex-col gap-3">
-            <label className="text-[14px] font-medium text-foreground">Destination</label>
+            <label className="text-[13px] font-medium text-foreground">Destination</label>
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Country">
                 <CountryPicker
@@ -333,7 +333,7 @@ export function InternationalWireFlow({
 
           {codeOk && currentCountry && (
             <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-              <label className="text-[14px] font-medium text-foreground">Beneficiary bank</label>
+              <label className="text-[13px] font-medium text-foreground">Beneficiary bank</label>
               <Field label="Bank">
                 {availableBanks.length > 0 ? (
                   <Select value={state.wBank} onValueChange={(val) => val && onChange("wBank", val)}>
@@ -373,7 +373,7 @@ export function InternationalWireFlow({
 
           {bankDetailsOk && (
             <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-              <label className="text-[14px] font-medium text-foreground">Beneficiary details</label>
+              <label className="text-[13px] font-medium text-foreground">Beneficiary details</label>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Field label="Account number">
                   <input
@@ -458,7 +458,7 @@ export function InternationalWireFlow({
             </DialogDescription>
           </div>
           <DialogFooter className="flex-row gap-2.5 px-5 pb-5 sm:px-6">
-            <Button type="button" variant="outline" onClick={() => setPapssFor(null)} className="h-11 flex-1 text-[14px]">
+            <Button type="button" variant="outline" onClick={() => setPapssFor(null)} className="h-11 flex-1 text-[15px]">
               Not now
             </Button>
             <Button
@@ -469,7 +469,7 @@ export function InternationalWireFlow({
                 setPapssFor(null);
                 if (name) onUsePapss?.(name, currency);
               }}
-              className="h-11 flex-1 text-[14px]"
+              className="h-11 flex-1 text-[15px]"
             >
               Use PAPSS
             </Button>
@@ -482,7 +482,7 @@ export function InternationalWireFlow({
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount Section: You Send (GHS) vs Recipient Gets (Foreign) with switcher */}
           <div className="flex flex-col gap-2">
-            <label className="text-[14px] font-medium text-foreground">Transfer Amount</label>
+            <label className="text-[13px] font-medium text-foreground">Transfer Amount</label>
 
             <DualAmountFields
               foreign={state.wForeign}
@@ -508,10 +508,7 @@ export function InternationalWireFlow({
             {/* Row-level error alert below the entire row */}
             {overBalance && (
               <div className="mt-1 animate-in fade-in slide-in-from-top-1 duration-150">
-                <InsufficientFundsAlert
-                  available={fromAccount?.available ?? 0}
-                  currency={fromAccount?.currency || "GHS"}
-                />
+                <InsufficientFundsAlert />
               </div>
             )}
           </div>
@@ -520,7 +517,7 @@ export function InternationalWireFlow({
             <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* Who pays the charges */}
           <div className="flex flex-col gap-2">
-            <label className="text-[14px] font-medium text-foreground">Charges</label>
+            <label className="text-[13px] font-medium text-foreground">Charges</label>
             <Select value={state.wCharges} onValueChange={(val) => val && onChange("wCharges", val)}>
               <SelectTrigger className={TRIGGER}>
                 <SelectValue placeholder="Who pays for the charges" />

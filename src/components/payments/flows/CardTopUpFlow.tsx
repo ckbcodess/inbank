@@ -92,7 +92,7 @@ export function CardTopUpFlow({
 
       {/* 2. Destination Card */}
       <div className="flex flex-col gap-2">
-        <label className="text-[14px] font-medium text-foreground">Destination Card</label>
+        <label className="text-[13px] font-medium text-foreground">Destination Card</label>
         {selectedCard && isCollapsed ? (
           <CollapsedDetailsBadge
             title={selectedCard.name}
@@ -167,10 +167,7 @@ export function CardTopUpFlow({
             label={`Top up Amount (${selectedCard?.currency || "GHS"})`}
             error={
               overBalance ? (
-                <InsufficientFundsAlert
-                  available={fromAccount?.available ?? 0}
-                  currency={fromAccount?.currency || "GHS"}
-                />
+                <InsufficientFundsAlert />
               ) : undefined
             }
           />

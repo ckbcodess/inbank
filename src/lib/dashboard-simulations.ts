@@ -185,7 +185,7 @@ export function getSimulatedDashboardData({
       accounts = [
         {
           id: "acc-new-1",
-          name: "Personal Savings",
+          name: "Savings Account",
           number: "1011 8920 1920",
           currency: "GHS",
           balance: 500,
@@ -315,7 +315,7 @@ export function getSimulatedDashboardData({
       accounts = [
         {
           id: "acc-w-1",
-          name: "Premier Current Account",
+          name: "Current Account",
           number: "1018 9024 5100",
           currency: "GHS",
           balance: 285400.0,
@@ -326,7 +326,7 @@ export function getSimulatedDashboardData({
         },
         {
           id: "acc-w-2",
-          name: "Platinum High-Yield Savings",
+          name: "Savings Account",
           number: "1028 9045 1200",
           currency: "GHS",
           balance: 450000.0,
@@ -337,7 +337,7 @@ export function getSimulatedDashboardData({
         },
         {
           id: "acc-w-3",
-          name: "USD Global Reserve",
+          name: "Foreign Currency Account",
           number: "2019 9041 2300",
           currency: "USD",
           balance: 65000.0,
@@ -355,7 +355,7 @@ export function getSimulatedDashboardData({
       accounts = [
         {
           id: "acc-emp-1",
-          name: "Personal Savings",
+          name: "Savings Account",
           number: "1011 8920 1920",
           currency: "GHS",
           balance: 0,
