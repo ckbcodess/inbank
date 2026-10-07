@@ -18,6 +18,8 @@ interface AuthLayoutProps {
   titleClassName?: string;
   description?: ReactNode;
   descriptionClassName?: string;
+  /** A second heading that takes the title's place, in the same spot, while `show` is true (cross-fade, same height). */
+  swap?: { show: boolean; title: ReactNode; description?: ReactNode };
   children: ReactNode;
   /** Alignment of header (title, description, icon): default "left", or "center" for success/informatory states */
   align?: "left" | "center";
@@ -64,6 +66,7 @@ export default function AuthLayout({
   titleClassName,
   description,
   descriptionClassName,
+  swap,
   children,
   align = "left",
   onBack,
@@ -221,26 +224,62 @@ export default function AuthLayout({
                       align === "center" ? "text-center mx-auto max-w-[440px]" : "text-left sm:text-center sm:mx-auto sm:max-w-[440px]"
                     )}
                   >
-                    {title && (
-                      <h1
-                        className={cn(
-                          "text-[21px] sm:text-[23px] font-medium tracking-[-0.015em] text-foreground leading-snug",
-                          titleClassName
-                        )}
-                      >
-                        {title}
-                      </h1>
-                    )}
-                    {description && (
-                      <div
-                        className={cn(
-                          "mt-1.5 text-[13.5px] leading-relaxed text-balance text-muted-foreground",
-                          descriptionClassName
-                        )}
-                      >
-                        {description}
-                      </div>
-                    )}
+                    {(() => {
+                      const heading = (
+                        <>
+                          {title && (
+                            <h1
+                              className={cn(
+                                "text-[21px] sm:text-[23px] font-medium tracking-[-0.015em] text-foreground leading-snug",
+                                titleClassName
+                              )}
+                            >
+                              {title}
+                            </h1>
+                          )}
+                          {description && (
+                            <div
+                              className={cn(
+                                "mt-1.5 text-[13.5px] leading-relaxed text-balance text-muted-foreground",
+                                descriptionClassName
+                              )}
+                            >
+                              {description}
+                            </div>
+                          )}
+                        </>
+                      );
+                      if (!swap) return heading;
+                      const layer = "col-start-1 row-start-1 transition-[opacity,transform,filter] duration-reveal ease-settle";
+                      const hidden = "pointer-events-none translate-y-1 opacity-0 blur-[2px]";
+                      return (
+                        <div className="grid">
+                          <div className={cn(layer, swap.show && hidden)} aria-hidden={swap.show} inert={swap.show}>
+                            {heading}
+                          </div>
+                          <div className={cn(layer, !swap.show && hidden)} aria-hidden={!swap.show} inert={!swap.show}>
+                            <h1
+                              className={cn(
+                                "tabular text-[21px] sm:text-[23px] font-medium tracking-[-0.015em] text-foreground leading-snug",
+                                titleClassName
+                              )}
+                            >
+                              {swap.title}
+                            </h1>
+                            {swap.description && (
+                              <div
+                                className={cn(
+                                  "mt-1.5 text-[13.5px] leading-relaxed text-balance text-muted-foreground",
+                                  descriptionClassName
+                                )}
+                              >
+                                {swap.description}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
 

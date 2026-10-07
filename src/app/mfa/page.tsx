@@ -9,7 +9,7 @@ import { AppLoader } from "@/components/ui/loader";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { OtpHelp } from "@/components/payments/OtpHelp";
-import { PIN_LENGTH, REGISTERED_PHONE, useAuthorisation } from "@/components/payments/useAuthorisation";
+import { OTP_SHORTCODE, PIN_LENGTH, REGISTERED_PHONE, useAuthorisation } from "@/components/payments/useAuthorisation";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
 
 /**
@@ -28,6 +28,7 @@ function PinContent() {
   const [verifying, setVerifying] = useState(false);
   const hydrated = useSessionHydrated();
   const usingPin = auth.method === "pin";
+  const [shortcodeOpen, setShortcodeOpen] = useState(false);
 
   useEffect(() => {
     if (hydrated && !actor) router.replace("/login");
@@ -54,7 +55,13 @@ function PinContent() {
   ) : undefined;
 
   return (
-    <AuthLayout title={title} description={description} backHref="/login" backLabel="Back to login">
+    <AuthLayout
+      title={title}
+      description={description}
+      swap={!usingPin ? { show: shortcodeOpen, title: <a href={`tel:${OTP_SHORTCODE.replace("#", "%23")}`}>{OTP_SHORTCODE}</a>, description: "Dial it on your phone to see your code" } : undefined}
+      backHref="/login"
+      backLabel="Back to login"
+    >
       {/* New device: what we saw, so the person can tell if it was them. */}
       {isNewDevice && (
         <div data-tour="mfa-device-info" className="mb-6 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-left space-y-2.5">
@@ -123,7 +130,7 @@ function PinContent() {
           </button>
         ) : (
           <div className="flex flex-col items-center gap-3">
-            <OtpHelp resend={auth.resend} onResend={auth.requestResend} />
+            <OtpHelp resend={auth.resend} onResend={auth.requestResend} shortcodeOpen={shortcodeOpen} onShortcodeOpenChange={setShortcodeOpen} />
             <button
               type="button"
               onClick={() => auth.setMethod("pin")}
