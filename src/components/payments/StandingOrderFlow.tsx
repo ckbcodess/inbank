@@ -14,7 +14,7 @@
  *   7. Dedicated recurring schedule options (Frequency, First Run, End Condition).
  *   8. Progressive disclosure: recipient first; amount once the recipient is verified; then the
  *      schedule and name as one-line summaries (sensible defaults) that open on "Change".
- *   9. Review summary with fee breakdown and Transaction PIN modal authorization.
+ *   9. Review summary with fee breakdown and one-time code authorization.
  */
 
 import React, { useEffect, useMemo, useState } from "react";
@@ -56,7 +56,7 @@ import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import { useSession } from "@/lib/session-store";
 import { resolveDefaultAccountId, useAccountPrefs } from "@/lib/accounts-store";
 import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
-import TransactionPinModal from "./TransactionPinModal";
+import TransactionOtpModal from "./TransactionOtpModal";
 import { useAuthorisation } from "./useAuthorisation";
 import {
   FromAccountSelector,
@@ -448,7 +448,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const frequencyText = f.frequency ? frequencyLabel({ frequency: f.frequency, intervalDays }) : "";
 
   const handleAuthorize = (code?: string) => {
-    // The PIN modal keeps the entered code itself and hands it back; verify() here has no digits of its own.
+    // The code modal keeps the entered code itself and hands it back; verify() here has no digits of its own.
     if (!auth.verify(code)) return;
     const newId = `SO-${Date.now().toString().slice(-6)}`;
     saveStandingInstruction({
@@ -715,8 +715,8 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
           </div>
         </div>
 
-        {/* Transaction PIN Modal */}
-        <TransactionPinModal
+        {/* Transaction authorisation: a one-time code */}
+        <TransactionOtpModal
           open={pinModalOpen}
           onOpenChange={setPinModalOpen}
           onSuccess={(code) => {

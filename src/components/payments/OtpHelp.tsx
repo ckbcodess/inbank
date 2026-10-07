@@ -1,15 +1,14 @@
 "use client";
 
 /**
- * Under the one-time-code boxes, one quiet line of help: wait for the SMS
- * (resend when the timer ends) or get the code by shortcode instead. The
- * shortcode opens inline on tap, so the screen stays calm for everyone who
- * got the text.
+ * Under the one-time-code boxes, one quiet line of help: wait for the SMS (resend when the timer ends) or get the
+ * code by shortcode instead. The shortcode opens inline on tap, so the screen stays calm for everyone who got the
+ * text. Opened, it is just the instruction: Dial, the shortcode, to see your code.
  */
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { OTP_SHORTCODE, REGISTERED_PHONE } from "./useAuthorisation";
+import { OTP_SHORTCODE } from "./useAuthorisation";
 
 export function OtpHelp({
   resend,
@@ -23,7 +22,7 @@ export function OtpHelp({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className={cn("flex w-full flex-col items-center gap-3", className)}>
+    <div className={cn("flex w-full flex-col items-center gap-4", className)}>
       <div className="flex flex-wrap items-center justify-center gap-x-2 text-[13px]">
         <button
           type="button"
@@ -46,24 +45,21 @@ export function OtpHelp({
           onClick={() => setOpen((v) => !v)}
           className="cursor-pointer text-muted-foreground transition-colors hover:text-foreground"
         >
-          Use a shortcode
+          {open ? "Hide shortcode" : "Use a shortcode"}
         </button>
       </div>
 
       {open && (
-        <div className="flex w-full max-w-xs flex-col gap-1.5 rounded-xl bg-muted/50 px-4 py-3.5 text-left">
-          <span className="text-[13px] text-muted-foreground">
-            From <span className="tabular whitespace-nowrap text-foreground">{REGISTERED_PHONE}</span>, dial
-          </span>
+        <div className="flex w-full flex-col items-center gap-2.5 py-3 text-center animate-in fade-in duration-150">
+          <span className="text-[18px] text-foreground">Dial</span>
           <a
             href={`tel:${OTP_SHORTCODE.replace("#", "%23")}`}
-            className="tabular w-fit text-[20px] tracking-[-0.01em] text-foreground"
+            className="tabular text-[36px] leading-none tracking-[-0.02em] text-foreground"
           >
             {OTP_SHORTCODE}
           </a>
-          <span className="text-[12.5px] text-muted-foreground">
-            Your code shows on your phone. Enter it above. No data needed.
-          </span>
+          <span className="text-[16px] text-foreground">to see your code</span>
+          <span aria-hidden="true" className="mt-1.5 h-0.5 w-5 rounded-full bg-primary" />
         </div>
       )}
     </div>

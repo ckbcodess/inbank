@@ -24,7 +24,7 @@ function PinContent() {
   const isNewDevice = searchParams.get("device") === "new";
 
   const { actor, verifyMfa } = useSession();
-  const auth = useAuthorisation();
+  const auth = useAuthorisation("pin");
   const [verifying, setVerifying] = useState(false);
   const hydrated = useSessionHydrated();
   const usingPin = auth.method === "pin";

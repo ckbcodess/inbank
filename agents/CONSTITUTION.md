@@ -57,9 +57,11 @@ Ask these for every surface. If any answer is "no", say it out loud in the reply
 
 ## 2. Money movement
 
-- **Every payment is authorised.** This covers immediate, scheduled and repeating payments, and
-  standing orders. The transaction PIN is the default; a one-time SMS code is the alternative.
-  The gate is shared (`useAuthorisation`), so a new rail can't skip it.
+- **Every payment is authorised, with a one-time code.** This covers immediate, scheduled and repeating
+  payments, and standing orders. There is no transaction PIN: every transaction gets a 6-digit code by SMS, or
+  the customer reads it off their phone with the shortcode (Dial, the shortcode, to see your code). The gate is
+  shared (`useAuthorisation`, `TransactionOtpModal`), so a new rail can't skip it. Sign-in keeps its own PIN
+  (`/mfa`); that is not a payment.
 - **The payment is restated above the PIN or code boxes:** amount, payee, and the account it leaves
   from. A bare "enter your code" screen is what makes codes easy to phish.
 - **A payment code never auto-submits.** Sign-in may verify on the last digit because sign-in is

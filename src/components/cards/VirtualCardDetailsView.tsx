@@ -58,7 +58,7 @@ import { EmvChip } from "@/components/cards/EmvChip";
 import { GcbCardLogo } from "@/components/cards/GcbCardLogo";
 import { TiltCard3D } from "@/components/cards/TiltCard3D";
 import { RevealingAmount, useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
-import TransactionPinModal from "@/components/payments/TransactionPinModal";
+import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { CardDeliveryTrackerModal } from "@/components/cards/CardDeliveryTracker";
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
@@ -1446,14 +1446,14 @@ export function VirtualCardDetailsView({
       </Dialog>
 
       {/* Universal Transaction PIN Modal matching Payment Flow */}
-      <TransactionPinModal
+      <TransactionOtpModal
         open={pinAuthOpen}
         onOpenChange={setPinAuthOpen}
         onSuccess={handlePinAuthSuccess}
       />
 
       {/* The PIN gate in front of the card details */}
-      <TransactionPinModal
+      <TransactionOtpModal
         open={detailsAuthOpen}
         onOpenChange={setDetailsAuthOpen}
         onSuccess={handleDetailsAuthSuccess}
@@ -1461,7 +1461,7 @@ export function VirtualCardDetailsView({
       />
 
       {/* Security Authorization PIN Modal for Card Activation */}
-      <TransactionPinModal
+      <TransactionOtpModal
         open={activateAuthOpen}
         onOpenChange={setActivateAuthOpen}
         onSuccess={handleActivateAuthSuccess}
@@ -1469,7 +1469,7 @@ export function VirtualCardDetailsView({
       />
 
       {/* Unblocking is authorised with the PIN. Blocking has no pop-up at all. */}
-      <TransactionPinModal
+      <TransactionOtpModal
         open={unblockAuthOpen}
         onOpenChange={setUnblockAuthOpen}
         onSuccess={() => {

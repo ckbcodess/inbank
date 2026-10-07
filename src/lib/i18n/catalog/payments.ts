@@ -674,6 +674,9 @@ const payments: Entry[] = [
   ["24 hours", "24 heures", "24 horas", "24 小时"],
   ["2 days", "2 jours", "2 días", "2 天"],
   ["Plan type", "Type de forfait", "Tipo de plan", "套餐类型"],
+  ["Dial", "Composez", "Marca", "拨打"],
+  ["to see your code", "pour voir votre code", "para ver tu código", "查看您的验证码"],
+  ["Hide shortcode", "Masquer le code court", "Ocultar el código corto", "隐藏短码"],
 ];
 
 export default payments;

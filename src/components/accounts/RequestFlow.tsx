@@ -37,7 +37,7 @@ import {
 import { accountHolderName } from "@/lib/account-holder";
 import { BranchCombobox } from "@/components/ui/branch-combobox";
 import { useSession } from "@/lib/session-store";
-import TransactionPinModal from "@/components/payments/TransactionPinModal";
+import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { ProceedButton } from "@/components/payments/flows/shared";
 
@@ -473,7 +473,7 @@ export default function RequestFlow({ account }: { account: Account }) {
         </div>
       )}
 
-      <TransactionPinModal open={pinOpen} onOpenChange={setPinOpen} onSuccess={submit} title="Authorise request" />
+      <TransactionOtpModal open={pinOpen} onOpenChange={setPinOpen} onSuccess={submit} title="Authorise request" />
     </div>
   );
 }

@@ -2,8 +2,9 @@
 
 /**
  * Transaction Authorisation State Machine.
- * Default: 4-digit Transaction PIN created during customer onboarding.
- * Secondary / Alternative: 6-digit one-time code, by SMS or by shortcode.
+ * Payments are authorised with a 6-digit one-time code for every transaction, sent by SMS or read off the phone
+ * with a shortcode. There is no transaction PIN. The PIN method stays only for sign-in (`/mfa`), which asks for it
+ * with `useAuthorisation("pin")`.
  */
 
 import { useEffect, useState } from "react";
@@ -13,7 +14,7 @@ export const PIN_LENGTH = 4;
 export const RESEND_SECONDS = 30;
 export const REGISTERED_PHONE = "0244 ••• 821";
 /** USSD shortcode that shows a one-time code on the phone. Placeholder until the real code is issued. */
-export const OTP_SHORTCODE = "*711*5#";
+export const OTP_SHORTCODE = "*822*1*2#";
 
 export type AuthMethod = "pin" | "otp";
 export type AuthState = "entry" | "error" | "resent";
@@ -21,8 +22,8 @@ export type AuthState = "entry" | "error" | "resent";
 const blankPin = () => Array<string>(PIN_LENGTH).fill("");
 const blankOtp = () => Array<string>(OTP_LENGTH).fill("");
 
-export function useAuthorisation() {
-  const [method, setMethod] = useState<AuthMethod>("pin");
+export function useAuthorisation(initial: AuthMethod = "otp") {
+  const [method, setMethod] = useState<AuthMethod>(initial);
   const [pin, setPinState] = useState<string[]>(blankPin);
   const [otp, setOtpState] = useState<string[]>(blankOtp);
   const [state, setState] = useState<AuthState>("entry");
@@ -61,7 +62,7 @@ export function useAuthorisation() {
   const reset = () => {
     setPinState(blankPin());
     setOtpState(blankOtp());
-    setMethod("pin");
+    setMethod(initial);
     setState("entry");
     setResend(RESEND_SECONDS);
   };

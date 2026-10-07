@@ -25,7 +25,7 @@ import {
 import { Account, accountsForProfile, formatMoney } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
 import { useLinkedSources, type LinkedSource, type NetworkOperator } from "@/lib/accounts-store";
-import TransactionPinModal from "@/components/payments/TransactionPinModal";
+import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import {
   FromAccountSelector,
   AmountInput,
@@ -959,7 +959,7 @@ export default function LinkSourceAccountModal({
       </Dialog>
 
       {/* Transaction PIN Authorization Gate */}
-      <TransactionPinModal
+      <TransactionOtpModal
         open={isPinModalOpen}
         onOpenChange={setIsPinModalOpen}
         onSuccess={handlePinSuccess}

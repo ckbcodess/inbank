@@ -45,7 +45,7 @@ import { ActionTile } from "@/components/ui/action-tile";
 import { NetworkChip, NetworkLogo } from "@/components/cards/NetworkLogo";
 import { CARD_SCHEMES, NETWORK_TIERS, type CardScheme } from "@/lib/card-schemes";
 import { GcbCardLogo } from "@/components/cards/GcbCardLogo";
-import TransactionPinModal from "@/components/payments/TransactionPinModal";
+import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { toast } from "sonner";
 
 // GCB Iconic Soaring Golden Eagle Emblem (Standalone with Specular White Sheen Mask)
@@ -1199,7 +1199,7 @@ export function RequestCardFlow() {
       </AnimatePresence>
 
       {/* PIN & SMS OTP Authorization Modal */}
-      <TransactionPinModal
+      <TransactionOtpModal
         open={authModalOpen}
         onOpenChange={setAuthModalOpen}
         onSuccess={handleAuthorizeSuccess}

@@ -1077,3 +1077,10 @@ html[data-hide-focus-ring] :focus-visible * {
 .rn-root .rn-ink {
   will-change: auto;
 }
+
+
+/* Placeholders sit a step under the typed value (15px), so a field that is still empty reads as quiet. */
+input::placeholder,
+textarea::placeholder {
+  font-size: 13px;
+}

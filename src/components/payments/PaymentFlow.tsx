@@ -60,7 +60,7 @@ import { useSession } from "@/lib/session-store";
 import { resolveDefaultAccountId, useAccountPrefs } from "@/lib/accounts-store";
 import { roundMoney, sumMoney } from "@/lib/money";
 import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
-import TransactionPinModal from "./TransactionPinModal";
+import TransactionOtpModal from "./TransactionOtpModal";
 import { REGISTERED_PHONE, useAuthorisation } from "./useAuthorisation";
 import { groupAvatarTint } from "./flows/beneficiaries";
 import { OwnAccountFlow } from "./flows/OwnAccountFlow";
@@ -3708,8 +3708,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           </div>
         )}
 
-        {/* Transaction PIN Modal across board matching Figma node 1277:23601 */}
-        <TransactionPinModal
+        {/* Transaction authorisation: a one-time code for every transaction */}
+        <TransactionOtpModal
           open={pinModalOpen || stage === 3}
           onOpenChange={(isOpen) => {
             setPinModalOpen(isOpen);
