@@ -60,7 +60,7 @@ export default function ReturnForClarificationDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <MessageSquareWarning size={18} strokeWidth={1.9} className="text-warning-text" />
-            <span>Return for clarification</span>
+            <span>Return for Clarification</span>
           </DialogTitle>
         </DialogHeader>
 
@@ -112,11 +112,10 @@ export default function ReturnForClarificationDialog({
         </DialogBody>
 
         <DialogFooter>
-          <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
           <Button
-            size="sm"
             disabled={!canSubmit}
             onClick={() => {
               onConfirm({ note: note.trim(), documents: flagged });

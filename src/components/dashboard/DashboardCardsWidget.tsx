@@ -180,7 +180,7 @@ export function DashboardCardsWidget() {
         {managingCard && (
           <DialogContent size="md">
             <DialogHeader>
-              <DialogTitle>{managingCard.type} card controls</DialogTitle>
+              <DialogTitle>{managingCard.type} Card Controls</DialogTitle>
             </DialogHeader>
 
             <DialogBody>
@@ -283,14 +283,13 @@ export function DashboardCardsWidget() {
             <DialogFooter className="justify-between">
               <Button
                 variant="ghost"
-                size="sm"
                 nativeButton={false}
                 render={<Link href="/cards" />}
-                className="text-[13px] text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground"
               >
                 Card hub →
               </Button>
-              <Button size="sm" onClick={() => setManagingCard(null)}>
+              <Button onClick={() => setManagingCard(null)}>
                 Done
               </Button>
             </DialogFooter>

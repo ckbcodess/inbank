@@ -119,7 +119,7 @@ export function AirtimeFlow({
 
       {/* 2. Destination: Network & Phone Number */}
       <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Recipient Details</label>
+        <label className="text-[13px] font-medium text-foreground">Recipient details</label>
         {isSelf ? (
           selfBlock
         ) : isPhoneValid && isCollapsed ? (
@@ -188,7 +188,6 @@ export function AirtimeFlow({
           <CategorySelect
             value={state.category}
             onChange={(val) => onChange("category", val)}
-            defaultCategory="Data"
           />
 
           {/* 7. Schedule Payment */}

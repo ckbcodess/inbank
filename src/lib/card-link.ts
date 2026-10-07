@@ -46,6 +46,36 @@ export function cardNetwork(digits: string): PendingCard["network"] {
   return "Card";
 }
 
+/** Card number as typed: digits only, at most 19, grouped in fours. */
+export function formatCardNumber(raw: string): string {
+  return raw.replace(/\D/g, "").slice(0, 19).replace(/(\d{4})(?=\d)/g, "$1 ");
+}
+
+/** Expiry as typed: digits only, at most four, shown MM/YY. A first digit above 1 becomes 0N. */
+export function formatCardExpiry(raw: string): string {
+  let d = raw.replace(/\D/g, "").slice(0, 4);
+  if (/^[2-9]/.test(d)) d = `0${d}`.slice(0, 4);
+  return d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d;
+}
+
+/** American Express codes are four digits, every other network's are three. */
+export function cardCvvLength(digits: string): number {
+  return /^3[47]/.test(digits) ? 4 : 3;
+}
+
+export function formatCardCvv(raw: string, digits: string): string {
+  return raw.replace(/\D/g, "").slice(0, cardCvvLength(digits));
+}
+
+export function isCardReady(number: string, expiry: string, cvv: string): boolean {
+  const digits = number.replace(/\D/g, "");
+  return (
+    digits.length >= 15 &&
+    /^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry.trim()) &&
+    cvv.replace(/\D/g, "").length === cardCvvLength(digits)
+  );
+}
+
 export const useCardLink = create<CardLinkState>()(
   persist(
     (set, get) => ({

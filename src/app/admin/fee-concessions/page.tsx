@@ -64,10 +64,10 @@ export default function FeeConcessionsPage() {
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
-        title="Fee concessions"
+        title="Fee Concessions"
         description="Approved concessions are applied automatically at transaction time. Maintaining them here removes the need for manual fee reversals."
         actions={
-          <Button size="sm">
+          <Button>
             <Plus size={14} strokeWidth={1.9} aria-hidden="true" />
             New concession
           </Button>
@@ -115,7 +115,7 @@ export default function FeeConcessionsPage() {
           title="No concessions configured"
           description="Standard tariffs apply to every customer until a concession is created and approved."
           action={
-            <Button size="sm" className="h-8 px-3 rounded-lg text-[13px]">
+            <Button className="rounded-lg">
               <Plus size={14} strokeWidth={1.9} aria-hidden="true" />
               New concession
             </Button>

@@ -322,41 +322,40 @@ export default function AddAccountDialog({
 
         {view === "confirm" && (
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={close} className="h-10 flex-1 rounded-lg text-[13.5px]">
+            <Button type="button" variant="outline" onClick={close}>
               Cancel
             </Button>
-            <Button type="button" onClick={() => setStep("selfie")} className="h-10 flex-1 rounded-lg text-[13.5px]">
+            <Button type="button" onClick={() => setStep("selfie")}>
               Continue
             </Button>
           </DialogFooter>
         )}
         {view === "no_match" && (
-          <DialogFooter className="flex-col gap-2">
+          <DialogFooter className="justify-between gap-4">
+            <p className="text-[12.5px] text-muted-foreground">
+              <span className="tabular">{triesLeft}</span> {triesLeft === 1 ? "try" : "tries"} left before we ask you
+              to visit a branch
+            </p>
             <Button
               type="button"
               onClick={() => {
                 setSelfie(null);
                 setStep("selfie");
               }}
-              className="h-10 w-full rounded-lg text-[13.5px]"
             >
               Try Again
             </Button>
-            <p className="text-center text-[12.5px] text-muted-foreground">
-              <span className="tabular">{triesLeft}</span> {triesLeft === 1 ? "try" : "tries"} left before we ask you
-              to visit a branch
-            </p>
           </DialogFooter>
         )}
         {view === "branch" && (
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={close} className="h-10 flex-1 rounded-lg text-[13.5px]">
+            <Button type="button" variant="outline" onClick={close}>
               Close
             </Button>
             <Button
               nativeButton={false}
               render={<Link href="/locate-us" onClick={close} />}
-              className="h-10 flex-1 gap-1.5 rounded-lg text-[13.5px]"
+             
             >
               <MapPin size={15} strokeWidth={1.8} aria-hidden="true" />
               Find a Branch
@@ -368,7 +367,7 @@ export default function AddAccountDialog({
             <Button
               nativeButton={false}
               render={<Link href="/locate-us" onClick={close} />}
-              className="h-10 w-full gap-1.5 rounded-lg text-[13.5px]"
+             
             >
               <MapPin size={15} strokeWidth={1.8} aria-hidden="true" />
               Find a Branch
@@ -381,7 +380,7 @@ export default function AddAccountDialog({
               type="button"
               disabled={!picked}
               onClick={() => (wallet ? setStep("move") : add())}
-              className="h-10 w-full rounded-lg text-[13.5px]"
+             
             >
               {wallet ? "Continue" : "Add Account"}
             </Button>
@@ -389,14 +388,14 @@ export default function AddAccountDialog({
         )}
         {view === "move" && (
           <DialogFooter>
-            <Button type="button" onClick={add} className="h-10 w-full rounded-lg text-[13.5px]">
+            <Button type="button" onClick={add}>
               {movesBalance ? "Add Account and Move Balance" : "Add Account"}
             </Button>
           </DialogFooter>
         )}
         {view === "done" && (
           <DialogFooter>
-            <Button type="button" onClick={close} className="h-10 w-full rounded-lg text-[13.5px]">
+            <Button type="button" onClick={close}>
               Done
             </Button>
           </DialogFooter>

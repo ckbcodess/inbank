@@ -35,7 +35,7 @@ export default function AdminOverviewPage() {
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
-        title="Operations overview"
+        title="Operations Overview"
         description={`${ROLE_LABEL[actor.role]} · internal staff portal`}
       />
 

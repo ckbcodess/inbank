@@ -360,40 +360,94 @@ export function getBundlesForNetwork(networkName?: string): BundleItem[] {
   return BUNDLES_BY_NETWORK[normalized] || MTN_BUNDLES;
 }
 
-export const GHANAIAN_NAMES = [
-  "Ransford Gyasi",
-  "Kwame Boateng",
-  "Kofi Osei Asante",
-  "Akua Mansah",
-  "Efua Addo Mensah",
-  "Nana Yaw Osei",
-  "Samuel Quartey",
-  "Abena Danso",
-  "Esi Sutherland",
-  "Kwadwo Appiah",
-  "Yaw Frempong",
-  "Adwoa Sarfo",
-  "Kweku Baako",
-  "Accra Fabrics Ltd",
-  "Golden Coast Logistics Ltd",
+/**
+ * Broadband plans (the Internet rail's "Broadband" path), grouped the way the providers sell them. `label` is the short
+ * name on the tile; `name` is the full name used on the review, receipt and ledger.
+ *
+ * MTN Fibre: unlimited monthly plans, GHS 299, 444 and 999 for 100, 300 and 500 Mbps (MTN Ghana, 17 June 2026).
+ * MTN TurboNet: data for the TurboNet router, 30 days with rollover (MTN Ghana plan list, January 2025).
+ * Telecel: the Monthly Core plans, the One Family shared-data plans and the Unlimited passes (Telecel plan listings,
+ * updated March 2026). Telecel's smaller add-ons (Mini, Bolt-on) and the Flexi pay-what-you-like bundles are not here yet:
+ * their validity and tiers were not confirmed. [ASSUMPTION: re-check every price with the providers before launch.]
+ */
+export type BroadbandPackage = BundleItem & { group: string; label: string; duration: string };
+
+const pkg = (id: string, network: string, brand: string, group: string, label: string, price: number, duration: string): BroadbandPackage => ({
+  id,
+  network,
+  group,
+  label,
+  val: label,
+  name: `${brand} ${label}`,
+  price,
+  duration,
+});
+
+const MTN_BROADBAND: BroadbandPackage[] = [
+  pkg("bb-mtn-fibre-100", "MTN Ghana", "MTN Fibre", "Fibre", "100 Mbps", 299, "30 days"),
+  pkg("bb-mtn-fibre-300", "MTN Ghana", "MTN Fibre", "Fibre", "300 Mbps", 444, "30 days"),
+  pkg("bb-mtn-fibre-500", "MTN Ghana", "MTN Fibre", "Fibre", "500 Mbps", 999, "30 days"),
+  pkg("bb-mtn-turbo-4", "MTN Ghana", "MTN TurboNet", "TurboNet", "4.3 GB", 43, "30 days"),
+  pkg("bb-mtn-turbo-9", "MTN Ghana", "MTN TurboNet", "TurboNet", "8.7 GB", 87, "30 days"),
+  pkg("bb-mtn-turbo-92", "MTN Ghana", "MTN TurboNet", "TurboNet", "91.8 GB", 253, "30 days"),
+  pkg("bb-mtn-turbo-351", "MTN Ghana", "MTN TurboNet", "TurboNet", "350.5 GB", 516, "30 days"),
 ];
 
+const TELECEL_BROADBAND: BroadbandPackage[] = [
+  pkg("bb-tel-browser", "Telecel Ghana", "Telecel", "Monthly Plans", "Browser", 120, "30 days"),
+  pkg("bb-tel-streamer", "Telecel Ghana", "Telecel", "Monthly Plans", "Streamer", 220, "30 days"),
+  pkg("bb-tel-webmaster", "Telecel Ghana", "Telecel", "Monthly Plans", "Webmaster", 270, "30 days"),
+  pkg("bb-tel-downloader", "Telecel Ghana", "Telecel", "Monthly Plans", "Downloader", 410, "30 days"),
+  pkg("bb-tel-office", "Telecel Ghana", "Telecel", "Monthly Plans", "Office", 680, "30 days"),
+  pkg("bb-tel-family-s", "Telecel Ghana", "Telecel One Family", "One Family", "Small", 180, "30 days"),
+  pkg("bb-tel-family-m", "Telecel Ghana", "Telecel One Family", "One Family", "Medium", 330, "30 days"),
+  pkg("bb-tel-family-l", "Telecel Ghana", "Telecel One Family", "One Family", "Large", 550, "30 days"),
+  pkg("bb-tel-family-xl", "Telecel Ghana", "Telecel One Family", "One Family", "Extra Large", 1045, "30 days"),
+  pkg("bb-tel-unl-day", "Telecel Ghana", "Telecel Unlimited", "Unlimited Passes", "Daily", 40, "24 hours"),
+  pkg("bb-tel-unl-weekend", "Telecel Ghana", "Telecel Unlimited", "Unlimited Passes", "Weekend", 30, "2 days"),
+];
+
+/** The two providers with broadband, in the order they are offered. */
+export const BROADBAND_NETWORKS: readonly string[] = ["MTN Ghana", "Telecel Ghana"];
+
+export function getBroadbandPackages(networkName?: string): BroadbandPackage[] {
+  if (!networkName) return [];
+  const normalized = normalizeNetworkName(networkName);
+  if (normalized === "MTN Ghana") return MTN_BROADBAND;
+  if (normalized === "Telecel Ghana") return TELECEL_BROADBAND;
+  return [];
+}
+
+/** The mock name enquiry's pool: any account or phone number that isn't pinned below resolves to one of these. */
+export const GHANAIAN_NAMES = [
+  "Ransford Gyasi",
+  "Elias Ayettey",
+  "Ishmael Gyan",
+  "Justice Oduro",
+  "Reuben Abuga-Williams",
+  "Tsotsoo Mills",
+  "Samuel Quartey",
+  "Kofi Boateng",
+  "Kelvin Oso",
+];
+
+/** Numbers pinned to a name (with and without spaces), so the demo flows resolve the same person every time. */
 export const ACCOUNT_RESOLUTIONS: Record<string, string> = {
-  "023144558890": "Accra Fabrics Ltd",
-  "0231 4455 8890": "Accra Fabrics Ltd",
-  "01234567890": "Akua Mansah",
-  "1234567890": "Akua Mansah",
+  "023144558890": "Justice Oduro",
+  "0231 4455 8890": "Justice Oduro",
+  "01234567890": "Elias Ayettey",
+  "1234567890": "Elias Ayettey",
   "0123456789012": "Samuel Quartey",
   "0244123456": "Ransford Gyasi",
   "0244 123 456": "Ransford Gyasi",
-  "0201987654": "Kwame Boateng",
-  "0201 987 654": "Kwame Boateng",
-  "0559220118": "Yaa Asantewaa",
-  "0559 220 118": "Yaa Asantewaa",
-  "0271445900": "Esther Appiah",
-  "0271 445 900": "Esther Appiah",
-  "1023445566": "Kofi Osei",
-  "1023 4455 66": "Kofi Osei",
+  "0201987654": "Ishmael Gyan",
+  "0201 987 654": "Ishmael Gyan",
+  "0559220118": "Tsotsoo Mills",
+  "0559 220 118": "Tsotsoo Mills",
+  "0271445900": "Reuben Abuga-Williams",
+  "0271 445 900": "Reuben Abuga-Williams",
+  "1023445566": "Kelvin Oso",
+  "1023 4455 66": "Kelvin Oso",
   "0277456789": "Kofi Boateng",
   "0277 456 789": "Kofi Boateng",
   "0244123821": "My Phone (Self)",
@@ -586,7 +640,7 @@ export function DualAmountFields({
           onChange({ ghs: val, foreign: recipientGets });
         }}
         currency={sendCurrency}
-        label="You Send"
+        label="You send"
         onFocus={onFocus}
         hasError={hasError}
       />
@@ -601,7 +655,7 @@ export function DualAmountFields({
         value={foreign}
         onChange={(val) => onChange({ foreign: val, ghs: "" })}
         currency={foreignCurrency}
-        label="Recipient Gets"
+        label="Recipient gets"
         onFocus={onFocus}
         hasError={hasError}
       />
@@ -943,30 +997,15 @@ export function CategorySelect({
   value,
   onChange,
   label = "Transaction Category",
-  defaultCategory,
 }: {
   value: string;
   onChange: (val: string) => void;
   label?: string;
-  defaultCategory?: string;
 }) {
-  const currentValue = value || defaultCategory || "Other";
-
-  useEffect(() => {
-    if (!value && defaultCategory) {
-      onChange(defaultCategory);
-    }
-  }, [value, defaultCategory, onChange]);
-
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-between">
-        <label className="text-[13px] font-medium text-foreground">{label}</label>
-        <span className="text-[11px] font-medium text-pill-success-text bg-pill-success px-2 py-0.5 rounded-full">
-          Pre-selected for Insights
-        </span>
-      </div>
-      <Select value={currentValue} onValueChange={(val) => onChange(val || "")}>
+      <label className="text-[13px] font-medium text-foreground">{label}</label>
+      <Select value={value || null} onValueChange={(val) => onChange(val || "")}>
         <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
           <SelectValue placeholder="Select category" />
         </SelectTrigger>
@@ -1101,7 +1140,7 @@ export function CollapsedDetailsBadge({
   onChange,
 }: {
   title: string;
-  subtitle?: string;
+  subtitle?: React.ReactNode;
   icon?: React.ReactNode;
   nameCheck?: { confirmed: boolean; by?: string };
   onChange: () => void;
@@ -1233,7 +1272,7 @@ export function SchedulePaymentSection({
         <div className="flex flex-col gap-3 pt-2 border-t border-border/60 animate-in fade-in slide-in-from-top-1 duration-150">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-foreground">Execution Date</label>
+              <label className="text-[13px] font-medium text-foreground">Execution date</label>
               <input
                 type="date"
                 value={state.startDate}

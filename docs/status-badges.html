@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NIBS status badges</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Token values copied from src/app/globals.css (light = :root, dark = .dark). Root font is 14px, so the badge sizes
+     below are the real ones: h-5 = 17.5px, px-2 = 7px, text-xs = 10.5px. */
+  .light {
+    --background: oklch(1 0 0);
+    --surface: oklch(0.985 0 0);
+    --card: #fafafa;
+    --border: #ebebeb;
+    --foreground: #2e2e2e;
+    --muted: #ebebeb;
+    --muted-foreground: #6b6b6b;
+    --accent-foreground: oklch(0.205 0 0);
+    --primary: #FFC423;
+    --primary-foreground: #451a03;
+    --active-bg: color-mix(in oklch, var(--primary) 15%, transparent);
+    --success: oklch(0.62 0.15 150);
+    --success-text: oklch(0.5 0.14 150);
+    --destructive: #df2a69;
+    --destructive-text: oklch(0.5 0.2 27);
+    --pill-success: color-mix(in oklch, var(--success) 24%, transparent);
+    --pill-success-text: oklch(0.42 0.15 150);
+    --pill-info: color-mix(in oklch, var(--info) 20%, transparent);
+    --pill-info-text: oklch(0.42 0.19 255);
+    --pill-warning: #ffc80066;
+    --pill-warning-text: #6b3900;
+    --pill-destructive: color-mix(in oklch, var(--destructive) 20%, transparent);
+    --pill-destructive-text: oklch(0.46 0.22 20);
+    --pill-neutral: var(--muted);
+    --pill-neutral-text: var(--accent-foreground);
+    --pill-violet: color-mix(in oklch, #8b5cf6 18%, transparent);
+    --pill-violet-text: #5b2fd0;
+    --pill-slate: color-mix(in oklch, #475569 16%, transparent);
+    --pill-slate-text: #334155;
+    --pill-teal: color-mix(in oklch, #14b8a6 20%, transparent);
+    --pill-teal-text: #0d6b63;
+    --pill-orange: color-mix(in oklch, #f97316 22%, transparent);
+    --pill-orange-text: #9a3c00;
+  }
+  .dark {
+    --background: oklch(0.145 0 0);
+    --surface: #080808;
+    --card: #181818;
+    --border: oklch(0.269 0 0);
+    --foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: #a3a3a3;
+    --accent-foreground: oklch(0.985 0 0);
+    --primary: #FFC423;
+    --primary-foreground: #321800;
+    --active-bg: color-mix(in oklch, var(--primary) 18%, transparent);
+    --success: oklch(0.68 0.15 150);
+    --success-text: oklch(0.78 0.15 150);
+    --destructive: #fe5d6d;
+    --destructive-text: #fe5d6d;
+    --pill-success: #00421a;
+    --pill-success-text: #3df07f;
+    --pill-info: color-mix(in oklch, var(--info) 26%, transparent);
+    --pill-info-text: oklch(0.84 0.13 250);
+    --pill-warning: #ffc80040;
+    --pill-warning-text: #ffd24d;
+    --pill-destructive: color-mix(in oklch, var(--destructive) 30%, transparent);
+    --pill-destructive-text: #ff7a88;
+    --pill-neutral: var(--muted);
+    --pill-neutral-text: var(--accent-foreground);
+    --pill-violet: color-mix(in oklch, #a78bfa 26%, transparent);
+    --pill-violet-text: #c4b5fd;
+    --pill-slate: color-mix(in oklch, #94a3b8 22%, transparent);
+    --pill-slate-text: #cbd5e1;
+    --pill-teal: color-mix(in oklch, #2dd4bf 22%, transparent);
+    --pill-teal-text: #5eead4;
+    --pill-orange: color-mix(in oklch, #fb923c 26%, transparent);
+    --pill-orange-text: #fdba74;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Open Sans", system-ui, sans-serif; font-size: 14px; background: #d9d9d9; color: #2e2e2e; }
+  .page { max-width: 1180px; margin: 0 auto; padding: 32px 20px 56px; }
+  h1 { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin: 0 0 6px; }
+  .lede { margin: 0 0 24px; color: #555; font-size: 13px; max-width: 70ch; line-height: 1.55; }
+  .themes { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 860px) { .themes { grid-template-columns: 1fr; } }
+  .panel { background: var(--background); color: var(--foreground); border-radius: 16px; padding: 28px; }
+  .panel > h2 { font-size: 16px; font-weight: 500; margin: 0 0 22px; }
+  section { margin-bottom: 26px; }
+  section:last-child { margin-bottom: 0; }
+  h3 { font-size: 13px; font-weight: 500; margin: 0 0 4px; }
+  .note { font-size: 12px; color: var(--muted-foreground); margin: 0 0 12px; line-height: 1.5; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; }
+  .item { display: flex; flex-direction: column; gap: 5px; align-items: flex-start; }
+  .item small { font-size: 11px; color: var(--muted-foreground); }
+
+  /* The Badge component (src/components/ui/badge.tsx) */
+  .badge { display: inline-flex; align-items: center; justify-content: center; gap: 3.5px; height: 17.5px; padding: 1.75px 7px; border-radius: 9999px; border: 1px solid transparent; font-size: 10.5px; font-weight: 500; line-height: 1; white-space: nowrap; }
+  .b-default { background: var(--primary); color: var(--primary-foreground); }
+  .b-secondary { background: var(--pill-neutral); color: var(--pill-neutral-text); }
+  .b-success { background: var(--pill-success); color: var(--pill-success-text); }
+  .b-warning { background: var(--pill-warning); color: var(--pill-warning-text); }
+  .b-destructive { background: var(--pill-destructive); color: var(--pill-destructive-text); }
+  .b-info { background: var(--pill-info); color: var(--pill-info-text); }
+  .b-brand { background: var(--active-bg); color: var(--foreground); }
+  .b-outline { border-color: var(--border); color: var(--foreground); }
+
+  /* The card status pill (src/components/cards/CardParts.tsx StatusPill) */
+  .pill { display: inline-flex; align-items: center; border-radius: 9999px; padding: 4.5px 10px; font-size: 11px; font-weight: 500; line-height: 1; white-space: nowrap; }
+  .p-active { background: var(--pill-success); color: var(--pill-success-text); }
+  .p-activate { background: var(--pill-warning); color: var(--pill-warning-text); }
+  .p-blocked { background: var(--pill-destructive); color: var(--pill-destructive-text); }
+  .p-expired { background: var(--pill-neutral); color: var(--pill-neutral-text); }
+  .p-production { background: var(--pill-violet); color: var(--pill-violet-text); }
+  .p-processing { background: var(--pill-slate); color: var(--pill-slate-text); }
+  .p-transit { background: var(--pill-info); color: var(--pill-info-text); }
+  .p-delivery { background: var(--pill-orange); color: var(--pill-orange-text); }
+  .p-pickup { background: var(--pill-teal); color: var(--pill-teal-text); }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Status badges</h1>
+  <p class="lede">Every status badge in the app, in light and dark. Colours are the real tokens from globals.css. The first three groups are the shared Badge component and the transaction mapping in StatusBadge.tsx; the card group is the card status pill, which is built separately and is a little larger.</p>
+
+  <div class="themes">
+    <!-- LIGHT -->
+    <div class="panel light">
+      <h2>Light</h2>
+
+      <section>
+        <h3>Badge variants</h3>
+        <p class="note">Badge component. Success, warning, destructive, info and neutral use the pill tokens.</p>
+        <div class="row">
+          <span class="item"><span class="badge b-default">Default</span><small>primary</small></span>
+          <span class="item"><span class="badge b-secondary">Secondary</span><small>pill-neutral</small></span>
+          <span class="item"><span class="badge b-success">Success</span><small>pill-success</small></span>
+          <span class="item"><span class="badge b-warning">Warning</span><small>pill-warning</small></span>
+          <span class="item"><span class="badge b-destructive">Destructive</span><small>pill-destructive</small></span>
+          <span class="item"><span class="badge b-info">Info</span><small>pill-info</small></span>
+          <span class="item"><span class="badge b-brand">Brand</span><small>active-bg</small></span>
+          <span class="item"><span class="badge b-outline">Outline</span><small>border</small></span>
+        </div>
+      </section>
+
+      <section>
+        <h3>Transactions</h3>
+        <p class="note">TransactionStatusBadge. Returned reads as warning, not as a failure.</p>
+        <div class="row">
+          <span class="badge b-warning">Pending</span>
+          <span class="badge b-success">Completed</span>
+          <span class="badge b-destructive">Failed</span>
+          <span class="badge b-destructive">Failed in batch</span>
+          <span class="badge b-warning">Returned</span>
+          <span class="badge b-secondary">Reversed</span>
+          <span class="badge b-warning">Disputed</span>
+          <span class="badge b-outline">Awaiting approval</span>
+        </div>
+      </section>
+
+      <section>
+        <h3>Cards</h3>
+        <p class="note">Card status pill. Nine states, nine hues, so a row of cards can be scanned without reading.</p>
+        <div class="row">
+          <span class="pill p-active">Active</span>
+          <span class="pill p-activate">Needs activation</span>
+          <span class="pill p-blocked">Blocked</span>
+          <span class="pill p-expired">Expired</span>
+          <span class="pill p-production">In production</span>
+          <span class="pill p-processing">Processing</span>
+          <span class="pill p-transit">In transit</span>
+          <span class="pill p-delivery">Out for delivery</span>
+          <span class="pill p-pickup">Ready for pickup</span>
+        </div>
+      </section>
+
+      <section>
+        <h3>Accounts, trade and verification</h3>
+        <p class="note">Badge component, as used on these screens.</p>
+        <div class="row">
+          <span class="badge b-brand">Default</span>
+          <span class="badge b-outline">Joint</span>
+          <span class="badge b-warning">Dormant</span>
+          <span class="badge b-success">Verified</span>
+          <span class="badge b-success">Valid</span>
+          <span class="badge b-warning">Missing</span>
+          <span class="badge b-warning">Urgent</span>
+          <span class="badge b-warning">Awaiting response</span>
+          <span class="badge b-warning">Exception flagged</span>
+          <span class="badge b-destructive">Exceeds your limit</span>
+          <span class="badge b-secondary">Under bank operations review</span>
+        </div>
+      </section>
+    </div>
+
+    <!-- DARK -->
+    <div class="panel dark">
+      <h2>Dark</h2>
+
+      <section>
+        <h3>Badge variants</h3>
+        <p class="note">Badge component. Success, warning, destructive, info and neutral use the pill tokens.</p>
+        <div class="row">
+          <span class="item"><span class="badge b-default">Default</span><small>primary</small></span>
+          <span class="item"><span class="badge b-secondary">Secondary</span><small>pill-neutral</small></span>
+          <span class="item"><span class="badge b-success">Success</span><small>pill-success</small></span>
+          <span class="item"><span class="badge b-warning">Warning</span><small>pill-warning</small></span>
+          <span class="item"><span class="badge b-destructive">Destructive</span><small>pill-destructive</small></span>
+          <span class="item"><span class="badge b-info">Info</span><small>pill-info</small></span>
+          <span class="item"><span class="badge b-brand">Brand</span><small>active-bg</small></span>
+          <span class="item"><span class="badge b-outline">Outline</span><small>border</small></span>
+        </div>
+      </section>
+
+      <section>
+        <h3>Transactions</h3>
+        <p class="note">TransactionStatusBadge. Returned reads as warning, not as a failure.</p>
+        <div class="row">
+          <span class="badge b-warning">Pending</span>
+          <span class="badge b-success">Completed</span>
+          <span class="badge b-destructive">Failed</span>
+          <span class="badge b-destructive">Failed in batch</span>
+          <span class="badge b-warning">Returned</span>
+          <span class="badge b-secondary">Reversed</span>
+          <span class="badge b-warning">Disputed</span>
+          <span class="badge b-outline">Awaiting approval</span>
+        </div>
+      </section>
+
+      <section>
+        <h3>Cards</h3>
+        <p class="note">Card status pill. Nine states, nine hues, so a row of cards can be scanned without reading.</p>
+        <div class="row">
+          <span class="pill p-active">Active</span>
+          <span class="pill p-activate">Needs activation</span>
+          <span class="pill p-blocked">Blocked</span>
+          <span class="pill p-expired">Expired</span>
+          <span class="pill p-production">In production</span>
+          <span class="pill p-processing">Processing</span>
+          <span class="pill p-transit">In transit</span>
+          <span class="pill p-delivery">Out for delivery</span>
+          <span class="pill p-pickup">Ready for pickup</span>
+        </div>
+      </section>
+
+      <section>
+        <h3>Accounts, trade and verification</h3>
+        <p class="note">Badge component, as used on these screens.</p>
+        <div class="row">
+          <span class="badge b-brand">Default</span>
+          <span class="badge b-outline">Joint</span>
+          <span class="badge b-warning">Dormant</span>
+          <span class="badge b-success">Verified</span>
+          <span class="badge b-success">Valid</span>
+          <span class="badge b-warning">Missing</span>
+          <span class="badge b-warning">Urgent</span>
+          <span class="badge b-warning">Awaiting response</span>
+          <span class="badge b-warning">Exception flagged</span>
+          <span class="badge b-destructive">Exceeds your limit</span>
+          <span class="badge b-secondary">Under bank operations review</span>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+</body>
+</html>

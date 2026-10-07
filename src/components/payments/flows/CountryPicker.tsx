@@ -61,7 +61,7 @@ export function CountryPicker({
       >
         <DialogContent size="sm" className="p-0">
           <DialogHeader onClose={() => setOpen(false)}>
-            <DialogTitle>Select destination country</DialogTitle>
+            <DialogTitle>Select Destination Country</DialogTitle>
           </DialogHeader>
           <div className="flex flex-col gap-3 px-5 pb-2 pt-4 sm:px-6">
             <div className="relative">

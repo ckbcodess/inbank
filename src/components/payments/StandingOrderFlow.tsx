@@ -198,7 +198,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     groupName: "",
     dataPackageId: "mtn-2",
     amount: "",
-    category: "Bills",
+    category: "",
     nickname: "",
     narration: "",
     frequency: "" as InstructionFrequency | "",
@@ -513,7 +513,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       paymentMethod: "ach",
       channel: "Internet Banking",
       profileKind: "RETAIL",
-      category: f.category as SpendCategory,
+      category: (f.category || "Family & Friends") as SpendCategory,
     });
 
     setCreatedId(newId);
@@ -537,7 +537,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       groupName: "",
       dataPackageId: "mtn-2",
       amount: "",
-      category: "Bills",
+      category: "",
       nickname: "",
       narration: "",
       frequency: "",
@@ -591,10 +591,8 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     set("network", "MTN Ghana");
                     set("dataPackageId", "mtn-2");
                     set("amount", "100");
-                    set("category", "Bills");
                   } else if (opt.id === "airtime") {
                     set("network", "MTN Ghana");
-                    set("category", "Bills");
                   } else {
                     set("nickname", "");
                   }
@@ -664,7 +662,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       [f.frequency === "Once" ? "Payment date" : "First payment", formatDate(f.firstRun)],
       ...(f.frequency === "Once" ? [] : ([["Ends", f.endCondition === "date" && f.endDate ? formatDate(f.endDate) : "Until cancelled"]] as Array<[string, string]>)),
       ...(rail === "bank" && !f.bank.includes("GCB") ? ([["Payment method", getPaymentMethodName(f.paymentMethod)]] as Array<[string, string]>) : []),
-      ["Category", f.category],
+      ...(f.category ? ([["Category", f.category]] as Array<[string, string]>) : []),
       ...(f.narration.trim() ? ([["Narration", f.narration.trim()]] as Array<[string, string]>) : []),
       ["Amount", formatMoney(numAmount, "GHS", true)],
       ["Fee", feeAmount === 0 ? "Free" : formatMoney(feeAmount, "GHS", true)],
@@ -788,7 +786,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
         {/* 3. Beneficiary Details Card */}
         <div className="flex flex-col gap-2">
-          <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
+          <label className="text-[13px] font-medium text-foreground">Beneficiary details</label>
 
           {isDestinationValid && detailsCollapsed ? (
             <CollapsedDetailsBadge

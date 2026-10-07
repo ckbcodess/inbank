@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   ChevronLeft,
   CreditCard,
+  ShieldCheck,
   Smartphone,
   Wallet,
 } from "lucide-react";
@@ -17,6 +18,7 @@ import {
   Dialog,
   DialogBody,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -28,13 +30,12 @@ import {
   FromAccountSelector,
   AmountInput,
   NarrationInput,
-  ProceedButton,
   OperatorSelect,
 } from "@/components/payments/flows/shared";
 import { PhoneInput } from "@/components/ui/phone-input";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { AppLoader } from "@/components/ui/loader";
-import { displayGhanaMobile, isCompleteGhanaMobile } from "@/lib/phone";
+import { displayGhanaMobile, displayLocalMobile, isCompleteGhanaMobile } from "@/lib/phone";
 import { ActionTile } from "@/components/ui/action-tile";
 import { cardNetwork, useCardLink } from "@/lib/card-link";
 import { useCardPayment } from "@/lib/card-payment";
@@ -307,9 +308,9 @@ export default function LinkSourceAccountModal({
       id: `src-momo-${Date.now()}`,
       type: "momo",
       title: OPERATORS[newMomoOperator].wallet,
-      subtitle: displayGhanaMobile(newMomoNumber),
+      subtitle: displayLocalMobile(newMomoNumber),
       operator: newMomoOperator,
-      maskedNumber: displayGhanaMobile(newMomoNumber),
+      maskedNumber: displayLocalMobile(newMomoNumber),
     };
     finishLinking(newSource);
   }
@@ -378,16 +379,16 @@ export default function LinkSourceAccountModal({
                   </button>
                 )}
               <DialogTitle>
-                {screen === "choice" && "Add money"}
-                {screen === "link_choice" && (onboarding ? "Link Source Account" : "Link a card or wallet")}
-                {screen === "internal_transfer" && "Transfer between accounts"}
-                {screen === "internal_success" && "Transfer completed"}
-                {screen === "linked_source_select" && "From linked wallet or card"}
-                {screen === "momo_waiting" && "Mobile authorization"}
-                {screen === "funding_success" && "Money added"}
-                {(screen === "link_new_momo" || screen === "link_momo_pending") && "Link new mobile wallet"}
+                {screen === "choice" && "Add Money"}
+                {screen === "link_choice" && (onboarding ? "Link Source Account" : "Link a Card or Wallet")}
+                {screen === "internal_transfer" && "Transfer Between Accounts"}
+                {screen === "internal_success" && "Transfer Completed"}
+                {screen === "linked_source_select" && "From Linked Wallet or Card"}
+                {screen === "momo_waiting" && "Mobile Authorization"}
+                {screen === "funding_success" && "Money Added"}
+                {(screen === "link_new_momo" || screen === "link_momo_pending") && "Link New Mobile Wallet"}
                 {screen === "link_momo_code" && "Confirm Your Code"}
-                {screen === "link_new_card" && "Link new bank card"}
+                {screen === "link_new_card" && "Link New Bank Card"}
               </DialogTitle>
             </div>
           </DialogHeader>
@@ -453,17 +454,6 @@ export default function LinkSourceAccountModal({
                   />
                 </div>
 
-                <div className="pt-2 flex justify-center">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleClose}
-                    className="text-[13px] text-muted-foreground hover:text-foreground"
-                  >
-                    Cancel
-                  </Button>
-                </div>
               </div>
             )}
 
@@ -492,14 +482,14 @@ export default function LinkSourceAccountModal({
                       accounts={fundableAccounts.filter((a) => a.id !== destinationAccount?.id)}
                       value={selectedSourceAccount?.id ?? ""}
                       onChange={setSelectedSourceAccountId}
-                      label="From Account"
+                      label="From account"
                     />
 
                     <FromAccountSelector
                       accounts={fundableAccounts.filter((a) => a.id !== selectedSourceAccount?.id)}
                       value={destinationAccount?.id ?? ""}
                       onChange={setDestinationId}
-                      label="To Account"
+                      label="To account"
                       placeholder="Select destination account"
                     />
 
@@ -520,14 +510,7 @@ export default function LinkSourceAccountModal({
                     />
 
                     {/* Submit CTA with PIN Authorization Gate */}
-                    <div className="pt-2 flex flex-col gap-2.5">
-                      <ProceedButton
-                        disabled={!selectedSourceAccount || !destinationAccount || !internalAmount || Number(internalAmount) <= 0}
-                        loading={busy}
-                        onClick={() => setIsPinModalOpen(true)}
-                        label={`Transfer ${formatMoney(Number(internalAmount || 0), "GHS", true)}`}
-                      />
-
+                    <div className="pt-2">
                       <div className="text-center pt-1">
                         <Link
                           href={`/payments/send?rail=bank&returnUrl=/accounts/${destinationAccount?.id || ""}`}
@@ -586,9 +569,6 @@ export default function LinkSourceAccountModal({
                   </div>
                 </div>
 
-                <Button type="button" onClick={handleClose} className="w-full mt-2 h-11 rounded-xl">
-                  Done
-                </Button>
               </div>
             )}
 
@@ -600,7 +580,7 @@ export default function LinkSourceAccountModal({
                 {/* List of Saved Methods */}
                 <div className="flex flex-col gap-2.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Payment Method
+                    Payment method
                   </label>
                   <div className="flex flex-col gap-2">
                     {linkedSources.map((source) => {
@@ -655,7 +635,7 @@ export default function LinkSourceAccountModal({
                   accounts={fundableAccounts}
                   value={destinationAccount?.id ?? ""}
                   onChange={setDestinationId}
-                  label="To Account"
+                  label="To account"
                   placeholder="Select destination account"
                 />
 
@@ -666,26 +646,6 @@ export default function LinkSourceAccountModal({
                   currency="GHS"
                   label="Amount"
                 />
-
-                {/* Actions */}
-                <div className="pt-2 flex flex-col gap-2">
-                  <ProceedButton
-                    disabled={!activeLinkedSource || !destinationAccount || !linkedAmount || Number(linkedAmount) <= 0 || busy}
-                    onClick={() => {
-                      setBusy(true);
-                      setTimeout(() => {
-                        setBusy(false);
-                        if (activeLinkedSource?.type === "momo") {
-                          setScreen("momo_waiting");
-                        } else {
-                          startLinkedCardPayment();
-                        }
-                      }, 400);
-                    }}
-                    loading={busy}
-                    label={`Proceed with ${activeLinkedSource?.title || "selected method"}`}
-                  />
-                </div>
               </form>
             )}
 
@@ -705,27 +665,6 @@ export default function LinkSourceAccountModal({
                   <p className="text-[13px] text-muted-foreground">
                     Enter your PIN on <strong className="text-foreground">{activeLinkedSource?.subtitle}</strong> to add {formatMoney(Number(linkedAmount || 0), "GHS", true)} to {destinationAccount?.name}.
                   </p>
-                </div>
-
-                <div className="w-full flex flex-col gap-2 pt-3">
-                  <Button
-                    type="button"
-                    onClick={handleMomoApprove}
-                    loading={busy}
-                    className="w-full h-11 rounded-xl"
-                  >
-                    I have approved on my phone
-                  </Button>
-
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setScreen("linked_source_select")}
-                    className="text-[13px] text-muted-foreground"
-                  >
-                    Back to payment methods
-                  </Button>
                 </div>
               </div>
             )}
@@ -769,9 +708,6 @@ export default function LinkSourceAccountModal({
                   </div>
                 </div>
 
-                <Button type="button" onClick={handleClose} className="w-full mt-2 h-11 rounded-xl">
-                  Done
-                </Button>
               </div>
             )}
 
@@ -779,7 +715,7 @@ export default function LinkSourceAccountModal({
                 SCREEN 8: LINK NEW MOMO WALLET
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_new_momo" && (
-              <form onSubmit={handleAddNewMomo} className="flex flex-col gap-4">
+              <form id={`${modalId}-momo-form`} onSubmit={handleAddNewMomo} className="flex flex-col gap-5">
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor={`${modalId}-momoNum`} className="text-[13px] font-medium text-foreground">
                     Mobile number
@@ -798,26 +734,6 @@ export default function LinkSourceAccountModal({
                     Network operator
                   </label>
                   <OperatorSelect value={newMomoOperator} onChange={setNewMomoOperator} />
-                </div>
-
-                <div className="pt-2 flex flex-col gap-2">
-                  <Button
-                    type="submit"
-                    disabled={!isCompleteGhanaMobile(newMomoNumber)}
-                    loading={busy}
-                    className="w-full h-11 rounded-xl"
-                  >
-                    {mode === "link" ? "Link wallet" : "Save & use wallet"}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setScreen(linkBackScreen)}
-                    className="text-[13px] text-muted-foreground"
-                  >
-                    Cancel
-                  </Button>
                 </div>
               </form>
             )}
@@ -874,27 +790,6 @@ export default function LinkSourceAccountModal({
                     {newMomoOperator} MoMo PIN, then come back here to confirm.
                   </p>
                 </div>
-
-                <div className="w-full flex flex-col gap-2 pt-2">
-                  <Button
-                    type="button"
-                    onClick={handleMomoLinkApproved}
-                    loading={busy}
-                    className="w-full h-11 rounded-xl"
-                  >
-                    I&apos;ve approved it
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    disabled={busy || momoResent}
-                    onClick={() => setMomoResent(true)}
-                    className="text-[13px] text-muted-foreground"
-                  >
-                    {momoResent ? "Request sent again" : "Didn't get it? Send again"}
-                  </Button>
-                </div>
               </div>
             )}
 
@@ -902,7 +797,7 @@ export default function LinkSourceAccountModal({
                 SCREEN 9: LINK NEW CARD
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_new_card" && (
-              <form onSubmit={handleAddNewCard} className="flex flex-col gap-4">
+              <form id={`${modalId}-card-form`} onSubmit={handleAddNewCard} className="flex flex-col gap-5">
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor={`${modalId}-cardNum`} className="text-[13px] font-medium text-foreground">
                     Card number
@@ -963,27 +858,103 @@ export default function LinkSourceAccountModal({
                   </div>
                 </div>
 
-                <p className="text-[12.5px] text-muted-foreground">
+                <p className="flex items-start gap-2 text-[12px] leading-relaxed text-muted-foreground">
+                  <ShieldCheck size={14} strokeWidth={1.8} className="mt-0.5 shrink-0" aria-hidden="true" />
                   Your bank will ask you to confirm it&apos;s you, then bring you back here.
                 </p>
-
-                <div className="flex flex-col gap-2">
-                  <Button type="submit" disabled={!cardComplete} loading={busy} className="w-full h-11 rounded-xl">
-                    {mode === "link" ? "Link card" : "Save & use card"}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setScreen(linkBackScreen)}
-                    className="text-[13px] text-muted-foreground"
-                  >
-                    Cancel
-                  </Button>
-                </div>
               </form>
             )}
           </DialogBody>
+
+          {screen === "choice" && (
+            <DialogFooter>
+              <Button type="button" variant="ghost" onClick={handleClose}>
+                Cancel
+              </Button>
+            </DialogFooter>
+          )}
+          {screen === "internal_transfer" && (
+            <DialogFooter>
+              <Button
+                type="button"
+                disabled={!selectedSourceAccount || !destinationAccount || !internalAmount || Number(internalAmount) <= 0}
+                loading={busy}
+                onClick={() => setIsPinModalOpen(true)}
+              >
+                {`Transfer ${formatMoney(Number(internalAmount || 0), "GHS", true)}`}
+              </Button>
+            </DialogFooter>
+          )}
+          {(screen === "internal_success" || screen === "funding_success") && (
+            <DialogFooter>
+              <Button type="button" onClick={handleClose}>
+                Done
+              </Button>
+            </DialogFooter>
+          )}
+          {screen === "linked_source_select" && (
+            <DialogFooter>
+              <Button
+                type="button"
+                disabled={!activeLinkedSource || !destinationAccount || !linkedAmount || Number(linkedAmount) <= 0 || busy}
+                loading={busy}
+                onClick={() => {
+                  setBusy(true);
+                  setTimeout(() => {
+                    setBusy(false);
+                    if (activeLinkedSource?.type === "momo") {
+                      setScreen("momo_waiting");
+                    } else {
+                      startLinkedCardPayment();
+                    }
+                  }, 400);
+                }}
+              >
+                {`Proceed with ${activeLinkedSource?.title || "selected method"}`}
+              </Button>
+            </DialogFooter>
+          )}
+          {screen === "momo_waiting" && (
+            <DialogFooter>
+              <Button type="button" variant="ghost" onClick={() => setScreen("linked_source_select")}>
+                Back to payment methods
+              </Button>
+              <Button type="button" onClick={handleMomoApprove} loading={busy}>
+                I have approved on my phone
+              </Button>
+            </DialogFooter>
+          )}
+          {screen === "link_momo_pending" && (
+            <DialogFooter>
+              <Button type="button" variant="ghost" disabled={busy || momoResent} onClick={() => setMomoResent(true)}>
+                {momoResent ? "Request sent again" : "Didn't get it? Send again"}
+              </Button>
+              <Button type="button" onClick={handleMomoLinkApproved} loading={busy}>
+                I&apos;ve approved it
+              </Button>
+            </DialogFooter>
+          )}
+
+          {screen === "link_new_momo" && (
+            <DialogFooter>
+              <Button type="button" variant="ghost" onClick={() => setScreen(linkBackScreen)}>
+                Cancel
+              </Button>
+              <Button type="submit" form={`${modalId}-momo-form`} disabled={!isCompleteGhanaMobile(newMomoNumber)} loading={busy}>
+                {mode === "link" ? "Link wallet" : "Save & use wallet"}
+              </Button>
+            </DialogFooter>
+          )}
+          {screen === "link_new_card" && (
+            <DialogFooter>
+              <Button type="button" variant="ghost" onClick={() => setScreen(linkBackScreen)}>
+                Cancel
+              </Button>
+              <Button type="submit" form={`${modalId}-card-form`} disabled={!cardComplete} loading={busy}>
+                {mode === "link" ? "Link card" : "Save & use card"}
+              </Button>
+            </DialogFooter>
+          )}
         </DialogContent>
       </Dialog>
 

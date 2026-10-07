@@ -87,7 +87,7 @@ export function WalletToBankFlow({
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
       {/* 1. Source Mobile Wallet */}
       <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Source Mobile Wallet</label>
+        <label className="text-[13px] font-medium text-foreground">Source mobile wallet</label>
         <div className="flex items-center justify-between h-[58px] min-h-[58px] px-3.5 w-full rounded-2xl border border-field-border bg-field gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
@@ -112,7 +112,7 @@ export function WalletToBankFlow({
 
       {/* 2. Destination Bank Account */}
       <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
+        <label className="text-[13px] font-medium text-foreground">Beneficiary details</label>
         {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `Account ${state.benAcct}`}
@@ -176,7 +176,6 @@ export function WalletToBankFlow({
         <CategorySelect
           value={state.category}
           onChange={(val) => onChange("category", val)}
-          defaultCategory="Family & Friends"
         />
 
         {/* 7. Schedule Payment */}

@@ -13,7 +13,7 @@
  */
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { AlertCircle, Plus } from "lucide-react";
+import { AlertCircle, BadgeCheck, Link2, Plus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import type { Account } from "@/lib/mock-data";
 import { useLinkedSources } from "@/lib/accounts-store";
@@ -31,6 +31,16 @@ export interface OwnWallet {
   /** The wallet name ("MTN Mobile Money"); `normalizeNetworkName` gives the line ("MTN Ghana"). */
   network: string;
   tag: "Registered" | "Linked";
+}
+
+/** Where an own number comes from, as an icon: the number registered with the bank, or one the customer linked. */
+export function WalletTag({ tag }: { tag: OwnWallet["tag"] }) {
+  const Icon = tag === "Registered" ? BadgeCheck : Link2;
+  return (
+    <span role="img" aria-label={tag} title={tag} className="inline-flex shrink-0 items-center text-muted-foreground">
+      <Icon size={14} strokeWidth={1.8} aria-hidden="true" />
+    </span>
+  );
 }
 
 export const digitsOf = (s: string) => s.replace(/\D/g, "");
@@ -153,8 +163,9 @@ export function OwnWalletPicker({
               <OperatorLogo name={current.network} size={36} />
               <span className="flex min-w-0 flex-col gap-0.5">
                 <span className="truncate text-[14px] text-foreground">{nameOf(current)}</span>
-                <span className="truncate text-[12.5px] text-muted-foreground tabular">
-                  {formatGhPhone(current.phone)} · {current.tag}
+                <span className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground tabular">
+                  <span className="truncate">{formatGhPhone(current.phone)}</span>
+                  <WalletTag tag={current.tag} />
                 </span>
               </span>
             </div>
@@ -167,8 +178,9 @@ export function OwnWalletPicker({
                 <OperatorLogo name={w.network} size={32} />
                 <span className="flex min-w-0 flex-col gap-0.5">
                   <span className="truncate text-[14px] text-foreground">{nameOf(w)}</span>
-                  <span className="truncate text-[12.5px] text-muted-foreground tabular">
-                    {formatGhPhone(w.phone)} · {w.tag}
+                  <span className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground tabular">
+                    <span className="truncate">{formatGhPhone(w.phone)}</span>
+                    <WalletTag tag={w.tag} />
                   </span>
                 </span>
               </div>

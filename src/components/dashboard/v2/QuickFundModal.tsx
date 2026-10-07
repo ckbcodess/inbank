@@ -17,10 +17,10 @@ import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from "@/
 import OtpInput from "@/components/auth/OtpInput";
 import { AppLoader } from "@/components/ui/loader";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { displayGhanaMobile, toNationalDigits } from "@/lib/phone";
+import { displayGhanaMobile, displayLocalMobile, toNationalDigits } from "@/lib/phone";
 import { maskMobile } from "@/lib/auth-shared";
 import { AmountInput, OperatorSelect } from "@/components/payments/flows/shared";
-import { cardNetwork } from "@/lib/card-link";
+import { cardNetwork, formatCardCvv, formatCardExpiry, formatCardNumber, isCardReady } from "@/lib/card-link";
 import { useCardPayment } from "@/lib/card-payment";
 import { ActionTile } from "@/components/ui/action-tile";
 
@@ -157,7 +157,7 @@ export function QuickFundFlow({
     } else {
       // The card's own bank approves it on its page (3-D Secure), then sends the customer back here.
       const digits = cardNumber.replace(/\D/g, "");
-      if (digits.length < 15 || !/^(0[1-9]|1[0-2])\/\d{2}$/.test(cardExpiry.trim()) || cardCvv.replace(/\D/g, "").length < 3) {
+      if (!isCardReady(cardNumber, cardExpiry, cardCvv)) {
         setBusy(false);
         setErrorMsg("Check the card number, expiry (MM/YY) and security code, then try again.");
         return;
@@ -195,7 +195,7 @@ export function QuickFundFlow({
     const parsedAmt = parseFloat(amount) || 100;
     onSuccess(parsedAmt, method, {
       operator: method === "momo" ? operator : undefined,
-      phone: method === "momo" ? displayGhanaMobile(phone) : undefined,
+      phone: method === "momo" ? displayLocalMobile(phone) : undefined,
       cardLast4: method === "card" ? resume?.cardLast4 ?? cardNumber.replace(/\s/g, "").slice(-4) : undefined,
     });
     onFinish();
@@ -307,7 +307,9 @@ export function QuickFundFlow({
                       id="quickFundCard"
                       placeholder="4000 1234 5678 9010"
                       value={cardNumber}
-                      onChange={(e) => setCardNumber(e.target.value)}
+                      inputMode="numeric"
+autoComplete="cc-number"
+onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                       className={FUND_FIELD}
                       required
                     />
@@ -319,7 +321,9 @@ export function QuickFundFlow({
                         id="quickFundExp"
                         placeholder="MM/YY"
                         value={cardExpiry}
-                        onChange={(e) => setCardExpiry(e.target.value)}
+                        inputMode="numeric"
+autoComplete="cc-exp"
+onChange={(e) => setCardExpiry(formatCardExpiry(e.target.value))}
                         className={FUND_FIELD}
                         required
                       />
@@ -330,9 +334,10 @@ export function QuickFundFlow({
                         id="quickFundCvv"
                         placeholder="•••"
                         type="password"
-                        maxLength={3}
                         value={cardCvv}
-                        onChange={(e) => setCardCvv(e.target.value)}
+                        inputMode="numeric"
+autoComplete="cc-csc"
+onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D/g, "")))}
                         className={FUND_FIELD}
                         required
                       />

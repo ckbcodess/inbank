@@ -144,7 +144,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
         />
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[var(--surface)] p-0 sm:p-3 lg:p-3.5">
-          <div className="shell-card flex min-h-0 flex-1 flex-col overflow-hidden rounded-none border-0 shadow-none sm:rounded-2xl sm:border sm:border-border sm:shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+          <div className="shell-card relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-none border-0 shadow-none sm:rounded-2xl sm:border sm:border-border sm:shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
             <TopHeader
               actor={actor}
               onMenuToggle={() => setSidebarOpen((p) => !p)}
@@ -153,7 +153,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
 
             <main
               key={activeProfile.id}
-              className="custom-scrollbar animate-in fade-in flex-1 overflow-y-auto duration-200"
+              className="custom-scrollbar animate-in fade-in flex-1 overflow-y-auto pt-14 duration-200"
               style={{ scrollbarGutter: "stable" }}
             >
               <div

@@ -48,7 +48,7 @@ export default function RejectionDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <XCircle size={18} strokeWidth={1.9} className="text-destructive" />
-            <span>Reject transaction</span>
+            <span>Reject Transaction</span>
           </DialogTitle>
         </DialogHeader>
 
@@ -75,19 +75,18 @@ export default function RejectionDialog({
         </DialogBody>
 
         <DialogFooter>
-          <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
           <Button
             variant="destructive"
-            size="sm"
             disabled={!canSubmit}
             onClick={() => {
               onConfirm(reason.trim());
               setReason("");
             }}
           >
-            Reject transaction
+            Reject Transaction
           </Button>
         </DialogFooter>
       </DialogContent>

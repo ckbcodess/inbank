@@ -240,7 +240,7 @@ export default function BusinessSignupPage() {
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="tin" className="text-[13px] font-medium text-foreground">
-                Taxpayer Identification Number (TIN)
+                Taxpayer identification number (TIN)
               </Label>
               <Input
                 id="tin"

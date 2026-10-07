@@ -20,8 +20,8 @@ const badgeVariants = cva(
           "bg-pill-warning text-pill-warning-text",
         info:
           "bg-pill-info text-pill-info-text",
-        /* A quiet amber tint for facts about the brand's own state (such as the default account), not a warning. */
-        brand: "bg-[var(--active-bg)] text-foreground",
+        /* Neutral pill for facts about the customer's own setup (such as the default account), not a status. */
+        brand: "bg-pill-neutral text-pill-neutral-text",
         outline:
           "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
         ghost:

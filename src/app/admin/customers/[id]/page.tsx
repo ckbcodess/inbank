@@ -46,7 +46,7 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
         description={`CORP-90114 · ${id}`}
         backTo={{ href: "/admin/customers", label: "Customers" }}
         actions={
-          <Button variant="destructive" size="sm" onClick={() => setSuspendOpen(true)} disabled={suspended}>
+          <Button variant="destructive" onClick={() => setSuspendOpen(true)} disabled={suspended}>
             <ShieldAlert size={14} strokeWidth={1.9} aria-hidden="true" />
             {suspended ? "Suspended" : "Suspend customer"}
           </Button>

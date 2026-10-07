@@ -4,7 +4,7 @@
  * Cards (list) — BRD FR-33 / FR-34 & New Card Creation Flow.
  * Matches exact design layout from reference screenshot:
  * - Top header with "+ Create Card" action
- * - One Filters button (card type), with the applied filter shown beside it
+ * - Filter pills: All Cards, Virtual, Debit, Prepaid
  * - Clean cards list with thumbnail graphics
  * - Search bar removed
  */
@@ -17,7 +17,6 @@ import { useSearchParams } from "next/navigation";
 import { Layers, Plus } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { AppliedFilters, FilterPanel, type FilterGroup } from "@/components/ui/filter-panel";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -241,21 +240,6 @@ function CardsPageContent() {
 
   const rows = effective === "partial-load" ? cards : filteredCards;
 
-  const filterGroups: FilterGroup[] = [
-    {
-      id: "type",
-      kind: "single",
-      label: "Card type",
-      options: [
-        { value: "Virtual", label: "Virtual" },
-        { value: "Debit", label: "Debit" },
-        { value: "Prepaid", label: "Prepaid" },
-      ],
-      value: typeFilter,
-      onChange: (v) => setTypeFilter(v as typeof typeFilter),
-    },
-  ];
-
   function handleCreateCard() {
     if (!cardName.trim()) return;
 
@@ -337,7 +321,7 @@ function CardsPageContent() {
             <Button
               nativeButton={false}
               render={<Link href="/cards/request" />}
-              className="h-9 gap-1.5 px-3.5 text-[13px] rounded-lg shadow-xs shrink-0"
+              className="shrink-0"
             >
               <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
               <span>Request a Card</span>
@@ -409,9 +393,27 @@ function CardsPageContent() {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-2">
-        <FilterPanel groups={filterGroups} onClear={() => setTypeFilter("all")} align="start" />
-        <AppliedFilters groups={filterGroups} />
+      {/* Segmented control filter (styled like the Payments page) */}
+      <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-chip p-1">
+        {(["all", "Virtual", "Debit", "Prepaid"] as const).map((t) => {
+          const isActive = typeFilter === t;
+          const label = t === "all" ? "All Cards" : t;
+          return (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTypeFilter(t)}
+              aria-pressed={isActive}
+              className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 sm:px-4 sm:py-2 text-[12.5px] sm:text-[13px] whitespace-nowrap transition cursor-pointer ${
+                isActive
+                  ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
+                  : "text-chip-foreground hover:text-chip-selected-foreground"
+              }`}
+            >
+              {label}
+            </button>
+          );
+        })}
       </div>
 
       {effective === "loading" && (
@@ -482,7 +484,7 @@ function CardsPageContent() {
 
           <DialogBody>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="c-name">Card Name / Nickname</Label>
+              <Label htmlFor="c-name">Card name / nickname</Label>
               <Input
                 id="c-name"
                 placeholder="e.g. AWS Subscription / Google Ads"
@@ -493,7 +495,7 @@ function CardsPageContent() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-2">
-                <Label>Card Type</Label>
+                <Label>Card type</Label>
                 <Select
                   value={cardType}
                   onValueChange={(val) =>
@@ -514,7 +516,7 @@ function CardsPageContent() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label>Network Scheme</Label>
+                <Label>Network scheme</Label>
                 <Select
                   value={cardScheme}
                   onValueChange={(val) =>
@@ -536,7 +538,7 @@ function CardsPageContent() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label>Linked Account</Label>
+              <Label>Linked account</Label>
               <Select
                 value={linkedAccId}
                 onValueChange={(val) => val && setLinkedAccId(val)}
@@ -558,7 +560,7 @@ function CardsPageContent() {
             {cardType === "Virtual" && (
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="c-limit">Monthly Spend Limit</Label>
+                  <Label htmlFor="c-limit">Monthly spend limit</Label>
                   <Input
                     id="c-limit"
                     value={spendLimit}
@@ -568,7 +570,7 @@ function CardsPageContent() {
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label>Usage Mode</Label>
+                  <Label>Usage mode</Label>
                   <Select
                     value={isSingleUse ? "single" : "recurring"}
                     onValueChange={(val) => setIsSingleUse(val === "single")}
@@ -591,7 +593,7 @@ function CardsPageContent() {
 
             {(cardType === "Prepaid" || cardType === "Virtual") && (
               <div className="flex flex-col gap-2">
-                <Label htmlFor="c-fund">Initial Funding Amount</Label>
+                <Label htmlFor="c-fund">Initial funding amount</Label>
                 <Input
                   id="c-fund"
                   value={initialFund}
@@ -606,13 +608,11 @@ function CardsPageContent() {
           <DialogFooter>
             <Button
               variant="ghost"
-              size="sm"
               onClick={() => setCreateOpen(false)}
             >
               Cancel
             </Button>
             <Button
-              size="sm"
               disabled={!cardName.trim()}
               onClick={handleCreateCard}
             >

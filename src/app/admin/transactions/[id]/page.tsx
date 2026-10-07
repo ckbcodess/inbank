@@ -43,7 +43,7 @@ export default function OpsTransactionDetailsPage({ params }: { params: Promise<
 
   if (!txn) {
     return (
-      <PageHeader title="Transaction not found" backTo={{ href: "/admin/transactions", label: "Monitoring" }} />
+      <PageHeader title="Transaction Not Found" backTo={{ href: "/admin/transactions", label: "Monitoring" }} />
     );
   }
 

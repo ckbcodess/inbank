@@ -153,14 +153,12 @@ export default function ProxyIdModal({
           <Button
             type="button"
             variant="ghost"
-            size="sm"
             onClick={() => onOpenChange(false)}
           >
             Cancel
           </Button>
           <Button
             type="button"
-            size="sm"
             onClick={handleSave}
             disabled={!canSave}
           >

@@ -13,6 +13,7 @@ import Link from "next/link";
 import PageHeader from "@/components/layout/PageHeader";
 import { useMemo } from "react";
 import { ActionTile } from "@/components/ui/action-tile";
+import { Button } from "@/components/ui/button";
 import { glassOf, pathRegion, rectRegion, type IconRegion } from "@/components/ui/glass-icon";
 import { duotoneOf, toneOutlineOf } from "@/components/ui/reicon-styles";
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
@@ -225,13 +226,10 @@ export default function SendAndPayPage() {
       <PageHeader
         title="Send & Pay"
         actions={
-          <Link
-            href="/payments/standing"
-            className="inline-flex h-8 items-center gap-1.5 rounded-[8px] bg-muted px-3 text-[13px] font-medium text-foreground transition-colors hover:bg-muted/80"
-          >
-            <Repeat size={15} strokeWidth={1.8} aria-hidden="true" />
+          <Button nativeButton={false} render={<Link href="/payments/standing" />} variant="tile">
+            <Repeat size={15} strokeWidth={1.8} aria-hidden="true" className="size-[15px]" />
             View Standing Orders
-          </Link>
+          </Button>
         }
       />
 

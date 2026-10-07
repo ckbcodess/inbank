@@ -85,8 +85,9 @@ export function DataBundleFlow({
     return getBundlesForNetwork(state.wNetwork);
   }, [state.wNetwork]);
 
+  // Never preselected: the bundle is what the customer pays for, so they choose it.
   const selectedBundle = useMemo(() => {
-    return bundles.find((b) => b.id === state.bundleId) ?? bundles[0];
+    return bundles.find((b) => b.id === state.bundleId);
   }, [bundles, state.bundleId]);
 
   const verifiedName = useMemo(() => {
@@ -132,7 +133,7 @@ export function DataBundleFlow({
 
       {/* 2. Destination: Network & Phone Number */}
       <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Recipient Details</label>
+        <label className="text-[13px] font-medium text-foreground">Recipient details</label>
         {isSelf ? (
           selfBlock
         ) : isPhoneValid && isCollapsed ? (
@@ -149,10 +150,7 @@ export function DataBundleFlow({
               value={state.wNetwork ? normalizeNetworkName(state.wNetwork) : ""}
               onChange={(val) => {
                 onChange("wNetwork", val);
-                const newBundles = getBundlesForNetwork(val);
-                if (newBundles && newBundles.length > 0) {
-                  onChange("bundleId", newBundles[0].id);
-                }
+                onChange("bundleId", "");
               }}
               options={TELCO_NETWORKS}
             />
@@ -163,12 +161,8 @@ export function DataBundleFlow({
                 onChange("aPhone", val);
                 const detected = detectTelcoNetwork(val);
                 if (detected && !state.wNetwork) {
-                  const newNet = detected.telcoName;
-                  onChange("wNetwork", newNet);
-                  const newBundles = getBundlesForNetwork(newNet);
-                  if (newBundles && newBundles.length > 0) {
-                    onChange("bundleId", newBundles[0].id);
-                  }
+                  onChange("wNetwork", detected.telcoName);
+                  onChange("bundleId", "");
                 }
                 const resolved = resolveAccountName(val, "");
                 if (resolved) {
@@ -191,7 +185,7 @@ export function DataBundleFlow({
           <div className="flex flex-col gap-2">
             <label className="text-[13px] font-medium text-foreground">Internet</label>
             <Select
-              value={selectedBundle?.id || bundles[0]?.id}
+              value={selectedBundle?.id ?? ""}
               onValueChange={(val) => {
                 if (val) {
                   onChange("bundleId", val);
@@ -246,42 +240,45 @@ export function DataBundleFlow({
             )}
           </div>
 
-          {/* 4. Narration */}
-          <NarrationInput
-            value={state.narration}
-            onChange={(val) => onChange("narration", val)}
-            placeholder={selectedBundle?.name || "Internet bundle"}
-          />
+          {selectedBundle && (
+            <>
+            {/* 4. Narration */}
+            <NarrationInput
+              value={state.narration}
+              onChange={(val) => onChange("narration", val)}
+              placeholder={selectedBundle?.name || "Internet bundle"}
+            />
 
-          {/* 5. Transaction Category */}
-          <CategorySelect
-            value={state.category}
-            onChange={(val) => onChange("category", val)}
-            defaultCategory="Data"
-          />
+            {/* 5. Transaction Category */}
+            <CategorySelect
+              value={state.category}
+              onChange={(val) => onChange("category", val)}
+            />
 
-          {/* 7. Schedule Payment */}
-          <SchedulePaymentSection
-            state={{
-              enabled: state.isScheduled ?? false,
-              startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
-              frequency: state.scheduleFrequency || "once",
-              endDate: state.scheduleEndDate || "",
-            }}
-            onChange={(updates) => {
-              if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
-              if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
-              if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
-              if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
-            }}
-          />
+            {/* 7. Schedule Payment */}
+            <SchedulePaymentSection
+              state={{
+                enabled: state.isScheduled ?? false,
+                startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
+                frequency: state.scheduleFrequency || "once",
+                endDate: state.scheduleEndDate || "",
+              }}
+              onChange={(updates) => {
+                if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
+                if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
+                if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
+                if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
+              }}
+            />
 
-          {/* 8. Proceed CTA */}
-          <ProceedButton
-            disabled={!isValid}
-            onClick={onProceed}
-            label={selectedBundle ? `Buy Bundle (${formatMoney(numAmount, "GHS", true)})` : "Buy Bundle"}
-          />
+            {/* 8. Proceed CTA */}
+            <ProceedButton
+              disabled={!isValid}
+              onClick={onProceed}
+              label={selectedBundle ? `Buy Bundle (${formatMoney(numAmount, "GHS", true)})` : "Buy Bundle"}
+            />
+            </>
+          )}
         </div>
       )}
     </div>

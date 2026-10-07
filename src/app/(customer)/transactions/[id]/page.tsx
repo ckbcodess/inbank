@@ -172,9 +172,8 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
-              size="sm"
               onClick={handleShare}
-              className="rounded-lg h-8 px-3 text-[13px] border-border/80"
+              className="rounded-lg border-border/80"
             >
               {copied ? (
                 <Check size={14} className="text-success-text" />
@@ -185,18 +184,16 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
             </Button>
             <Button
               variant="outline"
-              size="sm"
               onClick={handleDownload}
-              className="rounded-lg h-8 px-3 text-[13px] border-border/80"
+              className="rounded-lg border-border/80"
             >
               <ArrowDownToLine size={14} strokeWidth={1.8} />
               Receipt
             </Button>
             {!isCredit && (
               <Button
-                size="sm"
                 onClick={handleRepeat}
-                className="rounded-lg h-8 px-3 text-[13px]"
+                className="rounded-lg"
               >
                 <RefreshCw size={14} strokeWidth={1.8} />
                 Repeat
@@ -427,7 +424,7 @@ function StateBand({
               render={<Link href={`/payments/bulk/${txn.batchId ?? "batch-0090"}`} />}
             >
               <ArrowRight size={14} strokeWidth={1.8} className="mr-1.5" />
-              Open batch correction
+              Open Batch Correction
             </Button>
           </div>
         </Band>

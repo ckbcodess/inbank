@@ -60,6 +60,14 @@
   --color-pill-destructive-text: var(--pill-destructive-text);
   --color-pill-neutral: var(--pill-neutral);
   --color-pill-neutral-text: var(--pill-neutral-text);
+  --color-pill-violet: var(--pill-violet);
+  --color-pill-violet-text: var(--pill-violet-text);
+  --color-pill-slate: var(--pill-slate);
+  --color-pill-slate-text: var(--pill-slate-text);
+  --color-pill-teal: var(--pill-teal);
+  --color-pill-teal-text: var(--pill-teal-text);
+  --color-pill-orange: var(--pill-orange);
+  --color-pill-orange-text: var(--pill-orange-text);
   --color-info: var(--info);
   --color-success-text: var(--success-text);
   --color-warning-text: var(--warning-text);
@@ -136,15 +144,15 @@
   /* GCB Bank PLC brand amber: #FFC423 */
   --primary: #FFC423;
   --primary-hover: #ffd966;
-  --primary-foreground: #321800;
+  --primary-foreground: #451a03;
   /* Outline of the two-tone Send & Pay icons (the amber parts are --duo-accent). */
   --duo-outline: #475560;
   /* Icon tones (Send & Pay icon styles). light, mid and dark are the glass gradient (top, middle, bottom);
      ink is the line colour for outline and duotone icons, picked to read on a tile in this theme. */
-  --icon-amber-light: #ffffff;
+  --icon-amber-light: #fee6a4;
   --icon-amber-mid: #ffc423;
-  --icon-amber-dark: #2e2200;
-  --icon-amber-ink: #ffc423;
+  --icon-amber-dark: #ffbb00;
+  --icon-amber-ink: #ffcc00;
   --icon-blue-light: #d6e6ff;
   --icon-blue-mid: #4f8cff;
   --icon-blue-dark: #1d3fae;
@@ -185,16 +193,25 @@
   --chip-selected-foreground: oklch(0.145 0 0);
   --chip-foreground: oklch(0.556 0 0);
   /* Status pills ("Active", "Blocked", "Default"): a tint and the text on it. They follow the status colours until set. */
-  --pill-success: color-mix(in oklch, var(--success) 12%, transparent);
-  --pill-success-text: var(--success-text);
-  --pill-info: #54545421;
-  --pill-info-text: #383838;
-  --pill-warning: #ffc8003d;
-  --pill-warning-text: #704000;
-  --pill-destructive: #e600001f;
-  --pill-destructive-text: var(--destructive-text);
+  --pill-success: color-mix(in oklch, var(--success) 24%, transparent);
+  --pill-success-text: oklch(0.42 0.15 150);
+  --pill-info: color-mix(in oklch, var(--info) 20%, transparent);
+  --pill-info-text: oklch(0.42 0.19 255);
+  --pill-warning: #ffc80066;
+  --pill-warning-text: #6b3900;
+  --pill-destructive: color-mix(in oklch, var(--destructive) 20%, transparent);
+  --pill-destructive-text: oklch(0.46 0.22 20);
   --pill-neutral: var(--muted);
   --pill-neutral-text: var(--accent-foreground);
+  /* Card status hues beyond success, info, warning and destructive, so each delivery state has its own colour. */
+  --pill-violet: color-mix(in oklch, #8b5cf6 18%, transparent);
+  --pill-violet-text: #5b2fd0;
+  --pill-slate: color-mix(in oklch, #475569 16%, transparent);
+  --pill-slate-text: #334155;
+  --pill-teal: color-mix(in oklch, #14b8a6 20%, transparent);
+  --pill-teal-text: #0d6b63;
+  --pill-orange: color-mix(in oklch, #f97316 22%, transparent);
+  --pill-orange-text: #9a3c00;
   /* Initials circles on payees and billers: the same pastel in both modes, with dark ink on top. */
   --avatar-teal: #f1f8f9;
   --avatar-sand: #ebe8de;
@@ -385,16 +402,25 @@
   --chip-selected: #303030;
   --chip-selected-foreground: oklch(0.985 0 0);
   --chip-foreground: #6e6e6e;
-  --pill-success: #002e0d;
-  --pill-success-text: #20df69;
-  --pill-info: #2e2e2e99;
-  --pill-info-text: #c7c7c7;
-  --pill-warning: #ffc80029;
-  --pill-warning-text: #ffc423;
-  --pill-destructive: color-mix(in oklch, var(--destructive) 20%, transparent);
-  --pill-destructive-text: var(--destructive-text);
+  --pill-success: #00421a;
+  --pill-success-text: #3df07f;
+  --pill-info: color-mix(in oklch, var(--info) 26%, transparent);
+  --pill-info-text: oklch(0.84 0.13 250);
+  --pill-warning: #ffc80040;
+  --pill-warning-text: #ffd24d;
+  --pill-destructive: color-mix(in oklch, var(--destructive) 30%, transparent);
+  --pill-destructive-text: #ff7a88;
   --pill-neutral: var(--muted);
   --pill-neutral-text: var(--accent-foreground);
+  /* Card status hues beyond success, info, warning and destructive, so each delivery state has its own colour. */
+  --pill-violet: color-mix(in oklch, #a78bfa 26%, transparent);
+  --pill-violet-text: #c4b5fd;
+  --pill-slate: color-mix(in oklch, #94a3b8 22%, transparent);
+  --pill-slate-text: #cbd5e1;
+  --pill-teal: color-mix(in oklch, #2dd4bf 22%, transparent);
+  --pill-teal-text: #5eead4;
+  --pill-orange: color-mix(in oklch, #fb923c 26%, transparent);
+  --pill-orange-text: #fdba74;
   --avatar-teal: #f1f8f9;
   --avatar-sand: #ebe8de;
   --avatar-green: #e0eedd;
@@ -671,6 +697,14 @@ a,
 }
 .dark .shell-card {
   background: linear-gradient(to bottom, #141414 0%, #09090b 100%);
+}
+
+/* The top bar floats over the scrolling page: a translucent fill of the card colour, blurred (see TopHeader). */
+.shell-card {
+  --shell-header: rgb(255 255 255 / 0.72);
+}
+.dark .shell-card {
+  --shell-header: rgb(20 20 20 / 0.72);
 }
 
 /* CSS Mask fade-out for bottom edge of shell content — disabled to prevent masking notifications and interactive bottom controls */

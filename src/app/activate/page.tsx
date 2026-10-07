@@ -485,7 +485,7 @@ function ActivateContent() {
           {isMultiAccount && (
             <div className="space-y-2">
               <label htmlFor="primary-account-select" className="text-[13px] font-medium text-foreground px-0.5">
-                Default Account
+                Default account
               </label>
 
               <div data-tour="activate-account-picker">

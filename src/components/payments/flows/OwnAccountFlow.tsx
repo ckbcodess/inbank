@@ -99,7 +99,7 @@ export function OwnAccountFlow({
 
       {/* 2. To Account */}
       <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">To Account</label>
+        <label className="text-[13px] font-medium text-foreground">To account</label>
         {isDetailsValid && isCollapsed && toAccount ? (
           <CollapsedDetailsBadge
             title={toAccount.name}
@@ -163,7 +163,6 @@ export function OwnAccountFlow({
           <CategorySelect
             value={state.category}
             onChange={(val) => onChange("category", val)}
-            defaultCategory="Savings"
           />
 
           {/* 6. Schedule Payment */}

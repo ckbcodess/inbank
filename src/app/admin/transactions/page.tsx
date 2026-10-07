@@ -376,7 +376,7 @@ export default function TransactionMonitoringPage() {
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
-        title="Transaction monitoring"
+        title="Transaction Monitoring"
         description="Operational queue across all customers. View-only — no execution from this portal."
       />
 

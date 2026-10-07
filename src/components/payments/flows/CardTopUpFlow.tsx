@@ -92,7 +92,7 @@ export function CardTopUpFlow({
 
       {/* 2. Destination Card */}
       <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Destination Card</label>
+        <label className="text-[13px] font-medium text-foreground">Destination card</label>
         {selectedCard && isCollapsed ? (
           <CollapsedDetailsBadge
             title={selectedCard.name}
@@ -183,7 +183,6 @@ export function CardTopUpFlow({
           <CategorySelect
             value={state.category}
             onChange={(val) => onChange("category", val)}
-            defaultCategory="Savings"
           />
 
           {/* 6. Schedule Payment */}

@@ -183,7 +183,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
   if (!account) {
     return (
       <div className="mx-auto flex w-full max-w-[440px] flex-col gap-3">
-        <PageHeader title="Account not found" backTo={{ href: "/accounts", label: "My Accounts" }} />
+        <PageHeader title="Account Not Found" backTo={{ href: "/accounts", label: "My Accounts" }} />
         <p className="pl-11 text-[13px] text-muted-foreground">
           This account isn&apos;t available under the current banking relationship.
         </p>
@@ -247,8 +247,8 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
           <div className="flex flex-col gap-6 lg:mx-auto lg:w-[78%]">
             <BalanceCard account={account} isDefault={isDefault} />
             <div className="flex w-full items-start justify-evenly">
-              <RoundAction icon={Plus} label="Top up" onClick={() => setFundOpen(true)} />
-              <RoundAction icon={Share} label="Share details" onClick={() => setShareOpen(true)} />
+              <RoundAction icon={Plus} label="Top Up" onClick={() => setFundOpen(true)} />
+              <RoundAction icon={Share} label="Share Details" onClick={() => setShareOpen(true)} />
             </div>
           </div>
 

@@ -129,12 +129,11 @@ export default function ComplianceActionDialog({
             </DialogBody>
 
             <DialogFooter>
-              <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
+              <Button variant="ghost" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
               <Button
                 variant={commitVariant}
-                size="sm"
                 disabled={!canProceed}
                 onClick={() => (requiresStepUp ? setStage("step-up") : commit())}
               >
@@ -175,10 +174,10 @@ export default function ComplianceActionDialog({
             </DialogBody>
 
             <DialogFooter>
-              <Button variant="ghost" size="sm" onClick={() => setStage("confirm")}>
+              <Button variant="ghost" onClick={() => setStage("confirm")}>
                 Back
               </Button>
-              <Button variant={commitVariant} size="sm" disabled={!canComplete} onClick={commit}>
+              <Button variant={commitVariant} disabled={!canComplete} onClick={commit}>
                 {confirmLabel}
               </Button>
             </DialogFooter>

@@ -152,7 +152,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
         {activeBeneficiary && (
           <DialogContent size="md">
             <DialogHeader>
-              <DialogTitle>Quick pay: {activeBeneficiary.name}</DialogTitle>
+              <DialogTitle>Quick Pay: {activeBeneficiary.name}</DialogTitle>
             </DialogHeader>
 
             <form onSubmit={handleSendPayment}>
@@ -212,14 +212,12 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                 <Button
                   type="button"
                   variant="outline"
-                  size="sm"
                   onClick={() => setActiveBeneficiary(null)}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  size="sm"
                   loading={isProcessing}
                   className="gap-1.5"
                 >
@@ -236,7 +234,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
       <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
         <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle>Customize shortcuts</DialogTitle>
+            <DialogTitle>Customize Shortcuts</DialogTitle>
           </DialogHeader>
 
           <DialogBody>
@@ -275,7 +273,6 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
 
           <DialogFooter>
             <Button
-              size="sm"
               onClick={() => {
                 setShowEditModal(false);
                 toast.success("Quick suggestions updated successfully!");

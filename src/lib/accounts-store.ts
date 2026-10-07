@@ -16,6 +16,7 @@
  * Prototype-only: persisted per browser like the other client stores.
  */
 
+import { displayLocalMobile } from "@/lib/phone";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -68,6 +69,10 @@ interface LinkedSourcesState {
   setSources: (sources: LinkedSource[]) => void;
 }
 
+const localiseNumber = (n: string) => (n.trim().startsWith("+233") ? displayLocalMobile(n) : n);
+const localiseSource = (s: LinkedSource): LinkedSource =>
+  s.type === "momo" ? { ...s, subtitle: localiseNumber(s.subtitle), maskedNumber: localiseNumber(s.maskedNumber) } : s;
+
 export const useLinkedSources = create<LinkedSourcesState>()(
   persist(
     (set) => ({
@@ -83,7 +88,15 @@ export const useLinkedSources = create<LinkedSourcesState>()(
         }),
       setSources: (sources) => set({ sources }),
     }),
-    { name: "nibs-linked-sources" },
+    {
+      name: "nibs-linked-sources",
+      // Numbers saved before the local form became the standard ("+233 57 925 2564") are shown as "057 925 2564".
+      merge: (persisted, current) => {
+        const saved = (persisted as Partial<LinkedSourcesState> | undefined)?.sources;
+        if (!saved) return current;
+        return { ...current, sources: saved.map(localiseSource) };
+      },
+    },
   ),
 );
 

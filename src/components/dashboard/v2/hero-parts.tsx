@@ -269,12 +269,12 @@ export function HeroAccountMenu({
             {/* Inbound & Sharing */}
             <DropdownMenuItem onClick={handleCopyNumber} className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70">
               <Copy size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-              <span className="text-[13.5px]">Copy account number</span>
+              <span className="text-[13.5px]">Copy Account Number</span>
             </DropdownMenuItem>
 
             <DropdownMenuItem onClick={() => setShareOpen(true)} className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70">
               <Share2 size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-              <span className="text-[13.5px]">Share account details</span>
+              <span className="text-[13.5px]">Share Account Details</span>
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
@@ -285,7 +285,7 @@ export function HeroAccountMenu({
               className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
             >
               <FileText size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-              <span className="text-[13.5px]">Download e-Statement</span>
+              <span className="text-[13.5px]">Download E-Statement</span>
             </DropdownMenuItem>
 
             <DropdownMenuItem
@@ -293,7 +293,7 @@ export function HeroAccountMenu({
               className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
             >
               <ArrowLeftRight size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-              <span className="text-[13.5px]">View transactions</span>
+              <span className="text-[13.5px]">View Transactions</span>
             </DropdownMenuItem>
 
             <DropdownMenuItem
@@ -301,7 +301,7 @@ export function HeroAccountMenu({
               className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
             >
               <LayoutGrid size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-              <span className="text-[13.5px]">View all accounts</span>
+              <span className="text-[13.5px]">View All Accounts</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

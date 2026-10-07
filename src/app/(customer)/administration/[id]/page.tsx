@@ -75,7 +75,6 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
         actions={
           <Button
             variant="destructive"
-            size="sm"
             onClick={() => setSuspendOpen(true)}
             disabled={suspended}
           >

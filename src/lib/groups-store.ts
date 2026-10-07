@@ -32,10 +32,10 @@ const SEED_GROUPS: PaymentGroup[] = [
     createdAt: "2026-07-01",
     members: [
       { id: "m-1", name: "Ransford Gyasi", destination: "0244 123 456", type: "wallet", networkOrBank: "MTN Mobile Money", defaultAmount: 500 },
-      { id: "m-2", name: "Kwame Boateng", destination: "0201 987 654", type: "wallet", networkOrBank: "Telecel Cash", defaultAmount: 500 },
-      { id: "m-3", name: "Yaa Asantewaa", destination: "0559 220 118", type: "wallet", networkOrBank: "MTN Mobile Money", defaultAmount: 500 },
-      { id: "m-4", name: "Kofi Osei", destination: "1023 4455 66", type: "bank", networkOrBank: "GCB Bank", defaultAmount: 500 },
-      { id: "m-5", name: "Esther Appiah", destination: "0271 445 900", type: "wallet", networkOrBank: "AT Money", defaultAmount: 500 },
+      { id: "m-2", name: "Ishmael Gyan", destination: "0201 987 654", type: "wallet", networkOrBank: "Telecel Cash", defaultAmount: 500 },
+      { id: "m-3", name: "Tsotsoo Mills", destination: "0559 220 118", type: "wallet", networkOrBank: "MTN Mobile Money", defaultAmount: 500 },
+      { id: "m-4", name: "Kelvin Oso", destination: "1023 4455 66", type: "bank", networkOrBank: "GCB Bank", defaultAmount: 500 },
+      { id: "m-5", name: "Reuben Abuga-Williams", destination: "0271 445 900", type: "wallet", networkOrBank: "AT Money", defaultAmount: 500 },
     ],
   },
   {
@@ -54,7 +54,7 @@ const SEED_GROUPS: PaymentGroup[] = [
       { id: "s-6", name: "Esi Badu", destination: "0244 556 778", type: "wallet", networkOrBank: "MTN Mobile Money", defaultAmount: 1000 },
       { id: "s-7", name: "Fiifi Turkson", destination: "0202 334 556", type: "wallet", networkOrBank: "Telecel Cash", defaultAmount: 1000 },
       { id: "s-8", name: "Nana Yeboah", destination: "0559 887 112", type: "wallet", networkOrBank: "MTN Mobile Money", defaultAmount: 1000 },
-      { id: "s-9", name: "Adwoa Danso", destination: "0231 4455 8890", type: "bank", networkOrBank: "Standard Bank", defaultAmount: 1000 },
+      { id: "s-9", name: "Justice Oduro", destination: "0231 4455 8890", type: "bank", networkOrBank: "Standard Bank", defaultAmount: 1000 },
       { id: "s-10", name: "Kofi Boateng", destination: "0244 990 123", type: "wallet", networkOrBank: "MTN Mobile Money", defaultAmount: 1000 },
     ],
   },

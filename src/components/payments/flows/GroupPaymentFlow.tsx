@@ -83,7 +83,7 @@ export function GroupPaymentFlow({
 
       {/* 2. Destination Group */}
       <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Contribution Group</label>
+        <label className="text-[13px] font-medium text-foreground">Contribution group</label>
 
         {selectedGroup && isCollapsed ? (
           <CollapsedDetailsBadge
@@ -197,7 +197,6 @@ export function GroupPaymentFlow({
           <CategorySelect
             value={state.category}
             onChange={(val) => onChange("category", val)}
-            defaultCategory="Donations"
           />
         </div>
       )}

@@ -119,7 +119,7 @@ export function AccountExpensesView({
             description="Payments and card spend from this account will show here. Transfers between your own accounts aren't counted."
             action={
               period !== "12m" ? (
-                <Button variant="outline" size="sm" className="h-8 rounded-lg px-3 text-[13px]" onClick={() => changePeriod("12m")}>
+                <Button variant="outline" className="rounded-lg" onClick={() => changePeriod("12m")}>
                   Look at the last 12 months
                 </Button>
               ) : undefined

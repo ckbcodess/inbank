@@ -64,8 +64,8 @@ function customerNav(actor: Actor, activeProfile?: Profile | null): NavItem[] {
   items.push(
     { key: "transactions", label: "Transactions", path: "/transactions", icon: "ArrowLeftRight", group: "More Services" },
     { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "More Services" },
-    { key: "fx-rates", label: "FX rates", path: "/fx-rates", icon: "TrendingUp", group: "More Services" },
-    { key: "locate-us", label: "Locate us", path: "/locate-us", icon: "MapPin", group: "More Services" },
+    { key: "fx-rates", label: "FX Rates", path: "/fx-rates", icon: "TrendingUp", group: "More Services" },
+    { key: "locate-us", label: "Locate Us", path: "/locate-us", icon: "MapPin", group: "More Services" },
     { key: "settings", label: "Settings", path: "/settings", icon: "Settings", group: "More Services" },
     { key: "lifestyle", label: "Lifestyle", path: "/lifestyle", icon: "Sparkles", group: "More Services" },
   );
@@ -94,11 +94,11 @@ function adminNav(role: Role): NavItem[] {
 
   if (role === "BANK_ADMIN") {
     items.push({ key: "admin-customers", label: "Customers", path: "/admin/customers", icon: "Building2", group: "OPERATIONS" });
-    items.push({ key: "admin-fees", label: "Fee concessions", path: "/admin/fee-concessions", icon: "Percent", group: "CONTROL" });
+    items.push({ key: "admin-fees", label: "Fee Concessions", path: "/admin/fee-concessions", icon: "Percent", group: "CONTROL" });
   }
 
   if (role === "BANK_ADMIN" || role === "OPERATIONS_USER") {
-    items.push({ key: "admin-audit", label: "Audit log", path: "/admin/audit", icon: "Receipt", group: "CONTROL" });
+    items.push({ key: "admin-audit", label: "Audit Log", path: "/admin/audit", icon: "Receipt", group: "CONTROL" });
   }
 
   return items;

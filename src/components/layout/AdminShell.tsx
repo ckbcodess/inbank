@@ -80,7 +80,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         />
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[var(--surface)] p-0 sm:p-3 lg:p-3.5">
-          <div className="shell-card flex min-h-0 flex-1 flex-col overflow-hidden rounded-none border-0 shadow-none sm:rounded-2xl sm:border sm:border-border sm:shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+          <div className="shell-card relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-none border-0 shadow-none sm:rounded-2xl sm:border sm:border-border sm:shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
             <TopHeader
               actor={actor}
               onMenuToggle={() => setSidebarOpen((p) => !p)}
@@ -88,7 +88,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             />
 
             <main
-              className="custom-scrollbar flex-1 overflow-y-auto"
+              className="custom-scrollbar flex-1 overflow-y-auto pt-14"
               style={{ scrollbarGutter: "stable" }}
             >
               <div key={pathname} className="page-stagger mx-auto w-full max-w-[960px] px-4 pt-10 pb-12 sm:px-8 sm:pt-10 sm:pb-14 lg:px-10 lg:pt-12 lg:pb-16 xl:px-10">{children}</div>

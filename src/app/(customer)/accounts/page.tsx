@@ -103,7 +103,7 @@ function SectionHeading({ id, title, action }: { id: string; title: string; acti
 /** Section action: the system ghost button — no fill until hover. */
 function SectionAction({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
   return (
-    <Button type="button" variant="ghost" size="sm" onClick={onClick} className="h-8 shrink-0 gap-1.5 text-[13px]">
+    <Button type="button" variant="ghost" onClick={onClick} className="shrink-0">
       <Plus size={15} strokeWidth={1.8} aria-hidden="true" />
       {children}
     </Button>
@@ -357,7 +357,7 @@ function AccountsContent() {
             <Button
               type="button"
               onClick={() => setAddAccountOpen(true)}
-              className="h-9 shrink-0 gap-1.5 rounded-lg px-3.5 text-[13px] shadow-xs"
+              className="shrink-0"
             >
               <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
               <span>Add Account</span>
@@ -469,7 +469,7 @@ function AccountsContent() {
                     : "Link mobile money or a bank card to top up your account."
                 }
                 action={
-                  <Button size="sm" onClick={() => setLinkOpen(true)} className="gap-1.5 rounded-lg text-[13px]">
+                  <Button onClick={() => setLinkOpen(true)}>
                     <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
                     Link a Wallet or Card
                   </Button>
@@ -518,7 +518,7 @@ function AccountsContent() {
               <div className="flex size-24 items-center justify-center rounded-full bg-primary/15 text-foreground shadow-[0_0_60px_20px_color-mix(in_oklab,var(--primary)_18%,transparent)]">
                 <HandCoins size={40} strokeWidth={1.5} aria-hidden="true" />
               </div>
-              <DialogTitle className="text-[22px] tracking-[-0.02em]">You&apos;re almost there…</DialogTitle>
+              <DialogTitle className="text-[22px] tracking-[-0.02em]">You&apos;re Almost There…</DialogTitle>
               <p className="max-w-[320px] text-[14px] leading-relaxed text-muted-foreground">
                 Deposit to unlock instant banking. Fund your account today for quick payments and everyday
                 convenience.

@@ -172,12 +172,12 @@ export default function StandingOrderDetailPage() {
             </div>
           </DialogBody>
           <DialogFooter>
-            <Button variant="ghost" size="sm" onClick={() => setConfirmCancel(false)}>
-              Keep it
+            <Button variant="ghost" onClick={() => setConfirmCancel(false)}>
+              Keep It
             </Button>
-            <Button variant="destructive" size="sm" onClick={handleCancel}>
+            <Button variant="destructive" onClick={handleCancel}>
               <Trash2 size={14} strokeWidth={1.8} aria-hidden="true" className="mr-1.5" />
-              Cancel order
+              Cancel Order
             </Button>
           </DialogFooter>
         </DialogContent>

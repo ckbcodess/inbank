@@ -267,7 +267,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
         {selectedTx && (
           <DialogContent size="md">
             <DialogHeader>
-              <DialogTitle>Transaction details</DialogTitle>
+              <DialogTitle>Transaction Details</DialogTitle>
             </DialogHeader>
 
             <DialogBody>
@@ -319,7 +319,6 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
             <DialogFooter>
               <Button
                 variant="outline"
-                size="sm"
                 onClick={() => {
                   toast.success("Receipt PDF downloaded to your device.");
                 }}
@@ -329,7 +328,6 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                 Download PDF
               </Button>
               <Button
-                size="sm"
                 onClick={() => {
                   toast.success(`Repeat transfer of GHS ${selectedTx.amount} queued.`);
                   setSelectedTx(null);

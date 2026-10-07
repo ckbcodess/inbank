@@ -32,6 +32,12 @@ export function formatNationalMobile(raw: string): string {
   return [d.slice(0, 2), d.slice(2, 5), d.slice(5)].filter(Boolean).join(" ");
 }
 
+/** How a number is shown and stored on a saved source or account: the local form, "024 123 4567". */
+export function displayLocalMobile(raw: string): string {
+  const formatted = formatNationalMobile(raw);
+  return formatted ? `0${formatted}` : "";
+}
+
 /** For read-only display: "+233 24 123 4567". */
 export function displayGhanaMobile(raw: string): string {
   const formatted = formatNationalMobile(raw);

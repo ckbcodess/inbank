@@ -450,7 +450,7 @@ export function InternationalWireFlow({
       <Dialog open={papssFor !== null} onOpenChange={(open) => !open && setPapssFor(null)}>
         <DialogContent size="sm" className="p-0">
           <DialogHeader onClose={() => setPapssFor(null)}>
-            <DialogTitle>PAPSS is available for this transfer</DialogTitle>
+            <DialogTitle>PAPSS Is Available for This Transfer</DialogTitle>
           </DialogHeader>
           <div className="px-5 py-5 sm:px-6">
             <DialogDescription className="text-[14px] leading-relaxed text-muted-foreground">
@@ -482,7 +482,7 @@ export function InternationalWireFlow({
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount Section: You Send (GHS) vs Recipient Gets (Foreign) with switcher */}
           <div className="flex flex-col gap-2">
-            <label className="text-[13px] font-medium text-foreground">Transfer Amount</label>
+            <label className="text-[13px] font-medium text-foreground">Transfer amount</label>
 
             <DualAmountFields
               foreign={state.wForeign}
@@ -547,7 +547,6 @@ export function InternationalWireFlow({
           <CategorySelect
             value={state.category}
             onChange={(val) => onChange("category", val)}
-            defaultCategory="Remittances"
           />
 
           {/* 7. Schedule Payment */}

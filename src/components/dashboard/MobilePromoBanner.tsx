@@ -207,7 +207,7 @@ export function MobilePromoBanner() {
       <Dialog open={showCalculator} onOpenChange={setShowCalculator}>
         <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle>Fixed deposit calculator</DialogTitle>
+            <DialogTitle>Fixed Deposit Calculator</DialogTitle>
           </DialogHeader>
 
           <DialogBody>
@@ -270,13 +270,11 @@ export function MobilePromoBanner() {
           <DialogFooter>
             <Button
               variant="outline"
-              size="sm"
               onClick={() => setShowCalculator(false)}
             >
               Cancel
             </Button>
             <Button
-              size="sm"
               onClick={() => {
                 setShowCalculator(false);
                 toast.success("Fixed Deposit application initiated.");

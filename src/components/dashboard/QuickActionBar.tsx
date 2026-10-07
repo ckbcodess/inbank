@@ -184,7 +184,7 @@ export function QuickActionBar({
       <Dialog open={activeModal === "top-up"} onOpenChange={(open) => !open && setActiveModal(null)}>
         <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle>Top up card</DialogTitle>
+            <DialogTitle>Top Up Card</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <p className="text-[13px] text-muted-foreground leading-relaxed">
@@ -252,7 +252,7 @@ export function QuickActionBar({
       <Dialog open={activeModal === "transfer"} onOpenChange={(open) => !open && setActiveModal(null)}>
         <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle>Internal transfer</DialogTitle>
+            <DialogTitle>Internal Transfer</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <div className="flex flex-col gap-2">
@@ -326,7 +326,7 @@ export function QuickActionBar({
       <Dialog open={activeModal === "pay-bill"} onOpenChange={(open) => !open && setActiveModal(null)}>
         <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle>Pay a bill</DialogTitle>
+            <DialogTitle>Pay a Bill</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <div className="flex flex-col gap-2">
@@ -406,7 +406,7 @@ export function QuickActionBar({
       <Dialog open={activeModal === "customize"} onOpenChange={(open) => !open && setActiveModal(null)}>
         <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle>Customize quick actions</DialogTitle>
+            <DialogTitle>Customize Quick Actions</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <div className="flex flex-col gap-2.5">

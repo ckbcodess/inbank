@@ -139,7 +139,7 @@ export default function TopHeader({
   const unreadCount = NOTIFICATIONS.filter((n) => !n.read).length;
 
   return (
-    <header className="flex h-14 flex-shrink-0 items-center justify-between gap-4 border-b border-border px-4 sm:px-6 lg:px-8">
+    <header className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between gap-4 border-b border-border/60 bg-[var(--shell-header)] px-4 backdrop-blur-xl backdrop-saturate-150 sm:px-6 lg:px-8">
       <div className="flex min-w-0 items-center gap-3">
         <Button variant="ghost" size="icon-sm" onClick={onMenuToggle} className="lg:hidden shrink-0" aria-label="Open menu">
           <Menu size={17} strokeWidth={1.9} />
@@ -338,12 +338,11 @@ export default function TopHeader({
             </p>
           </DialogBody>
           <DialogFooter>
-            <Button variant="ghost" size="sm" onClick={() => setLogoutOpen(false)}>
+            <Button variant="ghost" onClick={() => setLogoutOpen(false)}>
               {t("common.cancel", "Cancel")}
             </Button>
             <Button
               variant="destructive"
-              size="sm"
               onClick={() => {
                 setLogoutOpen(false);
                 onSignOut();

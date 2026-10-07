@@ -66,7 +66,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
 
   if (!item || item.type !== "payment") {
     return (
-      <PageHeader title="Approval not found" backTo={{ href: "/approvals", label: "Approvals" }} />
+      <PageHeader title="Approval Not Found" backTo={{ href: "/approvals", label: "Approvals" }} />
     );
   }
 
@@ -83,7 +83,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
   return (
     <div className="flex flex-col gap-10">
       <PageHeader
-        title="Payment approval"
+        title="Payment Approval"
         description={`${item.reference} · submitted by ${item.submittedBy}`}
         backTo={{ href: "/approvals", label: "Approvals" }}
       />
@@ -190,7 +190,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
         <div className="flex flex-wrap items-center gap-2">
           <Button onClick={() => submitDecision("approved")} disabled={exceeds}>
             <CheckCircle2 size={15} strokeWidth={1.9} aria-hidden="true" />
-            Approve payment
+            Approve Payment
           </Button>
           <Button variant="destructive" onClick={() => setRejectOpen(true)}>
             <XCircle size={15} strokeWidth={1.9} aria-hidden="true" />
@@ -199,7 +199,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
           {exceeds && (
             <Button variant="outline">
               <AlertTriangle size={15} strokeWidth={1.9} aria-hidden="true" />
-              Refer to senior approver
+              Refer to Senior Approver
             </Button>
           )}
         </div>

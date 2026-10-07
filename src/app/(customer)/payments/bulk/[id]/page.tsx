@@ -38,7 +38,7 @@ export default function BatchCorrectionPage({ params }: { params: Promise<{ id: 
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
-        title="Batch correction"
+        title="Batch Correction"
         description={`Batch ${id} · payroll-august-2026.csv`}
         backTo={{ href: "/transactions", label: "Transactions" }}
       />
@@ -84,7 +84,7 @@ export default function BatchCorrectionPage({ params }: { params: Promise<{ id: 
       </section>
 
       <div className="flex flex-wrap gap-2">
-        <Button disabled>Resubmit corrected records</Button>
+        <Button disabled>Resubmit Corrected Records</Button>
         <Button variant="outline" nativeButton={false} render={<Link href="/payments" />}>
           Back to Payments
         </Button>

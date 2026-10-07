@@ -75,7 +75,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
   const [clarificationNote, setClarificationNote] = useState("");
 
   if (!item || item.type !== "trade") {
-    return <PageHeader title="Approval not found" backTo={{ href: "/approvals", label: "Approvals" }} />;
+    return <PageHeader title="Approval Not Found" backTo={{ href: "/approvals", label: "Approvals" }} />;
   }
 
   const currentVersion = TRADE_VERSIONS[TRADE_VERSIONS.length - 1];
@@ -96,7 +96,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
   return (
     <div className="flex flex-col gap-10">
       <PageHeader
-        title="Trade approval"
+        title="Trade Approval"
         description={`${item.reference} · submitted by ${item.submittedBy}`}
         backTo={{ href: "/approvals", label: "Approvals" }}
       />
@@ -235,7 +235,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
               </h2>
             </div>
             <Button variant="outline" size="sm" onClick={() => setState("awaiting-decision")}>
-              Close comparison
+              Close Comparison
             </Button>
           </div>
 
@@ -368,7 +368,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
         <div className="flex flex-wrap items-center gap-2">
           <Button onClick={() => submitDecision("approved")} disabled={decisionBlocked}>
             <CheckCircle2 size={15} strokeWidth={1.9} aria-hidden="true" />
-            Approve trade
+            Approve Trade
           </Button>
 
           {/* Recoverable path — visually secondary, warning-toned, not destructive */}
@@ -378,7 +378,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             className="border-warning/40 text-warning-text hover:bg-warning/10"
           >
             <MessageSquareWarning size={15} strokeWidth={1.9} aria-hidden="true" />
-            Return for clarification
+            Return for Clarification
           </Button>
 
           {/* Terminal path */}

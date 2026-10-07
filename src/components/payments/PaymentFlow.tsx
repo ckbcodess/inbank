@@ -29,6 +29,7 @@ import {
   Trash2,
   User,
   Users,
+  Wifi,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -69,6 +70,7 @@ import { MobileWalletFlow } from "./flows/MobileWalletFlow";
 import { WalletToBankFlow } from "./flows/WalletToBankFlow";
 import { AirtimeFlow } from "./flows/AirtimeFlow";
 import { DataBundleFlow } from "./flows/DataBundleFlow";
+import { BroadbandFlow } from "./flows/BroadbandFlow";
 import { CardTopUpFlow } from "./flows/CardTopUpFlow";
 import { BillsPaymentFlow } from "./flows/BillsPaymentFlow";
 import { InternationalWireFlow, CHARGE_OPTIONS, CODE_TYPE_LABELS } from "./flows/InternationalWireFlow";
@@ -85,6 +87,8 @@ import {
   detectTelcoNetwork,
   normalizeNetworkName,
   getBundlesForNetwork,
+  resolveAccountName,
+  getBroadbandPackages,
   formatGhPhone,
 } from "./flows/shared";
 import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
@@ -192,10 +196,10 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
   // Bank payees
   {
     id: "rec-b1",
-    name: "Kwame Boateng",
+    name: "Justice Oduro",
     bank: "GCB Bank",
     acct: "0231 4455 8890",
-    initials: "KB",
+    initials: "JO",
     rail: "bank",
     colorBg: "var(--avatar-teal)",
   },
@@ -239,10 +243,10 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
   },
   {
     id: "rec-w2",
-    name: "Yaw Mensah",
+    name: "Ishmael Gyan",
     bank: "Telecel Cash",
     acct: "0201 987 654",
-    initials: "YM",
+    initials: "IG",
     rail: "wallet",
     colorBg: "var(--avatar-red)",
   },
@@ -311,10 +315,10 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
   },
   {
     id: "rec-air-2",
-    name: "Kwame Boateng",
+    name: "Ishmael Gyan",
     bank: "Telecel Cash",
     acct: "0201 987 654",
-    initials: "KB",
+    initials: "IG",
     rail: "airtime",
     subtitle: "0201 987 654",
     colorBg: "var(--avatar-red)",
@@ -331,10 +335,10 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
   },
   {
     id: "rec-air-4",
-    name: "Yaa Asantewaa",
+    name: "Tsotsoo Mills",
     bank: "MTN Mobile Money",
     acct: "0559 220 118",
-    initials: "YA",
+    initials: "TM",
     rail: "airtime",
     subtitle: "0559 220 118",
     colorBg: "var(--avatar-lilac)",
@@ -383,10 +387,10 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
   },
   {
     id: "rec-dat-4",
-    name: "Kwame Boateng",
+    name: "Tsotsoo Mills",
     bank: "MTN Mobile Money",
     acct: "0559 220 118",
-    initials: "KB",
+    initials: "TM",
     rail: "data",
     subtitle: "0559 220 118",
     colorBg: "var(--avatar-lilac)",
@@ -712,59 +716,6 @@ const RECENT_AVATARS: RecentPayeeAvatar[] = [
   },
 ];
 
-const GHANAIAN_NAMES = [
-  "Ransford Gyasi",
-  "Kwame Boateng",
-  "Kofi Osei Asante",
-  "Akua Mansah",
-  "Efua Addo Mensah",
-  "Nana Yaw Osei",
-  "Samuel Quartey",
-  "Abena Danso",
-  "Esi Sutherland",
-  "Kwadwo Appiah",
-  "Yaw Frempong",
-  "Adwoa Sarfo",
-  "Kweku Baako",
-  "Accra Fabrics Ltd",
-  "Golden Coast Logistics Ltd",
-];
-
-const ACCOUNT_RESOLUTIONS: Record<string, string> = {
-  "023144558890": "Accra Fabrics Ltd",
-  "0231 4455 8890": "Accra Fabrics Ltd",
-  "01234567890": "Akua Mansah",
-  "1234567890": "Akua Mansah",
-  "0123456789012": "Samuel Quartey",
-  "0244123456": "Ransford Gyasi",
-  "0244 123 456": "Ransford Gyasi",
-  "0201987654": "Kwame Boateng",
-  "0201 987 654": "Kwame Boateng",
-  "0559220118": "Yaa Asantewaa",
-  "0559 220 118": "Yaa Asantewaa",
-  "0271445900": "Esther Appiah",
-  "0271 445 900": "Esther Appiah",
-  "1023445566": "Kofi Osei",
-  "1023 4455 66": "Kofi Osei",
-  "0277456789": "Kofi Boateng",
-  "0277 456 789": "Kofi Boateng",
-  "0244123821": "My Phone (Self)",
-  "0244 123 821": "My Phone (Self)",
-};
-
-function resolveAccountName(number: string, fallback: string = ""): string {
-  const clean = number.replace(/[\s-]/g, "");
-  if (!clean || clean.length < 8) return "";
-  if (fallback && fallback.trim() && fallback !== "Verified Account Holder") return fallback;
-  if (ACCOUNT_RESOLUTIONS[clean]) return ACCOUNT_RESOLUTIONS[clean];
-  
-  let hash = 0;
-  for (let i = 0; i < clean.length; i++) {
-    hash = (hash * 31 + clean.charCodeAt(i)) % GHANAIAN_NAMES.length;
-  }
-  return GHANAIAN_NAMES[Math.abs(hash)] || "Ransford Gyasi";
-}
-
 type Phase = "form" | "submitting" | "success";
 type ReceiptData = {
   pending: boolean;
@@ -924,7 +875,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const [bankCategory, setBankCategory] = useState<"own" | "gcb" | "other" | "international" | null>(null);
   const [walletCategory, setWalletCategory] = useState<"self" | "other" | null>(null);
   // Airtime & data share one "who is this for?" gate before any details.
-  const [topupCategory, setTopupCategory] = useState<"self" | "other" | null>(null);
+  const [topupCategory, setTopupCategory] = useState<"self" | "other" | "broadband" | null>(null);
   // Proxy & group each open on a chooser before their transfer form.
   const [proxyCategory, setProxyCategory] = useState<"transfer" | null>(null);
   const [proxyModalOpen, setProxyModalOpen] = useState(false);
@@ -1103,13 +1054,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       setTopupCategory(item.id.includes("self") ? "self" : "other");
       const detected = detectTelcoNetwork(item.acct);
       const net = detected?.telcoName || normalizeNetworkName(item.bank) || "MTN Ghana";
-      const bundles = getBundlesForNetwork(net);
-      const firstBundle = bundles[0]?.id;
+      // The bundle is the customer's choice every time: never preselected.
       setF((p) => ({
         ...p,
         aPhone: item.acct,
         wNetwork: net,
-        bundleId: firstBundle || p.bundleId,
+        bundleId: "",
         benName: item.name,
       }));
       setStage(1);
@@ -1199,8 +1149,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const toOwnAccount = accounts.find((a) => a.id === f.toOwnAccountId);
 
   const availableBundles = useMemo(() => {
-    return getBundlesForNetwork(f.wNetwork);
-  }, [f.wNetwork]);
+    return topupCategory === "broadband" ? getBroadbandPackages(f.wNetwork) : getBundlesForNetwork(f.wNetwork);
+  }, [f.wNetwork, topupCategory]);
 
   const bundle = useMemo(() => {
     return availableBundles.find((b) => b.id === f.bundleId);
@@ -1412,7 +1362,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "proxy") return verifiedAccountName || f.pxId || "Proxy Recipient";
     if (isForeign) return f.wBenName || "International Beneficiary";
     if (rail === "group") return f.groupName || "Group Contribution";
-    if (rail === "data") return verifiedAccountName || (f.aPhone ? `Internet (${f.aPhone})` : "Recipient");
+    if (rail === "data") return verifiedAccountName || (f.aPhone ? `${topupCategory === "broadband" ? "Broadband" : "Internet"} (${f.aPhone})` : "Recipient");
     if (rail === "airtime") return verifiedAccountName || (f.aPhone ? `Airtime (${f.aPhone})` : "Recipient");
     if (rail === "card-topup") {
       const card = CARDS.find((c) => c.id === f.cardId);
@@ -1433,6 +1383,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     return f.benName || "Recipient";
   }, [
     rail,
+    topupCategory,
     isForeign,
     bankCategory,
     walletCategory,
@@ -1459,6 +1410,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   const reviewAccountLabel = useMemo(() => {
     if (rail === "card-topup") return "Destination Card";
+    if (rail === "data" && topupCategory === "broadband") return "Broadband Account";
     if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") {
       return "Phone Number";
     }
@@ -1470,7 +1422,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "qr") return "Terminal / Merchant ID";
     if (rail === "swift") return "Account / IBAN";
     return "Account";
-  }, [rail, biller?.reference]);
+  }, [rail, biller?.reference, topupCategory]);
 
   const reviewAccountValue = useMemo(() => {
     if (bankCategory === "own" && rail !== "wallet-to-bank") return toOwnAccount?.number ? `••••${toOwnAccount.number.slice(-4)}` : "Own Account";
@@ -1675,9 +1627,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           handlePhoneLookup("aPhone", decoded);
           const detected = detectTelcoNetwork(decoded);
           const net = detected?.telcoName || "MTN Ghana";
-          const bundles = getBundlesForNetwork(net);
-          const firstBundle = bundles[0]?.id;
-          setF((p) => ({ ...p, aPhone: decoded, wNetwork: net, bundleId: firstBundle || p.bundleId }));
+          setF((p) => ({ ...p, aPhone: decoded, wNetwork: net, bundleId: "" }));
           setStage1Collapsed(true);
         }
       } else if (r === "proxy") {
@@ -1761,7 +1711,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           benCat = "number";
           network = f.wNetwork || "MTN";
           phoneNumber = f.aPhone;
-          detail = `${network} · ${phoneNumber} · ${bundle?.name || "Internet bundle"}`;
+          detail = topupCategory === "broadband" ? `${network} broadband · ${phoneNumber} · ${bundle?.name || "Broadband package"}` : `${network} · ${phoneNumber} · ${bundle?.name || "Internet bundle"}`;
         } else if (rail === "proxy") {
           txType = "proxy";
           benCat = "person";
@@ -1838,8 +1788,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         successTitle = "Airtime sent!";
         successMsg = `You’ve recharged ${f.aPhone || recipientDisplayName} with ${formattedAmount} airtime.`;
       } else if (rail === "data") {
-        successTitle = "Bundle activated!";
-        successMsg = `You’ve sent the ${bundle?.name || "internet bundle"} to ${f.aPhone || recipientDisplayName}.`;
+        if (topupCategory === "broadband") {
+          successTitle = "Broadband paid!";
+          successMsg = `You’ve bought the ${bundle?.name || "broadband package"} for ${recipientDisplayName} (${f.aPhone}).`;
+        } else {
+          successTitle = "Bundle activated!";
+          successMsg = `You’ve sent the ${bundle?.name || "internet bundle"} to ${f.aPhone || recipientDisplayName}.`;
+        }
       } else if (rail === "ecg") {
         successTitle = "Power recharged!";
         successMsg = `You’ve purchased ${formattedAmount} of electricity units for meter ${f.ecgMeter}.`;
@@ -1997,6 +1952,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       if (cardlessCategory === "third-party") return "Generate Token for Others";
       return "Cardless Withdrawal";
     }
+    if (rail === "data" && topupCategory === "broadband") return "Broadband";
     return RAIL_LABEL[rail] || "Send Money";
   };
 
@@ -2682,7 +2638,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <Button
                 type="button"
                 variant="ghost"
-                size="sm"
                 onClick={() => setProxyDeregisterOpen(false)}
               >
                 Keep it
@@ -2690,7 +2645,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <Button
                 type="button"
                 variant="destructive"
-                size="sm"
                 onClick={() => {
                   deregisterProxy();
                   setProxyDeregisterOpen(false);
@@ -2834,7 +2788,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Card 1: Self */}
           <ActionTile
             icon={Smartphone}
-            title="Send to Myself"
+            title="Send to My Number"
             onClick={() => {
               setTopupCategory("self");
               const selfNum = "0244123821";
@@ -2846,7 +2800,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 wNetwork: net,
                 benName: isData ? "My Device (Self)" : "My Phone (Self)",
                 airtimeAmount: "",
-                bundleId: isData ? getBundlesForNetwork(net)[0]?.id || p.bundleId : p.bundleId,
+                bundleId: isData ? "" : p.bundleId,
               }));
               setStage(1);
               setStage1Collapsed(true);
@@ -2857,7 +2811,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Card 2: Others */}
           <ActionTile
             icon={Users}
-            title="Send to Others"
+            title="Send to Other Numbers"
             onClick={() => {
               setTopupCategory("other");
               setF((p) => ({
@@ -2873,6 +2827,29 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             }}
             className="p-4.5"
           />
+
+          {/* Card 3: Broadband (Internet only): a connection at a home or office, not a phone */}
+          {isData && (
+            <ActionTile
+              icon={Wifi}
+              title="Broadband"
+              description="MTN and Telecel"
+              onClick={() => {
+                setTopupCategory("broadband");
+                setF((p) => ({
+                  ...p,
+                  aPhone: "",
+                  wNetwork: "",
+                  benName: "",
+                  airtimeAmount: "",
+                  bundleId: "",
+                }));
+                setStage(1);
+                setStage1Collapsed(false);
+              }}
+              className="p-4.5"
+            />
+          )}
         </div>
       </div>
     );
@@ -2937,7 +2914,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         {stage === 1 && (
           <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
             {/* Top-Level Quick Beneficiaries Strip */}
-            {activeRailBeneficiaries.length > 0 && bankCategory !== "own" && walletCategory !== "self" && topupCategory !== "self" && rail !== "group" && (
+            {activeRailBeneficiaries.length > 0 && bankCategory !== "own" && walletCategory !== "self" && topupCategory !== "self" && topupCategory !== "broadband" && rail !== "group" && (
               <div className="flex flex-col gap-6 -mb-1 animate-in fade-in duration-150">
                 <RailBeneficiaryStrip
                   items={activeRailBeneficiaries}
@@ -3177,8 +3154,34 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               />
             )}
 
+            {/* Flow 6C: Broadband */}
+            {rail === "data" && topupCategory === "broadband" && (
+              <BroadbandFlow
+                accounts={accounts}
+                state={{
+                  fromId: f.fromId,
+                  wNetwork: f.wNetwork,
+                  aPhone: f.aPhone,
+                  benName: f.benName,
+                  bundleId: f.bundleId,
+                  isScheduled: f.isScheduled,
+                  scheduleDate: f.scheduleDate,
+                  scheduleFrequency: f.scheduleFrequency,
+                  scheduleEndDate: f.scheduleEndDate,
+                }}
+                onChange={(key, val) => set(key, val)}
+                detailsCollapsed={stage1Collapsed}
+                onToggleCollapsed={setStage1Collapsed}
+                onProceed={() => {
+                  auth.reset();
+                  setStage1Collapsed(true);
+                  setStage(2);
+                }}
+              />
+            )}
+
             {/* Flow 6B: Internet */}
-            {rail === "data" && (
+            {rail === "data" && topupCategory !== "broadband" && (
               <DataBundleFlow
                 accounts={accounts}
                 state={{

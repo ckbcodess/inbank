@@ -50,7 +50,7 @@ export function ShareDetailsDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent size="sm">
         <DialogHeader>
-          <DialogTitle>Share account details</DialogTitle>
+          <DialogTitle>Share Account Details</DialogTitle>
         </DialogHeader>
         <DialogBody>
           <p className="mb-3 text-[13px] text-muted-foreground">Give these to anyone sending money to this account.</p>

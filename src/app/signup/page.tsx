@@ -401,7 +401,7 @@ function SignupContent() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="reviewEmail" className="text-[13px] font-medium text-foreground">Email Address</Label>
+              <Label htmlFor="reviewEmail" className="text-[13px] font-medium text-foreground">Email address</Label>
               <Input
                 id="reviewEmail"
                 type="email"
@@ -414,7 +414,7 @@ function SignupContent() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="reviewMobile" className="text-[13px] font-medium text-foreground">Mobile Number</Label>
+              <Label htmlFor="reviewMobile" className="text-[13px] font-medium text-foreground">Mobile number</Label>
               <PhoneInput id="reviewMobile" value={mobile} onValueChange={setMobile} />
               <p className="px-0.5 text-[12.5px] text-muted-foreground">We will send a code to verify this number.</p>
             </div>

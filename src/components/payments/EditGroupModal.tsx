@@ -328,7 +328,7 @@ export default function EditGroupModal({
               {/* Group Name */}
               <div className="flex flex-col gap-2">
                 <label className="text-[13px] font-medium text-foreground">
-                  Group Name <span className="text-destructive">*</span>
+                  Group name <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="text"
@@ -368,7 +368,7 @@ export default function EditGroupModal({
             {/* Split Type & Amount Configuration */}
             <div className="flex flex-col gap-3 pt-2">
               <label className="text-[13px] font-medium text-foreground">
-                Contribution Rule
+                Contribution rule
               </label>
 
               {/* Segmented Pill Toggle: Equal / Custom */}
@@ -780,14 +780,12 @@ export default function EditGroupModal({
           <DialogFooter>
             <Button
               variant="ghost"
-              size="sm"
               onClick={() => setMemberToDelete(null)}
             >
               Cancel
             </Button>
             <Button
               variant="destructive"
-              size="sm"
               onClick={handleConfirmRemoveMember}
             >
               Remove Member
@@ -810,14 +808,12 @@ export default function EditGroupModal({
           <DialogFooter>
             <Button
               variant="ghost"
-              size="sm"
               onClick={() => setShowDeleteGroupConfirm(false)}
             >
               Cancel
             </Button>
             <Button
               variant="destructive"
-              size="sm"
               onClick={handleConfirmDeleteGroup}
             >
               Delete Group

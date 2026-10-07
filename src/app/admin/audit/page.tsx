@@ -92,7 +92,7 @@ export default function AuditLogPage() {
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
-        title="Audit log"
+        title="Audit Log"
         description="Every user action, configuration change and transaction decision, with the actor, the time and the reason given. Entries are append-only and cannot be edited or removed."
       />
 

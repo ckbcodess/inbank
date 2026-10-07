@@ -87,7 +87,7 @@ export default function StandingOrdersPage() {
           title="No standing orders yet"
           description="Automate rent, susu contributions, family stipends, airtime, data or savings transfers."
           action={
-            <Button size="sm" nativeButton={false} render={<Link href="/payments/standing/new" />}>
+            <Button nativeButton={false} render={<Link href="/payments/standing/new" />}>
               <Plus size={14} strokeWidth={2} className="mr-1.5" />
               Create First Standing Order
             </Button>

@@ -53,7 +53,7 @@ export const SEED_BENEFICIARIES: BeneficiaryRecord[] = [
   },
   {
     id: "ben-b1",
-    name: "Accra Fabrics Ltd",
+    name: "Justice Oduro",
     transactionType: "bank",
     category: "person",
     bankName: "Standard Bank Ghana",
@@ -113,7 +113,7 @@ export const SEED_BENEFICIARIES: BeneficiaryRecord[] = [
   },
   {
     id: "ben-b6",
-    name: "Kofi Osei",
+    name: "Kelvin Oso",
     transactionType: "bank",
     category: "person",
     bankName: "GCB Bank",
@@ -138,7 +138,7 @@ export const SEED_BENEFICIARIES: BeneficiaryRecord[] = [
   },
   {
     id: "ben-w2",
-    name: "Kwame Boateng",
+    name: "Ishmael Gyan",
     transactionType: "wallet",
     category: "person",
     network: "Telecel Cash",
@@ -149,7 +149,7 @@ export const SEED_BENEFICIARIES: BeneficiaryRecord[] = [
   },
   {
     id: "ben-w3",
-    name: "Yaa Asantewaa",
+    name: "Tsotsoo Mills",
     transactionType: "wallet",
     category: "person",
     network: "MTN Mobile Money",
@@ -160,7 +160,7 @@ export const SEED_BENEFICIARIES: BeneficiaryRecord[] = [
   },
   {
     id: "ben-w4",
-    name: "Esther Appiah",
+    name: "Reuben Abuga-Williams",
     transactionType: "wallet",
     category: "person",
     network: "AT Money",

@@ -56,7 +56,7 @@ export default function TradeTypeSelectionPage() {
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
-        title="New trade request"
+        title="New Trade Request"
         description="Choose the instrument — the request form changes to match it."
         backTo={{ href: "/trade", label: "Trade Finance" }}
       />

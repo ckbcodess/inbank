@@ -12,7 +12,7 @@ export interface CardsLayoutProps {
   cards: PaymentCard[];
 }
 
-type Tone = "active" | "production" | "transit" | "delivery" | "pickup" | "activate" | "blocked" | "expired";
+type Tone = "active" | "production" | "processing" | "transit" | "delivery" | "pickup" | "activate" | "blocked" | "expired";
 
 interface StatusNote {
   label: string;
@@ -21,22 +21,23 @@ interface StatusNote {
 
 const DELIVERY_NOTE: Record<string, StatusNote> = {
   in_production: { label: "In production", tone: "production" },
-  processing: { label: "Processing", tone: "production" },
+  processing: { label: "Processing", tone: "processing" },
   in_transit: { label: "In transit", tone: "transit" },
   out_for_delivery: { label: "Out for delivery", tone: "delivery" },
   ready_for_pickup: { label: "Ready for pickup", tone: "pickup" },
 };
 
-/** One hue per state so a row of cards can be scanned without reading. */
+/** One hue per state so a row of cards can be scanned without reading: nine states, nine hues. */
 const TONE_CLASS: Record<Tone, string> = {
   active: "bg-pill-success text-pill-success-text",
-  production: "bg-pill-info text-pill-info-text",
-  transit: "bg-pill-info text-pill-info-text",
-  delivery: "bg-pill-warning text-pill-warning-text",
-  pickup: "bg-pill-success text-pill-success-text",
-  activate: "bg-pill-info text-pill-info-text",
+  activate: "bg-pill-warning text-pill-warning-text",
   blocked: "bg-pill-destructive text-pill-destructive-text",
   expired: "bg-pill-neutral text-pill-neutral-text",
+  production: "bg-pill-violet text-pill-violet-text",
+  processing: "bg-pill-slate text-pill-slate-text",
+  transit: "bg-pill-info text-pill-info-text",
+  delivery: "bg-pill-orange text-pill-orange-text",
+  pickup: "bg-pill-teal text-pill-teal-text",
 };
 
 /** Says something only when there is something to say, unless `includeActive` (gallery scanning). */

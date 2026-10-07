@@ -213,7 +213,6 @@ export default function GetStartedPage() {
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => setShowCoosModal(false)}
               disabled={isRedirecting}
             >
@@ -221,7 +220,6 @@ export default function GetStartedPage() {
             </Button>
             <Button
               type="button"
-              size="sm"
               data-tour="gs-cos-confirm"
               onClick={executeCoosRedirect}
               loading={isRedirecting}

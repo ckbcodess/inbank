@@ -728,7 +728,7 @@ export function VirtualCardDetailsView({
                         icon={PlusCircle}
                         label="Top Up"
                         href={`/payments/send?rail=card-topup&cardId=${currentCard.id}`}
-                        title="Top up card balance"
+                        title="Top Up Card Balance"
                       />
                     ) : (
                       hasPin && <RoundAction icon={KeypadIcon} label="Show PIN" onClick={handleOpenPinModal} disabled={isFrozen} />
@@ -814,7 +814,7 @@ export function VirtualCardDetailsView({
   const limitNode = (
     <ManageRow
       icon={Gauge}
-      title="Daily limits"
+      title="Daily Limits"
       value={dailyLimit === null ? "Not set" : `GHS ${dailyLimit.toLocaleString()} a day`}
       onClick={() => {
         setTempDaily(dailyLimit === null ? "" : String(dailyLimit));
@@ -868,7 +868,7 @@ export function VirtualCardDetailsView({
   const tNickname = (
     <ManageRow
       icon={Sparkles}
-      title="Card nickname"
+      title="Card Nickname"
       value={cardNickname}
       onClick={() => {
         setTempNickname(cardNickname);
@@ -890,10 +890,10 @@ export function VirtualCardDetailsView({
     ) : null;
   const tReset = hasPin ? <ManageRow icon={Key} title="Reset PIN" onClick={() => setActiveModal("reset-pin")} /> : null;
   const tReplace = (
-    <ManageRow icon={RefreshCw} title="Replace card" description="Lost, damaged or expired" onClick={() => setActiveModal("replace")} />
+    <ManageRow icon={RefreshCw} title="Replace Card" description="Lost, damaged or expired" onClick={() => setActiveModal("replace")} />
   );
   // Card activity is a row here; blocking is one of the round actions (the quickest thing to do if a card goes missing).
-  const tActivity = <ManageRow icon={ArrowLeftRight} title="Card activity" onClick={() => setActiveModal("activity")} />;
+  const tActivity = <ManageRow icon={ArrowLeftRight} title="Card Activity" onClick={() => setActiveModal("activity")} />;
 
   const activityListNode = (
     <>
@@ -1313,7 +1313,7 @@ export function VirtualCardDetailsView({
       <Dialog open={activeModal === "activity"} onOpenChange={(open) => !open && setActiveModal(null)}>
         <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle>Card activity</DialogTitle>
+            <DialogTitle>Card Activity</DialogTitle>
           </DialogHeader>
           <DialogBody className="gap-3">
             {activityListNode}
@@ -1333,7 +1333,7 @@ export function VirtualCardDetailsView({
       <Dialog open={activeModal === "top-up"} onOpenChange={(open) => !open && setActiveModal(null)}>
         <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle>Top up {currentCard.name}</DialogTitle>
+            <DialogTitle>Top Up {currentCard.name}</DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleExecuteTopUp}>
@@ -1348,7 +1348,7 @@ export function VirtualCardDetailsView({
 
               {/* Source Account */}
               <div className="space-y-1.5">
-                <label className="text-[13px] font-medium text-foreground">Fund from Account</label>
+                <label className="text-[13px] font-medium text-foreground">Fund from account</label>
                 <select
                   value={topUpSourceAccountId}
                   onChange={(e) => setTopUpSourceAccountId(e.target.value)}
@@ -1364,7 +1364,7 @@ export function VirtualCardDetailsView({
 
               {/* Top Up Amount */}
               <div className="space-y-1.5">
-                <label className="text-[13px] font-medium text-foreground">Top Up Amount (GHS)</label>
+                <label className="text-[13px] font-medium text-foreground">Top up amount (GHS)</label>
                 <Input
                   type="number"
                   min="1"
@@ -1382,14 +1382,12 @@ export function VirtualCardDetailsView({
               <Button
                 type="button"
                 variant="ghost"
-                size="sm"
                 onClick={() => setActiveModal(null)}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                size="sm"
                 disabled={!topUpAmount || parseFloat(topUpAmount) <= 0}
               >
                 Top Up Now
@@ -1435,12 +1433,11 @@ export function VirtualCardDetailsView({
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => {
                 setActiveModal(null);
                 setPinCountdown(15);
               }}
-              className="w-full cursor-pointer text-xs"
+              className="w-full cursor-pointer"
             >
               Done
             </Button>
@@ -1486,7 +1483,7 @@ export function VirtualCardDetailsView({
       <Dialog open={activeModal === "limits"} onOpenChange={(open) => !open && setActiveModal(null)}>
         <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle>Daily limits</DialogTitle>
+            <DialogTitle>Daily Limits</DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSaveLimits}>
@@ -1512,11 +1509,11 @@ export function VirtualCardDetailsView({
             </DialogBody>
 
             <DialogFooter>
-              <Button type="button" variant="ghost" size="sm" onClick={() => setActiveModal(null)}>
+              <Button type="button" variant="ghost" onClick={() => setActiveModal(null)}>
                 Cancel
               </Button>
-              <Button type="submit" size="sm">
-                Save limit
+              <Button type="submit">
+                Save Limit
               </Button>
             </DialogFooter>
           </form>
@@ -1527,7 +1524,7 @@ export function VirtualCardDetailsView({
       <Dialog open={activeModal === "details"} onOpenChange={(open) => !open && setActiveModal(null)}>
         <DialogContent size="md">
           <DialogHeader>
-            <DialogTitle>Card details</DialogTitle>
+            <DialogTitle>Card Details</DialogTitle>
           </DialogHeader>
           <DialogBody>
             <div className="flex flex-col divide-y divide-border/60">
@@ -1563,7 +1560,7 @@ export function VirtualCardDetailsView({
               <div className="flex items-center gap-3">
                 <Globe size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
-                  <span className="font-medium text-foreground">Online Checkout</span>
+                  <span className="font-medium text-foreground">Online checkout</span>
                   <span className="text-[11.5px] text-muted-foreground">E-commerce & web transactions</span>
                 </div>
               </div>
@@ -1582,7 +1579,7 @@ export function VirtualCardDetailsView({
               <div className="flex items-center gap-3">
                 <Globe size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
-                  <span className="font-medium text-foreground">International Usage</span>
+                  <span className="font-medium text-foreground">International usage</span>
                   <span className="text-[11.5px] text-muted-foreground">Cross-border foreign exchange payments</span>
                 </div>
               </div>
@@ -1601,7 +1598,7 @@ export function VirtualCardDetailsView({
               <div className="flex items-center gap-3">
                 <CreditCard size={18} className="text-muted-foreground" />
                 <div className="flex flex-col">
-                  <span className="font-medium text-foreground">ATM Cash Withdrawals</span>
+                  <span className="font-medium text-foreground">ATM cash withdrawals</span>
                   <span className="text-[11.5px] text-muted-foreground">Physical terminal cash access</span>
                 </div>
               </div>
@@ -1618,7 +1615,7 @@ export function VirtualCardDetailsView({
           </DialogBody>
 
           <DialogFooter>
-            <Button size="sm" onClick={() => setActiveModal(null)}>
+            <Button onClick={() => setActiveModal(null)}>
               Done
             </Button>
           </DialogFooter>
@@ -1634,22 +1631,21 @@ export function VirtualCardDetailsView({
 
           <DialogBody>
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="new-pin-input" className="text-[13px] font-medium text-foreground">New 4-Digit PIN</label>
+              <label htmlFor="new-pin-input" className="text-[13px] font-medium text-foreground">New 4-digit PIN</label>
               <Input id="new-pin-input" type="password" maxLength={4} placeholder="••••" className="h-10 tracking-widest text-[16px]" />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="confirm-pin-input" className="text-[13px] font-medium text-foreground">Confirm New PIN</label>
+              <label htmlFor="confirm-pin-input" className="text-[13px] font-medium text-foreground">Confirm new PIN</label>
               <Input id="confirm-pin-input" type="password" maxLength={4} placeholder="••••" className="h-10 tracking-widest text-[16px]" />
             </div>
           </DialogBody>
 
           <DialogFooter>
-            <Button variant="ghost" size="sm" onClick={() => setActiveModal(null)}>
+            <Button variant="ghost" onClick={() => setActiveModal(null)}>
               Cancel
             </Button>
             <Button
-              size="sm"
               onClick={() => {
                 triggerToast("PIN reset successfully");
                 setActiveModal(null);
@@ -1665,13 +1661,13 @@ export function VirtualCardDetailsView({
       <Dialog open={activeModal === "edit-nickname"} onOpenChange={(open) => !open && setActiveModal(null)}>
         <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle>Card nickname</DialogTitle>
+            <DialogTitle>Card Nickname</DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSaveNickname}>
             <DialogBody>
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="card-nickname-input" className="text-[13px] font-medium text-foreground">Card Nickname</label>
+                <label htmlFor="card-nickname-input" className="text-[13px] font-medium text-foreground">Card nickname</label>
                 <Input
                   id="card-nickname-input"
                   value={tempNickname}
@@ -1683,10 +1679,10 @@ export function VirtualCardDetailsView({
             </DialogBody>
 
             <DialogFooter>
-              <Button type="button" variant="ghost" size="sm" onClick={() => setActiveModal(null)}>
+              <Button type="button" variant="ghost" onClick={() => setActiveModal(null)}>
                 Cancel
               </Button>
-              <Button type="submit" size="sm">
+              <Button type="submit">
                 Save Changes
               </Button>
             </DialogFooter>
@@ -1713,11 +1709,10 @@ export function VirtualCardDetailsView({
           </DialogBody>
 
           <DialogFooter>
-            <Button variant="ghost" size="sm" onClick={() => setActiveModal(null)}>
+            <Button variant="ghost" onClick={() => setActiveModal(null)}>
               Cancel
             </Button>
             <Button
-              size="sm"
               nativeButton={false}
               render={<Link href={`/cards/request?replace=${encodeURIComponent(currentCard.id)}`} />}
             >
@@ -1739,7 +1734,7 @@ export function VirtualCardDetailsView({
               {/* CVV Input */}
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="card-cvv-input" className="text-[13px] font-medium text-foreground">
-                  3-Digit CVV Security Code
+                  3-digit CVV security code
                 </label>
                 <Input
                   id="card-cvv-input"
@@ -1760,7 +1755,7 @@ export function VirtualCardDetailsView({
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="card-pin-input" className="text-[13px] font-medium text-foreground">
-                    Set 4-Digit Card PIN
+                    Set 4-digit card PIN
                   </label>
                   <Input
                     id="card-pin-input"
@@ -1775,7 +1770,7 @@ export function VirtualCardDetailsView({
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="card-pin-confirm-input" className="text-[13px] font-medium text-foreground">
-                    Confirm 4-Digit PIN
+                    Confirm 4-digit PIN
                   </label>
                   <Input
                     id="card-pin-confirm-input"
@@ -1796,10 +1791,10 @@ export function VirtualCardDetailsView({
             </DialogBody>
 
             <DialogFooter>
-              <Button type="button" variant="ghost" size="sm" onClick={() => setActiveModal(null)}>
+              <Button type="button" variant="ghost" onClick={() => setActiveModal(null)}>
                 Cancel
               </Button>
-              <Button type="submit" size="sm">
+              <Button type="submit">
                 Activate Card
               </Button>
             </DialogFooter>

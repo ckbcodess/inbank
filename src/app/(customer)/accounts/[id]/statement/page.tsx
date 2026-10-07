@@ -33,7 +33,7 @@ export default function StatementConfigurationPage({ params }: { params: Promise
   const [maxAmount, setMaxAmount] = useState("");
 
   if (!account) {
-    return <PageHeader title="Account not found" backTo={{ href: "/accounts", label: "My Accounts" }} />;
+    return <PageHeader title="Account Not Found" backTo={{ href: "/accounts", label: "My Accounts" }} />;
   }
 
   const rows = transactionsForAccount(account.id).filter((t) => {
@@ -120,11 +120,11 @@ export default function StatementConfigurationPage({ params }: { params: Promise
             <div className="mt-5 flex items-center gap-2">
               <Button onClick={() => setShowPreview(true)}>
                 <FileText size={15} strokeWidth={1.9} aria-hidden="true" />
-                Preview statement
+                Preview Statement
               </Button>
               {showPreview && (
                 <Button variant="outline" onClick={() => setShowPreview(false)}>
-                  Change filters
+                  Change Filters
                 </Button>
               )}
             </div>

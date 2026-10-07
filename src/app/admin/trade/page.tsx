@@ -39,7 +39,7 @@ export default function TradeMonitoringPage() {
   return (
     <div className="flex flex-col gap-5">
       <PageHeader
-        title="Trade monitoring"
+        title="Trade Monitoring"
         description="Internal operational queue for trade transactions."
       />
 

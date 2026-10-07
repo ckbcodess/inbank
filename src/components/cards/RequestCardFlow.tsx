@@ -502,7 +502,7 @@ export function RequestCardFlow() {
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
             <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
-              {isReplacement ? "Replace" : "Configure"} {cardType.toLowerCase()} card
+              {isReplacement ? "Replace" : "Configure"} {cardType} Card
             </h1>
           </div>
 
@@ -918,7 +918,7 @@ export function RequestCardFlow() {
           {/* Detailed Summary Rows */}
           <div className="rounded-2xl border border-border/80 bg-card divide-y divide-border/80 overflow-hidden">
             <div className="p-4 flex items-center justify-between gap-4">
-              <span className="text-[13.5px] text-muted-foreground">Card nickname</span>
+              <span className="text-[13.5px] text-muted-foreground">Card Nickname</span>
               <span className="text-[14px] font-medium text-foreground truncate">
                 {cardName.trim() || `${cardType} Card`}
               </span>
@@ -945,7 +945,7 @@ export function RequestCardFlow() {
 
             {cardType !== "Virtual" && (
               <div className="p-4 flex items-center justify-between gap-4">
-                <span className="text-[13.5px] text-muted-foreground">Card network</span>
+                <span className="text-[13.5px] text-muted-foreground">Card Network</span>
                 <span className="text-[14px] font-medium text-foreground">
                   {cardScheme} • {networkType}
                 </span>

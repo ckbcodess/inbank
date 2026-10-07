@@ -804,7 +804,7 @@ export default function BeneficiariesPage() {
             <Button
               nativeButton={false}
               render={<Link href="/beneficiaries/groups/new" />}
-              className="h-9 gap-1.5 px-3.5 text-[13px] rounded-lg shadow-xs shrink-0"
+              className="shrink-0"
             >
               <Plus size={15} strokeWidth={2} />
               Add new group
@@ -818,7 +818,7 @@ export default function BeneficiariesPage() {
                 });
                 setFormOpen(true);
               }}
-              className="h-9 gap-1.5 px-3.5 text-[13px] rounded-lg shadow-xs shrink-0"
+              className="shrink-0"
             >
               <Plus size={15} strokeWidth={2} />
               {activeTab === "billers" ? "Add biller" : "Add beneficiary"}
@@ -996,7 +996,6 @@ export default function BeneficiariesPage() {
                 }
                 action={
                   <Button
-                    size="sm"
                     onClick={() => {
                       setForm({
                         ...INITIAL_FORM,
@@ -1100,7 +1099,6 @@ export default function BeneficiariesPage() {
                 description="Create a group to distribute transfers or Susu contributions in one step."
                 action={
                   <Button
-                    size="sm"
                     nativeButton={false}
                     render={<Link href="/beneficiaries/groups/new" />}
                   >
@@ -1137,7 +1135,7 @@ export default function BeneficiariesPage() {
             {/* Step 1: Destination Rail (Dropdown) */}
             <div className="flex flex-col gap-1.5">
               <label className="text-[13px] font-medium text-foreground">
-                Payment Rail
+                Payment rail
               </label>
               <Select
                 value={form.transactionType}
@@ -1183,7 +1181,7 @@ export default function BeneficiariesPage() {
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Network Provider
+                    Network provider
                   </label>
                   <Select
                     value={form.network}
@@ -1204,7 +1202,7 @@ export default function BeneficiariesPage() {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Wallet Phone Number
+                    Wallet phone number
                   </label>
                   <PhoneInput
                     value={form.phoneNumber}
@@ -1221,7 +1219,7 @@ export default function BeneficiariesPage() {
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Destination Bank
+                    Destination bank
                   </label>
                   <Select
                     value={form.bankName}
@@ -1242,7 +1240,7 @@ export default function BeneficiariesPage() {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Account Number
+                    Account number
                   </label>
                   <input
                     type="text"
@@ -1260,7 +1258,7 @@ export default function BeneficiariesPage() {
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Bill / Service Provider
+                    Bill / service provider
                   </label>
                   <Select
                     value={matchedBiller?.name || form.billerName}
@@ -1331,7 +1329,7 @@ export default function BeneficiariesPage() {
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Network Provider
+                    Network provider
                   </label>
                   <Select
                     value={form.network}
@@ -1352,7 +1350,7 @@ export default function BeneficiariesPage() {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Phone Number
+                    Phone number
                   </label>
                   <PhoneInput
                     value={form.phoneNumber}
@@ -1368,7 +1366,7 @@ export default function BeneficiariesPage() {
             {form.transactionType === "proxy" && (
               <div className="flex flex-col gap-1.5">
                 <label className="text-[13px] font-medium text-foreground">
-                  Proxy Identifier
+                  Proxy identifier
                 </label>
                 <div className="relative flex items-center">
                   <span className="absolute left-3.5 text-[15px] font-semibold text-muted-foreground select-none pointer-events-none">
@@ -1437,7 +1435,7 @@ export default function BeneficiariesPage() {
 
                 <div className="grid grid-cols-2 gap-2.5">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[13px] font-medium text-foreground">SWIFT / BIC Code</label>
+                    <label className="text-[13px] font-medium text-foreground">SWIFT / BIC code</label>
                     <input
                       type="text"
                       value={form.swiftBic}
@@ -1448,7 +1446,7 @@ export default function BeneficiariesPage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[13px] font-medium text-foreground">IBAN / Account Number</label>
+                    <label className="text-[13px] font-medium text-foreground">IBAN / account number</label>
                     <input
                       type="text"
                       value={form.accountNumber}
@@ -1460,7 +1458,7 @@ export default function BeneficiariesPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">Recipient Physical Address</label>
+                  <label className="text-[13px] font-medium text-foreground">Recipient physical address</label>
                   <input
                     type="text"
                     value={form.address}
@@ -1476,7 +1474,7 @@ export default function BeneficiariesPage() {
             {form.transactionType === "papss" && (
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">Destination Country</label>
+                  <label className="text-[13px] font-medium text-foreground">Destination country</label>
                   <Select
                     value={form.country}
                     onValueChange={(val) => {
@@ -1542,7 +1540,7 @@ export default function BeneficiariesPage() {
             {/* Step 4: Optional Nickname / Reference */}
             <div className="flex flex-col gap-1.5">
               <label className="text-[13px] font-medium text-foreground">
-                Nickname / Note <span className="text-[11px] text-muted-foreground/60">(optional)</span>
+                Nickname / note <span className="text-[11px] text-muted-foreground/60">(optional)</span>
               </label>
               <input
                 type="text"
@@ -1558,17 +1556,14 @@ export default function BeneficiariesPage() {
           <DialogFooter>
             <Button
               variant="ghost"
-              size="sm"
               onClick={() => setFormOpen(false)}
-              className="h-9 px-3.5 text-[13px]"
             >
               Cancel
             </Button>
             <Button
-              size="sm"
               onClick={handleSaveBeneficiary}
               disabled={!form.name.trim()}
-              className="h-9 px-4 text-[13px]"
+              className="px-4"
             >
               {form.id ? "Save Changes" : "Save Beneficiary"}
             </Button>
@@ -1588,10 +1583,10 @@ export default function BeneficiariesPage() {
             Are you sure you want to remove <span className="text-foreground">{toRemove?.name}</span>? This will not affect past transactions.
           </div>
           <DialogFooter>
-            <Button variant="ghost" size="sm" onClick={() => setRemoveId(null)}>
+            <Button variant="ghost" onClick={() => setRemoveId(null)}>
               Cancel
             </Button>
-            <Button variant="destructive" size="sm" onClick={handleRemoveBeneficiary}>
+            <Button variant="destructive" onClick={handleRemoveBeneficiary}>
               Remove
             </Button>
           </DialogFooter>
@@ -1609,10 +1604,10 @@ export default function BeneficiariesPage() {
             Are you sure you want to delete <span className="text-foreground">{toRemoveGroup?.name}</span>? Group members will remain in your individual beneficiaries directory.
           </div>
           <DialogFooter>
-            <Button variant="ghost" size="sm" onClick={() => setRemoveGroupId(null)}>
+            <Button variant="ghost" onClick={() => setRemoveGroupId(null)}>
               Cancel
             </Button>
-            <Button variant="destructive" size="sm" onClick={handleRemoveGroup}>
+            <Button variant="destructive" onClick={handleRemoveGroup}>
               Delete Group
             </Button>
           </DialogFooter>

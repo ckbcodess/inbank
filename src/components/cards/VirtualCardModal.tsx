@@ -256,7 +256,7 @@ export function VirtualCardView({
       {adjustingLimit && (
         <div className="mt-4 flex flex-col gap-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-3.5">
           <label htmlFor="card-view-limit-input" className="text-[13px] font-medium text-foreground">
-            New Monthly Limit ({activeCard.currency ?? "USD"})
+            New monthly limit ({activeCard.currency ?? "USD"})
           </label>
           <div className="flex items-center gap-2">
             <Input
@@ -286,15 +286,15 @@ export function VirtualCardView({
             </button>
           </div>
           <label className="flex items-center justify-between cursor-pointer">
-            <span>Online Checkout</span>
+            <span>Online checkout</span>
             <input type="checkbox" checked={onlineEnabled} onChange={(e) => setOnlineEnabled(e.target.checked)} className="size-4 rounded" />
           </label>
           <label className="flex items-center justify-between cursor-pointer">
-            <span>ATM Cash Withdrawal</span>
+            <span>ATM cash withdrawal</span>
             <input type="checkbox" checked={atmEnabled} onChange={(e) => setAtmEnabled(e.target.checked)} className="size-4 rounded" />
           </label>
           <label className="flex items-center justify-between cursor-pointer">
-            <span>International Usage</span>
+            <span>International usage</span>
             <input type="checkbox" checked={intlEnabled} onChange={(e) => setIntlEnabled(e.target.checked)} className="size-4 rounded" />
           </label>
         </div>

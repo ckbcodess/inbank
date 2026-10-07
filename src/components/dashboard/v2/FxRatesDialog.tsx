@@ -64,7 +64,7 @@ export function FxRatesDialog({ open, onOpenChange }: { open: boolean; onOpenCha
         </DialogBody>
         <DialogFooter className="justify-between">
           <p className="text-[13px] text-muted-foreground tabular">Updated {formatDate(FX_PUBLISHED_AT)}</p>
-          <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/fx-rates" />}>
+          <Button variant="outline" nativeButton={false} render={<Link href="/fx-rates" />}>
             All rates
           </Button>
         </DialogFooter>

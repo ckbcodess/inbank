@@ -138,7 +138,7 @@ export function BillsPaymentFlow({
 
       {/* 2. Biller & Reference / Account */}
       <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
+        <label className="text-[13px] font-medium text-foreground">Beneficiary details</label>
         {isDestinationValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={
@@ -262,17 +262,6 @@ export function BillsPaymentFlow({
           <CategorySelect
             value={state.category}
             onChange={(val) => onChange("category", val)}
-            defaultCategory={
-              selectedBiller?.category === "Education"
-                ? "Education"
-                : selectedBiller?.category === "Subscriptions"
-                ? "Entertainment"
-                : selectedBiller?.category === "Healthcare"
-                ? "Health"
-                : selectedBiller?.category === "Giving & Donations"
-                ? "Donations"
-                : "Bills"
-            }
           />
 
           {/* 7. Schedule Payment */}
