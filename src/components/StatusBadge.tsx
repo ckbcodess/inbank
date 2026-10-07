@@ -8,6 +8,7 @@
  */
 
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import type { TransactionState } from "@/lib/states";
 
 type Variant = "default" | "secondary" | "destructive" | "success" | "warning" | "outline";
@@ -23,9 +24,29 @@ const TRANSACTION_STATUS: Record<TransactionState, { label: string; variant: Var
   "awaiting-approval": { label: "Awaiting approval", variant: "outline" },
 };
 
+/** The plain word for a state ("Completed"), for text that isn't a badge. */
+export function transactionStatusLabel(state: TransactionState): string {
+  return TRANSACTION_STATUS[state].label;
+}
+
 export function TransactionStatusBadge({ state }: { state: TransactionState }) {
   const { label, variant } = TRANSACTION_STATUS[state];
   return <Badge variant={variant}>{label}</Badge>;
+}
+
+const STATUS_TEXT_CLASS: Record<Variant, string> = {
+  default: "text-foreground",
+  secondary: "text-muted-foreground",
+  outline: "text-muted-foreground",
+  success: "text-success-text",
+  warning: "text-warning-text",
+  destructive: "text-destructive-text",
+};
+
+/** The same status as plain coloured text, for a dense list where a pill would crowd the amount beside it. */
+export function TransactionStatusText({ state, className }: { state: TransactionState; className?: string }) {
+  const { label, variant } = TRANSACTION_STATUS[state];
+  return <span className={cn("text-[12px]", STATUS_TEXT_CLASS[variant], className)}>{label}</span>;
 }
 
 /** Generic status pill for trade/approval lifecycle labels. */

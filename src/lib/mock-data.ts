@@ -479,6 +479,8 @@ export interface Transaction {
   id: string;
   reference: string;
   date: string;
+  /** Time of day it happened, "14:05" (24-hour). Saved with every payment made in the app; seeded history may not have one. */
+  time?: string;
   valueDate: string;
   description: string;
   counterparty: string;

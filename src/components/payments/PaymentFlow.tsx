@@ -1886,6 +1886,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         id: trn,
         reference: trn,
         date: d.toISOString().slice(0, 10),
+        time: d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }),
         valueDate: d.toISOString().slice(0, 10),
         description: f.bankRef || f.wRef || f.pxRef || (rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Internet") : "Online Payment"),
         counterparty: isOwnTransfer ? (toOwnAccount?.name || "My Account") : rail === "card-topup" ? (cardObj?.name || "Card") : (resolvedName || "Recipient"),

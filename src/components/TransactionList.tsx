@@ -11,6 +11,8 @@
  * - Pagination: "Showing 1–10 of X cases" + Previous / page numbers / Next.
  */
 
+import { getTransactionType } from "@/lib/transaction-type";
+import { TransactionStatusText } from "@/components/StatusBadge";
 import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -70,14 +72,6 @@ const STATUS_OPTIONS: readonly { readonly id: StatusFilter; readonly name: strin
   { id: "pending", name: "Pending" },
   { id: "failed", name: "Failed" },
 ] as const;
-
-const CATEGORY_MAP: Record<string, string> = TRANSACTION_CATEGORIES.reduce<Record<string, string>>(
-  (acc, cat) => {
-    acc[cat.id] = cat.name;
-    return acc;
-  },
-  {}
-);
 
 function formatAccountDisplay(accountId: string): string {
   const acc = findAccount(accountId);
@@ -720,8 +714,6 @@ export default function TransactionList({
             {paginatedRows.map((t) => {
               const { colorClass, prefix } = getAmountStyling(t);
               const isCredit = t.direction === "credit";
-              const isFailed = t.state.startsWith("failed") || t.state === "reversed" || t.state === "disputed";
-              const isPending = t.state === "pending" || t.state === "awaiting-approval";
 
               return (
                 <div
@@ -746,21 +738,19 @@ export default function TransactionList({
                   </div>
 
                   {/* Counterparty & Metadata */}
-                  <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                  <div className="flex-1 min-w-0 flex flex-col gap-1.5">
                     <span className="font-normal text-foreground text-[14px] leading-tight truncate">
                       {t.counterparty || t.description}
                     </span>
                     <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground truncate">
-                      <span>{formatTableDate(t.date)}</span>
+                      <span className="truncate">{getTransactionType(t)}</span>
                       <span>·</span>
-                      <span className="truncate">
-                        {t.category ? CATEGORY_MAP[t.category] || t.category : getPaymentMethodDisplay(t)}
-                      </span>
+                      <span>{formatTableDate(t.date)}</span>
                     </div>
                   </div>
 
                   {/* Amount & State / Account Number */}
-                  <div className="shrink-0 flex flex-col items-end gap-0.5">
+                  <div className="shrink-0 flex flex-col items-end gap-1.5">
                     <span className={cn("tabular text-[14px]", colorClass)}>
                       {prefix}
                       {t.currency}{" "}
@@ -771,19 +761,7 @@ export default function TransactionList({
                           })
                         : "••••••"}
                     </span>
-                    {isFailed ? (
-                      <span className="text-[11.5px] text-destructive-text font-normal">
-                        Failed
-                      </span>
-                    ) : isPending ? (
-                      <span className="text-[11.5px] text-warning-text font-normal">
-                        Pending
-                      </span>
-                    ) : (
-                      <span className="text-[11.5px] text-muted-foreground">
-                        {formatAccountDisplay(t.accountId).split(" ").pop()}
-                      </span>
-                    )}
+                    <TransactionStatusText state={t.state} />
                   </div>
                 </div>
               );

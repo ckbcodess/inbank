@@ -18,11 +18,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   AlertCircle,
-  ArrowDownToLine,
   ArrowRight,
   Check,
   Clock,
   Copy,
+  FileDown,
   FileWarning,
   History,
   Layers,
@@ -34,8 +34,11 @@ import {
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { SimpleTooltip } from "@/components/ui/tooltip";
-import { GCBLogo } from "@/components/ui/GCBLogo";
-import { TransactionStatusBadge } from "@/components/StatusBadge";
+import { toast } from "sonner";
+import { getTransactionType } from "@/lib/transaction-type";
+import { ShareReceiptDialog, type ReceiptFormat } from "@/components/transactions/ShareReceiptDialog";
+import { RoundAction } from "@/components/ui/round-action";
+import { TransactionStatusBadge, transactionStatusLabel } from "@/components/StatusBadge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { TRANSACTION_STATE_LABEL, type TransactionState } from "@/lib/states";
 import {
@@ -75,13 +78,29 @@ function getTransactionMethodLabel(t: Transaction): string {
   return "GCB Transfer";
 }
 
+/** "14:05" -> "2:05 PM". Payments made in the app save their time; older history gets a steady stand-in per transaction. */
+function receiptTime(t: Transaction): string {
+  let hh: number;
+  let mm: number;
+  if (t.time && /^\d{1,2}:\d{2}$/.test(t.time)) {
+    [hh, mm] = t.time.split(":").map(Number);
+  } else {
+    let h = 0;
+    for (const c of t.id) h = (h * 31 + c.charCodeAt(0)) % 1440;
+    hh = 8 + Math.floor((h % 600) / 60);
+    mm = h % 60;
+  }
+  const hour12 = hh % 12 === 0 ? 12 : hh % 12;
+  return `${hour12}:${String(mm).padStart(2, "0")} ${hh >= 12 ? "PM" : "AM"}`;
+}
+
 export default function TransactionDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const { id } = use(params);
   const txn = findTransaction(id);
   const [state, setState] = useState<TransactionState>(txn?.state ?? "completed");
   const [copied, setCopied] = useState(false);
-  const [shareToast, setShareToast] = useState(false);
+  const [shareFormat, setShareFormat] = useState<ReceiptFormat | null>(null);
 
   const fromAccount = useMemo(() => {
     return txn ? findAccount(txn.accountId) : undefined;
@@ -108,7 +127,7 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
   const formattedDate = !isNaN(dateObj.getTime())
     ? dateObj.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" })
     : txn.date;
-  const formattedTime = "12:34 PM";
+  const formattedTime = receiptTime(txn);
 
   // Financial calculations
   const feeAmount = txn.fee ?? 0;
@@ -129,22 +148,97 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
     }
   };
 
-  const handleShare = async () => {
+  // The receipt as text. Masked leaves out every money figure (amount, fee, total, exchange rate).
+  const receiptText = (masked: boolean) => {
+    const to = txn.counterparty || txn.description;
+    const lines = [
+      "GCB Bank receipt",
+      `Status: ${transactionStatusLabel(state)}`,
+      `Type: ${getTransactionType(txn)}`,
+      `${isCredit ? "From" : "To"}: ${to}`,
+      `Date: ${formattedDate}`,
+      `Time: ${formattedTime}`,
+      `Reference: ${txn.reference}`,
+      masked
+        ? "Amounts are hidden on this receipt."
+        : `${isCredit ? "Amount credited" : "Amount debited"}: ${formatMoney(txn.amount, txn.currency)}${feeAmount > 0 ? ` (fee ${formatMoney(feeAmount, "GHS")}, total ${formatMoney(totalDebit, "GHS")})` : ""}`,
+    ];
+    return lines.join("\n");
+  };
+
+  // Save as PDF: the receipt on a clean page of its own, handed to the browser's print dialog ("Save as PDF").
+  const saveReceiptPdf = (masked: boolean) => {
+    const esc = (v: string) => v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const rows: [string, string][] = [
+      ["Status", transactionStatusLabel(state)],
+      ["Transaction type", getTransactionType(txn)],
+      [isCredit ? "From" : "To", txn.counterparty || txn.description],
+      ["Date", formattedDate],
+      ["Time", formattedTime],
+      ["Reference", txn.reference],
+      ...(masked
+        ? ([] as [string, string][])
+        : ([
+            ["Processing fee", feeAmount > 0 ? formatMoney(feeAmount, "GHS") : "GHS 0.00"],
+            [isCredit ? "Total credited" : "Total debited", formatMoney(totalDebit, "GHS")],
+          ] as [string, string][])),
+    ];
+    const amount = masked ? "Amount hidden" : `${isCredit ? "+" : "-"}${formatMoney(txn.amount, txn.currency)}`;
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>GCB-receipt-${esc(txn.reference)}</title>
+<style>
+  body { font-family: "Open Sans", Arial, sans-serif; color: #2e2e2e; margin: 48px auto; max-width: 520px; }
+  h1 { font-size: 15px; font-weight: 500; margin: 0 0 4px; }
+  .status { font-size: 12px; color: #6b6b6b; margin-bottom: 28px; }
+  .amount { font-size: 34px; margin: 0 0 28px; letter-spacing: -0.02em; }
+  .row { display: flex; justify-content: space-between; gap: 24px; padding: 11px 0; border-top: 1px dashed #cfcfcf; font-size: 13px; }
+  .row span:first-child { color: #6b6b6b; }
+  .note { margin-top: 24px; font-size: 11px; color: #8a8a8a; }
+</style></head><body>
+<h1>GCB Bank receipt</h1>
+<div class="status">${esc(methodLabel)}</div>
+<p class="amount">${esc(amount)}</p>
+${rows.map(([k, v]) => `<div class="row"><span>${esc(k)}</span><span>${esc(v)}</span></div>`).join("")}
+${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
+</body></html>`;
+    const frame = document.createElement("iframe");
+    frame.setAttribute("aria-hidden", "true");
+    frame.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;";
+    document.body.appendChild(frame);
+    const doc = frame.contentDocument;
+    if (!doc || !frame.contentWindow) {
+      frame.remove();
+      toast.error("Couldn’t prepare the PDF");
+      return;
+    }
+    doc.open();
+    doc.write(html);
+    doc.close();
+    const win = frame.contentWindow;
+    win.onafterprint = () => frame.remove();
+    // Give the page a beat to lay out before the print dialog opens.
+    setTimeout(() => win.print(), 150);
+  };
+
+  const shareReceipt = async (masked: boolean, format: ReceiptFormat) => {
+    if (format === "pdf") {
+      saveReceiptPdf(masked);
+      return;
+    }
+    const text = receiptText(masked);
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
-        await navigator.share({
-          title: `${methodLabel} - ${txn.reference}`,
-          text: `GCB Transaction ${txn.reference} for ${formatMoney(txn.amount, txn.currency)} to ${txn.counterparty || txn.description}.`,
-        });
+        await navigator.share({ title: `${methodLabel} - ${txn.reference}`, text });
         return;
       } catch {
-        // user cancelled or fallback
+        // cancelled, or not allowed: fall through to copying
       }
     }
-    // Fallback to clipboard
-    handleCopyReference();
-    setShareToast(true);
-    setTimeout(() => setShareToast(false), 2500);
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success(masked ? "Receipt copied with amounts hidden" : "Receipt copied", { description: "Paste it into any chat or email." });
+    } catch {
+      toast.error("Couldn’t copy the receipt");
+    }
   };
 
   const handleRepeat = () => {
@@ -155,212 +249,121 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
     );
   };
 
-  const handleDownload = () => {
-    if (typeof window !== "undefined") {
-      window.print();
-    }
-  };
-
   return (
     <div className="w-full flex flex-col gap-8">
       {/* Page Header with Back, Title, Status, and Action Controls */}
       <PageHeader
-        title={txn.counterparty || txn.description}
-        description={`${formattedDate} · ${formattedTime} · ${methodLabel}`}
-        badge={<TransactionStatusBadge state={state} />}
-        actions={
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={handleShare}
-              className="rounded-lg border-border/80"
-            >
-              {copied ? (
-                <Check size={14} className="text-success-text" />
-              ) : (
-                <Share size={14} strokeWidth={1.8} />
-              )}
-              Share
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleDownload}
-              className="rounded-lg border-border/80"
-            >
-              <ArrowDownToLine size={14} strokeWidth={1.8} />
-              Receipt
-            </Button>
-            {!isCredit && (
-              <Button
-                onClick={handleRepeat}
-                className="rounded-lg"
-              >
-                <RefreshCw size={14} strokeWidth={1.8} />
-                Repeat
-              </Button>
-            )}
-          </div>
-        }
+        title="Transaction Details"
         backTo={{ href: "/transactions", label: "Transactions" }}
       />
 
-      {/* Share Toast feedback */}
-      {shareToast && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full bg-foreground text-background px-4 py-2 text-[13px] shadow-lg animate-in fade-in slide-in-from-top-2">
-          Transaction reference copied to clipboard
-        </div>
-      )}
-
-      {/* Centered Receipt Container */}
-      <div className="mx-auto w-full max-w-3xl flex flex-col gap-8">
-        {/* Primary Financial Card */}
-        <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
-        {/* Amount & FX Summary */}
-        <div className="flex flex-col items-center justify-center text-center pb-6 border-b border-border">
-          <div className="flex items-center justify-center size-12 rounded-2xl bg-card border border-border/80 shadow-xs mb-3.5">
-            <GCBLogo className="h-6 w-auto" />
-          </div>
-
-          <span className="text-[12px] text-muted-foreground uppercase tracking-wider">
-            {isCredit ? "Amount Credited" : "Amount Debited"}
+      {/* Receipt: the amount first, what to do with it, then the details as a quiet list. No card around it. */}
+      <div className="mx-auto flex w-full max-w-xl flex-col gap-10">
+        <section className="flex flex-col items-center gap-2 pt-4 text-center">
+          <span className="text-[16px] font-medium text-foreground">{getTransactionType(txn)}</span>
+          <span
+            className={cn(
+              "tabular text-[34px] tracking-[-0.02em] sm:text-[42px]",
+              isCredit ? "text-success-text" : "text-foreground",
+            )}
+          >
+            {isCredit ? "+" : "-"}
+            {formatMoney(txn.amount, txn.currency, true)}
           </span>
-
-          <div className="mt-1 flex items-baseline justify-center gap-3 flex-wrap">
-            <span
-              className={cn(
-                "text-[34px] sm:text-[40px] tracking-[-0.03em] tabular-nums numorainput",
-                isCredit ? "text-success-text" : "text-foreground"
-              )}
-            >
-              {isCredit ? "+" : "-"}
-              {formatMoney(txn.amount, txn.currency, true)}
-            </span>
-          </div>
-
+          <span className="tabular text-[13px] text-muted-foreground">
+            {formatDate(txn.date)}, {formattedTime}
+          </span>
           {isForeign && (
-            <p className="mt-1 text-[13.5px] text-muted-foreground tabular-nums numorainput">
+            <p className="tabular text-[13px] text-muted-foreground">
               ≈ {formatMoney(txn.amount * exchangeRate, "GHS", true)} (1 {txn.currency} = {exchangeRate.toFixed(2)} GHS)
             </p>
           )}
+        </section>
+
+        {/* State-specific Recovery Affordances (Section 13.2) */}
+        <StateBand state={state} txn={txn} />
+
+        <section className="flex flex-col gap-2">
+          {/* Grouped: the payment itself, who it went from and to, what it was for, and the money. Dashed lines between groups. */}
+          <div className="flex flex-col divide-y divide-dashed divide-border">
+            {[
+              [
+                { label: "Status", value: <TransactionStatusBadge state={state} /> },
+                {
+                  label: "Reference",
+                  value: (
+                    <span className="flex items-center gap-2">
+                      <span>{txn.reference}</span>
+                      <SimpleTooltip content={copied ? "Copied" : "Copy reference"}>
+                        <button
+                          type="button"
+                          onClick={handleCopyReference}
+                          className="cursor-pointer rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                          aria-label="Copy reference"
+                        >
+                          {copied ? <Check size={13} className="text-success-text" /> : <Copy size={13} strokeWidth={1.8} />}
+                        </button>
+                      </SimpleTooltip>
+                    </span>
+                  ),
+                },
+              ],
+              [
+                {
+                  label: "From Account",
+                  value: fromAccount ? (
+                    <>
+                      {fromAccount.name}{" "}
+                      <span className="tabular text-muted-foreground">(•••{fromAccount.number.replace(/\s+/g, "").slice(-4)})</span>
+                    </>
+                  ) : (
+                    "Operating Account"
+                  ),
+                },
+                { label: isCredit ? "Sender" : "Recipient", value: txn.counterparty || txn.description },
+                ...(txn.counterpartyAccount ? [{ label: "Recipient Account", value: txn.counterpartyAccount }] : []),
+              ],
+              [
+                ...(txn.category ? [{ label: "Category", value: txn.category }] : []),
+                { label: "Narration", value: txn.description },
+              ],
+              [
+                { label: "Amount", value: formatMoney(txn.amount, txn.currency, true) },
+                { label: "Processing Fee", value: feeAmount > 0 ? formatMoney(feeAmount, "GHS", true) : "GHS 0.00" },
+                { label: isCredit ? "Total Credited" : "Total Debited", value: formatMoney(totalDebit, "GHS", true), strong: true },
+              ],
+            ].map((group, gi) => (
+              <dl key={gi} className="flex flex-col gap-3 py-5 first:pt-3 last:pb-0">
+                {group.map((row) => (
+                  <div key={row.label} className="flex items-baseline justify-between gap-6">
+                    <dt className="shrink-0 text-[13px] text-muted-foreground">{row.label}</dt>
+                    <dd className={cn("tabular min-w-0 text-right text-[14px] text-foreground", "strong" in row && row.strong && "text-[15px]")}>
+                      {row.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            ))}
+          </div>
+        </section>
+
+        {/* What to do with the receipt, beneath it: the shared round quick actions */}
+        <div className="flex flex-wrap justify-center gap-2">
+          <RoundAction icon={Share} label="Share" onClick={() => setShareFormat("text")} />
+          <RoundAction icon={FileDown} label="Save as PDF" onClick={() => setShareFormat("pdf")} />
+          {!isCredit && <RoundAction icon={RefreshCw} label="Repeat" onClick={handleRepeat} />}
         </div>
 
-        {/* Unified Transaction Details Grid */}
-        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5 pt-6">
-          <div>
-            <dt className="text-[12px] text-muted-foreground">Reference</dt>
-            <dd className="mt-1 flex items-center gap-2 text-[14px] text-foreground tabular-nums numorainput">
-              <span>{txn.reference}</span>
-              <SimpleTooltip content={copied ? "Copied" : "Copy reference"}>
-                <button
-                  type="button"
-                  onClick={handleCopyReference}
-                  className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted cursor-pointer"
-                  aria-label="Copy reference"
-                >
-                  {copied ? (
-                    <Check size={13} className="text-success-text" />
-                  ) : (
-                    <Copy size={13} strokeWidth={1.8} />
-                  )}
-                </button>
-              </SimpleTooltip>
-            </dd>
-          </div>
+      <ShareReceiptDialog format={shareFormat} onClose={() => setShareFormat(null)} onShare={shareReceipt} />
 
-          <div>
-            <dt className="text-[12px] text-muted-foreground">Date & Time</dt>
-            <dd className="mt-1 text-[14px] text-foreground tabular-nums numorainput">
-              {formattedDate} · {formattedTime}
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-[12px] text-muted-foreground">From Account</dt>
-            <dd className="mt-1 text-[14px] text-foreground">
-              {fromAccount ? (
-                <>
-                  {fromAccount.name}{" "}
-                  <span className="text-muted-foreground tabular-nums numorainput">
-                    (•••{fromAccount.number.replace(/\s+/g, "").slice(-4)})
-                  </span>
-                </>
-              ) : (
-                "Operating Account"
-              )}
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-[12px] text-muted-foreground">Recipient</dt>
-            <dd className="mt-1 text-[14px] text-foreground">
-              {txn.counterparty || txn.description}
-            </dd>
-          </div>
-
-          {txn.counterpartyAccount && (
-            <div>
-              <dt className="text-[12px] text-muted-foreground">Recipient Account</dt>
-              <dd className="mt-1 text-[14px] text-foreground tabular-nums numorainput">
-                {txn.counterpartyAccount}
-              </dd>
-            </div>
-          )}
-
-          <div>
-            <dt className="text-[12px] text-muted-foreground">Payment Channel</dt>
-            <dd className="mt-1 text-[14px] text-foreground">
-              {txn.channel || "Internet Banking"}
-            </dd>
-          </div>
-
-          {txn.category && (
-            <div>
-              <dt className="text-[12px] text-muted-foreground">Category</dt>
-              <dd className="mt-1 text-[14px] text-foreground">{txn.category}</dd>
-            </div>
-          )}
-
-          <div>
-            <dt className="text-[12px] text-muted-foreground">Narration</dt>
-            <dd className="mt-1 text-[14px] text-foreground">
-              {txn.description}
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-[12px] text-muted-foreground">Processing Fee</dt>
-            <dd className="mt-1 text-[14px] text-foreground tabular-nums numorainput">
-              {feeAmount > 0 ? formatMoney(feeAmount, "GHS", true) : "GHS 0.00"}
-            </dd>
-          </div>
-
-          <div>
-            <dt className="text-[12px] text-muted-foreground">
-              {isCredit ? "Total Credited" : "Total Debited"}
-            </dt>
-            <dd className="mt-1 text-[15px] text-foreground tabular-nums numorainput">
-              {formatMoney(totalDebit, "GHS", true)}
-            </dd>
-          </div>
-        </dl>
-      </div>
-
-      {/* State-specific Recovery Affordances (Section 13.2) */}
-      <StateBand state={state} txn={txn} />
-
-      {/* State Simulator Strip for testing Section 13.2 */}
-      <div className="pt-2 border-t border-border/40">
-        <p className="text-[11px] text-muted-foreground uppercase tracking-wider text-center mb-2">
-          State Simulator (Section 13.2)
-        </p>
-        <StateSwitcher
-          section="13.2"
-          states={ALL_STATES}
-          value={state}
-          onChange={setState}
-          labels={TRANSACTION_STATE_LABEL}
-        />
-      </div>
+      {/* Registers this screen's states in the Dev Mode menu; draws nothing. */}
+      <StateSwitcher
+        section="13.2"
+        states={ALL_STATES}
+        value={state}
+        onChange={setState}
+        labels={TRANSACTION_STATE_LABEL}
+      />
     </div>
   </div>
 );
