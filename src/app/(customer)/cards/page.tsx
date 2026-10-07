@@ -484,7 +484,7 @@ function CardsPageContent() {
 
           <DialogBody>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="c-name">Card name / nickname</Label>
+              <Label htmlFor="c-name">Card Name / Nickname</Label>
               <Input
                 id="c-name"
                 placeholder="e.g. AWS Subscription / Google Ads"
@@ -495,7 +495,7 @@ function CardsPageContent() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-2">
-                <Label>Card type</Label>
+                <Label>Card Type</Label>
                 <Select
                   value={cardType}
                   onValueChange={(val) =>
@@ -516,7 +516,7 @@ function CardsPageContent() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <Label>Network scheme</Label>
+                <Label>Network Scheme</Label>
                 <Select
                   value={cardScheme}
                   onValueChange={(val) =>
@@ -538,7 +538,7 @@ function CardsPageContent() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label>Linked account</Label>
+              <Label>Linked Account</Label>
               <Select
                 value={linkedAccId}
                 onValueChange={(val) => val && setLinkedAccId(val)}
@@ -560,7 +560,7 @@ function CardsPageContent() {
             {cardType === "Virtual" && (
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="c-limit">Monthly spend limit</Label>
+                  <Label htmlFor="c-limit">Monthly Spend Limit</Label>
                   <Input
                     id="c-limit"
                     value={spendLimit}
@@ -570,7 +570,7 @@ function CardsPageContent() {
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label>Usage mode</Label>
+                  <Label>Usage Mode</Label>
                   <Select
                     value={isSingleUse ? "single" : "recurring"}
                     onValueChange={(val) => setIsSingleUse(val === "single")}
@@ -593,7 +593,7 @@ function CardsPageContent() {
 
             {(cardType === "Prepaid" || cardType === "Virtual") && (
               <div className="flex flex-col gap-2">
-                <Label htmlFor="c-fund">Initial funding amount</Label>
+                <Label htmlFor="c-fund">Initial Funding Amount</Label>
                 <Input
                   id="c-fund"
                   value={initialFund}

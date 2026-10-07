@@ -137,7 +137,7 @@ export function MobileWalletFlow({
 
       {/* 2. Destination (Mobile Wallet) */}
       <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Beneficiary details</label>
+        <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
         {!isSelf && isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={isSelf ? `My ${state.wNetwork || REGISTERED_WALLET.network}` : (verifiedName || state.wName || `Wallet ${state.wPhone}`)}

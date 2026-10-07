@@ -149,7 +149,7 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="fullname" className="text-[13px] font-medium text-foreground">
-                  Full legal name
+                  Full Legal Name
                 </Label>
                 <Input
                   id="fullname"
@@ -162,7 +162,7 @@ export default function SettingsPage() {
 
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="email" className="text-[13px] font-medium text-foreground">
-                  Registered email
+                  Registered Email
                 </Label>
                 <Input
                   id="email"
@@ -176,7 +176,7 @@ export default function SettingsPage() {
 
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="phone" className="text-[13px] font-medium text-foreground">
-                  Primary mobile phone
+                  Primary Mobile Phone
                 </Label>
                 <PhoneInput
                   id="phone"
@@ -189,7 +189,7 @@ export default function SettingsPage() {
 
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="ghana-card" className="text-[13px] font-medium text-foreground flex items-center justify-between">
-                  <span>Ghana Card number (NIA)</span>
+                  <span>Ghana Card Number (NIA)</span>
                   <span className="text-[10.5px] text-success-text font-medium">Verified</span>
                 </Label>
                 <Input
@@ -203,7 +203,7 @@ export default function SettingsPage() {
 
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="address" className="text-[13px] font-medium text-foreground">
-                Residential / operating address
+                Residential / Operating Address
               </Label>
               <Input
                 id="address"
@@ -263,7 +263,7 @@ export default function SettingsPage() {
             <div className="flex flex-col gap-3.5 max-w-md">
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="curr-pass" className="text-[13px] font-medium text-foreground">
-                  Current password
+                  Current Password
                 </Label>
                 <Input
                   id="curr-pass"
@@ -276,7 +276,7 @@ export default function SettingsPage() {
 
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="new-pass" className="text-[13px] font-medium text-foreground">
-                  New password
+                  New Password
                 </Label>
                 <Input
                   id="new-pass"
@@ -289,7 +289,7 @@ export default function SettingsPage() {
 
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="conf-pass" className="text-[13px] font-medium text-foreground">
-                  Confirm new password
+                  Confirm New Password
                 </Label>
                 <Input
                   id="conf-pass"

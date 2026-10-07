@@ -58,7 +58,7 @@ export default function RejectionDialog({
           </p>
 
           <div className="flex flex-col gap-2 pt-1">
-            <Label htmlFor="reject-reason">Reason for rejection</Label>
+            <Label htmlFor="reject-reason">Reason for Rejection</Label>
             <Textarea
               id="reject-reason"
               value={reason}

@@ -128,7 +128,6 @@ const accounts: Entry[] = [
   ["≈ {0} (1 {1} = {2} GHS)", "≈ {0} (1 {1} = {2} GHS)", "≈ {0} (1 {1} = {2} GHS)", "≈ {0}（1 {1} = {2} GHS）"],
   ["Copied", "Copié", "Copiado", "已复制"],
   ["Copy reference", "Copier la référence", "Copiar referencia", "复制参考号"],
-  ["From Account", "Compte débité", "Cuenta de origen", "转出账户"],
   ["From account", "Compte débité", "Cuenta de origen", "转出账户"],
   ["Operating Account", "Compte d’exploitation", "Cuenta operativa", "运营账户"],
   ["Recipient Account", "Compte du bénéficiaire", "Cuenta del destinatario", "收款账户"],
@@ -408,6 +407,13 @@ const accounts: Entry[] = [
   ["Bulk Payment", "Paiement groupé", "Pago masivo", "批量付款"],
   ["Trade Payment", "Paiement commercial", "Pago comercial", "贸易付款"],
   ["Received", "Reçu", "Recibido", "已收到"],
+  ["Account Number", "Numéro de compte", "Número de cuenta", "账号"],
+  ["Addressed to (Optional)", "Destinataire (facultatif)", "Dirigida a (opcional)", "收件方（可选）"],
+  ["Counterparty or Beneficiary", "Contrepartie ou bénéficiaire", "Contraparte o beneficiario", "交易对方或收款人"],
+  ["From Account", "Compte débité", "Cuenta de origen", "转出账户"],
+  ["Maximum Amount", "Montant maximum", "Importe máximo", "最高金额"],
+  ["Minimum Amount", "Montant minimum", "Importe mínimo", "最低金额"],
+  ["Number of Booklets", "Nombre de chéquiers", "Número de talonarios", "支票簿数量"],
 ];
 
 export default accounts;

@@ -302,7 +302,7 @@ export function QuickFundFlow({
               ) : (
                 <div className="flex flex-col gap-3">
                   <div className="flex flex-col gap-1.5">
-                    <Label htmlFor="quickFundCard" className={FUND_LABEL}>Card number</Label>
+                    <Label htmlFor="quickFundCard" className={FUND_LABEL}>Card Number</Label>
                     <Input
                       id="quickFundCard"
                       placeholder="4000 1234 5678 9010"

@@ -706,7 +706,7 @@ export default function FigmaDesignFidelityDashboard() {
 
           <DialogBody>
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-foreground block">Recipient account / phone</label>
+              <label className="text-xs font-medium text-foreground block">Recipient Account / Phone</label>
               <input
                 type="text"
                 placeholder="e.g. 0244 123 456 or 4001 9922 1100"

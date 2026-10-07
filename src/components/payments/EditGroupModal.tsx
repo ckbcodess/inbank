@@ -328,7 +328,7 @@ export default function EditGroupModal({
               {/* Group Name */}
               <div className="flex flex-col gap-2">
                 <label className="text-[13px] font-medium text-foreground">
-                  Group name <span className="text-destructive">*</span>
+                  Group Name <span className="text-destructive">*</span>
                 </label>
                 <input
                   type="text"
@@ -368,7 +368,7 @@ export default function EditGroupModal({
             {/* Split Type & Amount Configuration */}
             <div className="flex flex-col gap-3 pt-2">
               <label className="text-[13px] font-medium text-foreground">
-                Contribution rule
+                Contribution Rule
               </label>
 
               {/* Segmented Pill Toggle: Equal / Custom */}

@@ -659,7 +659,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       ...(detail ? ([["Account", detail]] as Array<[string, string]>) : []),
       ["From", fromAccount?.name ?? ""],
       ["Frequency", frequencyText],
-      [f.frequency === "Once" ? "Payment date" : "First payment", formatDate(f.firstRun)],
+      [f.frequency === "Once" ? "Payment Date" : "First Payment", formatDate(f.firstRun)],
       ...(f.frequency === "Once" ? [] : ([["Ends", f.endCondition === "date" && f.endDate ? formatDate(f.endDate) : "Until cancelled"]] as Array<[string, string]>)),
       ...(rail === "bank" && !f.bank.includes("GCB") ? ([["Payment method", getPaymentMethodName(f.paymentMethod)]] as Array<[string, string]>) : []),
       ...(f.category ? ([["Category", f.category]] as Array<[string, string]>) : []),
@@ -786,7 +786,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
         {/* 3. Beneficiary Details Card */}
         <div className="flex flex-col gap-2">
-          <label className="text-[13px] font-medium text-foreground">Beneficiary details</label>
+          <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
 
           {isDestinationValid && detailsCollapsed ? (
             <CollapsedDetailsBadge
@@ -1018,7 +1018,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                 <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
                   <div className="flex flex-col gap-2">
                     <label htmlFor="so-short-name" className="text-[13px] font-medium text-foreground">
-                      Short name
+                      Short Name
                     </label>
                     <input
                       id="so-short-name"
@@ -1080,7 +1080,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   <div className={cn("grid grid-cols-1 gap-3.5", f.frequency !== "Once" && "sm:grid-cols-2")}>
                     <div className="flex flex-col gap-2">
                       <label htmlFor="so-first-run" className="text-[13px] font-medium text-foreground">
-                        {f.frequency === "Once" ? "Payment date" : "First payment"}
+                        {f.frequency === "Once" ? "Payment Date" : "First Payment"}
                       </label>
                       <input
                         id="so-first-run"
@@ -1118,7 +1118,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   {f.frequency !== "Once" && f.endCondition === "date" && (
                     <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-150">
                       <label htmlFor="so-end-date" className="text-[13px] font-medium text-foreground">
-                        Last payment
+                        Last Payment
                       </label>
                       <input
                         id="so-end-date"

@@ -303,7 +303,7 @@ export default function CreateGroupFlow({
           {/* Group Name * */}
           <div className="flex flex-col gap-2">
             <label className="text-[13px] font-medium text-foreground">
-              Group name <span className="text-destructive">*</span>
+              Group Name <span className="text-destructive">*</span>
             </label>
             <input
               ref={nameInputRef}
@@ -316,7 +316,7 @@ export default function CreateGroupFlow({
             />
           </div>
 
-          {/* Description (optional) */}
+          {/* Description (Optional) */}
           <div className="flex flex-col gap-2">
             <label className="text-[13px] font-medium text-foreground">
               Description <span className="text-muted-foreground font-normal">(optional)</span>
@@ -549,14 +549,14 @@ export default function CreateGroupFlow({
             <AmountInput
               value={defaultAmount}
               onChange={setDefaultAmount}
-              label="Amount per person"
+              label="Amount per Person"
               currency="GHS"
             />
           ) : (
             /* Custom Amounts List */
             <div className="flex flex-col gap-3">
               <label className="text-[13px] font-medium text-foreground">
-                Individual contribution amounts
+                Individual Contribution Amounts
               </label>
               <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/50 max-h-[320px] overflow-y-auto">
                 {members.map((member) => (

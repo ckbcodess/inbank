@@ -94,7 +94,7 @@ export default function ProxyIdModal({
         <DialogBody>
           {/* Proxy type */}
           <div className="flex flex-col gap-1.5">
-            <label className={labelCls}>Proxy type</label>
+            <label className={labelCls}>Proxy Type</label>
             <Select value={type} onValueChange={(v) => setType(v as ProxyType)}>
               <SelectTrigger className={selectCls}>
                 <SelectValue />
@@ -109,7 +109,7 @@ export default function ProxyIdModal({
           {/* Value */}
           <div className="flex flex-col gap-1.5">
             <label className={labelCls}>
-              {type === "phone" ? "Phone number" : "Ghana Card number"}
+              {type === "phone" ? "Phone Number" : "Ghana Card Number"}
             </label>
             {type === "phone" ? (
               <PhoneInput
@@ -133,7 +133,7 @@ export default function ProxyIdModal({
 
           {/* Linked account */}
           <div className="flex flex-col gap-1.5">
-            <label className={labelCls}>Receives into</label>
+            <label className={labelCls}>Receives Into</label>
             <Select value={linkedAccountId} onValueChange={(v) => v && setLinkedAccountId(v)}>
               <SelectTrigger className={selectCls}>
                 <SelectValue placeholder="Select an account" />

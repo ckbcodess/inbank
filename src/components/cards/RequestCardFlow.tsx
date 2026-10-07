@@ -513,13 +513,13 @@ export function RequestCardFlow() {
               accounts={availableAccounts}
               value={selectedAccountId}
               onChange={setSelectedAccountId}
-              label="Source account"
+              label="Source Account"
             />
 
             {/* Card Nickname - Universal for all card types */}
             <div className="flex flex-col gap-2">
               <label htmlFor="card-name-input" className="text-[13px] font-medium text-foreground">
-                Card nickname
+                Card Nickname
               </label>
               <input
                 id="card-name-input"
@@ -540,7 +540,7 @@ export function RequestCardFlow() {
                     value={fundAmount}
                     onChange={setFundAmount}
                     currency={currency}
-                    label="Initial funding amount"
+                    label="Initial Funding Amount"
                   />
                 ) : (
                   <div className="flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-muted/30 px-4 py-3.5">
@@ -566,7 +566,7 @@ export function RequestCardFlow() {
                 {/* Card network: Visa, Mastercard, GH-Link, UnionPay */}
                 <div className="flex flex-col gap-2">
                   <label className="text-[13px] font-medium text-foreground">
-                    Card network
+                    Card Network
                   </label>
                   <Select
                     value={cardScheme}
@@ -596,7 +596,7 @@ export function RequestCardFlow() {
                 {/* Network Type Selector - Always visible on entry of the page */}
                 <div className="flex flex-col gap-2">
                   <label className="text-[13px] font-medium text-foreground">
-                    Network type
+                    Network Type
                   </label>
                   <Select
                     value={networkType}
@@ -642,7 +642,7 @@ export function RequestCardFlow() {
                         value={fundAmount}
                         onChange={setFundAmount}
                         currency={currency}
-                        label="Initial funding amount"
+                        label="Initial Funding Amount"
                       />
                     )}
                     {cardType === "Prepaid" && !needsFunding && (

@@ -482,14 +482,14 @@ export default function LinkSourceAccountModal({
                       accounts={fundableAccounts.filter((a) => a.id !== destinationAccount?.id)}
                       value={selectedSourceAccount?.id ?? ""}
                       onChange={setSelectedSourceAccountId}
-                      label="From account"
+                      label="From Account"
                     />
 
                     <FromAccountSelector
                       accounts={fundableAccounts.filter((a) => a.id !== selectedSourceAccount?.id)}
                       value={destinationAccount?.id ?? ""}
                       onChange={setDestinationId}
-                      label="To account"
+                      label="To Account"
                       placeholder="Select destination account"
                     />
 
@@ -580,7 +580,7 @@ export default function LinkSourceAccountModal({
                 {/* List of Saved Methods */}
                 <div className="flex flex-col gap-2.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Payment method
+                    Payment Method
                   </label>
                   <div className="flex flex-col gap-2">
                     {linkedSources.map((source) => {
@@ -635,7 +635,7 @@ export default function LinkSourceAccountModal({
                   accounts={fundableAccounts}
                   value={destinationAccount?.id ?? ""}
                   onChange={setDestinationId}
-                  label="To account"
+                  label="To Account"
                   placeholder="Select destination account"
                 />
 
@@ -718,7 +718,7 @@ export default function LinkSourceAccountModal({
               <form id={`${modalId}-momo-form`} onSubmit={handleAddNewMomo} className="flex flex-col gap-5">
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor={`${modalId}-momoNum`} className="text-[13px] font-medium text-foreground">
-                    Mobile number
+                    Mobile Number
                   </label>
                   <PhoneInput
                     id={`${modalId}-momoNum`}
@@ -731,7 +731,7 @@ export default function LinkSourceAccountModal({
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Network operator
+                    Network Operator
                   </label>
                   <OperatorSelect value={newMomoOperator} onChange={setNewMomoOperator} />
                 </div>
@@ -800,7 +800,7 @@ export default function LinkSourceAccountModal({
               <form id={`${modalId}-card-form`} onSubmit={handleAddNewCard} className="flex flex-col gap-5">
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor={`${modalId}-cardNum`} className="text-[13px] font-medium text-foreground">
-                    Card number
+                    Card Number
                   </label>
                   <input
                     id={`${modalId}-cardNum`}
@@ -822,7 +822,7 @@ export default function LinkSourceAccountModal({
                 <div className="grid grid-cols-2 gap-3">
                   <div className="flex flex-col gap-1.5">
                     <label htmlFor={`${modalId}-cardExp`} className="text-[13px] font-medium text-foreground">
-                      Expiry date
+                      Expiry Date
                     </label>
                     <input
                       id={`${modalId}-cardExp`}

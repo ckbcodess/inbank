@@ -226,7 +226,7 @@ export default function BusinessSignupPage() {
           <form onSubmit={handleCompanySubmit} className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
               <Label htmlFor="companyName" className="text-[13px] font-medium text-foreground">
-                Registered business name
+                Registered Business Name
               </Label>
               <Input
                 id="companyName"
@@ -240,7 +240,7 @@ export default function BusinessSignupPage() {
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="tin" className="text-[13px] font-medium text-foreground">
-                Taxpayer identification number (TIN)
+                Taxpayer Identification Number (TIN)
               </Label>
               <Input
                 id="tin"
@@ -254,7 +254,7 @@ export default function BusinessSignupPage() {
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="businessType" className="text-[13px] font-medium text-foreground">
-                Business type
+                Business Type
               </Label>
               <Select
                 value={company.businessType}
@@ -326,7 +326,7 @@ export default function BusinessSignupPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="contactName" className="text-[13px] font-medium text-foreground">
-                  Full name
+                  Full Name
                 </Label>
                 <Input
                   id="contactName"
@@ -338,7 +338,7 @@ export default function BusinessSignupPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <Label htmlFor="contactRole" className="text-[13px] font-medium text-foreground">
-                  Your role
+                  Your Role
                 </Label>
                 <Select value={contact.role} onValueChange={(v) => v && setContact((c) => ({ ...c, role: v }))}>
                   <SelectTrigger id="contactRole" className="h-11 w-full text-[15px]">
@@ -357,7 +357,7 @@ export default function BusinessSignupPage() {
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="contactGhanaCard" className="text-[13px] font-medium text-foreground">
-                Ghana Card number
+                Ghana Card Number
               </Label>
               <Input
                 id="contactGhanaCard"
@@ -372,7 +372,7 @@ export default function BusinessSignupPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="contactMobile" className="text-[13px] font-medium text-foreground">
-                  Mobile number
+                  Mobile Number
                 </Label>
                 <PhoneInput
                   id="contactMobile"

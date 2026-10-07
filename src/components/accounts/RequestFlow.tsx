@@ -357,7 +357,7 @@ export default function RequestFlow({ account }: { account: Account }) {
 
           {kind === "cheque-book" && (
             <>
-            <Field label="Booklet size">
+            <Field label="Booklet Size">
               <FlowSelect
                 value={leaves}
                 onChange={(v) => setLeaves(v as typeof leaves)}
@@ -371,7 +371,7 @@ export default function RequestFlow({ account }: { account: Account }) {
               />
             </Field>
             {leaves && (
-              <Field label="Number of booklets">
+              <Field label="Number of Booklets">
                 <Stepper value={booklets} min={1} max={MAX_BOOKLETS} onChange={setBooklets} label="booklets" />
               </Field>
             )}
@@ -397,7 +397,7 @@ export default function RequestFlow({ account }: { account: Account }) {
                 />
               </Field>
               {purpose && (
-                <Field label="Addressed to (optional)" htmlFor="addressee">
+                <Field label="Addressed to (Optional)" htmlFor="addressee">
                   <input
                     id="addressee"
                     value={addressee}

@@ -1348,7 +1348,7 @@ export function VirtualCardDetailsView({
 
               {/* Source Account */}
               <div className="space-y-1.5">
-                <label className="text-[13px] font-medium text-foreground">Fund from account</label>
+                <label className="text-[13px] font-medium text-foreground">Fund From Account</label>
                 <select
                   value={topUpSourceAccountId}
                   onChange={(e) => setTopUpSourceAccountId(e.target.value)}
@@ -1364,7 +1364,7 @@ export function VirtualCardDetailsView({
 
               {/* Top Up Amount */}
               <div className="space-y-1.5">
-                <label className="text-[13px] font-medium text-foreground">Top up amount (GHS)</label>
+                <label className="text-[13px] font-medium text-foreground">Top Up Amount (GHS)</label>
                 <Input
                   type="number"
                   min="1"
@@ -1490,7 +1490,7 @@ export function VirtualCardDetailsView({
             <DialogBody>
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="daily-limit-input" className="text-[13px] font-medium text-foreground">
-                  Daily limit (GHS)
+                  Daily Limit (GHS)
                 </label>
                 <Input
                   id="daily-limit-input"
@@ -1631,12 +1631,12 @@ export function VirtualCardDetailsView({
 
           <DialogBody>
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="new-pin-input" className="text-[13px] font-medium text-foreground">New 4-digit PIN</label>
+              <label htmlFor="new-pin-input" className="text-[13px] font-medium text-foreground">New 4-Digit PIN</label>
               <Input id="new-pin-input" type="password" maxLength={4} placeholder="••••" className="h-10 tracking-widest text-[16px]" />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="confirm-pin-input" className="text-[13px] font-medium text-foreground">Confirm new PIN</label>
+              <label htmlFor="confirm-pin-input" className="text-[13px] font-medium text-foreground">Confirm New PIN</label>
               <Input id="confirm-pin-input" type="password" maxLength={4} placeholder="••••" className="h-10 tracking-widest text-[16px]" />
             </div>
           </DialogBody>
@@ -1667,7 +1667,7 @@ export function VirtualCardDetailsView({
           <form onSubmit={handleSaveNickname}>
             <DialogBody>
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="card-nickname-input" className="text-[13px] font-medium text-foreground">Card nickname</label>
+                <label htmlFor="card-nickname-input" className="text-[13px] font-medium text-foreground">Card Nickname</label>
                 <Input
                   id="card-nickname-input"
                   value={tempNickname}
@@ -1734,7 +1734,7 @@ export function VirtualCardDetailsView({
               {/* CVV Input */}
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="card-cvv-input" className="text-[13px] font-medium text-foreground">
-                  3-digit CVV security code
+                  3-Digit CVV Security Code
                 </label>
                 <Input
                   id="card-cvv-input"
@@ -1755,7 +1755,7 @@ export function VirtualCardDetailsView({
               <div className="grid grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="card-pin-input" className="text-[13px] font-medium text-foreground">
-                    Set 4-digit card PIN
+                    Set 4-Digit Card PIN
                   </label>
                   <Input
                     id="card-pin-input"
@@ -1770,7 +1770,7 @@ export function VirtualCardDetailsView({
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label htmlFor="card-pin-confirm-input" className="text-[13px] font-medium text-foreground">
-                    Confirm 4-digit PIN
+                    Confirm 4-Digit PIN
                   </label>
                   <Input
                     id="card-pin-confirm-input"

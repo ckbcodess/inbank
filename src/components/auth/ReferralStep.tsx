@@ -85,7 +85,7 @@ export default function ReferralStep({
         {entering && (
           <div className="flex flex-col items-center gap-3 w-full max-w-[240px] animate-in fade-in-0 zoom-in-95 duration-200">
             <Label htmlFor="referral-code" className="sr-only">
-              Branch code
+              Branch Code
             </Label>
             <Input
               id="referral-code"

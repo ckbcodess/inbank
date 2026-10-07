@@ -174,7 +174,7 @@ export function PapssPaymentFlow({
 
       {/* 2. Recipient & Destination Details */}
       <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">PAPSS beneficiary details</label>
+        <label className="text-[13px] font-medium text-foreground">PAPSS Beneficiary Details</label>
         {isDestinationValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || `PAPSS Account (${state.wIban})`}
@@ -252,7 +252,7 @@ export function PapssPaymentFlow({
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount Section: You Send (GHS) vs Recipient Gets (Foreign) with switcher */}
           <div className="flex flex-col gap-2">
-            <label className="text-[13px] font-medium text-foreground">Transfer amount</label>
+            <label className="text-[13px] font-medium text-foreground">Transfer Amount</label>
 
             <DualAmountFields
               foreign={state.wForeign}
@@ -287,7 +287,7 @@ export function PapssPaymentFlow({
           <NarrationInput
             value={state.wPurpose}
             onChange={(val) => onChange("wPurpose", val)}
-            label="Purpose of payment"
+            label="Purpose of Payment"
             placeholder="e.g. Trade settlement, family remittance"
           />
 

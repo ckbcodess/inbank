@@ -640,7 +640,7 @@ export function DualAmountFields({
           onChange({ ghs: val, foreign: recipientGets });
         }}
         currency={sendCurrency}
-        label="You send"
+        label="You Send"
         onFocus={onFocus}
         hasError={hasError}
       />
@@ -655,7 +655,7 @@ export function DualAmountFields({
         value={foreign}
         onChange={(val) => onChange({ foreign: val, ghs: "" })}
         currency={foreignCurrency}
-        label="Recipient gets"
+        label="Recipient Gets"
         onFocus={onFocus}
         hasError={hasError}
       />
@@ -684,7 +684,7 @@ export function AmountInput({
   onChange,
   onFocus,
   currency = "GHS",
-  label = "Enter amount",
+  label = "Enter Amount",
   error,
   hasError,
   disabled,
@@ -1272,7 +1272,7 @@ export function SchedulePaymentSection({
         <div className="flex flex-col gap-3 pt-2 border-t border-border/60 animate-in fade-in slide-in-from-top-1 duration-150">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-foreground">Execution date</label>
+              <label className="text-[13px] font-medium text-foreground">Execution Date</label>
               <input
                 type="date"
                 value={state.startDate}
@@ -1315,7 +1315,7 @@ export function NetworkSelect({
   value,
   onChange,
   options,
-  placeholder = "Select Network",
+  placeholder = "Select network",
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -1382,7 +1382,7 @@ export function BankSelect({
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
       <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
-        <SelectValue placeholder="Select Bank" />
+        <SelectValue placeholder="Select bank" />
       </SelectTrigger>
       <SelectContent>
         {options.map((b) => (

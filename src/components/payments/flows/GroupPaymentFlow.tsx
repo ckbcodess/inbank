@@ -83,7 +83,7 @@ export function GroupPaymentFlow({
 
       {/* 2. Destination Group */}
       <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Contribution group</label>
+        <label className="text-[13px] font-medium text-foreground">Contribution Group</label>
 
         {selectedGroup && isCollapsed ? (
           <CollapsedDetailsBadge

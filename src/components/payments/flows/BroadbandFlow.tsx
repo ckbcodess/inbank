@@ -104,7 +104,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
 
       {/* 2. Provider, then the broadband account at that provider */}
       <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Broadband provider</label>
+        <label className="text-[13px] font-medium text-foreground">Broadband Provider</label>
         {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName}
@@ -132,7 +132,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
             {provider && (
               <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
                 <label className="text-[13px] font-medium text-foreground" htmlFor="broadband-account">
-                  Broadband number
+                  Broadband Number
                 </label>
                 <input
                   id="broadband-account"

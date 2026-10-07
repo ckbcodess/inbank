@@ -3,15 +3,17 @@
 /**
  * Transaction authorisation, in one place for every flow that moves money (Send & Pay, standing orders, Add Money,
  * card requests). There is no transaction PIN: every transaction is approved with a 6-digit one-time code sent by
- * SMS, or read off the phone with a shortcode (see `OtpHelp`).
+ * SMS, or read off the phone with a shortcode (see `OtpHelp`). The code never approves on its own: it waits for a
+ * tap on Confirm (or Enter), as a payment is not recoverable.
 
  */
 
 import { AlertToast } from "@/components/ui/alert-toast";
 import { InlineError } from "@/components/ui/inline-error";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 import { Smartphone } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import OtpInput from "@/components/auth/OtpInput";
 import { useAuthorisation, REGISTERED_PHONE } from "./useAuthorisation";
 import { OtpHelp } from "./OtpHelp";
@@ -32,7 +34,8 @@ export default function TransactionOtpModal({
   phone = REGISTERED_PHONE,
 }: TransactionOtpModalProps) {
   const auth = useAuthorisation();
-  const [, setSubmitting] = useState(false);
+  const formId = useId();
+  const [submitting, setSubmitting] = useState(false);
 
   // A fresh code every time the modal opens.
   useEffect(() => {
@@ -43,9 +46,10 @@ export default function TransactionOtpModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  // Goes through as soon as the last digit lands. CONSTITUTION §2 says a payment code should wait for a tap: see WORKING_LOG.
-  const handleOtpComplete = (code?: string | string[]) => {
-    const raw = Array.isArray(code) ? code.join("") : code || auth.otp.join("");
+  const handleConfirm = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!auth.complete || submitting) return;
+    const raw = auth.otp.join("");
     if (raw === "000000") {
       auth.verify(raw);
       return;
@@ -65,7 +69,7 @@ export default function TransactionOtpModal({
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col items-center justify-center px-6 py-10 text-center sm:py-12">
+        <form id={formId} onSubmit={handleConfirm} className="flex flex-col items-center justify-center px-6 py-10 text-center sm:py-12">
           <div className="flex size-12 items-center justify-center rounded-full bg-muted text-foreground">
             <Smartphone size={22} strokeWidth={1.9} />
           </div>
@@ -85,7 +89,6 @@ export default function TransactionOtpModal({
               mask={false}
               invalid={auth.state === "error"}
               autoFocus={true}
-              onComplete={handleOtpComplete}
             />
           </div>
 
@@ -96,7 +99,16 @@ export default function TransactionOtpModal({
           <div className="mt-7 w-full">
             <OtpHelp resend={auth.resend} onResend={auth.requestResend} />
           </div>
-        </div>
+        </form>
+
+        <DialogFooter>
+          <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button type="submit" form={formId} disabled={!auth.complete} loading={submitting}>
+            Confirm
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

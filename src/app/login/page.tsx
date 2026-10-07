@@ -115,7 +115,7 @@ function LoginForm() {
           {/* Mobile number */}
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="mobile" className={LABEL}>
-              Mobile number
+              Mobile Number
             </Label>
             <PhoneInput
               id="mobile"

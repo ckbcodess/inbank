@@ -85,7 +85,6 @@ const beneficiaries: Entry[] = [
   ["Add Biller", "Ajouter un fournisseur", "Añadir proveedor", "添加账单方"],
   ["Add Beneficiary", "Ajouter un bénéficiaire", "Añadir beneficiario", "添加收款人"],
   ["Payment rail", "Canal de paiement", "Canal de pago", "付款渠道"],
-  ["Network Provider", "Opérateur", "Operador", "运营商"],
   ["Network provider", "Opérateur", "Operador", "运营商"],
   ["Select network", "Choisissez le réseau", "Selecciona la red", "选择网络"],
   ["Destination bank", "Banque destinataire", "Banco de destino", "收款银行"],
@@ -132,6 +131,15 @@ const beneficiaries: Entry[] = [
   ["4G LTE Wireless router", "Routeur sans fil 4G LTE", "Router inalámbrico 4G LTE", "4G LTE 无线路由器"],
   ["Domestic Tax Assessment", "Avis d’imposition", "Liquidación de impuestos", "国内税评估"],
   ["Welfare Fund", "Fonds de solidarité", "Fondo de bienestar", "福利基金"],
+  ["Bill / Service Provider", "Facture / Fournisseur", "Factura / Proveedor", "账单/服务商"],
+  ["Destination Bank", "Banque destinataire", "Banco de destino", "收款银行"],
+  ["Destination Country", "Pays de destination", "País de destino", "目的国家"],
+  ["IBAN / Account Number", "IBAN / Numéro de compte", "IBAN / Número de cuenta", "IBAN/账号"],
+  ["Network Provider", "Opérateur", "Operador", "运营商"],
+  ["Nickname / Note", "Surnom / note", "Alias / nota", "昵称/备注"],
+  ["Payment Rail", "Canal de paiement", "Canal de pago", "付款渠道"],
+  ["Proxy Identifier", "Identifiant proxy", "Alias", "代理 ID"],
+  ["Recipient Physical Address", "Adresse du bénéficiaire", "Dirección del destinatario", "收款人地址"],
 ];
 
 export default beneficiaries;

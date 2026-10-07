@@ -182,7 +182,7 @@ export function ScanAndPayFlow({
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor="merchant-id" className="text-[13px] text-foreground">
-                    Merchant terminal / PayCode ID
+                    Merchant Terminal / PayCode ID
                   </Label>
                   <div className="flex gap-2">
                     <Input

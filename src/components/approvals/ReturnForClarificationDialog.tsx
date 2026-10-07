@@ -89,7 +89,7 @@ export default function ReturnForClarificationDialog({
 
             {/* Document-level flagging — has no equivalent in rejection */}
             <div className="flex flex-col gap-2">
-              <Label>Flag specific documents (optional)</Label>
+              <Label>Flag Specific Documents (Optional)</Label>
               <div className="flex flex-col gap-1.5 rounded-xl border border-border p-3">
                 {TRADE_DOCUMENTS.map((doc) => (
                   <label

@@ -168,7 +168,9 @@ const admin: Entry[] = [
   ["Verification code", "Code de vérification", "Código de verificación", "验证码"],
   ["Suspend", "Suspendre", "Suspender", "暂停"],
   ["Deactivate", "Désactiver", "Desactivar", "停用"],
-  ["Why is this {0} being applied?", "Pourquoi appliquer cette mesure ({0}) ?", "¿Por qué se aplica esta medida ({0})?", "为何执行{0}？"],
+  ["Why is this {0} being applied?", "Pourquoi appliquer cette mesure ({0}) ?", "¿Por qué se aplica esta medida ({0})?", "为何执行{0}？"],
+  ["Reason (Required)", "Motif (obligatoire)", "Motivo (obligatorio)", "原因（必填）"],
+  ["Verification Code", "Code de vérification", "Código de verificación", "验证码"],
 ];
 
 export default admin;

@@ -494,7 +494,16 @@ const onboarding: Entry[] = [
   ["New customer · start with Card", "Nouveau client · commencer avec une carte", "Nuevo cliente · empezar con tarjeta", "新客户 · 从银行卡开始"],
   ["Registers with Ghana Card, then links a bank card as the funding source.", "S’inscrit avec la carte Ghana, puis associe une carte bancaire comme source de fonds.", "Se registra con la Ghana Card y luego vincula una tarjeta bancaria como fuente de fondos.", "使用加纳身份证注册，然后关联银行卡作为资金来源。"],
   ["Same entry as Wallet today — a dedicated Card path arrives in Pass 2.", "Même entrée que le portefeuille pour l’instant — un parcours carte dédié arrive en phase 2.", "Por ahora la misma entrada que la billetera; en la fase 2 llega un recorrido propio para tarjeta.", "目前与钱包入口相同——第二阶段将推出专属银行卡流程。"],
-  ["The 4-digit PIN authorises payments. This finishes registration and lands on linking a card.", "Le code à 4 chiffres autorise les paiements. L’inscription est terminée et vous passez à l’association d’une carte.", "El PIN de 4 dígitos autoriza los pagos. Con esto terminas el registro y pasas a vincular una tarjeta.", "4 位交易密码用于授权付款。完成注册后将进入关联银行卡。"],
+  ["The 4-digit PIN authorises payments. This finishes registration and lands on linking a card.", "Le code à 4 chiffres autorise les paiements. L’inscription est terminée et vous passez à l’association d’une carte.", "El PIN de 4 dígitos autoriza los pagos. Con esto terminas el registro y pasas a vincular una tarjeta.", "4 位交易密码用于授权付款。完成注册后将进入关联银行卡。"],
+  ["Business Type", "Type d’entreprise", "Tipo de empresa", "企业类型"],
+  ["Confirm New Password", "Confirmez le nouveau mot de passe", "Confirmar nueva contraseña", "确认新密码"],
+  ["Full Name", "Nom complet", "Nombre completo", "全名"],
+  ["Ghana Card Number", "Numéro de carte Ghana", "Número de Ghana Card", "加纳身份证号"],
+  ["Mobile Number", "Numéro de mobile", "Número de móvil", "手机号码"],
+  ["New Password", "Nouveau mot de passe", "Nueva contraseña", "新密码"],
+  ["Registered Business Name", "Raison sociale", "Razón social", "注册企业名称"],
+  ["Taxpayer Identification Number (TIN)", "Numéro d’identification fiscale (TIN)", "Número de identificación fiscal (TIN)", "纳税人识别号（TIN）"],
+  ["Your Role", "Votre fonction", "Tu cargo", "您的职务"],
 ];
 
 export default onboarding;

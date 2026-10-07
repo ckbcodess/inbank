@@ -138,7 +138,7 @@ export function BillsPaymentFlow({
 
       {/* 2. Biller & Reference / Account */}
       <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Beneficiary details</label>
+        <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
         {isDestinationValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={
@@ -208,7 +208,7 @@ export function BillsPaymentFlow({
                   onValueChange={(val) => val && onChange("billerId", val)}
                 >
                   <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
-                    <SelectValue placeholder="Select Biller" />
+                    <SelectValue placeholder="Select biller" />
                   </SelectTrigger>
                   <SelectContent>
                     {filteredBillers.map((b) => (

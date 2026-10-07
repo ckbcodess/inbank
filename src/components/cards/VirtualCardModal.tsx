@@ -222,7 +222,7 @@ export function VirtualCardView({
       {/* Card Details Key-Value List */}
       <div className="mt-5 space-y-3.5 text-[13.5px]">
         <div className="flex items-center justify-between">
-          <span className="text-slate-500 dark:text-slate-400 font-normal">Card Number</span>
+          <span className="text-slate-500 dark:text-slate-400 font-normal">Card number</span>
           <span className="font-medium text-slate-900 dark:text-slate-100 tabular tracking-wide">
             {unhidden
               ? activeCard.fullNumber ?? `4532 8901 2345 ${activeCard.maskedNumber?.slice(-4) ?? "1234"}`
@@ -256,7 +256,7 @@ export function VirtualCardView({
       {adjustingLimit && (
         <div className="mt-4 flex flex-col gap-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-3.5">
           <label htmlFor="card-view-limit-input" className="text-[13px] font-medium text-foreground">
-            New monthly limit ({activeCard.currency ?? "USD"})
+            New Monthly Limit ({activeCard.currency ?? "USD"})
           </label>
           <div className="flex items-center gap-2">
             <Input

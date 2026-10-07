@@ -260,7 +260,14 @@ const services: Entry[] = [
   ["Mask Balances", "Masquer les soldes", "Ocultar saldos", "隐藏余额"],
   ["Show Balances", "Afficher les soldes", "Mostrar saldos", "显示余额"],
   ["Preferences updated", "Préférences mises à jour", "Preferencias actualizadas", "偏好已更新"],
-  ["Save Preferences", "Enregistrer les préférences", "Guardar preferencias", "保存偏好"],
+  ["Save Preferences", "Enregistrer les préférences", "Guardar preferencias", "保存偏好"],
+  ["Booklet Size", "Taille du chéquier", "Tamaño del talonario", "支票簿页数"],
+  ["Current Password", "Mot de passe actuel", "Contraseña actual", "当前密码"],
+  ["Full Legal Name", "Nom légal complet", "Nombre legal completo", "法定全名"],
+  ["Ghana Card Number (NIA)", "Numéro de carte Ghana (NIA)", "Número de Ghana Card (NIA)", "加纳身份证号（NIA）"],
+  ["Pickup Branch", "Agence de retrait", "Sucursal de recogida", "领取网点"],
+  ["Primary Mobile Phone", "Mobile principal", "Móvil principal", "主要手机号"],
+  ["Residential / Operating Address", "Adresse de résidence / d’activité", "Dirección de residencia / actividad", "居住/经营地址"],
 ];
 
 export default services;

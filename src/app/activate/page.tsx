@@ -401,7 +401,7 @@ function ActivateContent() {
           {/* Card Input Field */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="ghana-card" className="text-[13px] font-medium text-foreground">
-              Ghana Card number
+              Ghana Card Number
             </Label>
             <Input
               id="ghana-card"
@@ -485,7 +485,7 @@ function ActivateContent() {
           {isMultiAccount && (
             <div className="space-y-2">
               <label htmlFor="primary-account-select" className="text-[13px] font-medium text-foreground px-0.5">
-                Default account
+                Default Account
               </label>
 
               <div data-tour="activate-account-picker">

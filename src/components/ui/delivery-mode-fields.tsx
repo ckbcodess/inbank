@@ -44,7 +44,7 @@ export function DeliveryModeFields({
   return (
     <>
       <label className="text-[13px] font-medium text-foreground">
-        Mode of delivery
+        Mode of Delivery
       </label>
 
       <div className="grid grid-cols-2 gap-3">
@@ -112,7 +112,7 @@ export function DeliveryModeFields({
           <div key="branch" className="animate-in fade-in">
           <div className="flex flex-col gap-2 pt-1">
             <label className="text-[13px] font-medium text-foreground">
-              Pickup branch
+              Pickup Branch
             </label>
             <BranchCombobox
               value={value.branch}
@@ -127,7 +127,7 @@ export function DeliveryModeFields({
           <div className="flex flex-col gap-3.5 pt-1">
             <div className="flex flex-col gap-2">
               <label className="text-[13px] font-medium text-foreground">
-                Recipient name
+                Recipient Name
               </label>
               <input
                 type="text"
@@ -139,7 +139,7 @@ export function DeliveryModeFields({
             </div>
             <div className="flex flex-col gap-2">
               <label className="text-[13px] font-medium text-foreground">
-                Delivery address
+                Delivery Address
               </label>
               <input
                 type="text"

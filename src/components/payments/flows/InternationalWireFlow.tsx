@@ -289,7 +289,7 @@ export function InternationalWireFlow({
                 />
               </Field>
 
-              <Field label="Mode of delivery">
+              <Field label="Mode of Delivery">
                 <Select
                   value={state.wMode}
                   onValueChange={(val) => {
@@ -333,7 +333,7 @@ export function InternationalWireFlow({
 
           {codeOk && currentCountry && (
             <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-              <label className="text-[13px] font-medium text-foreground">Beneficiary bank</label>
+              <label className="text-[13px] font-medium text-foreground">Beneficiary Bank</label>
               <Field label="Bank">
                 {availableBanks.length > 0 ? (
                   <Select value={state.wBank} onValueChange={(val) => val && onChange("wBank", val)}>
@@ -359,7 +359,7 @@ export function InternationalWireFlow({
                 )}
               </Field>
 
-              <Field label="Bank address">
+              <Field label="Bank Address">
                 <input
                   type="text"
                   value={state.wBankAddress}
@@ -373,9 +373,9 @@ export function InternationalWireFlow({
 
           {bankDetailsOk && (
             <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-              <label className="text-[13px] font-medium text-foreground">Beneficiary details</label>
+              <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
               <div className="grid gap-3 sm:grid-cols-2">
-                <Field label="Account number">
+                <Field label="Account Number">
                   <input
                     type="text"
                     value={state.wIban}
@@ -409,7 +409,7 @@ export function InternationalWireFlow({
 
                   {optionalOpen ? (
                     <div className="grid gap-3 animate-in fade-in duration-150 ease-out sm:grid-cols-2">
-                      <Field label="Email address" optional>
+                      <Field label="Email Address" optional>
                         <input
                           type="email"
                           value={state.wBenEmail}
@@ -418,7 +418,7 @@ export function InternationalWireFlow({
                           className={INPUT}
                         />
                       </Field>
-                      <Field label="Contact number" optional>
+                      <Field label="Contact Number" optional>
                         <input
                           type="tel"
                           value={state.wBenPhone}
@@ -482,7 +482,7 @@ export function InternationalWireFlow({
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount Section: You Send (GHS) vs Recipient Gets (Foreign) with switcher */}
           <div className="flex flex-col gap-2">
-            <label className="text-[13px] font-medium text-foreground">Transfer amount</label>
+            <label className="text-[13px] font-medium text-foreground">Transfer Amount</label>
 
             <DualAmountFields
               foreign={state.wForeign}
@@ -539,7 +539,7 @@ export function InternationalWireFlow({
           <NarrationInput
             value={state.wPurpose}
             onChange={(val) => onChange("wPurpose", val)}
-            label="Transaction narration"
+            label="Transaction Narration"
             placeholder="e.g. Commercial invoice, tuition fee, investment"
           />
 

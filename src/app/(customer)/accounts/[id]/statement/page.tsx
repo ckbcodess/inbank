@@ -87,7 +87,7 @@ export default function StatementConfigurationPage({ params }: { params: Promise
                 <Input id="to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
               </div>
               <div className="flex flex-col gap-2 sm:col-span-2">
-                <Label htmlFor="cp">Counterparty or beneficiary</Label>
+                <Label htmlFor="cp">Counterparty or Beneficiary</Label>
                 <Input
                   id="cp"
                   value={counterparty}
@@ -96,7 +96,7 @@ export default function StatementConfigurationPage({ params }: { params: Promise
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="min">Minimum amount</Label>
+                <Label htmlFor="min">Minimum Amount</Label>
                 <Input
                   id="min"
                   inputMode="decimal"
@@ -106,7 +106,7 @@ export default function StatementConfigurationPage({ params }: { params: Promise
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="max">Maximum amount</Label>
+                <Label htmlFor="max">Maximum Amount</Label>
                 <Input
                   id="max"
                   inputMode="decimal"

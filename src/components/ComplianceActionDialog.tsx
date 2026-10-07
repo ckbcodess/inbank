@@ -112,7 +112,7 @@ export default function ComplianceActionDialog({
               <p className="text-[13px] text-muted-foreground leading-relaxed">{description}</p>
 
               <div className="flex flex-col gap-2 pt-1">
-                <Label htmlFor="compliance-reason">Reason (required)</Label>
+                <Label htmlFor="compliance-reason">Reason (Required)</Label>
                 <Textarea
                   id="compliance-reason"
                   value={reason}
@@ -160,7 +160,7 @@ export default function ComplianceActionDialog({
               </p>
 
               <div className="flex flex-col gap-2 pt-1">
-                <Label htmlFor="compliance-stepup">Verification code</Label>
+                <Label htmlFor="compliance-stepup">Verification Code</Label>
                 <Input
                   id="compliance-stepup"
                   inputMode="numeric"

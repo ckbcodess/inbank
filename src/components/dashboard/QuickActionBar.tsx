@@ -209,7 +209,7 @@ export function QuickActionBar({
               </Select>
             </div>
             <div className="flex flex-col gap-2">
-              <Label>Fund from</Label>
+              <Label>Fund From</Label>
               <Select
                 value={topUpFrom}
                 onValueChange={(val) => val && setTopUpFrom(val)}
@@ -227,7 +227,7 @@ export function QuickActionBar({
               </Select>
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="topup-amount">Enter amount</Label>
+              <Label htmlFor="topup-amount">Enter Amount</Label>
               <Input
                 id="topup-amount"
                 placeholder="0.00"
@@ -256,7 +256,7 @@ export function QuickActionBar({
           </DialogHeader>
           <DialogBody>
             <div className="flex flex-col gap-2">
-              <Label>From account</Label>
+              <Label>From Account</Label>
               <Select
                 value={transferFrom}
                 onValueChange={(val) => val && setTransferFrom(val)}
@@ -274,7 +274,7 @@ export function QuickActionBar({
               </Select>
             </div>
             <div className="flex flex-col gap-2">
-              <Label>To account</Label>
+              <Label>To Account</Label>
               <Select
                 value={transferTo}
                 onValueChange={(val) => val && setTransferTo(val)}
@@ -292,7 +292,7 @@ export function QuickActionBar({
               </Select>
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="t-amount">Enter amount</Label>
+              <Label htmlFor="t-amount">Enter Amount</Label>
               <Input
                 id="t-amount"
                 placeholder="0.00"
@@ -302,7 +302,7 @@ export function QuickActionBar({
               />
             </div>
             <div className="flex flex-col gap-2">
-              <Label htmlFor="t-ref">Reference / purpose</Label>
+              <Label htmlFor="t-ref">Reference / Purpose</Label>
               <Input
                 id="t-ref"
                 placeholder="e.g. Monthly liquidity rebalance"
@@ -349,7 +349,7 @@ export function QuickActionBar({
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label>Pay from account</Label>
+              <Label>Pay From Account</Label>
               <Select
                 value={payBillAccount}
                 onValueChange={(val) => val && setPayBillAccount(val)}
@@ -381,7 +381,7 @@ export function QuickActionBar({
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="bill-amt">Payment amount (GHS)</Label>
+              <Label htmlFor="bill-amt">Payment Amount (GHS)</Label>
               <Input
                 id="bill-amt"
                 placeholder="0.00"

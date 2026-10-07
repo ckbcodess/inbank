@@ -161,7 +161,7 @@ export default function ForgotPasswordPage() {
         >
           <div className="flex flex-col gap-2">
             <Label htmlFor="mobile" className="text-[13px] font-medium text-foreground">
-              Mobile number
+              Mobile Number
             </Label>
             <PhoneInput
               id="mobile"

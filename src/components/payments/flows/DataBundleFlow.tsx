@@ -133,7 +133,7 @@ export function DataBundleFlow({
 
       {/* 2. Destination: Network & Phone Number */}
       <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Recipient details</label>
+        <label className="text-[13px] font-medium text-foreground">Recipient Details</label>
         {isSelf ? (
           selfBlock
         ) : isPhoneValid && isCollapsed ? (

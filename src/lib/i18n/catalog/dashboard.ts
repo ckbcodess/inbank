@@ -434,7 +434,16 @@ const dashboard: Entry[] = [
   ["Prepaid Card", "Carte prépayée", "Tarjeta prepago", "预付卡"],
   ["More ways to send", "Autres façons d’envoyer", "Más formas de enviar", "更多转账方式"],
   ["All bill categories", "Toutes les catégories de factures", "Todas las categorías de facturas", "全部账单类别"],
-  ["More options", "Plus d’options", "Más opciones", "更多选项"],
+  ["More options", "Plus d’options", "Más opciones", "更多选项"],
+  ["Card Number", "Numéro de carte", "Número de tarjeta", "卡号"],
+  ["Deposit Amount (GHS)", "Montant du dépôt (GHS)", "Importe del depósito (GHS)", "存款金额（GHS）"],
+  ["Enter Amount", "Saisissez le montant", "Introduce el importe", "输入金额"],
+  ["Fund From", "Alimenter depuis", "Recargar desde", "资金来源"],
+  ["Network Operator", "Opérateur", "Operador", "运营商"],
+  ["Pay From Account", "Payer depuis le compte", "Pagar desde la cuenta", "付款账户"],
+  ["Payment Amount (GHS)", "Montant du paiement (GHS)", "Importe del pago (GHS)", "付款金额（GHS）"],
+  ["Reference / Purpose", "Référence / motif", "Referencia / finalidad", "参考号/用途"],
+  ["Tenure (Months)", "Durée (mois)", "Plazo (meses)", "期限（月）"],
 ];
 
 export default dashboard;

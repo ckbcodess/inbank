@@ -442,7 +442,19 @@ const recent: Entry[] = [
   ["Greeted by name, passkey, no code", "Accueilli par son nom, clé d’accès, sans code", "Saludo por nombre, llave de acceso, sin código", "按姓名问候，通行密钥，无需验证码"],
   ["First time, new device", "Première fois, nouvel appareil", "Primera vez, dispositivo nuevo", "首次使用，新设备"],
   ["Activation, remember device, welcome", "Activation, mémorisation de l’appareil, bienvenue", "Activación, recordar dispositivo, bienvenida", "激活、记住设备、欢迎页"],
-  ["Moving from old internet banking", "Migration depuis l’ancienne banque en ligne", "Migración desde la antigua banca en línea", "从旧网上银行迁移"],
+  ["Moving from old internet banking", "Migration depuis l’ancienne banque en ligne", "Migración desde la antigua banca en línea", "从旧网上银行迁移"],
+  ["Bank Address", "Adresse de la banque", "Dirección del banco", "银行地址"],
+  ["Beneficiary Bank", "Banque du bénéficiaire", "Banco del beneficiario", "收款银行"],
+  ["Branch Code", "Code d’agence", "Código de sucursal", "网点代码"],
+  ["Contact Number", "Numéro de contact", "Número de contacto", "联系电话"],
+  ["Email Address", "Adresse e-mail", "Correo electrónico", "电子邮箱"],
+  ["First Payment", "Premier paiement", "Primer pago", "首次付款"],
+  ["Last Payment", "Dernier paiement", "Último pago", "最后一次付款"],
+  ["Linked Account", "Compte associé", "Cuenta vinculada", "关联账户"],
+  ["Payment Date", "Date de paiement", "Fecha de pago", "付款日期"],
+  ["SWIFT / BIC Code", "Code SWIFT / BIC", "Código SWIFT / BIC", "SWIFT / BIC 代码"],
+  ["Short Name", "Nom court", "Nombre corto", "简称"],
+  ["Transaction Narration", "Libellé de la transaction", "Concepto de la transacción", "交易备注"],
 ];
 
 export default recent;

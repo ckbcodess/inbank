@@ -171,7 +171,9 @@ const business: Entry[] = [
   ["Be specific about what you need — the submitter sees this verbatim.", "Soyez précis — le demandeur verra ce texte tel quel.", "Sé concreto: el solicitante verá este texto tal cual.", "请具体说明——提交人将看到原文。"],
   ["At least 10 characters required.", "Au moins 10 caractères requis.", "Se necesitan al menos 10 caracteres.", "至少需 10 个字符。"],
   ["Flag specific documents (optional)", "Signaler des documents précis (facultatif)", "Marcar documentos concretos (opcional)", "标记具体文件（选填）"],
-  ["Return to submitter", "Renvoyer au demandeur", "Devolver al solicitante", "退回提交人"],
+  ["Return to submitter", "Renvoyer au demandeur", "Devolver al solicitante", "退回提交人"],
+  ["Flag Specific Documents (Optional)", "Signaler des documents précis (facultatif)", "Marcar documentos concretos (opcional)", "标记具体文件（选填）"],
+  ["Reason for Rejection", "Motif du refus", "Motivo del rechazo", "拒绝原因"],
 ];
 
 export default business;

@@ -1135,7 +1135,7 @@ export default function BeneficiariesPage() {
             {/* Step 1: Destination Rail (Dropdown) */}
             <div className="flex flex-col gap-1.5">
               <label className="text-[13px] font-medium text-foreground">
-                Payment rail
+                Payment Rail
               </label>
               <Select
                 value={form.transactionType}
@@ -1181,7 +1181,7 @@ export default function BeneficiariesPage() {
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Network provider
+                    Network Provider
                   </label>
                   <Select
                     value={form.network}
@@ -1202,7 +1202,7 @@ export default function BeneficiariesPage() {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Wallet phone number
+                    Wallet Phone Number
                   </label>
                   <PhoneInput
                     value={form.phoneNumber}
@@ -1219,7 +1219,7 @@ export default function BeneficiariesPage() {
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Destination bank
+                    Destination Bank
                   </label>
                   <Select
                     value={form.bankName}
@@ -1240,7 +1240,7 @@ export default function BeneficiariesPage() {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Account number
+                    Account Number
                   </label>
                   <input
                     type="text"
@@ -1258,7 +1258,7 @@ export default function BeneficiariesPage() {
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Bill / service provider
+                    Bill / Service Provider
                   </label>
                   <Select
                     value={matchedBiller?.name || form.billerName}
@@ -1329,7 +1329,7 @@ export default function BeneficiariesPage() {
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Network provider
+                    Network Provider
                   </label>
                   <Select
                     value={form.network}
@@ -1350,7 +1350,7 @@ export default function BeneficiariesPage() {
 
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[13px] font-medium text-foreground">
-                    Phone number
+                    Phone Number
                   </label>
                   <PhoneInput
                     value={form.phoneNumber}
@@ -1366,7 +1366,7 @@ export default function BeneficiariesPage() {
             {form.transactionType === "proxy" && (
               <div className="flex flex-col gap-1.5">
                 <label className="text-[13px] font-medium text-foreground">
-                  Proxy identifier
+                  Proxy Identifier
                 </label>
                 <div className="relative flex items-center">
                   <span className="absolute left-3.5 text-[15px] font-semibold text-muted-foreground select-none pointer-events-none">
@@ -1435,7 +1435,7 @@ export default function BeneficiariesPage() {
 
                 <div className="grid grid-cols-2 gap-2.5">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[13px] font-medium text-foreground">SWIFT / BIC code</label>
+                    <label className="text-[13px] font-medium text-foreground">SWIFT / BIC Code</label>
                     <input
                       type="text"
                       value={form.swiftBic}
@@ -1446,7 +1446,7 @@ export default function BeneficiariesPage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[13px] font-medium text-foreground">IBAN / account number</label>
+                    <label className="text-[13px] font-medium text-foreground">IBAN / Account Number</label>
                     <input
                       type="text"
                       value={form.accountNumber}
@@ -1458,7 +1458,7 @@ export default function BeneficiariesPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">Recipient physical address</label>
+                  <label className="text-[13px] font-medium text-foreground">Recipient Physical Address</label>
                   <input
                     type="text"
                     value={form.address}
@@ -1474,7 +1474,7 @@ export default function BeneficiariesPage() {
             {form.transactionType === "papss" && (
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">Destination country</label>
+                  <label className="text-[13px] font-medium text-foreground">Destination Country</label>
                   <Select
                     value={form.country}
                     onValueChange={(val) => {
@@ -1540,7 +1540,7 @@ export default function BeneficiariesPage() {
             {/* Step 4: Optional Nickname / Reference */}
             <div className="flex flex-col gap-1.5">
               <label className="text-[13px] font-medium text-foreground">
-                Nickname / note <span className="text-[11px] text-muted-foreground/60">(optional)</span>
+                Nickname / Note <span className="text-[11px] text-muted-foreground/60">(Optional)</span>
               </label>
               <input
                 type="text"

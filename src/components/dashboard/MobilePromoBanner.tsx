@@ -216,7 +216,7 @@ export function MobilePromoBanner() {
             </p>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-foreground">Deposit amount (GHS)</label>
+              <label className="text-[13px] font-medium text-foreground">Deposit Amount (GHS)</label>
               <div className="flex items-center rounded-xl border border-field-border bg-field px-3.5 py-2 focus-within:border-field-border-focus focus-within:bg-field-focus">
                 <span className="text-[14px] font-medium text-muted-foreground mr-2">GHS</span>
                 <input
@@ -231,7 +231,7 @@ export function MobilePromoBanner() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-foreground">Tenure (months)</label>
+              <label className="text-[13px] font-medium text-foreground">Tenure (Months)</label>
               <div className="grid grid-cols-4 gap-2">
                 {[3, 6, 12, 24].map((m) => (
                   <button
