@@ -14,11 +14,11 @@
 
 import { AlertToast } from "@/components/ui/alert-toast";
 import { InlineError } from "@/components/ui/inline-error";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { ShieldCheck, KeyRound, Smartphone } from "lucide-react";
 import OtpInput from "@/components/auth/OtpInput";
 import { REGISTERED_PHONE, type AuthMethod, type AuthState, PIN_LENGTH } from "./useAuthorisation";
-import { OtpHelp } from "./OtpHelp";
+import { OtpHelp, OtpPrompt } from "./OtpHelp";
 import { cn } from "@/lib/utils";
 
 export interface AuthorisePanelProps {
@@ -54,6 +54,7 @@ export function AuthorisePanel({
   variant = "fullscreen",
 }: AuthorisePanelProps) {
   const isPin = method === "pin";
+  const [shortcodeOpen, setShortcodeOpen] = useState(false);
   const pinInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-focus the invisible PIN input when in PIN mode
@@ -110,16 +111,21 @@ export function AuthorisePanel({
       <div className="flex flex-col gap-5">
         {summary}
 
-        <div className="flex flex-col items-center gap-1.5 text-center">
-          <span className="text-[15.5px] font-medium text-foreground">
-            {isPin ? "Enter Transaction PIN" : "Enter OTP Verification Code"}
-          </span>
-          <span className="text-[13px] text-muted-foreground">
-            {isPin
-              ? "Enter your 4-digit transaction PIN created during onboarding"
-              : `A 6-digit one-time code was sent to ${REGISTERED_PHONE}`}
-          </span>
-        </div>
+        {isPin ? (
+          <div className="flex flex-col items-center gap-1.5 text-center">
+            <span className="text-[15.5px] font-medium text-foreground">Enter Transaction PIN</span>
+            <span className="text-[13px] text-muted-foreground">Enter your 4-digit transaction PIN created during onboarding</span>
+          </div>
+        ) : (
+          <OtpPrompt
+            as="span"
+            open={shortcodeOpen}
+            title="Enter OTP Verification Code"
+            description={`A 6-digit one-time code was sent to ${REGISTERED_PHONE}`}
+            titleClass="text-[15.5px] font-medium text-foreground"
+            descClass="mt-1.5 text-[13px] text-muted-foreground"
+          />
+        )}
 
         {isPin ? (
           <OtpInput
@@ -159,7 +165,7 @@ export function AuthorisePanel({
 
         {/* Alternative authentication option & resend affordance */}
         <div className="flex flex-col items-center gap-2.5 pt-1">
-          {!isPin && <OtpHelp resend={resend} onResend={onResend} />}
+          {!isPin && <OtpHelp resend={resend} onResend={onResend} shortcodeOpen={shortcodeOpen} onShortcodeOpenChange={setShortcodeOpen} />}
 
           {onMethodChange && (
             <button
@@ -313,14 +319,18 @@ export function AuthorisePanel({
             <Smartphone size={44} strokeWidth={1.8} />
           </div>
 
-          <h2 className="mt-6 text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
-            Enter OTP Verification Code
-          </h2>
-
-          <p className="mt-2 text-[13.5px] text-muted-foreground max-w-xs">
-            A 6-digit one-time code was sent to{" "}
-            <span className="font-medium text-foreground tabular whitespace-nowrap">{REGISTERED_PHONE}</span>
-          </p>
+          <OtpPrompt
+            open={shortcodeOpen}
+            title="Enter OTP Verification Code"
+            description={
+              <>
+                A 6-digit one-time code was sent to{" "}
+                <span className="font-medium text-foreground tabular whitespace-nowrap">{REGISTERED_PHONE}</span>
+              </>
+            }
+            titleClass="mt-6 text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground"
+            descClass="mt-2 text-[13.5px] text-muted-foreground max-w-xs"
+          />
 
           <div className="mt-10 flex justify-center w-full">
             <OtpInput
@@ -344,7 +354,7 @@ export function AuthorisePanel({
           <AlertToast when={state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${REGISTERED_PHONE}.`} />
 
           <div className="mt-8 flex flex-col items-center gap-3">
-            <OtpHelp resend={resend} onResend={onResend} />
+            <OtpHelp resend={resend} onResend={onResend} shortcodeOpen={shortcodeOpen} onShortcodeOpenChange={setShortcodeOpen} />
 
             {onMethodChange && (
               <button

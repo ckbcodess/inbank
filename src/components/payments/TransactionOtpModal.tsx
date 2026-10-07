@@ -3,8 +3,8 @@
 /**
  * Transaction authorisation, in one place for every flow that moves money (Send & Pay, standing orders, Add Money,
  * card requests). There is no transaction PIN: every transaction is approved with a 6-digit one-time code sent by
- * SMS, or read off the phone with a shortcode (see `OtpHelp`). The code never approves on its own: it waits for a
- * tap on Confirm (or Enter), as a payment is not recoverable.
+ * SMS, or read off the phone with a shortcode (see `OtpHelp`). There is no Confirm button: the code is submitted
+ * as soon as the sixth digit lands (designer's call, 2026-10-07).
 
  */
 
@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import OtpInput from "@/components/auth/OtpInput";
 import { useAuthorisation, REGISTERED_PHONE } from "./useAuthorisation";
-import { OtpHelp } from "./OtpHelp";
+import { OtpHelp, OtpPrompt } from "./OtpHelp";
 
 export interface TransactionOtpModalProps {
   open: boolean;
@@ -36,15 +36,25 @@ export default function TransactionOtpModal({
   const auth = useAuthorisation();
   const formId = useId();
   const [submitting, setSubmitting] = useState(false);
+  const [shortcodeOpen, setShortcodeOpen] = useState(false);
 
   // A fresh code every time the modal opens.
   useEffect(() => {
     if (open) {
       auth.reset();
       setSubmitting(false);
+      setShortcodeOpen(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
+
+  const code = auth.otp.join("");
+
+  // No Confirm button: the sixth digit submits.
+  useEffect(() => {
+    if (open && auth.complete) handleConfirm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [code]);
 
   const handleConfirm = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -74,11 +84,18 @@ export default function TransactionOtpModal({
             <Smartphone size={22} strokeWidth={1.9} />
           </div>
 
-          <h2 className="mt-5 text-[22px] font-medium tracking-[-0.02em] text-foreground">Enter OTP Verification Code</h2>
-
-          <p className="mt-2 max-w-xs text-[13px] text-muted-foreground">
-            A 6-digit one-time code was sent to <span className="tabular whitespace-nowrap font-medium text-foreground">{phone}</span>
-          </p>
+          <OtpPrompt
+            open={shortcodeOpen}
+            title="Enter OTP Verification Code"
+            description={
+              <>
+                A 6-digit one-time code was sent to{" "}
+                <span className="tabular whitespace-nowrap font-medium text-foreground">{phone}</span>
+              </>
+            }
+            titleClass="mt-5 text-[22px] font-medium tracking-[-0.02em] text-foreground"
+            descClass="mt-2 max-w-xs text-[13px] text-muted-foreground"
+          />
 
           <div className="mt-8 flex w-full justify-center">
             <OtpInput
@@ -97,16 +114,13 @@ export default function TransactionOtpModal({
           <AlertToast when={auth.state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${phone}.`} />
 
           <div className="mt-7 w-full">
-            <OtpHelp resend={auth.resend} onResend={auth.requestResend} />
+            <OtpHelp resend={auth.resend} onResend={auth.requestResend} shortcodeOpen={shortcodeOpen} onShortcodeOpenChange={setShortcodeOpen} />
           </div>
         </form>
 
         <DialogFooter>
           <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
             Cancel
-          </Button>
-          <Button type="submit" form={formId} disabled={!auth.complete} loading={submitting}>
-            Confirm
           </Button>
         </DialogFooter>
       </DialogContent>
