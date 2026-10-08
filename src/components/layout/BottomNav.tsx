@@ -50,11 +50,11 @@ export function BottomNav({ onOpenDrawer }: BottomNavProps) {
               className={cn(
                 "group relative flex flex-col items-center justify-center gap-1.5 py-1 px-2.5 rounded-xl transition-all duration-150 active:scale-92 cursor-pointer select-none",
                 isActive
-                  ? "text-primary dark:text-white font-medium"
-                  : "text-muted-foreground hover:text-foreground dark:text-white/60 dark:hover:text-white",
+                  ? "text-black dark:text-white font-semibold"
+                  : "text-neutral-500 hover:text-black dark:text-white/60 dark:hover:text-white",
               )}
             >
-              <Icon size={20} strokeWidth={isActive ? 2.2 : 1.75} className="shrink-0 transition-colors" />
+              <Icon size={20} strokeWidth={isActive ? 2.3 : 1.75} className="shrink-0 transition-colors" />
               <span className="text-[11px] tracking-[-0.01em] leading-none whitespace-nowrap">
                 {tab.label}
               </span>
