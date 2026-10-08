@@ -52,7 +52,7 @@ export default function TermDepositDetailPage() {
 
   const rows: Array<[string, React.ReactNode]> = [
     ["Reference", d.reference],
-    ["Interest rate", `${d.rate}% a year`],
+    ["Interest rate", `${d.rate}%`],
     ["Deposit period", `${d.tenureDays} days`],
     ["Opened", formatDate(d.createdOn)],
     ["Matures", formatDate(d.maturity)],

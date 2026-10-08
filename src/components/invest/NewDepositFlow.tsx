@@ -184,7 +184,7 @@ export function NewDepositFlow() {
             rows={[
               ["From", from ? `${from.name} · ${from.number}` : ""],
               ["Deposit period", `${tenure} days`],
-              ["Interest rate", `${rate}% a year`],
+              ["Interest rate", `${rate}%`],
               ["Interest earned", money(interest)],
               ["Matures", formatDate(maturity)],
               ["When it matures", depositInstructionLabel(instruction)],
@@ -268,15 +268,9 @@ export function NewDepositFlow() {
             <dl className="flex flex-col gap-3 px-1 text-[14px]">
               {(
                 [
-                  ["Interest rate", `${rate}% a year`],
-                  ["Interest earned", money(interest)],
-                  ...(instruction === "rollover"
-                    ? ([
-                        ["Paid to your account at maturity", money(interest)],
-                        ["Stays invested", money(num)],
-                      ] as Array<[string, string]>)
-                    : ([["You receive at maturity", money(atMaturity)]] as Array<[string, string]>)),
-                  ["Matures", formatDate(maturity)],
+                  ["Interest rate", `${rate}%`],
+                  ["You’ll receive", money(instruction === "rollover" ? interest : atMaturity)],
+                  ["Maturity date", formatDate(maturity)],
                 ] as Array<[string, string]>
               ).map(([label, value]) => (
                 <div key={label} className="flex items-baseline justify-between gap-6">
