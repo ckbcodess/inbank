@@ -204,7 +204,7 @@ export function DataBundleFlow({
       {isPhoneValid && isNetworkValid && (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Bundle Selection */}
-          <Field label="Internet">
+          <Field label="Bundles">
             <Select
               value={selectedBundle?.id ?? ""}
               onValueChange={(val) => {

@@ -110,7 +110,7 @@ const PAY_ACTIONS: PaymentAction[] = [
   },
   {
     id: "data",
-    title: "Internet",
+    title: "Bundles",
     href: "/payments/send?rail=data",
     icon: Wifi,
     tone: "amber",

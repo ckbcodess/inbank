@@ -120,7 +120,7 @@ export function topUpOptions(): PaymentOptionGroup[] {
     {
       options: [
         { id: "airtime", title: "Airtime", href: "/payments/send?rail=airtime", icon: Smartphone },
-        { id: "data", title: "Internet", href: "/payments/send?rail=data", icon: Wifi },
+        { id: "data", title: "Bundles", href: "/payments/send?rail=data", icon: Wifi },
         { id: "card", title: "Prepaid Card", href: "/payments/send?rail=card-topup", icon: CreditCard },
       ],
     },

@@ -97,7 +97,7 @@ const STANDING_ORDER_OPTIONS = [
   { id: "proxy" as TransactionType, title: "To Proxy", icon: User },
   { id: "group" as TransactionType, title: "To Group", icon: Users },
   { id: "wallet-to-bank" as TransactionType, title: "Wallet to Bank", icon: ArrowLeftRight },
-  { id: "data" as TransactionType, title: "Internet", icon: Wifi },
+  { id: "data" as TransactionType, title: "Bundles", icon: Wifi },
   { id: "airtime" as TransactionType, title: "Airtime", icon: PhoneCall },
 ];
 
@@ -685,7 +685,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
           <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
-            Review Standing Order
+            Standing Order Summary
           </h1>
         </div>
 
@@ -1127,7 +1127,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       setDetailsCollapsed(true);
                       setScreen("review");
                     }}
-                    label="Continue to Review"
+                    label="Continue to Summary"
                   />
                   </div>
                 )}

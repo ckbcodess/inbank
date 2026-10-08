@@ -164,7 +164,7 @@ const RAIL_LABEL: Record<Rail, string> = {
   swift: "Outside Ghana",
   "wallet-to-bank": "Wallet to Bank",
   airtime: "Airtime Top-up",
-  data: "Internet",
+  data: "Bundles",
   ecg: "ECG Prepaid",
   bill: "GCB Pay / Bills",
   ghanagov: "Ghana.gov",
@@ -1925,7 +1925,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   const getPageTitle = () => {
     if (stage === 2) {
-      return "Review";
+      return "Summary";
     }
     if (stage === 3) {
       return "Authorization";
@@ -2786,7 +2786,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Card 1: Self */}
           <ActionTile
             icon={Smartphone}
-            title="Data for Myself"
+            title={isData ? "Data for Myself" : "Airtime for Myself"}
             onClick={() => {
               setTopupCategory("self");
               const selfNum = "0244123821";
@@ -2809,7 +2809,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Card 2: Others */}
           <ActionTile
             icon={Users}
-            title="Data for Others"
+            title={isData ? "Data for Others" : "Airtime for Others"}
             onClick={() => {
               setTopupCategory("other");
               setF((p) => ({
