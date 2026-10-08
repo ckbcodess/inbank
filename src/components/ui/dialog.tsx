@@ -90,6 +90,7 @@ function DialogContent({
       <DialogOverlay />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
+        data-fullscreen={size === "full" ? "true" : undefined}
         className={cn(
           size === "full"
             ? "fixed inset-0 z-50 flex flex-col w-full h-full bg-modal text-foreground overflow-y-auto"

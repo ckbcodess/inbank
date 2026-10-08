@@ -948,26 +948,74 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* Modal fluid scale & fade animations (Emil Kowalski design engineering) */
-@keyframes modal-scale-in {
+/* Modal fluid scale & slide animations (Emil Kowalski design engineering) */
+
+/* Desktop Modal: Enters subtly from negative Y (above) and exits to positive Y (below) */
+@keyframes modal-desktop-in {
   from {
     opacity: 0;
-    scale: 0.8;
+    transform: translate3d(-50%, calc(-50% - 16px), 0) scale(0.98);
   }
   to {
     opacity: 1;
-    scale: 1;
+    transform: translate3d(-50%, -50%, 0) scale(1);
   }
 }
 
-@keyframes modal-scale-out {
+@keyframes modal-desktop-out {
   from {
     opacity: 1;
-    scale: 1;
+    transform: translate3d(-50%, -50%, 0) scale(1);
   }
   to {
     opacity: 0;
-    scale: 0.8;
+    transform: translate3d(-50%, calc(-50% + 16px), 0) scale(0.98);
+  }
+}
+
+/* Fullscreen modal on desktop */
+@keyframes modal-fullscreen-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes modal-fullscreen-out {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+}
+
+/* Mobile Bottom Sheet: Slides up smoothly from bottom on enter, slides down on exit */
+@keyframes sheet-mobile-in {
+  from {
+    opacity: 0.85;
+    transform: translate3d(0, 100%, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes sheet-mobile-out {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, 100%, 0);
   }
 }
 
@@ -990,7 +1038,7 @@ input[type="number"] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  @keyframes modal-scale-in {
+  @keyframes modal-desktop-in {
     from {
       opacity: 0;
     }
@@ -998,7 +1046,39 @@ input[type="number"] {
       opacity: 1;
     }
   }
-  @keyframes modal-scale-out {
+  @keyframes modal-desktop-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes modal-fullscreen-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes modal-fullscreen-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes sheet-mobile-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes sheet-mobile-out {
     from {
       opacity: 1;
     }
@@ -1013,20 +1093,39 @@ input[type="number"] {
   transform-origin: center;
 }
 
-@media (max-width: 639px) {
-  [data-slot="dialog-content"] {
-    transform-origin: bottom center;
-  }
-}
-
 [data-slot="dialog-content"][data-open] {
-  animation: modal-scale-in 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: transform, opacity, scale;
+  animation: modal-desktop-in 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
 
 [data-slot="dialog-content"][data-closed] {
-  animation: modal-scale-out 160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: transform, opacity, scale;
+  animation: modal-desktop-out 160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+[data-slot="dialog-content"][data-fullscreen="true"][data-open] {
+  animation: modal-fullscreen-in 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+[data-slot="dialog-content"][data-fullscreen="true"][data-closed] {
+  animation: modal-fullscreen-out 160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* On mobile (under 640px), dialogs become bottom sheets */
+@media (max-width: 639px) {
+  [data-slot="dialog-content"]:not([data-fullscreen="true"]) {
+    transform-origin: bottom center;
+  }
+
+  [data-slot="dialog-content"]:not([data-fullscreen="true"])[data-open] {
+    animation: sheet-mobile-in 280ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+    will-change: transform, opacity;
+  }
+
+  [data-slot="dialog-content"]:not([data-fullscreen="true"])[data-closed] {
+    animation: sheet-mobile-out 200ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+    will-change: transform, opacity;
+  }
 }
 
 [data-slot="dialog-overlay"][data-open] {
