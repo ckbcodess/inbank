@@ -148,12 +148,13 @@ export function GlassIcon({ icon: Icon, tone = "amber", accent, size = 30, class
         </filter>
       </defs>
       {/* Masked once: the edge bands are already composited inside the glyph, and a second mask would square the
-          anti-aliased edge alpha. With an accent the region mask sits inside the filter, so each part gets its own edges. */}
+          anti-aliased edge alpha. With an accent the region mask sits inside the filter, so each part gets its own edges.
+          Glass shine/edge effect is applied only to the amber parts of the icon. */}
       {[
-        { id: ink, clip: accent ? outMask : undefined },
-        ...(accent ? [{ id: inkAccent, clip: inMask }] : []),
+        { id: ink, tone, clip: accent ? outMask : undefined },
+        ...(accent ? [{ id: inkAccent, tone: accent.tone, clip: inMask }] : []),
       ].map((layer) => (
-        <g key={layer.id} filter={`url(#${edge})`}>
+        <g key={layer.id} filter={layer.tone === "amber" ? `url(#${edge})` : undefined}>
           <g mask={layer.clip ? `url(#${layer.clip})` : undefined}>
             <g mask={`url(#${glyph})`}>
               <rect x="0" y="0" width={CANVAS} height={CANVAS} fill={`url(#${layer.id})`} />

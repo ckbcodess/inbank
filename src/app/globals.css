@@ -149,9 +149,9 @@
   --duo-outline: #475560;
   /* Icon tones (Send & Pay icon styles). light, mid and dark are the glass gradient (top, middle, bottom);
      ink is the line colour for outline and duotone icons, picked to read on a tile in this theme. */
-  --icon-amber-light: #fee6a4;
-  --icon-amber-mid: #ffc423;
-  --icon-amber-dark: #ffbb00;
+  --icon-amber-light: #fee39a;
+  --icon-amber-mid: #ffbb00;
+  --icon-amber-dark: #ffc524;
   --icon-amber-ink: #ffcc00;
   --icon-blue-light: #d6e6ff;
   --icon-blue-mid: #4f8cff;
@@ -173,12 +173,12 @@
   --icon-teal-mid: #1fb5ad;
   --icon-teal-dark: #0b6661;
   --icon-teal-ink: #12908a;
-  --icon-slate-light: #e1f0fe;
-  --icon-slate-mid: #6f8995;
-  --icon-slate-dark: #00408a;
-  --icon-slate-ink: #2f4b60;
+  --icon-slate-light: #a0afbb;
+  --icon-slate-mid: #768998;
+  --icon-slate-dark: #3d72ae;
+  --icon-slate-ink: #3f6b8d;
   /* The edges of every glass icon, whatever its tone. */
-  --glass-shine: #d2a970;
+  --glass-shine: #ffca0a;
   --glass-shade: #240e00;
   /* The soft highlight that sweeps across a loading skeleton. */
   --skeleton-shine: oklch(1 0 0 / 60%);
@@ -230,10 +230,10 @@
   --info-text: oklch(0.5 0.19 255);
   /* Input fields, text areas, selects and the PIN boxes. */
   --field: #f9f9f9;
-  --field-hover: #f5f5f5;
-  --field-focus: #f9f9f9;
+  --field-hover: #ffffff;
+  --field-focus: #ffffff;
   --field-border: #ebebeb;
-  --field-border-focus: #cca128;
+  --field-border-focus: #0059ff;
   /* Dropdown menus. */
   --menu: #ffffff;
   --menu-item-hover: #f5f5f5;
@@ -271,7 +271,7 @@
   --success: oklch(0.62 0.15 150);
   --warning: oklch(0.72 0.16 75);
   --border: #ebebeb;
-  --ring: oklch(0.78 0.15 86.7);
+  --ring: #f9c43f;
   /* Secondary chart palette (complementary warm hue) */
   /*
    * Categorical data-viz palette — encodes IDENTITY (which category), not
@@ -326,7 +326,7 @@
   --hover-fill: 90%;
   --hover-mix-color: #000;
   --active-bg: color-mix(in oklch, var(--primary) 15%, transparent);
-  --active-border: oklch(0.65 0.16 75);
+  --active-border: #3400c2;
   --surface: oklch(0.985 0 0);
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -386,10 +386,10 @@
   --icon-teal-mid: #1fb5ad;
   --icon-teal-dark: #0b6661;
   --icon-teal-ink: #5fd8d1;
-  --icon-slate-light: #d2dae1;
+  --icon-slate-light: #d8e4ee;
   --icon-slate-mid: #192f43;
-  --icon-slate-dark: #1f2933;
-  --icon-slate-ink: #9fb0bd;
+  --icon-slate-dark: #c5ccd3;
+  --icon-slate-ink: #2f96e4;
   /* The edges of every glass icon, whatever its tone. */
   --glass-shine: #ffffff;
   --glass-shade: #ff4000;
