@@ -1,5 +1,5 @@
-import { DetailPageSkeleton } from "@/components/states/PageSkeletons";
+import { InvestmentDetailSkeleton } from "@/components/states/PageSkeletons";
 
 export default function Loading() {
-  return <DetailPageSkeleton />;
+  return <InvestmentDetailSkeleton />;
 }

@@ -20,7 +20,8 @@ import { Bank, Safe } from "reicon-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { SegmentedControl } from "@/components/ui/segmented-control";
-import { ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
+import { ListErrorState, TrueEmptyState } from "@/components/states/ListStates";
+import { InvestHomeSkeleton, InvestRowBones } from "@/components/states/PageSkeletons";
 import { InvestDevTools, PRODUCTS_HREF, SecurityIcon, TERM_PRODUCTS_HREF, TREASURY_HOME, TREASURY_PRODUCTS_HREF } from "@/components/invest/parts";
 import { InvestWelcome } from "@/components/invest/InvestWelcome";
 import { SecuritiesAccountDialog } from "@/components/invest/SecuritiesAccountDialog";
@@ -70,6 +71,8 @@ export function InvestHome() {
   const { showAmounts } = useAmountVisibility();
   const [state, setState] = useState<PageState>("populated");
   const [needsAccount, setNeedsAccount] = useState(false);
+
+  if (!hydrated) return <InvestHomeSkeleton />;
 
   const money = (n: number) => formatMoney(n, "GHS", showAmounts);
 
@@ -191,7 +194,28 @@ export function InvestHome() {
   }
 
   const yourInvestments = () => {
-    if (state === "loading") return <ListSkeleton rows={3} />;
+    if (state === "loading") {
+      return (
+        <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-4">
+            <div className="flex min-h-8 items-center px-1">
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Term Deposits</span>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-1">
+              <InvestRowBones rows={2} />
+            </div>
+          </div>
+          <div className="flex flex-col gap-4">
+            <div className="flex min-h-8 items-center px-1">
+              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Treasury Bills &amp; Bonds</span>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-1">
+              <InvestRowBones rows={2} />
+            </div>
+          </div>
+        </div>
+      );
+    }
     if (state === "error") return <ListErrorState onRetry={() => setState("populated")} />;
 
     return (
@@ -274,7 +298,7 @@ export function InvestHome() {
       <InvestWelcome />
       <SecuritiesAccountDialog open={needsAccount} onOpenChange={setNeedsAccount} />
       <SegmentedControl aria-label="Invest view" options={VIEWS} value={view} onChange={setView} />
-      {!hydrated ? <ListSkeleton rows={4} /> : view === "products" ? products() : yourInvestments()}
+      {view === "products" ? products() : yourInvestments()}
     </div>
   );
 }

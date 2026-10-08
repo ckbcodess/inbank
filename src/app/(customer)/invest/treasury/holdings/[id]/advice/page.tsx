@@ -9,7 +9,7 @@
 import { useParams } from "next/navigation";
 import PageHeader from "@/components/layout/PageHeader";
 import { Badge } from "@/components/ui/badge";
-import { DetailPageSkeleton } from "@/components/states/PageSkeletons";
+import { InvestmentDetailSkeleton } from "@/components/states/PageSkeletons";
 import { FactsPanel, HoldingNotFound, TREASURY_HOME } from "@/components/invest/parts";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { findAccount, formatDate, formatMoney } from "@/lib/mock-data";
@@ -31,7 +31,7 @@ export default function HoldingAdvicePage() {
   const { hydrated, holding: h } = useHolding(id);
   const { showAmounts } = useAmountVisibility();
 
-  if (!hydrated) return <DetailPageSkeleton />;
+  if (!hydrated) return <InvestmentDetailSkeleton />;
   if (!h) return <HoldingNotFound title="Advice" />;
 
   const money = (n: number) => formatMoney(n, "GHS", showAmounts);

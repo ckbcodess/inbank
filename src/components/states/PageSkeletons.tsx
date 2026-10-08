@@ -335,3 +335,148 @@ export function ReceiptPageSkeleton() {
     </Frame>
   );
 }
+
+/** Square icon tile + two lines + trailing rate/amount, the shape of investment holdings and product rows. */
+export function InvestRowBones({ rows = 3, className }: { rows?: number; className?: string }) {
+  return (
+    <div className={cn("divide-y divide-border/60", className)}>
+      {Array.from({ length: rows }).map((_, i) => (
+        <div key={i} className="flex items-center gap-3.5 px-4 py-3.5">
+          <Bone className="size-9 shrink-0 rounded-xl" style={{ animationDelay: `${i * 60}ms` }} />
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            <Bone className="h-3.5 w-2/5" style={{ animationDelay: `${i * 60}ms` }} />
+            <Bone className="h-3 w-1/4" style={{ animationDelay: `${i * 60}ms` }} />
+          </div>
+          <div className="flex shrink-0 flex-col items-end gap-1.5">
+            <Bone className="h-3.5 w-16" style={{ animationDelay: `${i * 60}ms` }} />
+            <Bone className="h-2.5 w-10" style={{ animationDelay: `${i * 60}ms` }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Invest home page: header with title, segmented control tab, and two investment sections with rows. */
+export function InvestHomeSkeleton() {
+  return (
+    <Frame className="gap-8">
+      <HeaderBones action={false} />
+      <Bone className="h-10 w-full max-w-[280px] rounded-xl" />
+      <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-4">
+          <div className="flex min-h-8 items-center px-1">
+            <Bone className="h-4 w-32" />
+          </div>
+          <Panel className="overflow-hidden p-1">
+            <InvestRowBones rows={2} />
+          </Panel>
+        </div>
+        <div className="flex flex-col gap-4">
+          <div className="flex min-h-8 items-center px-1">
+            <Bone className="h-4 w-44" />
+          </div>
+          <Panel className="overflow-hidden p-1">
+            <InvestRowBones rows={2} />
+          </Panel>
+        </div>
+      </div>
+    </Frame>
+  );
+}
+
+/** Invest products page (Term Deposits, Treasury Bills & Bonds). */
+export function InvestProductsSkeleton({ groups = 1, rows = 3 }: { groups?: number; rows?: number }) {
+  return (
+    <Frame className="gap-8">
+      <div className="flex items-center gap-2.5">
+        <Bone className="size-9 rounded-lg" />
+        <Bone className="h-7 w-48 rounded-lg" />
+      </div>
+      <div className="flex flex-col gap-10">
+        {Array.from({ length: groups }).map((_, g) => (
+          <div key={g} className="flex flex-col gap-4">
+            {groups > 1 && (
+              <div className="flex min-h-8 flex-col gap-1.5 px-1">
+                <Bone className="h-4 w-36" />
+                <Bone className="h-3 w-48" />
+              </div>
+            )}
+            <Panel className="overflow-hidden p-1">
+              <InvestRowBones rows={rows} />
+            </Panel>
+          </div>
+        ))}
+      </div>
+    </Frame>
+  );
+}
+
+/** Invest offer overview/calculator page (e.g. /invest/offer/[key]): single-column facts, worked example, CTA. */
+export function OfferDetailSkeleton() {
+  return (
+    <Frame className="gap-8">
+      <div className="flex items-center gap-2.5">
+        <Bone className="size-9 rounded-lg" />
+        <Bone className="h-7 w-52 rounded-lg" />
+      </div>
+      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-8">
+        <Panel className="flex flex-col gap-3 p-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center justify-between gap-6 px-3 py-2">
+              <Bone className="h-3.5 w-28" />
+              <Bone className="h-3.5 w-32" />
+            </div>
+          ))}
+        </Panel>
+        <div className="flex flex-col gap-3">
+          <div className="px-1">
+            <Bone className="h-3.5 w-36" />
+          </div>
+          <Panel className="flex flex-col gap-3 p-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-between gap-6 px-3 py-2">
+                <Bone className="h-3.5 w-24" />
+                <Bone className="h-3.5 w-28" />
+              </div>
+            ))}
+          </Panel>
+        </div>
+        <Bone className="h-13 w-full rounded-2xl" />
+      </div>
+    </Frame>
+  );
+}
+
+/** Single investment holding/deposit detail page: hero amount, facts card, and 3 action tiles. */
+export function InvestmentDetailSkeleton() {
+  return (
+    <Frame className="gap-8">
+      <div className="flex items-center gap-2.5">
+        <Bone className="size-9 rounded-lg" />
+        <Bone className="h-7 w-56 rounded-lg" />
+        <Bone className="h-6 w-16 rounded-full" />
+      </div>
+      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-8">
+        <div className="flex flex-col gap-2 px-1">
+          <Bone className="h-3.5 w-24" />
+          <Bone className="h-10 w-48 rounded-lg" />
+          <Bone className="h-3.5 w-36" />
+        </div>
+        <Panel className="flex flex-col gap-3 p-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="flex items-center justify-between gap-6 px-3 py-2">
+              <Bone className="h-3.5 w-28" style={{ animationDelay: `${i * 40}ms` }} />
+              <Bone className="h-3.5 w-32" style={{ animationDelay: `${i * 40}ms` }} />
+            </div>
+          ))}
+        </Panel>
+        <div className="flex flex-col gap-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Bone key={i} className="h-[72px] w-full rounded-2xl" style={{ animationDelay: `${i * 60}ms` }} />
+          ))}
+        </div>
+      </div>
+    </Frame>
+  );
+}

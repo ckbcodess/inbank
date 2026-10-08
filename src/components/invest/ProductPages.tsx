@@ -12,7 +12,8 @@
 
 import { Clock } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
-import { ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
+import { TrueEmptyState } from "@/components/states/ListStates";
+import { InvestProductsSkeleton } from "@/components/states/PageSkeletons";
 import { InvestDevTools, PRODUCTS_HREF } from "@/components/invest/parts";
 import { OfferRow, securityOffers, termOffers, type Offer } from "@/components/invest/offers";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
@@ -41,11 +42,12 @@ function Group({ title, line, offers }: { title?: string; line?: string; offers:
 
 export function TermDepositProducts() {
   const hydrated = useTreasuryHydrated();
+  if (!hydrated) return <InvestProductsSkeleton groups={1} rows={3} />;
   return (
     <div className="flex flex-col gap-8">
       <PageHeader title="Term Deposits" backTo={back} />
       <InvestDevTools section="Invest" />
-      {!hydrated ? <ListSkeleton rows={3} /> : <Group offers={termOffers()} />}
+      <Group offers={termOffers()} />
     </div>
   );
 }
@@ -54,13 +56,13 @@ export function TreasuryProducts() {
   const hydrated = useTreasuryHydrated();
   const { marketOpen } = useMyTreasury();
 
+  if (!hydrated) return <InvestProductsSkeleton groups={2} rows={2} />;
+
   return (
     <div className="flex flex-col gap-8">
       <PageHeader title="Treasury Bills & Bonds" backTo={back} />
       <InvestDevTools section="Invest" />
-      {!hydrated ? (
-        <ListSkeleton rows={4} />
-      ) : !marketOpen ? (
+      {!marketOpen ? (
         <TrueEmptyState
           icon={<Clock size={22} strokeWidth={1.8} />}
           title="The market is closed right now"
@@ -75,4 +77,5 @@ export function TreasuryProducts() {
     </div>
   );
 }
+
 

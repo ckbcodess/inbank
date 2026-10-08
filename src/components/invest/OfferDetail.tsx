@@ -12,7 +12,7 @@ import { useParams } from "next/navigation";
 import { SearchX } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { DetailPageSkeleton } from "@/components/states/PageSkeletons";
+import { OfferDetailSkeleton } from "@/components/states/PageSkeletons";
 import { TrueEmptyState } from "@/components/states/ListStates";
 import { FactsPanel, TERM_PRODUCTS_HREF, TREASURY_PRODUCTS_HREF } from "@/components/invest/parts";
 import { findOffer } from "@/components/invest/offers";
@@ -36,7 +36,7 @@ export function OfferDetail() {
       ? { href: TERM_PRODUCTS_HREF, label: "Term Deposits" }
       : { href: TREASURY_PRODUCTS_HREF, label: "Treasury Bills & Bonds" };
 
-  if (!hydrated) return <DetailPageSkeleton />;
+  if (!hydrated) return <OfferDetailSkeleton />;
   if (!offer) {
     return (
       <div className="flex flex-col gap-8">

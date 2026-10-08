@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 import { CalendarClock, CircleMinus, XCircle } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { ActionTile } from "@/components/ui/action-tile";
-import { DetailPageSkeleton } from "@/components/states/PageSkeletons";
+import { InvestmentDetailSkeleton } from "@/components/states/PageSkeletons";
 import { TrueEmptyState } from "@/components/states/ListStates";
 import { Button } from "@/components/ui/button";
 import { FactsPanel, INVEST_HOME } from "@/components/invest/parts";
@@ -26,7 +26,7 @@ export default function TermDepositDetailPage() {
   const { showAmounts } = useAmountVisibility();
   const back = { href: INVEST_HOME, label: "Invest" };
 
-  if (!hydrated) return <DetailPageSkeleton />;
+  if (!hydrated) return <InvestmentDetailSkeleton />;
   if (!d) {
     return (
       <div className="flex flex-col gap-8">

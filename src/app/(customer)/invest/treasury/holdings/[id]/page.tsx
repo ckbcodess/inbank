@@ -10,7 +10,7 @@ import { CalendarClock, FileText, Undo2 } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import { ActionTile } from "@/components/ui/action-tile";
-import { DetailPageSkeleton } from "@/components/states/PageSkeletons";
+import { InvestmentDetailSkeleton } from "@/components/states/PageSkeletons";
 import { FactsPanel, HoldingNotFound, TREASURY_HOME, INVEST_HOME } from "@/components/invest/parts";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { formatDate, formatMoney } from "@/lib/mock-data";
@@ -22,7 +22,7 @@ export default function HoldingDetailPage() {
   const { hydrated, holding: h, csd } = useHolding(id);
   const { showAmounts } = useAmountVisibility();
 
-  if (!hydrated) return <DetailPageSkeleton />;
+  if (!hydrated) return <InvestmentDetailSkeleton />;
   if (!h) return <HoldingNotFound />;
 
   const base = `${TREASURY_HOME}/holdings/${h.id}`;

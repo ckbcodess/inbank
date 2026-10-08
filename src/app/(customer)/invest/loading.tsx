@@ -1,5 +1,5 @@
-import { ListPageSkeleton } from "@/components/states/PageSkeletons";
+import { InvestHomeSkeleton } from "@/components/states/PageSkeletons";
 
 export default function Loading() {
-  return <ListPageSkeleton rows={5} toolbar={false} />;
+  return <InvestHomeSkeleton />;
 }
