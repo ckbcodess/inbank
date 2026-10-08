@@ -235,7 +235,7 @@ export function NewDepositFlow() {
                 key={t.days}
                 title={`${t.days} days`}
                 detail={`Matures ${formatDate(addDays(MOCK_TODAY, t.days))}`}
-                value={`${t.rate}% a year`}
+                value={`${t.rate}%`}
                 selected={tenure === t.days}
                 onSelect={() => setTenure(t.days)}
               />
