@@ -950,26 +950,26 @@ input[type="number"] {
 
 /* Modal fluid scale & slide animations (Emil Kowalski design engineering) */
 
-/* Desktop Modal: Enters subtly from negative Y (above) and exits to positive Y (below) */
+/* Desktop Modal: Enters subtly from bottom (+16px) to center (0), exits sliding down (+16px) */
 @keyframes modal-desktop-in {
   from {
     opacity: 0;
-    transform: translate3d(-50%, calc(-50% - 16px), 0) scale(0.98);
+    transform: translate3d(0, 16px, 0) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translate3d(-50%, -50%, 0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
 @keyframes modal-desktop-out {
   from {
     opacity: 1;
-    transform: translate3d(-50%, -50%, 0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
   to {
     opacity: 0;
-    transform: translate3d(-50%, calc(-50% + 16px), 0) scale(0.98);
+    transform: translate3d(0, 16px, 0) scale(0.98);
   }
 }
 
