@@ -25,6 +25,7 @@ import { useSession, useSessionHydrated } from "@/lib/session-store";
 import { getNavigation } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { FxQuickModal } from "@/components/fx/FxQuickModal";
+import { BottomNav } from "./BottomNav";
 
 const COLLAPSE_KEY = "nibs-sidebar-collapsed";
 
@@ -159,13 +160,14 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
               <div
                 key={pathname}
                 className={cn(
-                  "@container page-stagger mx-auto w-full px-4 pt-6 pb-12 sm:px-8 sm:pt-10 sm:pb-14 lg:px-10 lg:pt-12 lg:pb-16 xl:px-10",
+                  "@container page-stagger mx-auto w-full px-4 pt-6 pb-28 sm:px-8 sm:pt-10 sm:pb-14 lg:px-10 lg:pt-12 lg:pb-16 xl:px-10",
                   pathname === "/overview" ? "max-w-[1440px]" : "max-w-[960px]",
                 )}
               >
                 {children}
               </div>
             </main>
+            <BottomNav onOpenDrawer={() => setSidebarOpen(true)} />
           </div>
         </div>
       </div>
