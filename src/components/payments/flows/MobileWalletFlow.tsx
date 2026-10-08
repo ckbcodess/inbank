@@ -11,6 +11,7 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
+  AccountVerificationStatus,
   VerifiedAccountBadge,
   ResolvingAccountBadge,
   CollapsedDetailsBadge,
@@ -191,13 +192,12 @@ export function MobileWalletFlow({
               </>
             )}
 
-            {/* Resolving indicator */}
-            {!isSelf && isDetailsEntered && resolving && (
-              <ResolvingAccountBadge message="Verifying mobile wallet holder..." />
-            )}
-
-            {/* Verified badge */}
-            {isVerified && !isSelf && <VerifiedAccountBadge name={verifiedName} />}
+            {/* Verification Status */}
+            <AccountVerificationStatus
+              resolving={!isSelf && isDetailsEntered && resolving}
+              name={isVerified && !isSelf ? verifiedName : null}
+              resolvingMessage="Verifying..."
+            />
           </div>
         )}
 </Field>

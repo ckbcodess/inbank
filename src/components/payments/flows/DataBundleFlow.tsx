@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Account, formatMoney } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import {
@@ -15,6 +15,7 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
+  AccountVerificationStatus,
   VerifiedAccountBadge,
   CollapsedDetailsBadge,
   TELCO_NETWORKS,
@@ -91,14 +92,31 @@ export function DataBundleFlow({
     return bundles.find((b) => b.id === state.bundleId);
   }, [bundles, state.bundleId]);
 
+  const [resolving, setResolving] = useState(false);
+
+  const isPhoneValid = isCompleteGhanaMobile(state.aPhone);
+  const isNetworkValid = Boolean(state.wNetwork);
+
+  useEffect(() => {
+    if (!isSelf && isPhoneValid && isNetworkValid) {
+      setResolving(true);
+      const timer = setTimeout(() => {
+        setResolving(false);
+      }, 250);
+      return () => clearTimeout(timer);
+    } else {
+      setResolving(false);
+    }
+  }, [isSelf, isPhoneValid, isNetworkValid, state.aPhone, state.wNetwork]);
+
   const verifiedName = useMemo(() => {
     return resolveAccountName(state.aPhone, state.benName);
   }, [state.aPhone, state.benName]);
 
+  const isVerified = isPhoneValid && isNetworkValid && !resolving && Boolean(verifiedName);
+
   const numAmount = selectedBundle?.price ?? 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
-  const isPhoneValid = isCompleteGhanaMobile(state.aPhone);
-  const isNetworkValid = Boolean(state.wNetwork);
   const isValid = Boolean(state.fromId) && isNetworkValid && isPhoneValid && numAmount > 0 && !overBalance;
 
 
@@ -172,7 +190,12 @@ export function DataBundleFlow({
               aria-label="Phone number"
             />
 
-            {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+            {/* Verification Status */}
+            <AccountVerificationStatus
+              resolving={!isSelf && isPhoneValid && isNetworkValid && resolving}
+              name={isVerified && !isSelf ? verifiedName : null}
+              resolvingMessage="Verifying..."
+            />
           </div>
         )}
 </Field>

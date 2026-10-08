@@ -11,6 +11,7 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   CollapsedDetailsBadge,
+  AccountVerificationStatus,
   VerifiedAccountBadge,
   ResolvingAccountBadge,
   NETWORKS,
@@ -172,15 +173,12 @@ export function CardlessWithdrawalFlow({
                   />
                 </div>
 
-                {/* Resolving indicator */}
-                {isDetailsEntered && resolving && (
-                  <ResolvingAccountBadge message="Verifying recipient phone number..." />
-                )}
-
-                {/* Verified badge */}
-                {isVerified && (
-                  <VerifiedAccountBadge name={verifiedName} />
-                )}
+                {/* Verification Status */}
+                <AccountVerificationStatus
+                  resolving={isDetailsEntered && resolving}
+                  name={isVerified ? verifiedName : null}
+                  resolvingMessage="Verifying..."
+                />
               </div>
             )}
           </div>

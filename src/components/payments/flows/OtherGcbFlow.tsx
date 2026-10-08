@@ -9,6 +9,7 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
+  AccountVerificationStatus,
   VerifiedAccountBadge,
   ResolvingAccountBadge,
   CollapsedDetailsBadge,
@@ -128,13 +129,12 @@ export function OtherGcbFlow({
               className="numorainput tabular"
             />
 
-            {/* Resolving indicator */}
-            {isAcctValid && resolving && (
-              <ResolvingAccountBadge message="Verifying GCB account details..." />
-            )}
-
-            {/* Verified badge */}
-            {isVerified && <VerifiedAccountBadge name={verifiedName} />}
+            {/* Verification Status */}
+            <AccountVerificationStatus
+              resolving={isAcctValid && resolving}
+              name={isVerified ? verifiedName : null}
+              resolvingMessage="Verifying..."
+            />
           </div>
         )}
 </Field>

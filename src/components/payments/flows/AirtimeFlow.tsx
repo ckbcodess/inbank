@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
 import {
 } from "@/components/ui/select";
@@ -11,6 +11,7 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
+  AccountVerificationStatus,
   VerifiedAccountBadge,
   CollapsedDetailsBadge,
   TELCO_NETWORKS,
@@ -77,14 +78,31 @@ export function AirtimeFlow({
     [accounts, state.fromId]
   );
 
+  const [resolving, setResolving] = useState(false);
+
+  const isPhoneValid = isCompleteGhanaMobile(state.aPhone);
+  const isNetworkValid = Boolean(state.wNetwork);
+
+  useEffect(() => {
+    if (!isSelf && isPhoneValid && isNetworkValid) {
+      setResolving(true);
+      const timer = setTimeout(() => {
+        setResolving(false);
+      }, 250);
+      return () => clearTimeout(timer);
+    } else {
+      setResolving(false);
+    }
+  }, [isSelf, isPhoneValid, isNetworkValid, state.aPhone, state.wNetwork]);
+
   const verifiedName = useMemo(() => {
     return resolveAccountName(state.aPhone, state.benName);
   }, [state.aPhone, state.benName]);
 
+  const isVerified = isPhoneValid && isNetworkValid && !resolving && Boolean(verifiedName);
+
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
-  const isPhoneValid = isCompleteGhanaMobile(state.aPhone);
-  const isNetworkValid = Boolean(state.wNetwork);
   const isValid = Boolean(state.fromId) && isNetworkValid && isPhoneValid && numAmount > 0 && !overBalance;
 
 
@@ -154,7 +172,12 @@ export function AirtimeFlow({
               aria-label="Phone number"
             />
 
-            {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+            {/* Verification Status */}
+            <AccountVerificationStatus
+              resolving={!isSelf && isPhoneValid && isNetworkValid && resolving}
+              name={isVerified && !isSelf ? verifiedName : null}
+              resolvingMessage="Verifying..."
+            />
           </div>
         )}
 </Field>

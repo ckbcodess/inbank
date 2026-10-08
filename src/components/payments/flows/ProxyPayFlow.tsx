@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
 import {
   FromAccountSelector,
@@ -9,6 +9,7 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
+  AccountVerificationStatus,
   VerifiedAccountBadge,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
@@ -63,14 +64,30 @@ export function ProxyPayFlow({
     [accounts, state.fromId]
   );
 
+  const [resolving, setResolving] = useState(false);
+  const isPxValid = state.pxId.trim().length >= 4;
+
+  useEffect(() => {
+    if (isPxValid) {
+      setResolving(true);
+      const timer = setTimeout(() => {
+        setResolving(false);
+      }, 250);
+      return () => clearTimeout(timer);
+    } else {
+      setResolving(false);
+    }
+  }, [state.pxId, isPxValid]);
+
   const verifiedName = useMemo(() => {
     return resolveAccountName(state.pxId, state.benName || (state.pxId.startsWith("@") ? `${state.pxId.replace("@", "").toUpperCase()} Alias` : ""));
   }, [state.pxId, state.benName]);
 
+  const isVerified = isPxValid && !resolving && Boolean(verifiedName);
+
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
-  const isPxValid = state.pxId.trim().length >= 4;
-  const isValid = Boolean(state.fromId) && isPxValid && numAmount > 0 && !overBalance;
+  const isValid = Boolean(state.fromId) && isVerified && numAmount > 0 && !overBalance;
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
@@ -112,7 +129,12 @@ export function ProxyPayFlow({
                 className="pl-9 pr-4"
               />
             </div>
-            {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+            {/* Verification Status */}
+            <AccountVerificationStatus
+              resolving={isPxValid && resolving}
+              name={isVerified ? verifiedName : null}
+              resolvingMessage="Verifying..."
+            />
           </div>
         )}
 </Field>

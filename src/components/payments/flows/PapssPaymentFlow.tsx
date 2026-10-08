@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
 import {
   Select,
@@ -15,6 +15,7 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
+  AccountVerificationStatus,
   VerifiedAccountBadge,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
@@ -152,13 +153,26 @@ export function PapssPaymentFlow({
   const totalGhs = ghsEquivalent + fee;
   const overBalance = totalGhs > (fromAccount?.available ?? 0);
 
+  const [resolving, setResolving] = useState(false);
   const isDetailsValid = state.wIban.trim().length >= 6 && Boolean(state.wBank);
+
+  useEffect(() => {
+    if (isDetailsValid) {
+      setResolving(true);
+      const timer = setTimeout(() => {
+        setResolving(false);
+      }, 250);
+      return () => clearTimeout(timer);
+    } else {
+      setResolving(false);
+    }
+  }, [state.wIban, state.wBank, isDetailsValid]);
 
   const verifiedName = useMemo(() => {
     return resolveAccountName(state.wIban, state.wBenName);
   }, [state.wIban, state.wBenName]);
 
-  const isVerified = isDetailsValid && Boolean(verifiedName);
+  const isVerified = isDetailsValid && !resolving && Boolean(verifiedName);
 
   const isDestinationValid = isVerified;
 
@@ -242,8 +256,12 @@ export function PapssPaymentFlow({
               className="tabular"
             />
 
-            {/* Verified badge */}
-            {isVerified && <VerifiedAccountBadge name={verifiedName} />}
+            {/* Verification Status */}
+            <AccountVerificationStatus
+              resolving={isDetailsValid && resolving}
+              name={isVerified ? verifiedName : null}
+              resolvingMessage="Verifying..."
+            />
           </div>
         )}
 </Field>

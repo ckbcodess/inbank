@@ -2,7 +2,8 @@
 
 import { InlineError } from "@/components/ui/inline-error";
 import React, { useMemo, useRef, useState, useEffect } from "react";
-import { ArrowLeftRight, Landmark, AlertCircle, CheckCircle2, User } from "lucide-react";
+import { ArrowLeftRight, Landmark, AlertCircle, CheckCircle2, Check, User } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import {
@@ -1161,31 +1162,152 @@ export function ProceedButton({
 }
 
 /* -------------------------------------------------------------------------- */
-/* Subcomponent 7: Verified Badge                                             */
+/* Subcomponent 7: Verified & Resolving Verification Status                  */
 /* -------------------------------------------------------------------------- */
-export function VerifiedAccountBadge({ name }: { name: string }) {
+export function AccountVerificationStatus({
+  resolving,
+  name,
+  resolvingMessage = "Verifying...",
+  className,
+}: {
+  resolving?: boolean;
+  name?: string | null;
+  resolvingMessage?: string;
+  className?: string;
+}) {
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      {resolving ? (
+        <motion.div
+          key="resolving"
+          initial={{ opacity: 0, y: -2 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -2 }}
+          transition={{ duration: 0.18, ease: "easeOut" }}
+          className={cn("flex items-center gap-2 pt-1.5 text-[13px] text-muted-foreground select-none", className)}
+        >
+          <motion.span
+            key="spinner"
+            initial={{ scale: 0.4, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.3, opacity: 0 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="flex items-center justify-center shrink-0"
+          >
+            <AppLoader size={14} className="text-muted-foreground" />
+          </motion.span>
+          <motion.span
+            key="resolving-text"
+            initial={{ opacity: 0, scale: 0.96, x: -2 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.96, x: 2 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="truncate font-normal"
+          >
+            {resolvingMessage}
+          </motion.span>
+        </motion.div>
+      ) : name ? (
+        <motion.div
+          key="verified"
+          initial={{ opacity: 0, y: -2 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -2 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className={cn("flex items-center gap-2 pt-1.5 text-[13.5px] text-foreground select-none", className)}
+        >
+          <motion.span
+            key="check-icon"
+            initial={{ scale: 0.3, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.3, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 450, damping: 22, mass: 0.8 }}
+            className="flex size-4 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs"
+          >
+            <Check size={10} strokeWidth={3} className="shrink-0" />
+          </motion.span>
+          <motion.span
+            key="verified-name"
+            initial={{ opacity: 0, scale: 0.96, x: -2 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.96, x: 2 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="truncate font-normal"
+          >
+            {name}
+          </motion.span>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
+  );
+}
+
+export function VerifiedAccountBadge({ name, className }: { name: string; className?: string }) {
   if (!name) return null;
   return (
-    <div className="flex items-center justify-between gap-3 py-2.5 animate-in fade-in duration-150">
-      <span className="min-w-0 truncate text-[14px] text-foreground">{name}</span>
-      <span className="flex shrink-0 items-center gap-1.5 text-[12px] text-success-text">
-        <CheckCircle2 size={14} strokeWidth={1.9} className="shrink-0" aria-hidden="true" />
-        Verified
-      </span>
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: -2 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -2 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      className={cn("flex items-center gap-2 pt-1.5 text-[13.5px] text-foreground select-none", className)}
+    >
+      <motion.span
+        initial={{ scale: 0.3, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.3, opacity: 0 }}
+        transition={{ type: "spring", stiffness: 450, damping: 22, mass: 0.8 }}
+        className="flex size-4 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs"
+      >
+        <Check size={10} strokeWidth={3} className="shrink-0" />
+      </motion.span>
+      <motion.span
+        initial={{ opacity: 0, scale: 0.96, x: -2 }}
+        animate={{ opacity: 1, scale: 1, x: 0 }}
+        exit={{ opacity: 0, scale: 0.96, x: 2 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+        className="truncate font-normal"
+      >
+        {name}
+      </motion.span>
+    </motion.div>
   );
 }
 
 export function ResolvingAccountBadge({
-  message = "Verifying account holder details...",
+  message = "Verifying...",
+  className,
 }: {
   message?: string;
+  className?: string;
 }) {
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2 text-[12.5px] text-muted-foreground">
-      <AppLoader size={14} className="text-muted-foreground shrink-0" />
-      <span>{message}</span>
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: -2 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -2 }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
+      className={cn("flex items-center gap-2 pt-1.5 text-[13px] text-muted-foreground select-none", className)}
+    >
+      <motion.span
+        initial={{ scale: 0.4, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.4, opacity: 0 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
+        className="flex items-center justify-center shrink-0"
+      >
+        <AppLoader size={14} className="text-muted-foreground" />
+      </motion.span>
+      <motion.span
+        initial={{ opacity: 0, scale: 0.96, x: -2 }}
+        animate={{ opacity: 1, scale: 1, x: 0 }}
+        exit={{ opacity: 0, scale: 0.96, x: 2 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
+        className="truncate font-normal"
+      >
+        {message}
+      </motion.span>
+    </motion.div>
   );
 }
 

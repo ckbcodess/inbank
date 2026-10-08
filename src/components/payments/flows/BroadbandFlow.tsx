@@ -19,6 +19,7 @@ import {
   FromAccountSelector,
   InsufficientFundsAlert,
   ProceedButton,
+  AccountVerificationStatus,
   VerifiedAccountBadge,
   ResolvingAccountBadge,
   CollapsedDetailsBadge,
@@ -177,8 +178,11 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
                 className="tabular"
               />
               <InlineError message={showAcctError && provider.accountError} className="text-left" />
-              {isAcctValid && resolving && <ResolvingAccountBadge message={`Verifying ${provider.name} account details...`} />}
-              {isVerified && <VerifiedAccountBadge name={verifiedName} />}
+              <AccountVerificationStatus
+                resolving={isAcctValid && resolving}
+                name={isVerified ? verifiedName : null}
+                resolvingMessage="Verifying..."
+              />
             </div>
           )}
         </>

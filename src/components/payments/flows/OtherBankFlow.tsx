@@ -11,6 +11,7 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
+  AccountVerificationStatus,
   VerifiedAccountBadge,
   ResolvingAccountBadge,
   CollapsedDetailsBadge,
@@ -138,13 +139,12 @@ export function OtherBankFlow({
               className="numorainput tabular"
             />
 
-            {/* Resolving indicator */}
-            {isDetailsValid && resolving && (
-              <ResolvingAccountBadge message={`Verifying account with ${state.bank}...`} />
-            )}
-
-            {/* Verified badge */}
-            {isVerified && <VerifiedAccountBadge name={verifiedName} />}
+            {/* Verification Status */}
+            <AccountVerificationStatus
+              resolving={isDetailsValid && resolving}
+              name={isVerified ? verifiedName : null}
+              resolvingMessage="Verifying..."
+            />
           </div>
         )}
 </Field>

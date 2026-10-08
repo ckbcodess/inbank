@@ -65,6 +65,7 @@ import {
   NarrationInput,
   InsufficientFundsAlert,
   ProceedButton,
+  AccountVerificationStatus,
   VerifiedAccountBadge,
   CollapsedDetailsBadge,
   BankSelect,
@@ -980,15 +981,12 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               )}
 
               {/* Live Resolving State / Verification Badge */}
-              {rail !== "group" && resolving && (
-                <div className="flex items-center gap-2 rounded-xl border border-border bg-muted/40 p-2.5 text-[12.5px] text-muted-foreground animate-pulse">
-                  <AppLoader size={13} className="text-muted-foreground shrink-0" />
-                  <span>Resolving account holder details...</span>
-                </div>
-              )}
-
-              {rail !== "group" && !resolving && resolvedName && (
-                <VerifiedAccountBadge name={resolvedName} />
+              {rail !== "group" && (
+                <AccountVerificationStatus
+                  resolving={resolving}
+                  name={resolvedName}
+                  resolvingMessage="Verifying..."
+                />
               )}
             </div>
           )}
