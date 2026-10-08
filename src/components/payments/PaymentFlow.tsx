@@ -16,11 +16,11 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowLeftRight,
+  Check,
   CheckCircle2,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
-  ChevronUp,
+  Copy,
   Globe,
   Landmark,
   Pencil,
@@ -890,6 +890,18 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const { groups } = useGroupsStore();
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
   const [pinModalOpen, setPinModalOpen] = useState(false);
+  const [copiedTokenCode, setCopiedTokenCode] = useState<string | null>(null);
+
+  const handleCopyToken = useCallback((code: string) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(code);
+    }
+    setCopiedTokenCode(code);
+    toast.success(`Token code ${code} copied to clipboard!`);
+    setTimeout(() => {
+      setCopiedTokenCode((curr) => (curr === code ? null : curr));
+    }, 2000);
+  }, []);
 
   // Progressive Disclosure Stage Control (1..4)
   const [stage, setStage] = useState<number>(1);
@@ -2378,74 +2390,89 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         {/* 3. Active / Recent Generated Tokens Section */}
         <div className="flex flex-col gap-3.5 pt-2">
           <div className="flex items-center justify-between">
-            <h3 className="text-[15px] font-medium text-foreground">Active Withdrawal Tokens</h3>
+            <h3 className="text-[14px] font-medium text-foreground">Active Withdrawal Tokens</h3>
             <span className="text-[12px] text-muted-foreground font-normal">2 active tokens</span>
           </div>
 
           <div className="flex flex-col gap-3">
-            {/* Active Token Item 1 (Self) */}
-            <div className="flex flex-col p-4 rounded-[16px] border border-border/80 bg-card shadow-xs gap-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-warning/10 text-warning-text border border-warning/20">
-                    Self Withdrawal
-                  </span>
-                  <span className="text-[12px] text-muted-foreground">Expires in 18 hrs</span>
-                </div>
-                <span className="text-[16px] font-semibold text-foreground">GHS 200.00</span>
-              </div>
+            {[
+              {
+                code: "782-419",
+                type: "self" as const,
+                title: "Self Withdrawal",
+                expiresIn: "Expires in 18 hrs",
+                amount: 200,
+              },
+              {
+                code: "309-881",
+                type: "third-party" as const,
+                title: "Kofi Boateng (0244123456)",
+                expiresIn: "Expires in 22 hrs",
+                amount: 500,
+              },
+            ].map((token) => (
+              <div
+                key={token.code}
+                className="group relative flex flex-col rounded-2xl border border-border/80 bg-card p-4 transition duration-hover hover:border-border hover:shadow-xs gap-3.5"
+              >
+                {/* Header Row: Recipient & Amount */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
+                      {token.type === "self" ? (
+                        <Smartphone size={16} strokeWidth={1.8} className="text-muted-foreground" />
+                      ) : (
+                        <User size={16} strokeWidth={1.8} className="text-muted-foreground" />
+                      )}
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[13.5px] font-medium text-foreground truncate">
+                        {token.title}
+                      </span>
+                      <span className="text-[11.5px] text-muted-foreground">
+                        {token.expiresIn}
+                      </span>
+                    </div>
+                  </div>
 
-              <div className="flex items-center justify-between pt-1 border-t border-border/50">
-                <div className="flex flex-col">
-                  <span className="text-[11px] uppercase tracking-wider text-muted-foreground">Token Code</span>
-                  <span className="text-[18px] font-bold tracking-wider text-foreground">782-419</span>
+                  <div className="text-right shrink-0">
+                    <span className="text-[15px] font-semibold tabular text-foreground">
+                      GHS {token.amount.toFixed(2)}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
+
+                {/* Token Code & Copy Row */}
+                <div className="flex items-center justify-between gap-2 rounded-xl bg-muted/40 px-3.5 py-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+                      Token Code
+                    </span>
+                    <span className="font-mono text-[16px] font-semibold tracking-wider tabular text-foreground">
+                      {token.code}
+                    </span>
+                  </div>
+
                   <button
                     type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText("782-419");
-                      alert("Token code 782-419 copied to clipboard!");
-                    }}
-                    className="px-3 py-1.5 rounded-lg border border-border text-[12px] font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
+                    onClick={() => handleCopyToken(token.code)}
+                    className="inline-flex h-7.5 items-center gap-1.5 rounded-lg border border-border/80 bg-card px-2.5 text-[11.5px] font-medium text-foreground shadow-2xs transition-colors hover:bg-muted cursor-pointer"
                   >
-                    Copy Code
+                    {copiedTokenCode === token.code ? (
+                      <>
+                        <Check size={12} className="text-success stroke-[2.5]" />
+                        <span className="text-success font-medium">Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy size={12} className="text-muted-foreground" />
+                        <span>Copy Code</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
-            </div>
-
-            {/* Active Token Item 2 (Third-Party) */}
-            <div className="flex flex-col p-4 rounded-[16px] border border-border/80 bg-card shadow-xs gap-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-info/10 text-info-text border border-info/20">
-                    Kofi Boateng (0244123456)
-                  </span>
-                  <span className="text-[12px] text-muted-foreground">Expires in 22 hrs</span>
-                </div>
-                <span className="text-[16px] font-semibold text-foreground">GHS 500.00</span>
-              </div>
-
-              <div className="flex items-center justify-between pt-1 border-t border-border/50">
-                <div className="flex flex-col">
-                  <span className="text-[11px] uppercase tracking-wider text-muted-foreground">Token Code</span>
-                  <span className="text-[18px] font-bold tracking-wider text-foreground">309-881</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText("309-881");
-                      alert("Token code 309-881 copied to clipboard!");
-                    }}
-                    className="px-3 py-1.5 rounded-lg border border-border text-[12px] font-medium text-foreground hover:bg-muted transition-colors cursor-pointer"
-                  >
-                    Copy Code
-                  </button>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
