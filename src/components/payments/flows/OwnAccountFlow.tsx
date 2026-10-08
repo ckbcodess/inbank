@@ -118,7 +118,7 @@ export function OwnAccountFlow({
             value={state.toOwnAccountId}
             onValueChange={(val) => val && onChange("toOwnAccountId", val)}
           >
-            <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-3.5 text-left cursor-pointer flex items-center">
+            <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-4.5 text-left cursor-pointer flex items-center">
               <AccountSelectTriggerContent
                 account={toAccount}
                 placeholder="Select destination account"

@@ -608,9 +608,7 @@ export function AccountSelectTriggerContent({
   if (!account) {
     return (
       <div className="flex items-center gap-3 min-w-0 flex-1">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-          <Landmark size={18} strokeWidth={1.8} className="shrink-0" />
-        </span>
+        <Landmark size={20} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
         <span className="text-[14px] text-muted-foreground font-normal truncate">
           {placeholder}
         </span>
@@ -622,14 +620,12 @@ export function AccountSelectTriggerContent({
     <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
       {/* Left: Icon + Account Name + Account Number */}
       <div className="flex items-center gap-3 min-w-0">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-          <Landmark size={18} strokeWidth={1.8} className="shrink-0" />
-        </span>
+        <Landmark size={20} strokeWidth={1.8} className="shrink-0 text-foreground" />
         <div className="flex flex-col min-w-0 text-left gap-0.5">
           <span className="text-[14.5px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
             {account.name}
           </span>
-          <span className="text-[12.5px] text-muted-foreground font-normal truncate tabular leading-tight">
+          <span className="text-[12px] text-muted-foreground font-normal truncate tabular leading-tight">
             {account.number}
           </span>
         </div>
@@ -666,7 +662,7 @@ export function FromAccountSelector({
   return (
     <Field label={label}>
       <Select value={value} onValueChange={(val) => val && onChange(val)}>
-        <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-3.5 text-left cursor-pointer flex items-center">
+        <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-4.5 text-left cursor-pointer flex items-center">
           <AccountSelectTriggerContent
             account={selected}
             placeholder={placeholder}
@@ -1234,14 +1230,14 @@ export function CollapsedDetailsBadge({
 }) {
   const initials = initialsOf(title);
   return (
-    <div className="flex min-h-[58px] items-center justify-between gap-3 rounded-2xl border border-field-border bg-field px-3.5 py-2.5 transition-colors animate-in fade-in duration-150 ease-out hover:bg-field-hover">
+    <div className="flex min-h-[58px] items-center justify-between gap-3 rounded-2xl border border-field-border bg-field px-4.5 py-2.5 transition-colors animate-in fade-in duration-150 ease-out hover:bg-field-hover">
       <div className="flex min-w-0 items-center gap-3">
         {icon ? (
-          <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-foreground">
+          <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full text-foreground">
             {icon}
           </span>
         ) : (
-          <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-[12.5px] text-muted-foreground font-medium">
+          <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-[12px] text-muted-foreground font-medium">
             {initials || <User size={16} strokeWidth={1.8} aria-hidden="true" />}
           </span>
         )}
@@ -1256,7 +1252,7 @@ export function CollapsedDetailsBadge({
             )}
           </span>
           {subtitle && (
-            <span className="truncate text-[12.5px] leading-tight text-muted-foreground tabular">{subtitle}</span>
+            <span className="truncate text-[12px] leading-tight text-muted-foreground tabular">{subtitle}</span>
           )}
           {nameCheck &&
             !nameCheck.confirmed && (
@@ -1415,7 +1411,7 @@ export function NetworkSelect({
 }) {
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-3.5 text-left cursor-pointer flex items-center">
+      <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-4.5 text-left cursor-pointer flex items-center">
         <div className="flex items-center gap-3">
           <OperatorLogo name={value} size={36} />
           <span className={cn("text-[14.5px]", value ? "font-medium text-foreground" : "font-normal text-muted-foreground")}>
@@ -1472,7 +1468,7 @@ export function BankSelect({
 }) {
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-3.5 text-left cursor-pointer flex items-center">
+      <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-4.5 text-left cursor-pointer flex items-center">
         <SelectValue placeholder="Select bank" />
       </SelectTrigger>
       <SelectContent>
@@ -1491,7 +1487,7 @@ export function PaymentMethodSelect({ value, onChange }: { value: string; onChan
   const selected = PAYMENT_METHODS.find((m) => m.id === value);
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-3.5 text-left cursor-pointer flex items-center">
+      <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-4.5 text-left cursor-pointer flex items-center">
         <span className={cn("truncate text-[15px] font-normal", selected ? "text-foreground" : "text-muted-foreground")}>
           {selected ? selected.name : "Select payment method"}
         </span>

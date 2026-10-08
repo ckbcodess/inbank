@@ -156,14 +156,14 @@ export function OwnWalletPicker({
       >
         <SelectTrigger
           aria-label={line ? "Your numbers" : "Your wallets"}
-          className="flex h-[58px] min-h-[58px] rounded-2xl px-3.5 cursor-pointer items-center text-left"
+          className="flex h-[58px] min-h-[58px] rounded-2xl px-4.5 cursor-pointer items-center text-left"
         >
           {current && (
             <div className="flex min-w-0 items-center gap-3">
               <OperatorLogo name={current.network} size={36} />
               <span className="flex min-w-0 flex-col gap-0.5">
                 <span className="truncate text-[14px] text-foreground">{nameOf(current)}</span>
-                <span className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground tabular">
+                <span className="flex items-center gap-1.5 text-[12px] text-muted-foreground tabular">
                   <span className="truncate">{formatGhPhone(current.phone)}</span>
                   <WalletTag tag={current.tag} />
                 </span>
