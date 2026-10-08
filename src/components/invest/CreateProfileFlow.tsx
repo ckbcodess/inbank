@@ -24,7 +24,7 @@ import { TrueEmptyState } from "@/components/states/ListStates";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { FromAccountSelector, ProceedButton } from "@/components/payments/flows/shared";
-import { AuthSummary, INVEST_HOME } from "@/components/invest/parts";
+import { INVEST_HOME } from "@/components/invest/parts";
 import { useSession } from "@/lib/session-store";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
 import {
@@ -316,16 +316,6 @@ export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountInten
           onCreated?.();
           setScreen("success");
         }}
-        summary={
-          <AuthSummary
-            headline="Open your securities account"
-            rows={[
-              ["For", actor?.name ?? ""],
-              ["Linked account", from ? `${from.name} · ${from.number}` : ""],
-              ["Residential address", residential.trim()],
-            ]}
-          />
-        }
       />
     </div>
   );
