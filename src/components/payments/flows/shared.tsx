@@ -1415,7 +1415,7 @@ export function NetworkSelect({
 }) {
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger className="h-[58px] min-h-[58px] text-left cursor-pointer flex items-center">
+      <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-3.5 text-left cursor-pointer flex items-center">
         <div className="flex items-center gap-3">
           <OperatorLogo name={value} size={36} />
           <span className={cn("text-[14.5px]", value ? "font-medium text-foreground" : "font-normal text-muted-foreground")}>
@@ -1472,7 +1472,7 @@ export function BankSelect({
 }) {
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger >
+      <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-3.5 text-left cursor-pointer flex items-center">
         <SelectValue placeholder="Select bank" />
       </SelectTrigger>
       <SelectContent>
@@ -1491,7 +1491,7 @@ export function PaymentMethodSelect({ value, onChange }: { value: string; onChan
   const selected = PAYMENT_METHODS.find((m) => m.id === value);
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger >
+      <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-3.5 text-left cursor-pointer flex items-center">
         <span className={cn("truncate text-[15px] font-normal", selected ? "text-foreground" : "text-muted-foreground")}>
           {selected ? selected.name : "Select payment method"}
         </span>
