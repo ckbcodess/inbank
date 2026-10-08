@@ -28,13 +28,12 @@ import {
   HeroBalance,
   HeroStack,
   HeroSurface,
-  HeroUpdated,
   LastLogin,
   HeroAccountMenu,
 } from "../hero-parts";
 
 export function HeroLayout(props: DashViewProps) {
-  const { data, status, updatedAt, showAmounts, onToggle, onSelectAccount, onRefresh } = props;
+  const { data, status, showAmounts, onToggle, onSelectAccount, onRefresh } = props;
   const loading = status === "loading";
   const hasOtherAccounts = data.accounts.length > 1;
 
@@ -53,10 +52,7 @@ export function HeroLayout(props: DashViewProps) {
           <HeroSurface className="flex flex-col items-center gap-6 rounded-t-3xl px-4 pb-16 pt-14 sm:pb-28 sm:pt-20">
             <HeroAccountMenu data={data} className="absolute right-4 top-4 sm:right-6 sm:top-6" />
             <AccountSwitcher data={data} onSelect={onSelectAccount} align="center" tone="hero" />
-            <div className="flex flex-col items-center gap-4">
-              <HeroBalance data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
-              <HeroUpdated updatedAt={updatedAt} />
-            </div>
+            <HeroBalance data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
           </HeroSurface>
         }
       >

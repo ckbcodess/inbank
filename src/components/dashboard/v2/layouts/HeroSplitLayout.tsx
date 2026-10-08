@@ -27,13 +27,12 @@ import {
   HeroBalance,
   HeroStack,
   HeroSurface,
-  HeroUpdated,
   LastLogin,
   HeroAccountMenu,
 } from "../hero-parts";
 
 export function HeroSplitLayout(props: DashViewProps) {
-  const { data, status, updatedAt, showAmounts, onToggle, onSelectAccount, onRefresh } = props;
+  const { data, status, showAmounts, onToggle, onSelectAccount, onRefresh } = props;
   const loading = status === "loading";
   const hasOtherAccounts = data.accounts.length > 1;
 
@@ -52,10 +51,7 @@ export function HeroSplitLayout(props: DashViewProps) {
             <HeroAccountMenu data={data} className="absolute right-4 top-4 sm:right-8 sm:top-8" />
             <div className="flex flex-col items-start gap-8 sm:gap-10">
               <AccountSwitcher data={data} onSelect={onSelectAccount} tone="hero" />
-              <div className="flex flex-col gap-4">
-                <HeroBalance data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
-                <HeroUpdated updatedAt={updatedAt} className="opacity-50" />
-              </div>
+              <HeroBalance data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
             </div>
 
             <MoneyActions
