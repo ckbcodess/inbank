@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Landmark, Wallet } from "lucide-react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { Account, formatMoney } from "@/lib/mock-data";
+import { Account } from "@/lib/mock-data";
 import {
   AmountInput,
   FromAccountSelector,
@@ -103,7 +103,14 @@ export function OwnAccountFlow({
         {isDetailsValid && isCollapsed && toAccount ? (
           <CollapsedDetailsBadge
             title={toAccount.name}
-            subtitle={`Account ••${toAccount.number.slice(-4)} · ${formatMoney(toAccount.available, toAccount.currency, true)}`}
+            subtitle={`${toAccount.type} · ${toAccount.number}`}
+            icon={
+              toAccount.type === "Wallet" ? (
+                <Wallet size={20} strokeWidth={1.8} className="shrink-0" />
+              ) : (
+                <Landmark size={20} strokeWidth={1.8} className="shrink-0" />
+              )
+            }
             onChange={() => setCollapsed(false)}
           />
         ) : (

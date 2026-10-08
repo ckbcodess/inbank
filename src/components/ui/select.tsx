@@ -92,9 +92,9 @@ function SelectTrigger({
       data-size={size}
       data-active={isActive ? "true" : undefined}
       className={cn(
-        "flex w-full items-center justify-between gap-2 rounded-xl border border-field-border bg-field hover:bg-field-hover px-4 py-2 text-[14px] text-foreground transition-colors outline-none select-none",
-        "focus:outline-none focus-visible:outline-none focus-visible:border-field-border-focus focus:ring-0 focus-visible:ring-0",
-        "disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-0 data-placeholder:text-muted-foreground data-[size=default]:min-h-13 data-[size=sm]:min-h-8 data-[size=sm]:rounded-lg *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-field dark:text-foreground cursor-pointer",
+        "flex w-full items-center justify-between gap-2 rounded-xl border border-field-border bg-field hover:bg-field-hover px-4 py-2 text-[14px] text-foreground transition-all outline-none select-none",
+        "focus:outline-none focus-visible:outline-none focus-visible:border-field-border-focus focus:ring-2 focus:ring-field-border-focus/25 focus-visible:ring-2 focus-visible:ring-field-border-focus/25",
+        "disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 data-placeholder:text-muted-foreground data-[size=default]:min-h-13 data-[size=sm]:min-h-8 data-[size=sm]:rounded-lg *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:bg-field dark:text-foreground cursor-pointer",
         isActive &&
           "border-foreground/35 bg-muted/65 text-foreground font-medium dark:border-white/30 dark:bg-muted/40 shadow-xs",
         className

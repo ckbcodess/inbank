@@ -185,7 +185,10 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
-### 2026-10-08
+### 2026-10-08
+
+- **Decision** Invest offer details gained an interactive timeline scrubber and custom amount entry in `ReturnVisual` (`components/invest/OfferDetail.tsx`). 10 bars show accrued return across the tenure: clicking or scrubbing with pointer events highlights the selected date, displays projected balance with an arrow badge, and shows remaining milestones as dashed future outlines. Custom deposit entry live-recalculates all bars and passes through to `NewDepositFlow` and `BuyFlow`.
+- **Discovery** Treasury bills and term deposits share the straight-line accrual curve for intermediate bar inspections without needing separate calculation stores.
 - **Decision** Shared `Field` built (2026-10-08). `components/ui/field.tsx` (`Field`: label, hint, error, optional) sits on `Label`, which Title Cases its text at render (`lib/title-case.ts`). `Input`, `Textarea`, `Select` trigger and `PhoneInput` share one look (h-13, rounded-2xl, px-4, 14px); about 130 label wrappers, 50 raw inputs and 55 select triggers were moved onto them, and the private `Field`s and class constants (`INPUT`, `FUND_FIELD`, `LABEL`…) were removed. Only OTP boxes and amount fields stay bespoke. The old Send & Pay size won because it was the majority (50 of ~95).
 - **Gap** Search inputs are still hand-built in `TransactionList`, `CreateGroupFlow`, `EditGroupModal` and `CountryPicker` (`ui/search-bar.tsx` and `ExpandableSearch` exist). Inline cells (group contribution amounts) are raw by design. Not viewed in a browser: the unified size will change the look of login, signup, settings, beneficiaries, cards and group screens, which used h-10/h-11 before.
 - **Override** Placeholders are the same size as the typed value, in every input, textarea and select. Removed the global `input::placeholder { font-size: 13px }` rule in `globals.css` (added with the one-time-code work, "smaller placeholders"), so placeholder text inherits the field's own size. Don't set a placeholder size per field. Then set both to 14px (designer, 2026-10-08): about 100 field classes moved from `text-[15px]` to `text-[14px]`, and CONSTITUTION §5 now says so (the constitution row changed from 15px).
@@ -537,6 +540,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
   another of your numbers" (or "Link another wallet") is the last item. It no longer collapses into a summary after a
   pick, and the amount and later fields show as soon as the default is in. The removed-wallet notice still shows.
 - **Gap:** cardless withdrawal's "for myself" still offers only the registered number, not the linked wallets.
+- **Decision:** `OfferDetail` (`/invest/offer/[key]`) promoted to the grouped list design with the rate row integrated into the main facts panel (`Rate`, `Deposit period`, `Matures`, `Minimum deposit`) and an explicit worked breakdown in the example card (`You deposit`, `Estimated interest`, `You receive at maturity`). Standalone 40px hero rate and exploratory variant harness deleted.
 
 ---
 

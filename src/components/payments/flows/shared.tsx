@@ -608,8 +608,8 @@ export function AccountSelectTriggerContent({
   if (!account) {
     return (
       <div className="flex items-center gap-3 min-w-0 flex-1">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-          <Landmark size={17} strokeWidth={1.8} className="shrink-0" />
+        <span className="flex size-9 shrink-0 items-center justify-center text-muted-foreground">
+          <Landmark size={20} strokeWidth={1.8} className="shrink-0" />
         </span>
         <span className="text-[14px] text-muted-foreground font-normal truncate">
           {placeholder}
@@ -622,8 +622,8 @@ export function AccountSelectTriggerContent({
     <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
       {/* Left: Icon + Account Name + Account Number */}
       <div className="flex items-center gap-3 min-w-0">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-          <Landmark size={17} strokeWidth={1.8} className="shrink-0" />
+        <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
+          <Landmark size={20} strokeWidth={1.8} className="shrink-0" />
         </span>
         <div className="flex flex-col min-w-0 text-left gap-0.5">
           <span className="text-[14.5px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
@@ -951,8 +951,8 @@ export function AmountInput({
           nudge && "animate-amount-shake",
           disabled ? "bg-muted/30 cursor-not-allowed opacity-80" : "hover:bg-field-hover cursor-text",
           isError
-            ? "border-destructive/70 focus-within:border-destructive focus-within:ring-1 focus-within:ring-destructive/30"
-            : "border-field-border focus-within:border-field-border-focus focus-within:bg-field-focus focus-within:ring-0"
+            ? "border-destructive/70 focus-within:border-destructive focus-within:ring-2 focus-within:ring-destructive/30"
+            : "border-field-border focus-within:border-field-border-focus focus-within:bg-field-focus focus-within:ring-2 focus-within:ring-field-border-focus/25"
         )}
       >
         <div className="inline-flex items-center justify-center gap-2.5">
@@ -1236,9 +1236,15 @@ export function CollapsedDetailsBadge({
   return (
     <div className="flex min-h-[58px] items-center justify-between gap-3 rounded-2xl border border-field-border bg-field px-3.5 py-2.5 transition-colors animate-in fade-in duration-150 ease-out hover:bg-field-hover">
       <div className="flex min-w-0 items-center gap-3">
-        <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-[12.5px] text-muted-foreground">
-          {icon ?? (initials || <User size={16} strokeWidth={1.8} aria-hidden="true" />)}
-        </span>
+        {icon ? (
+          <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
+            {icon}
+          </span>
+        ) : (
+          <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-[12.5px] text-muted-foreground">
+            {initials || <User size={16} strokeWidth={1.8} aria-hidden="true" />}
+          </span>
+        )}
         <div className="flex min-w-0 flex-col gap-0.5 text-left">
           <span className="flex min-w-0 items-center gap-1.5">
             <span className="truncate text-[14.5px] font-medium leading-tight tracking-[-0.01em] text-foreground">{title}</span>

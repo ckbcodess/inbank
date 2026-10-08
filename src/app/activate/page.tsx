@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -36,6 +35,8 @@ import {
 } from "@/lib/activation";
 
 import { Field } from "@/components/ui/field";
+import { GhanaCardInput } from "@/components/ui/ghana-card-input";
+import { isCompleteGhanaCard } from "@/lib/ghana-card";
 type Step = OnboardingStep;
 
 const RESEND_SECONDS = 30;
@@ -162,8 +163,8 @@ function ActivateContent() {
 
   function handleGhanaCardSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!ghanaCard.trim()) {
-      setErrorMsg("Please enter your Ghana Card number");
+    if (!isCompleteGhanaCard(ghanaCard)) {
+      setErrorMsg("Enter all ten digits of your Ghana Card number: nine, then the check digit.");
       return;
     }
 
@@ -401,13 +402,11 @@ function ActivateContent() {
 
           {/* Card Input Field */}
           <Field label="Ghana Card Number" htmlFor="ghana-card">
-            <Input
+            <GhanaCardInput
               id="ghana-card"
               value={ghanaCard}
-              onChange={(e) => setGhanaCard(e.target.value)}
-              placeholder="e.g. GHA-0123456789-0"
-              className="uppercase"
-              autoFocus
+              onValueChange={setGhanaCard}
+              required
             />
 </Field>
 

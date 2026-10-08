@@ -1202,7 +1202,6 @@ export default function BeneficiariesPage() {
                     value={form.phoneNumber}
                     onValueChange={(v) => setForm((p) => ({ ...p, phoneNumber: v }))}
                     aria-label="Wallet phone number"
-                    className="h-11 rounded-xl border-field-border bg-field focus-within:border-field-border-focus focus-within:ring-0 shadow-xs"
                   />
 </Field>
               </div>
@@ -1332,7 +1331,6 @@ export default function BeneficiariesPage() {
                     value={form.phoneNumber}
                     onValueChange={(v) => setForm((p) => ({ ...p, phoneNumber: v }))}
                     aria-label="Phone number to top up"
-                    className="h-11 rounded-xl border-field-border bg-field focus-within:border-field-border-focus focus-within:ring-0"
                   />
 </Field>
               </div>

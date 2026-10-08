@@ -155,7 +155,7 @@ export const RECENT_AVATARS: RecentPayeeAvatar[] = [
     id: "rec-px3",
     name: "Kofi Appiah",
     bank: "Ghana Card",
-    acct: "GHA-71829304-1",
+    acct: "GHA-718293041-1",
     initials: "KA",
     rail: "proxy",
     subtitle: "Ghana Card ID",

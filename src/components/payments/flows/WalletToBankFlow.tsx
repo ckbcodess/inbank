@@ -91,8 +91,8 @@ export function WalletToBankFlow({
       <Field label="Source Mobile Wallet">
         <div className="flex items-center justify-between h-[58px] min-h-[58px] px-3.5 w-full rounded-2xl border border-field-border bg-field gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-              <Smartphone size={17} strokeWidth={1.8} />
+            <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
+              <Smartphone size={20} strokeWidth={1.8} />
             </span>
             <div className="flex flex-col min-w-0 text-left gap-0.5">
               <span className="text-[14.5px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">

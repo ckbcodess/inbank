@@ -60,7 +60,8 @@ export function NewDepositFlow() {
   const [tenure, setTenure] = useState<number | null>(TENURES.some((t) => t.days === chosenDays) ? chosenDays : null);
   // Set once the customer has just created their securities account here, so its confirmation stays on screen.
   const [profileStarted, setProfileStarted] = useState(false);
-  const [amount, setAmount] = useState("");
+  const initialAmount = params.get("amount") || "";
+  const [amount, setAmount] = useState(initialAmount);
   const [instruction, setInstruction] = useState<DepositInstruction>("close");
   const [authOpen, setAuthOpen] = useState(false);
   const [result, setResult] = useState<{ trn: string; maturity: string } | null>(null);

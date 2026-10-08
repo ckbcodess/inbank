@@ -142,10 +142,10 @@ export function PhoneInput({
     <div
       data-slot="phone-input"
       className={cn(
-        "flex h-13 w-full items-center gap-2 rounded-xl border border-field-border bg-field px-4 text-[14px] transition-colors outline-none",
-        "focus-within:outline-none focus-within:border-field-border-focus focus-within:ring-0",
+        "flex h-13 w-full items-center gap-2 rounded-xl border border-field-border bg-field px-4 text-[14px] transition-all outline-none",
+        "focus-within:outline-none focus-within:border-field-border-focus focus-within:ring-2 focus-within:ring-field-border-focus/25",
         "hover:bg-field-hover focus-within:bg-field-focus",
-        "has-aria-invalid:border-destructive has-aria-invalid:ring-0",
+        "has-aria-invalid:border-destructive has-aria-invalid:ring-2 has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40",
         disabled && "pointer-events-none opacity-50",
         className
       )}

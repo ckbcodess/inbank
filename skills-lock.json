@@ -73,6 +73,12 @@
       "skillPath": "skills/review-animations/SKILL.md",
       "computedHash": "8c2befeb28bb484bf2de7b2fc228774857e266d32a65d76895e78651a536d8cf"
     },
+    "variant": {
+      "source": "jakubkrehel/skills",
+      "sourceType": "github",
+      "skillPath": "skills/variant/SKILL.md",
+      "computedHash": "a2418869b2d944eaf0741589999174386d6bc63605b5f3e451388fd422f7f3e2"
+    },
     "write-swift": {
       "source": "emilkowalski/skill",
       "sourceType": "github",

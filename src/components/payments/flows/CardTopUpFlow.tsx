@@ -96,7 +96,8 @@ export function CardTopUpFlow({
         {selectedCard && isCollapsed ? (
           <CollapsedDetailsBadge
             title={selectedCard.name}
-            subtitle={`${selectedCard.scheme} (${selectedCard.maskedNumber}) · Current: ${formatMoney(selectedCard.balance ?? 0, selectedCard.currency, true)}`}
+            subtitle={`${selectedCard.scheme} · ${selectedCard.maskedNumber}`}
+            icon={<CreditCard size={20} strokeWidth={1.8} className="shrink-0" />}
             onChange={() => setCollapsed(false)}
           />
         ) : (
@@ -111,8 +112,8 @@ export function CardTopUpFlow({
             <SelectTrigger className="h-[58px] min-h-[58px] text-left flex items-center">
               {!selectedCard ? (
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                    <CreditCard size={17} strokeWidth={1.8} />
+                  <span className="flex size-9 shrink-0 items-center justify-center text-muted-foreground">
+                    <CreditCard size={20} strokeWidth={1.8} />
                   </span>
                   <span className="text-[14px] text-muted-foreground font-normal">
                     Select destination card
@@ -121,8 +122,8 @@ export function CardTopUpFlow({
               ) : (
                 <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                      <CreditCard size={17} strokeWidth={1.8} />
+                    <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
+                      <CreditCard size={20} strokeWidth={1.8} />
                     </span>
                     <div className="flex flex-col min-w-0 text-left gap-0.5">
                       <span className="text-[14.5px] text-foreground font-medium truncate leading-tight">

@@ -848,7 +848,6 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     value={f.destination}
                     onValueChange={handlePhoneChange}
                     aria-label="Mobile or wallet number"
-                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
                   />
                 </>
               )}
@@ -938,7 +937,6 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     value={f.destination}
                     onValueChange={handlePhoneChange}
                     aria-label="Phone number"
-                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
                   />
 
                   <Select
@@ -977,7 +975,6 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     value={f.destination}
                     onValueChange={handlePhoneChange}
                     aria-label="Phone number"
-                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
                   />
                 </>
               )}

@@ -90,11 +90,11 @@ export interface NiaRecord {
  * correctly reports "you already bank with us" rather than starting a
  * duplicate account.
  */
-const EXISTING_CUSTOMER_CARD = "GHA-0123456789-0";
+const EXISTING_CUSTOMER_CARD = "GHA-012345678-9";
 
 const NIA_RECORDS: Record<string, NiaRecord> = {
-  "GHA-0555555555-5": {
-    cardNumber: "GHA-0555555555-5",
+  "GHA-055555555-5": {
+    cardNumber: "GHA-055555555-5",
     firstName: "Kwabena",
     lastName: "Asare",
     dateOfBirth: "14 Mar 1994",
@@ -120,7 +120,7 @@ export function lookupGhanaCard(cardNumber: string): IdentityLookupResult {
   return { kind: "notFound" };
 }
 
-export const DEMO_NEW_CARD = "GHA-0555555555-5";
+export const DEMO_NEW_CARD = "GHA-055555555-5";
 export const DEMO_EXISTING_CARD = EXISTING_CUSTOMER_CARD;
 export const DEMO_SIGNUP_MOBILE = "+233201234567";
 

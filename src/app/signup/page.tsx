@@ -37,6 +37,8 @@ import {
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 
 import { Field } from "@/components/ui/field";
+import { GhanaCardInput } from "@/components/ui/ghana-card-input";
+import { isCompleteGhanaCard } from "@/lib/ghana-card";
 type Step = OnboardingStep;
 
 const RESEND_SECONDS = 30;
@@ -55,7 +57,7 @@ function SignupContent() {
     setErrorMsg("");
     setBusy(false);
   }, [stepParam]);
-  const [ghanaCard, setGhanaCard] = useState("GHA-7890123456-1");
+  const [ghanaCard, setGhanaCard] = useState("GHA-789012345-6");
   const [title, setTitle] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
@@ -128,8 +130,8 @@ function SignupContent() {
 
   function handleGhanaCardSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!ghanaCard.trim()) {
-      setErrorMsg("Please enter your Ghana Card number");
+    if (!isCompleteGhanaCard(ghanaCard)) {
+      setErrorMsg("Enter all ten digits of your Ghana Card number: nine, then the check digit.");
       return;
     }
     setErrorMsg("");
@@ -314,13 +316,10 @@ function SignupContent() {
       {step === "ghana_card" && (
         <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-5">
           <Field label="Ghana Card Number" htmlFor="ghanaCard">
-            <Input
+            <GhanaCardInput
               id="ghanaCard"
-              type="text"
-              placeholder="e.g GHA-0123456789-0"
               value={ghanaCard}
-              onChange={(e) => setGhanaCard(e.target.value.toUpperCase())}
-              className="uppercase"
+              onValueChange={setGhanaCard}
               required
             />
 </Field>

@@ -174,7 +174,6 @@ export default function SettingsPage() {
                   id="phone"
                   value={phone}
                   onValueChange={setPhone}
-                  className="h-10 text-[14px]"
                   required
                 />
 </Field>

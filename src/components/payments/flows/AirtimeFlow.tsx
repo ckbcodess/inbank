@@ -152,7 +152,6 @@ export function AirtimeFlow({
                 }
               }}
               aria-label="Phone number"
-              className="h-13 rounded-2xl border-field-border bg-field px-4 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
             />
 
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}

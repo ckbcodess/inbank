@@ -187,7 +187,6 @@ export function MobileWalletFlow({
                     }
                   }}
                   aria-label="Mobile number"
-                  className="h-13 rounded-2xl border-field-border bg-field px-4 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
                 />
               </>
             )}

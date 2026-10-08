@@ -15,7 +15,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ChevronRight, FileText, Landmark, PiggyBank, ShieldCheck, TrendingUp } from "lucide-react";
+import { ChevronRight, FileText, PiggyBank, ShieldCheck, TrendingUp } from "lucide-react";
+import { Bank, Safe } from "reicon-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { SegmentedControl } from "@/components/ui/segmented-control";
@@ -24,11 +25,17 @@ import { InvestDevTools, PRODUCTS_HREF, SecurityIcon, TERM_PRODUCTS_HREF, TREASU
 import { InvestWelcome } from "@/components/invest/InvestWelcome";
 import { SecuritiesAccountDialog } from "@/components/invest/SecuritiesAccountDialog";
 import { ActionTile } from "@/components/ui/action-tile";
+import { glassOf, rectRegion } from "@/components/ui/glass-icon";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { sumMoney } from "@/lib/money";
-import { daysLeftLabel, formatRate, SECURITIES, SUPPORT_PHONE, useMyTreasury, useTreasury, useTreasuryHydrated } from "@/lib/treasury";
-import { TENURES, termInterest, useMyDeposits } from "@/lib/term-deposits";
+import { daysLeftLabel, SUPPORT_PHONE, useMyTreasury, useTreasury, useTreasuryHydrated } from "@/lib/treasury";
+import { termInterest, useMyDeposits } from "@/lib/term-deposits";
+
+// The product tiles use the same duotone glass icons as the Send & Pay hub: amber glass with a graphite part.
+// Built once at module level so each is a stable component.
+const TermDepositIcon = glassOf(Safe as never, "amber", { tone: "slate", region: rectRegion(0, 13, 24, 12) });
+const TreasuryIcon = glassOf(Bank as never, "amber", { tone: "slate", region: rectRegion(0, 17.6, 24, 7) });
 
 type View = "investments" | "products";
 const VIEWS: readonly { value: View; label: string }[] = [
@@ -57,7 +64,7 @@ export function InvestHome() {
   const view: View = params.get("view") === "products" ? "products" : "investments";
 
   const hydrated = useTreasuryHydrated();
-  const { ownerId, csd, intent, holdings, orders, marketOpen } = useMyTreasury();
+  const { ownerId, csd, intent, holdings, orders } = useMyTreasury();
   const { active: deposits } = useMyDeposits();
   const clearIntent = useTreasury((s) => s.clearIntent);
   const { showAmounts } = useAmountVisibility();
@@ -242,19 +249,18 @@ export function InvestHome() {
 
   const products = () => (
     <div className="flex flex-col gap-6">
-      {!csd && <p className="px-1 text-[13px] text-muted-foreground">Look around freely. We open your securities account when you choose to invest.</p>}
       {csd?.status === "pending" && <p className="px-1 text-[13px] text-muted-foreground">Your securities account is being set up.</p>}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <ActionTile
-          icon={PiggyBank}
+          icon={TermDepositIcon}
+          bareIcon
           title="Term Deposits"
-          description={`Up to ${formatRate(Math.max(...TENURES.map((t) => t.rate)))} a year`}
           href={TERM_PRODUCTS_HREF}
         />
         <ActionTile
-          icon={Landmark}
+          icon={TreasuryIcon}
+          bareIcon
           title="Treasury Bills & Bonds"
-          description={marketOpen ? `Up to ${formatRate(Math.max(...SECURITIES.map((x) => x.rate)))} a year` : "Closed right now"}
           href={TREASURY_PRODUCTS_HREF}
         />
       </div>

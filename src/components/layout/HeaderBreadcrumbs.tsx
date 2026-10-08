@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { BackLink } from "@/components/layout/BackLink";
+import { findOffer } from "@/components/invest/offers";
 
 /** The full name of each Send & Pay flow, as the person knows it, never a clipped form of it. */
 const RAIL_BREADCRUMB_LABELS: Record<string, string> = {
@@ -231,14 +232,18 @@ export default function HeaderBreadcrumbs() {
     );
   }
 
-  // One option's details sits under Products. Its "offer" segment is not a page.
+  // One option's details sits under the list it came from, named for the option itself. Its "offer" segment is not a page.
   if (segments[0] === "invest" && segments[1] === "offer" && segments.length > 2) {
+    const offer = findOffer(segments[2]);
+    const term = offer ? offer.group === "term" : segments[2].startsWith("td-");
     return (
       <BreadcrumbView
         list={[
           { label: "Invest", href: "/invest", isLast: false },
-          { label: "Products", href: "/invest?view=products", isLast: false },
-          { label: "Details", href: pathname, isLast: true },
+          term
+            ? { label: "Term Deposits", href: "/invest/products/term-deposits", isLast: false }
+            : { label: "Treasury Bills & Bonds", href: "/invest/products/treasury", isLast: false },
+          { label: offer?.title ?? "Details", href: pathname, isLast: true },
         ]}
       />
     );

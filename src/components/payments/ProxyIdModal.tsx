@@ -22,8 +22,8 @@ import { useProxyStore, type ProxyType } from "@/lib/proxy-store";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 
-import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
+import { GhanaCardInput } from "@/components/ui/ghana-card-input";
 interface ProxyIdModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -108,18 +108,10 @@ export default function ProxyIdModal({
                 value={value}
                 onValueChange={setValue}
                 aria-label="Phone number"
-                className="h-11 rounded-xl border-field-border bg-field focus-within:border-field-border-focus focus-within:ring-0"
                 autoFocus
               />
             ) : (
-              <Input
-                type="text"
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                placeholder="e.g. GHA-0123456789-0"
-                className="tabular"
-                autoFocus
-              />
+              <GhanaCardInput value={value} onValueChange={setValue} autoFocus />
             )}
 </Field>
 

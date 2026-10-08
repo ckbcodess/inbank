@@ -91,13 +91,9 @@ export function OfferRow({ offer, showAmounts }: { offer: Offer; showAmounts: bo
     ) : null;
 
   const sub =
-    offer.group === "term"
-      ? "a year"
-      : s && s.market === "secondary" && s.available !== undefined
-        ? `${formatMoney(s.available, "GHS", showAmounts)} available`
-        : offer.icon === "bond"
-          ? "Bond"
-          : "Bill";
+    s && s.market === "secondary" && s.available !== undefined
+      ? `${formatMoney(s.available, "GHS", showAmounts)} available`
+      : null;
 
   return (
     <li>
@@ -112,7 +108,7 @@ export function OfferRow({ offer, showAmounts }: { offer: Offer; showAmounts: bo
         </span>
         <span className="flex shrink-0 flex-col items-end">
           <span className="tabular text-[14px] text-foreground">{formatRate(offer.rate)}</span>
-          <span className="tabular text-[12px] text-muted-foreground">{sub}</span>
+          {sub && <span className="tabular text-[12px] text-muted-foreground">{sub}</span>}
         </span>
         <ChevronRight size={15} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
       </Link>

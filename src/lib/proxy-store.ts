@@ -19,7 +19,7 @@ export type ProxyType = "phone" | "ghana-card";
 export interface MyProxy {
   id: string;
   type: ProxyType;
-  /** Display value, e.g. "0244 123 821" or "GHA-0123456789-0". */
+  /** Display value, e.g. "0244 123 821" or "GHA-012345678-9". */
   value: string;
   /** Account the proxy resolves to. */
   linkedAccountId: string;

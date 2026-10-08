@@ -724,7 +724,6 @@ export default function LinkSourceAccountModal({
                     id={`${modalId}-momoNum`}
                     value={newMomoNumber}
                     onValueChange={setNewMomoNumber}
-                    className="rounded-xl border-border bg-card"
                     required
                   />
 </Field>

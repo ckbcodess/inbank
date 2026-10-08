@@ -209,7 +209,7 @@ export const ACTIVATION_PERSONAS: Record<
     name: "Ransford Gyasi",
     tag: "Single Account",
     description: "Existing retail customer with one savings account",
-    ghanaCard: "GHA-0123456789-0",
+    ghanaCard: "GHA-012345678-9",
     holderName: "Ransford Gyasi",
     phone: "+233 24 123 4567",
     email: "ransford.gyasi@example.com",
@@ -295,7 +295,7 @@ export const ACTIVATION_PERSONAS: Record<
 export function getPersonaByGhanaCard(card: string): ActivationPersonaConfig {
   const norm = card.trim().toUpperCase();
   if (norm.includes("554433221") || norm.includes("MOBILE")) return ACTIVATION_PERSONAS.mobile_sync;
-  if (norm.includes("0123456789") || norm.includes("SINGLE")) return ACTIVATION_PERSONAS.single;
+  if (norm.includes("012345678") || norm.includes("SINGLE")) return ACTIVATION_PERSONAS.single;
   return ACTIVATION_PERSONAS.multi;
 }
 
@@ -316,7 +316,7 @@ export interface DemoIdentifier {
 }
 
 export const DEMO_IDENTIFIERS: readonly DemoIdentifier[] = [
-  { value: "GHA-0123456789-0", outcome: "Single Account · Ransford Gyasi", alreadyEnrolled: false, personaKey: "single" },
+  { value: "GHA-012345678-9", outcome: "Single Account · Ransford Gyasi", alreadyEnrolled: false, personaKey: "single" },
   { value: "GHA-998877665-1", outcome: "Multi-Account · Kwame Boateng (Pick Primary)", alreadyEnrolled: false, personaKey: "multi" },
   { value: "GHA-001234567-9", outcome: "Joint Account · Samuel Quartey & Esther Appiah", alreadyEnrolled: false, personaKey: "joint" },
   { value: "GHA-554433221-0", outcome: "Mobile Sync · Abena Osei", alreadyEnrolled: false, personaKey: "mobile_sync" },

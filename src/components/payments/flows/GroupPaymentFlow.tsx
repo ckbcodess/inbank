@@ -89,6 +89,7 @@ export function GroupPaymentFlow({
           <CollapsedDetailsBadge
             title={selectedGroup.name}
             subtitle={`${selectedGroup.members.length} members · ${selectedGroup.splitType === "equal" ? "Equal split" : "Custom split"}`}
+            icon={<Users size={20} strokeWidth={1.8} className="shrink-0" />}
             onChange={() => setCollapsed(false)}
           />
         ) : groups.length === 0 ? (
@@ -119,8 +120,8 @@ export function GroupPaymentFlow({
             <SelectTrigger className="min-h-[52px] h-auto border-border/80 bg-card text-left flex items-center">
               {!selectedGroup ? (
                 <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                    <Users size={18} strokeWidth={1.8} />
+                  <span className="flex size-9 shrink-0 items-center justify-center text-muted-foreground">
+                    <Users size={20} strokeWidth={1.8} />
                   </span>
                   <span className="text-[15px] text-muted-foreground font-normal truncate">
                     Select contribution group
@@ -129,8 +130,8 @@ export function GroupPaymentFlow({
               ) : (
                 <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
                   <div className="flex items-center gap-3.5 min-w-0">
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
-                      <Users size={18} strokeWidth={1.8} />
+                    <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
+                      <Users size={20} strokeWidth={1.8} />
                     </span>
                     <div className="flex flex-col min-w-0 text-left gap-0.5">
                       <span className="text-[15px] text-foreground font-medium truncate leading-tight">

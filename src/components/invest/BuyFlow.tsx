@@ -72,7 +72,8 @@ export function BuyFlow() {
   const [screen, setScreen] = useState<"form" | "review" | "success">("form");
   const [pickedFrom, setPickedFrom] = useState("");
   const [basis, setBasis] = useState<Basis>("cost");
-  const [amount, setAmount] = useState("");
+  const initialAmount = params.get("amount") || "";
+  const [amount, setAmount] = useState(initialAmount);
   const [instruction, setInstruction] = useState<MaturityInstructionId>("none");
   const [authOpen, setAuthOpen] = useState(false);
   // Set once the customer has just created their securities account here, so its confirmation stays on screen.

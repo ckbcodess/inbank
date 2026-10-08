@@ -371,6 +371,17 @@ const invest: Entry[] = [
   ["It’ll be ready within 7 working days of {0}. Meanwhile, you can explore our products.", "Il sera prêt sous 7 jours ouvrés à compter du {0}. En attendant, vous pouvez découvrir nos produits.", "Estará lista en un plazo de 7 días hábiles desde el {0}. Mientras tanto, puedes explorar nuestros productos.", "自 {0} 起 7 个工作日内开通。在此期间，您可以浏览我们的产品。"],
   ["Explore Products", "Découvrir les produits", "Explorar productos", "浏览产品"],
   ["Need help? Call {0}.", "Besoin d’aide ? Appelez le {0}.", "¿Necesitas ayuda? Llama al {0}.", "需要帮助？请致电 {0}。"],
+  ["Today", "Aujourd’hui", "Hoy", "今天"],
+  ["Your potential earn", "Ce que vous pourriez gagner", "Lo que podrías ganar", "您的潜在收益"],
+  ["Click or drag bars to inspect timeline", "Cliquez ou glissez sur les barres pour examiner la chronologie", "Haz clic o arrastra las barras para inspeccionar la cronología", "点击或拖动柱状图查看时间线"],
+  ["Jump to maturity", "Aller à l’échéance", "Ir al vencimiento", "跳至到期日"],
+  ["{0} days in", "{0} jours écoulés", "a los {0} días", "历时 {0} 天"],
+  ["+{0} total gain", "+{0} de gain total", "+{0} de ganancia total", "+{0} 总收益"],
+  ["+{0} by this date", "+{0} à cette date", "+{0} a esta fecha", "+{0} 截至该日期"],
+  ["Projected return for your deposit", "Rendement estimé pour votre dépôt", "Rendimiento estimado de tu depósito", "您存款的预计回报"],
+  ["Reset to {0}", "Réinitialiser à {0}", "Restablecer a {0}", "重置为 {0}"],
+  ["Minimum deposit is {0}", "Le dépôt minimum est de {0}", "El depósito mínimo es {0}", "最低存款额为 {0}"],
+  ["Enter at least {0} to invest.", "Saisissez au moins {0} pour investir.", "Introduce al menos {0} para invertir.", "请输入至少 {0} 进行投资。"],
 ];
 
 export default invest;

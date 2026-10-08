@@ -63,6 +63,7 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { displayGhanaMobile, isCompleteGhanaMobile } from "@/lib/phone";
 
 import { Field } from "@/components/ui/field";
+import { isCompleteGhanaCard } from "@/lib/ghana-card";
 const EMPTY_COMPANY: CompanyDetails = { name: "", tin: "", businessType: BUSINESS_TYPES[0] };
 const EMPTY_CONTACT: PrimaryContact = { name: "", role: SIGNATORY_ROLES[0], ghanaCard: "", mobile: "", email: "" };
 
@@ -108,7 +109,7 @@ export default function BusinessSignupPage() {
     const seedsBeyondContact = target.step === "signatories" || target.step === "documents" || target.step === "review" || target.step === "submitted";
     setContact(
       seedsBeyondContact
-        ? { name: "Abena Owusu-Mensah", role: "Director", ghanaCard: "GHA-0777888999-1", mobile: "+233241112233", email: "abena@adinkrafabrics.com" }
+        ? { name: "Abena Owusu-Mensah", role: "Director", ghanaCard: "GHA-077788899-1", mobile: "+233241112233", email: "abena@adinkrafabrics.com" }
         : EMPTY_CONTACT,
     );
     setContactIsSignatory(true);
@@ -345,7 +346,7 @@ export default function BusinessSignupPage() {
                 id="contactGhanaCard"
                 value={contact.ghanaCard}
                 onChange={(e) => setContact((c) => ({ ...c, ghanaCard: e.target.value }))}
-                placeholder="GHA-0123456789-0"
+                placeholder="GHA-012345678-9"
                 className="uppercase tabular"
                 required
               />
@@ -377,7 +378,7 @@ export default function BusinessSignupPage() {
               type="submit"
               variant="default"
               size="lg"
-              disabled={contact.name.trim() === "" || contact.ghanaCard.trim() === "" || !isCompleteGhanaMobile(contact.mobile) || contact.email.trim() === ""}
+              disabled={contact.name.trim() === "" || !isCompleteGhanaCard(contact.ghanaCard) || !isCompleteGhanaMobile(contact.mobile) || contact.email.trim() === ""}
               className="mt-2 h-11 w-full text-[14px]"
             >
               Proceed

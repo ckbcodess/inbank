@@ -20,14 +20,16 @@ import { useMyTreasury, useTreasuryHydrated } from "@/lib/treasury";
 
 const back = { href: PRODUCTS_HREF, label: "Products" };
 
-function Group({ title, line, offers }: { title?: string; line: string; offers: Offer[] }) {
+function Group({ title, line, offers }: { title?: string; line?: string; offers: Offer[] }) {
   const { showAmounts } = useAmountVisibility();
   return (
     <section className="flex flex-col gap-3">
-      <div className="flex flex-col gap-1 px-1">
-        {title && <h2 className="text-[16px] font-medium tracking-[-0.01em] text-foreground">{title}</h2>}
-        <p className="text-[13px] text-muted-foreground">{line}</p>
-      </div>
+      {(title || line) && (
+        <div className="flex flex-col gap-1 px-1">
+          {title && <h2 className="text-[16px] font-medium tracking-[-0.01em] text-foreground">{title}</h2>}
+          {line && <p className="text-[13px] text-muted-foreground">{line}</p>}
+        </div>
+      )}
       <ul className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">
         {offers.map((o) => (
           <OfferRow key={o.key} offer={o} showAmounts={showAmounts} />
@@ -43,7 +45,7 @@ export function TermDepositProducts() {
     <div className="flex flex-col gap-8">
       <PageHeader title="Term Deposits" backTo={back} />
       <InvestDevTools section="Invest" />
-      {!hydrated ? <ListSkeleton rows={3} /> : <Group line="A fixed rate, set when you open it." offers={termOffers()} />}
+      {!hydrated ? <ListSkeleton rows={3} /> : <Group offers={termOffers()} />}
     </div>
   );
 }
