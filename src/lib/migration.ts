@@ -53,7 +53,7 @@ export const MIGRATED_DATA = {
   ],
   // `recipient` is what the payment deep link opens with (number, account or reference); `detail` is what's shown.
   payees: [
-    { name: "Kwabena Asante", detail: "MTN MoMo · 024 •••• 118", rail: "wallet", recipient: "0244556118" },
+    { name: "Kwabena Asante", detail: "MTN MoMo · +233 24 ∗∗∗ 6118", rail: "wallet", recipient: "0244556118" },
     { name: "ECG Prepaid", detail: "Meter •••• 2231", rail: "ecg", recipient: "04122231" },
     { name: "Ama Owusu", detail: "Ecobank · •••• 7702", rail: "bank", recipient: "1441007702", bank: "Ecobank Ghana" },
     { name: "Ghana Water", detail: "Account •••• 5510", rail: "bill", recipient: "GW005510", billerId: "bil-002" },

@@ -17,6 +17,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import OtpInput from "@/components/auth/OtpInput";
 import { useAuthorisation, REGISTERED_PHONE } from "./useAuthorisation";
 import { OtpHelp, OtpPrompt } from "./OtpHelp";
+import { maskMobile } from "@/lib/auth-shared";
 
 export interface TransactionOtpModalProps {
   open: boolean;
@@ -36,6 +37,7 @@ export default function TransactionOtpModal({
   phone = REGISTERED_PHONE,
   summary,
 }: TransactionOtpModalProps) {
+  const displayPhone = maskMobile(phone);
   const auth = useAuthorisation();
   const formId = useId();
   const [submitting, setSubmitting] = useState(false);
@@ -94,7 +96,7 @@ export default function TransactionOtpModal({
             description={
               <>
                 A 6-digit one-time code was sent to{" "}
-                <span className="tabular whitespace-nowrap font-medium text-foreground">{phone}</span>
+                <span className="tabular whitespace-nowrap font-medium text-foreground">{displayPhone}</span>
               </>
             }
             titleClass="mt-5 text-[22px] font-medium tracking-[-0.02em] text-foreground"
@@ -115,7 +117,7 @@ export default function TransactionOtpModal({
 
           <InlineError message={auth.state === "error" && "That code isn’t right or has expired. Request a new one below."} className="mt-4" />
 
-          <AlertToast when={auth.state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${phone}.`} />
+          <AlertToast when={auth.state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${displayPhone}.`} />
 
           <div className="mt-7 w-full">
             <OtpHelp resend={auth.resend} onResend={auth.requestResend} shortcodeOpen={shortcodeOpen} onShortcodeOpenChange={setShortcodeOpen} />

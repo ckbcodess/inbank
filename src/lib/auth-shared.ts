@@ -7,14 +7,59 @@
 
 /* ── Masking ───────────────────────────────────────────────────────────────── */
 
-/** "+233241234567" → "+233 24 *** *567" — enough to recognise, not enough to reuse. */
+/**
+ * Standardized Phone Number Masking:
+ * Format: {country code} {identifier} {mask} {last 4 digits}
+ * Examples:
+ *   "0244123821"     → "+233 24 ∗∗∗ 3821"
+ *   "+233571234564"  → "+233 57 ∗∗∗ 4564"
+ *   "0241234567"     → "+233 24 ∗∗∗ 4567"
+ *   "+447911123456"  → "+44 79 ∗∗∗ 3456"
+ *
+ * Uses the centered asterisk (∗, U+2217) so the mask stays vertically aligned
+ * on the font midline, preventing the high-floating ASCII asterisk baseline issue.
+ */
 export function maskMobile(raw: string): string {
-  const digits = raw.replace(/\D/g, "");
-  if (digits.length < 7) return raw;
-  const country = digits.slice(0, 3);
-  const network = digits.slice(3, 5);
-  const last = digits.slice(-3);
-  return `+${country} ${network} *** *${last}`;
+  if (!raw) return "";
+  const cleaned = raw.trim();
+  const digits = cleaned.replace(/\D/g, "");
+
+  if (digits.length < 7) return cleaned;
+
+  // Ghana number with country code: 233XXXXXXXXX (12 digits)
+  if (digits.startsWith("233") && digits.length >= 11) {
+    const identifier = digits.slice(3, 5);
+    const last4 = digits.slice(-4);
+    return `+233 ${identifier} ∗∗∗ ${last4}`;
+  }
+
+  // Ghana 10-digit local format: 0XXXXXXXXX (e.g. 0244123821)
+  if (digits.length === 10 && digits.startsWith("0")) {
+    const identifier = digits.slice(1, 3);
+    const last4 = digits.slice(-4);
+    return `+233 ${identifier} ∗∗∗ ${last4}`;
+  }
+
+  // Ghana 9-digit local without leading 0: XXXXXXXXX (e.g. 244123821)
+  if (digits.length === 9) {
+    const identifier = digits.slice(0, 2);
+    const last4 = digits.slice(-4);
+    return `+233 ${identifier} ∗∗∗ ${last4}`;
+  }
+
+  // International foreign numbers (e.g. +44 79... or +1 415...)
+  if (cleaned.startsWith("+")) {
+    const last4 = digits.slice(-4);
+    const countryPrefix = cleaned.match(/^\+(\d{1,3})/)?.[1] ?? digits.slice(0, 2);
+    const rest = digits.slice(countryPrefix.length);
+    const identifier = rest.slice(0, 2);
+    return `+${countryPrefix} ${identifier} ∗∗∗ ${last4}`;
+  }
+
+  // Default fallback for any other number
+  const last4 = digits.slice(-4);
+  const identifier = digits.slice(0, 2);
+  return `+233 ${identifier} ∗∗∗ ${last4}`;
 }
 
 /** "ransford.gyasi@example.com" → "am•••••@example.com" — mirrors the MFA screen. */

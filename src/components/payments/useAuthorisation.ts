@@ -12,7 +12,7 @@ import { OTP_LENGTH } from "@/components/auth/OtpInput";
 
 export const PIN_LENGTH = 4;
 export const RESEND_SECONDS = 30;
-export const REGISTERED_PHONE = "0244 ••• 821";
+export const REGISTERED_PHONE = "+233 24 ∗∗∗ 3821";
 /** USSD shortcode that shows a one-time code on the phone. Placeholder until the real code is issued. */
 export const OTP_SHORTCODE = "*822*1*2#";
 

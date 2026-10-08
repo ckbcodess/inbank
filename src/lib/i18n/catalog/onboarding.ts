@@ -270,7 +270,7 @@ const onboarding: Entry[] = [
   ["Center your face in the circle.", "Centrez votre visage dans le cercle.", "Centra tu cara en el círculo.", "请将面部置于圆圈中央。"],
   ["Kindly provide title, email, and phone number.", "Veuillez indiquer votre titre, votre e-mail et votre numéro de téléphone.", "Indica tu título, correo y número de teléfono.", "请提供称谓、邮箱和手机号码。"],
   ["Confirm your details match your records.", "Vérifiez que vos informations sont exactes.", "Confirma que tus datos son correctos.", "确认您的信息与记录一致。"],
-  ["6-digit code sent to +233 24 *** *567.", "Code à 6 chiffres envoyé au +233 24 *** *567.", "Código de 6 dígitos enviado a +233 24 *** *567.", "6 位验证码已发送至 +233 24 *** *567。"],
+  ["6-digit code sent to +233 24 ∗∗∗ 4567.", "Code à 6 chiffres envoyé au +233 24 ∗∗∗ 4567.", "Código de 6 dígitos enviado a +233 24 ∗∗∗ 4567.", "6 位验证码已发送至 +233 24 ∗∗∗ 4567。"],
   ["6-digit code sent to am•••••@example.com.", "Code à 6 chiffres envoyé à am•••••@example.com.", "Código de 6 dígitos enviado a am•••••@example.com.", "6 位验证码已发送至 am•••••@example.com。"],
   ["National ID", "Pièce d’identité nationale", "Documento nacional", "国民身份证"],
   ["Setting up account...", "Configuration du compte…", "Configurando la cuenta…", "正在设置账户…"],
