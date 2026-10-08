@@ -2789,7 +2789,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Card 1: Self */}
           <ActionTile
             icon={Smartphone}
-            title="Send to My Number"
+            title="Data for Myself"
             onClick={() => {
               setTopupCategory("self");
               const selfNum = "0244123821";
@@ -2812,7 +2812,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           {/* Card 2: Others */}
           <ActionTile
             icon={Users}
-            title="Send to Other Numbers"
+            title="Data for Others"
             onClick={() => {
               setTopupCategory("other");
               setF((p) => ({

@@ -1,18 +1,20 @@
 "use client";
 
 /**
- * Broadband, on the Internet rail ("Broadband" next to "Send to My Number" and "Send to Other Numbers").
+ * Broadband, on the Internet rail ("Broadband" next to "Data for Myself" and "Data for others").
  *
- * The customer is paying for a connection at a home or office, not topping up a phone, so the destination is the
- * provider's broadband account, not a mobile number. The order follows the constitution: the account resolves to a name
- * before any package or price is shown, and nothing is preselected (a provider and a package are both the customer's
- * choice). Packages are in `getBroadbandPackages` (shared.tsx), with where each plan comes from.
+ * Three steps, in order: the product (MTN TurboNet, MTN Fibre or Telecel Broadband), then the one account field, whose
+ * label and rule come from that product, then the package. The account resolves to a name before any package or price
+ * is shown, and nothing is preselected. Products, their account rules and their packages live in `BROADBAND_PROVIDERS`
+ * and `getBroadbandPackages` (shared.tsx).
  */
 
 import { useEffect, useMemo, useState } from "react";
-import { Account, formatMoney } from "@/lib/mock-data";
+import { Account, formatDate, formatMoney } from "@/lib/mock-data";
+import { OperatorLogo } from "@/components/ui/operator-logo";
 import { OptionTile } from "@/components/ui/option-tile";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { InlineError } from "@/components/ui/inline-error";
 import {
   FromAccountSelector,
   InsufficientFundsAlert,
@@ -24,9 +26,9 @@ import {
   ScheduleFrequency,
   NetworkSelect,
   operatorBadgeIcon,
-  normalizeNetworkName,
   resolveAccountName,
-  BROADBAND_NETWORKS,
+  BROADBAND_PROVIDERS,
+  getBroadbandProvider,
   getBroadbandPackages,
 } from "./shared";
 
@@ -64,10 +66,14 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
 
   const fromAccount = useMemo(() => accounts.find((a) => a.id === state.fromId) ?? accounts[0], [accounts, state.fromId]);
 
-  const provider = state.wNetwork ? normalizeNetworkName(state.wNetwork) : "";
+  // Step 1 stores the product's name in `wNetwork`, so the rule for step 2 is looked up from it.
+  const provider = getBroadbandProvider(state.wNetwork);
 
-  const cleanAcct = state.aPhone.replace(/[\s-]/g, "");
-  const isAcctValid = cleanAcct.length >= 9;
+  const cleanAcct = provider ? provider.sanitize(state.aPhone) : "";
+  const isAcctValid = provider ? provider.isValid(cleanAcct) : false;
+  // An error shows once the person has left the field, so typing a number isn't scolded letter by letter.
+  const [acctTouched, setAcctTouched] = useState(false);
+  const showAcctError = acctTouched && state.aPhone.length > 0 && !isAcctValid;
 
   // A short "verifying" beat, like the other account flows.
   const [resolving, setResolving] = useState(false);
@@ -84,13 +90,29 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
   const verifiedName = useMemo(() => resolveAccountName(state.aPhone, state.benName), [state.aPhone, state.benName]);
   const isVerified = Boolean(provider) && isAcctValid && !resolving && Boolean(verifiedName);
 
-  const packages = useMemo(() => getBroadbandPackages(provider), [provider]);
+  // Some products show only the package this account is on now (Telecel); the rest show their whole catalogue.
+  const activeOnly = Boolean(provider?.activePackageFor);
+  const packages = useMemo(() => {
+    if (!provider) return [];
+    if (provider.activePackageFor) {
+      const active = provider.activePackageFor(cleanAcct);
+      return active ? [active] : [];
+    }
+    return getBroadbandPackages(provider.name);
+  }, [provider, cleanAcct]);
   const groups = useMemo(() => {
     const byGroup = new Map<string, typeof packages>();
     for (const p of packages) byGroup.set(p.group, [...(byGroup.get(p.group) ?? []), p]);
     return [...byGroup.entries()];
   }, [packages]);
-  const selected = packages.find((p) => p.id === state.bundleId);
+  const selected = activeOnly ? packages[0] : packages.find((p) => p.id === state.bundleId);
+  const dueOn = provider?.activeDueDate ? provider.activeDueDate(cleanAcct) : "";
+
+  // The active package is the only one there is, so it is what the payment carries. Keep the stored choice in step.
+  const activeId = activeOnly && isVerified ? (packages[0]?.id ?? "") : "";
+  useEffect(() => {
+    if (activeOnly && state.bundleId !== activeId) onChange("bundleId", activeId);
+  }, [activeOnly, activeId, state.bundleId, onChange]);
   // One kind of plan at a time: a handful of tiles, not the whole catalogue. A chosen package keeps its own kind open.
   const [pickedGroup, setPickedGroup] = useState<string | null>(null);
   const activeGroup =
@@ -105,68 +127,85 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
       {/* 1. From account */}
       <FromAccountSelector accounts={accounts} value={state.fromId} onChange={(id) => onChange("fromId", id)} />
 
-      {/* 2. Provider, then the broadband account at that provider */}
-      <Field label="Broadband Provider">
-        {isVerified && isCollapsed ? (
-          <CollapsedDetailsBadge
-            title={verifiedName}
-            subtitle={`${provider} · ${state.aPhone}`}
-            icon={operatorBadgeIcon(provider)}
-            nameCheck={{ confirmed: true, by: provider }}
-            onChange={() => setCollapsed(false)}
-          />
-        ) : (
-          <div className="flex flex-col gap-3">
+      {isVerified && isCollapsed ? (
+        <CollapsedDetailsBadge
+          title={verifiedName}
+          subtitle={`${provider?.name} · ${state.aPhone}`}
+          icon={operatorBadgeIcon(provider?.name)}
+          nameCheck={{ confirmed: true, by: provider?.name ?? "" }}
+          onChange={() => setCollapsed(false)}
+        />
+      ) : (
+        <>
+          {/* 2. Which broadband product */}
+          <Field label="Broadband Provider">
             <NetworkSelect
-              value={provider}
+              value={state.wNetwork}
               placeholder="Select provider"
-              options={BROADBAND_NETWORKS}
+              options={BROADBAND_PROVIDERS.map((p) => p.name)}
               onChange={(val) => {
                 onChange("wNetwork", val);
-                // The account and the package belong to the provider: clear them when it changes.
+                // The account and the package belong to the product: clear them when it changes.
                 onChange("aPhone", "");
                 onChange("benName", "");
                 onChange("bundleId", "");
                 setPickedGroup(null);
+                setAcctTouched(false);
               }}
             />
+          </Field>
 
-            {provider && (
-              <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-                <Label htmlFor="broadband-account">
-                  Account number
-                </Label>
-                <Input
-                  id="broadband-account"
-                  type="text"
-                  inputMode="numeric"
-                  value={state.aPhone}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/[^0-9]/g, "");
-                    onChange("aPhone", val);
-                    onChange("benName", resolveAccountName(val, ""));
-                  }}
-                  placeholder="Enter the number on your bill"
-                  className="tabular"
-                />
-                <p className="text-[12px] text-muted-foreground">The number on your bill, or on the router’s SIM.</p>
-                {isAcctValid && resolving && (
-                  <ResolvingAccountBadge message={provider === "Telecel Ghana" ? "Verifying Telecel account details..." : "Verifying MTN account details..."} />
-                )}
-                {isVerified && <VerifiedAccountBadge name={verifiedName} />}
-              </div>
-            )}
-          </div>
-        )}
-</Field>
+          {/* 3. The one account field. Its label, placeholder and rule come from the product chosen above. */}
+          {provider && (
+            <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+              <Label htmlFor="broadband-account">{provider.accountLabel}</Label>
+              <Input
+                id="broadband-account"
+                type="text"
+                inputMode={provider.inputMode}
+                autoComplete="off"
+                maxLength={provider.maxLength}
+                value={state.aPhone}
+                onChange={(e) => {
+                  const val = provider.sanitize(e.target.value);
+                  onChange("aPhone", val);
+                  onChange("benName", resolveAccountName(val, ""));
+                }}
+                onBlur={() => setAcctTouched(true)}
+                aria-invalid={showAcctError || undefined}
+                placeholder={provider.accountPlaceholder}
+                className="tabular"
+              />
+              <InlineError message={showAcctError && provider.accountError} className="text-left" />
+              {isAcctValid && resolving && <ResolvingAccountBadge message={`Verifying ${provider.name} account details...`} />}
+              {isVerified && <VerifiedAccountBadge name={verifiedName} />}
+            </div>
+          )}
+        </>
+      )}
 
-      {/* Only once the account is verified: the package and what it costs */}
+      {/* 4. Only once the account is verified: the package and what it costs */}
       {isVerified && (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+          {activeOnly ? (
+            <div className="flex flex-col gap-2">
+              <Label id="broadband-package-label">Your Active Package</Label>
+              {selected ? (
+                <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
+                  <OperatorLogo name={provider?.name} size={36} />
+                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span className="text-[14px] text-foreground">{selected.label}</span>
+                    <span className="text-[12px] text-muted-foreground tabular">Due {formatDate(dueOn)}</span>
+                  </div>
+                  <span className="text-[16px] text-foreground tabular">{formatMoney(selected.price, "GHS", true)}</span>
+                </div>
+              ) : (
+                <p className="text-[13px] text-muted-foreground">There’s no active package on this account right now.</p>
+              )}
+            </div>
+          ) : (
           <div className="flex flex-col gap-2">
-            <Label id="broadband-package-label">
-              Package
-            </Label>
+            <Label id="broadband-package-label">Bundle Package</Label>
             {groups.length > 1 && (
               <SegmentedControl
                 aria-label="Plan type"
@@ -196,6 +235,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
               </div>
             )}
           </div>
+          )}
 
           {selected && (
             <>

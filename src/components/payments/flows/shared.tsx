@@ -409,15 +409,104 @@ const TELECEL_BROADBAND: BroadbandPackage[] = [
   pkg("bb-tel-unl-weekend", "Telecel Ghana", "Telecel Unlimited", "Unlimited Passes", "Weekend", 30, "2 days"),
 ];
 
-/** The two providers with broadband, in the order they are offered. */
-export const BROADBAND_NETWORKS: readonly string[] = ["MTN Ghana", "Telecel Ghana"];
+/**
+ * The broadband products, in the order they are offered. Each one has its own account (the field label and the rule it
+ * is checked against) and its own packages. `packageGroups` limits a product to some of its network's plan groups.
+ *
+ * [ASSUMPTION] The Telecel user ID rule (8 to 20 letters or numbers) is a placeholder until Telecel confirms its format.
+ * The MTN Fibre rule is likewise a guess until MTN confirms its account number format.
+ */
+export type BroadbandProvider = {
+  name: string;
+  packageGroups?: readonly string[];
+  accountLabel: string;
+  accountPlaceholder: string;
+  accountError: string;
+  maxLength: number;
+  inputMode: "numeric" | "text";
+  sanitize: (raw: string) => string;
+  isValid: (clean: string) => boolean;
+  /** Set when the account only shows the package it is on now, not the whole catalogue. */
+  activePackageFor?: (clean: string) => BroadbandPackage | undefined;
+  activeDueDate?: (clean: string) => string;
+};
 
-export function getBroadbandPackages(networkName?: string): BroadbandPackage[] {
-  if (!networkName) return [];
-  const normalized = normalizeNetworkName(networkName);
-  if (normalized === "MTN Ghana") return MTN_BROADBAND;
-  if (normalized === "Telecel Ghana") return TELECEL_BROADBAND;
-  return [];
+/**
+ * The Telecel package each user ID is on right now. [MOCK] Pinned IDs are listed; any other ID resolves to one of the
+ * Telecel plans by hash, so every demo user has an active package. Replace with the provider's lookup.
+ */
+const TELECEL_ACTIVE_PACKAGE_IDS: Record<string, string> = {
+  TEL12345678: "bb-tel-family-m",
+};
+
+/** When the active Telecel package is next due, as an ISO date. [MOCK] Two to twenty-six days from today, by user ID. */
+export function activeTelecelDueDate(userId: string): string {
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) {
+    hash = (hash * 31 + userId.charCodeAt(i)) % 25;
+  }
+  const due = new Date();
+  due.setDate(due.getDate() + 2 + Math.abs(hash));
+  return due.toISOString();
+}
+
+export function activeTelecelPackage(userId: string): BroadbandPackage | undefined {
+  const pinned = TELECEL_ACTIVE_PACKAGE_IDS[userId];
+  if (pinned) return TELECEL_BROADBAND.find((p) => p.id === pinned);
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) {
+    hash = (hash * 31 + userId.charCodeAt(i)) % TELECEL_BROADBAND.length;
+  }
+  return TELECEL_BROADBAND[Math.abs(hash)];
+}
+
+export const BROADBAND_PROVIDERS: readonly BroadbandProvider[] = [
+  {
+    name: "MTN TurboNet",
+    packageGroups: ["TurboNet"],
+    accountLabel: "Paired Mobile Number",
+    accountPlaceholder: "Enter your mobile number",
+    accountError: "Enter the 10-digit mobile number paired to your router.",
+    maxLength: 10,
+    inputMode: "numeric",
+    sanitize: (raw) => raw.replace(/\D/g, ""),
+    isValid: (clean) => /^0\d{9}$/.test(clean),
+  },
+  {
+    name: "MTN Fibre",
+    packageGroups: ["Fibre"],
+    accountLabel: "Fibre Account Number",
+    accountPlaceholder: "Enter your account number",
+    accountError: "Enter a valid Fibre account number (8 to 16 letters or numbers).",
+    maxLength: 16,
+    inputMode: "text",
+    sanitize: (raw) => raw.replace(/[^a-zA-Z0-9]/g, "").toUpperCase(),
+    isValid: (clean) => /^[A-Z0-9]{8,16}$/.test(clean),
+  },
+  {
+    name: "Telecel Broadband",
+    accountLabel: "User ID",
+    accountPlaceholder: "Enter your user ID",
+    accountError: "Enter a valid Telecel user ID (8 to 20 letters or numbers).",
+    maxLength: 20,
+    inputMode: "text",
+    sanitize: (raw) => raw.replace(/[^a-zA-Z0-9]/g, "").toUpperCase(),
+    isValid: (clean) => /^[A-Z0-9]{8,20}$/.test(clean),
+    activePackageFor: activeTelecelPackage,
+    activeDueDate: activeTelecelDueDate,
+  },
+];
+
+export function getBroadbandProvider(name?: string): BroadbandProvider | undefined {
+  return BROADBAND_PROVIDERS.find((p) => p.name === name);
+}
+
+/** The packages a broadband product sells. `name` is the product (for example "MTN Fibre"), not the network. */
+export function getBroadbandPackages(providerName?: string): BroadbandPackage[] {
+  const provider = getBroadbandProvider(providerName);
+  if (!provider) return [];
+  const network = operatorFromName(provider.name) === "MTN" ? MTN_BROADBAND : TELECEL_BROADBAND;
+  return provider.packageGroups ? network.filter((p) => provider.packageGroups?.includes(p.group)) : network;
 }
 
 /** The mock name enquiry's pool: any account or phone number that isn't pinned below resolves to one of these. */
@@ -1077,10 +1166,10 @@ export function ProceedButton({
 export function VerifiedAccountBadge({ name }: { name: string }) {
   if (!name) return null;
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-success/20 bg-success/5 px-3 py-2 text-[13px] text-foreground animate-in fade-in duration-150">
-      <CheckCircle2 size={14} strokeWidth={1.9} className="text-success-text shrink-0" />
-      <span className="font-medium text-foreground">{name}</span>
-      <span className="text-[11.5px] text-success-text ml-auto font-medium">
+    <div className="flex items-center justify-between gap-3 py-2.5 animate-in fade-in duration-150">
+      <span className="min-w-0 truncate text-[14px] text-foreground">{name}</span>
+      <span className="flex shrink-0 items-center gap-1.5 text-[12px] text-success-text">
+        <CheckCircle2 size={14} strokeWidth={1.9} className="shrink-0" aria-hidden="true" />
         Verified
       </span>
     </div>
