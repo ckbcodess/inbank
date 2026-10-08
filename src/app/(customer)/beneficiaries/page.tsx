@@ -22,7 +22,6 @@ import {
   List,
   Pencil,
   Plus,
-  Receipt,
   Search,
   Send,
   Smartphone,
@@ -31,6 +30,7 @@ import {
   Wallet,
   X,
 } from "lucide-react";
+import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/layout/PageHeader";
 import { Badge } from "@/components/ui/badge";
@@ -90,7 +90,7 @@ const TYPE_CONFIG: Record<TransactionType, TypeMeta> = {
   bank: { label: "Bank Transfer", plural: "Bank Transfers", rail: "bank", icon: Landmark },
   wallet: { label: "Mobile Wallet", plural: "Mobile Wallets", rail: "wallet", icon: Wallet },
   proxy: { label: "Proxy Pay", plural: "Proxy Pay", rail: "proxy", icon: User },
-  bill: { label: "Bills & Utilities", plural: "Bills & Utilities", rail: "bill", icon: Receipt },
+  bill: { label: "Bills & Utilities", plural: "Bills & Utilities", rail: "bill", icon: CediReceiptIcon },
   airtime: { label: "Airtime & Data", plural: "Airtime & Data", rail: "airtime", icon: Smartphone },
   swift: { label: "SWIFT International Wire", plural: "SWIFT Wire Transfers", rail: "swift", icon: Globe },
   papss: { label: "PAPSS Cross-Border", plural: "PAPSS Cross-Border", rail: "papss", icon: Globe },

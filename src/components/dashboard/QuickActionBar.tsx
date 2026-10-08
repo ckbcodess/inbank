@@ -16,9 +16,9 @@ import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import {
   ArrowLeftRight,
-  Receipt,
   SlidersHorizontal,
 } from "lucide-react";
+import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -162,7 +162,7 @@ export function QuickActionBar({
                 setActiveModal("pay-bill");
               }}
             >
-              <Receipt size={15} strokeWidth={1.9} aria-hidden="true" />
+              <CediReceiptIcon size={15} strokeWidth={1.9} aria-hidden="true" />
               <span>Pay bills</span>
             </Button>
           </div>

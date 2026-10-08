@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Send, Receipt, CreditCard, Zap, Check, ArrowRight, ShieldCheck } from "lucide-react";
+import { Send, CreditCard, Zap, Check, ArrowRight, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import {
   Dialog,
   DialogBody,
@@ -22,7 +23,7 @@ interface SuggestedForYouCardProps {
 export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps) {
   const [quickActions, setQuickActions] = useState([
     { id: "send-wallet", label: "Send to Wallet", icon: Send, href: "/payments/send", enabled: true },
-    { id: "pay-bills", label: "Pay Bills", icon: Receipt, href: "/payments/bills", enabled: true },
+    { id: "pay-bills", label: "Pay Bills", icon: CediReceiptIcon, href: "/payments/bills", enabled: true },
     { id: "card-topup", label: "Card Top up", icon: CreditCard, href: "/cards", enabled: true },
     { id: "ecg-bill", label: "ECG", icon: Zap, href: "/payments/bills?biller=ecg", enabled: true },
   ]);

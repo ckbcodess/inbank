@@ -7,7 +7,6 @@ import {
   Eye,
   EyeOff,
   Send,
-  Receipt,
   Smartphone,
   CreditCard,
   Layers,
@@ -15,6 +14,7 @@ import {
   ArrowUpRight,
   ArrowDownLeft
 } from "lucide-react";
+import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import { formatMoney, toLocalEquivalent, type Account } from "@/lib/mock-data";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { SimpleTooltip } from "@/components/ui/tooltip";
@@ -190,7 +190,7 @@ export function LiquidityDeck({
             className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group cursor-pointer"
           >
             <span className="flex size-9 items-center justify-center rounded-full bg-muted text-foreground transition-transform">
-              <Receipt size={16} strokeWidth={2} />
+              <CediReceiptIcon size={16} strokeWidth={2} />
             </span>
             <span className="text-[12px] font-medium text-foreground">Pay Bills</span>
           </button>

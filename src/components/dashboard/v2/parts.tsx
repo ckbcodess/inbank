@@ -16,7 +16,6 @@ import {
   EyeOff,
   ChevronDown,
   ChevronRight,
-  Receipt,
   Send,
   Download,
   RefreshCw,
@@ -26,6 +25,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { RoundAction } from "@/components/ui/round-action";
+import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { formatMoney, type Account, type Transaction, type PaymentCard } from "@/lib/mock-data";
 import { roundMoney } from "@/lib/money";
@@ -235,9 +235,9 @@ export function MoneyActions({
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [kind, setKind] = useState<MoneyActionKind>("send");
-  const actions: { kind: MoneyActionKind; icon: typeof Send; label: string; primary: boolean }[] = [
+  const actions: { kind: MoneyActionKind; icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>; label: string; primary: boolean }[] = [
     { kind: "send", icon: Send, label: t("dashboard.sendMoney", "Send Money"), primary: true },
-    { kind: "bill", icon: Receipt, label: t("dashboard.payBill", "GCB Pay"), primary: false },
+    { kind: "bill", icon: CediReceiptIcon, label: t("dashboard.payBill", "GCB Pay"), primary: false },
     { kind: "topup", icon: Download, label: t("dashboard.topUp", "Top-Up"), primary: false },
   ];
   const hero = tone === "hero";

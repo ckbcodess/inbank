@@ -15,7 +15,6 @@ import {
   Heart,
   Landmark,
   Plus,
-  Receipt,
   Repeat,
   Smartphone,
   Store,
@@ -23,6 +22,7 @@ import {
   Wallet,
   Wifi,
 } from "lucide-react";
+import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import type { BillerCategory } from "@/lib/mock-data";
 
 type OptionIcon = React.ComponentType<{
@@ -57,7 +57,7 @@ export function withFrom(href: string, accountId: string | null): string {
 }
 
 export const GCB_PAY_CATEGORIES: { id: BillerCategory; title: string; icon: OptionIcon }[] = [
-  { id: "Bills & Utilities", title: "Bills & Utilities", icon: Receipt },
+  { id: "Bills & Utilities", title: "Bills & Utilities", icon: CediReceiptIcon },
   { id: "Education", title: "Education", icon: GraduationCap },
   { id: "Giving & Donations", title: "Giving & Donations", icon: Church },
   { id: "Government Services", title: "Government Services", icon: Building2 },

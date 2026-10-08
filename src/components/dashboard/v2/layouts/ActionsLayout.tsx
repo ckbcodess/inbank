@@ -10,9 +10,10 @@
  */
 
 import { motion } from "framer-motion";
-import { ArrowLeftRight, CalendarClock, CreditCard, Receipt, Send, Smartphone } from "lucide-react";
+import { ArrowLeftRight, CalendarClock, CreditCard, Send, Smartphone } from "lucide-react";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { ActionTile } from "@/components/ui/action-tile";
+import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import {
   AccountSwitcher,
   ActivityCard,
@@ -38,7 +39,7 @@ export function ActionsLayout(props: DashViewProps) {
 
   const tiles = [
     { icon: Send, title: t("dashboard.sendMoney", "Send Money"), href: withFrom("/payments/send", from) },
-    { icon: Receipt, title: t("dashboard.payBill", "GCB Pay"), href: withFrom("/payments/bills", from) },
+    { icon: CediReceiptIcon, title: t("dashboard.payBill", "GCB Pay"), href: withFrom("/payments/bills", from) },
     { icon: Smartphone, title: t("dashboard.airtimeData", "Airtime & Data"), href: withFrom("/payments/send?rail=airtime", from) },
     // Only meaningful with somewhere else to move money to.
     ...(data.accounts.length > 1
