@@ -112,7 +112,9 @@ export function CardTopUpFlow({
             <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-4.5 text-left flex items-center">
               {!selectedCard ? (
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <CreditCard size={20} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
+                  <span className="flex size-9 shrink-0 items-center justify-center text-muted-foreground">
+                    <CreditCard size={20} strokeWidth={1.8} className="shrink-0" />
+                  </span>
                   <span className="text-[14px] text-muted-foreground font-normal">
                     Select destination card
                   </span>
@@ -120,7 +122,9 @@ export function CardTopUpFlow({
               ) : (
                 <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <CreditCard size={20} strokeWidth={1.8} className="shrink-0 text-foreground" />
+                    <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
+                      <CreditCard size={20} strokeWidth={1.8} className="shrink-0" />
+                    </span>
                     <div className="flex flex-col min-w-0 text-left gap-0.5">
                       <span className="text-[14.5px] text-foreground font-medium truncate leading-tight">
                         {selectedCard.name}

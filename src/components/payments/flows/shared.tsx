@@ -608,7 +608,9 @@ export function AccountSelectTriggerContent({
   if (!account) {
     return (
       <div className="flex items-center gap-3 min-w-0 flex-1">
-        <Landmark size={20} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />
+        <span className="flex size-9 shrink-0 items-center justify-center text-muted-foreground">
+          <Landmark size={20} strokeWidth={1.8} className="shrink-0" />
+        </span>
         <span className="text-[14px] text-muted-foreground font-normal truncate">
           {placeholder}
         </span>
@@ -620,7 +622,9 @@ export function AccountSelectTriggerContent({
     <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
       {/* Left: Icon + Account Name + Account Number */}
       <div className="flex items-center gap-3 min-w-0">
-        <Landmark size={20} strokeWidth={1.8} className="shrink-0 text-foreground" />
+        <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
+          <Landmark size={20} strokeWidth={1.8} className="shrink-0" />
+        </span>
         <div className="flex flex-col min-w-0 text-left gap-0.5">
           <span className="text-[14.5px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
             {account.name}
