@@ -608,8 +608,8 @@ export function AccountSelectTriggerContent({
   if (!account) {
     return (
       <div className="flex items-center gap-3 min-w-0 flex-1">
-        <span className="flex size-9 shrink-0 items-center justify-center text-muted-foreground">
-          <Landmark size={20} strokeWidth={1.8} className="shrink-0" />
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+          <Landmark size={18} strokeWidth={1.8} className="shrink-0" />
         </span>
         <span className="text-[14px] text-muted-foreground font-normal truncate">
           {placeholder}
@@ -622,8 +622,8 @@ export function AccountSelectTriggerContent({
     <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
       {/* Left: Icon + Account Name + Account Number */}
       <div className="flex items-center gap-3 min-w-0">
-        <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
-          <Landmark size={20} strokeWidth={1.8} className="shrink-0" />
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
+          <Landmark size={18} strokeWidth={1.8} className="shrink-0" />
         </span>
         <div className="flex flex-col min-w-0 text-left gap-0.5">
           <span className="text-[14.5px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
@@ -666,7 +666,7 @@ export function FromAccountSelector({
   return (
     <Field label={label}>
       <Select value={value} onValueChange={(val) => val && onChange(val)}>
-        <SelectTrigger className="h-[58px] min-h-[58px] text-left cursor-pointer flex items-center">
+        <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-3.5 text-left cursor-pointer flex items-center">
           <AccountSelectTriggerContent
             account={selected}
             placeholder={placeholder}
@@ -680,7 +680,7 @@ export function FromAccountSelector({
           ))}
         </SelectContent>
       </Select>
-</Field>
+    </Field>
   );
 }
 
@@ -1237,11 +1237,11 @@ export function CollapsedDetailsBadge({
     <div className="flex min-h-[58px] items-center justify-between gap-3 rounded-2xl border border-field-border bg-field px-3.5 py-2.5 transition-colors animate-in fade-in duration-150 ease-out hover:bg-field-hover">
       <div className="flex min-w-0 items-center gap-3">
         {icon ? (
-          <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
+          <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-foreground">
             {icon}
           </span>
         ) : (
-          <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-[12.5px] text-muted-foreground">
+          <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-[12.5px] text-muted-foreground font-medium">
             {initials || <User size={16} strokeWidth={1.8} aria-hidden="true" />}
           </span>
         )}

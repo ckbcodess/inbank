@@ -106,9 +106,9 @@ export function OwnAccountFlow({
             subtitle={`${toAccount.type} · ${toAccount.number}`}
             icon={
               toAccount.type === "Wallet" ? (
-                <Wallet size={20} strokeWidth={1.8} className="shrink-0" />
+                <Wallet size={18} strokeWidth={1.8} className="shrink-0" />
               ) : (
-                <Landmark size={20} strokeWidth={1.8} className="shrink-0" />
+                <Landmark size={18} strokeWidth={1.8} className="shrink-0" />
               )
             }
             onChange={() => setCollapsed(false)}
@@ -118,7 +118,7 @@ export function OwnAccountFlow({
             value={state.toOwnAccountId}
             onValueChange={(val) => val && onChange("toOwnAccountId", val)}
           >
-            <SelectTrigger className="h-[58px] min-h-[58px] text-left cursor-pointer flex items-center">
+            <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-3.5 text-left cursor-pointer flex items-center">
               <AccountSelectTriggerContent
                 account={toAccount}
                 placeholder="Select destination account"
