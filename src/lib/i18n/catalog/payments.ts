@@ -696,6 +696,7 @@ const payments: Entry[] = [
   ["Save as Beneficiary", "Enregistrer comme bénéficiaire", "Guardar como beneficiario", "保存为收款人"],
   ["Save as Beneficiary?", "Enregistrer comme bénéficiaire ?", "¿Guardar como beneficiario?", "保存为收款人？"],
   ["Until I Cancel", "Jusqu’à ce que j’annule", "Hasta que la cancele", "直至我取消"],
+  ["Save as Favourite Group?", "Enregistrer comme groupe favori ?", "¿Guardar como grupo favorito?", "保存为常用群组？"],
 ];
 
 export default payments;

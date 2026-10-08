@@ -31,7 +31,6 @@ import { GCBLogo } from "@/components/ui/GCBLogo";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
 import OtpInput from "@/components/auth/OtpInput";
 import { AppLoader } from "@/components/ui/loader";
@@ -61,6 +60,7 @@ import { AmountInput, OperatorSelect } from "@/components/payments/flows/shared"
 import { OperatorLogo } from "@/components/ui/operator-logo";
 import { ActionTile } from "@/components/ui/action-tile";
 
+import { Field } from "@/components/ui/field";
 type FundDetails = { operator?: string; phone?: string; cardLast4?: string };
 
 type FlowStep =
@@ -75,8 +75,6 @@ type FlowStep =
   | "referral";
 
 /** The money flows' field look (Send & Pay, Add money): rounded-2xl, 14px medium labels, the shared AmountInput. */
-const FUND_FIELD = "h-13 rounded-2xl px-4 text-[15px]";
-const FUND_LABEL = "text-[14px] font-medium text-foreground";
 
 const BUTTON =
   "h-10.5 w-full text-[14px] font-medium active:scale-[0.96] transition-transform duration-150 cursor-pointer";
@@ -647,30 +645,23 @@ export function FirstRunWelcome({
                           /* ── Branch 2: Different number (HAS phone field + network selector + Amount) ── */
                           <div className="flex flex-col gap-3.5">
                             {/* Mobile Number input */}
-                            <div className="flex flex-col gap-1.5">
-                              <Label htmlFor="momoPhone" className={FUND_LABEL}>
-                                Mobile Number
-                              </Label>
+                            <Field label="Mobile Number" htmlFor="momoPhone">
                               <PhoneInput
                                 id="momoPhone"
                                 value={phone}
                                 onValueChange={handleCustomPhoneChange}
-                                className={FUND_FIELD}
                                 required
                                 autoFocus
                               />
                               <p className="px-0.5 text-[11.5px] text-muted-foreground">
                                 A verification code will be sent to confirm this number.
                               </p>
-                            </div>
+</Field>
 
                             {/* Network Provider Selector */}
-                            <div className="flex flex-col gap-1.5">
-                              <Label className={FUND_LABEL}>
-                                Network Provider
-                              </Label>
+                            <Field label="Network Provider">
                               <OperatorSelect value={operator} onChange={setOperator} />
-                            </div>
+</Field>
 
                             {/* Amount Input */}
                             <AmountInput value={amount} onChange={setAmount} currency="GHS" label="Amount" />
@@ -678,10 +669,7 @@ export function FirstRunWelcome({
                         )
                       ) : (
                         <div className="flex flex-col gap-3.5">
-                          <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="cardNum" className={FUND_LABEL}>
-                              Card Number
-                            </Label>
+                          <Field label="Card Number" htmlFor="cardNum">
                             <Input
                               id="cardNum"
                               placeholder="4000 1234 5678 9010"
@@ -689,15 +677,11 @@ export function FirstRunWelcome({
                               inputMode="numeric"
 autoComplete="cc-number"
 onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-                              className={FUND_FIELD}
                               required
                             />
-                          </div>
+</Field>
                           <div className="grid grid-cols-2 gap-2.5">
-                            <div className="flex flex-col gap-1.5">
-                              <Label htmlFor="cardExp" className={FUND_LABEL}>
-                                Expiry
-                              </Label>
+                            <Field label="Expiry" htmlFor="cardExp">
                               <Input
                                 id="cardExp"
                                 placeholder="MM/YY"
@@ -705,14 +689,10 @@ onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                                 inputMode="numeric"
 autoComplete="cc-exp"
 onChange={(e) => setCardExpiry(formatCardExpiry(e.target.value))}
-                                className={FUND_FIELD}
                                 required
                               />
-                            </div>
-                            <div className="flex flex-col gap-1.5">
-                              <Label htmlFor="cardCvv" className={FUND_LABEL}>
-                                CVV
-                              </Label>
+</Field>
+                            <Field label="CVV" htmlFor="cardCvv">
                               <Input
                                 id="cardCvv"
                                 placeholder="•••"
@@ -720,10 +700,9 @@ onChange={(e) => setCardExpiry(formatCardExpiry(e.target.value))}
                                 inputMode="numeric"
 autoComplete="cc-csc"
 onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D/g, "")))}
-                                className={FUND_FIELD}
                                 required
                               />
-                            </div>
+</Field>
                           </div>
                           <AmountInput value={amount} onChange={setAmount} currency="GHS" label="Amount" />
                         </div>

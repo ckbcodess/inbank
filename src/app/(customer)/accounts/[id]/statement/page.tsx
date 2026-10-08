@@ -18,6 +18,7 @@ import { FilteredEmptyState, ListErrorState, ListSkeleton, TrueEmptyState } from
 import type { BaselineState } from "@/lib/states";
 import { findAccount, formatMoney, transactionsForAccount, formatDate } from "@/lib/mock-data";
 
+import { Field } from "@/components/ui/field";
 const BASELINE_STATES: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 
 export default function StatementConfigurationPage({ params }: { params: Promise<{ id: string }> }) {
@@ -78,14 +79,12 @@ export default function StatementConfigurationPage({ params }: { params: Promise
             </p>
 
             <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="from">From</Label>
+              <Field label="From" htmlFor="from">
                 <Input id="from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="to">To</Label>
+</Field>
+              <Field label="To" htmlFor="to">
                 <Input id="to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
-              </div>
+</Field>
               <div className="flex flex-col gap-2 sm:col-span-2">
                 <Label htmlFor="cp">Counterparty or Beneficiary</Label>
                 <Input
@@ -95,8 +94,7 @@ export default function StatementConfigurationPage({ params }: { params: Promise
                   placeholder="Any counterparty"
                 />
               </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="min">Minimum Amount</Label>
+              <Field label="Minimum Amount" htmlFor="min">
                 <Input
                   id="min"
                   inputMode="decimal"
@@ -104,9 +102,8 @@ export default function StatementConfigurationPage({ params }: { params: Promise
                   onChange={(e) => setMinAmount(e.target.value)}
                   placeholder="No minimum"
                 />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="max">Maximum Amount</Label>
+</Field>
+              <Field label="Maximum Amount" htmlFor="max">
                 <Input
                   id="max"
                   inputMode="decimal"
@@ -114,7 +111,7 @@ export default function StatementConfigurationPage({ params }: { params: Promise
                   onChange={(e) => setMaxAmount(e.target.value)}
                   placeholder="No maximum"
                 />
-              </div>
+</Field>
             </div>
 
             <div className="mt-5 flex items-center gap-2">

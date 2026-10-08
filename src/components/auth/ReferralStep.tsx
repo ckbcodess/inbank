@@ -98,7 +98,7 @@ export default function ReferralStep({
               inputMode="numeric"
               autoComplete="off"
               maxLength={3}
-              className="tabular h-12 w-full text-center text-[22px] tracking-[0.3em] font-medium placeholder:text-muted-foreground/30 rounded-xl bg-field border-field-border"
+              className="tabular text-center text-[22px] tracking-[0.3em] font-medium"
             />
 
             {referrer && (

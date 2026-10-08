@@ -41,6 +41,8 @@ import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { ProceedButton } from "@/components/payments/flows/shared";
 
+import { Field as UiField } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 export type RequestKind = "statement" | "cheque-book" | "letter";
 
 const PERIODS = [
@@ -318,29 +320,27 @@ export default function RequestFlow({ account }: { account: Account }) {
               {period === "custom" && (
                 <div className="grid grid-cols-2 gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
                   <Field label="From">
-                    <input
+                    <Input
                       type="date"
                       value={from}
                       max={to || today}
                       onChange={(e) => setFrom(e.target.value)}
-                      className={INPUT}
                     />
                   </Field>
                   <Field label="To">
-                    <input
+                    <Input
                       type="date"
                       value={to}
                       min={from || undefined}
                       max={today}
                       onChange={(e) => setTo(e.target.value)}
-                      className={INPUT}
                     />
                   </Field>
                 </div>
               )}
               {periodDone && (
                 <Field label="Send to" htmlFor="statement-email">
-                  <input
+                  <Input
                     id="statement-email"
                     type="email"
                     inputMode="email"
@@ -348,7 +348,6 @@ export default function RequestFlow({ account }: { account: Account }) {
                     value={statementEmail}
                     onChange={(e) => setStatementEmail(e.target.value)}
                     placeholder="Email address"
-                    className={INPUT}
                   />
                 </Field>
               )}
@@ -398,12 +397,11 @@ export default function RequestFlow({ account }: { account: Account }) {
               </Field>
               {purpose && (
                 <Field label="Addressed to (Optional)" htmlFor="addressee">
-                  <input
+                  <Input
                     id="addressee"
                     value={addressee}
                     onChange={(e) => setAddressee(e.target.value)}
                     placeholder={purpose === "visa" ? "e.g. British High Commission, Accra" : "To Whom It May Concern"}
-                    className={INPUT}
                   />
                 </Field>
               )}
@@ -480,17 +478,12 @@ export default function RequestFlow({ account }: { account: Account }) {
 
 /* ── Fields — the Send & Pay form controls ─────────────────────────────── */
 
-const INPUT =
-  "h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular";
 
 function Field({ label, htmlFor, children }: { label: string; htmlFor?: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-      <label htmlFor={htmlFor} className="text-[13px] font-medium text-foreground">
-        {label}
-      </label>
+    <UiField label={label} htmlFor={htmlFor} className="animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
       {children}
-    </div>
+    </UiField>
   );
 }
 
@@ -517,7 +510,7 @@ function FlowSelect({
   const selected = options.find((o) => o.id === value);
   return (
     <Select value={value ?? ""} onValueChange={(v) => v && onChange(v)}>
-      <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
+      <SelectTrigger >
         {selected ? (
           <span className="truncate text-[15px] font-normal text-foreground">{selected.name}</span>
         ) : (

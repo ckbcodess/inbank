@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogBody,
@@ -46,6 +45,7 @@ import {
 } from "@/lib/mock-data";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 
+import { Field } from "@/components/ui/field";
 type ModalType = "transfer" | "pay-bill" | "top-up" | "customize" | null;
 
 export function QuickActionBar({
@@ -190,13 +190,12 @@ export function QuickActionBar({
             <p className="text-[13px] text-muted-foreground leading-relaxed">
               Move funds from an account onto a prepaid or virtual card.
             </p>
-            <div className="flex flex-col gap-2">
-              <Label>Card</Label>
+            <Field label="Card">
               <Select
                 value={topUpCardId}
                 onValueChange={(val) => val && setTopUpCardId(val)}
               >
-                <SelectTrigger className="h-10 w-full">
+                <SelectTrigger >
                   <SelectValue placeholder="Select card" />
                 </SelectTrigger>
                 <SelectContent>
@@ -207,14 +206,13 @@ export function QuickActionBar({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label>Fund From</Label>
+</Field>
+            <Field label="Fund From">
               <Select
                 value={topUpFrom}
                 onValueChange={(val) => val && setTopUpFrom(val)}
               >
-                <SelectTrigger className="h-10 w-full">
+                <SelectTrigger >
                   <SelectValue placeholder="Select funding account" />
                 </SelectTrigger>
                 <SelectContent>
@@ -225,9 +223,8 @@ export function QuickActionBar({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="topup-amount">Enter Amount</Label>
+</Field>
+            <Field label="Enter Amount" htmlFor="topup-amount">
               <Input
                 id="topup-amount"
                 placeholder="0.00"
@@ -235,7 +232,7 @@ export function QuickActionBar({
                 onChange={(e) => setTopUpAmount(e.target.value)}
                 className="tabular"
               />
-            </div>
+</Field>
           </DialogBody>
           <DialogFooter>
             <Button variant="outline" onClick={() => setActiveModal(null)}>
@@ -255,13 +252,12 @@ export function QuickActionBar({
             <DialogTitle>Internal Transfer</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <div className="flex flex-col gap-2">
-              <Label>From Account</Label>
+            <Field label="From Account">
               <Select
                 value={transferFrom}
                 onValueChange={(val) => val && setTransferFrom(val)}
               >
-                <SelectTrigger className="h-10 w-full">
+                <SelectTrigger >
                   <SelectValue placeholder="Select source account" />
                 </SelectTrigger>
                 <SelectContent>
@@ -272,14 +268,13 @@ export function QuickActionBar({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label>To Account</Label>
+</Field>
+            <Field label="To Account">
               <Select
                 value={transferTo}
                 onValueChange={(val) => val && setTransferTo(val)}
               >
-                <SelectTrigger className="h-10 w-full">
+                <SelectTrigger >
                   <SelectValue placeholder="Select destination account" />
                 </SelectTrigger>
                 <SelectContent>
@@ -290,9 +285,8 @@ export function QuickActionBar({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="t-amount">Enter Amount</Label>
+</Field>
+            <Field label="Enter Amount" htmlFor="t-amount">
               <Input
                 id="t-amount"
                 placeholder="0.00"
@@ -300,16 +294,15 @@ export function QuickActionBar({
                 onChange={(e) => setTransferAmount(e.target.value)}
                 className="tabular"
               />
-            </div>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="t-ref">Reference / Purpose</Label>
+</Field>
+            <Field label="Reference / Purpose" htmlFor="t-ref">
               <Input
                 id="t-ref"
                 placeholder="e.g. Monthly liquidity rebalance"
                 value={transferRef}
                 onChange={(e) => setTransferRef(e.target.value)}
               />
-            </div>
+</Field>
           </DialogBody>
           <DialogFooter>
             <Button variant="outline" onClick={() => setActiveModal(null)}>
@@ -329,13 +322,12 @@ export function QuickActionBar({
             <DialogTitle>Pay a Bill</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <div className="flex flex-col gap-2">
-              <Label>Biller</Label>
+            <Field label="Biller">
               <Select
                 value={selectedBillerId}
                 onValueChange={(val) => val && setSelectedBillerId(val)}
               >
-                <SelectTrigger className="h-10 w-full">
+                <SelectTrigger >
                   <SelectValue placeholder="Select biller" />
                 </SelectTrigger>
                 <SelectContent>
@@ -346,15 +338,14 @@ export function QuickActionBar({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+</Field>
 
-            <div className="flex flex-col gap-2">
-              <Label>Pay From Account</Label>
+            <Field label="Pay From Account">
               <Select
                 value={payBillAccount}
                 onValueChange={(val) => val && setPayBillAccount(val)}
               >
-                <SelectTrigger className="h-10 w-full">
+                <SelectTrigger >
                   <SelectValue placeholder="Select account" />
                 </SelectTrigger>
                 <SelectContent>
@@ -365,23 +356,19 @@ export function QuickActionBar({
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+</Field>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="biller-ref">
-                {BILLERS.find((b) => b.id === selectedBillerId)?.reference ??
-                  "Customer reference / account no"}
-              </Label>
+            <Field label={BILLERS.find((b) => b.id === selectedBillerId)?.reference ??
+                  "Customer reference / account no"} htmlFor="biller-ref">
               <Input
                 id="biller-ref"
                 placeholder="e.g. 1049284019"
                 value={billerRefNo}
                 onChange={(e) => setBillerRefNo(e.target.value)}
               />
-            </div>
+</Field>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="bill-amt">Payment Amount (GHS)</Label>
+            <Field label="Payment Amount (GHS)" htmlFor="bill-amt">
               <Input
                 id="bill-amt"
                 placeholder="0.00"
@@ -389,7 +376,7 @@ export function QuickActionBar({
                 onChange={(e) => setBillPayAmount(e.target.value)}
                 className="tabular"
               />
-            </div>
+</Field>
           </DialogBody>
           <DialogFooter>
             <Button variant="outline" onClick={() => setActiveModal(null)}>

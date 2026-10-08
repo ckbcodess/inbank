@@ -25,11 +25,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TRADE_DOCUMENTS } from "@/lib/mock-data";
 
+import { Field } from "@/components/ui/field";
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -71,8 +71,7 @@ export default function ReturnForClarificationDialog({
           </p>
 
           <div className="flex flex-col gap-4 pt-1">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="clarify-note">What needs clarifying?</Label>
+            <Field label="What needs clarifying?" htmlFor="clarify-note">
               <Textarea
                 id="clarify-note"
                 value={note}
@@ -85,11 +84,10 @@ export default function ReturnForClarificationDialog({
                   ? "At least 10 characters required."
                   : `${note.trim().length} characters`}
               </p>
-            </div>
+</Field>
 
             {/* Document-level flagging — has no equivalent in rejection */}
-            <div className="flex flex-col gap-2">
-              <Label>Flag Specific Documents (Optional)</Label>
+            <Field label="Flag Specific Documents (Optional)">
               <div className="flex flex-col gap-1.5 rounded-xl border border-border p-3">
                 {TRADE_DOCUMENTS.map((doc) => (
                   <label
@@ -107,7 +105,7 @@ export default function ReturnForClarificationDialog({
                   </label>
                 ))}
               </div>
-            </div>
+</Field>
           </div>
         </DialogBody>
 

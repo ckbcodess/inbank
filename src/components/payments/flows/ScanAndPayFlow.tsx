@@ -19,9 +19,9 @@ import {
   CollapsedDetailsBadge,
 } from "./shared";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
+import { Field } from "@/components/ui/field";
 export interface ScanAndPayFormState {
   fromId: string;
   qrMerchant: string;
@@ -180,17 +180,14 @@ export function ScanAndPayFlow({
             {/* Manual ID Input Tab */}
             {activeTab === "manual" && !isMerchantSelected && (
               <div className="flex flex-col gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <Label htmlFor="merchant-id" className="text-[13px] text-foreground">
-                    Merchant Terminal / PayCode ID
-                  </Label>
+                <Field label="Merchant Terminal / PayCode ID" htmlFor="merchant-id">
                   <div className="flex gap-2">
                     <Input
                       id="merchant-id"
                       value={state.qrCode}
                       onChange={(e) => onChange("qrCode", e.target.value.toUpperCase())}
                       placeholder="e.g. GCB-QR-88210"
-                      className="h-11 uppercase"
+                      className="uppercase"
                     />
                     <Button
                       type="button"
@@ -205,7 +202,7 @@ export function ScanAndPayFlow({
                       Verify
                     </Button>
                   </div>
-                </div>
+</Field>
               </div>
             )}
 

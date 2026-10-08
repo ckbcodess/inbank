@@ -207,7 +207,7 @@ export default function FxRatesPage() {
                   <Select value={fromCcy} onValueChange={(val) => val && setFromCcy(val)}>
                     <SelectTrigger
                       hideChevron
-                      className="h-auto w-auto shrink-0 gap-2 border-0 bg-transparent p-1 shadow-none hover:bg-muted/70 focus-visible:ring-0 cursor-pointer rounded-xl"
+                      className="h-auto w-auto shrink-0 gap-2 border-0 p-1 hover:bg-muted/70 cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
                         <CurrencyLogo currency={fromCcy} size={24} />
@@ -257,7 +257,7 @@ export default function FxRatesPage() {
                   <Select value={toCcy} onValueChange={(val) => val && setToCcy(val)}>
                     <SelectTrigger
                       hideChevron
-                      className="h-auto w-auto shrink-0 gap-2 border-0 bg-transparent p-1 shadow-none hover:bg-muted/70 focus-visible:ring-0 cursor-pointer rounded-xl"
+                      className="h-auto w-auto shrink-0 gap-2 border-0 p-1 hover:bg-muted/70 cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
                         <CurrencyLogo currency={toCcy} size={24} />

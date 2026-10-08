@@ -437,7 +437,7 @@ export default function TransactionList({
         datePreset === "custom" ? (
           <div className="mt-3 grid grid-cols-2 gap-3">
             <div className="flex min-w-0 flex-col gap-1.5">
-              <Label htmlFor="txn-from" className="text-[13px]">
+              <Label htmlFor="txn-from">
                 From
               </Label>
               <Input
@@ -449,7 +449,7 @@ export default function TransactionList({
               />
             </div>
             <div className="flex min-w-0 flex-col gap-1.5">
-              <Label htmlFor="txn-to" className="text-[13px]">
+              <Label htmlFor="txn-to">
                 To
               </Label>
               <Input
@@ -612,7 +612,7 @@ export default function TransactionList({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by reference ID,  recipient ...."
-            className="w-full h-11 sm:h-12 pl-11 pr-10 rounded-xl border border-field-border bg-field text-[15px] sm:text-[15px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-0 focus:border-field-border-focus focus:bg-field-focus transition-colors"
+            className="w-full h-11 sm:h-12 pl-11 pr-10 rounded-xl border border-field-border bg-field text-[14px] sm:text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-0 focus:border-field-border-focus focus:bg-field-focus transition-colors"
           />
           {query && (
             <button
@@ -639,20 +639,20 @@ export default function TransactionList({
         <div className="hidden sm:flex flex-wrap items-center gap-3 p-3 rounded-lg border border-border/60 bg-muted/20 animate-in fade-in slide-in-from-top-1 duration-150">
           <div className="flex items-center gap-2">
             <span className="text-[12px] font-medium text-muted-foreground">From:</span>
-            <input
+            <Input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="h-8 rounded-lg border border-field-border bg-field px-2.5 text-[15px] text-foreground outline-none focus:border-field-border-focus tabular"
+              className="h-8 tabular"
             />
           </div>
           <div className="flex items-center gap-2">
             <span className="text-[12px] font-medium text-muted-foreground">To:</span>
-            <input
+            <Input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="h-8 rounded-lg border border-field-border bg-field px-2.5 text-[15px] text-foreground outline-none focus:border-field-border-focus tabular"
+              className="h-8 tabular"
             />
           </div>
           {(dateFrom || dateTo) && (

@@ -81,11 +81,11 @@ export function FxPulse() {
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-end gap-2">
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-            <Label htmlFor="fx-pair" className="text-[13px] font-medium text-foreground">
+            <Label htmlFor="fx-pair">
               Currency
             </Label>
             <Select value={base} onValueChange={(value) => setBase(value ?? base)}>
-              <SelectTrigger id="fx-pair" className="h-9 w-full">
+              <SelectTrigger id="fx-pair" >
                 <div className="flex items-center gap-2 truncate">
                   <CurrencyPairLogos base={base} quote="GHS" size={18} />
                   <SelectValue />
@@ -121,7 +121,7 @@ export function FxPulse() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="fx-amount" className="flex items-center gap-1.5 text-[13px] font-medium text-foreground">
+          <Label htmlFor="fx-amount" className="flex items-center gap-1.5">
             <CurrencyLogo currency={fromCurrency} size={14} />
             <span>Amount in {fromCurrency}</span>
           </Label>

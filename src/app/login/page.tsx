@@ -16,11 +16,10 @@ import { toLocalMobile } from "@/lib/phone";
 import { useTrustedDevice, type TrustedDevice } from "@/lib/device-trust";
 import { findLegacyUser } from "@/lib/migration";
 
+import { Field } from "@/components/ui/field";
 type LoginState = "idle" | "submitting" | "error";
 
 /** Same field as the rest of the app. */
-const FIELD = "h-11 text-[15px]";
-const LABEL = "text-[12px] text-foreground";
 
 function LoginForm() {
   const router = useRouter();
@@ -113,10 +112,7 @@ function LoginForm() {
         {/* Fields Group */}
         <div className="flex flex-col gap-4">
           {/* Mobile number */}
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="mobile" className={LABEL}>
-              Mobile Number
-            </Label>
+          <Field label="Mobile Number" htmlFor="mobile">
             <PhoneInput
               id="mobile"
               autoComplete="username"
@@ -131,14 +127,13 @@ function LoginForm() {
                 setMobile(v);
                 if (state === "error") setState("idle");
               }}
-              className={FIELD}
               required
             />
-          </div>
+</Field>
 
           {/* Password Input */}
           <div className={`flex flex-col gap-1.5 ${state === "error" ? "animate-pin-shake" : ""}`}>
-            <Label htmlFor="password" className={LABEL}>
+            <Label htmlFor="password">
               Password
             </Label>
             <div className="relative">
@@ -152,7 +147,7 @@ function LoginForm() {
                   setPassword(e.target.value);
                   if (state === "error") setState("idle");
                 }}
-                className={`${FIELD} pr-9`}
+                className="pr-9"
                 required
               />
               <button
@@ -265,10 +260,7 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="returning-password" className={LABEL}>
-              Password
-            </Label>
+          <Field label="Password" htmlFor="returning-password">
             <div className="relative">
               <Input
                 id="returning-password"
@@ -278,7 +270,7 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
                 autoFocus
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={`${FIELD} pr-9`}
+                className="pr-9"
                 required
               />
               <button
@@ -296,7 +288,7 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
             >
               Forgot password?
             </Link>
-          </div>
+</Field>
           <Button type="submit" variant="default" size="lg" loading={submitting} className="h-11 sm:h-11.5 w-full text-[14.5px]">
             Log in
           </Button>

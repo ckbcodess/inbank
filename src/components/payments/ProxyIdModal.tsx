@@ -22,6 +22,8 @@ import { useProxyStore, type ProxyType } from "@/lib/proxy-store";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 
+import { Input } from "@/components/ui/input";
+import { Field } from "@/components/ui/field";
 interface ProxyIdModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -30,12 +32,6 @@ interface ProxyIdModalProps {
   accounts: Account[];
   onSaved?: () => void;
 }
-
-const inputCls =
-  "h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition";
-const selectCls =
-  "h-11 w-full rounded-xl border border-field-border bg-field pl-3.5 pr-10 text-[15px] text-foreground";
-const labelCls = "text-[12.5px] text-muted-foreground";
 
 export default function ProxyIdModal({
   open,
@@ -93,10 +89,9 @@ export default function ProxyIdModal({
 
         <DialogBody>
           {/* Proxy type */}
-          <div className="flex flex-col gap-1.5">
-            <label className={labelCls}>Proxy Type</label>
+          <Field label="Proxy Type">
             <Select value={type} onValueChange={(v) => setType(v as ProxyType)}>
-              <SelectTrigger className={selectCls}>
+              <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -104,13 +99,10 @@ export default function ProxyIdModal({
                 <SelectItem value="ghana-card">Ghana Card</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+</Field>
 
           {/* Value */}
-          <div className="flex flex-col gap-1.5">
-            <label className={labelCls}>
-              {type === "phone" ? "Phone Number" : "Ghana Card Number"}
-            </label>
+          <Field label={type === "phone" ? "Phone Number" : "Ghana Card Number"}>
             {type === "phone" ? (
               <PhoneInput
                 value={value}
@@ -120,22 +112,21 @@ export default function ProxyIdModal({
                 autoFocus
               />
             ) : (
-              <input
+              <Input
                 type="text"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 placeholder="e.g. GHA-0123456789-0"
-                className={`${inputCls} tabular`}
+                className="tabular"
                 autoFocus
               />
             )}
-          </div>
+</Field>
 
           {/* Linked account */}
-          <div className="flex flex-col gap-1.5">
-            <label className={labelCls}>Receives Into</label>
+          <Field label="Receives Into">
             <Select value={linkedAccountId} onValueChange={(v) => v && setLinkedAccountId(v)}>
-              <SelectTrigger className={selectCls}>
+              <SelectTrigger>
                 <SelectValue placeholder="Select an account" />
               </SelectTrigger>
               <SelectContent>
@@ -146,7 +137,7 @@ export default function ProxyIdModal({
                 ))}
               </SelectContent>
             </Select>
-          </div>
+</Field>
         </DialogBody>
 
         <DialogFooter>

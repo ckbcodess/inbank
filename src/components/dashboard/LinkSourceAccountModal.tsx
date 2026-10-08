@@ -43,6 +43,9 @@ import { OPERATORS } from "@/lib/operators";
 import { SourceMark } from "@/components/ui/source-mark";
 import { CheckBadge } from "@/components/ui/check-badge";
 
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/field";
 interface LinkSourceAccountModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -579,9 +582,9 @@ export default function LinkSourceAccountModal({
               <form onSubmit={handleLinkedSourceSubmit} className="flex flex-col gap-5">
                 {/* List of Saved Methods */}
                 <div className="flex flex-col gap-2.5">
-                  <label className="text-[13px] font-medium text-foreground">
+                  <Label>
                     Payment Method
-                  </label>
+                  </Label>
                   <div className="flex flex-col gap-2">
                     {linkedSources.map((source) => {
                       const isSelected = selectedSourceId === source.id;
@@ -716,10 +719,7 @@ export default function LinkSourceAccountModal({
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_new_momo" && (
               <form id={`${modalId}-momo-form`} onSubmit={handleAddNewMomo} className="flex flex-col gap-5">
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor={`${modalId}-momoNum`} className="text-[13px] font-medium text-foreground">
-                    Mobile Number
-                  </label>
+                <Field label="Mobile Number" htmlFor={`${modalId}-momoNum`}>
                   <PhoneInput
                     id={`${modalId}-momoNum`}
                     value={newMomoNumber}
@@ -727,14 +727,11 @@ export default function LinkSourceAccountModal({
                     className="rounded-xl border-border bg-card"
                     required
                   />
-                </div>
+</Field>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">
-                    Network Operator
-                  </label>
+                <Field label="Network Operator">
                   <OperatorSelect value={newMomoOperator} onChange={setNewMomoOperator} />
-                </div>
+</Field>
               </form>
             )}
 
@@ -798,11 +795,8 @@ export default function LinkSourceAccountModal({
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_new_card" && (
               <form id={`${modalId}-card-form`} onSubmit={handleAddNewCard} className="flex flex-col gap-5">
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor={`${modalId}-cardNum`} className="text-[13px] font-medium text-foreground">
-                    Card Number
-                  </label>
-                  <input
+                <Field label="Card Number" htmlFor={`${modalId}-cardNum`}>
+                  <Input
                     id={`${modalId}-cardNum`}
                     type="text"
                     inputMode="numeric"
@@ -814,17 +808,14 @@ export default function LinkSourceAccountModal({
                       )
                     }
                     placeholder="4000 1234 5678 9010"
-                    className="h-11 w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 tabular text-[15px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
+                    className="tabular"
                     required
                   />
-                </div>
+</Field>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor={`${modalId}-cardExp`} className="text-[13px] font-medium text-foreground">
-                      Expiry Date
-                    </label>
-                    <input
+                  <Field label="Expiry Date" htmlFor={`${modalId}-cardExp`}>
+                    <Input
                       id={`${modalId}-cardExp`}
                       type="text"
                       inputMode="numeric"
@@ -835,15 +826,12 @@ export default function LinkSourceAccountModal({
                         setNewCardExpiry(d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d);
                       }}
                       placeholder="MM/YY"
-                      className="h-11 w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 tabular text-[15px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
+                      className="tabular"
                       required
                     />
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor={`${modalId}-cardCvv`} className="text-[13px] font-medium text-foreground">
-                      CVV
-                    </label>
-                    <input
+</Field>
+                  <Field label="CVV" htmlFor={`${modalId}-cardCvv`}>
+                    <Input
                       id={`${modalId}-cardCvv`}
                       type="password"
                       inputMode="numeric"
@@ -852,10 +840,10 @@ export default function LinkSourceAccountModal({
                       value={newCardCvv}
                       onChange={(e) => setNewCardCvv(e.target.value.replace(/\D/g, ""))}
                       placeholder="•••"
-                      className="h-11 w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 tabular text-[15px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
+                      className="tabular"
                       required
                     />
-                  </div>
+</Field>
                 </div>
 
                 <p className="flex items-start gap-2 text-[12px] leading-relaxed text-muted-foreground">

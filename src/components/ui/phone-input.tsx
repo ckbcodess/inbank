@@ -91,7 +91,7 @@ function CountryDropdown({
               placeholder="Search country or code"
               aria-label="Search countries"
               autoComplete="off"
-              className="h-10 w-full rounded-lg border border-field-border bg-field pl-9 pr-3 text-[15px] text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-field-border-focus focus:bg-field-focus"
+              className="h-10 w-full rounded-lg border border-field-border bg-field pl-9 pr-3 text-[14px] text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-field-border-focus focus:bg-field-focus"
             />
           </div>
           <ul className="max-h-[260px] overflow-y-auto" role="listbox" aria-label="Countries">
@@ -142,7 +142,7 @@ export function PhoneInput({
     <div
       data-slot="phone-input"
       className={cn(
-        "flex h-11 w-full items-center gap-2 rounded-lg border border-field-border bg-field px-3.5 text-[15px] transition-colors outline-none",
+        "flex h-13 w-full items-center gap-2 rounded-2xl border border-field-border bg-field px-4 text-[14px] transition-colors outline-none",
         "focus-within:outline-none focus-within:border-field-border-focus focus-within:ring-0",
         "hover:bg-field-hover focus-within:bg-field-focus",
         "has-aria-invalid:border-destructive has-aria-invalid:ring-0",

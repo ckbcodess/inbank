@@ -16,6 +16,8 @@ import {
   resolveAccountName,
 } from "./shared";
 
+import { Input } from "@/components/ui/input";
+import { Field } from "@/components/ui/field";
 export interface ProxyPayFormState {
   fromId: string;
   pxId: string;
@@ -80,8 +82,7 @@ export function ProxyPayFlow({
       />
 
       {/* 2. Destination: Proxy ID */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
+      <Field label="Beneficiary Details">
         {isPxValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || state.pxId}
@@ -95,7 +96,7 @@ export function ProxyPayFlow({
               <span className="absolute left-4 text-[16px] font-semibold text-muted-foreground select-none pointer-events-none">
                 @
               </span>
-              <input
+              <Input
                 type="text"
                 value={state.pxId.replace(/^@/, "")}
                 onChange={(e) => {
@@ -108,13 +109,13 @@ export function ProxyPayFlow({
                   }
                 }}
                 placeholder="kwame.b"
-                className="h-13 w-full rounded-2xl border border-field-border bg-field pl-9 pr-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition"
+                className="pl-9 pr-4"
               />
             </div>
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
           </div>
         )}
-      </div>
+</Field>
 
       {/* Progressive Disclosure: Only reveal Amount & subsequent form fields after Proxy ID is entered */}
       {isPxValid && (

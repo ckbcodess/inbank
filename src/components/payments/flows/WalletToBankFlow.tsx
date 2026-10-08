@@ -20,6 +20,8 @@ import {
   BankSelect,
 } from "./shared";
 
+import { Input } from "@/components/ui/input";
+import { Field } from "@/components/ui/field";
 export interface WalletToBankFormState {
   bank: string;
   benAcct: string;
@@ -86,8 +88,7 @@ export function WalletToBankFlow({
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
       {/* 1. Source Mobile Wallet */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Source Mobile Wallet</label>
+      <Field label="Source Mobile Wallet">
         <div className="flex items-center justify-between h-[58px] min-h-[58px] px-3.5 w-full rounded-2xl border border-field-border bg-field gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
@@ -108,11 +109,10 @@ export function WalletToBankFlow({
             </span>
           </div>
         </div>
-      </div>
+</Field>
 
       {/* 2. Destination Bank Account */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
+      <Field label="Beneficiary Details">
         {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `Account ${state.benAcct}`}
@@ -124,7 +124,7 @@ export function WalletToBankFlow({
           <div className="flex flex-col gap-3">
             <BankSelect value={state.bank || ""} onChange={(val) => onChange("bank", val)} options={BANKS} />
 
-            <input
+            <Input
               type="text"
               inputMode="numeric"
               value={state.benAcct}
@@ -137,7 +137,7 @@ export function WalletToBankFlow({
                 }
               }}
               placeholder="Enter account number"
-              className="numorainput h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
+              className="numorainput tabular"
             />
 
             {isDetailsValid && resolving && (
@@ -147,7 +147,7 @@ export function WalletToBankFlow({
             {isVerified && <VerifiedAccountBadge name={verifiedName} />}
           </div>
         )}
-      </div>
+</Field>
 
       {/* Progressive disclosure: amount and onwards appear once the account is verified. */}
       {isVerified && (

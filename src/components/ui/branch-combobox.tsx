@@ -170,7 +170,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="Type or select pickup branch..."
-          className="flex-1 min-w-0 bg-transparent text-[15px] font-medium text-foreground placeholder:text-muted-foreground/60 placeholder:font-normal outline-none"
+          className="flex-1 min-w-0 bg-transparent text-[14px] font-medium text-foreground placeholder:text-muted-foreground/60 placeholder:font-normal outline-none"
         />
         {query && (
           <button

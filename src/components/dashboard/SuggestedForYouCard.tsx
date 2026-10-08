@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import { Field } from "@/components/ui/field";
 interface SuggestedForYouCardProps {
   onQuickAction?: (action: string) => void;
 }
@@ -167,8 +168,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">Amount (GHS)</label>
+                <Field label="Amount (GHS)">
                   <div className="flex items-center rounded-xl border border-field-border bg-field px-3.5 py-2 focus-within:border-field-border-focus focus-within:bg-field-focus">
                     <span className="text-[14px] font-medium text-muted-foreground mr-2">GHS</span>
                     <input
@@ -182,7 +182,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                       required
                     />
                   </div>
-                </div>
+</Field>
 
                 {/* Quick Amount Chips */}
                 <div className="flex items-center gap-2">

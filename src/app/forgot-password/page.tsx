@@ -29,12 +29,12 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2, Landmark, ScanFace } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { Label } from "@/components/ui/label";
 import AuthLayout from "@/components/auth/AuthLayout";
 import SelfieCapture from "@/components/auth/SelfieCapture";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 
+import { Field } from "@/components/ui/field";
 type Stage = "mobile" | "selfie" | "no_match" | "branch" | "password" | "done";
 
 const STEP_NUMBER: Partial<Record<Stage, number>> = {
@@ -159,10 +159,7 @@ export default function ForgotPasswordPage() {
           }}
           className="flex flex-col gap-5"
         >
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="mobile" className="text-[13px] font-medium text-foreground">
-              Mobile Number
-            </Label>
+          <Field label="Mobile Number" htmlFor="mobile">
             <PhoneInput
               id="mobile"
               value={mobile}
@@ -170,7 +167,7 @@ export default function ForgotPasswordPage() {
               autoFocus
               required
             />
-          </div>
+</Field>
 
           <Button
             type="submit"
@@ -208,8 +205,8 @@ export default function ForgotPasswordPage() {
             onPasswordChange={setPassword}
             onConfirmChange={setConfirm}
             autoFocus
-            passwordLabel="New password"
-            confirmLabel="Confirm new password"
+            passwordLabel="New Password"
+            confirmLabel="Confirm New Password"
           />
 
           <Button

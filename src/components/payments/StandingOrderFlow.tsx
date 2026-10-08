@@ -159,6 +159,9 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { useOwnWallets } from "./flows/OwnWalletPicker";
 import { formatGhPhone } from "./flows/shared";
 
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/field";
 export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const router = useRouter();
   const { handleBack: handleBackNavigation } = useContextualBack("/payments/standing");
@@ -785,8 +788,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
         />
 
         {/* 3. Beneficiary Details Card */}
-        <div className="flex flex-col gap-2">
-          <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
+        <Field label="Beneficiary Details">
 
           {isDestinationValid && detailsCollapsed ? (
             <CollapsedDetailsBadge
@@ -826,13 +828,13 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     <PaymentMethodSelect value={f.paymentMethod || "gip"} onChange={(val) => set("paymentMethod", val)} />
                   )}
 
-                  <input
+                  <Input
                     type="text"
                     inputMode="numeric"
                     value={f.destination}
                     onChange={(e) => set("destination", e.target.value.replace(/[^0-9]/g, ""))}
                     placeholder="Enter account number"
-                    className="numorainput h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
+                    className="numorainput tabular"
                   />
                 </>
               )}
@@ -846,7 +848,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     value={f.destination}
                     onValueChange={handlePhoneChange}
                     aria-label="Mobile or wallet number"
-                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
+                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
                   />
                 </>
               )}
@@ -857,7 +859,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   <span className="absolute left-4 text-[16px] font-semibold text-muted-foreground select-none pointer-events-none">
                     @
                   </span>
-                  <input
+                  <Input
                     type="text"
                     value={f.proxyId.replace(/^@/, "")}
                     onChange={(e) => {
@@ -865,7 +867,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       set("proxyId", cleaned ? `@${cleaned}` : "");
                     }}
                     placeholder="kwame.b"
-                    className="h-13 w-full rounded-2xl border border-field-border bg-field pl-9 pr-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
+                    className="pl-9 pr-4 tabular"
                   />
                 </div>
               )}
@@ -899,7 +901,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       }
                     }}
                   >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
+                    <SelectTrigger >
                       <SelectValue placeholder="Select group" />
                     </SelectTrigger>
                     <SelectContent>
@@ -936,7 +938,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     value={f.destination}
                     onValueChange={handlePhoneChange}
                     aria-label="Phone number"
-                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
+                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
                   />
 
                   <Select
@@ -952,7 +954,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       if (open && isDestinationValid) setDetailsCollapsed(true);
                     }}
                   >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
+                    <SelectTrigger >
                       <SelectValue placeholder="Select monthly bundle" />
                     </SelectTrigger>
                     <SelectContent>
@@ -975,7 +977,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                     value={f.destination}
                     onValueChange={handlePhoneChange}
                     aria-label="Phone number"
-                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
+                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
                   />
                 </>
               )}
@@ -993,7 +995,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               )}
             </div>
           )}
-        </div>
+</Field>
 
         {/* Everything below appears once the recipient is verified */}
         {revealed && (
@@ -1016,19 +1018,16 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-1 duration-200">
                 {/* 5. Short name and category */}
                 <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor="so-short-name" className="text-[13px] font-medium text-foreground">
-                      Short Name
-                    </label>
-                    <input
+                  <Field label="Short Name" htmlFor="so-short-name">
+                    <Input
                       id="so-short-name"
                       type="text"
                       value={f.nickname}
                       onChange={(e) => set("nickname", e.target.value)}
                       placeholder="e.g. Monthly rent, Susu"
-                      className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none transition focus:border-field-border-focus focus:ring-0"
+                      
                     />
-                  </div>
+</Field>
 
                   <CategorySelect
                     value={f.category}
@@ -1039,13 +1038,12 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                 <NarrationInput value={f.narration} onChange={(val) => set("narration", val)} />
 
                 {/* 6. Frequency */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-[13px] font-medium text-foreground">Frequency</label>
+                <Field label="Frequency">
                   <Select
                     value={f.frequency}
                     onValueChange={(val) => val && set("frequency", val as InstructionFrequency)}
                   >
-                    <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
+                    <SelectTrigger >
                       <span className={cn("truncate", !f.frequency && "text-muted-foreground")}>{FREQUENCY_OPTIONS.find((o) => o.id === f.frequency)?.label ?? "Select frequency"}</span>
                     </SelectTrigger>
                     <SelectContent>
@@ -1060,46 +1058,42 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   {f.frequency === "Custom" && (
                     <div className="flex items-center gap-3 animate-in fade-in duration-150">
                       <span className="text-[13px] text-muted-foreground">Repeat after</span>
-                      <input
+                      <Input
                         type="text"
                         inputMode="numeric"
                         aria-label="Number of days"
                         value={f.intervalDays}
                         onChange={(e) => set("intervalDays", e.target.value.replace(/[^0-9]/g, "").slice(0, 3))}
-                        className="tabular h-11 w-20 rounded-xl border border-field-border bg-field px-3 text-center text-[15px] text-foreground outline-none focus:border-field-border-focus"
+                        className="tabular w-20 text-center"
                       />
                       <span className="text-[13px] text-muted-foreground">days</span>
                     </div>
                   )}
-                </div>
+</Field>
 
                 {/* Everything else waits for a frequency (and the days, when it is every X days) */}
                 {f.frequency && (f.frequency !== "Custom" || Number(f.intervalDays) >= 1) && (
                   <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-1 duration-200">
                   {/* 7. First run, and when it stops */}
                   <div className={cn("grid grid-cols-1 gap-3.5", f.frequency !== "Once" && "sm:grid-cols-2")}>
-                    <div className="flex flex-col gap-2">
-                      <label htmlFor="so-first-run" className="text-[13px] font-medium text-foreground">
-                        {f.frequency === "Once" ? "Payment Date" : "First Payment"}
-                      </label>
-                      <input
+                    <Field label={f.frequency === "Once" ? "Payment Date" : "First Payment"} htmlFor="so-first-run">
+                      <Input
                         id="so-first-run"
                         type="date"
                         value={f.firstRun}
                         min={new Date().toISOString().slice(0, 10)}
                         onChange={(e) => set("firstRun", e.target.value)}
-                        className="tabular h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus"
+                        className="tabular"
                       />
-                    </div>
+</Field>
 
                     {f.frequency !== "Once" && (
-                      <div className="flex flex-col gap-2">
-                        <label className="text-[13px] font-medium text-foreground">Ends</label>
+                      <Field label="Ends">
                         <Select
                           value={f.endCondition}
                           onValueChange={(val) => val && set("endCondition", val as "indefinite" | "date")}
                         >
-                          <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
+                          <SelectTrigger >
                             <span className="truncate">{f.endCondition === "date" ? "On a Date" : "Until I Cancel"}</span>
                           </SelectTrigger>
                           <SelectContent>
@@ -1111,22 +1105,22 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                             </SelectItem>
                           </SelectContent>
                         </Select>
-                      </div>
+</Field>
                     )}
                   </div>
 
                   {f.frequency !== "Once" && f.endCondition === "date" && (
                     <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-150">
-                      <label htmlFor="so-end-date" className="text-[13px] font-medium text-foreground">
+                      <Label htmlFor="so-end-date">
                         Last Payment
-                      </label>
-                      <input
+                      </Label>
+                      <Input
                         id="so-end-date"
                         type="date"
                         value={f.endDate}
                         min={f.firstRun}
                         onChange={(e) => set("endDate", e.target.value)}
-                        className="tabular h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus"
+                        className="tabular"
                       />
                     </div>
                   )}

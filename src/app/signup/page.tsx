@@ -36,6 +36,7 @@ import {
 
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 
+import { Field } from "@/components/ui/field";
 type Step = OnboardingStep;
 
 const RESEND_SECONDS = 30;
@@ -312,20 +313,17 @@ function SignupContent() {
       {/* STEP 1: Enter Ghana Card */}
       {step === "ghana_card" && (
         <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="ghanaCard" className="text-[13px] font-medium text-foreground">
-              Ghana Card Number
-            </Label>
+          <Field label="Ghana Card Number" htmlFor="ghanaCard">
             <Input
               id="ghanaCard"
               type="text"
               placeholder="e.g GHA-0123456789-0"
               value={ghanaCard}
               onChange={(e) => setGhanaCard(e.target.value.toUpperCase())}
-              className="h-11 text-[14.5px] uppercase"
+              className="uppercase"
               required
             />
-          </div>
+</Field>
 
           <AlertToast when={errorMsg} message={errorMsg} />
 
@@ -388,9 +386,9 @@ function SignupContent() {
               </span>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="reviewTitle" className="text-[13px] font-medium text-foreground">Title</Label>
+              <Label htmlFor="reviewTitle">Title</Label>
               <Select value={title} onValueChange={(val) => val && setTitle(val)}>
-                <SelectTrigger id="reviewTitle" className="h-11 w-full rounded-lg border border-border bg-transparent px-3.5 text-left text-[15px] shadow-none flex items-center justify-between">
+                <SelectTrigger id="reviewTitle" className="border-border text-left flex items-center justify-between">
                   <span className={title ? undefined : "text-muted-foreground/60"}>{title || "Select title"}</span>
                 </SelectTrigger>
                 <SelectContent>
@@ -401,7 +399,7 @@ function SignupContent() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="reviewEmail" className="text-[13px] font-medium text-foreground">Email Address</Label>
+              <Label htmlFor="reviewEmail">Email Address</Label>
               <Input
                 id="reviewEmail"
                 type="email"
@@ -410,11 +408,11 @@ function SignupContent() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 aria-invalid={email.trim() !== "" && !detailsValid && !/^\S+@\S+\.\S+$/.test(email.trim())}
-                className="h-11"
+                
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="reviewMobile" className="text-[13px] font-medium text-foreground">Mobile Number</Label>
+              <Label htmlFor="reviewMobile">Mobile Number</Label>
               <PhoneInput id="reviewMobile" value={mobile} onValueChange={setMobile} />
               <p className="px-0.5 text-[12.5px] text-muted-foreground">We will send a code to verify this number.</p>
             </div>

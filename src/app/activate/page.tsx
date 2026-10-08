@@ -35,6 +35,7 @@ import {
   type ActivationPersonaConfig,
 } from "@/lib/activation";
 
+import { Field } from "@/components/ui/field";
 type Step = OnboardingStep;
 
 const RESEND_SECONDS = 30;
@@ -399,19 +400,16 @@ function ActivateContent() {
           )}
 
           {/* Card Input Field */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="ghana-card" className="text-[13px] font-medium text-foreground">
-              Ghana Card Number
-            </Label>
+          <Field label="Ghana Card Number" htmlFor="ghana-card">
             <Input
               id="ghana-card"
               value={ghanaCard}
               onChange={(e) => setGhanaCard(e.target.value)}
               placeholder="e.g. GHA-0123456789-0"
-              className="h-11 text-[14.5px] uppercase"
+              className="uppercase"
               autoFocus
             />
-          </div>
+</Field>
 
           <AlertToast when={errorMsg} message={errorMsg} />
 
@@ -484,9 +482,9 @@ function ActivateContent() {
           {/* CASE A: Multi-Account Dropdown Selection */}
           {isMultiAccount && (
             <div className="space-y-2">
-              <label htmlFor="primary-account-select" className="text-[13px] font-medium text-foreground px-0.5">
+              <Label htmlFor="primary-account-select">
                 Default Account
-              </label>
+              </Label>
 
               <div data-tour="activate-account-picker">
                 <Select
@@ -495,7 +493,7 @@ function ActivateContent() {
                 >
                   <SelectTrigger
                     id="primary-account-select"
-                    className="h-11 min-h-11 py-2 px-3.5 w-full rounded-xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center justify-between"
+                    className="min-h-11 text-left cursor-pointer flex items-center justify-between"
                   >
                     <SelectValue placeholder="Select default account">
                       {selectedPrimaryAccount ? (

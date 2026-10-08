@@ -32,6 +32,7 @@ import { OwnWalletPicker, digitsOf, useOwnDestination } from "./OwnWalletPicker"
 import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 
+import { Field } from "@/components/ui/field";
 export interface DataBundleFormState {
   fromId: string;
   wNetwork: string;
@@ -132,8 +133,7 @@ export function DataBundleFlow({
       />
 
       {/* 2. Destination: Network & Phone Number */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Recipient Details</label>
+      <Field label="Recipient Details">
         {isSelf ? (
           selfBlock
         ) : isPhoneValid && isCollapsed ? (
@@ -170,20 +170,19 @@ export function DataBundleFlow({
                 }
               }}
               aria-label="Phone number"
-              className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
+              className="h-13 rounded-2xl border-field-border bg-field px-4 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
             />
 
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
           </div>
         )}
-      </div>
+</Field>
 
       {/* Progressive Disclosure: Only reveal Bundle Selection & onwards after phone number & network are valid */}
       {isPhoneValid && isNetworkValid && (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Bundle Selection */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[13px] font-medium text-foreground">Internet</label>
+          <Field label="Internet">
             <Select
               value={selectedBundle?.id ?? ""}
               onValueChange={(val) => {
@@ -238,7 +237,7 @@ export function DataBundleFlow({
                 <InsufficientFundsAlert />
               </div>
             )}
-          </div>
+</Field>
 
           {selectedBundle && (
             <>

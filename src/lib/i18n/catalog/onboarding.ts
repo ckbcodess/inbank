@@ -504,6 +504,7 @@ const onboarding: Entry[] = [
   ["Registered Business Name", "Raison sociale", "Razón social", "注册企业名称"],
   ["Taxpayer Identification Number (TIN)", "Numéro d’identification fiscale (TIN)", "Número de identificación fiscal (TIN)", "纳税人识别号（TIN）"],
   ["Your Role", "Votre fonction", "Tu cargo", "您的职务"],
+  ["Confirm Password", "Confirmez le mot de passe", "Confirmar contraseña", "确认密码"],
 ];
 
 export default onboarding;

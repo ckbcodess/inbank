@@ -20,6 +20,7 @@ import {
   CollapsedDetailsBadge,
 } from "./shared";
 
+import { Field } from "@/components/ui/field";
 export interface GroupPaymentFormState {
   fromId: string;
   groupName: string;
@@ -82,8 +83,7 @@ export function GroupPaymentFlow({
       />
 
       {/* 2. Destination Group */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Contribution Group</label>
+      <Field label="Contribution Group">
 
         {selectedGroup && isCollapsed ? (
           <CollapsedDetailsBadge
@@ -116,7 +116,7 @@ export function GroupPaymentFlow({
               }
             }}
           >
-            <SelectTrigger className="min-h-[52px] h-auto py-2.5 w-full rounded-2xl border border-border/80 bg-card px-4 text-left shadow-none flex items-center">
+            <SelectTrigger className="min-h-[52px] h-auto border-border/80 bg-card text-left flex items-center">
               {!selectedGroup ? (
                 <div className="flex items-center gap-3.5 min-w-0 flex-1">
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
@@ -158,7 +158,7 @@ export function GroupPaymentFlow({
             </SelectContent>
           </Select>
         )}
-      </div>
+</Field>
 
       {/* Progressive Disclosure: Only reveal Amount & subsequent form fields after group is selected */}
       {Boolean(selectedGroup) && (

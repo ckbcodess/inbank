@@ -156,7 +156,7 @@ export function OwnWalletPicker({
       >
         <SelectTrigger
           aria-label={line ? "Your numbers" : "Your wallets"}
-          className="flex h-[58px] min-h-[58px] w-full cursor-pointer items-center rounded-2xl border border-field-border bg-field px-3.5 py-0 text-left shadow-none transition-colors hover:bg-field-hover"
+          className="flex h-[58px] min-h-[58px] cursor-pointer items-center text-left"
         >
           {current && (
             <div className="flex min-w-0 items-center gap-3">

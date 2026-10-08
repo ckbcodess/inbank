@@ -72,6 +72,9 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { PhoneInput } from "@/components/ui/phone-input";
 
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/field";
 type ActiveTab = "people" | "billers" | "groups";
 type TypeFilter = "all" | TransactionType;
 type GroupByOption = "type" | "none";
@@ -893,7 +896,7 @@ export default function BeneficiariesPage() {
             size={18}
             className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
           />
-          <input
+          <Input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -904,7 +907,7 @@ export default function BeneficiariesPage() {
                 ? "Search by utility provider, meter number, or network..."
                 : "Search by group title, description, or member name..."
             }
-            className="w-full h-12 pl-11 pr-10 rounded-xl border border-field-border bg-field text-[15px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-0 focus:border-field-border-focus focus:bg-field-focus transition-colors"
+            className="pl-11 pr-10"
           />
           {query && (
             <button
@@ -1133,10 +1136,7 @@ export default function BeneficiariesPage() {
           {/* Modal Content with Progressive Disclosure */}
           <DialogBody>
             {/* Step 1: Destination Rail (Dropdown) */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-foreground">
-                Payment Rail
-              </label>
+            <Field label="Payment Rail">
               <Select
                 value={form.transactionType}
                 onValueChange={(val) => {
@@ -1144,7 +1144,7 @@ export default function BeneficiariesPage() {
                   setForm((p) => ({ ...p, transactionType: val as TransactionType }));
                 }}
               >
-                <SelectTrigger className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[15px] shadow-xs">
+                <SelectTrigger className="shadow-xs">
                   <div className="flex items-center gap-2.5 truncate">
                     {(() => {
                       const meta = TYPE_CONFIG[form.transactionType] || TYPE_CONFIG.bank;
@@ -1173,21 +1173,18 @@ export default function BeneficiariesPage() {
                   })}
                 </SelectContent>
               </Select>
-            </div>
+</Field>
 
             {/* Step 2: Rail-Specific Provider / Destination / Network Dropdowns & Details */}
             {/* Mobile Wallet Rail */}
             {form.transactionType === "wallet" && (
               <div className="flex flex-col gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">
-                    Network Provider
-                  </label>
+                <Field label="Network Provider">
                   <Select
                     value={form.network}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, network: val }))}
                   >
-                    <SelectTrigger className="h-11 rounded-xl border border-field-border bg-field px-3.5 text-[15px] shadow-xs">
+                    <SelectTrigger className="shadow-xs">
                       <SelectValue placeholder="Select network" />
                     </SelectTrigger>
                     <SelectContent>
@@ -1198,34 +1195,28 @@ export default function BeneficiariesPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
+</Field>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">
-                    Wallet Phone Number
-                  </label>
+                <Field label="Wallet Phone Number">
                   <PhoneInput
                     value={form.phoneNumber}
                     onValueChange={(v) => setForm((p) => ({ ...p, phoneNumber: v }))}
                     aria-label="Wallet phone number"
                     className="h-11 rounded-xl border-field-border bg-field focus-within:border-field-border-focus focus-within:ring-0 shadow-xs"
                   />
-                </div>
+</Field>
               </div>
             )}
 
             {/* Domestic Bank Rail (GCB / Other Banks) */}
             {form.transactionType === "bank" && (
               <div className="flex flex-col gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">
-                    Destination Bank
-                  </label>
+                <Field label="Destination Bank">
                   <Select
                     value={form.bankName}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
                   >
-                    <SelectTrigger className="h-11 rounded-xl border border-field-border bg-field px-3.5 text-[15px] shadow-xs">
+                    <SelectTrigger className="shadow-xs">
                       <SelectValue placeholder="Select destination bank" />
                     </SelectTrigger>
                     <SelectContent className="max-h-56">
@@ -1236,30 +1227,24 @@ export default function BeneficiariesPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
+</Field>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">
-                    Account Number
-                  </label>
-                  <input
+                <Field label="Account Number">
+                  <Input
                     type="text"
                     value={form.accountNumber}
                     onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
                     placeholder={form.bankName === "GCB Bank" ? "13-digit GCB Account" : "Recipient account number"}
-                    className="h-11 rounded-xl border border-field-border bg-field px-3.5 text-[15px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition shadow-xs"
+                    className="tabular shadow-xs"
                   />
-                </div>
+</Field>
               </div>
             )}
 
             {/* Bills & Utilities Rail */}
             {form.transactionType === "bill" && (
               <div className="flex flex-col gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">
-                    Bill / Service Provider
-                  </label>
+                <Field label="Bill / Service Provider">
                   <Select
                     value={matchedBiller?.name || form.billerName}
                     onValueChange={(val) => {
@@ -1279,7 +1264,7 @@ export default function BeneficiariesPage() {
                       });
                     }}
                   >
-                    <SelectTrigger className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[15px]">
+                    <SelectTrigger >
                       <SelectValue placeholder="Select bill / utility provider" />
                     </SelectTrigger>
                     <SelectContent className="max-h-72">
@@ -1307,35 +1292,29 @@ export default function BeneficiariesPage() {
                       })}
                     </SelectContent>
                   </Select>
-                </div>
+</Field>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">
-                    {billerRefLabel}
-                  </label>
-                  <input
+                <Field label={billerRefLabel}>
+                  <Input
                     type="text"
                     value={form.billerReference}
                     onChange={(e) => setForm((p) => ({ ...p, billerReference: e.target.value }))}
                     placeholder={billerRefPlaceholder}
-                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[15px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                    className="tabular"
                   />
-                </div>
+</Field>
               </div>
             )}
 
             {/* Airtime Rail */}
             {form.transactionType === "airtime" && (
               <div className="flex flex-col gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">
-                    Network Provider
-                  </label>
+                <Field label="Network Provider">
                   <Select
                     value={form.network}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, network: val }))}
                   >
-                    <SelectTrigger className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[15px]">
+                    <SelectTrigger >
                       <SelectValue placeholder="Select network provider" />
                     </SelectTrigger>
                     <SelectContent>
@@ -1346,33 +1325,27 @@ export default function BeneficiariesPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
+</Field>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">
-                    Phone Number
-                  </label>
+                <Field label="Phone Number">
                   <PhoneInput
                     value={form.phoneNumber}
                     onValueChange={(v) => setForm((p) => ({ ...p, phoneNumber: v }))}
                     aria-label="Phone number to top up"
                     className="h-11 rounded-xl border-field-border bg-field focus-within:border-field-border-focus focus-within:ring-0"
                   />
-                </div>
+</Field>
               </div>
             )}
 
             {/* Proxy Pay Rail */}
             {form.transactionType === "proxy" && (
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[13px] font-medium text-foreground">
-                  Proxy Identifier
-                </label>
+              <Field label="Proxy Identifier">
                 <div className="relative flex items-center">
                   <span className="absolute left-3.5 text-[15px] font-semibold text-muted-foreground select-none pointer-events-none">
                     @
                   </span>
-                  <input
+                  <Input
                     type="text"
                     value={form.proxyId.replace(/^@/, "")}
                     onChange={(e) => {
@@ -1380,18 +1353,17 @@ export default function BeneficiariesPage() {
                       setForm((p) => ({ ...p, proxyId: cleaned ? `@${cleaned}` : "" }));
                     }}
                     placeholder="kwame.b"
-                    className="h-11 w-full rounded-xl border border-field-border bg-field pl-8 pr-3.5 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                    className="pl-8 pr-3.5"
                   />
                 </div>
-              </div>
+</Field>
             )}
 
             {/* SWIFT International Wire */}
             {form.transactionType === "swift" && (
               <div className="flex flex-col gap-3">
                 <div className="grid grid-cols-2 gap-2.5">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[13px] font-medium text-foreground">Country</label>
+                  <Field label="Country">
                     <Select
                       value={form.country}
                       onValueChange={(val) => {
@@ -1400,7 +1372,7 @@ export default function BeneficiariesPage() {
                         setForm((p) => ({ ...p, country: val, bankName: defaultBank }));
                       }}
                     >
-                      <SelectTrigger className="h-11 rounded-xl border border-field-border bg-field px-3 text-[15px]">
+                      <SelectTrigger >
                         <SelectValue placeholder="Country" />
                       </SelectTrigger>
                       <SelectContent className="max-h-56">
@@ -1411,15 +1383,14 @@ export default function BeneficiariesPage() {
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
+</Field>
 
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[13px] font-medium text-foreground">Bank</label>
+                  <Field label="Bank">
                     <Select
                       value={form.bankName}
                       onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
                     >
-                      <SelectTrigger className="h-11 rounded-xl border border-field-border bg-field px-3 text-[15px]">
+                      <SelectTrigger >
                         <SelectValue placeholder="Select bank" />
                       </SelectTrigger>
                       <SelectContent className="max-h-56">
@@ -1430,51 +1401,47 @@ export default function BeneficiariesPage() {
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
+</Field>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[13px] font-medium text-foreground">SWIFT / BIC Code</label>
-                    <input
+                  <Field label="SWIFT / BIC Code">
+                    <Input
                       type="text"
                       value={form.swiftBic}
                       onChange={(e) => setForm((p) => ({ ...p, swiftBic: e.target.value.toUpperCase() }))}
                       placeholder="e.g. BARCGB22"
-                      className="h-11 rounded-xl border border-field-border bg-field px-3 text-[15px] text-foreground uppercase tracking-wider tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                      className="uppercase tracking-wider tabular"
                     />
-                  </div>
+</Field>
 
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[13px] font-medium text-foreground">IBAN / Account Number</label>
-                    <input
+                  <Field label="IBAN / Account Number">
+                    <Input
                       type="text"
                       value={form.accountNumber}
                       onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
                       placeholder="GB29 BARC 2020 1555"
-                      className="h-11 rounded-xl border border-field-border bg-field px-3 text-[15px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                      className="tabular"
                     />
-                  </div>
+</Field>
                 </div>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">Recipient Physical Address</label>
-                  <input
+                <Field label="Recipient Physical Address">
+                  <Input
                     type="text"
                     value={form.address}
                     onChange={(e) => setForm((p) => ({ ...p, address: e.target.value }))}
                     placeholder="Street, City, Postal Code"
-                    className="h-11 rounded-xl border border-field-border bg-field px-3.5 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                    
                   />
-                </div>
+</Field>
               </div>
             )}
 
             {/* PAPSS Cross-Border Rail */}
             {form.transactionType === "papss" && (
               <div className="flex flex-col gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[13px] font-medium text-foreground">Destination Country</label>
+                <Field label="Destination Country">
                   <Select
                     value={form.country}
                     onValueChange={(val) => {
@@ -1483,7 +1450,7 @@ export default function BeneficiariesPage() {
                       setForm((p) => ({ ...p, country: val, bankName: defaultBank }));
                     }}
                   >
-                    <SelectTrigger className="h-11 rounded-xl border border-field-border bg-field px-3.5 text-[15px]">
+                    <SelectTrigger >
                       <SelectValue placeholder="Select African destination" />
                     </SelectTrigger>
                     <SelectContent className="max-h-56">
@@ -1494,14 +1461,14 @@ export default function BeneficiariesPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
+</Field>
 
                 <div className="grid grid-cols-2 gap-2.5">
                   <Select
                     value={form.bankName}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
                   >
-                    <SelectTrigger className="h-11 rounded-xl border border-field-border bg-field px-3 text-[15px]">
+                    <SelectTrigger >
                       <SelectValue placeholder="Select bank" />
                     </SelectTrigger>
                     <SelectContent className="max-h-56">
@@ -1512,42 +1479,39 @@ export default function BeneficiariesPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <input
+                  <Input
                     type="text"
                     value={form.accountNumber}
                     onChange={(e) => setForm((p) => ({ ...p, accountNumber: e.target.value }))}
                     placeholder="Account / IBAN"
-                    className="h-11 rounded-xl border border-field-border bg-field px-3 text-[15px] text-foreground tabular placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                    className="tabular"
                   />
                 </div>
               </div>
             )}
 
             {/* Step 3: Beneficiary Legal Name / Biller Nickname */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-foreground">
-                {activeTab === "billers" ? "Biller Name" : "Beneficiary Full Name"}
-              </label>
-              <input
+            <Field label={activeTab === "billers" ? "Biller Name" : "Beneficiary Full Name"}>
+              <Input
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                 placeholder={activeTab === "billers" ? "e.g. ECG PowerApp" : "e.g. Kojo Mensah"}
-                className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                
               />
-            </div>
+</Field>
 
             {/* Step 4: Optional Nickname / Reference */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-foreground">
+              <Label>
                 Nickname / Note <span className="text-[11px] text-muted-foreground/60">(Optional)</span>
-              </label>
-              <input
+              </Label>
+              <Input
                 type="text"
                 value={form.nickname}
                 onChange={(e) => setForm((p) => ({ ...p, nickname: e.target.value }))}
                 placeholder="e.g. Landlord, Monthly Groceries"
-                className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                
               />
             </div>
           </DialogBody>

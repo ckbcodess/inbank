@@ -24,6 +24,7 @@ import { REGISTERED_PHONE } from "../useAuthorisation";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 
+import { Field } from "@/components/ui/field";
 export interface CardlessFormState {
   fromId: string;
   withdrawalType: "self" | "third-party";
@@ -122,8 +123,7 @@ export function CardlessWithdrawalFlow({
       />
 
       {/* 2. Beneficiary / Network & Phone Details */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
+      <Field label="Beneficiary Details">
 
         {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
@@ -169,7 +169,7 @@ export function CardlessWithdrawalFlow({
                       }
                     }}
                     aria-label="Phone number"
-                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
+                    className="h-13 rounded-2xl border-field-border bg-field px-4 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
                   />
                 </div>
 
@@ -186,7 +186,7 @@ export function CardlessWithdrawalFlow({
             )}
           </div>
         )}
-      </div>
+</Field>
 
       {/* Progressive Disclosure: Only reveal Amount & Narration after Verification */}
       {isVerified && (

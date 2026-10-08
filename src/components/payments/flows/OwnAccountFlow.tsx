@@ -22,6 +22,7 @@ import {
   ScheduleFrequency,
 } from "./shared";
 
+import { Field } from "@/components/ui/field";
 export interface OwnAccountFormState {
   fromId: string;
   toOwnAccountId: string;
@@ -98,8 +99,7 @@ export function OwnAccountFlow({
       />
 
       {/* 2. To Account */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">To Account</label>
+      <Field label="To Account">
         {isDetailsValid && isCollapsed && toAccount ? (
           <CollapsedDetailsBadge
             title={toAccount.name}
@@ -111,7 +111,7 @@ export function OwnAccountFlow({
             value={state.toOwnAccountId}
             onValueChange={(val) => val && onChange("toOwnAccountId", val)}
           >
-            <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center">
+            <SelectTrigger className="h-[58px] min-h-[58px] text-left cursor-pointer flex items-center">
               <AccountSelectTriggerContent
                 account={toAccount}
                 placeholder="Select destination account"
@@ -134,7 +134,7 @@ export function OwnAccountFlow({
             <span>Destination account cannot be the same as source account.</span>
           </div>
         )}
-      </div>
+</Field>
 
       {/* Progressive Disclosure: Only reveal Amount & subsequent sections after destination account is selected */}
       {isDetailsValid && (

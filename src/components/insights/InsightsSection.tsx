@@ -159,7 +159,7 @@ export function InsightsSection({ profileKind }: { profileKind: ProfileKind }) {
             value={account}
             onValueChange={(value) => setAccount(value ?? ALL_ACCOUNTS)}
           >
-            <SelectTrigger className="h-9 w-[210px]" aria-label="Account">
+            <SelectTrigger className="w-[210px]" aria-label="Account">
               <SelectValue placeholder="All accounts" />
             </SelectTrigger>
             <SelectContent align="end">

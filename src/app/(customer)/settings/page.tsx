@@ -32,6 +32,7 @@ import { forgetThisDevice, useTrustedDevice } from "@/lib/device-trust";
 import { toast } from "sonner";
 import { PhoneInput } from "@/components/ui/phone-input";
 
+import { Field } from "@/components/ui/field";
 type SettingsTab = "profile" | "security" | "notifications" | "preferences";
 
 export default function SettingsPage() {
@@ -147,48 +148,39 @@ export default function SettingsPage() {
             <h2 className="text-[15px] font-medium text-foreground tracking-tight">Personal & Account Holder Details</h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="fullname" className="text-[13px] font-medium text-foreground">
-                  Full Legal Name
-                </Label>
+              <Field label="Full Legal Name" htmlFor="fullname">
                 <Input
                   id="fullname"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="h-10 text-[13px]"
+                  
                   required
                 />
-              </div>
+</Field>
 
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="email" className="text-[13px] font-medium text-foreground">
-                  Registered Email
-                </Label>
+              <Field label="Registered Email" htmlFor="email">
                 <Input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-10 text-[13px]"
+                  
                   required
                 />
-              </div>
+</Field>
 
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="phone" className="text-[13px] font-medium text-foreground">
-                  Primary Mobile Phone
-                </Label>
+              <Field label="Primary Mobile Phone" htmlFor="phone">
                 <PhoneInput
                   id="phone"
                   value={phone}
                   onValueChange={setPhone}
-                  className="h-10 text-[15px]"
+                  className="h-10 text-[14px]"
                   required
                 />
-              </div>
+</Field>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="ghana-card" className="text-[13px] font-medium text-foreground flex items-center justify-between">
+                <Label htmlFor="ghana-card" className="flex items-center justify-between">
                   <span>Ghana Card Number (NIA)</span>
                   <span className="text-[10.5px] text-success-text font-medium">Verified</span>
                 </Label>
@@ -196,22 +188,19 @@ export default function SettingsPage() {
                   id="ghana-card"
                   value={ghanaCard}
                   disabled
-                  className="h-10 text-[15px] bg-muted/30"
+                  className="bg-muted/30"
                 />
               </div>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="address" className="text-[13px] font-medium text-foreground">
-                Residential / Operating Address
-              </Label>
+            <Field label="Residential / Operating Address" htmlFor="address">
               <Input
                 id="address"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                className="h-10 text-[13px]"
+                
               />
-            </div>
+</Field>
 
             {/* Proxy ID Card */}
             <div className="flex items-center justify-between rounded-xl border border-border bg-muted/20 p-4 mt-1">
@@ -261,44 +250,35 @@ export default function SettingsPage() {
             <h2 className="text-[15px] font-medium text-foreground tracking-tight">Change Password</h2>
 
             <div className="flex flex-col gap-3.5 max-w-md">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="curr-pass" className="text-[13px] font-medium text-foreground">
-                  Current Password
-                </Label>
+              <Field label="Current Password" htmlFor="curr-pass">
                 <Input
                   id="curr-pass"
                   type="password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="h-10 text-[13px]"
+                  
                 />
-              </div>
+</Field>
 
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="new-pass" className="text-[13px] font-medium text-foreground">
-                  New Password
-                </Label>
+              <Field label="New Password" htmlFor="new-pass">
                 <Input
                   id="new-pass"
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="h-10 text-[13px]"
+                  
                 />
-              </div>
+</Field>
 
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="conf-pass" className="text-[13px] font-medium text-foreground">
-                  Confirm New Password
-                </Label>
+              <Field label="Confirm New Password" htmlFor="conf-pass">
                 <Input
                   id="conf-pass"
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="h-10 text-[13px]"
+                  
                 />
-              </div>
+</Field>
             </div>
           </div>
 
@@ -385,7 +365,7 @@ export default function SettingsPage() {
                   </span>
                 </div>
                 <Select value={sessionTimeout} onValueChange={(val) => { if (val) setSessionTimeout(val); }}>
-                  <SelectTrigger className="w-32 h-8 text-[15px]">
+                  <SelectTrigger className="w-32 h-8 text-[14px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

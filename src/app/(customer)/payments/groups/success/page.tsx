@@ -67,7 +67,7 @@ function SuccessContent() {
       onPrimaryAction={() => router.push("/beneficiaries")}
       primaryActionLabel="Back to Overview"
       showSaveBeneficiary={true}
-      saveBeneficiaryLabel="Save as favourite group?"
+      saveBeneficiaryLabel="Save as Favourite Group?"
       initialSaveBeneficiary={true}
       customActionCards={[
         {

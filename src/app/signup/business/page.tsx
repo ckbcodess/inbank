@@ -28,7 +28,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -63,6 +62,7 @@ import {
 import { PhoneInput } from "@/components/ui/phone-input";
 import { displayGhanaMobile, isCompleteGhanaMobile } from "@/lib/phone";
 
+import { Field } from "@/components/ui/field";
 const EMPTY_COMPANY: CompanyDetails = { name: "", tin: "", businessType: BUSINESS_TYPES[0] };
 const EMPTY_CONTACT: PrimaryContact = { name: "", role: SIGNATORY_ROLES[0], ghanaCard: "", mobile: "", email: "" };
 
@@ -224,43 +224,34 @@ export default function BusinessSignupPage() {
         {/* ── Company ──────────────────────────────────────────────────────── */}
         {step === "company" && variant !== "existingCustomer" && (
           <form onSubmit={handleCompanySubmit} className="flex flex-col gap-5">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="companyName" className="text-[13px] font-medium text-foreground">
-                Registered Business Name
-              </Label>
+            <Field label="Registered Business Name" htmlFor="companyName">
               <Input
                 id="companyName"
                 value={company.name}
                 onChange={(e) => setCompany((c) => ({ ...c, name: e.target.value }))}
                 placeholder="Adinkra Fabrics Ltd"
-                className="h-11 text-[14.5px]"
+                
                 required
               />
-            </div>
+</Field>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="tin" className="text-[13px] font-medium text-foreground">
-                Taxpayer Identification Number (TIN)
-              </Label>
+            <Field label="Taxpayer Identification Number (TIN)" htmlFor="tin">
               <Input
                 id="tin"
                 value={company.tin}
                 onChange={(e) => setCompany((c) => ({ ...c, tin: e.target.value }))}
                 placeholder="C0099887766"
-                className="h-11 text-[14.5px] uppercase tabular"
+                className="uppercase tabular"
                 required
               />
-            </div>
+</Field>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="businessType" className="text-[13px] font-medium text-foreground">
-                Business Type
-              </Label>
+            <Field label="Business Type" htmlFor="businessType">
               <Select
                 value={company.businessType}
                 onValueChange={(v) => v && setCompany((c) => ({ ...c, businessType: v }))}
               >
-                <SelectTrigger id="businessType" className="h-11 w-full text-[15px]">
+                <SelectTrigger id="businessType" >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -271,7 +262,7 @@ export default function BusinessSignupPage() {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+</Field>
 
             <Button
               type="submit"
@@ -324,24 +315,18 @@ export default function BusinessSignupPage() {
             </p>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="contactName" className="text-[13px] font-medium text-foreground">
-                  Full Name
-                </Label>
+              <Field label="Full Name" htmlFor="contactName">
                 <Input
                   id="contactName"
                   value={contact.name}
                   onChange={(e) => setContact((c) => ({ ...c, name: e.target.value }))}
-                  className="h-11 text-[14.5px]"
+                  
                   required
                 />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="contactRole" className="text-[13px] font-medium text-foreground">
-                  Your Role
-                </Label>
+</Field>
+              <Field label="Your Role" htmlFor="contactRole">
                 <Select value={contact.role} onValueChange={(v) => v && setContact((c) => ({ ...c, role: v }))}>
-                  <SelectTrigger id="contactRole" className="h-11 w-full text-[15px]">
+                  <SelectTrigger id="contactRole" >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -352,28 +337,22 @@ export default function BusinessSignupPage() {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+</Field>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="contactGhanaCard" className="text-[13px] font-medium text-foreground">
-                Ghana Card Number
-              </Label>
+            <Field label="Ghana Card Number" htmlFor="contactGhanaCard">
               <Input
                 id="contactGhanaCard"
                 value={contact.ghanaCard}
                 onChange={(e) => setContact((c) => ({ ...c, ghanaCard: e.target.value }))}
                 placeholder="GHA-0123456789-0"
-                className="h-11 text-[14.5px] uppercase tabular"
+                className="uppercase tabular"
                 required
               />
-            </div>
+</Field>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="contactMobile" className="text-[13px] font-medium text-foreground">
-                  Mobile Number
-                </Label>
+              <Field label="Mobile Number" htmlFor="contactMobile">
                 <PhoneInput
                   id="contactMobile"
                   value={contact.mobile}
@@ -381,20 +360,17 @@ export default function BusinessSignupPage() {
                   className="text-[14.5px]"
                   required
                 />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="contactEmail" className="text-[13px] font-medium text-foreground">
-                  Email
-                </Label>
+</Field>
+              <Field label="Email" htmlFor="contactEmail">
                 <Input
                   id="contactEmail"
                   type="email"
                   value={contact.email}
                   onChange={(e) => setContact((c) => ({ ...c, email: e.target.value }))}
-                  className="h-11 text-[14.5px]"
+                  
                   required
                 />
-              </div>
+</Field>
             </div>
 
             <Button
@@ -710,10 +686,10 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
           onChange={(e) => setName(e.target.value)}
           placeholder="Full name"
           aria-label="Signatory name"
-          className="h-11 text-[14.5px]"
+          
         />
         <Select value={role} onValueChange={(v) => v && setRole(v)}>
-          <SelectTrigger aria-label="Signatory role" className="h-11 w-full text-[15px]">
+          <SelectTrigger aria-label="Signatory role" >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -728,7 +704,7 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
       <PhoneInput
         value={mobile}
         onValueChange={setMobile}
-        className="text-[15px]"
+        className="text-[14px]"
         aria-label="Signatory mobile number"
       />
       <div className="flex gap-2">

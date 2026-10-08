@@ -26,6 +26,7 @@ import {
 import { useFxStore } from "@/lib/fx-presentation-store";
 import { cn } from "@/lib/utils";
 
+import { Input } from "@/components/ui/input";
 const CONVERTER_CURRENCIES = [
   { code: "USD", name: "US Dollar" },
   { code: "GHS", name: "Ghanaian Cedi" },
@@ -433,12 +434,12 @@ export function FxQuickModal() {
                   strokeWidth={2}
                   className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
                 />
-                <input
+                <Input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Filter currencies (e.g. USD, EUR, GBP)..."
-                  className="h-8.5 w-full rounded-lg border border-field-border bg-field pl-8 pr-3 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-border transition-colors"
+                  className="pl-8 pr-3 focus:border-border"
                 />
               </div>
 

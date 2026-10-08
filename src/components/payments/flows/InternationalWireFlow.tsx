@@ -26,6 +26,9 @@ import {
   DualAmountFields,
 } from "./shared";
 
+import { Label } from "@/components/ui/label";
+import { Field as UiField } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 export interface InternationalWireFormState {
   fromId: string;
   wCountry: string;
@@ -102,20 +105,12 @@ export const CHARGE_OPTIONS = [
   { id: "recipient", label: "Recipient Pays", note: "GCB's fee is taken out of the amount sent." },
 ];
 
-const INPUT =
-  "h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition";
-const TRIGGER =
-  "h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none";
 
 function Field({ label, optional, children }: { label: string; optional?: boolean; children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <span className="text-[12.5px] text-muted-foreground">
-        {label}
-        {optional && " (optional)"}
-      </span>
+    <UiField label={label} optional={optional}>
       {children}
-    </div>
+    </UiField>
   );
 }
 
@@ -262,18 +257,17 @@ export function InternationalWireFlow({
 
       {/* 2. Where it's going, and who gets it */}
       {isDestinationValid && isCollapsed ? (
-        <div className="flex flex-col gap-2">
-          <label className="text-[13px] font-medium text-foreground">Beneficiary</label>
+        <Field label="Beneficiary">
           <CollapsedDetailsBadge
             title={state.wBenName}
             subtitle={`${state.wBank} · ${state.wSwift} · ${state.wIban}`}
             onChange={() => setCollapsed(false)}
           />
-        </div>
+</Field>
       ) : (
         <>
           <div className="flex flex-col gap-3">
-            <label className="text-[13px] font-medium text-foreground">Destination</label>
+            <Label>Destination</Label>
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Country">
                 <CountryPicker
@@ -298,7 +292,7 @@ export function InternationalWireFlow({
                     onChange("wSwift", "");
                   }}
                 >
-                  <SelectTrigger className={TRIGGER}>
+                  <SelectTrigger >
                     <SelectValue placeholder="Select mode of delivery" />
                   </SelectTrigger>
                   <SelectContent>
@@ -318,12 +312,12 @@ export function InternationalWireFlow({
             {codeType && (
               <div className="animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
                 <Field label={codeType.label}>
-                  <input
+                  <Input
                     type="text"
                     value={state.wSwift}
                     onChange={(e) => onChange("wSwift", codeType.clean(e.target.value))}
                     placeholder={codeType.placeholder}
-                    className={`${INPUT} tabular uppercase tracking-wider placeholder:normal-case placeholder:tracking-normal`}
+                    className="tabular uppercase tracking-wider placeholder:normal-case placeholder:tracking-normal"
                   />
                 </Field>
                 <p className="px-1 pt-1.5 text-[12.5px] text-muted-foreground">{codeType.hint}</p>
@@ -333,11 +327,11 @@ export function InternationalWireFlow({
 
           {codeOk && currentCountry && (
             <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-              <label className="text-[13px] font-medium text-foreground">Beneficiary Bank</label>
+              <Label>Beneficiary Bank</Label>
               <Field label="Bank">
                 {availableBanks.length > 0 ? (
                   <Select value={state.wBank} onValueChange={(val) => val && onChange("wBank", val)}>
-                    <SelectTrigger className={TRIGGER}>
+                    <SelectTrigger >
                       <SelectValue placeholder="Select beneficiary bank" />
                     </SelectTrigger>
                     <SelectContent>
@@ -349,23 +343,21 @@ export function InternationalWireFlow({
                     </SelectContent>
                   </Select>
                 ) : (
-                  <input
+                  <Input
                     type="text"
                     value={state.wBank}
                     onChange={(e) => onChange("wBank", e.target.value)}
                     placeholder="Enter beneficiary bank"
-                    className={INPUT}
                   />
                 )}
               </Field>
 
               <Field label="Bank Address">
-                <input
+                <Input
                   type="text"
                   value={state.wBankAddress}
                   onChange={(e) => onChange("wBankAddress", e.target.value)}
                   placeholder="Enter address"
-                  className={INPUT}
                 />
               </Field>
             </div>
@@ -373,24 +365,23 @@ export function InternationalWireFlow({
 
           {bankDetailsOk && (
             <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-              <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
+              <Label>Beneficiary Details</Label>
               <div className="grid gap-3 sm:grid-cols-2">
                 <Field label="Account Number">
-                  <input
+                  <Input
                     type="text"
                     value={state.wIban}
                     onChange={(e) => onChange("wIban", e.target.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase())}
                     placeholder="Enter beneficiary account number"
-                    className={`${INPUT} tabular uppercase placeholder:normal-case`}
+                    className="tabular uppercase placeholder:normal-case"
                   />
                 </Field>
                 <Field label="Name">
-                  <input
+                  <Input
                     type="text"
                     value={state.wBenName}
                     onChange={(e) => onChange("wBenName", e.target.value)}
                     placeholder="Legal name of recipient"
-                    className={INPUT}
                   />
                 </Field>
               </div>
@@ -398,33 +389,31 @@ export function InternationalWireFlow({
               {accountOk && nameOk && (
                 <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
                   <Field label="Address">
-                    <input
+                    <Input
                       type="text"
                       value={state.wBenAddress}
                       onChange={(e) => onChange("wBenAddress", e.target.value)}
                       placeholder="Enter beneficiary address"
-                      className={INPUT}
                     />
                   </Field>
 
                   {optionalOpen ? (
                     <div className="grid gap-3 animate-in fade-in duration-150 ease-out sm:grid-cols-2">
                       <Field label="Email Address" optional>
-                        <input
+                        <Input
                           type="email"
                           value={state.wBenEmail}
                           onChange={(e) => onChange("wBenEmail", e.target.value)}
                           placeholder="Enter email address"
-                          className={INPUT}
                         />
                       </Field>
                       <Field label="Contact Number" optional>
-                        <input
+                        <Input
                           type="tel"
                           value={state.wBenPhone}
                           onChange={(e) => onChange("wBenPhone", e.target.value.replace(/[^0-9+\s]/g, ""))}
                           placeholder="Enter contact number"
-                          className={`${INPUT} tabular`}
+                          className="tabular"
                         />
                       </Field>
                     </div>
@@ -481,8 +470,7 @@ export function InternationalWireFlow({
       {isDestinationValid && (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount Section: You Send (GHS) vs Recipient Gets (Foreign) with switcher */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[13px] font-medium text-foreground">Transfer Amount</label>
+          <Field label="Transfer Amount">
 
             <DualAmountFields
               foreign={state.wForeign}
@@ -511,15 +499,14 @@ export function InternationalWireFlow({
                 <InsufficientFundsAlert />
               </div>
             )}
-          </div>
+</Field>
 
           {numForeign > 0 && (
             <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* Who pays the charges */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[13px] font-medium text-foreground">Charges</label>
+          <Field label="Charges">
             <Select value={state.wCharges} onValueChange={(val) => val && onChange("wCharges", val)}>
-              <SelectTrigger className={TRIGGER}>
+              <SelectTrigger >
                 <SelectValue placeholder="Who pays for the charges" />
               </SelectTrigger>
               <SelectContent>
@@ -533,7 +520,7 @@ export function InternationalWireFlow({
             <p className="px-1 text-[12.5px] text-muted-foreground">
               {CHARGE_OPTIONS.find((c) => c.id === state.wCharges)?.note}
             </p>
-          </div>
+</Field>
 
           {/* 4. Narration / Purpose of Payment */}
           <NarrationInput

@@ -69,7 +69,7 @@ function LanguageSelect() {
         aria-label={t("header.language", "Language")}
         value={language}
         onChange={(e) => setLanguage(e.target.value as typeof language)}
-        className="h-9 cursor-pointer appearance-none rounded-lg border border-field-border bg-field py-0 pl-3 pr-8 text-[15px] text-foreground outline-none transition-colors duration-hover hover:bg-field-hover focus-visible:border-field-border-focus focus-visible:bg-field-focus"
+        className="h-9 cursor-pointer appearance-none rounded-lg border border-field-border bg-field py-0 pl-3 pr-8 text-[14px] text-foreground outline-none transition-colors duration-hover hover:bg-field-hover focus-visible:border-field-border-focus focus-visible:bg-field-focus"
       >
         {languages.map((lang) => (
           <option key={lang.code} value={lang.code}>

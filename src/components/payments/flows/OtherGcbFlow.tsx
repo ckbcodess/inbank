@@ -17,6 +17,8 @@ import {
   resolveAccountName,
 } from "./shared";
 
+import { Input } from "@/components/ui/input";
+import { Field } from "@/components/ui/field";
 export interface OtherGcbFormState {
   fromId: string;
   benAcct: string;
@@ -100,8 +102,7 @@ export function OtherGcbFlow({
       />
 
       {/* 2. Destination (GCB Account) */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
+      <Field label="Beneficiary Details">
         {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `GCB Account ${state.benAcct}`}
@@ -111,7 +112,7 @@ export function OtherGcbFlow({
           />
         ) : (
           <div className="flex flex-col gap-3">
-            <input
+            <Input
               type="text"
               inputMode="numeric"
               value={state.benAcct}
@@ -124,7 +125,7 @@ export function OtherGcbFlow({
                 }
               }}
               placeholder="Enter account number"
-              className="numorainput h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
+              className="numorainput tabular"
             />
 
             {/* Resolving indicator */}
@@ -136,7 +137,7 @@ export function OtherGcbFlow({
             {isVerified && <VerifiedAccountBadge name={verifiedName} />}
           </div>
         )}
-      </div>
+</Field>
 
       {/* Progressive Disclosure: Only reveal Amount & subsequent sections after verification */}
       {isVerified && (

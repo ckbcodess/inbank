@@ -27,6 +27,7 @@ import { OwnWalletPicker, digitsOf, useOwnDestination } from "./OwnWalletPicker"
 import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 
+import { Field } from "@/components/ui/field";
 export interface AirtimeFormState {
   fromId: string;
   wNetwork: string;
@@ -118,8 +119,7 @@ export function AirtimeFlow({
       />
 
       {/* 2. Destination: Network & Phone Number */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Recipient Details</label>
+      <Field label="Recipient Details">
         {isSelf ? (
           selfBlock
         ) : isPhoneValid && isCollapsed ? (
@@ -152,13 +152,13 @@ export function AirtimeFlow({
                 }
               }}
               aria-label="Phone number"
-              className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
+              className="h-13 rounded-2xl border-field-border bg-field px-4 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
             />
 
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
           </div>
         )}
-      </div>
+</Field>
 
       {/* Progressive Disclosure: Only reveal Amount & onwards after phone number & network are valid */}
       {isPhoneValid && isNetworkValid && (

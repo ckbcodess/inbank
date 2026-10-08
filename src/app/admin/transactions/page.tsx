@@ -280,7 +280,7 @@ export default function TransactionMonitoringPage() {
         datePreset === "custom" ? (
           <div className="mt-3 grid grid-cols-2 gap-3">
             <div className="flex min-w-0 flex-col gap-1.5">
-              <Label htmlFor="mon-from" className="text-[13px]">
+              <Label htmlFor="mon-from">
                 From
               </Label>
               <Input
@@ -292,7 +292,7 @@ export default function TransactionMonitoringPage() {
               />
             </div>
             <div className="flex min-w-0 flex-col gap-1.5">
-              <Label htmlFor="mon-to" className="text-[13px]">
+              <Label htmlFor="mon-to">
                 To
               </Label>
               <Input

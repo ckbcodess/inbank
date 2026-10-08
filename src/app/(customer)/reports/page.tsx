@@ -38,6 +38,7 @@ import { useSession } from "@/lib/session-store";
 import { isCorporateAdmin } from "@/lib/roles";
 import { AUDIT_EVENTS, TRANSACTIONS, formatDate, formatMoney } from "@/lib/mock-data";
 
+import { Field } from "@/components/ui/field";
 const LIST_STATES: readonly ListState[] = [
   "loading",
   "empty",
@@ -211,20 +212,14 @@ export default function ReportsPage() {
       {/* Filters */}
       <section className="rounded-2xl border border-border bg-card p-5">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="rep-from" className="text-[13px]">
-              From
-            </Label>
+          <Field label="From" htmlFor="rep-from">
             <Input id="rep-from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="rep-to" className="text-[13px]">
-              To
-            </Label>
+</Field>
+          <Field label="To" htmlFor="rep-to">
             <Input id="rep-to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
-          </div>
+</Field>
           <div className="flex flex-col gap-1.5 sm:col-span-2">
-            <Label htmlFor="rep-q" className="text-[13px]">
+            <Label htmlFor="rep-q">
               Search
             </Label>
             <div className="relative">

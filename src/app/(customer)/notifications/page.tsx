@@ -255,7 +255,7 @@ export default function NotificationsPage() {
                 }
               />
               <div className="flex flex-col">
-                <Label htmlFor={`channel-${c.key}`} className="text-[13px]">
+                <Label htmlFor={`channel-${c.key}`}>
                   {c.label}
                 </Label>
                 <span className="mt-0.5 text-[12px] text-muted-foreground">{c.description}</span>

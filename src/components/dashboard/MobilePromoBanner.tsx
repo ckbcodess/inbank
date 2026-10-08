@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import { Field } from "@/components/ui/field";
 export function MobilePromoBanner() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showCalculator, setShowCalculator] = useState(false);
@@ -215,8 +216,7 @@ export function MobilePromoBanner() {
               Estimated returns calculated at 14.50% annual interest.
             </p>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-foreground">Deposit Amount (GHS)</label>
+            <Field label="Deposit Amount (GHS)">
               <div className="flex items-center rounded-xl border border-field-border bg-field px-3.5 py-2 focus-within:border-field-border-focus focus-within:bg-field-focus">
                 <span className="text-[14px] font-medium text-muted-foreground mr-2">GHS</span>
                 <input
@@ -228,10 +228,9 @@ export function MobilePromoBanner() {
                   className="w-full bg-transparent text-[17px] font-medium text-foreground outline-none tabular"
                 />
               </div>
-            </div>
+</Field>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-foreground">Tenure (Months)</label>
+            <Field label="Tenure (Months)">
               <div className="grid grid-cols-4 gap-2">
                 {[3, 6, 12, 24].map((m) => (
                   <button
@@ -248,7 +247,7 @@ export function MobilePromoBanner() {
                   </button>
                 ))}
               </div>
-            </div>
+</Field>
 
             {/* Earnings Result Card */}
             <div className="rounded-xl bg-success/10 p-3.5 dark:bg-success/15 border border-success/20">

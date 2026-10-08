@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { Check, Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { PASSWORD_RULES, passwordMeetsRules } from "@/lib/auth-shared";
 
+import { Field } from "@/components/ui/field";
 /**
  * Password + confirm, with the Bank's rules in one requirements card. Shared by
  * activation, sign-up, migration and password reset, so they look the same and
@@ -34,7 +34,7 @@ export default function NewPasswordFields({
   onConfirmChange,
   autoFocus = false,
   passwordLabel = "Password",
-  confirmLabel = "Confirm password",
+  confirmLabel = "Confirm Password",
 }: NewPasswordFieldsProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -118,10 +118,7 @@ function PasswordInput({
   invalid?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-2">
-      <Label htmlFor={id} className="text-[13px] font-medium text-foreground">
-        {label}
-      </Label>
+    <Field label={label} htmlFor={id}>
       <div className="relative">
         <Input
           id={id}
@@ -130,7 +127,7 @@ function PasswordInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="h-11 pr-11 text-[14px]"
+          className="pr-11"
           aria-invalid={invalid || undefined}
           autoFocus={autoFocus}
           required
@@ -144,6 +141,6 @@ function PasswordInput({
           {shown ? <EyeOff size={16} strokeWidth={1.8} /> : <Eye size={16} strokeWidth={1.8} />}
         </button>
       </div>
-    </div>
+</Field>
   );
 }

@@ -21,6 +21,7 @@ import {
   ScheduleFrequency,
 } from "./shared";
 
+import { Field } from "@/components/ui/field";
 export interface CardTopUpFormState {
   fromId: string;
   cardId: string;
@@ -91,8 +92,7 @@ export function CardTopUpFlow({
       />
 
       {/* 2. Destination Card */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Destination Card</label>
+      <Field label="Destination Card">
         {selectedCard && isCollapsed ? (
           <CollapsedDetailsBadge
             title={selectedCard.name}
@@ -108,7 +108,7 @@ export function CardTopUpFlow({
               }
             }}
           >
-            <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-field-border bg-field text-left shadow-none flex items-center">
+            <SelectTrigger className="h-[58px] min-h-[58px] text-left flex items-center">
               {!selectedCard ? (
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
@@ -151,7 +151,7 @@ export function CardTopUpFlow({
             </SelectContent>
           </Select>
         )}
-      </div>
+</Field>
 
       {/* Progressive Disclosure: Only reveal Amount & onwards after card is selected */}
       {Boolean(selectedCard) && (

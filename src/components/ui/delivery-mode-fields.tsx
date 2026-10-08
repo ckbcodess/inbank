@@ -11,6 +11,8 @@ import { SmoothHeight } from "@/components/ui/smooth-height";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { GCB_BRANCHES, type DeliveryMethod, type GcbBranch } from "@/lib/mock-data";
 
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 export interface DeliveryDetails {
   method: DeliveryMethod | null;
   branch: GcbBranch | null;
@@ -43,9 +45,9 @@ export function DeliveryModeFields({
 }) {
   return (
     <>
-      <label className="text-[13px] font-medium text-foreground">
+      <Label>
         Mode of Delivery
-      </label>
+      </Label>
 
       <div className="grid grid-cols-2 gap-3">
         <button
@@ -111,9 +113,9 @@ export function DeliveryModeFields({
         {value.method === "BRANCH_PICKUP" && (
           <div key="branch" className="animate-in fade-in">
           <div className="flex flex-col gap-2 pt-1">
-            <label className="text-[13px] font-medium text-foreground">
+            <Label>
               Pickup Branch
-            </label>
+            </Label>
             <BranchCombobox
               value={value.branch}
               onChange={(branch) => onChange({ branch })}
@@ -126,47 +128,47 @@ export function DeliveryModeFields({
           <div key="delivery" className="animate-in fade-in">
           <div className="flex flex-col gap-3.5 pt-1">
             <div className="flex flex-col gap-2">
-              <label className="text-[13px] font-medium text-foreground">
+              <Label>
                 Recipient Name
-              </label>
-              <input
+              </Label>
+              <Input
                 type="text"
                 value={value.recipientName}
                 onChange={(e) => onChange({ recipientName: e.target.value })}
                 placeholder="Full name"
-                className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition placeholder:text-muted-foreground/60"
+                
               />
             </div>
             <div className="flex flex-col gap-2">
-              <label className="text-[13px] font-medium text-foreground">
+              <Label>
                 Delivery Address
-              </label>
-              <input
+              </Label>
+              <Input
                 type="text"
                 value={value.address}
                 onChange={(e) => onChange({ address: e.target.value })}
                 placeholder="Street or digital address"
-                className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition placeholder:text-muted-foreground/60"
+                
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="flex flex-col gap-2">
-                <label className="text-[13px] font-medium text-foreground">City</label>
-                <input
+                <Label>City</Label>
+                <Input
                   type="text"
                   value={value.city}
                   onChange={(e) => onChange({ city: e.target.value })}
                   placeholder="City"
-                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition placeholder:text-muted-foreground/60"
+                  
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-[13px] font-medium text-foreground">Phone</label>
+                <Label>Phone</Label>
                 <PhoneInput
                   value={value.phone}
                   onValueChange={(phone) => onChange({ phone })}
                   aria-label="Delivery phone number"
-                  className="h-13 rounded-2xl border-field-border bg-field px-4 text-[15px] focus-within:border-field-border-focus focus-within:ring-0"
+                  className="h-13 rounded-2xl border-field-border bg-field px-4 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
                 />
               </div>
             </div>

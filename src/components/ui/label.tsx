@@ -3,8 +3,14 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { toTitleCase } from "@/lib/title-case"
 
-function Label({ className, ...props }: React.ComponentProps<"label">) {
+/** Walks the label's children and Title Cases the plain text, so no screen can type its own casing. */
+function titleCaseChildren(children: React.ReactNode): React.ReactNode {
+  return React.Children.map(children, (child) => (typeof child === "string" ? toTitleCase(child) : child))
+}
+
+function Label({ className, children, ...props }: React.ComponentProps<"label">) {
   return (
     <label
       data-slot="label"
@@ -13,7 +19,9 @@ function Label({ className, ...props }: React.ComponentProps<"label">) {
         className
       )}
       {...props}
-    />
+    >
+      {titleCaseChildren(children)}
+    </label>
   )
 }
 

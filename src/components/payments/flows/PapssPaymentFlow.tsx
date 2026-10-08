@@ -24,6 +24,8 @@ import {
   DualAmountFields,
 } from "./shared";
 
+import { Input } from "@/components/ui/input";
+import { Field } from "@/components/ui/field";
 const PAPSS_COUNTRIES = [
   { name: "Nigeria", currency: "NGN" },
   { name: "Kenya", currency: "KES" },
@@ -173,8 +175,7 @@ export function PapssPaymentFlow({
       />
 
       {/* 2. Recipient & Destination Details */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">PAPSS Beneficiary Details</label>
+      <Field label="PAPSS Beneficiary Details">
         {isDestinationValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || `PAPSS Account (${state.wIban})`}
@@ -197,7 +198,7 @@ export function PapssPaymentFlow({
                   }
                 }}
               >
-                <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
+                <SelectTrigger >
                   <SelectValue placeholder="Select African country" />
                 </SelectTrigger>
                 <SelectContent>
@@ -213,7 +214,7 @@ export function PapssPaymentFlow({
                 value={state.wBank}
                 onValueChange={(val) => val && onChange("wBank", val)}
               >
-                <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
+                <SelectTrigger >
                   <SelectValue placeholder="Select receiving bank" />
                 </SelectTrigger>
                 <SelectContent>
@@ -226,7 +227,7 @@ export function PapssPaymentFlow({
               </Select>
             </div>
 
-            <input
+            <Input
               type="text"
               value={state.wIban}
               onChange={(e) => {
@@ -238,21 +239,20 @@ export function PapssPaymentFlow({
                 }
               }}
               placeholder="Enter account number or IBAN"
-              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
+              className="tabular"
             />
 
             {/* Verified badge */}
             {isVerified && <VerifiedAccountBadge name={verifiedName} />}
           </div>
         )}
-      </div>
+</Field>
 
       {/* Progressive Disclosure: Only reveal Foreign Amount & onwards after PAPSS details are entered */}
       {isDestinationValid && (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount Section: You Send (GHS) vs Recipient Gets (Foreign) with switcher */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[13px] font-medium text-foreground">Transfer Amount</label>
+          <Field label="Transfer Amount">
 
             <DualAmountFields
               foreign={state.wForeign}
@@ -281,7 +281,7 @@ export function PapssPaymentFlow({
                 <InsufficientFundsAlert />
               </div>
             )}
-          </div>
+</Field>
 
           {/* 4. Narration / Purpose of Payment */}
           <NarrationInput

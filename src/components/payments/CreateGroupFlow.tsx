@@ -25,6 +25,8 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 interface CreateGroupFlowProps {
   groupToEdit?: PaymentGroup | null;
   onCancel?: () => void;
@@ -302,32 +304,32 @@ export default function CreateGroupFlow({
         <div className="flex flex-col gap-5">
           {/* Group Name * */}
           <div className="flex flex-col gap-2">
-            <label className="text-[13px] font-medium text-foreground">
+            <Label>
               Group Name <span className="text-destructive">*</span>
-            </label>
-            <input
+            </Label>
+            <Input
               ref={nameInputRef}
               type="text"
               value={name}
               maxLength={50}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter narration"
-              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+              
             />
           </div>
 
           {/* Description (Optional) */}
           <div className="flex flex-col gap-2">
-            <label className="text-[13px] font-medium text-foreground">
+            <Label>
               Description <span className="text-muted-foreground font-normal">(optional)</span>
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               value={description}
               maxLength={120}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter narration"
-              className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+              
             />
           </div>
 
@@ -366,19 +368,19 @@ export default function CreateGroupFlow({
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <input
+                  <Input
                     type="text"
                     value={customName}
                     onChange={(e) => setCustomName(e.target.value)}
                     placeholder="Full name"
-                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 placeholder:text-muted-foreground/60 transition"
+                    
                   />
-                  <input
+                  <Input
                     type="text"
                     value={customDest}
                     onChange={(e) => setCustomDest(e.target.value)}
                     placeholder="Phone or Account Number"
-                    className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 placeholder:text-muted-foreground/60 transition"
+                    
                   />
                 </div>
 
@@ -429,7 +431,7 @@ export default function CreateGroupFlow({
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search contacts"
-                className="h-13 w-full rounded-2xl border border-field-border bg-field pl-11 pr-10 text-[15px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                className="h-13 w-full rounded-2xl border border-field-border bg-field pl-11 pr-10 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
               />
               {search && (
                 <button
@@ -555,9 +557,9 @@ export default function CreateGroupFlow({
           ) : (
             /* Custom Amounts List */
             <div className="flex flex-col gap-3">
-              <label className="text-[13px] font-medium text-foreground">
+              <Label>
                 Individual Contribution Amounts
-              </label>
+              </Label>
               <div className="rounded-2xl border border-border/80 bg-card overflow-hidden divide-y divide-border/50 max-h-[320px] overflow-y-auto">
                 {members.map((member) => (
                   <div

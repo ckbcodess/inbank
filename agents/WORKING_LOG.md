@@ -183,7 +183,12 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ---
 
-## Inbox
+## Inbox
+
+### 2026-10-08
+- **Decision** Shared `Field` built (2026-10-08). `components/ui/field.tsx` (`Field`: label, hint, error, optional) sits on `Label`, which Title Cases its text at render (`lib/title-case.ts`). `Input`, `Textarea`, `Select` trigger and `PhoneInput` share one look (h-13, rounded-2xl, px-4, 14px); about 130 label wrappers, 50 raw inputs and 55 select triggers were moved onto them, and the private `Field`s and class constants (`INPUT`, `FUND_FIELD`, `LABEL`…) were removed. Only OTP boxes and amount fields stay bespoke. The old Send & Pay size won because it was the majority (50 of ~95).
+- **Gap** Search inputs are still hand-built in `TransactionList`, `CreateGroupFlow`, `EditGroupModal` and `CountryPicker` (`ui/search-bar.tsx` and `ExpandableSearch` exist). Inline cells (group contribution amounts) are raw by design. Not viewed in a browser: the unified size will change the look of login, signup, settings, beneficiaries, cards and group screens, which used h-10/h-11 before.
+- **Override** Placeholders are the same size as the typed value, in every input, textarea and select. Removed the global `input::placeholder { font-size: 13px }` rule in `globals.css` (added with the one-time-code work, "smaller placeholders"), so placeholder text inherits the field's own size. Don't set a placeholder size per field. Then set both to 14px (designer, 2026-10-08): about 100 field classes moved from `text-[15px]` to `text-[14px]`, and CONSTITUTION §5 now says so (the constitution row changed from 15px).
 
 ### 2026-10-07
 - **Decision** An alternative way to do the same step replaces the heading in place; it never opens underneath it. On every code screen, "Use a shortcode" cross-fades the heading ("Enter OTP Verification Code" plus its line) into the shortcode in the same slot, with the same type size, weight and position. The block keeps one height (both layers share a grid cell), so the boxes below never move and the eye stays put. Why: opening it underneath left two competing headings, pushed the boxes down and made the screen feel like it had changed state.

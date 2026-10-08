@@ -30,6 +30,9 @@ import {
   getBroadbandPackages,
 } from "./shared";
 
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/field";
 export interface BroadbandFormState {
   fromId: string;
   wNetwork: string;
@@ -103,8 +106,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
       <FromAccountSelector accounts={accounts} value={state.fromId} onChange={(id) => onChange("fromId", id)} />
 
       {/* 2. Provider, then the broadband account at that provider */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Broadband Provider</label>
+      <Field label="Broadband Provider">
         {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName}
@@ -131,10 +133,10 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
 
             {provider && (
               <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-                <label className="text-[13px] font-medium text-foreground" htmlFor="broadband-account">
-                  Broadband Number
-                </label>
-                <input
+                <Label htmlFor="broadband-account">
+                  Account number
+                </Label>
+                <Input
                   id="broadband-account"
                   type="text"
                   inputMode="numeric"
@@ -145,7 +147,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
                     onChange("benName", resolveAccountName(val, ""));
                   }}
                   placeholder="Enter the number on your bill"
-                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none transition tabular focus:border-field-border-focus focus:ring-0"
+                  className="tabular"
                 />
                 <p className="text-[12px] text-muted-foreground">The number on your bill, or on the router’s SIM.</p>
                 {isAcctValid && resolving && (
@@ -156,15 +158,15 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
             )}
           </div>
         )}
-      </div>
+</Field>
 
       {/* Only once the account is verified: the package and what it costs */}
       {isVerified && (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           <div className="flex flex-col gap-2">
-            <label className="text-[13px] font-medium text-foreground" id="broadband-package-label">
+            <Label id="broadband-package-label">
               Package
-            </label>
+            </Label>
             {groups.length > 1 && (
               <SegmentedControl
                 aria-label="Plan type"

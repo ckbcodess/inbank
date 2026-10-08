@@ -12,6 +12,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import { Input } from "@/components/ui/input";
 export const OTP_LENGTH = 6;
 
 interface OtpInputProps {
@@ -120,7 +121,7 @@ export default function OtpInput({
                 –
               </span>
             )}
-            <input
+            <Input
               ref={(el) => {
                 inputsRef.current[i] = el;
               }}

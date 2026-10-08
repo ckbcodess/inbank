@@ -139,6 +139,7 @@ here. Never fall back to dense, boxed layouts.
 - **All numbers carry `.tabular`:** money, dates, account numbers, references, percentages and rates.
 - **Casing:**
   - Never all caps or letter-spaced labels. Older `uppercase` uses get converted when a file is touched.
+  - Form field labels are Title Case, enforced by `Label` / `Field` (designer, 2026-10-07).
   - Questions, descriptions, helper text and micro-labels are sentence case.
   - Option labels, tile labels and non-question headers are Title Case.
 
@@ -149,7 +150,7 @@ here. Never fall back to dense, boxed layouts.
 | Section / panel heading | `text-[16px] font-medium` (14px under `sm` where space is tight) |
 | Row primary text | `text-[14px] text-foreground` |
 | Body, table cells | `text-[13px] text-foreground` |
-| Form input values (`Input`, `Textarea`, select triggers) | `text-[15px] text-foreground`. The value is bigger than its label. |
+| Form input values and placeholders (`Input`, `Textarea`, select triggers) | `text-[14px] text-foreground`. The placeholder is the same size as the value; never size it separately. |
 | Form labels | `text-[13px] font-medium text-foreground` (never muted) |
 | Meta, captions, micro-labels, field helper text | `text-[12px] text-muted-foreground`, sentence case |
 | Long-form paragraphs | add `leading-relaxed` |
@@ -206,6 +207,7 @@ here. Never fall back to dense, boxed layouts.
 - **Back returns to where the person came from** (`useContextualBack`), never a hardcoded parent.
 - **Forms reveal themselves step by step** (see PATTERNS.md). Never render every field at once.
 - **Never put two controls that do the same thing on one screen.**
+- **One field, one set of components.** Every labelled control is a `Field` (`components/ui/field.tsx`) around `Input`, `Textarea`, `Select`, `PhoneInput` or a date picker. The label's casing (Title Case), size and spacing, the "(Optional)" suffix, the hint and the error line all come from there; a screen only says what the field is called. Never style an input by hand, never write a raw `<input>` or `<label>` for a text field, and never size a placeholder (it matches the value). The only bespoke fields are the one-time code boxes (`OtpInput`) and the amount field.
 
 ## 10. Engineering invariants
 

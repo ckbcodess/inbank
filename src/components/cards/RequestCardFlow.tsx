@@ -48,6 +48,8 @@ import { GcbCardLogo } from "@/components/cards/GcbCardLogo";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { toast } from "sonner";
 
+import { Input } from "@/components/ui/input";
+import { Field } from "@/components/ui/field";
 // GCB Iconic Soaring Golden Eagle Emblem (Standalone with Specular White Sheen Mask)
 function GcbEagleEmblem({ className, idPrefix = "gcb-card-eagle" }: { className?: string; idPrefix?: string }) {
   const maskId = `${idPrefix}-mask`;
@@ -517,19 +519,16 @@ export function RequestCardFlow() {
             />
 
             {/* Card Nickname - Universal for all card types */}
-            <div className="flex flex-col gap-2">
-              <label htmlFor="card-name-input" className="text-[13px] font-medium text-foreground">
-                Card Nickname
-              </label>
-              <input
+            <Field label="Card Nickname" htmlFor="card-name-input">
+              <Input
                 id="card-name-input"
                 type="text"
                 placeholder="How the card shows up in the app"
                 value={cardName}
                 onChange={(e) => setCardName(e.target.value)}
-                className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition placeholder:text-muted-foreground/60"
+                
               />
-            </div>
+</Field>
 
             {/* Virtual Card Flow: Initial Funding & Continue */}
             {cardType === "Virtual" ? (
@@ -564,17 +563,14 @@ export function RequestCardFlow() {
             ) : (
               <>
                 {/* Card network: Visa, Mastercard, GH-Link, UnionPay */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-[13px] font-medium text-foreground">
-                    Card Network
-                  </label>
+                <Field label="Card Network">
                   <Select
                     value={cardScheme}
                     onValueChange={(val) => {
                       if (val) handleSchemeChange(val as CardScheme);
                     }}
                   >
-                    <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center">
+                    <SelectTrigger className="min-h-[58px] h-auto text-left cursor-pointer flex items-center">
                       <div className="flex min-w-0 flex-1 items-center gap-2.5">
                         <NetworkChip scheme={cardScheme} />
                         <span className="text-[14.5px] font-medium text-foreground truncate">{cardScheme}</span>
@@ -591,20 +587,17 @@ export function RequestCardFlow() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
+</Field>
 
                 {/* Network Type Selector - Always visible on entry of the page */}
-                <div className="flex flex-col gap-2">
-                  <label className="text-[13px] font-medium text-foreground">
-                    Network Type
-                  </label>
+                <Field label="Network Type">
                   <Select
                     value={networkType}
                     onValueChange={(val) => {
                       if (val) setNetworkType(val);
                     }}
                   >
-                    <SelectTrigger className="min-h-[58px] h-auto py-2.5 px-4 w-full rounded-2xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center">
+                    <SelectTrigger className="min-h-[58px] h-auto text-left cursor-pointer flex items-center">
                       <div className="flex flex-col min-w-0 text-left flex-1">
                         <span
                           className={`text-[14.5px] font-medium truncate leading-tight ${
@@ -631,7 +624,7 @@ export function RequestCardFlow() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
+</Field>
 
                 {/* Progressive Disclosure: Disclose funding and fulfillment ONLY after network type is selected */}
                 <SmoothCollapse open={Boolean(networkType)} className="w-full">

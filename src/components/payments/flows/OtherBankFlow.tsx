@@ -22,6 +22,8 @@ import {
   PaymentMethodSelect,
 } from "./shared";
 
+import { Input } from "@/components/ui/input";
+import { Field } from "@/components/ui/field";
 export interface OtherBankFormState {
   fromId: string;
   bank: string;
@@ -108,8 +110,7 @@ export function OtherBankFlow({
       />
 
       {/* 2. Destination Bank & Account Number */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
+      <Field label="Beneficiary Details">
         {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `Account ${state.benAcct}`}
@@ -121,7 +122,7 @@ export function OtherBankFlow({
           <div className="flex flex-col gap-3">
             <BankSelect value={state.bank || ""} onChange={(val) => onChange("bank", val)} options={OTHER_BANKS} />
 
-            <input
+            <Input
               type="text"
               inputMode="numeric"
               value={state.benAcct}
@@ -134,7 +135,7 @@ export function OtherBankFlow({
                 }
               }}
               placeholder="Enter account number"
-              className="numorainput h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
+              className="numorainput tabular"
             />
 
             {/* Resolving indicator */}
@@ -146,16 +147,15 @@ export function OtherBankFlow({
             {isVerified && <VerifiedAccountBadge name={verifiedName} />}
           </div>
         )}
-      </div>
+</Field>
 
       {/* Progressive Disclosure: Only reveal Payment Method, Amount & onwards after details are verified */}
       {isVerified && (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Payment Method */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[13px] font-medium text-foreground">Payment Method</label>
+          <Field label="Payment Method">
             <PaymentMethodSelect value={state.paymentMethod || "gip"} onChange={(val) => onChange("paymentMethod", val)} />
-          </div>
+</Field>
 
           {/* 4. Amount */}
           <AmountInput

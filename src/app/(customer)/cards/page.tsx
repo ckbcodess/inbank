@@ -18,7 +18,6 @@ import { Layers, Plus } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogBody,
@@ -74,6 +73,7 @@ import {
   type CardSimulationPreset,
 } from "@/lib/cards-dev-store";
 
+import { Field } from "@/components/ui/field";
 const SIMULATION_STATES: readonly CardSimulationPreset[] = [
   "clean",
   "out_for_delivery",
@@ -483,26 +483,24 @@ function CardsPageContent() {
           </DialogHeader>
 
           <DialogBody>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="c-name">Card Name / Nickname</Label>
+            <Field label="Card Name / Nickname" htmlFor="c-name">
               <Input
                 id="c-name"
                 placeholder="e.g. AWS Subscription / Google Ads"
                 value={cardName}
                 onChange={(e) => setCardName(e.target.value)}
               />
-            </div>
+</Field>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-2">
-                <Label>Card Type</Label>
+              <Field label="Card Type">
                 <Select
                   value={cardType}
                   onValueChange={(val) =>
                     val && setCardType(val as "Virtual" | "Prepaid" | "Debit")
                   }
                 >
-                  <SelectTrigger className="h-10 w-full">
+                  <SelectTrigger >
                     <SelectValue placeholder="Select card type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -513,17 +511,16 @@ function CardsPageContent() {
                     <SelectItem value="Debit">Debit Card</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
+</Field>
 
-              <div className="flex flex-col gap-2">
-                <Label>Network Scheme</Label>
+              <Field label="Network Scheme">
                 <Select
                   value={cardScheme}
                   onValueChange={(val) =>
                     val && setCardScheme(val as CardScheme)
                   }
                 >
-                  <SelectTrigger className="h-10 w-full">
+                  <SelectTrigger >
                     <SelectValue placeholder="Select scheme" />
                   </SelectTrigger>
                   <SelectContent>
@@ -534,16 +531,15 @@ function CardsPageContent() {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+</Field>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label>Linked Account</Label>
+            <Field label="Linked Account">
               <Select
                 value={linkedAccId}
                 onValueChange={(val) => val && setLinkedAccId(val)}
               >
-                <SelectTrigger className="h-10 w-full">
+                <SelectTrigger >
                   <SelectValue placeholder="Select linked account" />
                 </SelectTrigger>
                 <SelectContent>
@@ -555,12 +551,11 @@ function CardsPageContent() {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
+</Field>
 
             {cardType === "Virtual" && (
               <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="c-limit">Monthly Spend Limit</Label>
+                <Field label="Monthly Spend Limit" htmlFor="c-limit">
                   <Input
                     id="c-limit"
                     value={spendLimit}
@@ -568,14 +563,13 @@ function CardsPageContent() {
                     placeholder="2500.00"
                     className="tabular"
                   />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Label>Usage Mode</Label>
+</Field>
+                <Field label="Usage Mode">
                   <Select
                     value={isSingleUse ? "single" : "recurring"}
                     onValueChange={(val) => setIsSingleUse(val === "single")}
                   >
-                    <SelectTrigger className="h-10 w-full">
+                    <SelectTrigger >
                       <SelectValue placeholder="Select mode" />
                     </SelectTrigger>
                     <SelectContent>
@@ -587,13 +581,12 @@ function CardsPageContent() {
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
+</Field>
               </div>
             )}
 
             {(cardType === "Prepaid" || cardType === "Virtual") && (
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="c-fund">Initial Funding Amount</Label>
+              <Field label="Initial Funding Amount" htmlFor="c-fund">
                 <Input
                   id="c-fund"
                   value={initialFund}
@@ -601,7 +594,7 @@ function CardsPageContent() {
                   placeholder="500.00"
                   className="tabular"
                 />
-              </div>
+</Field>
             )}
           </DialogBody>
 

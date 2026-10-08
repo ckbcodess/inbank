@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatMoney, type PaymentCard } from "@/lib/mock-data";
 
+import { Label } from "@/components/ui/label";
 export interface VirtualCardProps {
   card?: Partial<PaymentCard>;
   cards?: PaymentCard[];
@@ -255,16 +256,16 @@ export function VirtualCardView({
       {/* Adjust Limit Form overlay when active */}
       {adjustingLimit && (
         <div className="mt-4 flex flex-col gap-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-3.5">
-          <label htmlFor="card-view-limit-input" className="text-[13px] font-medium text-foreground">
+          <Label htmlFor="card-view-limit-input">
             New Monthly Limit ({activeCard.currency ?? "USD"})
-          </label>
+          </Label>
           <div className="flex items-center gap-2">
             <Input
               id="card-view-limit-input"
               value={limitInput}
               onChange={(e) => setLimitInput(e.target.value)}
               placeholder="12000.00"
-              className="tabular h-9 text-[13px] bg-white dark:bg-slate-900"
+              className="tabular bg-white dark:bg-slate-900"
             />
             <Button size="sm" onClick={handleSaveLimit} className="h-9 px-3 text-[12.5px]">
               Save

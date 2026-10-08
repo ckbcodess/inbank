@@ -22,6 +22,8 @@ import {
   ScheduleFrequency,
 } from "./shared";
 
+import { Input } from "@/components/ui/input";
+import { Field } from "@/components/ui/field";
 const GHANA_GOV_SERVICES = [
   "GRA — Domestic Tax",
   "GRA — Customs & Ports",
@@ -137,8 +139,7 @@ export function BillsPaymentFlow({
       />
 
       {/* 2. Biller & Reference / Account */}
-      <div className="flex flex-col gap-2">
-        <label className="text-[13px] font-medium text-foreground">Beneficiary Details</label>
+      <Field label="Beneficiary Details">
         {isDestinationValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={
@@ -167,12 +168,12 @@ export function BillsPaymentFlow({
                   Electricity Company of Ghana (ECG)
                 </div>
 
-                <input
+                <Input
                   type="text"
                   value={state.ecgMeter}
                   onChange={(e) => onChange("ecgMeter", e.target.value)}
                   placeholder="Enter meter number"
-                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
+                  className="tabular"
                 />
               </>
             ) : state.subType === "ghanagov" ? (
@@ -181,7 +182,7 @@ export function BillsPaymentFlow({
                   value={state.govService || ""}
                   onValueChange={(val) => val && onChange("govService", val)}
                 >
-                  <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
+                  <SelectTrigger >
                     <SelectValue placeholder="Select government agency" />
                   </SelectTrigger>
                   <SelectContent>
@@ -193,12 +194,12 @@ export function BillsPaymentFlow({
                   </SelectContent>
                 </Select>
 
-                <input
+                <Input
                   type="text"
                   value={state.govRef}
                   onChange={(e) => onChange("govRef", e.target.value)}
                   placeholder="Enter PRN or invoice number"
-                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
+                  className="tabular"
                 />
               </>
             ) : (
@@ -207,7 +208,7 @@ export function BillsPaymentFlow({
                   value={state.billerId || selectedBiller?.id || ""}
                   onValueChange={(val) => val && onChange("billerId", val)}
                 >
-                  <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
+                  <SelectTrigger >
                     <SelectValue placeholder="Select biller" />
                   </SelectTrigger>
                   <SelectContent>
@@ -219,12 +220,12 @@ export function BillsPaymentFlow({
                   </SelectContent>
                 </Select>
 
-                <input
+                <Input
                   type="text"
                   value={state.billRef}
                   onChange={(e) => onChange("billRef", e.target.value)}
                   placeholder={selectedBiller ? `Enter ${selectedBiller.reference.toLowerCase()}` : "Enter account or reference number"}
-                  className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition tabular"
+                  className="tabular"
                 />
               </>
             )}
@@ -232,7 +233,7 @@ export function BillsPaymentFlow({
             {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
           </div>
         )}
-      </div>
+</Field>
 
       {/* Progressive Disclosure: Only reveal Amount & onwards after destination details are entered */}
       {isDestinationValid && (

@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Dialog, DialogBody, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import OtpInput from "@/components/auth/OtpInput";
 import { AppLoader } from "@/components/ui/loader";
@@ -24,6 +23,7 @@ import { cardNetwork, formatCardCvv, formatCardExpiry, formatCardNumber, isCardR
 import { useCardPayment } from "@/lib/card-payment";
 import { ActionTile } from "@/components/ui/action-tile";
 
+import { Field } from "@/components/ui/field";
 interface QuickFundModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -36,8 +36,6 @@ interface QuickFundModalProps {
 }
 
 /** The money flows' field look (Send & Pay, Add money): rounded-2xl, 14px medium labels, the shared AmountInput. */
-const FUND_FIELD = "h-13 rounded-2xl px-4 text-[15px]";
-const FUND_LABEL = "text-[14px] font-medium text-foreground";
 
 type FundDetails = { operator?: string; phone?: string; cardLast4?: string };
 
@@ -279,11 +277,8 @@ export function QuickFundFlow({
               {method === "momo" ? (
                 <div className="flex flex-col gap-3.5">
                   {/* Phone Input with +233 */}
-                  <div className="flex flex-col gap-1.5">
-                    <Label htmlFor="quickFundPhone" className={FUND_LABEL}>
-                      Mobile Number
-                    </Label>
-                    <PhoneInput id="quickFundPhone" value={phone} onValueChange={setPhone} className={FUND_FIELD} required />
+                  <Field label="Mobile Number" htmlFor="quickFundPhone">
+                    <PhoneInput id="quickFundPhone" value={phone} onValueChange={setPhone} required />
                     {registeredPhone && (
                       <p className="px-0.5 text-[12.5px] text-muted-foreground">
                         {usingRegistered
@@ -291,18 +286,16 @@ export function QuickFundFlow({
                           : "Not your registered number, so we'll text a code to confirm it's yours."}
                       </p>
                     )}
-                  </div>
+</Field>
 
                   {/* Telco Selector */}
-                  <div className="flex flex-col gap-1.5">
-                    <Label className={FUND_LABEL}>Network Provider</Label>
+                  <Field label="Network Provider">
                     <OperatorSelect value={operator} onChange={setOperator} />
-                  </div>
+</Field>
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
-                  <div className="flex flex-col gap-1.5">
-                    <Label htmlFor="quickFundCard" className={FUND_LABEL}>Card Number</Label>
+                  <Field label="Card Number" htmlFor="quickFundCard">
                     <Input
                       id="quickFundCard"
                       placeholder="4000 1234 5678 9010"
@@ -310,13 +303,11 @@ export function QuickFundFlow({
                       inputMode="numeric"
 autoComplete="cc-number"
 onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
-                      className={FUND_FIELD}
                       required
                     />
-                  </div>
+</Field>
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="flex flex-col gap-1.5">
-                      <Label htmlFor="quickFundExp" className={FUND_LABEL}>Expiry</Label>
+                    <Field label="Expiry" htmlFor="quickFundExp">
                       <Input
                         id="quickFundExp"
                         placeholder="MM/YY"
@@ -324,12 +315,10 @@ onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                         inputMode="numeric"
 autoComplete="cc-exp"
 onChange={(e) => setCardExpiry(formatCardExpiry(e.target.value))}
-                        className={FUND_FIELD}
                         required
                       />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <Label htmlFor="quickFundCvv" className={FUND_LABEL}>CVV</Label>
+</Field>
+                    <Field label="CVV" htmlFor="quickFundCvv">
                       <Input
                         id="quickFundCvv"
                         placeholder="•••"
@@ -338,10 +327,9 @@ onChange={(e) => setCardExpiry(formatCardExpiry(e.target.value))}
                         inputMode="numeric"
 autoComplete="cc-csc"
 onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D/g, "")))}
-                        className={FUND_FIELD}
                         required
                       />
-                    </div>
+</Field>
                   </div>
                 </div>
               )}

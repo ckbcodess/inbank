@@ -19,6 +19,8 @@ import { OPERATORS, OPERATOR_IDS, operatorFromName, telcoName, type Operator } f
 import { formatValueForDisplay, FormatOn, ThousandStyle } from "numora";
 import { TextMorph } from "torph/react";
 
+import { Input } from "@/components/ui/input";
+import { Field } from "@/components/ui/field";
 export const BANKS = [
   "GCB Bank",
   "Standard Bank Ghana",
@@ -573,10 +575,9 @@ export function FromAccountSelector({
   );
 
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-[13px] font-medium text-foreground">{label}</label>
+    <Field label={label}>
       <Select value={value} onValueChange={(val) => val && onChange(val)}>
-        <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center">
+        <SelectTrigger className="h-[58px] min-h-[58px] text-left cursor-pointer flex items-center">
           <AccountSelectTriggerContent
             account={selected}
             placeholder={placeholder}
@@ -590,7 +591,7 @@ export function FromAccountSelector({
           ))}
         </SelectContent>
       </Select>
-    </div>
+</Field>
   );
 }
 
@@ -852,8 +853,7 @@ export function AmountInput({
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-[13px] font-medium text-foreground">{label}</label>
+    <Field label={label}>
       <div
         onClick={handleClick}
         onAnimationEnd={() => setNudge(false)}
@@ -934,7 +934,7 @@ export function AmountInput({
           {error}
         </div>
       )}
-    </div>
+</Field>
   );
 }
 
@@ -973,9 +973,8 @@ export function NarrationInput({
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-[13px] font-medium text-foreground">{label}</label>
-      <input
+    <Field label={label}>
+      <Input
         type="text"
         data-field="narration"
         data-narration="true"
@@ -984,9 +983,9 @@ export function NarrationInput({
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition"
+        
       />
-    </div>
+</Field>
   );
 }
 
@@ -1003,10 +1002,9 @@ export function CategorySelect({
   label?: string;
 }) {
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-[13px] font-medium text-foreground">{label}</label>
+    <Field label={label}>
       <Select value={value || null} onValueChange={(val) => onChange(val || "")}>
-        <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
+        <SelectTrigger >
           <SelectValue placeholder="Select category" />
         </SelectTrigger>
         <SelectContent>
@@ -1026,7 +1024,7 @@ export function CategorySelect({
           <SelectItem value="Other">Other</SelectItem>
         </SelectContent>
       </Select>
-    </div>
+</Field>
   );
 }
 
@@ -1216,12 +1214,12 @@ export function SaveBeneficiaryCheckbox({
       </label>
       {checked && onNicknameChange && (
         <div className="pl-7 animate-in fade-in slide-in-from-top-1 duration-150">
-          <input
+          <Input
             type="text"
             value={nickname || ""}
             onChange={(e) => onNicknameChange(e.target.value)}
             placeholder="Beneficiary nickname (optional)"
-            className="h-11 w-full rounded-xl border border-field-border bg-field px-3.5 text-[15px] text-foreground outline-none focus:border-field-border-focus focus:ring-0 transition placeholder:text-muted-foreground"
+            
           />
         </div>
       )}
@@ -1271,23 +1269,21 @@ export function SchedulePaymentSection({
       {state.enabled && (
         <div className="flex flex-col gap-3 pt-2 border-t border-border/60 animate-in fade-in slide-in-from-top-1 duration-150">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-foreground">Execution Date</label>
-              <input
+            <Field label="Execution Date">
+              <Input
                 type="date"
                 value={state.startDate}
                 min={new Date().toISOString().split("T")[0]}
                 onChange={(e) => onChange({ startDate: e.target.value })}
-                className="h-11 w-full rounded-xl border border-field-border bg-field px-3 text-[15px] text-foreground outline-none focus:border-field-border-focus tabular"
+                className="tabular"
               />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-medium text-foreground">Frequency</label>
+</Field>
+            <Field label="Frequency">
               <Select
                 value={state.frequency}
                 onValueChange={(val) => onChange({ frequency: (val || "once") as ScheduleFrequency })}
               >
-                <SelectTrigger className="h-11 w-full rounded-xl border border-field-border bg-field text-[15px]">
+                <SelectTrigger >
                   <SelectValue placeholder="Select frequency" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1297,7 +1293,7 @@ export function SchedulePaymentSection({
                   <SelectItem value="monthly">Monthly</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+</Field>
           </div>
         </div>
       )}
@@ -1324,7 +1320,7 @@ export function NetworkSelect({
 }) {
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger className="h-[58px] min-h-[58px] py-0 px-3.5 w-full rounded-2xl border border-field-border bg-field hover:bg-field-hover text-left cursor-pointer transition-colors shadow-none flex items-center">
+      <SelectTrigger className="h-[58px] min-h-[58px] text-left cursor-pointer flex items-center">
         <div className="flex items-center gap-3">
           <OperatorLogo name={value} size={36} />
           <span className={cn("text-[14.5px]", value ? "font-medium text-foreground" : "font-normal text-muted-foreground")}>
@@ -1381,7 +1377,7 @@ export function BankSelect({
 }) {
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
+      <SelectTrigger >
         <SelectValue placeholder="Select bank" />
       </SelectTrigger>
       <SelectContent>
@@ -1400,7 +1396,7 @@ export function PaymentMethodSelect({ value, onChange }: { value: string; onChan
   const selected = PAYMENT_METHODS.find((m) => m.id === value);
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger className="h-13 w-full rounded-2xl border border-field-border bg-field px-4 text-[15px] text-foreground shadow-none">
+      <SelectTrigger >
         <span className={cn("truncate text-[15px] font-normal", selected ? "text-foreground" : "text-muted-foreground")}>
           {selected ? selected.name : "Select payment method"}
         </span>

@@ -71,6 +71,8 @@ import { useContextualBack } from "@/lib/contextual-back";
 import { SmoothCollapse } from "@/components/ui/smooth-height";
 
 
+import { Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/field";
 export type DeliverySimulationState =
   | "default"
   | "branch_processing"
@@ -1348,11 +1350,11 @@ export function VirtualCardDetailsView({
 
               {/* Source Account */}
               <div className="space-y-1.5">
-                <label className="text-[13px] font-medium text-foreground">Fund From Account</label>
+                <Label>Fund From Account</Label>
                 <select
                   value={topUpSourceAccountId}
                   onChange={(e) => setTopUpSourceAccountId(e.target.value)}
-                  className="w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 py-2.5 text-[15px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
+                  className="w-full rounded-xl border border-field-border bg-field hover:bg-field-hover px-3 py-2.5 text-[14px] text-foreground transition-colors focus:outline-none focus:border-field-border-focus focus:bg-field-focus focus:ring-0"
                 >
                   {availableAccounts.map((acc) => (
                     <option key={acc.id} value={acc.id}>
@@ -1364,7 +1366,7 @@ export function VirtualCardDetailsView({
 
               {/* Top Up Amount */}
               <div className="space-y-1.5">
-                <label className="text-[13px] font-medium text-foreground">Top Up Amount (GHS)</label>
+                <Label>Top Up Amount (GHS)</Label>
                 <Input
                   type="number"
                   min="1"
@@ -1373,7 +1375,7 @@ export function VirtualCardDetailsView({
                   value={topUpAmount}
                   onChange={(e) => setTopUpAmount(e.target.value)}
                   required
-                  className="rounded-xl h-11 text-[14px] tabular"
+                  className="tabular"
                 />
               </div>
             </DialogBody>
@@ -1488,10 +1490,7 @@ export function VirtualCardDetailsView({
 
           <form onSubmit={handleSaveLimits}>
             <DialogBody>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="daily-limit-input" className="text-[13px] font-medium text-foreground">
-                  Daily Limit (GHS)
-                </label>
+              <Field label="Daily Limit (GHS)" htmlFor="daily-limit-input">
                 <Input
                   id="daily-limit-input"
                   type="number"
@@ -1500,12 +1499,12 @@ export function VirtualCardDetailsView({
                   value={tempDaily}
                   onChange={(e) => setTempDaily(e.target.value)}
                   placeholder="5000"
-                  className="h-10 text-[13.5px] tabular"
+                  className="tabular"
                 />
                 <span className="text-[11px] text-muted-foreground">
                   Current spend today: GHS {dailySpent.toLocaleString()} · Maximum cap: GHS {maxDailyCap.toLocaleString()}
                 </span>
-              </div>
+</Field>
             </DialogBody>
 
             <DialogFooter>
@@ -1630,15 +1629,13 @@ export function VirtualCardDetailsView({
           </DialogHeader>
 
           <DialogBody>
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="new-pin-input" className="text-[13px] font-medium text-foreground">New 4-Digit PIN</label>
-              <Input id="new-pin-input" type="password" maxLength={4} placeholder="••••" className="h-10 tracking-widest text-[16px]" />
-            </div>
+            <Field label="New 4-Digit PIN" htmlFor="new-pin-input">
+              <Input id="new-pin-input" type="password" maxLength={4} placeholder="••••" className="tracking-widest text-[16px]" />
+</Field>
 
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="confirm-pin-input" className="text-[13px] font-medium text-foreground">Confirm New PIN</label>
-              <Input id="confirm-pin-input" type="password" maxLength={4} placeholder="••••" className="h-10 tracking-widest text-[16px]" />
-            </div>
+            <Field label="Confirm New PIN" htmlFor="confirm-pin-input">
+              <Input id="confirm-pin-input" type="password" maxLength={4} placeholder="••••" className="tracking-widest text-[16px]" />
+</Field>
           </DialogBody>
 
           <DialogFooter>
@@ -1666,16 +1663,15 @@ export function VirtualCardDetailsView({
 
           <form onSubmit={handleSaveNickname}>
             <DialogBody>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="card-nickname-input" className="text-[13px] font-medium text-foreground">Card Nickname</label>
+              <Field label="Card Nickname" htmlFor="card-nickname-input">
                 <Input
                   id="card-nickname-input"
                   value={tempNickname}
                   onChange={(e) => setTempNickname(e.target.value)}
                   placeholder="AWS & SaaS Virtual Card"
-                  className="h-10 text-[13.5px]"
+                  
                 />
-              </div>
+</Field>
             </DialogBody>
 
             <DialogFooter>
@@ -1732,10 +1728,7 @@ export function VirtualCardDetailsView({
           <form onSubmit={handleActivateCard}>
             <DialogBody className="space-y-4">
               {/* CVV Input */}
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="card-cvv-input" className="text-[13px] font-medium text-foreground">
-                  3-Digit CVV Security Code
-                </label>
+              <Field label="3-Digit CVV Security Code" htmlFor="card-cvv-input">
                 <Input
                   id="card-cvv-input"
                   type="text"
@@ -1743,20 +1736,17 @@ export function VirtualCardDetailsView({
                   placeholder="e.g. 842"
                   value={activationCvv}
                   onChange={(e) => { setActivationCvv(e.target.value.replace(/\D/g, "")); setActivationError(""); }}
-                  className="h-10 text-[13.5px] tracking-wider"
+                  className="tracking-wider"
                   required
                 />
                 <span className="text-[11.5px] text-muted-foreground">
                   Found on the signature strip on the back of your physical card.
                 </span>
-              </div>
+</Field>
 
               {/* Set 4-digit PIN */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="card-pin-input" className="text-[13px] font-medium text-foreground">
-                    Set 4-Digit Card PIN
-                  </label>
+                <Field label="Set 4-Digit Card PIN" htmlFor="card-pin-input">
                   <Input
                     id="card-pin-input"
                     type="password"
@@ -1764,14 +1754,11 @@ export function VirtualCardDetailsView({
                     placeholder="••••"
                     value={activationPin}
                     onChange={(e) => { setActivationPin(e.target.value.replace(/\D/g, "")); setActivationError(""); }}
-                    className="h-10 text-[13.5px] text-center tracking-widest"
+                    className="text-center tracking-widest"
                     required
                   />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor="card-pin-confirm-input" className="text-[13px] font-medium text-foreground">
-                    Confirm 4-Digit PIN
-                  </label>
+</Field>
+                <Field label="Confirm 4-Digit PIN" htmlFor="card-pin-confirm-input">
                   <Input
                     id="card-pin-confirm-input"
                     type="password"
@@ -1779,10 +1766,10 @@ export function VirtualCardDetailsView({
                     placeholder="••••"
                     value={activationPinConfirm}
                     onChange={(e) => { setActivationPinConfirm(e.target.value.replace(/\D/g, "")); setActivationError(""); }}
-                    className="h-10 text-[13.5px] text-center tracking-widest"
+                    className="text-center tracking-widest"
                     required
                   />
-                </div>
+</Field>
               </div>
               <span className="text-[11.5px] text-muted-foreground block -mt-1">
                 This PIN will be required for ATM cash withdrawals and point-of-sale transactions.
