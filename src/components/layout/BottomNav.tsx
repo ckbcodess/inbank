@@ -54,14 +54,7 @@ export function BottomNav({ onOpenDrawer }: BottomNavProps) {
                   : "text-muted-foreground hover:text-foreground dark:text-white/60 dark:hover:text-white",
               )}
             >
-              <div
-                className={cn(
-                  "relative flex size-7 items-center justify-center rounded-full transition-colors",
-                  isActive && "bg-primary/10 dark:bg-white/10",
-                )}
-              >
-                <Icon size={19} strokeWidth={isActive ? 2.2 : 1.75} className="shrink-0" />
-              </div>
+              <Icon size={20} strokeWidth={isActive ? 2.2 : 1.75} className="shrink-0 transition-colors" />
               <span className="text-[11px] tracking-[-0.01em] leading-none whitespace-nowrap">
                 {tab.label}
               </span>
