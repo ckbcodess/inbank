@@ -20,6 +20,8 @@ export function getTransactionType(t: Transaction): string {
       return "Internet";
     case "own-account":
       return "Between My Accounts";
+    case "term-deposit":
+      return "Term Deposit";
     case "card":
       return "Card Payment";
     case "bill":

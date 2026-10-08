@@ -362,7 +362,9 @@ function buildLedger(kind: ProfileKind): LedgerEntry[] {
   );
 
   for (const t of curated) {
+    // Money moved into or out of a term deposit is saving, not income or spend.
     const internal =
+      t.paymentMethod === "term-deposit" ||
       ownAccounts.has(t.counterparty.toLowerCase()) ||
       ownAccounts.has(t.counterpartyAccount.replace(/\s/g, ""));
     entries.push({

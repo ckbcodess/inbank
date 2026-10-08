@@ -1,0 +1,145 @@
+"use client";
+
+/**
+ * One option, to look at before committing to anything (the way a brokerage shows a stock before you buy it): the
+ * rate, the few facts that matter, and a worked example in cedis. Starting is one clear button at the bottom, and
+ * what starting involves is said right above it: with no securities account yet, we set it up first.
+ */
+
+import { useState } from "react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { SearchX } from "lucide-react";
+import PageHeader from "@/components/layout/PageHeader";
+import { Button } from "@/components/ui/button";
+import { DetailPageSkeleton } from "@/components/states/PageSkeletons";
+import { TrueEmptyState } from "@/components/states/ListStates";
+import { FactsPanel, TERM_PRODUCTS_HREF, TREASURY_PRODUCTS_HREF } from "@/components/invest/parts";
+import { findOffer } from "@/components/invest/offers";
+import { SecuritiesAccountDialog } from "@/components/invest/SecuritiesAccountDialog";
+import { formatDate, formatMoney } from "@/lib/mock-data";
+import { sumMoney } from "@/lib/money";
+import { addDays, costFromFace, couponPerPeriod, formatRate, MOCK_TODAY, useMyTreasury, useTreasuryHydrated } from "@/lib/treasury";
+import { interestFor, MIN_DEPOSIT } from "@/lib/term-deposits";
+
+const EXAMPLE = 1000;
+const money = (n: number) => formatMoney(n, "GHS", true);
+
+export function OfferDetail() {
+  const { key } = useParams<{ key: string }>();
+  const hydrated = useTreasuryHydrated();
+  const { csd, marketOpen } = useMyTreasury();
+  const offer = findOffer(key);
+  const [needsCsd, setNeedsCsd] = useState(false);
+  const back = offer?.group === "term" ? { href: TERM_PRODUCTS_HREF, label: "Term Deposits" } : { href: TREASURY_PRODUCTS_HREF, label: "Treasury Bills & Bonds" };
+
+  if (!hydrated) return <DetailPageSkeleton />;
+  if (!offer) {
+    return (
+      <div className="flex flex-col gap-8">
+        <PageHeader title="Investment" backTo={back} />
+        <TrueEmptyState
+          icon={<SearchX size={22} strokeWidth={1.8} />}
+          title="We couldn’t find that one"
+          description="It may have been sold or the auction may have closed."
+          action={
+            <Button nativeButton={false} render={<Link href="/invest?view=products" />}>
+              View Products
+            </Button>
+          }
+        />
+      </div>
+    );
+  }
+
+  const s = offer.security;
+  const closed = offer.group !== "term" && !marketOpen;
+
+  const facts: Array<[string, string]> =
+    offer.group === "term"
+      ? [
+          ["Deposit period", `${offer.tenureDays} days`],
+          ["Matures", formatDate(addDays(MOCK_TODAY, offer.tenureDays ?? 0))],
+          ["Minimum", money(MIN_DEPOSIT)],
+        ]
+      : s && offer.group === "primary"
+        ? [
+            ["Auction number", String(s.auction)],
+            ["Settles", formatDate(s.settlement ?? s.maturity)],
+            ["Matures", formatDate(s.maturity)],
+          ]
+        : s
+          ? [
+              ["Matures", formatDate(s.maturity)],
+              ["Available", money(s.available ?? 0)],
+            ]
+          : [];
+
+  const example: Array<[string, string]> =
+    offer.group === "term" && offer.tenureDays
+      ? [
+          ["You deposit", money(EXAMPLE)],
+          ["You receive at maturity", money(sumMoney([EXAMPLE, interestFor(EXAMPLE, offer.rate, offer.tenureDays)]))],
+        ]
+      : s
+        ? [
+            ["You pay today", money(costFromFace(s, EXAMPLE))],
+            ["You receive at maturity", money(EXAMPLE)],
+            ...(s.kind === "bond" ? ([["Interest every 6 months", money(couponPerPeriod(EXAMPLE, s.rate))]] as Array<[string, string]>) : []),
+          ]
+        : [];
+
+  // Said before the button is pressed, and again in the popup when it is.
+  const note = closed
+    ? "The market is closed right now."
+    : csd?.status === "pending"
+      ? "Your securities account is being set up. You can invest once it’s ready."
+      : !csd
+        ? "To start investing, you need a securities account."
+        : null;
+
+  const startHref = csd
+    ? offer.href
+    : `/invest/profile?next=${encodeURIComponent(offer.href)}&label=${encodeURIComponent(offer.label)}`;
+  const canStart = !closed && csd?.status !== "pending";
+
+  return (
+    <div className="flex flex-col gap-8">
+      <PageHeader title={offer.title} backTo={back} />
+      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-8">
+        <section className="flex flex-col gap-1.5 px-1">
+          <span className="tabular text-[40px] leading-none tracking-[-0.02em] text-foreground">{formatRate(offer.rate)}</span>
+          <span className="text-[14px] text-muted-foreground">
+            {offer.group === "term" ? "a year" : offer.group === "primary" ? "Indicative rate" : "Rate"}
+          </span>
+        </section>
+
+        <FactsPanel rows={facts} />
+
+        <section className="flex flex-col gap-3">
+          <div className="px-1 text-[13px] text-muted-foreground">{`For example, ${money(EXAMPLE)}`}</div>
+          <FactsPanel rows={example} />
+          {offer.group === "primary" && (
+            <p className="px-1 text-[12px] text-muted-foreground">The final rate is set at the auction.</p>
+          )}
+        </section>
+
+        <div className="flex flex-col gap-3">
+          {note && <p className="px-1 text-center text-[13px] text-muted-foreground">{note}</p>}
+          <Button
+            type="button"
+            className="h-13 w-full rounded-2xl text-[16px]"
+            disabled={!canStart}
+            nativeButton={!(canStart && csd)}
+            render={canStart && csd ? <Link href={startHref} /> : undefined}
+            onClick={canStart && !csd ? () => setNeedsCsd(true) : undefined}
+          >
+            Invest
+          </Button>
+        </div>
+      </div>
+
+      <SecuritiesAccountDialog open={needsCsd} onOpenChange={setNeedsCsd} next={{ href: offer.href, label: offer.label }} />
+    </div>
+  );
+}

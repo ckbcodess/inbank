@@ -93,6 +93,7 @@ The designer and product owner on this project is Ransford Gyasi.
 - **Think holistically.** Build every feature as if the app were made for one specific customer. Extend
   the experience around the ask (what would they want to filter, compare or understand next?). Cut
   redundant UI rather than shipping it. Don't silently expand into unrelated areas.
+- **Say when a request repeats an existing path.** If asked to add a control, screen or option that does the same job as one the customer already has, say so, name the existing path, and recommend not building it (the designer has asked for this; example: a per-investment Statement duplicates Advice and the portfolio Statement). Build it only if the designer still wants it, or if it would do something different. The test: does it add a new outcome, or only a second way to the same one?
 - **Keep notes short and plain.** Dense logs and all-caps headers are disliked. Write what changed, why,
   and what's still open, in a few lines.
 - **Don't commit, push or open PRs unless asked.**

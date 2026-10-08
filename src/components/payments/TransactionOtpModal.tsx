@@ -24,6 +24,8 @@ export interface TransactionOtpModalProps {
   onSuccess: (code?: string) => void;
   title?: string;
   phone?: string;
+  /** What is being approved (amount, who, from where), restated above the code boxes so a bare code prompt can't be phished. */
+  summary?: React.ReactNode;
 }
 
 export default function TransactionOtpModal({
@@ -32,6 +34,7 @@ export default function TransactionOtpModal({
   onSuccess,
   title = "Authorization",
   phone = REGISTERED_PHONE,
+  summary,
 }: TransactionOtpModalProps) {
   const auth = useAuthorisation();
   const formId = useId();
@@ -80,6 +83,7 @@ export default function TransactionOtpModal({
         </DialogHeader>
 
         <form id={formId} onSubmit={handleConfirm} className="flex flex-col items-center justify-center px-6 py-10 text-center sm:py-12">
+          {summary && <div className="mb-8 w-full text-left">{summary}</div>}
           <div className="flex size-12 items-center justify-center rounded-full bg-muted text-foreground">
             <Smartphone size={22} strokeWidth={1.9} />
           </div>

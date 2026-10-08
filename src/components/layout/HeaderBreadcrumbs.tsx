@@ -55,6 +55,26 @@ const ROUTE_LABELS: Record<string, string> = {
   exceptions: "Exceptions",
   "fee-concessions": "Fee Concessions",
   settings: "Settings",
+  invest: "Invest",
+  treasury: "Treasury Bills & Bonds",
+  profile: "Securities Account",
+  "term-deposits": "Term Deposit",
+  redeem: "Redeem Part of the Deposit",
+  close: "Close the Deposit",
+  maturity: "When It Matures",
+};
+
+/** The pages directly under Invest → Treasury Bills & Bonds. */
+const TREASURY_LABELS: Record<string, string> = {
+  buy: "Buy",
+  statement: "Statement",
+};
+
+/** The pages under one holding. The holding itself is "Investment". */
+const HOLDING_SUB_LABELS: Record<string, string> = {
+  advice: "Advice",
+  maturity: "When It Matures",
+  rediscount: "Rediscount",
 };
 
 /** What a record page under each list is called: "Account Details", never a bare "Details". */
@@ -67,6 +87,7 @@ const DETAIL_LABELS: Record<string, string> = {
   bulk: "Batch Correction",
   standing: "Standing Order Details",
   customers: "Customer Details",
+  "term-deposits": "Deposit Details",
 };
 
 /** A "new" page under each list is named for what it creates. */
@@ -74,6 +95,7 @@ const NEW_LABELS: Record<string, string> = {
   standing: "New Standing Order",
   trade: "New Trade Request",
   groups: "Create Group",
+  "term-deposits": "New Term Deposit",
 };
 
 /** Under Cards, "request" is the Request a Card flow (or its replacement variant). */
@@ -209,6 +231,33 @@ export default function HeaderBreadcrumbs() {
     );
   }
 
+  // One option's details sits under Products. Its "offer" segment is not a page.
+  if (segments[0] === "invest" && segments[1] === "offer" && segments.length > 2) {
+    return (
+      <BreadcrumbView
+        list={[
+          { label: "Invest", href: "/invest", isLast: false },
+          { label: "Products", href: "/invest?view=products", isLast: false },
+          { label: "Details", href: pathname, isLast: true },
+        ]}
+      />
+    );
+  }
+
+  // A holding is one page, and so are its Advice, maturity and rediscount pages. Its "holdings" segment is not a page.
+  if (segments[0] === "invest" && segments[1] === "treasury" && segments[2] === "holdings" && segments.length > 3) {
+    const sub = segments[4] ? HOLDING_SUB_LABELS[segments[4]] : undefined;
+    return (
+      <BreadcrumbView
+        list={[
+          { label: "Invest", href: "/invest", isLast: false },
+          { label: "Investment", href: `/invest/treasury/holdings/${segments[3]}`, isLast: !sub },
+          ...(sub ? [{ label: sub, href: pathname, isLast: true }] : []),
+        ]}
+      />
+    );
+  }
+
   const crumbs: Crumb[] = [];
   let currentPath = "";
 
@@ -219,6 +268,9 @@ export default function HeaderBreadcrumbs() {
     const parent = segments[index - 1]?.toLowerCase();
 
     let label = ROUTE_LABELS[key];
+
+    // Pages under Treasury Bills & Bonds are named in full.
+    if (parent === "treasury" && TREASURY_LABELS[key]) label = TREASURY_LABELS[key];
 
     // Send Money names itself after the rail it is on.
     if (key === "send" && rail && RAIL_BREADCRUMB_LABELS[rail]) {
@@ -249,6 +301,9 @@ export default function HeaderBreadcrumbs() {
           .join(" ");
       }
     }
+
+    // The treasury, term deposit and products "homes" are just the Invest page, so they aren't a step of their own.
+    if (!isLast && (currentPath === "/invest/treasury" || currentPath === "/invest/term-deposits" || currentPath === "/invest/products")) return;
 
     crumbs.push({
       label,
