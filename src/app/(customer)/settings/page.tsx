@@ -179,7 +179,7 @@ export default function SettingsPage() {
                 />
 </Field>
 
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2">
                 <Label htmlFor="ghana-card" className="flex items-center justify-between">
                   <span>Ghana Card Number (NIA)</span>
                   <span className="text-[10.5px] text-success-text font-medium">Verified</span>

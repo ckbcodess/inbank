@@ -120,7 +120,7 @@ export function FxPulse() {
           </Button>
         </div>
 
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-2">
           <Label htmlFor="fx-amount" className="flex items-center gap-1.5">
             <CurrencyLogo currency={fromCurrency} size={14} />
             <span>Amount in {fromCurrency}</span>

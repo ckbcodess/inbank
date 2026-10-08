@@ -1502,7 +1502,7 @@ export default function BeneficiariesPage() {
 </Field>
 
             {/* Step 4: Optional Nickname / Reference */}
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <Label>
                 Nickname / Note <span className="text-[11px] text-muted-foreground/60">(Optional)</span>
               </Label>

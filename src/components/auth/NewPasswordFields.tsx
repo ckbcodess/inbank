@@ -127,7 +127,7 @@ function PasswordInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="pr-11"
+          className="pr-12"
           aria-invalid={invalid || undefined}
           autoFocus={autoFocus}
           required
@@ -136,7 +136,7 @@ function PasswordInput({
           type="button"
           onClick={onToggle}
           aria-label={shown ? "Hide password" : "Show password"}
-          className="absolute right-1.5 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+          className="absolute right-2 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
         >
           {shown ? <EyeOff size={16} strokeWidth={1.8} /> : <Eye size={16} strokeWidth={1.8} />}
         </button>
