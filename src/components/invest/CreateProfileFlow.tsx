@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { OccupationCombobox } from "@/components/ui/occupation-combobox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormPageSkeleton } from "@/components/states/PageSkeletons";
 import { TrueEmptyState } from "@/components/states/ListStates";
@@ -246,7 +247,7 @@ export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountInten
         </Field>
 
         <Field label="Occupation" htmlFor="invest-occupation">
-          <Input id="invest-occupation" value={occupation} onChange={(e) => setOccupation(e.target.value)} placeholder="For example, Teacher" autoComplete="organization-title" />
+          <OccupationCombobox id="invest-occupation" value={occupation} onChange={setOccupation} />
         </Field>
 
         <Field label="Email Address" htmlFor="invest-email" error={emailInvalid && "Enter a valid email address."}>
