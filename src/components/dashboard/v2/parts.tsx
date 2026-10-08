@@ -284,7 +284,7 @@ export function MoneyActions({
   }
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-3", className)}>
+    <div className={cn("flex flex-wrap items-center gap-3 max-sm:w-full max-sm:gap-1.5", className)}>
       {actions.map(({ kind: k, icon: Icon, label, primary }) => (
         <Button
           key={k}
@@ -293,11 +293,11 @@ export function MoneyActions({
           onClick={() => pick(k)}
           aria-haspopup="dialog"
           className={cn(
-            "h-auto gap-2 px-5 py-3 text-[14px] leading-none shadow-xs max-sm:flex-1 max-sm:gap-1.5 max-sm:px-2 max-sm:text-[13px]",
+            "h-auto gap-2 px-5 py-3 text-[14px] leading-none shadow-xs max-sm:flex-1 max-sm:min-w-0 max-sm:h-10 max-sm:gap-1 max-sm:px-1.5 max-sm:py-2.5 max-sm:text-[11.5px] max-sm:font-semibold max-sm:tracking-tight",
           )}
         >
-          <Icon size={17} strokeWidth={1.8} className="size-[17px]" />
-          {label}
+          <Icon size={17} strokeWidth={1.8} className="size-[17px] shrink-0 max-sm:size-3.5" />
+          <span className="truncate">{label}</span>
         </Button>
       ))}
       {picker}

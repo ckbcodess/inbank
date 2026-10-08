@@ -37,9 +37,7 @@ import {
   UserCheck,
   Users,
   Wallet,
-  X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import type { NavItem } from "@/lib/navigation";
@@ -216,8 +214,8 @@ export default function Sidebar({
       onMouseEnter={() => setIsSidebarHovered(true)}
       onMouseMove={() => !pointerSeen && setPointerSeen(true)}
       onMouseLeave={() => setIsSidebarHovered(false)}
-      className={`fixed inset-y-0 left-0 z-40 flex shrink-0 flex-col bg-[var(--surface)] transition-[width,transform] duration-200 ease-[cubic-bezier(0.25,0.1,0.25,1)] lg:relative lg:z-20 lg:translate-x-0 ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
+      className={`fixed inset-y-0 left-0 z-50 flex shrink-0 flex-col bg-[var(--surface)] shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform lg:relative lg:z-20 lg:shadow-none lg:translate-x-0 ${
+        isOpen ? "translate-x-0" : "-translate-x-full pointer-events-none lg:pointer-events-auto"
       }`}
       style={{ width: collapsed ? 56 : 224 }}
     >
@@ -278,10 +276,6 @@ export default function Sidebar({
         >
           <PanelLeftClose className="size-[17.5px]" strokeWidth={1.8} />
         </button>
-
-        <Button variant="ghost" size="icon-sm" onClick={onClose} className="lg:hidden" aria-label="Close menu">
-          <X size={16} />
-        </Button>
       </div>
 
       {/* Navigation */}

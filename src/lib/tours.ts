@@ -271,16 +271,16 @@ export const TOURS: Tour[] = [
       {
         target: "gs-walletcard",
         route: "/get-started",
-        title: "Create a Payment Profile",
+        title: "Use a Wallet or Card",
         body: "Register with Ghana Card and create an instant virtual wallet.",
-        action: "Click Create a Payment Profile",
+        action: "Click Use a Wallet or Card",
       },
       {
         target: "signup-card",
         route: "/signup",
         title: "Enter the Ghana Card",
         body: "Verified against the NIA register. The demo number is prefilled.",
-        action: "Click Proceed",
+        action: "Click Continue",
       },
       {
         target: "signup-selfie",
@@ -294,7 +294,7 @@ export const TOURS: Tour[] = [
         route: "/signup",
         title: "Verify the details",
         body: "Confirm the information matched from national records.",
-        action: "Click Proceed",
+        action: "Click Verify Mobile Number",
       },
       {
         target: "signup-otp",
@@ -308,7 +308,7 @@ export const TOURS: Tour[] = [
         route: "/signup",
         title: "Set a password",
         body: "Set a password with minimum 8 characters, upper, lower, numbers and symbols.",
-        action: "Click Proceed",
+        action: "Click Set Your PIN",
       },
       {
         target: "signup-pin",
@@ -342,16 +342,16 @@ export const TOURS: Tour[] = [
       {
         target: "gs-walletcard",
         route: "/get-started",
-        title: "Create a Payment Profile",
+        title: "Use a Wallet or Card",
         body: "Register with Ghana Card and create an instant virtual wallet.",
-        action: "Click Create a Payment Profile",
+        action: "Click Use a Wallet or Card",
       },
       {
         target: "signup-card",
         route: "/signup",
         title: "Enter the Ghana Card",
         body: "Verified against the NIA register. The demo number is prefilled.",
-        action: "Click Proceed",
+        action: "Click Continue",
       },
       {
         target: "signup-selfie",
@@ -365,7 +365,7 @@ export const TOURS: Tour[] = [
         route: "/signup",
         title: "Verify the details",
         body: "Confirm the information matched from national records.",
-        action: "Click Proceed",
+        action: "Click Verify Mobile Number",
       },
       {
         target: "signup-otp",
@@ -379,7 +379,7 @@ export const TOURS: Tour[] = [
         route: "/signup",
         title: "Set a password",
         body: "Set a password with minimum 8 characters, upper, lower, numbers and symbols.",
-        action: "Click Proceed",
+        action: "Click Set Your PIN",
       },
       {
         target: "signup-pin",

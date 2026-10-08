@@ -12,6 +12,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import Sidebar from "./Sidebar";
 import TopHeader from "./TopHeader";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
@@ -63,12 +64,19 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   return (
     <>
       <div className="flex h-dvh overflow-hidden bg-[var(--surface)]">
-        {sidebarOpen && (
-          <div
-            className="animate-in fade-in fixed inset-0 z-30 bg-black/30 backdrop-blur-[2px] duration-150 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
+        <AnimatePresence>
+          {sidebarOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md lg:hidden"
+              onClick={() => setSidebarOpen(false)}
+              aria-hidden="true"
+            />
+          )}
+        </AnimatePresence>
 
         <Sidebar
           items={navItems}

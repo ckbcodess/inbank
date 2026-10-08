@@ -60,13 +60,13 @@ export default function GetStartedPage() {
       <AuthLayout
         title={
           screen === 1
-            ? "How Will You Like to Register?"
-            : "How Will You Like to Proceed?"
+            ? "How Would You Like to Register?"
+            : "How Would You Like to Get Started?"
         }
         description={
           screen === 1
             ? "Select the option that best describes your relationship with GCB."
-            : "Choose how to set up your account."
+            : "Choose how you would like to use Internet Banking."
         }
         onBack={screen === 2 ? () => setScreen(1) : undefined}
         backHref={screen === 1 ? "/login" : undefined}
@@ -90,6 +90,9 @@ export default function GetStartedPage() {
                 <div className="flex flex-col">
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
                     GCB Account Holder
+                  </span>
+                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
+                    I already have a GCB account.
                   </span>
                 </div>
               </div>
@@ -116,6 +119,9 @@ export default function GetStartedPage() {
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
                     New to GCB
                   </span>
+                  <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
+                    I do not have a GCB account.
+                  </span>
                 </div>
               </div>
 
@@ -128,7 +134,7 @@ export default function GetStartedPage() {
           </div>
 
             <p className="text-center text-[13px] text-muted-foreground">
-              Already have an account?{" "}
+              Already registered?{" "}
               <Link
                 href="/login"
                 className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80"
@@ -138,7 +144,8 @@ export default function GetStartedPage() {
             </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3">
             {/* Step 2 Option 1: Open a GCB Account -> Immediate COOS modal */}
             <button
               type="button"
@@ -155,7 +162,7 @@ export default function GetStartedPage() {
                     Open a GCB Account
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
-                    Open a new bank account online.
+                    Open an account and access Internet Banking.
                   </span>
                 </div>
               </div>
@@ -165,7 +172,7 @@ export default function GetStartedPage() {
               </div>
             </button>
 
-            {/* Step 2 Option 2: Create a Payment Profile -> Immediate route to /signup */}
+            {/* Step 2 Option 2: Use a Wallet or Card -> Immediate route to /signup */}
             <button
               type="button"
               data-tour="gs-walletcard"
@@ -178,10 +185,10 @@ export default function GetStartedPage() {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
-                    Create a Payment Profile
+                    Use a Wallet or Card
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
-                    Fund with mobile money or any bank card.
+                    Use mobile money or a bank card.
                   </span>
                 </div>
               </div>
@@ -192,6 +199,17 @@ export default function GetStartedPage() {
                 className="shrink-0 text-foreground/70 transition duration-200 group-hover:text-foreground"
               />
             </button>
+          </div>
+
+            <p className="text-center text-[13px] text-muted-foreground">
+              Already registered?{" "}
+              <Link
+                href="/login"
+                className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80"
+              >
+                Login
+              </Link>
+            </p>
           </div>
         )}
       </AuthLayout>

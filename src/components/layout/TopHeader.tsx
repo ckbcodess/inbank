@@ -278,21 +278,23 @@ export default function TopHeader({
               </span>
             </DropdownMenuItem>
 
-            {/* Dev Tools Visibility Toggle */}
-            <DropdownMenuItem
-              onClick={toggleDevToolsHidden}
-              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
-            >
-              <span className="flex items-center gap-3">
-                {devToolsHidden ? (
-                  <Eye size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
-                ) : (
-                  <EyeOff size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
-                )}
-                <span>{devToolsHidden ? "Show floating dev tools" : "Hide floating dev tools"}</span>
-              </span>
-              <span className="text-[10px] font-mono text-muted-foreground/70 bg-muted px-1.5 py-0.5 rounded">Ctrl+Shift+D</span>
-            </DropdownMenuItem>
+            {/* Dev Tools Visibility Toggle (dev only, hidden in live build) */}
+            {process.env.NODE_ENV !== "production" && (
+              <DropdownMenuItem
+                onClick={toggleDevToolsHidden}
+                className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
+              >
+                <span className="flex items-center gap-3">
+                  {devToolsHidden ? (
+                    <Eye size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                  ) : (
+                    <EyeOff size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                  )}
+                  <span>{devToolsHidden ? "Show floating dev tools" : "Hide floating dev tools"}</span>
+                </span>
+                <span className="text-[10px] font-mono text-muted-foreground/70 bg-muted px-1.5 py-0.5 rounded">Ctrl+Shift+D</span>
+              </DropdownMenuItem>
+            )}
 
             <DropdownMenuSeparator className="my-1" />
 
@@ -352,7 +354,7 @@ export default function TopHeader({
           </DialogHeader>
           <DialogBody>
             <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-              {t("header.signOutConfirmBody", "You’ll need to log in again to see your accounts.")}
+              {t("header.signOutConfirmBody", "You can log in again anytime to access your accounts.")}
             </p>
           </DialogBody>
           <DialogFooter>

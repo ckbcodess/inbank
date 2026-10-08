@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
-import { toast } from "sonner";
+import { useEffect, useSyncExternalStore } from "react";
 
 const STORAGE_KEY = "nibs-hide-dev-tools";
 
@@ -47,9 +46,24 @@ export function toggleDevToolsHidden() {
   const current = getSnapshot();
   const next = !current;
   setDevToolsHidden(next);
-  toast.info(next ? "Floating dev tools hidden (Press Ctrl+Shift+D to show)" : "Floating dev tools visible", {
-    duration: 2500,
+}
+
+let shortcutInitialized = false;
+
+function initShortcut() {
+  if (typeof window === "undefined" || shortcutInitialized) return;
+  shortcutInitialized = true;
+  window.addEventListener("keydown", (e: KeyboardEvent) => {
+    // Toggle with Ctrl+Shift+D or Cmd+Shift+D
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "D" || e.key === "d" || e.code === "KeyD")) {
+      e.preventDefault();
+      toggleDevToolsHidden();
+    }
   });
+}
+
+if (typeof window !== "undefined") {
+  initShortcut();
 }
 
 /**
@@ -58,20 +72,9 @@ export function toggleDevToolsHidden() {
  * and keyboard shortcut Ctrl+Shift+D (or Cmd+Shift+D).
  */
 export function useDevToolsHidden(): boolean {
-  const isHidden = useSyncExternalStore(subscribe, getSnapshot, () => false);
-
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      // Toggle with Ctrl+Shift+D or Cmd+Shift+D
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === "D" || e.key === "d")) {
-        e.preventDefault();
-        toggleDevToolsHidden();
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    initShortcut();
   }, []);
 
-  return isHidden;
+  return useSyncExternalStore(subscribe, getSnapshot, () => false);
 }

@@ -126,8 +126,8 @@ export default function ForgotPasswordPage() {
       description: "Enter it twice to make sure it's right.",
     },
     done: {
-      title: "Password Reset",
-      description: "Log in with your new password. Any other devices have been logged out.",
+      title: "Password Reset Successful",
+      description: "Your password has been reset. Log in with your new password.",
     },
   };
 

@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import AuthLayout from "@/components/auth/AuthLayout";
-import { maskEmail, maskMobile } from "@/lib/auth-shared";
+import { maskMobile } from "@/lib/auth-shared";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import SelfieCapture from "@/components/auth/SelfieCapture";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
@@ -82,7 +82,6 @@ function ActivateContent() {
   // OTP State
   const [digits, setDigits] = useState<string[]>(() => Array<string>(OTP_LENGTH).fill(""));
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
-  const [otpTarget, setOtpTarget] = useState<"sms" | "email">("sms");
 
   // Password & PIN State
   const [password, setPassword] = useState("");
@@ -318,7 +317,7 @@ function ActivateContent() {
     <AuthLayout
       title={
         step === "ghana_card"
-          ? "Let's Verify Your Identity"
+          ? "Verify Your Identity"
           : step === "selfie"
           ? "Selfie Match"
           : step === "review_details"
@@ -337,7 +336,7 @@ function ActivateContent() {
       }
       description={
         step === "ghana_card"
-          ? "We’ll securely verify you using your Ghana Card."
+          ? "We will securely verify your identity using your Ghana Card."
           : step === "selfie"
           ? "Center your face in the frame."
           : step === "review_details"
@@ -351,11 +350,11 @@ function ActivateContent() {
           : step === "otp"
           ? isJoint
             ? <>A 6-digit code has been sent to {maskMobile(activePersona.phone)}.<br />Please enter the code below. A notice has also gone to {maskMobile(activePersona.coSignatoryPhone ?? "")}.</>
-            : <>A 6-digit code has been sent to {otpTarget === "sms" ? maskMobile(activePersona.phone) : maskEmail(activePersona.email)}.<br />Please enter the code below.</>
+            : <>A 6-digit code has been sent to {maskMobile(activePersona.phone)}.<br />Please enter the code below.</>
           : step === "password"
           ? "Choose a password you will remember."
           : step === "pin"
-          ? "Set a PIN for all your transactions in the app."
+          ? "Set a 4-digit PIN for secure access."
           : "Re-enter your 4-digit PIN to confirm."
       }
       onBack={handleBackStep}
@@ -421,7 +420,7 @@ function ActivateContent() {
               loading={busy}
               className="h-11 w-full text-[14px]"
             >
-              Proceed
+              Continue
             </Button>
             <p className="text-center text-[12.5px] leading-5 text-muted-foreground">
               By continuing, you agree to our{" "}
@@ -658,17 +657,9 @@ function ActivateContent() {
               )}
             </button>
 
-            <button
-              type="button"
-              onClick={() => {
-                setOtpTarget(otpTarget === "sms" ? "email" : "sms");
-                setCountdown(RESEND_SECONDS);
-                setErrorMsg("");
-              }}
-              className="text-center text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:text-muted-foreground disabled:no-underline disabled:cursor-default cursor-pointer"
-            >
-              Send to {otpTarget === "sms" ? "email instead" : "SMS instead"}
-            </button>
+            <p className="text-center text-[13px] text-muted-foreground">
+              Dial <a href="tel:*422*11%23" className="tabular font-medium text-foreground underline underline-offset-4 hover:text-foreground/80">*422*11#</a> to retrieve your code
+            </p>
           </div>
 
           {isJoint && (
@@ -716,7 +707,7 @@ function ActivateContent() {
             loading={busy}
             className="mt-2 h-11 w-full text-[14px]"
           >
-            Proceed
+            Set Your PIN
           </Button>
         </form>
       )}

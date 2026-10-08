@@ -14,7 +14,7 @@
 import { AlertToast } from "@/components/ui/alert-toast";
 import { useState } from "react";
 import { PartyPopper } from "lucide-react";
-import { DialogTitle } from "@/components/ui/dialog";
+import { DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -70,10 +70,13 @@ export default function ReferralStep({
       data-tour={dataTour}
     >
       {/* Top area */}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1.5">
         <DialogTitle className="text-[20px] font-medium tracking-tight text-foreground sm:text-[22px]">
-          Got a referral code?
+          Were You Referred by Someone?
         </DialogTitle>
+        <DialogDescription className="text-[13px] text-muted-foreground leading-normal">
+          Enter their referral code to help them receive their reward.
+        </DialogDescription>
       </div>
 
       {/* Middle area: Centered icon and optional code input */}

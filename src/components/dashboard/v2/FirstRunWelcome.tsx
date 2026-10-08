@@ -190,6 +190,7 @@ export function FirstRunWelcome({
       handleFinalizeDeposit();
     }, 2600);
     return () => window.clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
   const applyStage = (
@@ -440,7 +441,7 @@ export function FirstRunWelcome({
                           Welcome to GCB, {firstName}!
                         </DialogTitle>
                         <p className="text-[14px] leading-relaxed text-muted-foreground max-w-[360px]">
-                          Your virtual wallet is ready. Add funds before sending, paying, or shopping online from your dashboard.
+                          Your virtual account is ready. Fund your account to send money, pay bills and shop online.
                         </p>
                       </div>
                     </div>
@@ -479,12 +480,12 @@ export function FirstRunWelcome({
                           <ChevronLeft size={18} strokeWidth={2} />
                         </button>
                         <DialogTitle className="text-[20px] font-medium tracking-tight text-foreground sm:text-[22px]">
-                          Choose funding method
+                          Choose a Funding Method
                         </DialogTitle>
                       </div>
 
                       <p className="text-[13.5px] text-muted-foreground leading-relaxed">
-                        Select how you&apos;d like to deposit funds into your virtual wallet.
+                        Select how you would like to fund your virtual account.
                       </p>
 
                       <div className="flex flex-col gap-4 pt-1">
@@ -832,7 +833,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                           GHS {parseFloat(amount).toFixed(2)} deposited
                         </DialogTitle>
                         <p className="text-[13.5px] text-muted-foreground">
-                          Available in your virtual wallet now.
+                          Available in your virtual account now.
                         </p>
                       </div>
                     </div>
@@ -843,7 +844,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                         onClick={() => goTo("source")}
                         className={BUTTON}
                       >
-                        Continue
+                        Go to Dashboard
                       </Button>
                     </div>
                   </div>

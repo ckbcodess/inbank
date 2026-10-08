@@ -126,7 +126,7 @@ function PinContent() {
             onClick={() => auth.setMethod("otp")}
             className="cursor-pointer text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80"
           >
-            Get a code by SMS instead
+            Forgot PIN?
           </button>
         ) : (
           <div className="flex flex-col items-center gap-3">

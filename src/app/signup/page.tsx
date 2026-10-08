@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { displayGhanaMobile, isCompleteGhanaMobile } from "@/lib/phone";
-import { maskEmail, maskMobile } from "@/lib/auth-shared";
+import { maskMobile } from "@/lib/auth-shared";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import SelfieCapture from "@/components/auth/SelfieCapture";
@@ -57,7 +57,7 @@ function SignupContent() {
     setErrorMsg("");
     setBusy(false);
   }, [stepParam]);
-  const [ghanaCard, setGhanaCard] = useState("GHA-789012345-6");
+  const [ghanaCard, setGhanaCard] = useState("GHA-998877665-1");
   const [title, setTitle] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
@@ -68,7 +68,6 @@ function SignupContent() {
   // OTP State
   const [digits, setDigits] = useState<string[]>(() => Array<string>(OTP_LENGTH).fill(""));
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
-  const [otpTarget, setOtpTarget] = useState<"sms" | "email">("sms");
 
   // Password & PIN State
   const [password, setPassword] = useState("");
@@ -273,11 +272,11 @@ function SignupContent() {
     <AuthLayout
       title={
         step === "ghana_card"
-          ? "Let's Verify Your Identity"
+          ? "Verify Your Identity"
           : step === "selfie"
           ? "Selfie Match"
           : step === "review_details"
-          ? "Review Your Details"
+          ? "Complete Your Details"
           : step === "otp"
           ? "Confirm Your Code"
           : step === "password"
@@ -288,19 +287,17 @@ function SignupContent() {
       }
       description={
         step === "ghana_card"
-          ? "We’ll securely verify you using your Ghana Card."
+          ? "We will securely verify your identity using your Ghana Card."
           : step === "selfie"
           ? "Center your face in the circle."
           : step === "review_details"
-          ? "Kindly provide title, email, and phone number."
+          ? "Enter your title, email and mobile number."
           : step === "otp"
-          ? otpTarget === "sms"
-            ? <>A 6-digit code has been sent to {maskMobile(displayGhanaMobile(mobile))}.<br />Please enter the code below.</>
-            : <>A 6-digit code has been sent to {maskEmail(email.trim())}.<br />Please enter the code below.</>
+          ? <>A 6-digit code has been sent to {maskMobile(displayGhanaMobile(mobile))}.<br />Please enter the code below.</>
           : step === "password"
           ? "Choose a password you will remember."
           : step === "pin"
-          ? "Set a PIN for all your transactions in the app."
+          ? "Set a 4-digit PIN for secure access."
           : "Re-enter your 4-digit PIN to confirm."
       }
       onBack={handleBackStep}
@@ -335,7 +332,7 @@ function SignupContent() {
               loading={busy}
               className="h-11 w-full text-[14px]"
             >
-              Proceed
+              Continue
             </Button>
             <p className="text-center text-[12.5px] leading-5 text-muted-foreground">
               By continuing, you agree to our{" "}
@@ -403,7 +400,7 @@ function SignupContent() {
                 id="reviewEmail"
                 type="email"
                 autoComplete="email"
-                placeholder="e.g. ransford.gyasi@example.com"
+                placeholder="Enter email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 aria-invalid={email.trim() !== "" && !detailsValid && !/^\S+@\S+\.\S+$/.test(email.trim())}
@@ -412,8 +409,8 @@ function SignupContent() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="reviewMobile">Mobile Number</Label>
-              <PhoneInput id="reviewMobile" value={mobile} onValueChange={setMobile} />
-              <p className="px-0.5 text-[12.5px] text-muted-foreground">We will send a code to verify this number.</p>
+              <PhoneInput id="reviewMobile" value={mobile} onValueChange={setMobile} placeholder="Enter mobile number" />
+              <p className="px-0.5 text-[12.5px] text-muted-foreground">We’ll send a verification code to this number.</p>
             </div>
           </div>
 
@@ -427,7 +424,7 @@ function SignupContent() {
             loading={busy}
             className="mt-3.5 h-11 w-full text-[14px]"
           >
-            Proceed
+            Verify Mobile Number
           </Button>
         </div>
       )}
@@ -481,17 +478,9 @@ function SignupContent() {
               )}
             </button>
 
-            <button
-              type="button"
-              onClick={() => {
-                setOtpTarget(otpTarget === "sms" ? "email" : "sms");
-                setCountdown(RESEND_SECONDS);
-                setErrorMsg("");
-              }}
-              className="text-center text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:text-muted-foreground disabled:no-underline disabled:cursor-default cursor-pointer"
-            >
-              Send to {otpTarget === "sms" ? "email instead" : "SMS instead"}
-            </button>
+            <p className="text-center text-[13px] text-muted-foreground">
+              Dial <a href="tel:*422*11%23" className="tabular font-medium text-foreground underline underline-offset-4 hover:text-foreground/80">*422*11#</a> to retrieve your code
+            </p>
           </div>
 
           {busy && (
@@ -532,7 +521,7 @@ function SignupContent() {
             disabled={!newPasswordReady(password, confirmPassword)} loading={busy}
             className="mt-2 h-11 w-full text-[14px]"
           >
-            Proceed
+            Set Your PIN
           </Button>
         </form>
       )}

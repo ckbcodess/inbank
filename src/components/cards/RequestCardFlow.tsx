@@ -223,7 +223,6 @@ function defaultThemeId(type: CardType): string {
 
 export function RequestCardFlow() {
   const router = useRouter();
-  const { handleBack: handleBackNavigation } = useContextualBack("/cards");
   const actor = useSession((s) => s.actor);
   const activeProfile = useSession((s) => s.activeProfile);
 
@@ -240,6 +239,10 @@ export function RequestCardFlow() {
     return id ? findCard(id) ?? null : null;
   }, [searchParams]);
   const isReplacement = replacing !== null;
+
+  const { handleBack: handleBackNavigation } = useContextualBack(
+    replacing ? `/cards/${replacing.id}` : "/cards"
+  );
 
   // Flow State
   const [step, setStep] = useState<FlowStep>(() => (replacing ? "details" : "select-type"));
@@ -496,7 +499,7 @@ export function RequestCardFlow() {
             <button
               type="button"
               onClick={() =>
-                replacing ? router.push(`/cards/${replacing.id}`) : setStep("select-type")
+                replacing ? handleBackNavigation() : setStep("select-type")
               }
               className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               aria-label="Back"
@@ -1173,7 +1176,7 @@ export function RequestCardFlow() {
             >
               <button
                 type="button"
-                onClick={() => router.push(`/cards/${createdCard.id}`)}
+                onClick={() => router.replace(`/cards/${createdCard.id}`)}
                 className="relative overflow-hidden w-full rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground px-5 py-3.5 text-[14.5px] font-medium active:scale-[0.99] transition cursor-pointer text-center shadow-xs"
               >
                 {/* Single light sweep as the button arrives */}
