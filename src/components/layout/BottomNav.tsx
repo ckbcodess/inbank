@@ -38,7 +38,7 @@ export function BottomNav({ onOpenDrawer }: BottomNavProps) {
   return (
     <nav
       aria-label="Mobile Navigation"
-      className="fixed inset-x-0 bottom-0 z-40 w-full border-t border-border/70 bg-background/95 backdrop-blur-2xl pt-3 pb-[max(1.1rem,calc(env(safe-area-inset-bottom)+0.6rem))] px-2 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] md:hidden dark:border-white/10 dark:bg-[#121212]/95 dark:shadow-[0_-4px_24px_rgba(0,0,0,0.3)]"
+      className="fixed inset-x-0 bottom-0 z-40 w-full border-t border-border/70 bg-background/95 backdrop-blur-2xl pt-4 pb-[max(1.5rem,calc(env(safe-area-inset-bottom)+1rem))] px-2 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] md:hidden dark:border-white/10 dark:bg-[#121212]/95 dark:shadow-[0_-4px_24px_rgba(0,0,0,0.3)]"
     >
       <div className="mx-auto flex w-full max-w-lg items-center justify-around">
         {tabs.map((tab) => {
@@ -54,8 +54,8 @@ export function BottomNav({ onOpenDrawer }: BottomNavProps) {
                   : "text-neutral-400 hover:text-neutral-700 dark:text-white/40 dark:hover:text-white/80",
               )}
             >
-              <Icon size={20} strokeWidth={isActive ? 1.85 : 1.5} className="shrink-0 transition-colors" />
-              <span className="text-[11px] tracking-[-0.01em] leading-none whitespace-nowrap">
+              <Icon size={21} strokeWidth={isActive ? 1.85 : 1.5} className="shrink-0 transition-colors" />
+              <span className="text-[11px] font-medium tracking-[-0.01em] leading-none whitespace-nowrap">
                 {tab.label}
               </span>
             </div>
