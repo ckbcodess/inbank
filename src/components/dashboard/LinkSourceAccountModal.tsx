@@ -595,8 +595,8 @@ export default function LinkSourceAccountModal({
                           onClick={() => setSelectedSourceId(source.id)}
                           className={`flex items-center justify-between rounded-2xl border p-3.5 text-left transition cursor-pointer ${
                             isSelected
-                              ? "border-field-border-focus bg-field"
-                              : "border-field-border bg-field hover:bg-field-hover"
+                              ? "border-[var(--active-border)] bg-[var(--active-bg)]"
+                              : "border-border bg-card hover:bg-muted/50"
                           }`}
                         >
                           <div className="flex items-center gap-3">

@@ -52,18 +52,20 @@ export function DeliveryModeFields({
       <div className="grid grid-cols-2 gap-3">
         <button
           type="button"
+          role="radio"
+          aria-checked={value.method === "BRANCH_PICKUP"}
           onClick={() => onChange({ method: "BRANCH_PICKUP" })}
           className={`p-3.5 sm:p-4 rounded-2xl border text-left transition cursor-pointer flex items-center gap-3 ${
             value.method === "BRANCH_PICKUP"
-              ? "border-field-border-focus bg-field text-foreground"
-              : "border-field-border bg-field hover:bg-field-hover text-foreground"
+              ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
+              : "border-border bg-card hover:bg-muted/50 text-foreground"
           }`}
         >
           <div
             className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
               value.method === "BRANCH_PICKUP"
-                ? "border-field-border-focus bg-field-border-focus"
-                : "border-field-border bg-transparent"
+                ? "border-[var(--active-border)] bg-[var(--active-border)]"
+                : "border-border bg-transparent"
             }`}
           >
             {value.method === "BRANCH_PICKUP" && (
@@ -80,18 +82,20 @@ export function DeliveryModeFields({
 
         <button
           type="button"
+          role="radio"
+          aria-checked={value.method === "DELIVERY"}
           onClick={() => onChange({ method: "DELIVERY" })}
           className={`p-3.5 sm:p-4 rounded-2xl border text-left transition cursor-pointer flex items-center gap-3 ${
             value.method === "DELIVERY"
-              ? "border-field-border-focus bg-field text-foreground"
-              : "border-field-border bg-field hover:bg-field-hover text-foreground"
+              ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
+              : "border-border bg-card hover:bg-muted/50 text-foreground"
           }`}
         >
           <div
             className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
               value.method === "DELIVERY"
-                ? "border-field-border-focus bg-field-border-focus"
-                : "border-field-border bg-transparent"
+                ? "border-[var(--active-border)] bg-[var(--active-border)]"
+                : "border-border bg-transparent"
             }`}
           >
             {value.method === "DELIVERY" && (
