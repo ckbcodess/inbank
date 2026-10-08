@@ -112,19 +112,24 @@ export function OfferDetail() {
     }
   }
 
-  // Said before the button is pressed, and again in the popup when it is.
-  const note = closed
-    ? "The market is closed right now."
-    : csd?.status === "pending"
-      ? "Your securities account is being set up. You can invest once it’s ready."
-      : !csd
-        ? "To start investing, you need a securities account."
-        : null;
+  // For Term Deposits, no CSD is required and market hours do not apply.
+  // For Treasury Bills & Bonds, CSD profile and market status are checked.
+  const isTerm = offer.group === "term";
+  const note = isTerm
+    ? null
+    : closed
+      ? "The market is closed right now."
+      : csd?.status === "pending"
+        ? "Your securities account is being set up. You can invest once it’s ready."
+        : !csd
+          ? "To start investing in securities, you need a securities account."
+          : null;
 
-  const startHref = csd
+  const canStart = isTerm ? true : !closed && csd?.status !== "pending";
+  const hasAccess = isTerm || Boolean(csd && csd.status === "active");
+  const startHref = hasAccess
     ? offer.href
     : `/invest/profile?next=${encodeURIComponent(offer.href)}&label=${encodeURIComponent(offer.label)}`;
-  const canStart = !closed && csd?.status !== "pending";
 
   return (
     <div className="flex flex-col gap-8">
@@ -146,9 +151,9 @@ export function OfferDetail() {
             type="button"
             className="h-13 w-full rounded-2xl text-[16px]"
             disabled={!canStart}
-            nativeButton={!(canStart && csd)}
-            render={canStart && csd ? <Link href={startHref} /> : undefined}
-            onClick={canStart && !csd ? () => setNeedsCsd(true) : undefined}
+            nativeButton={!(canStart && hasAccess)}
+            render={canStart && hasAccess ? <Link href={startHref} /> : undefined}
+            onClick={canStart && !hasAccess ? () => setNeedsCsd(true) : undefined}
           >
             Invest
           </Button>

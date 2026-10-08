@@ -24,13 +24,12 @@ import { ListErrorState, TrueEmptyState } from "@/components/states/ListStates";
 import { InvestHomeSkeleton, InvestRowBones } from "@/components/states/PageSkeletons";
 import { InvestDevTools, PRODUCTS_HREF, SecurityIcon, TERM_PRODUCTS_HREF, TREASURY_HOME, TREASURY_PRODUCTS_HREF } from "@/components/invest/parts";
 import { InvestWelcome } from "@/components/invest/InvestWelcome";
-import { SecuritiesAccountDialog } from "@/components/invest/SecuritiesAccountDialog";
 import { ActionTile } from "@/components/ui/action-tile";
 import { glassOf, rectRegion } from "@/components/ui/glass-icon";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { sumMoney } from "@/lib/money";
-import { daysLeftLabel, SUPPORT_PHONE, useMyTreasury, useTreasury, useTreasuryHydrated } from "@/lib/treasury";
+import { daysLeftLabel, useMyTreasury, useTreasury, useTreasuryHydrated } from "@/lib/treasury";
 import { termInterest, useMyDeposits } from "@/lib/term-deposits";
 
 // The product tiles use the same duotone glass icons as the Send & Pay hub: amber glass with a graphite part.
@@ -70,7 +69,6 @@ export function InvestHome() {
   const clearIntent = useTreasury((s) => s.clearIntent);
   const { showAmounts } = useAmountVisibility();
   const [state, setState] = useState<PageState>("populated");
-  const [needsAccount, setNeedsAccount] = useState(false);
 
   if (!hydrated) return <InvestHomeSkeleton />;
 
@@ -111,22 +109,18 @@ export function InvestHome() {
   function status() {
     if (csd?.status === "pending") {
       return (
-        <section className="mx-auto flex max-w-[460px] flex-col items-center gap-4 px-4 py-14 text-center sm:py-16">
-          <span className="flex size-20 items-center justify-center rounded-full bg-muted text-foreground">
-            <ShieldCheck size={40} strokeWidth={1.5} aria-hidden="true" />
+        <section className="flex items-start gap-4 rounded-2xl border border-border bg-card p-4 sm:p-5">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
+            <ShieldCheck size={20} strokeWidth={1.8} aria-hidden="true" />
           </span>
-          <div className="flex flex-col gap-2">
-            <h2 className="text-[20px] tracking-[-0.01em] text-foreground">Your securities account is being set up</h2>
-            <p className="text-[14px] leading-relaxed text-muted-foreground">
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <h2 className="text-[15px] font-medium text-foreground">Securities account being set up</h2>
+            <p className="text-[13px] leading-relaxed text-muted-foreground">
               {intent
-                ? `It’ll be ready within 7 working days of ${formatDate(csd.requestedOn)}. Your choice, ${intent.label}, is saved. Meanwhile, you can explore our products.`
-                : `It’ll be ready within 7 working days of ${formatDate(csd.requestedOn)}. Meanwhile, you can explore our products.`}
+                ? `Your securities account for Treasury Bills & Bonds will be ready within 7 working days. Your choice, ${intent.label}, is saved. You can still open Term Deposits right away.`
+                : `Your securities account for Treasury Bills & Bonds will be ready within 7 working days of ${formatDate(csd.requestedOn)}. You can open Term Deposits right away.`}
             </p>
           </div>
-          <Button type="button" onClick={() => goProducts()}>
-            Explore Products
-          </Button>
-          <p className="text-[12px] text-muted-foreground">{`Need help? Call ${SUPPORT_PHONE}.`}</p>
         </section>
       );
     }
@@ -222,13 +216,13 @@ export function InvestHome() {
       <div className="flex flex-col gap-10">
         {status()}
 
-        {nothingYet && csd?.status !== "pending" && !(csd?.status === "active" && intent) && (
+        {nothingYet && !(csd?.status === "active" && intent) && (
           <TrueEmptyState
             icon={<TrendingUp size={22} strokeWidth={1.8} />}
-            title={csd?.status === "active" ? "Start your first investment" : "You haven’t started investing yet"}
+            title="You haven’t started investing yet"
             description="Browse the products to see what’s on offer."
             action={
-              <Button type="button" onClick={() => (csd ? goProducts() : setNeedsAccount(true))}>
+              <Button type="button" onClick={() => goProducts()}>
                 Start Investing
               </Button>
             }
@@ -273,7 +267,6 @@ export function InvestHome() {
 
   const products = () => (
     <div className="flex flex-col gap-6">
-      {csd?.status === "pending" && <p className="px-1 text-[13px] text-muted-foreground">Your securities account is being set up.</p>}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <ActionTile
           icon={TermDepositIcon}
@@ -296,7 +289,6 @@ export function InvestHome() {
       <PageHeader title="Invest" />
       <InvestDevTools section="Invest" states={STATES} value={state} onChange={(v) => setState(v as PageState)} labels={STATE_LABELS} />
       <InvestWelcome />
-      <SecuritiesAccountDialog open={needsAccount} onOpenChange={setNeedsAccount} />
       <SegmentedControl aria-label="Invest view" options={VIEWS} value={view} onChange={setView} />
       {view === "products" ? products() : yourInvestments()}
     </div>

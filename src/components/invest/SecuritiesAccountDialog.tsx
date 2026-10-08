@@ -29,7 +29,7 @@ export function SecuritiesAccountDialog({
         </DialogHeader>
         <DialogBody>
           <p className="text-[14px] leading-relaxed text-muted-foreground">
-            To start investing, you need a securities account. It’s held with the Central Securities Depository, where what you own is recorded, and it’s ready within 7 working days.
+            To invest in Treasury Bills and Government Bonds, you need a securities account. It’s held with the Central Securities Depository, where your holdings are registered, and it’s ready within 7 working days.
           </p>
         </DialogBody>
         <DialogFooter>

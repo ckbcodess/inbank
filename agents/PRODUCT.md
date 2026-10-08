@@ -242,6 +242,9 @@ Open questions live in [WORKING_LOG.md](WORKING_LOG.md), not here.
   offered once, after onboarding, and never gates sign-up.
 - `[DECIDED 2026-08-26]` PAPSS replaced the generic international wire in Send Money. SWIFT came back
   on 2026-10-01 as **Outside Ghana**. If a country is PAPSS-eligible, the customer is offered PAPSS.
+- `[DECIDED 2026-10-08]` **Invest rails separation (Term Deposits vs Treasury).** Term Deposits are
+  direct bank fixed deposits (no CSD securities account required, instant creation). Treasury Bills &
+  Bonds are government securities held at the CSD and require an active securities account (7-day setup).
 
 ## 8. Scope
 

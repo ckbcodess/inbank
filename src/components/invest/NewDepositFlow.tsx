@@ -21,14 +21,13 @@ import { TrueEmptyState } from "@/components/states/ListStates";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { AmountInput, FromAccountSelector, InsufficientFundsAlert, ProceedButton } from "@/components/payments/flows/shared";
-import { AccountRequired, AuthSummary, FactsPanel, INVEST_HOME } from "@/components/invest/parts";
-import { CreateProfileFlow } from "@/components/invest/CreateProfileFlow";
-import { DEPOSITS_HOME, DepositInstructionField, OutcomeFailure, postDepositEntry } from "@/components/invest/term-deposit-parts";
+import { AuthSummary, FactsPanel, INVEST_HOME } from "@/components/invest/parts";
+import { DepositInstructionField, OutcomeFailure, postDepositEntry } from "@/components/invest/term-deposit-parts";
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { sumMoney } from "@/lib/money";
 import { useSession } from "@/lib/session-store";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
-import { addDays, MOCK_TODAY, useMyTreasury, useTreasuryAccounts } from "@/lib/treasury";
+import { addDays, MOCK_TODAY, useTreasuryAccounts } from "@/lib/treasury";
 import {
   depositInstructionLabel,
   interestFor,
@@ -48,7 +47,6 @@ export function NewDepositFlow() {
   const params = useSearchParams();
   const chosenDays = Number(params.get("days")) || null;
   const { hydrated } = useMyDeposits();
-  const { csd } = useMyTreasury();
   const ownerId = useSession((s) => s.actor?.id) ?? "guest";
   const openDeposit = useTermDeposits((s) => s.open);
   const failRequests = useTermDeposits((s) => s.failRequests);
@@ -58,8 +56,6 @@ export function NewDepositFlow() {
   const [screen, setScreen] = useState<"form" | "review" | "success" | "failed">("form");
   const [pickedFrom, setPickedFrom] = useState("");
   const [tenure, setTenure] = useState<number | null>(TENURES.some((t) => t.days === chosenDays) ? chosenDays : null);
-  // Set once the customer has just created their securities account here, so its confirmation stays on screen.
-  const [profileStarted, setProfileStarted] = useState(false);
   const initialAmount = params.get("amount") || "";
   const [amount, setAmount] = useState(initialAmount);
   const [instruction, setInstruction] = useState<DepositInstruction>("close");
@@ -83,20 +79,6 @@ export function NewDepositFlow() {
   }
 
   if (!hydrated) return <FormPageSkeleton fields={3} />;
-
-  // No securities account yet: set it up right here, then carry on with this deposit when it is ready.
-  if (!csd || profileStarted) {
-    return (
-      <CreateProfileFlow
-        intent={{
-          href: chosenDays ? `${DEPOSITS_HOME}/new?days=${chosenDays}` : `${DEPOSITS_HOME}/new`,
-          label: chosenDays ? `${chosenDays}-day term deposit` : "term deposit",
-        }}
-        onCreated={() => setProfileStarted(true)}
-      />
-    );
-  }
-  if (csd.status !== "active") return <AccountRequired status={csd.status} title="New Term Deposit" backTo={back} />;
 
   if (accounts.length === 0) {
     return (

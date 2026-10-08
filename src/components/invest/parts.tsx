@@ -159,16 +159,16 @@ export function AccountRequired({
       <PageHeader title={title} backTo={backTo} />
       <TrueEmptyState
         icon={<ShieldCheck size={22} strokeWidth={1.8} />}
-        title={pending ? "Your securities account is being set up" : "You need an securities account first"}
+        title={pending ? "Your securities account is being set up" : "You need a securities account first"}
         description={
           pending
             ? `It will be ready within 7 working days. For support, call Customer Experience on ${SUPPORT_PHONE}.`
-            : "It’s set up the first time you start an investment, and it’s ready within 7 working days."
+            : "It’s set up the first time you invest in treasury securities, and it’s ready within 7 working days."
         }
         action={
           pending ? undefined : (
             <Button nativeButton={false} render={<Link href="/invest/profile" />}>
-              Start Investing Now
+              Open Securities Account
             </Button>
           )
         }

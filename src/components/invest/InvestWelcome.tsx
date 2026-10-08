@@ -13,15 +13,15 @@ import { useMyTreasury, useTreasury, useTreasuryHydrated } from "@/lib/treasury"
 const BENEFITS = [
   { icon: TrendingUp, title: "See what you’ll earn first", detail: "You see what you pay and what you get back before you confirm." },
   { icon: CalendarClock, title: "Choose how long", detail: "From 91 days to a year, or longer with bonds." },
-  { icon: Landmark, title: "Lend to the Government of Ghana", detail: "Treasury bills and bonds are loans to the government." },
+  { icon: Landmark, title: "Grow your money with confidence", detail: "Choose between GCB Term Deposits and Government of Ghana Treasury Bills & Bonds." },
 ] as const;
 
 export function InvestWelcome() {
   const hydrated = useTreasuryHydrated();
-  const { ownerId, csd, welcomed } = useMyTreasury();
+  const { ownerId, welcomed } = useMyTreasury();
   const markWelcomed = useTreasury((s) => s.markWelcomed);
 
-  const open = hydrated && ownerId !== "guest" && !csd && !welcomed;
+  const open = hydrated && ownerId !== "guest" && !welcomed;
   const close = () => markWelcomed(ownerId);
 
   return (
