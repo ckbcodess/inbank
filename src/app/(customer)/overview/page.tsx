@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import { GcbDashboard, type DashStatus } from "@/components/dashboard/v2/GcbDashboard";
 import { HeroWaveTuner } from "@/components/dashboard/v2/HeroWaveTuner";
 import { OPEN_FUND_EVENT } from "@/lib/payment-options";
-import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import { FirstRunWelcome } from "@/components/dashboard/v2/FirstRunWelcome";
 import { QuickFundModal, type FundResume } from "@/components/dashboard/v2/QuickFundModal";
 import { useCardPaymentReturn } from "@/lib/card-payment";
@@ -17,19 +16,8 @@ import { SaveSourcePrompt, sourceFromFunding, useIsLinked } from "@/components/d
 import {
   clearHasSkippedFunding,
   peekVerifiedMobile,
-  setFirstRun,
-  setPendingFundPrompt,
-  setPendingReferral,
   type PendingFundingSource,
 } from "@/lib/device-trust";
-import { ChevronDown, Sparkles } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import {
@@ -164,25 +152,6 @@ function OverviewContent() {
     setSaveSource(sourceFromFunding(method, details));
   };
 
-  const triggerPostOnboarding = (
-    stage: "all" | "referral" | "ready" | "fund" | "source"
-  ) => {
-    setFirstRun("new");
-    if (stage === "all" || stage === "referral") {
-      setPendingReferral(true);
-    }
-    if (stage === "all" || stage === "ready" || stage === "fund") {
-      setPendingFundPrompt(true);
-    }
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(
-        new CustomEvent("open-welcome-flow", {
-          detail: { stage, kind: "new" },
-        })
-      );
-    }
-  };
-
   return (
     <>
       <StateSwitcher
@@ -223,54 +192,6 @@ function OverviewContent() {
       />
       {saveSource && !saveSourceLinked && (
         <SaveSourcePrompt source={saveSource} onDone={() => setSaveSource(null)} />
-      )}
-
-      {SHOW_DEMO_TOOLS && (
-        <>
-        {/* Session helper: button to bring up post-onboarding cards for editing (easily removed after session) */}
-        <div className="fixed bottom-5 right-5 z-40">
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex h-9 cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-3.5 text-[13px] font-medium text-foreground shadow-lg transition-colors hover:bg-muted outline-none">
-              <Sparkles size={14} className="text-muted-foreground" aria-hidden="true" />
-              <span>Post-Onboarding Cards</span>
-              <ChevronDown size={13} className="text-muted-foreground" aria-hidden="true" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuItem
-                className="cursor-pointer text-[13px] font-medium"
-                onClick={() => triggerPostOnboarding("all")}
-              >
-                Play Full Sequence →
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="cursor-pointer text-[13px]"
-                onClick={() => triggerPostOnboarding("referral")}
-              >
-                1. Referral Code
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="cursor-pointer text-[13px]"
-                onClick={() => triggerPostOnboarding("ready")}
-              >
-                2. Fund Account Prompt
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="cursor-pointer text-[13px]"
-                onClick={() => triggerPostOnboarding("fund")}
-              >
-                3. Quick Fund Modal
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="cursor-pointer text-[13px]"
-                onClick={() => triggerPostOnboarding("source")}
-              >
-                4. Save Funding Source
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        </>
       )}
     </>
   );
