@@ -2344,12 +2344,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           ))}
         </HorizontalScrollStrip>
 
-        {/* 2 Separate Category Cards matching user uploaded image */}
+        {/* 2 Separate Category Cards */}
         <div className="flex flex-col gap-3.5">
           {/* Card 1: Generate Token for myself */}
           <ActionTile
             icon={Smartphone}
             title="Generate for Myself"
+            description="Withdraw cash at any GCB ATM using your registered mobile number"
             onClick={() => {
               setCardlessCategory("self");
               setF((p) => ({
@@ -2361,7 +2362,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 wRef: "",
               }));
               setStage(1);
-              setStage1Collapsed(true);
+              setStage1Collapsed(false);
             }}
             className="p-4.5"
           />
@@ -2370,6 +2371,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           <ActionTile
             icon={Users}
             title="Generate for Others"
+            description="Send an ATM cashout token to another mobile recipient"
             onClick={() => {
               setCardlessCategory("third-party");
               setF((p) => ({
@@ -3470,6 +3472,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   recipientName: f.benName,
                   amount: f.wAmount || f.bankAmount,
                   narration: f.wRef || f.bankRef,
+                  category: f.category,
                   saveBeneficiary: f.saveBeneficiary,
                   beneficiaryNickname: f.beneficiaryNickname,
                 }}
@@ -3480,6 +3483,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   else if (key === "amount") set("wAmount", val as string);
                   else if (key === "narration") set("wRef", val as string);
                   else if (key === "wNetwork") set("wNetwork", val as string);
+                  else if (key === "category") set("category", val as string);
                   else set(key, val);
                 }}
                 detailsCollapsed={stage1Collapsed}

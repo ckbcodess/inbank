@@ -1,19 +1,17 @@
 "use client";
 
-import { useState, useMemo, useEffect, useLayoutEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { Smartphone } from "lucide-react";
 import { Account } from "@/lib/mock-data";
-import {
-} from "@/components/ui/select";
 import {
   FromAccountSelector,
   AmountInput,
   NarrationInput,
+  CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
   CollapsedDetailsBadge,
   AccountVerificationStatus,
-  VerifiedAccountBadge,
-  ResolvingAccountBadge,
   NETWORKS,
   detectTelcoNetwork,
   operatorBadgeIcon,
@@ -24,8 +22,8 @@ import {
 import { REGISTERED_PHONE } from "../useAuthorisation";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
-
 import { Field } from "@/components/ui/field";
+
 export interface CardlessFormState {
   fromId: string;
   withdrawalType: "self" | "third-party";
@@ -34,6 +32,7 @@ export interface CardlessFormState {
   recipientName: string;
   amount: string;
   narration: string;
+  category?: string;
   saveBeneficiary?: boolean;
   beneficiaryNickname?: string;
 }
@@ -56,29 +55,13 @@ export function CardlessWithdrawalFlow({
   onToggleCollapsed,
 }: CardlessWithdrawalFlowProps) {
   const isSelf = state.withdrawalType === "self";
-  const [internalCollapsed, setInternalCollapsed] = useState(
-    detailsCollapsed !== undefined ? detailsCollapsed : isSelf
-  );
+  const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
   const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
 
   const setCollapsed = (val: boolean) => {
     setInternalCollapsed(val);
     onToggleCollapsed?.(val);
   };
-
-  // Withdrawing for yourself needs no recipient details, so that section
-  // collapses when "self" is chosen. The parent's callback is read through a
-  // ref so a new function each render doesn't re-run this.
-  const onToggleRef = useRef(onToggleCollapsed);
-  useLayoutEffect(() => {
-    onToggleRef.current = onToggleCollapsed;
-  });
-  useEffect(() => {
-    if (isSelf) {
-      setInternalCollapsed(true);
-      onToggleRef.current?.(true);
-    }
-  }, [isSelf]);
 
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
@@ -125,7 +108,6 @@ export function CardlessWithdrawalFlow({
 
       {/* 2. Beneficiary / Network & Phone Details */}
       <Field label="Beneficiary Details">
-
         {isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={isSelf ? "Myself (Cardless Code)" : (verifiedName || state.recipientName || `Recipient ${state.recipientPhone}`)}
@@ -134,15 +116,18 @@ export function CardlessWithdrawalFlow({
                 ? `Self Cash Withdrawal · ${formatGhPhone(REGISTERED_PHONE)}`
                 : `${state.wNetwork || "MTN Mobile Money"} · ${formatGhPhone(state.recipientPhone)}`
             }
-            icon={!isSelf ? operatorBadgeIcon(state.wNetwork || "") : undefined}
-            nameCheck={isSelf ? undefined : { confirmed: Boolean(verifiedName), by: state.wNetwork || undefined }}
+            icon={isSelf ? <Smartphone size={18} className="text-primary" /> : operatorBadgeIcon(state.wNetwork || "")}
+            nameCheck={isSelf ? { confirmed: true } : { confirmed: Boolean(verifiedName), by: state.wNetwork || undefined }}
             onChange={() => setCollapsed(false)}
           />
         ) : (
           <div className="flex flex-col gap-3">
             {isSelf ? (
-              <div className="flex h-13 items-center justify-between rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
-                <span className="tabular">{REGISTERED_PHONE}</span>
+              <div className="flex h-13 items-center justify-between rounded-2xl border border-border/80 bg-muted/20 px-4 text-[14px] font-medium text-foreground">
+                <div className="flex items-center gap-2.5">
+                  <Smartphone size={18} className="text-muted-foreground" />
+                  <span className="tabular">{formatGhPhone(REGISTERED_PHONE)}</span>
+                </div>
                 <span className="text-[12px] text-muted-foreground font-normal">Registered Mobile</span>
               </div>
             ) : (
@@ -183,9 +168,9 @@ export function CardlessWithdrawalFlow({
             )}
           </div>
         )}
-</Field>
+      </Field>
 
-      {/* Progressive Disclosure: Only reveal Amount & Narration after Verification */}
+      {/* Progressive Disclosure: Only reveal Amount, Narration & Category after Verification */}
       {isVerified && (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount Input */}
@@ -197,12 +182,8 @@ export function CardlessWithdrawalFlow({
             onFocus={() => {
               if (isVerified) setCollapsed(true);
             }}
-            hasError={overBalance}
+            error={overBalance ? <InsufficientFundsAlert /> : undefined}
           />
-
-          {overBalance && (
-            <InsufficientFundsAlert />
-          )}
 
           {/* 4. Narration Input */}
           <NarrationInput
@@ -211,8 +192,18 @@ export function CardlessWithdrawalFlow({
             placeholder="Reason for cardless withdrawal (optional)"
           />
 
-          {/* 5. Proceed Button */}
-          <ProceedButton disabled={!isValid} onClick={onProceed} label="Generate Withdrawal Token" />
+          {/* 5. Transaction Category (Optional) */}
+          <CategorySelect
+            value={state.category || ""}
+            onChange={(val) => onChange("category", val)}
+          />
+
+          {/* 6. Proceed Button */}
+          <ProceedButton
+            disabled={!isValid}
+            onClick={onProceed}
+            label="Generate Withdrawal Token"
+          />
         </div>
       )}
     </div>
