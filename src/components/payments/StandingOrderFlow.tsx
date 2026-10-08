@@ -675,16 +675,16 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
         {/* Header with back button */}
-        <div className="relative flex items-center">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <button
             type="button"
             onClick={() => setScreen("form")}
-            className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to form"
           >
-            <ChevronLeft size={22} strokeWidth={1.8} />
+            <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
             Review Standing Order
           </h1>
         </div>
@@ -738,16 +738,16 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
       {/* Header with back button */}
-      <div className="relative flex items-center">
+      <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
         <button
           type="button"
           onClick={() => setRail(null)}
-          className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+          className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
           aria-label="Back to Select a standing order"
         >
-          <ChevronLeft size={22} strokeWidth={1.8} />
+          <ChevronLeft size={20} strokeWidth={1.8} />
         </button>
-        <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+        <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
           {railConfig.title} Standing Order
         </h1>
       </div>

@@ -111,63 +111,33 @@ interface Crumb {
 
 function BreadcrumbView({ list }: { list: Crumb[] }) {
   if (list.length === 0) return null;
-  const currentCrumb = list[list.length - 1];
-  const parentCrumb = list.length > 1 ? list[list.length - 2] : null;
 
   return (
-    <nav aria-label="Breadcrumbs" className="flex items-center min-w-0">
-      {/* Mobile: Only current page with left-pointing chevron linking back */}
-      <div className="flex sm:hidden items-center min-w-0">
-        {parentCrumb ? (
-          <BackLink
-            href={parentCrumb.href}
-            className="group flex items-center gap-1 text-foreground hover:text-foreground transition-colors min-w-0"
-            title={`Back to ${parentCrumb.label}`}
-          >
-            <ChevronLeft
-              size={17}
-              strokeWidth={2}
-              className="text-muted-foreground group-hover:text-foreground shrink-0 transition-colors -ml-1"
+    <nav aria-label="Breadcrumbs" className="hidden sm:flex items-center gap-1.5 text-[13px] leading-none min-w-0">
+      {list.map((crumb, idx) => (
+        <div key={crumb.href || crumb.label} className="flex items-center gap-1.5">
+          {idx > 0 && (
+            <ChevronRight
+              size={13}
+              strokeWidth={1.7}
+              className="text-muted-foreground/40 shrink-0"
               aria-hidden="true"
             />
-            <span className="font-medium text-foreground truncate max-w-[180px] text-[13.5px]">
-              {currentCrumb.label}
+          )}
+          {crumb.isLast ? (
+            <span className="font-medium text-foreground truncate max-w-[320px]">
+              {crumb.label}
             </span>
-          </BackLink>
-        ) : (
-          <span className="font-medium text-foreground truncate max-w-[200px] text-[13.5px]">
-            {currentCrumb.label}
-          </span>
-        )}
-      </div>
-
-      {/* Desktop: Complete breadcrumb trail */}
-      <div className="hidden sm:flex items-center gap-1.5 text-[13px] leading-none">
-        {list.map((crumb, idx) => (
-          <div key={crumb.href || crumb.label} className="flex items-center gap-1.5">
-            {idx > 0 && (
-              <ChevronRight
-                size={13}
-                strokeWidth={1.7}
-                className="text-muted-foreground/40 shrink-0"
-                aria-hidden="true"
-              />
-            )}
-            {crumb.isLast ? (
-              <span className="font-medium text-foreground truncate max-w-[320px]">
-                {crumb.label}
-              </span>
-            ) : (
-              <Link
-                href={crumb.href}
-                className="text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {crumb.label}
-              </Link>
-            )}
-          </div>
-        ))}
-      </div>
+          ) : (
+            <Link
+              href={crumb.href}
+              className="text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {crumb.label}
+            </Link>
+          )}
+        </div>
+      ))}
     </nav>
   );
 }

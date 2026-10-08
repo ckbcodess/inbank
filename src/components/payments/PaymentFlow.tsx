@@ -2077,16 +2077,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if (rail === "bank" && !bankCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="relative flex items-center">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <button
             type="button"
             onClick={handleBackNavigation}
-            className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to Send & Pay"
           >
-            <ChevronLeft size={22} strokeWidth={1.8} />
+            <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
             Which bank do you want to send to?
           </h1>
         </div>
@@ -2189,16 +2189,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if ((rail === "wallet" || rail === "momo") && !walletCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="relative flex items-center">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <button
             type="button"
             onClick={handleBackNavigation}
-            className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to Send & Pay"
           >
-            <ChevronLeft size={22} strokeWidth={1.8} />
+            <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
             Which wallet do you want to send to?
           </h1>
         </div>
@@ -2280,20 +2280,18 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if (rail === "cardless" && !cardlessCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="relative flex items-center justify-between">
-          <div className="flex items-center">
-            <button
-              type="button"
-              onClick={handleBackNavigation}
-              className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-              aria-label="Back to Send & Pay"
-            >
-              <ChevronLeft size={22} strokeWidth={1.8} />
-            </button>
-            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
-              Who is this token for?
-            </h1>
-          </div>
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <button
+            type="button"
+            onClick={handleBackNavigation}
+            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
+            aria-label="Back to Send & Pay"
+          >
+            <ChevronLeft size={20} strokeWidth={1.8} />
+          </button>
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
+            Who is this token for?
+          </h1>
         </div>
 
         {/* Recent Beneficiaries Strip */}
@@ -2459,16 +2457,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if (rail === "bill" && !billCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="relative flex items-center">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <button
             type="button"
             onClick={handleBackNavigation}
-            className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to Send & Pay"
           >
-            <ChevronLeft size={22} strokeWidth={1.8} />
+            <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
             GCB Pay
           </h1>
         </div>
@@ -2527,16 +2525,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if (rail === "proxy" && !proxyCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="relative flex items-center">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <button
             type="button"
             onClick={handleBackNavigation}
-            className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to Send & Pay"
           >
-            <ChevronLeft size={22} strokeWidth={1.8} />
+            <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
             Proxy Payments
           </h1>
         </div>
@@ -2665,16 +2663,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if (rail === "group" && !groupCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="relative flex items-center">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <button
             type="button"
             onClick={handleBackNavigation}
-            className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to Send & Pay"
           >
-            <ChevronLeft size={22} strokeWidth={1.8} />
+            <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
             Group Payments
           </h1>
         </div>
@@ -2743,16 +2741,16 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     const isData = rail === "data";
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="relative flex items-center">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <button
             type="button"
             onClick={handleBackNavigation}
-            className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to Send & Pay"
           >
-            <ChevronLeft size={22} strokeWidth={1.8} />
+            <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
             {isData ? "Who is this internet bundle for?" : "Who is this airtime for?"}
           </h1>
         </div>
@@ -2859,9 +2857,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   // Unified Progressive Disclosure Experience across ALL Services
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-      {/* Header with back button sitting outside the text */}
-      <div className="relative flex items-center justify-between">
-        <div className="flex items-center">
+      {/* Header with back button */}
+      <div className="flex items-center justify-between gap-3 min-w-0">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <button
             type="button"
             onClick={() => {
@@ -2887,12 +2885,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 handleBackNavigation();
               }
             }}
-            className="absolute -left-11 md:-left-12 top-1/2 -translate-y-1/2 flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to previous screen"
           >
-            <ChevronLeft size={22} strokeWidth={1.8} />
+            <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
             {getPageTitle()}
           </h1>
         </div>

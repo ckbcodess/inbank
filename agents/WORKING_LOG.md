@@ -542,6 +542,11 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - **Gap:** cardless withdrawal's "for myself" still offers only the registered number, not the linked wallets.
 - **Decision:** `OfferDetail` (`/invest/offer/[key]`) promoted to the grouped list design with the rate row integrated into the main facts panel (`Rate`, `Deposit period`, `Matures`, `Minimum deposit`) and an explicit worked breakdown in the example card (`You deposit`, `Estimated interest`, `You receive at maturity`). Standalone 40px hero rate and exploratory variant harness deleted.
 
+### 2026-10-08
+- **Decision (Mobile-native UX):** Breadcrumbs in `TopHeader` (`HeaderBreadcrumbs.tsx`) are hidden on mobile (`hidden sm:flex`). On mobile (<640px), the top bar remains clean with only the hamburger menu and action buttons.
+- **Decision (Subflow Navigation):** Replaced negative-offset absolute positioning (`-left-11`) with responsive in-flow flex back button headers in `PaymentFlow.tsx` and `StandingOrderFlow.tsx` so back buttons are never clipped or pushed off-screen on mobile screens.
+- **Decision (Mobile Platform Baseline):** Added Next.js `Viewport` export (`viewportFit: "cover"`, `interactiveWidget: "resizes-content"`) in `layout.tsx` and baseline CSS rules in `globals.css` (`-webkit-tap-highlight-color: transparent`, `touch-action: manipulation`, 16px input prevention of iOS zoom, `overscroll-behavior: none`).
+
 ---
 
 ## Consolidation history
