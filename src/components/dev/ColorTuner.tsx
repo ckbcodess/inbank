@@ -13,6 +13,7 @@ import { Copy, Crosshair, Palette, RotateCcw, Search } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useCaptureMode } from "@/lib/capture-mode";
+import { useDevToolsHidden } from "@/lib/dev-tools-visibility";
 import {
   discoverTunerGroups,
   hydrateColorTuner,
@@ -51,13 +52,14 @@ export function ColorTuner() {
 function ColorTunerInner() {
   const open = useTunerOpen();
   const captureMode = useCaptureMode();
+  const devToolsHidden = useDevToolsHidden();
 
   // Put any saved changes on the page as soon as the app is up, even when the panel is closed.
   useEffect(() => {
     hydrateColorTuner();
   }, []);
 
-  if (captureMode) return null;
+  if (captureMode || devToolsHidden) return null;
 
   return (
     <div data-color-tuner className="fixed bottom-5 right-[4.75rem] z-50 flex flex-col items-end gap-3">

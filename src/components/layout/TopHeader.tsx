@@ -34,6 +34,7 @@ import { useAmountVisibility } from "@/components/providers/AmountVisibilityProv
 import { useDevState } from "@/components/providers/DevStateProvider";
 import { DevStateMenuItems } from "@/components/states/DevStateMenuItems";
 import { useCaptureMode } from "@/lib/capture-mode";
+import { toggleDevToolsHidden, useDevToolsHidden } from "@/lib/dev-tools-visibility";
 import { NOTIFICATIONS } from "@/lib/mock-data";
 import {
   DropdownMenu,
@@ -125,6 +126,7 @@ export default function TopHeader({
   const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
   const { devState } = useDevState();
   const captureMode = useCaptureMode();
+  const devToolsHidden = useDevToolsHidden();
   const { t } = useTranslation();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -274,6 +276,22 @@ export default function TopHeader({
                 <ShieldCheck size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.security", "Security")}</span>
               </span>
+            </DropdownMenuItem>
+
+            {/* Dev Tools Visibility Toggle */}
+            <DropdownMenuItem
+              onClick={toggleDevToolsHidden}
+              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
+            >
+              <span className="flex items-center gap-3">
+                {devToolsHidden ? (
+                  <Eye size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                ) : (
+                  <EyeOff size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
+                )}
+                <span>{devToolsHidden ? "Show floating dev tools" : "Hide floating dev tools"}</span>
+              </span>
+              <span className="text-[10px] font-mono text-muted-foreground/70 bg-muted px-1.5 py-0.5 rounded">Ctrl+Shift+D</span>
             </DropdownMenuItem>
 
             <DropdownMenuSeparator className="my-1" />

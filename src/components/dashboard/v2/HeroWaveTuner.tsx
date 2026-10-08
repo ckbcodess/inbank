@@ -12,6 +12,7 @@ import { Copy, Pause, Play, RotateCcw, Waves } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useCaptureMode } from "@/lib/capture-mode";
+import { useDevToolsHidden } from "@/lib/dev-tools-visibility";
 import {
   HERO_WAVE_DEFAULTS,
   heroWaveExport,
@@ -43,7 +44,8 @@ const SLIDERS: { key: NumericKey; label: string; min: number; max: number; step:
 export function HeroWaveTuner() {
   const open = useWaveTunerOpen();
   const captureMode = useCaptureMode();
-  if (captureMode) return null;
+  const devToolsHidden = useDevToolsHidden();
+  if (captureMode || devToolsHidden) return null;
 
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">

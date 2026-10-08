@@ -24,6 +24,8 @@ import { ACTORS } from "@/lib/mock-data";
 import { ACTIVATION_STEPS, SIGNUP_STEPS, parseOnboardingStep } from "@/lib/onboarding-steps";
 import { forgetThisDevice, setFirstRun, setPendingFundPrompt, setPendingReferral, trustThisDevice } from "@/lib/device-trust";
 import { LEGACY_DEMO_MOBILE, MIGRATION_STEPS, parseMigrationStep } from "@/lib/migration";
+import { setDevToolsHidden, useDevToolsHidden } from "@/lib/dev-tools-visibility";
+import { EyeOff } from "lucide-react";
 
 const PERSONAS = [
   { id: "multi", label: "Several accounts" },
@@ -41,6 +43,7 @@ function PersonaFlowSwitcherContent() {
   const searchParams = useSearchParams();
   const { signIn, selectProfile, verifyMfa, signOut } = useSession();
   const activeTourId = useTour((s) => s.activeTourId);
+  const devToolsHidden = useDevToolsHidden();
   const [open, setOpen] = useState(false);
 
   const urlPersona = searchParams.get("persona");
@@ -56,7 +59,7 @@ function PersonaFlowSwitcherContent() {
   useEffect(() => setMounted(true), []);
 
   const onOnboarding = ONBOARDING_PATHS.some((p) => (p === "/" ? pathname === "/" : pathname?.startsWith(p)));
-  if (!mounted || !onOnboarding || activeTourId) return null;
+  if (!mounted || !onOnboarding || activeTourId || devToolsHidden) return null;
 
   const currentStep = parseOnboardingStep(searchParams.get("step"));
 
@@ -170,8 +173,20 @@ function PersonaFlowSwitcherContent() {
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent size="xl" className="sm:max-w-[920px]">
-          <DialogHeader>
+          <DialogHeader className="flex flex-row items-center justify-between">
             <DialogTitle>Jump to a step</DialogTitle>
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                setDevToolsHidden(true);
+              }}
+              className="mr-6 flex items-center gap-1.5 rounded-lg border border-border/80 px-2.5 py-1 text-[12px] text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+              title="Hide all floating dev tools. Press Ctrl+Shift+D to show them again anytime."
+            >
+              <EyeOff size={13} strokeWidth={1.8} />
+              <span>Hide floating tools <span className="opacity-60 text-[10px] font-mono">(Ctrl+Shift+D)</span></span>
+            </button>
           </DialogHeader>
           <DialogBody>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
