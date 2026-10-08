@@ -894,7 +894,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   // Progressive Disclosure Stage Control (1..4)
   const [stage, setStage] = useState<number>(1);
   const [stage1Collapsed, setStage1Collapsed] = useState(false);
-  const [showFeeBreakdown, setShowFeeBreakdown] = useState(false);
   const storedDefaultId = useAccountPrefs((s) => s.defaultAccountId);
   const [f, setF] = useState({
     // Pay from the account the customer came from (e.g. the dashboard's
@@ -3617,55 +3616,34 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               {/* Divider Line */}
               <div className="w-full border-t border-border/70 my-1" />
 
-              {/* Card 2: Amount & Fee Breakdown Container (Collapsible) */}
-              <div className="flex flex-col w-full rounded-[15.75px] border border-border bg-card overflow-hidden shadow-xs">
-                {/* Toggle Header */}
-                <button
-                  type="button"
-                  onClick={() => setShowFeeBreakdown((prev) => !prev)}
-                  className="flex items-center justify-between px-4 py-3 w-full hover:bg-muted/30 transition-colors cursor-pointer text-left"
-                >
-                  <span className="text-[13.5px] text-foreground font-normal">
-                    {showFeeBreakdown ? "Hide Amount Breakdown" : "Show Amount Breakdown"}
+              {/* Card 2: Amount & Fee Breakdown Container (Visible by default) */}
+              <div className="flex flex-col w-full rounded-[15.75px] border border-border bg-card overflow-hidden shadow-xs divide-y divide-border/60">
+                <div className="flex items-center justify-between px-4 py-3 w-full">
+                  <span className="text-[13.5px] text-muted-foreground">Transfer Amount</span>
+                  <span className="text-[13.5px] font-normal text-foreground tabular">
+                    {formatMoney(currentAmount, isForeign ? f.wCurrency : "GHS", true)}
                   </span>
-                  {showFeeBreakdown ? (
-                    <ChevronUp size={16} className="text-muted-foreground" />
-                  ) : (
-                    <ChevronDown size={16} className="text-muted-foreground" />
-                  )}
-                </button>
-
-                {/* Collapsible Content */}
-                {showFeeBreakdown && (
-                  <div className="flex flex-col w-full border-t border-border/60 divide-y divide-border/60 animate-in fade-in duration-150">
-                    <div className="flex items-center justify-between px-4 py-3 w-full">
-                      <span className="text-[13.5px] text-muted-foreground">Transfer Amount</span>
-                      <span className="text-[13.5px] text-foreground tabular">
-                        {formatMoney(currentAmount, isForeign ? f.wCurrency : "GHS", true)}
-                      </span>
-                    </div>
-                    {feeDetails.feeAmount > 0 && (
-                      <div className="flex items-center justify-between px-4 py-3 w-full">
-                        <span className="text-[13.5px] text-muted-foreground">
-                          {feeDetails.feeName || "Transfer Fee"}
-                          {rail === "swift" && f.wCharges === "recipient" ? " (taken from the amount)" : ""}
-                        </span>
-                        <span className="text-[13.5px] text-foreground tabular">
-                          {formatMoney(feeDetails.feeAmount, "GHS", true)}
-                        </span>
-                      </div>
-                    )}
-                    {isForeign && (
-                      <div className="flex items-center justify-between px-4 py-3 w-full">
-                        <span className="text-[13.5px] text-muted-foreground">Exchange Rate</span>
-                        <span className="text-[13.5px] text-foreground tabular">1 {f.wCurrency} = {rate} GHS</span>
-                      </div>
-                    )}
+                </div>
+                {feeDetails.feeAmount > 0 && (
+                  <div className="flex items-center justify-between px-4 py-3 w-full">
+                    <span className="text-[13.5px] text-muted-foreground">
+                      {feeDetails.feeName || "Transfer Fee"}
+                      {rail === "swift" && f.wCharges === "recipient" ? " (taken from the amount)" : ""}
+                    </span>
+                    <span className="text-[13.5px] font-normal text-foreground tabular">
+                      {formatMoney(feeDetails.feeAmount, "GHS", true)}
+                    </span>
+                  </div>
+                )}
+                {isForeign && (
+                  <div className="flex items-center justify-between px-4 py-3 w-full">
+                    <span className="text-[13.5px] text-muted-foreground">Exchange Rate</span>
+                    <span className="text-[13.5px] font-normal text-foreground tabular">1 {f.wCurrency} = {rate} GHS</span>
                   </div>
                 )}
 
-                {/* Total Row (Always displayed!) */}
-                <div className="flex items-center justify-between px-4 py-3.5 w-full bg-muted/40 dark:bg-muted/20 border-t border-border/70">
+                {/* Total Row */}
+                <div className="flex items-center justify-between px-4 py-3.5 w-full bg-muted/40 dark:bg-muted/20">
                   <span className="text-[13.5px] text-foreground font-normal">Total Debit</span>
                   <span className="text-[26px] sm:text-[28px] font-semibold text-foreground tracking-[-0.03em] tabular">
                     {formatMoney(totalDebit, "GHS", true)}
