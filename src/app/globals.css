@@ -1082,3 +1082,39 @@ html[data-hide-focus-ring] :focus-visible * {
 .rn-root .rn-ink {
   will-change: auto;
 }
+
+/* Pure CSS animations for verification badges and inline loading states */
+@keyframes badge-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.35);
+  }
+  65% {
+    opacity: 1;
+    transform: scale(1.14);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes verify-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-badge-pop {
+  animation: badge-pop 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.animate-verify-in {
+  animation: verify-enter 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+

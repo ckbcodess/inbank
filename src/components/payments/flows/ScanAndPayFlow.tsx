@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from "react";
 import {
   Camera,
-  CheckCircle2,
+  Check,
   Flashlight,
   QrCode,
   Store,
@@ -216,7 +216,9 @@ export function ScanAndPayFlow({
                   <div className="flex flex-col">
                     <div className="flex items-center gap-1.5">
                       <span className="text-[14px] font-medium text-foreground">{state.qrMerchant}</span>
-                      <CheckCircle2 size={14} strokeWidth={1.9} className="text-success-text shrink-0" />
+                      <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop">
+                        <Check size={9} strokeWidth={3} className="shrink-0" />
+                      </span>
                     </div>
                     <span className="text-[11.5px] text-muted-foreground">
                       Terminal: {state.qrCode || "Universal QR Verified"}
