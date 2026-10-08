@@ -271,7 +271,7 @@
   --success: oklch(0.62 0.15 150);
   --warning: oklch(0.72 0.16 75);
   --border: #ebebeb;
-  --ring: #f9c43f;
+  --ring: #b8b8b8;
   /* Secondary chart palette (complementary warm hue) */
   /*
    * Categorical data-viz palette — encodes IDENTITY (which category), not
@@ -326,7 +326,7 @@
   --hover-fill: 90%;
   --hover-mix-color: #000;
   --active-bg: color-mix(in oklch, var(--primary) 15%, transparent);
-  --active-border: #3400c2;
+  --active-border: #6f3434;
   --surface: oklch(0.985 0 0);
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
