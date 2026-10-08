@@ -822,23 +822,23 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
 
                 {/* STEP 5: DEPOSIT SUCCESS */}
                 {step === "success" && (
-                  <div className="flex flex-1 flex-col justify-between h-full py-2">
-                    <div className="flex flex-col items-center text-center gap-4 pt-6">
-                      <div className="flex size-14 items-center justify-center rounded-2xl bg-success/15 text-success-text shadow-2xs">
-                        <CheckCircle2 size={28} strokeWidth={1.9} />
+                  <div className="flex flex-1 flex-col justify-between h-full">
+                    <div className="my-auto flex flex-1 flex-col items-center justify-center gap-4 py-8 text-center">
+                      <div className="flex size-16 items-center justify-center rounded-2xl bg-success/15 text-success-text shadow-2xs">
+                        <CheckCircle2 size={32} strokeWidth={1.9} />
                       </div>
 
-                      <div className="flex flex-col gap-1">
-                        <DialogTitle className="tabular-nums text-[22px] font-medium tracking-tight text-foreground">
+                      <div className="flex max-w-[320px] flex-col gap-1.5">
+                        <DialogTitle className="tabular-nums text-[22px] font-medium tracking-tight text-foreground sm:text-[24px]">
                           GHS {parseFloat(amount).toFixed(2)} deposited
                         </DialogTitle>
-                        <p className="text-[13.5px] text-muted-foreground">
+                        <p className="text-[14px] leading-relaxed text-muted-foreground">
                           Available in your virtual account now.
                         </p>
                       </div>
                     </div>
 
-                    <div className="pt-6">
+                    <div className="pt-4">
                       <Button
                         type="button"
                         onClick={() => goTo("source")}
