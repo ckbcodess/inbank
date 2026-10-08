@@ -7,8 +7,29 @@ import { cn } from "@/lib/utils"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 
-function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
-  return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
+import { hideFocusRingUntilNextMove } from "@/lib/focus-ring"
+
+function DropdownMenu({ open, onOpenChange, ...props }: MenuPrimitive.Root.Props) {
+  const wasOpen = React.useRef(false);
+  React.useEffect(() => {
+    if (open) wasOpen.current = true;
+    else if (wasOpen.current) {
+      wasOpen.current = false;
+      hideFocusRingUntilNextMove();
+    }
+  }, [open]);
+
+  return (
+    <MenuPrimitive.Root
+      data-slot="dropdown-menu"
+      open={open}
+      onOpenChange={(next, details) => {
+        if (!next) hideFocusRingUntilNextMove();
+        onOpenChange?.(next, details);
+      }}
+      {...props}
+    />
+  );
 }
 
 function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {

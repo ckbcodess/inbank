@@ -118,7 +118,7 @@ function RowMenu({ label, children }: { label: string; children: React.ReactNode
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={label}
-        className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-1 focus-visible:ring-ring"
       >
         <MoreHorizontal size={17} strokeWidth={1.8} />
       </DropdownMenuTrigger>

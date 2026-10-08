@@ -951,8 +951,8 @@ export function AmountInput({
           nudge && "animate-amount-shake",
           disabled ? "bg-muted/30 cursor-not-allowed opacity-80" : "hover:bg-field-hover cursor-text",
           isError
-            ? "border-destructive/70 focus-within:border-destructive focus-within:ring-2 focus-within:ring-destructive/30"
-            : "border-field-border focus-within:border-field-border-focus focus-within:bg-field-focus focus-within:ring-2 focus-within:ring-field-border-focus/25"
+            ? "border-destructive focus-within:border-destructive focus-within:ring-1 focus-within:ring-destructive"
+            : "border-field-border focus-within:border-field-border-focus focus-within:bg-field-focus focus-within:ring-1 focus-within:ring-field-border-focus"
         )}
       >
         <div className="inline-flex items-center justify-center gap-2.5">
@@ -1301,7 +1301,7 @@ export function SaveBeneficiaryCheckbox({
           type="checkbox"
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}
-          className="size-4.5 rounded-[5px] border-border text-foreground focus:ring-ring/30 accent-foreground cursor-pointer"
+          className="size-4.5 rounded-[5px] border-border text-foreground focus:ring-ring accent-foreground cursor-pointer"
         />
         <span className="text-[14px] font-medium text-foreground">
           {label}

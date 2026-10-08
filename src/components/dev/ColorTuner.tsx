@@ -226,7 +226,7 @@ function ColorRow({
           type="button"
           onClick={onLocate}
           title="Show where this is used on the page"
-          className="flex min-w-0 cursor-pointer flex-col rounded-md text-left outline-none transition-colors hover:bg-muted/60 focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex min-w-0 cursor-pointer flex-col rounded-md text-left outline-none transition-colors hover:bg-muted/60 focus-visible:ring-1 focus-visible:ring-ring"
         >
           <span className={cn("truncate text-[12.5px]", changed ? "text-foreground" : "text-muted-foreground")}>{label}</span>
           <span className="flex items-center gap-1 truncate text-[11px] text-muted-foreground/70">

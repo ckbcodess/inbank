@@ -233,7 +233,7 @@
   --field-hover: #ffffff;
   --field-focus: #ffffff;
   --field-border: #ebebeb;
-  --field-border-focus: #0059ff;
+  --field-border-focus: #553911;
   /* Dropdown menus. */
   --menu: #ffffff;
   --menu-item-hover: #f5f5f5;
@@ -439,7 +439,7 @@
   --field-hover: #1c1c1c;
   --field-focus: #181818;
   --field-border: #292929;
-  --field-border-focus: #916f12;
+  --field-border-focus: #8a8a8a;
   --menu: #1a1a1a;
   --menu-item-hover: #282828;
   --device-frame: #2a2a2a;
@@ -527,7 +527,7 @@ html.i18n-pending body {
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring;
   }
   html {
     font-size: 14px;
@@ -1058,14 +1058,19 @@ input[type="number"] {
 }
 @keyframes skeleton-shimmer { to { transform: translateX(100%); } }
 
-/* Right after a modal closes, focus goes back to the control that opened it. Keep its ring off until the person
+/* Right after a modal or dropdown closes, focus goes back to the control that opened it. Keep its ring off until the person
    moves with the keyboard again (see lib/focus-ring.ts). The ring vars are set on the control, or on its children
    for group-focus-visible rings, so zeroing them removes the ring and leaves every other shadow alone. */
+html[data-hide-focus-ring] :focus,
+html[data-hide-focus-ring] :focus *,
 html[data-hide-focus-ring] :focus-visible,
 html[data-hide-focus-ring] :focus-visible * {
   --tw-ring-shadow: 0 0 #0000 !important;
   --tw-ring-offset-shadow: 0 0 #0000 !important;
+  --tw-ring-color: transparent !important;
   outline-color: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* @kitlangton/rolling-number (the balance roll) ships `.rn-ink { will-change: transform }`

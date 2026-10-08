@@ -851,7 +851,7 @@ export function VirtualCardDetailsView({
   ) : fundsAccount ? (
     <Link
       href={`/accounts/${fundsAccount.id}`}
-      className="group mx-auto flex h-8 max-w-full items-center justify-center gap-2 rounded-md text-[14px] outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      className="group mx-auto flex h-8 max-w-full items-center justify-center gap-2 rounded-md text-[14px] outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <span className="text-muted-foreground">Linked to</span>
       <span className="truncate text-foreground group-hover:underline group-hover:underline-offset-4">{fundsAccount.name}</span>

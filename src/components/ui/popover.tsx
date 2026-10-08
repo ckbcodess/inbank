@@ -6,7 +6,30 @@ import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
 import { cn } from "@/lib/utils"
 
 
-const Popover = PopoverPrimitive.Root
+import { hideFocusRingUntilNextMove } from "@/lib/focus-ring"
+
+function Popover({ open, onOpenChange, ...props }: PopoverPrimitive.Root.Props) {
+  const wasOpen = React.useRef(false);
+  React.useEffect(() => {
+    if (open) wasOpen.current = true;
+    else if (wasOpen.current) {
+      wasOpen.current = false;
+      hideFocusRingUntilNextMove();
+    }
+  }, [open]);
+
+  return (
+    <PopoverPrimitive.Root
+      open={open}
+      onOpenChange={(next, details) => {
+        if (!next) hideFocusRingUntilNextMove();
+        onOpenChange?.(next, details);
+      }}
+      {...props}
+    />
+  );
+}
+
 const PopoverTrigger = PopoverPrimitive.Trigger
 const PopoverClose = PopoverPrimitive.Close
 

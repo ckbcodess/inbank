@@ -26,7 +26,7 @@ export function OptionTile({ title, detail, value, selected, onSelect }: OptionT
       aria-checked={selected}
       onClick={onSelect}
       className={cn(
-        "flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border p-4 text-left transition-colors duration-hover outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "flex w-full cursor-pointer items-center justify-between gap-4 rounded-2xl border p-4 text-left transition-colors duration-hover outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         selected
           ? "border-[var(--active-border)] bg-[var(--active-bg)]"
           : "border-border bg-card hover:bg-muted/50",
