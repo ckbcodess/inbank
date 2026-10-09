@@ -354,8 +354,8 @@ export function HeroTopActions({
 }) {
   return (
     <div className={cn("relative z-10 flex items-center gap-2", className)}>
-      <HeroFxAction />
       <HeroQrAction />
+      <HeroFxAction />
     </div>
   );
 }

@@ -53,8 +53,10 @@ export function HeroLayout(props: DashViewProps) {
       <HeroStack
         hero={
           <HeroSurface className="flex flex-col items-center gap-6 rounded-t-3xl px-4 pb-16 pt-14 sm:pb-28 sm:pt-20">
-            <HeroQrAction className="absolute left-4 top-4 sm:left-6 sm:top-6" />
-            <HeroFxAction className="absolute right-4 top-4 sm:right-6 sm:top-6" />
+            <div className="absolute right-4 top-4 sm:right-6 sm:top-6 z-10 flex items-center gap-2">
+              <HeroQrAction />
+              <HeroFxAction />
+            </div>
             <div className="flex items-center gap-2">
               <AccountSwitcher data={data} onSelect={onSelectAccount} align="center" tone="hero" />
               <HeroAccountOptionsMenu data={data} />
