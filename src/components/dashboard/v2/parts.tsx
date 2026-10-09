@@ -8,7 +8,7 @@
  * every outbound link carries it (`?from=` / `?account=`).
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -155,17 +155,33 @@ export function CardHeader({ title, href, cta }: { title: string; href?: string;
 }
 
 /** A panel with nothing to show yet: what's missing, and the way to fix it. */
-export function PanelEmpty({ text, action }: { text: string; action?: { label: string; href: string } }) {
+export function PanelEmpty({
+  text,
+  action,
+}: {
+  text: string;
+  action?: { label: string; href?: string; onClick?: () => void };
+}) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-2 py-6 text-center sm:py-8">
       <p className="text-[13px] text-muted-foreground">{text}</p>
       {action && (
-        <Link
-          href={action.href}
-          className="text-[13px] text-foreground underline-offset-4 transition-colors hover:underline"
-        >
-          {action.label}
-        </Link>
+        action.href ? (
+          <Link
+            href={action.href}
+            className="text-[13px] text-foreground underline-offset-4 transition-colors hover:underline"
+          >
+            {action.label}
+          </Link>
+        ) : action.onClick ? (
+          <button
+            type="button"
+            onClick={action.onClick}
+            className="text-[13px] text-foreground underline-offset-4 transition-colors hover:underline cursor-pointer"
+          >
+            {action.label}
+          </button>
+        ) : null
       )}
     </div>
   );
@@ -762,30 +778,20 @@ export function ActivityBody({
   limit?: number;
   onOpenFundModal?: () => void;
 }) {
+  const { t } = useTranslation();
   if (loading) return <PanelSkeleton rows={limit} />;
   if (data.latestTxns.length === 0) {
     const account = selectedAccount(data);
     const isUnfunded = (account?.balance ?? 0) === 0;
-    if (isUnfunded) {
+    if (isUnfunded && onOpenFundModal) {
       return (
-        <div className="flex flex-col items-center justify-center gap-1.5 py-7 text-center px-4">
-          <span className="text-[13.5px] text-foreground font-medium">No activity yet</span>
-          <p className="text-[12.5px] text-muted-foreground max-w-[270px] leading-relaxed">
-            Once you fund your account, all your transfers, deposits, and card transactions will appear here.
-          </p>
-          {onOpenFundModal && (
-            <button
-              type="button"
-              onClick={onOpenFundModal}
-              className="mt-2 text-[12.5px] text-foreground font-medium hover:underline underline-offset-4 cursor-pointer"
-            >
-              Fund your account →
-            </button>
-          )}
-        </div>
+        <PanelEmpty
+          text={t("dashboard.noActivityYet", "No activity on this account yet.")}
+          action={{ label: t("dashboard.fundAccount", "Fund account"), onClick: onOpenFundModal }}
+        />
       );
     }
-    return <PanelEmpty text="No activity on this account yet." />;
+    return <PanelEmpty text={t("dashboard.noActivityYet", "No activity on this account yet.")} />;
   }
   return <RecentTransactions txns={data.latestTxns} showAmounts={showAmounts} limit={limit} />;
 }
@@ -835,7 +841,7 @@ export function CardsCard({
       {loading ? (
         <PanelSkeleton rows={2} />
       ) : data.cards.length === 0 ? (
-        <PanelEmpty text="No card on this account." action={{ label: "Request a card", href: "/cards/request" }} />
+        <PanelEmpty text={t("dashboard.noCardsOnAccount", "No card on this account.")} action={{ label: t("dashboard.requestCard", "Request a card"), href: "/cards/request" }} />
       ) : (
         <div className="flex flex-col gap-3">
           <CardsMini cards={data.cards} />
@@ -868,6 +874,11 @@ export function AnalyticsCard({
   showAmounts: boolean;
   className?: string;
 }) {
+  const { t } = useTranslation();
+  const allRangesEmpty = useMemo(() => {
+    return Object.values(data.spendByRange || {}).every((b) => (b?.total ?? 0) <= 0);
+  }, [data.spendByRange]);
+
   if (loading) {
     // The card as it will be: its own title, the half-ring with its hole, and the three range pills.
     return (
@@ -878,8 +889,10 @@ export function AnalyticsCard({
       >
         <span className="sr-only">Loading</span>
         <div className="flex items-center justify-between">
-          <h2 className="text-[17px] font-medium leading-none tracking-[-0.01em] text-foreground">My Spends</h2>
-          <span className="text-[13px] text-muted-foreground">Details</span>
+          <h2 className="text-[14px] font-medium leading-none text-foreground sm:text-[16px]">
+            {t("dashboard.mySpends", "My Spends")}
+          </h2>
+          <span className="text-[12.5px] text-muted-foreground">{t("dashboard.details", "Details")}</span>
         </div>
         <div className="relative my-auto flex flex-col items-center justify-center">
           <div className="relative aspect-[400/225] w-full max-w-[360px]">
@@ -895,12 +908,28 @@ export function AnalyticsCard({
       </div>
     );
   }
-  return <SpendsRadialChart
+
+  if (allRangesEmpty) {
+    return (
+      <Card className={className}>
+        <CardHeader
+          title={t("dashboard.mySpends", "My Spends")}
+          href={data.selectedAccountId ? `/accounts/${data.selectedAccountId}/expenses` : "/accounts"}
+          cta={t("dashboard.details", "Details")}
+        />
+        <PanelEmpty text={t("dashboard.noSpendingYet", "No spending on this account yet.")} />
+      </Card>
+    );
+  }
+
+  return (
+    <SpendsRadialChart
       byRange={data.spendByRange}
       showAmounts={showAmounts}
       className={className}
       href={data.selectedAccountId ? `/accounts/${data.selectedAccountId}/expenses` : "/accounts"}
-    />;
+    />
+  );
 }
 
 /** Exchange rates as a collapsible bar (headline pair peeks while closed). */
