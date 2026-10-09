@@ -3,7 +3,7 @@
 import { NetworkLogo } from "@/components/cards/NetworkLogo";
 import { toast } from "sonner";
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, X, Lock, ShieldAlert, RefreshCw } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Lock, Unlock, ShieldAlert, RefreshCw } from "lucide-react";
 import {
   Dialog,
   DialogBody,
@@ -309,8 +309,8 @@ export function VirtualCardView({
             onClick={handleToggleFreeze}
             className="flex items-center gap-2.5 px-4 py-2.5 text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-800 dark:text-slate-200 cursor-pointer"
           >
-            <Lock size={15} className="text-slate-400" />
-            <span>{isFrozen ? "Unblock card" : "Block card"}</span>
+            {isFrozen ? <Unlock size={15} className="text-slate-400" /> : <Lock size={15} className="text-slate-400" />}
+            <span>{isFrozen ? "Unblock Card" : "Block Card"}</span>
           </button>
 
           <button

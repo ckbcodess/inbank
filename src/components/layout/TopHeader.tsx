@@ -30,7 +30,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { useDevState } from "@/components/providers/DevStateProvider";
 import { DevStateMenuItems } from "@/components/states/DevStateMenuItems";
 import { useCaptureMode } from "@/lib/capture-mode";
@@ -123,13 +122,10 @@ export default function TopHeader({
   onSignOut,
 }: TopHeaderProps) {
   const router = useRouter();
-  const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
   const { devState } = useDevState();
   const captureMode = useCaptureMode();
   const devToolsHidden = useDevToolsHidden();
   const { t } = useTranslation();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
   const [logoutOpen, setLogoutOpen] = useState(false);
 
   const initials = actor.name
@@ -196,25 +192,6 @@ export default function TopHeader({
             </Button>
           </SimpleTooltip>
         )}
-
-        <SimpleTooltip
-          content={showAmounts ? t("header.hideAmounts", "Hide cash amounts") : t("header.showAmounts", "Show cash amounts")}
-          side="bottom"
-        >
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={toggleAmountVisibility}
-            aria-label={showAmounts ? t("header.hideAmounts", "Hide cash amounts") : t("header.showAmounts", "Show cash amounts")}
-            className="relative shrink-0 text-muted-foreground hover:text-foreground"
-          >
-            {mounted && showAmounts ? (
-              <Eye size={16} strokeWidth={1.9} />
-            ) : (
-              <EyeOff size={16} strokeWidth={1.9} className="text-warning-text" />
-            )}
-          </Button>
-        </SimpleTooltip>
 
         <DropdownMenu>
           <DropdownMenuTrigger

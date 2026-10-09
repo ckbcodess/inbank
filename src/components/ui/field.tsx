@@ -32,7 +32,7 @@ export function Field({
     <div className={cn("flex flex-col gap-2", className)}>
       <Label htmlFor={htmlFor}>
         {label}
-        {optional ? " (Optional)" : null}
+        {optional ? <span className="text-[12px] font-normal italic text-muted-foreground ml-1.5">(optional)</span> : null}
       </Label>
       {children}
       {error ? (

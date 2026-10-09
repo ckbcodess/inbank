@@ -27,9 +27,10 @@ import {
   Copy,
   Gauge,
   ArrowLeftRight,
-  CheckCircle2,
   Eye,
-  EyeOff, Ban,
+  EyeOff,
+  Lock,
+  Unlock,
 } from "lucide-react";
 import {
   Dialog,
@@ -45,6 +46,7 @@ import { InlineError } from "@/components/ui/inline-error";
 import { Input } from "@/components/ui/input";
 import {
   accountsForProfile,
+  formatMoney,
   type PaymentCard,
   type CardTransaction,
   getCardTransactions,
@@ -170,6 +172,200 @@ function DetailLine({ label, value, onCopy }: { label: string; value: string; on
 
 /** How long the card details stay on screen after the PIN. */
 const DETAILS_SECONDS = 15;
+
+type BlockReason = "fraud" | "personal" | "others";
+
+function BlockReasonDialog({
+  open,
+  onOpenChange,
+  cardName,
+  last4,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  cardName: string;
+  last4: string;
+}) {
+  const [reason, setReason] = useState<BlockReason>("fraud");
+  const [fraudUnauthorised, setFraudUnauthorised] = useState<"yes" | "no">("yes");
+  const [fraudPossession, setFraudPossession] = useState<"lost" | "stolen" | "neither">("lost");
+  const [personalOption, setPersonalOption] = useState<string>("misplaced");
+  const [otherDetails, setOtherDetails] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setTimeout(() => {
+      setSubmitting(false);
+      onOpenChange(false);
+      toast.success("Card blocked · Reason recorded", {
+        description: "Your security preferences have been saved. Unblocking will require your PIN.",
+      });
+    }, 400);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent size="md">
+        <DialogHeader>
+          <div className="flex items-center gap-2.5">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-destructive/10 text-destructive shrink-0">
+              <Lock size={17} strokeWidth={1.9} />
+            </div>
+            <div>
+              <DialogTitle>Reason for Blocking Card</DialogTitle>
+              <p className="text-[12px] text-muted-foreground mt-0.5">
+                {cardName} (•••• {last4}) is now blocked. Let us know why.
+              </p>
+            </div>
+          </div>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit}>
+          <DialogBody className="space-y-4">
+            {/* Primary Reason Selector */}
+            <div className="space-y-2">
+              <Label>Why are you blocking this card?</Label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: "fraud", label: "Suspect Fraud" },
+                  { id: "personal", label: "Personal" },
+                  { id: "others", label: "Others" },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setReason(item.id as BlockReason)}
+                    className={cn(
+                      "flex flex-col items-center justify-center rounded-xl border p-3 text-center transition-all cursor-pointer",
+                      reason === item.id
+                        ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground font-medium shadow-xs"
+                        : "border-border bg-card text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                    )}
+                  >
+                    <span className="text-[13px]">{item.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Follow-up Questionnaire */}
+            {reason === "fraud" && (
+              <div className="rounded-xl border border-border/70 bg-muted/30 p-3.5 space-y-3.5 animate-in fade-in duration-200">
+                <div className="space-y-1.5">
+                  <Label className="text-[12.5px] font-normal">Have you spotted unauthorised transactions?</Label>
+                  <div className="flex gap-2">
+                    {[
+                      { id: "yes", label: "Yes" },
+                      { id: "no", label: "No / Not sure" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setFraudUnauthorised(opt.id as "yes" | "no")}
+                        className={cn(
+                          "flex-1 rounded-lg border px-3 py-1.5 text-[12.5px] transition-colors cursor-pointer text-center",
+                          fraudUnauthorised === opt.id
+                            ? "border-[var(--active-border)] bg-card text-foreground font-medium"
+                            : "border-border bg-transparent text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-[12.5px] font-normal">Is the physical card lost or stolen?</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { id: "lost", label: "Lost" },
+                      { id: "stolen", label: "Stolen" },
+                      { id: "neither", label: "Still with me" },
+                    ].map((opt) => (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setFraudPossession(opt.id as "lost" | "stolen" | "neither")}
+                        className={cn(
+                          "rounded-lg border px-2 py-1.5 text-[12px] transition-colors cursor-pointer text-center",
+                          fraudPossession === opt.id
+                            ? "border-[var(--active-border)] bg-card text-foreground font-medium"
+                            : "border-border bg-transparent text-muted-foreground hover:text-foreground",
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {reason === "personal" && (
+              <div className="rounded-xl border border-border/70 bg-muted/30 p-3.5 space-y-2 animate-in fade-in duration-200">
+                <Label className="text-[12.5px] font-normal">What is your primary reason?</Label>
+                <div className="flex flex-col gap-1.5">
+                  {[
+                    { id: "misplaced", label: "Misplaced card temporarily" },
+                    { id: "budgeting", label: "Preventing unplanned or online spending" },
+                    { id: "travelling", label: "Travelling / Card not in use" },
+                  ].map((opt) => (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => setPersonalOption(opt.id)}
+                      className={cn(
+                        "flex items-center justify-between rounded-lg border px-3 py-2 text-left text-[12.5px] transition-colors cursor-pointer",
+                        personalOption === opt.id
+                          ? "border-[var(--active-border)] bg-card text-foreground font-medium"
+                          : "border-border bg-transparent text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      <span>{opt.label}</span>
+                      {personalOption === opt.id && <span className="text-[11px] text-foreground">✓</span>}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {reason === "others" && (
+              <div className="rounded-xl border border-border/70 bg-muted/30 p-3.5 space-y-2 animate-in fade-in duration-200">
+                <Field label="Additional details" optional>
+                  <Input
+                    value={otherDetails}
+                    onChange={(e) => setOtherDetails(e.target.value)}
+                    placeholder="E.g. Damaged chip, testing feature..."
+                    className="text-[13px]"
+                  />
+                </Field>
+              </div>
+            )}
+          </DialogBody>
+
+          <DialogFooter className="flex items-center justify-between gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                onOpenChange(false);
+                toast.success("Card blocked", { description: "Unblocking it will ask for your PIN." });
+              }}
+            >
+              Skip
+            </Button>
+            <Button type="submit" loading={submitting}>
+              Submit Reason
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export function VirtualCardDetailsView({
   card,
@@ -524,6 +720,8 @@ export function VirtualCardDetailsView({
     triggerToast(`Copied ${label} to clipboard`);
   };
 
+  const [blockReasonOpen, setBlockReasonOpen] = useState(false);
+
   const handleToggleFreeze = () => {
     const nextFrozen = !isFrozen;
     setIsFrozen(nextFrozen);
@@ -532,7 +730,11 @@ export function VirtualCardDetailsView({
     // Write through to the shared card store so the Cards page and dashboard agree.
     setCardStatusInStore(currentCard.id, newStatus);
     if (onUpdateCard) onUpdateCard({ status: newStatus });
-    triggerToast(nextFrozen ? "Card blocked. Unblocking it will ask for your PIN." : "Card unblocked and active");
+    if (nextFrozen) {
+      setBlockReasonOpen(true);
+    } else {
+      triggerToast("Card unblocked and active");
+    }
     setActiveModal(null);
   };
 
@@ -733,12 +935,12 @@ export function VirtualCardDetailsView({
                         title="Top Up Card Balance"
                       />
                     ) : (
-                      hasPin && <RoundAction icon={KeypadIcon} label="Show PIN" onClick={handleOpenPinModal} disabled={isFrozen} />
+                      hasPin && <RoundAction icon={KeypadIcon} label="Show Card PIN" onClick={handleOpenPinModal} disabled={isFrozen} />
                     )}
                     <RoundAction icon={CreditCard} label="View Details" onClick={() => setDetailsAuthOpen(true)} />
                     <RoundAction
-                      icon={isFrozen ? CheckCircle2 : Ban}
-                      label={isFrozen ? "Unblock card" : "Block card"}
+                      icon={isFrozen ? Unlock : Lock}
+                      label={isFrozen ? "Unblock Card" : "Block Card"}
                       onClick={() => (isFrozen ? setUnblockAuthOpen(true) : handleToggleFreeze())}
                     />
                   </div>
@@ -884,7 +1086,7 @@ export function VirtualCardDetailsView({
     hasPin && isFundable ? (
       <ManageRow
         icon={KeypadIcon}
-        title="Show PIN"
+        title="Show Card PIN"
         description={isFrozen ? "Unblock the card to view its PIN" : undefined}
         disabled={isFrozen}
         onClick={handleOpenPinModal}
@@ -968,7 +1170,7 @@ export function VirtualCardDetailsView({
                         )}
                       >
                         {isCredit ? "+ " : "− "}
-                        <RevealingAmount amount={item.amount} currency={currentCard.currency || "GHS"} />
+                        {formatMoney(item.amount, currentCard.currency || "GHS", true)}
                       </span>
                       {isFailed ? (
                         <span className="text-[11.5px] text-destructive font-normal">
@@ -1795,6 +1997,14 @@ export function VirtualCardDetailsView({
         open={activeModal === "tracking"}
         onOpenChange={(open) => !open && setActiveModal(null)}
         initialView={initialTrackerView}
+      />
+
+      {/* 11. Block Reason Questionnaire Modal */}
+      <BlockReasonDialog
+        open={blockReasonOpen}
+        onOpenChange={setBlockReasonOpen}
+        cardName={currentCard.name || "Card"}
+        last4={currentCard.maskedNumber?.slice(-4) || "••••"}
       />
     </div>
   );

@@ -41,7 +41,7 @@ import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import { ListErrorState, TrueEmptyState } from "@/components/states/ListStates";
 import type { BaselineState } from "@/lib/states";
-import { findAccount, formatDate, transactionsForAccount, type Account, type Transaction } from "@/lib/mock-data";
+import { findAccount, formatDate, formatMoney, transactionsForAccount, type Account, type Transaction } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
 import { accountHolderName } from "@/lib/account-holder";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
@@ -411,7 +411,7 @@ function ActivityRow({ t }: { t: Transaction }) {
         <span className="flex shrink-0 flex-col items-end gap-0.5">
           <span className={cn("text-[14px] tabular", isCredit ? "text-success" : "text-foreground")}>
             {isCredit ? "+ " : "− "}
-            <RevealingAmount amount={t.amount} currency={t.currency} />
+            {formatMoney(t.amount, t.currency, true)}
           </span>
           {isFailed ? (
             <span className="text-[11.5px] text-destructive">Failed</span>

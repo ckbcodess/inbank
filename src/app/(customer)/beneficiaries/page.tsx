@@ -73,7 +73,6 @@ import { toast } from "sonner";
 import { PhoneInput } from "@/components/ui/phone-input";
 
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Field } from "@/components/ui/field";
 type ActiveTab = "people" | "billers" | "groups";
 type TypeFilter = "all" | TransactionType;
@@ -1500,18 +1499,14 @@ export default function BeneficiariesPage() {
 </Field>
 
             {/* Step 4: Optional Nickname / Reference */}
-            <div className="flex flex-col gap-2">
-              <Label>
-                Nickname / Note <span className="text-[11px] text-muted-foreground/60">(Optional)</span>
-              </Label>
+            <Field label="Nickname / Note" optional>
               <Input
                 type="text"
                 value={form.nickname}
                 onChange={(e) => setForm((p) => ({ ...p, nickname: e.target.value }))}
                 placeholder="e.g. Landlord, Monthly Groceries"
-                
               />
-            </div>
+            </Field>
           </DialogBody>
 
           {/* Sticky Footer with Primary Button */}

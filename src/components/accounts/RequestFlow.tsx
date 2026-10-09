@@ -396,7 +396,7 @@ export default function RequestFlow({ account }: { account: Account }) {
                 />
               </Field>
               {purpose && (
-                <Field label="Addressed to (Optional)" htmlFor="addressee">
+                <Field label="Addressed to" optional htmlFor="addressee">
                   <Input
                     id="addressee"
                     value={addressee}
@@ -479,9 +479,19 @@ export default function RequestFlow({ account }: { account: Account }) {
 /* ── Fields — the Send & Pay form controls ─────────────────────────────── */
 
 
-function Field({ label, htmlFor, children }: { label: string; htmlFor?: string; children: React.ReactNode }) {
+function Field({
+  label,
+  htmlFor,
+  optional,
+  children,
+}: {
+  label: string;
+  htmlFor?: string;
+  optional?: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <UiField label={label} htmlFor={htmlFor} className="animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+    <UiField label={label} htmlFor={htmlFor} optional={optional} className="animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
       {children}
     </UiField>
   );

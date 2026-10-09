@@ -8,8 +8,7 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
 } from "lucide-react";
-import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
-import type { Transaction } from "@/lib/mock-data";
+import { formatMoney, type Transaction } from "@/lib/mock-data";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -240,7 +239,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                     )}
                   >
                     {isDebit ? "− " : "+ "}
-                    <RevealingAmount amount={item.amount} currency="GHS" />
+                    {formatMoney(item.amount, "GHS", true)}
                   </span>
                   {isFailed ? (
                     <span className="text-[11.5px] text-destructive font-normal">

@@ -424,6 +424,8 @@ const accounts: Entry[] = [
   ["Something Else", "Autre chose", "Otro motivo", "其他"],
   ["Swift Code", "Code SWIFT", "Código SWIFT", "SWIFT 代码"],
   ["Visa or Embassy", "Visa ou ambassade", "Visado o embajada", "签证或使馆"],
+  ["Open a GCB account", "Ouvrir un compte GCB", "Abrir una cuenta GCB", "开立 GCB 账户"],
+  ["Open a GCB Account", "Ouvrir un compte GCB", "Abrir una cuenta GCB", "开立 GCB 账户"],
 ];
 
 export default accounts;

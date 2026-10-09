@@ -27,6 +27,7 @@ import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/field";
 interface CreateGroupFlowProps {
   groupToEdit?: PaymentGroup | null;
   onCancel?: () => void;
@@ -319,19 +320,15 @@ export default function CreateGroupFlow({
           </div>
 
           {/* Description (Optional) */}
-          <div className="flex flex-col gap-2">
-            <Label>
-              Description <span className="text-muted-foreground font-normal">(optional)</span>
-            </Label>
+          <Field label="Description" optional>
             <Input
               type="text"
               value={description}
               maxLength={120}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter narration"
-              
             />
-          </div>
+          </Field>
 
           {/* Select Members Section */}
           <div className="flex flex-col gap-2.5">

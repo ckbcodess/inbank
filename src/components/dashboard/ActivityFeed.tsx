@@ -21,8 +21,7 @@ import Link from "next/link";
 import { AlertCircle, ArrowUpRight, Copy, Layers, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
-import { formatDate, type Transaction } from "@/lib/mock-data";
-import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
+import { formatDate, formatMoney, type Transaction } from "@/lib/mock-data";
 
 const FAILED_STATES = new Set(["failed-single", "failed-bulk", "failed-trade"]);
 
@@ -82,7 +81,6 @@ function FailureDetail({ txn }: { txn: Transaction }) {
 }
 
 export function ActivityFeed({ transactions }: { transactions: Transaction[] }) {
-  useAmountVisibility();
   const recent = transactions.slice(0, 5);
 
   return (
@@ -122,7 +120,7 @@ export function ActivityFeed({ transactions }: { transactions: Transaction[] }) 
                   </span>
                   <span className="shrink-0 text-[13px] text-foreground tabular">
                     {t.direction === "debit" ? "− " : "+ "}
-                    <RevealingAmount amount={t.amount} currency={t.currency} />
+                    {formatMoney(t.amount, t.currency, true)}
                   </span>
                   <TransactionStatusBadge state={t.state} />
                   <ArrowUpRight

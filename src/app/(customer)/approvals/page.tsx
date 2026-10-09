@@ -31,8 +31,7 @@ import {
   TrueEmptyState,
 } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
-import { APPROVAL_QUEUE } from "@/lib/mock-data";
-import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
+import { APPROVAL_QUEUE, formatMoney } from "@/lib/mock-data";
 
 const LIST_STATES: readonly ListState[] = [
   "loading",
@@ -46,7 +45,6 @@ const LIST_STATES: readonly ListState[] = [
 type TypeFilter = "all" | "payment" | "trade";
 
 export default function ApprovalQueuePage() {
-  useAmountVisibility();
   const [state, setState] = useState<ListState>("populated");
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
@@ -181,7 +179,7 @@ export default function ApprovalQueuePage() {
                     </span>
 
                     <span className="shrink-0 text-[13.5px] text-foreground tabular">
-                      <RevealingAmount amount={item.amount} currency={item.currency} />
+                      {formatMoney(item.amount, item.currency, true)}
                     </span>
 
                     <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />

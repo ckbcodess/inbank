@@ -30,6 +30,7 @@ import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Field } from "@/components/ui/field";
 interface EditGroupModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -352,19 +353,15 @@ export default function EditGroupModal({
               </div>
 
               {/* Description */}
-              <div className="flex flex-col gap-2">
-                <Label>
-                  Description <span className="text-muted-foreground font-normal">(optional)</span>
-                </Label>
+              <Field label="Description" optional>
                 <Input
                   type="text"
                   value={description}
                   maxLength={120}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Optional description or circle purpose"
-                  
                 />
-              </div>
+              </Field>
             </div>
 
             {/* Split Type & Amount Configuration */}

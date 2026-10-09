@@ -360,7 +360,7 @@ function AccountsContent() {
               className="shrink-0"
             >
               <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-              <span>Add Account</span>
+              <span>{isWalletCustomer ? "Open a GCB account" : "Add Account"}</span>
             </Button>
           ) : undefined
         }

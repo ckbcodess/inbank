@@ -51,7 +51,6 @@ import {
   TRANSACTION_PAYMENT_METHODS,
   type Transaction,
 } from "@/lib/mock-data";
-import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { useSession } from "@/lib/session-store";
 import { cn } from "@/lib/utils";
 
@@ -187,7 +186,6 @@ export default function TransactionList({
 }: TransactionListProps) {
   const router = useRouter();
   const activeProfile = useSession((s) => s.activeProfile);
-  const { showAmounts } = useAmountVisibility();
 
   const [state, setState] = useState<ListState>("populated");
   const [query, setQuery] = useState("");
@@ -754,12 +752,10 @@ export default function TransactionList({
                     <span className={cn("tabular text-[14px]", colorClass)}>
                       {prefix}
                       {t.currency}{" "}
-                      {showAmounts
-                        ? t.amount.toLocaleString("en-US", {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })
-                        : "••••••"}
+                      {t.amount.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
                     </span>
                     <TransactionStatusText state={t.state} />
                   </div>

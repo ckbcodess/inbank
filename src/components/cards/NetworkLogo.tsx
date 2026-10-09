@@ -34,15 +34,9 @@ function Mastercard({ className }: { className?: string }) {
   );
 }
 
-/** Placeholder wordmark for GH-Link (GhIPSS) until the official artwork is supplied. */
+/** The GH-Link (GhIPSS) network logo from `/ghlink.svg`. */
 function GhLink({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 58 16" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} role="img" aria-label="GH-Link">
-      <text x="0" y="12.5" fontSize="14" fontWeight="700" fontStyle="italic" letterSpacing="-0.4" fill="currentColor" fontFamily="inherit">
-        GH-Link
-      </text>
-    </svg>
-  );
+  return <Image src="/ghlink.svg" alt="GH-Link" width={56} height={34} unoptimized className={cn("object-contain", className)} />;
 }
 
 /** The UnionPay mark, from `public/images/unionpay.svg`. Its own colours, like Mastercard's. */
