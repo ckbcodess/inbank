@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { Loader2 } from "lucide-react";
 import { Account, BILLERS } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -24,6 +26,7 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
+
 const GHANA_GOV_SERVICES = [
   "GRA — Domestic Tax",
   "GRA — Customs & Ports",
@@ -99,24 +102,87 @@ export function BillsPaymentFlow({
     return filteredBillers.find((b) => b.id === state.billerId) ?? filteredBillers[0];
   }, [filteredBillers, state.billerId]);
 
-  const verifiedName = useMemo(() => {
-    if (state.subType === "ecg") {
-      if (state.ecgMeter.trim().length >= 4) {
-        return resolveAccountName(state.ecgMeter, state.benName);
-      }
-      return "";
+  const currentRef = useMemo(() => {
+    if (state.subType === "ecg") return state.ecgMeter;
+    if (state.subType === "ghanagov") return state.govRef;
+    return state.billRef;
+  }, [state.subType, state.ecgMeter, state.govRef, state.billRef]);
+
+  const canVerify = useMemo(() => {
+    if (state.subType === "ghanagov" && !state.govService) return false;
+    if (state.subType === "bill" && !state.billerId && !selectedBiller?.id) return false;
+    return currentRef.trim().length >= 4;
+  }, [state.subType, state.govService, state.billerId, selectedBiller?.id, currentRef]);
+
+  const [verifiedRef, setVerifiedRef] = useState<string | null>(() => {
+    if (state.benName && currentRef.trim().length >= 4) {
+      return currentRef.trim();
     }
-    if (state.subType === "ghanagov") {
-      if (state.govRef.trim().length >= 4) {
-        return resolveAccountName(state.govRef, state.benName);
-      }
-      return "";
-    }
-    if (state.billRef.trim().length >= 4) {
-      return resolveAccountName(state.billRef, state.benName);
+    return null;
+  });
+
+  const [verifiedName, setVerifiedName] = useState<string>(() => {
+    if (state.benName && currentRef.trim().length >= 4) {
+      return state.benName;
     }
     return "";
-  }, [state.subType, state.ecgMeter, state.govRef, state.billRef, state.benName]);
+  });
+
+  const [isVerifying, setIsVerifying] = useState(false);
+
+  // Synchronize if beneficiary was pre-selected from external avatar/preset
+  useEffect(() => {
+    if (state.benName && currentRef.trim().length >= 4 && verifiedRef !== currentRef.trim()) {
+      setVerifiedRef(currentRef.trim());
+      setVerifiedName(state.benName);
+    }
+  }, [state.benName, currentRef, verifiedRef]);
+
+  const isVerified = Boolean(
+    verifiedRef &&
+    verifiedRef === currentRef.trim() &&
+    verifiedName
+  );
+
+  const handleVerify = () => {
+    if (!canVerify || isVerifying) return;
+    setIsVerifying(true);
+    const ref = currentRef.trim();
+    const resolved = resolveAccountName(ref, state.benName || "");
+    const finalName = resolved || "Verified Account Holder";
+
+    setTimeout(() => {
+      setVerifiedRef(ref);
+      setVerifiedName(finalName);
+      onChange("benName", finalName);
+      setIsVerifying(false);
+    }, 250);
+  };
+
+  const renderVerifyButton = () => (
+    <button
+      type="button"
+      onClick={handleVerify}
+      disabled={!canVerify || isVerifying}
+      className={cn(
+        "absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-2.5 py-1 text-[12.5px] font-medium transition-all rounded-lg select-none",
+        canVerify
+          ? "text-muted-foreground hover:text-foreground hover:bg-muted/70 active:scale-95 cursor-pointer"
+          : "text-muted-foreground/35 cursor-not-allowed pointer-events-none"
+      )}
+    >
+      {isVerifying ? (
+        <>
+          <Loader2 className="size-3.5 animate-spin text-muted-foreground" />
+          <span className="text-muted-foreground text-[12px]">Verifying...</span>
+        </>
+      ) : isVerified ? (
+        <span className="text-success-text text-[12px] font-medium">Verified</span>
+      ) : (
+        "Verify"
+      )}
+    </button>
+  );
 
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
@@ -124,10 +190,10 @@ export function BillsPaymentFlow({
   const isDestinationValid = useMemo(() => {
     if (state.subType === "ecg") return state.ecgMeter.trim().length >= 4;
     if (state.subType === "ghanagov") return Boolean(state.govService) && state.govRef.trim().length >= 4;
-    return Boolean(state.billerId) && state.billRef.trim().length >= 4;
-  }, [state.subType, state.ecgMeter, state.govService, state.govRef, state.billerId, state.billRef]);
+    return Boolean(state.billerId || selectedBiller?.id) && state.billRef.trim().length >= 4;
+  }, [state.subType, state.ecgMeter, state.govService, state.govRef, state.billerId, selectedBiller?.id, state.billRef]);
 
-  const isValid = Boolean(state.fromId) && isDestinationValid && Boolean(verifiedName) && numAmount > 0 && !overBalance;
+  const isValid = Boolean(state.fromId) && isDestinationValid && isVerified && Boolean(verifiedName) && numAmount > 0 && !overBalance;
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
@@ -140,7 +206,7 @@ export function BillsPaymentFlow({
 
       {/* 2. Biller & Reference / Account */}
       <Field label="Beneficiary Details">
-        {isDestinationValid && isCollapsed ? (
+        {isDestinationValid && isVerified && isCollapsed ? (
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || "Biller Account"}
             subtitle={
@@ -161,26 +227,43 @@ export function BillsPaymentFlow({
                   Electricity Company of Ghana (ECG)
                 </div>
 
-                <Input
-                  type="text"
-                  value={state.ecgMeter}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    onChange("ecgMeter", val);
-                    const resolved = resolveAccountName(val, "");
-                    if (resolved) onChange("benName", resolved);
-                  }}
-                  placeholder="Enter meter number"
-                  className="tabular"
-                />
+                <div className="relative">
+                  <Input
+                    type="text"
+                    value={state.ecgMeter}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onChange("ecgMeter", val);
+                      if (verifiedRef && verifiedRef !== val.trim()) {
+                        setVerifiedRef(null);
+                        setVerifiedName("");
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && canVerify && !isVerifying) {
+                        e.preventDefault();
+                        handleVerify();
+                      }
+                    }}
+                    placeholder="Enter meter number"
+                    className="tabular pr-20"
+                  />
+                  {renderVerifyButton()}
+                </div>
               </>
             ) : state.subType === "ghanagov" ? (
               <>
                 <Select
                   value={state.govService || ""}
-                  onValueChange={(val) => val && onChange("govService", val)}
+                  onValueChange={(val) => {
+                    if (val) {
+                      onChange("govService", val);
+                      setVerifiedRef(null);
+                      setVerifiedName("");
+                    }
+                  }}
                 >
-                  <SelectTrigger >
+                  <SelectTrigger>
                     <SelectValue placeholder="Select government agency" />
                   </SelectTrigger>
                   <SelectContent>
@@ -192,26 +275,43 @@ export function BillsPaymentFlow({
                   </SelectContent>
                 </Select>
 
-                <Input
-                  type="text"
-                  value={state.govRef}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    onChange("govRef", val);
-                    const resolved = resolveAccountName(val, "");
-                    if (resolved) onChange("benName", resolved);
-                  }}
-                  placeholder="Enter PRN or invoice number"
-                  className="tabular"
-                />
+                <div className="relative">
+                  <Input
+                    type="text"
+                    value={state.govRef}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onChange("govRef", val);
+                      if (verifiedRef && verifiedRef !== val.trim()) {
+                        setVerifiedRef(null);
+                        setVerifiedName("");
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && canVerify && !isVerifying) {
+                        e.preventDefault();
+                        handleVerify();
+                      }
+                    }}
+                    placeholder="Enter PRN or invoice number"
+                    className="tabular pr-20"
+                  />
+                  {renderVerifyButton()}
+                </div>
               </>
             ) : (
               <>
                 <Select
                   value={state.billerId || selectedBiller?.id || ""}
-                  onValueChange={(val) => val && onChange("billerId", val)}
+                  onValueChange={(val) => {
+                    if (val) {
+                      onChange("billerId", val);
+                      setVerifiedRef(null);
+                      setVerifiedName("");
+                    }
+                  }}
                 >
-                  <SelectTrigger >
+                  <SelectTrigger>
                     <SelectValue placeholder="Select biller" />
                   </SelectTrigger>
                   <SelectContent>
@@ -223,22 +323,33 @@ export function BillsPaymentFlow({
                   </SelectContent>
                 </Select>
 
-                <Input
-                  type="text"
-                  value={state.billRef}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    onChange("billRef", val);
-                    const resolved = resolveAccountName(val, "");
-                    if (resolved) onChange("benName", resolved);
-                  }}
-                  placeholder={selectedBiller ? `Enter ${selectedBiller.reference.toLowerCase()}` : "Enter account or reference number"}
-                  className="tabular"
-                />
+                <div className="relative">
+                  <Input
+                    type="text"
+                    value={state.billRef}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      onChange("billRef", val);
+                      if (verifiedRef && verifiedRef !== val.trim()) {
+                        setVerifiedRef(null);
+                        setVerifiedName("");
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && canVerify && !isVerifying) {
+                        e.preventDefault();
+                        handleVerify();
+                      }
+                    }}
+                    placeholder={selectedBiller ? `Enter ${selectedBiller.reference.toLowerCase()}` : "Enter account or reference number"}
+                    className="tabular pr-20"
+                  />
+                  {renderVerifyButton()}
+                </div>
               </>
             )}
 
-            {verifiedName && (
+            {isVerified && verifiedName && (
               <div className="flex flex-col gap-2 rounded-2xl border border-border/80 bg-muted/30 p-3.5 mt-1 animate-in fade-in duration-200">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[12.5px] text-muted-foreground">Customer Name</span>
@@ -265,14 +376,14 @@ export function BillsPaymentFlow({
       </Field>
 
       {/* Progressive Disclosure: Only reveal Amount & onwards after destination details are entered & verified */}
-      {isDestinationValid && verifiedName && (
+      {isDestinationValid && isVerified && (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount */}
           <AmountInput
             value={state.amount}
             onChange={(val) => onChange("amount", val)}
             onFocus={() => {
-              if (isDestinationValid) setCollapsed(true);
+              if (isDestinationValid && isVerified) setCollapsed(true);
             }}
             error={
               overBalance ? (

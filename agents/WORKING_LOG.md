@@ -185,6 +185,10 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-10-09
+
+- **Decision** Added the "Recommended for you" card stack panel to the dashboard (Figma node 5990:5504) in `src/components/dashboard/v2/RecommendedForYouCard.tsx`, filling the 6th slot of the dashboard grid (`dash-grid`) across Overview, Hero, HeroSplit and Actions layouts. Built with a static non-animating header row containing top-right chevron controls, layered depth cards, fluid Apple-style spring animations (`DECK_SPRING`), touch/drag swipe gestures (`drag="x"`), and direct CTA links (`/loans`, `/payments/bills?biller=dstv`, `/invest`, `/insure`).
+
 ### 2026-10-08
 
 - **Decision** Invest offer details gained an interactive timeline scrubber and custom amount entry in `ReturnVisual` (`components/invest/OfferDetail.tsx`). 10 bars show accrued return across the tenure: clicking or scrubbing with pointer events highlights the selected date, displays projected balance with an arrow badge, and shows remaining milestones as dashed future outlines. Custom deposit entry live-recalculates all bars and passes through to `NewDepositFlow` and `BuyFlow`.
@@ -549,6 +553,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - **Decision (Provider networks):** Added GhanaPay and G-Money networks and SVGs (`/ghanapay.svg`, `/gmoney.svg`) into `OPERATORS` (`lib/operators.ts`) and wallet pickers across the app.
 - **Decision (Onboarding & Auth):** Review details step in `/signup` and `/forgot-password` now use `PhoneInput` with country flag picker. MFA loader updated to "Logging you in...". Forgot password enforces selfie verification before new password input.
 - **Decision (Dashboard):** Balances hidden by default (`globalShowAmounts = false`, `splitCurrencyAndAmount` default `showAmounts = false`). Hero dashboard kebab options menu relocated beside `AccountSwitcher`; top-right CTA now holds QR code scan CTA alongside FX rates.
+- **Decision (GCB Pay / Bills Verification):** Replaced real-time on-type bill reference resolution with an in-field "Verify" button (`BillsPaymentFlow.tsx`). Typing no longer reveals customer details or amount input in real time; customer details and subsequent amount field only appear after clicking "Verify". Modifying the reference resets the verification state.
 
 ---
 
