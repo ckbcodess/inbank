@@ -11,7 +11,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, CreditCard, Lock } from "lucide-react";
+import { CheckCircle2, CreditCard, Lock, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AppLoader } from "@/components/ui/loader";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
@@ -98,7 +98,19 @@ export default function CardVerificationPage() {
 
       {/* Main Card View */}
       <main className="flex flex-1 items-center justify-center px-4 py-8 sm:py-12">
-        <div className="w-full max-w-[430px] rounded-3xl border border-border/80 bg-card p-7 sm:p-9 shadow-sm flex flex-col items-center text-center">
+        <div className="relative w-full max-w-[430px] rounded-3xl border border-border/80 bg-card p-7 sm:p-9 shadow-sm flex flex-col items-center text-center">
+          {step !== "verified" && (
+            <button
+              type="button"
+              onClick={cancel}
+              disabled={step === "verifying"}
+              aria-label="Close"
+              className="absolute top-4 right-4 sm:top-5 sm:right-5 flex size-8 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer disabled:pointer-events-none disabled:opacity-40"
+            >
+              <X size={18} strokeWidth={1.8} aria-hidden="true" />
+            </button>
+          )}
+
           {step === "verified" ? (
             <div className="flex flex-col items-center gap-3 py-6 text-center" role="status">
               <div className="flex size-14 items-center justify-center rounded-2xl bg-success/10 text-success-text">
@@ -177,7 +189,7 @@ export default function CardVerificationPage() {
                   <InlineError message="That code didn’t match. Check the latest message from your bank and try again." />
                 )}
 
-                <div className="flex flex-col gap-2 pt-1">
+                <div className="pt-1">
                   <Button
                     type="submit"
                     disabled={digits.join("").length < OTP_LENGTH}
@@ -186,15 +198,6 @@ export default function CardVerificationPage() {
                   >
                     Approve payment
                   </Button>
-
-                  <button
-                    type="button"
-                    onClick={cancel}
-                    disabled={step === "verifying"}
-                    className="text-[12.5px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
-                  >
-                    Cancel and return to GCB
-                  </button>
                 </div>
               </form>
             </div>
