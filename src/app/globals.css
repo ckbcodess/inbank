@@ -435,10 +435,10 @@
   --warning-text: oklch(0.82 0.14 85);
   --destructive-text: #fe5d6d;
   --info-text: oklch(0.78 0.12 250);
-  --field: #181818;
+  --field: #1a1a1a;
   --field-hover: #1c1c1c;
   --field-focus: #181818;
-  --field-border: #181818;
+  --field-border: #2b2b2b;
   --field-border-focus: #8a8a8a;
   --menu: #1a1a1a;
   --menu-item-hover: #282828;

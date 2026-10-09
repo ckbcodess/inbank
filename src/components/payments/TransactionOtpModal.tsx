@@ -15,6 +15,7 @@ import { Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import OtpInput from "@/components/auth/OtpInput";
+import { AppLoader } from "@/components/ui/loader";
 import { useAuthorisation, REGISTERED_PHONE } from "./useAuthorisation";
 import { OtpHelp, OtpPrompt } from "./OtpHelp";
 import { maskMobile } from "@/lib/auth-shared";
@@ -25,6 +26,8 @@ export interface TransactionOtpModalProps {
   onSuccess: (code?: string) => void;
   title?: string;
   phone?: string;
+  isUssd?: boolean;
+  amount?: string | number;
   /** What is being approved (amount, who, from where), restated above the code boxes so a bare code prompt can't be phished. */
   summary?: React.ReactNode;
 }
@@ -35,6 +38,8 @@ export default function TransactionOtpModal({
   onSuccess,
   title = "Authorization",
   phone = REGISTERED_PHONE,
+  isUssd = false,
+  amount,
   summary,
 }: TransactionOtpModalProps) {
   const displayPhone = maskMobile(phone);
@@ -42,6 +47,16 @@ export default function TransactionOtpModal({
   const formId = useId();
   const [submitting, setSubmitting] = useState(false);
   const [shortcodeOpen, setShortcodeOpen] = useState(false);
+
+  // USSD Auto-Approval simulation
+  useEffect(() => {
+    if (!open || !isUssd) return;
+    const timer = window.setTimeout(() => {
+      onOpenChange(false);
+      onSuccess("USSD_APPROVED");
+    }, 2800);
+    return () => window.clearTimeout(timer);
+  }, [open, isUssd, onOpenChange, onSuccess]);
 
   // A fresh code every time the modal opens.
   useEffect(() => {
@@ -76,6 +91,51 @@ export default function TransactionOtpModal({
       setSubmitting(false);
     }, 200);
   };
+
+  if (isUssd) {
+    const formattedAmount =
+      typeof amount === "number"
+        ? amount.toFixed(2)
+        : amount
+        ? parseFloat(String(amount).replace(/[^0-9.]/g, "") || "0").toFixed(2)
+        : null;
+
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent size="md">
+          <DialogHeader>
+            <DialogTitle>Approve on phone</DialogTitle>
+          </DialogHeader>
+
+          <div className="flex flex-col items-center text-center gap-4 px-6 py-8">
+            <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-2xs">
+              <Smartphone size={24} strokeWidth={1.8} />
+            </div>
+            <div className="flex flex-col gap-1">
+              {formattedAmount && (
+                <span className="tabular-nums text-[22px] font-semibold tracking-tight text-foreground">
+                  GHS {formattedAmount}
+                </span>
+              )}
+              <p className="text-[14px] text-muted-foreground">
+                Enter your Mobile Money PIN on your phone to approve.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 pt-2 text-[13px] text-muted-foreground">
+              <AppLoader size={15} />
+              <span>Waiting for approval…</span>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

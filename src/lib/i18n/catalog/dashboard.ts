@@ -3,6 +3,18 @@ import type { Entry } from "./types";
 /** Home dashboard, widgets, quick actions, analytics, FX mini, funding modal. */
 const dashboard: Entry[] = [
   ["Dashboard", "Tableau de bord", "Panel", "首页"],
+  ["Recommended for you", "Recommandé pour vous", "Recomendado para ti", "为您推荐"],
+  ["Access a Salary Advance", "Accédez à une avance sur salaire", "Accede a un anticipo de sueldo", "获取预支薪水"],
+  ["Get up to GHS 20,000 against your monthly salary in minutes.", "Obtenez jusqu'à 20 000 GHS sur votre salaire en quelques minutes.", "Obtén hasta 20.000 GHS sobre tu salario en minutos.", "数分钟内即可按月薪预支高达 20,000 GHS。"],
+  ["It's Almost That Time Again", "C'est bientôt l'heure", "Ya casi es esa época", "又到了这个时刻"],
+  ["Renew your DStv subscription to keep enjoying your favorite shows.", "Renouvelez votre abonnement DStv pour continuer à regarder vos programmes.", "Renueva tu suscripción a DStv para seguir disfrutando.", "续订您的 DStv 订阅，畅享精彩节目。"],
+  ["Make Your Money Work for You", "Faites fructifier votre argent", "Haz que tu dinero trabaje para ti", "让资金为您生息"],
+  ["Earn guaranteed competitive returns with a fixed Term Deposit.", "Bénéficiez de rendements compétitifs garantis avec un dépôt à terme.", "Obtén rendimientos competitivos garantizados con un depósito a plazo.", "通过定期存款获得稳健且具竞争力的收益。"],
+  ["Plan Ahead with Wealth Master Plan", "Anticipez avec le Plan Master Patrimoine", "Planifica con Wealth Master Plan", "通过财富总体规划提前规划"],
+  ["A flexible investment and protection plan for your family's future.", "Un plan d'investissement et de protection flexible pour l'avenir de votre famille.", "Un plan flexible de inversión y protección para el futuro de tu familia.", "为您的家庭未来提供灵活的投资与保障计划。"],
+  ["Renew DStv", "Renouveler DStv", "Renovar DStv", "续订 DStv"],
+  ["Open a Term Deposit", "Ouvrir un dépôt à terme", "Abrir un depósito a plazo", "开立定期存款"],
+  ["Explore & Apply", "Découvrir et postuler", "Explorar y solicitar", "了解并申请"],
   ["Your Accounts", "Vos comptes", "Tus cuentas", "您的账户"],
   ["Manage Accounts", "Gérer les comptes", "Gestionar cuentas", "管理账户"],
   ["Last login: {0}", "Dernière connexion : {0}", "Último inicio de sesión: {0}", "上次登录：{0}"],

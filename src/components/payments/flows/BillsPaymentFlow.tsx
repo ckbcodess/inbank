@@ -16,10 +16,10 @@ import {
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
-  VerifiedAccountBadge,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
   ScheduleFrequency,
+  resolveAccountName,
 } from "./shared";
 
 import { Input } from "@/components/ui/input";
@@ -101,33 +101,33 @@ export function BillsPaymentFlow({
 
   const verifiedName = useMemo(() => {
     if (state.subType === "ecg") {
-      if (state.ecgMeter.trim().length >= 5) {
-        return `ECG Prepaid · Meter ${state.ecgMeter.trim()}`;
+      if (state.ecgMeter.trim().length >= 4) {
+        return resolveAccountName(state.ecgMeter, state.benName);
       }
       return "";
     }
     if (state.subType === "ghanagov") {
       if (state.govRef.trim().length >= 4) {
-        return `${state.govService || "Ghana.gov"} · Ref ${state.govRef.trim()}`;
+        return resolveAccountName(state.govRef, state.benName);
       }
       return "";
     }
     if (state.billRef.trim().length >= 4) {
-      return `${selectedBiller?.name || "Biller"} · ${state.billRef.trim()}`;
+      return resolveAccountName(state.billRef, state.benName);
     }
     return "";
-  }, [state.subType, state.ecgMeter, state.govService, state.govRef, state.billRef, selectedBiller?.name]);
+  }, [state.subType, state.ecgMeter, state.govRef, state.billRef, state.benName]);
 
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
 
   const isDestinationValid = useMemo(() => {
-    if (state.subType === "ecg") return state.ecgMeter.trim().length >= 5;
+    if (state.subType === "ecg") return state.ecgMeter.trim().length >= 4;
     if (state.subType === "ghanagov") return Boolean(state.govService) && state.govRef.trim().length >= 4;
     return Boolean(state.billerId) && state.billRef.trim().length >= 4;
   }, [state.subType, state.ecgMeter, state.govService, state.govRef, state.billerId, state.billRef]);
 
-  const isValid = Boolean(state.fromId) && isDestinationValid && numAmount > 0 && !overBalance;
+  const isValid = Boolean(state.fromId) && isDestinationValid && Boolean(verifiedName) && numAmount > 0 && !overBalance;
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
@@ -142,15 +142,7 @@ export function BillsPaymentFlow({
       <Field label="Beneficiary Details">
         {isDestinationValid && isCollapsed ? (
           <CollapsedDetailsBadge
-            title={
-              verifiedName ||
-              state.benName ||
-              (state.subType === "ecg"
-                ? `Meter ${state.ecgMeter}`
-                : state.subType === "ghanagov"
-                ? state.govService || "Ghana.gov Service"
-                : selectedBiller?.name || "Biller Account")
-            }
+            title={verifiedName || state.benName || "Biller Account"}
             subtitle={
               state.subType === "ecg"
                 ? `Electricity Company of Ghana (ECG) · ${state.ecgMeter}`
@@ -158,6 +150,7 @@ export function BillsPaymentFlow({
                 ? `${state.govService || "Ghana.gov"} · Ref ${state.govRef}`
                 : `${selectedBiller?.name || "Biller"} · ${state.billRef}`
             }
+            nameCheck={{ confirmed: Boolean(verifiedName), by: state.subType === "ecg" ? "ECG" : state.subType === "ghanagov" ? "Ghana.gov" : selectedBiller?.name }}
             onChange={() => setCollapsed(false)}
           />
         ) : (
@@ -171,7 +164,12 @@ export function BillsPaymentFlow({
                 <Input
                   type="text"
                   value={state.ecgMeter}
-                  onChange={(e) => onChange("ecgMeter", e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onChange("ecgMeter", val);
+                    const resolved = resolveAccountName(val, "");
+                    if (resolved) onChange("benName", resolved);
+                  }}
                   placeholder="Enter meter number"
                   className="tabular"
                 />
@@ -197,7 +195,12 @@ export function BillsPaymentFlow({
                 <Input
                   type="text"
                   value={state.govRef}
-                  onChange={(e) => onChange("govRef", e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onChange("govRef", val);
+                    const resolved = resolveAccountName(val, "");
+                    if (resolved) onChange("benName", resolved);
+                  }}
                   placeholder="Enter PRN or invoice number"
                   className="tabular"
                 />
@@ -223,20 +226,46 @@ export function BillsPaymentFlow({
                 <Input
                   type="text"
                   value={state.billRef}
-                  onChange={(e) => onChange("billRef", e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onChange("billRef", val);
+                    const resolved = resolveAccountName(val, "");
+                    if (resolved) onChange("benName", resolved);
+                  }}
                   placeholder={selectedBiller ? `Enter ${selectedBiller.reference.toLowerCase()}` : "Enter account or reference number"}
                   className="tabular"
                 />
               </>
             )}
 
-            {verifiedName && <VerifiedAccountBadge name={verifiedName} />}
+            {verifiedName && (
+              <div className="flex flex-col gap-2 rounded-2xl border border-border/80 bg-muted/30 p-3.5 mt-1 animate-in fade-in duration-200">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[12.5px] text-muted-foreground">Customer Name</span>
+                  <span className="text-[13.5px] font-medium text-foreground">{verifiedName}</span>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[12.5px] text-muted-foreground">
+                    {state.subType === "ecg" ? "Meter Number" : state.subType === "ghanagov" ? "PRN / Reference" : "Account / Reference"}
+                  </span>
+                  <span className="text-[13px] font-mono text-foreground">
+                    {state.subType === "ecg" ? state.ecgMeter : state.subType === "ghanagov" ? state.govRef : state.billRef}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[12.5px] text-muted-foreground">Provider</span>
+                  <span className="text-[13px] text-foreground font-medium">
+                    {state.subType === "ecg" ? "Electricity Company of Ghana (ECG)" : state.subType === "ghanagov" ? (state.govService || "Ghana.gov") : (selectedBiller?.name || "Biller")}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         )}
-</Field>
+      </Field>
 
-      {/* Progressive Disclosure: Only reveal Amount & onwards after destination details are entered */}
-      {isDestinationValid && (
+      {/* Progressive Disclosure: Only reveal Amount & onwards after destination details are entered & verified */}
+      {isDestinationValid && verifiedName && (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount */}
           <AmountInput

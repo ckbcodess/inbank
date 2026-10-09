@@ -68,6 +68,7 @@ import { OtherGcbFlow } from "./flows/OtherGcbFlow";
 import { OtherBankFlow } from "./flows/OtherBankFlow";
 import { MobileWalletFlow } from "./flows/MobileWalletFlow";
 import { WalletToBankFlow } from "./flows/WalletToBankFlow";
+import { type Operator } from "@/lib/operators";
 import { AirtimeFlow } from "./flows/AirtimeFlow";
 import { DataBundleFlow } from "./flows/DataBundleFlow";
 import { BroadbandFlow } from "./flows/BroadbandFlow";
@@ -1297,9 +1298,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   // Live external name enquiry / account verification result
   const verifiedAccountName = useMemo(() => {
-    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") {
-      if (bankCategory === "own" && rail !== "wallet-to-bank") return ""; // Internal account transfers don't use external name enquiry
+    if (rail === "bank" || rail === "ach") {
+      if (bankCategory === "own") return ""; // Internal account transfers don't use external name enquiry
       return resolveAccountName(f.benAcct, f.benName);
+    }
+    if (rail === "wallet-to-bank") {
+      return "";
     }
     if (rail === "wallet" || rail === "momo") {
       return resolveAccountName(f.wPhone, f.wName);
@@ -1313,31 +1317,23 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       return resolveAccountName(f.aPhone, "");
     }
     if (rail === "bill") {
-      const matchedRecent = RECENT_AVATARS.find(
-        (x) => x.rail === "bill" && (x.billerId === f.billerId || x.acct === f.billRef)
-      );
-      if (matchedRecent && f.billRef === matchedRecent.acct) {
-        return `${matchedRecent.name} · ${biller?.name || matchedRecent.bank}`;
-      }
-      if (f.benName && f.billRef.trim().length >= 4) {
-        return `${f.benName} · ${biller?.name || "Biller"}`;
-      }
-      if (f.billRef.trim().length >= 4) {
-        return `${biller?.name || "Biller"} · Ref: ${f.billRef.trim()}`;
+      const ref = f.billRef.trim();
+      if (ref.length >= 4) {
+        return resolveAccountName(ref, f.benName);
       }
       return "";
     }
     if (rail === "ecg") {
-      if (f.benName) return f.benName;
-      if (f.ecgMeter.trim().length >= 5) {
-        return `ECG Prepaid · Meter: ${f.ecgMeter.trim()}`;
+      const ref = f.ecgMeter.trim();
+      if (ref.length >= 4) {
+        return resolveAccountName(ref, f.benName);
       }
       return "";
     }
     if (rail === "ghanagov") {
-      if (f.benName) return f.benName;
-      if (f.govRef.trim().length >= 5) {
-        return `Ghana.gov Invoice · ${f.govRef.trim()}`;
+      const ref = f.govRef.trim();
+      if (ref.length >= 4) {
+        return resolveAccountName(ref, f.benName);
       }
       return "";
     }
@@ -1352,19 +1348,20 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     f.pxId,
     f.aPhone,
     f.billRef,
-    biller?.name,
-    f.billerId,
     f.ecgMeter,
     f.govRef,
   ]);
 
   // Overall display name of recipient for Stage 2/3 and receipts
   const recipientDisplayName = useMemo(() => {
-    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") {
-      if (bankCategory === "own" && rail !== "wallet-to-bank") {
+    if (rail === "bank" || rail === "ach") {
+      if (bankCategory === "own") {
         return toOwnAccount ? `${toOwnAccount.name} (••${toOwnAccount.number.slice(-4)})` : "My GCB Account";
       }
       return verifiedAccountName || f.benName || (f.benAcct ? `Account ${f.benAcct}` : "Beneficiary");
+    }
+    if (rail === "wallet-to-bank") {
+      return account ? `${account.name} (••${account.number.slice(-4)})` : "My GCB Account";
     }
     if (rail === "wallet" || rail === "momo") {
       if (walletCategory === "self") return "My Own Wallet (Self)";
@@ -1380,20 +1377,15 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       return card ? `${card.name} (${card.maskedNumber})` : "Card Top up";
     }
     if (rail === "bill") {
-      const matchedRecent = RECENT_AVATARS.find(
-        (x) => x.rail === "bill" && (x.billerId === f.billerId || x.acct === f.billRef)
-      );
-      if (matchedRecent && f.billRef === matchedRecent.acct) {
-        return matchedRecent.name;
-      }
-      return f.benName || biller?.name || "Biller";
+      return verifiedAccountName || f.benName || biller?.name || "Biller";
     }
-    if (rail === "ecg") return "ECG — Electricity";
-    if (rail === "ghanagov") return f.govService || "Ghana.gov";
+    if (rail === "ecg") return verifiedAccountName || f.benName || "ECG — Electricity";
+    if (rail === "ghanagov") return verifiedAccountName || f.benName || f.govService || "Ghana.gov";
     if (rail === "qr") return f.qrMerchant || "Merchant";
     return f.benName || "Recipient";
   }, [
     rail,
+    account,
     topupCategory,
     isForeign,
     bankCategory,
@@ -1410,8 +1402,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     f.aPhone,
     f.cardId,
     biller?.name,
-    f.billerId,
-    f.billRef,
     f.govService,
     f.qrMerchant,
   ]);
@@ -1421,6 +1411,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   const reviewAccountLabel = useMemo(() => {
     if (rail === "card-topup") return "Destination Card";
+    if (rail === "wallet-to-bank") return "Destination Account";
     if (rail === "data" && topupCategory === "broadband") return "Broadband Account";
     if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") {
       return "Phone Number";
@@ -1437,11 +1428,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   const reviewAccountValue = useMemo(() => {
     if (bankCategory === "own" && rail !== "wallet-to-bank") return toOwnAccount?.number ? `••••${toOwnAccount.number.slice(-4)}` : "Own Account";
+    if (rail === "wallet-to-bank") return account?.number ? `••••${account.number.slice(-4)}` : "";
     if (rail === "card-topup") {
       const card = CARDS.find((c) => c.id === f.cardId);
       return card ? `${card.maskedNumber}` : "Card";
     }
-    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") return f.benAcct;
+    if (rail === "bank" || rail === "ach") return f.benAcct;
     if (rail === "wallet" || rail === "momo") return f.wPhone;
     if (rail === "airtime" || rail === "data") return f.aPhone;
     if (rail === "ecg") return f.ecgMeter;
@@ -1452,9 +1444,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "qr") return f.qrRef || "Verified GCB QR";
     if (rail === "swift") return f.wIban;
     return f.benAcct;
-  }, [bankCategory, toOwnAccount?.number, rail, f.wIban, f.benAcct, f.wPhone, f.aPhone, f.ecgMeter, f.billRef, f.govRef, f.pxId, f.cardId, selectedGroupObj, f.qrRef]);
+  }, [bankCategory, toOwnAccount?.number, account?.number, rail, f.wIban, f.benAcct, f.wPhone, f.aPhone, f.ecgMeter, f.billRef, f.govRef, f.pxId, f.cardId, selectedGroupObj, f.qrRef]);
 
   const reviewInstitutionLabel = useMemo(() => {
+    if (rail === "wallet-to-bank") return "Destination Bank";
     if (rail === "card-topup") return "Card Details";
     if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") {
       return "Network Provider";
@@ -1465,11 +1458,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   }, [rail]);
 
   const reviewInstitutionValue = useMemo(() => {
+    if (rail === "wallet-to-bank") return "GCB Bank PLC";
     if (rail === "card-topup") {
       const card = CARDS.find((c) => c.id === f.cardId);
       return card ? `${card.scheme} ${card.type} (${card.currency})` : "Prepaid Card";
     }
-    if (rail === "bank" || rail === "ach" || rail === "wallet-to-bank") return f.bank || "GCB Bank";
+    if (rail === "bank" || rail === "ach") return f.bank || "GCB Bank";
     if (rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data") return f.wNetwork || "Mobile Money";
     if (rail === "bill") return biller?.name || "Biller";
     if (rail === "ecg") return "Electricity Company of Ghana";
@@ -1886,7 +1880,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           ["Payment Method", isOwnTransfer ? "OWN ACCOUNT TRANSFER" : ((rail === "bank" && bankCategory === "other") || rail === "ach") && f.paymentMethod ? getPaymentMethodName(f.paymentMethod) : rail.toUpperCase()],
           ["Delivery Speed", isDualMandate ? "Upon Co-Signatory Approval" : (f.isScheduled ? `Scheduled for ${f.scheduleDate}` : deliverySpeed)],
           ["Payment Timing", f.isScheduled ? `Scheduled · ${f.scheduleFrequency === "once" ? "One-off" : f.scheduleFrequency.charAt(0).toUpperCase() + f.scheduleFrequency.slice(1)} (${f.scheduleDate})` : "Immediate Transfer"],
-          ["Fee", `${feeDetails.feeName}: ${feeDetails.feeAmount === 0 ? "Free (GHS 0.00)" : formatMoney(feeDetails.feeAmount, "GHS", true)}`],
+          ["Fee", feeDetails.feeAmount === 0 ? "Free (GHS 0.00)" : formatMoney(feeDetails.feeAmount, "GHS", true)],
           ...(f.saveBeneficiary ? ([["Beneficiary Saved", `Yes — ${f.beneficiaryNickname || resolvedName || "Saved to Payees"}`]] as [string, string][]) : []),
           ["From Account", `${account?.name} (••${account?.number.slice(-4)})`],
           ...(isOwnTransfer ? ([["To Account", `${toOwnAccount?.name} (••${toOwnAccount?.number.slice(-4)})`]] as [string, string][]) : []),
@@ -3111,27 +3105,32 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             {/* Flow 5: Mobile Wallet to Bank */}
             {rail === "wallet-to-bank" && (
               <WalletToBankFlow
+                accounts={accounts}
                 state={{
-                  bank: f.bank,
-                  benAcct: f.benAcct,
-                  benName: f.benName,
-                  amount: f.bankAmount || f.wAmount,
-                  narration: f.bankRef || f.wRef,
+                  toAccountId: f.fromId || account?.id || accounts[0]?.id || "",
+                  phone: f.wPhone || "0241234567",
+                  network: (f.wNetwork as Operator) || "MTN",
+                  amount: f.wAmount || f.bankAmount,
+                  narration: f.wRef || f.bankRef,
                   category: f.category,
-                  saveBeneficiary: f.saveBeneficiary,
-                  beneficiaryNickname: f.beneficiaryNickname,
                   isScheduled: f.isScheduled,
                   scheduleDate: f.scheduleDate,
                   scheduleFrequency: f.scheduleFrequency,
                   scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
-                  if (key === "amount") {
-                    set("bankAmount", val);
-                    set("wAmount", val);
+                  if (key === "toAccountId") {
+                    set("fromId", val as string);
+                  } else if (key === "phone") {
+                    set("wPhone", val as string);
+                  } else if (key === "network") {
+                    set("wNetwork", val as string);
+                  } else if (key === "amount") {
+                    set("bankAmount", val as string);
+                    set("wAmount", val as string);
                   } else if (key === "narration") {
-                    set("bankRef", val);
-                    set("wRef", val);
+                    set("bankRef", val as string);
+                    set("wRef", val as string);
                   } else set(key, val);
                 }}
                 detailsCollapsed={stage1Collapsed}
@@ -3658,7 +3657,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 {feeDetails.feeAmount > 0 && (
                   <div className="flex items-center justify-between px-4 py-3 w-full">
                     <span className="text-[13.5px] text-muted-foreground">
-                      {feeDetails.feeName || "Transfer Fee"}
+                      Fee
                       {rail === "swift" && f.wCharges === "recipient" ? " (taken from the amount)" : ""}
                     </span>
                     <span className="text-[13.5px] font-normal text-foreground tabular">
@@ -3715,9 +3714,11 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           </div>
         )}
 
-        {/* Transaction authorisation: a one-time code for every transaction */}
+        {/* Transaction authorisation: a one-time code for every transaction, or USSD for wallet-to-bank */}
         <TransactionOtpModal
           open={pinModalOpen || stage === 3}
+          isUssd={rail === "wallet-to-bank"}
+          amount={currentAmount}
           onOpenChange={(isOpen) => {
             setPinModalOpen(isOpen);
             if (!isOpen && stage === 3) setStage(2);

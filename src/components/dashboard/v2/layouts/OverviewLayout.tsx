@@ -21,6 +21,7 @@ import {
   Notices,
   PayAgainCard,
   PromoBanner,
+  RecommendedCard,
   RefreshControl,
   SPRING,
   type DashViewProps,
@@ -69,6 +70,7 @@ export function OverviewLayout(props: DashViewProps) {
           <AnalyticsCard data={data} loading={loading} showAmounts={showAmounts} />
           <CardsCard data={data} loading={loading} onOpenFundModal={props.onOpenFundModal} />
           <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} />
+          <RecommendedCard loading={loading} />
         </motion.div>
 
         <PromoBanner />

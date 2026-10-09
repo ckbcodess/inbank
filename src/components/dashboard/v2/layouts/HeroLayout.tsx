@@ -21,6 +21,7 @@ import {
   Notices,
   PayAgainCard,
   PromoBanner,
+  RecommendedCard,
   type DashViewProps,
 } from "../parts";
 import {
@@ -29,7 +30,8 @@ import {
   HeroStack,
   HeroSurface,
   LastLogin,
-  HeroTopActions,
+  HeroQrAction,
+  HeroFxAction,
   HeroAccountOptionsMenu,
 } from "../hero-parts";
 
@@ -51,7 +53,8 @@ export function HeroLayout(props: DashViewProps) {
       <HeroStack
         hero={
           <HeroSurface className="flex flex-col items-center gap-6 rounded-t-3xl px-4 pb-16 pt-14 sm:pb-28 sm:pt-20">
-            <HeroTopActions data={data} className="absolute right-4 top-4 sm:right-6 sm:top-6" />
+            <HeroQrAction className="absolute left-4 top-4 sm:left-6 sm:top-6" />
+            <HeroFxAction className="absolute right-4 top-4 sm:right-6 sm:top-6" />
             <div className="flex items-center gap-2">
               <AccountSwitcher data={data} onSelect={onSelectAccount} align="center" tone="hero" />
               <HeroAccountOptionsMenu data={data} />
@@ -82,6 +85,7 @@ export function HeroLayout(props: DashViewProps) {
           <AnalyticsCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
           <CardsCard data={data} loading={loading} className="rounded-3xl" onOpenFundModal={props.onOpenFundModal} />
           <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} className="rounded-3xl" />
+          <RecommendedCard loading={loading} className="rounded-3xl" />
         </AccountScoped>
       </HeroStack>
 

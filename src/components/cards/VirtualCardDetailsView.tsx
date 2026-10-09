@@ -618,6 +618,10 @@ export function VirtualCardDetailsView({
 
   // Card details (number, expiry, security code) are shown only after the PIN (or a one-time code) is entered.
   const [detailsAuthOpen, setDetailsAuthOpen] = useState(false);
+  // Reset PIN OTP Authorization state
+  const [resetPinAuthOpen, setResetPinAuthOpen] = useState(false);
+  const [resetNewPin, setResetNewPin] = useState("");
+  const [resetConfirmPin, setResetConfirmPin] = useState("");
   // Blocking is instant (it only ever makes the card safer); unblocking asks for the PIN first.
   const [unblockAuthOpen, setUnblockAuthOpen] = useState(false);
   const handleDetailsAuthSuccess = () => {
@@ -680,6 +684,18 @@ export function VirtualCardDetailsView({
     setPinCountdown(15);
     setActiveModal("pin");
     triggerToast("Identity verified. Card PIN revealed.");
+  };
+
+  const handleOpenResetPin = () => {
+    setResetPinAuthOpen(true);
+  };
+
+  const handleResetPinAuthSuccess = () => {
+    setResetPinAuthOpen(false);
+    setResetNewPin("");
+    setResetConfirmPin("");
+    setActiveModal("reset-pin");
+    triggerToast("Identity verified. Please enter your new card PIN.");
   };
 
   const handleExecuteTopUp = (e: React.FormEvent) => {
@@ -1092,7 +1108,7 @@ export function VirtualCardDetailsView({
         onClick={handleOpenPinModal}
       />
     ) : null;
-  const tReset = hasPin ? <ManageRow icon={Key} title="Reset PIN" onClick={() => setActiveModal("reset-pin")} /> : null;
+  const tReset = hasPin ? <ManageRow icon={Key} title="Reset PIN" onClick={handleOpenResetPin} /> : null;
   const tReplace = (
     <ManageRow icon={RefreshCw} title="Replace Card" description="Lost, damaged or expired" onClick={() => setActiveModal("replace")} />
   );
@@ -1683,6 +1699,14 @@ export function VirtualCardDetailsView({
         title="Authorize Unblock"
       />
 
+      {/* Security Authorization OTP Modal for Resetting Card PIN */}
+      <TransactionOtpModal
+        open={resetPinAuthOpen}
+        onOpenChange={setResetPinAuthOpen}
+        onSuccess={handleResetPinAuthSuccess}
+        title="Authorize PIN Reset"
+      />
+
       {/* 4. Set Limits Modal */}
       <Dialog open={activeModal === "limits"} onOpenChange={(open) => !open && setActiveModal(null)}>
         <DialogContent size="md">
@@ -1824,30 +1848,80 @@ export function VirtualCardDetailsView({
       </Dialog>
 
       {/* 6. Unblock / Reset PIN Modal */}
-      <Dialog open={activeModal === "reset-pin"} onOpenChange={(open) => !open && setActiveModal(null)}>
+      <Dialog
+        open={activeModal === "reset-pin"}
+        onOpenChange={(open) => {
+          if (!open) {
+            setActiveModal(null);
+            setResetNewPin("");
+            setResetConfirmPin("");
+          }
+        }}
+      >
         <DialogContent size="sm">
           <DialogHeader>
             <DialogTitle>Reset Card PIN</DialogTitle>
           </DialogHeader>
 
-          <DialogBody>
+          <DialogBody className="flex flex-col gap-4">
+            <p className="text-[13px] text-muted-foreground">
+              Set a new 4-digit PIN for ATM cash withdrawals and point-of-sale retail transactions.
+            </p>
+
             <Field label="New 4-Digit PIN" htmlFor="new-pin-input">
-              <Input id="new-pin-input" type="password" maxLength={4} placeholder="••••" className="tracking-widest text-[16px]" />
-</Field>
+              <Input
+                id="new-pin-input"
+                type="password"
+                inputMode="numeric"
+                maxLength={4}
+                value={resetNewPin}
+                onChange={(e) => setResetNewPin(e.target.value.replace(/\D/g, ""))}
+                placeholder="••••"
+                className="tracking-widest text-[16px] text-center font-mono"
+                autoFocus
+              />
+            </Field>
 
             <Field label="Confirm New PIN" htmlFor="confirm-pin-input">
-              <Input id="confirm-pin-input" type="password" maxLength={4} placeholder="••••" className="tracking-widest text-[16px]" />
-</Field>
+              <Input
+                id="confirm-pin-input"
+                type="password"
+                inputMode="numeric"
+                maxLength={4}
+                value={resetConfirmPin}
+                onChange={(e) => setResetConfirmPin(e.target.value.replace(/\D/g, ""))}
+                placeholder="••••"
+                className="tracking-widest text-[16px] text-center font-mono"
+              />
+            </Field>
+
+            {resetConfirmPin.length > 0 && resetNewPin !== resetConfirmPin && (
+              <p className="text-[12px] text-destructive font-medium">PINs do not match</p>
+            )}
           </DialogBody>
 
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setActiveModal(null)}>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setActiveModal(null);
+                setResetNewPin("");
+                setResetConfirmPin("");
+              }}
+            >
               Cancel
             </Button>
             <Button
+              disabled={
+                resetNewPin.length !== 4 ||
+                resetConfirmPin.length !== 4 ||
+                resetNewPin !== resetConfirmPin
+              }
               onClick={() => {
                 triggerToast("PIN reset successfully");
                 setActiveModal(null);
+                setResetNewPin("");
+                setResetConfirmPin("");
               }}
             >
               Update PIN

@@ -1,37 +1,26 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { Smartphone } from "lucide-react";
-import {
-} from "@/components/ui/select";
+import { useMemo, useEffect } from "react";
+import { Account } from "@/lib/mock-data";
 import {
   AmountInput,
   NarrationInput,
   CategorySelect,
-  InsufficientFundsAlert,
   ProceedButton,
-  AccountVerificationStatus,
-  VerifiedAccountBadge,
-  ResolvingAccountBadge,
-  CollapsedDetailsBadge,
-  BANKS,
+  FromAccountSelector,
   SchedulePaymentSection,
   ScheduleFrequency,
-  resolveAccountName,
-  BankSelect,
 } from "./shared";
-
-import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
+import { OwnWalletPicker, useOwnWallets, digitsOf, type OwnWallet } from "./OwnWalletPicker";
+
 export interface WalletToBankFormState {
-  bank: string;
-  benAcct: string;
-  benName: string;
+  toAccountId: string;
+  phone: string;
+  network: string;
   amount: string;
   narration: string;
   category: string;
-  saveBeneficiary?: boolean;
-  beneficiaryNickname?: string;
   isScheduled?: boolean;
   scheduleDate?: string;
   scheduleFrequency?: ScheduleFrequency;
@@ -39,6 +28,7 @@ export interface WalletToBankFormState {
 }
 
 interface WalletToBankFlowProps {
+  accounts: Account[];
   state: WalletToBankFormState;
   onChange: (key: keyof WalletToBankFormState, value: string | boolean | ScheduleFrequency | undefined) => void;
   onProceed: () => void;
@@ -47,162 +37,100 @@ interface WalletToBankFlowProps {
 }
 
 export function WalletToBankFlow({
+  accounts,
   state,
   onChange,
   onProceed,
-  detailsCollapsed,
-  onToggleCollapsed,
 }: WalletToBankFlowProps) {
-  const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
-  const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
+  const wallets = useOwnWallets();
+  const selectedAccount = useMemo(
+    () => accounts.find((a) => a.id === state.toAccountId) ?? accounts[0],
+    [accounts, state.toAccountId]
+  );
 
-  const setCollapsed = (val: boolean) => {
-    setInternalCollapsed(val);
-    onToggleCollapsed?.(val);
+  const selectedWallet = useMemo(
+    () => wallets.find((w) => digitsOf(w.phone) === digitsOf(state.phone)) ?? wallets[0],
+    [wallets, state.phone]
+  );
+
+  // Set default wallet details if empty
+  useEffect(() => {
+    if (!state.phone && selectedWallet) {
+      onChange("phone", selectedWallet.phone);
+      onChange("network", selectedWallet.network);
+    }
+  }, [state.phone, selectedWallet, onChange]);
+
+  const handleSelectWallet = (w: OwnWallet) => {
+    onChange("phone", w.phone);
+    onChange("network", w.network);
   };
-  const walletBalance = 1450.0; // Registered wallet available limit
-
-  const verifiedName = useMemo(() => {
-    return resolveAccountName(state.benAcct, state.benName);
-  }, [state.benAcct, state.benName]);
 
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
-  const overBalance = numAmount > walletBalance;
-  const isAcctValid = state.benAcct.replace(/\s/g, "").length >= 8;
-  const isDetailsValid = Boolean(state.bank) && isAcctValid;
-
-  // Same beat as the other bank flows: look the account up before asking for anything else.
-  const [resolving, setResolving] = useState(false);
-  useEffect(() => {
-    if (!isDetailsValid) {
-      setResolving(false);
-      return;
-    }
-    setResolving(true);
-    const timer = setTimeout(() => setResolving(false), 250);
-    return () => clearTimeout(timer);
-  }, [isDetailsValid, state.bank, state.benAcct]);
-
-  const isVerified = isDetailsValid && !resolving && Boolean(verifiedName);
-  const isValid = isVerified && numAmount > 0 && !overBalance;
+  const isPhoneValid = (state.phone || selectedWallet?.phone || "").replace(/[^0-9]/g, "").length >= 9;
+  const isValid = Boolean(selectedAccount) && isPhoneValid && numAmount > 0;
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
-      {/* 1. Source Mobile Wallet */}
+      {/* 1. Destination Bank Account */}
+      <FromAccountSelector
+        label="Destination Bank Account"
+        accounts={accounts}
+        value={state.toAccountId || selectedAccount?.id || ""}
+        onChange={(id) => onChange("toAccountId", id)}
+      />
+
+      {/* 2. Source Mobile Wallet Details — strictly tied to user's account */}
       <Field label="Source Mobile Wallet">
-        <div className="flex items-center justify-between h-[58px] min-h-[58px] px-3.5 w-full rounded-2xl border border-field-border bg-field gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
-              <Smartphone size={20} strokeWidth={1.8} />
-            </span>
-            <div className="flex flex-col min-w-0 text-left gap-0.5">
-              <span className="text-[14.5px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
-                MTN Mobile Money
-              </span>
-              <span className="text-[12.5px] text-muted-foreground font-normal truncate tabular leading-tight">
-                024 412 3456
-              </span>
-            </div>
-          </div>
-          <div className="text-right shrink-0">
-            <span className="text-[14.5px] text-foreground font-medium tabular tracking-tight">
-              GHS 1,450.00
-            </span>
-          </div>
-        </div>
-</Field>
-
-      {/* 2. Destination Bank Account */}
-      <Field label="Beneficiary Details">
-        {isVerified && isCollapsed ? (
-          <CollapsedDetailsBadge
-            title={verifiedName || state.benName || `Account ${state.benAcct}`}
-            subtitle={`${state.bank || "Bank"} · ${state.benAcct}`}
-            nameCheck={{ confirmed: Boolean(verifiedName), by: state.bank || undefined }}
-            onChange={() => setCollapsed(false)}
-          />
-        ) : (
-          <div className="flex flex-col gap-3">
-            <BankSelect value={state.bank || ""} onChange={(val) => onChange("bank", val)} options={BANKS} />
-
-            <Input
-              type="text"
-              inputMode="numeric"
-              value={state.benAcct}
-              onChange={(e) => {
-                const val = e.target.value.replace(/[^0-9]/g, "");
-                onChange("benAcct", val);
-                const resolved = resolveAccountName(val, "");
-                if (resolved) {
-                  onChange("benName", resolved);
-                }
-              }}
-              placeholder="Enter account number"
-              className="numorainput tabular"
-            />
-
-            {/* Verification Status */}
-            <AccountVerificationStatus
-              resolving={isDetailsValid && resolving}
-              name={isVerified ? verifiedName : null}
-              resolvingMessage="Verifying..."
-            />
-          </div>
-        )}
-</Field>
-
-      {/* Progressive disclosure: amount and onwards appear once the account is verified. */}
-      {isVerified && (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-        {/* 3. Amount */}
-        <AmountInput
-          value={state.amount}
-          onChange={(val) => onChange("amount", val)}
-          onFocus={() => {
-            if (isVerified) setCollapsed(true);
-          }}
-          error={
-            overBalance ? (
-              <InsufficientFundsAlert />
-            ) : undefined
-          }
+        <OwnWalletPicker
+          wallets={wallets}
+          selectedPhone={state.phone || selectedWallet?.phone || ""}
+          accounts={accounts}
+          onSelect={handleSelectWallet}
         />
+      </Field>
 
-        {/* 4. Narration */}
-        <NarrationInput
-          value={state.narration}
-          onChange={(val) => onChange("narration", val)}
-        />
+      {/* 3. Amount */}
+      <AmountInput
+        value={state.amount}
+        onChange={(val) => onChange("amount", val)}
+        currency="GHS"
+        label="Amount to Transfer"
+      />
 
-        {/* 5. Transaction Category (Optional) */}
-        <CategorySelect
-          value={state.category}
-          onChange={(val) => onChange("category", val)}
-        />
+      {/* 4. Narration (Optional) */}
+      <NarrationInput
+        value={state.narration}
+        onChange={(val) => onChange("narration", val)}
+      />
 
-        {/* 7. Schedule Payment */}
-        <SchedulePaymentSection
-          state={{
-            enabled: state.isScheduled ?? false,
-            startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
-            frequency: state.scheduleFrequency || "once",
-            endDate: state.scheduleEndDate || "",
-          }}
-          onChange={(updates) => {
-            if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
-            if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
-            if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
-            if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
-          }}
-        />
+      {/* 5. Transaction Category (Optional) */}
+      <CategorySelect
+        value={state.category}
+        onChange={(val) => onChange("category", val)}
+      />
 
-        {/* 8. Proceed CTA */}
-        <ProceedButton
-          disabled={!isValid}
-          onClick={onProceed}
-        />
-        </div>
-      )}
+      {/* 6. Schedule Payment */}
+      <SchedulePaymentSection
+        state={{
+          enabled: state.isScheduled ?? false,
+          startDate: state.scheduleDate || new Date(Date.now() + 86400000).toISOString().split("T")[0],
+          frequency: state.scheduleFrequency || "once",
+          endDate: state.scheduleEndDate || "",
+        }}
+        onChange={(updates) => {
+          if (updates.enabled !== undefined) onChange("isScheduled", updates.enabled);
+          if (updates.startDate !== undefined) onChange("scheduleDate", updates.startDate);
+          if (updates.frequency !== undefined) onChange("scheduleFrequency", updates.frequency);
+          if (updates.endDate !== undefined) onChange("scheduleEndDate", updates.endDate);
+        }}
+      />
+
+      {/* 7. Proceed CTA */}
+      <ProceedButton
+        disabled={!isValid}
+        onClick={onProceed}
+      />
     </div>
   );
 }

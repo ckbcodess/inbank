@@ -547,7 +547,7 @@ export const ACCOUNT_RESOLUTIONS: Record<string, string> = {
 
 export function resolveAccountName(number: string, fallback: string = ""): string {
   const clean = number.replace(/[\s-]/g, "");
-  if (!clean || clean.length < 8) return "";
+  if (!clean || clean.length < 4) return "";
   if (fallback && fallback.trim() && fallback !== "Verified Account Holder") return fallback;
   if (ACCOUNT_RESOLUTIONS[clean]) return ACCOUNT_RESOLUTIONS[clean];
   

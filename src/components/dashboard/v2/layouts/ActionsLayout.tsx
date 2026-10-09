@@ -25,6 +25,7 @@ import {
   Greeting,
   Notices,
   PayAgainCard,
+  RecommendedCard,
   RefreshControl,
   SPRING,
   withFrom,
@@ -88,6 +89,7 @@ export function ActionsLayout(props: DashViewProps) {
           <AnalyticsCard data={data} loading={loading} showAmounts={showAmounts} />
           <CardsCard data={data} loading={loading} onOpenFundModal={props.onOpenFundModal} />
           <ComingUpCard data={data} loading={loading} showAmounts={showAmounts} />
+          <RecommendedCard loading={loading} />
         </motion.div>
       </div>
     </div>

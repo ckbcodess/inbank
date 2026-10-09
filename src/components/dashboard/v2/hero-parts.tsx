@@ -299,6 +299,52 @@ export function HeroAccountOptionsMenu({
   );
 }
 
+/** Top left CTA on the hero surface: QR Code CTA. */
+export function HeroQrAction({ className }: { className?: string }) {
+  return (
+    <Button
+      variant="glass"
+      size="icon-lg"
+      className={cn(HERO_GLASS_EXTRA, "h-10 w-10 max-sm:h-9 max-sm:w-9 relative z-10", className)}
+      aria-label="Scan & Pay with QR"
+      title="Scan & Pay with QR"
+      nativeButton={false}
+      render={<Link href="/payments/send?rail=qr" />}
+    >
+      <QrCode size={18} strokeWidth={1.9} className="size-[18px]" />
+    </Button>
+  );
+}
+
+/** Top right CTA on the hero surface: FX Rates. */
+export function HeroFxAction({ className }: { className?: string }) {
+  const [ratesOpen, setRatesOpen] = useState(false);
+  const usd = findFxRate("USD") ?? FX_RATES[0];
+  const RateTrend = usd.changePct >= 0 ? TrendingUp : TrendingDown;
+
+  return (
+    <>
+      <Button
+        type="button"
+        variant="glass"
+        onClick={() => setRatesOpen(true)}
+        className={cn(HERO_GLASS_EXTRA, "h-10 gap-2.5 px-2.5 max-sm:h-9 max-sm:gap-1.5 max-sm:px-2 relative z-10", className)}
+        aria-label={`FX Rates. 1 USD is ${usd.mid.toFixed(2)} GHS`}
+        title="FX Rates"
+      >
+        <span className="relative flex shrink-0 items-center">
+          <span className="max-sm:hidden"><CurrencyLogo currency="GHS" size={20} showBorder={false} /></span>
+          <CurrencyLogo currency="USD" size={20} showBorder={false} className="-ml-1.5 max-sm:ml-0" />
+        </span>
+        <span className="tabular text-[14px] tracking-[-0.01em] max-sm:text-[13px]"><span className="max-sm:hidden">USD </span>{usd.mid.toFixed(2)}</span>
+        <RateTrend size={15} strokeWidth={2} className={cn("size-[15px]", usd.changePct >= 0 ? "text-success-text" : "text-destructive-text")} />
+      </Button>
+
+      <FxRatesDialog open={ratesOpen} onOpenChange={setRatesOpen} />
+    </>
+  );
+}
+
 /** Top right CTA container on the hero surface: FX Rates + QR Code CTA. */
 export function HeroTopActions({
   className,
@@ -306,44 +352,11 @@ export function HeroTopActions({
   data?: DashData;
   className?: string;
 }) {
-  const [ratesOpen, setRatesOpen] = useState(false);
-  const usd = findFxRate("USD") ?? FX_RATES[0];
-  const RateTrend = usd.changePct >= 0 ? TrendingUp : TrendingDown;
-
   return (
-    <>
-      <div className={cn("relative z-10 flex items-center gap-2", className)}>
-        <Button
-          type="button"
-          variant="glass"
-          onClick={() => setRatesOpen(true)}
-          className={cn(HERO_GLASS_EXTRA, "h-10 gap-2.5 px-2.5 max-sm:h-9 max-sm:gap-1.5 max-sm:px-2")}
-          aria-label={`FX Rates. 1 USD is ${usd.mid.toFixed(2)} GHS`}
-          title="FX Rates"
-        >
-          <span className="relative flex shrink-0 items-center">
-            <span className="max-sm:hidden"><CurrencyLogo currency="GHS" size={20} showBorder={false} /></span>
-            <CurrencyLogo currency="USD" size={20} showBorder={false} className="-ml-1.5 max-sm:ml-0" />
-          </span>
-          <span className="tabular text-[14px] tracking-[-0.01em] max-sm:text-[13px]"><span className="max-sm:hidden">USD </span>{usd.mid.toFixed(2)}</span>
-          <RateTrend size={15} strokeWidth={2} className={cn("size-[15px]", usd.changePct >= 0 ? "text-success-text" : "text-destructive-text")} />
-        </Button>
-
-        <Button
-          variant="glass"
-          size="icon-lg"
-          className={cn(HERO_GLASS_EXTRA, "h-10 w-10 max-sm:h-9 max-sm:w-9")}
-          aria-label="Scan & Pay with QR"
-          title="Scan & Pay with QR"
-          nativeButton={false}
-          render={<Link href="/payments/send?rail=qr" />}
-        >
-          <QrCode size={18} strokeWidth={1.9} className="size-[18px]" />
-        </Button>
-      </div>
-
-      <FxRatesDialog open={ratesOpen} onOpenChange={setRatesOpen} />
-    </>
+    <div className={cn("relative z-10 flex items-center gap-2", className)}>
+      <HeroFxAction />
+      <HeroQrAction />
+    </div>
   );
 }
 

@@ -19,14 +19,12 @@ import {
   type PendingFundingSource,
 } from "@/lib/device-trust";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
-import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import {
   getSimulatedDashboardData,
   DASHBOARD_USAGE_STATES,
   DASHBOARD_STATE_LABELS,
   DASHBOARD_LAYOUTS,
   DEFAULT_DASHBOARD_LAYOUT,
-  DASHBOARD_LAYOUT_LABELS,
   type DashboardLayout,
   type DashboardUsageType,
 } from "@/lib/dashboard-simulations";
@@ -86,24 +84,6 @@ function OverviewContent() {
 
   const isHero = layout === "hero" || layout === "hero-split";
 
-  const layoutGroups = useMemo<DevStateGroup[]>(
-    () => [
-      {
-        label: "Dashboard layout",
-        states: DASHBOARD_LAYOUTS.map((id) => ({ id, label: DASHBOARD_LAYOUT_LABELS[id] })),
-        value: layout,
-        onChange: (next) => {
-          setLayout(next as DashboardLayout);
-          try {
-            localStorage.setItem(LAYOUT_KEY, next);
-          } catch {
-            // Storage blocked — the pick lasts for this visit only.
-          }
-        },
-      },
-    ],
-    [layout],
-  );
 
   const data = useMemo(() => {
     if (!actor || !activeProfile) return null;
@@ -160,8 +140,6 @@ function OverviewContent() {
         value={usageType}
         onChange={setUsageType}
         labels={DASHBOARD_STATE_LABELS}
-        label="Data state"
-        groups={layoutGroups}
       />
       <GcbDashboard
         layout={layout}

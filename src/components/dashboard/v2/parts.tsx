@@ -954,6 +954,10 @@ export function FxBar({ defaultOpen = false, className }: { defaultOpen?: boolea
   );
 }
 
+/* ── Recommended for you (Card stack) ─────────────────────────────────── */
+
+export { RecommendedForYouCard, RecommendedForYouCard as RecommendedCard } from "./RecommendedForYouCard";
+
 /* ── Promo banner ────────────────────────────────────────────────────────── */
 
 /**
@@ -977,3 +981,4 @@ export function PromoBanner({ className }: { className?: string }) {
     </div>
   );
 }
+
