@@ -9,14 +9,13 @@
  * Demo: any 6 digits approve; 000000 shows the wrong-code state; Cancel returns without taking anything.
  */
 
-import { InlineError } from "@/components/ui/inline-error";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, CreditCard, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AppLoader } from "@/components/ui/loader";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
-import { NetworkLogo } from "@/components/cards/NetworkLogo";
+import { InlineError } from "@/components/ui/inline-error";
 import { useCardLink } from "@/lib/card-link";
 import { useCardPayment } from "@/lib/card-payment";
 import { formatMoney } from "@/lib/mock-data";
@@ -45,12 +44,6 @@ function useHydrated(...stores: { persist?: { hasHydrated: () => boolean; onFini
   }, []);
   return hydrated;
 }
-
-const NETWORK_SECURE_NAME: Record<string, string> = {
-  Visa: "Visa Secure",
-  Mastercard: "Mastercard Identity Check",
-  UnionPay: "UnionPay Secure",
-};
 
 export default function CardVerificationPage() {
   const router = useRouter();
@@ -90,83 +83,84 @@ export default function CardVerificationPage() {
 
   if (!hydrated) return <div className="min-h-dvh bg-background" />;
 
-  const secureName = pending ? NETWORK_SECURE_NAME[pending.network] : undefined;
+  const last4 = pending?.last4 ?? "2222";
+  const merchant = paying?.merchant ?? "GCB Bank PLC";
+  const description = paying?.description ?? (isPayment ? "Fund your GCB account" : "Link card to GCB account");
+  const amountStr = paying ? formatMoney(paying.amount, paying.currency, true) : "GHS 100.00";
 
   return (
-    <div data-auth-shell className="flex min-h-dvh w-full flex-col bg-muted/40 text-foreground">
-      <header className="flex h-14 items-center justify-center gap-2 border-b border-border bg-card px-4 text-[13px] text-muted-foreground">
-        <Lock size={14} strokeWidth={1.9} aria-hidden="true" />
-        {secureName ?? "Secure card verification"}
+    <div data-auth-shell className="flex min-h-dvh w-full flex-col bg-muted/30 dark:bg-background text-foreground">
+      {/* Top Lock Header */}
+      <header className="flex h-14 items-center justify-center gap-1.5 px-4 text-[13px] text-muted-foreground">
+        <Lock size={13.5} strokeWidth={1.8} aria-hidden="true" />
+        <span>Secure card verification</span>
       </header>
 
-      <main className="flex flex-1 items-start justify-center px-4 py-10 sm:py-16">
-        <div className="w-full max-w-[420px] rounded-2xl border border-border bg-card p-6 sm:p-8">
-          {!pending && step !== "verified" ? (
-            <div className="flex flex-col items-center gap-4 text-center">
-              <p className="text-[14px] text-muted-foreground">There&apos;s nothing waiting to be verified.</p>
-              <Button type="button" onClick={() => router.replace("/overview")} className="h-11 w-full rounded-xl">
-                Back to GCB
-              </Button>
-            </div>
-          ) : step === "verified" ? (
-            <div className="flex flex-col items-center gap-3 py-4 text-center" role="status">
-              <div className="flex size-12 items-center justify-center rounded-2xl bg-success/10 text-success-text">
-                <CheckCircle2 size={26} strokeWidth={1.8} aria-hidden="true" />
+      {/* Main Card View */}
+      <main className="flex flex-1 items-center justify-center px-4 py-8 sm:py-12">
+        <div className="w-full max-w-[430px] rounded-3xl border border-border/80 bg-card p-7 sm:p-9 shadow-sm flex flex-col items-center text-center">
+          {step === "verified" ? (
+            <div className="flex flex-col items-center gap-3 py-6 text-center" role="status">
+              <div className="flex size-14 items-center justify-center rounded-2xl bg-success/10 text-success-text">
+                <CheckCircle2 size={28} strokeWidth={2} aria-hidden="true" />
               </div>
-              <h1 className="text-[18px] tracking-[-0.01em]">{isPayment ? "Payment approved" : "Card verified"}</h1>
-              <p className="flex items-center gap-2 text-[13.5px] text-muted-foreground">
+              <h1 className="text-[20px] font-medium tracking-tight">{isPayment ? "Payment approved" : "Card verified"}</h1>
+              <p className="flex items-center gap-2 text-[13.5px] text-muted-foreground mt-1">
                 <AppLoader size={14} />
                 Taking you back to GCB…
               </p>
             </div>
           ) : (
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-1.5">
-                <h1 className="text-[20px] tracking-[-0.015em]">Confirm it&apos;s you</h1>
-                <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-                  {isPayment
-                    ? "GCB Bank is asking your bank to approve this payment. Enter the code we sent to the phone number on your card account."
-                    : "GCB Bank wants to link your card. Enter the code we sent to the phone number on your card account."}
+            <div className="w-full flex flex-col items-center">
+              {/* Bank Logo / Mark */}
+              <div className="flex flex-col items-center gap-2.5 mb-6">
+                <div className="flex size-14 items-center justify-center rounded-2xl bg-[#00E599] text-black shadow-sm select-none">
+                  <span className="text-[28px] font-bold leading-none tracking-tight">U</span>
+                </div>
+                <span className="text-[17px] font-medium text-foreground tracking-[-0.01em]">UX Bank</span>
+              </div>
+
+              {/* Title & Description */}
+              <div className="flex flex-col items-center gap-1.5 text-center mb-6">
+                <h1 className="text-[22px] font-medium tracking-tight text-foreground">Confirm it&apos;s you</h1>
+                <p className="text-[13px] sm:text-[13.5px] leading-relaxed text-muted-foreground">
+                  A request to approve this payment has been created.
+                  <br />
+                  Enter the code to confirm.
                 </p>
               </div>
 
-              <dl className="flex flex-col gap-2.5 rounded-xl bg-muted/60 p-4 text-[13px]">
-                <div className="flex items-center justify-between gap-3">
+              {/* Transaction Details Inset */}
+              <dl className="w-full flex flex-col gap-3 rounded-2xl bg-muted/50 dark:bg-muted/30 p-4 sm:p-5 text-[13px] mb-6">
+                <div className="flex items-center justify-between gap-3 text-left">
                   <dt className="text-muted-foreground">Card</dt>
-                  <dd className="flex items-center gap-1.5 tabular">
-                    {pending?.network === "Card" ? (
-                      <CreditCard size={15} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
-                    ) : (
-                      <NetworkLogo scheme={pending?.network ?? "Visa"} className="h-3 text-foreground" />
-                    )}
-                    •••• {pending?.last4}
+                  <dd className="flex items-center gap-1.5 tabular font-medium text-foreground">
+                    <CreditCard size={14} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+                    <span>•••• {last4}</span>
                   </dd>
                 </div>
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center justify-between gap-3 text-left">
                   <dt className="text-muted-foreground">Merchant</dt>
-                  <dd>{paying?.merchant ?? "GCB Bank"}</dd>
+                  <dd className="font-medium text-foreground">{merchant}</dd>
                 </div>
-                {paying && (
-                  <div className="flex items-center justify-between gap-3">
-                    <dt className="text-muted-foreground">For</dt>
-                    <dd className="text-right">{paying.description}</dd>
-                  </div>
-                )}
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center justify-between gap-3 text-left">
+                  <dt className="text-muted-foreground">For</dt>
+                  <dd className="font-medium text-foreground text-right">{description}</dd>
+                </div>
+                <div className="flex items-center justify-between gap-3 text-left">
                   <dt className="text-muted-foreground">Amount</dt>
-                  <dd className="tabular">
-                    {paying ? formatMoney(paying.amount, paying.currency, true) : "GHS 0.00 · card check only"}
-                  </dd>
+                  <dd className="font-medium tabular text-foreground">{amountStr}</dd>
                 </div>
               </dl>
 
+              {/* OTP Form */}
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   const code = digits.join("");
                   if (code.length === OTP_LENGTH) verify(code);
                 }}
-                className="flex flex-col gap-5"
+                className="w-full flex flex-col gap-5"
               >
                 <OtpInput
                   value={digits}
@@ -179,37 +173,34 @@ export default function CardVerificationPage() {
                   invalid={step === "error"}
                 />
 
-                <InlineError message={step === "error" && "That code didn’t match. Check the latest message from your bank and try again."} />
+                {step === "error" && (
+                  <InlineError message="That code didn’t match. Check the latest message from your bank and try again." />
+                )}
 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 pt-1">
                   <Button
                     type="submit"
                     disabled={digits.join("").length < OTP_LENGTH}
                     loading={step === "verifying"}
-                    className="h-11 w-full rounded-xl"
+                    className="h-11 w-full rounded-xl text-[14px] font-medium"
                   >
-                    {isPayment ? "Approve payment" : "Verify"}
+                    Approve payment
                   </Button>
-                  <Button
+
+                  <button
                     type="button"
-                    variant="ghost"
-                    size="sm"
                     onClick={cancel}
                     disabled={step === "verifying"}
-                    className="text-[13px] text-muted-foreground"
+                    className="text-[12.5px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
                   >
                     Cancel and return to GCB
-                  </Button>
+                  </button>
                 </div>
               </form>
             </div>
           )}
         </div>
       </main>
-
-      <p className="pb-6 text-center text-[12px] text-muted-foreground">
-        Demo: any 6 digits approve · 000000 shows an error
-      </p>
     </div>
   );
 }

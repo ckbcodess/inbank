@@ -59,9 +59,13 @@ function SignupContent() {
   }, [stepParam]);
   const [ghanaCard, setGhanaCard] = useState("GHA-998877665-1");
   const [title, setTitle] = useState("");
+  const [country, setCountry] = useState("GH");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
-  const detailsValid = title !== "" && isCompleteGhanaMobile(mobile) && /^\S+@\S+\.\S+$/.test(email.trim());
+  const detailsValid =
+    title !== "" &&
+    (country === "GH" ? isCompleteGhanaMobile(mobile) : mobile.trim().length >= 7) &&
+    /^\S+@\S+\.\S+$/.test(email.trim());
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -409,7 +413,17 @@ function SignupContent() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="reviewMobile">Mobile Number</Label>
-              <PhoneInput id="reviewMobile" value={mobile} onValueChange={setMobile} placeholder="Enter mobile number" />
+              <PhoneInput
+                id="reviewMobile"
+                value={mobile}
+                country={country}
+                onCountryChange={(code) => {
+                  setCountry(code);
+                  setMobile("");
+                }}
+                onValueChange={setMobile}
+                placeholder="Enter mobile number"
+              />
               <p className="px-0.5 text-[12.5px] text-muted-foreground">We’ll send a verification code to this number.</p>
             </div>
           </div>

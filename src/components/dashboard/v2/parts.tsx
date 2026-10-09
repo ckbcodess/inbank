@@ -221,7 +221,7 @@ export function Greeting({ firstName, className }: { firstName: string; classNam
 
 /** A glass control on the hero panel: frosted, so the wave and map blur behind it. */
 export const HERO_GLASS =
-  "backdrop-blur-md border border-[color-mix(in_oklch,var(--hero-foreground)_16%,transparent)] bg-[color-mix(in_oklch,var(--hero-foreground)_8%,transparent)] text-[var(--hero-foreground)] hover:bg-[color-mix(in_oklch,var(--hero-foreground)_14%,transparent)] group-hover:bg-[color-mix(in_oklch,var(--hero-foreground)_14%,transparent)]";
+  "backdrop-blur-md border border-[color-mix(in_oklch,var(--hero-foreground)_8%,transparent)] bg-[color-mix(in_oklch,var(--hero-foreground)_8%,transparent)] text-[var(--hero-foreground)] hover:bg-[color-mix(in_oklch,var(--hero-foreground)_14%,transparent)] group-hover:bg-[color-mix(in_oklch,var(--hero-foreground)_14%,transparent)]";
 
 /**
  * Send / Pay Bill / Top-Up. Each opens a picker (bottom sheet on a phone) that
@@ -377,25 +377,6 @@ function AccountLabel({ account, bare = false, full = false }: { account: Accoun
 
 /**
  * The hero pill's drop shadow, blended with `multiply` so it darkens whatever is
- * behind it — the card, the drifting wave, either theme — instead of laying a
- * fixed dark colour on top. Two parts, like a real shadow: a tight contact
- * shadow right under the pill and a wider, softer one falling further. Both
- * are narrower than the pill and start low, so nothing haloes its sides and no
- * mask edge cuts them off. Strength comes from the wave tuner (`--pill-shadow`).
- */
-function PillShadow() {
-  return (
-    <span
-      aria-hidden
-      className="pointer-events-none absolute inset-0 -z-10 mix-blend-multiply"
-      style={{ opacity: "var(--pill-shadow, 0.6)" }}
-    >
-      <span className="absolute inset-x-[6%] top-[45%] -bottom-5 rounded-full bg-[var(--hero-pill-shadow)] opacity-60 blur-[14px]" />
-      <span className="absolute inset-x-[12%] top-[60%] -bottom-1.5 rounded-full bg-[var(--hero-pill-shadow)] blur-[5px]" />
-    </span>
-  );
-}
-
 /**
  * The account label. With several accounts it opens a menu to switch (closes on
  * pick); with one, it links to its details.
@@ -419,14 +400,13 @@ export function AccountSwitcher({
 
   const hero = tone === "hero";
   const trigger = hero
-    ? "flex w-fit items-center gap-2 rounded-full bg-[color-mix(in_oklch,var(--hero-foreground)_6%,transparent)] relative px-3.5 py-2 text-[13.5px] leading-none text-[var(--hero-foreground)] outline-none shadow-[inset_0_24px_24px_-12px_rgba(255,255,255,0.1)] transition-colors hover:bg-[color-mix(in_oklch,var(--hero-foreground)_12%,transparent)] sm:text-[16px]"
+    ? "flex w-fit items-center gap-2 h-9 sm:h-10 px-3.5 rounded-xl backdrop-blur-md border border-[color-mix(in_oklch,var(--hero-foreground)_8%,transparent)] bg-[color-mix(in_oklch,var(--hero-foreground)_8%,transparent)] text-[var(--hero-foreground)] hover:bg-[color-mix(in_oklch,var(--hero-foreground)_14%,transparent)] text-[13.5px] sm:text-[15px] font-medium outline-none shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] active:scale-95 transition-colors cursor-pointer"
     : "-mx-3 flex w-fit items-center gap-2.5 rounded-lg px-3 py-2 text-[15px] leading-none text-foreground outline-none transition-colors hover:bg-muted";
   const chevron = hero ? "text-[var(--hero-foreground)]" : "text-muted-foreground";
 
   if (data.accounts.length < 2) {
     return (
       <Link href={`/accounts/${account.id}`} className={trigger} aria-label={t("dashboard.accountDetails", "Account details")}>
-        {hero && <PillShadow />}
         <AccountLabel account={account} bare={hero} />
         <ChevronRight size={16} strokeWidth={1.8} className={chevron} />
       </Link>
@@ -436,10 +416,9 @@ export function AccountSwitcher({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className={cn(trigger, !hero && "aria-expanded:bg-muted", hero && "aria-expanded:bg-[color-mix(in_oklch,var(--hero-foreground)_12%,transparent)]", "cursor-pointer")}
+        className={cn(trigger, !hero && "aria-expanded:bg-muted", hero && "aria-expanded:bg-white/18")}
         aria-label={t("dashboard.switchAccount", "Switch account")}
       >
-        {hero && <PillShadow />}
         <AccountLabel account={account} bare={hero} />
         <ChevronDown size={16} strokeWidth={1.8} className={chevron} />
       </DropdownMenuTrigger>

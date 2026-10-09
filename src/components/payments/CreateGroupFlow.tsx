@@ -57,7 +57,7 @@ const DEFAULT_FALLBACK_CONTACTS: GroupMember[] = [
   { id: "c-7", name: "Current Account", destination: "2329938299", type: "bank", networkOrBank: "GCB Bank", defaultAmount: 200 },
 ];
 
-const WALLET_NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money"];
+const WALLET_NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money", "GhanaPay", "G-Money"];
 
 export default function CreateGroupFlow({
   groupToEdit,

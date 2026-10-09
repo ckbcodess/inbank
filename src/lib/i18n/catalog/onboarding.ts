@@ -210,7 +210,7 @@ const onboarding: Entry[] = [
   ["Forgot PIN", "Code PIN oublié", "¿Olvidaste tu PIN?", "忘记密码"],
   ["Forgot PIN?", "Code PIN oublié ?", "¿Olvidaste tu PIN?", "忘记密码？"],
   ["Use your PIN instead", "Utiliser votre PIN", "Usar tu PIN", "改用 PIN"],
-  ["Signing you in...", "Connexion en cours…", "Iniciando sesión…", "正在登录…"],
+  ["Logging you in...", "Connexion en cours…", "Iniciando sesión…", "正在登录…"],
   ["Search country or code", "Rechercher un pays ou un indicatif", "Buscar país o prefijo", "搜索国家或区号"],
   ["No country matches that.", "Aucun pays ne correspond.", "Ningún país coincide.", "没有匹配的国家。"],
   ["Enter the PIN", "Saisissez le PIN", "Introduce el PIN", "输入 PIN"],

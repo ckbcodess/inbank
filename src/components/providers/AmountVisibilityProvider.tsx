@@ -80,7 +80,7 @@ export function splitCurrencyAndAmount(
   amount?: number,
   currency = "GHS",
   value?: string,
-  showAmounts = true
+  showAmounts = false
 ): { prefix: string; numericText: string } {
   if (amount !== undefined) {
     const currUpper = (currency || "").toUpperCase();

@@ -51,7 +51,7 @@ const GHANA_BANKS = [
   "Zenith Bank Ghana",
 ];
 
-const WALLET_NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money"];
+const WALLET_NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money", "GhanaPay", "G-Money"];
 
 export default function EditGroupModal({
   open,

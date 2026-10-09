@@ -102,7 +102,9 @@ const slideVariants: Variants = {
   }),
 };
 
-function detectOperatorFromPhone(val: string): "MTN" | "Telecel" | "AT" {
+import { type Operator } from "@/lib/operators";
+
+function detectOperatorFromPhone(val: string): Operator {
   const digits = toNationalDigits(val);
   if (/^(20|50)/.test(digits)) return "Telecel";
   if (/^(27|57|26|56)/.test(digits)) return "AT";
@@ -132,7 +134,7 @@ export function FirstRunWelcome({
   const registeredPhone = peekVerifiedMobile() || "0241234567";
   const [phone, setPhone] = useState(registeredPhone);
   const [isCustomNumber, setIsCustomNumber] = useState(false);
-  const [operator, setOperator] = useState<"MTN" | "Telecel" | "AT">(() =>
+  const [operator, setOperator] = useState<Operator>(() =>
     detectOperatorFromPhone(registeredPhone)
   );
   const usingRegistered =

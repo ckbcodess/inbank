@@ -118,7 +118,7 @@ function PinContent() {
         {verifying ? (
           <div className="flex items-center justify-center gap-2 text-[13.5px] text-muted-foreground">
             <AppLoader size={16} />
-            <span>Signing you in...</span>
+            <span>Logging you in...</span>
           </div>
         ) : usingPin ? (
           <button

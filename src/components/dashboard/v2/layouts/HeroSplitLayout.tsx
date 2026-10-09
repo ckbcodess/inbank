@@ -28,7 +28,8 @@ import {
   HeroStack,
   HeroSurface,
   LastLogin,
-  HeroAccountMenu,
+  HeroTopActions,
+  HeroAccountOptionsMenu,
 } from "../hero-parts";
 
 export function HeroSplitLayout(props: DashViewProps) {
@@ -48,9 +49,12 @@ export function HeroSplitLayout(props: DashViewProps) {
           // Spacing per Figma 1951:2350: 40px sides and foot (+32px the sheet covers),
           // content sat on the foot; pill 40px above the balance, "Updated" 16px below it.
           <HeroSurface className="flex flex-col gap-8 rounded-t-3xl px-4 pb-[64px] pt-[60px] sm:px-10 sm:pb-[72px] sm:pt-[88px] lg:flex-row lg:items-end lg:justify-between">
-            <HeroAccountMenu data={data} className="absolute right-4 top-4 sm:right-8 sm:top-8" />
+            <HeroTopActions data={data} className="absolute right-4 top-4 sm:right-8 sm:top-8" />
             <div className="flex flex-col items-start gap-8 sm:gap-10">
-              <AccountSwitcher data={data} onSelect={onSelectAccount} tone="hero" />
+              <div className="flex items-center gap-2">
+                <AccountSwitcher data={data} onSelect={onSelectAccount} tone="hero" />
+                <HeroAccountOptionsMenu data={data} />
+              </div>
               <HeroBalance data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
             </div>
 

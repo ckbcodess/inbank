@@ -30,7 +30,6 @@ import {
   Wallet,
   Wifi,
 } from "lucide-react";
-import { AppLoader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { ActionTile } from "@/components/ui/action-tile";
 import {
@@ -66,7 +65,6 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   AccountVerificationStatus,
-  VerifiedAccountBadge,
   CollapsedDetailsBadge,
   BankSelect,
   NetworkSelect,
@@ -101,8 +99,8 @@ const STANDING_ORDER_OPTIONS = [
   { id: "airtime" as TransactionType, title: "Airtime", icon: PhoneCall },
 ];
 
-const WALLET_NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money"];
-const AIRTIME_NETWORKS = ["MTN Ghana", "Telecel Ghana", "AT Ghana"];
+const WALLET_NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money", "GhanaPay", "G-Money"];
+const AIRTIME_NETWORKS = ["MTN Ghana", "Telecel Ghana", "AT Ghana", "GhanaPay", "G-Money"];
 
 const NETWORK_DATA_PACKAGES: Record<string, { id: string; name: string; price: string }[]> = {
   "MTN Ghana": [

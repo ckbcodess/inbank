@@ -21,6 +21,7 @@ import {
   LayoutGrid,
   FileText,
   MoreVertical,
+  QrCode,
   Share2,
   TrendingDown,
   TrendingUp,
@@ -206,7 +207,8 @@ export function HeroSurface({
 /** What the hero's glass buttons add to the `glass` Button variant: the squarer corner and the inner top light. */
 const HERO_GLASS_EXTRA = "rounded-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] active:scale-95";
 
-export function HeroAccountMenu({
+/** The kebab icon menu for account options (Share, Copy, Statements, etc.) placed next to the account switcher. */
+export function HeroAccountOptionsMenu({
   data,
   className,
 }: {
@@ -215,15 +217,12 @@ export function HeroAccountMenu({
 }) {
   const router = useRouter();
   const [shareOpen, setShareOpen] = useState(false);
-  const [ratesOpen, setRatesOpen] = useState(false);
   const activeProfile = useSession((s) => s.activeProfile);
   const actor = useSession((s) => s.actor);
 
   const account = selectedAccount(data);
   if (!account) return null;
 
-  const usd = findFxRate("USD") ?? FX_RATES[0];
-  const RateTrend = usd.changePct >= 0 ? TrendingUp : TrendingDown;
   const holderName = accountHolderName(account, activeProfile, actor);
 
   const handleCopyNumber = () => {
@@ -233,6 +232,83 @@ export function HeroAccountMenu({
       description: `${groupDigits(account.number)} · ${account.name}`,
     });
   };
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="glass"
+              size="icon"
+              className={cn(HERO_GLASS_EXTRA, "h-9 w-9 sm:h-10 sm:w-10 aria-expanded:bg-white/18", className)}
+              aria-label={`Account options for ${account.name}`}
+            />
+          }
+        >
+          <MoreVertical size={17} strokeWidth={1.9} className="size-[17px]" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" sideOffset={6} className="w-[240px] rounded-2xl p-1.5">
+          {/* Inbound & Sharing */}
+          <DropdownMenuItem onClick={handleCopyNumber} className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70">
+            <Copy size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+            <span className="text-[13.5px]">Copy Account Number</span>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem onClick={() => setShareOpen(true)} className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70">
+            <Share2 size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+            <span className="text-[13.5px]">Share Account Details</span>
+          </DropdownMenuItem>
+
+          <DropdownMenuSeparator />
+
+          {/* Records & Activity */}
+          <DropdownMenuItem
+            onClick={() => router.push(`/accounts/${account.id}/requests?type=statement`)}
+            className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
+          >
+            <FileText size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+            <span className="text-[13.5px]">Download E-Statement</span>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={() => router.push(`/transactions?account=${account.id}`)}
+            className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
+          >
+            <ArrowLeftRight size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+            <span className="text-[13.5px]">View Transactions</span>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={() => router.push("/accounts")}
+            className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
+          >
+            <LayoutGrid size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
+            <span className="text-[13.5px]">View All Accounts</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <ShareDetailsDialog
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        account={account}
+        holderName={holderName}
+      />
+    </>
+  );
+}
+
+/** Top right CTA container on the hero surface: FX Rates + QR Code CTA. */
+export function HeroTopActions({
+  className,
+}: {
+  data?: DashData;
+  className?: string;
+}) {
+  const [ratesOpen, setRatesOpen] = useState(false);
+  const usd = findFxRate("USD") ?? FX_RATES[0];
+  const RateTrend = usd.changePct >= 0 ? TrendingUp : TrendingDown;
 
   return (
     <>
@@ -252,71 +328,27 @@ export function HeroAccountMenu({
           <span className="tabular text-[14px] tracking-[-0.01em] max-sm:text-[13px]"><span className="max-sm:hidden">USD </span>{usd.mid.toFixed(2)}</span>
           <RateTrend size={15} strokeWidth={2} className={cn("size-[15px]", usd.changePct >= 0 ? "text-success-text" : "text-destructive-text")} />
         </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                variant="glass"
-                size="icon-lg"
-                className={cn(HERO_GLASS_EXTRA, "aria-expanded:bg-white/18")}
-                aria-label={`Account options for ${account.name}`}
-              />
-            }
-          >
-            <MoreVertical size={18} strokeWidth={1.9} className="size-[18px]" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" sideOffset={6} className="w-[240px] rounded-2xl p-1.5">
-            {/* Inbound & Sharing */}
-            <DropdownMenuItem onClick={handleCopyNumber} className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70">
-              <Copy size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-              <span className="text-[13.5px]">Copy Account Number</span>
-            </DropdownMenuItem>
 
-            <DropdownMenuItem onClick={() => setShareOpen(true)} className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70">
-              <Share2 size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-              <span className="text-[13.5px]">Share Account Details</span>
-            </DropdownMenuItem>
-
-            <DropdownMenuSeparator />
-
-            {/* Records & Activity */}
-            <DropdownMenuItem
-              onClick={() => router.push(`/accounts/${account.id}/requests?type=statement`)}
-              className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
-            >
-              <FileText size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-              <span className="text-[13.5px]">Download E-Statement</span>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-              onClick={() => router.push(`/transactions?account=${account.id}`)}
-              className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
-            >
-              <ArrowLeftRight size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-              <span className="text-[13.5px]">View Transactions</span>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-              onClick={() => router.push("/accounts")}
-              className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
-            >
-              <LayoutGrid size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-              <span className="text-[13.5px]">View All Accounts</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Button
+          variant="glass"
+          size="icon-lg"
+          className={cn(HERO_GLASS_EXTRA, "h-10 w-10 max-sm:h-9 max-sm:w-9")}
+          aria-label="Scan & Pay with QR"
+          title="Scan & Pay with QR"
+          nativeButton={false}
+          render={<Link href="/payments/send?rail=qr" />}
+        >
+          <QrCode size={18} strokeWidth={1.9} className="size-[18px]" />
+        </Button>
       </div>
 
       <FxRatesDialog open={ratesOpen} onOpenChange={setRatesOpen} />
-      <ShareDetailsDialog
-        open={shareOpen}
-        onOpenChange={setShareOpen}
-        account={account}
-        holderName={holderName}
-      />
     </>
   );
 }
+
+/** Alias for backward compatibility */
+export const HeroAccountMenu = HeroTopActions;
 
 export function ManageAccountsLink({
   data,

@@ -57,13 +57,14 @@ export default function ForgotPasswordPage() {
   const [stage, setStage] = useState<Stage>("mobile");
   const [busy, setBusy] = useState(false);
 
+  const [country, setCountry] = useState("GH");
   const [mobile, setMobile] = useState("");
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
 
-  const mobileValid = isCompleteGhanaMobile(mobile);
+  const mobileValid = country === "GH" ? isCompleteGhanaMobile(mobile) : mobile.trim().length >= 7;
   const canReset = newPasswordReady(password, confirm);
 
   function advance(next: Stage, delay = 600) {
@@ -108,8 +109,8 @@ export default function ForgotPasswordPage() {
       description: "Enter the mobile number registered on your account.",
     },
     selfie: {
-      title: "Take a Selfie",
-      description: "We'll match it to the photo on your Ghana Card.",
+      title: "Selfie Verification",
+      description: "We'll match your selfie to the photo on your Ghana Card before you create a new password.",
     },
     no_match: {
       title: "We Couldn't Match Your Selfie",
@@ -163,6 +164,11 @@ export default function ForgotPasswordPage() {
             <PhoneInput
               id="mobile"
               value={mobile}
+              country={country}
+              onCountryChange={(code) => {
+                setCountry(code);
+                setMobile("");
+              }}
               onValueChange={setMobile}
               autoFocus
               required

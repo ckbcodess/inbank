@@ -545,6 +545,11 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - **Decision (Subflow Navigation):** Replaced negative-offset absolute positioning (`-left-11`) with responsive in-flow flex back button headers in `PaymentFlow.tsx` and `StandingOrderFlow.tsx` so back buttons are never clipped or pushed off-screen on mobile screens.
 - **Decision (Mobile Platform Baseline):** Added Next.js `Viewport` export (`viewportFit: "cover"`, `interactiveWidget: "resizes-content"`) in `layout.tsx` and baseline CSS rules in `globals.css` (`-webkit-tap-highlight-color: transparent`, `touch-action: manipulation`, 16px input prevention of iOS zoom, `overscroll-behavior: none`).
 
+### 2026-10-09
+- **Decision (Provider networks):** Added GhanaPay and G-Money networks and SVGs (`/ghanapay.svg`, `/gmoney.svg`) into `OPERATORS` (`lib/operators.ts`) and wallet pickers across the app.
+- **Decision (Onboarding & Auth):** Review details step in `/signup` and `/forgot-password` now use `PhoneInput` with country flag picker. MFA loader updated to "Logging you in...". Forgot password enforces selfie verification before new password input.
+- **Decision (Dashboard):** Balances hidden by default (`globalShowAmounts = false`, `splitCurrencyAndAmount` default `showAmounts = false`). Hero dashboard kebab options menu relocated beside `AccountSwitcher`; top-right CTA now holds QR code scan CTA alongside FX rates.
+
 ---
 
 ## Consolidation history

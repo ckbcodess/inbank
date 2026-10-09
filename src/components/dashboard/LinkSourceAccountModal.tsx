@@ -429,7 +429,7 @@ export default function LinkSourceAccountModal({
             {screen === "link_choice" && !onboarding && (
               <div className="flex flex-col gap-4">
                 {([
-                  { to: "link_new_momo", icon: Smartphone, title: "Mobile money wallet", hint: "MTN MoMo, Telecel Cash or AT Money" },
+                  { to: "link_new_momo", icon: Smartphone, title: "Mobile money wallet", hint: "MTN MoMo, Telecel Cash, AT Money, GhanaPay or G-Money" },
                   { to: "link_new_card", icon: CreditCard, title: "Bank card", hint: "Visa, Mastercard or UnionPay" },
                 ] as const).map((opt) => (
                   <ActionTile key={opt.to} icon={opt.icon} title={opt.title} description={opt.hint} onClick={() => setScreen(opt.to)} />

@@ -82,7 +82,7 @@ export function sendOptions({ hasOtherAccounts }: { hasOtherAccounts: boolean })
         {
           id: "momo",
           title: "Mobile Money",
-          hint: "MTN, Telecel, AT",
+          hint: "MTN, Telecel, AT, GhanaPay, G-Money",
           // No category: lands on "Which wallet do you want to send to?" (recent wallets, self or others).
           href: "/payments/send?rail=wallet",
           icon: Wallet,

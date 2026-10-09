@@ -19,6 +19,7 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import { displayGhanaMobile, displayLocalMobile, toNationalDigits } from "@/lib/phone";
 import { maskMobile } from "@/lib/auth-shared";
 import { AmountInput, OperatorSelect } from "@/components/payments/flows/shared";
+import { type Operator } from "@/lib/operators";
 import { cardNetwork, formatCardCvv, formatCardExpiry, formatCardNumber, isCardReady } from "@/lib/card-link";
 import { useCardPayment } from "@/lib/card-payment";
 import { ActionTile } from "@/components/ui/action-tile";
@@ -99,7 +100,7 @@ export function QuickFundFlow({
     resume ? (resume.status === "approved" ? "success" : "form") : "select",
   );
   const [method, setMethod] = useState<"momo" | "card">(resume ? "card" : "momo");
-  const [operator, setOperator] = useState<"MTN" | "Telecel" | "AT">("MTN");
+  const [operator, setOperator] = useState<Operator>("MTN");
   const [phone, setPhone] = useState(registeredPhone ?? "0241234567");
   const usingRegistered =
     !!registeredPhone && toNationalDigits(phone) === toNationalDigits(registeredPhone);

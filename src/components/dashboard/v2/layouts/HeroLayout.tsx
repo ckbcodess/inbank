@@ -29,7 +29,8 @@ import {
   HeroStack,
   HeroSurface,
   LastLogin,
-  HeroAccountMenu,
+  HeroTopActions,
+  HeroAccountOptionsMenu,
 } from "../hero-parts";
 
 export function HeroLayout(props: DashViewProps) {
@@ -50,8 +51,11 @@ export function HeroLayout(props: DashViewProps) {
       <HeroStack
         hero={
           <HeroSurface className="flex flex-col items-center gap-6 rounded-t-3xl px-4 pb-16 pt-14 sm:pb-28 sm:pt-20">
-            <HeroAccountMenu data={data} className="absolute right-4 top-4 sm:right-6 sm:top-6" />
-            <AccountSwitcher data={data} onSelect={onSelectAccount} align="center" tone="hero" />
+            <HeroTopActions data={data} className="absolute right-4 top-4 sm:right-6 sm:top-6" />
+            <div className="flex items-center gap-2">
+              <AccountSwitcher data={data} onSelect={onSelectAccount} align="center" tone="hero" />
+              <HeroAccountOptionsMenu data={data} />
+            </div>
             <HeroBalance data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
           </HeroSurface>
         }
