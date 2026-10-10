@@ -11,6 +11,7 @@
  */
 
 import { NetworkLogo } from "@/components/cards/NetworkLogo";
+import { TransactionItem } from "@/components/transactions/TransactionItem";
 import Link from "next/link";
 import { useId, useState } from "react";
 import {
@@ -18,7 +19,6 @@ import {
   EyeOff,
   ArrowUpRight,
   ArrowDownRight,
-  ArrowDownLeft,
   ChevronDown,
   ChevronRight,
   Lock,
@@ -615,57 +615,11 @@ export function RecentTransactions({
   }
   return (
     <ul className="flex flex-col gap-0.5">
-      {txns.slice(0, limit).map((t) => {
-        const credit = t.direction === "credit";
-        const failed = typeof t.state === "string" && t.state.startsWith("failed");
-        const pending = t.state === "pending";
-        return (
-          <li key={t.id}>
-            <Link
-              href={`/transactions/${t.id}`}
-              className="group flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition-colors hover:bg-tile-hover -mx-2"
-            >
-              <span
-                className={cn(
-                  "flex size-9 shrink-0 items-center justify-center rounded-full transition-transform group-hover:scale-105",
-                  credit ? "bg-pill-success text-success" : "bg-tile text-muted-foreground",
-                )}
-              >
-                {credit ? (
-                  <ArrowDownLeft className="size-4 stroke-[2]" />
-                ) : (
-                  <ArrowUpRight className="size-4 stroke-[2]" />
-                )}
-              </span>
-              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="truncate text-[13.5px] font-medium text-foreground">
-                  {t.counterparty || t.description}
-                </span>
-                <span className="text-[12px] text-muted-foreground tabular">{friendlyDate(t.date)}</span>
-              </span>
-              <span className="flex shrink-0 flex-col items-end gap-0.5">
-                <span
-                  className={cn(
-                    "tabular text-[13.5px] font-medium",
-                    credit ? "text-success" : "text-foreground",
-                  )}
-                >
-                  {credit ? "+ " : "− "}
-                  {fmtGHS(Math.abs(t.amount), showAmounts)}
-                </span>
-                <span
-                  className={cn(
-                    "text-[11px]",
-                    failed ? "text-destructive-text font-medium" : pending ? "text-warning-text" : "text-muted-foreground",
-                  )}
-                >
-                  {failed ? "Failed" : pending ? "Pending" : t.category || "Completed"}
-                </span>
-              </span>
-            </Link>
-          </li>
-        );
-      })}
+      {txns.slice(0, limit).map((t) => (
+        <li key={t.id}>
+          <TransactionItem transaction={t} showAmounts={showAmounts} density="compact" />
+        </li>
+      ))}
     </ul>
   );
 }

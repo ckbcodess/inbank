@@ -598,10 +598,20 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
      - Debit indicator: `bg-tile text-muted-foreground` (`--color-tile` & `--color-muted-foreground`).
      - Transaction status text: `text-destructive-text` (updated `#dd1d43` light, `#e51f47` dark) and `text-warning-text`.
      - Pay Again avatars: dedicated `--avatar-*` tokens (`bg-avatar-teal`, `bg-avatar-sand`, etc.) with `text-primary-foreground`.
-- **Decision (Transaction Green & Avatar Tokens Unification):**
-  1. Unified `--success` and `--success-text` across `:root` (`#16a34a`) and `.dark` (`#22c55e`), applying the vibrant emerald green across the dashboard, transaction list, and transaction details.
-  2. Mapped Pay Again and payee avatar circles in `parts.tsx` strictly to the dedicated `--avatar-*` tokens (`bg-avatar-teal`, `bg-avatar-sand`, `bg-avatar-green`, `bg-avatar-lilac`, `bg-avatar-blue`, `bg-avatar-yellow`, `bg-avatar-pink`) with `text-primary-foreground`.
-  3. Aligned directional icons, row hover states, and amount typography in `TransactionList.tsx`, `transactions/[id]/page.tsx`, `accounts/[id]/page.tsx`, `VirtualCardDetailsView.tsx`, and `RecentActivityWidget.tsx` to match the dashboard (`bg-pill-success text-success` for credits, `bg-tile text-muted-foreground` for debits, `stroke-[2]`, `hover:bg-tile-hover`, and `text-success font-medium`).
+- **Decision (Transaction Display & Iconography Redesign):** Created `TransactionIcon.tsx` and `TransactionItem.tsx` on branch `feat/transaction-display` to eliminate the wall of generic diagonal arrows (`ArrowDownLeft`/`ArrowUpRight`):
+  1. Replaced identical directional arrows with semantic category and rail marks:
+     - Mobile Money (MTN, Telecel, AT, GhanaPay, G-Money): branded `OperatorLogo`.
+     - Utilities & Bills: `Zap` (ECG / Power), `Droplets` (Water), `Tv` (DStv / Entertainment), `Receipt` (General bills / GCB Pay), `GraduationCap` (Education).
+     - Bank Transfers (GIP, ACH, RTGS, PAPSS): institutional `Landmark` with pastel blue tint.
+     - Telephony: `Wifi` (Data bundles) and `PhoneCall` (Airtime).
+     - Spending & Shopping: `CreditCard` (POS/Card) and `ShoppingBag` (Groceries/Retail).
+     - Income & Savings: `Briefcase` (Salary) and `TrendingUp` (Investments).
+     - Internal transfers: `ArrowLeftRight` (Between own accounts).
+  2. Maintained clean financial color separation:
+     - Credits display `+ GHS X.XX` in `text-success` with a subtle mini incoming arrow pip (`↓`) on the avatar.
+     - Debits display `− GHS X.XX` in `text-foreground` without aggressive red coloring.
+     - Status badges reserved for exceptions (**Pending** in amber, **Failed** in red, **Reversed** in muted grey), removing redundant repeated "Completed" pills on settled rows.
+  3. Replaced duplicate ad-hoc row rendering across `TransactionList.tsx`, `MinimalKit.tsx` (`RecentTransactions`), `accounts/[id]/page.tsx` (`ActivityRow`), `VirtualCardDetailsView.tsx`, and `RecentActivityWidget.tsx` with the unified `<TransactionItem />` and `<TransactionIcon />`.
 
 
 

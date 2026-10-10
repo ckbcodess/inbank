@@ -19,9 +19,7 @@ import { use, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowDownLeft,
   ArrowLeftRight,
-  ArrowUpRight,
   Eye,
   EyeOff,
   Files,
@@ -34,14 +32,14 @@ import {
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { TransactionItem } from "@/components/transactions/TransactionItem";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import { ListErrorState, TrueEmptyState } from "@/components/states/ListStates";
 import type { BaselineState } from "@/lib/states";
-import { findAccount, formatDate, formatMoney, transactionsForAccount, type Account, type Transaction } from "@/lib/mock-data";
+import { findAccount, transactionsForAccount, type Account, type Transaction } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
 import { accountHolderName } from "@/lib/account-holder";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
@@ -381,49 +379,6 @@ function BalanceCard({ account, isDefault }: { account: Account; isDefault: bool
   );
 }
 
-/* ── Last 10 transactions ──────────────────────────────────────────────────── */
-
-function ActivityRow({ t }: { t: Transaction }) {
-  const isCredit = t.direction === "credit";
-  const isFailed = t.state.startsWith("failed") || t.state === "reversed" || t.state === "disputed";
-  const isPending = t.state === "pending" || t.state === "awaiting-approval";
-
-  return (
-    <li>
-      <Link
-        href={`/transactions/${t.id}`}
-        className="flex items-center gap-4 rounded-xl px-3 py-3.5 sm:py-4 transition-colors hover:bg-tile-hover sm:px-4"
-      >
-        <span
-          className={cn(
-            "flex size-9 shrink-0 items-center justify-center rounded-full",
-            isCredit ? "bg-pill-success text-success" : "bg-tile text-muted-foreground",
-          )}
-        >
-          {isCredit ? <ArrowDownLeft size={16} strokeWidth={2} /> : <ArrowUpRight size={16} strokeWidth={2} />}
-        </span>
-        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="truncate text-[14px] text-foreground">{t.counterparty || t.description}</span>
-          <span className="truncate text-[12px] text-muted-foreground">
-            <span className="tabular">{formatDate(t.date)}</span> · {t.category || t.paymentMethod || "Payment"}
-          </span>
-        </span>
-        <span className="flex shrink-0 flex-col items-end gap-0.5">
-          <span className={cn("text-[14px] tabular", isCredit ? "text-success" : "text-foreground")}>
-            {isCredit ? "+ " : "− "}
-            {formatMoney(t.amount, t.currency, true)}
-          </span>
-          {isFailed ? (
-            <span className="text-[11.5px] text-destructive">Failed</span>
-          ) : isPending ? (
-            <span className="text-[11.5px] text-warning">Pending</span>
-          ) : null}
-        </span>
-      </Link>
-    </li>
-  );
-}
-
 /** A mini statement: the last ten movements, with this account's full transaction list one tap further. */
 function RecentTransactionsDialog({
   open,
@@ -451,7 +406,9 @@ function RecentTransactionsDialog({
           ) : (
             <ul className="-mx-2 flex flex-col gap-0.5">
               {transactions.map((t) => (
-                <ActivityRow key={t.id} t={t} />
+                <li key={t.id}>
+                  <TransactionItem transaction={t} />
+                </li>
               ))}
             </ul>
           )}

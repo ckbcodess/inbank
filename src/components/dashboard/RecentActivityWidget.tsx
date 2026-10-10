@@ -5,10 +5,9 @@ import {
   ChevronRight,
   Download,
   RotateCw,
-  ArrowDownLeft,
-  ArrowUpRight,
 } from "lucide-react";
 import { formatMoney, type Transaction } from "@/lib/mock-data";
+import { TransactionIcon } from "@/components/transactions/TransactionIcon";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -33,7 +32,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
     title: string;
     subtitle: string;
     amount: number;
-    direction: string;
+    direction: "debit" | "credit";
     status: string;
     reference: string;
     category: string;
@@ -47,7 +46,17 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
   ];
 
   // Raw mock transaction dataset
-  const allMockItems = [
+  const allMockItems: Array<{
+    id: string;
+    title: string;
+    subtitle: string;
+    amount: number;
+    direction: "debit" | "credit";
+    status: string;
+    account: string;
+    reference: string;
+    category: string;
+  }> = [
     {
       id: "act-1",
       title: "Supermarket Purchase — Melcom",
@@ -204,21 +213,13 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                 onClick={() => setSelectedTx(item)}
                 className="group relative overflow-hidden flex items-center gap-3.5 py-3 px-2 -mx-2 rounded-xl cursor-pointer hover:bg-tile-hover transition-colors"
               >
-                {/* Direction Anchor Icon */}
-                <div
-                  className={cn(
-                    "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
-                    isCredit
-                      ? "bg-pill-success text-success"
-                      : "bg-tile text-muted-foreground"
-                  )}
-                >
-                  {isCredit ? (
-                    <ArrowDownLeft className="size-4 stroke-[2]" />
-                  ) : (
-                    <ArrowUpRight className="size-4 stroke-[2]" />
-                  )}
-                </div>
+                {/* Semantic Category / Rail Icon */}
+                <TransactionIcon
+                  category={item.category}
+                  counterparty={item.title}
+                  direction={item.direction}
+                  size={36}
+                />
 
                 {/* Counterparty & Metadata */}
                 <div className="flex-1 min-w-0 flex flex-col gap-0.5">
@@ -271,11 +272,12 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
 
             <DialogBody>
               <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border/60">
-                <div className={`flex size-10 items-center justify-center rounded-full shrink-0 ${
-                  selectedTx.direction === "debit" ? "bg-destructive/10 text-destructive-text" : "bg-success/10 text-success-text"
-                }`}>
-                  {selectedTx.direction === "debit" ? <ArrowUpRight size={20} /> : <ArrowDownLeft size={20} />}
-                </div>
+                <TransactionIcon
+                  category={selectedTx.category}
+                  counterparty={selectedTx.title}
+                  direction={selectedTx.direction}
+                  size={40}
+                />
                 <div>
                   <span className="text-[14px] font-medium text-foreground">{selectedTx.title}</span>
                   <p className="text-[12px] text-muted-foreground">{selectedTx.subtitle}</p>

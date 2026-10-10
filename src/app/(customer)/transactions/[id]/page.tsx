@@ -39,6 +39,7 @@ import { getTransactionType } from "@/lib/transaction-type";
 import { ShareReceiptDialog, type ReceiptFormat } from "@/components/transactions/ShareReceiptDialog";
 import { RoundAction } from "@/components/ui/round-action";
 import { TransactionStatusBadge, transactionStatusLabel } from "@/components/StatusBadge";
+import { TransactionIcon } from "@/components/transactions/TransactionIcon";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { TRANSACTION_STATE_LABEL, type TransactionState } from "@/lib/states";
 import {
@@ -260,6 +261,7 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
       {/* Receipt: the amount first, what to do with it, then the details as a quiet list. No card around it. */}
       <div className="mx-auto flex w-full max-w-xl flex-col gap-10">
         <section className="flex flex-col items-center gap-2 pt-4 text-center">
+          <TransactionIcon transaction={txn} size={52} className="mb-1" />
           <span className="text-[16px] font-medium text-foreground">{getTransactionType(txn)}</span>
           <span
             className={cn(

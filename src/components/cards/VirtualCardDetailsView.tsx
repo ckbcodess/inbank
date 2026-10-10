@@ -2,13 +2,12 @@
 "use client";
 
 import { NetworkLogo } from "@/components/cards/NetworkLogo";
+import { TransactionIcon } from "@/components/transactions/TransactionIcon";
 import { securityCodeLabel } from "@/lib/card-schemes";
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import {
   AlertTriangle,
-  ArrowDownLeft,
-  ArrowUpRight,
   Building2,
   ChevronLeft,
   ChevronRight,
@@ -1079,21 +1078,13 @@ export function VirtualCardDetailsView({
                     key={item.id}
                     className="flex items-center gap-3.5 px-4 py-3 hover:bg-tile-hover transition-colors"
                   >
-                    {/* Direction Anchor Icon */}
-                    <div
-                      className={cn(
-                        "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
-                        isCredit
-                          ? "bg-pill-success text-success"
-                          : "bg-tile text-muted-foreground"
-                      )}
-                    >
-                      {isCredit ? (
-                        <ArrowDownLeft className="size-4 stroke-[2]" />
-                      ) : (
-                        <ArrowUpRight className="size-4 stroke-[2]" />
-                      )}
-                    </div>
+                    {/* Semantic Category / Merchant Icon */}
+                    <TransactionIcon
+                      category={item.category}
+                      counterparty={item.title}
+                      direction={item.direction}
+                      size={36}
+                    />
 
                     {/* Counterparty & Metadata */}
                     <div className="flex-1 min-w-0 flex flex-col gap-0.5">

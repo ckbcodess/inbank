@@ -11,15 +11,11 @@
  * - Pagination: "Showing 1–10 of X cases" + Previous / page numbers / Next.
  */
 
-import { getTransactionType } from "@/lib/transaction-type";
-import { TransactionStatusText } from "@/components/StatusBadge";
+import { TransactionItem } from "@/components/transactions/TransactionItem";
 import { useMemo, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import {
-  ArrowDownLeft,
   ArrowDownToLine,
   ArrowLeftRight,
-  ArrowUpRight,
   ChevronLeft,
   ChevronRight,
   Search,
@@ -98,36 +94,6 @@ function getPaymentMethodDisplay(t: Transaction): string {
   return t.channel || "Bank Transfer";
 }
 
-function formatTableDate(dateStr: string): string {
-  try {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr;
-    return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
-  } catch {
-    return dateStr;
-  }
-}
-
-function getAmountStyling(t: Transaction) {
-  const isFailed = t.state.startsWith("failed") || t.state === "reversed" || t.state === "disputed";
-  if (isFailed) {
-    return {
-      colorClass: "text-destructive-text font-normal",
-      prefix: t.direction === "debit" ? "− " : "+ ",
-    };
-  }
-  if (t.direction === "credit" && t.state === "completed") {
-    return {
-      colorClass: "text-success font-medium",
-      prefix: "+ ",
-    };
-  }
-  return {
-    colorClass: "text-foreground font-normal",
-    prefix: t.direction === "debit" ? "− " : "+ ",
-  };
-}
-
 function exportTransactionsCSV(txns: Transaction[]) {
   const headers = [
     "Date",
@@ -184,7 +150,6 @@ export default function TransactionList({
   emptyDescription = "Activity will appear here as soon as money moves on this account.",
   initialAccountId,
 }: TransactionListProps) {
-  const router = useRouter();
   const activeProfile = useSession((s) => s.activeProfile);
 
   const [state, setState] = useState<ListState>("populated");
@@ -708,60 +673,14 @@ export default function TransactionList({
             className="flex flex-col gap-4"
           >
           {/* One list at every breakpoint — the same rows as the dashboard's Recent activity. */}
-          <div className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">
-            {paginatedRows.map((t) => {
-              const { colorClass, prefix } = getAmountStyling(t);
-              const isCredit = t.direction === "credit";
-
-              return (
-                <div
-                  key={t.id}
-                  onClick={() => router.push(`${detailBase}/${t.id}`)}
-                  className="flex items-center gap-4 rounded-xl px-3 py-3.5 sm:py-4 transition-colors hover:bg-tile-hover cursor-pointer active:bg-tile-hover/80 sm:px-4"
-                >
-                  {/* Direction Anchor Icon */}
-                  <div
-                    className={cn(
-                      "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
-                      isCredit
-                        ? "bg-pill-success text-success"
-                        : "bg-tile text-muted-foreground"
-                    )}
-                  >
-                    {isCredit ? (
-                      <ArrowDownLeft className="size-4 stroke-[2]" />
-                    ) : (
-                      <ArrowUpRight className="size-4 stroke-[2]" />
-                    )}
-                  </div>
-
-                  {/* Counterparty & Metadata */}
-                  <div className="flex-1 min-w-0 flex flex-col gap-1.5">
-                    <span className="font-normal text-foreground text-[14px] leading-tight truncate">
-                      {t.counterparty || t.description}
-                    </span>
-                    <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground truncate">
-                      <span className="truncate">{getTransactionType(t)}</span>
-                      <span>·</span>
-                      <span>{formatTableDate(t.date)}</span>
-                    </div>
-                  </div>
-
-                  {/* Amount & State / Account Number */}
-                  <div className="shrink-0 flex flex-col items-end gap-1.5">
-                    <span className={cn("tabular text-[14px]", colorClass)}>
-                      {prefix}
-                      {t.currency}{" "}
-                      {t.amount.toLocaleString("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </span>
-                    <TransactionStatusText state={t.state} />
-                  </div>
-                </div>
-              );
-            })}
+          <div className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-1.5 sm:p-2">
+            {paginatedRows.map((t) => (
+              <TransactionItem
+                key={t.id}
+                transaction={t}
+                href={`${detailBase}/${t.id}`}
+              />
+            ))}
           </div>
 
           {effective === "partial-load" && <PartialLoadFooter />}
