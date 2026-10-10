@@ -212,9 +212,9 @@ export function getEffectiveCardsForProfile(
   // 2. CLEAN BASELINE (Default)
   const cleanIds: readonly string[] = CLEAN_CARD_IDS[profileKind];
   const cleanCards = allCards
-    .filter((c) => cleanIds.includes(c.id) || c.id.startsWith("card-new-"));
+    .filter((c) => cleanIds.includes(c.id) || c.id === "card-single-001" || c.id.startsWith("card-new-"));
 
-  if (simulation === "clean") {
+  if (simulation === "clean" || cleanCards.length === 0 && allCards.length === 0) {
     return { cards: cleanCards, activeSimulatedCard: null };
   }
 

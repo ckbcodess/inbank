@@ -185,7 +185,7 @@ export default function FxRatesPage() {
                   <div className="relative flex-1 min-w-0 flex items-center pr-3">
                     <span
                       aria-hidden="true"
-                      className={`pointer-events-none whitespace-pre text-2xl sm:text-3xl font-bold tracking-tight tabular-nums select-none leading-none numorainput ${
+                      className={`pointer-events-none whitespace-pre text-2xl sm:text-3xl font-sans font-bold tracking-tight tabular-nums select-none leading-none numorainput ${
                         amount ? "text-foreground" : "text-muted-foreground/30"
                       }`}
                     >
@@ -200,7 +200,7 @@ export default function FxRatesPage() {
                       value={amount}
                       onChange={handleAmountChange}
                       placeholder="0.00"
-                      className="numorainput absolute inset-0 w-full h-full m-0 p-0 border-0 bg-transparent text-transparent placeholder-transparent outline-none focus:outline-none text-2xl sm:text-3xl font-bold tracking-tight tabular-nums leading-none caret-primary"
+                      className="numorainput absolute inset-0 w-full h-full m-0 p-0 border-0 bg-transparent text-transparent placeholder-transparent outline-none focus:outline-none font-sans text-2xl sm:text-3xl font-bold tracking-tight tabular-nums leading-none caret-primary"
                     />
                   </div>
 

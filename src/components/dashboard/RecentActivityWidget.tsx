@@ -202,21 +202,21 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                 key={item.id}
                 data-ripple="true"
                 onClick={() => setSelectedTx(item)}
-                className="group relative overflow-hidden flex items-center gap-3.5 py-3 px-2 -mx-2 rounded-xl cursor-pointer hover:bg-muted/40 transition-colors"
+                className="group relative overflow-hidden flex items-center gap-3.5 py-3 px-2 -mx-2 rounded-xl cursor-pointer hover:bg-tile-hover transition-colors"
               >
                 {/* Direction Anchor Icon */}
                 <div
                   className={cn(
                     "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
                     isCredit
-                      ? "bg-success/10 text-success"
-                      : "bg-muted text-muted-foreground"
+                      ? "bg-pill-success text-success"
+                      : "bg-tile text-muted-foreground"
                   )}
                 >
                   {isCredit ? (
-                    <ArrowDownLeft className="size-4 stroke-[1.8]" />
+                    <ArrowDownLeft className="size-4 stroke-[2]" />
                   ) : (
-                    <ArrowUpRight className="size-4 stroke-[1.8]" />
+                    <ArrowUpRight className="size-4 stroke-[2]" />
                   )}
                 </div>
 

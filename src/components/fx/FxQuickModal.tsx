@@ -263,7 +263,7 @@ export function FxQuickModal() {
                       <span
                         aria-hidden="true"
                         className={cn(
-                          "pointer-events-none whitespace-pre text-2xl font-medium tracking-tight tabular-nums select-none leading-none",
+                          "pointer-events-none whitespace-pre text-2xl font-sans font-medium tracking-tight tabular-nums select-none leading-none numorainput",
                           amount ? "text-foreground" : "text-muted-foreground/30",
                         )}
                       >
@@ -278,7 +278,7 @@ export function FxQuickModal() {
                         onChange={handleAmountChange}
                         placeholder="0.00"
                         aria-label="Amount to convert"
-                        className="absolute inset-0 h-full w-full border-0 bg-transparent text-2xl font-medium tracking-tight tabular-nums text-transparent caret-foreground outline-none focus:outline-none"
+                        className="numorainput font-sans absolute inset-0 h-full w-full border-0 bg-transparent text-2xl font-medium tracking-tight tabular-nums text-transparent caret-foreground outline-none focus:outline-none"
                       />
                     </div>
 

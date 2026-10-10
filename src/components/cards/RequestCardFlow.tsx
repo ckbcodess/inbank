@@ -749,8 +749,8 @@ export function RequestCardFlow() {
 
                 {/* Top Row: GCB Logo (Left) & Unboxed Card Type (Right) */}
                 <div className="relative z-10 flex items-center justify-between transition-colors duration-300">
-                  <GcbCardLogo themeId={selectedTheme.id} className="h-8 sm:h-9 w-auto drop-shadow-xs shrink-0 transition-colors duration-300" />
-                  <span className="text-[14px] sm:text-[15.5px] font-normal tracking-wide opacity-90 capitalize transition-colors duration-300">
+                  <GcbCardLogo themeId={selectedTheme.id} className="h-8 sm:h-9 w-auto aspect-[37.1621/32] drop-shadow-xs shrink-0 transition-colors duration-300" />
+                  <span className="text-[14px] sm:text-[15.5px] font-normal tracking-wide opacity-90 capitalize transition-colors duration-300 shrink-0">
                     {cardType}
                   </span>
                 </div>
@@ -889,8 +889,8 @@ export function RequestCardFlow() {
                 className="absolute inset-0 size-full object-cover pointer-events-none select-none"
               />
               <div className="relative z-10 flex items-center justify-between">
-                <GcbCardLogo themeId={selectedTheme.id} className="h-3 w-auto shrink-0" />
-                <span className="text-[6px] font-medium uppercase opacity-80">{cardType}</span>
+                <GcbCardLogo themeId={selectedTheme.id} className="h-3 w-auto aspect-[37.1621/32] shrink-0" />
+                <span className="text-[6px] font-medium uppercase opacity-80 shrink-0">{cardType}</span>
               </div>
               <div className="relative z-10 flex items-end justify-between">
                 <span className="text-[7.5px] font-medium truncate max-w-[40px]">

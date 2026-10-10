@@ -26,7 +26,7 @@ const buttonVariants = cva(
         tile: "bg-[var(--tile)] text-foreground hover:bg-[var(--tile-hover)]",
         // Frosted control for the dark hero panel on the dashboard (white type, tinted by --hero-foreground).
         glass:
-          "backdrop-blur-md border-[color-mix(in_oklch,var(--hero-foreground)_8%,transparent)] bg-[color-mix(in_oklch,var(--hero-foreground)_8%,transparent)] text-[var(--hero-foreground)] hover:bg-[color-mix(in_oklch,var(--hero-foreground)_14%,transparent)]",
+          "backdrop-blur-md border border-[color-mix(in_oklch,var(--hero-foreground)_20%,transparent)] bg-[color-mix(in_oklch,var(--hero-foreground)_15%,transparent)] text-[var(--hero-foreground)] hover:bg-[color-mix(in_oklch,var(--hero-foreground)_22%,transparent)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.18)] active:scale-95",
       },
       size: {
         default:

@@ -73,6 +73,15 @@
   --color-warning-text: var(--warning-text);
   --color-destructive-text: var(--destructive-text);
   --color-info-text: var(--info-text);
+  --color-avatar-teal: var(--avatar-teal);
+  --color-avatar-sand: var(--avatar-sand);
+  --color-avatar-green: var(--avatar-green);
+  --color-avatar-lilac: var(--avatar-lilac);
+  --color-avatar-yellow: var(--avatar-yellow);
+  --color-avatar-red: var(--avatar-red);
+  --color-avatar-blue: var(--avatar-blue);
+  --color-avatar-lemon: var(--avatar-lemon);
+  --color-avatar-pink: var(--avatar-pink);
   --color-tile: var(--tile);
   --color-tile-hover: var(--tile-hover);
   --color-field: var(--field);
@@ -224,9 +233,9 @@
   --avatar-pink: #fce7f3;
   /* Status colours as text: darker than the fills on light, lighter on dark, so they read on either surface. */
   --info: oklch(0.6 0.19 255);
-  --success-text: oklch(0.5 0.14 150);
+  --success-text: #16a34a;
   --warning-text: oklch(0.52 0.13 65);
-  --destructive-text: oklch(0.5 0.2 27);
+  --destructive-text: #dd1d43;
   --info-text: oklch(0.5 0.19 255);
   /* Input fields, text areas, selects and the PIN boxes. */
   --field: #ffffff;
@@ -266,9 +275,9 @@
   --muted-foreground: #8a8a8a;
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: #df2a69;
+  --destructive: #dd1d43;
   --destructive-foreground: oklch(1 0 0);
-  --success: oklch(0.62 0.15 150);
+  --success: #16a34a;
   --warning: oklch(0.72 0.16 75);
   --border: #ebebeb;
   --ring: #b8b8b8;
@@ -431,9 +440,9 @@
   --avatar-lemon: #fef08a;
   --avatar-pink: #fce7f3;
   --info: oklch(0.72 0.15 255);
-  --success-text: oklch(0.78 0.15 150);
+  --success-text: #22c55e;
   --warning-text: oklch(0.82 0.14 85);
-  --destructive-text: #fe5d6d;
+  --destructive-text: #e51f47;
   --info-text: oklch(0.78 0.12 250);
   --field: #1a1a1a;
   --field-hover: #1c1c1c;
@@ -468,9 +477,9 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.371 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: #fe5d6d;
+  --destructive: #e51f47;
   --destructive-foreground: oklch(1 0 0);
-  --success: oklch(0.68 0.15 150);
+  --success: #22c55e;
   --warning: oklch(0.78 0.15 75);
   --border: oklch(0.269 0 0);
   --ring: #ffc423;
@@ -780,8 +789,10 @@ select {
 
 /* Numora numeric input utility for all numeric-only fields */
 .numorainput {
+  font-family: inherit;
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
+  letter-spacing: inherit;
 }
 
 /* Modal / Dialog Form Fields — elevated & lighter than the modal surface in dark mode */
@@ -1226,7 +1237,7 @@ html {
 }
 
 @media (pointer: coarse) {
-  input, textarea, select {
+  input:not(.numorainput):not([data-preserve-font-size]), textarea, select {
     font-size: 16px !important;
   }
 }

@@ -387,8 +387,87 @@ export const SEED_BENEFICIARIES: BeneficiaryRecord[] = [
   },
 ];
 
+export function getInitialBeneficiaries(): BeneficiaryRecord[] {
+  if (typeof window === "undefined") return SEED_BENEFICIARIES;
+  try {
+    const sessionRaw = window.localStorage.getItem("nibs-session");
+    if (sessionRaw) {
+      const parsed = JSON.parse(sessionRaw);
+      const actorId = parsed?.state?.actor?.id;
+      if (actorId === "u-clean") return [];
+      if (actorId === "u-single") {
+        return [
+          {
+            id: "ben-s1",
+            name: "Mum (Yaa Osei)",
+            transactionType: "wallet",
+            category: "person",
+            network: "MTN Mobile Money",
+            phoneNumber: "0244 889 900",
+            currency: "GHS",
+            detail: "MTN Mobile Money · 0244 889 900",
+            verified: true,
+            createdAt: "2026-08-15",
+          },
+          {
+            id: "ben-s2",
+            name: "ECG Prepaid Electricity",
+            transactionType: "bill",
+            category: "biller",
+            billerCategory: "Utilities",
+            billerName: "Electricity Company of Ghana (ECG)",
+            billerReference: "P-992014",
+            currency: "GHS",
+            detail: "ECG Prepaid · Meter P-992014",
+            verified: true,
+            createdAt: "2026-08-20",
+          },
+        ];
+      }
+    }
+    const devRaw = window.localStorage.getItem("nibs-dev-user-simulation");
+    if (devRaw) {
+      const parsedDev = JSON.parse(devRaw);
+      if (parsedDev?.state?.userType === "clean") return [];
+      if (parsedDev?.state?.userType === "single") {
+        return [
+          {
+            id: "ben-s1",
+            name: "Mum (Yaa Osei)",
+            transactionType: "wallet",
+            category: "person",
+            network: "MTN Mobile Money",
+            phoneNumber: "0244 889 900",
+            currency: "GHS",
+            detail: "MTN Mobile Money · 0244 889 900",
+            verified: true,
+            createdAt: "2026-08-15",
+          },
+          {
+            id: "ben-s2",
+            name: "ECG Prepaid Electricity",
+            transactionType: "bill",
+            category: "biller",
+            billerCategory: "Utilities",
+            billerName: "Electricity Company of Ghana (ECG)",
+            billerReference: "P-992014",
+            currency: "GHS",
+            detail: "ECG Prepaid · Meter P-992014",
+            verified: true,
+            createdAt: "2026-08-20",
+          },
+        ];
+      }
+    }
+  } catch {
+    // fallback
+  }
+  return SEED_BENEFICIARIES;
+}
+
 interface BeneficiariesState {
   beneficiaries: BeneficiaryRecord[];
+  setBeneficiaries: (list: BeneficiaryRecord[]) => void;
   addBeneficiary: (record: Omit<BeneficiaryRecord, "id" | "createdAt">) => BeneficiaryRecord;
   updateBeneficiary: (id: string, updates: Partial<BeneficiaryRecord>) => void;
   removeBeneficiary: (id: string) => void;
@@ -400,6 +479,8 @@ export const useBeneficiariesStore = create<BeneficiariesState>()(
   persist(
     (set) => ({
       beneficiaries: SEED_BENEFICIARIES,
+
+      setBeneficiaries: (beneficiaries) => set({ beneficiaries }),
 
       addBeneficiary: (record) => {
         const id = `ben-${Date.now()}`;
@@ -444,7 +525,7 @@ export const useBeneficiariesStore = create<BeneficiariesState>()(
       },
 
       resetToDefault: () => {
-        set({ beneficiaries: SEED_BENEFICIARIES });
+        set({ beneficiaries: getInitialBeneficiaries() });
       },
     }),
     {

@@ -392,15 +392,15 @@ function ActivityRow({ t }: { t: Transaction }) {
     <li>
       <Link
         href={`/transactions/${t.id}`}
-        className="flex items-center gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-muted/50 sm:px-4"
+        className="flex items-center gap-4 rounded-xl px-3 py-3.5 sm:py-4 transition-colors hover:bg-tile-hover sm:px-4"
       >
         <span
           className={cn(
             "flex size-9 shrink-0 items-center justify-center rounded-full",
-            isCredit ? "bg-success/10 text-success" : "bg-muted text-muted-foreground",
+            isCredit ? "bg-pill-success text-success" : "bg-tile text-muted-foreground",
           )}
         >
-          {isCredit ? <ArrowDownLeft size={16} strokeWidth={1.8} /> : <ArrowUpRight size={16} strokeWidth={1.8} />}
+          {isCredit ? <ArrowDownLeft size={16} strokeWidth={2} /> : <ArrowUpRight size={16} strokeWidth={2} />}
         </span>
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="truncate text-[14px] text-foreground">{t.counterparty || t.description}</span>

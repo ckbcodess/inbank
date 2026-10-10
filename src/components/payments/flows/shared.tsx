@@ -922,7 +922,7 @@ export function AmountInput({
   let fontSizeClass = "text-[26px]";
   let currencySizeClass = "text-[17px]";
   if (numLength > 15) {
-    fontSizeClass = "text-[15px]";
+    fontSizeClass = "text-[16px]";
     currencySizeClass = "text-[13px]";
   } else if (numLength > 12) {
     fontSizeClass = "text-[18px]";
@@ -1003,7 +1003,7 @@ export function AmountInput({
               onFocus={onFocus}
               aria-label={label}
               className={cn(
-                "numorainput absolute inset-0 w-full h-full m-0 p-0 border-0 bg-transparent text-transparent placeholder-transparent outline-none focus:outline-none font-semibold tracking-tight tabular-nums px-0.5 leading-none selection:bg-primary/25 transition-[font-size] duration-150",
+                "numorainput absolute inset-0 w-full h-full m-0 p-0 border-0 bg-transparent text-transparent placeholder-transparent outline-none focus:outline-none font-sans font-semibold tracking-tight tabular-nums px-0.5 leading-none selection:bg-primary/25 transition-[font-size] duration-150",
                 disabled && "pointer-events-none",
                 fontSizeClass,
                 isError ? "caret-destructive" : "caret-primary"

@@ -24,7 +24,7 @@ export function GCBLogo({
       viewBox="-2 -2 54 47.5"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("text-foreground overflow-visible", className)}
+      className={cn("text-foreground overflow-visible shrink-0 aspect-[54/47.5]", className)}
       aria-label="GCB Bank"
       role="img"
       {...props}

@@ -43,6 +43,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ROLE_LABEL, type Actor } from "@/lib/roles";
+import { useDevUserStore, DEMO_USER_CONFIGS } from "@/lib/dev-user-simulation";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import HeaderBreadcrumbs from "./HeaderBreadcrumbs";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
@@ -125,6 +126,8 @@ export default function TopHeader({
   const { devState } = useDevState();
   const captureMode = useCaptureMode();
   const devToolsHidden = useDevToolsHidden();
+  const simUserType = useDevUserStore((s) => s.userType);
+  const simBadge = DEMO_USER_CONFIGS[simUserType]?.badgeLabel || "Dev";
   const { t } = useTranslation();
   const [logoutOpen, setLogoutOpen] = useState(false);
 
@@ -147,18 +150,21 @@ export default function TopHeader({
 
       <div className="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
         {/* Dev Mode Dropdown Menu — hidden in capture mode so it stays out of Figma captures */}
-        {devState && !captureMode && (
+        {!captureMode && !devToolsHidden && (
           <DropdownMenu>
             <DropdownMenuTrigger className="h-8 gap-1.5 rounded-lg border border-dashed border-warning/50 bg-warning/10 px-2.5 text-warning-text hover:bg-warning/20 hover:text-warning-text dark:hover:text-warning-text text-[12px] font-medium transition-colors flex items-center outline-none cursor-pointer whitespace-nowrap shrink-0">
               <Layers size={13} strokeWidth={2} className="shrink-0" />
               <span className="hidden sm:inline whitespace-nowrap">Dev Mode</span>
-              {devState.section && (
-                <span className="rounded bg-warning/20 px-1 py-0.5 text-[10px] shrink-0">
+              <span className="rounded bg-warning/20 px-1 py-0.5 text-[10px] shrink-0 font-medium">
+                {simBadge}
+              </span>
+              {devState?.section && (
+                <span className="rounded bg-warning/20 px-1 py-0.5 text-[10px] shrink-0 hidden md:inline">
                   {devState.section}
                 </span>
               )}
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-64 max-h-[80vh] overflow-y-auto">
+            <DropdownMenuContent align="end" className="w-72 max-h-[85vh] overflow-y-auto">
               <DevStateMenuItems devState={devState} />
             </DropdownMenuContent>
           </DropdownMenu>

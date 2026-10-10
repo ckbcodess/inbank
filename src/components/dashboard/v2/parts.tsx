@@ -133,7 +133,7 @@ export function dayLabel(iso: string): string {
 export function Card({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     // Phone: 16px inside a 16px gutter, so rows keep their width; desktop keeps the roomier 20px.
-    <div className={cn("flex h-[260px] flex-col justify-between gap-2.5 rounded-2xl border border-border bg-panel p-4 sm:gap-4 sm:p-5 overflow-hidden", className)}>
+    <div className={cn("flex h-[260px] flex-col gap-3 rounded-2xl border border-border bg-panel p-4 sm:p-5 overflow-hidden", className)}>
       {children}
     </div>
   );
@@ -221,7 +221,7 @@ export function Greeting({ firstName, className }: { firstName: string; classNam
 
 /** A glass control on the hero panel: frosted, so the wave and map blur behind it. */
 export const HERO_GLASS =
-  "backdrop-blur-md border border-[color-mix(in_oklch,var(--hero-foreground)_8%,transparent)] bg-[color-mix(in_oklch,var(--hero-foreground)_8%,transparent)] text-[var(--hero-foreground)] hover:bg-[color-mix(in_oklch,var(--hero-foreground)_14%,transparent)] group-hover:bg-[color-mix(in_oklch,var(--hero-foreground)_14%,transparent)]";
+  "backdrop-blur-md border border-[color-mix(in_oklch,var(--hero-foreground)_20%,transparent)] bg-[color-mix(in_oklch,var(--hero-foreground)_15%,transparent)] text-[var(--hero-foreground)] hover:bg-[color-mix(in_oklch,var(--hero-foreground)_22%,transparent)] group-hover:bg-[color-mix(in_oklch,var(--hero-foreground)_22%,transparent)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.18)] active:scale-95";
 
 /**
  * Send / Pay Bill / Top-Up. Each opens a picker (bottom sheet on a phone) that
@@ -310,6 +310,7 @@ export function MoneyActions({
           aria-haspopup="dialog"
           className={cn(
             "h-auto gap-2 px-5 py-3 text-[14px] leading-none shadow-xs max-sm:flex-1 max-sm:min-w-0 max-sm:h-10 max-sm:gap-1 max-sm:px-1.5 max-sm:py-2.5 max-sm:text-[11.5px] max-sm:font-semibold max-sm:tracking-tight",
+            hero && "rounded-xl",
           )}
         >
           <Icon size={17} strokeWidth={1.8} className="size-[17px] shrink-0 max-sm:size-3.5" />
@@ -400,7 +401,7 @@ export function AccountSwitcher({
 
   const hero = tone === "hero";
   const trigger = hero
-    ? "flex w-fit items-center gap-2 h-9 sm:h-10 px-3.5 rounded-xl backdrop-blur-md border border-[color-mix(in_oklch,var(--hero-foreground)_8%,transparent)] bg-[color-mix(in_oklch,var(--hero-foreground)_8%,transparent)] text-[var(--hero-foreground)] hover:bg-[color-mix(in_oklch,var(--hero-foreground)_14%,transparent)] text-[13.5px] sm:text-[15px] font-medium outline-none shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] active:scale-95 transition-colors cursor-pointer"
+    ? "flex w-fit items-center gap-2 h-9 sm:h-10 px-3.5 rounded-xl backdrop-blur-md border border-[color-mix(in_oklch,var(--hero-foreground)_20%,transparent)] bg-[color-mix(in_oklch,var(--hero-foreground)_15%,transparent)] text-[var(--hero-foreground)] hover:bg-[color-mix(in_oklch,var(--hero-foreground)_22%,transparent)] text-[13.5px] sm:text-[15px] font-medium outline-none shadow-[inset_0_1px_1px_rgba(255,255,255,0.18)] active:scale-95 transition-colors cursor-pointer"
     : "-mx-3 flex w-fit items-center gap-2.5 rounded-lg px-3 py-2 text-[15px] leading-none text-foreground outline-none transition-colors hover:bg-muted";
   const chevron = hero ? "text-[var(--hero-foreground)]" : "text-muted-foreground";
 
@@ -616,16 +617,16 @@ export function Notices({
 
 export function UpcomingList({ items, showAmounts }: { items: UpcomingPayment[]; showAmounts: boolean }) {
   return (
-    <ul className="flex flex-col">
+    <ul className="flex flex-col gap-0.5">
       {items.map((p) => (
-        <li key={p.id} className="flex items-center gap-3.5 py-3.5">
+        <li key={p.id} className="flex items-center gap-3.5 py-2 sm:py-2.5 rounded-xl px-2 -mx-2 transition-colors hover:bg-tile-hover">
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="truncate text-[14px] text-foreground">{p.payee}</span>
+            <span className="truncate text-[13.5px] font-medium text-foreground">{p.payee}</span>
             <span className="text-[12px] text-muted-foreground tabular">
               {dayLabel(p.date)} · {p.frequencyLabel}
             </span>
           </span>
-          <span className="shrink-0 tabular text-[14px] text-foreground">
+          <span className="shrink-0 tabular text-[13.5px] font-medium text-foreground">
             − {formatMoney(p.amount, p.currency, showAmounts)}
           </span>
         </li>
@@ -672,15 +673,22 @@ export function ComingUpCard({
 /* ── Pay again (saved payees) ────────────────────────────────────────────── */
 
 const AVATAR_TINTS = [
-  "bg-[color-mix(in_oklch,var(--cat-1)_18%,transparent)] text-[var(--cat-1)]",
-  "bg-[color-mix(in_oklch,var(--cat-3)_18%,transparent)] text-[var(--cat-3)]",
-  "bg-[color-mix(in_oklch,var(--cat-5)_18%,transparent)] text-[var(--cat-5)]",
-  "bg-[color-mix(in_oklch,var(--cat-4)_18%,transparent)] text-[var(--cat-4)]",
+  "bg-avatar-teal text-primary-foreground border border-black/5 dark:border-white/10",
+  "bg-avatar-sand text-primary-foreground border border-black/5 dark:border-white/10",
+  "bg-avatar-green text-primary-foreground border border-black/5 dark:border-white/10",
+  "bg-avatar-lilac text-primary-foreground border border-black/5 dark:border-white/10",
+  "bg-avatar-blue text-primary-foreground border border-black/5 dark:border-white/10",
+  "bg-avatar-yellow text-primary-foreground border border-black/5 dark:border-white/10",
+  "bg-avatar-pink text-primary-foreground border border-black/5 dark:border-white/10",
 ];
 
 function initials(name: string): string {
-  const parts = name.split(" ").filter(Boolean);
-  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
+  const clean = name.replace(/[()[\]]/g, " ").trim();
+  const parts = clean.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) {
+    return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
+  }
+  return (clean.slice(0, 2) || "??").toUpperCase();
 }
 
 /**
@@ -694,46 +702,84 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
     <Card className={className}>
       <CardHeader title={t("dashboard.payAgain", "Pay again")} href="/beneficiaries" cta={t("common.manage", "Manage")} />
       {loading ? (
-        // The same four-across grid of avatars with a name and a detail under each.
-        <div className="my-auto grid grid-cols-4 gap-x-2 gap-y-3.5">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="flex min-w-0 flex-col items-center gap-1.5 sm:gap-2">
-              <Bone className="size-10 rounded-full sm:size-11" style={{ animationDelay: `${i * 50}ms` }} />
-              <div className="flex w-full flex-col items-center gap-1">
-                <Bone className="h-2.5 w-4/5" style={{ animationDelay: `${i * 50}ms` }} />
-                <Bone className="h-2 w-3/5" style={{ animationDelay: `${i * 50}ms` }} />
+        // Balanced grid of avatar skeletons
+        <div className="flex flex-1 flex-col justify-around">
+          <div className="grid grid-cols-4 gap-x-2 gap-y-3.5">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="flex min-w-0 flex-col items-center gap-1.5 sm:gap-2">
+                <Bone className="size-10 rounded-full sm:size-11" style={{ animationDelay: `${i * 50}ms` }} />
+                <div className="flex w-full flex-col items-center gap-1">
+                  <Bone className="h-2.5 w-4/5" style={{ animationDelay: `${i * 50}ms` }} />
+                  <Bone className="h-2 w-3/5" style={{ animationDelay: `${i * 50}ms` }} />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       ) : data.payAgain.length === 0 ? (
         <PanelEmpty
           text={t("dashboard.payAgainEmpty", "Save the people and bills you pay often, and they'll wait here.")}
           action={{ label: t("dashboard.addSomeone", "Add someone"), href: "/beneficiaries?add=1" }}
         />
-      ) : (
-        <div className="my-auto grid grid-cols-4 gap-x-2 gap-y-3.5">
-          {data.payAgain.slice(0, 8).map((p, i) => (
+      ) : data.payAgain.length <= 3 ? (
+        // When there are 1 to 3 payees (e.g. single-account user), render as clean payee rows starting from the top
+        <div className="flex flex-1 flex-col justify-start gap-1">
+          {data.payAgain.map((p, i) => (
             <Link
               key={p.href}
               href={withFrom(p.href, data.selectedAccountId)}
-              className="group flex min-w-0 flex-col items-center gap-1.5 text-center"
+              className="group flex items-center gap-3 py-2.5 transition-colors hover:bg-tile-hover rounded-xl px-2 -mx-2"
               aria-label={`Pay ${p.name}, ${p.detail}`}
             >
               <span
                 className={cn(
-                  "flex size-10 items-center justify-center rounded-full text-[13px] tracking-[0.02em] transition-transform sm:size-11 sm:text-[13.5px]",
+                  "flex size-9 shrink-0 items-center justify-center rounded-full text-[13px] font-medium tracking-[0.02em]",
                   AVATAR_TINTS[i % AVATAR_TINTS.length],
                 )}
               >
                 {initials(p.name)}
               </span>
-              <span className="flex w-full min-w-0 flex-col gap-0.5">
-                <span className="truncate text-[12px] leading-tight text-foreground">{p.name}</span>
-                <span className="truncate text-[11px] leading-tight text-muted-foreground">{p.detail}</span>
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="truncate text-[13.5px] font-medium text-foreground">
+                  {p.name}
+                </span>
+                <span className="truncate text-[12px] text-muted-foreground">
+                  {p.detail}
+                </span>
+              </span>
+              <span className="shrink-0 flex items-center gap-1 text-[12px] text-muted-foreground group-hover:text-foreground transition-colors">
+                <span>Pay</span>
+                <ChevronRight size={14} className="text-muted-foreground/60 group-hover:translate-x-0.5 transition-transform" />
               </span>
             </Link>
           ))}
+        </div>
+      ) : (
+        // When 4 or more payees, render as a balanced 4-column avatar grid
+        <div className="flex flex-1 flex-col justify-around">
+          <div className="grid grid-cols-4 gap-x-2 gap-y-3.5">
+            {data.payAgain.slice(0, 8).map((p, i) => (
+              <Link
+                key={p.href}
+                href={withFrom(p.href, data.selectedAccountId)}
+                className="group flex min-w-0 flex-col items-center gap-1.5 text-center"
+                aria-label={`Pay ${p.name}, ${p.detail}`}
+              >
+                <span
+                  className={cn(
+                    "flex size-10 items-center justify-center rounded-full text-[13px] tracking-[0.02em] transition-transform group-hover:scale-105 sm:size-11 sm:text-[13.5px]",
+                    AVATAR_TINTS[i % AVATAR_TINTS.length],
+                  )}
+                >
+                  {initials(p.name)}
+                </span>
+                <span className="flex w-full min-w-0 flex-col gap-0.5">
+                  <span className="truncate text-[12px] leading-tight text-foreground font-medium">{p.name}</span>
+                  <span className="truncate text-[11px] leading-tight text-muted-foreground">{p.detail}</span>
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </Card>
@@ -748,7 +794,7 @@ export function ActivityBody({
   data,
   loading,
   showAmounts,
-  limit = 4,
+  limit = 3,
   onOpenFundModal,
 }: {
   data: DashData;
@@ -779,7 +825,7 @@ export function ActivityCard({
   data,
   loading,
   showAmounts,
-  limit = 4,
+  limit = 3,
   className,
   onOpenFundModal,
 }: {

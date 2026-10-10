@@ -264,7 +264,7 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
           <span
             className={cn(
               "tabular text-[34px] tracking-[-0.02em] sm:text-[42px]",
-              isCredit ? "text-success-text" : "text-foreground",
+              isCredit ? "text-success" : "text-foreground",
             )}
           >
             {isCredit ? "+" : "-"}

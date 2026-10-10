@@ -35,6 +35,63 @@ export function groupAvatarTint(id: string): string {
   return GROUP_AVATAR_TINTS[hash % GROUP_AVATAR_TINTS.length];
 }
 
+export const SINGLE_RECENT_AVATARS: RecentPayeeAvatar[] = [
+  {
+    id: "rec-s1",
+    name: "Mum (Yaa Osei)",
+    bank: "MTN Mobile Money",
+    acct: "0244 889 900",
+    initials: "YO",
+    rail: "wallet",
+    colorBg: "var(--avatar-teal)",
+  },
+  {
+    id: "rec-s2",
+    name: "ECG Electricity",
+    bank: "ECG",
+    acct: "P-992014",
+    initials: "EC",
+    rail: "bill",
+    category: "Utilities",
+    colorBg: "var(--avatar-sand)",
+  },
+];
+
+export function getSimulatedRecentAvatars(): RecentPayeeAvatar[] {
+  if (typeof window === "undefined") return RECENT_AVATARS;
+  try {
+    const sessionRaw = window.localStorage.getItem("nibs-session");
+    if (sessionRaw) {
+      const parsed = JSON.parse(sessionRaw);
+      const actorId = parsed?.state?.actor?.id;
+      if (actorId === "u-clean") return [];
+      if (actorId === "u-single") return SINGLE_RECENT_AVATARS;
+    }
+    const devRaw = window.localStorage.getItem("nibs-dev-user-simulation");
+    if (devRaw) {
+      const parsedDev = JSON.parse(devRaw);
+      if (parsedDev?.state?.userType === "clean") return [];
+      if (parsedDev?.state?.userType === "single") return SINGLE_RECENT_AVATARS;
+    }
+  } catch {
+    // fallback
+  }
+  return RECENT_AVATARS;
+}
+
+export function useRecentAvatars(): RecentPayeeAvatar[] {
+  const [avatars, setAvatars] = useState<RecentPayeeAvatar[]>(getSimulatedRecentAvatars);
+
+  useEffect(() => {
+    setAvatars(getSimulatedRecentAvatars());
+    const handleStorage = () => setAvatars(getSimulatedRecentAvatars());
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
+  return avatars;
+}
+
 export const RECENT_AVATARS: RecentPayeeAvatar[] = [
   // Bank payees
   {

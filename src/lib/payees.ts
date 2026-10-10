@@ -46,6 +46,13 @@ function migratedPayees(): PayAgainPayee[] {
   });
 }
 
+const SINGLE_PAYEES: PayAgainPayee[] = [
+  { name: "Mum (Yaa Osei)", detail: "MTN MoMo", href: payHref("wallet", "Mum (Yaa Osei)", { account: "0244889900" }) },
+  { name: "ECG Electricity", detail: "ECG prepaid", href: payHref("bill", "ECG Electricity", { ref: "P-992014" }) },
+];
+
 export function payAgainFor(actorId: string): PayAgainPayee[] {
+  if (actorId === "u-clean") return [];
+  if (actorId === "u-single") return SINGLE_PAYEES;
   return actorId === "u-legacy" ? migratedPayees() : DEFAULT_PAYEES;
 }

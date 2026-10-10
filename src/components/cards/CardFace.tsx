@@ -59,9 +59,9 @@ export function CardFace({
           <div className="flex items-center justify-between">
             <GcbCardLogo
               themeId={theme.id}
-              className="h-[8cqw] w-auto shrink-0"
+              className="h-[8cqw] w-[9.3cqw] aspect-[37.1621/32] shrink-0"
             />
-            <span className="text-[3.6cqw] leading-none tracking-wide opacity-90">
+            <span className="text-[3.6cqw] leading-none tracking-wide opacity-90 shrink-0">
               {card.type}
             </span>
           </div>

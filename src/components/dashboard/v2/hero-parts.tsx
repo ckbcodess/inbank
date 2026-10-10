@@ -205,7 +205,7 @@ export function HeroSurface({
 }
 
 /** What the hero's glass buttons add to the `glass` Button variant: the squarer corner and the inner top light. */
-const HERO_GLASS_EXTRA = "rounded-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)] active:scale-95";
+const HERO_GLASS_EXTRA = "rounded-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.18)] active:scale-95";
 
 /** The kebab icon menu for account options (Share, Copy, Statements, etc.) placed next to the account switcher. */
 export function HeroAccountOptionsMenu({

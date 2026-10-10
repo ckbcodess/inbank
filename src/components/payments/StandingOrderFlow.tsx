@@ -75,7 +75,7 @@ import {
 } from "./flows/shared";
 import {
   RailBeneficiaryStrip,
-  RECENT_AVATARS,
+  useRecentAvatars,
   type RecentPayeeAvatar,
 } from "./flows/beneficiaries";
 import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
@@ -168,6 +168,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const auth = useAuthorisation();
   const { groups } = useGroupsStore();
   const savedBeneficiaries = useBeneficiariesStore((s) => s.beneficiaries);
+  const RECENT_AVATARS = useRecentAvatars();
   const ownWallets = useOwnWallets();
   const storedDefaultId = useAccountPrefs((s) => s.defaultAccountId);
   // Start from the account the customer came from (?from=), else their default.
@@ -329,7 +330,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       }
     }
     return merged;
-  }, [rail, groups, savedBeneficiaries, ownWallets]);
+  }, [rail, groups, savedBeneficiaries, ownWallets, RECENT_AVATARS]);
 
   /**
    * Selecting a beneficiary immediately fills details AND sets detailsCollapsed to TRUE.

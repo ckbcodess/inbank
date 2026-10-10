@@ -118,7 +118,7 @@ function getAmountStyling(t: Transaction) {
   }
   if (t.direction === "credit" && t.state === "completed") {
     return {
-      colorClass: "text-success-text font-normal",
+      colorClass: "text-success font-medium",
       prefix: "+ ",
     };
   }
@@ -717,21 +717,21 @@ export default function TransactionList({
                 <div
                   key={t.id}
                   onClick={() => router.push(`${detailBase}/${t.id}`)}
-                  className="flex items-center gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-muted/50 cursor-pointer active:bg-muted/70 sm:px-4"
+                  className="flex items-center gap-4 rounded-xl px-3 py-3.5 sm:py-4 transition-colors hover:bg-tile-hover cursor-pointer active:bg-tile-hover/80 sm:px-4"
                 >
                   {/* Direction Anchor Icon */}
                   <div
                     className={cn(
                       "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
                       isCredit
-                        ? "bg-success/10 text-success-text"
-                        : "bg-muted text-muted-foreground"
+                        ? "bg-pill-success text-success"
+                        : "bg-tile text-muted-foreground"
                     )}
                   >
                     {isCredit ? (
-                      <ArrowDownLeft className="size-4 stroke-[1.8]" />
+                      <ArrowDownLeft className="size-4 stroke-[2]" />
                     ) : (
-                      <ArrowUpRight className="size-4 stroke-[1.8]" />
+                      <ArrowUpRight className="size-4 stroke-[2]" />
                     )}
                   </div>
 

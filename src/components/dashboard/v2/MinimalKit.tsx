@@ -602,7 +602,7 @@ export function Panel({
 export function RecentTransactions({
   txns,
   showAmounts,
-  limit = 5,
+  limit = 3,
 }: {
   txns: Transaction[];
   showAmounts: boolean;
@@ -614,7 +614,7 @@ export function RecentTransactions({
     );
   }
   return (
-    <ul className="flex flex-col">
+    <ul className="flex flex-col gap-0.5">
       {txns.slice(0, limit).map((t) => {
         const credit = t.direction === "credit";
         const failed = typeof t.state === "string" && t.state.startsWith("failed");
@@ -623,22 +623,22 @@ export function RecentTransactions({
           <li key={t.id}>
             <Link
               href={`/transactions/${t.id}`}
-              className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60"
+              className="group flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition-colors hover:bg-tile-hover -mx-2"
             >
               <span
                 className={cn(
-                  "flex size-8 shrink-0 items-center justify-center rounded-full",
-                  credit ? "bg-success/10 text-success" : "bg-muted text-muted-foreground",
+                  "flex size-9 shrink-0 items-center justify-center rounded-full transition-transform group-hover:scale-105",
+                  credit ? "bg-pill-success text-success" : "bg-tile text-muted-foreground",
                 )}
               >
                 {credit ? (
-                  <ArrowDownLeft className="size-4 stroke-[1.8]" />
+                  <ArrowDownLeft className="size-4 stroke-[2]" />
                 ) : (
-                  <ArrowUpRight className="size-4 stroke-[1.8]" />
+                  <ArrowUpRight className="size-4 stroke-[2]" />
                 )}
               </span>
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="truncate text-[14px] text-foreground">
+                <span className="truncate text-[13.5px] font-medium text-foreground">
                   {t.counterparty || t.description}
                 </span>
                 <span className="text-[12px] text-muted-foreground tabular">{friendlyDate(t.date)}</span>
@@ -646,7 +646,7 @@ export function RecentTransactions({
               <span className="flex shrink-0 flex-col items-end gap-0.5">
                 <span
                   className={cn(
-                    "tabular text-[14px]",
+                    "tabular text-[13.5px] font-medium",
                     credit ? "text-success" : "text-foreground",
                   )}
                 >
@@ -655,8 +655,8 @@ export function RecentTransactions({
                 </span>
                 <span
                   className={cn(
-                    "text-[11.5px]",
-                    failed ? "text-destructive" : pending ? "text-warning" : "text-muted-foreground",
+                    "text-[11px]",
+                    failed ? "text-destructive-text font-medium" : pending ? "text-warning-text" : "text-muted-foreground",
                   )}
                 >
                   {failed ? "Failed" : pending ? "Pending" : t.category || "Completed"}

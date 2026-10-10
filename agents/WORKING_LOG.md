@@ -183,7 +183,14 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ---
 
-## Inbox
+## Inbox
+
+### 2026-10-10
+
+- **Discovery** WebKit / iPad Safari container query SVG sizing: An inline-flex container with `h-[8cqw] w-auto` wrapping an SVG with percentage width (`size-full`) fails to resolve intrinsic aspect ratio under WebKit container query inline-size contexts. WebKit stretches the container across the flex row, pushing `{card.type}` out and centering the GCB logo in the middle. Fixed with explicit `w-[9.3cqw] aspect-[37.1621/32]` and `shrink-0` on `CardFace.tsx` and `GcbCardLogo.tsx`. Swept and added `aspect-ratio` and `shrink-0` across `NetworkLogo.tsx` (`Visa`, `Mastercard`, `GhLink`, `UnionPay`), `GCBLogo.tsx`, `RequestCardFlow.tsx` and `VirtualCardDetailsView.tsx`.
+- **Discovery** Mobile `pointer: coarse` font override in `globals.css`: A global `input, textarea, select { font-size: 16px !important; }` meant to prevent iOS Safari auto-zoom forced the transparent `<input>` layer in `AmountInput` down from its display font size (26px) to 16px. Because each digit in the input was physically narrower than the overlaying 26px `TextMorph` digits, the native blinking caret sat in the middle of the field (around `5,0|00`). Exempted `.numorainput` from the 16px override and added font inheritance. Swept all currency/rate inputs (`fx-rates/page.tsx`, `FxQuickModal.tsx`) with `.numorainput font-sans` so caret alignment remains 1:1 on mobile/touch devices.
+- **Decision** Hero secondary glass controls (`HERO_GLASS` and `Button` variant `glass`): Increased fill opacity from 8% to 15% and border from 8% to 20% with a specular inner top rim light (`shadow-[inset_0_1px_1px_rgba(255,255,255,0.18)]`). On dark hero surfaces (`#131516`), 8% fill was pitch-black; 15% produces luminous, physical frosted glass.
+- **Decision** Virtual card 3D details view (`VirtualCardDetailsView.tsx`): Omitted EMV chip and contactless wifi waves when viewing virtual cards, matching `CONSTITUTION.md` and `CardFace.tsx`.
 
 ### 2026-10-09
 
@@ -196,7 +203,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 ### 2026-10-08
 
 - **Decision** Invest offer details gained an interactive timeline scrubber and custom amount entry in `ReturnVisual` (`components/invest/OfferDetail.tsx`). 10 bars show accrued return across the tenure: clicking or scrubbing with pointer events highlights the selected date, displays projected balance with an arrow badge, and shows remaining milestones as dashed future outlines. Custom deposit entry live-recalculates all bars and passes through to `NewDepositFlow` and `BuyFlow`.
-- **Discovery** Treasury bills and term deposits share the straight-line accrual curve for intermediate bar inspections without needing separate calculation stores.
+- **Discovery** Treasury bills and term deposits share the straight-line accrual curve for intermediate bar inspections without needing separate calculation stores.
 - **Decision** Shared `Field` built (2026-10-08). `components/ui/field.tsx` (`Field`: label, hint, error, optional) sits on `Label`, which Title Cases its text at render (`lib/title-case.ts`). `Input`, `Textarea`, `Select` trigger and `PhoneInput` share one look (h-13, rounded-2xl, px-4, 14px); about 130 label wrappers, 50 raw inputs and 55 select triggers were moved onto them, and the private `Field`s and class constants (`INPUT`, `FUND_FIELD`, `LABEL`…) were removed. Only OTP boxes and amount fields stay bespoke. The old Send & Pay size won because it was the majority (50 of ~95).
 - **Gap** Search inputs are still hand-built in `TransactionList`, `CreateGroupFlow`, `EditGroupModal` and `CountryPicker` (`ui/search-bar.tsx` and `ExpandableSearch` exist). Inline cells (group contribution amounts) are raw by design. Not viewed in a browser: the unified size will change the look of login, signup, settings, beneficiaries, cards and group screens, which used h-10/h-11 before.
 - **Override** Placeholders are the same size as the typed value, in every input, textarea and select. Removed the global `input::placeholder { font-size: 13px }` rule in `globals.css` (added with the one-time-code work, "smaller placeholders"), so placeholder text inherits the field's own size. Don't set a placeholder size per field. Then set both to 14px (designer, 2026-10-08): about 100 field classes moved from `text-[15px]` to `text-[14px]`, and CONSTITUTION §5 now says so (the constitution row changed from 15px).
@@ -253,7 +260,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - **Gap** Not viewed in a browser (no dev server, per AGENTS). Checked: `tsc` and eslint clean on every changed file, i18n coverage clean for the new screens (only product names, nationalities, titles and Dev Mode labels are left in English), and the pricing and date maths run in isolation.
 - **Reuse** Holdings could appear on the dashboard (a "due at maturity" line) and a standing order could fund a purchase. Rolled-over instructions could post to Needs attention a week before maturity. Not built.
 
-### 2026-10-07
+### 2026-10-07
 - **Decision** An alternative way to do the same step replaces the heading in place; it never opens underneath it. On every code screen, "Use a shortcode" cross-fades the heading ("Enter OTP Verification Code" plus its line) into the shortcode in the same slot, with the same type size, weight and position. The block keeps one height (both layers share a grid cell), so the boxes below never move and the eye stays put. Why: opening it underneath left two competing headings, pushed the boxes down and made the screen feel like it had changed state.
 - **Candidate pattern** In-place heading swap: `OtpPrompt` in `payments/OtpHelp.tsx` for the dialog and panels, `swap` prop on `AuthLayout` for sign-in (`/mfa`). Drive it from `OtpHelp`'s `shortcodeOpen` / `onShortcodeOpenChange`. Reuse it for any "try another way" that changes what the screen asks (PIN vs code, resend options) before adding a second block.
 - **Override** CONSTITUTION §2 ("a payment code never auto-submits"): `TransactionOtpModal` has no Confirm button and submits as soon as the sixth digit lands (designer, 2026-10-07). Cancel is the only footer action. Constitution still needs the change proposed.
@@ -568,6 +575,34 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
   - `/forgot-pin` created: Mobile → Selfie → New PIN (with live rule checks) → Confirm PIN → Done. Linked directly from `/mfa` ("Forgot PIN?") and `/settings`.
 - **Decision (Card Blocking Reason Dialog):** Redesigned the card blocking dialog in `VirtualCardDetailsView.tsx` (`BlockReasonDialog`) from a multi-level nested card/survey questionnaire (dense nested cards, multi-level button grids) to a clean, calm, single-level choice list (`misplaced`, `lost_stolen`, `fraud`, `budgeting`, `other`) with quiet context-specific guidance, eliminating all cards-inside-cards and nested button matrices.
 - **Decision (Card Top-Up / Send & Pay):** Card top-up destination picker in `CardTopUpFlow.tsx` is strictly filtered to the customer's own active GCB fundable cards (`cardsForProfile(profileKind)` with `c.fundable && c.status === "Active"` — GCB Prepaid and Virtual cards). Top-up currency is enforced as GHS (`currency="GHS"`, `Top up Amount (GHS)`), and retail card mocks are denominated in GHS.
+
+### 2026-10-10
+- **Decision (Dev Mode User Simulation):** Replaced monolithic shared mock datasets with 3 coherent customer simulation personas (`useDevUserStore` in `src/lib/dev-user-simulation.ts`):
+  1. `Clean` (Kwesi Arthur, `u-clean`): Completely clean onboarding state with 0 payment cards, 0 saved beneficiaries, 0 transaction history, 0 standing orders, 0 linked funding sources, and a single unfunded GHS 0.00 account (`acc-clean-001`).
+  2. `Single` (Abena Osei, `u-single`): Realistic single-account user with 1 Current Account (`acc-single-001`, GHS 4,250.00), 1 GCB Visa Debit card (`card-single-001`), 2 scoped beneficiaries (Mum's MTN MoMo & ECG Prepaid), 5 focused transactions, 1 standing order, and 1 linked MoMo wallet.
+  3. `Everyday` (Ransford Gyasi, `u-retail`): Active multiple-account retail customer with Current, Smart Save & USD accounts, 3 cards (Debit, Prepaid, Virtual), 25 beneficiaries, rich ledger history, 3 standing instructions, and 3 linked accounts/wallets.
+- **Decision (Destructive Color Tokens):** Updated `--destructive` and `--destructive-text` across light and dark modes in `globals.css`:
+  - `:root`: `--destructive: #dd1d43;`, `--destructive-text: #dd1d43;`
+  - `.dark`: `--destructive: #e51f47;`, `--destructive-text: #e51f47;`
+- **Decision (Dashboard Panel Stacking & Layout Balance):** Fixed vertical misalignment and awkward content stacking across dashboard cards (`parts.tsx` and `mock-data.ts`):
+  1. Removed `justify-between` from base `Card` container so content naturally stacks from the top below `CardHeader` with consistent `gap-3` spacing, preventing single/sparse items in "Recent activity" and "Coming up" from sinking to the floor of the 260px card.
+  2. Fixed "Pay again" (`PayAgainCard`):
+     - For 1 to 3 payees (e.g. single-account user): renders as clean horizontal list rows matching the visual rhythm of Recent Activity and Cards, eliminating severe grid truncation ("Mum (Yaa ...", "ECG Electri...") and empty column voids.
+     - For 4+ payees: renders as an evenly spaced avatar grid (`justify-around`), removing `my-auto` centering.
+     - Fixed `initials()` parser to strip brackets/parentheses (`"Mum (Yaa Osei)"` now correctly yields `"MY"` instead of broken `"M("`).
+  3. Balanced mock retail transaction distribution so primary Current Account `acc-ret-001` receives realistic day-to-day spending entries rather than all transactions being assigned to Smart Save `acc-ret-002`.
+  4. Adjusted `RecentTransactions` display limit from 4 to 3 and added subtle row dividing lines (`divide-y divide-border/30`) with `py-2.5` padding in `MinimalKit.tsx` and `parts.tsx`. Previously, 4 items overflowed the available 184px vertical content height, cramming the 4th item directly against the bottom container border; 3 items provide generous, calm breathing room and match the visual rhythm of the other panels.
+  5. Mapped list item row interaction and status styles strictly to existing semantic design tokens (`globals.css`):
+     - Row hover surface: `hover:bg-tile-hover` (`--color-tile-hover` = `#eeeeed` light, `#1c1c1c` dark).
+     - Credit indicator: `bg-pill-success text-success` (`--color-pill-success` & `--color-success`).
+     - Debit indicator: `bg-tile text-muted-foreground` (`--color-tile` & `--color-muted-foreground`).
+     - Transaction status text: `text-destructive-text` (updated `#dd1d43` light, `#e51f47` dark) and `text-warning-text`.
+     - Pay Again avatars: dedicated `--avatar-*` tokens (`bg-avatar-teal`, `bg-avatar-sand`, etc.) with `text-primary-foreground`.
+- **Decision (Transaction Green & Avatar Tokens Unification):**
+  1. Unified `--success` and `--success-text` across `:root` (`#16a34a`) and `.dark` (`#22c55e`), applying the vibrant emerald green across the dashboard, transaction list, and transaction details.
+  2. Mapped Pay Again and payee avatar circles in `parts.tsx` strictly to the dedicated `--avatar-*` tokens (`bg-avatar-teal`, `bg-avatar-sand`, `bg-avatar-green`, `bg-avatar-lilac`, `bg-avatar-blue`, `bg-avatar-yellow`, `bg-avatar-pink`) with `text-primary-foreground`.
+  3. Aligned directional icons, row hover states, and amount typography in `TransactionList.tsx`, `transactions/[id]/page.tsx`, `accounts/[id]/page.tsx`, `VirtualCardDetailsView.tsx`, and `RecentActivityWidget.tsx` to match the dashboard (`bg-pill-success text-success` for credits, `bg-tile text-muted-foreground` for debits, `stroke-[2]`, `hover:bg-tile-hover`, and `text-success font-medium`).
+
 
 
 ---

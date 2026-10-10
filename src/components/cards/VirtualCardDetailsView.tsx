@@ -1077,21 +1077,21 @@ export function VirtualCardDetailsView({
                 return (
                   <div
                     key={item.id}
-                    className="flex items-center gap-3.5 px-4 py-3 hover:bg-muted/30 transition-colors"
+                    className="flex items-center gap-3.5 px-4 py-3 hover:bg-tile-hover transition-colors"
                   >
                     {/* Direction Anchor Icon */}
                     <div
                       className={cn(
                         "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
                         isCredit
-                          ? "bg-success/10 text-success"
-                          : "bg-muted text-muted-foreground"
+                          ? "bg-pill-success text-success"
+                          : "bg-tile text-muted-foreground"
                       )}
                     >
                       {isCredit ? (
-                        <ArrowDownLeft className="size-4 stroke-[1.8]" />
+                        <ArrowDownLeft className="size-4 stroke-[2]" />
                       ) : (
-                        <ArrowUpRight className="size-4 stroke-[1.8]" />
+                        <ArrowUpRight className="size-4 stroke-[2]" />
                       )}
                     </div>
 
@@ -1237,17 +1237,21 @@ export function VirtualCardDetailsView({
 
                     {/* Top Row: GCB Logo (Left) & Card Type (Right) */}
                     <div className="relative z-10 flex items-center justify-between">
-                      <GcbCardLogo themeId={activeTheme.id} className="h-7 sm:h-8 w-auto drop-shadow-xs shrink-0" />
-                      <span className="text-[13px] sm:text-[14px] font-normal tracking-wide opacity-90 capitalize">
+                      <GcbCardLogo themeId={activeTheme.id} className="h-7 sm:h-8 w-auto aspect-[37.1621/32] drop-shadow-xs shrink-0" />
+                      <span className="text-[13px] sm:text-[14px] font-normal tracking-wide opacity-90 capitalize shrink-0">
                         {effectiveCard.type}
                       </span>
                     </div>
 
-                    {/* Middle Row: Chip & Contactless Waves */}
-                    <div className="relative z-10 my-auto py-1 flex items-center gap-3">
-                      <EmvChip />
-                      <Wifi size={20} strokeWidth={2.4} className="rotate-90 opacity-85 shrink-0" />
-                    </div>
+                    {/* Middle Row: Chip & Contactless Waves (Physical cards only) */}
+                    {!(effectiveCard.type === "Virtual" || effectiveCard.isVirtual) ? (
+                      <div className="relative z-10 my-auto py-1 flex items-center gap-3">
+                        <EmvChip />
+                        <Wifi size={20} strokeWidth={2.4} className="rotate-90 opacity-85 shrink-0" />
+                      </div>
+                    ) : (
+                      <div className="my-auto" aria-hidden="true" />
+                    )}
 
                     {/* Bottom Row: CARD HOLDER, EXP, Visa/Mastercard Logo */}
                     <div className="relative z-10 flex items-end justify-between whitespace-nowrap gap-4">

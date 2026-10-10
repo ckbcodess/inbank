@@ -63,6 +63,7 @@ import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
 import TransactionOtpModal from "./TransactionOtpModal";
 import { REGISTERED_PHONE, useAuthorisation } from "./useAuthorisation";
 import { groupAvatarTint } from "./flows/beneficiaries";
+import { useDevUserStore } from "@/lib/dev-user-simulation";
 import { OwnAccountFlow } from "./flows/OwnAccountFlow";
 import { OtherGcbFlow } from "./flows/OtherGcbFlow";
 import { OtherBankFlow } from "./flows/OtherBankFlow";
@@ -193,7 +194,7 @@ interface RecentPayeeAvatar {
   subtitle?: string;
 }
 
-const RECENT_AVATARS: RecentPayeeAvatar[] = [
+const ALL_RECENT_AVATARS: RecentPayeeAvatar[] = [
   // Bank payees
   {
     id: "rec-b1",
@@ -869,6 +870,34 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const { handleBack: handleBackNavigation } = useContextualBack("/payments");
   const activeProfile = useSession((s) => s.activeProfile);
   const accounts = useMemo(() => accountsForProfile(activeProfile?.kind), [activeProfile?.kind]);
+  const simUserType = useDevUserStore((s) => s.userType);
+  const RECENT_AVATARS = useMemo<RecentPayeeAvatar[]>(() => {
+    if (simUserType === "clean") return [];
+    if (simUserType === "single") {
+      return [
+        {
+          id: "rec-s1",
+          name: "Mum (Yaa Osei)",
+          bank: "MTN Mobile Money",
+          acct: "0244 889 900",
+          initials: "YO",
+          rail: "wallet",
+          colorBg: "var(--avatar-teal)",
+        },
+        {
+          id: "rec-s2",
+          name: "ECG Electricity",
+          bank: "ECG",
+          acct: "P-992014",
+          initials: "EC",
+          rail: "bill",
+          category: "Bills & Utilities",
+          colorBg: "var(--avatar-sand)",
+        },
+      ];
+    }
+    return ALL_RECENT_AVATARS;
+  }, [simUserType]);
 
   const auth = useAuthorisation();
 
@@ -1173,7 +1202,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const categoryBeneficiaries = useMemo(() => {
     if (!billCategory) return RECENT_AVATARS.filter((item) => item.rail === "bill");
     return RECENT_AVATARS.filter((item) => item.rail === "bill" && item.category === billCategory);
-  }, [billCategory]);
+  }, [billCategory, RECENT_AVATARS]);
 
   const selectedGroupObj = useMemo(() => groups.find((g) => g.name === f.groupName), [groups, f.groupName]);
 
@@ -1212,7 +1241,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       return RECENT_AVATARS.filter((i) => i.rail === "bank" || i.rail === "wallet-to-bank");
     }
     return RECENT_AVATARS.filter((i) => i.rail === rail);
-  }, [rail, bankCategory, walletCategory, categoryBeneficiaries, groups]);
+  }, [rail, bankCategory, walletCategory, categoryBeneficiaries, groups, RECENT_AVATARS]);
 
   const num = (v: string) => Number(String(v).replace(/[^0-9.]/g, "")) || 0;
 

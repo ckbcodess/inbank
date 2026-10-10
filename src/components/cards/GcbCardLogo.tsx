@@ -4,6 +4,8 @@ import React, { useId } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { useTiltContext } from "./TiltCard3D";
 
+import { cn } from "@/lib/utils";
+
 interface GcbCardLogoProps {
   className?: string;
   themeId?: string;
@@ -46,7 +48,7 @@ export function GcbCardLogo({ className = "h-8 w-auto" }: GcbCardLogoProps) {
   );
 
   return (
-    <div className={`relative inline-flex items-center justify-center select-none ${className}`}>
+    <div className={cn("relative inline-flex items-center justify-center select-none aspect-[37.1621/32] shrink-0", className)}>
       {/* Base Original Vector Logo (Inherits textColor cleanly) */}
       <svg
         viewBox="0 0 37.1621 32"

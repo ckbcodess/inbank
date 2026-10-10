@@ -13,11 +13,25 @@ import { getGlobalShowAmounts } from "@/components/providers/AmountVisibilityPro
 
 /* ── Actors ────────────────────────────────────────────────────────────────── */
 
-const RETAIL_PROFILE: Profile = {
+export const RETAIL_PROFILE: Profile = {
   id: "prof-retail",
   kind: "RETAIL",
   name: "Personal Banking",
   reference: "•••• 4561",
+};
+
+export const CLEAN_PROFILE: Profile = {
+  id: "prof-clean",
+  kind: "RETAIL",
+  name: "Personal Banking",
+  reference: "•••• 0001",
+};
+
+export const SINGLE_PROFILE: Profile = {
+  id: "prof-single",
+  kind: "RETAIL",
+  name: "Personal Banking",
+  reference: "•••• 0313",
 };
 
 const JOINT_PROFILE: Profile = {
@@ -39,6 +53,26 @@ const CORPORATE_PROFILE: Profile = {
  * spans both shells, which is why internal staff carry no profiles.
  */
 export const ACTORS: Actor[] = [
+  {
+    id: "u-clean",
+    name: "Kwesi Arthur",
+    email: "kwesi.arthur@example.com",
+    phone: "0244000001",
+    role: "RETAIL_CUSTOMER",
+    shell: "customer",
+    profiles: [CLEAN_PROFILE],
+    tradeEligible: false,
+  },
+  {
+    id: "u-single",
+    name: "Abena Osei",
+    email: "abena.osei@example.com",
+    phone: "0551200313",
+    role: "RETAIL_CUSTOMER",
+    shell: "customer",
+    profiles: [SINGLE_PROFILE],
+    tradeEligible: false,
+  },
   {
     id: "u-retail",
     name: "Ransford Gyasi",
@@ -287,6 +321,28 @@ export const ACCOUNTS: Account[] = [
     profileKind: "CORPORATE",
   },
   {
+    id: "acc-clean-001",
+    name: "Current Account",
+    number: "4001 0000 0001",
+    type: "Current",
+    currency: "GHS",
+    balance: 0.0,
+    available: 0.0,
+    status: "Active",
+    profileKind: "RETAIL",
+  },
+  {
+    id: "acc-single-001",
+    name: "Current Account",
+    number: "4001 5512 0313",
+    type: "Current",
+    currency: "GHS",
+    balance: 4_250.0,
+    available: 4_250.0,
+    status: "Active",
+    profileKind: "RETAIL",
+  },
+  {
     id: "acc-ret-001",
     name: "Savings Account",
     number: "4001 9922 1100",
@@ -383,14 +439,56 @@ export const ACCOUNTS: Account[] = [
 export const GHANA_CARD_ACCOUNT_IDS = ["acc-ret-001", "acc-ret-002", "acc-ret-home", "acc-ret-salary"] as const;
 
 /**
+ * Inspects browser storage to resolve active retail simulation profile:
+ * - "clean": Kwesi Arthur (0 cards, 0 beneficiaries, fresh unfunded account)
+ * - "single": Abena Osei (1 account, 1 card, 2 beneficiaries)
+ * - "everyday": Ransford Gyasi (multi-account active user)
+ */
+export function getSimulatedRetailUser(): "clean" | "single" | "everyday" {
+  if (typeof window === "undefined") return "everyday";
+  try {
+    const sessionRaw = window.localStorage.getItem("nibs-session");
+    if (sessionRaw) {
+      const parsed = JSON.parse(sessionRaw);
+      const actorId = parsed?.state?.actor?.id;
+      if (actorId === "u-clean") return "clean";
+      if (actorId === "u-single") return "single";
+      if (actorId === "u-retail") return "everyday";
+    }
+    const devRaw = window.localStorage.getItem("nibs-dev-user-simulation");
+    if (devRaw) {
+      const parsedDev = JSON.parse(devRaw);
+      if (parsedDev?.state?.userType) return parsedDev.state.userType;
+    }
+  } catch {
+    // storage not available
+  }
+  return "everyday";
+}
+
+/**
  * Foreign-currency accounts are out of scope — the BRD covers local-currency
  * accounts only, so they never surface in account lists, balances or pickers.
  * `acc-003` stays in ACCOUNTS purely so trade records and USD cards that
  * reference it still resolve through `findAccount`.
  */
 export function accountsForProfile(kind: "RETAIL" | "CORPORATE" = "CORPORATE"): Account[] {
+  if (kind === "CORPORATE") {
+    return ACCOUNTS.filter(
+      (a) => (a.profileKind ?? "CORPORATE") === "CORPORATE" && a.type !== "Foreign Currency" && !a.scenarioOnly,
+    );
+  }
+
+  const sim = getSimulatedRetailUser();
+  if (sim === "clean") {
+    return ACCOUNTS.filter((a) => a.id === "acc-clean-001");
+  }
+  if (sim === "single") {
+    return ACCOUNTS.filter((a) => a.id === "acc-single-001");
+  }
+
   return ACCOUNTS.filter(
-    (a) => (a.profileKind ?? "CORPORATE") === kind && a.type !== "Foreign Currency" && !a.scenarioOnly,
+    (a) => (a.profileKind ?? "CORPORATE") === "RETAIL" && a.type !== "Foreign Currency" && !a.scenarioOnly && a.id !== "acc-clean-001" && a.id !== "acc-single-001",
   );
 }
 
@@ -807,7 +905,7 @@ export const TRANSACTIONS: Transaction[] = [
     description: "Melcom Stores — Payment",
     counterparty: "Melcom Stores",
     counterpartyAccount: "0012 3456 7890",
-    accountId: "acc-ret-002",
+    accountId: "acc-ret-001",
     currency: "GHS",
     amount: 500.0,
     direction: "debit",
@@ -826,7 +924,7 @@ export const TRANSACTIONS: Transaction[] = [
     description: "Melcom Stores — Airtime",
     counterparty: "Melcom Stores",
     counterpartyAccount: "0012 3456 7890",
-    accountId: "acc-ret-002",
+    accountId: "acc-ret-001",
     currency: "GHS",
     amount: 500.0,
     direction: "debit",
@@ -845,7 +943,7 @@ export const TRANSACTIONS: Transaction[] = [
     description: "Kofi Mensah — Wallet to Bank",
     counterparty: "Kofi Mensah",
     counterpartyAccount: "0244 5566 77",
-    accountId: "acc-ret-002",
+    accountId: "acc-ret-001",
     currency: "GHS",
     amount: 452.0,
     direction: "credit",
@@ -864,7 +962,7 @@ export const TRANSACTIONS: Transaction[] = [
     description: "Kofi Mensah — Wallet to Bank",
     counterparty: "Kofi Mensah",
     counterpartyAccount: "0244 5566 77",
-    accountId: "acc-ret-002",
+    accountId: "acc-ret-001",
     currency: "GHS",
     amount: 452.0,
     direction: "credit",
@@ -883,7 +981,7 @@ export const TRANSACTIONS: Transaction[] = [
     description: "Melcom Stores — Data",
     counterparty: "Melcom Stores",
     counterpartyAccount: "0012 3456 7890",
-    accountId: "acc-ret-002",
+    accountId: "acc-ret-001",
     currency: "GHS",
     amount: 500.0,
     direction: "debit",
@@ -902,7 +1000,7 @@ export const TRANSACTIONS: Transaction[] = [
     description: "Kofi Mensah — Wallet to Bank",
     counterparty: "Kofi Mensah",
     counterpartyAccount: "0244 5566 77",
-    accountId: "acc-ret-002",
+    accountId: "acc-ret-001",
     currency: "GHS",
     amount: 452.0,
     direction: "credit",
@@ -921,7 +1019,7 @@ export const TRANSACTIONS: Transaction[] = [
     description: "SMS & Monthly Card Maintenance Fee",
     counterparty: "GCB Bank Charges",
     counterpartyAccount: "GCB-SYS-001",
-    accountId: "acc-ret-002",
+    accountId: "acc-ret-001",
     currency: "GHS",
     amount: 15.0,
     direction: "debit",
@@ -940,7 +1038,7 @@ export const TRANSACTIONS: Transaction[] = [
     description: "Wallet to Bank — MTN MoMo to GCB Account",
     counterparty: "My MTN Mobile Money",
     counterpartyAccount: "0244 9911 22",
-    accountId: "acc-ret-002",
+    accountId: "acc-ret-001",
     currency: "GHS",
     amount: 1_200.0,
     direction: "credit",
@@ -976,7 +1074,7 @@ export const TRANSACTIONS: Transaction[] = [
     description: "Data Bundle — Telecel 20GB",
     counterparty: "Telecel Ghana",
     counterpartyAccount: "0200 1234 56",
-    accountId: "acc-ret-002",
+    accountId: "acc-ret-001",
     currency: "GHS",
     amount: 120.0,
     direction: "debit",
@@ -995,7 +1093,7 @@ export const TRANSACTIONS: Transaction[] = [
     description: "GhIPSS Instant Pay (GIP) — Rent Contribution",
     counterparty: "Landlord Properties",
     counterpartyAccount: "0122 3344 5566",
-    accountId: "acc-ret-002",
+    accountId: "acc-ret-001",
     currency: "GHS",
     amount: 2_500.0,
     direction: "debit",
@@ -1014,7 +1112,7 @@ export const TRANSACTIONS: Transaction[] = [
     description: "Shoprite Accra Mall — Groceries",
     counterparty: "Shoprite Ghana",
     counterpartyAccount: "0100 8822 1100",
-    accountId: "acc-ret-002",
+    accountId: "acc-ret-001",
     currency: "GHS",
     amount: 320.4,
     direction: "debit",
@@ -1284,12 +1382,119 @@ export function findTransaction(id: string): Transaction | undefined {
   return dynamicTxn;
 }
 
+export const SINGLE_USER_TRANSACTIONS: Transaction[] = [
+  {
+    id: "txn-s-001",
+    reference: "NIB-2026-909901",
+    date: "2026-10-09",
+    valueDate: "2026-10-09",
+    description: "Salary Credit — Min of Education",
+    counterparty: "Ministry of Education Ghana",
+    counterpartyAccount: "0100 2233 4455",
+    accountId: "acc-single-001",
+    currency: "GHS",
+    amount: 5200.0,
+    direction: "credit",
+    kind: "single",
+    state: "completed",
+    channel: "ACH Direct Credit",
+    paymentMethod: "ach",
+    profileKind: "RETAIL",
+  },
+  {
+    id: "txn-s-002",
+    reference: "NIB-2026-909902",
+    date: "2026-10-08",
+    valueDate: "2026-10-08",
+    description: "Transfer to Mum (Yaa Osei)",
+    counterparty: "Mum (Yaa Osei)",
+    counterpartyAccount: "0244 889 900",
+    accountId: "acc-single-001",
+    currency: "GHS",
+    amount: 500.0,
+    direction: "debit",
+    kind: "single",
+    state: "completed",
+    channel: "Mobile Money",
+    paymentMethod: "momo",
+    category: "Household",
+    profileKind: "RETAIL",
+  },
+  {
+    id: "txn-s-003",
+    reference: "NIB-2026-909903",
+    date: "2026-10-07",
+    valueDate: "2026-10-07",
+    description: "ECG Prepaid Electricity",
+    counterparty: "Electricity Company of Ghana",
+    counterpartyAccount: "P-992014",
+    accountId: "acc-single-001",
+    currency: "GHS",
+    amount: 150.0,
+    direction: "debit",
+    kind: "single",
+    state: "completed",
+    channel: "Bills & Utilities",
+    paymentMethod: "bill",
+    category: "Bills",
+    profileKind: "RETAIL",
+  },
+  {
+    id: "txn-s-004",
+    reference: "NIB-2026-909904",
+    date: "2026-10-05",
+    valueDate: "2026-10-05",
+    description: "Melcom Supermarket Accra",
+    counterparty: "Melcom Plus Cantonments",
+    counterpartyAccount: "POS-MELCOM-882",
+    accountId: "acc-single-001",
+    currency: "GHS",
+    amount: 249.5,
+    direction: "debit",
+    kind: "single",
+    state: "completed",
+    channel: "POS Card",
+    paymentMethod: "card",
+    category: "Food",
+    profileKind: "RETAIL",
+  },
+  {
+    id: "txn-s-005",
+    reference: "NIB-2026-909905",
+    date: "2026-10-03",
+    valueDate: "2026-10-03",
+    description: "MTN Airtime 0551200313",
+    counterparty: "MTN Ghana",
+    counterpartyAccount: "055 120 0313",
+    accountId: "acc-single-001",
+    currency: "GHS",
+    amount: 50.0,
+    direction: "debit",
+    kind: "single",
+    state: "completed",
+    channel: "Mobile Banking",
+    paymentMethod: "airtime",
+    category: "Airtime & Data",
+    profileKind: "RETAIL",
+  },
+];
+
 export function transactionsForAccount(accountId: string): Transaction[] {
+  if (accountId === "acc-clean-001") return [];
+  if (accountId === "acc-single-001") return SINGLE_USER_TRANSACTIONS;
   return TRANSACTIONS.filter((t) => t.accountId === accountId);
 }
 
 export function transactionsForProfile(kind: "RETAIL" | "CORPORATE" = "CORPORATE"): Transaction[] {
-  return TRANSACTIONS.filter((t) => (t.profileKind ?? "CORPORATE") === kind);
+  if (kind === "CORPORATE") {
+    return TRANSACTIONS.filter((t) => (t.profileKind ?? "CORPORATE") === "CORPORATE");
+  }
+
+  const sim = getSimulatedRetailUser();
+  if (sim === "clean") return [];
+  if (sim === "single") return SINGLE_USER_TRANSACTIONS;
+
+  return TRANSACTIONS.filter((t) => (t.profileKind ?? "CORPORATE") === "RETAIL");
 }
 
 /* ── Beneficiaries ─────────────────────────────────────────────────────────── */
@@ -1928,10 +2133,42 @@ export const CARDS: PaymentCard[] = [
     trackingNumber: "GCB-CRD-102948",
     estimatedDeliveryDate: "3-5 business days",
   },
+  {
+    id: "card-single-001",
+    name: "Everyday Checking",
+    maskedNumber: "•••• 4012",
+    fullNumber: "4532 1089 3322 4012",
+    cvv: "582",
+    type: "Debit",
+    scheme: "Visa",
+    currency: "GHS",
+    balance: null,
+    linkedAccountId: "acc-single-001",
+    holder: "Abena Osei",
+    expiry: "11/29",
+    status: "Active",
+    fundable: false,
+    profileKind: "RETAIL",
+    colorTheme: "gold",
+  },
 ];
 
 export function cardsForProfile(kind: "RETAIL" | "CORPORATE" = "CORPORATE"): PaymentCard[] {
-  return CARDS.filter((c) => (c.profileKind ?? "CORPORATE") === kind);
+  if (kind === "CORPORATE") {
+    return CARDS.filter((c) => (c.profileKind ?? "CORPORATE") === "CORPORATE");
+  }
+
+  const sim = getSimulatedRetailUser();
+  if (sim === "clean") {
+    return [];
+  }
+  if (sim === "single") {
+    return CARDS.filter((c) => c.id === "card-single-001");
+  }
+
+  return CARDS.filter(
+    (c) => (c.profileKind ?? "CORPORATE") === "RETAIL" && c.id !== "card-single-001",
+  );
 }
 
 export function findCard(id: string): PaymentCard | undefined {
@@ -2413,7 +2650,7 @@ export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
   {
     id: "si-r03",
     beneficiary: "DSTV Family — Living room",
-    accountId: "acc-ret-002",
+    accountId: "acc-ret-001",
     amount: 245,
     currency: "GHS",
     frequency: "Monthly",
@@ -2445,6 +2682,18 @@ export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
     status: "Active",
     shortName: "Education plan",
     transactionType: "To Bank",
+  },
+  {
+    id: "si-s01",
+    beneficiary: "Yaa Osei (Mum) — Family support",
+    accountId: "acc-single-001",
+    amount: 200,
+    currency: "GHS",
+    frequency: "Monthly",
+    nextRun: "2026-10-15",
+    status: "Active",
+    shortName: "Family support",
+    transactionType: "To Wallet",
   },
 ];
 

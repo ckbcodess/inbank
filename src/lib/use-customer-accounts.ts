@@ -30,6 +30,11 @@ export function useCustomerAccounts() {
 
   const accounts = useMemo<Account[]>(() => {
     if (!isRetail) return accountsForProfile("CORPORATE");
+    const retailAccounts = accountsForProfile("RETAIL");
+    const firstAcc = retailAccounts[0];
+    if (firstAcc?.id === "acc-clean-001" || firstAcc?.id === "acc-single-001") {
+      return retailAccounts;
+    }
     const base = walletMigration ? [] : scenario.accountIds;
     const ids = [...new Set([...base, ...addedAccountIds])];
     return ids
