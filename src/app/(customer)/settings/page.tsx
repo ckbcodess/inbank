@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   Bell,
   Check,
@@ -192,14 +193,14 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            <Field label="Residential / Operating Address" htmlFor="address">
+            <Field label="Residential / Operating Address" optional htmlFor="address">
               <Input
                 id="address"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 
               />
-</Field>
+            </Field>
 
             {/* Proxy ID Card */}
             <div className="flex items-center justify-between rounded-xl border border-border bg-muted/20 p-4 mt-1">
@@ -295,11 +296,11 @@ export default function SettingsPage() {
                   </span>
                 </div>
                 <Button
-                  type="button"
                   variant="outline"
                   size="sm"
                   className="text-[12px] h-8"
-                  onClick={() => toast.success("OTP sent to your registered phone to reset PIN")}
+                  nativeButton={false}
+                  render={<Link href="/forgot-pin" />}
                 >
                   Reset PIN
                 </Button>

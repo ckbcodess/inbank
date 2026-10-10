@@ -1,79 +1,66 @@
 "use client";
 
 /**
- * Password Reset — BRD FR-31.
+ * PIN Reset — Forgot PIN.
  *
- * Mobile number → selfie → new password → back to login.
+ * Mobile number → selfie → set new PIN → confirm new PIN → done.
  *
- * The selfie is the verification: it's matched against the Ghana Card photo
- * the Bank already holds, so the customer doesn't need access to an inbox or
- * a code to get back in. Two deliberate security properties:
- *
- *  - The mobile step never confirms whether a profile exists. It always
- *    advances with the same wording, so this screen can't be used to
- *    enumerate customers.
- *  - Password rules come from the same component activation uses
- *    (`NewPasswordFields`), so a reset can't enforce a different standard.
- *
- * A selfie that doesn't match gets a calm retry screen (likely causes, no
- * blame). After MAX_SELFIE_ATTEMPTS misses, selfie checks stop and the
- * customer is sent to a branch with their Ghana Card.
- *
- * Demo: any mobile number ending in 0000 (e.g. 24 000 0000) never matches.
- *
- * Sits outside both shells — it is reached from Login, before authentication.
+ * The selfie matches against the Ghana Card photo on file.
+ * Once verified, the customer chooses a new 4-digit transaction PIN
+ * adhering to the bank's rules (no consecutive numbers, no repeating numbers).
  */
 
-import { useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Landmark, ScanFace } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PhoneInput } from "@/components/ui/phone-input";
 import AuthLayout from "@/components/auth/AuthLayout";
 import SelfieCapture from "@/components/auth/SelfieCapture";
-import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
+import OtpInput from "@/components/auth/OtpInput";
+import PinRequirements from "@/components/auth/PinRequirements";
 import { AppLoader } from "@/components/ui/loader";
-import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 import { isCompleteGhanaMobile } from "@/lib/phone";
-import { maskMobile } from "@/lib/auth-shared";
-
+import { hasConsecutiveDigits, hasRepeatingDigits } from "@/lib/auth-shared";
+import { useSession } from "@/lib/session-store";
 import { Field } from "@/components/ui/field";
-type Stage = "mobile" | "selfie" | "no_match" | "branch" | "otp" | "password" | "done";
+
+type Stage = "mobile" | "selfie" | "no_match" | "branch" | "pin" | "confirm_pin" | "done";
 
 const STEP_NUMBER: Partial<Record<Stage, number>> = {
   mobile: 1,
   selfie: 2,
   no_match: 2,
-  otp: 3,
-  password: 4,
+  pin: 3,
+  confirm_pin: 4,
 };
 
-const RESEND_SECONDS = 30;
 const MAX_SELFIE_ATTEMPTS = 3;
 const BRANCH_LOCATOR_URL = "https://www.gcbbank.com.gh/branches-and-atms";
 
-/** Demo hook: numbers ending in 0000 stand in for a face that won't match. */
 function selfieMatches(mobile: string): boolean {
   return !mobile.endsWith("0000");
 }
 
-export default function ForgotPasswordPage() {
+function ForgotPinContent() {
   const router = useRouter();
+  const { actor } = useSession();
+
   const [stage, setStage] = useState<Stage>("mobile");
   const [busy, setBusy] = useState(false);
 
   const [country, setCountry] = useState("GH");
-  const [mobile, setMobile] = useState("");
+  const [mobile, setMobile] = useState(actor?.phone ?? "");
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [failedAttempts, setFailedAttempts] = useState(0);
-  const [otpDigits, setOtpDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
-  const [countdown, setCountdown] = useState(RESEND_SECONDS);
+
+  const [pinDigits, setPinDigits] = useState<string[]>(["", "", "", ""]);
+  const [confirmPinDigits, setConfirmPinDigits] = useState<string[]>(["", "", "", ""]);
+  const [pinMisses, setPinMisses] = useState(0);
+  const [pinNote, setPinNote] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
 
   const mobileValid = country === "GH" ? isCompleteGhanaMobile(mobile) : mobile.trim().length >= 7;
-  const canReset = newPasswordReady(password, confirm);
 
   function advance(next: Stage, delay = 600) {
     setBusy(true);
@@ -86,10 +73,10 @@ export default function ForgotPasswordPage() {
   function handleSelfie(image: string) {
     setSelfieImage(image);
     if (selfieMatches(mobile)) {
-      setOtpDigits(Array(OTP_LENGTH).fill(""));
-      setCountdown(RESEND_SECONDS);
+      setPinDigits(["", "", "", ""]);
+      setConfirmPinDigits(["", "", "", ""]);
       setErrorMsg("");
-      advance("otp", 800);
+      advance("pin", 800);
       return;
     }
     const attempts = failedAttempts + 1;
@@ -102,24 +89,62 @@ export default function ForgotPasswordPage() {
     setStage("selfie");
   }
 
-  function handleOtpSubmit(incomingCode?: string) {
-    const code = incomingCode ?? otpDigits.join("");
-    if (code.length < OTP_LENGTH || busy) return;
-    if (code === "000000") {
-      setErrorMsg("The code entered is incorrect or has expired. Please try again or request a new code.");
+  function handlePinSubmit(incomingPin?: string) {
+    const pin = incomingPin ?? pinDigits.join("");
+    if (pin.length < 4 || busy) {
+      if (pin.length < 4) setErrorMsg("Please enter a 4-digit PIN");
+      return;
+    }
+    if (hasConsecutiveDigits(pin)) {
+      setErrorMsg("PIN cannot contain consecutive numbers.");
+      return;
+    }
+    if (hasRepeatingDigits(pin)) {
+      setErrorMsg("PIN cannot contain repeating numbers.");
       return;
     }
     setErrorMsg("");
-    advance("password", 600);
+    setConfirmPinDigits(["", "", "", ""]);
+    advance("confirm_pin", 500);
+  }
+
+  function restartPin(note = "") {
+    setPinMisses(0);
+    setPinDigits(["", "", "", ""]);
+    setConfirmPinDigits(["", "", "", ""]);
+    setErrorMsg("");
+    setPinNote(note);
+    setStage("pin");
+  }
+
+  function handleConfirmPinSubmit(incomingConfirmPin?: string) {
+    const confirmPin = incomingConfirmPin ?? confirmPinDigits.join("");
+    if (confirmPin.length < 4 || busy) {
+      if (confirmPin.length < 4) setErrorMsg("Please confirm your 4-digit PIN");
+      return;
+    }
+    const originalPin = pinDigits.join("");
+    if (originalPin.length === 4 && confirmPin !== originalPin) {
+      if (pinMisses + 1 >= 2) {
+        restartPin("Those didn’t match twice, so let’s start again. Choose a PIN you’ll remember.");
+        return;
+      }
+      setPinMisses(pinMisses + 1);
+      setErrorMsg("PINs don’t match. Try again.");
+      setConfirmPinDigits(["", "", "", ""]);
+      return;
+    }
+    setErrorMsg("");
+    advance("done", 600);
   }
 
   function handleBack() {
-    if (stage === "password") {
-      setPassword("");
-      setConfirm("");
-      setStage("otp");
-    } else if (stage === "otp") {
-      setOtpDigits(Array(OTP_LENGTH).fill(""));
+    setErrorMsg("");
+    if (stage === "confirm_pin") {
+      setConfirmPinDigits(["", "", "", ""]);
+      setStage("pin");
+    } else if (stage === "pin") {
+      setPinDigits(["", "", "", ""]);
       setSelfieImage(null);
       setStage("selfie");
     } else if (stage === "selfie" || stage === "no_match") {
@@ -130,12 +155,12 @@ export default function ForgotPasswordPage() {
 
   const copy: Record<Stage, { title: string; description: string }> = {
     mobile: {
-      title: "Reset Your Password",
+      title: "Reset Your PIN",
       description: "Enter the mobile number registered on your account.",
     },
     selfie: {
       title: "Selfie Verification",
-      description: "We'll match your selfie to the photo on your Ghana Card before you create a new password.",
+      description: "We'll match your selfie to the photo on your Ghana Card before you set a new PIN.",
     },
     no_match: {
       title: "We Couldn't Match Your Selfie",
@@ -145,27 +170,21 @@ export default function ForgotPasswordPage() {
     branch: {
       title: "Let's Finish This at a Branch",
       description:
-        "Your selfie still didn't match, so we've paused selfie checks for this number. Bring your Ghana Card to any GCB branch and we'll reset your password there.",
+        "Your selfie still didn't match, so we've paused selfie checks for this number. Bring your Ghana Card to any GCB branch and we'll reset your PIN there.",
     },
-    otp: {
-      title: "Confirm Your Code",
-      description: `A 6-digit code has been sent to ${maskMobile(mobile || "0244123821")}. Please enter the code below.`,
+    pin: {
+      title: "Set a New PIN",
+      description: "Choose a 4-digit PIN for all your transactions.",
     },
-    password: {
-      title: "Create a New Password",
-      description: "Enter it twice to make sure it's right.",
+    confirm_pin: {
+      title: "Confirm New PIN",
+      description: "Re-enter your 4-digit PIN to confirm.",
     },
     done: {
-      title: "Password Reset Successful",
-      description: "Your password has been reset. Log in with your new password.",
+      title: "PIN Reset Successful",
+      description: "Your transaction PIN has been reset. You can now use your new PIN.",
     },
   };
-
-  useEffect(() => {
-    if (stage !== "otp" || countdown <= 0) return;
-    const timer = setInterval(() => setCountdown((c) => Math.max(0, c - 1)), 1000);
-    return () => clearInterval(timer);
-  }, [stage, countdown]);
 
   return (
     <AuthLayout
@@ -181,8 +200,8 @@ export default function ForgotPasswordPage() {
               : undefined
       }
       onBack={stage !== "done" && stage !== "branch" && stage !== "mobile" ? handleBack : undefined}
-      backHref={stage === "mobile" ? "/login" : undefined}
-      backLabel={stage === "mobile" ? "Back to login" : "Back"}
+      backHref={stage === "mobile" ? (actor ? "/overview" : "/login") : undefined}
+      backLabel={stage === "mobile" ? (actor ? "Back to dashboard" : "Back to login") : "Back"}
       align={stage === "done" || stage === "no_match" || stage === "branch" ? "center" : "left"}
       stepProgress={STEP_NUMBER[stage] ? { current: STEP_NUMBER[stage], total: 4 } : undefined}
       width="compact"
@@ -208,13 +227,14 @@ export default function ForgotPasswordPage() {
               autoFocus
               required
             />
-</Field>
+          </Field>
 
           <Button
             type="submit"
             variant="default"
             size="lg"
-            disabled={!mobileValid} loading={busy}
+            disabled={!mobileValid}
+            loading={busy}
             className="mt-2 h-11 w-full text-[14px]"
           >
             Proceed
@@ -228,31 +248,84 @@ export default function ForgotPasswordPage() {
           busy={busy}
           capturedImage={selfieImage}
           onRetake={() => setSelfieImage(null)}
-          dataTour="reset-selfie"
+          dataTour="reset-pin-selfie"
         />
       )}
 
-      {stage === "otp" && (
+      {stage === "pin" && (
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            handleOtpSubmit();
+            handlePinSubmit();
           }}
-          className="flex flex-col gap-6"
+          className="flex flex-col items-center gap-6"
         >
-          <div data-tour="reset-otp">
+          <div className="w-full" data-tour="reset-pin">
             <OtpInput
-              value={otpDigits}
+              value={pinDigits}
               onChange={(next) => {
-                setOtpDigits(next);
+                setPinDigits(next);
                 if (errorMsg) setErrorMsg("");
+                if (pinNote) setPinNote("");
               }}
-              onComplete={(code) => handleOtpSubmit(code)}
+              length={4}
+              mask
+              onComplete={(pin) => handlePinSubmit(pin)}
               disabled={busy}
               invalid={!!errorMsg}
               autoFocus
             />
           </div>
+
+          <PinRequirements pin={pinDigits.join("")} />
+
+          {errorMsg && (
+            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+              {errorMsg}
+            </p>
+          )}
+          {!errorMsg && pinNote && (
+            <p className="-mt-3 text-center text-[13px] text-muted-foreground">{pinNote}</p>
+          )}
+
+          {busy && (
+            <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
+              <AppLoader size={16} />
+              <span>Saving your PIN…</span>
+            </div>
+          )}
+        </form>
+      )}
+
+      {stage === "confirm_pin" && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleConfirmPinSubmit();
+          }}
+          className="flex flex-col items-center gap-6"
+        >
+          <div className="w-full" data-tour="reset-confirm-pin">
+            <OtpInput
+              value={confirmPinDigits}
+              onChange={(next) => {
+                setConfirmPinDigits(next);
+                if (errorMsg) setErrorMsg("");
+              }}
+              length={4}
+              mask
+              onComplete={(pin) => handleConfirmPinSubmit(pin)}
+              disabled={busy}
+              invalid={!!errorMsg}
+              autoFocus
+            />
+          </div>
+
+          <PinRequirements
+            pin={confirmPinDigits.join("")}
+            originalPin={pinDigits.join("")}
+            isConfirm
+          />
 
           {errorMsg && (
             <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
@@ -260,66 +333,12 @@ export default function ForgotPasswordPage() {
             </p>
           )}
 
-          <div className="flex flex-col items-center gap-2">
-            <button
-              type="button"
-              disabled={countdown > 0}
-              onClick={() => {
-                setCountdown(RESEND_SECONDS);
-                setErrorMsg("");
-              }}
-              className="text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:text-muted-foreground disabled:no-underline disabled:cursor-default cursor-pointer"
-            >
-              {countdown > 0 ? (
-                <>
-                  Resend code in <span className="tabular">{countdown}s</span>
-                </>
-              ) : (
-                "Resend code"
-              )}
-            </button>
-
-            <p className="text-center text-[13px] text-muted-foreground">
-              Dial <a href="tel:*422*11%23" className="tabular font-medium text-foreground underline underline-offset-4 hover:text-foreground/80">*422*11#</a> to retrieve your code
-            </p>
-          </div>
-
           {busy && (
             <div className="flex items-center justify-center gap-2 py-1 text-[13.5px] text-muted-foreground">
               <AppLoader size={16} />
-              <span>Verifying code...</span>
+              <span>Updating PIN...</span>
             </div>
           )}
-        </form>
-      )}
-
-      {stage === "password" && (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (canReset && !busy) advance("done");
-          }}
-          className="flex flex-col gap-5"
-        >
-          <NewPasswordFields
-            password={password}
-            confirm={confirm}
-            onPasswordChange={setPassword}
-            onConfirmChange={setConfirm}
-            autoFocus
-            passwordLabel="New Password"
-            confirmLabel="Confirm New Password"
-          />
-
-          <Button
-            type="submit"
-            variant="default"
-            size="lg"
-            disabled={!canReset} loading={busy}
-            className="mt-2 h-11 w-full text-[14px]"
-          >
-            Reset password
-          </Button>
         </form>
       )}
 
@@ -350,10 +369,10 @@ export default function ForgotPasswordPage() {
           <Button
             variant="ghost"
             size="lg"
-            onClick={() => router.push("/login")}
+            onClick={() => router.push(actor ? "/overview" : "/login")}
             className="h-11 w-full text-[14px]"
           >
-            Back to login
+            {actor ? "Back to dashboard" : "Back to login"}
           </Button>
         </div>
       )}
@@ -362,12 +381,20 @@ export default function ForgotPasswordPage() {
         <Button
           variant="default"
           size="lg"
-          onClick={() => router.push("/login")}
+          onClick={() => router.push(actor ? "/overview" : "/login")}
           className="h-11 w-full text-[14px]"
         >
-          Back to login
+          {actor ? "Back to dashboard" : "Back to login"}
         </Button>
       )}
     </AuthLayout>
+  );
+}
+
+export default function ForgotPinPage() {
+  return (
+    <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
+      <ForgotPinContent />
+    </Suspense>
   );
 }

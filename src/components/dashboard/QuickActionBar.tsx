@@ -294,15 +294,15 @@ export function QuickActionBar({
                 onChange={(e) => setTransferAmount(e.target.value)}
                 className="tabular"
               />
-</Field>
-            <Field label="Reference / Purpose" htmlFor="t-ref">
+            </Field>
+            <Field label="Reference / Purpose" optional htmlFor="t-ref">
               <Input
                 id="t-ref"
                 placeholder="e.g. Monthly liquidity rebalance"
                 value={transferRef}
                 onChange={(e) => setTransferRef(e.target.value)}
               />
-</Field>
+            </Field>
           </DialogBody>
           <DialogFooter>
             <Button variant="outline" onClick={() => setActiveModal(null)}>

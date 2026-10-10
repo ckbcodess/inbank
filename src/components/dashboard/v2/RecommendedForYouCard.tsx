@@ -110,8 +110,8 @@ export function RecommendedForYouCard({
 
   if (loading) {
     return (
-      <div className={cn("relative flex w-full flex-col justify-end pt-3", className)}>
-        <Bone className="aspect-[430/214.25] w-full rounded-2xl sm:rounded-3xl" />
+      <div className={cn("relative flex h-[260px] w-full flex-col justify-end pt-2.5", className)}>
+        <Bone className="h-full w-full rounded-2xl sm:rounded-3xl" />
       </div>
     );
   }
@@ -124,12 +124,12 @@ export function RecommendedForYouCard({
   return (
     <div
       className={cn(
-        "group/stack relative flex w-full flex-col justify-end pt-3 select-none",
+        "group/stack relative flex h-[260px] w-full flex-col justify-end pt-2.5 select-none",
         className
       )}
     >
-      {/* Outer Card Stack Container (Exact 430:214.25 aspect ratio matching dashboard grid) */}
-      <div className="relative w-full aspect-[430/214.25]">
+      {/* Outer Card Stack Container (fills full height matching other panels) */}
+      <div className="relative h-full w-full">
         {/* Layer 3: Backmost peeking card */}
         <div
           aria-hidden="true"
@@ -237,13 +237,13 @@ export function RecommendedForYouCard({
               sizes="(min-width: 1060px) 450px, (min-width: 640px) 50vw, 100vw"
             />
 
-            {/* Typography and CTA Button Overlay — Balanced layout with generous spacing from header */}
-            <div className="absolute inset-0 pt-12 sm:pt-16 pb-4 sm:pb-6 px-4 sm:px-6 flex flex-col justify-between max-w-[60%] sm:max-w-[56%] z-20 pointer-events-none [transform:translateZ(0)]">
-              {/* Title & Subtitle with text balance */}
-              <div className="flex flex-col gap-1 sm:gap-1.5 min-w-0 antialiased">
+            {/* Typography and CTA Button Overlay — Vertically centered and harmoniously grouped */}
+            <div className="absolute inset-0 pt-10 sm:pt-12 pb-4 sm:pb-6 px-4 sm:px-6 flex flex-col justify-center max-w-[62%] sm:max-w-[58%] z-20 pointer-events-none [transform:translateZ(0)]">
+              {/* Title & Subtitle with cohesive spacing */}
+              <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0 antialiased">
                 <h3
                   className={cn(
-                    "text-[16px] xs:text-[17.5px] sm:text-[19px] lg:text-[20px] font-medium leading-[1.18] tracking-tight text-balance [-webkit-font-smoothing:antialiased]",
+                    "text-[16.5px] xs:text-[18px] sm:text-[19.5px] lg:text-[20.5px] font-medium leading-[1.2] tracking-tight text-balance [-webkit-font-smoothing:antialiased]",
                     current.titleClasses
                   )}
                 >
@@ -251,26 +251,26 @@ export function RecommendedForYouCard({
                 </h3>
                 <p
                   className={cn(
-                    "text-[11.5px] sm:text-[12.5px] leading-snug line-clamp-2 font-normal max-w-[95%] [-webkit-font-smoothing:antialiased]",
+                    "text-[12px] sm:text-[13px] leading-snug line-clamp-2 font-normal max-w-[95%] [-webkit-font-smoothing:antialiased]",
                     current.subtitleClasses
                   )}
                 >
                   {current.subtitle}
                 </p>
-              </div>
 
-              {/* Dynamic Action Button */}
-              <div className="pt-2 pointer-events-auto">
-                <Link
-                  href={current.href}
-                  className={cn(
-                    "inline-flex items-center justify-center rounded-full px-4 py-1.5 sm:py-2 text-[12px] sm:text-[12.5px] font-medium shadow-2xs transition-transform duration-160 ease-out active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-2",
-                    current.buttonClasses
-                  )}
-                  aria-label={`${current.buttonLabel} - ${current.title}`}
-                >
-                  {current.buttonLabel}
-                </Link>
+                {/* Dynamic Action Button directly below subtitle */}
+                <div className="pt-2 sm:pt-3 pointer-events-auto">
+                  <Link
+                    href={current.href}
+                    className={cn(
+                      "inline-flex items-center justify-center rounded-full px-4.5 py-1.5 sm:py-2 text-[12px] sm:text-[12.5px] font-medium shadow-2xs transition-transform duration-160 ease-out active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-2",
+                      current.buttonClasses
+                    )}
+                    aria-label={`${current.buttonLabel} - ${current.title}`}
+                  >
+                    {current.buttonLabel}
+                  </Link>
+                </div>
               </div>
             </div>
           </motion.div>

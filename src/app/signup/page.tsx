@@ -15,9 +15,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { displayGhanaMobile, isCompleteGhanaMobile } from "@/lib/phone";
-import { maskMobile } from "@/lib/auth-shared";
+import { hasConsecutiveDigits, hasRepeatingDigits, maskMobile } from "@/lib/auth-shared";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
+import PinRequirements from "@/components/auth/PinRequirements";
 import SelfieCapture from "@/components/auth/SelfieCapture";
 import { useSession } from "@/lib/session-store";
 import { ACTORS } from "@/lib/mock-data";
@@ -187,6 +188,14 @@ function SignupContent() {
     const pin = incomingPin ?? pinDigits.join("");
     if (pin.length < 4 || busy) {
       if (pin.length < 4) setErrorMsg("Please enter a 4-digit PIN");
+      return;
+    }
+    if (hasConsecutiveDigits(pin)) {
+      setErrorMsg("PIN cannot contain consecutive numbers.");
+      return;
+    }
+    if (hasRepeatingDigits(pin)) {
+      setErrorMsg("PIN cannot contain repeating numbers.");
       return;
     }
     setErrorMsg("");
@@ -535,7 +544,7 @@ function SignupContent() {
             disabled={!newPasswordReady(password, confirmPassword)} loading={busy}
             className="mt-2 h-11 w-full text-[14px]"
           >
-            Set Your PIN
+            Proceed
           </Button>
         </form>
       )}
@@ -565,6 +574,8 @@ function SignupContent() {
               autoFocus
             />
           </div>
+
+          <PinRequirements pin={pinDigits.join("")} />
 
           {errorMsg && (
             <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
@@ -609,6 +620,12 @@ function SignupContent() {
               autoFocus
             />
           </div>
+
+          <PinRequirements
+            pin={confirmPinDigits.join("")}
+            originalPin={pinDigits.join("")}
+            isConfirm
+          />
 
           {errorMsg && (
             <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">

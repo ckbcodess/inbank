@@ -1865,7 +1865,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         amount: currentAmount,
         fee,
         total: totalDebit,
-        narration: f.bankRef || f.wRef || f.pxRef || (rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Internet") : "Online Payment"),
+        narration: f.bankRef || f.wRef || f.pxRef || (rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Internet") : rail === "wallet-to-bank" ? "Wallet to Bank" : "Online Payment"),
         rows: [
           ...(isDualMandate
             ? ([
@@ -1893,7 +1893,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         date: d.toISOString().slice(0, 10),
         time: d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }),
         valueDate: d.toISOString().slice(0, 10),
-        description: f.bankRef || f.wRef || f.pxRef || (rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Internet") : "Online Payment"),
+        description: f.bankRef || f.wRef || f.pxRef || (rail === "card-topup" ? "Card top up" : rail === "data" ? (bundle?.name || "Internet") : rail === "wallet-to-bank" ? "Wallet to Bank" : "Online Payment"),
         counterparty: isOwnTransfer ? (toOwnAccount?.name || "My Account") : rail === "card-topup" ? (cardObj?.name || "Card") : (resolvedName || "Recipient"),
         counterpartyAccount: isOwnTransfer
           ? (toOwnAccount?.number || "")
@@ -3111,27 +3111,18 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   phone: f.wPhone || "0241234567",
                   network: (f.wNetwork as Operator) || "MTN",
                   amount: f.wAmount || f.bankAmount,
-                  narration: f.wRef || f.bankRef,
-                  category: f.category,
-                  isScheduled: f.isScheduled,
-                  scheduleDate: f.scheduleDate,
-                  scheduleFrequency: f.scheduleFrequency,
-                  scheduleEndDate: f.scheduleEndDate,
                 }}
                 onChange={(key, val) => {
                   if (key === "toAccountId") {
-                    set("fromId", val as string);
+                    set("fromId", val);
                   } else if (key === "phone") {
-                    set("wPhone", val as string);
+                    set("wPhone", val);
                   } else if (key === "network") {
-                    set("wNetwork", val as string);
+                    set("wNetwork", val);
                   } else if (key === "amount") {
-                    set("bankAmount", val as string);
-                    set("wAmount", val as string);
-                  } else if (key === "narration") {
-                    set("bankRef", val as string);
-                    set("wRef", val as string);
-                  } else set(key, val);
+                    set("bankAmount", val);
+                    set("wAmount", val);
+                  }
                 }}
                 detailsCollapsed={stage1Collapsed}
                 onToggleCollapsed={setStage1Collapsed}

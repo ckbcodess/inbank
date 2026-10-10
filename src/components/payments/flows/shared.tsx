@@ -277,8 +277,8 @@ export function getDetailedFeeBreakdown({
   };
 }
 
-/** Wallet names, then the bank's own wallet. The networks come from `lib/operators.ts`. */
-export const NETWORKS = [...OPERATOR_IDS.map((id) => OPERATORS[id].wallet), "GCB Wallet"];
+/** Wallet names. The networks come from `lib/operators.ts`. */
+export const NETWORKS = OPERATOR_IDS.map((id) => OPERATORS[id].wallet);
 /** The lines a number can be on. */
 export const TELCO_NETWORKS: readonly string[] = OPERATOR_IDS.map((id) => OPERATORS[id].telco);
 
@@ -340,11 +340,6 @@ const AT_BUNDLES: BundleItem[] = [
   { id: "a-3", name: "AT Sika Kokoo 25GB", val: "25 GB", price: 100, network: "AT Ghana" },
 ];
 
-const GCB_BUNDLES: BundleItem[] = [
-  { id: "g-1", name: "GCB Data Pass 3GB", val: "3 GB", price: 15, network: "GCB Wallet" },
-  { id: "g-2", name: "GCB Data Pass 10GB", val: "10 GB", price: 45, network: "GCB Wallet" },
-];
-
 export const BUNDLES_BY_NETWORK: Record<string, BundleItem[]> = {
   "MTN Ghana": MTN_BUNDLES,
   "MTN Mobile Money": MTN_BUNDLES,
@@ -352,7 +347,6 @@ export const BUNDLES_BY_NETWORK: Record<string, BundleItem[]> = {
   "Telecel Cash": TELECEL_BUNDLES,
   "AT Ghana": AT_BUNDLES,
   "AT Money": AT_BUNDLES,
-  "GCB Wallet": GCB_BUNDLES,
 };
 
 export function getBundlesForNetwork(networkName?: string): BundleItem[] {
@@ -1036,12 +1030,14 @@ export function NarrationInput({
   onDone,
   label = "Narration",
   placeholder = "Enter narration",
+  optional = true,
 }: {
   value: string;
   onChange: (val: string) => void;
   onDone?: () => void;
   label?: string;
   placeholder?: string;
+  optional?: boolean;
 }) {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -1062,7 +1058,7 @@ export function NarrationInput({
   };
 
   return (
-    <Field label={label}>
+    <Field label={label} optional={optional}>
       <Input
         type="text"
         data-field="narration"
@@ -1072,9 +1068,8 @@ export function NarrationInput({
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        
       />
-</Field>
+    </Field>
   );
 }
 
@@ -1085,13 +1080,15 @@ export function CategorySelect({
   value,
   onChange,
   label = "Transaction Category",
+  optional = true,
 }: {
   value: string;
   onChange: (val: string) => void;
   label?: string;
+  optional?: boolean;
 }) {
   return (
-    <Field label={label}>
+    <Field label={label} optional={optional}>
       <Select value={value || null} onValueChange={(val) => onChange(val || "")}>
         <SelectTrigger >
           <SelectValue placeholder="Select category" />
@@ -1113,7 +1110,7 @@ export function CategorySelect({
           <SelectItem value="Other">Other</SelectItem>
         </SelectContent>
       </Select>
-</Field>
+    </Field>
   );
 }
 
@@ -1359,13 +1356,14 @@ export function SaveBeneficiaryCheckbox({
       </label>
       {checked && onNicknameChange && (
         <div className="pl-7 animate-in fade-in slide-in-from-top-1 duration-150">
-          <Input
-            type="text"
-            value={nickname || ""}
-            onChange={(e) => onNicknameChange(e.target.value)}
-            placeholder="Beneficiary nickname (optional)"
-            
-          />
+          <Field label="Beneficiary Nickname" optional>
+            <Input
+              type="text"
+              value={nickname || ""}
+              onChange={(e) => onNicknameChange(e.target.value)}
+              placeholder="e.g. Ama's savings"
+            />
+          </Field>
         </div>
       )}
     </div>

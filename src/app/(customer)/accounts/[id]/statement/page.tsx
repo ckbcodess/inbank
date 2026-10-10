@@ -12,7 +12,6 @@ import { Download, FileText } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { FilteredEmptyState, ListErrorState, ListSkeleton, TrueEmptyState } from "@/components/states/ListStates";
 import type { BaselineState } from "@/lib/states";
@@ -85,16 +84,15 @@ export default function StatementConfigurationPage({ params }: { params: Promise
               <Field label="To" htmlFor="to">
                 <Input id="to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
 </Field>
-              <div className="flex flex-col gap-2 sm:col-span-2">
-                <Label htmlFor="cp">Counterparty or Beneficiary</Label>
+              <Field label="Counterparty or Beneficiary" optional htmlFor="cp" className="sm:col-span-2">
                 <Input
                   id="cp"
                   value={counterparty}
                   onChange={(e) => setCounterparty(e.target.value)}
                   placeholder="Any counterparty"
                 />
-              </div>
-              <Field label="Minimum Amount" htmlFor="min">
+              </Field>
+              <Field label="Minimum Amount" optional htmlFor="min">
                 <Input
                   id="min"
                   inputMode="decimal"
@@ -102,8 +100,8 @@ export default function StatementConfigurationPage({ params }: { params: Promise
                   onChange={(e) => setMinAmount(e.target.value)}
                   placeholder="No minimum"
                 />
-</Field>
-              <Field label="Maximum Amount" htmlFor="max">
+              </Field>
+              <Field label="Maximum Amount" optional htmlFor="max">
                 <Input
                   id="max"
                   inputMode="decimal"
@@ -111,7 +109,7 @@ export default function StatementConfigurationPage({ params }: { params: Promise
                   onChange={(e) => setMaxAmount(e.target.value)}
                   placeholder="No maximum"
                 />
-</Field>
+              </Field>
             </div>
 
             <div className="mt-5 flex items-center gap-2">

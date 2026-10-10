@@ -159,7 +159,6 @@ import { useOwnWallets } from "./flows/OwnWalletPicker";
 import { formatGhPhone } from "./flows/shared";
 
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Field } from "@/components/ui/field";
 export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
   const router = useRouter();
@@ -1103,18 +1102,17 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   </div>
 
                   {f.frequency !== "Once" && f.endCondition === "date" && (
-                    <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-150">
-                      <Label htmlFor="so-end-date">
-                        Last Payment
-                      </Label>
-                      <Input
-                        id="so-end-date"
-                        type="date"
-                        value={f.endDate}
-                        min={f.firstRun}
-                        onChange={(e) => set("endDate", e.target.value)}
-                        className="tabular"
-                      />
+                    <div className="animate-in fade-in slide-in-from-top-1 duration-150">
+                      <Field label="Last Payment" htmlFor="so-end-date">
+                        <Input
+                          id="so-end-date"
+                          type="date"
+                          value={f.endDate}
+                          min={f.firstRun}
+                          onChange={(e) => set("endDate", e.target.value)}
+                          className="tabular"
+                        />
+                      </Field>
                     </div>
                   )}
 

@@ -146,7 +146,7 @@ export function SpendsRadialChart({
   return (
     <div
       className={cn(
-        "flex flex-col justify-between gap-3 rounded-2xl border border-border bg-panel p-4 shadow-none transition-colors sm:p-5",
+        "flex h-[260px] flex-col justify-between gap-2.5 rounded-2xl border border-border bg-panel p-4 shadow-none transition-colors sm:p-5 overflow-hidden",
         className
       )}
     >
@@ -165,7 +165,7 @@ export function SpendsRadialChart({
 
       {/* Semicircle Chart Container */}
       <div className="relative my-auto flex flex-col items-center justify-center">
-        <div className="relative w-full max-w-[360px] aspect-[400/225] select-none">
+        <div className="relative w-full max-w-[280px] aspect-[400/225] select-none">
           <svg
             viewBox="0 0 400 225"
             className="size-full overflow-visible"
@@ -277,7 +277,7 @@ export function SpendsRadialChart({
                 setHoveredCategory(null);
               }}
               className={cn(
-                "flex-1 rounded-full py-1.5 text-[13px] tabular transition-colors cursor-pointer text-center outline-none select-none",
+                "flex-1 rounded-full py-1 text-[12px] tabular transition-colors cursor-pointer text-center outline-none select-none",
                 isActive
                   ? "bg-foreground text-background shadow-xs"
                   : "border border-border/80 bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"

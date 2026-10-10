@@ -24,7 +24,6 @@ import { BarChart3, Download, FileText, Search } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import {
@@ -218,10 +217,7 @@ export default function ReportsPage() {
           <Field label="To" htmlFor="rep-to">
             <Input id="rep-to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
 </Field>
-          <div className="flex flex-col gap-1.5 sm:col-span-2">
-            <Label htmlFor="rep-q">
-              Search
-            </Label>
+          <Field label="Search" optional htmlFor="rep-q" className="sm:col-span-2">
             <div className="relative">
               <Search
                 size={15}
@@ -237,7 +233,7 @@ export default function ReportsPage() {
                 className="pl-9"
               />
             </div>
-          </div>
+          </Field>
         </div>
 
         {!isActivity && (

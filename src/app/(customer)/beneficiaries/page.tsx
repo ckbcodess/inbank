@@ -111,7 +111,7 @@ const GHANA_BANKS = [
   "Zenith Bank Ghana",
 ];
 
-const WALLET_NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money", "GhanaPay", "G-Money", "GCB Wallet"];
+const WALLET_NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money", "GhanaPay", "G-Money"];
 const AIRTIME_NETWORKS = ["MTN Ghana", "Telecel Ghana", "AT Ghana", "GhanaPay", "G-Money"];
 const BILLER_CATEGORIES = Array.from(new Set(BILLERS.map((b) => b.category)));
 

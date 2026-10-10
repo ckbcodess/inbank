@@ -132,8 +132,8 @@ export function dayLabel(iso: string): string {
 
 export function Card({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    // Phone: 16px inside a 16px gutter, so rows keep their width; desktop keeps the roomier 24px.
-    <div className={cn("flex flex-col gap-3 rounded-2xl border border-border bg-panel p-4 sm:gap-6 sm:p-6", className)}>
+    // Phone: 16px inside a 16px gutter, so rows keep their width; desktop keeps the roomier 20px.
+    <div className={cn("flex h-[260px] flex-col justify-between gap-2.5 rounded-2xl border border-border bg-panel p-4 sm:gap-4 sm:p-5 overflow-hidden", className)}>
       {children}
     </div>
   );
@@ -695,13 +695,13 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
       <CardHeader title={t("dashboard.payAgain", "Pay again")} href="/beneficiaries" cta={t("common.manage", "Manage")} />
       {loading ? (
         // The same four-across grid of avatars with a name and a detail under each.
-        <div className="grid grid-cols-4 gap-x-2 gap-y-6 sm:mt-1 sm:gap-y-7">
+        <div className="my-auto grid grid-cols-4 gap-x-2 gap-y-3.5">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="flex min-w-0 flex-col items-center gap-2.5 sm:gap-3">
-              <Bone className="size-11 rounded-full sm:size-12" style={{ animationDelay: `${i * 50}ms` }} />
-              <div className="flex w-full flex-col items-center gap-1.5">
-                <Bone className="h-3 w-4/5" style={{ animationDelay: `${i * 50}ms` }} />
-                <Bone className="h-2.5 w-3/5" style={{ animationDelay: `${i * 50}ms` }} />
+            <div key={i} className="flex min-w-0 flex-col items-center gap-1.5 sm:gap-2">
+              <Bone className="size-10 rounded-full sm:size-11" style={{ animationDelay: `${i * 50}ms` }} />
+              <div className="flex w-full flex-col items-center gap-1">
+                <Bone className="h-2.5 w-4/5" style={{ animationDelay: `${i * 50}ms` }} />
+                <Bone className="h-2 w-3/5" style={{ animationDelay: `${i * 50}ms` }} />
               </div>
             </div>
           ))}
@@ -712,25 +712,25 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
           action={{ label: t("dashboard.addSomeone", "Add someone"), href: "/beneficiaries?add=1" }}
         />
       ) : (
-        <div className="grid grid-cols-4 gap-x-2 gap-y-6 sm:mt-1 sm:gap-y-7">
-          {data.payAgain.map((p, i) => (
+        <div className="my-auto grid grid-cols-4 gap-x-2 gap-y-3.5">
+          {data.payAgain.slice(0, 8).map((p, i) => (
             <Link
               key={p.href}
               href={withFrom(p.href, data.selectedAccountId)}
-              className="group flex min-w-0 flex-col items-center gap-2.5 text-center sm:gap-3"
+              className="group flex min-w-0 flex-col items-center gap-1.5 text-center"
               aria-label={`Pay ${p.name}, ${p.detail}`}
             >
               <span
                 className={cn(
-                  "flex size-11 items-center justify-center rounded-full text-[13.5px] tracking-[0.02em] transition-transform sm:size-12 sm:text-[14px]",
+                  "flex size-10 items-center justify-center rounded-full text-[13px] tracking-[0.02em] transition-transform sm:size-11 sm:text-[13.5px]",
                   AVATAR_TINTS[i % AVATAR_TINTS.length],
                 )}
               >
                 {initials(p.name)}
               </span>
-              <span className="flex w-full min-w-0 flex-col gap-1">
+              <span className="flex w-full min-w-0 flex-col gap-0.5">
                 <span className="truncate text-[12px] leading-tight text-foreground">{p.name}</span>
-                <span className="truncate text-[11.5px] leading-tight text-muted-foreground">{p.detail}</span>
+                <span className="truncate text-[11px] leading-tight text-muted-foreground">{p.detail}</span>
               </span>
             </Link>
           ))}
@@ -822,10 +822,10 @@ export function CardsCard({
       ) : data.cards.length === 0 ? (
         <PanelEmpty text={t("dashboard.noCardsOnAccount", "No card on this account.")} action={{ label: t("dashboard.requestCard", "Request a card"), href: "/cards/request" }} />
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-1 flex-col justify-between gap-3">
           <CardsMini cards={data.cards} />
           {isUnfunded && onOpenFundModal && (
-            <div className="flex items-center justify-between rounded-xl bg-muted/40 px-3.5 py-2 text-[12px] text-muted-foreground">
+            <div className="mt-auto flex items-center justify-between rounded-xl bg-muted/40 px-3.5 py-2 text-[12px] text-muted-foreground">
               <span>Card ready · active once funded</span>
               <button
                 type="button"
@@ -864,7 +864,7 @@ export function AnalyticsCard({
       <div
         role="status"
         aria-busy="true"
-        className={cn("flex flex-col justify-between gap-3 rounded-2xl border border-border bg-panel p-4 shadow-none sm:p-5", className)}
+        className={cn("flex h-[260px] flex-col justify-between gap-2.5 rounded-2xl border border-border bg-panel p-4 shadow-none sm:p-5 overflow-hidden", className)}
       >
         <span className="sr-only">Loading</span>
         <div className="flex items-center justify-between">
@@ -874,14 +874,14 @@ export function AnalyticsCard({
           <span className="text-[12.5px] text-muted-foreground">{t("dashboard.details", "Details")}</span>
         </div>
         <div className="relative my-auto flex flex-col items-center justify-center">
-          <div className="relative aspect-[400/225] w-full max-w-[360px]">
+          <div className="relative aspect-[400/225] w-full max-w-[280px]">
             <Bone className="absolute inset-x-0 top-0 h-[88.9%] rounded-t-full rounded-b-none" />
             <div className="absolute inset-x-[20%] bottom-[11.1%] h-[53.3%] rounded-t-full bg-card" />
           </div>
         </div>
         <div className="flex w-full items-center gap-2">
           {[0, 1, 2].map((i) => (
-            <Bone key={i} className="h-[31px] flex-1 rounded-full" style={{ animationDelay: `${i * 60}ms` }} />
+            <Bone key={i} className="h-7 flex-1 rounded-full" style={{ animationDelay: `${i * 60}ms` }} />
           ))}
         </div>
       </div>
@@ -966,17 +966,14 @@ export { RecommendedForYouCard, RecommendedForYouCard as RecommendedCard } from 
  */
 export function PromoBanner({ className }: { className?: string }) {
   return (
-    <div className={cn("hidden sm:block", className)}>
+    <div className={cn("hidden sm:block relative w-full h-[180px] sm:h-[200px] lg:h-[220px] rounded-2xl sm:rounded-3xl overflow-hidden bg-[#FFC423] shadow-xs", className)}>
       <Image
         src="/images/Container.png"
         alt="Banking made easier, wherever you are. Scan the QR code to get the GCB mobile app."
-        width={2760}
-        height={737}
-        // The ad spans the dashboard, about 1380px wide at most. Next re-encodes at quality 75 by default, which
-        // softens a picture with fine text; keep it high.
+        fill
         sizes="(min-width: 1440px) 1380px, calc(100vw - 96px)"
         quality={95}
-        className="h-auto w-full rounded-2xl"
+        className="object-cover object-center"
       />
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Laptop, MapPin } from "lucide-react";
 import { AlertToast } from "@/components/ui/alert-toast";
@@ -121,13 +122,12 @@ function PinContent() {
             <span>Logging you in...</span>
           </div>
         ) : usingPin ? (
-          <button
-            type="button"
-            onClick={() => auth.setMethod("otp")}
+          <Link
+            href="/forgot-pin"
             className="cursor-pointer text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80"
           >
             Forgot PIN?
-          </button>
+          </Link>
         ) : (
           <div className="flex flex-col items-center gap-3">
             <OtpHelp resend={auth.resend} onResend={auth.requestResend} shortcodeOpen={shortcodeOpen} onShortcodeOpenChange={setShortcodeOpen} />

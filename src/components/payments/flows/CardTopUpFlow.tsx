@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { CreditCard } from "lucide-react";
-import { Account, CARDS, formatMoney } from "@/lib/mock-data";
+import { Account, cardsForProfile, formatMoney } from "@/lib/mock-data";
+import { useSession } from "@/lib/session-store";
+import { getEffectiveCardsForProfile, useCardsDevStore } from "@/lib/cards-dev-store";
 import {
   Select,
   SelectContent,
@@ -59,24 +62,36 @@ export function CardTopUpFlow({
     onToggleCollapsed?.(val);
   };
 
+  const activeProfile = useSession((s) => s.activeProfile);
+  const devState = useCardsDevStore();
+  const profileKind = activeProfile?.kind ?? "RETAIL";
+
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
     [accounts, state.fromId]
   );
 
+  // Strictly filter to the current customer's own GCB cards
+  const myCards = useMemo(() => {
+    const raw = cardsForProfile(profileKind);
+    const { cards } = getEffectiveCardsForProfile(profileKind, raw, devState);
+    return cards;
+  }, [profileKind, devState]);
+
+  // Card top-up is only applicable for the user's active GCB Prepaid and Virtual cards (which hold their own balance)
   const fundableCards = useMemo(() => {
-    const list = CARDS.filter((c) => c.fundable && c.status === "Active");
+    const list = myCards.filter((c) => c.fundable && c.status === "Active");
     if (state.cardId && !list.some((c) => c.id === state.cardId)) {
-      const match = CARDS.find((c) => c.id === state.cardId);
+      const match = myCards.find((c) => c.id === state.cardId);
       if (match) list.unshift(match);
     }
-    return list.length > 0 ? list : CARDS.filter((c) => c.status === "Active");
-  }, [state.cardId]);
+    return list;
+  }, [myCards, state.cardId]);
 
   const selectedCard = useMemo(() => {
     if (!state.cardId) return undefined;
-    return fundableCards.find((c) => c.id === state.cardId) ?? CARDS.find((c) => c.id === state.cardId);
-  }, [fundableCards, state.cardId]);
+    return fundableCards.find((c) => c.id === state.cardId) ?? myCards.find((c) => c.id === state.cardId);
+  }, [fundableCards, myCards, state.cardId]);
 
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
@@ -95,11 +110,24 @@ export function CardTopUpFlow({
       <Field label="Destination Card">
         {selectedCard && isCollapsed ? (
           <CollapsedDetailsBadge
-            title={selectedCard.name}
-            subtitle={`${selectedCard.scheme} · ${selectedCard.maskedNumber}`}
+            title={`GCB ${selectedCard.name}`}
+            subtitle={`GCB ${selectedCard.type} · ${selectedCard.scheme} · ${selectedCard.maskedNumber}`}
             icon={<CreditCard size={18} strokeWidth={1.8} className="shrink-0" />}
             onChange={() => setCollapsed(false)}
           />
+        ) : fundableCards.length === 0 ? (
+          <div className="rounded-2xl border border-border bg-card p-4 text-center space-y-2">
+            <p className="text-[13.5px] font-medium text-foreground">No eligible GCB cards to top up</p>
+            <p className="text-[12px] text-muted-foreground max-w-sm mx-auto">
+              Card top-ups apply to GCB Prepaid and Virtual cards. GCB Debit cards draw directly from your bank account.
+            </p>
+            <Link
+              href="/cards/request"
+              className="inline-flex items-center justify-center rounded-xl bg-primary px-3.5 py-2 text-[12.5px] font-medium text-primary-foreground hover:bg-primary/90 transition-colors mt-1"
+            >
+              Request a GCB Card
+            </Link>
+          </div>
         ) : (
           <Select
             value={state.cardId || ""}
@@ -116,7 +144,7 @@ export function CardTopUpFlow({
                     <CreditCard size={20} strokeWidth={1.8} className="shrink-0" />
                   </span>
                   <span className="text-[14px] text-muted-foreground font-normal">
-                    Select destination card
+                    Select your GCB card
                   </span>
                 </div>
               ) : (
@@ -127,10 +155,10 @@ export function CardTopUpFlow({
                     </span>
                     <div className="flex flex-col min-w-0 text-left gap-0.5">
                       <span className="text-[14.5px] text-foreground font-medium truncate leading-tight">
-                        {selectedCard.name}
+                        GCB {selectedCard.name}
                       </span>
                       <span className="text-[12px] text-muted-foreground font-normal truncate leading-tight">
-                        {selectedCard.scheme} · {selectedCard.maskedNumber}
+                        GCB {selectedCard.type} · {selectedCard.scheme} · {selectedCard.maskedNumber}
                       </span>
                     </div>
                   </div>
@@ -146,13 +174,13 @@ export function CardTopUpFlow({
             <SelectContent>
               {fundableCards.map((c) => (
                 <SelectItem key={c.id} value={c.id}>
-                  {c.name} ({c.maskedNumber}) — {formatMoney(c.balance ?? 0, c.currency, true)}
+                  GCB {c.name} ({c.maskedNumber}) — {formatMoney(c.balance ?? 0, c.currency, true)}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         )}
-</Field>
+      </Field>
 
       {/* Progressive Disclosure: Only reveal Amount & onwards after card is selected */}
       {Boolean(selectedCard) && (
@@ -164,8 +192,8 @@ export function CardTopUpFlow({
             onFocus={() => {
               if (selectedCard) setCollapsed(true);
             }}
-            currency={selectedCard?.currency || "GHS"}
-            label={`Top up Amount (${selectedCard?.currency || "GHS"})`}
+            currency="GHS"
+            label="Enter Amount"
             error={
               overBalance ? (
                 <InsufficientFundsAlert />

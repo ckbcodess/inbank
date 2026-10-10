@@ -55,6 +55,7 @@ import type { DevStateGroup } from "@/components/providers/DevStateProvider";
 import { formatMoney, type Account } from "@/lib/mock-data";
 import { useAccountPrefs, useLinkedSources, type LinkedSource } from "@/lib/accounts-store";
 import AddAccountDialog from "@/components/accounts/AddAccountDialog";
+import OpenGcbAccountDialog from "@/components/accounts/OpenGcbAccountDialog";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
 import PageHeader from "@/components/layout/PageHeader";
 import { TileChip } from "@/components/ui/action-tile";
@@ -259,6 +260,7 @@ function AccountsContent() {
   const [removing, setRemoving] = useState<LinkedSource | null>(null);
   const [selfieMatch, setSelfieMatch] = useState<"match" | "no-match">("match");
   const [addAccountOpen, setAddAccountOpen] = useState(false);
+  const [openGcbAccountOpen, setOpenGcbAccountOpen] = useState(false);
   const clearAddedAccounts = useAccountPrefs((s) => s.clearAddedAccounts);
   const [migratedDismissed, setMigratedDismissed] = useState(false);
 
@@ -356,11 +358,17 @@ function AccountsContent() {
           isRetail && screenState !== "loading" && screenState !== "error" ? (
             <Button
               type="button"
-              onClick={() => setAddAccountOpen(true)}
+              onClick={() => {
+                if (isWalletCustomer) {
+                  setOpenGcbAccountOpen(true);
+                } else {
+                  setAddAccountOpen(true);
+                }
+              }}
               className="shrink-0"
             >
               <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-              <span>{isWalletCustomer ? "Open a GCB account" : "Add Account"}</span>
+              <span>{isWalletCustomer ? "Open a GCB Account" : "Add Account"}</span>
             </Button>
           ) : undefined
         }
@@ -608,6 +616,12 @@ function AccountsContent() {
             ? { balance: defaultAccount.available, sourceTitles: sources.map((src) => src.title) }
             : undefined
         }
+      />
+
+      {/* Wallet customer: redirect to account opening portal */}
+      <OpenGcbAccountDialog
+        open={openGcbAccountOpen}
+        onOpenChange={setOpenGcbAccountOpen}
       />
     </div>
   );

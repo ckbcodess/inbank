@@ -187,7 +187,11 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ### 2026-10-09
 
+- **Decision** Added PIN requirement checks ("4 digits", "No consecutive numbers", "No repeating numbers", and "PINs match" on confirmation) with a live requirements card (`PinRequirements.tsx`) placed beneath the OTP input fields in onboarding (`/signup` and `/activate`). Added `hasConsecutiveDigits`, `hasRepeatingDigits` and `pinMeetsRules` to `src/lib/auth-shared.ts`.
+- **Decision** Changed the CTA button on the onboarding password creation step (`/signup` and `/activate`) from "Set Your PIN" to "Proceed".
+- **Decision** Updated the COOS account opening redirect modal title to "Open a GCB Account" and extracted `OpenGcbAccountDialog` (`components/accounts/OpenGcbAccountDialog.tsx`). Reused it across `/get-started` and `/accounts` ("Open a GCB Account" in PageHeader for virtual wallet holders).
 - **Decision** Added the "Recommended for you" card stack panel to the dashboard (Figma node 5990:5504) in `src/components/dashboard/v2/RecommendedForYouCard.tsx`, filling the 6th slot of the dashboard grid (`dash-grid`) across Overview, Hero, HeroSplit and Actions layouts. Built with a static non-animating header row containing top-right chevron controls, layered depth cards, fluid Apple-style spring animations (`DECK_SPRING`), touch/drag swipe gestures (`drag="x"`), and direct CTA links (`/loans`, `/payments/bills?biller=dstv`, `/invest`, `/insure`).
+- **Decision** Removed narration, transaction category and schedule payment from the Wallet to Bank payment flow (`src/components/payments/flows/WalletToBankFlow.tsx` and `src/components/payments/PaymentFlow.tsx`). The flow now contains Destination Bank Account, Source Mobile Wallet, Amount and Proceed CTA.
 
 ### 2026-10-08
 
@@ -550,11 +554,21 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - **Decision (Mobile Platform Baseline):** Added Next.js `Viewport` export (`viewportFit: "cover"`, `interactiveWidget: "resizes-content"`) in `layout.tsx` and baseline CSS rules in `globals.css` (`-webkit-tap-highlight-color: transparent`, `touch-action: manipulation`, 16px input prevention of iOS zoom, `overscroll-behavior: none`).
 
 ### 2026-10-09
-- **Decision (Provider networks):** Added GhanaPay and G-Money networks and SVGs (`/ghanapay.svg`, `/gmoney.svg`) into `OPERATORS` (`lib/operators.ts`) and wallet pickers across the app.
+- **Decision (Provider networks):** Added GhanaPay and G-Money networks and SVGs (`/ghanapay.svg`, `/gmoney.svg`) into `OPERATORS` (`lib/operators.ts`) and wallet pickers across the app. Removed redundant unbranded `"GCB Wallet"` dropdown item from `NETWORKS` in `shared.tsx` and `WALLET_NETWORKS` in `beneficiaries/page.tsx` since GCB's official mobile money wallet is `G-Money`.
 - **Decision (Onboarding & Auth):** Review details step in `/signup` and `/forgot-password` now use `PhoneInput` with country flag picker. MFA loader updated to "Logging you in...". Forgot password enforces selfie verification before new password input.
 - **Decision (Dashboard):** Balances hidden by default (`globalShowAmounts = false`, `splitCurrencyAndAmount` default `showAmounts = false`). Hero dashboard kebab options menu relocated beside `AccountSwitcher`; top-right hero actions hold QR code scan CTA followed by FX rates (`[QR] [FX]`).
-- **Decision (Dashboard Recommendations Card):** Clean template background images used without baked-in raster text (`bg-salary-advance.png`, `bg-dstv.png`, `bg-term-deposit.png`, `bg-wealth-master.png`). Titles, subtitles, and interactive pill CTA buttons rendered as live DOM overlays on top of the clean artwork with Open Sans typography and theme-matched colors. "Recommended for you" header and left/right navigation chevrons sit stationary at the top layer (`z-30`) so only card artwork and offer copy transition with spring motion.
+- **Decision (Dashboard Recommendations Card):** Clean template background images used without baked-in raster text (`bg-salary-advance.png`, `bg-dstv.png`, `bg-term-deposit.png`, `bg-wealth-master.png`). Titles, subtitles, and interactive pill CTA buttons rendered as live DOM overlays on top of the clean artwork with Open Sans typography and theme-matched colors. "Recommended for you" header and left/right navigation chevrons sit stationary at the top layer (`z-30`), while the title, subtitle, and CTA button form a vertically centered, unified lockup on the left half to eliminate awkward gaps.
 - **Decision (GCB Pay / Bills Verification):** Replaced real-time on-type bill reference resolution with an in-field "Verify" button (`BillsPaymentFlow.tsx`). Typing no longer reveals customer details or amount input in real time; customer details and subsequent amount field only appear after clicking "Verify". Modifying the reference resets the verification state.
+- **Decision (Form fields):** All optional fields across all application flows (Send & Pay, transfers, standing orders, statement configuration, reports, settings, quick actions) explicitly render an italicized `(optional)` indicator by their label via `Field` (`optional` prop), with `CategorySelect`, `NarrationInput`, and `SaveBeneficiaryCheckbox` defaulting to optional.
+- **Decision (Open GCB Account Modal):** Standardized title to "Open a GCB Account" (`OpenGcbAccountDialog.tsx`). Virtual account / wallet holders on `/accounts` clicking "Open a GCB account" trigger this same unified modal.
+- **Decision (Password Creation CTA):** "Set your PIN" CTA button on the "Create your password" step in `/signup` and `/activate` changed to "Proceed".
+- **Decision (PIN Validation & Rules):** PIN rules enforce 4 digits, no 3+ consecutive numbers (`hasConsecutiveDigits`), and no repeating digits (`hasRepeatingDigits`). The live `<PinRequirements />` checklist renders below PIN inputs displaying "No consecutive numbers" and "No repeating numbers" (and "PINs match" on confirmation step).
+- **Decision (Forgot Password & Forgot PIN Flows):**
+  - `/forgot-password` updated: Mobile → Selfie → OTP verification code → New password → Done.
+  - `/forgot-pin` created: Mobile → Selfie → New PIN (with live rule checks) → Confirm PIN → Done. Linked directly from `/mfa` ("Forgot PIN?") and `/settings`.
+- **Decision (Card Blocking Reason Dialog):** Redesigned the card blocking dialog in `VirtualCardDetailsView.tsx` (`BlockReasonDialog`) from a multi-level nested card/survey questionnaire (dense nested cards, multi-level button grids) to a clean, calm, single-level choice list (`misplaced`, `lost_stolen`, `fraud`, `budgeting`, `other`) with quiet context-specific guidance, eliminating all cards-inside-cards and nested button matrices.
+- **Decision (Card Top-Up / Send & Pay):** Card top-up destination picker in `CardTopUpFlow.tsx` is strictly filtered to the customer's own active GCB fundable cards (`cardsForProfile(profileKind)` with `c.fundable && c.status === "Active"` — GCB Prepaid and Virtual cards). Top-up currency is enforced as GHS (`currency="GHS"`, `Top up Amount (GHS)`), and retail card mocks are denominated in GHS.
+
 
 ---
 

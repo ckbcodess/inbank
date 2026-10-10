@@ -277,7 +277,7 @@ export default function AddAccountDialog({
                 <span className="flex min-w-0 flex-1 flex-col items-start gap-1">
                   <span className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
                     <Wallet size={14} strokeWidth={1.8} aria-hidden="true" />
-                    GCB Wallet
+                    GCB Virtual Account
                   </span>
                   <span className="text-[20px] tracking-[-0.02em] text-foreground tabular">
                     {formatMoney(wallet.balance, "GHS", true)}

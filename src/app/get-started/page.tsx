@@ -11,15 +11,7 @@ import {
   UserCheck,
 } from "lucide-react";
 import AuthLayout from "@/components/auth/AuthLayout";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogBody,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import OpenGcbAccountDialog from "@/components/accounts/OpenGcbAccountDialog";
 
 export default function GetStartedPage() {
   const router = useRouter();
@@ -28,7 +20,6 @@ export default function GetStartedPage() {
   // Screen 2: How would you like to proceed?
   const [screen, setScreen] = useState<1 | 2>(1);
   const [showCoosModal, setShowCoosModal] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
 
   function handleChooseExisting() {
     router.push("/activate");
@@ -44,15 +35,6 @@ export default function GetStartedPage() {
 
   function handleChooseWalletCard() {
     router.push("/signup?flow=wallet_card");
-  }
-
-  function executeCoosRedirect() {
-    setIsRedirecting(true);
-    setTimeout(() => {
-      window.open("https://accountopening.gcb.com.gh", "_blank");
-      setIsRedirecting(false);
-      setShowCoosModal(false);
-    }, 1000);
   }
 
   return (
@@ -215,40 +197,11 @@ export default function GetStartedPage() {
       </AuthLayout>
 
       {/* COOS Redirection Confirmation Modal */}
-      <Dialog open={showCoosModal} onOpenChange={setShowCoosModal}>
-        <DialogContent size="sm">
-          <DialogHeader>
-            <DialogTitle>Account Opening Portal</DialogTitle>
-          </DialogHeader>
-
-          <DialogBody>
-            <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-              You will be redirected to <span className="font-medium text-foreground">accountopening.gcb.com.gh</span> to complete your account application.
-            </p>
-          </DialogBody>
-
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowCoosModal(false)}
-              disabled={isRedirecting}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              data-tour="gs-cos-confirm"
-              onClick={executeCoosRedirect}
-              loading={isRedirecting}
-              className="gap-1.5"
-            >
-              Continue to portal
-              <ExternalLink className="size-3.5" />
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <OpenGcbAccountDialog
+        open={showCoosModal}
+        onOpenChange={setShowCoosModal}
+        dataTourConfirm="gs-cos-confirm"
+      />
     </>
   );
 }

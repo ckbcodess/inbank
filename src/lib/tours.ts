@@ -308,7 +308,7 @@ export const TOURS: Tour[] = [
         route: "/signup",
         title: "Set a password",
         body: "Set a password with minimum 8 characters, upper, lower, numbers and symbols.",
-        action: "Click Set Your PIN",
+        action: "Click Proceed",
       },
       {
         target: "signup-pin",
@@ -379,7 +379,7 @@ export const TOURS: Tour[] = [
         route: "/signup",
         title: "Set a password",
         body: "Set a password with minimum 8 characters, upper, lower, numbers and symbols.",
-        action: "Click Set Your PIN",
+        action: "Click Proceed",
       },
       {
         target: "signup-pin",

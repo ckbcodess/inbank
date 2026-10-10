@@ -87,6 +87,49 @@ export function passwordMeetsRules(pw: string): boolean {
   return PASSWORD_RULES.every((r) => r.test(pw));
 }
 
+/* ── PIN rules ─────────────────────────────────────────────────────────────── */
+
+export interface PinRule {
+  id: string;
+  label: string;
+  test: (pin: string) => boolean;
+}
+
+export function hasConsecutiveDigits(pin: string): boolean {
+  if (pin.length < 3) return false;
+  const asc = "0123456789012";
+  const desc = "0987654321098";
+  for (let i = 0; i <= pin.length - 3; i++) {
+    const chunk = pin.slice(i, i + 3);
+    if (asc.includes(chunk) || desc.includes(chunk)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function hasRepeatingDigits(pin: string): boolean {
+  if (pin.length < 2) return false;
+  return new Set(pin).size < pin.length;
+}
+
+export function pinMeetsRules(pin: string): boolean {
+  return pin.length === 4 && !hasConsecutiveDigits(pin) && !hasRepeatingDigits(pin);
+}
+
+export const PIN_RULES: readonly PinRule[] = [
+  {
+    id: "no-consecutive",
+    label: "No consecutive numbers",
+    test: (pin) => pin.length > 0 && !hasConsecutiveDigits(pin),
+  },
+  {
+    id: "no-repeating",
+    label: "No repeating numbers",
+    test: (pin) => pin.length > 0 && !hasRepeatingDigits(pin),
+  },
+];
+
 /* ── Payment approval method ───────────────────────────────────────────────── */
 
 export type ApprovalMethod = "sms" | "email" | "token";

@@ -880,6 +880,7 @@ html.theme-fade *::after {
 .dash-grid {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));
+  grid-auto-rows: 260px;
 }
 
 @container (min-width: 640px) {
