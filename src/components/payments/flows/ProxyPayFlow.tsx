@@ -10,13 +10,13 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   AccountVerificationStatus,
-  VerifiedAccountBadge,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
   ScheduleFrequency,
   resolveAccountName,
 } from "./shared";
 
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
 export interface ProxyPayFormState {
@@ -110,34 +110,50 @@ export function ProxyPayFlow({
         ) : (
           <div className="flex flex-col gap-3">
             <div className="relative flex items-center">
-              <span className="absolute left-4 text-[16px] font-semibold text-muted-foreground select-none pointer-events-none">
-                @
-              </span>
               <Input
                 type="text"
-                value={state.pxId.replace(/^@/, "")}
+                value={state.pxId}
                 onChange={(e) => {
-                  const cleaned = e.target.value.replace(/^@/, "").trim();
-                  const valWithAt = cleaned ? `@${cleaned}` : "";
-                  onChange("pxId", valWithAt);
-                  const resolved = resolveAccountName(valWithAt, "");
+                  const val = e.target.value.trim();
+                  onChange("pxId", val);
+                  const resolved = resolveAccountName(val, "");
                   if (resolved) {
                     onChange("benName", resolved);
                   }
                 }}
-                placeholder="kwame.b"
-                className="pl-9 pr-4"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && isPxValid) {
+                    e.preventDefault();
+                    setResolving(true);
+                    setTimeout(() => setResolving(false), 200);
+                  }
+                }}
+                placeholder="Enter Ghana Card, phone, email or handle"
+                className="pr-10"
               />
+              <button
+                type="button"
+                onClick={() => {
+                  if (isPxValid) {
+                    setResolving(true);
+                    setTimeout(() => setResolving(false), 200);
+                  }
+                }}
+                aria-label="Search and verify proxy ID"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+              >
+                <Search size={16} strokeWidth={1.8} />
+              </button>
             </div>
             {/* Verification Status */}
             <AccountVerificationStatus
               resolving={isPxValid && resolving}
               name={isVerified ? verifiedName : null}
-              resolvingMessage="Verifying..."
+              resolvingMessage="Verifying proxy identifier..."
             />
           </div>
         )}
-</Field>
+      </Field>
 
       {/* Progressive Disclosure: Only reveal Amount & subsequent form fields after Proxy ID is entered */}
       {isPxValid && (

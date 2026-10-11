@@ -272,11 +272,11 @@ export function HeroAccountOptionsMenu({
           </DropdownMenuItem>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/transactions?account=${account.id}`)}
+            onClick={() => router.push(`/transactions?account=${account.id}&limit=10`)}
             className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
           >
             <ArrowLeftRight size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-            <span className="text-[13.5px]">View Transactions</span>
+            <span className="text-[13.5px]">View Last 10 Transactions</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem

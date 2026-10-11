@@ -27,12 +27,19 @@ import { Field } from "@/components/ui/field";
 
 type Stage = "mobile" | "selfie" | "no_match" | "branch" | "pin" | "confirm_pin" | "done";
 
-const STEP_NUMBER: Partial<Record<Stage, number>> = {
+const STEP_NUMBER_WITH_MOBILE: Partial<Record<Stage, number>> = {
   mobile: 1,
   selfie: 2,
   no_match: 2,
   pin: 3,
   confirm_pin: 4,
+};
+
+const STEP_NUMBER_SESSION: Partial<Record<Stage, number>> = {
+  selfie: 1,
+  no_match: 1,
+  pin: 2,
+  confirm_pin: 3,
 };
 
 const MAX_SELFIE_ATTEMPTS = 3;
@@ -46,7 +53,8 @@ function ForgotPinContent() {
   const router = useRouter();
   const { actor } = useSession();
 
-  const [stage, setStage] = useState<Stage>("mobile");
+  const hasExistingSession = Boolean(actor?.phone || actor);
+  const [stage, setStage] = useState<Stage>(() => (hasExistingSession ? "selfie" : "mobile"));
   const [busy, setBusy] = useState(false);
 
   const [country, setCountry] = useState("GH");
@@ -149,7 +157,11 @@ function ForgotPinContent() {
       setStage("selfie");
     } else if (stage === "selfie" || stage === "no_match") {
       setSelfieImage(null);
-      setStage("mobile");
+      if (hasExistingSession) {
+        router.push("/mfa");
+      } else {
+        setStage("mobile");
+      }
     }
   }
 
@@ -199,11 +211,31 @@ function ForgotPinContent() {
               ? Landmark
               : undefined
       }
-      onBack={stage !== "done" && stage !== "branch" && stage !== "mobile" ? handleBack : undefined}
-      backHref={stage === "mobile" ? (actor ? "/overview" : "/login") : undefined}
-      backLabel={stage === "mobile" ? (actor ? "Back to dashboard" : "Back to login") : "Back"}
+      onBack={stage !== "done" && stage !== "branch" && (stage !== "mobile" || hasExistingSession) ? handleBack : undefined}
+      backHref={
+        stage === "mobile"
+          ? (actor ? "/overview" : "/login")
+          : (stage === "selfie" && hasExistingSession)
+            ? "/mfa"
+            : undefined
+      }
+      backLabel={
+        stage === "mobile"
+          ? (actor ? "Back to dashboard" : "Back to login")
+          : (stage === "selfie" && hasExistingSession)
+            ? "Back to PIN entry"
+            : "Back"
+      }
       align={stage === "done" || stage === "no_match" || stage === "branch" ? "center" : "left"}
-      stepProgress={STEP_NUMBER[stage] ? { current: STEP_NUMBER[stage], total: 4 } : undefined}
+      stepProgress={
+        hasExistingSession
+          ? STEP_NUMBER_SESSION[stage]
+            ? { current: STEP_NUMBER_SESSION[stage], total: 3 }
+            : undefined
+          : STEP_NUMBER_WITH_MOBILE[stage]
+            ? { current: STEP_NUMBER_WITH_MOBILE[stage], total: 4 }
+            : undefined
+      }
       width="compact"
     >
       {stage === "mobile" && (

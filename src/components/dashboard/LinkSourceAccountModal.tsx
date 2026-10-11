@@ -22,6 +22,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Account, accountsForProfile, formatMoney } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
 import { useLinkedSources, type LinkedSource, type NetworkOperator } from "@/lib/accounts-store";
@@ -41,10 +48,7 @@ import { cardNetwork, useCardLink } from "@/lib/card-link";
 import { useCardPayment } from "@/lib/card-payment";
 import { OPERATORS } from "@/lib/operators";
 import { SourceMark } from "@/components/ui/source-mark";
-import { CheckBadge } from "@/components/ui/check-badge";
-
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Field } from "@/components/ui/field";
 interface LinkSourceAccountModalProps {
   isOpen: boolean;
@@ -286,15 +290,9 @@ export default function LinkSourceAccountModal({
     setTimeout(() => {
       setBusy(false);
       setMomoResent(false);
-      // New to GCB: the number is confirmed with a 6-digit code instead — the
-      // "approve on your phone" prompt comes later, when they actually fund.
-      if (onboarding) {
-        setMomoCode(Array(OTP_LENGTH).fill(""));
-        setMomoCodeError(false);
-        setScreen("link_momo_code");
-      } else {
-        setScreen("link_momo_pending");
-      }
+      setMomoCode(Array(OTP_LENGTH).fill(""));
+      setMomoCodeError(false);
+      setScreen("link_momo_code");
     }, 600);
   }
 
@@ -580,44 +578,35 @@ export default function LinkSourceAccountModal({
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "linked_source_select" && (
               <form onSubmit={handleLinkedSourceSubmit} className="flex flex-col gap-5">
-                {/* List of Saved Methods */}
-                <div className="flex flex-col gap-2.5">
-                  <Label>
-                    Payment Method
-                  </Label>
-                  <div className="flex flex-col gap-2">
-                    {linkedSources.map((source) => {
-                      const isSelected = selectedSourceId === source.id;
-                      return (
-                        <button
-                          key={source.id}
-                          type="button"
-                          onClick={() => setSelectedSourceId(source.id)}
-                          className={`flex items-center justify-between rounded-2xl border p-3.5 text-left transition cursor-pointer ${
-                            isSelected
-                              ? "border-[var(--active-border)] bg-[var(--active-bg)]"
-                              : "border-border bg-card hover:bg-muted/50"
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <SourceMark type={source.type} operator={source.operator} title={source.title} />
-                            <div className="flex flex-col">
-                              <span className="text-[14px] font-medium text-foreground">
-                                {source.title}
-                              </span>
-                              <span className="text-[12px] text-muted-foreground">
-                                {source.subtitle}
-                              </span>
+                {/* Payment Method Select Dropdown */}
+                <div className="flex flex-col gap-2">
+                  <Field label="Payment Method">
+                    <Select
+                      value={selectedSourceId || (linkedSources[0]?.id ?? "")}
+                      onValueChange={(val) => val && setSelectedSourceId(val)}
+                    >
+                      <SelectTrigger className="w-full h-14 rounded-2xl border-field-border bg-field px-4">
+                        <SelectValue placeholder="Select payment method" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {linkedSources.map((source) => (
+                          <SelectItem key={source.id} value={source.id} className="py-2.5 cursor-pointer">
+                            <div className="flex items-center gap-3">
+                              <SourceMark type={source.type} operator={source.operator} title={source.title} />
+                              <div className="flex flex-col text-left">
+                                <span className="text-[14px] font-medium text-foreground">
+                                  {source.title}
+                                </span>
+                                <span className="text-[12px] text-muted-foreground">
+                                  {source.subtitle}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-
-                          {isSelected && (
-                            <CheckBadge />
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </Field>
 
                   {/* Only sources already linked can fund an account here; linking lives on Accounts. */}
                   {linkedSources.length === 0 && (
@@ -726,7 +715,14 @@ export default function LinkSourceAccountModal({
                     onValueChange={setNewMomoNumber}
                     required
                   />
-</Field>
+                </Field>
+
+                {isCompleteGhanaMobile(newMomoNumber) && (
+                  <div className="rounded-xl border border-success/30 bg-success/5 p-3 flex items-center justify-between text-[13px] animate-in fade-in duration-200">
+                    <span className="text-muted-foreground">Account Holder:</span>
+                    <span className="font-medium text-foreground">Kwesi Appiah</span>
+                  </div>
+                )}
 
                 <Field label="Network Operator">
                   <OperatorSelect value={newMomoOperator} onChange={setNewMomoOperator} />

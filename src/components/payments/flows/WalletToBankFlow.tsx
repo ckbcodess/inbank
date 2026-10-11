@@ -6,6 +6,7 @@ import {
   AmountInput,
   ProceedButton,
   FromAccountSelector,
+  NarrationInput,
 } from "./shared";
 import { Field } from "@/components/ui/field";
 import { OwnWalletPicker, useOwnWallets, digitsOf, type OwnWallet } from "./OwnWalletPicker";
@@ -15,6 +16,7 @@ export interface WalletToBankFormState {
   phone: string;
   network: string;
   amount: string;
+  narration?: string;
 }
 
 interface WalletToBankFlowProps {
@@ -88,7 +90,14 @@ export function WalletToBankFlow({
         label="Amount to Transfer"
       />
 
-      {/* 4. Proceed CTA */}
+      {/* 4. Narration (Optional) */}
+      <NarrationInput
+        value={state.narration || ""}
+        onChange={(val) => onChange("narration", val)}
+        optional
+      />
+
+      {/* 5. Proceed CTA */}
       <ProceedButton
         disabled={!isValid}
         onClick={onProceed}

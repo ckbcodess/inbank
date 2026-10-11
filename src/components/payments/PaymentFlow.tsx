@@ -1451,7 +1451,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "proxy") return "Proxy ID";
     if (rail === "group") return "Split Type";
     if (rail === "qr") return "Terminal / Merchant ID";
-    if (rail === "swift") return "Account / IBAN";
+    if (rail === "swift" || rail === "papss") return "Recipient Account";
     return "Account";
   }, [rail, biller?.reference, topupCategory]);
 
@@ -1471,7 +1471,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "proxy") return f.pxId;
     if (rail === "group") return selectedGroupObj ? `${selectedGroupObj.members.length} members (${selectedGroupObj.splitType === "equal" ? `GHS ${selectedGroupObj.defaultPerMemberAmount} each` : "Custom"})` : "Group";
     if (rail === "qr") return f.qrRef || "Verified GCB QR";
-    if (rail === "swift") return f.wIban;
+    if (rail === "swift" || rail === "papss") return f.wIban;
     return f.benAcct;
   }, [bankCategory, toOwnAccount?.number, account?.number, rail, f.wIban, f.benAcct, f.wPhone, f.aPhone, f.ecgMeter, f.billRef, f.govRef, f.pxId, f.cardId, selectedGroupObj, f.qrRef]);
 
@@ -1483,6 +1483,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     }
     if (rail === "bill" || rail === "ecg") return "Service Provider";
     if (rail === "ghanagov") return "Agency / Service";
+    if (rail === "papss") return "Recipient Bank";
     return "Bank";
   }, [rail]);
 
@@ -1497,9 +1498,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     if (rail === "bill") return biller?.name || "Biller";
     if (rail === "ecg") return "Electricity Company of Ghana";
     if (rail === "ghanagov") return f.govService || "Ghana.gov";
-    if (rail === "swift") return f.wBank;
+    if (rail === "swift" || rail === "papss") return f.wBank ? `${f.wBank}${f.wCountry ? ` · ${f.wCountry}` : ""}` : (f.wCountry || "PAPSS Bank");
     return "";
-  }, [rail, f.wBank, f.bank, f.wNetwork, biller?.name, f.govService, f.cardId]);
+  }, [rail, f.wBank, f.bank, f.wNetwork, biller?.name, f.govService, f.cardId, f.wCountry]);
 
   const handleLookup = (key: keyof typeof f, rawVal: string) => {
     set(key, rawVal);
@@ -1999,7 +2000,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         message={receipt.msg}
         transactionId={receipt.trn}
         receiptRows={receipt.rows}
-        onViewReceipt={() => router.push(`/transactions/${receipt.trn}`)}
+        onViewReceipt={() => router.push(`/transactions/${receipt.trn}?from=success`)}
         onSecondaryAction={() => {
           setPhase("form");
           setStage(1);
@@ -2077,7 +2078,11 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               }
             : undefined
         }
-        showSaveBeneficiary={rail !== "cardless"}
+        showSaveBeneficiary={
+          rail !== "cardless" &&
+          bankCategory !== "own" &&
+          !f.toOwnAccountId
+        }
         initialSaveBeneficiary={f.saveBeneficiary}
         onSaveBeneficiaryChange={(saved) => set("saveBeneficiary", saved)}
         onSchedulePayment={() => router.push("/payments/standing/new")}
@@ -3140,6 +3145,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   phone: f.wPhone || "0241234567",
                   network: (f.wNetwork as Operator) || "MTN",
                   amount: f.wAmount || f.bankAmount,
+                  narration: f.bankRef || f.wRef || "",
                 }}
                 onChange={(key, val) => {
                   if (key === "toAccountId") {
@@ -3151,6 +3157,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   } else if (key === "amount") {
                     set("bankAmount", val);
                     set("wAmount", val);
+                  } else if (key === "narration") {
+                    set("bankRef", val);
+                    set("wRef", val);
                   }
                 }}
                 detailsCollapsed={stage1Collapsed}

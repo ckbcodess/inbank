@@ -21,6 +21,10 @@ import {
   RefreshCw,
   Landmark,
   AlertCircle,
+  CreditCard,
+  History,
+  PieChart,
+  Timer,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -158,12 +162,19 @@ export function CardHeader({ title, href, cta }: { title: string; href?: string;
 export function PanelEmpty({
   text,
   action,
+  icon: Icon,
 }: {
   text: string;
   action?: { label: string; href?: string; onClick?: () => void };
+  icon?: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number }>;
 }) {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-2 py-6 text-center sm:py-8">
+    <div className="flex flex-1 flex-col items-center justify-center gap-2.5 py-6 text-center sm:py-7">
+      {Icon && (
+        <div className="flex size-10 items-center justify-center rounded-full bg-muted/60 text-muted-foreground mb-0.5">
+          <Icon size={18} strokeWidth={1.8} />
+        </div>
+      )}
       <p className="text-[13px] text-muted-foreground">{text}</p>
       {action && (
         action.href ? (
@@ -638,6 +649,7 @@ export function UpcomingList({ items, showAmounts }: { items: UpcomingPayment[];
 export function ComingUpEmpty({ accountId }: { accountId: string | null }) {
   return (
     <PanelEmpty
+      icon={Timer}
       text="Nothing scheduled from this account."
       action={{ label: "Schedule a payment", href: withFrom("/payments/standing/new", accountId) }}
     />
@@ -718,6 +730,7 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
         </div>
       ) : data.payAgain.length === 0 ? (
         <PanelEmpty
+          icon={CediReceiptIcon}
           text={t("dashboard.payAgainEmpty", "Save the people and bills you pay often, and they'll wait here.")}
           action={{ label: t("dashboard.addSomeone", "Add someone"), href: "/beneficiaries?add=1" }}
         />
@@ -811,12 +824,13 @@ export function ActivityBody({
     if (isUnfunded && onOpenFundModal) {
       return (
         <PanelEmpty
+          icon={History}
           text={t("dashboard.noActivityYet", "No activity on this account yet.")}
           action={{ label: t("dashboard.fundAccount", "Fund account"), onClick: onOpenFundModal }}
         />
       );
     }
-    return <PanelEmpty text={t("dashboard.noActivityYet", "No activity on this account yet.")} />;
+    return <PanelEmpty icon={History} text={t("dashboard.noActivityYet", "No activity on this account yet.")} />;
   }
   return <RecentTransactions txns={data.latestTxns} showAmounts={showAmounts} limit={limit} />;
 }
@@ -866,7 +880,7 @@ export function CardsCard({
       {loading ? (
         <PanelSkeleton rows={2} />
       ) : data.cards.length === 0 ? (
-        <PanelEmpty text={t("dashboard.noCardsOnAccount", "No card on this account.")} action={{ label: t("dashboard.requestCard", "Request a card"), href: "/cards/request" }} />
+        <PanelEmpty icon={CreditCard} text={t("dashboard.noCardsOnAccount", "No card on this account.")} action={{ label: t("dashboard.requestCard", "Request a card"), href: "/cards/request" }} />
       ) : (
         <div className="flex flex-1 flex-col justify-between gap-3">
           <CardsMini cards={data.cards} />
@@ -942,7 +956,7 @@ export function AnalyticsCard({
           href={data.selectedAccountId ? `/accounts/${data.selectedAccountId}/expenses` : "/accounts"}
           cta={t("dashboard.details", "Details")}
         />
-        <PanelEmpty text={t("dashboard.noSpendingYet", "No spending on this account yet.")} />
+        <PanelEmpty icon={PieChart} text={t("dashboard.noSpendingYet", "No spending on this account yet.")} />
       </Card>
     );
   }

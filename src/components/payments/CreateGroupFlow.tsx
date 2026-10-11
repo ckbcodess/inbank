@@ -14,7 +14,7 @@ import {
 import { useGroupsStore, type PaymentGroup, type GroupMember } from "@/lib/groups-store";
 import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
 import { Button } from "@/components/ui/button";
-import { AmountInput } from "@/components/payments/flows/shared";
+import { AmountInput, OTHER_BANKS } from "@/components/payments/flows/shared";
 import {
   Dialog,
   DialogContent,
@@ -99,9 +99,9 @@ export default function CreateGroupFlow({
   const [showNewContact, setShowNewContact] = useState(false);
   const [customName, setCustomName] = useState("");
   const [customDest, setCustomDest] = useState("");
-  const [customType, setCustomType] = useState<"wallet" | "bank">("wallet");
-  // One network for now; the choice isn't offered in the inline form yet.
-  const customNetworkOrBank = WALLET_NETWORKS[0];
+  const [customCategory, setCustomCategory] = useState<"gcb" | "other_bank" | "wallet">("gcb");
+  const [customBank, setCustomBank] = useState("Ecobank Ghana Ltd");
+  const [customWalletNetwork, setCustomWalletNetwork] = useState(WALLET_NETWORKS[0]);
 
   // Unsaved changes confirmation dialog
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -181,16 +181,23 @@ export default function CreateGroupFlow({
   // Add custom contact inline
   const handleAddCustomContact = () => {
     if (!customName.trim() || !customDest.trim()) {
-      toast.error("Please enter both contact name and phone/account number");
+      toast.error("Please enter both contact name and account/phone number");
       return;
     }
     const amt = parseFloat(defaultAmount) || 0;
+    const networkOrBank =
+      customCategory === "gcb"
+        ? "GCB Bank"
+        : customCategory === "other_bank"
+        ? customBank
+        : customWalletNetwork;
+
     const newMember: GroupMember = {
       id: `m-custom-${Date.now()}`,
       name: customName.trim(),
       destination: customDest.trim(),
-      type: customType,
-      networkOrBank: customNetworkOrBank,
+      type: customCategory === "wallet" ? "wallet" : "bank",
+      networkOrBank,
       defaultAmount: amt,
     };
     setMembers((prev) => [...prev, newMember]);
@@ -381,38 +388,74 @@ export default function CreateGroupFlow({
                   />
                 </div>
 
-                <div className="flex items-center justify-between gap-3 pt-1">
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-2.5 pt-1">
+                  <div className="flex flex-wrap items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => setCustomType("wallet")}
+                      onClick={() => setCustomCategory("gcb")}
                       className={cn(
                         "px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors cursor-pointer",
-                        customType === "wallet" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                        customCategory === "gcb" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                      )}
+                    >
+                      GCB Account
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCustomCategory("other_bank")}
+                      className={cn(
+                        "px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors cursor-pointer",
+                        customCategory === "other_bank" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                      )}
+                    >
+                      Other Local Bank
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCustomCategory("wallet")}
+                      className={cn(
+                        "px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors cursor-pointer",
+                        customCategory === "wallet" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                       )}
                     >
                       Mobile Wallet
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setCustomType("bank")}
-                      className={cn(
-                        "px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors cursor-pointer",
-                        customType === "bank" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                      )}
-                    >
-                      Bank Account
-                    </button>
                   </div>
 
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={handleAddCustomContact}
-                    className="h-9 px-4 rounded-xl text-[13px] bg-primary text-primary-foreground font-normal cursor-pointer"
-                  >
-                    Add Member
-                  </Button>
+                  {customCategory === "other_bank" && (
+                    <select
+                      value={customBank}
+                      onChange={(e) => setCustomBank(e.target.value)}
+                      className="h-10 w-full rounded-xl border border-input bg-background px-3 text-[13px] text-foreground outline-none"
+                    >
+                      {OTHER_BANKS.map((b) => (
+                        <option key={b} value={b}>{b}</option>
+                      ))}
+                    </select>
+                  )}
+
+                  {customCategory === "wallet" && (
+                    <select
+                      value={customWalletNetwork}
+                      onChange={(e) => setCustomWalletNetwork(e.target.value)}
+                      className="h-10 w-full rounded-xl border border-input bg-background px-3 text-[13px] text-foreground outline-none"
+                    >
+                      {WALLET_NETWORKS.map((w) => (
+                        <option key={w} value={w}>{w}</option>
+                      ))}
+                    </select>
+                  )}
+
+                  <div className="flex justify-end pt-1">
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={handleAddCustomContact}
+                      className="h-9 px-4 rounded-xl text-[13px] bg-primary text-primary-foreground font-normal cursor-pointer"
+                    >
+                      Add Member
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}

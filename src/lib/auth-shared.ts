@@ -120,12 +120,12 @@ export function pinMeetsRules(pin: string): boolean {
 export const PIN_RULES: readonly PinRule[] = [
   {
     id: "no-consecutive",
-    label: "No consecutive numbers",
+    label: "No consecutive numbers (e.g. 1234)",
     test: (pin) => pin.length > 0 && !hasConsecutiveDigits(pin),
   },
   {
     id: "no-repeating",
-    label: "No repeating numbers",
+    label: "No repeating numbers (e.g. 1111)",
     test: (pin) => pin.length > 0 && !hasRepeatingDigits(pin),
   },
 ];

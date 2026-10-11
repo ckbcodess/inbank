@@ -449,7 +449,7 @@ function AccountsContent() {
         <section className="flex flex-col gap-4" aria-labelledby="sources-heading">
           <SectionHeading
             id="sources-heading"
-            title="Sources of Funds"
+            title="Other Funding Sources"
             action={
               sources.length > 0 && screenState === "populated" ? (
                 <SectionAction onClick={() => setLinkOpen(true)}>Link a Wallet or Card</SectionAction>
@@ -582,8 +582,9 @@ function AccountsContent() {
             <div className="flex items-start gap-3">
               <AlertTriangle size={18} strokeWidth={1.8} aria-hidden="true" className="mt-0.5 shrink-0 text-warning" />
               <p className="text-[13.5px] leading-relaxed text-muted-foreground tabular">
-                You won&apos;t be able to add money from {removing?.subtitle} until you link it again. Money already in
-                your accounts isn&apos;t affected.
+                {removing?.type === "card"
+                  ? `You will no longer be able to add money using card ending ${removing.subtitle.replace(/\D/g, "") || "1111"} until you link it again. Money already in your accounts will not be affected.`
+                  : `You will no longer be able to add money from ${removing?.subtitle} until you link it again. Money already in your accounts will not be affected.`}
               </p>
             </div>
           </DialogBody>
@@ -597,7 +598,7 @@ function AccountsContent() {
               onClick={() => removing && handleRemoveSource(removing)}
               className="h-10 flex-1 rounded-lg text-[13.5px]"
             >
-              Remove
+              {removing?.type === "card" ? "Remove Card" : "Remove"}
             </Button>
           </DialogFooter>
         </DialogContent>

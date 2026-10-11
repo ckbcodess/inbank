@@ -24,6 +24,7 @@ import { isCompleteGhanaMobile } from "@/lib/phone";
 
 import { Field } from "@/components/ui/field";
 import { GhanaCardInput } from "@/components/ui/ghana-card-input";
+import { Input } from "@/components/ui/input";
 interface ProxyIdModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -64,7 +65,11 @@ export default function ProxyIdModal({
   const valueValid =
     type === "phone"
       ? isCompleteGhanaMobile(value)
-      : value.trim().replace(/\s/g, "").length >= 10;
+      : type === "ghana-card"
+      ? value.trim().replace(/\s/g, "").length >= 10
+      : type === "email"
+      ? value.includes("@") && value.includes(".")
+      : value.trim().length >= 3;
   const canSave = valueValid && Boolean(linkedAccountId);
 
   function handleSave() {
@@ -77,6 +82,15 @@ export default function ProxyIdModal({
     onSaved?.();
     onOpenChange(false);
   }
+
+  const valueLabel =
+    type === "phone"
+      ? "Phone Number"
+      : type === "ghana-card"
+      ? "Ghana Card Number"
+      : type === "email"
+      ? "Email Address"
+      : "Custom Text / Alias";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -97,12 +111,14 @@ export default function ProxyIdModal({
               <SelectContent>
                 <SelectItem value="phone">Phone Number</SelectItem>
                 <SelectItem value="ghana-card">Ghana Card</SelectItem>
+                <SelectItem value="email">Email Address</SelectItem>
+                <SelectItem value="other">Custom Text / Alias</SelectItem>
               </SelectContent>
             </Select>
-</Field>
+          </Field>
 
           {/* Value */}
-          <Field label={type === "phone" ? "Phone Number" : "Ghana Card Number"}>
+          <Field label={valueLabel}>
             {type === "phone" ? (
               <PhoneInput
                 value={value}
@@ -110,10 +126,26 @@ export default function ProxyIdModal({
                 aria-label="Phone number"
                 autoFocus
               />
-            ) : (
+            ) : type === "ghana-card" ? (
               <GhanaCardInput value={value} onValueChange={setValue} autoFocus />
+            ) : type === "email" ? (
+              <Input
+                type="email"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder="e.g. kwesi@example.com"
+                autoFocus
+              />
+            ) : (
+              <Input
+                type="text"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder="e.g. kwesi-ghipss"
+                autoFocus
+              />
             )}
-</Field>
+          </Field>
 
           {/* Linked account */}
           <Field label="Receives Into">

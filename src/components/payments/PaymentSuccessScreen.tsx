@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Bell,
-  Receipt,
+  ReceiptText,
   Repeat,
   Trash2,
   Sparkles,
@@ -13,6 +13,15 @@ import {
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogBody,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export interface SuccessActionCard {
   id: string;
@@ -29,6 +38,28 @@ export interface CardlessTokenDetails {
   recipientPhone: string;
   recipientName?: string;
   onDelete?: () => void;
+}
+
+/**
+ * Normalizes confirmation titles to strict Sentence Case with an exclamation mark.
+ * Preserves banking acronyms (GCB, PAPSS, QR, ATM, ECG, PIN, USSD).
+ */
+export function formatSuccessTitle(rawTitle: string): string {
+  if (!rawTitle) return "Transfer successful!";
+  const trimmed = rawTitle.trim().replace(/[!.]+$/, "");
+  const words = trimmed.split(/\s+/);
+  const acronyms = new Set(["GCB", "PAPSS", "QR", "ATM", "ECG", "PIN", "USSD", "ID", "GIP", "ACH", "RTGS"]);
+
+  const normalized = words.map((word, idx) => {
+    const upper = word.toUpperCase();
+    if (acronyms.has(upper)) return upper;
+    if (idx === 0) {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    }
+    return word.toLowerCase();
+  });
+
+  return `${normalized.join(" ")}!`;
 }
 
 export interface PaymentSuccessScreenProps {
@@ -215,7 +246,12 @@ export function PaymentSuccessScreen({
   const router = useRouter();
   const [saveBeneficiary, setSaveBeneficiary] = useState(initialSaveBeneficiary);
   const [feedbackSent, setFeedbackSent] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackRating, setFeedbackRating] = useState<"great" | "okay" | "bad" | null>(null);
+  const [feedbackComment, setFeedbackComment] = useState("");
   const [burstKey, setBurstKey] = useState(0);
+
+  const normalizedTitle = useMemo(() => formatSuccessTitle(title), [title]);
 
   // Animation Phase: "eagle" (initial brand moment) -> "checked" (final settled green check)
   const [badgePhase, setBadgePhase] = useState<"eagle" | "checked">("eagle");
@@ -332,8 +368,7 @@ export function PaymentSuccessScreen({
   };
 
   const handleFeedbackClick = () => {
-    setFeedbackSent(true);
-    setTimeout(() => setFeedbackSent(false), 3500);
+    setShowFeedbackModal(true);
   };
 
   // Determine effective transaction ID for receipt routing
@@ -353,7 +388,7 @@ export function PaymentSuccessScreen({
     if (onViewReceipt) {
       onViewReceipt();
     } else {
-      router.push(`/transactions/${encodeURIComponent(effectiveTxnId)}`);
+      router.push(`/transactions/${encodeURIComponent(effectiveTxnId)}?from=success`);
     }
   };
 
@@ -382,7 +417,7 @@ export function PaymentSuccessScreen({
     {
       id: "receipt",
       label: "View Receipt",
-      icon: Receipt,
+      icon: ReceiptText,
       onClick: handleViewReceipt,
     },
   ];
@@ -392,7 +427,7 @@ export function PaymentSuccessScreen({
       return {
         ...card,
         label: card.label === "Download Receipt" ? "View Receipt" : card.label,
-        icon: card.icon || Receipt,
+        icon: card.icon || ReceiptText,
         onClick: handleViewReceipt,
       };
     }
@@ -544,7 +579,7 @@ export function PaymentSuccessScreen({
             transition={{ duration: 0.44, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             className="text-[26px] sm:text-[30px] font-medium leading-[34px] sm:leading-[38px] tracking-[-0.02em] text-foreground text-center"
           >
-            {title}
+            {normalizedTitle}
           </motion.h1>
           {revealRest && (
             <motion.p
@@ -710,6 +745,80 @@ export function PaymentSuccessScreen({
         </button>
       </motion.div>
       )}
+
+      {/* ── Interactive Share Feedback Modal ── */}
+      <Dialog open={showFeedbackModal} onOpenChange={setShowFeedbackModal}>
+        <DialogContent className="max-w-[420px] p-6">
+          <DialogHeader>
+            <DialogTitle className="text-[17px] font-medium text-foreground">
+              Share Feedback
+            </DialogTitle>
+          </DialogHeader>
+          <DialogBody className="flex flex-col gap-4 py-2">
+            <p className="text-[13.5px] text-muted-foreground">
+              How was your payment experience today?
+            </p>
+            <div className="grid grid-cols-3 gap-2.5">
+              {[
+                { id: "great", label: "Great", emoji: "😊" },
+                { id: "okay", label: "Okay", emoji: "😐" },
+                { id: "bad", label: "Not good", emoji: "☹️" },
+              ].map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setFeedbackRating(opt.id as "great" | "okay" | "bad")}
+                  className={cn(
+                    "flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 text-center transition-colors cursor-pointer",
+                    feedbackRating === opt.id
+                      ? "border-primary bg-primary/10 text-primary font-medium"
+                      : "border-border/70 hover:bg-muted/50 text-foreground"
+                  )}
+                >
+                  <span className="text-[24px]">{opt.emoji}</span>
+                  <span className="text-[12.5px]">{opt.label}</span>
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-col gap-1.5 pt-1">
+              <label htmlFor="feedback-comment" className="text-[12.5px] text-muted-foreground">
+                Comments (optional)
+              </label>
+              <textarea
+                id="feedback-comment"
+                value={feedbackComment}
+                onChange={(e) => setFeedbackComment(e.target.value)}
+                placeholder="Tell us what went well or what we can improve..."
+                rows={3}
+                className="w-full rounded-lg border border-border/70 bg-card p-2.5 text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:border-primary"
+              />
+            </div>
+          </DialogBody>
+          <DialogFooter className="flex gap-2 sm:justify-end pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowFeedbackModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                setShowFeedbackModal(false);
+                setFeedbackSent(true);
+                toast.success("Thank you! Your feedback helps us improve GCB Internet Banking.");
+                setFeedbackRating(null);
+                setFeedbackComment("");
+                setTimeout(() => setFeedbackSent(false), 4000);
+              }}
+              disabled={!feedbackRating}
+            >
+              Submit Feedback
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

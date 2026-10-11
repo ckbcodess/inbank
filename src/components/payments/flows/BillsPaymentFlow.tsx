@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import { Account, BILLERS } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import {
@@ -26,6 +26,33 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
+
+interface TvPackage {
+  id: string;
+  name: string;
+  amount: number;
+}
+
+const TV_PACKAGES: Record<string, TvPackage[]> = {
+  "bil-006": [
+    { id: "dstv-premium", name: "DStv Premium — GHS 650.00", amount: 650 },
+    { id: "dstv-compact-plus", name: "DStv Compact Plus — GHS 380.00", amount: 380 },
+    { id: "dstv-compact", name: "DStv Compact — GHS 260.00", amount: 260 },
+    { id: "dstv-family", name: "DStv Family — GHS 150.00", amount: 150 },
+    { id: "dstv-access", name: "DStv Access — GHS 80.00", amount: 80 },
+  ],
+  "bil-007b": [
+    { id: "gotv-supa-plus", name: "GOtv Supa Plus — GHS 175.00", amount: 175 },
+    { id: "gotv-supa", name: "GOtv Supa — GHS 125.00", amount: 125 },
+    { id: "gotv-max", name: "GOtv Max — GHS 90.00", amount: 90 },
+    { id: "gotv-plus", name: "GOtv Plus — GHS 55.00", amount: 55 },
+  ],
+  "bil-007": [
+    { id: "st-super", name: "StarTimes Super — GHS 130.00", amount: 130 },
+    { id: "st-smart", name: "StarTimes Smart — GHS 75.00", amount: 75 },
+    { id: "st-basic", name: "StarTimes Basic — GHS 45.00", amount: 45 },
+  ],
+};
 
 const GHANA_GOV_SERVICES = [
   "GRA — Domestic Tax",
@@ -108,11 +135,16 @@ export function BillsPaymentFlow({
     return state.billRef;
   }, [state.subType, state.ecgMeter, state.govRef, state.billRef]);
 
+  const isGivingCategory =
+    state.billCategory === "Giving & Donations" ||
+    selectedBiller?.category === "Giving & Donations";
+
   const canVerify = useMemo(() => {
+    if (isGivingCategory) return currentRef.trim().length >= 2;
     if (state.subType === "ghanagov" && !state.govService) return false;
     if (state.subType === "bill" && !state.billerId && !selectedBiller?.id) return false;
     return currentRef.trim().length >= 4;
-  }, [state.subType, state.govService, state.billerId, selectedBiller?.id, currentRef]);
+  }, [state.subType, state.govService, state.billerId, selectedBiller?.id, currentRef, isGivingCategory]);
 
   const [verifiedRef, setVerifiedRef] = useState<string | null>(() => {
     if (state.benName && currentRef.trim().length >= 4) {
@@ -122,6 +154,9 @@ export function BillsPaymentFlow({
   });
 
   const [verifiedName, setVerifiedName] = useState<string>(() => {
+    if (state.subType === "ecg" && state.ecgMeter.trim().length >= 4) {
+      return "Sam Quartey";
+    }
     if (state.benName && currentRef.trim().length >= 4) {
       return state.benName;
     }
@@ -129,6 +164,9 @@ export function BillsPaymentFlow({
   });
 
   const [isVerifying, setIsVerifying] = useState(false);
+  const [selectedTvPackageId, setSelectedTvPackageId] = useState<string>("");
+
+  const tvPackages = selectedBiller ? TV_PACKAGES[selectedBiller.id] : undefined;
 
   // Synchronize if beneficiary was pre-selected from external avatar/preset
   useEffect(() => {
@@ -139,17 +177,25 @@ export function BillsPaymentFlow({
   }, [state.benName, currentRef, verifiedRef]);
 
   const isVerified = Boolean(
-    verifiedRef &&
-    verifiedRef === currentRef.trim() &&
-    verifiedName
+    isGivingCategory
+      ? currentRef.trim().length >= 2
+      : (verifiedRef && verifiedRef === currentRef.trim() && verifiedName) ||
+        (state.subType === "ecg" && state.ecgMeter.trim().length >= 4 && verifiedName)
   );
 
   const handleVerify = () => {
     if (!canVerify || isVerifying) return;
     setIsVerifying(true);
     const ref = currentRef.trim();
-    const resolved = resolveAccountName(ref, state.benName || "");
-    const finalName = resolved || "Verified Account Holder";
+    let finalName = "";
+    if (state.subType === "ecg") {
+      finalName = "Sam Quartey";
+    } else if (isGivingCategory) {
+      finalName = state.benName || "Registered Church Member";
+    } else {
+      const resolved = resolveAccountName(ref, state.benName || "");
+      finalName = resolved || "Verified Account Holder";
+    }
 
     setTimeout(() => {
       setVerifiedRef(ref);
@@ -179,7 +225,10 @@ export function BillsPaymentFlow({
       ) : isVerified ? (
         <span className="text-success-text text-[12px] font-medium">Verified</span>
       ) : (
-        "Verify"
+        <span className="flex items-center gap-1">
+          <Search size={13} strokeWidth={2} />
+          <span>Verify</span>
+        </span>
       )}
     </button>
   );
@@ -349,24 +398,24 @@ export function BillsPaymentFlow({
               </>
             )}
 
-            {isVerified && verifiedName && (
+            {isVerified && (
               <div className="flex flex-col gap-2 rounded-2xl border border-border/80 bg-muted/30 p-3.5 mt-1 animate-in fade-in duration-200">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[12.5px] text-muted-foreground">Customer Name</span>
-                  <span className="text-[13.5px] font-medium text-foreground">{verifiedName}</span>
+                  <span className="text-[12.5px] text-muted-foreground">Name of Beneficiary</span>
+                  <span className="text-[13.5px] font-medium text-foreground">{verifiedName || (state.subType === "ecg" ? "Sam Quartey" : state.benName || "Kwesi Appiah")}</span>
+                </div>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[12.5px] text-muted-foreground">Name of Biller</span>
+                  <span className="text-[13px] text-foreground font-medium">
+                    {state.subType === "ecg" ? "Electricity Company of Ghana (ECG)" : state.subType === "ghanagov" ? (state.govService || "Ghana.gov") : (selectedBiller?.name || "Biller")}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[12.5px] text-muted-foreground">
-                    {state.subType === "ecg" ? "Meter Number" : state.subType === "ghanagov" ? "PRN / Reference" : "Account / Reference"}
+                    {state.subType === "ecg" ? "Meter Number" : state.subType === "ghanagov" ? "PRN / Reference" : isGivingCategory ? "Member ID / Phone" : (selectedBiller?.reference || "Reference Number")}
                   </span>
                   <span className="text-[13px] font-mono text-foreground">
                     {state.subType === "ecg" ? state.ecgMeter : state.subType === "ghanagov" ? state.govRef : state.billRef}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[12.5px] text-muted-foreground">Provider</span>
-                  <span className="text-[13px] text-foreground font-medium">
-                    {state.subType === "ecg" ? "Electricity Company of Ghana (ECG)" : state.subType === "ghanagov" ? (state.govService || "Ghana.gov") : (selectedBiller?.name || "Biller")}
                   </span>
                 </div>
               </div>
@@ -378,6 +427,35 @@ export function BillsPaymentFlow({
       {/* Progressive Disclosure: Only reveal Amount & onwards after destination details are entered & verified */}
       {isDestinationValid && isVerified && (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+          {/* Subscription Package (e.g. DSTV Compact Plus) */}
+          {tvPackages && tvPackages.length > 0 && (
+            <Field label="Subscription Package">
+              <Select
+                value={selectedTvPackageId}
+                onValueChange={(val) => {
+                  if (val) {
+                    setSelectedTvPackageId(val);
+                    const pkg = tvPackages.find((p) => p.id === val);
+                    if (pkg) {
+                      onChange("amount", String(pkg.amount));
+                    }
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select subscription package" />
+                </SelectTrigger>
+                <SelectContent>
+                  {tvPackages.map((pkg) => (
+                    <SelectItem key={pkg.id} value={pkg.id}>
+                      {pkg.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+          )}
+
           {/* 3. Amount */}
           <AmountInput
             value={state.amount}
