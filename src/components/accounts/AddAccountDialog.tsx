@@ -75,7 +75,7 @@ export default function AddAccountDialog({
   const [step, setStep] = useState<Step>("confirm");
   const [selfie, setSelfie] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(false);
-  const [pickedId, setPickedId] = useState<string | null>(null);
+  const [pickedIds, setPickedIds] = useState<string[]>([]);
   const [added, setAdded] = useState<Account | null>(null);
   // Not reset on close — reopening mustn't hand out fresh tries.
   const [failedAttempts, setFailedAttempts] = useState(0);
@@ -83,7 +83,8 @@ export default function AddAccountDialog({
 
   const held = ghanaCardAccountIds.map((id) => findAccount(id)).filter((a): a is Account => Boolean(a));
   const available = held.filter((a) => !existingIds.includes(a.id));
-  const picked = held.find((a) => a.id === pickedId) ?? null;
+  const pickedAccounts = held.filter((a) => pickedIds.includes(a.id));
+  const picked = pickedAccounts[0] ?? null;
   const movesBalance = Boolean(wallet && wallet.balance > 0);
   const sources =
     wallet && wallet.sourceTitles.length > 0 ? wallet.sourceTitles.join(" and ") : "Your linked wallets and cards";
@@ -92,7 +93,7 @@ export default function AddAccountDialog({
     setStep("confirm");
     setSelfie(null);
     setVerifying(false);
-    setPickedId(null);
+    setPickedIds([]);
     setAdded(null);
   }
 
@@ -117,13 +118,19 @@ export default function AddAccountDialog({
     }, 900);
   }
 
+  function togglePicked(id: string) {
+    setPickedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  }
+
   function add() {
-    if (!picked) return;
-    addAccount(picked.id);
-    if (wallet) migrateWallet(picked.id, wallet.balance);
-    setAdded(picked);
+    if (pickedIds.length === 0) return;
+    pickedIds.forEach((id) => addAccount(id));
+    if (wallet && pickedAccounts[0]) migrateWallet(pickedAccounts[0].id, wallet.balance);
+    setAdded(pickedAccounts[0] ?? null);
     setStep("done");
-    onAdded?.(picked);
+    pickedAccounts.forEach((acc) => onAdded?.(acc));
   }
 
   // Once locked, every visit lands on the branch step until it's done in person.
@@ -142,7 +149,7 @@ export default function AddAccountDialog({
                 onClick={() => {
                   if (view === "choose") {
                     setSelfie(null);
-                    setPickedId(null);
+                    setPickedIds([]);
                   }
                   setStep(back);
                 }}
@@ -220,18 +227,18 @@ export default function AddAccountDialog({
           {view === "choose" && held.length > 0 && (
             <div className="flex flex-col gap-3">
               <p className="text-[13.5px] text-muted-foreground">Accounts held under your Ghana Card</p>
-              <div role="radiogroup" aria-label="Accounts" className="flex flex-col gap-2.5">
+              <div role="group" aria-label="Accounts" className="flex flex-col gap-2.5">
                 {held.map((account) => {
                   const already = existingIds.includes(account.id);
-                  const selected = pickedId === account.id;
+                  const selected = pickedIds.includes(account.id);
                   return (
                     <button
                       key={account.id}
                       type="button"
-                      role="radio"
+                      role="checkbox"
                       aria-checked={selected}
                       disabled={already}
-                      onClick={() => setPickedId(account.id)}
+                      onClick={() => togglePicked(account.id)}
                       className={cn(
                         "flex items-center gap-4 rounded-[16px] border p-4 text-left transition-colors",
                         selected
@@ -257,7 +264,9 @@ export default function AddAccountDialog({
                         </Badge>
                       ) : selected ? (
                         <CheckBadge />
-                      ) : null}
+                      ) : (
+                        <div className="size-5 rounded-md border border-border shrink-0" />
+                      )}
                     </button>
                   );
                 })}
@@ -305,16 +314,22 @@ export default function AddAccountDialog({
             </div>
           )}
 
-          {view === "done" && added && (
+          {view === "done" && (added || pickedAccounts.length > 0) && (
             <div className="flex flex-col items-center gap-3 py-2 text-center" role="status">
               <div className="flex size-14 items-center justify-center rounded-2xl bg-success/10 text-success">
                 <CheckCircle2 size={30} strokeWidth={1.8} aria-hidden="true" />
               </div>
-              <p className="text-[17px] tracking-[-0.01em] text-foreground">{added.name} is added</p>
+              <p className="text-[17px] tracking-[-0.01em] text-foreground">
+                {pickedAccounts.length > 1
+                  ? `${pickedAccounts.length} Accounts Added`
+                  : `${(added ?? pickedAccounts[0])?.name ?? "Account"} is added`}
+              </p>
               <p className="text-[13.5px] text-muted-foreground tabular">
                 {wallet && movesBalance
                   ? `${formatMoney(wallet.balance, "GHS", true)} moved from your wallet`
-                  : `${added.type} · ${added.number}`}
+                  : pickedAccounts.length > 1
+                    ? `${pickedAccounts.map((a) => a.name).join(", ")} now linked to your profile`
+                    : `${(added ?? pickedAccounts[0])?.type} · ${(added ?? pickedAccounts[0])?.number}`}
               </p>
             </div>
           )}
@@ -378,11 +393,14 @@ export default function AddAccountDialog({
           <DialogFooter>
             <Button
               type="button"
-              disabled={!picked}
+              disabled={pickedIds.length === 0}
               onClick={() => (wallet ? setStep("move") : add())}
-             
             >
-              {wallet ? "Continue" : "Add Account"}
+              {wallet
+                ? "Continue"
+                : pickedIds.length > 1
+                  ? `Add Accounts (${pickedIds.length})`
+                  : "Add Account"}
             </Button>
           </DialogFooter>
         )}

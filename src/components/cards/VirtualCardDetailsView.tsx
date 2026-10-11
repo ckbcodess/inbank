@@ -218,9 +218,9 @@ function BlockReasonDialog({
               <Lock size={17} strokeWidth={1.9} />
             </div>
             <div>
-              <DialogTitle>Why are you blocking this card?</DialogTitle>
-              <p className="text-[12px] text-muted-foreground mt-0.5">
-                {cardName} (•••• {last4}) is now blocked.
+              <DialogTitle className="text-base font-medium text-foreground">Card Blocked</DialogTitle>
+              <p className="text-[13px] text-muted-foreground mt-1">
+                Your {cardName} card ending in {last4} has been blocked. Please tell us why you blocked this card.
               </p>
             </div>
           </div>
@@ -1001,7 +1001,9 @@ export function VirtualCardDetailsView({
       className="group mx-auto flex h-8 max-w-full items-center justify-center gap-2 rounded-md text-[14px] outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
     >
       <span className="text-muted-foreground">Linked to</span>
-      <span className="truncate text-foreground group-hover:underline group-hover:underline-offset-4">{fundsAccount.name}</span>
+      <span className="truncate text-foreground group-hover:underline group-hover:underline-offset-4">
+        {fundsAccount.name} {fundsAccount.number ? `xxxx${fundsAccount.number.replace(/\D/g, "").slice(-4) || fundsAccount.number.slice(-4)}` : ""}
+      </span>
       <ChevronRight size={15} strokeWidth={1.8} className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" aria-hidden="true" />
     </Link>
   ) : (

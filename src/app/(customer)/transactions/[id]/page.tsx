@@ -15,7 +15,8 @@
 
 import { use, useState, useMemo } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { GCBLogo } from "@/components/ui/GCBLogo";
 import {
   AlertCircle,
   ArrowRight,
@@ -39,7 +40,6 @@ import { getTransactionType } from "@/lib/transaction-type";
 import { ShareReceiptDialog, type ReceiptFormat } from "@/components/transactions/ShareReceiptDialog";
 import { RoundAction } from "@/components/ui/round-action";
 import { TransactionStatusBadge, transactionStatusLabel } from "@/components/StatusBadge";
-import { TransactionIcon } from "@/components/transactions/TransactionIcon";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { TRANSACTION_STATE_LABEL, type TransactionState } from "@/lib/states";
 import {
@@ -97,6 +97,8 @@ function receiptTime(t: Transaction): string {
 
 export default function TransactionDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromSuccess = searchParams.get("from") === "success";
   const { id } = use(params);
   const txn = findTransaction(id);
   const [state, setState] = useState<TransactionState>(txn?.state ?? "completed");
@@ -114,8 +116,8 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
         <p className="text-[14px] text-muted-foreground">
           The transaction record you requested could not be located.
         </p>
-        <Button onClick={() => router.push("/transactions")} variant="outline" className="mt-2">
-          Back to Transactions
+        <Button onClick={() => router.push(fromSuccess ? "/payments" : "/transactions")} variant="outline" className="mt-2">
+          {fromSuccess ? "Back to Payments" : "Back to Transactions"}
         </Button>
       </div>
     );
@@ -255,13 +257,24 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
       {/* Page Header with Back, Title, Status, and Action Controls */}
       <PageHeader
         title="Transaction Details"
-        backTo={{ href: "/transactions", label: "Transactions" }}
+        backTo={
+          fromSuccess
+            ? { href: "/payments", label: "Payments" }
+            : { href: "/transactions", label: "Transactions" }
+        }
       />
 
-      {/* Receipt: the amount first, what to do with it, then the details as a quiet list. No card around it. */}
-      <div className="mx-auto flex w-full max-w-xl flex-col gap-10">
-        <section className="flex flex-col items-center gap-2 pt-4 text-center">
-          <TransactionIcon transaction={txn} size={52} className="mb-1" />
+      {/* Official GCB Digital Transaction Receipt */}
+      <div className="relative mx-auto flex w-full max-w-xl flex-col gap-8 rounded-2xl border border-border/80 bg-card p-6 sm:p-8 overflow-hidden shadow-xs">
+        {/* Subtle background eagle watermark */}
+        <div className="pointer-events-none absolute -top-10 -right-10 size-80 opacity-[0.03] select-none text-foreground">
+          <GCBLogo className="size-full" showWordmark={false} />
+        </div>
+
+        <section className="relative z-10 flex flex-col items-center gap-2 pt-2 text-center">
+          <div className="mb-2 flex items-center justify-center">
+            <GCBLogo className="h-8 w-auto text-foreground" />
+          </div>
           <span className="text-[16px] font-medium text-foreground">{getTransactionType(txn)}</span>
           <span
             className={cn(

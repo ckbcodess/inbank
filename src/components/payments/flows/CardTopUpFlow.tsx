@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Link from "next/link";
 import { CreditCard } from "lucide-react";
 import { Account, cardsForProfile, formatMoney } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
@@ -25,6 +24,8 @@ import {
 } from "./shared";
 
 import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 export interface CardTopUpFormState {
   fromId: string;
   cardId: string;
@@ -88,14 +89,20 @@ export function CardTopUpFlow({
     return list;
   }, [myCards, state.cardId]);
 
+  const [isOtherCard, setIsOtherCard] = useState<boolean>(fundableCards.length === 0);
+  const [refCode, setRefCode] = useState<string>(
+    state.cardId?.startsWith("ref-") ? state.cardId.replace("ref-", "") : ""
+  );
+
   const selectedCard = useMemo(() => {
-    if (!state.cardId) return undefined;
+    if (isOtherCard || !state.cardId || state.cardId.startsWith("ref-")) return undefined;
     return fundableCards.find((c) => c.id === state.cardId) ?? myCards.find((c) => c.id === state.cardId);
-  }, [fundableCards, myCards, state.cardId]);
+  }, [isOtherCard, fundableCards, myCards, state.cardId]);
 
   const numAmount = Number(state.amount.replace(/[^0-9.]/g, "")) || 0;
   const overBalance = numAmount > (fromAccount?.available ?? 0);
-  const isValid = Boolean(state.fromId) && Boolean(selectedCard) && numAmount > 0 && !overBalance;
+  const isCardValid = isOtherCard ? refCode.trim().length === 8 : Boolean(selectedCard);
+  const isValid = Boolean(state.fromId) && isCardValid && numAmount > 0 && !overBalance;
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
@@ -108,89 +115,143 @@ export function CardTopUpFlow({
 
       {/* 2. Destination Card */}
       <Field label="Destination Card">
-        {selectedCard && isCollapsed ? (
+        {isCardValid && isCollapsed ? (
           <CollapsedDetailsBadge
-            title={`GCB ${selectedCard.name}`}
-            subtitle={`GCB ${selectedCard.type} · ${selectedCard.scheme} · ${selectedCard.maskedNumber}`}
+            title={isOtherCard ? `GCB Prepaid Card (${refCode})` : `GCB ${selectedCard?.name}`}
+            subtitle={
+              isOtherCard
+                ? `Card Reference: ${refCode}`
+                : `GCB ${selectedCard?.type} · ${selectedCard?.scheme} · ${selectedCard?.maskedNumber}`
+            }
             icon={<CreditCard size={18} strokeWidth={1.8} className="shrink-0" />}
             onChange={() => setCollapsed(false)}
           />
-        ) : fundableCards.length === 0 ? (
-          <div className="rounded-2xl border border-border bg-card p-4 text-center space-y-2">
-            <p className="text-[13.5px] font-medium text-foreground">No eligible GCB cards to top up</p>
-            <p className="text-[12px] text-muted-foreground max-w-sm mx-auto">
-              Card top-ups apply to GCB Prepaid and Virtual cards. GCB Debit cards draw directly from your bank account.
-            </p>
-            <Link
-              href="/cards/request"
-              className="inline-flex items-center justify-center rounded-xl bg-primary px-3.5 py-2 text-[12.5px] font-medium text-primary-foreground hover:bg-primary/90 transition-colors mt-1"
-            >
-              Request a GCB Card
-            </Link>
-          </div>
         ) : (
-          <Select
-            value={state.cardId || ""}
-            onValueChange={(val) => {
-              if (val) {
-                onChange("cardId", val);
-              }
-            }}
-          >
-            <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-4.5 text-left flex items-center">
-              {!selectedCard ? (
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <span className="flex size-9 shrink-0 items-center justify-center text-muted-foreground">
-                    <CreditCard size={20} strokeWidth={1.8} className="shrink-0" />
-                  </span>
-                  <span className="text-[14px] text-muted-foreground font-normal">
-                    Select your GCB card
-                  </span>
-                </div>
-              ) : (
-                <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
-                      <CreditCard size={20} strokeWidth={1.8} className="shrink-0" />
-                    </span>
-                    <div className="flex flex-col min-w-0 text-left gap-0.5">
-                      <span className="text-[14.5px] text-foreground font-medium truncate leading-tight">
-                        GCB {selectedCard.name}
+          <div className="flex flex-col gap-3">
+            {fundableCards.length > 0 && (
+              <div className="flex items-center gap-2 pb-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsOtherCard(false);
+                    onChange("cardId", fundableCards[0]?.id || "");
+                  }}
+                  className={cn(
+                    "px-3 py-1.5 rounded-xl text-[12.5px] font-medium transition-colors cursor-pointer",
+                    !isOtherCard ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  My GCB Cards
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsOtherCard(true);
+                    onChange("cardId", refCode.length === 8 ? `ref-${refCode}` : "");
+                  }}
+                  className={cn(
+                    "px-3 py-1.5 rounded-xl text-[12.5px] font-medium transition-colors cursor-pointer",
+                    isOtherCard ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  Other GCB Card (Reference)
+                </button>
+              </div>
+            )}
+
+            {isOtherCard || fundableCards.length === 0 ? (
+              <div className="flex flex-col gap-2">
+                <Input
+                  type="text"
+                  maxLength={8}
+                  value={refCode}
+                  onChange={(e) => {
+                    const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+                    setRefCode(val);
+                    if (val.length === 8) {
+                      onChange("cardId", `ref-${val}`);
+                    } else {
+                      onChange("cardId", "");
+                    }
+                  }}
+                  placeholder="e.g. 7X2K89AB"
+                  className="tabular font-mono tracking-widest text-[15px]"
+                />
+                <p className="text-[12px] text-muted-foreground">
+                  Enter recipient&apos;s 8-character card top-up reference number
+                </p>
+                {refCode.length === 8 && (
+                  <div className="flex items-center gap-2 rounded-xl bg-muted/40 p-3 text-[13px] text-foreground font-medium animate-in fade-in duration-150">
+                    <CreditCard size={16} className="text-primary shrink-0" />
+                    <span>Verified Recipient: GCB Prepaid Card ({refCode})</span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Select
+                value={state.cardId || ""}
+                onValueChange={(val) => {
+                  if (val) {
+                    onChange("cardId", val);
+                  }
+                }}
+              >
+                <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-4.5 text-left flex items-center">
+                  {!selectedCard ? (
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <span className="flex size-9 shrink-0 items-center justify-center text-muted-foreground">
+                        <CreditCard size={20} strokeWidth={1.8} className="shrink-0" />
                       </span>
-                      <span className="text-[12px] text-muted-foreground font-normal truncate leading-tight">
-                        GCB {selectedCard.type} · {selectedCard.scheme} · {selectedCard.maskedNumber}
+                      <span className="text-[14px] text-muted-foreground font-normal">
+                        Select your GCB card
                       </span>
                     </div>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-[14px] text-foreground font-semibold tabular block">
-                      {formatMoney(selectedCard.balance ?? 0, selectedCard.currency, true)}
-                    </span>
-                    <span className="text-[11.5px] text-muted-foreground font-normal">Balance</span>
-                  </div>
-                </div>
-              )}
-            </SelectTrigger>
-            <SelectContent>
-              {fundableCards.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  GCB {c.name} ({c.maskedNumber}) — {formatMoney(c.balance ?? 0, c.currency, true)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+                  ) : (
+                    <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
+                          <CreditCard size={20} strokeWidth={1.8} className="shrink-0" />
+                        </span>
+                        <div className="flex flex-col min-w-0 text-left gap-0.5">
+                          <span className="text-[14.5px] text-foreground font-medium truncate leading-tight">
+                            GCB {selectedCard.name}
+                          </span>
+                          <span className="text-[12px] text-muted-foreground font-normal truncate leading-tight">
+                            GCB {selectedCard.type} · {selectedCard.scheme} · {selectedCard.maskedNumber}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <span className="text-[14px] text-foreground font-semibold tabular block">
+                          {formatMoney(selectedCard.balance ?? 0, selectedCard.currency, true)}
+                        </span>
+                        <span className="text-[11.5px] text-muted-foreground font-normal">Balance</span>
+                      </div>
+                    </div>
+                  )}
+                </SelectTrigger>
+                <SelectContent>
+                  {fundableCards.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      GCB {c.name} ({c.maskedNumber}) — {formatMoney(c.balance ?? 0, c.currency, true)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
         )}
       </Field>
 
       {/* Progressive Disclosure: Only reveal Amount & onwards after card is selected */}
-      {Boolean(selectedCard) && (
+      {isCardValid && (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount */}
           <AmountInput
             value={state.amount}
             onChange={(val) => onChange("amount", val)}
             onFocus={() => {
-              if (selectedCard) setCollapsed(true);
+              if (isCardValid) setCollapsed(true);
             }}
             currency="GHS"
             label="Enter Amount"

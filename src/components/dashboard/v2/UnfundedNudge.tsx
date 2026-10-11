@@ -26,7 +26,7 @@ export function UnfundedNudge({ onFundClick, className }: UnfundedNudgeProps) {
   return (
     <div
       role="region"
-      aria-label="Wallet funding nudge"
+      aria-label="Virtual account funding nudge"
       className={`relative flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-6 ${
         className ?? ""
       }`}
@@ -38,7 +38,7 @@ export function UnfundedNudge({ onFundClick, className }: UnfundedNudgeProps) {
 
         <div className="flex min-w-0 flex-col gap-0.5">
           <h3 className="text-[15.5px] tracking-[-0.01em] text-foreground sm:text-[16.5px]">
-            Fund your wallet to get started
+            Fund your virtual account to get started
           </h3>
           <p className="text-[13px] leading-relaxed text-muted-foreground sm:text-[13.5px]">
             Deposit via Mobile Money or card to activate transfers and payments.
@@ -52,7 +52,7 @@ export function UnfundedNudge({ onFundClick, className }: UnfundedNudgeProps) {
           onClick={onFundClick}
           className="h-11 flex-1 cursor-pointer px-5 text-[14px] active:scale-[0.97] transition-transform duration-150 sm:flex-none"
         >
-          <span>Fund Wallet</span>
+          <span>Fund Virtual Account</span>
           <ArrowRight size={15} strokeWidth={1.8} className="ml-1.5" />
         </Button>
 

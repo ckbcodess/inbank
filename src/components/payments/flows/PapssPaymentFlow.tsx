@@ -11,12 +11,10 @@ import {
 } from "@/components/ui/select";
 import {
   FromAccountSelector,
-  NarrationInput,
   CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
   AccountVerificationStatus,
-  VerifiedAccountBadge,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
   ScheduleFrequency,
@@ -35,6 +33,17 @@ const PAPSS_COUNTRIES = [
   { name: "Egypt", currency: "EGP" },
   { name: "Rwanda", currency: "RWF" },
   { name: "Zambia", currency: "ZMW" },
+];
+
+export const PAPSS_PURPOSES = [
+  "Trade & Commercial Goods Settlement",
+  "Services & Consulting Payment",
+  "Family Support & Remittance",
+  "Education & Tuition Fees",
+  "Medical & Healthcare Expenses",
+  "Travel & Tourism",
+  "Investment & Capital Transfer",
+  "Other Cross-Border Settlement",
 ];
 
 export interface PapssPaymentFormState {
@@ -252,7 +261,7 @@ export function PapssPaymentFlow({
                   onChange("wBenName", resolved);
                 }
               }}
-              placeholder="Enter account number or IBAN"
+              placeholder="Enter account number"
               className="tabular"
             />
 
@@ -301,13 +310,24 @@ export function PapssPaymentFlow({
             )}
 </Field>
 
-          {/* 4. Narration / Purpose of Payment */}
-          <NarrationInput
-            value={state.wPurpose}
-            onChange={(val) => onChange("wPurpose", val)}
-            label="Purpose of Payment"
-            placeholder="e.g. Trade settlement, family remittance"
-          />
+          {/* 4. Purpose of Payment */}
+          <Field label="Purpose of Payment">
+            <Select
+              value={state.wPurpose}
+              onValueChange={(val) => val && onChange("wPurpose", val)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select purpose of payment" />
+              </SelectTrigger>
+              <SelectContent>
+                {PAPSS_PURPOSES.map((purpose) => (
+                  <SelectItem key={purpose} value={purpose}>
+                    {purpose}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
 
           {/* 5. Transaction Category */}
           <CategorySelect

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { AlertCircle, Landmark, Wallet } from "lucide-react";
 import {
   Select,
@@ -100,7 +101,17 @@ export function OwnAccountFlow({
 
       {/* 2. To Account */}
       <Field label="To Account">
-        {isDetailsValid && isCollapsed && toAccount ? (
+        {accounts.filter((a) => a.id !== state.fromId).length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-4 text-[13px] text-muted-foreground">
+            <p>You have one active account. Link another account under your Ghana Card to transfer between them.</p>
+            <Link
+              href="/accounts"
+              className="mt-2 inline-flex items-center gap-1.5 text-primary hover:underline font-medium text-[12.5px]"
+            >
+              Go to Accounts &amp; Cards to link an account &rarr;
+            </Link>
+          </div>
+        ) : isDetailsValid && isCollapsed && toAccount ? (
           <CollapsedDetailsBadge
             title={toAccount.name}
             subtitle={`${toAccount.type} · ${toAccount.number}`}
@@ -141,7 +152,7 @@ export function OwnAccountFlow({
             <span>Destination account cannot be the same as source account.</span>
           </div>
         )}
-</Field>
+      </Field>
 
       {/* Progressive Disclosure: Only reveal Amount & subsequent sections after destination account is selected */}
       {isDetailsValid && (

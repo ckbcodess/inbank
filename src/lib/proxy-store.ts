@@ -14,7 +14,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type ProxyType = "phone" | "ghana-card";
+export type ProxyType = "phone" | "ghana-card" | "email" | "other";
 
 export interface MyProxy {
   id: string;
@@ -72,4 +72,6 @@ export const useProxyStore = create<ProxyState>()(
 export const PROXY_TYPE_LABEL: Record<ProxyType, string> = {
   phone: "Phone number",
   "ghana-card": "Ghana Card",
+  email: "Email address",
+  other: "Custom text / Alias",
 };

@@ -15,12 +15,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ChevronRight, FileText, PiggyBank, ShieldCheck, TrendingUp } from "lucide-react";
+import { ChevronRight, FileText, PiggyBank, ShieldCheck } from "lucide-react";
 import { Bank, Safe } from "reicon-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { SegmentedControl } from "@/components/ui/segmented-control";
-import { ListErrorState, TrueEmptyState } from "@/components/states/ListStates";
+import { ListErrorState } from "@/components/states/ListStates";
 import { InvestHomeSkeleton, InvestRowBones } from "@/components/states/PageSkeletons";
 import { InvestDevTools, PRODUCTS_HREF, SecurityIcon, TERM_PRODUCTS_HREF, TREASURY_HOME, TREASURY_PRODUCTS_HREF } from "@/components/invest/parts";
 import { InvestWelcome } from "@/components/invest/InvestWelcome";
@@ -75,7 +75,6 @@ export function InvestHome() {
   const money = (n: number) => formatMoney(n, "GHS", showAmounts);
 
   const setView = (next: View) => router.replace(next === "products" ? PRODUCTS_HREF : "/invest", { scroll: false });
-  const goProducts = () => setView("products");
 
   const treasuryRows: Row[] = holdings
     .map<Row>((h) => ({
@@ -217,16 +216,26 @@ export function InvestHome() {
         {status()}
 
         {nothingYet && !(csd?.status === "active" && intent) && (
-          <TrueEmptyState
-            icon={<TrendingUp size={22} strokeWidth={1.8} />}
-            title="You haven’t started investing yet"
-            description="Browse the products to see what’s on offer."
-            action={
-              <Button type="button" onClick={() => goProducts()}>
-                Start Investing
-              </Button>
-            }
-          />
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-1 px-1">
+              <h2 className="text-[17px] font-medium text-foreground">Choose an investment type to begin</h2>
+              <p className="text-[13.5px] text-muted-foreground">Select between fixed-rate GCB Term Deposits and Government of Ghana Treasury Bills &amp; Bonds.</p>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <ActionTile
+                icon={TermDepositIcon}
+                bareIcon
+                title="Term Deposits"
+                href={TERM_PRODUCTS_HREF}
+              />
+              <ActionTile
+                icon={TreasuryIcon}
+                bareIcon
+                title="Treasury Bills & Bonds"
+                href={TREASURY_PRODUCTS_HREF}
+              />
+            </div>
+          </div>
         )}
 
         {hasDeposits && section("Term Deposits", depositRows.map(renderRow))}

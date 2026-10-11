@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
+import { Search } from "lucide-react";
 import {
 } from "@/components/ui/select";
 import {
@@ -12,8 +13,6 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   AccountVerificationStatus,
-  VerifiedAccountBadge,
-  ResolvingAccountBadge,
   CollapsedDetailsBadge,
   OTHER_BANKS,
   SchedulePaymentSection,
@@ -123,21 +122,43 @@ export function OtherBankFlow({
           <div className="flex flex-col gap-3">
             <BankSelect value={state.bank || ""} onChange={(val) => onChange("bank", val)} options={OTHER_BANKS} />
 
-            <Input
-              type="text"
-              inputMode="numeric"
-              value={state.benAcct}
-              onChange={(e) => {
-                const val = e.target.value.replace(/[^0-9]/g, "");
-                onChange("benAcct", val);
-                const resolved = resolveAccountName(val, "");
-                if (resolved) {
-                  onChange("benName", resolved);
-                }
-              }}
-              placeholder="Enter account number"
-              className="numorainput tabular"
-            />
+            <div className="relative flex items-center">
+              <Input
+                type="text"
+                inputMode="numeric"
+                value={state.benAcct}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^0-9]/g, "");
+                  onChange("benAcct", val);
+                  const resolved = resolveAccountName(val, "");
+                  if (resolved) {
+                    onChange("benName", resolved);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && isAcctValid) {
+                    e.preventDefault();
+                    setResolving(true);
+                    setTimeout(() => setResolving(false), 200);
+                  }
+                }}
+                placeholder="Enter account number"
+                className="numorainput tabular pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (isAcctValid) {
+                    setResolving(true);
+                    setTimeout(() => setResolving(false), 200);
+                  }
+                }}
+                aria-label="Search and verify account"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+              >
+                <Search size={16} strokeWidth={1.8} />
+              </button>
+            </div>
 
             {/* Verification Status */}
             <AccountVerificationStatus

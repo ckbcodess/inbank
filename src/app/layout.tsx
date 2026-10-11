@@ -19,6 +19,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { RouteLoadingProvider } from "@/components/providers/RouteLoadingProvider";
 import { LanguageProvider } from "@/lib/i18n/LanguageProvider";
 import { NavHistoryTracker } from "@/components/layout/NavHistoryTracker";
+import { SidiAssistantWidget } from "@/components/layout/SidiAssistantWidget";
 
 const openSans = Open_Sans({
   variable: "--font-sans",
@@ -73,6 +74,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       )}
                       {SHOW_DEMO_TOOLS && <ColorTuner />}
                       <TourOverlay />
+                      <SidiAssistantWidget />
                     </DevStateProvider>
                   </AndroidRippleProvider>
                 </AmountVisibilityProvider>

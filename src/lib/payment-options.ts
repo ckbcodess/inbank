@@ -63,8 +63,8 @@ export const GCB_PAY_CATEGORIES: { id: BillerCategory; title: string; icon: Opti
   { id: "Government Services", title: "Government Services", icon: Building2 },
   { id: "Healthcare", title: "Healthcare", icon: Heart },
   { id: "Merchant Payments", title: "Merchant Payments", icon: Store },
-  { id: "Others", title: "Others", icon: Plus },
   { id: "Subscriptions", title: "Subscriptions", icon: Tv },
+  { id: "Others", title: "Others", icon: Plus },
 ];
 
 /*

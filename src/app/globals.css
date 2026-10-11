@@ -900,7 +900,7 @@ html.theme-fade *::after {
   }
 }
 
-@container (min-width: 1060px) {
+@container (min-width: 920px) {
   .dash-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -912,21 +912,21 @@ html.theme-fade *::after {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
-  @media (min-width: 1440px) {
+  @media (min-width: 1200px) {
     .dash-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 }
 
-@container (min-width: 1060px) {
+@container (min-width: 920px) {
   .dash-grid-lead {
     grid-column: span 2 / span 2;
   }
 }
 
 @supports not (container-type: inline-size) {
-  @media (min-width: 1440px) {
+  @media (min-width: 1200px) {
     .dash-grid-lead {
       grid-column: span 2 / span 2;
     }
