@@ -64,7 +64,7 @@ export function ScanAndPayFlow({
   onToggleCollapsed,
 }: ScanAndPayFlowProps) {
   const searchParams = useSearchParams();
-  const initialMode = searchParams?.get("mode") === "myqr" ? "myqr" : "scan";
+  const initialMode = searchParams?.get("mode") === "scan" ? "scan" : "myqr";
   const [activeMode, setActiveMode] = useState<"scan" | "myqr">(initialMode);
 
   // Terminal ID modal dialog state
@@ -179,13 +179,83 @@ export function ScanAndPayFlow({
             onChange={(val) => setActiveMode(val as "scan" | "myqr")}
             fullWidth
             options={[
-              { value: "scan", label: "Scan & Pay" },
               { value: "myqr", label: "My QR" },
+              { value: "scan", label: "Scan & Pay" },
             ]}
           />
 
-          {/* Mode 1: Scan & Pay — centered in remaining space below toggles */}
-          {activeMode === "scan" ? (
+          {/* Mode 1: My QR — centered in remaining space below toggles */}
+          {activeMode === "myqr" ? (
+            <div className="flex flex-1 flex-col justify-center gap-6 my-auto pt-6 animate-in fade-in duration-200">
+              {/* Canvas with identical footprint without border so buttons don't shift */}
+              <div className="relative flex min-h-[46vh] sm:min-h-0 sm:aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl p-4">
+                {/* Centered QR Container */}
+                <div className="flex flex-col items-center justify-center text-foreground p-2 w-[320px] sm:w-[350px]">
+                  <QrCode
+                    value={`00020101021226500010com.ghana.pay0115GCB-0313-982105204541153039365802GH59${String(userName.length).padStart(2, "0")}${userName.toUpperCase()}6005ACCRA62140110GCB03139826304${(receiveAccount?.number || "0313").replace(/\s+/g, "").slice(-4)}`}
+                    size={260}
+                    className="size-auto text-neutral-950 dark:text-neutral-50"
+                    moduleColor="currentColor"
+                    bgColor="transparent"
+                    centerLogo={
+                      <div className="flex items-center justify-center">
+                        <GCBLogo
+                          className="w-12 h-auto"
+                          eagleColor="#FFC423"
+                          wordmarkColor="currentColor"
+                        />
+                      </div>
+                    }
+                  />
+                  <div className="mt-4 flex flex-col items-center text-center">
+                    <span className="text-[14.5px] font-semibold text-foreground tracking-tight">{userName}</span>
+                    <span className="text-[12px] text-muted-foreground font-mono mt-0.5">
+                      {receiveAccount?.name || "Operating Account"} •••• {(receiveAccount?.number || "0313").replace(/\s+/g, "").slice(-4)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Account Switcher underneath the QR code — styled like the account fields in Send & Pay */}
+              {accounts.length > 1 && (
+                <div className="w-full">
+                  <FromAccountSelector
+                    accounts={accounts}
+                    value={receiveAccountId}
+                    onChange={(id: string) => {
+                      setReceiveAccountId(id);
+                      const selected = accounts.find((a) => a.id === id);
+                      if (selected) {
+                        toast.success(`Receiving account changed to ${selected.name}`);
+                      }
+                    }}
+                    label="Receiving Account"
+                    placeholder="Select account to receive funds"
+                  />
+                </div>
+              )}
+
+              {/* Two Action Buttons: Outline on left, Primary on right */}
+              <div className="flex w-full items-center gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1 h-12 text-[14px] font-medium rounded-xl border-border/80 bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
+                  onClick={handleShareMyQr}
+                >
+                  Share QR Code
+                </Button>
+                <Button
+                  type="button"
+                  className="flex-1 h-12 text-[14px] font-medium rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs cursor-pointer"
+                  onClick={handleDownloadMyQr}
+                >
+                  Download
+                </Button>
+              </div>
+            </div>
+          ) : (
+            /* Mode 2: Scan & Pay — centered in remaining space below toggles */
             <div className="flex flex-1 flex-col justify-center gap-6 my-auto pt-6 animate-in fade-in duration-200">
               {/* Viewfinder Canvas (Solid black camera feed look) */}
               <div
@@ -273,76 +343,6 @@ export function ScanAndPayFlow({
                   }}
                 >
                   Enter Merchant ID
-                </Button>
-              </div>
-            </div>
-          ) : (
-            /* Mode 2: My QR — centered in remaining space below toggles */
-            <div className="flex flex-1 flex-col justify-center gap-6 my-auto pt-6 animate-in fade-in duration-200">
-              {/* Canvas with identical footprint without border so buttons don't shift */}
-              <div className="relative flex min-h-[46vh] sm:min-h-0 sm:aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl p-4">
-                {/* Centered QR Container */}
-                <div className="flex flex-col items-center justify-center text-foreground p-2 w-[320px] sm:w-[350px]">
-                  <QrCode
-                    value={`00020101021226500010com.ghana.pay0115GCB-0313-982105204541153039365802GH59${String(userName.length).padStart(2, "0")}${userName.toUpperCase()}6005ACCRA62140110GCB03139826304${(receiveAccount?.number || "0313").replace(/\s+/g, "").slice(-4)}`}
-                    size={260}
-                    className="size-auto text-neutral-950 dark:text-neutral-50"
-                    moduleColor="currentColor"
-                    bgColor="transparent"
-                    centerLogo={
-                      <div className="flex items-center justify-center">
-                        <GCBLogo
-                          className="w-12 h-auto"
-                          eagleColor="#FFC423"
-                          wordmarkColor="currentColor"
-                        />
-                      </div>
-                    }
-                  />
-                  <div className="mt-4 flex flex-col items-center text-center">
-                    <span className="text-[14.5px] font-semibold text-foreground tracking-tight">{userName}</span>
-                    <span className="text-[12px] text-muted-foreground font-mono mt-0.5">
-                      {receiveAccount?.name || "Operating Account"} •••• {(receiveAccount?.number || "0313").replace(/\s+/g, "").slice(-4)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Account Switcher underneath the QR code — styled like the account fields in Send & Pay */}
-              {accounts.length > 1 && (
-                <div className="w-full">
-                  <FromAccountSelector
-                    accounts={accounts}
-                    value={receiveAccountId}
-                    onChange={(id: string) => {
-                      setReceiveAccountId(id);
-                      const selected = accounts.find((a) => a.id === id);
-                      if (selected) {
-                        toast.success(`Receiving account changed to ${selected.name}`);
-                      }
-                    }}
-                    label="Receiving Account"
-                    placeholder="Select account to receive funds"
-                  />
-                </div>
-              )}
-
-              {/* Two Action Buttons: Outline on left, Primary on right */}
-              <div className="flex w-full items-center gap-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex-1 h-12 text-[14px] font-medium rounded-xl border-border/80 bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
-                  onClick={handleShareMyQr}
-                >
-                  Share QR Code
-                </Button>
-                <Button
-                  type="button"
-                  className="flex-1 h-12 text-[14px] font-medium rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs cursor-pointer"
-                  onClick={handleDownloadMyQr}
-                >
-                  Download
                 </Button>
               </div>
             </div>

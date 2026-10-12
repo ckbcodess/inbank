@@ -196,6 +196,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
   - Balanced the center GCB emblem by increasing its scale (`w-12 h-auto`) to harmonize with the circular cutout diameter and removing the restrictive inner bounding ring.
   - Refactored `qr-code.tsx` module rendering from rounded chiclet squares (`rx={0.16}`) to standard, solid, continuous rectangular blocks with horizontal run-length merging and `shapeRendering="crispEdges"`, giving the code the authentic, sharp appearance of an official QR code.
   - Renamed the scan action button to "Enter Merchant ID" (replacing "Type Terminal ID") and removed the sample merchants simulation grid from the Merchant ID input dialog for a clean, production-grade modal.
+  - Reordered the QR mode segmented controls so "My QR" appears first and "Scan & Pay" appears second, defaulting the initial tab to My QR unless `?mode=scan` is explicitly supplied.
 - **Decision (Onboarding Layout Chip Visibility):** Guarded the floating layout switcher chip in `AuthLayout` (`src/components/auth/AuthLayout.tsx`) behind `SHOW_DEMO_TOOLS` so it does not render on production/live builds (`process.env.NODE_ENV === "production"`), and bound it to `useDevToolsHidden()` and `useCaptureMode()` so pressing `Ctrl+Shift+D` (or `Cmd+Shift+D`) toggles its visibility in dev alongside the other floating tools.
 
 ### 2026-10-11
