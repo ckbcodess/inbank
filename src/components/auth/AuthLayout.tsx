@@ -11,6 +11,9 @@ import { cn } from "@/lib/utils";
 import { SmoothHeight } from "@/components/ui/smooth-height";
 import EagleBackdrop from "@/components/brand/EagleBackdrop";
 import { AUTH_LOOK_LABEL, useAuthLayoutStore } from "@/lib/auth-layout-store";
+import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
+import { useDevToolsHidden } from "@/lib/dev-tools-visibility";
+import { useCaptureMode } from "@/lib/capture-mode";
 import { SPRING } from "@/lib/motion";
 
 interface AuthLayoutProps {
@@ -87,6 +90,8 @@ export default function AuthLayout({
   // Test switch: the saved look overrides the page's variant. Read after mount to avoid a hydration mismatch.
   const look = useAuthLayoutStore((s) => s.look);
   const cycleLook = useAuthLayoutStore((s) => s.cycle);
+  const devToolsHidden = useDevToolsHidden();
+  const captureMode = useCaptureMode();
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     void useAuthLayoutStore.persist.rehydrate();
@@ -318,13 +323,16 @@ export default function AuthLayout({
         </div>
       </main>
 
-      <button
-        type="button"
-        onClick={cycleLook}
-        className="fixed bottom-4 right-4 z-50 rounded-full border border-border bg-card-auth/95 px-3 py-1.5 text-[12px] text-muted-foreground shadow-sm backdrop-blur transition-colors hover:text-foreground active:scale-95 cursor-pointer"
-      >
-        Layout: {AUTH_LOOK_LABEL[mounted ? look : "hybrid"]}
-      </button>
+      {mounted && SHOW_DEMO_TOOLS && !devToolsHidden && !captureMode && (
+        <button
+          type="button"
+          onClick={cycleLook}
+          title="Cycle onboarding layout (Press Ctrl+Shift+D to hide dev tools)"
+          className="fixed bottom-4 right-4 z-50 rounded-full border border-border bg-card-auth/95 px-3 py-1.5 text-[12px] text-muted-foreground shadow-sm backdrop-blur transition-colors hover:text-foreground active:scale-95 cursor-pointer"
+        >
+          Layout: {AUTH_LOOK_LABEL[look]}
+        </button>
+      )}
     </div>
   );
 }

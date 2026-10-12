@@ -38,10 +38,10 @@ export function groupAvatarTint(id: string): string {
 export const SINGLE_RECENT_AVATARS: RecentPayeeAvatar[] = [
   {
     id: "rec-s1",
-    name: "Mum (Yaa Osei)",
+    name: "Mum (Yaa Gyan)",
     bank: "MTN Mobile Money",
     acct: "0244 889 900",
-    initials: "YO",
+    initials: "YG",
     rail: "wallet",
     colorBg: "var(--avatar-teal)",
   },

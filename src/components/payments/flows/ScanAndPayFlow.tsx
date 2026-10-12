@@ -1,18 +1,14 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import {
-  Camera,
   Check,
-  Flashlight,
   Store,
   Fuel,
   ShoppingCart,
   UtensilsCrossed,
-  Share2,
-  Download,
-  Image as ImageIcon,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Account } from "@/lib/mock-data";
@@ -29,15 +25,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { SegmentedControl } from "@/components/ui/segmented-control";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { GCBLogo } from "@/components/ui/GCBLogo";
-import { cn } from "@/lib/utils";
+import { QrCode } from "@/components/ui/qr-code";
+import { useSession } from "@/lib/session-store";
 
 export interface ScanAndPayFormState {
   fromId: string;
@@ -76,7 +67,14 @@ export function ScanAndPayFlow({
   const initialMode = searchParams?.get("mode") === "myqr" ? "myqr" : "scan";
   const [activeMode, setActiveMode] = useState<"scan" | "myqr">(initialMode);
 
-  // My QR state
+  // Terminal ID modal dialog state
+  const [terminalDialogOpen, setTerminalDialogOpen] = useState(false);
+  const [terminalInput, setTerminalInput] = useState("");
+
+  // Hidden file input ref for gallery selection
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+
+  // My QR state: default to primary account, allows switching for multi-account users
   const [receiveAccountId, setReceiveAccountId] = useState(accounts[0]?.id || "");
   const receiveAccount = useMemo(
     () => accounts.find((a) => a.id === receiveAccountId) ?? accounts[0],
@@ -90,9 +88,6 @@ export function ScanAndPayFlow({
     setInternalCollapsed(val);
     onToggleCollapsed?.(val);
   };
-
-  const [activeTab, setActiveTab] = useState<"camera" | "manual">("camera");
-  const [flashlight, setFlashlight] = useState(false);
 
   const fromAccount = useMemo(
     () => accounts.find((a) => a.id === state.fromId) ?? accounts[0],
@@ -108,8 +103,26 @@ export function ScanAndPayFlow({
     onChange("qrMerchant", m.name);
     onChange("qrCode", m.code);
     if (!state.narration) {
-      onChange("narration", `Purchase at ${m.name}`);
+      onChange("narration", `Purchase at ${m.name.split("—")[0].trim()}`);
     }
+  }
+
+  function handleConfirmTerminal(code: string) {
+    const trimmed = code.trim().toUpperCase();
+    if (!trimmed) return;
+    const found = SAMPLE_MERCHANTS.find((m) => m.code === trimmed);
+    if (found) {
+      handleSelectMerchant(found);
+      toast.success(`Connected to ${found.name}`);
+    } else {
+      onChange("qrMerchant", `Merchant Terminal (${trimmed})`);
+      onChange("qrCode", trimmed);
+      if (!state.narration) {
+        onChange("narration", `Payment to Terminal ${trimmed}`);
+      }
+      toast.success(`Terminal ${trimmed} verified`);
+    }
+    setTerminalDialogOpen(false);
   }
 
   function handleClearMerchant() {
@@ -121,14 +134,20 @@ export function ScanAndPayFlow({
   function handleGalleryUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
-      const randomMerchant = SAMPLE_MERCHANTS[0];
+      // Simulate scanning decoded QR code from image
+      const randomMerchant = SAMPLE_MERCHANTS[Math.floor(Math.random() * SAMPLE_MERCHANTS.length)];
       handleSelectMerchant(randomMerchant);
-      toast.success(`Scanned QR successfully: ${randomMerchant.name}`);
+      toast.success(`Scanned QR code: ${randomMerchant.name}`);
     }
+    // Reset file input so user can choose the same file again if needed
+    e.target.value = "";
   }
 
+  const actor = useSession((s) => s.actor);
+  const userName = actor?.name || "Ransford Gyasi";
+
   const handleShareMyQr = async () => {
-    const shareText = `GCB GhQR Payment Details\nName: Kwesi Appiah\nAccount: ${receiveAccount?.name || "Operating Account"} (•••• ${receiveAccount?.number?.replace(/\s+/g, "").slice(-4) || "0313"})\nBank: GCB Bank PLC`;
+    const shareText = `GCB GhQR Payment Details\nName: ${userName}\nAccount: ${receiveAccount?.name || "Operating Account"} (•••• ${receiveAccount?.number?.replace(/\s+/g, "").slice(-4) || "0313"})\nBank: GCB Bank PLC`;
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
@@ -137,7 +156,7 @@ export function ScanAndPayFlow({
         });
         return;
       } catch {
-        // Fallback to copy
+        // Fallback to clipboard copy
       }
     }
     await navigator.clipboard.writeText(shareText);
@@ -145,176 +164,274 @@ export function ScanAndPayFlow({
   };
 
   const handleDownloadMyQr = () => {
-    toast.success("Personal QR code image downloaded to device");
+    toast.success("Personal QR code image saved to downloads");
   };
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
-      {/* 1. Mode Switcher: Scan & Pay vs My QR */}
-      <div className="flex justify-center">
-        <SegmentedControl
-          aria-label="QR Mode"
-          value={activeMode}
-          onChange={(val) => setActiveMode(val as "scan" | "myqr")}
-          options={[
-            { value: "scan", label: "Scan & Pay" },
-            { value: "myqr", label: "My QR" },
-          ]}
-        />
-      </div>
+      {/* ── STAGE A: IDENTIFY / VIEW QR (When no merchant is selected yet) ── */}
+      {!isMerchantSelected ? (
+        <div className="flex flex-col w-full max-w-xl mx-auto min-h-[calc(100dvh-200px)] sm:min-h-[calc(100dvh-240px)] animate-in fade-in duration-200 ease-out">
+          {/* Segmented Control Switcher stays anchored at top */}
+          <SegmentedControl
+            aria-label="QR Mode"
+            value={activeMode}
+            onChange={(val) => setActiveMode(val as "scan" | "myqr")}
+            fullWidth
+            options={[
+              { value: "scan", label: "Scan & Pay" },
+              { value: "myqr", label: "My QR" },
+            ]}
+          />
 
-      {/* ── MODE A: MY QR ── */}
-      {activeMode === "myqr" ? (
-        <div className="flex flex-col gap-6 animate-in fade-in duration-200">
-          <Field label="Receiving Account">
-            <Select value={receiveAccountId} onValueChange={(val) => val && setReceiveAccountId(val)}>
-              <SelectTrigger className="w-full h-12">
-                <SelectValue placeholder="Select account to receive into" />
-              </SelectTrigger>
-              <SelectContent>
-                {accounts.map((acc) => (
-                  <SelectItem key={acc.id} value={acc.id}>
-                    <div className="flex items-center justify-between w-full gap-4">
-                      <span>{acc.name}</span>
-                      <span className="text-xs text-muted-foreground font-mono">
-                        •••• {acc.number.replace(/\s+/g, "").slice(-4)}
-                      </span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </Field>
+          {/* Mode 1: Scan & Pay — centered in remaining space below toggles */}
+          {activeMode === "scan" ? (
+            <div className="flex flex-1 flex-col justify-center gap-6 my-auto pt-6 animate-in fade-in duration-200">
+              {/* Viewfinder Canvas (Solid black camera feed look) */}
+              <div
+                className="relative flex min-h-[58vh] sm:min-h-0 sm:aspect-[4/3] w-full flex-col items-center justify-center overflow-hidden rounded-2xl bg-black border border-black/80 text-white cursor-pointer group shadow-md"
+                onClick={() => {
+                  // Convenience: clicking viewport simulates scanning a merchant
+                  const sample = SAMPLE_MERCHANTS[0];
+                  handleSelectMerchant(sample);
+                  toast.success(`Scanned QR code: ${sample.name}`);
+                }}
+                title="Tap to scan or select from gallery below"
+              >
+                {/* Crosshairs Viewfinder target box */}
+                <div className="relative size-44 sm:size-52 flex flex-col items-center justify-center transition-transform duration-300 group-hover:scale-[1.02]">
+                  {/* Four Corner Crosshair Brackets matching user reference */}
+                  <svg
+                    viewBox="0 0 200 200"
+                    className="size-full pointer-events-none drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    {/* Top-Left */}
+                    <path
+                      d="M 14 54 L 14 30 A 16 16 0 0 1 30 14 L 54 14"
+                      stroke="#FFFFFF"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                    />
+                    {/* Top-Right */}
+                    <path
+                      d="M 146 14 L 170 14 A 16 16 0 0 1 186 30 L 186 54"
+                      stroke="#FFFFFF"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                    />
+                    {/* Bottom-Left */}
+                    <path
+                      d="M 14 146 L 14 170 A 16 16 0 0 0 30 186 L 54 186"
+                      stroke="#FFFFFF"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                    />
+                    {/* Bottom-Right */}
+                    <path
+                      d="M 146 186 L 170 186 A 16 16 0 0 0 186 170 L 186 146"
+                      stroke="#FFFFFF"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </div>
 
-          {/* Personal QR Display Card */}
-          <div className="relative mx-auto flex w-full max-w-sm flex-col items-center gap-4 rounded-2xl border border-border/80 bg-card p-6 text-center shadow-xs">
-            <div className="flex flex-col items-center gap-1.5">
-              <div className="flex items-center gap-2">
-                <GCBLogo className="h-6 w-auto text-foreground" />
-                <span className="text-xs font-medium text-foreground tracking-wide uppercase">
-                  GCB GhQR
+                {/* Subtitle helper placed directly underneath the crosshairs */}
+                <p className="mt-4 text-center px-4 text-[13.5px] font-medium text-white/90 tracking-tight drop-shadow-sm">
+                  Scan the QR code to pay
+                </p>
+
+                {/* Hidden gallery file input */}
+                <input
+                  ref={galleryInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleGalleryUpload}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+
+              {/* Two Action Buttons: Outline on left, Primary on right */}
+              <div className="flex w-full items-center gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1 h-12 text-[14px] font-medium rounded-xl border-border/80 bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
+                  onClick={() => galleryInputRef.current?.click()}
+                >
+                  Select from Gallery
+                </Button>
+                <Button
+                  type="button"
+                  className="flex-1 h-12 text-[14px] font-medium rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs cursor-pointer"
+                  onClick={() => {
+                    setTerminalInput("");
+                    setTerminalDialogOpen(true);
+                  }}
+                >
+                  Enter Merchant ID
+                </Button>
+              </div>
+            </div>
+          ) : (
+            /* Mode 2: My QR — centered in remaining space below toggles */
+            <div className="flex flex-1 flex-col justify-center gap-6 my-auto pt-6 animate-in fade-in duration-200">
+              {/* Canvas with identical footprint without border so buttons don't shift */}
+              <div className="relative flex min-h-[46vh] sm:min-h-0 sm:aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl p-4">
+                {/* Centered QR Container */}
+                <div className="flex flex-col items-center justify-center text-foreground p-2 w-[320px] sm:w-[350px]">
+                  <QrCode
+                    value={`00020101021226500010com.ghana.pay0115GCB-0313-982105204541153039365802GH59${String(userName.length).padStart(2, "0")}${userName.toUpperCase()}6005ACCRA62140110GCB03139826304${(receiveAccount?.number || "0313").replace(/\s+/g, "").slice(-4)}`}
+                    size={260}
+                    className="size-auto text-neutral-950 dark:text-neutral-50"
+                    moduleColor="currentColor"
+                    bgColor="transparent"
+                    centerLogo={
+                      <div className="flex items-center justify-center">
+                        <GCBLogo
+                          className="w-12 h-auto"
+                          eagleColor="#FFC423"
+                          wordmarkColor="currentColor"
+                        />
+                      </div>
+                    }
+                  />
+                  <div className="mt-4 flex flex-col items-center text-center">
+                    <span className="text-[14.5px] font-semibold text-foreground tracking-tight">{userName}</span>
+                    <span className="text-[12px] text-muted-foreground font-mono mt-0.5">
+                      {receiveAccount?.name || "Operating Account"} •••• {(receiveAccount?.number || "0313").replace(/\s+/g, "").slice(-4)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Account Switcher underneath the QR code — styled like the account fields in Send & Pay */}
+              {accounts.length > 1 && (
+                <div className="w-full">
+                  <FromAccountSelector
+                    accounts={accounts}
+                    value={receiveAccountId}
+                    onChange={(id: string) => {
+                      setReceiveAccountId(id);
+                      const selected = accounts.find((a) => a.id === id);
+                      if (selected) {
+                        toast.success(`Receiving account changed to ${selected.name}`);
+                      }
+                    }}
+                    label="Receiving Account"
+                    placeholder="Select account to receive funds"
+                  />
+                </div>
+              )}
+
+              {/* Two Action Buttons: Outline on left, Primary on right */}
+              <div className="flex w-full items-center gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1 h-12 text-[14px] font-medium rounded-xl border-border/80 bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
+                  onClick={handleShareMyQr}
+                >
+                  Share QR Code
+                </Button>
+                <Button
+                  type="button"
+                  className="flex-1 h-12 text-[14px] font-medium rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs cursor-pointer"
+                  onClick={handleDownloadMyQr}
+                >
+                  Download
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Merchant ID Dialog Modal (matching user reference mockup with theme awareness) */}
+          <Dialog open={terminalDialogOpen} onOpenChange={setTerminalDialogOpen}>
+            <DialogContent size="sm" className="rounded-3xl p-0 overflow-hidden shadow-2xl border border-border/70 bg-card text-foreground">
+              {/* Header: Title on left, close on right */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
+                <span className="text-[16px] font-medium text-foreground tracking-tight">
+                  Merchant ID
                 </span>
+                <button
+                  type="button"
+                  onClick={() => setTerminalDialogOpen(false)}
+                  className="flex size-7 items-center justify-center rounded-full bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                  aria-label="Close"
+                >
+                  <X size={15} strokeWidth={2} />
+                </button>
               </div>
-              <h3 className="text-[17px] font-medium text-foreground pt-1">
-                Kwesi Appiah
-              </h3>
-              <p className="text-[12.5px] text-muted-foreground font-mono">
-                {receiveAccount?.name || "Operating Account"} ••••{" "}
-                {receiveAccount?.number?.replace(/\s+/g, "").slice(-4) || "0313"}
-              </p>
-            </div>
 
-            {/* Stylized QR Code Box */}
-            <div className="relative flex size-56 items-center justify-center rounded-2xl border border-border/80 bg-white p-4 shadow-xs">
-              <svg
-                viewBox="0 0 200 200"
-                className="size-full"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                {/* 3 Large Corner Position Detection Patterns */}
-                <rect x="10" y="10" width="50" height="50" rx="6" fill="#1C1C1E" />
-                <rect x="18" y="18" width="34" height="34" rx="3" fill="#FFFFFF" />
-                <rect x="25" y="25" width="20" height="20" rx="2" fill="#1C1C1E" />
+              {/* Body: Centered store icon, headline, and pill-bordered input */}
+              <div className="flex flex-col items-center px-6 pt-7 pb-6">
+                {/* Green store badge */}
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-600 dark:text-emerald-400 shadow-sm mb-4">
+                  <Store size={22} strokeWidth={1.75} />
+                </div>
 
-                <rect x="140" y="10" width="50" height="50" rx="6" fill="#1C1C1E" />
-                <rect x="148" y="18" width="34" height="34" rx="3" fill="#FFFFFF" />
-                <rect x="155" y="25" width="20" height="20" rx="2" fill="#1C1C1E" />
+                {/* Headline */}
+                <h3 className="text-[20px] sm:text-[22px] font-semibold text-foreground tracking-tight text-center mb-5">
+                  Enter the merchant ID
+                </h3>
 
-                <rect x="10" y="140" width="50" height="50" rx="6" fill="#1C1C1E" />
-                <rect x="18" y="148" width="34" height="34" rx="3" fill="#FFFFFF" />
-                <rect x="25" y="155" width="20" height="20" rx="2" fill="#1C1C1E" />
-
-                {/* Timing patterns & decorative GhQR data blocks */}
-                <g fill="#1C1C1E">
-                  <rect x="70" y="16" width="10" height="10" rx="1" />
-                  <rect x="90" y="16" width="10" height="10" rx="1" />
-                  <rect x="110" y="16" width="10" height="10" rx="1" />
-                  <rect x="16" y="70" width="10" height="10" rx="1" />
-                  <rect x="16" y="90" width="10" height="10" rx="1" />
-                  <rect x="16" y="110" width="10" height="10" rx="1" />
-
-                  <rect x="70" y="40" width="10" height="10" rx="1" />
-                  <rect x="100" y="40" width="10" height="10" rx="1" />
-                  <rect x="120" y="40" width="10" height="10" rx="1" />
-
-                  <rect x="40" y="70" width="10" height="10" rx="1" />
-                  <rect x="70" y="70" width="10" height="10" rx="1" />
-                  <rect x="120" y="70" width="10" height="10" rx="1" />
-                  <rect x="140" y="70" width="10" height="10" rx="1" />
-                  <rect x="170" y="70" width="10" height="10" rx="1" />
-
-                  <rect x="40" y="100" width="10" height="10" rx="1" />
-                  <rect x="70" y="100" width="10" height="10" rx="1" />
-                  <rect x="140" y="100" width="10" height="10" rx="1" />
-                  <rect x="160" y="100" width="10" height="10" rx="1" />
-
-                  <rect x="40" y="120" width="10" height="10" rx="1" />
-                  <rect x="100" y="120" width="10" height="10" rx="1" />
-                  <rect x="120" y="120" width="10" height="10" rx="1" />
-                  <rect x="170" y="120" width="10" height="10" rx="1" />
-
-                  <rect x="70" y="140" width="10" height="10" rx="1" />
-                  <rect x="110" y="140" width="10" height="10" rx="1" />
-                  <rect x="150" y="140" width="10" height="10" rx="1" />
-
-                  <rect x="80" y="160" width="10" height="10" rx="1" />
-                  <rect x="120" y="160" width="10" height="10" rx="1" />
-                  <rect x="170" y="160" width="10" height="10" rx="1" />
-
-                  <rect x="70" y="180" width="10" height="10" rx="1" />
-                  <rect x="100" y="180" width="10" height="10" rx="1" />
-                  <rect x="140" y="180" width="10" height="10" rx="1" />
-                </g>
-
-                {/* Central Shield with Golden Eagle */}
-                <rect x="78" y="78" width="44" height="44" rx="8" fill="#FFFFFF" stroke="#FFC423" strokeWidth="2" />
-              </svg>
-              <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                <GCBLogo className="size-7 text-foreground" />
+                {/* Centered input */}
+                <div className="w-full">
+                  <Input
+                    id="terminal-input-id"
+                    value={terminalInput}
+                    onChange={(e) => setTerminalInput(e.target.value.toUpperCase())}
+                    placeholder="E.G. GCB-QR-88210"
+                    className="h-12 w-full rounded-2xl border border-border bg-background px-4 text-center font-mono uppercase text-[15px] tracking-wider placeholder:text-muted-foreground/60 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && terminalInput.trim()) {
+                        e.preventDefault();
+                        handleConfirmTerminal(terminalInput);
+                      }
+                    }}
+                  />
+                </div>
               </div>
-            </div>
 
-            <p className="text-[12px] text-muted-foreground max-w-[280px]">
-              Scan with GCB Mobile App, GhanaPay, or any GhQR-compliant banking app to pay this account.
-            </p>
-
-            {/* Actions: Share & Download */}
-            <div className="flex w-full items-center gap-3 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                className="flex-1 gap-2 text-[13px]"
-                onClick={handleShareMyQr}
-              >
-                <Share2 size={15} />
-                <span>Share QR</span>
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="flex-1 gap-2 text-[13px]"
-                onClick={handleDownloadMyQr}
-              >
-                <Download size={15} />
-                <span>Download</span>
-              </Button>
-            </div>
-          </div>
+              {/* Footer: Right-aligned Cancel button (and Continue if text is typed) */}
+              <div className="flex items-center justify-end px-6 py-4 border-t border-border/60">
+                <button
+                  type="button"
+                  onClick={() => setTerminalDialogOpen(false)}
+                  className="text-[14px] font-medium text-muted-foreground hover:text-foreground px-2 py-1 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                {terminalInput.trim() && (
+                  <Button
+                    type="button"
+                    className="ml-3 h-9 px-4 rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover font-medium shadow-xs cursor-pointer"
+                    onClick={() => handleConfirmTerminal(terminalInput)}
+                  >
+                    Continue
+                  </Button>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       ) : (
-        /* ── MODE B: SCAN & PAY ── */
-        <div className="flex flex-col gap-6 animate-in fade-in duration-200">
-          {/* 1. Source Account */}
+        /* ── STAGE B: MERCHANT IDENTIFIED -> PAYMENT DETAILS ── */
+        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+          {/* Source Account Selector */}
           <FromAccountSelector
             accounts={accounts}
             value={state.fromId}
             onChange={(id: string) => onChange("fromId", id)}
           />
 
-          {/* 2. Merchant & QR Identification */}
+          {/* Identified Merchant Card */}
           <Field label="Merchant Details">
-            {isMerchantSelected && isCollapsed ? (
+            {isCollapsed ? (
               <CollapsedDetailsBadge
                 title={state.qrMerchant}
                 subtitle={`Terminal: ${state.qrCode || "Verified GCB QR"}`}
@@ -322,7 +439,7 @@ export function ScanAndPayFlow({
                 nameCheck={{ confirmed: true }}
                 onChange={() => setCollapsed(false)}
               />
-            ) : isMerchantSelected ? (
+            ) : (
               <div className="flex items-center justify-between rounded-xl border border-success/30 bg-success/5 p-3.5">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-success/15 text-success">
@@ -330,7 +447,9 @@ export function ScanAndPayFlow({
                   </div>
                   <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[14px] font-medium text-foreground truncate">{state.qrMerchant}</span>
+                      <span className="text-[14px] font-medium text-foreground truncate">
+                        {state.qrMerchant}
+                      </span>
                       <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-success text-success-foreground shadow-xs">
                         <Check size={9} strokeWidth={3} className="shrink-0" />
                       </span>
@@ -345,160 +464,45 @@ export function ScanAndPayFlow({
                   variant="ghost"
                   size="sm"
                   onClick={handleClearMerchant}
-                  className="text-xs text-muted-foreground hover:text-foreground h-8 px-2.5"
-                  aria-label="Remove merchant"
+                  className="text-xs text-muted-foreground hover:text-foreground h-8 px-2.5 cursor-pointer"
+                  aria-label="Change merchant"
                 >
                   Change
                 </Button>
               </div>
-            ) : (
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-[13px] font-medium text-muted-foreground">Identify merchant</span>
-                  <SegmentedControl
-                    aria-label="Merchant identification method"
-                    value={activeTab}
-                    onChange={(val) => setActiveTab(val as "camera" | "manual")}
-                    options={[
-                      { value: "camera", label: "Scanner" },
-                      { value: "manual", label: "Enter ID" },
-                    ]}
-                  />
-                </div>
-
-                {/* Viewfinder Scanner Tab */}
-                {activeTab === "camera" && (
-                  <div className="flex flex-col gap-3">
-                    <div className="relative flex aspect-video sm:aspect-[16/9] w-full flex-col items-center justify-center overflow-hidden rounded-2xl border border-border/70 bg-muted/30 text-foreground">
-                      {/* Viewfinder Target Box */}
-                      <div className="relative size-36 sm:size-44 flex items-center justify-center rounded-2xl border-2 border-dashed border-primary/40 bg-background/30 backdrop-blur-xs">
-                        <div className="absolute inset-x-3 top-0 h-0.5 bg-primary/70 animate-pulse" />
-                        <Camera size={26} className="text-muted-foreground/60" strokeWidth={1.5} />
-                      </div>
-
-                      {/* Top right: Select QR from Gallery */}
-                      <label className="absolute top-3 right-3 flex items-center gap-1.5 rounded-lg border border-border/70 bg-background/80 px-2.5 py-1.5 text-[11.5px] text-foreground hover:bg-muted/80 backdrop-blur-xs cursor-pointer transition-colors shadow-xs">
-                        <ImageIcon size={13} />
-                        <span>Gallery</span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleGalleryUpload}
-                        />
-                      </label>
-
-                      {/* Flashlight toggle */}
-                      <button
-                        type="button"
-                        onClick={() => setFlashlight(!flashlight)}
-                        className={cn(
-                          "absolute bottom-3 right-3 flex size-8 items-center justify-center rounded-lg border transition-colors cursor-pointer",
-                          flashlight
-                            ? "bg-primary text-primary-foreground border-primary"
-                            : "bg-background/80 text-muted-foreground border-border/70 hover:text-foreground backdrop-blur-xs"
-                        )}
-                        aria-label="Toggle flashlight"
-                      >
-                        <Flashlight size={14} />
-                      </button>
-
-                      <span className="absolute bottom-3 left-3 text-[11.5px] text-muted-foreground">
-                        Align GCB GhanaPay or Universal QR inside frame
-                      </span>
-                    </div>
-
-                    {/* Quick Simulation Selectors */}
-                    <div className="flex flex-col gap-2 pt-1">
-                      <span className="text-[11.5px] font-medium text-muted-foreground">
-                        Or select a verified merchant to simulate scan:
-                      </span>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {SAMPLE_MERCHANTS.map((m) => {
-                          const Icon = m.icon;
-                          return (
-                            <button
-                              key={m.code}
-                              type="button"
-                              onClick={() => handleSelectMerchant(m)}
-                              className="flex items-center gap-2.5 rounded-xl border border-border/70 bg-muted/15 p-2.5 text-left transition-colors hover:bg-muted/50 hover:border-border cursor-pointer group"
-                            >
-                              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground group-hover:text-foreground transition-colors">
-                                <Icon size={16} strokeWidth={1.75} />
-                              </div>
-                              <div className="flex flex-col min-w-0">
-                                <span className="text-[12.5px] font-medium text-foreground truncate">{m.name}</span>
-                                <span className="text-[11px] text-muted-foreground font-mono">{m.code}</span>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Manual ID Input Tab */}
-                {activeTab === "manual" && (
-                  <div className="flex flex-col gap-2">
-                    <div className="flex gap-2">
-                      <Input
-                        id="merchant-id"
-                        value={state.qrCode}
-                        onChange={(e) => onChange("qrCode", e.target.value.toUpperCase())}
-                        placeholder="e.g. GCB-QR-88210"
-                        className="uppercase font-mono"
-                      />
-                      <Button
-                        type="button"
-                        className="h-11 px-4 text-[13px]"
-                        onClick={() => {
-                          const code = state.qrCode.trim().toUpperCase();
-                          const found = SAMPLE_MERCHANTS.find((m) => m.code === code);
-                          onChange("qrMerchant", found ? found.name : `Verified Merchant (${code})`);
-                        }}
-                        disabled={!state.qrCode.trim()}
-                      >
-                        Verify
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
             )}
           </Field>
 
-          {/* 3. Progressive Disclosure: Amount, Narration, Category, CTA */}
-          {isMerchantSelected && (
-            <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-              <AmountInput
-                value={state.amount}
-                onChange={(val: string) => onChange("amount", val)}
-                onFocus={() => {
-                  setCollapsed(true);
-                }}
-                currency="GHS"
-                error={hasInsufficientFunds ? <InsufficientFundsAlert /> : undefined}
-              />
+          {/* Amount Input */}
+          <AmountInput
+            value={state.amount}
+            onChange={(val: string) => onChange("amount", val)}
+            onFocus={() => {
+              setCollapsed(true);
+            }}
+            currency="GHS"
+            error={hasInsufficientFunds ? <InsufficientFundsAlert /> : undefined}
+          />
 
-              <NarrationInput
-                value={state.narration}
-                onChange={(val: string) => onChange("narration", val)}
-                placeholder="e.g. Counter Checkout / Table 4"
-              />
+          {/* Narration */}
+          <NarrationInput
+            value={state.narration}
+            onChange={(val: string) => onChange("narration", val)}
+            placeholder="e.g. Counter Checkout / Table 4"
+          />
 
-              <CategorySelect
-                value={state.category}
-                onChange={(val: string) => onChange("category", val)}
-              />
+          {/* Category */}
+          <CategorySelect
+            value={state.category}
+            onChange={(val: string) => onChange("category", val)}
+          />
 
-              <ProceedButton
-                disabled={!canProceed}
-                onClick={onProceed}
-                label="Review & Pay Merchant"
-              />
-            </div>
-          )}
+          {/* Action Button */}
+          <ProceedButton
+            disabled={!canProceed}
+            onClick={onProceed}
+            label="Review & Pay Merchant"
+          />
         </div>
       )}
     </div>

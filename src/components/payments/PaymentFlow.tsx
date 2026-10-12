@@ -32,6 +32,7 @@ import {
   Wifi,
 } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ActionTile } from "@/components/ui/action-tile";
 import {
@@ -877,10 +878,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       return [
         {
           id: "rec-s1",
-          name: "Mum (Yaa Osei)",
+          name: "Mum (Yaa Gyan)",
           bank: "MTN Mobile Money",
           acct: "0244 889 900",
-          initials: "YO",
+          initials: "YG",
           rail: "wallet",
           colorBg: "var(--avatar-teal)",
         },
@@ -2912,7 +2913,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   // Unified Progressive Disclosure Experience across ALL Services
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
+    <div className={cn(
+      "mx-auto flex w-full flex-col gap-8 animate-in fade-in duration-200 ease-out",
+      rail === "qr" ? "max-w-xl" : "max-w-2xl"
+    )}>
       {/* Header with back button */}
       <div className="flex items-center justify-between gap-3 min-w-0">
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
@@ -2923,6 +2927,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 setStage(2);
               } else if (stage === 2) {
                 setStage(1);
+              } else if (rail === "qr" && f.qrMerchant) {
+                set("qrMerchant", "");
+                set("qrRef", "");
+                setStage1Collapsed(false);
               } else if (rail === "bank" && bankCategory) {
                 setBankCategory(null);
               } else if ((rail === "wallet" || rail === "momo" || rail === "wallet-to-bank") && walletCategory) {

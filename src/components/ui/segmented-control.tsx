@@ -14,14 +14,27 @@ interface SegmentedControlProps<T extends string> {
   /** Names the group for assistive tech. */
   "aria-label": string;
   className?: string;
+  fullWidth?: boolean;
 }
 
-export function SegmentedControl<T extends string>({ options, value, onChange, className, ...rest }: SegmentedControlProps<T>) {
+export function SegmentedControl<T extends string>({
+  options,
+  value,
+  onChange,
+  className,
+  fullWidth = false,
+  ...rest
+}: SegmentedControlProps<T>) {
   return (
     <div
       role="radiogroup"
       aria-label={rest["aria-label"]}
-      className={cn("inline-flex w-fit max-w-full flex-nowrap items-center overflow-x-auto no-scrollbar rounded-xl bg-chip p-1", className)}
+      className={cn(
+        fullWidth
+          ? "flex w-full items-center rounded-xl bg-chip p-1"
+          : "inline-flex w-fit max-w-full flex-nowrap items-center overflow-x-auto no-scrollbar rounded-xl bg-chip p-1",
+        className
+      )}
     >
       {options.map((o) => {
         const active = o.value === value;
@@ -33,10 +46,11 @@ export function SegmentedControl<T extends string>({ options, value, onChange, c
             aria-checked={active}
             onClick={() => onChange(o.value)}
             className={cn(
-              "flex shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-[12.5px] transition duration-hover sm:px-4 sm:py-2 sm:text-[13px]",
+              "flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg px-3 py-1.5 text-[12.5px] transition duration-hover sm:px-4 sm:py-2 sm:text-[13px]",
+              fullWidth ? "flex-1" : "shrink-0",
               active
                 ? "bg-chip-selected font-medium text-chip-selected-foreground shadow-sm"
-                : "text-chip-foreground hover:text-chip-selected-foreground",
+                : "text-chip-foreground hover:text-chip-selected-foreground"
             )}
           >
             {o.label}

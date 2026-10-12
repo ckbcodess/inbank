@@ -49,12 +49,12 @@ export function DemoUserSwitcherSection() {
     {
       id: "clean",
       title: "Clean (Zero Setup)",
-      subtitle: "Kwesi Arthur · Fresh Unfunded Account · 0 Cards · 0 Payees",
+      subtitle: "Samuel Quartey · Fresh Unfunded Account · 0 Cards · 0 Payees",
     },
     {
       id: "single",
       title: "Single Account User",
-      subtitle: "Abena Osei · 1 Account · 1 Visa Debit · 2 Payees",
+      subtitle: "Ishmael Gyan · 1 Account · 1 Visa Debit · 2 Payees",
     },
     {
       id: "everyday",

@@ -399,7 +399,7 @@ export function getInitialBeneficiaries(): BeneficiaryRecord[] {
         return [
           {
             id: "ben-s1",
-            name: "Mum (Yaa Osei)",
+            name: "Mum (Yaa Gyan)",
             transactionType: "wallet",
             category: "person",
             network: "MTN Mobile Money",
@@ -433,7 +433,7 @@ export function getInitialBeneficiaries(): BeneficiaryRecord[] {
         return [
           {
             id: "ben-s1",
-            name: "Mum (Yaa Osei)",
+            name: "Mum (Yaa Gyan)",
             transactionType: "wallet",
             category: "person",
             network: "MTN Mobile Money",

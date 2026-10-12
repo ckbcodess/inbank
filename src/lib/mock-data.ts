@@ -54,9 +54,19 @@ const CORPORATE_PROFILE: Profile = {
  */
 export const ACTORS: Actor[] = [
   {
+    id: "u-retail",
+    name: "Ransford Gyasi",
+    email: "ransford.gyasi@example.com",
+    phone: "0244123821",
+    role: "RETAIL_CUSTOMER",
+    shell: "customer",
+    profiles: [RETAIL_PROFILE],
+    tradeEligible: false,
+  },
+  {
     id: "u-clean",
-    name: "Kwesi Arthur",
-    email: "kwesi.arthur@example.com",
+    name: "Samuel Quartey",
+    email: "samuel.quartey@example.com",
     phone: "0244000001",
     role: "RETAIL_CUSTOMER",
     shell: "customer",
@@ -65,22 +75,12 @@ export const ACTORS: Actor[] = [
   },
   {
     id: "u-single",
-    name: "Abena Osei",
-    email: "abena.osei@example.com",
+    name: "Ishmael Gyan",
+    email: "ishmael.gyan@example.com",
     phone: "0551200313",
     role: "RETAIL_CUSTOMER",
     shell: "customer",
     profiles: [SINGLE_PROFILE],
-    tradeEligible: false,
-  },
-  {
-    id: "u-retail",
-    name: "Ransford Gyasi",
-    email: "ransford.gyasi@example.com",
-    phone: "0244123821",
-    role: "RETAIL_CUSTOMER",
-    shell: "customer",
-    profiles: [RETAIL_PROFILE],
     tradeEligible: false,
   },
   {
@@ -440,8 +440,8 @@ export const GHANA_CARD_ACCOUNT_IDS = ["acc-ret-001", "acc-ret-002", "acc-ret-ho
 
 /**
  * Inspects browser storage to resolve active retail simulation profile:
- * - "clean": Kwesi Arthur (0 cards, 0 beneficiaries, fresh unfunded account)
- * - "single": Abena Osei (1 account, 1 card, 2 beneficiaries)
+ * - "clean": Samuel Quartey (0 cards, 0 beneficiaries, fresh unfunded account)
+ * - "single": Ishmael Gyan (1 account, 1 card, 2 beneficiaries)
  * - "everyday": Ransford Gyasi (multi-account active user)
  */
 export function getSimulatedRetailUser(): "clean" | "single" | "everyday" {
@@ -1406,8 +1406,8 @@ export const SINGLE_USER_TRANSACTIONS: Transaction[] = [
     reference: "NIB-2026-909902",
     date: "2026-10-08",
     valueDate: "2026-10-08",
-    description: "Transfer to Mum (Yaa Osei)",
-    counterparty: "Mum (Yaa Osei)",
+    description: "Transfer to Mum (Yaa Gyan)",
+    counterparty: "Mum (Yaa Gyan)",
     counterpartyAccount: "0244 889 900",
     accountId: "acc-single-001",
     currency: "GHS",
@@ -2144,7 +2144,7 @@ export const CARDS: PaymentCard[] = [
     currency: "GHS",
     balance: null,
     linkedAccountId: "acc-single-001",
-    holder: "Abena Osei",
+    holder: "Ishmael Gyan",
     expiry: "11/29",
     status: "Active",
     fundable: false,
@@ -2685,7 +2685,7 @@ export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
   },
   {
     id: "si-s01",
-    beneficiary: "Yaa Osei (Mum) — Family support",
+    beneficiary: "Yaa Gyan (Mum) — Family support",
     accountId: "acc-single-001",
     amount: 200,
     currency: "GHS",

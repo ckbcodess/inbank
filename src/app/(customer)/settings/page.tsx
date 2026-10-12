@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Bell,
@@ -45,12 +45,22 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsTab>("profile");
 
   // Profile state
-  const [name, setName] = useState(actor?.name || "Kodjo Mensah");
-  const [email, setEmail] = useState(actor?.email || "kodjo.mensah@adinkragroup.com");
-  const [phone, setPhone] = useState("+233 24 412 3456");
+  const [name, setName] = useState(actor?.name || "Ransford Gyasi");
+  const [email, setEmail] = useState(actor?.email || "ransford.gyasi@example.com");
+  const [phone, setPhone] = useState(actor?.phone ? `+233 ${actor.phone.slice(1, 3)} ${actor.phone.slice(3, 6)} ${actor.phone.slice(6)}` : "+233 24 412 3821");
   const [ghanaCard] = useState("GHA-721840294-8");
-  const [proxyId] = useState("GH-KODJO-01");
+  const [proxyId] = useState(actor?.name ? `GH-${actor.name.split(" ")[0].toUpperCase()}-01` : "GH-RANSFORD-01");
   const [address, setAddress] = useState("Plot 14, Senchi Street, Airport Residential Area, Accra");
+
+  useEffect(() => {
+    if (actor) {
+      setName(actor.name);
+      setEmail(actor.email);
+      if (actor.phone) {
+        setPhone(`+233 ${actor.phone.slice(1, 3)} ${actor.phone.slice(3, 6)} ${actor.phone.slice(6)}`);
+      }
+    }
+  }, [actor]);
 
   // Security state
   const [currentPassword, setCurrentPassword] = useState("");

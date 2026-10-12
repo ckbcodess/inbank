@@ -25,6 +25,7 @@ import { isCompleteGhanaMobile } from "@/lib/phone";
 import { Field } from "@/components/ui/field";
 import { GhanaCardInput } from "@/components/ui/ghana-card-input";
 import { Input } from "@/components/ui/input";
+import { useSession } from "@/lib/session-store";
 interface ProxyIdModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -42,6 +43,8 @@ export default function ProxyIdModal({
   onSaved,
 }: ProxyIdModalProps) {
   const { myProxy, registerProxy, updateProxy } = useProxyStore();
+  const actor = useSession((s) => s.actor);
+  const userAlias = actor?.name ? actor.name.split(" ")[0].toLowerCase() : "ransford";
 
   const [type, setType] = useState<ProxyType>("phone");
   const [value, setValue] = useState("");
@@ -133,7 +136,7 @@ export default function ProxyIdModal({
                 type="email"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder="e.g. kwesi@example.com"
+                placeholder={`e.g. ${userAlias}@example.com`}
                 autoFocus
               />
             ) : (
@@ -141,7 +144,7 @@ export default function ProxyIdModal({
                 type="text"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder="e.g. kwesi-ghipss"
+                placeholder={`e.g. ${userAlias}-ghipss`}
                 autoFocus
               />
             )}

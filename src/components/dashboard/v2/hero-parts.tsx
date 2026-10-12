@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { useSession } from "@/lib/session-store";
 import { heroWaveVars, useHeroWave } from "@/lib/hero-wave";
@@ -299,20 +299,22 @@ export function HeroAccountOptionsMenu({
   );
 }
 
-/** Top left CTA on the hero surface: QR Code CTA. */
+/** Top left CTA on the hero surface: QR Code CTA. Routes to My QR on Scan to Pay page. */
 export function HeroQrAction({ className }: { className?: string }) {
   return (
-    <Button
-      variant="glass"
-      size="icon-lg"
-      className={cn(HERO_GLASS_EXTRA, "h-10 w-10 max-sm:h-9 max-sm:w-9 relative z-10", className)}
-      aria-label="Scan & Pay with QR"
-      title="Scan & Pay with QR"
-      nativeButton={false}
-      render={<Link href="/payments/send?rail=qr" />}
+    <Link
+      href="/payments/send?rail=qr&mode=myqr"
+      className={cn(
+        buttonVariants({ variant: "glass", size: "icon-lg" }),
+        HERO_GLASS_EXTRA,
+        "h-10 w-10 max-sm:h-9 max-sm:w-9 relative z-10",
+        className
+      )}
+      aria-label="My QR Code"
+      title="My QR Code"
     >
       <QrCode size={18} strokeWidth={1.9} className="size-[18px]" />
-    </Button>
+    </Link>
   );
 }
 

@@ -47,7 +47,7 @@ function migratedPayees(): PayAgainPayee[] {
 }
 
 const SINGLE_PAYEES: PayAgainPayee[] = [
-  { name: "Mum (Yaa Osei)", detail: "MTN MoMo", href: payHref("wallet", "Mum (Yaa Osei)", { account: "0244889900" }) },
+  { name: "Mum (Yaa Gyan)", detail: "MTN MoMo", href: payHref("wallet", "Mum (Yaa Gyan)", { account: "0244889900" }) },
   { name: "ECG Electricity", detail: "ECG prepaid", href: payHref("bill", "ECG Electricity", { ref: "P-992014" }) },
 ];
 

@@ -62,7 +62,10 @@ function LoginForm() {
       const actor = findActorByPhone(mobile);
       if (!actor) {
         // Fallback for prototype testing: allow login if email matches demo pattern or default actor
-        const defaultActor = bankingType === "business" ? ACTORS[5] : ACTORS[0];
+        const defaultActor =
+          bankingType === "business"
+            ? (ACTORS.find((a) => a.role.startsWith("CORPORATE_")) ?? ACTORS[5])
+            : (ACTORS.find((a) => a.id === "u-retail") ?? ACTORS[0]);
         signIn(defaultActor);
         router.push("/mfa");
         return;

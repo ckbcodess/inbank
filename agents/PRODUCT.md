@@ -277,7 +277,8 @@ The Loans, Lifestyle, Cardless and QR scope conflicts are listed in WORKING_LOG.
 | Persona | Id | Who |
 |---|---|---|
 | Ransford Gyasi | `u-retail` | Main retail customer, several accounts (`024 412 3821`) |
-| Samuel Quartey | `u-joint` | Retail, plus a joint account with Esther Appiah. The only persona that switches profiles |
+| Samuel Quartey | `u-clean` / `u-joint` | Clean zero-setup persona (`u-clean`), plus joint account with Esther Appiah (`u-joint`) |
+| Ishmael Gyan | `u-single` | Single-account retail customer (1 account, 1 card, 2 payees) |
 | Elias Ayettey | `u-joint-either` | Retail joint account holder (either-to-sign) |
 | Abena Osei | `u-abena` | Mobile app user |
 | Kofi Mensah | `u-kofi` | COOS persona |

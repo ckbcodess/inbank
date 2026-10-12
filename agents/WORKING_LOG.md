@@ -185,16 +185,29 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-10-12
+
+- **Decision (Active Persona and Account Holder Cleanup):** Replaced static hardcoded "Kwesi Appiah" occurrences across `LinkSourceAccountModal.tsx`, `ScanAndPayFlow.tsx` (GhQR payload, share text, and card details), and `BillsPaymentFlow.tsx` with dynamic session actor resolution (`actor?.name || "Ransford Gyasi"`), ensuring all simulated personas (Ransford Gyasi, Samuel Quartey, Ishmael Gyan) render accurately. Cleaned up Settings (`settings/page.tsx`) fallback from stale "Kodjo Mensah" to "Ransford Gyasi" with hydration synchronization, updated `ProxyIdModal.tsx` alias placeholders dynamically, prioritized `u-retail` as `ACTORS[0]` and default login persona, and aligned historical simulation persona references in the log.
+- **Decision (Design Delivery Proposal Q4 2026):** Reworked design delivery timeline to 05 October – 18 December 2026 (11 weeks), aligning with the BRD target go-live of 15 December 2026. Reserved December for dedicated UAT testing support/defect triage and Design System Add-ons (harvesting and documenting UI assets/components created during the project for omnichannel reuse). Compiled print-ready proposal PDF at `docs/Internet-Banking-Design-Delivery-Proposal-Q4-2026.pdf` and markdown at `docs/DESIGN-DELIVERY-PROPOSAL-Q4-2026.md`.
+- **Decision (Scan & Pay Viewfinder & My QR Refinements):** Refined `ScanAndPayFlow.tsx` and `qr-code.tsx`:
+  - Updated camera viewfinder to an immersive full-black aesthetic (`bg-black`) with high-contrast white crosshairs and helper text positioned directly beneath the frame.
+  - Positioned the destination receiving account switcher beneath the QR code card using `FromAccountSelector` matching the standard account selectors in Send & Pay flows.
+  - Removed container gray fills (`bg-neutral-100`) from the My QR display and SVG cutout mask in favor of transparent/`bg-background` integration.
+  - Balanced the center GCB emblem by increasing its scale (`w-12 h-auto`) to harmonize with the circular cutout diameter and removing the restrictive inner bounding ring.
+  - Refactored `qr-code.tsx` module rendering from rounded chiclet squares (`rx={0.16}`) to standard, solid, continuous rectangular blocks with horizontal run-length merging and `shapeRendering="crispEdges"`, giving the code the authentic, sharp appearance of an official QR code.
+  - Renamed the scan action button to "Enter Merchant ID" (replacing "Type Terminal ID") and removed the sample merchants simulation grid from the Merchant ID input dialog for a clean, production-grade modal.
+- **Decision (Onboarding Layout Chip Visibility):** Guarded the floating layout switcher chip in `AuthLayout` (`src/components/auth/AuthLayout.tsx`) behind `SHOW_DEMO_TOOLS` so it does not render on production/live builds (`process.env.NODE_ENV === "production"`), and bound it to `useDevToolsHidden()` and `useCaptureMode()` so pressing `Ctrl+Shift+D` (or `Cmd+Shift+D`) toggles its visibility in dev alongside the other floating tools.
+
 ### 2026-10-11
 
 - **Decision (Internet Banking Review Implementation - 35 items across 7 modules):** Executed comprehensive review and polish items from `Internet Banking Review 9Oct26.docx`:
   1. **Pre-login & PIN:** `/forgot-pin` automatically bypasses redundant mobile entry if already authenticated in session; step count adjusted to 3 steps with back button routing to `/mfa`; added concrete visual examples (`e.g. 1234`, `e.g. 1111`) to PIN requirements rules.
   2. **Dashboard & Shell:** Updated unfunded nudge copy to "Fund your virtual account" and "Fund Virtual Account"; lowered `.dash-grid` container query breakpoint from 1060px to 920px (media fallback 1200px) enabling 3-column layout on standard laptops; changed transaction history dropdown to "View Last 10 Transactions"; decorated empty states with contextual semantic badges; mounted floating 3D Sidi avatar (`public/sidi-avatar.png`) assistant globally across all screens.
-  3. **Accounts & Cards:** Enhanced `AddAccountDialog.tsx` with multi-select checkboxes and dynamic batch button ("Add Accounts (${count})"); renamed accounts funding section to "Other Funding Sources"; styled Remove Card dialog with exact confirmation copy; improved `LinkSourceAccountModal.tsx` with compact Select dropdown, 10-digit auto-resolution for Kwesi Appiah, and on-screen verification code simulation; added single-account fallback message in `OwnAccountFlow.tsx`; updated `VirtualCardDetailsView.tsx` with prominent "Card Blocked" title and masked account reference format `Linked to Current Account xxxx1234`.
+  3. **Accounts & Cards:** Enhanced `AddAccountDialog.tsx` with multi-select checkboxes and dynamic batch button ("Add Accounts (${count})"); renamed accounts funding section to "Other Funding Sources"; styled Remove Card dialog with exact confirmation copy; improved `LinkSourceAccountModal.tsx` with compact Select dropdown, 10-digit auto-resolution for account holder (Ransford Gyasi), and on-screen verification code simulation; added single-account fallback message in `OwnAccountFlow.tsx`; updated `VirtualCardDetailsView.tsx` with prominent "Card Blocked" title and masked account reference format `Linked to Current Account xxxx1234`.
   4. **Send & Pay Transfers & Rails:** Alphabetized all 33 Ghanaian banks in `BANKS` list from Absa to Zenith; renamed PAPSS processing fee to simple "Fee"; added clickable search icon and `Enter` key triggers across `OtherBankFlow`, `OtherGcbFlow` (enforcing strict 13-digit GCB length validation), and `ProxyPayFlow`; expanded `proxy-store.ts` to support Ghana Card, phone number, email, and custom alias proxy types; enabled 3 destination categories in `CreateGroupFlow.tsx` (GCB, Other Local Bank, Mobile Wallet); added optional Narration input and verified USSD push modal on `WalletToBankFlow.tsx`; updated `PapssPaymentFlow.tsx` to "Enter account number" and added `PAPSS_PURPOSES` Select dropdown; displayed recipient account and recipient bank rows in PAPSS review summary.
   5. **GCB Pay & Bills:** Swapped "Subscriptions" and "Others" so Others sits last; enabled ECG Prepaid auto-resolution to Sam Quartey; added `TV_PACKAGES` for DStv, GOtv, StarTimes prepopulating amounts while keeping them editable; ordered beneficiary details card to Name of Beneficiary -> Name of Biller -> Reference number; permitted flexible donor identifier resolution under Giving & Donations; removed own-card limitation on `CardTopUpFlow.tsx` and added 8-character alphanumeric reference support.
   6. **Confirmation & Receipts:** Enforced sentence case with exclamation mark on confirmation titles (`Transfer successful!`, `Payment successful!`, `Request submitted!`); replaced dollar receipt icon with `ReceiptText`; added interactive "Share Feedback" modal with emojis (😊 Great, 😐 Okay, ☹️ Not good), comment textarea, and toast feedback; wired View Receipt navigation with `?from=success` parameter; configured transaction receipt back button to return to payments; embedded official GCB logo and subtle eagle watermark on receipt background; hid "Save as Beneficiary" for own-account transfers.
-  7. **QR Payments & Invest Hub:** Built dual-mode segmented toggle in `ScanAndPayFlow.tsx` between **Scan & Pay** and **My QR**; in My QR: receiving account selector, Kwesi Appiah customer name, masked account number, high-res GhQR SVG code, and Share & Download actions; in Scan & Pay: camera viewfinder with live frame, flashlight, "Select QR from Gallery" image upload, and Terminal ID entry with verification; streamlined Invest home to provide immediate, clear choice cards between Term Deposits and Treasury Bills & Bonds.
+  7. **QR Payments & Invest Hub:** Built dual-mode segmented toggle in `ScanAndPayFlow.tsx` between **Scan & Pay** and **My QR**; in My QR: receiving account selector, Ransford Gyasi customer name, masked account number, high-res GhQR SVG code, and Share & Download actions; in Scan & Pay: camera viewfinder with live frame, flashlight, "Select QR from Gallery" image upload, and Terminal ID entry with verification; streamlined Invest home to provide immediate, clear choice cards between Term Deposits and Treasury Bills & Bonds.
 
 ### 2026-10-10
 
@@ -589,8 +602,8 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ### 2026-10-10
 - **Decision (Dev Mode User Simulation):** Replaced monolithic shared mock datasets with 3 coherent customer simulation personas (`useDevUserStore` in `src/lib/dev-user-simulation.ts`):
-  1. `Clean` (Kwesi Arthur, `u-clean`): Completely clean onboarding state with 0 payment cards, 0 saved beneficiaries, 0 transaction history, 0 standing orders, 0 linked funding sources, and a single unfunded GHS 0.00 account (`acc-clean-001`).
-  2. `Single` (Abena Osei, `u-single`): Realistic single-account user with 1 Current Account (`acc-single-001`, GHS 4,250.00), 1 GCB Visa Debit card (`card-single-001`), 2 scoped beneficiaries (Mum's MTN MoMo & ECG Prepaid), 5 focused transactions, 1 standing order, and 1 linked MoMo wallet.
+  1. `Clean` (Samuel Quartey, `u-clean`): Completely clean onboarding state with 0 payment cards, 0 saved beneficiaries, 0 transaction history, 0 standing orders, 0 linked funding sources, and a single unfunded GHS 0.00 account (`acc-clean-001`).
+  2. `Single` (Ishmael Gyan, `u-single`): Realistic single-account user with 1 Current Account (`acc-single-001`, GHS 4,250.00), 1 GCB Visa Debit card (`card-single-001`), 2 scoped beneficiaries (Mum's MTN MoMo & ECG Prepaid), 5 focused transactions, 1 standing order, and 1 linked MoMo wallet.
   3. `Everyday` (Ransford Gyasi, `u-retail`): Active multiple-account retail customer with Current, Smart Save & USD accounts, 3 cards (Debit, Prepaid, Virtual), 25 beneficiaries, rich ledger history, 3 standing instructions, and 3 linked accounts/wallets.
 - **Decision (Destructive Color Tokens):** Updated `--destructive` and `--destructive-text` across light and dark modes in `globals.css`:
   - `:root`: `--destructive: #dd1d43;`, `--destructive-text: #dd1d43;`
@@ -614,7 +627,42 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
   2. Mapped Pay Again and payee avatar circles in `parts.tsx` strictly to the dedicated `--avatar-*` tokens (`bg-avatar-teal`, `bg-avatar-sand`, `bg-avatar-green`, `bg-avatar-lilac`, `bg-avatar-blue`, `bg-avatar-yellow`, `bg-avatar-pink`) with `text-primary-foreground`.
   3. Aligned directional icons, row hover states, and amount typography in `TransactionList.tsx`, `transactions/[id]/page.tsx`, `accounts/[id]/page.tsx`, `VirtualCardDetailsView.tsx`, and `RecentActivityWidget.tsx` to match the dashboard (`bg-pill-success text-success` for credits, `bg-tile text-muted-foreground` for debits, `stroke-[2]`, `hover:bg-tile-hover`, and `text-success font-medium`).
 
+- **Decision (QR Payment / Scan & Pay Redesign):**
+  - Re-architected `ScanAndPayFlow.tsx` and `PaymentFlow.tsx` on `feature/qr-codes` to match the minimalist reference mockup (Images 1 & 2):
+    1. Centered layout constrained to `max-w-xl` aligning the header `< QR Payment`, the segmented switcher, the viewport, and the bottom actions seamlessly.
+    2. Full-width `SegmentedControl` (`Scan & Pay` | `My QR`) with edge-to-edge pill buttons.
+    3. **Scan & Pay Tab:**
+       - Replaced cluttered account selectors and quick merchant lists with a clean `aspect-[4/3]` viewport camera canvas featuring a subtle scanning reticle, animated laser indicator, and gallery file picker.
+       - Rendered two side-by-side action buttons: `Select from Gallery` (outline) and `Type Terminal ID` (primary brand amber `#FFC423`).
+       - Clicking `Type Terminal ID` triggers an accessible modal dialog to input the 8-10 digit GhQR Terminal ID, including quick sample merchant chips (Melcom Plus, Shell, Shoprite, Starbites).
+       - Upon scanning or terminal verification, smoothly transitions to the payment details form (Account, Amount, Narration, Category, Review & Pay).
+    4. **My QR Tab:**
+       - Clean `aspect-[4/3]` canvas with a centered white rounded card housing the user's GCB GhQR code, account details ("Ransford Gyasi — Operating Account •••• 0313"), and central GCB emblem.
+       - Rendered two side-by-side action buttons: `Share QR Code` (outline) and `Download` (primary brand amber `#FFC423`).
+    5. Back navigation on `< QR Payment` seamlessly clears selected merchant if in payment details stage, returning user straight to the scanner canvas before exiting to payments hub.
 
+### 2026-10-12
+- **Decision (Demo Simulation Personas Renamed):**
+  - Updated retail simulation personas in `src/components/states/DevStateMenuItems.tsx`, `src/lib/dev-user-simulation.ts`, and `src/lib/mock-data.ts`:
+    1. **Clean (Zero Setup):** Samuel Quartey (`u-clean`) — fresh unfunded account, 0 cards, 0 beneficiaries.
+    2. **Single Account User:** Ishmael Gyan (`u-single`) — 1 current account, 1 Visa Debit card, 2 beneficiaries (Mum Yaa Gyan & ECG Prepaid).
+    3. **Everyday User (Multiple Accounts):** Ransford Gyasi (`u-retail`) — 3 accounts, 3 cards, full history.
+- **My QR Layout & Logo Polish:**
+  - Kept the outer `aspect-[4/3]` container footprint in `ScanAndPayFlow.tsx` without a background fill so action buttons stay strictly anchored at the same height across mode switches.
+  - Built authentic Version 3 (29x29) Reed-Solomon QR code generator in `src/components/ui/qr-code.tsx` with smooth modules, proper finders, and a circular center knockout displaying the black GCB logo (`#1C1C1E`).
+  - Removed the redundant top text header above the QR code on the card.
+  - Fixed the `Type Terminal ID` dialog modal in `ScanAndPayFlow.tsx`: resolved double close buttons, eliminated title horizontal truncation, and moved instructional copy into `DialogBody`.
+  - Replaced the camera icon and dashed box in `ScanAndPayFlow.tsx` viewfinder with a 4-corner rounded crosshairs reticle matching the camera framing reference.
+  - Added `PersonalQrModal.tsx` and connected dashboard hero QR button (`HeroQrAction`) to trigger a personal QR overlay rather than navigating away immediately.
+  - Made the camera viewfinder fill the mobile screen (`min-h-[58vh] sm:min-h-0 sm:aspect-[4/3]`) while keeping desktop 4/3 ratio intact.
+  - Redesigned the Terminal ID modal into the clean Merchant ID dialog matching the reference: green store badge, "Enter the merchant ID" heading, centered pill input with "E.G. GCB-QR-88210", and right-aligned Cancel.
+  - Refactored Merchant ID modal styling to use semantic design tokens (`bg-card`, `text-foreground`, `text-muted-foreground`, `border-border/70`, `bg-muted`, etc.) ensuring natural adaptation across both light and dark themes without hardcoded dark values.
+  - Anchored `Scan & Pay / My QR` segmented toggles cleanly at the top of the view, while vertically centering the camera viewfinder and bottom action buttons (`my-auto justify-center`) in the remaining viewport space.
+  - Styled the camera scanning viewfinder canvas in solid pitch black (`bg-black border-black/80`) with bright white crosshairs brackets and white text (`text-white/90`) to authentically replicate an active camera feed.
+  - Scaled up the My QR card and code matrix (card width `w-[320px] sm:w-[350px]`, QR matrix size `260px`, central logo `size-9`), and removed borders from both the card and the outer footprint container for a seamless borderless presentation.
+  - Positioned the destination account switcher beneath the QR code card using `FromAccountSelector` (styled identically to the account selector in the Send & Pay flow): selecting an account automatically updates the card text, the QR matrix payload, and clipboard share copy.
+  - Gave the My QR card a filled background that adapts cleanly across modes (`bg-neutral-100 dark:bg-neutral-900/90`), with theme-adaptive QR modules, center knockout circle, and GCB brand logo (brand amber eagle `#FFC423` + black text in light mode, white text in dark mode).
+  - Updated dashboard hero QR button (`HeroQrAction`) to route directly to `/payments/send?rail=qr&mode=myqr` displaying the My QR code tab on load.
 
 ---
 

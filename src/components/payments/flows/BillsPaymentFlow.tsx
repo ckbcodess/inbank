@@ -26,6 +26,7 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
+import { useSession } from "@/lib/session-store";
 
 interface TvPackage {
   id: string;
@@ -102,6 +103,9 @@ export function BillsPaymentFlow({
   detailsCollapsed,
   onToggleCollapsed,
 }: BillsPaymentFlowProps) {
+  const actor = useSession((s) => s.actor);
+  const defaultUserName = actor?.name || "Ransford Gyasi";
+
   const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
   const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
 
@@ -155,7 +159,7 @@ export function BillsPaymentFlow({
 
   const [verifiedName, setVerifiedName] = useState<string>(() => {
     if (state.subType === "ecg" && state.ecgMeter.trim().length >= 4) {
-      return "Sam Quartey";
+      return "Samuel Quartey";
     }
     if (state.benName && currentRef.trim().length >= 4) {
       return state.benName;
@@ -189,12 +193,12 @@ export function BillsPaymentFlow({
     const ref = currentRef.trim();
     let finalName = "";
     if (state.subType === "ecg") {
-      finalName = "Sam Quartey";
+      finalName = "Samuel Quartey";
     } else if (isGivingCategory) {
       finalName = state.benName || "Registered Church Member";
     } else {
       const resolved = resolveAccountName(ref, state.benName || "");
-      finalName = resolved || "Verified Account Holder";
+      finalName = resolved || defaultUserName;
     }
 
     setTimeout(() => {
@@ -402,7 +406,7 @@ export function BillsPaymentFlow({
               <div className="flex flex-col gap-2 rounded-2xl border border-border/80 bg-muted/30 p-3.5 mt-1 animate-in fade-in duration-200">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[12.5px] text-muted-foreground">Name of Beneficiary</span>
-                  <span className="text-[13.5px] font-medium text-foreground">{verifiedName || (state.subType === "ecg" ? "Sam Quartey" : state.benName || "Kwesi Appiah")}</span>
+                  <span className="text-[13.5px] font-medium text-foreground">{verifiedName || (state.subType === "ecg" ? "Samuel Quartey" : state.benName || defaultUserName)}</span>
                 </div>
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[12.5px] text-muted-foreground">Name of Biller</span>

@@ -107,6 +107,7 @@ export default function LinkSourceAccountModal({
   const startCardLink = useCardLink((s) => s.start);
   const startCardPayment = useCardPayment((s) => s.start);
   const modalId = useId();
+  const actor = useSession((s) => s.actor);
   const activeProfile = useSession((s) => s.activeProfile);
   const allAccounts = useMemo(
     () => accountsProp ?? accountsForProfile(activeProfile?.kind ?? "RETAIL"),
@@ -720,7 +721,7 @@ export default function LinkSourceAccountModal({
                 {isCompleteGhanaMobile(newMomoNumber) && (
                   <div className="rounded-xl border border-success/30 bg-success/5 p-3 flex items-center justify-between text-[13px] animate-in fade-in duration-200">
                     <span className="text-muted-foreground">Account Holder:</span>
-                    <span className="font-medium text-foreground">Kwesi Appiah</span>
+                    <span className="font-medium text-foreground">{actor?.name || "Ransford Gyasi"}</span>
                   </div>
                 )}
 
