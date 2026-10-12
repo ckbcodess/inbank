@@ -15,6 +15,7 @@ import { QrCode } from "@/components/ui/qr-code";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { toast } from "sonner";
 import { accountsForProfile } from "@/lib/mock-data";
+import { useSession } from "@/lib/session-store";
 import { ScanLine, Share2, Download } from "lucide-react";
 
 interface PersonalQrModalProps {
@@ -23,6 +24,8 @@ interface PersonalQrModalProps {
 }
 
 export function PersonalQrModal({ open, onOpenChange }: PersonalQrModalProps) {
+  const { actor } = useSession();
+  const userName = actor?.name || "Ransford Gyasi";
   const accounts = accountsForProfile("RETAIL");
   const primaryAccount = accounts[0] || {
     name: "Operating Account",
@@ -30,7 +33,7 @@ export function PersonalQrModal({ open, onOpenChange }: PersonalQrModalProps) {
   };
 
   const handleShare = async () => {
-    const shareText = `GCB GhQR Payment Details\nName: Kwesi Appiah\nAccount: ${primaryAccount.name} (•••• ${primaryAccount.number.replace(/\s+/g, "").slice(-4)})\nBank: GCB Bank PLC`;
+    const shareText = `GCB GhQR Payment Details\nName: ${userName}\nAccount: ${primaryAccount.name} (•••• ${primaryAccount.number.replace(/\s+/g, "").slice(-4)})\nBank: GCB Bank PLC`;
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
@@ -61,7 +64,7 @@ export function PersonalQrModal({ open, onOpenChange }: PersonalQrModalProps) {
           {/* Centered White Rounded QR Card */}
           <div className="flex flex-col items-center justify-center rounded-2xl bg-white text-slate-900 p-6 shadow-sm border border-border/60 w-[240px] sm:w-[260px] aspect-square">
             <QrCode
-              value={`00020101021226500010com.ghana.pay0115GCB-0313-982105204541153039365802GH5912KWESI APPIAH6005ACCRA62140110GCB03139826304${primaryAccount.number.replace(/\s+/g, "").slice(-4)}`}
+              value={`00020101021226500010com.ghana.pay0115GCB-0313-982105204541153039365802GH59${String(userName.length).padStart(2, "0")}${userName.toUpperCase()}6005ACCRA62140110GCB03139826304${primaryAccount.number.replace(/\s+/g, "").slice(-4)}`}
               size={190}
               className="size-full"
               centerLogo={
@@ -77,7 +80,7 @@ export function PersonalQrModal({ open, onOpenChange }: PersonalQrModalProps) {
           {/* User & Account details */}
           <div className="flex flex-col items-center text-center">
             <span className="text-[15px] font-semibold text-foreground">
-              Kwesi Appiah
+              {userName}
             </span>
             <span className="text-[12px] text-muted-foreground font-mono">
               {primaryAccount.name} •••• {primaryAccount.number.replace(/\s+/g, "").slice(-4)}
