@@ -131,10 +131,10 @@ export default function BulkUploadPage() {
       </section>
 
       <div className="flex flex-wrap gap-2">
-        <Button disabled>Submit {validCount} valid records</Button>
         <Button variant="outline" nativeButton={false} render={<Link href="/payments" />}>
           Cancel
         </Button>
+        <Button disabled>Submit {validCount} valid records</Button>
       </div>
     </div>
   );

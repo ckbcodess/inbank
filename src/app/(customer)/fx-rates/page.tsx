@@ -161,7 +161,7 @@ export default function FxRatesPage() {
       {state === "empty" && (
         <TrueEmptyState illustration="empty-rates"
           title="No rates published yet today"
-          description="Yesterday's rates aren't shown because they may be out of date."
+          description="Yesterday's rates aren't shown; they may be out of date."
         />
       )}
 

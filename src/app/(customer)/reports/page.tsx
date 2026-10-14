@@ -269,6 +269,7 @@ export default function ReportsPage() {
       {effective === "empty" && (
         <TrueEmptyState illustration="empty-chart"
           title="No activity in this period"
+          description="No records between these dates. Try a wider range."
         />
       )}
 

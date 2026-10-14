@@ -181,6 +181,7 @@ export default function TransactionList({
   detailBase = "/transactions",
   showStateSwitcher = true,
   emptyTitle = "No transactions yet",
+  emptyDescription = "Activity will appear here once money moves.",
   initialAccountId,
 }: TransactionListProps) {
   const router = useRouter();
@@ -680,6 +681,7 @@ export default function TransactionList({
         <TrueEmptyState
           illustration="empty-activity"
           title={emptyTitle}
+          description={emptyDescription}
           action={
             <Button nativeButton={false} render={<Link href="/payments" />} className="h-9 rounded-lg px-4 text-[13px]">
               Start a transaction

@@ -160,6 +160,7 @@ export default function NotificationsPage() {
       {effective === "empty" && (
         <TrueEmptyState illustration="caught-up"
           title="Nothing to catch up on"
+          description="Payment updates will appear here."
         />
       )}
 

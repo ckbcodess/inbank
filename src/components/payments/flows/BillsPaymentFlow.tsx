@@ -19,6 +19,7 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   CollapsedDetailsBadge,
+  VerifiedAccountBadge,
   SchedulePaymentSection,
   ScheduleFrequency,
   resolveAccountName,
@@ -403,11 +404,11 @@ export function BillsPaymentFlow({
             )}
 
             {isVerified && (
+              <VerifiedAccountBadge name={verifiedName || (state.subType === "ecg" ? "Samuel Quartey" : state.benName || defaultUserName)} />
+            )}
+
+            {isVerified && (
               <div className="flex flex-col gap-2 rounded-2xl border border-border/80 bg-muted/30 p-3.5 mt-1 animate-in fade-in duration-200">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-[12.5px] text-muted-foreground">Name of Beneficiary</span>
-                  <span className="text-[13.5px] font-medium text-foreground">{verifiedName || (state.subType === "ecg" ? "Samuel Quartey" : state.benName || defaultUserName)}</span>
-                </div>
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[12.5px] text-muted-foreground">Name of Biller</span>
                   <span className="text-[13px] text-foreground font-medium">

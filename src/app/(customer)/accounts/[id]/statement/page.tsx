@@ -65,6 +65,7 @@ export default function StatementConfigurationPage({ params }: { params: Promise
       {pageState === "empty" && (
         <TrueEmptyState illustration="empty-statements"
           title="No statements available"
+          description="Statements appear once transactions are posted."
         />
       )}
 

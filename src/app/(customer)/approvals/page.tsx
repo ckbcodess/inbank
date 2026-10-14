@@ -132,6 +132,7 @@ export default function ApprovalQueuePage() {
       {effective === "empty" && (
         <TrueEmptyState illustration="caught-up"
           title="Nothing waiting on you"
+          description="Requests that need your approval will appear here."
         />
       )}
 

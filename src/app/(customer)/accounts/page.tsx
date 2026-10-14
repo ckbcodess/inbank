@@ -456,7 +456,8 @@ function AccountsContent() {
             }
           />
 
-          <div className={LIST}>
+          {/* The empty state sits straight on the page, with no card behind it. */}
+          <div className={screenState === "populated" && sources.length === 0 ? undefined : LIST}>
             {screenState === "loading" && <ListSkeleton rows={2} />}
 
             {screenState === "sources-error" && (
@@ -469,6 +470,7 @@ function AccountsContent() {
             {screenState === "populated" && sources.length === 0 && (
               <TrueEmptyState illustration="empty-sources"
                 title="No cards or wallets linked"
+                description="Link mobile money or a bank card to add money."
                 action={
                   <Button onClick={() => setLinkOpen(true)}>
                     <Plus size={15} strokeWidth={1.9} aria-hidden="true" />

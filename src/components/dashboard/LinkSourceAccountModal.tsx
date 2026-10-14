@@ -50,6 +50,7 @@ import { OPERATORS } from "@/lib/operators";
 import { SourceMark } from "@/components/ui/source-mark";
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
+import { VerifiedAccountBadge } from "@/components/payments/flows/shared";
 interface LinkSourceAccountModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -718,11 +719,9 @@ export default function LinkSourceAccountModal({
                   />
                 </Field>
 
+                {/* The verified name reads the same here as under every payment field. */}
                 {isCompleteGhanaMobile(newMomoNumber) && (
-                  <div className="rounded-xl border border-success/30 bg-success/5 p-3 flex items-center justify-between text-[13px] animate-in fade-in duration-200">
-                    <span className="text-muted-foreground">Account Holder:</span>
-                    <span className="font-medium text-foreground">{actor?.name || "Ransford Gyasi"}</span>
-                  </div>
+                  <VerifiedAccountBadge name={actor?.name || "Ransford Gyasi"} className="-mt-3" />
                 )}
 
                 <Field label="Network Operator">

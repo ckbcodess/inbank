@@ -115,6 +115,7 @@ export function AccountExpensesView({
         <div className="rounded-2xl border border-border bg-card">
           <TrueEmptyState illustration="empty-chart"
             title={`Nothing spent from this account in the last ${periodLabel}`}
+            description="Payments and card spend will show here."
             action={
               period !== "12m" ? (
                 <Button variant="outline" className="rounded-lg" onClick={() => changePeriod("12m")}>

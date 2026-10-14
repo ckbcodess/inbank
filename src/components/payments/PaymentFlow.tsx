@@ -2543,10 +2543,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             className="p-4.5"
           />
 
-          {/* Card 2: Other GCB Card (Reference) */}
+          {/* Card 2: Other GCB Cards */}
           <ActionTile
             icon={Users}
-            title="Other GCB Card (Reference)"
+            title="Other GCB Cards"
             onClick={() => {
               setCardTopupCategory("other");
               setStage(1);

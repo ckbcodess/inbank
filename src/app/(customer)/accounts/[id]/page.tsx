@@ -446,6 +446,7 @@ function RecentTransactionsDialog({
           {transactions.length === 0 ? (
             <TrueEmptyState illustration="empty-activity"
               title="No activity on this account yet"
+              description="Money in and out will show here."
             />
           ) : (
             <ul className="-mx-2 flex flex-col gap-0.5">

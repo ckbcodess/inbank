@@ -32,62 +32,12 @@ function Shapes({ cx, cy, layers }: { cx: number; cy: number; layers: Layer[] })
 
 function Frame({ children }: { children: React.ReactNode }) {
   return (
-    <svg viewBox="0 0 200 132" width={290} height={191} aria-hidden="true" className="mx-auto h-auto max-w-full">
+    <svg viewBox="0 0 200 132" width={330} height={218} aria-hidden="true" className="mx-auto h-auto max-w-full">
       {children}
     </svg>
   );
 }
 
-const OBJECT = "fill-card stroke-foreground/55";
-
-const CARD_LAYERS: Layer[] = [
-  { b: "a", scale: 1.35, rotate: 0, opacity: 0.14 },
-  { b: "b", scale: 1.05, rotate: 38, opacity: 0.28 },
-  { b: "a", scale: 0.72, rotate: -28, opacity: 0.55 },
-];
-const ACTIVITY_LAYERS: Layer[] = [
-  { b: "b", scale: 1.3, rotate: 20, opacity: 0.14 },
-  { b: "a", scale: 1.0, rotate: -35, opacity: 0.28 },
-  { b: "b", scale: 0.7, rotate: 50, opacity: 0.55 },
-];
-
-/** Two cards, one fanned behind the other, for the empty Cards page. */
-export function EmptyArtCards() {
-  return (
-    <Frame>
-      <Shapes cx={100} cy={68} layers={CARD_LAYERS} />
-      <g transform="translate(92 62) rotate(-11)" strokeWidth={1.6} strokeLinejoin="round">
-        <rect x={-36} y={-22} width={72} height={44} rx={7} className={OBJECT} />
-      </g>
-      <g transform="translate(106 72) rotate(6)" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
-        <rect x={-36} y={-22} width={72} height={44} rx={7} className="fill-card stroke-foreground/75" />
-        <rect x={-27} y={-12} width={15} height={11} rx={2.5} className="fill-card stroke-primary" />
-        <path d="M-27 10 H-2" className="fill-none stroke-foreground/45" />
-        <path d="M10 10 H27" className="fill-none stroke-foreground/45" />
-      </g>
-    </Frame>
-  );
-}
-
-/** A receipt with a few lines on it, for the empty transactions list. */
-export function EmptyArtActivity() {
-  return (
-    <Frame>
-      <Shapes cx={100} cy={66} layers={ACTIVITY_LAYERS} />
-      <g transform="translate(100 66) rotate(-4)" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
-        <path
-          d="M-26 -38 H26 V36 L20 31 L13 36 L6.5 31 L0 36 L-6.5 31 L-13 36 L-20 31 L-26 36 Z"
-          className="fill-card stroke-foreground/75"
-        />
-        <circle cx={-15} cy={-25} r={5} className="fill-card stroke-primary" />
-        <path d="M-5 -25 H14" className="fill-none stroke-foreground/45" />
-        <path d="M-17 -9 H5 M13 -9 H17" className="fill-none stroke-foreground/45" />
-        <path d="M-17 3 H-1 M9 3 H17" className="fill-none stroke-foreground/45" />
-        <path d="M-17 15 H9 M13 15 H17" className="fill-none stroke-foreground/45" />
-      </g>
-    </Frame>
-  );
-}
 
 /* ── The rest of the set. Same recipe: an object over the layered shapes, each turned differently. ── */
 
@@ -111,57 +61,6 @@ const LINE = "fill-none stroke-foreground/45";
 const FRONT = "fill-card stroke-foreground/75";
 const BACK = "fill-card stroke-foreground/40";
 const SW = { strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round" } as const;
-
-/** A phone and a card, for no linked cards or wallets. */
-export function EmptyArtSources() {
-  return (
-    <Frame>
-      <Shapes cx={100} cy={66} layers={L2} />
-      <g transform="translate(116 60) rotate(9)" {...SW}>
-        <rect x={-15} y={-26} width={30} height={52} rx={6} className={BACK} />
-        <path d="M-5 -19 H5" className={LINE} />
-        <circle cx={0} cy={17} r={2.2} className="fill-card stroke-primary" />
-      </g>
-      <g transform="translate(86 74) rotate(-9)" {...SW}>
-        <rect x={-31} y={-20} width={62} height={40} rx={7} className={FRONT} />
-        <rect x={-23} y={-11} width={13} height={10} rx={2.5} className="fill-card stroke-primary" />
-        <path d="M-23 9 H-4" className={LINE} />
-      </g>
-    </Frame>
-  );
-}
-
-/** Two people, for no saved people or billers. */
-export function EmptyArtPeople() {
-  return (
-    <Frame>
-      <Shapes cx={100} cy={66} layers={L3} />
-      <g {...SW}>
-        <circle cx={118} cy={52} r={9} className={BACK} />
-        <path d="M100 88 C100 74 108 68 118 68 C128 68 136 74 136 88 Z" className={BACK} />
-        <circle cx={86} cy={50} r={10} className="fill-card stroke-primary" />
-        <path d="M66 90 C66 74 75 66 86 66 C97 66 106 74 106 90 Z" className={FRONT} />
-      </g>
-    </Frame>
-  );
-}
-
-/** Three people, for no payment groups. */
-export function EmptyArtGroups() {
-  return (
-    <Frame>
-      <Shapes cx={100} cy={66} layers={L4} />
-      <g {...SW}>
-        <circle cx={72} cy={62} r={7} className={BACK} />
-        <path d="M58 86 C58 76 64 71 72 71 C80 71 86 76 86 86 Z" className={BACK} />
-        <circle cx={128} cy={62} r={7} className={BACK} />
-        <path d="M114 86 C114 76 120 71 128 71 C136 71 142 76 142 86 Z" className={BACK} />
-        <circle cx={100} cy={52} r={9} className="fill-card stroke-primary" />
-        <path d="M82 90 C82 76 90 68 100 68 C110 68 118 76 118 90 Z" className={FRONT} />
-      </g>
-    </Frame>
-  );
-}
 
 /** A calendar, for no standing orders. */
 export function EmptyArtStanding() {

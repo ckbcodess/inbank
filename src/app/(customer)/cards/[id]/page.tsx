@@ -104,6 +104,7 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
       {state === "empty" && (
         <TrueEmptyState illustration="empty-activity"
           title="No card activity found"
+          description="Transactions made with this card will show here."
         />
       )}
 

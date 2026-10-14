@@ -48,12 +48,12 @@ export function TrueEmptyState({
   const fallbackIcon = icon ?? <Inbox size={22} strokeWidth={1.5} />;
   return (
     <div className="flex flex-col items-center justify-center px-4 py-14 sm:py-16 text-center">
-      <div className="mb-4 text-muted-foreground/60 flex items-center justify-center">
+      <div className="mb-8 text-muted-foreground/60 flex items-center justify-center">
         {illustration ? <StateIllustration id={illustration} fallback={fallbackIcon} /> : fallbackIcon}
       </div>
-      <p className="text-[14.5px] font-medium text-foreground">{title}</p>
-      {description && <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>}
-      {action && <div className="mt-4">{action}</div>}
+      <p className="text-[18px] sm:text-[20px] font-medium tracking-[-0.01em] text-foreground">{title}</p>
+      {description && <p className="mt-2.5 max-w-xl text-[14px] leading-relaxed text-muted-foreground">{description}</p>}
+      {action && <div className="mt-7">{action}</div>}
     </div>
   );
 }

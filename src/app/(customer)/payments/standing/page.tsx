@@ -84,6 +84,7 @@ export default function StandingOrdersPage() {
         <TrueEmptyState
           illustration="empty-standing"
           title="No standing orders yet"
+          description="Automate rent, susu, airtime, data or savings transfers."
           action={
             <Button nativeButton={false} render={<Link href="/payments/standing/new" />}>
               <Plus size={14} strokeWidth={2} className="mr-1.5" />

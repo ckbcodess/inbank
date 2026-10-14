@@ -1372,17 +1372,10 @@ export function VirtualCardDetailsView({
               </div>
             )}
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full pt-2">
+            {/* Action Buttons: the secondary sits first and the primary last, in a row. Stacked on a phone the primary stays on top. */}
+            <div className="flex flex-col-reverse sm:flex-row items-center justify-center gap-3 w-full pt-2">
               {effectiveCard.deliveryStatus === "ready_for_pickup" ? (
                 <>
-                  <Button
-                    type="button"
-                    onClick={handleOpenActivate}
-                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px]"
-                  >
-                    Activate Card
-                  </Button>
                   <Button
                     type="button"
                     variant="outline"
@@ -1394,9 +1387,6 @@ export function VirtualCardDetailsView({
                   >
                     Show Pickup Code
                   </Button>
-                </>
-              ) : effectiveCard.deliveryStatus === "delivered" ? (
-                <>
                   <Button
                     type="button"
                     onClick={handleOpenActivate}
@@ -1404,6 +1394,9 @@ export function VirtualCardDetailsView({
                   >
                     Activate Card
                   </Button>
+                </>
+              ) : effectiveCard.deliveryStatus === "delivered" ? (
+                <>
                   <Button
                     type="button"
                     variant="outline"
@@ -1415,9 +1408,6 @@ export function VirtualCardDetailsView({
                   >
                     Track Delivery
                   </Button>
-                </>
-              ) : effectiveCard.deliveryStatus === "out_for_delivery" ? (
-                <>
                   <Button
                     type="button"
                     onClick={handleOpenActivate}
@@ -1425,6 +1415,9 @@ export function VirtualCardDetailsView({
                   >
                     Activate Card
                   </Button>
+                </>
+              ) : effectiveCard.deliveryStatus === "out_for_delivery" ? (
+                <>
                   <Button
                     type="button"
                     variant="outline"
@@ -1435,6 +1428,13 @@ export function VirtualCardDetailsView({
                     className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px]"
                   >
                     Show Delivery Code
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleOpenActivate}
+                    className="w-full sm:w-auto h-11 px-6 rounded-xl text-[14px]"
+                  >
+                    Activate Card
                   </Button>
                 </>
               ) : (

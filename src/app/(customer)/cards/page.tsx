@@ -432,6 +432,7 @@ function CardsPageContent() {
         <TrueEmptyState
           illustration="empty-cards"
           title="No cards yet"
+          description="Get a virtual card instantly or request a physical one."
           action={
             <Button nativeButton={false} render={<Link href="/cards/request" />} className="h-9 rounded-lg px-4 text-[13px]">
               Request a card

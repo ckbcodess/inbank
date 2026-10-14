@@ -709,6 +709,9 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
         aria-label="Signatory mobile number"
       />
       <div className="flex gap-2">
+        <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)} className="h-9">
+          Cancel
+        </Button>
         <Button
           type="button"
           size="sm"
@@ -723,9 +726,6 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
           className="h-9"
         >
           Add signatory
-        </Button>
-        <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)} className="h-9">
-          Cancel
         </Button>
       </div>
     </div>

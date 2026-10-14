@@ -132,7 +132,8 @@ function Chevrons({ i, total, onChange }: { i: number; total: number; onChange: 
   const btn =
     "flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-hover enabled:hover:bg-item-hover enabled:hover:text-foreground disabled:opacity-30";
   return (
-    <div className="-my-1.5 flex items-center">
+    // Contextual: shown while the pointer is over the card or keyboard focus is on a control in it (not after a mouse click, which leaves focus behind). Touch screens can't hover, so they keep them.
+    <div className="-my-1.5 flex items-center opacity-0 pointer-events-none transition-opacity duration-hover group-hover/rec:pointer-events-auto group-hover/rec:opacity-100 group-has-[:focus-visible]/rec:pointer-events-auto group-has-[:focus-visible]/rec:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100">
       <button type="button" aria-label="Previous recommendation" disabled={i === 0} onClick={() => onChange(i - 1)} className={btn}>
         <ChevronLeft size={16} strokeWidth={1.8} />
       </button>
@@ -154,7 +155,7 @@ export function RecommendedForYouCard({
   const [index, setIndex] = useState(0);
 
   const shell = cn(
-    "relative flex h-[260px] flex-col gap-3 overflow-hidden rounded-2xl border border-border bg-panel p-4 sm:p-5",
+    "group/rec relative flex h-[260px] flex-col gap-3 overflow-hidden rounded-2xl border border-border bg-panel p-4 sm:p-5",
     className,
   );
 
