@@ -991,11 +991,6 @@ export default function BeneficiariesPage() {
             ) : (
               <TrueEmptyState illustration="empty-people"
                 title={activeTab === "people" ? "No people saved yet" : "No billers saved yet"}
-                description={
-                  activeTab === "people"
-                    ? "Save frequent payees and bank accounts to speed up your transfers."
-                    : "Save your frequent utilities and billers for 1-click bill payments."
-                }
                 action={
                   <Button
                     onClick={() => {
@@ -1098,7 +1093,6 @@ export default function BeneficiariesPage() {
             ) : (
               <TrueEmptyState illustration="empty-groups"
                 title="No payment groups created"
-                description="Create a group to distribute transfers or Susu contributions in one step."
                 action={
                   <Button
                     nativeButton={false}

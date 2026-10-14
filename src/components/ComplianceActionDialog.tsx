@@ -36,7 +36,7 @@ export interface ComplianceActionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: (payload: { reason: string }) => void;
-  /** Dialog title, e.g. "Block Payroll Prepaid ••••6654?" */
+  /** Dialog title, e.g. "Block Payroll Prepaid ****6654?" */
   title: string;
   /** What will happen, and the audit consequence. */
   description?: string;

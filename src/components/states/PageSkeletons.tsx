@@ -15,7 +15,7 @@
  *
  * Variants: `ListPageSkeleton` (the default for any list or table page), `HubPageSkeleton`
  * (tile hubs), `DetailPageSkeleton` (one record), `FormPageSkeleton` (a form or flow),
- * `DashboardSkeleton` (the overview), plus one each for account detail, accounts,
+ * `StepListSkeleton` (a flow's first question), `DashboardSkeleton` (the overview), plus one each for account detail, accounts,
  * settings, transactions and a receipt.
  */
 
@@ -105,6 +105,23 @@ export function HubPageSkeleton({ groups = 2, tiles = 4 }: { groups?: number; ti
           </div>
         </div>
       ))}
+    </Frame>
+  );
+}
+
+/** A flow's first question: back arrow, the question as a title, then one tile per answer (e.g. "Which bank do you want to send to?"). */
+export function StepListSkeleton({ tiles = 4 }: { tiles?: number }) {
+  return (
+    <Frame className="mx-auto max-w-2xl gap-8">
+      <div className="flex items-center gap-2.5 sm:gap-3">
+        <Bone className="size-8 rounded-lg sm:size-9" />
+        <Bone className="h-7 w-72 max-w-full rounded-lg" />
+      </div>
+      <div className="flex flex-col gap-3.5">
+        {Array.from({ length: tiles }).map((_, i) => (
+          <Bone key={i} className="h-[86px] rounded-2xl" style={{ animationDelay: `${i * 60}ms` }} />
+        ))}
+      </div>
     </Frame>
   );
 }

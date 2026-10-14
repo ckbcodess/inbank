@@ -329,7 +329,7 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
                   value: fromAccount ? (
                     <>
                       {fromAccount.name}{" "}
-                      <span className="tabular text-muted-foreground">(•••{fromAccount.number.replace(/\s+/g, "").slice(-4)})</span>
+                      <span className="tabular text-muted-foreground">(∗∗∗{fromAccount.number.replace(/\s+/g, "").slice(-4)})</span>
                     </>
                   ) : (
                     "Operating Account"

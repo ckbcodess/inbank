@@ -129,7 +129,7 @@ export function LiquidityDeck({
                     })}
                   </>
                 ) : (
-                  "••••••••"
+                  "∗∗∗∗∗∗∗∗"
                 )}
               </span>
             </div>

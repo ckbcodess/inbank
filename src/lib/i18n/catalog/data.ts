@@ -80,7 +80,7 @@ const data: Entry[] = [
   ["3 of 128 records in PAYROLL-AUG-2026 failed validation and need correction.", "3 des 128 enregistrements de PAYROLL-AUG-2026 n’ont pas passé la validation et doivent être corrigés.", "3 de los 128 registros de PAYROLL-AUG-2026 no superaron la validación y deben corregirse.", "PAYROLL-AUG-2026 中 128 条记录有 3 条未通过验证，需更正。"],
   ["Payment submitted for approval", "Paiement soumis à approbation", "Pago enviado para aprobación", "付款已提交审批"],
   ["GHS 12,000.00 to Nsawam Foods Ltd is awaiting approver action.", "Le paiement de GHS 12,000.00 à Nsawam Foods Ltd attend un approbateur.", "El pago de GHS 12,000.00 a Nsawam Foods Ltd está pendiente del aprobador.", "向 Nsawam Foods Ltd 支付的 GHS 12,000.00 正等待审批。"],
-  ["Payroll Prepaid •••• 6654 was blocked at your request.", "La carte Payroll Prepaid •••• 6654 a été bloquée à votre demande.", "La tarjeta Payroll Prepaid •••• 6654 se bloqueó a petición tuya.", "应您的要求，Payroll Prepaid •••• 6654 已冻结。"],
+  ["Payroll Prepaid ∗∗∗∗ 6654 was blocked at your request.", "La carte Payroll Prepaid ∗∗∗∗ 6654 a été bloquée à votre demande.", "La tarjeta Payroll Prepaid ∗∗∗∗ 6654 se bloqueó a petición tuya.", "应您的要求，Payroll Prepaid ∗∗∗∗ 6654 已冻结。"],
 
   // Audit
   ["Corporate Approver", "Approbateur entreprise", "Aprobador empresarial", "企业审批人"],

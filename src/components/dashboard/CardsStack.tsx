@@ -59,7 +59,7 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
                 </Badge>
               </div>
               <div className="tabular text-[14.5px] tracking-[0.08em]">
-                •••• •••• •••• {front.maskedNumber.replace(/\D/g, "")}
+                **** **** **** {front.maskedNumber.replace(/\D/g, "")}
               </div>
               <div className="flex items-end justify-between">
                 <div>

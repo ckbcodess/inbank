@@ -33,7 +33,7 @@ export function PersonalQrModal({ open, onOpenChange }: PersonalQrModalProps) {
   };
 
   const handleShare = async () => {
-    const shareText = `GCB GhQR Payment Details\nName: ${userName}\nAccount: ${primaryAccount.name} (•••• ${primaryAccount.number.replace(/\s+/g, "").slice(-4)})\nBank: GCB Bank PLC`;
+    const shareText = `GCB GhQR Payment Details\nName: ${userName}\nAccount: ${primaryAccount.name} (∗∗∗∗ ${primaryAccount.number.replace(/\s+/g, "").slice(-4)})\nBank: GCB Bank PLC`;
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
@@ -83,7 +83,7 @@ export function PersonalQrModal({ open, onOpenChange }: PersonalQrModalProps) {
               {userName}
             </span>
             <span className="text-[12px] text-muted-foreground font-mono">
-              {primaryAccount.name} •••• {primaryAccount.number.replace(/\s+/g, "").slice(-4)}
+              {primaryAccount.name} ∗∗∗∗ {primaryAccount.number.replace(/\s+/g, "").slice(-4)}
             </span>
             <p className="text-[11.5px] text-muted-foreground/80 pt-1.5 max-w-[260px] text-center">
               Scan with any GhQR, GhanaPay, or mobile banking app to receive instant payments.

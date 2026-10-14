@@ -147,7 +147,7 @@ export function ScanAndPayFlow({
   const userName = actor?.name || "Ransford Gyasi";
 
   const handleShareMyQr = async () => {
-    const shareText = `GCB GhQR Payment Details\nName: ${userName}\nAccount: ${receiveAccount?.name || "Operating Account"} (•••• ${receiveAccount?.number?.replace(/\s+/g, "").slice(-4) || "0313"})\nBank: GCB Bank PLC`;
+    const shareText = `GCB GhQR Payment Details\nName: ${userName}\nAccount: ${receiveAccount?.name || "Operating Account"} (∗∗∗∗ ${receiveAccount?.number?.replace(/\s+/g, "").slice(-4) || "0313"})\nBank: GCB Bank PLC`;
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
@@ -210,7 +210,7 @@ export function ScanAndPayFlow({
                   <div className="mt-4 flex flex-col items-center text-center">
                     <span className="text-[14.5px] font-semibold text-foreground tracking-tight">{userName}</span>
                     <span className="text-[12px] text-muted-foreground font-mono mt-0.5">
-                      {receiveAccount?.name || "Operating Account"} •••• {(receiveAccount?.number || "0313").replace(/\s+/g, "").slice(-4)}
+                      {receiveAccount?.name || "Operating Account"} ∗∗∗∗ {(receiveAccount?.number || "0313").replace(/\s+/g, "").slice(-4)}
                     </span>
                   </div>
                 </div>

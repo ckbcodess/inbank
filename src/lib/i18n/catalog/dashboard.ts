@@ -157,7 +157,7 @@ const dashboard: Entry[] = [
   ["Limits & PIN", "Plafonds et code", "Límites y PIN", "限额与密码"],
   ["Visa Debit Card", "Carte Visa Débit", "Tarjeta Visa Débito", "Visa 借记卡"],
   ["{0} Mobile Money", "{0} Mobile Money", "Dinero móvil {0}", "{0} 移动支付"],
-  ["•••• {0} · Exp {1}", "•••• {0} · Exp. {1}", "•••• {0} · Cad. {1}", "•••• {0} · 有效期 {1}"],
+  ["∗∗∗∗ {0} · Exp {1}", "∗∗∗∗ {0} · Exp. {1}", "∗∗∗∗ {0} · Cad. {1}", "∗∗∗∗ {0} · 有效期 {1}"],
   ["Fund account", "Alimenter le compte", "Añadir fondos", "为账户充值"],
   ["Transfer between accounts", "Virement entre comptes", "Transferencia entre cuentas", "账户间转账"],
   ["Transfer Completed", "Virement effectué", "Transferencia completada", "转账完成"],

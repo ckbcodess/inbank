@@ -90,7 +90,7 @@ function isKind(v: string | null): v is RequestKind {
 }
 
 function maskEmail(email: string) {
-  return email.replace(/(.{2}).*(@.*)/, "$1•••$2");
+  return email.replace(/(.{2}).*(@.*)/, "$1∗∗∗$2");
 }
 
 export default function RequestFlow({ account }: { account: Account }) {
@@ -168,7 +168,7 @@ export default function RequestFlow({ account }: { account: Account }) {
 
   const summary = useMemo(() => {
     if (!kind) return null;
-    const rows: [string, string][] = [["Account", `${account.name} •• ${last4}`]];
+    const rows: [string, string][] = [["Account", `${account.name} ∗∗ ${last4}`]];
     let fee = 0;
     let ready = "";
 
@@ -448,7 +448,7 @@ export default function RequestFlow({ account }: { account: Account }) {
           </div>
 
           <p className="-mt-1 px-4 text-center text-[12px] text-muted-foreground">
-            Clicking “Submit request” authorises GCB Bank PLC to charge the fee to {account.name} •• {last4}.
+            Clicking “Submit request” authorises GCB Bank PLC to charge the fee to {account.name} ∗∗ {last4}.
           </p>
 
           <div className="flex w-full items-center gap-4 pt-1">

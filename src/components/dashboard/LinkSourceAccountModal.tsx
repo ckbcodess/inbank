@@ -835,7 +835,7 @@ export default function LinkSourceAccountModal({
                       maxLength={4}
                       value={newCardCvv}
                       onChange={(e) => setNewCardCvv(e.target.value.replace(/\D/g, ""))}
-                      placeholder="•••"
+                      placeholder="∗∗∗"
                       className="tabular"
                       required
                     />

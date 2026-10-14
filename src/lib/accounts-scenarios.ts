@@ -43,8 +43,8 @@ const ONBOARDING_CARD: LinkedSource = {
   id: "src-card-onboarding",
   type: "card",
   title: "Stanbic Visa Debit",
-  subtitle: "•••• 4410 · Exp 03/29",
-  maskedNumber: "•••• 4410",
+  subtitle: "∗∗∗∗ 4410 · Exp 03/29",
+  maskedNumber: "∗∗∗∗ 4410",
 };
 
 export const ACCOUNTS_SCENARIOS: AccountsScenario[] = [

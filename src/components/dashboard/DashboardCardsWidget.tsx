@@ -31,7 +31,7 @@ export function DashboardCardsWidget() {
     {
       id: "card-debit",
       type: "Debit",
-      maskedNumber: "•••• 9102",
+      maskedNumber: "∗∗∗∗ 9102",
       frozen: false,
       network: "VISA",
       gradient: "linear-gradient(135deg, rgb(0, 153, 102) 0%, rgb(0, 150, 137) 50%, rgb(0, 117, 149) 100%)",
@@ -43,7 +43,7 @@ export function DashboardCardsWidget() {
     {
       id: "card-virtual",
       type: "Virtual",
-      maskedNumber: "•••• 4419",
+      maskedNumber: "∗∗∗∗ 4419",
       frozen: false,
       network: "MASTERCARD",
       gradient: "linear-gradient(135deg, rgb(29, 41, 61) 0%, rgb(24, 24, 27) 50%, rgb(15, 23, 43) 100%)",
@@ -55,7 +55,7 @@ export function DashboardCardsWidget() {
     {
       id: "card-travel",
       type: "Corporate",
-      maskedNumber: "•••• 8831",
+      maskedNumber: "∗∗∗∗ 8831",
       frozen: false,
       network: "VISA",
       gradient: "linear-gradient(135deg, rgb(180, 83, 9) 0%, rgb(120, 53, 15) 50%, rgb(67, 20, 7) 100%)",
@@ -112,12 +112,12 @@ export function DashboardCardsWidget() {
           {cards.map((card) => (
             <div
               key={card.id}
-              className="flex items-center justify-between py-2.5 px-2.5 -mx-2.5 rounded-xl transition-colors hover:bg-muted/40 first:pt-1.5 last:pb-1.5"
+              className="flex items-center justify-between py-2.5 px-2.5 -mx-2.5 rounded-xl transition-colors hover:bg-item-hover first:pt-1.5 last:pb-1.5"
             >
               {/* Left: Mini Card Graphic & Info */}
               <div
                 data-ripple="true"
-                className="relative overflow-hidden flex items-center gap-3.5 cursor-pointer group rounded-lg p-1.5 -m-1.5 transition-colors hover:bg-muted/50"
+                className="relative overflow-hidden flex items-center gap-3.5 cursor-pointer group rounded-lg p-1.5 -m-1.5 transition-colors"
                 onClick={() => setManagingCard(card)}
               >
                 {/* Mini Card Graphic */}

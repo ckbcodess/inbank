@@ -64,7 +64,7 @@ export function TotalBalanceCard({ accounts }: TotalBalanceCardProps) {
               </>
             ) : (
               <span className="text-[26px] sm:text-[34px] font-normal tracking-tight tabular">
-                GHS ••••••
+                GHS ∗∗∗∗∗∗
               </span>
             )}
           </div>

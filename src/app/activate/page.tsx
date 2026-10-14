@@ -509,7 +509,7 @@ function ActivateContent() {
                             {selectedPrimaryAccount.name}
                           </span>
                           <span className="text-muted-foreground text-[12.5px] shrink-0">
-                            •••• {selectedPrimaryAccount.number.slice(-4)}
+                            **** {selectedPrimaryAccount.number.slice(-4)}
                           </span>
                           {selectedPrimaryAccount.isJoint && (
                             <span className="inline-flex items-center gap-1 rounded-md bg-primary/15 px-1.5 py-0.2 text-[10px] font-medium text-foreground shrink-0">
@@ -526,7 +526,7 @@ function ActivateContent() {
                       <SelectItem
                         key={acc.id}
                         value={acc.id}
-                        label={`${acc.name} · •••• ${acc.number.slice(-4)}`}
+                        label={`${acc.name} · ∗∗∗∗ ${acc.number.slice(-4)}`}
                       >
                         <div className="flex items-center justify-between w-full gap-3 py-0.5">
                           <div className="flex items-center gap-2 truncate">
@@ -542,7 +542,7 @@ function ActivateContent() {
                             )}
                           </div>
                           <span className="text-[12px] text-muted-foreground shrink-0">
-                            •••• {acc.number.slice(-4)}
+                            **** {acc.number.slice(-4)}
                           </span>
                         </div>
                       </SelectItem>
@@ -580,7 +580,7 @@ function ActivateContent() {
                     {activePersona.accounts[0]?.name}
                   </span>
                   <span className="text-[12.5px] text-muted-foreground">
-                    •••• {activePersona.accounts[0]?.number.slice(-4)}
+                    **** {activePersona.accounts[0]?.number.slice(-4)}
                   </span>
                 </div>
               </div>

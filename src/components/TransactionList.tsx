@@ -7,7 +7,7 @@
  * - Header: "Transactions" title + "Export Transactions" button with download icon.
  * - Search: Full-width search bar with placeholder "Search by reference ID,  recipient ...."
  * - Filters: one Filters button beside the search (status, date, account, method, category), with the applied filters shown as chips.
- * - Data Table: Date, Recipient, Account (e.g. Current •••4561), Method, Amount (with status/direction color formatting and privacy toggle), Category, Status (Complete, Failed, Pending pill badges).
+ * - Data Table: Date, Recipient, Account (e.g. Current ***4561), Method, Amount (with status/direction color formatting and privacy toggle), Category, Status (Complete, Failed, Pending pill badges).
  * - Pagination: "Showing 1–10 of X cases" + Previous / page numbers / Next.
  */
 
@@ -18,7 +18,6 @@ import { useRouter } from "next/navigation";
 import {
   ArrowDownLeft,
   ArrowDownToLine,
-  ArrowLeftRight,
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
@@ -26,6 +25,7 @@ import {
   X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -74,11 +74,11 @@ const STATUS_OPTIONS: readonly { readonly id: StatusFilter; readonly name: strin
 
 function formatAccountDisplay(accountId: string): string {
   const acc = findAccount(accountId);
-  if (!acc) return "Current •••4561";
+  if (!acc) return "Current ∗∗∗4561";
   const cleanName = acc.name.replace(/\s+Account$/i, "");
   const cleanNum = acc.number.replace(/\s+/g, "");
   const last4 = cleanNum.slice(-4);
-  return `${cleanName} •••${last4}`;
+  return `${cleanName} ∗∗∗${last4}`;
 }
 
 function getPaymentMethodDisplay(t: Transaction): string {
@@ -181,7 +181,6 @@ export default function TransactionList({
   detailBase = "/transactions",
   showStateSwitcher = true,
   emptyTitle = "No transactions yet",
-  emptyDescription = "Activity will appear here as soon as money moves on this account.",
   initialAccountId,
 }: TransactionListProps) {
   const router = useRouter();
@@ -520,7 +519,11 @@ export default function TransactionList({
 
 
   const effective: ListState =
-    state === "populated" && hasActiveFilters && results.length === 0 ? "filtered-empty" : state;
+    state === "populated" && transactions.length === 0
+      ? "empty"
+      : state === "populated" && hasActiveFilters && results.length === 0
+        ? "filtered-empty"
+        : state;
 
   const rows = effective === "partial-load" ? transactions : results;
 
@@ -547,7 +550,7 @@ export default function TransactionList({
       if (typeof page === "string") {
         return (
           <span key={`dots-${idx}`} className="px-1 text-muted-foreground select-none">
-            •••
+            ***
           </span>
         );
       }
@@ -674,10 +677,14 @@ export default function TransactionList({
       {effective === "error" && <ListErrorState onRetry={() => setState("populated")} />}
 
       {effective === "empty" && (
-        <TrueEmptyState illustration="empty-activity"
-          icon={<ArrowLeftRight size={20} strokeWidth={1.7} />}
+        <TrueEmptyState
+          illustration="empty-activity"
           title={emptyTitle}
-          description={emptyDescription}
+          action={
+            <Button nativeButton={false} render={<Link href="/payments" />} className="h-9 rounded-lg px-4 text-[13px]">
+              Start a transaction
+            </Button>
+          }
         />
       )}
 
@@ -717,7 +724,7 @@ export default function TransactionList({
                 <div
                   key={t.id}
                   onClick={() => router.push(`${detailBase}/${t.id}`)}
-                  className="flex items-center gap-4 rounded-xl px-3 py-3.5 sm:py-4 transition-colors hover:bg-tile-hover cursor-pointer active:bg-tile-hover/80 sm:px-4"
+                  className="flex items-center gap-4 rounded-xl px-3 py-3.5 sm:py-4 transition-colors hover:bg-item-hover cursor-pointer active:bg-item-hover/80 sm:px-4"
                 >
                   {/* Direction Anchor Icon */}
                   <div

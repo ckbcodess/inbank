@@ -322,7 +322,7 @@ onChange={(e) => setCardExpiry(formatCardExpiry(e.target.value))}
                     <Field label="CVV" htmlFor="quickFundCvv">
                       <Input
                         id="quickFundCvv"
-                        placeholder="•••"
+                        placeholder="∗∗∗"
                         type="password"
                         value={cardCvv}
                         inputMode="numeric"

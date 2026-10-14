@@ -38,7 +38,8 @@ export function TrueEmptyState({
   illustration,
 }: {
   title: string;
-  description: string;
+  /** Leave out when the title says it all: a title and one action is the clearest empty state. */
+  description?: string;
   action?: ReactNode;
   icon?: ReactNode;
   /** Registered drawing for this situation; the icon shows until it's been drawn. */
@@ -47,11 +48,11 @@ export function TrueEmptyState({
   const fallbackIcon = icon ?? <Inbox size={22} strokeWidth={1.5} />;
   return (
     <div className="flex flex-col items-center justify-center px-4 py-14 sm:py-16 text-center">
-      <div className="mb-3 text-muted-foreground/60 flex items-center justify-center">
+      <div className="mb-4 text-muted-foreground/60 flex items-center justify-center">
         {illustration ? <StateIllustration id={illustration} fallback={fallbackIcon} /> : fallbackIcon}
       </div>
       <p className="text-[14.5px] font-medium text-foreground">{title}</p>
-      <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>
+      {description && <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>}
       {action && <div className="mt-4">{action}</div>}
     </div>
   );

@@ -10,13 +10,13 @@ export function DashboardAnalyticsWidget() {
   const ranges = ["1w", "1m", "3m", "6m", "1y"] as const;
   const { showAmounts } = useAmountVisibility();
 
-  const [selectedAccount, setSelectedAccount] = useState("Current •••82139");
+  const [selectedAccount, setSelectedAccount] = useState("Current ∗∗∗82139");
   const [showAccountMenu, setShowAccountMenu] = useState(false);
 
   const accountOptions = [
-    "Current •••82139",
-    "Savings •••10482",
-    "FX Foreign •••93012",
+    "Current ∗∗∗82139",
+    "Savings ∗∗∗10482",
+    "FX Foreign ∗∗∗93012",
   ];
 
   const periodData: Record<"1w" | "1m" | "3m" | "6m" | "1y", {
@@ -215,7 +215,7 @@ export function DashboardAnalyticsWidget() {
                     ? `GHS ${new Intl.NumberFormat("en-GH").format(
                         activeItem ? activeItem.amount : totalSpend
                       )}`
-                    : "GHS ••••"}
+                    : "GHS ∗∗∗∗"}
                 </span>
                 <span className="mt-0.5 text-[10.5px] text-muted-foreground tabular">
                   {activeItem ? `${activeItem.percentage}% of total` : activeDataset.trend}
@@ -261,7 +261,7 @@ export function DashboardAnalyticsWidget() {
                     <span className="text-[12.5px] font-medium text-foreground tabular">
                       {showAmounts
                         ? `GHS ${new Intl.NumberFormat("en-GH").format(cat.amount)}`
-                        : "GHS ••••"}
+                        : "GHS ∗∗∗∗"}
                     </span>
                   </div>
                 </div>

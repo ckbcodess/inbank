@@ -255,7 +255,7 @@ export function SpendsRadialChart({
                   className="fill-foreground font-sans tabular"
                   style={{ fontSize: "24px", letterSpacing: "-0.02em" }}
                 >
-                  {showEffectiveAmounts ? fmtAmount(displayedAmount) : "GHS ••••"}
+                  {showEffectiveAmounts ? fmtAmount(displayedAmount) : "GHS ∗∗∗∗"}
                 </text>
               </>
             )}

@@ -67,7 +67,7 @@ export function fmtGHS(
     }).format(abs);
   }
   const full = `${sign}GHS ${body}`;
-  // When hidden, `maskDigits` drops separators and shows one bullet per digit.
+  // When hidden, `maskDigits` drops separators and shows one asterisk per digit.
   return showAmounts ? full : maskDigits(full);
 }
 
@@ -164,7 +164,7 @@ export function BalanceHeadline({
             <span className={cn("text-muted-foreground", fracSizes[size])}>{frac}</span>
           </>
         ) : (
-          "GHS ••••••"
+          "GHS ∗∗∗∗∗∗"
         )}
       </div>
     </div>
@@ -195,7 +195,7 @@ export function DeltaLine({
         {fmtGHS(Math.abs(delta), showAmounts, { compact: true })}
       </span>
       <span className="text-muted-foreground tabular">
-        {showAmounts ? signedPct(deltaPct) : "••%"}
+        {showAmounts ? signedPct(deltaPct) : "∗∗%"}
       </span>
       <span className="text-muted-foreground">· past {spanDays} days</span>
     </div>
@@ -359,7 +359,7 @@ export function AccountRows({
                 {shortName(a.name)}
               </span>
               <span className="text-[12px] text-muted-foreground tabular">
-                {a.type} · ••{a.number.slice(-4)}
+                {a.type} · ∗∗{a.number.slice(-4)}
               </span>
             </span>
             <span className={cn("tabular text-foreground", size === "lg" ? "text-[17px]" : "text-[14px]")}>
@@ -623,7 +623,7 @@ export function RecentTransactions({
           <li key={t.id}>
             <Link
               href={`/transactions/${t.id}`}
-              className="group flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition-colors hover:bg-tile-hover -mx-2"
+              className="group flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition-colors hover:bg-item-hover -mx-2"
             >
               <span
                 className={cn(

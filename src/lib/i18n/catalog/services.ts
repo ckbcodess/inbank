@@ -256,7 +256,7 @@ const services: Entry[] = [
   ["Currently: {0}", "Actuellement : {0}", "Actualmente: {0}", "当前：{0}"],
   ["Currently:", "Actuellement :", "Actualmente:", "当前："],
   ["Amounts visible on screen", "Montants visibles à l’écran", "Importes visibles en pantalla", "金额可见"],
-  ["Amounts masked (••••••)", "Montants masqués (••••••)", "Importes ocultos (••••••)", "金额已隐藏（••••••）"],
+  ["Amounts masked (∗∗∗∗∗∗)", "Montants masqués (∗∗∗∗∗∗)", "Importes ocultos (∗∗∗∗∗∗)", "金额已隐藏（∗∗∗∗∗∗）"],
   ["Mask Balances", "Masquer les soldes", "Ocultar saldos", "隐藏余额"],
   ["Show Balances", "Afficher les soldes", "Mostrar saldos", "显示余额"],
   ["Preferences updated", "Préférences mises à jour", "Preferencias actualizadas", "偏好已更新"],

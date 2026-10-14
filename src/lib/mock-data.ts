@@ -17,21 +17,21 @@ export const RETAIL_PROFILE: Profile = {
   id: "prof-retail",
   kind: "RETAIL",
   name: "Personal Banking",
-  reference: "•••• 4561",
+  reference: "∗∗∗∗ 4561",
 };
 
 export const CLEAN_PROFILE: Profile = {
   id: "prof-clean",
   kind: "RETAIL",
   name: "Personal Banking",
-  reference: "•••• 0001",
+  reference: "∗∗∗∗ 0001",
 };
 
 export const SINGLE_PROFILE: Profile = {
   id: "prof-single",
   kind: "RETAIL",
   name: "Personal Banking",
-  reference: "•••• 0313",
+  reference: "∗∗∗∗ 0313",
 };
 
 const JOINT_PROFILE: Profile = {
@@ -1766,7 +1766,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-v01",
     name: "AWS & SaaS",
-    maskedNumber: "•••• 9102",
+    maskedNumber: "∗∗∗∗ 9102",
     fullNumber: "4532 8910 4421 9102",
     cvv: "814",
     type: "Virtual",
@@ -1787,7 +1787,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-v02",
     name: "Google Ads Marketing",
-    maskedNumber: "•••• 3194",
+    maskedNumber: "∗∗∗∗ 3194",
     fullNumber: "5412 7719 3320 3194",
     cvv: "492",
     type: "Virtual",
@@ -1808,7 +1808,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-001",
     name: "Corporate Travel",
-    maskedNumber: "•••• 4412",
+    maskedNumber: "∗∗∗∗ 4412",
     fullNumber: "4532 1100 8820 4412",
     cvv: "219",
     type: "Prepaid",
@@ -1826,7 +1826,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-002",
     name: "Corporate Procurement",
-    maskedNumber: "•••• 8830",
+    maskedNumber: "∗∗∗∗ 8830",
     fullNumber: "5412 6601 2290 8830",
     cvv: "614",
     type: "Prepaid",
@@ -1844,7 +1844,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-003",
     name: "Main Operating",
-    maskedNumber: "•••• 1207",
+    maskedNumber: "∗∗∗∗ 1207",
     type: "Debit",
     scheme: "Visa",
     currency: "GHS",
@@ -1860,7 +1860,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-004",
     name: "Payroll Disbursements",
-    maskedNumber: "•••• 6654",
+    maskedNumber: "∗∗∗∗ 6654",
     type: "Prepaid",
     scheme: "Mastercard",
     currency: "GHS",
@@ -1876,7 +1876,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-005",
     name: "Executive Operating",
-    maskedNumber: "•••• 3719",
+    maskedNumber: "∗∗∗∗ 3719",
     fullNumber: "5412 8840 1920 3719",
     cvv: "721",
     type: "Debit",
@@ -1899,7 +1899,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-006",
     name: "Branch Operations Card",
-    maskedNumber: "•••• 6128",
+    maskedNumber: "∗∗∗∗ 6128",
     fullNumber: "4532 9901 3344 6128",
     cvv: "392",
     type: "Debit",
@@ -1923,7 +1923,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-007",
     name: "Field Logistics Prepaid",
-    maskedNumber: "•••• 7841",
+    maskedNumber: "∗∗∗∗ 7841",
     fullNumber: "5412 1188 4402 7841",
     cvv: "563",
     type: "Prepaid",
@@ -1946,7 +1946,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-ret-001",
     name: "Everyday Checking",
-    maskedNumber: "•••• 9102",
+    maskedNumber: "∗∗∗∗ 9102",
     fullNumber: "4532 8901 2345 9102",
     cvv: "842",
     type: "Debit",
@@ -1964,7 +1964,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-ret-002",
     name: "Online Subscriptions",
-    maskedNumber: "•••• 5521",
+    maskedNumber: "∗∗∗∗ 5521",
     fullNumber: "5412 9012 3456 5521",
     cvv: "318",
     type: "Prepaid",
@@ -1982,7 +1982,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-ret-007",
     name: "Online Shopping",
-    maskedNumber: "•••• 7730",
+    maskedNumber: "∗∗∗∗ 7730",
     fullNumber: "4532 5566 7788 7730",
     cvv: "265",
     type: "Virtual",
@@ -2003,7 +2003,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-ret-003",
     name: "Salary Direct Debit",
-    maskedNumber: "•••• 2419",
+    maskedNumber: "∗∗∗∗ 2419",
     fullNumber: "4532 6677 8899 2419",
     cvv: "914",
     type: "Debit",
@@ -2026,7 +2026,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-ret-004",
     name: "Savings Travel Card",
-    maskedNumber: "•••• 8301",
+    maskedNumber: "∗∗∗∗ 8301",
     fullNumber: "5412 3344 5566 8301",
     cvv: "427",
     type: "Prepaid",
@@ -2049,7 +2049,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-008",
     name: "Premier Gold Corporate",
-    maskedNumber: "•••• 8821",
+    maskedNumber: "∗∗∗∗ 8821",
     fullNumber: "5412 8821 7701 8821",
     cvv: "629",
     type: "Debit",
@@ -2081,7 +2081,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-ret-005",
     name: "Executive Premier Card",
-    maskedNumber: "•••• 3491",
+    maskedNumber: "∗∗∗∗ 3491",
     fullNumber: "4532 9900 1234 3491",
     cvv: "512",
     type: "Debit",
@@ -2113,7 +2113,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-ret-006",
     name: "Forex Travel Prepaid",
-    maskedNumber: "•••• 4180",
+    maskedNumber: "∗∗∗∗ 4180",
     fullNumber: "5412 1122 3344 4180",
     cvv: "394",
     type: "Prepaid",
@@ -2136,7 +2136,7 @@ export const CARDS: PaymentCard[] = [
   {
     id: "card-single-001",
     name: "Everyday Checking",
-    maskedNumber: "•••• 4012",
+    maskedNumber: "∗∗∗∗ 4012",
     fullNumber: "4532 1089 3322 4012",
     cvv: "582",
     type: "Debit",
@@ -2815,7 +2815,7 @@ export const NOTIFICATIONS: AppNotification[] = [
     id: "ntf-005",
     kind: "status",
     title: "Card blocked",
-    body: "Payroll Prepaid •••• 6654 was blocked at your request.",
+    body: "Payroll Prepaid ∗∗∗∗ 6654 was blocked at your request.",
     date: "2026-08-09T14:41:00Z",
     read: true,
     href: "/cards/card-004",
@@ -2882,7 +2882,7 @@ export const AUDIT_EVENTS: AuditEvent[] = [
     actor: "Ransford Gyasi",
     role: "Corporate Admin",
     action: "Blocked card",
-    target: "Payroll Prepaid •••• 6654 · Reason: reported lost by holder",
+    target: "Payroll Prepaid ∗∗∗∗ 6654 · Reason: reported lost by holder",
     channel: "Internet Banking",
     ip: "102.176.44.02",
   },
@@ -2968,7 +2968,7 @@ export function formatMoney(amount: number, currency = "GHS", showAmounts?: bool
         : currency.toUpperCase() === "GBP"
         ? "£"
         : "GHS";
-    return `${symbol} ••••••`;
+    return `${symbol} ∗∗∗∗∗∗`;
   }
   if (currency.toUpperCase() === "GHS" || currency === "GH₵") {
     return `GHS ${new Intl.NumberFormat("en-GH", {

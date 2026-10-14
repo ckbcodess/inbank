@@ -26,7 +26,7 @@ interface RecentActivityWidgetProps {
 }
 
 export function RecentActivityWidget({ transactions = [] }: RecentActivityWidgetProps) {
-  const [selectedAccount, setSelectedAccount] = useState("Current •••82139");
+  const [selectedAccount, setSelectedAccount] = useState("Current ∗∗∗82139");
   const [showFilterMenu, setShowFilterMenu] = useState(false);
   const [selectedTx, setSelectedTx] = useState<{
     id: string;
@@ -41,9 +41,9 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
 
   const accountOptions = [
     { label: "All Accounts", id: "all" },
-    { label: "Current •••82139", id: "current" },
-    { label: "Savings •••10482", id: "savings" },
-    { label: "FX Foreign •••93012", id: "fx" },
+    { label: "Current ∗∗∗82139", id: "current" },
+    { label: "Savings ∗∗∗10482", id: "savings" },
+    { label: "FX Foreign ∗∗∗93012", id: "fx" },
   ];
 
   // Raw mock transaction dataset
@@ -55,7 +55,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
       amount: 450.0,
       direction: "debit",
       status: "Completed",
-      account: "Current •••82139",
+      account: "Current ∗∗∗82139",
       reference: "TX-9481029",
       category: "Groceries",
     },
@@ -66,7 +66,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
       amount: 600.0,
       direction: "debit",
       status: "Completed",
-      account: "Current •••82139",
+      account: "Current ∗∗∗82139",
       reference: "TX-9481030",
       category: "Transport",
     },
@@ -77,7 +77,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
       amount: 350.0,
       direction: "debit",
       status: "Completed",
-      account: "Current •••82139",
+      account: "Current ∗∗∗82139",
       reference: "TX-9481031",
       category: "Utilities",
     },
@@ -88,7 +88,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
       amount: 8500.0,
       direction: "credit",
       status: "Completed",
-      account: "Current •••82139",
+      account: "Current ∗∗∗82139",
       reference: "TX-9481032",
       category: "Income",
     },
@@ -99,7 +99,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
       amount: 2000.0,
       direction: "credit",
       status: "Completed",
-      account: "Savings •••10482",
+      account: "Savings ∗∗∗10482",
       reference: "TX-9481033",
       category: "Savings",
     },
@@ -110,7 +110,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
       amount: 1250.0,
       direction: "debit",
       status: "Completed",
-      account: "FX Foreign •••93012",
+      account: "FX Foreign ∗∗∗93012",
       reference: "TX-9481034",
       category: "Shopping",
     },
@@ -202,7 +202,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                 key={item.id}
                 data-ripple="true"
                 onClick={() => setSelectedTx(item)}
-                className="group relative overflow-hidden flex items-center gap-3.5 py-3 px-2 -mx-2 rounded-xl cursor-pointer hover:bg-tile-hover transition-colors"
+                className="group relative overflow-hidden flex items-center gap-3.5 py-3 px-2 -mx-2 rounded-xl cursor-pointer hover:bg-item-hover transition-colors"
               >
                 {/* Direction Anchor Icon */}
                 <div

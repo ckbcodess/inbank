@@ -31,7 +31,7 @@ function describe(source: PendingFundingSource) {
         subtitle: source.momoNumber || "",
         masked: source.momoNumber || "",
       }
-    : { title: "Visa Debit Card", subtitle: `•••• ${last4}`, masked: `•••• ${last4}` };
+    : { title: "Visa Debit Card", subtitle: `∗∗∗∗ ${last4}`, masked: `∗∗∗∗ ${last4}` };
 }
 
 /** True when this wallet or card is already one of the customer's linked sources. */

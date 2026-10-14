@@ -30,20 +30,20 @@ export function compactNumber(value: number): string {
 
 /** Axis tick: compact, unprefixed — the axis title carries the currency. */
 export function compactTick(value: number, showAmounts: boolean): string {
-  if (!showAmounts) return "••";
+  if (!showAmounts) return "∗∗";
   return compactNumber(value);
 }
 
 /** Compact with the currency symbol, for tooltips and headline figures. */
 export function compactMoney(value: number, showAmounts: boolean): string {
-  if (!showAmounts) return "GHS ••••";
+  if (!showAmounts) return "GHS ∗∗∗∗";
   const sign = value < 0 ? "−" : "";
   return `${sign}GHS ${compactNumber(Math.abs(value))}`;
 }
 
 /** Exact figure with grouping, for the values printed beside a chart. */
 export function exactMoney(value: number, showAmounts: boolean): string {
-  if (!showAmounts) return "GHS ••••••";
+  if (!showAmounts) return "GHS ∗∗∗∗∗∗";
   const sign = value < 0 ? "−" : "";
   const body = new Intl.NumberFormat("en-GH", {
     minimumFractionDigits: 2,

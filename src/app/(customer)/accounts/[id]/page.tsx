@@ -392,7 +392,7 @@ function ActivityRow({ t }: { t: Transaction }) {
     <li>
       <Link
         href={`/transactions/${t.id}`}
-        className="flex items-center gap-4 rounded-xl px-3 py-3.5 sm:py-4 transition-colors hover:bg-tile-hover sm:px-4"
+        className="flex items-center gap-4 rounded-xl px-3 py-3.5 sm:py-4 transition-colors hover:bg-item-hover sm:px-4"
       >
         <span
           className={cn(
@@ -446,7 +446,6 @@ function RecentTransactionsDialog({
           {transactions.length === 0 ? (
             <TrueEmptyState illustration="empty-activity"
               title="No activity on this account yet"
-              description="Money in and out of this account will show here."
             />
           ) : (
             <ul className="-mx-2 flex flex-col gap-0.5">

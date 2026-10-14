@@ -197,6 +197,10 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
   - Refactored `qr-code.tsx` module rendering from rounded chiclet squares (`rx={0.16}`) to standard, solid, continuous rectangular blocks with horizontal run-length merging and `shapeRendering="crispEdges"`, giving the code the authentic, sharp appearance of an official QR code.
   - Renamed the scan action button to "Enter Merchant ID" (replacing "Type Terminal ID") and removed the sample merchants simulation grid from the Merchant ID input dialog for a clean, production-grade modal.
   - Reordered the QR mode segmented controls so "My QR" appears first and "Scan & Pay" appears second, defaulting the initial tab to My QR unless `?mode=scan` is explicitly supplied.
+- **Decision (Sidi Assistant Chat Panel Redesign):** Redesigned the global floating AI assistant panel (`src/components/layout/SidiAssistantWidget.tsx`) to match the reference structure:
+  - Top ambient glow with warm peach and lavender gradient fade, top-right action controls (conversation clock toggle, expand/compact size toggle, close), and a friendly centered greeting (`✨ Hi ${firstName}, how can I help you?`).
+  - Structured suggestion cards categorized under "For you" (spending summary, standing orders, virtual cards), "Insights" (top expenses, cash flow), and "More" (banking help).
+  - Floating pill input bar featuring contextual `@` tag mentions and a dedicated blue upward arrow send button, with seamless switching to active conversational threads.
 - **Decision (Onboarding Layout Chip Visibility):** Guarded the floating layout switcher chip in `AuthLayout` (`src/components/auth/AuthLayout.tsx`) behind `SHOW_DEMO_TOOLS` so it does not render on production/live builds (`process.env.NODE_ENV === "production"`), and bound it to `useDevToolsHidden()` and `useCaptureMode()` so pressing `Ctrl+Shift+D` (or `Cmd+Shift+D`) toggles its visibility in dev alongside the other floating tools.
 
 ### 2026-10-11
@@ -285,7 +289,8 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - **Gap** Not viewed in a browser (no dev server, per AGENTS). Checked: `tsc` and eslint clean on every changed file, i18n coverage clean for the new screens (only product names, nationalities, titles and Dev Mode labels are left in English), and the pricing and date maths run in isolation.
 - **Reuse** Holdings could appear on the dashboard (a "due at maturity" line) and a standing order could fund a purchase. Rolled-over instructions could post to Needs attention a week before maturity. Not built.
 
-### 2026-10-07
+### 2026-10-07
+
 - **Decision** An alternative way to do the same step replaces the heading in place; it never opens underneath it. On every code screen, "Use a shortcode" cross-fades the heading ("Enter OTP Verification Code" plus its line) into the shortcode in the same slot, with the same type size, weight and position. The block keeps one height (both layers share a grid cell), so the boxes below never move and the eye stays put. Why: opening it underneath left two competing headings, pushed the boxes down and made the screen feel like it had changed state.
 - **Candidate pattern** In-place heading swap: `OtpPrompt` in `payments/OtpHelp.tsx` for the dialog and panels, `swap` prop on `AuthLayout` for sign-in (`/mfa`). Drive it from `OtpHelp`'s `shortcodeOpen` / `onShortcodeOpenChange`. Reuse it for any "try another way" that changes what the screen asks (PIN vs code, resend options) before adding a second block.
 - **Override** CONSTITUTION §2 ("a payment code never auto-submits"): `TransactionOtpModal` has no Confirm button and submits as soon as the sixth digit lands (designer, 2026-10-07). Cancel is the only footer action. Constitution still needs the change proposed.
@@ -664,8 +669,84 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
   - Positioned the destination account switcher beneath the QR code card using `FromAccountSelector` (styled identically to the account selector in the Send & Pay flow): selecting an account automatically updates the card text, the QR matrix payload, and clipboard share copy.
   - Gave the My QR card a filled background that adapts cleanly across modes (`bg-neutral-100 dark:bg-neutral-900/90`), with theme-adaptive QR modules, center knockout circle, and GCB brand logo (brand amber eagle `#FFC423` + black text in light mode, white text in dark mode).
   - Updated dashboard hero QR button (`HeroQrAction`) to route directly to `/payments/send?rail=qr&mode=myqr` displaying the My QR code tab on load.
+- **Sidi AI Assistant Panel Redesign & Motion Polish (`branch: insights`):**
+  - Refactored `src/components/layout/SidiAssistantWidget.tsx` structure and aesthetics:
+    1. Removed `@` context tag button and state for a cleaner, unified input bar.
+    2. Refined input placeholder to `"Ask Sidi about anything..."`.
+    3. Replaced generic blue colors with GCB amber brand tokens (`bg-primary`, `text-primary-foreground`, `hover:bg-primary-hover`, `group-hover:text-primary`, amber top ambient glow).
+    4. Upgraded suggestion row icons (`ArrowRightLeft`, `FileText`, `CreditCard`, `Search`, `TrendingUp`, `HelpCircle`) inside soft tactile rounded badge containers (`size-8 rounded-xl bg-muted/70 text-muted-foreground group-hover:bg-primary/15 group-hover:text-primary transition-colors`).
+    5. Fixed entrance animation stutter: eliminated conflicting CSS `transition-all duration-300` on the `<motion.div>` container, set `style={{ transformOrigin: "bottom right" }}`, and implemented responsive spring physics (`damping: 26, stiffness: 340, mass: 0.7`) so the panel blooms smoothly out of the launcher avatar without lag or jitter.
+    6. Removed the top yellow/amber gradient overlay per user feedback, keeping the header clean, crisp, and neutral against the card surface.
+    7. Replaced the default browser scrollbar on the assistant content container with `.custom-scrollbar` and `overscroll-contain`, giving it the app's thin 6px pill thumb, transparent track, and dark-mode adaptation.
+    8. Streamlined suggestions from 6 categorized items down to exactly 3 high-signal starter cards ("Summarize my recent transactions", "How to set up a standing order", "Find my highest expenses this month") under a single "Suggested" label to honor Hick's Law and reduce cognitive load.
+- **Recommended For You / Personalized Insights Hub (`branch: insights`):**
+  - Distilled `src/components/dashboard/v2/RecommendedForYouCard.tsx` following `/distill`, `/better-ui`, and `/better-colors`:
+    1. Eliminated AI-generated clichés: removed card-in-a-card container nesting, cheese `Sparkles` badge, and multi-colored pastel icon boxes.
+    2. Elevated to bold editorial typography with high contrast: prominent tabular financial stats (`GHS 12,500`, `In 3 days`, `14.5% p.a.`) leading directly into concise, natural human explanations.
+    3. Seamless single-surface integration with the dashboard grid (`h-[260px]`, `bg-panel border-border`), quiet editorial counter (`01 / 03`), and tactile CTA pill (`active:scale-[0.96]`).
+    4. Smooth, interruptible physical slide transitions (`framer-motion` with `ease: [0.2, 0, 0, 1]`) and drag gesture support.
+
+
+
+
+
+
 
 ---
+
+## 2026-10-13
+
+**Decision** — `RecommendedForYouCard` card stack updated to full bidirectional animation: using typed Framer Motion `cardVariants` with directional delta (`direction = 1 | -1`). When moving backward, the preceding card smoothly drops in from top/front while the active card pushes back into the stack with spring physics. Files: `src/components/dashboard/v2/RecommendedForYouCard.tsx`. ESLint 0 warnings, TSC exit 0.
+
+- **Motion Lab & Tokenizer One-Pager (`/motion-lab`):**
+  - Created interactive one-page animation laboratory at `src/app/motion-lab/page.tsx` for fine-tuning cubic-bezier easing curves (`settle`, `standard`, `inOut`, `snappy`, `bounce`), spring physics parameters, and every animation duration token across the app (`press`, `hover`, `reveal`, `move`, `entrance`, `modal`, `toast`).
+  - Features an interactive SVG Bezier canvas with draggable handles, linear comparison runways, live micro-interaction tests (button press, card hover, modal dialog, toast alerts, slide drawers, accordion expansions), live runtime CSS injection to test changes instantly across the DOM, and 1-click token export directly to `src/lib/motion.ts` and `src/app/globals.css`.
+  - Calibrated motion tokens in `src/app/globals.css` and `src/lib/motion.ts`: sped up card entrance duration from 400ms to 200ms (`--dur-entrance: 200ms`, `entrance: 0.2s`), and optimized `SPRING.settle` (`stiffness: 360, damping: 28, mass: 0.8`) for swift, responsive card loading and account switching across the dashboard.
+- **Surface Token Refactor (`--item-hover`):**
+  - Replaced ambiguous usage of `muted` / `tile-hover` for interactive row elements with dedicated semantic design token `--item-hover` / `hover:bg-item-hover`.
+  - Defined `--item-hover: rgba(0, 0, 0, 0.04)` (light) and `--item-hover: rgba(255, 255, 255, 0.05)` (dark) in `src/app/globals.css`.
+  - Standardized all list item hover states across Accounts (`/accounts`), Account Details (`/accounts/[id]`), Transactions (`TransactionList.tsx`), Cards list (`CardsList.tsx`), and Dashboard panels (`UpcomingList`, `PayAgainCard`, `MinimalKit` recent txns, `RecentActivityWidget`, `DashboardCardsWidget`).
+- **Foreground Color Tokens Calibration (`src/app/globals.css`):**
+  - Updated color tokens per user calibration:
+    - `--accent-foreground`: `#171717`
+    - `--destructive-foreground`: `#ffffff`
+    - `--foreground`: `#0a0a0a`
+    - `--hero-foreground`: `#ffffff`
+    - `--muted-foreground`: `#8a8a8a`
+    - `--primary-foreground`: `#290e00`
+- **Tokens Consolidation & Color Tuner Groupings:**
+  - Consolidated duration tokens across CSS and TypeScript (`src/app/globals.css`, `src/lib/motion.ts`) into a streamlined 3-tier velocity scale:
+    - `--dur-fast` / `SPEED.fast`: `200ms` (`0.2s`)
+    - `--dur-base` / `SPEED.base`: `400ms` (`0.4s`)
+    - `--dur-slow` / `SPEED.slow`: `600ms` (`0.6s`)
+    - Preserved backwards-compatible semantic aliases (`press`, `hover`, `reveal`, `move`, `entrance`, `modal`, `toast`).
+  - Added dedicated **"Interactive & Hovers"** group category in [`src/lib/color-tuner.ts`](src/lib/color-tuner.ts#L30) to give clean, isolated control over hover overlay and interactive states in the live Color Tuner panel.
+  - Synced defaults and exports in [`/motion-lab`](src/app/motion-lab/page.tsx).
+
+---
+
+## 2026-10-14
+
+- Decision: Recommended for you is text only (no photos), fed by the recommendation engine: one plain statement at a time, the reason it's shown, a text link to act, chevrons top right. Variant B chosen and cleaned up; "Not for me" was dropped (no dismissal).
+- Override: soft amber corner shapes (inline SVG, `fill-primary`) on that panel, at the designer's request. Constitution 3 bans decorative blobs; if kept, propose the exception.
+- Decision: Recommended for you keeps the shapes that shift with each item (variant D, others and the switch deleted). The shapes are closed and oversized, clipped by the panel, so rotating never shows a cut edge.
+- Decision: Recommended for you uses four amber layers stacked in the bottom-left corner, faint to solid, each turning with the item. Variants and the dev switch deleted.
+- Decision: dashboard empty-state icons are bare and thin (30px, stroke 1.3, muted, no container) in `PanelEmpty` (`dashboard/v2/parts.tsx`). Variants and the switch deleted. Empty panels without an icon (Insights, Timeline layouts) are unchanged.
+- Decision: dashboard empty panels (`PanelEmpty`, `dashboard/v2/parts.tsx`) stack a bare thin icon, the message, and the action as the standard small outline `Button` (default radius, like the rest of the dashboard) with extra space above it. Variants and the switch deleted.
+- Decision: every mask is now the centred asterisk (∗, U+2217), never a bullet or `xxxx`: hidden amounts, card and account tails, emails. `maskDigits` in `AmountVisibilityProvider.tsx` is the source for amounts; phone numbers already used it. Bullets stay only as separators. Keep new masks on ∗.
+- Discovery: the mask sweep also turned Tailwind's `**:` child variant into `∗∗:` in `ui/dropdown-menu.tsx` and `ui/select.tsx`, breaking menu item styles. Restored. When masking again, never touch `**:` in class strings.
+- Decision: the Sidi chat header has a Get help menu: call customer care (+233 302 681 531, from the assistant's own help answer) and Find a branch (`/locate-us`). There is no help or support route in the app yet.
+- Decision: first-time empty states (Cards, Transactions) are one line-drawing (`states/EmptyArt.tsx`, inline SVG so it follows the theme), a one-line title and one action. No description. `TrueEmptyState` description is now optional. `StateIllustration` renders inline art before looking for a file.
+- Decision: first-time empty states keep the centred layout: our own drawing (an object on layered amber shapes, `states/EmptyArt.tsx`), a one-line title and one action. Variants and the switch deleted.
+- Decision: every customer first-time empty state with a registered drawing now uses our own art (`states/EmptyArt.tsx`: cards, activity, sources, people, groups, standing orders, statements, rates, chart, caught-up), a one-line title and at most one action. Descriptions were dropped except on FX rates (it says why there are no rates). Transactions action is "Start a transaction" (`/payments`).
+- Decision: `/payments/send` loading shows `StepListSkeleton` for the bank choice (`?rail=bank`, no recipient) and the form skeleton otherwise.
+- Gap: `TransactionList` still accepts an unused `emptyDescription` prop. Admin and invest empty states (no registered drawing) keep the icon style and their descriptions. Rates, statements and chart pages have no action, because none makes sense.
+- Discovery: Cards and Transactions only showed `TrueEmptyState` when forced from Dev Mode; real empty data rendered an empty list. `effective` now treats `cards.length === 0` and `transactions.length === 0` as empty.
+- Gap: the Transactions empty action is "Send money" (`/payments`) because there is no add-money route outside the dashboard's fund modal. On an unfunded account the better action is to fund it. `CardsEmptyIllustration.tsx` (fanned cards) is now unused. Other first-time empty lists (people, groups, standing orders, sources) still use the icon fallback.
+- Decision: Sidi assistant (`layout/SidiAssistantWidget.tsx`) rebuilt. Launcher is the plain avatar that opens into an "Ask Sidi" pill on hover or focus and turns into a close button when open. No greeting bubble, no online dot: an unsolicited pop-up sits against "nothing between the person and their balance", and a green dot would claim a status we can't back. Panel: "New chat" header, welcome with pill suggestions, input and send only (no attach or skills, by design).
+- Gap: assistant copy is hardcoded English (no FR/ES/ZH rows) and the replies are canned. The standing-order answer said "4-digit transaction PIN"; corrected to the 6-digit code per the constitution.
+- Discovery: the rolling-number reel fades and clips its top and bottom edges, which cut the comma tail on the hero balance (`leading-none`). `RevealingAmount` now gives the reel room (`leading-[1.3]`, `-my-[0.15em]`, `--rn-edge-fade: 0.05em`).
+- Gap: the recommendation copy is hardcoded English (no FR/ES/ZH rows) and the "reason" lines are mock. 
 
 ## Consolidation history
 - **2026-10-03:** Bootstrap. Built the five files from these sources:

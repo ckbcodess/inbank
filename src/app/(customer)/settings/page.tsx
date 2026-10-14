@@ -507,7 +507,7 @@ export default function SettingsPage() {
                 <div className="flex flex-col">
                   <span className="text-[13.5px] font-medium text-foreground">Cash Balance Visibility</span>
                   <span className="text-[12px] text-muted-foreground">
-                    Currently: {showAmounts ? "Amounts visible on screen" : "Amounts masked (••••••)"}
+                    Currently: {showAmounts ? "Amounts visible on screen" : "Amounts masked (∗∗∗∗∗∗)"}
                   </span>
                 </div>
                 <Button

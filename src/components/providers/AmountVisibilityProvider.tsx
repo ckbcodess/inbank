@@ -18,18 +18,18 @@ export function setGlobalShowAmounts(show: boolean): void {
 }
 
 /**
- * Helper to mask currency strings (e.g. "GHS 124,500.00" -> "GHS ••••••").
+ * Helper to mask currency strings (e.g. "GHS 124,500.00" -> "GHS ******").
  * Only masks strings that explicitly contain a recognized currency symbol/code (GH₵, GHS, $, €, £, USD, EUR, GBP).
  * Non-monetary counts (e.g. "2", "0", "Awaiting 3 approvals") remain completely untouched.
  */
 /**
  * Mask an amount for the hidden view: drop grouping commas and the decimal
- * point, then replace every digit with a bullet — so the mask is pure bullets
+ * point, then replace every digit with a centred asterisk (∗), so the mask is pure asterisks
  * with no punctuation, and its length reflects the magnitude (a 7-figure amount
- * shows 7 bullets). Currency symbols and the +/− sign are left in place.
+ * shows 7 asterisks). Currency symbols and the +/− sign are left in place.
  */
 export function maskDigits(str: string): string {
-  return str.replace(/[.,]/g, "").replace(/[0-9]/g, "•");
+  return str.replace(/[.,]/g, "").replace(/[0-9]/g, "∗");
 }
 
 /** Format an amount as a string, masking digits when amounts are hidden. */
@@ -73,8 +73,8 @@ export function maskCurrencyString(val: string | number): string {
 }
 
 /**
- * Helper to separate static currency prefix (USD, GHS, $, etc.) from the animated numeric/bullet text.
- * Keeps currency codes like "USD" or "GHS" static so only digits and bullets animate.
+ * Helper to separate static currency prefix (USD, GHS, $, etc.) from the animated numeric/asterisk text.
+ * Keeps currency codes like "USD" or "GHS" static so only digits and asterisks animate.
  */
 export function splitCurrencyAndAmount(
   amount?: number,
@@ -216,8 +216,8 @@ export function useAmountVisibility() {
 }
 
 /**
- * RevealingAmount component with static currency prefix (USD, GHS, etc.) and animated numbers/bullets.
- * The currency prefix remains static so only numeric digits and bullets animate upwards.
+ * RevealingAmount component with static currency prefix (USD, GHS, etc.) and animated numbers/asterisks.
+ * The currency prefix remains static so only numeric digits and asterisks animate upwards.
  */
 export function RevealingAmount({
   amount,
@@ -237,11 +237,18 @@ export function RevealingAmount({
   return (
     <span className={`inline-flex items-center select-none ${className}`}>
       {prefix && <span className="shrink-0 select-none font-normal mr-[0.3em]">{prefix.trim()}</span>}
+      {/*
+        The reel clips and softly fades its top and bottom edges. At a tight line height that
+        cut through the comma's tail, so give the viewport room below the baseline (cancelled
+        by the negative margin, so layout doesn't move) and keep the fade to a sliver.
+      */}
       <RollingText
         text={numericText}
         transition="direct"
         duration={350}
         motionBlur
+        className="-my-[0.15em] leading-[1.3]"
+        style={{ "--rn-edge-fade": "0.05em" } as React.CSSProperties}
       />
     </span>
   );

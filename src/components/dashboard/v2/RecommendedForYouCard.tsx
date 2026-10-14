@@ -1,89 +1,147 @@
 "use client";
 
-import { useState } from "react";
+/**
+ * Recommended for you: what the recommendation engine thinks is useful to this
+ * customer right now. One recommendation at a time as a plain statement on the
+ * panel, why it's here, and a text link to act on it. Four soft amber layers
+ * stack in the bottom-left corner and shift a little with each item. No imagery.
+ */
+
+import { Fragment, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Bone } from "@/components/states/PageSkeletons";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
+import { DURATION, EASE, SPRING } from "@/lib/motion";
 
-export interface RecommendationCardData {
+interface Recommendation {
   id: string;
-  title: string;
-  subtitle: string;
-  image: string;
-  href: string;
-  buttonLabel: string;
-  bgTone: string;
-  textColor: "light" | "dark";
-  titleClasses: string;
-  subtitleClasses: string;
-  buttonClasses: string;
+  /** The recommendation as one plain sentence. */
+  headline: string;
+  /** Why the engine picked it for this customer. */
+  reason: string;
+  ctaLabel: string;
+  ctaHref: string;
 }
 
-const RECOMMENDATIONS: RecommendationCardData[] = [
+// Ordered by what the customer already does (a bill that's due) before what the bank offers (credit).
+const RECOMMENDATIONS: Recommendation[] = [
   {
-    id: "salary-advance",
-    title: "Access a Salary Advance",
-    subtitle: "For up to GHS 20,000",
-    image: "/images/dashboard/recommendations/bg-salary-advance.png",
-    href: "/loans",
-    buttonLabel: "Apply Now",
-    bgTone: "#141414",
-    textColor: "light",
-    titleClasses: "text-white",
-    subtitleClasses: "text-zinc-300",
-    buttonClasses: "bg-[#FFC423] text-neutral-950 hover:bg-[#F0B51A]",
-  },
-  {
-    id: "dstv",
-    title: "It's Almost That Time Again",
-    subtitle: "Renew your DStv subscription to keep enjoying.",
-    image: "/images/dashboard/recommendations/bg-dstv.png",
-    href: "/payments/bills?biller=dstv",
-    buttonLabel: "Renew DStv",
-    bgTone: "#0067a3",
-    textColor: "light",
-    titleClasses: "text-white",
-    subtitleClasses: "text-sky-100",
-    buttonClasses: "bg-[#141414] text-white hover:bg-black",
+    id: "dstv-bill",
+    headline: "Your GHS 245.00 DStv bill is due in 3 days",
+    reason: "You pay it on the 15th every month.",
+    ctaLabel: "Pay bill",
+    ctaHref: "/payments/bills?biller=dstv",
   },
   {
     id: "term-deposit",
-    title: "Make Your Money Work for you",
-    subtitle: "Earn interest with a Term Deposit.",
-    image: "/images/dashboard/recommendations/bg-term-deposit.png",
-    href: "/invest",
-    buttonLabel: "Open a Term Deposit",
-    bgTone: "#f5b026",
-    textColor: "dark",
-    titleClasses: "text-[#141414]",
-    subtitleClasses: "text-neutral-800",
-    buttonClasses: "bg-[#141414] text-white hover:bg-black",
+    headline: "You could earn GHS 180.75 on GHS 5,000",
+    reason: "14.5% a year, fixed for 91 days.",
+    ctaLabel: "See deposit",
+    ctaHref: "/invest",
   },
   {
-    id: "wealth-master",
-    title: "Plan Ahead with Wealth Master Plan",
-    subtitle: "Plan to help you prepare for your financial future.",
-    image: "/images/dashboard/recommendations/bg-wealth-master.png",
-    href: "/insure",
-    buttonLabel: "Explore and Apply",
-    bgTone: "#fbfbf9",
-    textColor: "dark",
-    titleClasses: "text-[#1C0D02]",
-    subtitleClasses: "text-neutral-600",
-    buttonClasses: "bg-[#FFC423] text-neutral-950 hover:bg-[#F0B51A]",
+    id: "salary-advance",
+    headline: "You qualify for a GHS 20,000 Salary Advance",
+    reason: "Your salary lands here monthly.",
+    ctaLabel: "See more",
+    ctaHref: "/loans",
+  },
+  {
+    id: "wealth-goal",
+    headline: "You could save GHS 600 in a year",
+    reason: "Set aside GHS 50 a month.",
+    ctaLabel: "Start a goal",
+    ctaHref: "/invest",
   },
 ];
 
-// Physical spring for smooth card deck transitions
-const DECK_SPRING = {
-  type: "spring",
-  duration: 0.38,
-  bounce: 0.08,
-} as const;
+/*
+ * Two closed, soft-edged shapes. Each is bigger than the corner it sits in and
+ * only partly on the panel, so turning one never exposes a cut edge. The panel
+ * clips them. Decoration only.
+ */
+const SHAPE_SOLID =
+  "M52 3 C66 1 74 14 82 22 C92 30 99 44 94 58 C90 70 78 74 72 84 C66 94 54 99 42 95 C30 91 24 82 14 76 C4 68 2 54 8 42 C14 30 12 20 24 12 C34 6 42 4 52 3 Z";
+const SHAPE_FAINT =
+  "M46 5 C58 8 62 20 74 24 C86 28 98 38 96 52 C94 66 84 70 78 80 C72 90 62 98 50 96 C38 94 34 84 24 78 C12 72 3 62 5 50 C7 38 18 34 22 24 C26 14 36 3 46 5 Z";
+
+/** Each item's pose for the two shapes: a turn and a size. */
+const POSES = [
+  { solid: { r: 0, s: 1 }, faint: { r: 0, s: 1 } },
+  { solid: { r: 38, s: 1.1 }, faint: { r: -42, s: 0.9 } },
+  { solid: { r: -32, s: 0.92 }, faint: { r: 52, s: 1.1 } },
+  { solid: { r: 74, s: 1.04 }, faint: { r: -76, s: 1 } },
+] as const;
+
+interface ShapeLayer {
+  d: string;
+  /** Where it sits and how big. Positions are explicit, since Framer owns `transform`. */
+  place: string;
+  /** Fill opacity; the front layer is solid. */
+  tint?: string;
+  /** Which pose to follow, so the layers don't all turn together. */
+  k: number;
+}
+
+// Back to front, faint to solid.
+const LAYERS: ShapeLayer[] = [
+  { d: SHAPE_SOLID, place: "-bottom-[100px] -left-[100px] size-[200px]", tint: "opacity-12", k: 3 },
+  { d: SHAPE_FAINT, place: "-bottom-[85px] -left-[85px] size-[170px]", tint: "opacity-25", k: 2 },
+  { d: SHAPE_SOLID, place: "-bottom-[70px] -left-[70px] size-[140px]", tint: "opacity-45", k: 1 },
+  { d: SHAPE_FAINT, place: "-bottom-[56px] -left-[56px] size-[112px]", k: 0 },
+];
+
+function Shapes({ index }: { index: number }) {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0">
+      {LAYERS.map((layer, n) => {
+        const pose = POSES[(index + layer.k) % POSES.length].solid;
+        return (
+          <motion.svg
+            key={n}
+            viewBox="0 0 100 100"
+            className={cn("absolute", layer.place)}
+            initial={false}
+            animate={{ rotate: layer.k % 2 ? -pose.r : pose.r, scale: pose.s }}
+            transition={SPRING.gentle}
+          >
+            <path d={layer.d} className={cn("fill-primary", layer.tint)} />
+          </motion.svg>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Seconds between one word and the next. */
+const WORD_STEP = 0.035;
+
+/** A small rise and fade in, held back by `delay`. */
+function reveal(delay: number) {
+  return {
+    initial: { opacity: 0, y: 6 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: DURATION.reveal, ease: EASE.settle, delay },
+  };
+}
+
+function Chevrons({ i, total, onChange }: { i: number; total: number; onChange: (n: number) => void }) {
+  const btn =
+    "flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-hover enabled:hover:bg-item-hover enabled:hover:text-foreground disabled:opacity-30";
+  return (
+    <div className="-my-1.5 flex items-center">
+      <button type="button" aria-label="Previous recommendation" disabled={i === 0} onClick={() => onChange(i - 1)} className={btn}>
+        <ChevronLeft size={16} strokeWidth={1.8} />
+      </button>
+      <button type="button" aria-label="Next recommendation" disabled={i >= total - 1} onClick={() => onChange(i + 1)} className={btn}>
+        <ChevronRight size={16} strokeWidth={1.8} />
+      </button>
+    </div>
+  );
+}
 
 export function RecommendedForYouCard({
   loading = false,
@@ -93,189 +151,75 @@ export function RecommendedForYouCard({
   className?: string;
 }) {
   const { t } = useTranslation();
-  const [activeIdx, setActiveIdx] = useState(0);
-  const [direction, setDirection] = useState(1);
+  const [index, setIndex] = useState(0);
 
-  const total = RECOMMENDATIONS.length;
-
-  const handleNext = () => {
-    setDirection(1);
-    setActiveIdx((prev) => (prev + 1) % total);
-  };
-
-  const handlePrev = () => {
-    setDirection(-1);
-    setActiveIdx((prev) => (prev - 1 + total) % total);
-  };
+  const shell = cn(
+    "relative flex h-[260px] flex-col gap-3 overflow-hidden rounded-2xl border border-border bg-panel p-4 sm:p-5",
+    className,
+  );
 
   if (loading) {
     return (
-      <div className={cn("relative flex h-[260px] w-full flex-col justify-end pt-2.5", className)}>
-        <Bone className="h-full w-full rounded-2xl sm:rounded-3xl" />
+      <div className={shell}>
+        <Bone className="h-4 w-36 rounded-md" />
+        <div className="flex flex-1 flex-col items-center justify-center gap-2.5">
+          <Bone className="h-5 w-56 rounded-md" />
+          <Bone className="h-5 w-40 rounded-md" />
+        </div>
+        <Bone className="mx-auto h-3.5 w-20 rounded-md" />
       </div>
     );
   }
 
-  const current = RECOMMENDATIONS[activeIdx];
-  const next1 = RECOMMENDATIONS[(activeIdx + 1) % total];
-  const next2 = RECOMMENDATIONS[(activeIdx + 2) % total];
-  const isLightText = current.textColor === "light";
+  const r = RECOMMENDATIONS[index];
+  const words = r.headline.split(" ");
+  const reasonAt = words.length * WORD_STEP + 0.05;
 
   return (
-    <div
-      className={cn(
-        "group/stack relative flex h-[260px] w-full flex-col justify-end pt-2.5 select-none",
-        className
-      )}
-    >
-      {/* Outer Card Stack Container (fills full height matching other panels) */}
-      <div className="relative h-full w-full">
-        {/* Layer 3: Backmost peeking card */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-4 -top-3 bottom-3 overflow-hidden rounded-2xl sm:rounded-3xl border border-black/10 opacity-40 shadow-2xs transition-all duration-300 pointer-events-none"
-          style={{ backgroundColor: next2.bgTone }}
-        />
+    <div className={shell}>
+      <Shapes index={index} />
 
-        {/* Layer 2: Middle peeking card */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-2 -top-1.5 bottom-1.5 overflow-hidden rounded-2xl sm:rounded-3xl border border-black/10 opacity-70 shadow-2xs transition-all duration-300 pointer-events-none"
-          style={{ backgroundColor: next1.bgTone }}
-        />
-
-        {/* Static Header & Controls Layer — EXACT same top & side padding (p-4 / sm:p-6) as all dashboard cards */}
-        <div className="absolute top-4 sm:top-6 inset-x-4 sm:inset-x-6 z-30 flex items-center justify-between pointer-events-none transition-colors duration-200">
-          <span
-            className={cn(
-              "text-[14px] sm:text-[16px] font-medium leading-none tracking-tight transition-colors duration-200 antialiased",
-              isLightText ? "text-white/90" : "text-neutral-900/90"
-            )}
-          >
-            {t("dashboard.recommendedForYou", "Recommended for you")}
-          </span>
-
-          {/* Left / Right Arrow Navigation Controls */}
-          <div
-            className={cn(
-              "pointer-events-auto flex items-center gap-0.5 rounded-full p-0.5 backdrop-blur-md border transition-all duration-200 shadow-2xs",
-              isLightText
-                ? "bg-black/35 border-white/20 text-white"
-                : "bg-white/70 border-black/10 text-neutral-900"
-            )}
-          >
-            <button
-              type="button"
-              onClick={handlePrev}
-              aria-label="Previous recommendation"
-              className={cn(
-                "flex size-6 sm:size-6.5 items-center justify-center rounded-full active:scale-90 transition-all cursor-pointer",
-                isLightText ? "hover:bg-white/20" : "hover:bg-black/10"
-              )}
-            >
-              <ChevronLeft size={15} strokeWidth={2.2} />
-            </button>
-            <button
-              type="button"
-              onClick={handleNext}
-              aria-label="Next recommendation"
-              className={cn(
-                "flex size-6 sm:size-6.5 items-center justify-center rounded-full active:scale-90 transition-all cursor-pointer",
-                isLightText ? "hover:bg-white/20" : "hover:bg-black/10"
-              )}
-            >
-              <ChevronRight size={15} strokeWidth={2.2} />
-            </button>
-          </div>
-        </div>
-
-        {/* Layer 1: Active Front Card with animated blur + physical slide crossfade */}
-        <AnimatePresence mode="popLayout" custom={direction}>
-          <motion.div
-            key={current.id}
-            custom={direction}
-            initial={{
-              scale: 0.97,
-              y: direction > 0 ? 8 : -8,
-              opacity: 0,
-              filter: "blur(3px)",
-            }}
-            animate={{
-              scale: 1,
-              y: 0,
-              opacity: 1,
-              filter: "blur(0px)",
-            }}
-            exit={{
-              scale: 0.97,
-              y: direction > 0 ? -10 : 10,
-              opacity: 0,
-              filter: "blur(3px)",
-              transition: { duration: 0.2, ease: [0.23, 1, 0.32, 1] },
-            }}
-            transition={DECK_SPRING}
-            drag="x"
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.2}
-            onDragEnd={(_, info) => {
-              if (info.offset.x < -35) handleNext();
-              else if (info.offset.x > 35) handlePrev();
-            }}
-            className="relative h-full w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-border/70 shadow-sm transition-shadow hover:shadow-md cursor-grab active:cursor-grabbing [backface-visibility:hidden] [transform:translate3d(0,0,0)]"
-            style={{
-              backgroundColor: current.bgTone,
-              willChange: "transform, opacity, filter",
-            }}
-          >
-            {/* Clean Template Artwork */}
-            <Image
-              src={current.image}
-              alt=""
-              fill
-              priority
-              className="object-cover object-right sm:object-center pointer-events-none"
-              sizes="(min-width: 1060px) 450px, (min-width: 640px) 50vw, 100vw"
-            />
-
-            {/* Typography and CTA Button Overlay — Vertically centered and harmoniously grouped */}
-            <div className="absolute inset-0 pt-10 sm:pt-12 pb-4 sm:pb-6 px-4 sm:px-6 flex flex-col justify-center max-w-[62%] sm:max-w-[58%] z-20 pointer-events-none [transform:translateZ(0)]">
-              {/* Title & Subtitle with cohesive spacing */}
-              <div className="flex flex-col gap-1.5 sm:gap-2 min-w-0 antialiased">
-                <h3
-                  className={cn(
-                    "text-[16.5px] xs:text-[18px] sm:text-[19.5px] lg:text-[20.5px] font-medium leading-[1.2] tracking-tight text-balance [-webkit-font-smoothing:antialiased]",
-                    current.titleClasses
-                  )}
-                >
-                  {current.title}
-                </h3>
-                <p
-                  className={cn(
-                    "text-[12px] sm:text-[13px] leading-snug line-clamp-2 font-normal max-w-[95%] [-webkit-font-smoothing:antialiased]",
-                    current.subtitleClasses
-                  )}
-                >
-                  {current.subtitle}
-                </p>
-
-                {/* Dynamic Action Button directly below subtitle */}
-                <div className="pt-2 sm:pt-3 pointer-events-auto">
-                  <Link
-                    href={current.href}
-                    className={cn(
-                      "inline-flex items-center justify-center rounded-full px-4.5 py-1.5 sm:py-2 text-[12px] sm:text-[12.5px] font-medium shadow-2xs transition-transform duration-160 ease-out active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-2",
-                      current.buttonClasses
-                    )}
-                    aria-label={`${current.buttonLabel} - ${current.title}`}
-                  >
-                    {current.buttonLabel}
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
+      <div className="relative z-10 flex items-center justify-between">
+        <span className="text-[14px] font-medium leading-none text-foreground sm:text-[16px]">
+          {t("dashboard.recommendedForYou", "Recommended for you")}
+        </span>
+        <Chevrons i={index} total={RECOMMENDATIONS.length} onChange={setIndex} />
       </div>
+
+      {/* The old text fades out, then the new one arrives word by word, then the reason, then the link. */}
+      <AnimatePresence initial={false} mode="wait">
+        <motion.div
+          key={r.id}
+          exit={{ opacity: 0 }}
+          transition={{ duration: DURATION.hover, ease: EASE.settle }}
+          className="relative z-10 flex flex-1 flex-col items-center justify-between text-center"
+        >
+          <div className="flex flex-1 flex-col items-center justify-center gap-2 px-2">
+            <p className="text-[19px] font-medium leading-[1.35] tracking-[-0.01em] text-foreground sm:text-[21px]">
+              {words.map((w, n) => (
+                <Fragment key={n}>
+                  <motion.span className="inline-block" {...reveal(n * WORD_STEP)}>
+                    {w}
+                  </motion.span>
+                  {n < words.length - 1 && " "}
+                </Fragment>
+              ))}
+            </p>
+            <motion.p className="text-[12.5px] text-muted-foreground" {...reveal(reasonAt)}>
+              {r.reason}
+            </motion.p>
+          </div>
+          <motion.div {...reveal(reasonAt + WORD_STEP * 2)}>
+            <Link
+              href={r.ctaHref}
+              className="group -my-2 inline-flex items-center gap-1.5 py-2 text-[13px] text-foreground transition-colors duration-hover hover:text-foreground/80"
+            >
+              {r.ctaLabel}
+              <ArrowRight size={14} strokeWidth={1.8} className="transition-transform duration-hover group-hover:translate-x-0.5" />
+            </Link>
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

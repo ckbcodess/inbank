@@ -48,7 +48,7 @@ export default function AccountExpensesPage({ params }: { params: Promise<{ id: 
         backTo={{ href: `/accounts/${account.id}`, label: account.name }}
         badge={
           <ContextChip title={`${account.name} ${account.number}`}>
-            {account.name} <span className="tabular">•• {account.number.slice(-4)}</span>
+            {account.name} <span className="tabular">∗∗ {account.number.slice(-4)}</span>
           </ContextChip>
         }
       />

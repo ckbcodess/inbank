@@ -37,7 +37,7 @@ import { useAmountVisibility } from "@/components/providers/AmountVisibilityProv
 type Direction = "to-ghs" | "from-ghs";
 
 function format(amount: number, currency: string, showAmounts: boolean): string {
-  if (!showAmounts) return `${currency} ••••••`;
+  if (!showAmounts) return `${currency} ∗∗∗∗∗∗`;
   return `${currency} ${new Intl.NumberFormat("en-GH", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,

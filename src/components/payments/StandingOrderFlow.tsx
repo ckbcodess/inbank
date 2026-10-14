@@ -616,7 +616,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       ["Beneficiary", resolvedName || f.destination || f.proxyId || f.groupName],
       ["Short name", orderName],
       ["Schedule Frequency", `${frequencyText} · First run ${formatDate(f.firstRun)}`],
-      ["Debit Account", `${fromAccount?.name} (•••${fromAccount?.number.slice(-4)})`],
+      ["Debit Account", `${fromAccount?.name} (∗∗∗${fromAccount?.number.slice(-4)})`],
       ["Total per Execution", formatMoney(totalPerCycle, "GHS", true)],
     ];
 

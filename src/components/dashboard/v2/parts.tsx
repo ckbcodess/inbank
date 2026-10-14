@@ -170,30 +170,19 @@ export function PanelEmpty({
 }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-2.5 py-6 text-center sm:py-7">
-      {Icon && (
-        <div className="flex size-10 items-center justify-center rounded-full bg-muted/60 text-muted-foreground mb-0.5">
-          <Icon size={18} strokeWidth={1.8} />
-        </div>
-      )}
+      {/* Bare and thin: nothing around it, so an empty panel stays quiet. */}
+      {Icon && <Icon size={30} strokeWidth={1.3} className="mb-0.5 text-muted-foreground/70" />}
       <p className="text-[13px] text-muted-foreground">{text}</p>
-      {action && (
-        action.href ? (
-          <Link
-            href={action.href}
-            className="text-[13px] text-foreground underline-offset-4 transition-colors hover:underline"
-          >
+      {action &&
+        (action.href ? (
+          <Button nativeButton={false} render={<Link href={action.href} />} variant="outline" size="sm" className="mt-3">
             {action.label}
-          </Link>
+          </Button>
         ) : action.onClick ? (
-          <button
-            type="button"
-            onClick={action.onClick}
-            className="text-[13px] text-foreground underline-offset-4 transition-colors hover:underline cursor-pointer"
-          >
+          <Button onClick={action.onClick} variant="outline" size="sm" className="mt-3">
             {action.label}
-          </button>
-        ) : null
-      )}
+          </Button>
+        ) : null)}
     </div>
   );
 }
@@ -381,7 +370,7 @@ function AccountLabel({ account, bare = false, full = false }: { account: Accoun
       {!bare && <Landmark size={17} strokeWidth={1.8} className="shrink-0 text-muted-foreground" />}
       <span>{t(`accounts.type.${account.type}`, account.type)}</span>
       <span className={cn("tabular", !bare && "text-muted-foreground")}>
-        {full ? account.number : `••••${last4(account.number)}`}
+        {full ? account.number : `∗∗∗∗${last4(account.number)}`}
       </span>
     </>
   );
@@ -630,7 +619,7 @@ export function UpcomingList({ items, showAmounts }: { items: UpcomingPayment[];
   return (
     <ul className="flex flex-col gap-0.5">
       {items.map((p) => (
-        <li key={p.id} className="flex items-center gap-3.5 py-2 sm:py-2.5 rounded-xl px-2 -mx-2 transition-colors hover:bg-tile-hover">
+        <li key={p.id} className="flex items-center gap-3.5 py-2 sm:py-2.5 rounded-xl px-2 -mx-2 transition-colors hover:bg-item-hover">
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
             <span className="truncate text-[13.5px] font-medium text-foreground">{p.payee}</span>
             <span className="text-[12px] text-muted-foreground tabular">
@@ -731,7 +720,7 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
       ) : data.payAgain.length === 0 ? (
         <PanelEmpty
           icon={CediReceiptIcon}
-          text={t("dashboard.payAgainEmpty", "Save the people and bills you pay often, and they'll wait here.")}
+          text={t("dashboard.payAgainEmpty", "Save the people and bills you pay often.")}
           action={{ label: t("dashboard.addSomeone", "Add someone"), href: "/beneficiaries?add=1" }}
         />
       ) : data.payAgain.length <= 3 ? (
@@ -741,7 +730,7 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
             <Link
               key={p.href}
               href={withFrom(p.href, data.selectedAccountId)}
-              className="group flex items-center gap-3 py-2.5 transition-colors hover:bg-tile-hover rounded-xl px-2 -mx-2"
+              className="group flex items-center gap-3 py-2.5 transition-colors hover:bg-item-hover rounded-xl px-2 -mx-2"
               aria-label={`Pay ${p.name}, ${p.detail}`}
             >
               <span

@@ -27,6 +27,7 @@ const GROUP_RULES: [string, RegExp][] = [
   ["Text", /(^foreground$|-foreground$)/],
   ["Brand", /^(primary|ring|active-|action-icon|tile-accent)/],
   ["Status", /^(success|warning|destructive|info)/],
+  ["Interactive & Hovers", /^(hover|item-hover|tile-hover|field-hover|menu-item-hover)/],
   ["Fields and menus", /^(field|menu|input$)/],
   ["Borders", /(^border$|-border$|-border-focus$|^duo-outline$)/],
   ["Tints and banners", /^(tint-|banner-)/],
@@ -34,7 +35,7 @@ const GROUP_RULES: [string, RegExp][] = [
   ["Marks", /^(mc-|duo-)/],
   ["Dashboard hero", /^(hero|sheet|balance-card|account-card)/],
   ["Icons", /^(icon-|glass-)/],
-  ["Surfaces", /^(background|surface|card|modal|popover|muted|secondary|accent|tile|sidebar|glass|device|skeleton|auth-card)/],
+  ["Surfaces", /^(background|surface|card|modal|popover|muted|secondary|accent|tile|sidebar|glass|device|skeleton)/],
 ];
 const SKIP = /^(color-|tw-|font|radius|shadow|dur-|breakpoint|animate|ease|sidebar-width|ripple)/;
 

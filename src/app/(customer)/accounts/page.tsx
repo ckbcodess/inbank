@@ -34,7 +34,6 @@ import {
   Landmark,
   MoreHorizontal,
   Plus,
-  Smartphone,
   Trash2,
   Wallet,
   X,
@@ -150,7 +149,7 @@ function AccountRow({
     <li>
       <Link
         href={`/accounts/${account.id}`}
-        className="group flex items-center gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-muted/50 sm:px-4"
+        className="group flex items-center gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-item-hover sm:px-4"
       >
         <TileChip tone="onCard">
           {isWallet ? (
@@ -469,13 +468,7 @@ function AccountsContent() {
 
             {screenState === "populated" && sources.length === 0 && (
               <TrueEmptyState illustration="empty-sources"
-                icon={<Smartphone size={20} strokeWidth={1.7} aria-hidden="true" />}
                 title="No cards or wallets linked"
-                description={
-                  defaultAccount
-                    ? `Link mobile money or a bank card to top up ${defaultAccount.name}.`
-                    : "Link mobile money or a bank card to top up your account."
-                }
                 action={
                   <Button onClick={() => setLinkOpen(true)}>
                     <Plus size={15} strokeWidth={1.9} aria-hidden="true" />

@@ -135,7 +135,7 @@ export function buildNewRetailActor(record: NiaRecord, email: string, phone: str
     id: `prof-signup-${signupSequence}`,
     kind: "RETAIL",
     name: "Personal Banking",
-    reference: `•••• ${String(4000 + signupSequence).slice(-4)}`,
+    reference: `∗∗∗∗ ${String(4000 + signupSequence).slice(-4)}`,
   };
 
   return {

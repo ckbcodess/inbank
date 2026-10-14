@@ -160,9 +160,8 @@ export default function FxRatesPage() {
 
       {state === "empty" && (
         <TrueEmptyState illustration="empty-rates"
-          icon={<TrendingUp size={22} strokeWidth={1.8} />}
           title="No rates published yet today"
-          description="Today's rates have not been published. Yesterday's rates are not shown here because they may no longer be accurate."
+          description="Yesterday's rates aren't shown because they may be out of date."
         />
       )}
 

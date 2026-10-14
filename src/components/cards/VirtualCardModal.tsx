@@ -31,7 +31,7 @@ const DEFAULT_CARD: Partial<PaymentCard> = {
   name: "Savings Card",
   balance: 16058.94,
   currency: "USD",
-  maskedNumber: "•••• 1234",
+  maskedNumber: "∗∗∗∗ 1234",
   fullNumber: "4532 8901 2345 1234",
   expiry: "06/27",
   cvv: "842",
@@ -227,7 +227,7 @@ export function VirtualCardView({
           <span className="font-medium text-slate-900 dark:text-slate-100 tabular tracking-wide">
             {unhidden
               ? activeCard.fullNumber ?? `4532 8901 2345 ${activeCard.maskedNumber?.slice(-4) ?? "1234"}`
-              : `• • • • ${activeCard.maskedNumber?.slice(-4) ?? "1234"}`}
+              : `∗ ∗ ∗ ∗ ${activeCard.maskedNumber?.slice(-4) ?? "1234"}`}
           </span>
         </div>
 
@@ -241,7 +241,7 @@ export function VirtualCardView({
         <div className="flex items-center justify-between">
           <span className="text-slate-500 dark:text-slate-400 font-normal">CVC</span>
           <span className="font-medium text-slate-900 dark:text-slate-100 tabular tracking-widest">
-            {unhidden ? activeCard.cvv ?? "842" : "• • •"}
+            {unhidden ? activeCard.cvv ?? "842" : "∗ ∗ ∗"}
           </span>
         </div>
 

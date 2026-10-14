@@ -280,7 +280,7 @@ export function PaymentSuccessScreen({
     });
     if (nameRow && typeof nameRow[1] === "string" && nameRow[1].trim()) {
       const raw = nameRow[1].trim();
-      const cleaned = raw.replace(/^Yes\s*—\s*/i, "").replace(/\s*\(••.*?\)$/, "").trim();
+      const cleaned = raw.replace(/^Yes\s*—\s*/i, "").replace(/\s*\(∗∗.*?\)$/, "").trim();
       if (cleaned) return cleaned;
     }
     // Try matching "to <Name>" in message

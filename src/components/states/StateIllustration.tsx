@@ -13,6 +13,32 @@
 import { useState, type ReactNode } from "react";
 import { PLACEMENT_SIZE, STATE_ILLUSTRATIONS, type StateIllustrationId } from "@/lib/state-illustrations";
 import { cn } from "@/lib/utils";
+import {
+  EmptyArtActivity,
+  EmptyArtCards,
+  EmptyArtCaughtUp,
+  EmptyArtChart,
+  EmptyArtGroups,
+  EmptyArtPeople,
+  EmptyArtRates,
+  EmptyArtSources,
+  EmptyArtStanding,
+  EmptyArtStatements,
+} from "@/components/states/EmptyArt";
+
+/** Drawings that live in code (they follow the theme) rather than as files. */
+const INLINE_ART: Partial<Record<StateIllustrationId, () => React.JSX.Element>> = {
+  "empty-cards": EmptyArtCards,
+  "empty-activity": EmptyArtActivity,
+  "empty-sources": EmptyArtSources,
+  "empty-people": EmptyArtPeople,
+  "empty-groups": EmptyArtGroups,
+  "empty-standing": EmptyArtStanding,
+  "empty-statements": EmptyArtStatements,
+  "empty-rates": EmptyArtRates,
+  "empty-chart": EmptyArtChart,
+  "caught-up": EmptyArtCaughtUp,
+};
 
 export function StateIllustration({
   id,
@@ -23,10 +49,12 @@ export function StateIllustration({
   fallback?: ReactNode;
   className?: string;
 }) {
+  const Inline = INLINE_ART[id];
   const entry: { placement: keyof typeof PLACEMENT_SIZE; drawn: boolean; dark?: boolean } = STATE_ILLUSTRATIONS[id];
   const [failed, setFailed] = useState(false);
   const [darkFailed, setDarkFailed] = useState(false);
 
+  if (Inline) return <Inline />;
   if (!entry.drawn || failed) return <>{fallback}</>;
 
   const { w, h } = PLACEMENT_SIZE[entry.placement];

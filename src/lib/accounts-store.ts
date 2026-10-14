@@ -53,8 +53,8 @@ export const DEFAULT_LINKED_SOURCES: LinkedSource[] = [
     id: "src-card-1",
     type: "card",
     title: "Ecobank Visa Debit",
-    subtitle: "•••• 9102 · Exp 12/28",
-    maskedNumber: "•••• 9102",
+    subtitle: "∗∗∗∗ 9102 · Exp 12/28",
+    maskedNumber: "∗∗∗∗ 9102",
   },
 ];
 

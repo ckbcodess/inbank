@@ -21,6 +21,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Copy,
+  CreditCard,
   Globe,
   Landmark,
   Pencil,
@@ -915,6 +916,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const [groupCategory, setGroupCategory] = useState<"transfer" | null>(null);
   const { myProxy, deregisterProxy } = useProxyStore();
   const [cardlessCategory, setCardlessCategory] = useState<"self" | "third-party" | null>(null);
+  const [cardTopupCategory, setCardTopupCategory] = useState<"my" | "other" | null>(null);
   const [billCategory, setBillCategory] = useState<BillerCategory | null>(null);
   const [phase, setPhase] = useState<Phase>("form");
   const [receipt, setReceipt] = useState<ReceiptData | null>(null);
@@ -1386,12 +1388,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const recipientDisplayName = useMemo(() => {
     if (rail === "bank" || rail === "ach") {
       if (bankCategory === "own") {
-        return toOwnAccount ? `${toOwnAccount.name} (••${toOwnAccount.number.slice(-4)})` : "My GCB Account";
+        return toOwnAccount ? `${toOwnAccount.name} (∗∗${toOwnAccount.number.slice(-4)})` : "My GCB Account";
       }
       return verifiedAccountName || f.benName || (f.benAcct ? `Account ${f.benAcct}` : "Beneficiary");
     }
     if (rail === "wallet-to-bank") {
-      return account ? `${account.name} (••${account.number.slice(-4)})` : "My GCB Account";
+      return account ? `${account.name} (∗∗${account.number.slice(-4)})` : "My GCB Account";
     }
     if (rail === "wallet" || rail === "momo") {
       if (walletCategory === "self") return "My Own Wallet (Self)";
@@ -1457,8 +1459,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   }, [rail, biller?.reference, topupCategory]);
 
   const reviewAccountValue = useMemo(() => {
-    if (bankCategory === "own" && rail !== "wallet-to-bank") return toOwnAccount?.number ? `••••${toOwnAccount.number.slice(-4)}` : "Own Account";
-    if (rail === "wallet-to-bank") return account?.number ? `••••${account.number.slice(-4)}` : "";
+    if (bankCategory === "own" && rail !== "wallet-to-bank") return toOwnAccount?.number ? `∗∗∗∗${toOwnAccount.number.slice(-4)}` : "Own Account";
+    if (rail === "wallet-to-bank") return account?.number ? `∗∗∗∗${account.number.slice(-4)}` : "";
     if (rail === "card-topup") {
       const card = CARDS.find((c) => c.id === f.cardId);
       return card ? `${card.maskedNumber}` : "Card";
@@ -1913,8 +1915,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           ["Payment Timing", f.isScheduled ? `Scheduled · ${f.scheduleFrequency === "once" ? "One-off" : f.scheduleFrequency.charAt(0).toUpperCase() + f.scheduleFrequency.slice(1)} (${f.scheduleDate})` : "Immediate Transfer"],
           ["Fee", feeDetails.feeAmount === 0 ? "Free (GHS 0.00)" : formatMoney(feeDetails.feeAmount, "GHS", true)],
           ...(f.saveBeneficiary ? ([["Beneficiary Saved", `Yes — ${f.beneficiaryNickname || resolvedName || "Saved to Payees"}`]] as [string, string][]) : []),
-          ["From Account", `${account?.name} (••${account?.number.slice(-4)})`],
-          ...(isOwnTransfer ? ([["To Account", `${toOwnAccount?.name} (••${toOwnAccount?.number.slice(-4)})`]] as [string, string][]) : []),
+          ["From Account", `${account?.name} (∗∗${account?.number.slice(-4)})`],
+          ...(isOwnTransfer ? ([["To Account", `${toOwnAccount?.name} (∗∗${toOwnAccount?.number.slice(-4)})`]] as [string, string][]) : []),
           ["Reference / Ref Code", trn],
         ],
       });
@@ -2510,6 +2512,53 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     );
   }
 
+  // Intermediary Screen: Card Top up Chooser ("Which card do you want to top up?")
+  if (rail === "card-topup" && !cardTopupCategory) {
+    return (
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <button
+            type="button"
+            onClick={handleBackNavigation}
+            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
+            aria-label="Back to Send & Pay"
+          >
+            <ChevronLeft size={20} strokeWidth={1.8} />
+          </button>
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
+            Which card do you want to top up?
+          </h1>
+        </div>
+
+        <div className="flex flex-col gap-3.5">
+          {/* Card 1: My GCB Cards */}
+          <ActionTile
+            icon={CreditCard}
+            title="My GCB Cards"
+            onClick={() => {
+              setCardTopupCategory("my");
+              setStage(1);
+              setStage1Collapsed(false);
+            }}
+            className="p-4.5"
+          />
+
+          {/* Card 2: Other GCB Card (Reference) */}
+          <ActionTile
+            icon={Users}
+            title="Other GCB Card (Reference)"
+            onClick={() => {
+              setCardTopupCategory("other");
+              setStage(1);
+              setStage1Collapsed(false);
+            }}
+            className="p-4.5"
+          />
+        </div>
+      </div>
+    );
+  }
+
   // Intermediary Screen: GCB Pay Category Selection Hub (Figma Node 1176:28982)
   if (rail === "bill" && !billCategory) {
     return (
@@ -2945,6 +2994,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 setCardlessCategory(null);
               } else if (rail === "bill" && billCategory) {
                 setBillCategory(null);
+              } else if (rail === "card-topup" && cardTopupCategory) {
+                setCardTopupCategory(null);
               } else {
                 handleBackNavigation();
               }
@@ -3282,6 +3333,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             {/* Flow 6C: Card Top up */}
             {rail === "card-topup" && (
               <CardTopUpFlow
+                category={cardTopupCategory}
                 accounts={accounts}
                 state={{
                   fromId: f.fromId,
@@ -3577,7 +3629,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 <div className="flex items-center justify-between px-4 py-3 w-full">
                   <span className="text-[13.5px] text-muted-foreground">From</span>
                   <span className="text-[13.5px] font-normal text-foreground">
-                    {rail === "wallet-to-bank" ? "MTN Mobile Money (•••3821)" : `${account?.name} (•••${account?.number.slice(-4)})`}
+                    {rail === "wallet-to-bank" ? "MTN Mobile Money (∗∗∗3821)" : `${account?.name} (∗∗∗${account?.number.slice(-4)})`}
                   </span>
                 </div>
 

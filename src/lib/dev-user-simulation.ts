@@ -77,7 +77,7 @@ export const DEMO_USER_CONFIGS: Record<DemoUserType, DemoUserConfig> = {
       id: "prof-retail",
       kind: "RETAIL",
       name: "Personal Banking",
-      reference: "•••• 4561",
+      reference: "∗∗∗∗ 4561",
     },
     accountIds: ["acc-ret-001", "acc-ret-002", "acc-003"],
     defaultAccountId: "acc-ret-001",

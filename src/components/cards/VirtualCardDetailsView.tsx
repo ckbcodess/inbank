@@ -1003,7 +1003,7 @@ export function VirtualCardDetailsView({
     >
       <span className="text-muted-foreground">Linked to</span>
       <span className="truncate text-foreground group-hover:underline group-hover:underline-offset-4">
-        {fundsAccount.name} {fundsAccount.number ? `xxxx${fundsAccount.number.replace(/\D/g, "").slice(-4) || fundsAccount.number.slice(-4)}` : ""}
+        {fundsAccount.name} {fundsAccount.number ? `∗∗∗∗${fundsAccount.number.replace(/\D/g, "").slice(-4) || fundsAccount.number.slice(-4)}` : ""}
       </span>
       <ChevronRight size={15} strokeWidth={1.8} className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground" aria-hidden="true" />
     </Link>
@@ -1130,7 +1130,7 @@ export function VirtualCardDetailsView({
                         </span>
                       ) : (
                         <span className="text-[11.5px] text-muted-foreground">
-                          {currentCard.maskedNumber || "•••• 9102"}
+                          {currentCard.maskedNumber || "∗∗∗∗ 9102"}
                         </span>
                       )}
                     </div>
@@ -1812,7 +1812,7 @@ export function VirtualCardDetailsView({
                 maxLength={4}
                 value={resetNewPin}
                 onChange={(e) => setResetNewPin(e.target.value.replace(/\D/g, ""))}
-                placeholder="••••"
+                placeholder="∗∗∗∗"
                 className="tracking-widest text-[16px] text-center font-mono"
                 autoFocus
               />
@@ -1826,7 +1826,7 @@ export function VirtualCardDetailsView({
                 maxLength={4}
                 value={resetConfirmPin}
                 onChange={(e) => setResetConfirmPin(e.target.value.replace(/\D/g, ""))}
-                placeholder="••••"
+                placeholder="∗∗∗∗"
                 className="tracking-widest text-[16px] text-center font-mono"
               />
             </Field>
@@ -1909,7 +1909,7 @@ export function VirtualCardDetailsView({
             <div className="p-3.5 rounded-xl bg-warning/10 dark:bg-warning/40 border border-warning/30 text-warning-text text-[12.5px] flex items-start gap-2.5">
               <AlertTriangle size={18} className="shrink-0 text-warning-text mt-0.5" />
               <span>
-                Once you submit the replacement, this card (•••• {maskedLast4}) is blocked
+                Once you submit the replacement, this card (∗∗∗∗ {maskedLast4}) is blocked
                 {isFundable ? " and its balance moves to the new card" : ""}. Next, check the
                 details we&rsquo;ve filled in from this card.
               </span>
@@ -1963,7 +1963,7 @@ export function VirtualCardDetailsView({
                     id="card-pin-input"
                     type="password"
                     maxLength={4}
-                    placeholder="••••"
+                    placeholder="∗∗∗∗"
                     value={activationPin}
                     onChange={(e) => { setActivationPin(e.target.value.replace(/\D/g, "")); setActivationError(""); }}
                     className="text-center tracking-widest"
@@ -1975,7 +1975,7 @@ export function VirtualCardDetailsView({
                     id="card-pin-confirm-input"
                     type="password"
                     maxLength={4}
-                    placeholder="••••"
+                    placeholder="∗∗∗∗"
                     value={activationPinConfirm}
                     onChange={(e) => { setActivationPinConfirm(e.target.value.replace(/\D/g, "")); setActivationError(""); }}
                     className="text-center tracking-widest"
@@ -2014,7 +2014,7 @@ export function VirtualCardDetailsView({
         open={blockReasonOpen}
         onOpenChange={setBlockReasonOpen}
         cardName={currentCard.name || "Card"}
-        last4={currentCard.maskedNumber?.slice(-4) || "••••"}
+        last4={currentCard.maskedNumber?.slice(-4) || "∗∗∗∗"}
       />
     </div>
   );

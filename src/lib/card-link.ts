@@ -90,8 +90,8 @@ export const useCardLink = create<CardLinkState>()(
             id: `src-card-${Date.now()}`,
             type: "card",
             title: card.network === "Card" ? "Debit card" : `${card.network} debit card`,
-            subtitle: `•••• ${card.last4} · Exp ${card.expiry}`,
-            maskedNumber: `•••• ${card.last4}`,
+            subtitle: `∗∗∗∗ ${card.last4} · Exp ${card.expiry}`,
+            maskedNumber: `∗∗∗∗ ${card.last4}`,
           };
           useLinkedSources.getState().addSource(source);
           set({

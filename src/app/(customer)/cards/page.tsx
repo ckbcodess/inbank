@@ -53,7 +53,6 @@ import { useSession, useSessionHydrated } from "@/lib/session-store";
 import { readyCache } from "@/lib/ready-cache";
 import { useCardAssetsReady } from "@/components/cards/useCardAssetsReady";
 import { CardsPageSkeleton, CardsSkeleton } from "@/components/cards/CardParts";
-import { CardsEmptyIllustration } from "@/components/cards/CardsEmptyIllustration";
 import { CardsStack } from "@/components/cards/layouts/CardsStack";
 import { CardsCarousel } from "@/components/cards/layouts/CardsCarousel";
 import { CardsGallery } from "@/components/cards/layouts/CardsGallery";
@@ -234,9 +233,11 @@ function CardsPageContent() {
 
   const effective: ListState = !ready
     ? "loading"
-    : state === "populated" && typeFilter !== "all" && filteredCards.length === 0
-      ? "filtered-empty"
-      : state;
+    : state === "populated" && cards.length === 0
+      ? "empty"
+      : state === "populated" && typeFilter !== "all" && filteredCards.length === 0
+        ? "filtered-empty"
+        : state;
 
   const rows = effective === "partial-load" ? cards : filteredCards;
 
@@ -264,7 +265,7 @@ function CardsPageContent() {
     const newCard: PaymentCard = {
       id: `card-new-${Date.now()}`,
       name: cardName.trim(),
-      maskedNumber: `•••• ${lastFour}`,
+      maskedNumber: `∗∗∗∗ ${lastFour}`,
       fullNumber: fullNum,
       cvv: generatedCvv,
       type: cardType,
@@ -428,18 +429,12 @@ function CardsPageContent() {
       )}
 
       {effective === "empty" && (
-        <TrueEmptyState illustration="empty-cards"
-          icon={<CardsEmptyIllustration />}
+        <TrueEmptyState
+          illustration="empty-cards"
           title="No cards yet"
-          description="Get a virtual card instantly, or request a debit or prepaid card and we'll deliver it. It will show up here."
           action={
-            <Button
-              nativeButton={false}
-              render={<Link href="/cards/request" />}
-              className="h-9 gap-1.5 rounded-lg px-3.5 text-[13px] shadow-xs"
-            >
-              <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-              <span>Request a Card</span>
+            <Button nativeButton={false} render={<Link href="/cards/request" />} className="h-9 rounded-lg px-4 text-[13px]">
+              Request a card
             </Button>
           }
         />

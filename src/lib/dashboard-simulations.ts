@@ -118,7 +118,7 @@ const DEMO_ATTENTION_ITEMS: AttentionItem[] = [
     id: "card-blocked-demo",
     tone: "destructive",
     title: "Card blocked",
-    detail: "Visa Debit · •••• 4012",
+    detail: "Visa Debit · ∗∗∗∗ 4012",
     href: "/cards",
   },
   {
@@ -199,7 +199,7 @@ export function getSimulatedDashboardData({
         {
           id: "card-new-1",
           name: "Visa Virtual Debit",
-          maskedNumber: "•••• 8920",
+          maskedNumber: "∗∗∗∗ 8920",
           scheme: "Visa",
           type: "Virtual",
           balance: 500,
@@ -254,7 +254,7 @@ export function getSimulatedDashboardData({
         {
           id: "card-new-unfunded",
           name: "Visa Virtual Debit",
-          maskedNumber: "•••• 8920",
+          maskedNumber: "∗∗∗∗ 8920",
           scheme: "Visa",
           type: "Virtual",
           balance: 0,

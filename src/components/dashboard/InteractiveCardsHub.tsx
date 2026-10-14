@@ -157,7 +157,7 @@ export function InteractiveCardsHub({
             <span className="text-[15px] sm:text-[16px] tracking-wider font-medium">
               {isRevealed
                 ? `4111 8820 9410 ${currentCard.maskedNumber.slice(-4)}`
-                : `•••• •••• •••• ${currentCard.maskedNumber.slice(-4)}`}
+                : `∗∗∗∗ ∗∗∗∗ ∗∗∗∗ ${currentCard.maskedNumber.slice(-4)}`}
             </span>
             <button
               type="button"
@@ -178,7 +178,7 @@ export function InteractiveCardsHub({
               </div>
               <div>
                 <span className="text-[9px] uppercase tracking-wider block opacity-70">CVV</span>
-                <span>{isRevealed ? "782" : "•••"}</span>
+                <span>{isRevealed ? "782" : "∗∗∗"}</span>
               </div>
             </div>
 

@@ -62,9 +62,9 @@ export function maskMobile(raw: string): string {
   return `+233 ${identifier} ∗∗∗ ${last4}`;
 }
 
-/** "ransford.gyasi@example.com" → "am•••••@example.com" — mirrors the MFA screen. */
+/** "ransford.gyasi@example.com" → "am∗∗∗∗∗@example.com" — mirrors the MFA screen. */
 export function maskEmail(raw: string): string {
-  return raw.replace(/(.{2}).*(@.*)/, "$1•••••$2");
+  return raw.replace(/(.{2}).*(@.*)/, "$1∗∗∗∗∗$2");
 }
 
 /* ── Password rules ────────────────────────────────────────────────────────── */

@@ -148,7 +148,7 @@ export default function CardVerificationPage() {
                   <dt className="text-muted-foreground">Card</dt>
                   <dd className="flex items-center gap-1.5 tabular font-medium text-foreground">
                     <CreditCard size={14} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-                    <span>•••• {last4}</span>
+                    <span>∗∗∗∗ {last4}</span>
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-3 text-left">

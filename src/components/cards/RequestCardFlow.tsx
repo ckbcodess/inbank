@@ -385,7 +385,7 @@ export function RequestCardFlow() {
     const newCard: PaymentCard = {
       id: `card-req-${Date.now()}`,
       name: finalCardName,
-      maskedNumber: `•••• ${lastFour}`,
+      maskedNumber: `∗∗∗∗ ${lastFour}`,
       fullNumber: fullNum,
       cvv: generatedCvv,
       type: cardType,
@@ -896,7 +896,7 @@ export function RequestCardFlow() {
                 <span className="text-[7.5px] font-medium truncate max-w-[40px]">
                   {cardType}
                 </span>
-                <span className="text-[6.5px] opacity-80">••••</span>
+                <span className="text-[6.5px] opacity-80">∗∗∗∗</span>
               </div>
             </div>
             <div className="flex flex-col min-w-0">

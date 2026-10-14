@@ -216,7 +216,7 @@ export default function FigmaDesignFidelityDashboard() {
             <div className="size-2 rounded-full bg-[#10b981]" />
             <span className="font-semibold text-[#18181b]">Personal Banking</span>
             <span className="text-[#71717a] text-[11px] bg-[#f4f4f5] px-2 py-0.5 rounded-md">
-              Personal · •••• 4821
+              Personal · ∗∗∗∗ 4821
             </span>
           </div>
 
@@ -254,7 +254,7 @@ export default function FigmaDesignFidelityDashboard() {
           <section className="space-y-1">
             <span className="text-xs font-medium text-[#71717a]">Total available</span>
             <div className="text-4xl sm:text-5xl font-extrabold tracking-tight text-[#18181b] tabular">
-              {showAmounts ? "GHS 18,070.50" : "GHS ••••••"}
+              {showAmounts ? "GHS 18,070.50" : "GHS ∗∗∗∗∗∗"}
             </div>
           </section>
 
@@ -354,7 +354,7 @@ export default function FigmaDesignFidelityDashboard() {
 
                       <div className="text-right">
                         <p className="text-xs font-bold text-[#18181b]">
-                          {showAmounts ? acc.amount : "GHS ••••••"}
+                          {showAmounts ? acc.amount : "GHS ∗∗∗∗∗∗"}
                         </p>
                         <span className="text-[10px] text-[#71717a] font-sans">available</span>
                       </div>
@@ -376,8 +376,8 @@ export default function FigmaDesignFidelityDashboard() {
 
                 <div className="divide-y divide-[#f8f9fa] p-2 space-y-2">
                   {[
-                    { id: "c1", name: "Visa Personal Debit", scheme: "VISA", type: "Visa Debit · •••• 9102", fundable: false },
-                    { id: "c2", name: "Mastercard Virtual Prepaid", scheme: "MASTERCARD", type: "Virtual · •••• 4821", fundable: true },
+                    { id: "c1", name: "Visa Personal Debit", scheme: "VISA", type: "Visa Debit · ∗∗∗∗ 9102", fundable: false },
+                    { id: "c2", name: "Mastercard Virtual Prepaid", scheme: "MASTERCARD", type: "Virtual · ∗∗∗∗ 4821", fundable: true },
                   ].map(c => {
                     const isBlocked = blockedCards[c.id];
 
@@ -457,7 +457,7 @@ export default function FigmaDesignFidelityDashboard() {
                         <span>Money in</span>
                       </div>
                       <p className="font-bold text-[#18181b] mt-0.5">
-                        {showAmounts ? "GHS 42,500.00" : "GHS ••••••"}
+                        {showAmounts ? "GHS 42,500.00" : "GHS ∗∗∗∗∗∗"}
                       </p>
                     </div>
 
@@ -467,7 +467,7 @@ export default function FigmaDesignFidelityDashboard() {
                         <span>Money out</span>
                       </div>
                       <p className="font-bold text-[#18181b] mt-0.5">
-                        {showAmounts ? "GHS 24,429.50" : "GHS ••••••"}
+                        {showAmounts ? "GHS 24,429.50" : "GHS ∗∗∗∗∗∗"}
                       </p>
                     </div>
 
@@ -477,7 +477,7 @@ export default function FigmaDesignFidelityDashboard() {
                         <span>Net</span>
                       </div>
                       <p className="font-bold text-[#18181b] mt-0.5">
-                        {showAmounts ? "+ GHS 18,070.50" : "GHS ••••••"}
+                        {showAmounts ? "+ GHS 18,070.50" : "GHS ∗∗∗∗∗∗"}
                       </p>
                     </div>
                   </div>
@@ -538,7 +538,7 @@ export default function FigmaDesignFidelityDashboard() {
                         <div className="flex items-center gap-3 font-bold">
                           <span className="text-[#18181b]">{cat.pct}%</span>
                           <span className="text-[#71717a] text-[11px]">
-                            {showAmounts ? `GHS ${(cat.pct * 75).toFixed(0)}` : "GHS ••••"}
+                            {showAmounts ? `GHS ${(cat.pct * 75).toFixed(0)}` : "GHS ∗∗∗∗"}
                           </span>
                         </div>
                       </div>
@@ -636,7 +636,7 @@ export default function FigmaDesignFidelityDashboard() {
                 <div className="flex items-center gap-2">
                   <CurrencyLogo currency="GHS" size={24} />
                   <div className="text-2xl font-bold text-[#18181b] tabular">
-                    {showAmounts ? `GHS ${(Number(fxAmount || 0) * 15.385).toLocaleString("en-US", { minimumFractionDigits: 2 })}` : "GHS ••••••"}
+                    {showAmounts ? `GHS ${(Number(fxAmount || 0) * 15.385).toLocaleString("en-US", { minimumFractionDigits: 2 })}` : "GHS ∗∗∗∗∗∗"}
                   </div>
                 </div>
                 <p className="text-xs text-[#71717a] pt-1">
@@ -679,7 +679,7 @@ export default function FigmaDesignFidelityDashboard() {
 
                     <div className="flex items-center gap-4">
                       <span className={`text-xs font-bold tabular ${isCred ? "text-emerald-700" : "text-[#18181b]"}`}>
-                        {isCred ? "+ " : "− "}{showAmounts ? t.amount : "GHS ••••••"}
+                        {isCred ? "+ " : "− "}{showAmounts ? t.amount : "GHS ∗∗∗∗∗∗"}
                       </span>
                       <Badge variant="outline" className="text-[10px] hidden sm:inline-flex">
                         {t.status}

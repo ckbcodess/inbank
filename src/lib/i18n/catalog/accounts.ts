@@ -380,7 +380,7 @@ const accounts: Entry[] = [
   ["Collection branch", "Agence de retrait", "Sucursal de recogida", "领取网点"],
   ["Just need a copy for yourself?", "Besoin d’une copie pour vous seulement ?", "¿Solo necesitas una copia para ti?", "只需自留一份？"],
   ["Download a statement now", "Télécharger un relevé maintenant", "Descargar un extracto ahora", "立即下载对账单"],
-  ["Clicking “Submit request” authorises GCB Bank PLC to charge the fee to {0} •• {1}.", "En cliquant sur « Envoyer la demande », vous autorisez GCB Bank PLC à prélever les frais sur {0} •• {1}.", "Al hacer clic en «Enviar solicitud», autorizas a GCB Bank PLC a cobrar la comisión en {0} •• {1}.", "点击“提交申请”即表示您授权 GCB Bank PLC 从 {0} •• {1} 扣取费用。"],
+  ["Clicking “Submit request” authorises GCB Bank PLC to charge the fee to {0} ∗∗ {1}.", "En cliquant sur « Envoyer la demande », vous autorisez GCB Bank PLC à prélever les frais sur {0} ∗∗ {1}.", "Al hacer clic en «Enviar solicitud», autorizas a GCB Bank PLC a cobrar la comisión en {0} ∗∗ {1}.", "点击“提交申请”即表示您授权 GCB Bank PLC 从 {0} ∗∗ {1} 扣取费用。"],
   ["Submit request", "Envoyer la demande", "Enviar solicitud", "提交申请"],
   ["Authorise request", "Autoriser la demande", "Autorizar solicitud", "授权申请"],
   ["Delivery", "Remise", "Entrega", "交付方式"],

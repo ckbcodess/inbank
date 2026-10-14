@@ -39,6 +39,7 @@ export interface CardTopUpFormState {
 }
 
 interface CardTopUpFlowProps {
+  category?: "my" | "other" | null;
   accounts: Account[];
   state: CardTopUpFormState;
   onChange: (key: keyof CardTopUpFormState, value: string | boolean | ScheduleFrequency | undefined) => void;
@@ -48,6 +49,7 @@ interface CardTopUpFlowProps {
 }
 
 export function CardTopUpFlow({
+  category = "my",
   accounts,
   state,
   onChange,
@@ -89,7 +91,7 @@ export function CardTopUpFlow({
     return list;
   }, [myCards, state.cardId]);
 
-  const [isOtherCard, setIsOtherCard] = useState<boolean>(fundableCards.length === 0);
+  const isOtherCard = category === "other" || fundableCards.length === 0;
   const [refCode, setRefCode] = useState<string>(
     state.cardId?.startsWith("ref-") ? state.cardId.replace("ref-", "") : ""
   );
@@ -114,7 +116,7 @@ export function CardTopUpFlow({
       />
 
       {/* 2. Destination Card */}
-      <Field label="Destination Card">
+      <Field label={isOtherCard ? "Recipient Card Reference" : "Destination Card"}>
         {isCardValid && isCollapsed ? (
           <CollapsedDetailsBadge
             title={isOtherCard ? `GCB Prepaid Card (${refCode})` : `GCB ${selectedCard?.name}`}
@@ -128,38 +130,7 @@ export function CardTopUpFlow({
           />
         ) : (
           <div className="flex flex-col gap-3">
-            {fundableCards.length > 0 && (
-              <div className="flex items-center gap-2 pb-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsOtherCard(false);
-                    onChange("cardId", fundableCards[0]?.id || "");
-                  }}
-                  className={cn(
-                    "px-3 py-1.5 rounded-xl text-[12.5px] font-medium transition-colors cursor-pointer",
-                    !isOtherCard ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                  )}
-                >
-                  My GCB Cards
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsOtherCard(true);
-                    onChange("cardId", refCode.length === 8 ? `ref-${refCode}` : "");
-                  }}
-                  className={cn(
-                    "px-3 py-1.5 rounded-xl text-[12.5px] font-medium transition-colors cursor-pointer",
-                    isOtherCard ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                  )}
-                >
-                  Other GCB Card (Reference)
-                </button>
-              </div>
-            )}
-
-            {isOtherCard || fundableCards.length === 0 ? (
+            {isOtherCard ? (
               <div className="flex flex-col gap-2">
                 <Input
                   type="text"
