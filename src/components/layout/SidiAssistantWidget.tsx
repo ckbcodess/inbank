@@ -85,25 +85,27 @@ export function SidiAssistantWidget() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatLog]);
 
+  // Depend on whether someone is signed in, not on the actor object: the session store hands out a new object when
+  // it hydrates or refreshes, and re-running this effect would cancel the timers that end the greeting, leaving it stuck.
+  const signedIn = Boolean(actor);
   useEffect(() => {
-    if (!actor) return;
+    if (!signedIn) return;
     try {
       if (sessionStorage.getItem(INTRO_KEY)) return;
       sessionStorage.setItem(INTRO_KEY, "1");
     } catch {
       return;
     }
-    const timers = [
-      setTimeout(() => {
-        setIntroLabel(true);
-        setIntro(true);
-      }, INTRO_DELAY),
-      setTimeout(() => setIntro(false), INTRO_DELAY + INTRO_HOLD),
-      // The greeting stays until the pill has folded away, so the text doesn't change mid-fold.
-      setTimeout(() => setIntroLabel(false), INTRO_DELAY + INTRO_HOLD + 600),
-    ];
-    return () => timers.forEach(clearTimeout);
-  }, [actor]);
+    // No cleanup on purpose: the greeting must always be allowed to finish and fold away. (Setting state after the
+    // widget has gone is harmless.)
+    setTimeout(() => {
+      setIntroLabel(true);
+      setIntro(true);
+    }, INTRO_DELAY);
+    setTimeout(() => setIntro(false), INTRO_DELAY + INTRO_HOLD);
+    // The greeting stays until the pill has folded away, so the text doesn't change mid-fold.
+    setTimeout(() => setIntroLabel(false), INTRO_DELAY + INTRO_HOLD + 600);
+  }, [signedIn]);
 
   // Opening puts the cursor in the box; Escape closes.
   useEffect(() => {
