@@ -2,6 +2,8 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { MIGRATED_DATA } from "./migration";
+import { BILLERS } from "./mock-data";
 
 export type TransactionType =
   | "bank"
@@ -35,9 +37,15 @@ export interface BeneficiaryRecord {
   countryCode?: string;
   label?: string;
   createdAt: string;
+  /** Kept at the top of every list the customer picks from. */
+  pinned?: boolean;
+  /** When this person was last paid, the amount, and how many times: what the pickers rank by and show. */
+  lastPaidAt?: string;
+  lastAmount?: number;
+  payCount?: number;
 }
 
-export const SEED_BENEFICIARIES: BeneficiaryRecord[] = [
+const RAW_SEED_BENEFICIARIES: BeneficiaryRecord[] = [
   // ── Bank Transfers ─────────────────────────────────────────────
   {
     id: "ben-b0",
@@ -387,7 +395,127 @@ export const SEED_BENEFICIARIES: BeneficiaryRecord[] = [
   },
 ];
 
+/** Demo usage, so the pickers have something to rank and show: who is pinned, last paid, how often. */
+const SEED_USAGE: Record<string, Pick<BeneficiaryRecord, "pinned" | "lastPaidAt" | "lastAmount" | "payCount">> = {
+  "ben-w1": { pinned: true, lastPaidAt: "2026-10-13", lastAmount: 200, payCount: 14 },
+  "ben-b1": { pinned: true, lastPaidAt: "2026-10-10", lastAmount: 500, payCount: 9 },
+  "ben-at1": { lastPaidAt: "2026-10-12", lastAmount: 20, payCount: 20 },
+  "ben-w5": { lastPaidAt: "2026-10-08", lastAmount: 120, payCount: 6 },
+  "ben-px1": { lastPaidAt: "2026-10-05", lastAmount: 80, payCount: 5 },
+  "ben-bl1": { lastPaidAt: "2026-10-01", lastAmount: 245, payCount: 11 },
+  "ben-bl4": { lastPaidAt: "2026-09-30", lastAmount: 245, payCount: 8 },
+  "ben-b5": { lastPaidAt: "2026-09-28", lastAmount: 1500, payCount: 4 },
+  "ben-w2": { lastPaidAt: "2026-09-15", lastAmount: 300, payCount: 3 },
+  "ben-pa1": { lastPaidAt: "2026-09-02", lastAmount: 3000, payCount: 2 },
+  "ben-b2": { lastPaidAt: "2026-08-20", lastAmount: 4200, payCount: 2 },
+};
+
+/** The same mobile number, whatever it was typed as: its last nine digits. */
+export function phoneKey(phone?: string): string {
+  return (phone ?? "").replace(/\D/g, "").slice(-9);
+}
+
+const WALLET_NETWORK_FOR: Record<string, string> = {
+  "MTN Ghana": "MTN Mobile Money",
+  "Telecel Ghana": "Telecel Cash",
+  "AT Ghana": "AT Money",
+};
+/** A top-up line's network as the matching wallet is named ("MTN Ghana" becomes "MTN Mobile Money"). */
+export function walletNetworkName(network?: string): string | undefined {
+  return network ? WALLET_NETWORK_FOR[network] ?? network : network;
+}
+
+/**
+ * One saved record per mobile number. A number you top up with airtime or data is the same thing as a wallet
+ * you send money to, so airtime records fold into the wallet with the same number (usage added together), or
+ * become a wallet record when no wallet has that number. How it is paid (money, airtime, data) is chosen at
+ * payment time. Safe to run on a list that is already unified.
+ */
+export function unifyMobile(list: BeneficiaryRecord[]): BeneficiaryRecord[] {
+  const out: BeneficiaryRecord[] = [];
+  const byPhone = new Map<string, BeneficiaryRecord>();
+  const copies = list.map((b) => ({ ...b }));
+  for (const b of copies) {
+    if (b.transactionType === "wallet" && phoneKey(b.phoneNumber)) byPhone.set(phoneKey(b.phoneNumber), b);
+  }
+  for (const b of copies) {
+    if (b.transactionType !== "airtime") {
+      out.push(b);
+      continue;
+    }
+    const target = byPhone.get(phoneKey(b.phoneNumber));
+    if (target) {
+      target.payCount = (target.payCount ?? 0) + (b.payCount ?? 0) || undefined;
+      target.pinned = target.pinned || b.pinned;
+      if ((b.lastPaidAt ?? "") > (target.lastPaidAt ?? "")) {
+        target.lastPaidAt = b.lastPaidAt;
+        target.lastAmount = b.lastAmount;
+      }
+      continue;
+    }
+    const network = walletNetworkName(b.network);
+    const converted: BeneficiaryRecord = {
+      ...b,
+      transactionType: "wallet",
+      category: "person",
+      network,
+      detail: `${network ?? "Mobile Money"} · ${b.phoneNumber ?? ""}`,
+    };
+    if (phoneKey(converted.phoneNumber)) byPhone.set(phoneKey(converted.phoneNumber), converted);
+    out.push(converted);
+  }
+  return out;
+}
+
+export const SEED_BENEFICIARIES: BeneficiaryRecord[] = unifyMobile(
+  RAW_SEED_BENEFICIARIES.map((b) => ({ ...b, ...SEED_USAGE[b.id] })),
+);
+
+/**
+ * The order every picker uses: pinned first, then the most recently paid, then the most often paid, then
+ * the most recently saved. People never paid sort after people who have been.
+ */
+export function rankBeneficiaries(list: BeneficiaryRecord[]): BeneficiaryRecord[] {
+  const paidAt = (b: BeneficiaryRecord) => (b.lastPaidAt ? Date.parse(b.lastPaidAt) || 0 : 0);
+  return [...list].sort(
+    (a, b) =>
+      Number(!!b.pinned) - Number(!!a.pinned) ||
+      paidAt(b) - paidAt(a) ||
+      (b.payCount ?? 0) - (a.payCount ?? 0) ||
+      b.createdAt.localeCompare(a.createdAt),
+  );
+}
+
+/** The payees that came across from the old internet banking, as saved beneficiaries. */
+export function migratedBeneficiaries(): BeneficiaryRecord[] {
+  return MIGRATED_DATA.payees.map((p, i): BeneficiaryRecord => {
+    const base = { id: `ben-m${i + 1}`, name: p.name, detail: p.detail, verified: true, currency: "GHS", createdAt: "2026-05-01" };
+    if (p.rail === "wallet") {
+      return { ...base, transactionType: "wallet", category: "person", network: "MTN Mobile Money", phoneNumber: p.recipient };
+    }
+    if (p.rail === "ecg") {
+      return { ...base, transactionType: "bill", category: "biller", billerCategory: "Bills & Utilities", billerName: "ECG Prepaid", billerReference: p.recipient };
+    }
+    if (p.rail === "bank") {
+      return { ...base, transactionType: "bank", category: "person", bankName: "bank" in p && p.bank ? p.bank : "Bank", accountNumber: p.recipient };
+    }
+    const biller = BILLERS.find((b) => "billerId" in p && b.id === p.billerId);
+    return {
+      ...base,
+      transactionType: "bill",
+      category: "biller",
+      billerCategory: biller?.category ?? "Others",
+      billerName: biller?.name ?? p.name,
+      billerReference: p.recipient,
+    };
+  });
+}
+
 export function getInitialBeneficiaries(): BeneficiaryRecord[] {
+  return unifyMobile(initialBeneficiaries());
+}
+
+function initialBeneficiaries(): BeneficiaryRecord[] {
   if (typeof window === "undefined") return SEED_BENEFICIARIES;
   try {
     const sessionRaw = window.localStorage.getItem("nibs-session");
@@ -395,6 +523,7 @@ export function getInitialBeneficiaries(): BeneficiaryRecord[] {
       const parsed = JSON.parse(sessionRaw);
       const actorId = parsed?.state?.actor?.id;
       if (actorId === "u-clean") return [];
+      if (actorId === "u-legacy") return migratedBeneficiaries();
       if (actorId === "u-single") {
         return [
           {
@@ -471,6 +600,9 @@ interface BeneficiariesState {
   addBeneficiary: (record: Omit<BeneficiaryRecord, "id" | "createdAt">) => BeneficiaryRecord;
   updateBeneficiary: (id: string, updates: Partial<BeneficiaryRecord>) => void;
   removeBeneficiary: (id: string) => void;
+  togglePinned: (id: string) => void;
+  /** Called when a payment to a saved beneficiary goes through. */
+  recordPayment: (id: string, amount: number) => void;
   changeTransactionType: (id: string, newType: TransactionType) => void;
   resetToDefault: () => void;
 }
@@ -503,6 +635,22 @@ export const useBeneficiariesStore = create<BeneficiariesState>()(
         }));
       },
 
+      togglePinned: (id) => {
+        set((state) => ({
+          beneficiaries: state.beneficiaries.map((b) => (b.id === id ? { ...b, pinned: !b.pinned } : b)),
+        }));
+      },
+
+      recordPayment: (id, amount) => {
+        set((state) => ({
+          beneficiaries: state.beneficiaries.map((b) =>
+            b.id === id
+              ? { ...b, lastPaidAt: new Date().toISOString(), lastAmount: amount, payCount: (b.payCount ?? 0) + 1 }
+              : b,
+          ),
+        }));
+      },
+
       removeBeneficiary: (id) => {
         set((state) => ({
           beneficiaries: state.beneficiaries.filter((b) => b.id !== id),
@@ -530,6 +678,16 @@ export const useBeneficiariesStore = create<BeneficiariesState>()(
     }),
     {
       name: "nibs_beneficiaries_store",
+      // v2 added pinned / last paid / pay count (older lists get the demo usage filled in); v3 made one record per
+      // mobile number (airtime records fold into wallets)
+      version: 3,
+      migrate: (persisted) => {
+        const state = persisted as { beneficiaries?: BeneficiaryRecord[] };
+        return {
+          ...state,
+          beneficiaries: unifyMobile((state.beneficiaries ?? []).map((b) => ({ ...SEED_USAGE[b.id], ...b }))),
+        } as BeneficiariesState;
+      },
     }
   )
 );

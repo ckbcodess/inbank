@@ -23,6 +23,7 @@ import {
 } from "./shared";
 
 import { Input } from "@/components/ui/input";
+import { SavedRecipientSuggest, atBank, type RecentPayeeAvatar } from "./beneficiaries";
 import { Field } from "@/components/ui/field";
 export interface OtherBankFormState {
   fromId: string;
@@ -48,6 +49,9 @@ interface OtherBankFlowProps {
   onProceed: () => void;
   detailsCollapsed?: boolean;
   onToggleCollapsed?: (collapsed: boolean) => void;
+  /** Saved recipients for this rail, offered from the field; picking one calls `onPickSaved` with its id. */
+  savedRecipients?: RecentPayeeAvatar[];
+  onPickSaved?: (id: string) => void;
 }
 
 export function OtherBankFlow({
@@ -57,6 +61,8 @@ export function OtherBankFlow({
   onProceed,
   detailsCollapsed,
   onToggleCollapsed,
+  savedRecipients,
+  onPickSaved,
 }: OtherBankFlowProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
   const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
@@ -122,43 +128,57 @@ export function OtherBankFlow({
           <div className="flex flex-col gap-3">
             <BankSelect value={state.bank || ""} onChange={(val) => onChange("bank", val)} options={OTHER_BANKS} />
 
-            <div className="relative flex items-center">
-              <Input
-                type="text"
-                inputMode="numeric"
-                value={state.benAcct}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/[^0-9]/g, "");
-                  onChange("benAcct", val);
-                  const resolved = resolveAccountName(val, "");
-                  if (resolved) {
-                    onChange("benName", resolved);
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && isAcctValid) {
-                    e.preventDefault();
-                    setResolving(true);
-                    setTimeout(() => setResolving(false), 200);
-                  }
-                }}
-                placeholder="Enter account number"
-                className="numorainput tabular pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  if (isAcctValid) {
-                    setResolving(true);
-                    setTimeout(() => setResolving(false), 200);
-                  }
-                }}
-                aria-label="Search and verify account"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
-              >
-                <Search size={16} strokeWidth={1.8} />
-              </button>
-            </div>
+            <SavedRecipientSuggest
+              items={atBank((savedRecipients ?? []).filter((r) => !r.bank.includes("GCB")), state.bank)}
+              query={state.benAcct}
+              onSelect={(item) => onPickSaved?.(item.id)}
+            >
+              {({ overlayAdornment }) => (
+                <div className="relative flex items-center">
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    value={state.benAcct}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, "");
+                      onChange("benAcct", val);
+                      const resolved = resolveAccountName(val, "");
+                      if (resolved) {
+                        onChange("benName", resolved);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && isAcctValid) {
+                        e.preventDefault();
+                        setResolving(true);
+                        setTimeout(() => setResolving(false), 200);
+                      }
+                    }}
+                    placeholder="Enter account number"
+                    readOnly={!state.bank}
+                    className="numorainput tabular pr-10"
+                  />
+                  {overlayAdornment ?? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (isAcctValid) {
+                          setResolving(true);
+                          setTimeout(() => setResolving(false), 200);
+                        }
+                      }}
+                      aria-label="Search and verify account"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                    >
+                      <Search size={16} strokeWidth={1.8} />
+                    </button>
+                  )}
+                </div>
+              )}
+            </SavedRecipientSuggest>
+            {!state.bank && (
+              <p className="-mt-1 text-[12px] text-muted-foreground">Choose a bank to enter an account number, or pick a saved recipient.</p>
+            )}
 
             {/* Verification Status */}
             <AccountVerificationStatus

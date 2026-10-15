@@ -31,6 +31,8 @@ interface PhoneInputProps
   country?: string;
   /** Turns the fixed "+233" into a country picker. */
   onCountryChange?: (code: string) => void;
+  /** Something at the end of the field, inside the border (for example a button that opens saved recipients). */
+  endAdornment?: React.ReactNode;
 }
 
 const GHANA = "GH";
@@ -130,6 +132,7 @@ export function PhoneInput({
   inputClassName,
   country = GHANA,
   onCountryChange,
+  endAdornment,
   placeholder,
   autoComplete = "tel-national",
   disabled,
@@ -173,6 +176,7 @@ export function PhoneInput({
         )}
         {...props}
       />
+      {endAdornment && <span className="-mr-2.5 flex shrink-0">{endAdornment}</span>}
     </div>
   );
 }

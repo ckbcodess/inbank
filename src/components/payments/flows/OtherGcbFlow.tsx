@@ -18,6 +18,7 @@ import {
 } from "./shared";
 
 import { Input } from "@/components/ui/input";
+import { SavedRecipientSuggest, type RecentPayeeAvatar } from "./beneficiaries";
 import { Field } from "@/components/ui/field";
 export interface OtherGcbFormState {
   fromId: string;
@@ -41,6 +42,9 @@ interface OtherGcbFlowProps {
   onProceed: () => void;
   detailsCollapsed?: boolean;
   onToggleCollapsed?: (collapsed: boolean) => void;
+  /** Saved recipients for this rail, offered from the field; picking one calls `onPickSaved` with its id. */
+  savedRecipients?: RecentPayeeAvatar[];
+  onPickSaved?: (id: string) => void;
 }
 
 export function OtherGcbFlow({
@@ -50,6 +54,8 @@ export function OtherGcbFlow({
   onProceed,
   detailsCollapsed,
   onToggleCollapsed,
+  savedRecipients,
+  onPickSaved,
 }: OtherGcbFlowProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
   const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
@@ -112,46 +118,56 @@ export function OtherGcbFlow({
           />
         ) : (
           <div className="flex flex-col gap-3">
-            <div className="relative flex items-center">
-              <Input
-                type="text"
-                inputMode="numeric"
-                maxLength={13}
-                value={state.benAcct}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/[^0-9]/g, "");
-                  onChange("benAcct", val);
-                  if (val.length === 13) {
-                    const resolved = resolveAccountName(val, "");
-                    if (resolved) {
-                      onChange("benName", resolved);
-                    }
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && isAcctValid) {
-                    e.preventDefault();
-                    setResolving(true);
-                    setTimeout(() => setResolving(false), 200);
-                  }
-                }}
-                placeholder="Enter 13-digit GCB account number"
-                className="numorainput tabular pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  if (isAcctValid) {
-                    setResolving(true);
-                    setTimeout(() => setResolving(false), 200);
-                  }
-                }}
-                aria-label="Search and verify GCB account"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
-              >
-                <Search size={16} strokeWidth={1.8} />
-              </button>
-            </div>
+            <SavedRecipientSuggest
+              items={(savedRecipients ?? []).filter((r) => r.bank.includes("GCB"))}
+              query={state.benAcct}
+              onSelect={(item) => onPickSaved?.(item.id)}
+            >
+              {({ overlayAdornment }) => (
+                <div className="relative flex items-center">
+                  <Input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={13}
+                    value={state.benAcct}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/[^0-9]/g, "");
+                      onChange("benAcct", val);
+                      if (val.length === 13) {
+                        const resolved = resolveAccountName(val, "");
+                        if (resolved) {
+                          onChange("benName", resolved);
+                        }
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && isAcctValid) {
+                        e.preventDefault();
+                        setResolving(true);
+                        setTimeout(() => setResolving(false), 200);
+                      }
+                    }}
+                    placeholder="Enter 13-digit GCB account number"
+                    className="numorainput tabular pr-10"
+                  />
+                  {overlayAdornment ?? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (isAcctValid) {
+                          setResolving(true);
+                          setTimeout(() => setResolving(false), 200);
+                        }
+                      }}
+                      aria-label="Search and verify GCB account"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                    >
+                      <Search size={16} strokeWidth={1.8} />
+                    </button>
+                  )}
+                </div>
+              )}
+            </SavedRecipientSuggest>
 
             {cleanAcct.length > 0 && cleanAcct.length < 13 && (
               <p className="text-[12px] text-muted-foreground">

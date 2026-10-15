@@ -12,7 +12,6 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   AccountVerificationStatus,
-  VerifiedAccountBadge,
   CollapsedDetailsBadge,
   TELCO_NETWORKS,
   SchedulePaymentSection,
@@ -26,6 +25,7 @@ import {
 } from "./shared";
 import { OwnWalletPicker, digitsOf, useOwnDestination } from "./OwnWalletPicker";
 import { PhoneInput } from "@/components/ui/phone-input";
+import { onNetwork, SavedRecipientSuggest, type RecentPayeeAvatar } from "./beneficiaries";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 
 import { Field } from "@/components/ui/field";
@@ -54,6 +54,9 @@ interface AirtimeFlowProps {
   onToggleCollapsed?: (collapsed: boolean) => void;
   /** "My own number": choose from the customer's own lines instead of typing one. */
   isSelf?: boolean;
+  /** Saved recipients for this rail, offered from the field; picking one calls `onPickSaved` with its id. */
+  savedRecipients?: RecentPayeeAvatar[];
+  onPickSaved?: (id: string) => void;
 }
 
 export function AirtimeFlow({
@@ -64,6 +67,8 @@ export function AirtimeFlow({
   detailsCollapsed,
   onToggleCollapsed,
   isSelf = false,
+  savedRecipients,
+  onPickSaved,
 }: AirtimeFlowProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
   const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
@@ -156,21 +161,35 @@ export function AirtimeFlow({
               options={TELCO_NETWORKS}
             />
 
-            <PhoneInput
-              value={state.aPhone}
-              onValueChange={(val) => {
-                onChange("aPhone", val);
-                const detected = detectTelcoNetwork(val);
-                if (detected && !state.wNetwork) {
-                  onChange("wNetwork", detected.telcoName);
-                }
-                const resolved = resolveAccountName(val, "");
-                if (resolved) {
-                  onChange("benName", resolved);
-                }
-              }}
-              aria-label="Phone number"
-            />
+            <SavedRecipientSuggest
+              items={onNetwork(savedRecipients ?? [], state.wNetwork)}
+              query={state.aPhone}
+              onSelect={(item) => onPickSaved?.(item.id)}
+            >
+              {({ endAdornment }) => (
+                <PhoneInput
+                  value={state.aPhone}
+                  onValueChange={(val) => {
+                    onChange("aPhone", val);
+                    const detected = detectTelcoNetwork(val);
+                    if (detected && !state.wNetwork) {
+                      onChange("wNetwork", detected.telcoName);
+                    }
+                    const resolved = resolveAccountName(val, "");
+                    if (resolved) {
+                      onChange("benName", resolved);
+                    }
+                  }}
+                  aria-label="Phone number"
+                  // Typing waits for the network; the saved-recipients button stays live and sets it
+                  readOnly={!state.wNetwork}
+                  endAdornment={endAdornment}
+                />
+              )}
+            </SavedRecipientSuggest>
+            {!state.wNetwork && (
+              <p className="-mt-1 text-[12px] text-muted-foreground">Choose a network to enter a number, or pick a saved recipient.</p>
+            )}
 
             {/* Verification Status */}
             <AccountVerificationStatus

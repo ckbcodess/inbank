@@ -160,6 +160,16 @@
   /* Tile surface tokens. Hub tiles are filled with --tile, with no stroke, and --tile-hover on hover; the fill also
      serves the empty PIN dots. Single source for both modes so a change reflects everywhere. */
   --tile: #f6f6f5;
+  /* The cash-out ticket is warm paper with black ink in both themes. */
+  --ticket-paper: #f1efe8;
+  --ticket-ink: #0a0a0a;
+  --ticket-rule: #cbc8bf;
+  /* The cash-out code board: paper tiles on the card surface, following the theme. */
+  --board: #fafafa;
+  --board-tile-top: #ffffff;
+  --board-tile-bottom: #f1f1ef;
+  --board-line: #e3e3e0;
+  --board-ink: #0a0a0a;
   --tile-hover: #eeeeed;
   /* Shared list item hover token for lists, accounts, and dashboard panels (replaces raw muted/tile-hover) */
   --item-hover: rgba(0, 0, 0, 0.04);
@@ -376,6 +386,16 @@
   --card-item: #212121;
   --modal: #121212;
   --tile: #171717;
+  /* The cash-out ticket is warm paper with black ink in both themes. */
+  --ticket-paper: #f1efe8;
+  --ticket-ink: #0a0a0a;
+  --ticket-rule: #cbc8bf;
+  /* The cash-out code board: paper tiles on the card surface, following the theme. */
+  --board: #181818;
+  --board-tile-top: #242424;
+  --board-tile-bottom: #1c1c1c;
+  --board-line: #2a2a2a;
+  --board-ink: #f4f4f4;
   --tile-hover: #1c1c1c;
   --item-hover: rgba(255, 255, 255, 0.05);
   --tile-accent: #FFC423;

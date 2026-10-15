@@ -26,6 +26,7 @@ import {
 } from "./shared";
 
 import { Input } from "@/components/ui/input";
+import { SavedRecipientSuggest, type RecentPayeeAvatar } from "./beneficiaries";
 import { Field } from "@/components/ui/field";
 import { useSession } from "@/lib/session-store";
 
@@ -94,6 +95,9 @@ interface BillsPaymentFlowProps {
   onProceed: () => void;
   detailsCollapsed?: boolean;
   onToggleCollapsed?: (collapsed: boolean) => void;
+  /** Saved recipients for this rail, offered from the field; picking one calls `onPickSaved` with its id. */
+  savedRecipients?: RecentPayeeAvatar[];
+  onPickSaved?: (id: string) => void;
 }
 
 export function BillsPaymentFlow({
@@ -103,6 +107,8 @@ export function BillsPaymentFlow({
   onProceed,
   detailsCollapsed,
   onToggleCollapsed,
+  savedRecipients,
+  onPickSaved,
 }: BillsPaymentFlowProps) {
   const actor = useSession((s) => s.actor);
   const defaultUserName = actor?.name || "Ransford Gyasi";
@@ -247,6 +253,8 @@ export function BillsPaymentFlow({
     return Boolean(state.billerId || selectedBiller?.id) && state.billRef.trim().length >= 4;
   }, [state.subType, state.ecgMeter, state.govService, state.govRef, state.billerId, selectedBiller?.id, state.billRef]);
 
+  const chosenBillerId = state.billerId || selectedBiller?.id || "";
+
   const isValid = Boolean(state.fromId) && isDestinationValid && isVerified && Boolean(verifiedName) && numAmount > 0 && !overBalance;
 
   return (
@@ -281,29 +289,34 @@ export function BillsPaymentFlow({
                   Electricity Company of Ghana (ECG)
                 </div>
 
-                <div className="relative">
-                  <Input
-                    type="text"
-                    value={state.ecgMeter}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      onChange("ecgMeter", val);
-                      if (verifiedRef && verifiedRef !== val.trim()) {
-                        setVerifiedRef(null);
-                        setVerifiedName("");
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && canVerify && !isVerifying) {
-                        e.preventDefault();
-                        handleVerify();
-                      }
-                    }}
-                    placeholder="Enter meter number"
-                    className="tabular pr-20"
-                  />
-                  {renderVerifyButton()}
-                </div>
+                <SavedRecipientSuggest items={(savedRecipients ?? []).filter((r) => r.rail === "ecg")} query={state.ecgMeter} onSelect={(item) => onPickSaved?.(item.id)}>
+                  {({ endAdornment }) => (
+                    <div className="relative">
+                      <Input
+                        type="text"
+                        value={state.ecgMeter}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          onChange("ecgMeter", val);
+                          if (verifiedRef && verifiedRef !== val.trim()) {
+                            setVerifiedRef(null);
+                            setVerifiedName("");
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && canVerify && !isVerifying) {
+                            e.preventDefault();
+                            handleVerify();
+                          }
+                        }}
+                        placeholder="Enter meter number"
+                        className="tabular pr-32"
+                      />
+                      <span className="absolute right-[5.5rem] top-1/2 -translate-y-1/2">{endAdornment}</span>
+                      {renderVerifyButton()}
+                    </div>
+                  )}
+                </SavedRecipientSuggest>
               </>
             ) : state.subType === "ghanagov" ? (
               <>
@@ -329,29 +342,38 @@ export function BillsPaymentFlow({
                   </SelectContent>
                 </Select>
 
-                <div className="relative">
-                  <Input
-                    type="text"
-                    value={state.govRef}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      onChange("govRef", val);
-                      if (verifiedRef && verifiedRef !== val.trim()) {
-                        setVerifiedRef(null);
-                        setVerifiedName("");
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && canVerify && !isVerifying) {
-                        e.preventDefault();
-                        handleVerify();
-                      }
-                    }}
-                    placeholder="Enter PRN or invoice number"
-                    className="tabular pr-20"
-                  />
-                  {renderVerifyButton()}
-                </div>
+                <SavedRecipientSuggest items={(savedRecipients ?? []).filter((r) => r.rail === "ghanagov" && (!state.govService || r.bank === state.govService))} query={state.govRef} onSelect={(item) => onPickSaved?.(item.id)}>
+                  {({ endAdornment }) => (
+                    <div className="relative">
+                      <Input
+                        type="text"
+                        value={state.govRef}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          onChange("govRef", val);
+                          if (verifiedRef && verifiedRef !== val.trim()) {
+                            setVerifiedRef(null);
+                            setVerifiedName("");
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && canVerify && !isVerifying) {
+                            e.preventDefault();
+                            handleVerify();
+                          }
+                        }}
+                        placeholder="Enter PRN or invoice number"
+                        readOnly={!state.govService}
+                          className="tabular pr-32"
+                      />
+                      <span className="absolute right-[5.5rem] top-1/2 -translate-y-1/2">{endAdornment}</span>
+                      {renderVerifyButton()}
+                    </div>
+                  )}
+                </SavedRecipientSuggest>
+                {!state.govService && (
+                  <p className="-mt-1 text-[12px] text-muted-foreground">Choose a government agency to enter a reference, or pick a saved recipient.</p>
+                )}
               </>
             ) : (
               <>
@@ -377,29 +399,38 @@ export function BillsPaymentFlow({
                   </SelectContent>
                 </Select>
 
-                <div className="relative">
-                  <Input
-                    type="text"
-                    value={state.billRef}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      onChange("billRef", val);
-                      if (verifiedRef && verifiedRef !== val.trim()) {
-                        setVerifiedRef(null);
-                        setVerifiedName("");
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && canVerify && !isVerifying) {
-                        e.preventDefault();
-                        handleVerify();
-                      }
-                    }}
-                    placeholder={selectedBiller ? `Enter ${selectedBiller.reference.toLowerCase()}` : "Enter account or reference number"}
-                    className="tabular pr-20"
-                  />
-                  {renderVerifyButton()}
-                </div>
+                <SavedRecipientSuggest items={(savedRecipients ?? []).filter((r) => r.rail === "bill" && (!chosenBillerId || r.billerId === chosenBillerId))} query={state.billRef} onSelect={(item) => onPickSaved?.(item.id)}>
+                  {({ endAdornment }) => (
+                    <div className="relative">
+                      <Input
+                        type="text"
+                        value={state.billRef}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          onChange("billRef", val);
+                          if (verifiedRef && verifiedRef !== val.trim()) {
+                            setVerifiedRef(null);
+                            setVerifiedName("");
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && canVerify && !isVerifying) {
+                            e.preventDefault();
+                            handleVerify();
+                          }
+                        }}
+                        placeholder={selectedBiller ? `Enter ${selectedBiller.reference.toLowerCase()}` : "Enter account or reference number"}
+                        readOnly={!chosenBillerId}
+                          className="tabular pr-32"
+                      />
+                      <span className="absolute right-[5.5rem] top-1/2 -translate-y-1/2">{endAdornment}</span>
+                      {renderVerifyButton()}
+                    </div>
+                  )}
+                </SavedRecipientSuggest>
+                {!chosenBillerId && (
+                  <p className="-mt-1 text-[12px] text-muted-foreground">Choose a biller to enter a reference, or pick a saved recipient.</p>
+                )}
               </>
             )}
 

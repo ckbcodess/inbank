@@ -5,7 +5,7 @@
  * Keeps page components thin, decoupled, and production-ready for live API swapping.
  */
 
-import { payAgainFor } from "./payees";
+import { payAgainFromSaved } from "./payees";
 import {
   accountsForProfile,
   transactionsForProfile,
@@ -394,6 +394,6 @@ export function getSimulatedDashboardData({
         ? DEMO_ATTENTION_ITEMS
         : attention.filter((i) => !i.accountId || i.accountId === selectedId),
     // A brand-new (or empty) customer hasn't paid anyone yet.
-    payAgain: usageType === "new_customer" || usageType === "empty" ? [] : payAgainFor(actor.id),
+    payAgain: usageType === "new_customer" || usageType === "empty" ? [] : payAgainFromSaved(),
   };
 }

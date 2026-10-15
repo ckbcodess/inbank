@@ -6,8 +6,6 @@ import {
   Bell,
   ReceiptText,
   Repeat,
-  Trash2,
-  Sparkles,
   RotateCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,15 +27,6 @@ export interface SuccessActionCard {
   icon: React.ComponentType<{ size?: number; className?: string }>;
   onClick?: () => void;
   active?: boolean;
-}
-
-export interface CardlessTokenDetails {
-  code: string;
-  amount: string;
-  expiresAt: string;
-  recipientPhone: string;
-  recipientName?: string;
-  onDelete?: () => void;
 }
 
 /**
@@ -95,8 +84,6 @@ export interface PaymentSuccessScreenProps {
   onSchedulePayment?: () => void;
   /** Leave out the Schedule Payment card (e.g. the payment already is a standing order). */
   hideSchedule?: boolean;
-  /** Cardless withdrawal token payload if generated via cardless rail */
-  cardlessToken?: CardlessTokenDetails;
   /** Name of the beneficiary to display in the toast notification */
   beneficiaryName?: string;
   /** Rail or category name for the beneficiary toast (e.g. "Send to Wallet", "Bank Transfer") */
@@ -239,7 +226,6 @@ export function PaymentSuccessScreen({
   onSaveBeneficiaryChange,
   customActionCards,
   onSchedulePayment,
-  cardlessToken,
   beneficiaryName,
   beneficiaryRail,
 }: PaymentSuccessScreenProps) {
@@ -291,11 +277,14 @@ export function PaymentSuccessScreen({
     return "Beneficiary";
   }, [beneficiaryName, receiptRows, message]);
 
-  const effectiveRail = useMemo(() => {
+  const effectiveRail = useMemo((): string | null => {
     if (beneficiaryRail && beneficiaryRail.trim()) {
       return beneficiaryRail.trim();
     }
     const combined = `${title} ${message} ${receiptRows.map(([k, v]) => `${k} ${typeof v === "string" ? v : ""}`).join(" ")}`.toLowerCase();
+    if (combined.includes("international") || combined.includes("swift") || combined.includes("papss")) {
+      return "International Payments";
+    }
     if (combined.includes("wallet") || combined.includes("mobile money") || combined.includes("momo")) {
       return "Send to Wallet";
     }
@@ -311,7 +300,8 @@ export function PaymentSuccessScreen({
     if (combined.includes("bill") || combined.includes("ecg") || combined.includes("utility")) {
       return "Bill Payment";
     }
-    return "Send to Wallet";
+    // Unknown rail: say "your beneficiaries" rather than naming the wrong one
+    return null;
   }, [beneficiaryRail, title, message, receiptRows]);
 
   // Orchestrate the entrance: eagle brand moment -> settles into the emerald check,
@@ -361,9 +351,9 @@ export function PaymentSuccessScreen({
     setSaveBeneficiary(next);
     onSaveBeneficiaryChange?.(next);
     if (next) {
-      toast.success(`${effectiveBenName} has been added to ${effectiveRail} beneficiaries`);
+      toast.success(`${effectiveBenName} has been added to ${effectiveRail ? `${effectiveRail} ` : "your "}beneficiaries`);
     } else {
-      toast.info(`${effectiveBenName} has been removed from ${effectiveRail} beneficiaries`);
+      toast.info(`${effectiveBenName} has been removed from ${effectiveRail ? `${effectiveRail} ` : "your "}beneficiaries`);
     }
   };
 
@@ -593,46 +583,6 @@ export function PaymentSuccessScreen({
           )}
         </div>
       </motion.div>
-
-      {/* ── Cardless Withdrawal Token Voucher (if generated) ── */}
-      {cardlessToken && revealRest && (
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-          className="w-full max-w-[460px] rounded-[14px] border border-warning/30 bg-warning/5 p-4 flex flex-col gap-3 shadow-xs text-left"
-        >
-          <div className="flex items-center justify-between border-b border-warning/20 pb-2">
-            <span className="text-[12.5px] font-medium text-warning-text flex items-center gap-1.5">
-              <Sparkles size={13} />
-              <span>ATM Withdrawal Voucher</span>
-            </span>
-            <span className="text-[12px] text-muted-foreground">Expires: {cardlessToken.expiresAt}</span>
-          </div>
-          <div className="flex items-center justify-between py-1">
-            <div className="flex flex-col">
-              <span className="text-[12px] text-muted-foreground">Voucher Code</span>
-              <span className="text-[22px] font-bold tracking-widest tabular text-foreground">{cardlessToken.code}</span>
-            </div>
-            <div className="text-right">
-              <span className="text-[12px] text-muted-foreground">Amount</span>
-              <div className="text-[18px] font-semibold tabular text-foreground">GHS {cardlessToken.amount}</div>
-            </div>
-          </div>
-          {cardlessToken.onDelete && (
-            <div className="flex justify-end pt-1">
-              <button
-                type="button"
-                onClick={cardlessToken.onDelete}
-                className="flex items-center gap-1 text-[12px] text-destructive hover:underline cursor-pointer"
-              >
-                <Trash2 size={13} />
-                <span>Cancel Voucher</span>
-              </button>
-            </div>
-          )}
-        </motion.div>
-      )}
 
       {/* ── Feedback Notification ── */}
       {feedbackSent && (

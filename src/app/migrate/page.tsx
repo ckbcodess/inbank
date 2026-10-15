@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useSession } from "@/lib/session-store";
 import { setFirstRun } from "@/lib/device-trust";
+import { migratedBeneficiaries, useBeneficiariesStore } from "@/lib/beneficiaries-store";
 import {
   LEGACY_DEMO_MOBILE,
   MIGRATED_DATA,
@@ -91,6 +92,8 @@ function MigrateContent() {
     window.setTimeout(() => {
       signIn(actor);
       verifyMfa();
+      // Their payees came across with them: they are saved beneficiaries from the first screen
+      useBeneficiariesStore.getState().setBeneficiaries(migratedBeneficiaries());
       setFirstRun("migrated");
       router.push("/overview");
     }, 700);

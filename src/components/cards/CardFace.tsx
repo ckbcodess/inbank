@@ -9,7 +9,7 @@
  */
 
 import { NetworkLogo } from "@/components/cards/NetworkLogo";
-import { Ban, Wifi } from "lucide-react";
+import { Lock, Wifi } from "lucide-react";
 import type { PaymentCard } from "@/lib/mock-data";
 import { getCardTheme } from "@/components/cards/card-themes";
 import { EmvChip } from "@/components/cards/EmvChip";
@@ -90,7 +90,7 @@ export function CardFace({
       {blocked && (
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="flex size-[18cqw] items-center justify-center rounded-full bg-white/90 text-primary-foreground shadow-md">
-            <Ban
+            <Lock
               className="size-[8cqw]"
               strokeWidth={1.8}
               aria-label="Blocked"

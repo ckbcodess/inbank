@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Split-flap code: five variations</title>
+<style>
+:root{--page:#ffffff;--stage:#f4f4f2;--card:#fafafa;--fg:#0a0a0a;--muted:#6b6b6b;--border:#e3e3e0;--primary:#FFC423;--paper:#ffffff;--ink:#0a0a0a}
+:root[data-theme="dark"]{--page:#0b0b0b;--stage:#141414;--card:#181818;--fg:#f4f4f4;--muted:#9a9a9a;--border:#2a2a2a;--paper:#242424;--ink:#f4f4f4}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--page:#0b0b0b;--stage:#141414;--card:#181818;--fg:#f4f4f4;--muted:#9a9a9a;--border:#2a2a2a;--paper:#242424;--ink:#f4f4f4}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--fg);font-family:"Open Sans",system-ui,sans-serif;font-size:14px}
+main{max-width:1200px;margin:0 auto;padding:40px 24px 80px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:32px;flex-wrap:wrap}
+h1{font-size:22px;font-weight:500;letter-spacing:-.02em;margin:0 0 6px}
+header p{margin:0;color:var(--muted);max-width:600px;line-height:1.5}
+.ctl{display:flex;gap:8px}
+button{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 14px;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:20px}
+.cell{display:flex;flex-direction:column;gap:12px}
+.stage{background:var(--stage);border-radius:20px;min-height:360px;display:grid;place-items:center;padding:24px;overflow:hidden}
+.cap h2{font-size:14px;font-weight:500;margin:0 0 2px}
+.cap h2 span{color:var(--muted);font-weight:400;margin-right:6px}
+.cap p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.5}
+.t{font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.01ms!important}}
+
+/* shared tile */
+.row{display:flex;justify-content:center;gap:8px;align-items:center}
+.sp{width:12px}
+.tl{position:relative;display:grid;place-items:center;overflow:hidden;font-variant-numeric:tabular-nums;perspective:240px}
+.tl:after{content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:var(--line,#0a0a0a);transform:translateY(-1px);pointer-events:none}
+.tl b{font-weight:inherit;display:block}
+.tl.flip b{animation:flipin .09s ease-out both}
+@keyframes flipin{from{transform:rotateX(-75deg);opacity:.25}to{transform:none;opacity:1}}
+.sm{font-size:12px;opacity:.75}
+.board{border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:18px;width:340px}
+.meta{display:flex;justify-content:space-between;font-size:12px}
+
+/* A: light board, follows the theme */
+.A{background:var(--card);border:1px solid var(--border);color:var(--fg)}
+.A .meta{color:var(--muted)}
+.A .tl{width:44px;height:66px;font-size:38px;border-radius:9px;background:linear-gradient(var(--paper) 50%,var(--stage) 50%);border:1px solid var(--border);color:var(--fg);--line:var(--border)}
+
+/* B: amber tiles */
+.B{background:#141414;color:#fff}
+.B .meta{color:#8a8a8a}
+.B .tl{width:44px;height:66px;font-size:38px;border-radius:9px;background:linear-gradient(#ffd24a 50%,#f4b414 50%);color:#0a0a0a;font-weight:600;--line:rgba(0,0,0,.45)}
+
+/* C: two big panels, three digits each */
+.C{background:#141414;color:#fff;align-items:center}
+.C .meta{color:#8a8a8a;width:100%}
+.C .grp{display:flex;gap:2px}
+.C .tl{width:34px;height:84px;font-size:52px;background:linear-gradient(#262626 50%,#1c1c1c 50%);color:#ffd35a}
+.C .grp .tl:first-child{border-radius:12px 0 0 12px}.C .grp .tl:last-child{border-radius:0 12px 12px 0}
+.C .grp .tl:after{display:none}
+.C .grp{position:relative}.C .grp:after{content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:#0a0a0a}
+.C .row{gap:14px}
+
+/* D: a full board, every row flips */
+.D{background:#141414;color:#fff;gap:12px;width:372px}
+.D .line{display:flex;align-items:center;gap:10px}
+.D .lab{width:58px;font-size:11px;color:#8a8a8a;letter-spacing:.06em}
+.D .cells{display:flex;gap:3px;flex-wrap:nowrap}
+.D .tl{width:18px;height:26px;font-size:15px;background:linear-gradient(#262626 50%,#1c1c1c 50%);color:#ffd35a;border-radius:4px}
+.D .big .tl{width:32px;height:52px;font-size:30px;border-radius:7px}
+.D .big .cells{gap:4px}
+.D .sepx{height:1px;background:#2a2a2a;margin:2px 0}
+.D .dot{width:6px;height:6px;border-radius:50%;background:#ffc423;display:inline-block;margin-right:6px}
+
+/* E: true two-half flap, deeper board */
+.E{background:linear-gradient(#1a1a1a,#101010);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 20px 40px rgba(0,0,0,.35);position:relative}
+.E .meta{color:#8a8a8a}
+.E .led{display:flex;align-items:center;gap:6px;color:#ffc423;font-size:11px}
+.E .led i{width:7px;height:7px;border-radius:50%;background:#ffc423;box-shadow:0 0 10px #ffc423;animation:pulse 1.2s 2}
+@keyframes pulse{50%{opacity:.35}}
+.fp{position:relative;width:46px;height:72px;border-radius:9px;background:#0a0a0a;perspective:300px}
+.fp .h{position:absolute;left:0;right:0;height:50%;overflow:hidden;background:linear-gradient(#2c2c2c,#222)}
+.fp .u{top:0;border-radius:9px 9px 0 0;border-bottom:1px solid #000}
+.fp .d{bottom:0;border-radius:0 0 9px 9px;background:linear-gradient(#1e1e1e,#181818)}
+.fp .h span{position:absolute;left:0;right:0;height:200%;display:grid;place-items:center;font-size:44px;color:#ffd35a;font-variant-numeric:tabular-nums}
+.fp .u span{top:0}.fp .d span{bottom:0}
+.fp .lf{backface-visibility:hidden}
+.fp .lu{transform-origin:bottom;z-index:2}
+.fp .ld{transform-origin:top;z-index:2}
+.fp:before,.fp:after{content:"";position:absolute;top:50%;width:5px;height:9px;background:#0a0a0a;z-index:3;transform:translateY(-50%)}
+.fp:before{left:-2px;border-radius:0 3px 3px 0}.fp:after{right:-2px;border-radius:3px 0 0 3px}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div>
+    <h1>Split-flap code: five variations</h1>
+    <p>The same board, pushed five ways. Same content in each (code 782 419, GHS 200.00, to Myself, expires 16/10/26). Pick one and I'll build it into the success page, or mix two (for example E's flap with B's colour).</p>
+  </div>
+  <div class="ctl"><button id="replay" type="button">Replay</button><button id="theme" type="button">Switch theme</button></div>
+</header>
+
+<section class="grid" id="grid">
+
+<div class="cell"><div class="stage">
+  <div class="board A">
+    <div class="meta"><span>Myself · +233 24 ∗∗∗ 4567</span><span class="t">GHS 200.00</span></div>
+    <div class="row" data-code="782 419"></div>
+    <div class="meta" style="justify-content:center">Expires 16/10/26</div>
+  </div></div>
+  <div class="cap"><h2><span>A</span>Paper board</h2><p>Light tiles that follow the theme, instead of a black board. Quieter, sits on the page like the rest of the app. Trade-off: loses the drama of the dark board.</p></div></div>
+
+<div class="cell"><div class="stage">
+  <div class="board B">
+    <div class="meta"><span>Myself · +233 24 ∗∗∗ 4567</span><span class="t">GHS 200.00</span></div>
+    <div class="row" data-code="782 419"></div>
+    <div class="meta" style="justify-content:center">Expires 16/10/26</div>
+  </div></div>
+  <div class="cap"><h2><span>B</span>Amber tiles</h2><p>Solid amber tiles with black digits on the dark board. The brand colour carries the code and nothing else competes. Trade-off: heavier than the current gold-on-dark.</p></div></div>
+
+<div class="cell"><div class="stage">
+  <div class="board C">
+    <div class="meta"><span>Myself · +233 24 ∗∗∗ 4567</span><span class="t">GHS 200.00</span></div>
+    <div class="row" data-groups="782,419"></div>
+    <div class="meta" style="justify-content:center">Expires 16/10/26</div>
+  </div></div>
+  <div class="cap"><h2><span>C</span>Two panels</h2><p>The code as two big three-digit panels, each one hinge, so it reads as "782, 419". Fewer edges, bigger digits. Trade-off: less of the per-digit flipping feel.</p></div></div>
+
+<div class="cell"><div class="stage">
+  <div class="board D">
+    <div class="line"><span class="lab">TO</span><div class="cells" data-text="MYSELF"></div></div>
+    <div class="line"><span class="lab">AMOUNT</span><div class="cells" data-text="GHS 200.00"></div></div>
+    <div class="sepx"></div>
+    <div class="line big"><span class="lab"><i class="dot"></i>CODE</span><div class="cells" data-text="782 419"></div></div>
+    <div class="sepx"></div>
+    <div class="line"><span class="lab">EXPIRES</span><div class="cells" data-text="16/10/26"></div></div>
+  </div></div>
+  <div class="cap"><h2><span>D</span>Departures board</h2><p>A full board where every line flips, the amount and recipient too, the code as the big row. The most faithful to an airport board. Trade-off: more to look at, and the small tiles are fiddly on a phone.</p></div></div>
+
+<div class="cell"><div class="stage">
+  <div class="board E">
+    <div class="meta"><span class="led"><i></i>Ready</span><span class="t">GHS 200.00</span></div>
+    <div class="row" data-fp="782 419" style="gap:7px"></div>
+    <div class="meta"><span>Myself · +233 24 ∗∗∗ 4567</span><span class="t">Exp 16/10/26</span></div>
+  </div></div>
+  <div class="cap"><h2><span>E</span>True flap</h2><p>Real two-half flaps: the top half folds down and the new digit's bottom half swings into place, with a lit "Ready" lamp. The most mechanical. Trade-off: the most code to maintain and the heaviest motion.</p></div></div>
+
+</section>
+</main>
+<script>
+var DIG="0123456789",LET="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+function pool(ch){return /[0-9]/.test(ch)?DIG:/[A-Z]/.test(ch)?LET:null}
+function mkTile(cls){var d=document.createElement("span");d.className="tl"+(cls?" "+cls:"");d.innerHTML="<b></b>";return d}
+function settle(tile,final,startMs,flips){
+  var p=pool(final),b=tile.firstChild;
+  if(!p){b.textContent=final;return}
+  var last="";
+  for(let n=1;n<=flips;n++){
+    setTimeout(function(){
+      var v=final;
+      if(n<flips){do{v=p[Math.floor(Math.random()*p.length)]}while(v===last)}
+      last=v;b.textContent=v;
+      tile.classList.remove("flip");void tile.offsetWidth;tile.classList.add("flip");
+    },startMs+n*75);
+  }
+}
+function build(){
+  document.querySelectorAll("[data-code]").forEach(function(row){
+    row.innerHTML="";var i=0;
+    row.dataset.code.split("").forEach(function(c){
+      if(c===" "){var s=document.createElement("span");s.className="sp";row.appendChild(s);return}
+      var t=mkTile();row.appendChild(t);settle(t,c,450+i*120,7+i);i++;
+    });
+  });
+  document.querySelectorAll("[data-groups]").forEach(function(row){
+    row.innerHTML="";var i=0;
+    row.dataset.groups.split(",").forEach(function(g){
+      var gr=document.createElement("div");gr.className="grp";row.appendChild(gr);
+      g.split("").forEach(function(c){var t=mkTile();gr.appendChild(t);settle(t,c,450+i*120,7+i);i++});
+    });
+  });
+  document.querySelectorAll("[data-text]").forEach(function(box){
+    box.innerHTML="";var i=0;
+    box.dataset.text.split("").forEach(function(c){
+      var t=mkTile();box.appendChild(t);
+      if(c===" "){t.style.background="none";t.firstChild.textContent="";t.style.setProperty("--line","transparent");}
+      else{settle(t,c,300+i*70,6+(i%4));}
+      i++;
+    });
+  });
+  document.querySelectorAll("[data-fp]").forEach(function(row){
+    row.innerHTML="";var i=0;
+    row.dataset.fp.split("").forEach(function(c){
+      if(c===" "){var s=document.createElement("span");s.className="sp";row.appendChild(s);return}
+      var el=document.createElement("div");el.className="fp";
+      el.innerHTML='<div class="h u"><span></span></div><div class="h d"><span></span></div><div class="h u lf lu"><span></span></div><div class="h d lf ld"><span></span></div>';
+      row.appendChild(el);
+      flap(el,c,450+i*120,7+i);i++;
+    });
+  });
+}
+function flap(el,final,startMs,flips){
+  var u=el.querySelector(".u span"),d=el.querySelector(".d span"),lu=el.querySelector(".lu"),ld=el.querySelector(".ld");
+  var luS=lu.querySelector("span"),ldS=ld.querySelector("span");
+  var cur="";
+  u.textContent=d.textContent=luS.textContent=ldS.textContent="";
+  lu.style.opacity=ld.style.opacity=0;
+  for(let n=1;n<=flips;n++){
+    setTimeout(function(){
+      var v=final;
+      if(n<flips){do{v=DIG[Math.floor(Math.random()*10)]}while(v===cur)}
+      var old=cur;cur=v;
+      u.textContent=v;luS.textContent=old;d.textContent=old;ldS.textContent=v;
+      lu.style.opacity=1;ld.style.opacity=1;
+      lu.animate([{transform:"rotateX(0)"},{transform:"rotateX(-90deg)"}],{duration:36,easing:"ease-in",fill:"forwards"});
+      ld.animate([{transform:"rotateX(90deg)"},{transform:"rotateX(0)"}],{duration:36,delay:36,easing:"ease-out",fill:"forwards"})
+        .onfinish=function(){d.textContent=v;lu.style.opacity=0;ld.style.opacity=0};
+    },startMs+n*75);
+  }
+}
+var r=document.documentElement;
+document.getElementById("theme").addEventListener("click",function(){
+  var dark=r.getAttribute("data-theme")?r.getAttribute("data-theme")==="dark":matchMedia("(prefers-color-scheme: dark)").matches;
+  r.setAttribute("data-theme",dark?"light":"dark");
+});
+document.getElementById("replay").addEventListener("click",build);
+build();
+</script>
+</body>
+</html>

@@ -7,7 +7,7 @@ export default function GroupsIndexPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/beneficiaries?tab=groups");
+    router.replace("/beneficiaries/groups");
   }, [router]);
 
   return null;

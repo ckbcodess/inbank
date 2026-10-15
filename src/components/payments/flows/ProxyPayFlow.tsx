@@ -18,6 +18,7 @@ import {
 
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { SavedRecipientSuggest, type RecentPayeeAvatar } from "./beneficiaries";
 import { Field } from "@/components/ui/field";
 export interface ProxyPayFormState {
   fromId: string;
@@ -41,6 +42,9 @@ interface ProxyPayFlowProps {
   onProceed: () => void;
   detailsCollapsed?: boolean;
   onToggleCollapsed?: (collapsed: boolean) => void;
+  /** Saved recipients for this rail, offered from the field; picking one calls `onPickSaved` with its id. */
+  savedRecipients?: RecentPayeeAvatar[];
+  onPickSaved?: (id: string) => void;
 }
 
 export function ProxyPayFlow({
@@ -50,6 +54,8 @@ export function ProxyPayFlow({
   onProceed,
   detailsCollapsed,
   onToggleCollapsed,
+  savedRecipients,
+  onPickSaved,
 }: ProxyPayFlowProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
   const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
@@ -109,42 +115,52 @@ export function ProxyPayFlow({
           />
         ) : (
           <div className="flex flex-col gap-3">
-            <div className="relative flex items-center">
-              <Input
-                type="text"
-                value={state.pxId}
-                onChange={(e) => {
-                  const val = e.target.value.trim();
-                  onChange("pxId", val);
-                  const resolved = resolveAccountName(val, "");
-                  if (resolved) {
-                    onChange("benName", resolved);
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && isPxValid) {
-                    e.preventDefault();
-                    setResolving(true);
-                    setTimeout(() => setResolving(false), 200);
-                  }
-                }}
-                placeholder="Enter Ghana Card, phone, email or handle"
-                className="pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  if (isPxValid) {
-                    setResolving(true);
-                    setTimeout(() => setResolving(false), 200);
-                  }
-                }}
-                aria-label="Search and verify proxy ID"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
-              >
-                <Search size={16} strokeWidth={1.8} />
-              </button>
-            </div>
+            <SavedRecipientSuggest
+              items={savedRecipients ?? []}
+              query={state.pxId}
+              onSelect={(item) => onPickSaved?.(item.id)}
+            >
+              {({ overlayAdornment }) => (
+                <div className="relative flex items-center">
+                  <Input
+                    type="text"
+                    value={state.pxId}
+                    onChange={(e) => {
+                      const val = e.target.value.trim();
+                      onChange("pxId", val);
+                      const resolved = resolveAccountName(val, "");
+                      if (resolved) {
+                        onChange("benName", resolved);
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && isPxValid) {
+                        e.preventDefault();
+                        setResolving(true);
+                        setTimeout(() => setResolving(false), 200);
+                      }
+                    }}
+                    placeholder="Enter Ghana Card, phone, email or handle"
+                    className="pr-10"
+                  />
+                  {overlayAdornment ?? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (isPxValid) {
+                          setResolving(true);
+                          setTimeout(() => setResolving(false), 200);
+                        }
+                      }}
+                      aria-label="Search and verify proxy ID"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                    >
+                      <Search size={16} strokeWidth={1.8} />
+                    </button>
+                  )}
+                </div>
+              )}
+            </SavedRecipientSuggest>
             {/* Verification Status */}
             <AccountVerificationStatus
               resolving={isPxValid && resolving}

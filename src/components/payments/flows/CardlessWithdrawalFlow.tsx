@@ -6,22 +6,21 @@ import { Account } from "@/lib/mock-data";
 import {
   FromAccountSelector,
   AmountInput,
-  NarrationInput,
-  CategorySelect,
   InsufficientFundsAlert,
   ProceedButton,
   CollapsedDetailsBadge,
   AccountVerificationStatus,
   NETWORKS,
+  NetworkSelect,
   detectTelcoNetwork,
   operatorBadgeIcon,
   resolveAccountName,
   formatGhPhone,
-  NetworkSelect,
 } from "./shared";
-import { REGISTERED_PHONE } from "../useAuthorisation";
+import { OwnWalletPicker, REGISTERED_WALLET, useOwnDestination, type OwnWallet } from "./OwnWalletPicker";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
+import { maskMobile } from "@/lib/auth-shared";
 import { Field } from "@/components/ui/field";
 
 export interface CardlessFormState {
@@ -46,6 +45,12 @@ interface CardlessWithdrawalFlowProps {
   onToggleCollapsed?: (collapsed: boolean) => void;
 }
 
+/**
+ * Generate an ATM cash-out code. The same shape as the other flows: from account, who it's for,
+ * how much. For yourself you pick one of your own numbers (the registered one or any linked wallet,
+ * as in Send to Wallet); for someone else you pick their network and enter their number (the network is
+ * filled in from the number when it can be), and the name is looked up. No narration or category is asked.
+ */
 export function CardlessWithdrawalFlow({
   accounts,
   state,
@@ -68,6 +73,18 @@ export function CardlessWithdrawalFlow({
     [accounts, state.fromId]
   );
 
+  // Yourself: any number that's yours, defaulting to the registered one.
+  const own = useOwnDestination({
+    isSelf,
+    phone: state.recipientPhone,
+    apply: (w) => {
+      onChange("recipientPhone", w.phone);
+      onChange("wNetwork", w.network);
+      onChange("recipientName", `My ${w.network}`);
+    },
+  });
+  const selfPhone = state.recipientPhone || REGISTERED_WALLET.phone;
+
   const isPhoneValid = isSelf || isCompleteGhanaMobile(state.recipientPhone || "");
   const isNetworkValid = isSelf || Boolean(state.wNetwork);
   const isDetailsEntered = isPhoneValid && isNetworkValid;
@@ -77,19 +94,24 @@ export function CardlessWithdrawalFlow({
   useEffect(() => {
     if (!isSelf && isDetailsEntered) {
       setResolving(true);
-      const timer = setTimeout(() => {
-        setResolving(false);
-      }, 250);
+      const timer = setTimeout(() => setResolving(false), 250);
       return () => clearTimeout(timer);
-    } else {
-      setResolving(false);
     }
+    setResolving(false);
   }, [isSelf, isDetailsEntered, state.recipientPhone, state.wNetwork]);
 
-  const verifiedName = useMemo(() => {
-    if (isSelf) return "Myself (Self Withdrawal)";
-    return resolveAccountName(state.recipientPhone, state.recipientName);
-  }, [isSelf, state.recipientPhone, state.recipientName]);
+  // A number picked from the quick-pick strip arrives without a network: fill it in from the number when we can
+  useEffect(() => {
+    if (isSelf || state.wNetwork || !isPhoneValid) return;
+    const detected = detectTelcoNetwork(state.recipientPhone);
+    if (detected) onChange("wNetwork", detected.walletName);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSelf, isPhoneValid, state.recipientPhone, state.wNetwork]);
+
+  const verifiedName = useMemo(
+    () => (isSelf ? "" : resolveAccountName(state.recipientPhone, state.recipientName)),
+    [isSelf, state.recipientPhone, state.recipientName]
+  );
 
   const isVerified = isSelf || (isDetailsEntered && !resolving && Boolean(verifiedName));
 
@@ -99,111 +121,82 @@ export function CardlessWithdrawalFlow({
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
-      {/* 1. From Account Selector */}
-      <FromAccountSelector
-        accounts={accounts}
-        value={state.fromId}
-        onChange={(id) => onChange("fromId", id)}
-      />
+      <FromAccountSelector accounts={accounts} value={state.fromId} onChange={(id) => onChange("fromId", id)} />
 
-      {/* 2. Beneficiary / Network & Phone Details */}
-      <Field label="Beneficiary Details">
-        {isVerified && isCollapsed ? (
-          <CollapsedDetailsBadge
-            title={isSelf ? "Myself (Cardless Code)" : (verifiedName || state.recipientName || `Recipient ${state.recipientPhone}`)}
-            subtitle={
-              isSelf
-                ? `Self Cash Withdrawal · ${formatGhPhone(REGISTERED_PHONE)}`
-                : `${state.wNetwork || "MTN Mobile Money"} · ${formatGhPhone(state.recipientPhone)}`
-            }
-            icon={isSelf ? <Smartphone size={18} className="text-primary" /> : operatorBadgeIcon(state.wNetwork || "")}
-            nameCheck={isSelf ? { confirmed: true } : { confirmed: Boolean(verifiedName), by: state.wNetwork || undefined }}
-            onChange={() => setCollapsed(false)}
+      {/* Yourself: pick which of your numbers gets the code */}
+      {isSelf && (
+        <Field label="Send Code To">
+          <OwnWalletPicker
+            wallets={own.wallets}
+            selectedPhone={selfPhone}
+            accounts={accounts}
+            onSelect={(w: OwnWallet) => own.pick(w)}
+            removedNotice={own.removedNotice}
           />
-        ) : (
-          <div className="flex flex-col gap-3">
-            {isSelf ? (
-              <div className="flex h-13 items-center justify-between rounded-2xl border border-border/80 bg-muted/20 px-4 text-[14px] font-medium text-foreground">
-                <div className="flex items-center gap-2.5">
-                  <Smartphone size={18} className="text-muted-foreground" />
-                  <span className="tabular">{formatGhPhone(REGISTERED_PHONE)}</span>
-                </div>
-                <span className="text-[12px] text-muted-foreground font-normal">Registered Mobile</span>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-1 duration-150">
-                {/* Mobile Network Selector */}
-                <NetworkSelect
-                  value={state.wNetwork || ""}
-                  onChange={(val) => onChange("wNetwork", val)}
-                  options={NETWORKS}
-                />
+        </Field>
+      )}
 
-                {/* Phone Number Input with Auto-Network Detection & Verification */}
-                <div>
-                  <PhoneInput
-                    value={state.recipientPhone}
-                    onValueChange={(val) => {
-                      onChange("recipientPhone", val);
-                      const detected = detectTelcoNetwork(val);
-                      if (detected && !state.wNetwork) {
-                        onChange("wNetwork", detected.walletName);
-                      }
-                      const resolved = resolveAccountName(val, "");
-                      if (resolved) {
-                        onChange("recipientName", resolved);
-                      }
-                    }}
-                    aria-label="Phone number"
-                  />
-                </div>
+      {/* Someone else: just their number. The name is looked up and shown, like every other payment field. */}
+      {!isSelf && (
+        <Field label="Recipient">
+          {isVerified && isCollapsed ? (
+            <CollapsedDetailsBadge
+              title={verifiedName}
+              subtitle={formatGhPhone(state.recipientPhone)}
+              icon={operatorBadgeIcon(state.wNetwork || "") ?? <Smartphone size={18} className="text-primary" />}
+              nameCheck={{ confirmed: true, by: state.wNetwork || undefined }}
+              onChange={() => setCollapsed(false)}
+            />
+          ) : (
+            <div className="flex flex-col gap-3 animate-in fade-in duration-150">
+              <NetworkSelect
+                value={state.wNetwork || ""}
+                onChange={(val) => onChange("wNetwork", val)}
+                options={NETWORKS}
+              />
+              <PhoneInput
+                value={state.recipientPhone}
+                onValueChange={(val) => {
+                  onChange("recipientPhone", val);
+                  const detected = detectTelcoNetwork(val);
+                  if (detected && !state.wNetwork) onChange("wNetwork", detected.walletName);
+                  const resolved = resolveAccountName(val, "");
+                  if (resolved) onChange("recipientName", resolved);
+                }}
+                aria-label="Recipient mobile number"
+              />
+              <AccountVerificationStatus
+                resolving={isDetailsEntered && resolving}
+                name={isVerified ? verifiedName : null}
+                resolvingMessage="Verifying..."
+              />
+            </div>
+          )}
+        </Field>
+      )}
 
-                {/* Verification Status */}
-                <AccountVerificationStatus
-                  resolving={isDetailsEntered && resolving}
-                  name={isVerified ? verifiedName : null}
-                  resolvingMessage="Verifying..."
-                />
-              </div>
-            )}
-          </div>
-        )}
-      </Field>
-
-      {/* Progressive Disclosure: Only reveal Amount, Narration & Category after Verification */}
       {isVerified && (
         <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-          {/* 3. Amount Input */}
-          <AmountInput
-            value={state.amount}
-            onChange={(val) => onChange("amount", val)}
-            currency={fromAccount?.currency || "GHS"}
-            label="Withdrawal Amount"
-            onFocus={() => {
-              if (isVerified) setCollapsed(true);
-            }}
-            error={overBalance ? <InsufficientFundsAlert /> : undefined}
-          />
+          <div className="flex flex-col gap-2">
+            <AmountInput
+              value={state.amount}
+              onChange={(val) => onChange("amount", val)}
+              currency={fromAccount?.currency || "GHS"}
+              label="Amount"
+              onFocus={() => {
+                if (!isSelf) setCollapsed(true);
+              }}
+              error={overBalance ? <InsufficientFundsAlert /> : undefined}
+            />
+            {/* Where the code goes, and what it's good for, in one line */}
+            <p className="text-[12.5px] text-muted-foreground tabular">
+              {isSelf
+                ? `We'll text the code to ${maskMobile(selfPhone)}. It works at any GCB ATM.`
+                : `We'll text the code to ${verifiedName}. It works at any GCB ATM.`}
+            </p>
+          </div>
 
-          {/* 4. Narration Input */}
-          <NarrationInput
-            value={state.narration}
-            onChange={(val) => onChange("narration", val)}
-            placeholder="Reason for cardless withdrawal (optional)"
-          />
-
-          {/* 5. Transaction Category (Optional) */}
-          <CategorySelect
-            value={state.category || ""}
-            onChange={(val) => onChange("category", val)}
-          />
-
-          {/* 6. Proceed Button */}
-          <ProceedButton
-            disabled={!isValid}
-            onClick={onProceed}
-            label="Generate Withdrawal Token"
-          />
+          <ProceedButton disabled={!isValid} onClick={onProceed} label="Generate Code" />
         </div>
       )}
     </div>
