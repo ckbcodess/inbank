@@ -22,8 +22,8 @@ import { CashoutTicket } from "./CashoutTicket";
 const DROP = 56;
 const START_SCALE = 0.97;
 
-/** Seconds: the pause before it appears (so the page settles first), the slide, and the fade. */
-const LEAD_S = 0.7;
+/** Seconds: the pause before it appears (the eagle intro before it already gave the page its beat), the slide, and the fade. */
+const LEAD_S = 0.15;
 const SLIDE_S = 0.7;
 const FADE_S = 0.35;
 

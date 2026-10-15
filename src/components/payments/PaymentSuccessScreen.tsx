@@ -91,7 +91,7 @@ export interface PaymentSuccessScreenProps {
 }
 
 // GCB Iconic Soaring Golden Eagle Emblem (Standalone with Specular White Sheen Mask)
-function GcbEagleEmblem({ className, idPrefix = "gcb-eagle" }: { className?: string; idPrefix?: string }) {
+export function GcbEagleEmblem({ className, idPrefix = "gcb-eagle" }: { className?: string; idPrefix?: string }) {
   const maskId = `${idPrefix}-mask`;
   const sheenGradId = `${idPrefix}-sheen-grad`;
 
@@ -180,7 +180,7 @@ function GcbEagleEmblem({ className, idPrefix = "gcb-eagle" }: { className?: str
 }
 
 // Subtle pleasant Web Audio confirmation chime
-function playDelightChime() {
+export function playDelightChime() {
   try {
     const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (!AudioCtx) return;
