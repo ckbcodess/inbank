@@ -2,7 +2,7 @@
 
 /**
  * The success page for a cardless withdrawal, built 1:1 from the Figma frame (Showcase, node
- * 6050:1179): the ticket, "Token generated!", one line about expiry, Share Token and Done. The
+ * 6050:1179): the ticket, "Code generated!", one line about expiry, Share Code and Done. The
  * code is made once when the withdrawal is confirmed and passed in, so it never changes here.
  */
 
@@ -31,10 +31,10 @@ export function CashoutCodeSuccess({
   const [run, setRun] = useState(0);
 
   async function share() {
-    const message = `GCB ATM cash-out token ${code} for GHS ${amount}. Enter it at any GCB ATM. It expires 24 hours after it was created.`;
+    const message = `GCB ATM cash-out code ${code} for GHS ${amount}. Enter it at any GCB ATM. It expires 24 hours after it was created.`;
     try {
       if (navigator.share) {
-        await navigator.share({ title: "GCB ATM token", text: message });
+        await navigator.share({ title: "GCB ATM code", text: message });
       } else {
         await navigator.clipboard?.writeText(message);
         toast.success("Copied. Paste it into a message.");
@@ -63,16 +63,16 @@ export function CashoutCodeSuccess({
       <CashoutTicketArrival key={run} code={code} amount={amount} recipientPhone={recipientPhone} />
 
       <div className="flex flex-col items-center gap-4 text-center">
-        <p className="text-[26px] leading-none text-foreground">Token generated!</p>
+        <p className="text-[26px] leading-none text-foreground">Code generated!</p>
         <p className="max-w-[340px] text-balance text-[16px] leading-5 tracking-[-0.18px] text-muted-foreground sm:max-w-none sm:text-[18px]">
-          This token expires after 24 hrs of creation
+          This code expires after 24 hrs of creation
         </p>
       </div>
 
       {/* Secondary first, primary last */}
       <div className="flex items-start justify-center gap-[10.5px]">
         <Button type="button" variant="outline" onClick={share} className="px-[21px]">
-          Share Token
+          Share Code
         </Button>
         <Button type="button" onClick={onDone} className="px-7">
           Done

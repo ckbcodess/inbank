@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * One unused cash-out token, opened from the Active codes list: the same ticket as the success page, and
+ * One unused cash-out code, opened from the Active codes list: the same ticket as the success page, and
  * the two things you can do with it: share it, or delete it. Deleting is a danger action, kept apart, and
  * asks first: the confirmation says exactly what will happen before anything is removed.
  */
@@ -31,14 +31,14 @@ export function ActiveCodeDialog({
   code: ActiveCashoutCode | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Called when the customer deletes the token; the parent removes it from the list. */
+  /** Called when the customer deletes the code; the parent removes it from the list. */
   onCancelCode: (code: string) => void;
 }) {
   const [confirming, setConfirming] = useState(false);
   if (!code) return null;
 
   const amount = code.amount.toFixed(2);
-  const message = `GCB ATM cash-out token ${code.code} for GHS ${amount}. Enter it at any GCB ATM. ${code.expires}.`;
+  const message = `GCB ATM cash-out code ${code.code} for GHS ${amount}. Enter it at any GCB ATM. ${code.expires}.`;
 
   function close(next: boolean) {
     if (!next) setConfirming(false);
@@ -48,7 +48,7 @@ export function ActiveCodeDialog({
   async function share() {
     try {
       if (navigator.share) {
-        await navigator.share({ title: "GCB ATM token", text: message });
+        await navigator.share({ title: "GCB ATM code", text: message });
       } else {
         await navigator.clipboard?.writeText(message);
         toast.success("Copied. Paste it into a message.");
@@ -64,15 +64,15 @@ export function ActiveCodeDialog({
         open={open && !confirming}
         onOpenChange={close}
         size="sm"
-        title="ATM token"
+        title="ATM code"
         footer={
           // One row on a phone too (the footer stacks its direct children there), primary last
           <div className="flex w-full gap-2 sm:justify-between">
             <Button type="button" variant="destructive" onClick={() => setConfirming(true)} className="flex-1 sm:flex-none">
-              Delete token
+              Delete code
             </Button>
             <Button type="button" onClick={share} className="flex-1 sm:flex-none">
-              Share Token
+              Share Code
             </Button>
           </div>
         }
@@ -80,7 +80,7 @@ export function ActiveCodeDialog({
         <div className="flex flex-col items-center gap-3 pb-2 pt-4 text-center">
           <CashoutTicket code={code.code} amount={amount} recipientPhone={code.phone ?? REGISTERED_WALLET.phone} />
           <p className="max-w-[300px] text-balance text-[13px] text-muted-foreground">
-            {code.expires}. Anyone with this token can take the cash.
+            {code.expires}. Anyone with this code can take the cash.
           </p>
         </div>
       </Modal>
@@ -90,11 +90,11 @@ export function ActiveCodeDialog({
         open={open && confirming}
         onOpenChange={close}
         size="sm"
-        title="Delete this token?"
+        title="Delete this code?"
         footer={
           <div className="flex w-full gap-2 sm:justify-end">
             <Button type="button" variant="outline" onClick={() => setConfirming(false)} className="flex-1 sm:flex-none">
-              Keep token
+              Keep code
             </Button>
             <Button
               type="button"
@@ -104,21 +104,21 @@ export function ActiveCodeDialog({
                 onCancelCode(code.code);
                 setConfirming(false);
                 onOpenChange(false);
-                toast.success("Token deleted. The money stays in your account.");
+                toast.success("Code deleted. The money stays in your account.");
               }}
             >
-              Delete token
+              Delete code
             </Button>
           </div>
         }
       >
         <div className="flex flex-col gap-3 py-2">
           <p className="text-[14px] leading-relaxed text-foreground">
-            The token <span className="tabular">{code.code}</span> for <span className="tabular">GHS {amount}</span> will stop
+            The code <span className="tabular">{code.code}</span> for <span className="tabular">GHS {amount}</span> will stop
             working. It can&apos;t be used at an ATM afterwards, and this can&apos;t be undone.
           </p>
           <p className="text-[13px] leading-relaxed text-muted-foreground">
-            The money stays in your account. You can generate a new token any time.
+            The money stays in your account. You can generate a new code any time.
           </p>
         </div>
       </Modal>

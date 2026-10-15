@@ -1,8 +1,8 @@
 /**
- * The cash-out token as a ticket: warm paper with scalloped top and bottom edges and a bite out of each
+ * The cash-out code as a ticket: warm paper with scalloped top and bottom edges and a bite out of each
  * side, the colour GCB eagle, the code large, a dashed rule, then the amount and where it goes. It is
  * paper in both themes, so its colours are the ticket tokens (`--ticket-*`), not the page colours.
- * Used by the success page and by the dialog that opens an existing token.
+ * Used by the success page and by the dialog that opens an existing code.
  */
 
 import Image from "next/image";
