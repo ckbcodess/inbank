@@ -164,12 +164,6 @@
   --ticket-paper: #f1efe8;
   --ticket-ink: #0a0a0a;
   --ticket-rule: #cbc8bf;
-  /* The cash-out code board: paper tiles on the card surface, following the theme. */
-  --board: #fafafa;
-  --board-tile-top: #ffffff;
-  --board-tile-bottom: #f1f1ef;
-  --board-line: #e3e3e0;
-  --board-ink: #0a0a0a;
   --tile-hover: #eeeeed;
   /* Shared list item hover token for lists, accounts, and dashboard panels (replaces raw muted/tile-hover) */
   --item-hover: rgba(0, 0, 0, 0.04);
@@ -390,12 +384,6 @@
   --ticket-paper: #f1efe8;
   --ticket-ink: #0a0a0a;
   --ticket-rule: #cbc8bf;
-  /* The cash-out code board: paper tiles on the card surface, following the theme. */
-  --board: #181818;
-  --board-tile-top: #242424;
-  --board-tile-bottom: #1c1c1c;
-  --board-line: #2a2a2a;
-  --board-ink: #f4f4f4;
   --tile-hover: #1c1c1c;
   --item-hover: rgba(255, 255, 255, 0.05);
   --tile-accent: #FFC423;
@@ -735,22 +723,30 @@ a,
   animation: none !important;
 }
 
-/* App shell card surface. Light mode is a solid card fill (surface/card #fff).
-   Dark mode gradients top-to-bottom #141414 -> #09090b, so the card's lower
-   edge melts into the #09090b sidebar/backdrop. */
+/* App shell card surface: the page's content card, a top-to-bottom gradient between two tokens. Light mode is a flat
+   white (both ends the same). Dark mode fades from the card's top colour down to the page backdrop (--surface), so
+   the card's lower edge melts into the sidebar and backdrop instead of ending on a near-miss colour. The floating
+   top bar and the phone bottom bar use the top colour, so they always match the card. */
+:root {
+  --shell-top: #ffffff;
+  --shell-bottom: #ffffff;
+  /* The backdrop behind the card: the sidebar and the margin around the card are one continuous gradient. */
+  --shell-surface-top: var(--surface);
+  --shell-surface-bottom: var(--surface);
+}
+.dark {
+  --shell-top: #141414;
+  --shell-bottom: var(--surface);
+  --shell-surface-top: #0f0f0f;
+  --shell-surface-bottom: var(--surface);
+}
+.shell-backdrop {
+  background: linear-gradient(to bottom, var(--shell-surface-top) 0%, var(--shell-surface-bottom) 100%);
+}
 .shell-card {
-  background: #ffffff;
-}
-.dark .shell-card {
-  background: linear-gradient(to bottom, #141414 0%, #09090b 100%);
-}
-
-/* The top bar floats over the scrolling page: a translucent fill of the card colour, blurred (see TopHeader). */
-.shell-card {
-  --shell-header: rgb(255 255 255 / 0.88);
-}
-.dark .shell-card {
-  --shell-header: rgb(20 20 20 / 0.88);
+  background: linear-gradient(to bottom, var(--shell-top) 0%, var(--shell-bottom) 100%);
+  /* The top bar floats over the scrolling page: a translucent fill of the card colour, blurred (see TopHeader). */
+  --shell-header: color-mix(in srgb, var(--shell-top) 88%, transparent);
 }
 
 /* CSS Mask fade-out for bottom edge of shell content — disabled to prevent masking notifications and interactive bottom controls */

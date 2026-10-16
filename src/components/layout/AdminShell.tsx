@@ -63,7 +63,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   return (
     <>
-      <div className="flex h-dvh overflow-hidden bg-[var(--surface)]">
+      <div className="shell-backdrop flex h-dvh overflow-hidden">
         <AnimatePresence>
           {sidebarOpen && (
             <motion.div
@@ -87,8 +87,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           onToggleCollapse={toggleCollapse}
         />
 
-        <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[var(--surface)] p-0 sm:p-3 lg:p-3.5">
-          <div className="shell-card relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-none border-0 shadow-none sm:rounded-2xl sm:border sm:border-border sm:shadow-[0_8px_30px_rgb(0,0,0,0.04)] sm:dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)]">
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden p-0 sm:p-3 lg:p-3.5">
+          <div className="shell-card relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-none border-0 shadow-none sm:rounded-2xl sm:border sm:border-border">
             <TopHeader
               actor={actor}
               onMenuToggle={() => setSidebarOpen((p) => !p)}

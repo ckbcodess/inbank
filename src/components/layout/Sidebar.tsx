@@ -214,7 +214,7 @@ export default function Sidebar({
       onMouseEnter={() => setIsSidebarHovered(true)}
       onMouseMove={() => !pointerSeen && setPointerSeen(true)}
       onMouseLeave={() => setIsSidebarHovered(false)}
-      className={`fixed inset-y-0 left-0 z-50 flex shrink-0 flex-col bg-[var(--surface)] shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform lg:relative lg:z-20 lg:shadow-none lg:translate-x-0 ${
+      className={`fixed inset-y-0 left-0 z-50 shell-backdrop flex shrink-0 flex-col shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform lg:relative lg:z-20 lg:shadow-none lg:translate-x-0 ${
         isOpen ? "translate-x-0" : "-translate-x-full pointer-events-none lg:pointer-events-auto"
       }`}
       style={{ width: collapsed ? 56 : 224 }}

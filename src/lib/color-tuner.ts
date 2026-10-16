@@ -35,7 +35,11 @@ const GROUP_RULES: [string, RegExp][] = [
   ["Marks", /^(mc-|duo-)/],
   ["Dashboard hero", /^(hero|sheet|balance-card|account-card)/],
   ["Icons", /^(icon-|glass-)/],
-  ["Surfaces", /^(background|surface|card|modal|popover|muted|secondary|accent|tile|sidebar|glass|device|skeleton)/],
+  ["Shell and sidebar", /^shell-/],
+  ["Avatars", /^avatar-/],
+  ["Cash-out ticket", /^ticket-/],
+  ["Dark elevation", /^dm-/],
+  ["Surfaces", /^(background|surface|card|modal|panel|popover|muted|secondary|accent|tile|sidebar|glass|device|skeleton)/],
 ];
 const SKIP = /^(color-|tw-|font|radius|shadow|dur-|breakpoint|animate|ease|sidebar-width|ripple)/;
 
