@@ -530,6 +530,10 @@ export const useBeneficiariesStore = create<BeneficiariesState>()(
     }),
     {
       name: "nibs_beneficiaries_store",
+      // Browsers that ran the later beneficiaries experiments saved this store as version 3. Keep reading it (extra
+      // fields are ignored) instead of throwing it away with a "couldn't be migrated" error.
+      version: 3,
+      migrate: (persisted) => persisted as BeneficiariesState,
     }
   )
 );
