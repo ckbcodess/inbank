@@ -277,14 +277,11 @@ export function PaymentSuccessScreen({
     return "Beneficiary";
   }, [beneficiaryName, receiptRows, message]);
 
-  const effectiveRail = useMemo((): string | null => {
+  const effectiveRail = useMemo(() => {
     if (beneficiaryRail && beneficiaryRail.trim()) {
       return beneficiaryRail.trim();
     }
     const combined = `${title} ${message} ${receiptRows.map(([k, v]) => `${k} ${typeof v === "string" ? v : ""}`).join(" ")}`.toLowerCase();
-    if (combined.includes("international") || combined.includes("swift") || combined.includes("papss")) {
-      return "International Payments";
-    }
     if (combined.includes("wallet") || combined.includes("mobile money") || combined.includes("momo")) {
       return "Send to Wallet";
     }
@@ -300,8 +297,7 @@ export function PaymentSuccessScreen({
     if (combined.includes("bill") || combined.includes("ecg") || combined.includes("utility")) {
       return "Bill Payment";
     }
-    // Unknown rail: say "your beneficiaries" rather than naming the wrong one
-    return null;
+    return "Send to Wallet";
   }, [beneficiaryRail, title, message, receiptRows]);
 
   // Orchestrate the entrance: eagle brand moment -> settles into the emerald check,
@@ -351,9 +347,9 @@ export function PaymentSuccessScreen({
     setSaveBeneficiary(next);
     onSaveBeneficiaryChange?.(next);
     if (next) {
-      toast.success(`${effectiveBenName} has been added to ${effectiveRail ? `${effectiveRail} ` : "your "}beneficiaries`);
+      toast.success(`${effectiveBenName} has been added to ${effectiveRail} beneficiaries`);
     } else {
-      toast.info(`${effectiveBenName} has been removed from ${effectiveRail ? `${effectiveRail} ` : "your "}beneficiaries`);
+      toast.info(`${effectiveBenName} has been removed from ${effectiveRail} beneficiaries`);
     }
   };
 

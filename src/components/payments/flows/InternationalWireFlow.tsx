@@ -29,7 +29,6 @@ import {
 import { Label } from "@/components/ui/label";
 import { Field as UiField } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { SavedRecipientSuggest, type RecentPayeeAvatar } from "./beneficiaries";
 export interface InternationalWireFormState {
   fromId: string;
   wCountry: string;
@@ -68,9 +67,6 @@ interface InternationalWireFlowProps {
   onToggleCollapsed?: (collapsed: boolean) => void;
   /** Switch to the PAPSS flow for this African country. */
   onUsePapss?: (countryName: string, currency: string) => void;
-  /** Saved recipients for this rail, offered from the field; picking one calls `onPickSaved` with its id. */
-  savedRecipients?: RecentPayeeAvatar[];
-  onPickSaved?: (id: string) => void;
 }
 
 /** Mode of delivery is the kind of bank code they have; each has its own shape. */
@@ -201,8 +197,6 @@ export function InternationalWireFlow({
   detailsCollapsed,
   onToggleCollapsed,
   onUsePapss,
-  savedRecipients,
-  onPickSaved,
 }: InternationalWireFlowProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
   const [showOptional, setShowOptional] = useState(false);
@@ -273,13 +267,7 @@ export function InternationalWireFlow({
       ) : (
         <>
           <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between gap-3">
-              <Label>Destination</Label>
-              {/* One tap fills the country, bank, account and name from someone you've saved */}
-              <SavedRecipientSuggest items={savedRecipients ?? []} query="" onSelect={(item) => onPickSaved?.(item.id)}>
-                {({ endAdornment }) => <span className="-my-2 -mr-2.5">{endAdornment}</span>}
-              </SavedRecipientSuggest>
-            </div>
+            <Label>Destination</Label>
             <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Country">
                 <CountryPicker

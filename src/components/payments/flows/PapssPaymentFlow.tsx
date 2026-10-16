@@ -24,7 +24,6 @@ import {
 } from "./shared";
 
 import { Input } from "@/components/ui/input";
-import { SavedRecipientSuggest, type RecentPayeeAvatar } from "./beneficiaries";
 import { Field } from "@/components/ui/field";
 const PAPSS_COUNTRIES = [
   { name: "Nigeria", currency: "NGN" },
@@ -74,9 +73,6 @@ interface PapssPaymentFlowProps {
   onProceed: () => void;
   detailsCollapsed?: boolean;
   onToggleCollapsed?: (collapsed: boolean) => void;
-  /** Saved recipients for this rail, offered from the field; picking one calls `onPickSaved` with its id. */
-  savedRecipients?: RecentPayeeAvatar[];
-  onPickSaved?: (id: string) => void;
 }
 
 const PAPSS_BANKS_BY_COUNTRY: Record<string, string[]> = {
@@ -140,8 +136,6 @@ export function PapssPaymentFlow({
   onProceed,
   detailsCollapsed,
   onToggleCollapsed,
-  savedRecipients,
-  onPickSaved,
 }: PapssPaymentFlowProps) {
   const [internalCollapsed, setInternalCollapsed] = useState(detailsCollapsed ?? false);
   const isCollapsed = detailsCollapsed !== undefined ? detailsCollapsed : internalCollapsed;
@@ -256,31 +250,20 @@ export function PapssPaymentFlow({
               </Select>
             </div>
 
-            <SavedRecipientSuggest
-              items={(savedRecipients ?? []).filter((r) => !state.wCountry || r.country === state.wCountry)}
-              query={state.wIban}
-              onSelect={(item) => onPickSaved?.(item.id)}
-            >
-              {({ overlayAdornment }) => (
-                <div className="relative">
-                  <Input
-                    type="text"
-                    value={state.wIban}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      onChange("wIban", val);
-                      const resolved = resolveAccountName(val, "");
-                      if (resolved) {
-                        onChange("wBenName", resolved);
-                      }
-                    }}
-                    placeholder="Enter account number"
-                    className="tabular pr-12"
-                  />
-                  {overlayAdornment}
-                </div>
-              )}
-            </SavedRecipientSuggest>
+            <Input
+              type="text"
+              value={state.wIban}
+              onChange={(e) => {
+                const val = e.target.value;
+                onChange("wIban", val);
+                const resolved = resolveAccountName(val, "");
+                if (resolved) {
+                  onChange("wBenName", resolved);
+                }
+              }}
+              placeholder="Enter account number"
+              className="tabular"
+            />
 
             {/* Verification Status */}
             <AccountVerificationStatus

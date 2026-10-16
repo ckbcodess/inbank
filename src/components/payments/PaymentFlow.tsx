@@ -12,12 +12,13 @@
  */
 
 import { GCBLogo } from "@/components/ui/GCBLogo";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowLeftRight,
   CheckCircle2,
   ChevronLeft,
+  ChevronRight,
   CreditCard,
   Globe,
   Landmark,
@@ -63,8 +64,8 @@ import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
 import TransactionOtpModal from "./TransactionOtpModal";
 import { useAuthorisation } from "./useAuthorisation";
 import { REGISTERED_WALLET } from "./flows/OwnWalletPicker";
-import { PAPSS_COUNTRIES, SWIFT_COUNTRIES } from "@/lib/beneficiary-options";
-import { groupAvatarTint, HorizontalScrollStrip, RailBeneficiaryStrip, useRecentAvatars } from "./flows/beneficiaries";
+import { groupAvatarTint } from "./flows/beneficiaries";
+import { useDevUserStore } from "@/lib/dev-user-simulation";
 import { OwnAccountFlow } from "./flows/OwnAccountFlow";
 import { OtherGcbFlow } from "./flows/OtherGcbFlow";
 import { OtherBankFlow } from "./flows/OtherBankFlow";
@@ -96,7 +97,7 @@ import {
   getBroadbandPackages,
   formatGhPhone,
 } from "./flows/shared";
-import { phoneKey, useBeneficiariesStore, walletNetworkName } from "@/lib/beneficiaries-store";
+import { useBeneficiariesStore } from "@/lib/beneficiaries-store";
 import { useContextualBack } from "@/lib/contextual-back";
 
 export type FlowGroup = "send" | "bills";
@@ -195,12 +196,531 @@ interface RecentPayeeAvatar {
   category?: BillerCategory;
   country?: string;
   subtitle?: string;
-  benId?: string;
-  pinned?: boolean;
-  lastPaidAt?: string;
-  lastAmount?: number;
-  payCount?: number;
 }
+
+const ALL_RECENT_AVATARS: RecentPayeeAvatar[] = [
+  // Bank payees
+  {
+    id: "rec-b1",
+    name: "Justice Oduro",
+    bank: "GCB Bank",
+    acct: "0231 4455 8890",
+    initials: "JO",
+    rail: "bank",
+    colorBg: "var(--avatar-teal)",
+  },
+  {
+    id: "rec-b2",
+    name: "Abena Osei",
+    bank: "Stanbic Bank",
+    acct: "1089 3322 1100",
+    initials: "AO",
+    rail: "bank",
+    colorBg: "var(--avatar-sand)",
+  },
+  {
+    id: "rec-b3",
+    name: "Accra Fabrics Ltd",
+    bank: "Ecobank Ghana",
+    acct: "0142 8899 0011",
+    initials: "AF",
+    rail: "bank",
+    colorBg: "var(--avatar-green)",
+  },
+  {
+    id: "rec-b4",
+    name: "Jane Asare",
+    bank: "Access Bank",
+    acct: "0102 3344 5566",
+    initials: "JA",
+    rail: "bank",
+    colorBg: "var(--avatar-lilac)",
+  },
+
+  // Mobile Wallet payees
+  {
+    id: "rec-w1",
+    name: "Ransford Gyasi",
+    bank: "MTN Mobile Money",
+    acct: "0244 123 456",
+    initials: "AS",
+    rail: "wallet",
+    colorBg: "var(--avatar-yellow)",
+  },
+  {
+    id: "rec-w2",
+    name: "Ishmael Gyan",
+    bank: "Telecel Cash",
+    acct: "0201 987 654",
+    initials: "IG",
+    rail: "wallet",
+    colorBg: "var(--avatar-red)",
+  },
+  {
+    id: "rec-w3",
+    name: "Kofi Boateng",
+    bank: "AT Money",
+    acct: "0277 456 789",
+    initials: "KB",
+    rail: "wallet",
+    colorBg: "var(--avatar-blue)",
+  },
+
+  // Proxy payees
+  {
+    id: "rec-px1",
+    name: "Kwame Boateng",
+    bank: "Proxy ID",
+    acct: "@kwame.b",
+    initials: "KB",
+    rail: "proxy",
+    subtitle: "@kwame.b",
+    colorBg: "var(--avatar-teal)",
+  },
+  {
+    id: "rec-px2",
+    name: "Ransford Gyasi",
+    bank: "Proxy ID",
+    acct: "@ama.serwaa",
+    initials: "AS",
+    rail: "proxy",
+    subtitle: "@ama.serwaa",
+    colorBg: "var(--avatar-blue)",
+  },
+  {
+    id: "rec-px3",
+    name: "Kofi Appiah",
+    bank: "Ghana Card",
+    acct: "GHA-718293041-1",
+    initials: "KA",
+    rail: "proxy",
+    subtitle: "Ghana Card ID",
+    colorBg: "var(--avatar-yellow)",
+  },
+
+  // Airtime payees
+  {
+    id: "rec-air-self",
+    name: "My Phone (Self)",
+    bank: "MTN Mobile Money",
+    acct: "0244 123 821",
+    initials: "ME",
+    rail: "airtime",
+    subtitle: "0244 123 821",
+    colorBg: "var(--avatar-yellow)",
+  },
+  {
+    id: "rec-air-1",
+    name: "Ransford Gyasi",
+    bank: "MTN Mobile Money",
+    acct: "0244 123 456",
+    initials: "AS",
+    rail: "airtime",
+    subtitle: "0244 123 456",
+    colorBg: "var(--avatar-blue)",
+  },
+  {
+    id: "rec-air-2",
+    name: "Ishmael Gyan",
+    bank: "Telecel Cash",
+    acct: "0201 987 654",
+    initials: "IG",
+    rail: "airtime",
+    subtitle: "0201 987 654",
+    colorBg: "var(--avatar-red)",
+  },
+  {
+    id: "rec-air-3",
+    name: "Kofi Boateng",
+    bank: "AT Money",
+    acct: "0277 456 789",
+    initials: "KB",
+    rail: "airtime",
+    subtitle: "0277 456 789",
+    colorBg: "var(--avatar-green)",
+  },
+  {
+    id: "rec-air-4",
+    name: "Tsotsoo Mills",
+    bank: "MTN Mobile Money",
+    acct: "0559 220 118",
+    initials: "TM",
+    rail: "airtime",
+    subtitle: "0559 220 118",
+    colorBg: "var(--avatar-lilac)",
+  },
+
+  // Data Bundle payees
+  {
+    id: "rec-dat-self",
+    name: "My Device (Self)",
+    bank: "MTN Mobile Money",
+    acct: "0244 123 821",
+    initials: "ME",
+    rail: "data",
+    subtitle: "0244 123 821",
+    colorBg: "var(--avatar-yellow)",
+  },
+  {
+    id: "rec-dat-1",
+    name: "Home Router (MiFi)",
+    bank: "Telecel Cash",
+    acct: "0201 987 654",
+    initials: "HR",
+    rail: "data",
+    subtitle: "0201 987 654",
+    colorBg: "var(--avatar-red)",
+  },
+  {
+    id: "rec-dat-2",
+    name: "Office iPad",
+    bank: "AT Money",
+    acct: "0277 456 789",
+    initials: "IP",
+    rail: "data",
+    subtitle: "0277 456 789",
+    colorBg: "var(--avatar-green)",
+  },
+  {
+    id: "rec-dat-3",
+    name: "Ransford Gyasi",
+    bank: "MTN Mobile Money",
+    acct: "0244 123 456",
+    initials: "AS",
+    rail: "data",
+    subtitle: "0244 123 456",
+    colorBg: "var(--avatar-blue)",
+  },
+  {
+    id: "rec-dat-4",
+    name: "Tsotsoo Mills",
+    bank: "MTN Mobile Money",
+    acct: "0559 220 118",
+    initials: "TM",
+    rail: "data",
+    subtitle: "0559 220 118",
+    colorBg: "var(--avatar-lilac)",
+  },
+
+  // PAPSS International payees
+  {
+    id: "rec-papss1",
+    name: "Lagos Textile Mills",
+    bank: "Access Bank Nigeria",
+    acct: "NG-8891-40023-77",
+    initials: "LT",
+    rail: "papss",
+    country: "Nigeria",
+    subtitle: "NGN · Nigeria",
+    colorBg: "var(--avatar-green)",
+  },
+  {
+    id: "rec-papss2",
+    name: "Abidjan Cocoa Exporters",
+    bank: "Ecobank Côte d'Ivoire",
+    acct: "CI-5510-99201-12",
+    initials: "AC",
+    rail: "papss",
+    country: "Côte d'Ivoire",
+    subtitle: "XOF · Côte d'Ivoire",
+    colorBg: "var(--avatar-red)",
+  },
+  {
+    id: "rec-papss3",
+    name: "Nairobi Solar Tech",
+    bank: "Equity Bank Kenya",
+    acct: "KE-0029-44102-88",
+    initials: "NS",
+    rail: "papss",
+    country: "Kenya",
+    subtitle: "KES · Kenya",
+    colorBg: "var(--avatar-blue)",
+  },
+  {
+    id: "rec-papss4",
+    name: "Cape Town Freight",
+    bank: "Standard Bank SA",
+    acct: "ZA-7712-33901-44",
+    initials: "CT",
+    rail: "papss",
+    country: "South Africa",
+    subtitle: "ZAR · South Africa",
+    colorBg: "var(--avatar-yellow)",
+  },
+
+  // ECG Prepaid payees
+  {
+    id: "rec-ecg1",
+    name: "Lester Adjei (Home)",
+    bank: "ECG Prepaid",
+    acct: "P-8839210",
+    initials: "ECG",
+    rail: "ecg",
+    subtitle: "Meter: P-8839210",
+    colorBg: "var(--avatar-yellow)",
+  },
+  {
+    id: "rec-ecg2",
+    name: "Kumasi Branch Office",
+    bank: "ECG Prepaid",
+    acct: "P-9921405",
+    initials: "ECG",
+    rail: "ecg",
+    subtitle: "Meter: P-9921405",
+    colorBg: "var(--avatar-lemon)",
+  },
+
+  // Ghana.gov payees
+  {
+    id: "rec-gov1",
+    name: "DVLA Licence Renewal",
+    bank: "DVLA — Driver licence renewal",
+    acct: "DVLA-2026-9901",
+    initials: "DV",
+    rail: "ghanagov",
+    subtitle: "DVLA-2026-9901",
+    colorBg: "var(--avatar-blue)",
+  },
+  {
+    id: "rec-gov2",
+    name: "Domestic Tax Return",
+    bank: "GRA — Domestic Tax Assessment",
+    acct: "TIN-9088214-G",
+    initials: "GRA",
+    rail: "ghanagov",
+    subtitle: "TIN-9088214-G",
+    colorBg: "var(--avatar-yellow)",
+  },
+  {
+    id: "rec-gov3",
+    name: "Passport 32-Page",
+    bank: "Passports Office — Standard 32-Page",
+    acct: "PASS-882109",
+    initials: "PP",
+    rail: "ghanagov",
+    subtitle: "PASS-882109",
+    colorBg: "var(--avatar-pink)",
+  },
+
+  // Bills (GCB Pay One-Tap Beneficiaries categorized by Pay Type)
+  // 1. Bills & Utilities
+  {
+    id: "rec-bill1",
+    name: "Lester Adjei (Home)",
+    bank: "ECG — Electricity",
+    acct: "P-8839210",
+    initials: "ECG",
+    rail: "bill",
+    billerId: "bil-001",
+    category: "Bills & Utilities",
+    subtitle: "Meter: P-8839210",
+    colorBg: "var(--avatar-yellow)",
+  },
+  {
+    id: "rec-bill2",
+    name: "Ghana Water (Res)",
+    bank: "Ghana Water (GWCL)",
+    acct: "GW-440291",
+    initials: "GW",
+    rail: "bill",
+    billerId: "bil-002",
+    category: "Bills & Utilities",
+    subtitle: "Acct: GW-440291",
+    colorBg: "var(--avatar-blue)",
+  },
+  {
+    id: "rec-bill-ut3",
+    name: "NEDCo Power (Site)",
+    bank: "NEDCo Power Ghana",
+    acct: "NED-552019",
+    initials: "NED",
+    rail: "bill",
+    billerId: "bil-002b",
+    category: "Bills & Utilities",
+    subtitle: "Meter: NED-552019",
+    colorBg: "var(--avatar-lemon)",
+  },
+
+  // 2. Subscriptions
+  {
+    id: "rec-bill3",
+    name: "DSTV Family (Hall)",
+    bank: "DSTV / MultiChoice",
+    acct: "1029384812",
+    initials: "DS",
+    rail: "bill",
+    billerId: "bil-006",
+    category: "Subscriptions",
+    subtitle: "Smartcard: 1029384812",
+    colorBg: "var(--avatar-lilac)",
+  },
+  {
+    id: "rec-bill-tv2",
+    name: "StarTimes (Bedroom)",
+    bank: "StarTimes Ghana",
+    acct: "0219883421",
+    initials: "ST",
+    rail: "bill",
+    billerId: "bil-007",
+    category: "Subscriptions",
+    subtitle: "Smartcard: 0219883421",
+    colorBg: "var(--avatar-blue)",
+  },
+  {
+    id: "rec-bill-tv3",
+    name: "GOtv Plus (Kids)",
+    bank: "GOtv Ghana",
+    acct: "20993841",
+    initials: "GO",
+    rail: "bill",
+    billerId: "bil-007b",
+    category: "Subscriptions",
+    subtitle: "IUC: 20993841",
+    colorBg: "var(--avatar-red)",
+  },
+
+  // 3. Education
+  {
+    id: "rec-bill-edu1",
+    name: "Kwabena (UG Legon)",
+    bank: "University of Ghana (Legon)",
+    acct: "UG-10928341",
+    initials: "UG",
+    rail: "bill",
+    billerId: "bil-008",
+    category: "Education",
+    subtitle: "ID: UG-10928341",
+    colorBg: "var(--avatar-blue)",
+  },
+  {
+    id: "rec-bill-edu2",
+    name: "Akua (KNUST Tuition)",
+    bank: "KNUST Tuition & Fees",
+    acct: "KN-8839210",
+    initials: "KN",
+    rail: "bill",
+    billerId: "bil-008b",
+    category: "Education",
+    subtitle: "Student ID: KN-8839210",
+    colorBg: "var(--avatar-yellow)",
+  },
+  {
+    id: "rec-bill-edu3",
+    name: "WAEC Portal (Kofi)",
+    bank: "WAEC Exams Portal",
+    acct: "WAEC-002914",
+    initials: "WAEC",
+    rail: "bill",
+    billerId: "bil-008c",
+    category: "Education",
+    subtitle: "Index: WAEC-002914",
+    colorBg: "var(--avatar-green)",
+  },
+
+  // 4. Government Services
+  {
+    id: "rec-bill4",
+    name: "GRA Tax Assessment",
+    bank: "GRA — Tax Payment",
+    acct: "TIN-9088214-G",
+    initials: "GRA",
+    rail: "bill",
+    billerId: "bil-004",
+    category: "Government Services",
+    subtitle: "TIN: TIN-9088214-G",
+    colorBg: "var(--avatar-yellow)",
+  },
+  {
+    id: "rec-bill-gov2",
+    name: "DVLA Licence Renewal",
+    bank: "DVLA — Driver Licence",
+    acct: "DVLA-2026-9901",
+    initials: "DVLA",
+    rail: "bill",
+    billerId: "bil-004c",
+    category: "Government Services",
+    subtitle: "Licence: DVLA-2026-9901",
+    colorBg: "var(--avatar-blue)",
+  },
+
+  // 5. Healthcare
+  {
+    id: "rec-bill-hlth1",
+    name: "Ransford Gyasi (NHIS)",
+    bank: "National Health Insurance (NHIS)",
+    acct: "NHIS-9920148",
+    initials: "NHIS",
+    rail: "bill",
+    billerId: "bil-009",
+    category: "Healthcare",
+    subtitle: "Card: NHIS-9920148",
+    colorBg: "var(--avatar-red)",
+  },
+  {
+    id: "rec-bill-hlth2",
+    name: "Family Folder (Korle Bu)",
+    bank: "Korle Bu Teaching Hospital",
+    acct: "KBTH-88210-P",
+    initials: "KB",
+    rail: "bill",
+    billerId: "bil-009b",
+    category: "Healthcare",
+    subtitle: "Folder: KBTH-88210-P",
+    colorBg: "var(--avatar-pink)",
+  },
+
+  // 6. Giving & Donations
+  {
+    id: "rec-bill-rel1",
+    name: "ICGC Tithe & Offering",
+    bank: "ICGC Christ Temple",
+    acct: "ICGC-0244123456",
+    initials: "ICGC",
+    rail: "bill",
+    billerId: "bil-010",
+    category: "Giving & Donations",
+    subtitle: "Phone: 0244 123 456",
+    colorBg: "#ede9fe",
+  },
+  {
+    id: "rec-bill-rel2",
+    name: "Action Chapel Seed",
+    bank: "Action Chapel International",
+    acct: "ACI-883921",
+    initials: "ACI",
+    rail: "bill",
+    billerId: "bil-010b",
+    category: "Giving & Donations",
+    subtitle: "Member ID: ACI-883921",
+    colorBg: "var(--avatar-yellow)",
+  },
+
+  // 7. Others
+  {
+    id: "rec-bill5",
+    name: "MTN Fibre Broadband",
+    bank: "MTN Ghana Broadband",
+    acct: "0244 123 456",
+    initials: "MTN",
+    rail: "bill",
+    billerId: "bil-003",
+    category: "Others",
+    subtitle: "Line: 0244 123 456",
+    colorBg: "var(--avatar-lemon)",
+  },
+  {
+    id: "rec-bill6",
+    name: "SIC Fleet Insurance",
+    bank: "SIC Insurance",
+    acct: "POL-882109-SIC",
+    initials: "SIC",
+    rail: "bill",
+    billerId: "bil-005",
+    category: "Others",
+    subtitle: "Policy: POL-882109-SIC",
+    colorBg: "var(--avatar-green)",
+  },
+];
 
 type Phase = "form" | "submitting" | "success";
 type ReceiptData = {
@@ -223,6 +743,133 @@ type ReceiptData = {
 };
 
 
+function HorizontalScrollStrip({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setCanScrollLeft(scrollLeft > 6);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 6);
+  }, []);
+
+  useEffect(() => {
+    checkScroll();
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const observer = new ResizeObserver(() => checkScroll());
+    observer.observe(el);
+
+    window.addEventListener("resize", checkScroll);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, [checkScroll]);
+
+  const scroll = (direction: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const scrollAmount = Math.max(180, el.clientWidth * 0.65);
+    el.scrollBy({
+      left: direction === "right" ? scrollAmount : -scrollAmount,
+      behavior: "smooth",
+    });
+  };
+
+  return (
+    <div className={`relative w-full ${className}`}>
+      {/* Contextual Left Chevron with gradient mask */}
+      {canScrollLeft && (
+        <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center pr-5 pl-0 bg-gradient-to-r from-card via-card/70 to-transparent dark:via-card/40 pointer-events-none animate-in fade-in duration-200">
+          <button
+            type="button"
+            onClick={() => scroll("left")}
+            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 text-foreground shadow-sm backdrop-blur-md transition active:scale-95 cursor-pointer -ml-1"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft size={16} strokeWidth={2.2} />
+          </button>
+        </div>
+      )}
+
+      {/* Horizontally scrollable track */}
+      <div
+        ref={scrollRef}
+        onScroll={checkScroll}
+        className="flex items-center gap-3 overflow-x-auto pb-1.5 scrollbar-none scroll-smooth"
+      >
+        {children}
+      </div>
+
+      {/* Contextual Right Smart Chevron with gradient mask */}
+      {canScrollRight && (
+        <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center pl-6 pr-0 bg-gradient-to-l from-card via-card/70 to-transparent dark:via-card/40 pointer-events-none animate-in fade-in duration-200">
+          <button
+            type="button"
+            onClick={() => scroll("right")}
+            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 text-foreground shadow-sm backdrop-blur-md transition active:scale-95 cursor-pointer -mr-1"
+            aria-label="Scroll right"
+          >
+            <ChevronRight size={16} strokeWidth={2.2} />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RailBeneficiaryStrip({
+  items,
+  onSelect,
+}: {
+  title?: string;
+  items: RecentPayeeAvatar[];
+  onSelect: (item: RecentPayeeAvatar) => void;
+}) {
+  if (!items || items.length === 0) return null;
+  return (
+    <div className="pb-2">
+      <HorizontalScrollStrip>
+        {items.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => onSelect(item)}
+            className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
+            title={`Select ${item.name} (${item.subtitle || item.bank || item.acct})`}
+          >
+            <span
+              className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85] shadow-xs border border-black/5 dark:border-white/10"
+              style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
+            >
+              {item.initials}
+            </span>
+            <div className="flex flex-col w-full px-0.5">
+              <span className="text-[12px] font-medium text-foreground truncate w-full" title={item.name}>
+                {item.name}
+              </span>
+              <span className="text-[11px] text-muted-foreground truncate w-full" title={item.subtitle || item.bank}>
+                {item.subtitle || item.bank}
+              </span>
+            </div>
+          </button>
+        ))}
+      </HorizontalScrollStrip>
+    </div>
+  );
+}
+
 const ACTIVE_CASHOUT_CODES = [
   { code: "782-419", who: "Myself", amount: 200, expires: "Expires in 18 hrs", phone: "0241234567" },
   { code: "309-881", who: "Kofi Boateng", amount: 500, expires: "Expires in 22 hrs", phone: "0244123456" },
@@ -234,12 +881,34 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   const { handleBack: handleBackNavigation } = useContextualBack("/payments");
   const activeProfile = useSession((s) => s.activeProfile);
   const accounts = useMemo(() => accountsForProfile(activeProfile?.kind), [activeProfile?.kind]);
-  // The quick-pick list is the saved beneficiaries: one list, shared with the Beneficiaries page, standing orders and Pay again
-  const savedAvatars = useRecentAvatars();
-  const RECENT_AVATARS = useMemo<RecentPayeeAvatar[]>(
-    () => savedAvatars.map((a) => ({ ...a, rail: a.rail as Rail, category: a.category as BillerCategory | undefined })),
-    [savedAvatars],
-  );
+  const simUserType = useDevUserStore((s) => s.userType);
+  const RECENT_AVATARS = useMemo<RecentPayeeAvatar[]>(() => {
+    if (simUserType === "clean") return [];
+    if (simUserType === "single") {
+      return [
+        {
+          id: "rec-s1",
+          name: "Mum (Yaa Gyan)",
+          bank: "MTN Mobile Money",
+          acct: "0244 889 900",
+          initials: "YG",
+          rail: "wallet",
+          colorBg: "var(--avatar-teal)",
+        },
+        {
+          id: "rec-s2",
+          name: "ECG Electricity",
+          bank: "ECG",
+          acct: "P-992014",
+          initials: "EC",
+          rail: "bill",
+          category: "Bills & Utilities",
+          colorBg: "var(--avatar-sand)",
+        },
+      ];
+    }
+    return ALL_RECENT_AVATARS;
+  }, [simUserType]);
 
   const auth = useAuthorisation();
 
@@ -341,16 +1010,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     cardlessType: "self" as "self" | "third-party",
   });
 
-  const pickSaved = (id: string) => {
-    const picked = RECENT_AVATARS.find((a) => a.id === id);
-    if (picked) selectBeneficiary(picked);
-  };
-
-  // The saved beneficiary this payment is for (when picked from the strip), so its "last paid" is updated on success
-  const [selectedBenId, setSelectedBenId] = useState<string | null>(null);
-
   const selectBeneficiary = (item: RecentPayeeAvatar) => {
-    setSelectedBenId(item.benId ?? null);
     if (item.rail === "bill") {
       setRail("bill");
       const matchedBiller =
@@ -465,29 +1125,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       return;
     }
 
-    if (item.rail === "swift") {
-      setRail("swift");
-      const country = item.country || "";
-      setF((p) => ({
-        ...p,
-        wBenName: item.name,
-        wBank: item.bank,
-        wIban: item.acct,
-        wCountry: country,
-        wCurrency: SWIFT_COUNTRIES.find((c) => c.name === country)?.currency ?? p.wCurrency,
-        // The SWIFT or routing code is not kept with a saved beneficiary; the wire asks for it
-        wSwift: "",
-        wMode: "",
-      }));
-      setStage(1);
-      setStage1Collapsed(true);
-      return;
-    }
-
     if (item.rail === "papss") {
       setRail("papss");
       const country = item.country || "Nigeria";
-      const curr = PAPSS_COUNTRIES.find((c) => c.name === country)?.currency ?? "XOF";
+      const curr = country === "Nigeria" ? "NGN" : country === "Kenya" ? "KES" : country === "South Africa" ? "ZAR" : "XOF";
       setF((p) => ({
         ...p,
         wBenName: item.name,
@@ -1083,7 +1724,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
       if (f.saveBeneficiary) {
         const benDisplayName = f.beneficiaryNickname?.trim() || resolvedName || f.benName || f.wName || "New Payee";
-        let txType: "bank" | "wallet" | "proxy" | "bill" | "airtime" | "papss" | "swift" = "bank";
+        let txType: "bank" | "wallet" | "proxy" | "bill" | "airtime" | "papss" = "bank";
         let benCat: "person" | "biller" | "number" = "person";
         let detail = "";
         let bankName = f.bank || "GCB Bank";
@@ -1100,16 +1741,15 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           phoneNumber = f.wPhone;
           detail = `${network} · ${phoneNumber}`;
         } else if (rail === "airtime") {
-          // A top-up number is a mobile number: saved the same way as a wallet
-          txType = "wallet";
-          benCat = "person";
-          network = walletNetworkName(f.wNetwork) || "MTN Mobile Money";
+          txType = "airtime";
+          benCat = "number";
+          network = f.wNetwork || "MTN";
           phoneNumber = f.aPhone;
           detail = `${network} · ${phoneNumber}`;
         } else if (rail === "data") {
           txType = "wallet";
-          benCat = "person";
-          network = walletNetworkName(f.wNetwork) || "MTN Mobile Money";
+          benCat = "number";
+          network = f.wNetwork || "MTN";
           phoneNumber = f.aPhone;
           detail = topupCategory === "broadband" ? `${network} broadband · ${phoneNumber} · ${bundle?.name || "Broadband package"}` : `${network} · ${phoneNumber} · ${bundle?.name || "Internet bundle"}`;
         } else if (rail === "proxy") {
@@ -1117,7 +1757,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           benCat = "person";
           detail = `Proxy · ${f.pxId}`;
         } else if (isForeign) {
-          txType = rail === "swift" ? "swift" : "papss";
+          txType = "papss";
           benCat = "person";
           bankName = f.wBank || "International Bank";
           accountNumber = f.wIban;
@@ -1136,15 +1776,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           detail = `${bankName} · ${accountNumber}`;
         }
 
-        // One record per mobile number: paying a number that is already saved just updates it
-        const store = useBeneficiariesStore.getState();
-        const existingMobile =
-          txType === "wallet" && phoneKey(phoneNumber)
-            ? store.beneficiaries.find((x) => x.transactionType === "wallet" && phoneKey(x.phoneNumber) === phoneKey(phoneNumber))
-            : undefined;
-        if (existingMobile) {
-          store.recordPayment(existingMobile.id, currentAmount);
-        } else store.addBeneficiary({
+        useBeneficiariesStore.getState().addBeneficiary({
           name: benDisplayName,
           transactionType: txType,
           category: benCat,
@@ -1156,15 +1788,8 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           phoneNumber,
           billerName,
           billerReference,
-          country: isForeign ? f.wCountry || undefined : undefined,
-          currency: isForeign ? f.wCurrency : undefined,
           label: f.beneficiaryNickname?.trim() || undefined,
-          payCount: 1,
-          lastPaidAt: new Date().toISOString(),
-          lastAmount: currentAmount,
         });
-      } else if (selectedBenId && currentAmount > 0) {
-        useBeneficiariesStore.getState().recordPayment(selectedBenId, currentAmount);
       }
 
       const formattedAmount = formatMoney(currentAmount, isForeign ? f.wCurrency : "GHS", true);
@@ -1498,11 +2123,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             ? "Bill Payment"
             : rail === "airtime" || rail === "data"
             ? "Airtime & Data"
-            : rail === "swift" || rail === "papss"
-            ? "International Payments"
-            : rail === "proxy"
-            ? "Proxy Pay"
-            : undefined
+            : "Send to Wallet"
         }
       />
     );
@@ -1527,7 +2148,31 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </div>
 
         {/* Recent Bank Beneficiaries Avatars */}
-        <RailBeneficiaryStrip items={RECENT_AVATARS.filter((item) => item.rail === "bank")} onSelect={selectBeneficiary} />
+        <HorizontalScrollStrip>
+          {RECENT_AVATARS.filter((item) => item.rail === "bank").map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => selectBeneficiary(item)}
+              className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
+            >
+              <span
+                className="flex size-14 items-center justify-center rounded-full text-[20px] text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
+                style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
+              >
+                {item.initials}
+              </span>
+              <div className="flex flex-col">
+                <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
+                  {item.name.split(" ")[0]}
+                </span>
+                <span className="text-[11px] text-muted-foreground truncate max-w-[80px]">
+                  {item.bank.split(" ")[0]}
+                </span>
+              </div>
+            </button>
+          ))}
+        </HorizontalScrollStrip>
 
         {/* 4 Category Cards */}
         <div className="flex flex-col gap-3.5">
@@ -1615,7 +2260,31 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </div>
 
         {/* Recent Wallet Beneficiaries Avatars */}
-        <RailBeneficiaryStrip items={RECENT_AVATARS.filter((item) => item.rail === "wallet")} onSelect={selectBeneficiary} />
+        <HorizontalScrollStrip>
+          {RECENT_AVATARS.filter((item) => item.rail === "wallet").map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => selectBeneficiary(item)}
+              className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
+            >
+              <span
+                className="flex size-14 items-center justify-center rounded-full text-[20px] text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
+                style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
+              >
+                {item.initials}
+              </span>
+              <div className="flex flex-col">
+                <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
+                  {item.name.split(" ")[0]}
+                </span>
+                <span className="text-[11px] text-muted-foreground truncate max-w-[80px]">
+                  {item.bank.split(" ")[0]}
+                </span>
+              </div>
+            </button>
+          ))}
+        </HorizontalScrollStrip>
 
         {/* 2 Category Cards */}
         <div className="flex flex-col gap-3.5">
@@ -1682,22 +2351,43 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </div>
 
         {/* Recent Beneficiaries Strip */}
-        <RailBeneficiaryStrip
-          items={RECENT_AVATARS.filter((item) => item.rail === "wallet" || item.rail === "bank")}
-          onSelect={(item) => {
-            setCardlessCategory("third-party");
-            setF((p) => ({
-              ...p,
-              cardlessType: "third-party",
-              wPhone: item.acct.replace(/\s+/g, ""),
-              benName: item.name,
-              wAmount: "",
-              wRef: "",
-            }));
-            setStage(1);
-            setStage1Collapsed(true);
-          }}
-        />
+        <HorizontalScrollStrip>
+          {RECENT_AVATARS.filter((item) => item.rail === "wallet" || item.rail === "bank").slice(0, 4).map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => {
+                setCardlessCategory("third-party");
+                setF((p) => ({
+                  ...p,
+                  cardlessType: "third-party",
+                  wPhone: item.acct.replace(/\s+/g, ""),
+                  benName: item.name,
+                  wAmount: "",
+                  wRef: "",
+                }));
+                setStage(1);
+                setStage1Collapsed(true);
+              }}
+              className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
+            >
+              <span
+                className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85] shadow-xs border border-black/5 dark:border-white/10"
+                style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
+              >
+                {item.initials}
+              </span>
+              <div className="flex flex-col w-full">
+                <span className="text-[12px] font-medium text-foreground truncate w-full">
+                  {item.name.split(" ")[0]}
+                </span>
+                <span className="text-[11px] text-muted-foreground truncate w-full">
+                  {item.bank.split(" ")[0]}
+                </span>
+              </div>
+            </button>
+          ))}
+        </HorizontalScrollStrip>
 
         {/* 2 Separate Category Cards */}
         <div className="flex flex-col gap-3.5">
@@ -1843,7 +2533,31 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </div>
 
         {/* All Recent GCB Pay Beneficiaries Avatars */}
-        <RailBeneficiaryStrip items={RECENT_AVATARS.filter((item) => item.rail === "bill")} onSelect={selectBeneficiary} />
+        <HorizontalScrollStrip>
+          {RECENT_AVATARS.filter((item) => item.rail === "bill").map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => selectBeneficiary(item)}
+              className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
+            >
+              <span
+                className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85] shadow-xs border border-black/5 dark:border-white/10"
+                style={{ backgroundColor: item.colorBg || "var(--avatar-yellow)" }}
+              >
+                {item.initials}
+              </span>
+              <div className="flex flex-col w-full">
+                <span className="text-[12px] font-medium text-foreground truncate w-full">
+                  {item.name.split(" ")[0]}
+                </span>
+                <span className="text-[11px] text-muted-foreground truncate w-full">
+                  {item.bank.split(" ")[0]}
+                </span>
+              </div>
+            </button>
+          ))}
+        </HorizontalScrollStrip>
 
         {/* 7 Category Cards (2-column Grid matching Figma Node 1176:28982) */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -2103,7 +2817,31 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </div>
 
         {/* Recent recipients (excluding the Self shortcut, which is its own card) */}
-        <RailBeneficiaryStrip items={RECENT_AVATARS.filter((item) => item.rail === rail && !item.id.includes("self"))} onSelect={selectBeneficiary} />
+        <HorizontalScrollStrip>
+          {RECENT_AVATARS.filter((item) => item.rail === rail && !item.id.includes("self")).map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => selectBeneficiary(item)}
+              className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
+            >
+              <span
+                className="flex size-14 items-center justify-center rounded-full text-[18px] text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
+                style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
+              >
+                {item.initials}
+              </span>
+              <div className="flex flex-col">
+                <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
+                  {item.name.split(" ")[0]}
+                </span>
+                <span className="text-[11px] text-muted-foreground truncate max-w-[80px]">
+                  {item.subtitle || item.bank.split(" ")[0]}
+                </span>
+              </div>
+            </button>
+          ))}
+        </HorizontalScrollStrip>
 
         {/* 2 Category Cards */}
         <div className="flex flex-col gap-3.5">
@@ -2245,7 +2983,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         {stage === 1 && (
           <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
             {/* Top-Level Quick Beneficiaries Strip */}
-            {activeRailBeneficiaries.length > 0 && bankCategory !== "own" && walletCategory !== "self" && topupCategory !== "self" && topupCategory !== "broadband" && rail !== "group" && !["wallet", "momo", "bank", "airtime", "data", "proxy", "bill", "ecg", "ghanagov", "papss", "swift"].includes(rail) && (
+            {activeRailBeneficiaries.length > 0 && bankCategory !== "own" && walletCategory !== "self" && topupCategory !== "self" && topupCategory !== "broadband" && rail !== "group" && (
               <div className="flex flex-col gap-6 -mb-1 animate-in fade-in duration-150">
                 <RailBeneficiaryStrip
                   items={activeRailBeneficiaries}
@@ -2258,7 +2996,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   <button
                     type="button"
                     onClick={() => {
-                      setSelectedBenId(null);
                       setStage1Collapsed(false);
                       setF((p) => ({
                         ...p,
@@ -2313,8 +3050,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             {rail === "bank" && bankCategory === "gcb" && (
               <OtherGcbFlow
                 accounts={accounts}
-                savedRecipients={RECENT_AVATARS.filter((a) => a.rail === "bank")}
-                onPickSaved={pickSaved}
                 state={{
                   fromId: f.fromId,
                   benAcct: f.benAcct,
@@ -2348,8 +3083,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             {((rail === "bank" && (bankCategory === "other" || (!bankCategory && rail === "bank"))) || rail === "ach") && (
               <OtherBankFlow
                 accounts={accounts}
-                savedRecipients={RECENT_AVATARS.filter((a) => a.rail === "bank")}
-                onPickSaved={pickSaved}
                 state={{
                   fromId: f.fromId,
                   bank: f.bank,
@@ -2409,8 +3142,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 }}
                 detailsCollapsed={stage1Collapsed}
                 onToggleCollapsed={setStage1Collapsed}
-                savedRecipients={RECENT_AVATARS.filter((a) => a.rail === "wallet")}
-                onPickSaved={pickSaved}
                 onProceed={() => {
                   auth.reset();
                   setStage1Collapsed(true);
@@ -2459,8 +3190,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             {rail === "airtime" && (
               <AirtimeFlow
                 accounts={accounts}
-                savedRecipients={RECENT_AVATARS.filter((a) => a.rail === "airtime" && !a.id.includes("self"))}
-                onPickSaved={pickSaved}
                 state={{
                   fromId: f.fromId,
                   wNetwork: f.wNetwork,
@@ -2524,8 +3253,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             {rail === "data" && topupCategory !== "broadband" && (
               <DataBundleFlow
                 accounts={accounts}
-                savedRecipients={RECENT_AVATARS.filter((a) => a.rail === "data" && !a.id.includes("self"))}
-                onPickSaved={pickSaved}
                 state={{
                   fromId: f.fromId,
                   wNetwork: f.wNetwork,
@@ -2595,8 +3322,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             {(rail === "bill" || rail === "ecg" || rail === "ghanagov") && (
               <BillsPaymentFlow
                 accounts={accounts}
-                savedRecipients={RECENT_AVATARS.filter((a) => a.rail === "bill" || a.rail === "ecg" || a.rail === "ghanagov")}
-                onPickSaved={pickSaved}
                 state={{
                   fromId: f.fromId,
                   subType: rail === "ecg" ? "ecg" : rail === "ghanagov" ? "ghanagov" : "bill",
@@ -2643,8 +3368,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             {(rail === "swift" || (bankCategory === "international" && rail !== "papss")) && (
               <InternationalWireFlow
                 accounts={accounts}
-                savedRecipients={RECENT_AVATARS.filter((a) => a.rail === "swift")}
-                onPickSaved={pickSaved}
                 state={{
                   fromId: f.fromId,
                   wCountry: f.wCountry,
@@ -2691,8 +3414,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             {rail === "papss" && (
               <PapssPaymentFlow
                 accounts={accounts}
-                savedRecipients={RECENT_AVATARS.filter((a) => a.rail === "papss")}
-                onPickSaved={pickSaved}
                 state={{
                   fromId: f.fromId,
                   wCountry: f.wCountry || "Nigeria",
@@ -2753,8 +3474,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             {rail === "proxy" && (
               <ProxyPayFlow
                 accounts={accounts}
-                savedRecipients={RECENT_AVATARS.filter((a) => a.rail === "proxy")}
-                onPickSaved={pickSaved}
                 state={{
                   fromId: f.fromId,
                   pxId: f.pxId,

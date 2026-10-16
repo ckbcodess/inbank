@@ -12,6 +12,8 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   AccountVerificationStatus,
+  VerifiedAccountBadge,
+  ResolvingAccountBadge,
   CollapsedDetailsBadge,
   NETWORKS,
   SchedulePaymentSection,
@@ -22,7 +24,6 @@ import {
   formatGhPhone,
   NetworkSelect,
 } from "./shared";
-import { onNetwork, SavedRecipientSuggest, type RecentPayeeAvatar } from "./beneficiaries";
 import { OwnWalletPicker, REGISTERED_WALLET, useOwnDestination, WalletTag, type OwnWallet } from "./OwnWalletPicker";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { isCompleteGhanaMobile } from "@/lib/phone";
@@ -52,9 +53,6 @@ interface MobileWalletFlowProps {
   onProceed: () => void;
   detailsCollapsed?: boolean;
   onToggleCollapsed?: (collapsed: boolean) => void;
-  /** Saved wallet recipients, offered under the number field; picking one calls `onPickSaved` with its id. */
-  savedRecipients?: RecentPayeeAvatar[];
-  onPickSaved?: (id: string) => void;
 }
 
 export function MobileWalletFlow({
@@ -65,8 +63,6 @@ export function MobileWalletFlow({
   onProceed,
   detailsCollapsed,
   onToggleCollapsed,
-  savedRecipients,
-  onPickSaved,
 }: MobileWalletFlowProps) {
   const isSelf = walletCategory === "self";
   const [internalCollapsed, setInternalCollapsed] = useState(
@@ -102,9 +98,6 @@ export function MobileWalletFlow({
   });
   const ownPhone = state.wPhone || REGISTERED_WALLET.phone;
   const pickOwnWallet = (w: OwnWallet) => own.pick(w);
-
-  // Saved people on the chosen network only: a Telecel number is never offered for an MTN wallet
-  const recipientsOnNetwork = useMemo(() => onNetwork(savedRecipients ?? [], state.wNetwork), [savedRecipients, state.wNetwork]);
 
   const isPhoneValid = isSelf || isCompleteGhanaMobile(state.wPhone);
   const isNetworkValid = isSelf || Boolean(state.wNetwork);
@@ -181,36 +174,21 @@ export function MobileWalletFlow({
                   options={NETWORKS}
                 />
 
-                <SavedRecipientSuggest
-                  items={recipientsOnNetwork}
-                  query={state.wPhone}
-                  onSelect={(item) => onPickSaved?.(item.id)}
-                >
-                  {({ endAdornment }) => (
-                    <PhoneInput
-                      value={state.wPhone}
-                      onValueChange={(val) => {
-                        onChange("wPhone", val);
-                        const detected = detectTelcoNetwork(val);
-                        if (detected && !state.wNetwork) {
-                          onChange("wNetwork", detected.walletName);
-                        }
-                        const resolved = resolveAccountName(val, "");
-                        if (resolved) {
-                          onChange("wName", resolved);
-                        }
-                      }}
-                      aria-label="Mobile number"
-                      // Typing waits for the network (it decides who can be suggested and where the money goes).
-                      // The saved-recipients button stays live: picking someone sets the network itself.
-                      readOnly={!state.wNetwork}
-                      endAdornment={endAdornment}
-                    />
-                  )}
-                </SavedRecipientSuggest>
-                {!state.wNetwork && (
-                  <p className="-mt-1 text-[12px] text-muted-foreground">Choose a network to enter a number, or pick a saved recipient.</p>
-                )}
+                <PhoneInput
+                  value={state.wPhone}
+                  onValueChange={(val) => {
+                    onChange("wPhone", val);
+                    const detected = detectTelcoNetwork(val);
+                    if (detected && !state.wNetwork) {
+                      onChange("wNetwork", detected.walletName);
+                    }
+                    const resolved = resolveAccountName(val, "");
+                    if (resolved) {
+                      onChange("wName", resolved);
+                    }
+                  }}
+                  aria-label="Mobile number"
+                />
               </>
             )}
 

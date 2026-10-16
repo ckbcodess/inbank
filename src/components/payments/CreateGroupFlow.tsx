@@ -287,7 +287,7 @@ export default function CreateGroupFlow({
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
+    <div className="mx-auto flex w-full max-w-[580px] flex-col gap-6 py-6 sm:py-8 animate-in fade-in duration-200 ease-out">
       {/* ────────────────────────────────────────────────────────────────────────── */}
       {/* HEADER: Inline Back Chevron + Screen Title matching Figma mockups          */}
       {/* ────────────────────────────────────────────────────────────────────────── */}
