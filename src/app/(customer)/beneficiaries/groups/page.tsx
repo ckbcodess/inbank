@@ -1,7 +1,5 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { GroupListView } from "@/components/beneficiaries/BeneficiaryList";
-
-export default function BeneficiariesGroupsPage() {
-  return <GroupListView backTo={{ href: "/beneficiaries", label: "Beneficiaries" }} />;
+export default function BeneficiariesGroupsIndexPage() {
+  redirect("/beneficiaries?tab=groups");
 }

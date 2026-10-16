@@ -1,6 +1,5 @@
 "use client";
 
-import { KIND_GROUPS } from "@/components/beneficiaries/BeneficiaryList";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { ChevronRight } from "lucide-react";
@@ -162,8 +161,11 @@ export default function HeaderBreadcrumbs() {
     const isEdit = segments.includes("edit");
 
     const groupCrumbs: Crumb[] = [
-      { label: "Beneficiaries", href: "/beneficiaries", isLast: false },
-      { label: "Groups", href: "/beneficiaries/groups", isLast: !isCreate && !isEdit },
+      {
+        label: "Beneficiaries",
+        href: "/beneficiaries?tab=groups",
+        isLast: !isCreate && !isEdit,
+      },
     ];
 
     if (isCreate) {
@@ -181,30 +183,6 @@ export default function HeaderBreadcrumbs() {
     }
 
     return <BreadcrumbView list={groupCrumbs} />;
-  }
-
-  if (segments[0] === "beneficiaries" && segments[1] === "pinned") {
-    return (
-      <BreadcrumbView
-        list={[
-          { label: "Beneficiaries", href: "/beneficiaries", isLast: false },
-          { label: "Pinned", href: pathname, isLast: true },
-        ]}
-      />
-    );
-  }
-
-  // Beneficiaries > People > Bank Accounts (and the same for Billers)
-  if (segments[0] === "beneficiaries" && (segments[1] === "people" || segments[1] === "billers")) {
-    const section = segments[1];
-    const sectionLabel = section === "people" ? "People" : "Billers";
-    const kindKey = segments[2];
-    const list: Crumb[] = [
-      { label: "Beneficiaries", href: "/beneficiaries", isLast: false },
-      { label: sectionLabel, href: `/beneficiaries/${section}`, isLast: !kindKey },
-    ];
-    if (kindKey && KIND_GROUPS[kindKey]) list.push({ label: KIND_GROUPS[kindKey].plural, href: pathname, isLast: true });
-    return <BreadcrumbView list={list} />;
   }
 
   // An approval is one page, named for what is being approved. Its "payment" or "trade" segment is not a page.

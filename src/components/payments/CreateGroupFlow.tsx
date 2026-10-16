@@ -219,7 +219,7 @@ export default function CreateGroupFlow({
     if (onCancel) {
       onCancel();
     } else {
-      router.push("/beneficiaries/groups");
+      router.push("/beneficiaries?tab=groups");
     }
   };
 
@@ -282,7 +282,7 @@ export default function CreateGroupFlow({
     } else if (onSuccess) {
       onSuccess(savedGroup);
     } else {
-      router.push("/beneficiaries/groups");
+      router.push("/beneficiaries?tab=groups");
     }
   };
 

@@ -2075,7 +2075,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           <ActionTile
             icon={Pencil}
             title="Manage Groups"
-            onClick={() => router.push("/beneficiaries/groups")}
+            onClick={() => router.push("/beneficiaries?tab=groups")}
             className="p-4.5"
           />
         </div>
