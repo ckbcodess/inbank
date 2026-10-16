@@ -33,7 +33,7 @@ const GROUP_RULES: [string, RegExp][] = [
   ["Tints and banners", /^(tint-|banner-)/],
   ["Charts", /^(chart|cat-|spend-)/],
   ["Marks", /^(mc-|duo-)/],
-  ["Dashboard hero", /^(hero|sheet|balance-card|account-card)/],
+  ["Dashboard hero", /^(hero|sheet|account-card)/],
   ["Icons", /^(icon-|glass-)/],
   ["Shell and sidebar", /^shell-/],
   ["Avatars", /^avatar-/],
@@ -41,7 +41,7 @@ const GROUP_RULES: [string, RegExp][] = [
   ["Dark elevation", /^dm-/],
   ["Surfaces", /^(background|surface|card|modal|panel|popover|muted|secondary|accent|tile|sidebar|glass|device|skeleton)/],
 ];
-const SKIP = /^(color-|tw-|font|radius|shadow|dur-|breakpoint|animate|ease|sidebar-width|ripple)/;
+const SKIP = /^(color-|tw-|font|radius|shadow|dur-|breakpoint|animate|ease|ripple)/;
 
 function humanize(id: string): string {
   const words = id.replace(/-/g, " ");

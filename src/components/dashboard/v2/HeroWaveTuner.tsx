@@ -1,8 +1,9 @@
 "use client";
 
 /**
- * Dev tool: tune the hero card live — its colours, the wave of light, grain,
- * the pill shadow and the panel container's glow. A floating button at the bottom right of the Hero layouts
+ * Dev tool: tune the hero's motion and shape live: the wave of light (cycle, drift, size, lift, second wave), grain,
+ * the pill shadow and the size of the panel container's glow. Its colours are tokens, so they live in the Colour
+ * tuner (Dashboard hero group), not here. A floating button at the bottom right of the Hero layouts
  * opens the panel above it. Changes apply as you drag and persist in this
  * browser; "Copy values" puts them on the clipboard to bake in as defaults.
  * Hidden in capture mode so it stays out of Figma captures.
@@ -27,17 +28,12 @@ import {
 type NumericKey = { [K in keyof HeroWaveSettings]: HeroWaveSettings[K] extends number ? K : never }[keyof HeroWaveSettings];
 
 const SLIDERS: { key: NumericKey; label: string; min: number; max: number; step: number; unit: string }[] = [
-  { key: "strength", label: "Wave strength · dark", min: 0, max: 100, step: 1, unit: "%" },
-  { key: "strengthLight", label: "Wave strength · light", min: 0, max: 100, step: 1, unit: "%" },
   { key: "second", label: "Second wave", min: 0, max: 100, step: 1, unit: "%" },
   { key: "speed", label: "Cycle", min: 4, max: 60, step: 1, unit: "s" },
   { key: "drift", label: "Drift", min: 0, max: 20, step: 0.5, unit: "%" },
   { key: "grain", label: "Grain (anti-banding)", min: 0, max: 60, step: 1, unit: "%" },
   { key: "size", label: "Size", min: 40, max: 160, step: 1, unit: "%" },
   { key: "lift", label: "Lift", min: 0, max: 80, step: 1, unit: "%" },
-  { key: "pillShadow", label: "Pill shadow", min: 0, max: 100, step: 1, unit: "%" },
-  { key: "glowStrengthDark", label: "Container glow · dark", min: 0, max: 100, step: 1, unit: "%" },
-  { key: "glowStrengthLight", label: "Container glow · light", min: 0, max: 100, step: 1, unit: "%" },
   { key: "glowSize", label: "Container glow size", min: 40, max: 200, step: 1, unit: "%" },
 ];
 
@@ -101,30 +97,9 @@ function TunerPanel() {
         </div>
       </div>
 
-      {/* Each theme has its own card and light; the card shows whichever theme is on. */}
-      {([
-        ["cardDark", "Card · dark"],
-        ["cardLight", "Card · light"],
-        ["textDark", "Text · dark"],
-        ["textLight", "Text · light"],
-        ["color", "Wave · dark"],
-        ["colorLight", "Wave · light"],
-        ["glowDark", "Container glow · dark"],
-        ["glowLight", "Container glow · light"],
-      ] as const).map(([key, label]) => (
-        <label key={key} className="flex items-center justify-between gap-3 text-[12.5px] text-foreground">
-          {label}
-          <span className="flex items-center gap-2">
-            <span className="tabular text-foreground">{wave[key]}</span>
-            <input
-              type="color"
-              value={wave[key]}
-              onChange={(e) => setHeroWave({ [key]: e.target.value })}
-              className="size-7 cursor-pointer rounded-lg border border-border bg-transparent p-0.5"
-            />
-          </span>
-        </label>
-      ))}
+      <p className="text-[12px] text-muted-foreground">
+        Colours (card, text, wave, glow) are in the Colour tuner, under Dashboard hero.
+      </p>
 
       <div className="flex flex-col gap-3">
         {SLIDERS.map(({ key, label, min, max, step, unit }) => {

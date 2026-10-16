@@ -120,8 +120,8 @@ function HeroArt({ map = true }: { map?: boolean }) {
     // Behind the content: the surface is isolated, so -z-10 still sits above its fill.
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 -z-10 [contain:paint] [--hero-card:var(--wave-card-light)] [--hero-wave:var(--wave-color-light)] dark:[--hero-card:var(--wave-card-dark)] dark:[--hero-wave:var(--wave-color-dark)]"
-      style={{ background: "var(--hero-card, var(--hero-surface))" }}
+      className="pointer-events-none absolute inset-0 -z-10 [contain:paint]"
+      style={{ background: "var(--hero-surface)" }}
     >
       <div
         className="hero-wave-a absolute -left-[20%] h-[95%] rounded-[50%] will-change-transform [backface-visibility:hidden]"
@@ -193,7 +193,6 @@ export function HeroSurface({
       ref={ref}
       className={cn(
         "relative isolate overflow-hidden border border-[var(--hero-border)] bg-[var(--hero-surface)] text-[var(--hero-foreground)]",
-        "[--hero-foreground:var(--wave-text-light)] dark:[--hero-foreground:var(--wave-text-dark)]",
         className,
       )}
       style={heroWaveVars(wave)}
@@ -307,13 +306,13 @@ export function HeroQrAction({ className }: { className?: string }) {
       className={cn(
         buttonVariants({ variant: "glass", size: "icon-lg" }),
         HERO_GLASS_EXTRA,
-        "h-10 w-10 max-sm:h-9 max-sm:w-9 relative z-10",
+        "h-16 w-16 rounded-full max-sm:h-12 max-sm:w-12 relative z-10",
         className
       )}
       aria-label="My QR Code"
       title="My QR Code"
     >
-      <QrCode size={18} strokeWidth={1.9} className="size-[18px]" />
+      <QrCode size={32} strokeWidth={1.7} className="size-8 max-sm:size-6" />
     </Link>
   );
 }
@@ -342,6 +341,29 @@ export function HeroFxAction({ className }: { className?: string }) {
         <RateTrend size={15} strokeWidth={2} className={cn("size-[15px]", usd.changePct >= 0 ? "text-success-text" : "text-destructive-text")} />
       </Button>
 
+      <FxRatesDialog open={ratesOpen} onOpenChange={setRatesOpen} />
+    </>
+  );
+}
+
+/** FX Rates as one of the hero's action buttons (beside Send Money, GCB Pay and Top-Up): both flags and the label. */
+export function HeroFxRatesButton({ className }: { className?: string }) {
+  const [ratesOpen, setRatesOpen] = useState(false);
+  return (
+    <>
+      <Button
+        type="button"
+        variant="glass"
+        onClick={() => setRatesOpen(true)}
+        className={cn(HERO_GLASS_EXTRA, className)}
+        aria-haspopup="dialog"
+      >
+        <span className="relative flex shrink-0 items-center max-sm:hidden">
+          <CurrencyLogo currency="GHS" size={20} showBorder={false} />
+          <CurrencyLogo currency="USD" size={20} showBorder={false} className="-ml-1.5" />
+        </span>
+        <span className="truncate">FX Rates</span>
+      </Button>
       <FxRatesDialog open={ratesOpen} onOpenChange={setRatesOpen} />
     </>
   );
@@ -546,7 +568,7 @@ export function HeroSheet({ children, className }: { children: React.ReactNode; 
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-[-560px] h-[862px] w-[1605px] max-w-none -translate-x-1/2 [--sheet-glow:var(--glow-color-light)] dark:mix-blend-plus-lighter dark:[--sheet-glow:var(--glow-color-dark)]"
+        className="pointer-events-none absolute left-1/2 top-[-560px] h-[862px] w-[1605px] max-w-none -translate-x-1/2 [--sheet-glow:var(--hero-glow)] dark:mix-blend-plus-lighter"
         style={{ background: SHEET_GLOW, scale: "var(--glow-size)" }}
       />
       {children}

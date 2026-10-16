@@ -221,7 +221,7 @@ export function Greeting({ firstName, className }: { firstName: string; classNam
 
 /** A glass control on the hero panel: frosted, so the wave and map blur behind it. */
 export const HERO_GLASS =
-  "backdrop-blur-md border border-[color-mix(in_oklch,var(--hero-foreground)_20%,transparent)] bg-[color-mix(in_oklch,var(--hero-foreground)_15%,transparent)] text-[var(--hero-foreground)] hover:bg-[color-mix(in_oklch,var(--hero-foreground)_22%,transparent)] group-hover:bg-[color-mix(in_oklch,var(--hero-foreground)_22%,transparent)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.18)] active:scale-95";
+  "backdrop-blur-md bg-[linear-gradient(to_bottom,var(--hero-glass-top),var(--hero-glass-bottom))] text-[var(--hero-foreground)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_transparent] hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_var(--hero-glass-hover)] group-hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_var(--hero-glass-hover)] active:scale-95";
 
 /**
  * Send / Pay Bill / Top-Up. Each opens a picker (bottom sheet on a phone) that
@@ -239,6 +239,7 @@ export function MoneyActions({
   variant = "buttons",
   tone = "plain",
   className,
+  extra,
 }: {
   accountId: string | null;
   /** Offers "Between my accounts" under Send. */
@@ -247,6 +248,8 @@ export function MoneyActions({
   /** `hero`: glass controls with white type for the slate hero panel. */
   tone?: "plain" | "hero";
   className?: string;
+  /** One more button after the actions (the hero's FX Rates). It is handed the buttons' own classes so it matches. */
+  extra?: (buttonClassName: string) => React.ReactNode;
 }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -299,6 +302,11 @@ export function MoneyActions({
     );
   }
 
+  const buttonClass = cn(
+    "h-auto gap-2 px-5 py-3 text-[14px] leading-none shadow-xs max-sm:flex-1 max-sm:min-w-0 max-sm:h-10 max-sm:gap-1 max-sm:px-1.5 max-sm:py-2.5 max-sm:text-[11.5px] max-sm:font-semibold max-sm:tracking-tight",
+    hero && "rounded-xl",
+  );
+
   return (
     <div className={cn("flex flex-wrap items-center gap-3 max-sm:w-full max-sm:gap-1.5", className)}>
       {actions.map(({ kind: k, icon: Icon, label, primary }) => (
@@ -308,15 +316,13 @@ export function MoneyActions({
           variant={primary ? "default" : hero ? "glass" : "outline"}
           onClick={() => pick(k)}
           aria-haspopup="dialog"
-          className={cn(
-            "h-auto gap-2 px-5 py-3 text-[14px] leading-none shadow-xs max-sm:flex-1 max-sm:min-w-0 max-sm:h-10 max-sm:gap-1 max-sm:px-1.5 max-sm:py-2.5 max-sm:text-[11.5px] max-sm:font-semibold max-sm:tracking-tight",
-            hero && "rounded-xl",
-          )}
+          className={buttonClass}
         >
           <Icon size={17} strokeWidth={1.8} className="size-[17px] shrink-0 max-sm:size-3.5" />
           <span className="truncate">{label}</span>
         </Button>
       ))}
+      {extra?.(buttonClass)}
       {picker}
     </div>
   );
@@ -401,7 +407,7 @@ export function AccountSwitcher({
 
   const hero = tone === "hero";
   const trigger = hero
-    ? "flex w-fit items-center gap-2 h-9 sm:h-10 px-3.5 rounded-xl backdrop-blur-md border border-[color-mix(in_oklch,var(--hero-foreground)_20%,transparent)] bg-[color-mix(in_oklch,var(--hero-foreground)_15%,transparent)] text-[var(--hero-foreground)] hover:bg-[color-mix(in_oklch,var(--hero-foreground)_22%,transparent)] text-[13.5px] sm:text-[15px] font-medium outline-none shadow-[inset_0_1px_1px_rgba(255,255,255,0.18)] active:scale-95 transition-colors cursor-pointer"
+    ? "flex w-fit items-center gap-2 h-9 sm:h-10 px-3.5 rounded-xl backdrop-blur-md bg-[linear-gradient(to_bottom,var(--hero-glass-top),var(--hero-glass-bottom))] text-[var(--hero-foreground)] text-[13.5px] sm:text-[15px] font-medium outline-none shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_transparent] hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_var(--hero-glass-hover)] active:scale-95 transition-[box-shadow,transform] cursor-pointer"
     : "-mx-3 flex w-fit items-center gap-2.5 rounded-lg px-3 py-2 text-[15px] leading-none text-foreground outline-none transition-colors hover:bg-muted";
   const chevron = hero ? "text-[var(--hero-foreground)]" : "text-muted-foreground";
 

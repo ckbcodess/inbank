@@ -1,9 +1,13 @@
 "use client";
 
 /**
- * The dashboard hero's look — card, text, wave of light, pill shadow and the
- * panel container's glow: its settings, a tiny shared store (so the
- * Dev Mode tuner and the hero stay in step), and the CSS variables it maps to.
+ * The dashboard hero's motion and shape: how the wave of light moves (cycle, drift, size, lift, second wave), its
+ * grain, and the size of the panel container's glow. A tiny shared store (so the Dev Mode tuner and
+ * the hero stay in step) and the CSS variables it maps to.
+ *
+ * Colours are not here. The card, its text, the wave and the container glow are the tokens `--hero-surface`,
+ * `--hero-foreground`, `--hero-wave` and `--hero-glow` in globals.css (a wave's or glow's strength is the alpha in its
+ * token), tuned in the Colour tuner. One place for each thing.
  *
  * Tweaks persist per browser — a reviewing convenience, like the layout pick.
  * "Copy values" hands them back as the defaults to bake in below.
@@ -12,22 +16,6 @@
 import { useSyncExternalStore } from "react";
 
 export interface HeroWaveSettings {
-  /** The card's own fill in dark mode (defaults mirror --hero-surface in globals.css). */
-  cardDark: string;
-  /** The card's own fill in light mode. */
-  cardLight: string;
-  /** Text and glass-control colour on the card in dark mode (mirrors --hero-foreground). */
-  textDark: string;
-  /** Text and glass-control colour on the card in light mode. */
-  textLight: string;
-  /** Wave colour in dark mode. */
-  color: string;
-  /** How strongly it shows in dark mode, 0–100 (%). */
-  strength: number;
-  /** Wave colour in light mode. */
-  colorLight: string;
-  /** How strongly it shows in light mode, 0–100 (%). */
-  strengthLight: number;
   /** The second wave's strength relative to the first, 0–100 (%). */
   second: number;
   /** Seconds for one full cycle of the first wave; the second runs ~1.44× slower. */
@@ -40,17 +28,7 @@ export interface HeroWaveSettings {
   size: number;
   /** How far up the hero the waves reach, 0–80 (%). */
   lift: number;
-  /** The account pill's multiply shadow, 0–100 (%). */
-  pillShadow: number;
-  /** The soft glow along the top of the panel container, dark mode. */
-  glowDark: string;
-  /** Its strength in dark mode, 0–100 (%). */
-  glowStrengthDark: number;
-  /** The container glow in light mode. */
-  glowLight: string;
-  /** Its strength in light mode, 0–100 (%) — off by default, as designed. */
-  glowStrengthLight: number;
-  /** The glow's size, % of the design's ellipse. */
+    /** The glow's size, % of the design's ellipse. */
   glowSize: number;
   /** Motion on or paused. */
   moving: boolean;
@@ -58,25 +36,12 @@ export interface HeroWaveSettings {
 
 export const HERO_WAVE_DEFAULTS: HeroWaveSettings = {
   // Tuned by the designer in the wave tuner, 2026-09-26.
-  cardDark: "#131516",
-  cardLight: "#36434e",
-  textDark: "#ffffff",
-  textLight: "#ffffff",
-  color: "#455e68",
-  strength: 77,
-  colorLight: "#b1c3d2",
-  strengthLight: 59,
   second: 91,
   speed: 16,
   drift: 18,
   grain: 36,
   size: 150,
   lift: 59,
-  pillShadow: 2,
-  glowDark: "#374951",
-  glowStrengthDark: 23,
-  glowLight: "#ffffff",
-  glowStrengthLight: 0,
   glowSize: 97,
   moving: true,
 };
@@ -163,16 +128,9 @@ export function useWaveTunerOpen(): boolean {
   );
 }
 
-/** The CSS variables `HeroSurface`, `HeroArt` and `.hero-wave-a/b` (globals.css) read. */
+/** The CSS variables `HeroArt`, `HeroSheet` and `.hero-wave-a/b` (globals.css) read. Motion and shape only; colours are tokens. */
 export function heroWaveVars(s: HeroWaveSettings): React.CSSProperties {
   return {
-    // The hero picks one of each pair per theme into --hero-card / --hero-wave / --hero-foreground.
-    "--wave-card-dark": s.cardDark,
-    "--wave-card-light": s.cardLight,
-    "--wave-text-dark": s.textDark,
-    "--wave-text-light": s.textLight,
-    "--wave-color-dark": `color-mix(in srgb, ${s.color} ${s.strength}%, transparent)`,
-    "--wave-color-light": `color-mix(in srgb, ${s.colorLight} ${s.strengthLight}%, transparent)`,
     "--wave-second": s.second / 100,
     "--wave-speed-a": `${s.speed}s`,
     "--wave-speed-b": `${Math.round(s.speed * 1.44 * 10) / 10}s`,
@@ -180,9 +138,6 @@ export function heroWaveVars(s: HeroWaveSettings): React.CSSProperties {
     "--wave-grain": s.grain / 100,
     "--wave-size": `${s.size}%`,
     "--wave-lift": `${s.lift}%`,
-    "--pill-shadow": s.pillShadow / 100,
-    "--glow-color-dark": `color-mix(in srgb, ${s.glowDark} ${s.glowStrengthDark}%, transparent)`,
-    "--glow-color-light": `color-mix(in srgb, ${s.glowLight} ${s.glowStrengthLight}%, transparent)`,
     "--glow-size": s.glowSize / 100,
     "--wave-play": s.moving ? "running" : "paused",
   } as React.CSSProperties;
