@@ -100,7 +100,8 @@ function softFalloff(color: string): string {
   return `radial-gradient(closest-side in oklab, ${stops}, transparent 100%)`;
 }
 
-const WAVE_FILL = softFalloff("var(--hero-wave)");
+const WAVE_A_FILL = softFalloff("var(--hero-wave-a)");
+const WAVE_B_FILL = softFalloff("var(--hero-wave-b)");
 
 /**
  * Dither against banding: opaque greyscale noise centred on mid-grey. Blended
@@ -126,7 +127,7 @@ function HeroArt({ map = true }: { map?: boolean }) {
       <div
         className="hero-wave-a absolute -left-[20%] h-[95%] rounded-[50%] will-change-transform [backface-visibility:hidden]"
         style={{
-          background: WAVE_FILL,
+          background: WAVE_A_FILL,
           bottom: "calc(var(--wave-lift) - 95%)",
           width: "var(--wave-size)",
         }}
@@ -134,7 +135,7 @@ function HeroArt({ map = true }: { map?: boolean }) {
       <div
         className="hero-wave-b absolute -right-[15%] h-[85%] rounded-[50%] will-change-transform [backface-visibility:hidden]"
         style={{
-          background: WAVE_FILL,
+          background: WAVE_B_FILL,
           bottom: "calc(var(--wave-lift) - 100%)",
           width: "calc(var(--wave-size) * 0.89)",
           opacity: "var(--wave-second)",
@@ -150,7 +151,14 @@ function HeroArt({ map = true }: { map?: boolean }) {
           unoptimized
           // Above the fold, and the splash already fetched it: load now, not lazily.
           priority
-          className="absolute bottom-[4px] right-[-110px] hidden opacity-35 mix-blend-color-burn sm:block dark:opacity-100"
+          className="absolute hidden mix-blend-color-burn [--eagle-opacity:var(--eagle-opacity-light)] sm:block dark:[--eagle-opacity:var(--eagle-opacity-dark)]"
+          style={{
+            right: "var(--eagle-right)",
+            bottom: "var(--eagle-bottom)",
+            opacity: "var(--eagle-opacity)",
+            scale: "var(--eagle-scale)",
+            transformOrigin: "bottom right",
+          }}
         />
       )}
     </div>
@@ -204,7 +212,7 @@ export function HeroSurface({
 }
 
 /** What the hero's glass buttons add to the `glass` Button variant: the squarer corner and the inner top light. */
-const HERO_GLASS_EXTRA = "rounded-xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.18)] active:scale-95";
+const HERO_GLASS_EXTRA = "rounded-xl";
 
 /** The kebab icon menu for account options (Share, Copy, Statements, etc.) placed next to the account switcher. */
 export function HeroAccountOptionsMenu({
@@ -438,7 +446,7 @@ export function HeroBalance({
   const account = selectedAccount(data);
   if (!account) return null;
   return (
-    <div className={cn("relative flex items-center gap-2", className)}>
+    <div className={cn("relative flex items-center gap-2 text-[var(--hero-balance-foreground)]", className)}>
       {loading ? (
         <span
           className="h-[28px] w-56 skeleton-shimmer sm:h-[44px] rounded-lg bg-[color-mix(in_oklch,var(--hero-foreground)_15%,transparent)] sm:w-72"
@@ -538,7 +546,7 @@ function useRimLight() {
 const SHEET_BACKGROUND = [
   "linear-gradient(var(--card), var(--card)) padding-box",
   "radial-gradient(ellipse 340px 20% at var(--rim-x, 50%) 0%, color-mix(in srgb, var(--sheet-rim) calc(var(--rim-o) * 100%), transparent), transparent) border-box",
-  "linear-gradient(var(--border), var(--border)) border-box",
+  "linear-gradient(var(--hero-sheet-border), var(--hero-sheet-border)) border-box",
 ].join(", ");
 
 /** The rounded sheet the panels sit on, with the soft glow along its top in dark mode and a rim-lit border. */

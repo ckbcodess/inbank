@@ -130,9 +130,11 @@ function DropdownMenuSubTrigger({
   className,
   inset,
   children,
+  chevron,
   ...props
 }: MenuPrimitive.SubmenuTrigger.Props & {
   inset?: boolean
+  chevron?: React.ReactNode
 }) {
   return (
     <MenuPrimitive.SubmenuTrigger
@@ -145,7 +147,7 @@ function DropdownMenuSubTrigger({
       {...props}
     >
       {children}
-      <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2} className="ml-auto" />
+      {chevron !== undefined ? chevron : <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2} className="ml-auto" />}
     </MenuPrimitive.SubmenuTrigger>
   )
 }

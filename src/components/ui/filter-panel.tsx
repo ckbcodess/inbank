@@ -1,8 +1,30 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { SlidersHorizontal, X } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  ArrowRightLeft,
+  ArrowUpDown,
+  Calendar,
+  Check,
+  CircleDashed,
+  Filter,
+  Landmark,
+  MapPin,
+  Radio,
+  SlidersHorizontal,
+  Tag,
+  User,
+  X,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +39,10 @@ interface FilterGroupBase {
   options: FilterOption[];
   /** Short explanation shown under the label, for terms that need one. */
   hint?: string;
+  /** Label for the unconstrained option. Defaults to "All". */
+  anyLabel?: string;
+  /** Optional icon for category menus (defaults to an intelligent match based on id/label). */
+  icon?: React.ElementType;
 }
 
 /** One choice, or "Any". `value` equals `anyValue` when the filter is off. */
@@ -53,126 +79,38 @@ function labelOf(g: FilterGroup, value: string): string {
   return g.options.find((o) => o.value === value)?.label ?? value;
 }
 
-function optionChars(g: FilterGroup): number {
-  return g.options.reduce((n, o) => n + o.label.length, 0);
-}
-
-/** Few, very short options sit in one segmented row beside the label. */
-function fitsInline(g: FilterGroup): boolean {
-  return g.options.length <= 4 && optionChars(g) <= 22;
-}
-
-/** Few options that are too wide to sit beside the label get a full-width segmented row under it. */
-function fitsSegmented(g: FilterGroup): boolean {
-  return g.options.length <= 4 && optionChars(g) <= 30;
-}
-
-const segment =
-  "shrink-0 whitespace-nowrap rounded-lg px-3 py-1.5 text-[13px] transition-colors duration-hover ease-settle cursor-pointer";
-const segmentOn = "bg-chip-selected text-chip-selected-foreground shadow-xs font-medium";
-const segmentOff = "text-chip-foreground hover:text-chip-selected-foreground";
-
-const chip =
-  "h-8 rounded-lg border px-3 text-[13px] transition-colors duration-hover ease-settle cursor-pointer";
-const chipOn = "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground font-medium";
-const chipOff = "border-border bg-card text-muted-foreground hover:bg-muted/50 hover:text-foreground";
-
 function toggle(list: string[], value: string): string[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 }
 
-function FilterRow({ group }: { group: FilterGroup }) {
-  const anyOn = !isActive(group);
-  const anyValue = group.kind === "single" ? (group.anyValue ?? "all") : "";
-  const inline = fitsInline(group);
-  const segmented = inline || fitsSegmented(group);
+function getGroupIcon(group: FilterGroup): React.ElementType {
+  if (group.icon) return group.icon;
+  const key = `${group.id} ${group.label}`.toLowerCase();
+  if (key.includes("status")) return CircleDashed;
+  if (key.includes("date") || key.includes("time") || key.includes("period")) return Calendar;
+  if (key.includes("account")) return Landmark;
+  if (key.includes("method") || key.includes("rail") || key.includes("payment")) return ArrowRightLeft;
+  if (key.includes("category") || key.includes("cat")) return Tag;
+  if (key.includes("assignee") || key.includes("creator") || key.includes("user") || key.includes("person")) return User;
+  if (key.includes("type") || key.includes("kind")) return SlidersHorizontal;
+  if (key.includes("city") || key.includes("location") || key.includes("branch")) return MapPin;
+  if (key.includes("channel")) return Radio;
+  if (key.includes("direction")) return ArrowUpDown;
+  return Filter;
+}
 
-  const select = (value: string) => {
-    if (group.kind === "single") group.onChange(value);
-    else group.onChange(toggle(group.value, value));
-  };
-  const clear = () => {
-    if (group.kind === "single") group.onChange(anyValue);
-    else group.onChange([]);
-  };
-  const picked = (value: string) =>
-    group.kind === "single" ? group.value === value : group.value.includes(value);
-
-  const labelBlock = (
-    <div className="min-w-0">
-      <span className="text-[13px] font-medium text-foreground">{group.label}</span>
-      {group.hint && <p className="mt-0.5 text-[12px] text-muted-foreground">{group.hint}</p>}
-    </div>
-  );
-
-  if (segmented) {
-    const item = (wide: boolean) => cn(segment, wide && "flex-1");
-    return (
-      <div role="group" aria-label={group.label}>
-        <div
-          className={cn(
-            inline
-              ? "flex flex-wrap items-center justify-between gap-x-4 gap-y-2"
-              : "flex flex-col gap-2.5",
-          )}
-        >
-          {labelBlock}
-          <div className={cn("flex max-w-full items-center rounded-xl bg-chip p-1", inline && "inline-flex")}>
-            {group.options.map((o) => (
-              <button
-                key={o.value}
-                type="button"
-                aria-pressed={picked(o.value)}
-                onClick={() => select(o.value)}
-                className={cn(item(!inline), picked(o.value) ? segmentOn : segmentOff)}
-              >
-                {o.label}
-              </button>
-            ))}
-            <button
-              type="button"
-              aria-pressed={anyOn}
-              onClick={clear}
-              className={cn(item(!inline), anyOn ? segmentOn : segmentOff)}
-            >
-              Any
-            </button>
-          </div>
-        </div>
-        {group.kind === "single" && group.extra}
-      </div>
-    );
+function getGroupSummary(group: FilterGroup): string | null {
+  if (!isActive(group)) return null;
+  if (group.kind === "single") {
+    if (group.chipLabel) return group.chipLabel(group.value);
+    const opt = group.options.find((o) => o.value === group.value);
+    return opt?.label ?? group.value;
   }
-
-  return (
-    <div role="group" aria-label={group.label} className="flex flex-col gap-2.5">
-      {labelBlock}
-      <div className="flex flex-wrap gap-1.5">
-        {group.kind === "single" && (
-          <button
-            type="button"
-            aria-pressed={anyOn}
-            onClick={clear}
-            className={cn(chip, anyOn ? chipOn : chipOff)}
-          >
-            Any
-          </button>
-        )}
-        {group.options.map((o) => (
-          <button
-            key={o.value}
-            type="button"
-            aria-pressed={picked(o.value)}
-            onClick={() => select(o.value)}
-            className={cn(chip, picked(o.value) ? chipOn : chipOff)}
-          >
-            {o.label}
-          </button>
-        ))}
-      </div>
-      {group.kind === "single" && group.extra}
-    </div>
-  );
+  if (group.value.length === 1) {
+    const opt = group.options.find((o) => o.value === group.value[0]);
+    return opt?.label ?? group.value[0];
+  }
+  return `${group.value.length}`;
 }
 
 interface FilterPanelProps {
@@ -185,23 +123,26 @@ interface FilterPanelProps {
 }
 
 /**
- * FilterPanel — the one list-filter control in the app.
+ * FilterPanel — the list-filter control.
  *
- * A single "Filters" button beside the search field. It opens a panel with one
- * row per filter: the label on the left and a segmented control on the right
- * when the options are few, otherwise the options wrap beneath the label.
- * "Any" means the filter is off. Pair it with `AppliedFilters` so the person
- * can always see what is narrowing the list without opening the panel.
+ * For single-category filters, opens directly as a simple option list with checkmarks.
+ * For multi-category filters (e.g. Transactions), collapses into category rows with
+ * icons and right carets (like Linear) that fly out into focused submenus.
  */
 export function FilterPanel({ groups, onClear, className, align = "end" }: FilterPanelProps) {
   const active = countActiveFilters(groups);
+  const multipleGroups = groups.length > 1;
+
   return (
-    <Popover>
-      <PopoverTrigger
+    <DropdownMenu>
+      <DropdownMenuTrigger
         render={
           <Button
             variant="outline"
-            className={cn("h-9 shrink-0 gap-2 rounded-xl px-3.5 text-[13px]", className)}
+            className={cn(
+              "h-9 shrink-0 gap-2 rounded-xl px-3.5 text-[13px] transition-transform duration-150 active:scale-[0.98]",
+              className
+            )}
           />
         }
       >
@@ -212,32 +153,205 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
             {active}
           </span>
         )}
-      </PopoverTrigger>
-      <PopoverContent
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
         align={align}
-        sideOffset={8}
-        className="w-[min(28rem,calc(100vw-2rem))] rounded-2xl"
+        sideOffset={6}
+        className={cn(
+          "max-w-[calc(100vw-2rem)] rounded-xl p-1",
+          multipleGroups ? "w-56 sm:w-60" : "w-64 sm:w-72"
+        )}
       >
-        <div className="flex max-h-[min(34rem,70vh)] flex-col gap-5 overflow-y-auto p-5">
-          {groups.map((g) => (
-            <FilterRow key={g.id} group={g} />
-          ))}
-          {active > 0 && (
-            <div className="flex justify-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onClear}
-                className="h-8 gap-1.5 rounded-lg px-3 text-[13px] font-normal text-muted-foreground"
-              >
-                <X size={14} strokeWidth={1.8} aria-hidden="true" />
-                Clear all filters
-              </Button>
-            </div>
-          )}
-        </div>
-      </PopoverContent>
-    </Popover>
+        {multipleGroups ? (
+          /* Multi-group: Linear-style collapsed categories with submenus */
+          <div className="flex flex-col">
+            {groups.map((group) => {
+              const Icon = getGroupIcon(group);
+              const summary = getGroupSummary(group);
+              const anyOn = !isActive(group);
+              const anyValue = group.kind === "single" ? (group.anyValue ?? "all") : "";
+              const anyLabel = group.anyLabel ?? "All";
+
+              const select = (value: string) => {
+                if (group.kind === "single") group.onChange(value);
+                else group.onChange(toggle(group.value, value));
+              };
+              const clear = () => {
+                if (group.kind === "single") group.onChange(anyValue);
+                else group.onChange([]);
+              };
+              const picked = (value: string) =>
+                group.kind === "single" ? group.value === value : group.value.includes(value);
+
+              return (
+                <DropdownMenuSub key={group.id}>
+                  <DropdownMenuSubTrigger
+                    chevron={
+                      <span className="ml-auto text-[9px] text-muted-foreground/45 group-data-popup-open:text-foreground select-none" aria-hidden="true">
+                        ▸
+                      </span>
+                    }
+                    className="group gap-2.5 px-2.5 py-1.5 text-[13px] cursor-pointer"
+                  >
+                    <Icon size={14} strokeWidth={1.8} className="shrink-0 text-muted-foreground/80" />
+                    <span className="truncate text-foreground font-medium">{group.label}</span>
+                    {summary && (
+                      <span className="ml-auto mr-1 max-w-[80px] truncate text-[11px] text-muted-foreground tabular">
+                        {summary}
+                      </span>
+                    )}
+                  </DropdownMenuSubTrigger>
+
+                  <DropdownMenuSubContent
+                    side="right"
+                    sideOffset={4}
+                    align="start"
+                    className="w-60 sm:w-68 max-w-[calc(100vw-2rem)] max-h-[min(26rem,75vh)] overflow-y-auto p-1"
+                  >
+                    {/* "All" reset option */}
+                    <DropdownMenuItem
+                      onClick={clear}
+                      closeOnClick={false}
+                      className="justify-between px-2.5 py-1.5 text-[13px] cursor-pointer"
+                    >
+                      <span className="truncate">{anyLabel}</span>
+                      {anyOn && (
+                        <Check size={14} strokeWidth={2.2} className="shrink-0 text-foreground" aria-hidden="true" />
+                      )}
+                    </DropdownMenuItem>
+
+                    <div className="my-1 border-t border-border/40" role="separator" />
+
+                    {/* Group options */}
+                    {group.options.map((o) => {
+                      const isSelected = picked(o.value);
+                      return (
+                        <DropdownMenuItem
+                          key={o.value}
+                          onClick={() => select(o.value)}
+                          closeOnClick={false}
+                          className="justify-between px-2.5 py-1.5 text-[13px] cursor-pointer"
+                        >
+                          <span className="truncate">{o.label}</span>
+                          {isSelected && (
+                            <Check size={14} strokeWidth={2.2} className="shrink-0 text-foreground" aria-hidden="true" />
+                          )}
+                        </DropdownMenuItem>
+                      );
+                    })}
+
+                    {/* Extra controls (e.g. custom date range inputs) */}
+                    {group.kind === "single" && group.extra && (
+                      <div
+                        className="mt-1.5 border-t border-border/40 p-2"
+                        onClick={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => e.stopPropagation()}
+                      >
+                        {group.extra}
+                      </div>
+                    )}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+              );
+            })}
+
+            {active > 0 && (
+              <>
+                <div className="my-1 border-t border-border/50" role="separator" />
+                <DropdownMenuItem
+                  onClick={onClear}
+                  className="gap-2 px-2.5 py-1.5 text-[12px] text-muted-foreground hover:text-foreground justify-center cursor-pointer"
+                >
+                  <X size={13} strokeWidth={1.8} aria-hidden="true" />
+                  Clear all filters
+                </DropdownMenuItem>
+              </>
+            )}
+          </div>
+        ) : (
+          /* Single group: direct options list */
+          <div className="flex flex-col">
+            {groups[0] && (() => {
+              const group = groups[0];
+              const anyOn = !isActive(group);
+              const anyValue = group.kind === "single" ? (group.anyValue ?? "all") : "";
+              const anyLabel = group.anyLabel ?? "All";
+
+              const select = (value: string) => {
+                if (group.kind === "single") group.onChange(value);
+                else group.onChange(toggle(group.value, value));
+              };
+              const clear = () => {
+                if (group.kind === "single") group.onChange(anyValue);
+                else group.onChange([]);
+              };
+              const picked = (value: string) =>
+                group.kind === "single" ? group.value === value : group.value.includes(value);
+
+              return (
+                <div className="flex flex-col">
+                  {/* "All" reset option */}
+                  <DropdownMenuItem
+                    onClick={clear}
+                    closeOnClick={false}
+                    className="justify-between px-2.5 py-1.5 text-[13px] cursor-pointer"
+                  >
+                    <span className="truncate">{anyLabel}</span>
+                    {anyOn && (
+                      <Check size={14} strokeWidth={2.2} className="shrink-0 text-foreground" aria-hidden="true" />
+                    )}
+                  </DropdownMenuItem>
+
+                  <div className="my-1 border-t border-border/40" role="separator" />
+
+                  {/* Options */}
+                  {group.options.map((o) => {
+                    const isSelected = picked(o.value);
+                    return (
+                      <DropdownMenuItem
+                        key={o.value}
+                        onClick={() => select(o.value)}
+                        closeOnClick={false}
+                        className="justify-between px-2.5 py-1.5 text-[13px] cursor-pointer"
+                      >
+                        <span className="truncate">{o.label}</span>
+                        {isSelected && (
+                          <Check size={14} strokeWidth={2.2} className="shrink-0 text-foreground" aria-hidden="true" />
+                        )}
+                      </DropdownMenuItem>
+                    );
+                  })}
+
+                  {group.kind === "single" && group.extra && (
+                    <div
+                      className="mt-1.5 border-t border-border/40 p-2"
+                      onClick={(e) => e.stopPropagation()}
+                      onKeyDown={(e) => e.stopPropagation()}
+                    >
+                      {group.extra}
+                    </div>
+                  )}
+
+                  {active > 0 && (
+                    <>
+                      <div className="my-1 border-t border-border/50" role="separator" />
+                      <DropdownMenuItem
+                        onClick={onClear}
+                        className="gap-2 px-2.5 py-1.5 text-[12px] text-muted-foreground hover:text-foreground justify-center cursor-pointer"
+                      >
+                        <X size={13} strokeWidth={1.8} aria-hidden="true" />
+                        Clear filter
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 

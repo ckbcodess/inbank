@@ -183,6 +183,87 @@ export function resetTunerAll() {
   emit();
 }
 
+/* ── Hero presets ──────────────────────────────────────────────────────────────
+   A preset is a saved set of hero token values. "Original" is the palette in globals.css (it clears the hero tokens
+   any preset touches); the others set them. Applying one only replaces those tokens, so anything else tuned stays. */
+
+export interface TunerPreset {
+  id: string;
+  label: string;
+  overrides: Overrides;
+}
+
+export const TUNER_PRESETS: TunerPreset[] = [
+  { id: "original", label: "Original", overrides: { light: {}, dark: {} } },
+  {
+    id: "amber",
+    label: "Amber",
+    overrides: {
+      light: {
+        "hero-surface": "#ffc423",
+        "hero-wave-a": "#fff4e0e6",
+        "hero-wave-b": "#ffe894",
+        "hero-glow": "#ffc3212e",
+        "sheet-rim": "#fffaf04d",
+        "hero-glass-bottom": "#8a500080",
+        "hero-glass-top": "#977d114a",
+        "hero-border": "#ffae00",
+        "hero-balance-foreground": "#4c0b0b",
+        "hero-primary": "#ffffff",
+        "hero-primary-hover": "#ededed",
+        "hero-glass-hover": "#3d15151a",
+      },
+      dark: {
+        "hero-surface": "#0f0f0f",
+        "hero-glass-top": "#2417004f",
+        "account-card": "#99a6bf29",
+        "hero-wave-a": "#8f3900e3",
+        "hero-wave-b": "#ffa305",
+        "sheet-rim": "#fff3e580",
+        "hero-glow": "#ffa50a42",
+        "hero-glass-bottom": "#a68a5938",
+        "hero-glass-hover": "#ffffff0a",
+      },
+    },
+  },
+];
+
+/** Every token any preset sets: what applying a preset replaces. */
+const PRESET_TOKENS: Record<TunerTheme, Set<string>> = {
+  light: new Set(TUNER_PRESETS.flatMap((p) => Object.keys(p.overrides.light))),
+  dark: new Set(TUNER_PRESETS.flatMap((p) => Object.keys(p.overrides.dark))),
+};
+
+export function applyTunerPreset(id: string) {
+  const preset = TUNER_PRESETS.find((p) => p.id === id);
+  if (!preset) return;
+  const next: Overrides = { light: {}, dark: {} };
+  for (const theme of ["light", "dark"] as const) {
+    for (const [token, value] of Object.entries(overrides[theme])) {
+      if (!PRESET_TOKENS[theme].has(token)) next[theme][token] = value;
+    }
+    Object.assign(next[theme], preset.overrides[theme]);
+  }
+  overrides = next;
+  apply();
+  persist();
+  emit();
+}
+
+/** The preset the current values match exactly (on the tokens presets touch), or null once something is tuned by hand. */
+export function activeTunerPreset(o: Overrides): string | null {
+  for (const preset of TUNER_PRESETS) {
+    const matches = (["light", "dark"] as const).every((theme) => {
+      const have = Object.fromEntries(Object.entries(o[theme]).filter(([k]) => PRESET_TOKENS[theme].has(k)));
+      const want = preset.overrides[theme];
+      const keys = Object.keys(want);
+      return keys.length === Object.keys(have).length && keys.every((k) => have[k] === want[k]);
+    });
+    if (matches) return preset.id;
+  }
+  return null;
+}
+
 export function setTunerOpen(next: boolean) {
   open = next;
   try {

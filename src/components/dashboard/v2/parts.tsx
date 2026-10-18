@@ -27,7 +27,7 @@ import {
   Timer,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Button, GLASS_CLASS, buttonVariants } from "@/components/ui/button";
 import { RoundAction } from "@/components/ui/round-action";
 import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
@@ -220,8 +220,11 @@ export function Greeting({ firstName, className }: { firstName: string; classNam
 }
 
 /** A glass control on the hero panel: frosted, so the wave and map blur behind it. */
-export const HERO_GLASS =
-  "backdrop-blur-md bg-[linear-gradient(to_bottom,var(--hero-glass-top),var(--hero-glass-bottom))] text-[var(--hero-foreground)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_transparent] hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_var(--hero-glass-hover)] group-hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_var(--hero-glass-hover)] active:scale-95";
+export const HERO_GLASS = GLASS_CLASS;
+
+/** The hero's primary button (Send Money): its own fill, hover and text colour tokens, starting as the brand primary. */
+const HERO_PRIMARY_CLASS =
+  "bg-[var(--hero-primary)] text-[var(--hero-primary-foreground)] hover:bg-[var(--hero-primary-hover)]";
 
 /**
  * Send / Pay Bill / Top-Up. Each opens a picker (bottom sheet on a phone) that
@@ -303,8 +306,9 @@ export function MoneyActions({
   }
 
   const buttonClass = cn(
-    "h-auto gap-2 px-5 py-3 text-[14px] leading-none shadow-xs max-sm:flex-1 max-sm:min-w-0 max-sm:h-10 max-sm:gap-1 max-sm:px-1.5 max-sm:py-2.5 max-sm:text-[11.5px] max-sm:font-semibold max-sm:tracking-tight",
-    hero && "rounded-xl",
+    "h-auto gap-2 px-5 py-3 text-[14px] leading-none max-sm:flex-1 max-sm:min-w-0 max-sm:h-10 max-sm:gap-1 max-sm:px-1.5 max-sm:py-2.5 max-sm:text-[11.5px] max-sm:font-semibold max-sm:tracking-tight",
+    // The hero's glass buttons keep the variant's own top highlight; a plain shadow here would replace it.
+    hero ? "rounded-xl" : "shadow-xs",
   );
 
   return (
@@ -316,7 +320,7 @@ export function MoneyActions({
           variant={primary ? "default" : hero ? "glass" : "outline"}
           onClick={() => pick(k)}
           aria-haspopup="dialog"
-          className={buttonClass}
+          className={cn(buttonClass, hero && primary && HERO_PRIMARY_CLASS)}
         >
           <Icon size={17} strokeWidth={1.8} className="size-[17px] shrink-0 max-sm:size-3.5" />
           <span className="truncate">{label}</span>
@@ -407,7 +411,10 @@ export function AccountSwitcher({
 
   const hero = tone === "hero";
   const trigger = hero
-    ? "flex w-fit items-center gap-2 h-9 sm:h-10 px-3.5 rounded-xl backdrop-blur-md bg-[linear-gradient(to_bottom,var(--hero-glass-top),var(--hero-glass-bottom))] text-[var(--hero-foreground)] text-[13.5px] sm:text-[15px] font-medium outline-none shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_transparent] hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_var(--hero-glass-hover)] active:scale-95 transition-[box-shadow,transform] cursor-pointer"
+    ? cn(
+        buttonVariants({ variant: "glass" }),
+        "flex w-fit items-center gap-2 h-9 sm:h-10 px-3.5 rounded-xl text-[13.5px] sm:text-[15px] font-medium outline-none transition-[box-shadow,transform] cursor-pointer",
+      )
     : "-mx-3 flex w-fit items-center gap-2.5 rounded-lg px-3 py-2 text-[15px] leading-none text-foreground outline-none transition-colors hover:bg-muted";
   const chevron = hero ? "text-[var(--hero-foreground)]" : "text-muted-foreground";
 
@@ -775,7 +782,7 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
               >
                 <span
                   className={cn(
-                    "flex size-10 items-center justify-center rounded-full text-[13px] tracking-[0.02em] transition-transform group-hover:scale-105 sm:size-11 sm:text-[13.5px]",
+                    "flex size-10 items-center justify-center rounded-full text-[13px] tracking-[0.02em] transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85] sm:size-11 sm:text-[13.5px]",
                     AVATAR_TINTS[i % AVATAR_TINTS.length],
                   )}
                 >

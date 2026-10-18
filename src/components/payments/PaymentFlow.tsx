@@ -2917,10 +2917,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
   // Unified Progressive Disclosure Experience across ALL Services
   return (
-    <div className={cn(
-      "mx-auto flex w-full flex-col gap-8 animate-in fade-in duration-200 ease-out",
-      rail === "qr" ? "max-w-xl" : "max-w-2xl"
-    )}>
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
       {/* Header with back button */}
       <div className="flex items-center justify-between gap-3 min-w-0">
         <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">

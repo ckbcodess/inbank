@@ -2,11 +2,11 @@
 
 /**
  * The dashboard hero's motion and shape: how the wave of light moves (cycle, drift, size, lift, second wave), its
- * grain, and the size of the panel container's glow. A tiny shared store (so the Dev Mode tuner and
+ * grain, the size of the panel container's glow, and the dotted eagle (where it sits and how strong it is). A tiny shared store (so the Dev Mode tuner and
  * the hero stay in step) and the CSS variables it maps to.
  *
  * Colours are not here. The card, its text, the wave and the container glow are the tokens `--hero-surface`,
- * `--hero-foreground`, `--hero-wave` and `--hero-glow` in globals.css (a wave's or glow's strength is the alpha in its
+ * `--hero-foreground`, `--hero-wave-a`, `--hero-wave-b` and `--hero-glow` in globals.css (a wave's or glow's strength is the alpha in its
  * token), tuned in the Colour tuner. One place for each thing.
  *
  * Tweaks persist per browser — a reviewing convenience, like the layout pick.
@@ -30,6 +30,16 @@ export interface HeroWaveSettings {
   lift: number;
     /** The glow's size, % of the design's ellipse. */
   glowSize: number;
+  /** The dotted eagle in the hero's bottom right: its size, % of the artwork's own size. */
+  eagleScale: number;
+  /** How far it sits from the right edge, px (negative pushes it off the edge). */
+  eagleRight: number;
+  /** How far it sits from the bottom edge, px. */
+  eagleBottom: number;
+  /** Its opacity in light mode, 0–100 (%). */
+  eagleOpacityLight: number;
+  /** Its opacity in dark mode, 0–100 (%). */
+  eagleOpacityDark: number;
   /** Motion on or paused. */
   moving: boolean;
 }
@@ -43,6 +53,12 @@ export const HERO_WAVE_DEFAULTS: HeroWaveSettings = {
   size: 150,
   lift: 59,
   glowSize: 97,
+  // The hero's own placement before it was tunable: 471px wide, 4px up, 110px off the right edge.
+  eagleScale: 100,
+  eagleRight: -110,
+  eagleBottom: 4,
+  eagleOpacityLight: 35,
+  eagleOpacityDark: 100,
   moving: true,
 };
 
@@ -139,6 +155,11 @@ export function heroWaveVars(s: HeroWaveSettings): React.CSSProperties {
     "--wave-size": `${s.size}%`,
     "--wave-lift": `${s.lift}%`,
     "--glow-size": s.glowSize / 100,
+    "--eagle-scale": s.eagleScale / 100,
+    "--eagle-right": `${s.eagleRight}px`,
+    "--eagle-bottom": `${s.eagleBottom}px`,
+    "--eagle-opacity-light": s.eagleOpacityLight / 100,
+    "--eagle-opacity-dark": s.eagleOpacityDark / 100,
     "--wave-play": s.moving ? "running" : "paused",
   } as React.CSSProperties;
 }

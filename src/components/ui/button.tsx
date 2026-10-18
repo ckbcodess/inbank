@@ -6,6 +6,15 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { AppLoader } from "@/components/ui/loader"
 
+/**
+ * The hero's glass control, in one place: a translucent gradient over the panel with the backdrop blur, a faint top
+ * highlight, and a hover wash. The wash is an inset shadow, not a background swap, because a gradient can't
+ * transition to a flat colour. Every glass control uses this: the Button `glass` variant, the account pill and
+ * the round-action chips (`HERO_GLASS`). Its colours are the `--hero-glass-*` tokens in globals.css.
+ */
+export const GLASS_CLASS =
+  "backdrop-blur-md bg-[linear-gradient(to_bottom,var(--hero-glass-top),var(--hero-glass-bottom))] text-[var(--hero-button-foreground)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_transparent] hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_var(--hero-glass-hover)] group-hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_var(--hero-glass-hover)]";
+
 const buttonVariants = cva(
   "group/button relative overflow-hidden inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-[13px] font-semibold whitespace-nowrap transition-colors duration-100 ease-out outline-none select-none focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:bg-muted disabled:text-muted-foreground disabled:border-transparent disabled:opacity-60 aria-invalid:border-destructive aria-invalid:ring-1 aria-invalid:ring-destructive dark:aria-invalid:border-destructive dark:aria-invalid:ring-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 cursor-pointer",
   {
@@ -25,8 +34,7 @@ const buttonVariants = cva(
         // The same fill as a hub list tile (--tile), for a button that sits beside or above tiles.
         tile: "bg-[var(--tile)] text-foreground hover:bg-[var(--tile-hover)]",
         // Frosted control for the dark hero panel on the dashboard (white type, tinted by --hero-foreground).
-        glass:
-          "backdrop-blur-md bg-[linear-gradient(to_bottom,var(--hero-glass-top),var(--hero-glass-bottom))] text-[var(--hero-foreground)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_transparent] hover:shadow-[inset_0_1px_1px_rgba(255,255,255,0.18),inset_0_0_0_999px_var(--hero-glass-hover)] active:scale-95",
+        glass: GLASS_CLASS,
       },
       size: {
         default:

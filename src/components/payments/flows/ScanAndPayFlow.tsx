@@ -168,10 +168,10 @@ export function ScanAndPayFlow({
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-6">
       {/* ── STAGE A: IDENTIFY / VIEW QR (When no merchant is selected yet) ── */}
       {!isMerchantSelected ? (
-        <div className="flex flex-col w-full max-w-xl mx-auto min-h-[calc(100dvh-200px)] sm:min-h-[calc(100dvh-240px)] animate-in fade-in duration-200 ease-out">
+        <div className="flex flex-col w-full max-w-xl mx-auto min-h-[calc(100dvh-200px)] sm:min-h-[calc(100dvh-240px)]">
           {/* Segmented Control Switcher stays anchored at top */}
           <SegmentedControl
             aria-label="QR Mode"

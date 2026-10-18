@@ -331,11 +331,21 @@
   /* Dashboard hero panel (Figma 1945:5108): a slate card with white type here; near-black with white type in dark. */
   --hero-surface: #36434e;
   /* The card is flat; the slow waves of light that drift across it are its gradient.
-     The wave's strength is the alpha in --hero-wave; same for the glow behind the sheet. */
-  --hero-wave: color-mix(in srgb, #b1c3d2 59%, transparent);
+     Each wave has its own colour, --hero-wave-a (left) and --hero-wave-b (right); a wave's strength is the alpha in its token; same for the glow behind the sheet. */
+  --hero-wave-a: color-mix(in srgb, #b1c3d2 59%, transparent);
+  --hero-wave-b: color-mix(in srgb, #b1c3d2 59%, transparent);
   --hero-glow: color-mix(in srgb, #ffffff 0%, transparent);
   --hero-border: #8d9aa5;
+  /* The border around the sheet of panels under the hero (the rim light is drawn over it). */
+  --hero-sheet-border: var(--border);
   --hero-foreground: #ffffff;
+  /* The balance figure, and the text on the secondary buttons, each its own colour (both start as the hero text colour). */
+  --hero-balance-foreground: #ffffff;
+  --hero-button-foreground: #ffffff;
+  /* The hero's primary button (Send Money): fill, hover and text. They start as the brand primary. */
+  --hero-primary: var(--primary);
+  --hero-primary-hover: var(--primary-hover);
+  --hero-primary-foreground: var(--primary-foreground);
   /* The hero's secondary buttons: a translucent top-to-bottom gradient (lighter at the top) over the panel, with its own hover pair, so it never follows the text colour. */
   --hero-glass-top: #0923344a;
   --hero-glass-bottom: #8fa1af80;
@@ -518,10 +528,17 @@
   --spend-5: #b69cff;
   --spend-other: #4d5055;
   --hero-surface: #131516;
-  --hero-wave: color-mix(in srgb, #455e68 77%, transparent);
+  --hero-wave-a: color-mix(in srgb, #455e68 77%, transparent);
+  --hero-wave-b: color-mix(in srgb, #455e68 77%, transparent);
   --hero-glow: color-mix(in srgb, #374951 23%, transparent);
   --hero-border: #1e2224;
+  --hero-sheet-border: var(--border);
   --hero-foreground: #ffffff;
+  --hero-balance-foreground: #ffffff;
+  --hero-button-foreground: #ffffff;
+  --hero-primary: var(--primary);
+  --hero-primary-hover: var(--primary-hover);
+  --hero-primary-foreground: var(--primary-foreground);
   --hero-glass-top: #09233429;
   --hero-glass-bottom: #8fa1af61;
   --hero-glass-hover: rgb(255 255 255 / 0.24);

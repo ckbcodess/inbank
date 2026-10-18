@@ -2,7 +2,7 @@
 
 /**
  * Dev tool: tune the hero's motion and shape live: the wave of light (cycle, drift, size, lift, second wave), grain,
- * the pill shadow and the size of the panel container's glow. Its colours are tokens, so they live in the Colour
+ * the size of the panel container's glow and the dotted eagle (its size, position and opacity). Its colours are tokens, so they live in the Colour
  * tuner (Dashboard hero group), not here. A floating button at the bottom right of the Hero layouts
  * opens the panel above it. Changes apply as you drag and persist in this
  * browser; "Copy values" puts them on the clipboard to bake in as defaults.
@@ -34,6 +34,11 @@ const SLIDERS: { key: NumericKey; label: string; min: number; max: number; step:
   { key: "grain", label: "Grain (anti-banding)", min: 0, max: 60, step: 1, unit: "%" },
   { key: "size", label: "Size", min: 40, max: 160, step: 1, unit: "%" },
   { key: "lift", label: "Lift", min: 0, max: 80, step: 1, unit: "%" },
+  { key: "eagleScale", label: "Eagle size", min: 30, max: 200, step: 1, unit: "%" },
+  { key: "eagleRight", label: "Eagle from the right", min: -300, max: 100, step: 1, unit: "px" },
+  { key: "eagleBottom", label: "Eagle from the bottom", min: -100, max: 100, step: 1, unit: "px" },
+  { key: "eagleOpacityLight", label: "Eagle opacity · light", min: 0, max: 100, step: 1, unit: "%" },
+  { key: "eagleOpacityDark", label: "Eagle opacity · dark", min: 0, max: 100, step: 1, unit: "%" },
   { key: "glowSize", label: "Container glow size", min: 40, max: 200, step: 1, unit: "%" },
 ];
 

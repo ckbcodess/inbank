@@ -84,8 +84,9 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
   - One `FilterGroup[]` per page drives both the panel and the chips. A group is `single` (one
     choice or Any) or `multi` (none means Any). Fields that need more, like a custom date range, go
     in `extra`.
-  - A group with up to four short options renders as a segmented row beside its label; anything
-    longer wraps as chips under it. The panel is the same popover on phone and desktop.
+  - Single-group filters render options directly in a clean vertical list. Multi-group filters (such as Transactions)
+    collapse into Linear-style category rows with icons and right carets (`▸`) that fly out into focused submenus,
+    displaying active values inline.
   - The button shows how many groups are on. "Clear all filters" appears only when one is.
 - **Don't:** put filter dropdowns or pills straight in the toolbar, or build a separate mobile sheet.
 - **Examples:** `components/TransactionList.tsx` (most groups, custom date range),

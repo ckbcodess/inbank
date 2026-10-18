@@ -5,7 +5,8 @@
  * panel with every colour token the stylesheet defines, found automatically, grouped and searchable. Each has a swatch
  * and a hex field, and see-through ones get an opacity slider. Edits apply to the theme that is on screen, update the
  * whole app as you drag, and persist in this browser; switch theme to edit the other one. "Copy CSS" puts the changed
- * tokens on the clipboard in the shape of globals.css. Hidden in capture mode; only mounted in dev.
+ * tokens on the clipboard in the shape of globals.css. A Hero preset row switches the hero between saved palettes
+ * (Original and Amber). Hidden in capture mode; only mounted in dev.
  */
 
 import { useEffect, useMemo, useState } from "react";
@@ -15,6 +16,9 @@ import { cn } from "@/lib/utils";
 import { useCaptureMode } from "@/lib/capture-mode";
 import { useDevToolsHidden } from "@/lib/dev-tools-visibility";
 import {
+  TUNER_PRESETS,
+  activeTunerPreset,
+  applyTunerPreset,
   discoverTunerGroups,
   hydrateColorTuner,
   locateToken,
@@ -93,6 +97,7 @@ function TunerPanel() {
     () => (typeof document === "undefined" ? {} : readTunerDefaults(groups.flatMap((g) => g.tokens.map((t) => t.id)))),
     [groups, theme], // eslint-disable-line react-hooks/exhaustive-deps
   );
+  const activePreset = activeTunerPreset(overrides);
   const changedCount = Object.keys(overrides.light).length + Object.keys(overrides.dark).length;
   const q = query.trim().toLowerCase();
   const allIds = useMemo(() => groups.flatMap((g) => g.tokens.map((t) => t.id)), [groups]);
@@ -126,6 +131,31 @@ function TunerPanel() {
         <span className="text-[12px] text-muted-foreground">
           Editing {theme} mode. Switch theme to edit the other.
         </span>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <span className="text-[12px] text-muted-foreground">Hero preset</span>
+        <div className="flex gap-1.5">
+          {TUNER_PRESETS.map((p) => {
+            const on = activePreset === p.id;
+            return (
+              <button
+                key={p.id}
+                type="button"
+                aria-pressed={on}
+                onClick={() => applyTunerPreset(p.id)}
+                className={cn(
+                  "flex-1 cursor-pointer rounded-lg border px-3 py-1.5 text-[12.5px] transition-colors",
+                  on
+                    ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
+                    : "border-border bg-card text-muted-foreground hover:bg-muted/50 hover:text-foreground",
+                )}
+              >
+                {p.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <label className="relative block">
