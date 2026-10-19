@@ -70,7 +70,7 @@ export default function GetStartedPage() {
                   <UserCheck size={18} strokeWidth={2.2} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
+                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[var(--ls-tight)]">
                     GCB Account Holder
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
@@ -98,7 +98,7 @@ export default function GetStartedPage() {
                   <Plus size={19} strokeWidth={2.4} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
+                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[var(--ls-tight)]">
                     New to GCB
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
@@ -140,7 +140,7 @@ export default function GetStartedPage() {
                   <Landmark size={18} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
+                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[var(--ls-tight)]">
                     Open a GCB Account
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">
@@ -166,7 +166,7 @@ export default function GetStartedPage() {
                   <Plus size={18} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">
+                  <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[var(--ls-tight)]">
                     Use a Wallet or Card
                   </span>
                   <span className="text-[13px] sm:text-[13.5px] text-muted-foreground leading-snug mt-0.5">

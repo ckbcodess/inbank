@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transaction rows: 10 ways</title>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --bg: #fafafa; --card: #ffffff; --fg: #0a0a0a; --muted: #737373; --line: #ececec; --tile: #f4f4f3;
+    --success: #15803d; --success-bg: #dcf3e3; --warn: #b45309; --warn-bg: #fdf0d5; --primary: #ffc423;
+    --c1: #e0eedd; --c2: #dbeafe; --c3: #f5ebf7; --c4: #ebe8de; --c5: #fce7f3; --c6: #f1f8f9;
+    --ink1:#2f5d3a; --ink2:#1e4fa0; --ink3:#6b3a78; --ink4:#6b5f3a; --ink5:#9a2f63; --ink6:#2f6368;
+  }
+  .dark { --bg:#0b0b0b; --card:#181818; --fg:#f5f5f5; --muted:#9a9a9a; --line:#262626; --tile:#232323;
+    --success:#4ade80; --success-bg:#16331f; --warn:#f0b34a; --warn-bg:#3a2a0c;
+    --c1:#26402c; --c2:#1d3358; --c3:#3a2a44; --c4:#3a3626; --c5:#4a2438; --c6:#1f3a3d;
+    --ink1:#a6e0b2; --ink2:#a9c7f5; --ink3:#e0bdea; --ink4:#e5d9a8; --ink5:#f2b3d2; --ink6:#a7dade; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Open Sans", system-ui, sans-serif; background: var(--bg); color: var(--fg); font-size: 14px; }
+  header { position: sticky; top: 0; z-index: 5; display:flex; align-items:center; justify-content:space-between; gap:16px; padding: 14px 24px; background: var(--bg); border-bottom: 1px solid var(--line); }
+  header h1 { font-size: 18px; font-weight: 500; margin: 0; letter-spacing: -0.02em; }
+  header p { margin: 2px 0 0; color: var(--muted); font-size: 12.5px; }
+  button.theme { border: 1px solid var(--line); background: var(--card); color: var(--fg); border-radius: 10px; padding: 8px 14px; cursor: pointer; font: inherit; }
+  main { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 28px; padding: 24px; max-width: 1500px; margin: 0 auto; }
+  section.v { display:flex; flex-direction:column; gap:10px; }
+  section.v h2 { font-size: 15px; font-weight: 500; margin: 0; }
+  section.v .why { color: var(--muted); font-size: 12.5px; line-height: 1.5; margin: 0 0 4px; min-height: 56px; }
+  .list { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 8px; }
+  .row { display:flex; align-items:center; gap: 12px; padding: 12px; border-radius: 12px; position: relative; }
+  .row:hover { background: var(--tile); }
+  .mid { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .name { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meta { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display:flex; align-items:center; gap:6px; }
+  .end { text-align:right; display:flex; flex-direction:column; gap:3px; align-items:flex-end; flex-shrink:0; }
+  .amt { font-variant-numeric: tabular-nums; font-size: 14px; }
+  .amt.in { color: var(--success); font-weight: 500; }
+  .amt.hold { color: var(--muted); }
+  .amt.fail { color: var(--muted); text-decoration: line-through; }
+  .st { font-size: 12px; color: var(--warn); }
+  .day { padding: 10px 12px 4px; color: var(--muted); font-size: 12px; }
+  .tile { width: 40px; height: 40px; border-radius: 12px; background: var(--tile); display:flex; align-items:center; justify-content:center; flex-shrink:0; position:relative; color: var(--fg); }
+  .tile svg { width: 18px; height: 18px; stroke-width: 1.7; }
+  .round { border-radius: 999px; }
+  .corner { position:absolute; right:-4px; bottom:-4px; width:18px; height:18px; border-radius:999px; background: var(--card); display:flex; align-items:center; justify-content:center; box-shadow: 0 0 0 1px var(--line); }
+  .corner svg { width: 11px; height: 11px; stroke-width: 2.2; }
+  .corner.in { color: var(--success); }
+  .mono { font-size: 13px; font-weight: 500; letter-spacing: .02em; }
+  .chip { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--tile); color: var(--muted); white-space: nowrap; }
+  .bar { position:absolute; left:0; top:10px; bottom:10px; width:3px; border-radius:3px; background: var(--line); }
+  .bar.pend { background: var(--warn); } .bar.in { background: var(--success); }
+  .rail { position:relative; padding-left: 18px; }
+  .rail::before { content:""; position:absolute; left: 22px; top: 18px; bottom: 18px; width:1px; background: var(--line); }
+  .dot { width: 9px; height: 9px; border-radius: 99px; background: var(--fg); flex-shrink:0; margin-left: 3px; box-shadow: 0 0 0 4px var(--card); position:relative; z-index:1; }
+  .dot.in { background: var(--success); } .dot.hold { background: var(--card); box-shadow: 0 0 0 4px var(--card), inset 0 0 0 2px var(--muted); }
+  .two { display:grid; grid-template-columns: 1fr auto; gap: 4px 12px; }
+  .when { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; width: 46px; flex-shrink:0; }
+  .count { color: var(--muted); font-size: 11px; margin-left: auto; }
+</style>
+</head>
+<body class="">
+<header>
+  <div>
+    <h1>Transaction rows: 10 ways</h1>
+    <p>Same 12 transactions, one row design each. Amount colour says whether money moved and which way; a word appears only when it isn't Completed.</p>
+  </div>
+  <button class="theme" onclick="document.body.classList.toggle('dark')">Light / dark</button>
+</header>
+<main id="root"></main>
+
+<script>
+const T = [
+  { who:"Melcom Stores", kind:"Scan & Pay", sub:"Merchant · GHQR-MLC-0412", icon:"qr-code", rail:"Scan & Pay", dir:"out", amt:"500.00", st:"ok", date:"11 Aug", day:"11 Aug", cat:"Shopping", catIcon:"shopping-bag", pal:1, mono:"ME", cnt:"" },
+  { who:"MTN Ghana", kind:"Airtime", sub:"Airtime · 0244 ••• 821", icon:"signal", rail:"Airtime", dir:"out", amt:"100.00", st:"failed", date:"11 Aug", day:"11 Aug", cat:"Data", catIcon:"wifi", pal:4, mono:"MT" },
+  { who:"My MTN Mobile Money", kind:"Wallet to bank", sub:"Wallet to bank · 0244 ••• 677", icon:"wallet", rail:"Wallet to bank", dir:"in", amt:"452.00", st:"pending", date:"11 Aug", day:"11 Aug", cat:"", catIcon:"arrow-down-left", pal:4, mono:"MT" },
+  { who:"Kofi Mensah", kind:"Mobile money", sub:"MTN Mobile Money · 0244 ••• 677", icon:"smartphone", rail:"Mobile money", dir:"out", amt:"200.00", st:"ok", date:"10 Aug", day:"10 Aug", cat:"Family & Friends", catIcon:"users", pal:2, mono:"KM" },
+  { who:"Telecel Ghana", kind:"Data bundle", sub:"Data · 0200 ••• 456", icon:"wifi", rail:"Data", dir:"out", amt:"60.00", st:"ok", date:"10 Aug", day:"10 Aug", cat:"Data", catIcon:"wifi", pal:5, mono:"TG" },
+  { who:"Landlord Properties", kind:"Bank transfer", sub:"Stanbic Bank Ghana · 0122 ••• 5566", icon:"landmark", rail:"Bank transfer", dir:"out", amt:"2,500.00", st:"ok", date:"9 Aug", day:"9 Aug", cat:"Rent", catIcon:"home", pal:3, mono:"LP" },
+  { who:"Employer Ltd", kind:"Salary", sub:"Absa Bank Ghana · ACH", icon:"landmark", rail:"Bank transfer", dir:"in", amt:"4,200.00", st:"ok", date:"8 Aug", day:"8 Aug", cat:"Income", catIcon:"banknote", pal:1, mono:"EL" },
+  { who:"ECG Prepaid", kind:"GCB Pay", sub:"Meter · 0300 ••• 6677", icon:"receipt", rail:"GCB Pay", dir:"out", amt:"250.00", st:"ok", date:"8 Aug", day:"8 Aug", cat:"Utilities", catIcon:"zap", pal:4, mono:"EC" },
+  { who:"K. Mensah", kind:"PAPSS", sub:"KCB Bank Kenya · Kenya", icon:"globe", rail:"PAPSS", dir:"out", amt:"3,500.00", st:"ok", date:"7 Aug", day:"7 Aug", cat:"Remittances", catIcon:"globe", pal:2, mono:"KM" },
+  { who:"Savings Account", kind:"Between my accounts", sub:"Between my accounts · ••• 1100", icon:"arrow-left-right", rail:"Own account", dir:"in", amt:"1,500.00", st:"ok", date:"7 Aug", day:"7 Aug", cat:"Savings", catIcon:"piggy-bank", pal:6, mono:"SA" },
+  { who:"GCB ATM, High Street", kind:"Cash-out code", sub:"Cash-out code · ATM-044", icon:"banknote", rail:"Cash-out code", dir:"out", amt:"600.00", st:"ok", date:"6 Aug", day:"6 Aug", cat:"Cash", catIcon:"banknote", pal:4, mono:"GA" },
+  { who:"Shoprite Ghana", kind:"Card", sub:"Card · Groceries", icon:"credit-card", rail:"Card", dir:"out", amt:"320.40", st:"ok", date:"6 Aug", day:"6 Aug", cat:"Food", catIcon:"shopping-cart", pal:5, mono:"SG" },
+];
+const sign = t => t.dir === "out" ? "−" : "+";
+const amtCls = t => t.st !== "ok" ? (t.st === "failed" ? "fail" : "hold") : (t.dir === "in" ? "in" : "");
+const amt = t => `<span class="amt ${amtCls(t)}">${sign(t)} GHS ${t.amt}</span>`;
+const stw = t => t.st === "ok" ? "" : `<span class="st">${t.st === "failed" ? "Failed" : "Pending"}</span>`;
+const end = t => `<div class="end">${amt(t)}${stw(t)}</div>`;
+const ic = (n, extra="") => `<i data-lucide="${n}" ${extra}></i>`;
+const pal = t => `background: var(--c${t.pal}); color: var(--ink${t.pal});`;
+
+const V = [
+ { n:"1 · What it was, which way it went", why:"The tile shows the kind of payment (bank, wallet, signal, receipt, card, QR, globe), and a small corner arrow keeps direction. One glance tells you what it was without reading.",
+   row:t=>`<div class="row"><div class="tile">${ic(t.icon)}<span class="corner ${t.dir==='in'?'in':''}">${ic(t.dir==='in'?'arrow-down-left':'arrow-up-right')}</span></div><div class="mid"><span class="name">${t.who}</span><span class="meta">${t.kind} · ${t.date}</span></div>${end(t)}</div>` },
+ { n:"2 · Who, as a monogram", why:"Like a contacts list: a tinted monogram for the person or business, the same colour every time. The kind sits in the meta line. Best when you scan for a name.",
+   row:t=>`<div class="row"><div class="tile round mono" style="${pal(t)}">${t.mono}</div><div class="mid"><span class="name">${t.who}</span><span class="meta">${t.kind} · ${t.date}</span></div>${end(t)}</div>` },
+ { n:"3 · Monogram, with the rail as a badge", why:"Who on the tile, what on a small badge. Two questions answered at once without a second line of text.",
+   row:t=>`<div class="row"><div class="tile round mono" style="${pal(t)}">${t.mono}<span class="corner">${ic(t.icon)}</span></div><div class="mid"><span class="name">${t.who}</span><span class="meta">${t.sub}</span></div>${end(t)}</div>` },
+ { n:"4 · The detail that matters, on the second line", why:"No heavy tile. The second line carries what this rail needs: provider and number for airtime, bank for a transfer, meter for a bill. The tile is a quiet rail icon.",
+   row:t=>`<div class="row"><div class="tile">${ic(t.icon)}</div><div class="mid"><span class="name">${t.who}</span><span class="meta">${t.sub}</span></div>${end(t)}</div>` },
+ { n:"5 · Kind as a chip beside the name", why:"No leading icon at all. A small chip names the kind next to the name, and the date lives under it. The densest option, good for long histories.",
+   row:t=>`<div class="row"><div class="mid"><span class="name" style="display:flex;gap:8px;align-items:center"><span style="overflow:hidden;text-overflow:ellipsis">${t.who}</span><span class="chip">${t.kind}</span></span><span class="meta">${t.sub} · ${t.date}</span></div>${end(t)}</div>` },
+ { n:"6 · Grouped by day, time on the left", why:"The date becomes a heading, so each row can drop it. A time or a short rail icon sits on the left. Reads like a statement.",
+   html:()=>{ let d="",o=""; T.forEach(t=>{ if(t.day!==d){ d=t.day; o+=`<div class="day">${d}</div>`; } o+=`<div class="row"><span class="tile" style="width:34px;height:34px;border-radius:10px">${ic(t.icon)}</span><div class="mid"><span class="name">${t.who}</span><span class="meta">${t.kind}</span></div>${end(t)}</div>`; }); return o; } },
+ { n:"7 · By spend category", why:"The tile shows what the money was for (food, rent, utilities), in the category colours. Best for budgeting, weaker for finding a specific payment.",
+   row:t=>`<div class="row"><div class="tile round" style="${pal(t)}">${ic(t.catIcon)}</div><div class="mid"><span class="name">${t.who}</span><span class="meta">${t.cat?t.cat+' · ':''}${t.kind} · ${t.date}</span></div>${end(t)}</div>` },
+ { n:"8 · Status bar on the left edge", why:"A thin bar down the row's left edge carries state: amber for pending, green for money in, nothing for the rest. State is read before any text, and nothing sits in the amount's column.",
+   row:t=>`<div class="row"><span class="bar ${t.st==='pending'?'pend':(t.dir==='in'&&t.st==='ok'?'in':'')}"></span><div class="tile" style="margin-left:6px">${ic(t.icon)}</div><div class="mid"><span class="name">${t.who}</span><span class="meta">${t.kind} · ${t.date}</span></div>${end(t)}</div>` },
+ { n:"9 · A ledger timeline", why:"A vertical line with a dot per entry: filled for settled, hollow for pending, green for money in. The date reads down the left. It feels like a statement and shows order at a glance.",
+   html:()=>`<div class="rail">${T.map(t=>`<div class="row"><span class="dot ${t.st!=='ok'?'hold':(t.dir==='in'?'in':'')}"></span><span class="when">${t.date}</span><div class="mid"><span class="name">${t.who}</span><span class="meta">${t.kind}</span></div>${end(t)}</div>`).join("")}</div>` },
+ { n:"10 · Two-column receipt line", why:"A compact two-column line: name and kind on the left; amount and a quiet balance-style meta on the right. No icon, maximum width for the words, scannable like a bank statement.",
+   row:t=>`<div class="row"><div class="two" style="flex:1;min-width:0"><span class="name">${t.who}</span>${amt(t)}<span class="meta">${t.sub}</span><span class="meta" style="justify-content:flex-end">${t.st==='ok'?t.date:`<span class="st">${t.st==='failed'?'Failed':'Pending'}</span> · ${t.date}`}</span></div></div>` },
+];
+
+const root = document.getElementById("root");
+V.forEach(v => {
+  const body = v.html ? v.html() : T.map(v.row).join("");
+  root.insertAdjacentHTML("beforeend", `<section class="v"><h2>${v.n}</h2><p class="why">${v.why}</p><div class="list">${body}</div></section>`);
+});
+lucide.createIcons();
+</script>
+</body>
+</html>

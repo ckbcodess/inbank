@@ -153,7 +153,7 @@ export function CardDeliveryTracker({
     <div className={cn("flex flex-col gap-6 w-full", className)}>
       {/* Subheader: Delivery Progress + Status Badge */}
       <div className="flex items-center justify-between">
-        <h3 className="text-[17px] font-medium text-foreground tracking-[-0.01em]">
+        <h3 className="text-[17px] font-medium text-foreground tracking-[var(--ls-tight)]">
           Delivery Progress
         </h3>
         <span className="rounded-full bg-pill-warning px-3 py-0.5 text-[12px] font-medium text-pill-warning-text">
@@ -203,7 +203,7 @@ export function CardDeliveryTracker({
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <span
                     className={cn(
-                      "text-[15px] leading-tight tracking-[-0.01em]",
+                      "text-[15px] leading-tight tracking-[var(--ls-tight)]",
                       isCompleted ? "text-foreground font-medium" : "text-muted-foreground"
                     )}
                   >
@@ -361,7 +361,7 @@ export function CardDeliveryTrackerModal({
                 <ChevronLeft size={20} strokeWidth={2} />
               </button>
             )}
-            <h2 className="text-[18px] font-medium text-foreground tracking-[-0.01em]">
+            <h2 className="text-[18px] font-medium text-foreground tracking-[var(--ls-tight)]">
               {view === "pickup-code"
                 ? isBranchPickup
                   ? "Branch Pickup Code"

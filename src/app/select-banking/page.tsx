@@ -49,7 +49,7 @@ export default function SelectBankingPage() {
                 <Icon size={18} strokeWidth={2.2} />
               </div>
               <div className="flex flex-col">
-                <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[-0.01em]">{title}</span>
+                <span className="text-[15.5px] sm:text-[16.5px] font-medium text-foreground tracking-[var(--ls-tight)]">{title}</span>
                 <span className="mt-0.5 text-[13px] sm:text-[13.5px] leading-snug text-muted-foreground">{description}</span>
               </div>
             </div>

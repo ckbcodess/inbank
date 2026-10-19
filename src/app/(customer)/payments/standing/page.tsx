@@ -97,7 +97,7 @@ export default function StandingOrdersPage() {
           {/* The glance: one number. The list below is already in date order, so no "next up" line. */}
           <section className="flex flex-col gap-2 px-1">
             <span className="text-[13px] text-muted-foreground">Leaves your accounts each month</span>
-            <span className="tabular text-[32px] leading-none tracking-[-0.01em] text-foreground">
+            <span className="tabular text-[32px] leading-none tracking-[var(--ls-tight)] text-foreground">
               {formatMoney(Math.round(perMonth), "GHS", showAmounts)}
             </span>
             {active.length === 0 && <span className="text-[13px] text-muted-foreground">Everything is paused.</span>}
@@ -106,7 +106,7 @@ export default function StandingOrdersPage() {
           {active.length > 0 && (
             <section className="flex flex-col gap-4">
               <div className="flex min-h-8 items-center px-1">
-                <h2 className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Coming up</h2>
+                <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">Coming up</h2>
               </div>
               <ul className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">
                 {active.map(renderRow)}
@@ -117,7 +117,7 @@ export default function StandingOrdersPage() {
           {paused.length > 0 && (
             <section className="flex flex-col gap-4">
               <div className="flex min-h-8 items-center px-1">
-                <h2 className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Paused</h2>
+                <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">Paused</h2>
               </div>
               <ul className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">
                 {paused.map(renderRow)}

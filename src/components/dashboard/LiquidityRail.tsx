@@ -111,7 +111,7 @@ export function LiquidityRail({
           <span className="text-[12px] text-muted-foreground">
             {selected ? selected.name : "Total spendable cash"}
           </span>
-          <div className="mt-1.5 text-[40px] leading-none tracking-[-0.02em] text-foreground tabular">
+          <div className="mt-1.5 text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
             <RevealingAmount value={formatMoney(headlineAmount, headlineCurrency, showAmounts)} />
           </div>
           <p className="mt-1.5 text-[12px] text-muted-foreground">

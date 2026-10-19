@@ -70,7 +70,7 @@ export function LastLogin({ className }: { className?: string }) {
   const previous = useSession((s) => s.previousSignIn);
   if (!previous) return null;
   return (
-    <span className={cn("tabular text-[12px] tracking-[-0.01em] text-muted-foreground", className)} suppressHydrationWarning>
+    <span className={cn("tabular text-[12px] tracking-[var(--ls-tight)] text-muted-foreground", className)} suppressHydrationWarning>
       {t("dashboard.lastLogin", "Last login: {0}", { 0: formatLastLogin(previous) })}
     </span>
   );
@@ -345,7 +345,7 @@ export function HeroFxAction({ className }: { className?: string }) {
           <span className="max-sm:hidden"><CurrencyLogo currency="GHS" size={20} showBorder={false} /></span>
           <CurrencyLogo currency="USD" size={20} showBorder={false} className="-ml-1.5 max-sm:ml-0" />
         </span>
-        <span className="tabular text-[14px] tracking-[-0.01em] max-sm:text-[13px]"><span className="max-sm:hidden">USD </span>{usd.mid.toFixed(2)}</span>
+        <span className="tabular text-[14px] tracking-[var(--ls-tight)] max-sm:text-[13px]"><span className="max-sm:hidden">USD </span>{usd.mid.toFixed(2)}</span>
         <RateTrend size={15} strokeWidth={2} className={cn("size-[15px]", usd.changePct >= 0 ? "text-success-text" : "text-destructive-text")} />
       </Button>
 
@@ -422,7 +422,7 @@ export function ManageAccountsLink({
 
 const HERO_FIGURE = {
   md: "text-[24px] leading-[28px] sm:text-[32px] sm:leading-[32px]",
-  lg: "text-[26px] leading-[30px] sm:text-[36px] sm:leading-[32px]",
+  lg: "text-[24px] leading-[28px] sm:text-[33px] sm:leading-[32px]",
   xl: "text-[28px] leading-[32px] sm:text-[44px] sm:leading-[48px]",
 } as const;
 
@@ -453,7 +453,7 @@ export function HeroBalance({
           aria-label={t("dashboard.loadingBalance", "Loading balance")}
         />
       ) : (
-        <span className={cn("tabular whitespace-nowrap tracking-[-0.02em]", HERO_FIGURE[size])}>
+        <span className={cn("tabular whitespace-nowrap tracking-[var(--ls-heading)]", HERO_FIGURE[size])}>
           {account.currency} <RevealingAmount amount={account.balance ?? 0} currency="" />
         </span>
       )}

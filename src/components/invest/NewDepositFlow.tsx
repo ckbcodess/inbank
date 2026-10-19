@@ -155,7 +155,7 @@ export function NewDepositFlow() {
         <div className="mx-auto flex w-full max-w-[600px] flex-col gap-8">
           <section className="flex flex-col gap-1.5 px-1">
             <span className="text-[13px] text-muted-foreground">You deposit</span>
-            <span className="tabular text-[40px] leading-none tracking-[-0.02em] text-foreground">{money(num)}</span>
+            <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(num)}</span>
             <span className="tabular text-[14px] text-muted-foreground">
               {instruction === "rollover"
                 ? `and receive ${money(interest)} in interest on ${formatDate(maturity)}`

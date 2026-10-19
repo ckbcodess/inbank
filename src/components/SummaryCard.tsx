@@ -30,7 +30,7 @@ export function SummaryCard({
         <span className="text-[12px] text-muted-foreground">{label}</span>
         {icon && <span className="text-muted-foreground" aria-hidden="true">{icon}</span>}
       </div>
-      <div className={`mt-2 text-[22px] leading-tight tracking-[-0.01em] tabular ${toneClass}`}>
+      <div className={`mt-2 text-[22px] leading-tight tracking-[var(--ls-tight)] tabular ${toneClass}`}>
         <RevealingAmount value={value} />
       </div>
       {hint && <p className="mt-1 text-[12px] text-muted-foreground">{hint}</p>}

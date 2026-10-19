@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transaction mark: 10 variations</title>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root { --bg:#fafafa; --card:#fff; --fg:#0a0a0a; --muted:#737373; --line:#ececec; --tile:#f4f4f3; --success:#15803d; --warn:#b45309;
+    --yellow:#fef9c3; --teal:#e4f1f4; --sand:#ebe8de; --lilac:#f5ebf7; --green:#e0eedd; --pink:#fce7f3; --lemon:#fef08a; --blue:#dbeafe;
+    --yellow-i:#8a6d00; --teal-i:#1b6b78; --sand-i:#6b5f3a; --lilac-i:#7a3f8a; --green-i:#2f6b3c; --pink-i:#a23464; --lemon-i:#7a6700; --blue-i:#1e4fa0;
+    --yellow-s:#e0a800; --teal-s:#1f8a9c; --sand-s:#a08a45; --lilac-s:#9b5bb0; --green-s:#3f9a54; --pink-s:#d6498a; --lemon-s:#c9a400; --blue-s:#3b7be0; }
+  .dark { --bg:#0b0b0b; --card:#181818; --fg:#f5f5f5; --muted:#9a9a9a; --line:#262626; --tile:#232323; --success:#4ade80; --warn:#f0b34a;
+    --yellow:#3a3410; --teal:#173238; --sand:#37321f; --lilac:#35283d; --green:#1f3524; --pink:#40233a; --lemon:#3a3608; --blue:#1b2b4b;
+    --yellow-i:#f2d86a; --teal-i:#8fd3df; --sand-i:#e0d29a; --lilac-i:#dcb4e8; --green-i:#a3dcb0; --pink-i:#f0b3d0; --lemon-i:#ece07a; --blue-i:#a7c4f2; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Open Sans",system-ui,sans-serif; background:var(--bg); color:var(--fg); font-size:14px; }
+  header { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 24px; background:var(--bg); border-bottom:1px solid var(--line); }
+  header h1 { font-size:18px; font-weight:500; margin:0; letter-spacing:-0.02em; } header p { margin:2px 0 0; color:var(--muted); font-size:12.5px; }
+  button.theme { border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:10px; padding:8px 14px; cursor:pointer; font:inherit; }
+  main { display:grid; grid-template-columns:repeat(auto-fill,minmax(430px,1fr)); gap:28px; padding:24px; max-width:1500px; margin:0 auto; }
+  section.v { display:flex; flex-direction:column; gap:10px; } section.v h2 { font-size:15px; font-weight:500; margin:0; }
+  section.v .why { color:var(--muted); font-size:12.5px; line-height:1.5; margin:0; min-height:56px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:14px; display:flex; flex-direction:column; gap:14px; }
+  .strip { display:flex; flex-wrap:wrap; gap:14px; padding:4px 4px 10px; border-bottom:1px solid var(--line); }
+  .row { display:flex; align-items:center; gap:12px; padding:6px 4px; }
+  .mid { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; } .name { font-size:14px; } .meta { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:5px; }
+  .end { text-align:right; display:flex; flex-direction:column; gap:3px; align-items:flex-end; } .amt { font-variant-numeric:tabular-nums; } .in{color:var(--success);font-weight:500} .hold{color:var(--muted)} .fail{color:var(--muted);text-decoration:line-through}
+  .st { font-size:12px; color:var(--warn); }
+  .mk { position:relative; width:40px; height:40px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .mk svg.lucide { width:18px; height:18px; stroke-width:1.7; }
+  .badge { position:absolute; right:-4px; bottom:-4px; width:18px; height:18px; border-radius:99px; background:var(--card); box-shadow:0 0 0 1px var(--line); display:flex; align-items:center; justify-content:center; color:var(--muted); }
+  .badge.in { color:var(--success); } .badge svg.lucide { width:11px; height:11px; stroke-width:2.2; }
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Transaction mark: 10 variations</h1><p>Each tries a different idea on the current tile (a tinted kind icon with a corner arrow): shape, colour treatment, where direction and state live.</p></div>
+  <button class="theme" onclick="document.body.classList.toggle('dark')">Light / dark</button>
+</header>
+<main id="root"></main>
+<script>
+const K = [
+ {k:"Bank",ic:"landmark",c:"blue"},{k:"Mobile money",ic:"smartphone",c:"yellow"},{k:"Wallet to bank",ic:"wallet",c:"yellow"},{k:"Airtime",ic:"signal",c:"teal"},
+ {k:"Data",ic:"wifi",c:"teal"},{k:"GCB Pay",ic:"receipt",c:"sand"},{k:"Card",ic:"credit-card",c:"lilac"},{k:"Scan & Pay",ic:"qr-code",c:"green"},
+ {k:"PAPSS",ic:"globe",c:"pink"},{k:"Own account",ic:"arrow-left-right",c:"lemon"},{k:"Cash-out",ic:"banknote",c:"lemon"}
+];
+const R = [
+ {who:"Melcom Stores",kind:"Scan & Pay",ic:"qr-code",c:"green",dir:"out",amt:"500.00",st:"ok",date:"11 Aug",mono:"ME"},
+ {who:"MTN Ghana",kind:"Airtime",ic:"signal",c:"teal",dir:"out",amt:"100.00",st:"failed",date:"11 Aug",mono:"MT"},
+ {who:"My MTN Mobile Money",kind:"Wallet to bank",ic:"wallet",c:"yellow",dir:"in",amt:"452.00",st:"pending",date:"11 Aug",mono:"MM"},
+ {who:"Landlord Properties",kind:"Bank transfer",ic:"landmark",c:"blue",dir:"out",amt:"2,500.00",st:"ok",date:"9 Aug",mono:"LP"},
+ {who:"Employer Ltd",kind:"Salary",ic:"landmark",c:"blue",dir:"in",amt:"4,200.00",st:"ok",date:"8 Aug",mono:"EL"},
+ {who:"K. Mensah",kind:"PAPSS",ic:"globe",c:"pink",dir:"out",amt:"3,500.00",st:"ok",date:"7 Aug",mono:"KM"},
+];
+const arrow = d => d==="in" ? "arrow-down-left" : "arrow-up-right";
+const I = (n,s="") => `<i data-lucide="${n}" ${s}></i>`;
+const cls = t => t.st==="failed"?"fail":t.st==="pending"?"hold":(t.dir==="in"?"in":"");
+const end = t => `<div class="end"><span class="amt ${cls(t)}">${t.dir==="out"?"−":"+"} GHS ${t.amt}</span>${t.st==="ok"?"":`<span class="st">${t.st==="failed"?"Failed":"Pending"}</span>`}</div>`;
+const rowOf = (mark, t, metaPrefix="") => `<div class="row">${mark}<div class="mid"><span class="name">${t.who}</span><span class="meta">${metaPrefix}${t.kind} · ${t.date}</span></div>${end(t)}</div>`;
+const bdg = t => `<span class="badge ${t.dir==="in"?"in":""}">${I(arrow(t.dir))}</span>`;
+
+const V = [
+ {n:"1 · Current: tinted squircle, corner arrow", why:"The reference: a pastel tile, a dark icon, a small arrow on the corner. Quiet and familiar.",
+  m:t=>`<div class="mk" style="border-radius:12px;background:var(--${t.c});color:#171717">${I(t.ic)}${t.dir?bdg(t):""}</div>`},
+ {n:"2 · Duotone: icon in the tile's own hue", why:"The icon takes a deeper shade of the tint instead of black. It reads as one coloured object, softer than black on pastel, and gives each kind more identity.",
+  m:t=>`<div class="mk" style="border-radius:12px;background:var(--${t.c});color:var(--${t.c}-i)">${I(t.ic)}${bdg(t)}</div>`},
+ {n:"3 · Circle, like a contact", why:"A round tile makes the list feel like people and places rather than a ledger. Direction stays on the corner.",
+  m:t=>`<div class="mk" style="border-radius:99px;background:var(--${t.c});color:var(--${t.c}-i)">${I(t.ic)}${bdg(t)}</div>`},
+ {n:"4 · Outline only", why:"No fill: a thin ring and icon in the kind's hue. The lightest option, it lets amounts carry the weight. Direction as a small filled dot for money in.",
+  m:t=>`<div class="mk" style="border-radius:12px;box-shadow:inset 0 0 0 1.5px var(--${t.c}-s);color:var(--${t.c}-s)">${I(t.ic)}${t.dir==="in"?`<span style="position:absolute;right:-3px;top:-3px;width:10px;height:10px;border-radius:9px;background:var(--success);box-shadow:0 0 0 2px var(--card)"></span>`:""}</div>`},
+ {n:"5 · Solid, white icon", why:"A saturated tile with a white icon. Strong and scannable down a long list, but loud; best if colour is the main way you read kinds.",
+  m:t=>`<div class="mk" style="border-radius:12px;background:var(--${t.c}-s);color:#fff">${I(t.ic)}${bdg(t)}</div>`},
+ {n:"6 · Arrow moves to the meta line", why:"The tile is just the kind. Direction becomes a small arrow in front of the second line, next to the words. Cleaner tile, direction still visible.",
+  m:t=>`<div class="mk" style="border-radius:12px;background:var(--${t.c});color:var(--${t.c}-i)">${I(t.ic)}</div>`, pre:t=>`<span style="color:${t.dir==="in"?"var(--success)":"var(--muted)"};display:inline-flex">${I(arrow(t.dir),'style="width:12px;height:12px"')}</span>`},
+ {n:"7 · Both glyphs inside the tile", why:"The kind icon and a tiny direction arrow share one tile (arrow top-right). One object, nothing hanging off the corner, so it never clips in a tight row.",
+  m:t=>`<div class="mk" style="border-radius:12px;background:var(--${t.c});color:var(--${t.c}-i)">${I(t.ic)}<span style="position:absolute;right:5px;top:5px;display:flex;color:${t.dir==="in"?"var(--success)":"var(--muted)"}">${I(arrow(t.dir),'style="width:10px;height:10px;stroke-width:2.4"')}</span></div>`},
+ {n:"8 · Who, with the rail as a badge", why:"A monogram for the counterparty, the payment kind as a small coloured badge. Answers who and how at once; the arrow becomes the badge's ring (green in).",
+  m:t=>`<div class="mk" style="border-radius:99px;background:var(--tile);font-size:13px;font-weight:500">${t.mono}<span style="position:absolute;right:-5px;bottom:-5px;width:20px;height:20px;border-radius:99px;background:var(--${t.c});color:var(--${t.c}-i);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 2px var(--card),0 0 0 3.5px ${t.dir==="in"?"var(--success)":"transparent"}">${I(t.ic,'style="width:11px;height:11px;stroke-width:2"')}</span></div>`},
+ {n:"9 · Soft gradient with inner light", why:"The pastel gets a gentle top-to-bottom gradient and an inner top highlight, echoing the hero's glass buttons. More depth, same colours.",
+  m:t=>`<div class="mk" style="border-radius:12px;background:linear-gradient(to bottom,var(--${t.c}),color-mix(in srgb,var(--${t.c}) 70%,var(--tile)));color:var(--${t.c}-i);box-shadow:inset 0 1px 1px rgba(255,255,255,.5)">${I(t.ic)}${bdg(t)}</div>`},
+ {n:"10 · State lives in the mark", why:"The tile itself carries state: solid when completed, a dashed ring when pending, a muted slashed tile when failed. The amount's column no longer needs a status word for the common cases.",
+  m:t=>{ const base = t.st==="pending" ? `background:transparent;box-shadow:inset 0 0 0 1.5px var(--${t.c}-s);outline:1.5px dashed var(--${t.c}-s);outline-offset:-1.5px;color:var(--${t.c}-i)` : t.st==="failed" ? `background:var(--tile);color:var(--muted)` : `background:var(--${t.c});color:var(--${t.c}-i)`;
+    return `<div class="mk" style="border-radius:12px;${base}">${I(t.ic)}${t.st==="failed"?`<span style="position:absolute;left:4px;right:4px;top:50%;height:1.5px;background:var(--muted);transform:rotate(-35deg)"></span>`:""}${bdg(t)}</div>`; }},
+];
+
+const root = document.getElementById("root");
+V.forEach(v => {
+  const strip = K.map(k => `<div style="display:flex;flex-direction:column;align-items:center;gap:6px">${v.m({...k,dir:"out",st:"ok",mono:k.k.slice(0,2).toUpperCase()})}<span style="font-size:10.5px;color:var(--muted)">${k.k}</span></div>`).join("");
+  const rows = R.map(t => rowOf(v.m(t), t, v.pre ? v.pre(t) : "")).join("");
+  root.insertAdjacentHTML("beforeend", `<section class="v"><h2>${v.n}</h2><p class="why">${v.why}</p><div class="card"><div class="strip">${strip}</div>${rows}</div></section>`);
+});
+lucide.createIcons();
+</script>
+</body>
+</html>

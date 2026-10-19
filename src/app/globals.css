@@ -222,25 +222,25 @@
   --chip-selected-foreground: oklch(0.145 0 0);
   --chip-foreground: oklch(0.556 0 0);
   /* Status pills ("Active", "Blocked", "Default"): a tint and the text on it. They follow the status colours until set. */
-  --pill-success: color-mix(in oklch, var(--success) 24%, transparent);
+  --pill-success: #43fe8b3d;
   --pill-success-text: oklch(0.42 0.15 150);
   --pill-info: color-mix(in oklch, var(--info) 20%, transparent);
   --pill-info-text: oklch(0.42 0.19 255);
-  --pill-warning: #ffc80066;
-  --pill-warning-text: #6b3900;
+  --pill-warning: #fedf6c66;
+  --pill-warning-text: #382000;
   --pill-destructive: color-mix(in oklch, var(--destructive) 20%, transparent);
   --pill-destructive-text: oklch(0.46 0.22 20);
   --pill-neutral: var(--muted);
   --pill-neutral-text: var(--accent-foreground);
   /* Card status hues beyond success, info, warning and destructive, so each delivery state has its own colour. */
   --pill-violet: color-mix(in oklch, #8b5cf6 18%, transparent);
-  --pill-violet-text: #5b2fd0;
+  --pill-violet-text: #160052;
   --pill-slate: color-mix(in oklch, #475569 16%, transparent);
   --pill-slate-text: #334155;
   --pill-teal: color-mix(in oklch, #14b8a6 20%, transparent);
   --pill-teal-text: #0d6b63;
   --pill-orange: color-mix(in oklch, #f97316 22%, transparent);
-  --pill-orange-text: #9a3c00;
+  --pill-orange-text: #471b00;
   /* Initials circles on payees and billers: the same pastel in both modes, with dark ink on top. */
   --avatar-teal: #f1f8f9;
   --avatar-sand: #ebe8de;
@@ -251,11 +251,30 @@
   --avatar-blue: #dbeafe;
   --avatar-lemon: #fef08a;
   --avatar-pink: #fce7f3;
+  /* Transaction marks: a tint per kind of payment and the deeper shade of it for the icon (a duotone). */
+  /* The white disc behind a brand logo that is not already a circle: logos are drawn for white, so it stays white in both themes. */
+  --logo-disc: #ffffff;
+  --tx-yellow: #fef9c3;
+  --tx-yellow-ink: #8a6d00;
+  --tx-teal: #e4f1f4;
+  --tx-teal-ink: #1b6b78;
+  --tx-sand: #ebe8de;
+  --tx-sand-ink: #6b5f3a;
+  --tx-lilac: #f5ebf7;
+  --tx-lilac-ink: #7a3f8a;
+  --tx-green: #e0eedd;
+  --tx-green-ink: #2f6b3c;
+  --tx-pink: #fce7f3;
+  --tx-pink-ink: #a23464;
+  --tx-lemon: #fef08a;
+  --tx-lemon-ink: #7a6700;
+  --tx-blue: #dbeafe;
+  --tx-blue-ink: #1e4fa0;
   /* Status colours as text: darker than the fills on light, lighter on dark, so they read on either surface. */
   --info: oklch(0.6 0.19 255);
   --success-text: #16a34a;
   --warning-text: oklch(0.52 0.13 65);
-  --destructive-text: #dd1d43;
+  --destructive-text: #b51c3b;
   --info-text: oklch(0.5 0.19 255);
   /* Input fields, text areas, selects and the PIN boxes. */
   --field: #ffffff;
@@ -327,6 +346,11 @@
   --spend-5: #a78bfa;
   --spend-other: #cbd5e1;
   --radius: 0.625rem;
+  /* Letter-spacing (tracking), one place. Kerning is the font's own and is left on. */
+  --ls-tight: -0.01em; /* titles inside cards, row names */
+  --ls-heading: -0.02em; /* page titles, section headings, large figures */
+  --ls-display: -0.03em; /* the biggest numbers */
+  --ls-label: 0.02em; /* small initials and codes */
   /* Brand gradient: deep amber → brighter golden glow at bottom */
   /* Dashboard hero panel (Figma 1945:5108): a slate card with white type here; near-black with white type in dark. */
   --hero-surface: #36434e;
@@ -398,7 +422,7 @@
   --account-card: #93a7ba14;
   --popover: var(--menu);
   --primary: #FFC423;
-  --primary-hover: #EBB420;
+  --primary-hover: #ffd966;
   --primary-foreground: #321800;
   /* Outline of the two-tone Send & Pay icons (the amber parts are --duo-accent). */
   --duo-outline: #52606b;
@@ -444,11 +468,11 @@
   --chip-selected: #303030;
   --chip-selected-foreground: oklch(0.985 0 0);
   --chip-foreground: #6e6e6e;
-  --pill-success: #00421a;
+  --pill-success: #002910;
   --pill-success-text: #3df07f;
   --pill-info: color-mix(in oklch, var(--info) 26%, transparent);
   --pill-info-text: oklch(0.84 0.13 250);
-  --pill-warning: #ffc80040;
+  --pill-warning: #a8510040;
   --pill-warning-text: #ffd24d;
   --pill-destructive: color-mix(in oklch, var(--destructive) 30%, transparent);
   --pill-destructive-text: #ff7a88;
@@ -461,8 +485,8 @@
   --pill-slate-text: #cbd5e1;
   --pill-teal: color-mix(in oklch, #2dd4bf 22%, transparent);
   --pill-teal-text: #5eead4;
-  --pill-orange: color-mix(in oklch, #fb923c 26%, transparent);
-  --pill-orange-text: #fdba74;
+  --pill-orange: #7b451842;
+  --pill-orange-text: #ff8400;
   --avatar-teal: #f1f8f9;
   --avatar-sand: #ebe8de;
   --avatar-green: #e0eedd;
@@ -472,10 +496,27 @@
   --avatar-blue: #dbeafe;
   --avatar-lemon: #fef08a;
   --avatar-pink: #fce7f3;
+  --logo-disc: #ffffff;
+  --tx-yellow: #3a3410;
+  --tx-yellow-ink: #f2d86a;
+  --tx-teal: #173238;
+  --tx-teal-ink: #8fd3df;
+  --tx-sand: #37321f;
+  --tx-sand-ink: #e0d29a;
+  --tx-lilac: #35283d;
+  --tx-lilac-ink: #dcb4e8;
+  --tx-green: #1f3524;
+  --tx-green-ink: #a3dcb0;
+  --tx-pink: #40233a;
+  --tx-pink-ink: #f0b3d0;
+  --tx-lemon: #3a3608;
+  --tx-lemon-ink: #ece07a;
+  --tx-blue: #1b2b4b;
+  --tx-blue-ink: #a7c4f2;
   --info: oklch(0.72 0.15 255);
-  --success-text: #22c55e;
+  --success-text: #00b341;
   --warning-text: oklch(0.82 0.14 85);
-  --destructive-text: #e51f47;
+  --destructive-text: #ae324b;
   --info-text: oklch(0.78 0.12 250);
   --field: #1a1a1a;
   --field-hover: #1c1c1c;
@@ -541,7 +582,7 @@
   --hero-primary-foreground: var(--primary-foreground);
   --hero-glass-top: #09233429;
   --hero-glass-bottom: #8fa1af61;
-  --hero-glass-hover: rgb(255 255 255 / 0.24);
+  --hero-glass-hover: #ffffff14;
   --sheet-rim: #c5d6dd80;
   /* Uniform interaction tokens — derived from --primary so they follow the brand color */
   --hover: oklch(1 0 0 / 5%);
@@ -1104,6 +1145,43 @@ input[type="number"] {
   }
 }
 
+/* Desktop Sheet: Slides in from right/left edge */
+@keyframes sheet-slide-in-right {
+  from {
+    transform: translate3d(calc(100% + 2rem), 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes sheet-slide-out-right {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(100% + 2rem), 0, 0);
+  }
+}
+
+@keyframes sheet-slide-in-left {
+  from {
+    transform: translate3d(calc(-100% - 2rem), 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes sheet-slide-out-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(-100% - 2rem), 0, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   @keyframes modal-desktop-in {
     from {
@@ -1152,6 +1230,22 @@ input[type="number"] {
     to {
       opacity: 0;
     }
+  }
+  @keyframes sheet-slide-in-right {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes sheet-slide-out-right {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  @keyframes sheet-slide-in-left {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes sheet-slide-out-left {
+    from { opacity: 1; }
+    to { opacity: 0; }
   }
 }
 
@@ -1202,6 +1296,47 @@ input[type="number"] {
 
 [data-slot="dialog-overlay"][data-closed] {
   animation: modal-fade-out 160ms ease-in forwards;
+  will-change: opacity;
+}
+
+/* Sheet open/close animation bindings */
+[data-slot="sheet-content"][data-side="right"][data-open] {
+  animation: sheet-slide-in-right 340ms cubic-bezier(0.32, 0.72, 0, 1) both;
+  will-change: transform;
+}
+
+[data-slot="sheet-content"][data-side="right"][data-closed] {
+  animation: sheet-slide-out-right 240ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  will-change: transform;
+}
+
+[data-slot="sheet-content"][data-side="left"][data-open] {
+  animation: sheet-slide-in-left 340ms cubic-bezier(0.32, 0.72, 0, 1) both;
+  will-change: transform;
+}
+
+[data-slot="sheet-content"][data-side="left"][data-closed] {
+  animation: sheet-slide-out-left 240ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  will-change: transform;
+}
+
+[data-slot="sheet-content"][data-side="bottom"][data-open] {
+  animation: sheet-mobile-in 340ms cubic-bezier(0.32, 0.72, 0, 1) both;
+  will-change: transform;
+}
+
+[data-slot="sheet-content"][data-side="bottom"][data-closed] {
+  animation: sheet-mobile-out 240ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  will-change: transform;
+}
+
+[data-slot="sheet-overlay"][data-open] {
+  animation: modal-fade-in 300ms ease-out forwards;
+  will-change: opacity;
+}
+
+[data-slot="sheet-overlay"][data-closed] {
+  animation: modal-fade-out 220ms ease-in forwards;
   will-change: opacity;
 }
 

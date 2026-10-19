@@ -119,7 +119,7 @@ export default function StandingOrderDetailPage() {
 
       <div className="mx-auto flex w-full max-w-[760px] flex-col gap-8">
         <section className="flex flex-col gap-1.5 px-1">
-          <span className={cn("tabular text-[40px] leading-none tracking-[-0.02em]", paused ? "text-muted-foreground" : "text-foreground")}>
+          <span className={cn("tabular text-[40px] leading-none tracking-[var(--ls-heading)]", paused ? "text-muted-foreground" : "text-foreground")}>
             {formatMoney(si.amount, si.currency, showAmounts)}
           </span>
           <span className="text-[14px] text-muted-foreground">

@@ -580,8 +580,10 @@ function rankSlices(totals: Map<string, number>): CategorySlice[] {
   const total = ranked.reduce((sum, r) => sum + r.amount, 0);
   if (total === 0) return [];
 
-  const head = ranked.slice(0, MAX_SLICES);
-  const tail = ranked.slice(MAX_SLICES);
+  // A real "Other" category always folds into the "Other" slice, so the chart never has two slices with that name
+  const named = ranked.filter((r) => r.category !== "Other");
+  const head = named.slice(0, MAX_SLICES);
+  const tail = [...named.slice(MAX_SLICES), ...ranked.filter((r) => r.category === "Other")].sort((x, y) => y.amount - x.amount);
 
   const slices: CategorySlice[] = head.map((r, i) => ({
     category: r.category,
@@ -682,7 +684,8 @@ function stableSlices(current: Map<string, number>, reference: Map<string, numbe
   const total = round2([...current.values()].reduce((sum, v) => sum + v, 0));
   if (total === 0) return [];
 
-  const order = [...reference.entries()].sort((a, b) => b[1] - a[1]).map(([category]) => category);
+  // A real "Other" category folds into the "Other" slice, never a slot of its own
+  const order = [...reference.entries()].sort((a, b) => b[1] - a[1]).map(([category]) => category).filter((c) => c !== "Other");
   const head = order.slice(0, MAX_SLICES);
 
   const slices: CategorySlice[] = head.map((category, i) => {
@@ -692,7 +695,7 @@ function stableSlices(current: Map<string, number>, reference: Map<string, numbe
 
   const tail = [...current.entries()].filter(([category, amount]) => !head.includes(category) && amount > 0);
   const tailAmount = round2(tail.reduce((sum, [, amount]) => sum + amount, 0));
-  if (order.length > MAX_SLICES || tailAmount > 0) {
+  if (order.length > MAX_SLICES || reference.has("Other") || tailAmount > 0) {
     slices.push({
       category: "Other",
       amount: tailAmount,

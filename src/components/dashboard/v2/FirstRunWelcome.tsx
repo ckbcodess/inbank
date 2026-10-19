@@ -555,7 +555,7 @@ export function FirstRunWelcome({
                       <div className="flex items-center gap-3.5 rounded-2xl border border-border/80 bg-muted/20 p-3.5 text-left sm:p-4">
                         <OperatorLogo operator={operator} size={44} />
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-[14px] font-medium tracking-[-0.01em] text-foreground sm:text-[14.5px]">
+                          <p className="truncate text-[14px] font-medium tracking-[var(--ls-tight)] text-foreground sm:text-[14.5px]">
                             {operator} Wallet
                           </p>
                           <p className="tabular-nums truncate text-[12.5px] text-muted-foreground sm:text-[13px]">
@@ -632,7 +632,7 @@ export function FirstRunWelcome({
                             <div className="flex items-center gap-3 rounded-2xl border border-border/80 bg-muted/20 p-3 sm:p-3.5 text-left">
                               <OperatorLogo operator={operator} size={44} />
                               <div className="min-w-0 flex-1">
-                                <p className="truncate text-[13.5px] font-medium tracking-[-0.01em] text-foreground">
+                                <p className="truncate text-[13.5px] font-medium tracking-[var(--ls-tight)] text-foreground">
                                   {operator} Wallet
                                 </p>
                                 <p className="tabular-nums truncate text-[12px] text-muted-foreground">

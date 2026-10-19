@@ -17,11 +17,13 @@
  * one would not stand out.
  */
 
+import { useState } from "react";
 import Link from "next/link";
 import { AlertCircle, ArrowUpRight, Copy, Layers, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TransactionStatusBadge } from "@/components/StatusBadge";
 import { formatDate, formatMoney, type Transaction } from "@/lib/mock-data";
+import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
 
 const FAILED_STATES = new Set(["failed-single", "failed-bulk", "failed-trade"]);
 
@@ -81,6 +83,7 @@ function FailureDetail({ txn }: { txn: Transaction }) {
 }
 
 export function ActivityFeed({ transactions }: { transactions: Transaction[] }) {
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   const recent = transactions.slice(0, 5);
 
   return (
@@ -108,9 +111,10 @@ export function ActivityFeed({ transactions }: { transactions: Transaction[] }) 
 
             return (
               <li key={t.id} className="px-5 py-3.5">
-                <Link
-                  href={`/transactions/${t.id}`}
-                  className="flex items-center gap-3 rounded-lg transition-colors hover:opacity-80"
+                <button
+                  type="button"
+                  onClick={() => setSelectedTx(t)}
+                  className="flex w-full text-left items-center gap-3 rounded-lg transition-colors hover:opacity-80 cursor-pointer"
                 >
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-[13px] text-foreground">{t.description}</span>
@@ -129,7 +133,7 @@ export function ActivityFeed({ transactions }: { transactions: Transaction[] }) 
                     aria-hidden="true"
                     className="shrink-0 text-muted-foreground"
                   />
-                </Link>
+                </button>
 
                 {failed && <FailureDetail txn={t} />}
               </li>
@@ -137,6 +141,15 @@ export function ActivityFeed({ transactions }: { transactions: Transaction[] }) 
           })}
         </ul>
       )}
+
+      {/* Transaction Details Sheet */}
+      <TransactionDetailSheet
+        transaction={selectedTx}
+        open={Boolean(selectedTx)}
+        onOpenChange={(o) => {
+          if (!o) setSelectedTx(null);
+        }}
+      />
     </section>
   );
 }

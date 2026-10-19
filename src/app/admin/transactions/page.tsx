@@ -8,6 +8,7 @@
  * object screen, view-only with no execution (12.5).
  */
 
+import { transactionRail } from "@/lib/transaction-type";
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
@@ -32,6 +33,7 @@ import {
   formatMoney,
   TRANSACTION_CATEGORIES,
   TRANSACTION_PAYMENT_METHODS,
+  TRANSACTION_RAILS,
 } from "@/lib/mock-data";
 
 const LIST_STATES: readonly ListState[] = [
@@ -128,49 +130,7 @@ export default function TransactionMonitoringPage() {
 
       // 3. Payment Method Filter (multi-select)
       if (methodFilters.length > 0) {
-        const pm = (t.paymentMethod || "").toLowerCase();
-        const ch = t.channel.toLowerCase();
-        const desc = t.description.toLowerCase();
-
-        const matchesMethod = methodFilters.some((mf) => {
-          if (mf === "wallet-to-bank") {
-            return pm === "wallet-to-bank" || desc.includes("wallet to bank");
-          }
-          if (mf === "papss") {
-            return pm === "papss" || ch.includes("papss") || desc.includes("papss");
-          }
-          if (mf === "gip") {
-            return pm === "gip" || desc.includes("gip") || ch.includes("gip");
-          }
-          if (mf === "ach") {
-            return pm === "ach" || ch.includes("ach");
-          }
-          if (mf === "rtgs") {
-            return pm === "rtgs" || ch.includes("rtgs");
-          }
-          if (mf === "momo") {
-            return pm === "momo" || ch.includes("mobile") || desc.includes("momo");
-          }
-          if (mf === "own-account") {
-            return pm === "own-account" || desc.includes("between my accounts") || desc.includes("to savings");
-          }
-          if (mf === "card") {
-            return pm === "card" || ch.includes("card") || ch.includes("pos");
-          }
-          if (mf === "bill") {
-            return pm === "bill" || desc.includes("utility") || t.category === "Utilities";
-          }
-          if (mf === "airtime") {
-            return pm === "airtime" || desc.includes("bundle") || desc.includes("airtime");
-          }
-          if (mf === "bulk") {
-            return pm === "bulk" || t.kind === "bulk" || ch.includes("bulk");
-          }
-          if (mf === "trade") {
-            return pm === "trade" || t.kind === "trade" || ch.includes("trade");
-          }
-          return false;
-        });
+        const matchesMethod = methodFilters.includes(transactionRail(t));
         if (!matchesMethod) return false;
       }
 
@@ -326,7 +286,7 @@ export default function TransactionMonitoringPage() {
       id: "method",
       kind: "multi",
       label: "Payment Method",
-      options: TRANSACTION_PAYMENT_METHODS.filter((m) => m.id !== "all").map((m) => ({
+      options: TRANSACTION_RAILS.map((m) => ({
         value: m.id,
         label: m.name,
       })),

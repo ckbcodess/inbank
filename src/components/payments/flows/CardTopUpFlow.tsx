@@ -25,7 +25,6 @@ import {
 
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 export interface CardTopUpFormState {
   fromId: string;
   cardId: string;
@@ -167,7 +166,7 @@ export function CardTopUpFlow({
                   }
                 }}
               >
-                <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-4.5 text-left flex items-center">
+                <SelectTrigger>
                   {!selectedCard ? (
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                       <span className="flex size-9 shrink-0 items-center justify-center text-muted-foreground">

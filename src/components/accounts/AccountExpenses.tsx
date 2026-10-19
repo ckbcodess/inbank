@@ -155,7 +155,7 @@ export function AccountExpensesView({
 
             <div className="flex flex-col gap-4 md:gap-6">
               {/* Same weight as the section headings on Accounts ("Sources of Funds"). */}
-              <h2 className="px-2 text-[16px] font-medium tracking-[-0.01em] text-foreground">
+              <h2 className="px-2 text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">
                 {BREAKDOWN_LABEL[view]}
               </h2>
               <ul className="flex flex-col gap-0.5" aria-label={BREAKDOWN_LABEL[view]}>

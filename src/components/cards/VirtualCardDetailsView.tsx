@@ -67,6 +67,7 @@ import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { toast } from "sonner";
 import { ActionTile } from "@/components/ui/action-tile";
 import { RoundAction } from "@/components/ui/round-action";
+import { BlockReasonDialog } from "@/components/cards/BlockReasonDialog";
 import { KeypadIcon } from "@/components/ui/keypad-icon";
 import { cn } from "@/lib/utils";
 import { useContextualBack } from "@/lib/contextual-back";
@@ -154,7 +155,7 @@ function DetailLine({ label, value, onCopy }: { label: string; value: string; on
     <div className="flex items-center justify-between gap-3 py-3">
       <div className="flex min-w-0 flex-col gap-0.5">
         <span className="text-[12px] text-muted-foreground">{label}</span>
-        <span className="tabular truncate text-[16px] tracking-[-0.01em] text-foreground">{value}</span>
+        <span className="tabular truncate text-[16px] tracking-[var(--ls-tight)] text-foreground">{value}</span>
       </div>
       {onCopy && (
         <button
@@ -172,130 +173,6 @@ function DetailLine({ label, value, onCopy }: { label: string; value: string; on
 
 /** How long the card details stay on screen after the PIN. */
 const DETAILS_SECONDS = 15;
-
-type BlockReason = "misplaced" | "lost_stolen" | "fraud" | "budgeting" | "other";
-
-const BLOCK_REASONS: { id: BlockReason; title: string }[] = [
-  { id: "misplaced", title: "Misplaced temporarily" },
-  { id: "lost_stolen", title: "Lost or stolen" },
-  { id: "fraud", title: "Suspected fraud" },
-  { id: "budgeting", title: "Spending control" },
-  { id: "other", title: "Other reason" },
-];
-
-function BlockReasonDialog({
-  open,
-  onOpenChange,
-  cardName,
-  last4,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  cardName: string;
-  last4: string;
-}) {
-  const [reason, setReason] = useState<BlockReason>("misplaced");
-  const [otherDetails, setOtherDetails] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setTimeout(() => {
-      setSubmitting(false);
-      onOpenChange(false);
-      toast.success("Card blocked · Reason recorded", {
-        description: "Your security preferences have been saved. Unblocking will require your PIN.",
-      });
-    }, 400);
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent size="md">
-        <DialogHeader>
-          <div className="flex items-center gap-2.5">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-destructive/10 text-destructive shrink-0">
-              <Lock size={17} strokeWidth={1.9} />
-            </div>
-            <div>
-              <DialogTitle className="text-base font-medium text-foreground">Card Blocked</DialogTitle>
-              <p className="text-[13px] text-muted-foreground mt-1">
-                Your {cardName} card ending in {last4} has been blocked. Please tell us why you blocked this card.
-              </p>
-            </div>
-          </div>
-        </DialogHeader>
-
-        <form onSubmit={handleSubmit}>
-          <DialogBody className="space-y-3">
-            <div role="radiogroup" aria-label="Reason for blocking card" className="flex flex-col gap-1.5">
-              {BLOCK_REASONS.map((item) => {
-                const isSelected = reason === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    role="radio"
-                    aria-checked={isSelected}
-                    onClick={() => setReason(item.id)}
-                    className={cn(
-                      "flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl border px-3.5 py-3 text-left transition-colors duration-hover outline-none focus-visible:ring-1 focus-visible:ring-ring",
-                      isSelected
-                        ? "border-[var(--active-border)] bg-[var(--active-bg)]"
-                        : "border-border bg-card hover:bg-muted/40",
-                    )}
-                  >
-                    <span className="text-[13px] font-medium text-foreground">{item.title}</span>
-                    <div
-                      className={cn(
-                        "size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors",
-                        isSelected
-                          ? "border-primary bg-primary"
-                          : "border-muted-foreground/40 bg-transparent",
-                      )}
-                    >
-                      {isSelected && <div className="size-1.5 rounded-full bg-background" />}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            {reason === "other" && (
-              <div className="pt-1 animate-in fade-in duration-200">
-                <Field label="Additional details" optional>
-                  <Input
-                    value={otherDetails}
-                    onChange={(e) => setOtherDetails(e.target.value)}
-                    placeholder="E.g. Damaged chip, replacing soon..."
-                    className="text-[13px]"
-                  />
-                </Field>
-              </div>
-            )}
-          </DialogBody>
-
-          <DialogFooter className="flex items-center justify-between gap-2">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => {
-                onOpenChange(false);
-                toast.success("Card blocked", { description: "Unblocking it will ask for your PIN." });
-              }}
-            >
-              Skip
-            </Button>
-            <Button type="submit" loading={submitting}>
-              Done
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-}
 
 export function VirtualCardDetailsView({
   card,
@@ -1198,7 +1075,7 @@ export function VirtualCardDetailsView({
         >
           <ChevronLeft size={22} strokeWidth={1.8} />
         </button>
-        <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-tight sm:leading-[28px] tracking-[-0.02em] text-foreground truncate min-w-0">
+        <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-tight sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate min-w-0">
           {cardNickname || "Virtual Card"}
         </h1>
       </div>
@@ -1289,7 +1166,7 @@ export function VirtualCardDetailsView({
 
             {/* Headline & Subtitle */}
             <div className="flex flex-col gap-2 items-center text-center">
-              <h2 className="text-[22px] sm:text-[26px] font-medium text-foreground tracking-[-0.02em]">
+              <h2 className="text-[22px] sm:text-[26px] font-medium text-foreground tracking-[var(--ls-heading)]">
                 {effectiveCard.deliveryStatus === "ready_for_pickup"
                   ? "Your card is ready for pickup"
                   : effectiveCard.deliveryStatus === "delivered"
@@ -2013,8 +1890,6 @@ export function VirtualCardDetailsView({
       <BlockReasonDialog
         open={blockReasonOpen}
         onOpenChange={setBlockReasonOpen}
-        cardName={currentCard.name || "Card"}
-        last4={currentCard.maskedNumber?.slice(-4) || "∗∗∗∗"}
       />
     </div>
   );

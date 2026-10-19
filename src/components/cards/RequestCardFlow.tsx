@@ -450,7 +450,7 @@ export function RequestCardFlow() {
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
-            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
               Request a Card
             </h1>
           </div>
@@ -506,7 +506,7 @@ export function RequestCardFlow() {
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
-            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
               {isReplacement ? "Replace" : "Configure"} {cardType} Card
             </h1>
           </div>
@@ -573,7 +573,7 @@ export function RequestCardFlow() {
                       if (val) handleSchemeChange(val as CardScheme);
                     }}
                   >
-                    <SelectTrigger className="min-h-[58px] h-auto text-left cursor-pointer flex items-center">
+                    <SelectTrigger className="h-auto">
                       <div className="flex min-w-0 flex-1 items-center gap-2.5">
                         <NetworkChip scheme={cardScheme} />
                         <span className="text-[14.5px] font-medium text-foreground truncate">{cardScheme}</span>
@@ -600,7 +600,7 @@ export function RequestCardFlow() {
                       if (val) setNetworkType(val);
                     }}
                   >
-                    <SelectTrigger className="min-h-[58px] h-auto text-left cursor-pointer flex items-center">
+                    <SelectTrigger className="h-auto">
                       <div className="flex flex-col min-w-0 text-left flex-1">
                         <span
                           className={`text-[14.5px] font-medium truncate leading-tight ${
@@ -710,7 +710,7 @@ export function RequestCardFlow() {
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
-            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
               Customize card
             </h1>
           </div>
@@ -873,7 +873,7 @@ export function RequestCardFlow() {
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
-            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
               {isReplacement ? "Review replacement" : "Review request"}
             </h1>
           </div>
@@ -900,7 +900,7 @@ export function RequestCardFlow() {
               </div>
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-[15px] font-medium text-foreground tracking-[-0.01em] truncate">
+              <span className="text-[15px] font-medium text-foreground tracking-[var(--ls-tight)] truncate">
                 {cardName.trim() || `${cardType} Card`}
               </span>
               <span className="text-[13px] text-muted-foreground mt-0.5">
@@ -1147,7 +1147,7 @@ export function RequestCardFlow() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.44, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-                className="text-[26px] sm:text-[28px] font-medium leading-[34px] tracking-[-0.02em] text-foreground text-center"
+                className="text-[26px] sm:text-[28px] font-medium leading-[34px] tracking-[var(--ls-heading)] text-foreground text-center"
               >
                 {isReplacement ? "Replacement Request Confirmed" : "Card Request Confirmed"}
               </motion.h1>

@@ -74,7 +74,7 @@ export function SourceSummary({ source }: { source: PendingFundingSource }) {
       <div className="flex items-center gap-3.5 rounded-xl border border-border/80 bg-muted/30 p-3.5 text-left">
         <SourceMark type={source.type} operator={operatorFromName(source.operator)} title={title} />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[14px] tracking-[-0.01em] text-foreground">{title}</p>
+          <p className="truncate text-[14px] tracking-[var(--ls-tight)] text-foreground">{title}</p>
           <p className="tabular truncate text-[12.5px] text-muted-foreground">{subtitle}</p>
         </div>
       </div>

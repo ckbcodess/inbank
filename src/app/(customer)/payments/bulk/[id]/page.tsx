@@ -40,7 +40,7 @@ export default function BatchCorrectionPage({ params }: { params: Promise<{ id: 
       <PageHeader
         title="Batch Correction"
         description={`Batch ${id} · payroll-august-2026.csv`}
-        backTo={{ href: "/transactions", label: "Transactions" }}
+        backTo={{ href: "/transactions", label: "Transaction History" }}
       />
 
       <StateSwitcher section="13.8" states={BULK_STATES} value={state} onChange={setState} />

@@ -1,8 +1,8 @@
 "use client";
 
+import { SavedSuggestions } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
-import { Search } from "lucide-react";
 import {
   FromAccountSelector,
   AmountInput,
@@ -69,6 +69,8 @@ export function OtherGcbFlow({
 
   // Resolving / Verification state
   const [resolving, setResolving] = useState(false);
+  // What is typed when the person is searching saved recipients by name rather than entering a number
+  const [nameQuery, setNameQuery] = useState("");
 
   useEffect(() => {
     if (isAcctValid) {
@@ -113,51 +115,34 @@ export function OtherGcbFlow({
         ) : (
           <div className="flex flex-col gap-3">
             <div className="relative flex items-center">
-              <Input
-                type="text"
-                inputMode="numeric"
-                maxLength={13}
-                value={state.benAcct}
-                onChange={(e) => {
-                  const val = e.target.value.replace(/[^0-9]/g, "");
-                  onChange("benAcct", val);
-                  if (val.length === 13) {
-                    const resolved = resolveAccountName(val, "");
-                    if (resolved) {
-                      onChange("benName", resolved);
+              <SavedSuggestions query={nameQuery || state.benAcct} onPicked={() => setNameQuery("")}>
+                <Input
+                  type="text"
+                  inputMode="text"
+                  value={nameQuery || state.benAcct}
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    // Letters mean the person is looking someone up by name, so the account stays empty until they pick or type digits
+                    if (/[a-z]/i.test(raw)) {
+                      setNameQuery(raw);
+                      onChange("benAcct", "");
+                      return;
                     }
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && isAcctValid) {
-                    e.preventDefault();
-                    setResolving(true);
-                    setTimeout(() => setResolving(false), 200);
-                  }
-                }}
-                placeholder="Enter 13-digit GCB account number"
-                className="numorainput tabular pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  if (isAcctValid) {
-                    setResolving(true);
-                    setTimeout(() => setResolving(false), 200);
-                  }
-                }}
-                aria-label="Search and verify GCB account"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
-              >
-                <Search size={16} strokeWidth={1.8} />
-              </button>
+                    setNameQuery("");
+                    const val = raw.replace(/[^0-9]/g, "").slice(0, 13);
+                    onChange("benAcct", val);
+                    if (val.length === 13) {
+                      const resolved = resolveAccountName(val, "");
+                      if (resolved) {
+                        onChange("benName", resolved);
+                      }
+                    }
+                  }}
+                  placeholder="Enter 13-digit account number or a saved name"
+                  className="numorainput tabular"
+                />
+              </SavedSuggestions>
             </div>
-
-            {cleanAcct.length > 0 && cleanAcct.length < 13 && (
-              <p className="text-[12px] text-muted-foreground">
-                GCB account numbers are 13 digits ({cleanAcct.length}/13 entered)
-              </p>
-            )}
 
             {/* Verification Status */}
             <AccountVerificationStatus

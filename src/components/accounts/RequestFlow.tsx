@@ -441,7 +441,7 @@ export default function RequestFlow({ account }: { account: Account }) {
 
             <div className="flex w-full items-center justify-between overflow-hidden rounded-[15.75px] border border-border bg-muted/40 px-4 py-3.5 shadow-xs dark:bg-muted/20">
               <span className="text-[13.5px] text-foreground">Fee</span>
-              <span className="text-[26px] tracking-[-0.03em] text-foreground tabular sm:text-[28px]">
+              <span className="text-[26px] tracking-[var(--ls-display)] text-foreground tabular sm:text-[28px]">
                 {formatMoney(summary.fee, "GHS", true)}
               </span>
             </div>

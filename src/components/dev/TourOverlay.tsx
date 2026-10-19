@@ -185,7 +185,7 @@ export default function TourOverlay() {
           </p>
         )}
 
-        <h4 className="mt-1.5 text-[13.5px] text-foreground tracking-[-0.01em]">{step.title}</h4>
+        <h4 className="mt-1.5 text-[13.5px] text-foreground tracking-[var(--ls-tight)]">{step.title}</h4>
 
         {/* Purpose — what this step does and why it's part of the flow */}
         <p className="mt-1 text-[12px] leading-snug text-muted-foreground">{step.body}</p>

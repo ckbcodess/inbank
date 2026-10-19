@@ -6,6 +6,7 @@ const payments: Entry[] = [
   ["Batch Correction", "Correction du lot", "Corrección del lote", "批次更正"],
   ["Batch {0} · payroll-august-2026.csv", "Lot {0} · payroll-august-2026.csv", "Lote {0} · payroll-august-2026.csv", "批次 {0} · payroll-august-2026.csv"],
   ["Transactions", "Transactions", "Transacciones", "交易"],
+  ["Transaction History", "Historique des transactions", "Historial de transacciones", "交易记录"],
   ["139 of 140 records in this batch settled successfully. Only the failed record below needs attention — correcting it revalidates that record alone.", "139 des 140 enregistrements de ce lot ont été réglés. Seul l’enregistrement en échec ci-dessous doit être traité — le corriger ne revalide que cet enregistrement.", "139 de los 140 registros de este lote se liquidaron correctamente. Solo el registro fallido de abajo necesita atención: al corregirlo se revalida únicamente ese registro.", "此批次 140 条记录中已有 139 条成功结算。只需处理下方失败的记录——更正后仅重新验证该条记录。"],
   ["Records needing correction", "Enregistrements à corriger", "Registros que requieren corrección", "需更正的记录"],
   ["Resubmit Corrected Records", "Renvoyer les enregistrements corrigés", "Reenviar registros corregidos", "重新提交已更正记录"],

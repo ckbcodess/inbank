@@ -126,7 +126,7 @@ export function InvestHome() {
     if (csd?.status === "active" && intent) {
       return (
         <section className="flex flex-col gap-3 px-1">
-          <h2 className="text-[18px] tracking-[-0.01em] text-foreground">Your securities account is ready</h2>
+          <h2 className="text-[18px] tracking-[var(--ls-tight)] text-foreground">Your securities account is ready</h2>
           <p className="text-[14px] text-muted-foreground">{`Carry on with ${intent.label}.`}</p>
           <div>
             <Button
@@ -178,7 +178,7 @@ export function InvestHome() {
     return (
       <section className="flex flex-col gap-4">
         <div className="flex min-h-8 items-center justify-between gap-4 px-1">
-          <h2 className="text-[16px] font-medium tracking-[-0.01em] text-foreground">{title}</h2>
+          <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">{title}</h2>
           {action}
         </div>
         <ul className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">{children}</ul>
@@ -192,7 +192,7 @@ export function InvestHome() {
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-4">
             <div className="flex min-h-8 items-center px-1">
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Term Deposits</span>
+              <span className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">Term Deposits</span>
             </div>
             <div className="rounded-2xl border border-border bg-card p-1">
               <InvestRowBones rows={2} />
@@ -200,7 +200,7 @@ export function InvestHome() {
           </div>
           <div className="flex flex-col gap-4">
             <div className="flex min-h-8 items-center px-1">
-              <span className="text-[16px] font-medium tracking-[-0.01em] text-foreground">Treasury Bills &amp; Bonds</span>
+              <span className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">Treasury Bills &amp; Bonds</span>
             </div>
             <div className="rounded-2xl border border-border bg-card p-1">
               <InvestRowBones rows={2} />

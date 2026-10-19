@@ -14,7 +14,7 @@ export function WorkInProgress({ title }: { title: string }) {
           <Hammer size={20} strokeWidth={1.8} aria-hidden="true" />
         </span>
         <div className="flex flex-col gap-1.5">
-          <h2 className="text-[18px] tracking-[-0.01em] text-foreground">Work in progress</h2>
+          <h2 className="text-[18px] tracking-[var(--ls-tight)] text-foreground">Work in progress</h2>
           <p className="max-w-[340px] text-[13.5px] leading-relaxed text-muted-foreground">
             {title} is on the way — we&rsquo;re still building it.
           </p>

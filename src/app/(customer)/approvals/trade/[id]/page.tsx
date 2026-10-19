@@ -210,7 +210,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
       <section className="rounded-2xl border border-border bg-card p-5">
         <div className="border-b border-border pb-5">
           <span className="text-[12px] text-muted-foreground">Trade value</span>
-          <p className="mt-1.5 text-[28px] leading-none tracking-[-0.02em] text-foreground tabular">
+          <p className="mt-1.5 text-[28px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
             {formatMoney(item.amount, item.currency)}
           </p>
         </div>

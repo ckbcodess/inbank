@@ -65,6 +65,9 @@ function formatRate(value: number): string {
   return value.toFixed(decimals);
 }
 
+/** The converter is indicative: a 12-digit figure is already beyond any real transfer. */
+const MAX_WHOLE_DIGITS = 12;
+
 export default function FxRatesPage() {
   const [state, setState] = useState<BaselineState>("populated");
   const [fromCcy, setFromCcy] = useState("USD");
@@ -73,7 +76,10 @@ export default function FxRatesPage() {
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputVal = e.target.value;
-    const cleanVal = inputVal.replace(/[^0-9.]/g, "").replace(/(\..*?)\..*/g, "$1");
+    const raw = inputVal.replace(/[^0-9.]/g, "").replace(/(\..*?)\..*/g, "$1");
+    // At most 12 digits before the point (up to the hundreds of billions) and 2 after it
+    const [whole = "", frac] = raw.split(".");
+    const cleanVal = whole.slice(0, MAX_WHOLE_DIGITS) + (frac !== undefined ? `.${frac.slice(0, 2)}` : "");
     if (!cleanVal) {
       setAmount("");
       return;
@@ -246,7 +252,7 @@ export default function FxRatesPage() {
                 </div>
 
                 {/* Bottom Output Card */}
-                <div className="flex items-center justify-between rounded-2xl border border-border bg-card px-4 py-3.5 sm:px-5 sm:py-4 shadow-xs transition-colors">
+                <div className="flex items-center justify-between rounded-2xl border border-field-border bg-field px-4 py-3.5 sm:px-5 sm:py-4 shadow-xs transition-colors">
                   <div className="min-w-0 flex-1 truncate text-2xl sm:text-3xl font-bold tabular tracking-tight text-foreground numorainput pr-3">
                     <TextMorph ease={{ stiffness: 400, damping: 30 }}>
                       {convertedFormatted}

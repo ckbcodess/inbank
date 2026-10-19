@@ -92,7 +92,7 @@ export function ActionTile({
           <TileChip accent={accent}>{leading ?? (Icon && <Icon size={20} strokeWidth={1.8} aria-hidden="true" />)}</TileChip>
         )}
         <span className="flex min-w-0 flex-col gap-0.5">
-          <span className={cn("truncate text-[16px] font-medium tracking-[-0.01em] text-foreground", compactOnMobile && "max-sm:line-clamp-2 max-sm:whitespace-normal max-sm:text-[14px] max-sm:leading-[1.25]")}>{title}</span>
+          <span className={cn("truncate text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground", compactOnMobile && "max-sm:line-clamp-2 max-sm:whitespace-normal max-sm:text-[14px] max-sm:leading-[1.25]")}>{title}</span>
           {description && <span className="text-[13px] leading-snug text-muted-foreground">{description}</span>}
         </span>
       </div>

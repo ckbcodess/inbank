@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Group sheet: 5 ways</title>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+:root{--bg:#f1f1f0;--page:#fafafa;--modal:#fff;--fg:#0a0a0a;--muted:#737373;--line:#ececec;--tile:#f4f4f3;--btn:#ebebeb;--primary:#ffc423;--pfg:#2b1d00;--ok:#15803d;--okbg:#dcfce7;--danger:#b51c3b;--av:#dbeafe;--avi:#1e4fa0;--warnbg:#fff3c4;--warn:#7a5b00}
+.dark{--bg:#050505;--page:#0b0b0b;--modal:#121212;--fg:#f5f5f5;--muted:#9a9a9a;--line:#262626;--tile:#1c1c1c;--btn:#242424;--ok:#4ade80;--okbg:#0b2a17;--danger:#ae324b;--av:#1b2b4b;--avi:#a7c4f2;--warnbg:#3a3410;--warn:#f2d86a}
+*{box-sizing:border-box}body{margin:0;font-family:"Open Sans",system-ui,sans-serif;background:var(--bg);color:var(--fg);font-size:14px}
+header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;background:var(--page);border-bottom:1px solid var(--line)}
+header.top h1{font-size:18px;font-weight:500;margin:0;letter-spacing:-.02em}header.top p{margin:2px 0 0;color:var(--muted);font-size:12.5px}
+button.theme{border:1px solid var(--line);background:var(--modal);color:var(--fg);border-radius:10px;padding:8px 14px;cursor:pointer;font:inherit}
+main{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:34px 28px;padding:28px;max-width:1700px;margin:0 auto}
+.v h2{font-size:15px;font-weight:500;margin:0 0 3px}.goal{font-size:12px;color:var(--ok);margin:0 0 4px;font-weight:500}.why{color:var(--muted);font-size:12.5px;line-height:1.5;margin:0 0 12px;min-height:56px}
+.sheet{width:100%;max-width:380px;height:620px;background:var(--modal);border:1px solid var(--line);border-radius:22px;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.x{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:99px;background:var(--btn);display:flex;align-items:center;justify-content:center;color:var(--muted)}.x svg{width:15px;height:15px}
+.hd{padding:22px 22px 0}.t{font-size:16px;font-weight:500;letter-spacing:-.01em}.sub{font-size:12.5px;color:var(--muted);margin-top:3px}
+.body{flex:1;padding:16px 22px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.ft{padding:12px 22px 20px;display:flex;flex-direction:column;gap:8px}
+.btn{height:46px;border-radius:99px;background:var(--btn);display:flex;align-items:center;justify-content:center;font-size:14px;gap:8px}.btn svg{width:16px;height:16px}
+.btn.p{background:var(--primary);color:var(--pfg)}.btn.d{color:var(--danger)}.btn.g{background:transparent;height:38px;color:var(--muted)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.av{border-radius:99px;background:var(--av);color:var(--avi);display:flex;align-items:center;justify-content:center;font-weight:400;flex-shrink:0}
+.card{background:var(--tile);border:1px solid var(--line);border-radius:18px;padding:4px 16px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:12px 0;font-size:13px;border-bottom:1px solid var(--line)}.kv:last-child{border:0}.kv span:first-child{color:var(--muted)}
+.cp{display:inline-flex;align-items:center;gap:6px}.cp svg{width:13px;height:13px;color:var(--muted)}
+.tab{font-variant-numeric:tabular-nums}.mut{color:var(--muted)}.sm{font-size:12px}
+.li{display:flex;align-items:center;justify-content:space-between;padding:10px 0;font-size:13px}.li .m{font-size:12px;color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px;border-radius:99px;background:var(--okbg);color:var(--ok)}.chip.w{background:var(--warnbg);color:var(--warn)}.chip svg{width:11px;height:11px}
+.circ{display:flex;justify-content:center;gap:22px;padding:6px 0}.circ div{display:flex;flex-direction:column;align-items:center;gap:7px;font-size:12px}.circ i{width:50px;height:50px;border-radius:99px;background:var(--primary);color:var(--pfg);display:flex;align-items:center;justify-content:center}.circ i svg{width:19px;height:19px}.circ .s i{background:var(--btn);color:var(--fg)}
+.amtbox{border:1px solid var(--line);background:var(--tile);border-radius:16px;height:54px;display:flex;align-items:center;gap:10px;padding:0 16px;font-size:20px}.amtbox small{font-size:13px;color:var(--muted)}
+.lnk{font-size:13px;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line)}
+.mini{width:26px;height:26px;font-size:10px}.stack{display:flex}.stack .av{border:2px solid var(--modal);margin-left:-8px}.stack .av:first-child{margin-left:0}.scroll{overflow:hidden;max-height:210px}.sec{font-size:12px;color:var(--muted);margin-bottom:2px}
+</style></head><body>
+<header class="top"><div><h1>Group sheet: 5 ways</h1><p>All five follow the beneficiary sheet: round avatar, name, details listed out, round actions at the foot. They differ in how the members are shown. Group: Colleagues Susu Circle, 4 members, GHS 200 each.</p></div><button class="theme" onclick="document.body.classList.toggle('dark')">Light / dark</button></header>
+<main id="root"></main>
+<script>
+const I=n=>`<i data-lucide="${n}"></i>`;
+const AV=(s,t)=>`<div class="av" style="width:${s}px;height:${s}px;font-size:${Math.round(s*.34)}px;background:var(--av);color:var(--avi)">${t}</div>`;
+const X=`<span class="x">${I("x")}</span>`;
+const M=[["Abena Osei","Stanbic · ··· 1100","200.00","AO",1],["Kojo Mensah","MTN Mobile Money · 024 412 7788","200.00","KM",2],["Efua Asante","GCB · ··· 4821","200.00","EA",3],["Yaw Gyasi","Telecel Cash · 020 551 3300","200.00","YG",4]];
+const kv=(a,b)=>`<div class="kv"><span>${a}</span><span class="tab">${b}</span></div>`;
+const hero=`<div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding-bottom:22px;text-align:center">${AV(80,"CS")}<div class="t" style="margin-top:12px">Colleagues Susu Circle</div><div class="sub" style="margin:0">4 members · GHS 800.00 in total</div></div>`;
+const wrap=c=>`<div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:52px 22px 14px;overflow:hidden">${hero}${c}</div>`;
+const heroS=`<div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding-bottom:22px;text-align:center">${AV(80,"CS")}<div class="t" style="margin-top:12px">Colleagues Susu Circle</div><div class="sub" style="margin:0">Group · 4 members</div></div>`;
+const wrapS=c=>`<div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:52px 22px 14px;overflow:hidden">${heroS}${c}</div>`;
+const act=`<div class="circ"><div><i>${I("send")}</i>Send</div><div class="s"><i>${I("pencil")}</i>Edit</div><div class="s"><i style="color:var(--danger)">${I("trash-2")}</i>Delete</div></div>`;
+const mem=(m,av)=>`<div class="kv" style="align-items:center"><span style="display:flex;align-items:center;gap:10px;color:var(--fg);min-width:0">${av?`<span class="av mini" style="background:var(--av);color:var(--avi)">${m[3]}</span>`:""}<span style="display:flex;flex-direction:column"><span>${m[0]}</span><span class="mut sm" style="font-size:11.5px">${m[1]}</span></span></span><span class="tab" style="color:var(--fg)">GHS ${m[2]}</span></div>`;
+const V=[
+{n:"1 · Members listed out",why:"The direct port of the beneficiary sheet: the card is simply the member list, each with what they will get. Total sits in the subtitle. Simplest, and what the sheet shows today.",
+ b:wrap(`<div class="card scroll">${M.map(m=>mem(m,false)).join("")}</div>`)},
+{n:"2 · Summary, then members",why:"The card answers the money questions first (total, each, split rule) like the beneficiary's account number and bank. Members are one line below, collapsed to 'See who is in it'.",
+ b:wrapS(`<div class="card">${kv("Total","GHS 800.00")}${kv("Each person","GHS 200.00")}${kv("Split","Equal")}${kv("Members",'4 <span class="lnk" style="margin-left:6px">View</span>')}</div>`)},
+{n:"3 · Overlapping member avatars",why:"A stack of the members' round avatars under the name says who is in it at a glance, then the details card has the money. Names are one tap away.",
+ b:wrapS(`<div style="display:flex;justify-content:center;margin:-8px 0 20px"><div class="stack">${M.map(m=>`<div class="av" style="width:34px;height:34px;font-size:11px;background:var(--av);color:var(--avi)">${m[3]}</div>`).join("")}</div></div><div class="card">${kv("Total","GHS 800.00")}${kv("Each person","GHS 200.00")}${kv("Members","4")}</div>`)},
+{n:"4 · Members with their own avatars",why:"As option 1, but every member has the same round avatar as the Beneficiaries page, so someone looks the same in a group as they do in your list. Richer, and a little busier.",
+ b:wrap(`<div class="card scroll">${M.map(m=>mem(m,true)).join("")}</div>`)},
+{n:"5 · Money card, then who",why:"Two blocks like the receipt: a small card for the money (total, each, split) and a quiet list beneath for the people. The money and the people never mix in one card.",
+ b:wrapS(`<div class="card" style="margin-bottom:14px">${kv("Total","GHS 800.00")}${kv("Each person","GHS 200.00 · equal")}</div><div class="sec" style="padding:0 4px">Who gets paid</div><div style="max-height:150px;overflow:hidden">${M.map(m=>`<div class="li"><span>${m[0]}</span><span class="tab">GHS ${m[2]}</span></div>`).join("")}</div>`)},
+];
+const root=document.getElementById("root");
+V.forEach(v=>root.insertAdjacentHTML("beforeend",`<section class="v"><h2>${v.n}</h2><p class="why">${v.why}</p><div class="sheet">${X}${v.b}<div class="ft" style="padding-top:4px">${act}</div></div></section>`));
+lucide.createIcons();
+</script></body></html>

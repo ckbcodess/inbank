@@ -80,7 +80,7 @@ export function OutcomeFailure({
         <AlertCircle size={28} strokeWidth={1.7} aria-hidden="true" />
       </span>
       <div className="flex flex-col gap-2">
-        <h1 className="text-[24px] font-medium leading-[30px] tracking-[-0.02em] text-foreground">{title}</h1>
+        <h1 className="text-[24px] font-medium leading-[30px] tracking-[var(--ls-heading)] text-foreground">{title}</h1>
         <p className="text-[15px] leading-[23px] text-muted-foreground">{message}</p>
       </div>
       <div className="flex w-full items-center gap-3">

@@ -54,7 +54,7 @@ export default function TradeDetailsPage({ params }: { params: Promise<{ id: str
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5">
           <div>
             <span className="text-[12px] text-muted-foreground">Trade value</span>
-            <p className="mt-1.5 text-[28px] leading-none tracking-[-0.02em] text-foreground tabular">
+            <p className="mt-1.5 text-[28px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
               {formatMoney(128000, "USD")}
             </p>
           </div>

@@ -49,7 +49,7 @@ export default function HoldingDetailPage() {
       <div className="mx-auto flex w-full max-w-[760px] flex-col gap-8">
         <section className="flex flex-col gap-1.5 px-1">
           <span className="text-[13px] text-muted-foreground">Face value, paid at maturity</span>
-          <span className={cn("tabular text-[40px] leading-none tracking-[-0.02em]", cashing ? "text-muted-foreground" : "text-foreground")}>
+          <span className={cn("tabular text-[40px] leading-none tracking-[var(--ls-heading)]", cashing ? "text-muted-foreground" : "text-foreground")}>
             {formatMoney(h.face, "GHS", showAmounts)}
           </span>
           {cashing && h.rediscount ? (

@@ -219,7 +219,7 @@ export function FxQuickModal() {
               <ArrowLeftRight size={15} strokeWidth={2} />
             </span>
             <div>
-              <DialogTitle className="text-[15px] font-medium tracking-[-0.01em] text-foreground">
+              <DialogTitle className="text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">
                 Foreign Exchange & Daily Interbank Rates
               </DialogTitle>
               <p className="text-[12px] text-muted-foreground">
@@ -244,7 +244,7 @@ export function FxQuickModal() {
           <div className="md:col-span-5 p-5 sm:p-6 flex flex-col justify-between gap-5 bg-card">
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
-                <span className="text-[12.5px] font-medium tracking-[-0.01em] text-foreground">
+                <span className="text-[12.5px] font-medium tracking-[var(--ls-tight)] text-foreground">
                   Quick Converter
                 </span>
                 <span className="text-[11px] text-muted-foreground">Indicative fixing</span>
@@ -451,7 +451,7 @@ export function FxQuickModal() {
             {/* Rates Table Container */}
             <div className="flex-1 overflow-hidden rounded-xl border border-border/70 bg-card shadow-xs flex flex-col">
               {/* Fixed Header Row */}
-              <div className="grid grid-cols-12 border-b border-border/70 bg-muted/40 px-3.5 py-2 text-[11px] font-medium text-muted-foreground tracking-[-0.01em] select-none shrink-0">
+              <div className="grid grid-cols-12 border-b border-border/70 bg-muted/40 px-3.5 py-2 text-[11px] font-medium text-muted-foreground tracking-[var(--ls-tight)] select-none shrink-0">
                 <span className="col-span-4">Currency Pair</span>
                 <span className="col-span-3 text-right">Buying</span>
                 <span className="col-span-2 text-right">Selling</span>
@@ -484,7 +484,7 @@ export function FxQuickModal() {
                         <div className="col-span-4 flex items-center gap-2 min-w-0 pr-1">
                           <CurrencyLogo currency={r.base} size={20} />
                           <div className="flex flex-col min-w-0 leading-tight">
-                            <span className="font-medium text-foreground tracking-[-0.01em] tabular truncate">
+                            <span className="font-medium text-foreground tracking-[var(--ls-tight)] tabular truncate">
                               {r.base}
                             </span>
                             <span className="text-[10.5px] text-muted-foreground truncate">

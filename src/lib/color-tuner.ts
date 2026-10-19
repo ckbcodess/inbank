@@ -37,6 +37,7 @@ const GROUP_RULES: [string, RegExp][] = [
   ["Icons", /^(icon-|glass-)/],
   ["Shell and sidebar", /^shell-/],
   ["Avatars", /^avatar-/],
+  ["Transaction marks", /^tx-/],
   ["Cash-out ticket", /^ticket-/],
   ["Dark elevation", /^dm-/],
   ["Surfaces", /^(background|surface|card|modal|panel|popover|muted|secondary|accent|tile|sidebar|glass|device|skeleton)/],

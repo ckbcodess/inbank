@@ -124,7 +124,7 @@ export default function RediscountPage() {
           <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200">
             <section className="flex flex-col gap-1.5 px-1">
               <span className="text-[13px] text-muted-foreground">You receive today</span>
-              <span className="tabular text-[40px] leading-none tracking-[-0.02em] text-foreground">{money(net)}</span>
+              <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(net)}</span>
               <span className="tabular text-[14px] text-muted-foreground">
                 {`Instead of ${money(redeem)} on ${formatDate(h.maturity)}`}
               </span>

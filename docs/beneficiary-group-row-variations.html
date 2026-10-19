@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beneficiary and group rows: 5 ways</title>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root { --bg:#f1f1f0; --page:#fafafa; --card:#fff; --fg:#0a0a0a; --muted:#737373; --line:#ececec; --tile:#f4f4f3; --fieldline:#e4e4e4; --primary:#ffc423; --pfg:#171717;
+    --c1:#e0eedd; --c2:#dbeafe; --c3:#f5ebf7; --c4:#ebe8de; --c5:#fce7f3; --c6:#e4f1f4; --i1:#2f6b3c; --i2:#1e4fa0; --i3:#7a3f8a; --i4:#6b5f3a; --i5:#a23464; --i6:#1b6b78; }
+  .dark { --bg:#050505; --page:#0b0b0b; --card:#181818; --fg:#f5f5f5; --muted:#9a9a9a; --line:#262626; --tile:#232323; --fieldline:#2e2e2e;
+    --c1:#1f3524; --c2:#1b2b4b; --c3:#35283d; --c4:#37321f; --c5:#40233a; --c6:#173238; --i1:#a3dcb0; --i2:#a7c4f2; --i3:#dcb4e8; --i4:#e0d29a; --i5:#f0b3d0; --i6:#8fd3df; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Open Sans",system-ui,sans-serif; background:var(--bg); color:var(--fg); font-size:14px; }
+  header.top { position:sticky; top:0; z-index:9; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 24px; background:var(--page); border-bottom:1px solid var(--line); }
+  header.top h1 { font-size:18px; font-weight:500; margin:0; letter-spacing:-0.02em; } header.top p { margin:2px 0 0; color:var(--muted); font-size:12.5px; }
+  button.theme { border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:10px; padding:8px 14px; cursor:pointer; font:inherit; }
+  main { display:grid; grid-template-columns:repeat(auto-fill,minmax(500px,1fr)); gap:30px; padding:28px; max-width:1600px; margin:0 auto; }
+  section.v h2 { font-size:15px; font-weight:500; margin:0 0 4px; } section.v .why { color:var(--muted); font-size:12.5px; line-height:1.5; margin:0 0 12px; min-height:58px; }
+  .frame { background:var(--page); border:1px solid var(--line); border-radius:20px; padding:14px; display:flex; flex-direction:column; gap:10px; }
+  .lab { font-size:11px; color:var(--muted); padding:0 6px; }
+  .list { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:6px; }
+  .row { display:flex; align-items:center; gap:12px; padding:12px 10px; border-radius:12px; cursor:pointer; }
+  .row:hover, .force .row { background:var(--tile); }
+  .av { width:40px; height:40px; border-radius:99px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; flex-shrink:0; }
+  .mid { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; } .nm { font-size:14px; } .dt { font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .amt { text-align:right; display:flex; flex-direction:column; gap:2px; font-variant-numeric:tabular-nums; }
+  .ib { width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:9px; color:var(--muted); } .ib svg { width:16px; height:16px; } .ib:hover { background:var(--card); color:var(--fg); }
+  .pay { border:1px solid var(--fieldline); background:transparent; color:var(--fg); border-radius:9px; padding:6px 14px; font:inherit; font-size:13px; cursor:pointer; }
+  .chev { color:var(--muted); width:16px; height:16px; }
+  .stack { display:flex; } .stack span { width:22px; height:22px; border-radius:99px; border:2px solid var(--card); margin-left:-7px; font-size:9px; display:flex; align-items:center; justify-content:center; font-weight:500; } .stack span:first-child { margin-left:0; }
+  /* hover reveal */
+  .swapbox { position:relative; min-width:132px; height:40px; display:flex; align-items:center; justify-content:flex-end; }
+  .swapbox .a { position:absolute; right:0; transition:opacity .12s; } .swapbox .b { position:absolute; right:0; display:flex; opacity:0; transition:opacity .12s; }
+  .row:hover .swapbox .a, .force .swapbox .a { opacity:0; } .row:hover .swapbox .b, .force .swapbox .b { opacity:1; }
+  .fade { position:relative; } .fade .b { position:absolute; right:0; top:50%; transform:translateY(-50%); display:flex; opacity:0; background:linear-gradient(to right, transparent, var(--tile) 22%); padding-left:28px; transition:opacity .12s; }
+  .row:hover .fade .b, .force .fade .b { opacity:1; }
+  .hid { display:none; } .row:hover .hid, .force .hid { display:flex; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div><h1>Beneficiary and group rows: 5 ways</h1><p>Each card shows the row at rest and while hovered. The hover-reveal rows leave a gap on the right when the icons are hidden, which is probably what looks off.</p></div>
+  <button class="theme" onclick="document.body.classList.toggle('dark')">Light / dark</button>
+</header>
+<main id="root"></main>
+<script>
+const G = [
+ {n:"Family monthly", sub:"4 members", mem:["KM","YG","AA","EO"], tot:"800.00", per:"GHS 200 each", c:2},
+ {n:"Susu circle", sub:"8 members", mem:["AB","KO","EA","JO","TM","FT"], tot:"4,000.00", per:"GHS 500 each", c:4},
+ {n:"Office lunch", sub:"6 members", mem:["AM","KS","RA","DT","HR"], tot:"310.00", per:"Custom split", c:6},
+ {n:"Church dues", sub:"12 members", mem:["KB","LA","IG","TL","AO"], tot:"1,200.00", per:"GHS 100 each", c:3},
+];
+const B = [
+ {n:"Kojo Mensah", sub:"GCB Bank", tot:"··· 4821", per:"Bank account", c:1},
+ {n:"ECG Prepaid", sub:"Bill", tot:"0245 118 902", per:"Meter number", c:5},
+];
+const I=(n,s="")=>`<i data-lucide="${n}" ${s}></i>`;
+const av=g=>`<div class="av" style="background:var(--c${g.c});color:var(--i${g.c})">${g.n.split(" ").map(w=>w[0]).join("").slice(0,2)}</div>`;
+const stack=g=>`<div class="stack">${g.mem.slice(0,4).map((m,i)=>`<span style="background:var(--c${(i%6)+1});color:var(--i${(i%6)+1})">${m}</span>`).join("")}${g.mem.length>4?`<span style="background:var(--tile);color:var(--muted)">+${g.mem.length-4}</span>`:""}</div>`;
+const acts=`<span class="ib">${I("send")}</span><span class="ib">${I("pencil")}</span><span class="ib">${I("trash-2")}</span>`;
+const amt=g=>`<div class="amt"><span>${g.mem?"GHS ":""}${g.tot}</span><span class="dt">${g.per}</span></div>`;
+const V=[
+ {n:"1 · Today's row (the gap)", why:"What it does now: the amounts sit left of three hidden icons, so at rest there is a blank strip on the right, and the amounts look pushed off-centre.",
+  r:g=>`<div class="row">${av(g)}<div class="mid"><span class="nm">${g.n}</span><span class="dt">${g.sub}</span></div>${amt(g)}<div class="ib hid" style="width:auto;gap:2px">${acts}</div><div style="width:118px" class="hidspace"></div></div>`},
+ {n:"2 · Actions replace the amounts", why:"One slot on the right. At rest it shows the total and the split; on hover the same slot turns into Send, Edit and Delete. No blank strip, nothing shifts.",
+  r:g=>`<div class="row">${av(g)}<div class="mid"><span class="nm">${g.n}</span><span class="dt">${g.sub}</span></div><div class="swapbox"><div class="a">${amt(g)}</div><div class="b">${acts}</div></div></div>`},
+ {n:"3 · Members as overlapping avatars", why:"The second line becomes a small stack of member avatars, so a group looks like people. Amount on the right and one Pay button; Edit and Delete move into the sheet.",
+  r:g=>`<div class="row">${av(g)}<div class="mid"><span class="nm">${g.n}</span><div style="display:flex;align-items:center;gap:8px">${g.mem?stack(g):""}<span class="dt">${g.sub}</span></div></div>${amt(g)}<button class="pay">Pay</button></div>`},
+ {n:"4 · Amounts under the name, Pay on the right", why:"Everything left-aligned in two lines (members and split together), so there is no floating amount column. A single Pay button is the only thing on the right; the rest is in the sheet.",
+  r:g=>`<div class="row">${av(g)}<div class="mid"><span class="nm">${g.n}</span><span class="dt">${g.sub} · ${g.mem?"GHS ":""}${g.tot} · ${g.per}</span></div><button class="pay">Pay</button><span class="ib">${I("more-horizontal")}</span></div>`},
+ {n:"5 · Fade-in actions over the amounts", why:"The amounts stay put. On hover the actions slide in over their right edge on a soft fade, so the row never reflows and the amounts only dim under the icons.",
+  r:g=>`<div class="row">${av(g)}<div class="mid"><span class="nm">${g.n}</span><span class="dt">${g.sub}</span></div><div class="fade">${amt(g)}<div class="b">${acts}</div></div></div>`},
+];
+const root=document.getElementById("root");
+V.forEach(v=>{
+  const mk=force=>`<div class="list ${force?"force":""}">${G.map((g,i)=>(force&&i>0)?v.r(g).replace('class="row"','class="row" style="background:transparent"'):v.r(g)).join("")}</div>`;
+  root.insertAdjacentHTML("beforeend",`<section class="v"><h2>${v.n}</h2><p class="why">${v.why}</p><div class="frame"><span class="lab">At rest</span><div class="list">${[...B,...G].map(g=>v.r(g)).join("")}</div><span class="lab">Hovering the first row</span><div class="list force1">${[...B,...G].map(g=>v.r(g)).join("")}</div></div></section>`);
+});
+// make only the first row of each "hovering" list show its hover state
+document.querySelectorAll(".force1").forEach(l=>{const r=l.querySelector(".row");r.classList.add("force");r.style.background="var(--tile)";const wrap=document.createElement("div");wrap.className="force";r.replaceWith(wrap);wrap.appendChild(r);});
+lucide.createIcons();
+</script>
+</body>
+</html>

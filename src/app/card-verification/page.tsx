@@ -129,7 +129,7 @@ export default function CardVerificationPage() {
                 <div className="flex size-14 items-center justify-center rounded-2xl bg-[#00E599] text-black shadow-sm select-none">
                   <span className="text-[28px] font-bold leading-none tracking-tight">U</span>
                 </div>
-                <span className="text-[17px] font-medium text-foreground tracking-[-0.01em]">UX Bank</span>
+                <span className="text-[17px] font-medium text-foreground tracking-[var(--ls-tight)]">UX Bank</span>
               </div>
 
               {/* Title & Description */}

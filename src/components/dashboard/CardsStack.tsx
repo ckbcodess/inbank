@@ -70,7 +70,7 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
                   <div className="text-[7.5px] uppercase tracking-wide opacity-55">Expires</div>
                   <div className="tabular mt-0.5 text-[10.5px]">{front.expiry}</div>
                 </div>
-                <div className="text-[13px] italic tracking-[-0.02em]">{front.scheme}</div>
+                <div className="text-[13px] italic tracking-[var(--ls-heading)]">{front.scheme}</div>
               </div>
             </div>
           </div>

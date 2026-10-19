@@ -644,7 +644,7 @@ export function AccountSelectTriggerContent({
           <Landmark size={20} strokeWidth={1.8} className="shrink-0" />
         </span>
         <div className="flex flex-col min-w-0 text-left gap-0.5">
-          <span className="text-[14.5px] text-foreground font-medium tracking-[-0.01em] truncate leading-tight">
+          <span className="text-[14.5px] text-foreground font-medium tracking-[var(--ls-tight)] truncate leading-tight">
             {account.name}
           </span>
           <span className="text-[12px] text-muted-foreground font-normal truncate tabular leading-tight">
@@ -684,7 +684,7 @@ export function FromAccountSelector({
   return (
     <Field label={label}>
       <Select value={value} onValueChange={(val) => val && onChange(val)}>
-        <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-4.5 text-left cursor-pointer flex items-center">
+        <SelectTrigger>
           <AccountSelectTriggerContent
             account={selected}
             placeholder={placeholder}
@@ -1315,7 +1315,7 @@ export function CollapsedDetailsBadge({
         )}
         <div className="flex min-w-0 flex-col gap-0.5 text-left">
           <span className="flex min-w-0 items-center gap-1.5">
-            <span className="truncate text-[14.5px] font-medium leading-tight tracking-[-0.01em] text-foreground">{title}</span>
+            <span className="truncate text-[14.5px] font-medium leading-tight tracking-[var(--ls-tight)] text-foreground">{title}</span>
             {nameCheck?.confirmed && (
               <span
                 className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop"
@@ -1487,10 +1487,10 @@ export function NetworkSelect({
 }) {
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-4.5 text-left cursor-pointer flex items-center">
+      <SelectTrigger>
         <div className="flex items-center gap-3">
           <OperatorLogo name={value} size={36} />
-          <span className={cn("text-[14.5px]", value ? "font-medium text-foreground" : "font-normal text-muted-foreground")}>
+          <span className={cn("text-[14px] text-foreground", !value && "text-muted-foreground")}>
             {value || placeholder}
           </span>
         </div>
@@ -1544,7 +1544,7 @@ export function BankSelect({
 }) {
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-4.5 text-left cursor-pointer flex items-center">
+      <SelectTrigger>
         <SelectValue placeholder="Select bank" />
       </SelectTrigger>
       <SelectContent>
@@ -1563,8 +1563,8 @@ export function PaymentMethodSelect({ value, onChange }: { value: string; onChan
   const selected = PAYMENT_METHODS.find((m) => m.id === value);
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
-      <SelectTrigger className="h-[58px] min-h-[58px] rounded-2xl px-4.5 text-left cursor-pointer flex items-center">
-        <span className={cn("truncate text-[15px] font-normal", selected ? "text-foreground" : "text-muted-foreground")}>
+      <SelectTrigger>
+        <span className={cn("truncate text-[14px]", selected ? "text-foreground" : "text-muted-foreground")}>
           {selected ? selected.name : "Select payment method"}
         </span>
       </SelectTrigger>

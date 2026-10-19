@@ -66,7 +66,7 @@ export default function TermDepositDetailPage() {
       <div className="mx-auto flex w-full max-w-[760px] flex-col gap-8">
         <section className="flex flex-col gap-1.5 px-1">
           <span className="text-[13px] text-muted-foreground">Deposited</span>
-          <span className="tabular text-[40px] leading-none tracking-[-0.02em] text-foreground">{money(open ? d.principal : 0)}</span>
+          <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(open ? d.principal : 0)}</span>
           {open ? (
             <span className="tabular flex gap-1.5 text-[14px] text-muted-foreground">
               <span>{formatDate(d.maturity)}</span>

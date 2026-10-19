@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Money-in indicator: 5 lighter options</title>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root { --bg:#fafafa; --card:#fff; --fg:#0a0a0a; --muted:#737373; --line:#ececec; --tile:#f4f4f3; --success:#15803d; --warn:#b45309;
+    --yellow:#fef9c3; --teal:#e4f1f4; --sand:#ebe8de; --lilac:#f5ebf7; --green:#e0eedd; --pink:#fce7f3; --lemon:#fef08a; --blue:#dbeafe;
+    --yellow-i:#8a6d00; --teal-i:#1b6b78; --sand-i:#6b5f3a; --lilac-i:#7a3f8a; --green-i:#2f6b3c; --pink-i:#a23464; --lemon-i:#7a6700; --blue-i:#1e4fa0;
+    --yellow-s:#e0a800; --teal-s:#1f8a9c; --sand-s:#a08a45; --lilac-s:#9b5bb0; --green-s:#3f9a54; --pink-s:#d6498a; --lemon-s:#c9a400; --blue-s:#3b7be0; }
+  .dark { --bg:#0b0b0b; --card:#181818; --fg:#f5f5f5; --muted:#9a9a9a; --line:#262626; --tile:#232323; --success:#4ade80; --warn:#f0b34a;
+    --yellow:#3a3410; --teal:#173238; --sand:#37321f; --lilac:#35283d; --green:#1f3524; --pink:#40233a; --lemon:#3a3608; --blue:#1b2b4b;
+    --yellow-i:#f2d86a; --teal-i:#8fd3df; --sand-i:#e0d29a; --lilac-i:#dcb4e8; --green-i:#a3dcb0; --pink-i:#f0b3d0; --lemon-i:#ece07a; --blue-i:#a7c4f2; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Open Sans",system-ui,sans-serif; background:var(--bg); color:var(--fg); font-size:14px; }
+  header { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 24px; background:var(--bg); border-bottom:1px solid var(--line); }
+  header h1 { font-size:18px; font-weight:500; margin:0; letter-spacing:-0.02em; } header p { margin:2px 0 0; color:var(--muted); font-size:12.5px; }
+  button.theme { border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:10px; padding:8px 14px; cursor:pointer; font:inherit; }
+  main { display:grid; grid-template-columns:repeat(auto-fill,minmax(430px,1fr)); gap:28px; padding:24px; max-width:1500px; margin:0 auto; }
+  section.v { display:flex; flex-direction:column; gap:10px; } section.v h2 { font-size:15px; font-weight:500; margin:0; }
+  section.v .why { color:var(--muted); font-size:12.5px; line-height:1.5; margin:0; min-height:56px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:14px; display:flex; flex-direction:column; gap:14px; }
+  .strip { display:flex; flex-wrap:wrap; gap:14px; padding:4px 4px 10px; border-bottom:1px solid var(--line); }
+  .row { display:flex; align-items:center; gap:12px; padding:6px 4px; }
+  .mid { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; } .name { font-size:14px; } .meta { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:5px; }
+  .end { text-align:right; display:flex; flex-direction:column; gap:3px; align-items:flex-end; } .amt { font-variant-numeric:tabular-nums; } .in{color:var(--success);font-weight:500} .hold{color:var(--muted)} .fail{color:var(--muted);text-decoration:line-through}
+  .st { font-size:12px; color:var(--warn); }
+  .mk { position:relative; width:40px; height:40px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .mk svg.lucide { width:18px; height:18px; stroke-width:1.7; }
+  .badge { position:absolute; right:-4px; bottom:-4px; width:18px; height:18px; border-radius:99px; background:var(--card); box-shadow:0 0 0 1px var(--line); display:flex; align-items:center; justify-content:center; color:var(--muted); }
+  .badge.in { color:var(--success); } .badge svg.lucide { width:11px; height:11px; stroke-width:2.2; }
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Money-in indicator: 5 lighter options</h1><p>Only money in is marked; money out stays plain. Five lighter ways to do it than the solid green badge.</p></div>
+  <button class="theme" onclick="document.body.classList.toggle('dark')">Light / dark</button>
+</header>
+<main id="root"></main>
+<script>
+const K = [
+ {k:"Bank",ic:"landmark",c:"blue"},{k:"Mobile money",ic:"smartphone",c:"yellow"},{k:"Wallet to bank",ic:"wallet",c:"yellow"},{k:"Airtime",ic:"signal",c:"teal"},
+ {k:"Data",ic:"wifi",c:"teal"},{k:"GCB Pay",ic:"receipt",c:"sand"},{k:"Card",ic:"credit-card",c:"lilac"},{k:"Scan & Pay",ic:"qr-code",c:"green"},
+ {k:"PAPSS",ic:"globe",c:"pink"},{k:"Own account",ic:"arrow-left-right",c:"lemon"},{k:"Cash-out",ic:"banknote",c:"lemon"}
+];
+const R = [
+ {who:"Melcom Stores",kind:"Scan & Pay",ic:"qr-code",c:"green",dir:"out",amt:"500.00",st:"ok",date:"11 Aug",mono:"ME"},
+ {who:"MTN Ghana",kind:"Airtime",ic:"signal",c:"teal",dir:"out",amt:"100.00",st:"failed",date:"11 Aug",mono:"MT"},
+ {who:"My MTN Mobile Money",kind:"Wallet to bank",ic:"wallet",c:"yellow",dir:"in",amt:"452.00",st:"pending",date:"11 Aug",mono:"MM"},
+ {who:"Landlord Properties",kind:"Bank transfer",ic:"landmark",c:"blue",dir:"out",amt:"2,500.00",st:"ok",date:"9 Aug",mono:"LP"},
+ {who:"Employer Ltd",kind:"Salary",ic:"landmark",c:"blue",dir:"in",amt:"4,200.00",st:"ok",date:"8 Aug",mono:"EL"},
+ {who:"K. Mensah",kind:"PAPSS",ic:"globe",c:"pink",dir:"out",amt:"3,500.00",st:"ok",date:"7 Aug",mono:"KM"},
+];
+const arrow = d => d==="in" ? "arrow-down-left" : "arrow-up-right";
+const I = (n,s="") => `<i data-lucide="${n}" ${s}></i>`;
+const cls = t => t.st==="failed"?"fail":t.st==="pending"?"hold":(t.dir==="in"?"in":"");
+const end = t => `<div class="end"><span class="amt ${cls(t)}">${t.dir==="out"?"−":"+"} GHS ${t.amt}</span>${t.st==="ok"?"":`<span class="st">${t.st==="failed"?"Failed":"Pending"}</span>`}</div>`;
+const rowOf = (mark, t, metaPrefix="") => `<div class="row">${mark}<div class="mid"><span class="name">${t.who}</span><span class="meta">${metaPrefix}${t.kind} · ${t.date}</span></div>${end(t)}</div>`;
+const bdg = t => `<span class="badge ${t.dir==="in"?"in":""}">${I(arrow(t.dir))}</span>`;
+
+const tile = (t, inner="") => `<div class="mk" style="border-radius:12px;background:var(--${t.c});color:var(--${t.c}-i)">${I(t.ic)}${inner}</div>`;
+const inn = t => t.dir === "in";
+const V = [
+ {n:"A · Quiet badge", why:"The earlier style, kept for credits only: a white round badge with a thin green arrow. Light, but still a clear pointer.",
+  m:t=>tile(t, inn(t)?`<span class="badge in">${I("arrow-down-left")}</span>`:"")},
+ {n:"B · Pale green badge", why:"A soft green disc (a tint, not a solid fill) with a green arrow. Reads as 'good news' without the weight of a solid circle.",
+  m:t=>tile(t, inn(t)?`<span class="badge" style="background:color-mix(in srgb,var(--success) 18%,var(--card));color:var(--success);box-shadow:0 0 0 2px var(--card)">${I("arrow-down-left")}</span>`:"")},
+ {n:"C · Bare arrow", why:"No badge at all: a small green arrow sitting on the tile's bottom-right corner over a thin card-coloured halo. The lightest glyph option.",
+  m:t=>tile(t, inn(t)?`<span style="position:absolute;right:-3px;bottom:-3px;display:flex;color:var(--success);background:var(--card);border-radius:99px;padding:1px">${I("arrow-down-left",'style="width:13px;height:13px;stroke-width:2.2"')}</span>`:"")},
+ {n:"D · Dot", why:"Just a small green dot on the corner, like a notification pip. No glyph to decode; the green amount and sign explain it. The quietest of all.",
+  m:t=>tile(t, inn(t)?`<span style="position:absolute;right:-2px;top:-2px;width:10px;height:10px;border-radius:9px;background:var(--success);box-shadow:0 0 0 2px var(--card)"></span>`:"")},
+ {n:"E · Arrow in the second line", why:"The tile stays clean. A small green arrow leads the 'kind · date' line for money in only. Direction sits beside the words, and nothing hangs off the tile.",
+  m:t=>tile(t), pre:t=>inn(t)?`<span style="color:var(--success);display:inline-flex">${I("arrow-down-left",'style="width:12px;height:12px;stroke-width:2"')}</span>`:""},
+];
+
+const root = document.getElementById("root");
+V.forEach(v => {
+  const mk = (k, dir) => `<div style="display:flex;flex-direction:column;align-items:center;gap:6px">${v.m({...k,dir,st:"ok",mono:k.k.slice(0,2).toUpperCase()})}<span style="font-size:10.5px;color:var(--muted)">${k.k} ${dir==="in"?"in":"out"}</span></div>`;
+  const strip = K.slice(0,6).map(k => mk(k,"out")).join("") + K.slice(0,6).map(k => mk(k,"in")).join("");
+  const rows = R.map(t => rowOf(v.m(t), t, v.pre ? v.pre(t) : "")).join("");
+  root.insertAdjacentHTML("beforeend", `<section class="v"><h2>${v.n}</h2><p class="why">${v.why}</p><div class="card"><div class="strip">${strip}</div>${rows}</div></section>`);
+});
+lucide.createIcons();
+</script>
+</body>
+</html>

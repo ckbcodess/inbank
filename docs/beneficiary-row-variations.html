@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beneficiary rows: 10 ways</title>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root { --bg:#f1f1f0; --page:#fafafa; --card:#fff; --fg:#0a0a0a; --muted:#737373; --line:#ececec; --tile:#f4f4f3; --fieldline:#e4e4e4; --success:#15803d; --warnbg:#fdf0d5; --warn:#b45309;
+    --c1:#e0eedd; --c2:#dbeafe; --c3:#f5ebf7; --c4:#ebe8de; --c5:#fce7f3; --c6:#e4f1f4; --i1:#2f6b3c; --i2:#1e4fa0; --i3:#7a3f8a; --i4:#6b5f3a; --i5:#a23464; --i6:#1b6b78; }
+  .dark { --bg:#050505; --page:#0b0b0b; --card:#181818; --fg:#f5f5f5; --muted:#9a9a9a; --line:#262626; --tile:#232323; --fieldline:#2e2e2e; --success:#4ade80; --warnbg:#3a2a0c; --warn:#f0b34a;
+    --c1:#1f3524; --c2:#1b2b4b; --c3:#35283d; --c4:#37321f; --c5:#40233a; --c6:#173238; --i1:#a3dcb0; --i2:#a7c4f2; --i3:#dcb4e8; --i4:#e0d29a; --i5:#f0b3d0; --i6:#8fd3df; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Open Sans",system-ui,sans-serif; background:var(--bg); color:var(--fg); font-size:14px; }
+  header.top { position:sticky; top:0; z-index:9; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 24px; background:var(--page); border-bottom:1px solid var(--line); }
+  header.top h1 { font-size:18px; font-weight:500; margin:0; letter-spacing:-0.02em; } header.top p { margin:2px 0 0; color:var(--muted); font-size:12.5px; }
+  button.theme { border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:10px; padding:8px 14px; cursor:pointer; font:inherit; }
+  main { display:grid; grid-template-columns:repeat(auto-fill,minmax(480px,1fr)); gap:30px; padding:28px; max-width:1600px; margin:0 auto; }
+  section.v h2 { font-size:15px; font-weight:500; margin:0 0 4px; } section.v .why { color:var(--muted); font-size:12.5px; line-height:1.5; margin:0 0 12px; min-height:58px; }
+  .frame { background:var(--page); border:1px solid var(--line); border-radius:20px; padding:14px; }
+  .list { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:6px; }
+  .row { display:flex; align-items:center; gap:12px; padding:11px 10px; border-radius:12px; cursor:pointer; } .row:hover { background:var(--tile); }
+  .av { width:40px; height:40px; border-radius:99px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; flex-shrink:0; }
+  .tile { width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .tile svg { width:18px; height:18px; stroke-width:1.7; }
+  .mid { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; } .nm { font-size:14px; } .dt { font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .chev { color:var(--muted); width:16px; height:16px; }
+  .acts { display:flex; align-items:center; gap:4px; color:var(--muted); }
+  .ib { width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:9px; color:var(--muted); } .ib svg { width:16px; height:16px; } .ib:hover { background:var(--tile); color:var(--fg); }
+  .pay { border:1px solid var(--fieldline); background:transparent; color:var(--fg); border-radius:9px; padding:6px 14px; font:inherit; font-size:13px; cursor:pointer; }
+  .chip { font-size:11px; padding:2px 8px; border-radius:99px; background:var(--tile); color:var(--muted); white-space:nowrap; }
+  .hov { opacity:0; transition:opacity .12s; } .row:hover .hov { opacity:1; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; } .cardx { border:1px solid var(--line); border-radius:16px; padding:14px; display:flex; flex-direction:column; gap:10px; background:var(--card); }
+  table { width:100%; border-collapse:collapse; font-size:13px; background:var(--card); border-radius:14px; } th { text-align:left; font-weight:400; color:var(--muted); font-size:12px; padding:10px; border-bottom:1px solid var(--line); } td { padding:10px; border-bottom:1px solid var(--line); } tr:last-child td { border-bottom:0; }
+  .num { font-variant-numeric:tabular-nums; color:var(--muted); }
+  .head { font-size:12px; color:var(--muted); padding:12px 10px 2px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div><h1>Beneficiary rows: 10 ways</h1><p>The same nine beneficiaries in each. The current row has a tile, a name with a tick, a long detail line with a kind chip, and three icons.</p></div>
+  <button class="theme" onclick="document.body.classList.toggle('dark')">Light / dark</button>
+</header>
+<main id="root"></main>
+<script>
+const B = [
+ {n:"Abena Osei",k:"bank",kind:"Bank transfer",inst:"Stanbic Bank Ghana",num:"•••• 1100",mono:"AO",c:3},
+ {n:"Abidjan Cocoa Exporters",k:"intl",kind:"PAPSS",inst:"Ecobank Côte d'Ivoire",num:"•••• 9201",mono:"AC",c:5},
+ {n:"Akua Mansah",k:"bank",kind:"Bank transfer",inst:"GCB Bank",num:"•••• 4421",mono:"AM",c:1},
+ {n:"Cape Town Freight",k:"intl",kind:"PAPSS",inst:"Standard Bank SA",num:"•••• 3901",mono:"CF",c:5},
+ {n:"Domestic Tax Assessment",k:"bill",kind:"GCB Pay",inst:"GRA Domestic Tax",num:"TIN ••• 214",mono:"DT",c:4},
+ {n:"DSTV Family",k:"bill",kind:"GCB Pay",inst:"DStv",num:"Smartcard ••• 2341",mono:"DF",c:4},
+ {n:"Field Team Line",k:"mob",kind:"Mobile number",inst:"AirtelTigo",num:"0271 ••• 220",mono:"FT",c:6},
+ {n:"Ghana Water",k:"bill",kind:"GCB Pay",inst:"Ghana Water",num:"Acct ••• 0291",mono:"GW",c:4},
+ {n:"Home Router",k:"mob",kind:"Mobile number",inst:"MTN",num:"0244 ••• 456",mono:"HR",c:2},
+];
+const IC = {bank:"landmark", intl:"globe", bill:"receipt", mob:"smartphone"};
+const I = (n, s="") => `<i data-lucide="${n}" ${s}></i>`;
+const tint = b => `background:var(--c${b.c});color:var(--i${b.c})`;
+const tile = b => `<div class="tile" style="${tint(b)}">${I(IC[b.k])}</div>`;
+const mono = b => `<div class="av" style="${tint(b)}">${b.mono}</div>`;
+const send = I("send"), edit = I("pencil"), del = I("trash-2"), more = I("more-horizontal"), chev = I("chevron-right", 'class="chev"');
+
+const V = [
+ {n:"1 · Pay, and a menu", why:"One clear action: a Pay button. Edit and Remove move into a menu. The kind lives on the tile, so the chip goes. Three icons become one button and one menu.",
+  r:b=>`<div class="row">${tile(b)}<div class="mid"><span class="nm">${b.n}</span><span class="dt">${b.inst} · ${b.num}</span></div><button class="pay">Pay</button><span class="ib">${more}</span></div>`},
+ {n:"2 · Tap the row, nothing on the right", why:"The whole row is the control: a chevron and nothing else. Pay, Edit and Remove live in the sheet it opens. The calmest list; costs one tap to act.",
+  r:b=>`<div class="row">${tile(b)}<div class="mid"><span class="nm">${b.n}</span><span class="dt">${b.kind} · ${b.inst}</span></div>${chev}</div>`},
+ {n:"3 · Monogram with a kind badge", why:"A tinted monogram for who, a small badge for what kind. Reads like a contact, and the second line stays short.",
+  r:b=>`<div class="row"><div class="av" style="${tint(b)};position:relative">${b.mono}<span style="position:absolute;right:-4px;bottom:-4px;width:18px;height:18px;border-radius:99px;background:var(--card);box-shadow:0 0 0 1px var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted)">${I(IC[b.k],'style="width:10px;height:10px;stroke-width:2"')}</span></div><div class="mid"><span class="nm">${b.n}</span><span class="dt">${b.inst} · ${b.num}</span></div>${chev}</div>`},
+ {n:"4 · The detail on the right", why:"Name and kind on the left; the number that identifies it, right-aligned in tabular figures, like a statement. Easy to compare down the column.",
+  r:b=>`<div class="row">${tile(b)}<div class="mid"><span class="nm">${b.n}</span><span class="dt">${b.kind}</span></div><div style="text-align:right;display:flex;flex-direction:column;gap:2px"><span class="num" style="color:var(--fg)">${b.num}</span><span class="dt">${b.inst}</span></div></div>`},
+ {n:"5 · Actions on hover", why:"At rest a row is a tile, a name and the detail. Pay, Edit and Remove appear when you hover (desktop). Quiet by default; on touch they live in a sheet.",
+  r:b=>`<div class="row">${tile(b)}<div class="mid"><span class="nm">${b.n}</span><span class="dt">${b.inst} · ${b.num}</span></div><div class="acts hov"><span class="ib">${send}</span><span class="ib">${edit}</span><span class="ib">${del}</span></div></div>`},
+ {n:"6 · One line, dots between", why:"Name first, then the kind and detail run on after it in muted type, all on one line. Roughly half the height per row, so more people fit on screen.",
+  r:b=>`<div class="row" style="padding:9px 10px">${mono(b)}<div class="mid" style="flex-direction:row;align-items:baseline;gap:8px;overflow:hidden"><span class="nm" style="white-space:nowrap">${b.n}</span><span class="dt">${b.kind} · ${b.inst} · ${b.num}</span></div><span class="ib" style="width:28px;height:28px">${more}</span></div>`},
+ {n:"7 · Verified only when it isn't", why:"A green tick on every row says nothing. Remove it; show a 'Pending approval' tag only on the rare one that is (the third row here). Paired with a single Pay button.",
+  r:(b,i)=>`<div class="row">${tile(b)}<div class="mid"><span class="nm">${b.n}</span><span class="dt">${b.inst} · ${b.num}</span></div>${i===2?'<span class="chip" style="background:var(--warnbg);color:var(--warn)">Pending approval</span>':""}<button class="pay">Pay</button></div>`},
+ {n:"8 · Cards in two columns", why:"Each beneficiary is a small card with the avatar, name, detail and a Pay button. Better for a short list you browse; takes more room per person.",
+  h:()=>`<div class="grid2">${B.slice(0,6).map(b=>`<div class="cardx"><div style="display:flex;gap:10px;align-items:center">${mono(b)}<div class="mid"><span class="nm" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${b.n}</span><span class="dt">${b.kind}</span></div></div><span class="dt">${b.inst} · ${b.num}</span><button class="pay" style="align-self:flex-start">Pay</button></div>`).join("")}</div>`},
+ {n:"9 · A table", why:"Columns for Name, Type, Detail and an action, with hairline dividers and no boxes. The most scannable for a long list on a wide screen.",
+  h:()=>`<table><thead><tr><th>Name</th><th>Type</th><th>Detail</th><th></th></tr></thead><tbody>${B.map(b=>`<tr><td><span style="display:flex;align-items:center;gap:10px">${mono(b).replace("width:40px","")}${b.n}</span></td><td class="num">${b.kind}</td><td class="num">${b.inst} · ${b.num}</td><td style="text-align:right"><button class="pay" style="padding:4px 12px">Pay</button></td></tr>`).join("")}</tbody></table>`},
+ {n:"10 · A to Z with letters", why:"Sticky letter headings break the list into short chunks and make the alphabet the navigation. Rows are plain: monogram, name, detail, chevron.",
+  h:()=>{ let cur="", o=""; B.forEach(b=>{ const l=b.n[0]; if(l!==cur){ cur=l; o+=`<div class="head">${l}</div>`; } o+=`<div class="row">${mono(b)}<div class="mid"><span class="nm">${b.n}</span><span class="dt">${b.inst} · ${b.num}</span></div>${chev}</div>`; }); return `<div class="list">${o}</div>`; }},
+];
+const root = document.getElementById("root");
+V.forEach(v => {
+  const inner = v.h ? v.h() : `<div class="list">${B.map((b,i)=>v.r(b,i)).join("")}</div>`;
+  root.insertAdjacentHTML("beforeend", `<section class="v"><h2>${v.n}</h2><p class="why">${v.why}</p><div class="frame">${inner}</div></section>`);
+});
+lucide.createIcons();
+</script>
+</body>
+</html>

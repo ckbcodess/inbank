@@ -563,7 +563,7 @@ export function PaymentSuccessScreen({
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.44, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="text-[26px] sm:text-[30px] font-medium leading-[34px] sm:leading-[38px] tracking-[-0.02em] text-foreground text-center"
+            className="text-[26px] sm:text-[30px] font-medium leading-[34px] sm:leading-[38px] tracking-[var(--ls-heading)] text-foreground text-center"
           >
             {normalizedTitle}
           </motion.h1>

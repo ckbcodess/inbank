@@ -11,14 +11,14 @@
  * - Pagination: "Showing 1–10 of X cases" + Previous / page numbers / Next.
  */
 
-import { getTransactionType } from "@/lib/transaction-type";
+import { getTransactionType, transactionRail } from "@/lib/transaction-type";
 import { TransactionStatusText } from "@/components/StatusBadge";
+import { amountStyling } from "@/lib/transaction-display";
+import { TransactionMark } from "@/components/transactions/TransactionMark";
 import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
-  ArrowDownLeft,
   ArrowDownToLine,
-  ArrowUpRight,
   ChevronLeft,
   ChevronRight,
   Search,
@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -48,7 +49,7 @@ import {
   accountsForProfile,
   findAccount,
   TRANSACTION_CATEGORIES,
-  TRANSACTION_PAYMENT_METHODS,
+  TRANSACTION_RAILS,
   type Transaction,
 } from "@/lib/mock-data";
 import { useSession } from "@/lib/session-store";
@@ -91,6 +92,8 @@ function getPaymentMethodDisplay(t: Transaction): string {
   if (t.paymentMethod === "rtgs") return "RTGS High Value";
   if (t.paymentMethod === "momo") return "Mobile Money (MoMo)";
   if (t.paymentMethod === "own-account") return "Between My Accounts";
+  if (t.paymentMethod === "qr") return "Scan & Pay";
+  if (t.paymentMethod === "cardless") return "ATM Cash-out Code";
   if (t.paymentMethod === "card") return "Card / POS Payment";
   if (t.paymentMethod === "bill") return "Bill Payment";
   if (t.paymentMethod === "bulk") return "Bulk Upload";
@@ -106,26 +109,6 @@ function formatTableDate(dateStr: string): string {
   } catch {
     return dateStr;
   }
-}
-
-function getAmountStyling(t: Transaction) {
-  const isFailed = t.state.startsWith("failed") || t.state === "reversed" || t.state === "disputed";
-  if (isFailed) {
-    return {
-      colorClass: "text-destructive-text font-normal",
-      prefix: t.direction === "debit" ? "− " : "+ ",
-    };
-  }
-  if (t.direction === "credit" && t.state === "completed") {
-    return {
-      colorClass: "text-success font-medium",
-      prefix: "+ ",
-    };
-  }
-  return {
-    colorClass: "text-foreground font-normal",
-    prefix: t.direction === "debit" ? "− " : "+ ",
-  };
 }
 
 function exportTransactionsCSV(txns: Transaction[]) {
@@ -193,9 +176,14 @@ export default function TransactionList({
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
   const [methodFilters, setMethodFilters] = useState<string[]>([]);
   const [statusFilters, setStatusFilters] = useState<StatusFilter[]>([]);
+  // Money movement: everything, only money in, or only money out
+  const [directionFilter, setDirectionFilter] = useState<"all" | "in" | "out">("all");
   const [datePreset, setDatePreset] = useState<DatePreset>("all");
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
+
+  // Selected transaction for details sheet
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -282,63 +270,13 @@ export default function TransactionList({
 
       // 4. Payment Method Filter (multi-select)
       if (methodFilters.length > 0) {
-        const pm = (t.paymentMethod || "").toLowerCase();
-        const ch = t.channel.toLowerCase();
-        const desc = t.description.toLowerCase();
-
-        const matchesMethod = methodFilters.some((mf) => {
-          if (mf === "wallet-to-bank") {
-            return (
-              pm === "wallet-to-bank" ||
-              desc.includes("wallet to bank") ||
-              ch.includes("wallet to bank")
-            );
-          }
-          if (mf === "papss") {
-            return pm === "papss" || ch.includes("papss") || desc.includes("papss");
-          }
-          if (mf === "airtime") {
-            return pm === "airtime" || ch.includes("airtime") || desc.includes("airtime");
-          }
-          if (mf === "data") {
-            return pm === "data" || ch.includes("data") || desc.includes("data");
-          }
-          if (mf === "gip") {
-            return pm === "gip" || desc.includes("gip") || ch.includes("gip");
-          }
-          if (mf === "ach") {
-            return pm === "ach" || ch.includes("ach");
-          }
-          if (mf === "rtgs") {
-            return pm === "rtgs" || ch.includes("rtgs");
-          }
-          if (mf === "momo") {
-            return pm === "momo" || ch.includes("mobile") || desc.includes("momo");
-          }
-          if (mf === "own-account") {
-            return pm === "own-account" || desc.includes("between my accounts") || desc.includes("to savings");
-          }
-          if (mf === "card") {
-            return pm === "card" || ch.includes("card") || ch.includes("pos");
-          }
-          if (mf === "bill") {
-            return (
-              pm === "bill" ||
-              desc.includes("utility") ||
-              t.category === "Utilities" ||
-              t.category === "Bills"
-            );
-          }
-          if (mf === "bulk") {
-            return pm === "bulk" || t.kind === "bulk" || ch.includes("bulk");
-          }
-          if (mf === "trade") {
-            return pm === "trade" || t.kind === "trade" || ch.includes("trade");
-          }
-          return false;
-        });
+        const matchesMethod = methodFilters.includes(transactionRail(t));
         if (!matchesMethod) return false;
       }
+
+      // Money movement
+      if (directionFilter === "in" && t.direction !== "credit") return false;
+      if (directionFilter === "out" && t.direction !== "debit") return false;
 
       // 5. Status Filter (multi-select)
       if (statusFilters.length > 0) {
@@ -386,6 +324,7 @@ export default function TransactionList({
     categoryFilters,
     methodFilters,
     statusFilters,
+    directionFilter,
     datePreset,
     dateFrom,
     dateTo,
@@ -394,7 +333,7 @@ export default function TransactionList({
   // Reset to page 1 whenever any filter or search query changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [query, accountFilter, categoryFilters, methodFilters, statusFilters, datePreset, dateFrom, dateTo]);
+  }, [query, accountFilter, categoryFilters, methodFilters, statusFilters, directionFilter, datePreset, dateFrom, dateTo]);
 
   const DATE_OPTIONS: { value: DatePreset; label: string }[] = [
     { value: "today", label: "Today" },
@@ -406,6 +345,18 @@ export default function TransactionList({
   ];
 
   const filterGroups: FilterGroup[] = [
+    {
+      id: "direction",
+      kind: "single",
+      label: "Money",
+      options: [
+        { value: "all", label: "All" },
+        { value: "in", label: "Money in" },
+        { value: "out", label: "Money out" },
+      ],
+      value: directionFilter,
+      onChange: (v) => setDirectionFilter(v as "all" | "in" | "out"),
+    },
     {
       id: "status",
       kind: "multi",
@@ -473,7 +424,7 @@ export default function TransactionList({
       id: "method",
       kind: "multi",
       label: "Payment Method",
-      options: TRANSACTION_PAYMENT_METHODS.filter((m) => m.id !== "all").map((m) => ({
+      options: TRANSACTION_RAILS.map((m) => ({
         value: m.id,
         label: m.name,
       })),
@@ -500,6 +451,7 @@ export default function TransactionList({
     setCategoryFilters([]);
     setMethodFilters([]);
     setStatusFilters([]);
+    setDirectionFilter("all");
     setDatePreset("all");
     setDateFrom("");
     setDateTo("");
@@ -511,6 +463,7 @@ export default function TransactionList({
     setCategoryFilters([]);
     setMethodFilters([]);
     setStatusFilters([]);
+    setDirectionFilter("all");
     setDatePreset("all");
     setDateFrom("");
     setDateTo("");
@@ -588,8 +541,8 @@ export default function TransactionList({
 
       {/* ── Page Header: Title & Export Action (no description underneath) ── */}
       <div className="flex items-center justify-between gap-3 w-full">
-        <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
-          Transactions
+        <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
+          Transaction History
         </h1>
         <Button
           variant="outline"
@@ -719,30 +672,16 @@ export default function TransactionList({
           {/* One list at every breakpoint — the same rows as the dashboard's Recent activity. */}
           <div className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">
             {paginatedRows.map((t) => {
-              const { colorClass, prefix } = getAmountStyling(t);
-              const isCredit = t.direction === "credit";
+              const { colorClass, prefix } = amountStyling(t);
 
               return (
                 <div
                   key={t.id}
-                  onClick={() => router.push(`${detailBase}/${t.id}`)}
+                  onClick={() => setSelectedTransaction(t)}
                   className="flex items-center gap-4 rounded-xl px-3 py-3.5 sm:py-4 transition-colors hover:bg-item-hover cursor-pointer active:bg-item-hover/80 sm:px-4"
                 >
-                  {/* Direction Anchor Icon */}
-                  <div
-                    className={cn(
-                      "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
-                      isCredit
-                        ? "bg-pill-success text-success"
-                        : "bg-tile text-muted-foreground"
-                    )}
-                  >
-                    {isCredit ? (
-                      <ArrowDownLeft className="size-4 stroke-[2]" />
-                    ) : (
-                      <ArrowUpRight className="size-4 stroke-[2]" />
-                    )}
-                  </div>
+                  {/* What it was, with a corner arrow for which way it went */}
+                  <TransactionMark transaction={t} />
 
                   {/* Counterparty & Metadata */}
                   <div className="flex-1 min-w-0 flex flex-col gap-1.5">
@@ -766,7 +705,10 @@ export default function TransactionList({
                         maximumFractionDigits: 2,
                       })}
                     </span>
-                    <TransactionStatusText state={t.state} />
+                    {/* Only what needs a word: a completed payment says nothing */}
+                    {t.state !== "completed" && (
+                      <TransactionStatusText state={t.state} />
+                    )}
                   </div>
                 </div>
               );
@@ -813,6 +755,15 @@ export default function TransactionList({
         </motion.div>
       )}
       </AnimatePresence>
+
+      {/* Transaction Details Sheet */}
+      <TransactionDetailSheet
+        transaction={selectedTransaction}
+        open={Boolean(selectedTransaction)}
+        onOpenChange={(open) => {
+          if (!open) setSelectedTransaction(null);
+        }}
+      />
     </div>
   );
 }

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saved recipients inside a payment rail: 10 ways</title>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+:root{--bg:#f1f1f0;--page:#fafafa;--modal:#fff;--fg:#0a0a0a;--muted:#737373;--line:#ececec;--tile:#f4f4f3;--btn:#ebebeb;--primary:#ffc423;--pfg:#2b1d00;--ok:#15803d;--okbg:#dcfce7;--danger:#b51c3b;--av:#dbeafe;--avi:#1e4fa0;--warnbg:#fff3c4;--warn:#7a5b00}
+.dark{--bg:#050505;--page:#0b0b0b;--modal:#121212;--fg:#f5f5f5;--muted:#9a9a9a;--line:#262626;--tile:#1c1c1c;--btn:#242424;--ok:#4ade80;--okbg:#0b2a17;--danger:#ae324b;--av:#1b2b4b;--avi:#a7c4f2;--warnbg:#3a3410;--warn:#f2d86a}
+*{box-sizing:border-box}body{margin:0;font-family:"Open Sans",system-ui,sans-serif;background:var(--bg);color:var(--fg);font-size:14px}
+header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;background:var(--page);border-bottom:1px solid var(--line)}
+header.top h1{font-size:18px;font-weight:500;margin:0;letter-spacing:-.02em}header.top p{margin:2px 0 0;color:var(--muted);font-size:12.5px}
+button.theme{border:1px solid var(--line);background:var(--modal);color:var(--fg);border-radius:10px;padding:8px 14px;cursor:pointer;font:inherit}
+main{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:34px 28px;padding:28px;max-width:1700px;margin:0 auto}
+.v h2{font-size:15px;font-weight:500;margin:0 0 3px}.goal{font-size:12px;color:var(--ok);margin:0 0 4px;font-weight:500}.why{color:var(--muted);font-size:12.5px;line-height:1.5;margin:0 0 12px;min-height:56px}
+.sheet{width:100%;max-width:380px;height:620px;background:var(--modal);border:1px solid var(--line);border-radius:22px;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.x{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:99px;background:var(--btn);display:flex;align-items:center;justify-content:center;color:var(--muted)}.x svg{width:15px;height:15px}
+.hd{padding:22px 22px 0}.t{font-size:16px;font-weight:500;letter-spacing:-.01em}.sub{font-size:12.5px;color:var(--muted);margin-top:3px}
+.body{flex:1;padding:16px 22px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.ft{padding:12px 22px 20px;display:flex;flex-direction:column;gap:8px}
+.btn{height:46px;border-radius:99px;background:var(--btn);display:flex;align-items:center;justify-content:center;font-size:14px;gap:8px}.btn svg{width:16px;height:16px}
+.btn.p{background:var(--primary);color:var(--pfg)}.btn.d{color:var(--danger)}.btn.g{background:transparent;height:38px;color:var(--muted)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.av{border-radius:99px;background:var(--av);color:var(--avi);display:flex;align-items:center;justify-content:center;font-weight:400;flex-shrink:0}
+.card{background:var(--tile);border:1px solid var(--line);border-radius:18px;padding:4px 16px}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:12px 0;font-size:13px;border-bottom:1px solid var(--line)}.kv:last-child{border:0}.kv span:first-child{color:var(--muted)}
+.cp{display:inline-flex;align-items:center;gap:6px}.cp svg{width:13px;height:13px;color:var(--muted)}
+.tab{font-variant-numeric:tabular-nums}.mut{color:var(--muted)}.sm{font-size:12px}
+.li{display:flex;align-items:center;justify-content:space-between;padding:10px 0;font-size:13px}.li .m{font-size:12px;color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 9px;border-radius:99px;background:var(--okbg);color:var(--ok)}.chip.w{background:var(--warnbg);color:var(--warn)}.chip svg{width:11px;height:11px}
+.circ{display:flex;justify-content:center;gap:22px;padding:6px 0}.circ div{display:flex;flex-direction:column;align-items:center;gap:7px;font-size:12px}.circ i{width:50px;height:50px;border-radius:99px;background:var(--primary);color:var(--pfg);display:flex;align-items:center;justify-content:center}.circ i svg{width:19px;height:19px}.circ .s i{background:var(--btn);color:var(--fg)}
+.amtbox{border:1px solid var(--line);background:var(--tile);border-radius:16px;height:54px;display:flex;align-items:center;gap:10px;padding:0 16px;font-size:20px}.amtbox small{font-size:13px;color:var(--muted)}
+.lnk{font-size:13px;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line)}
+.page{width:100%;max-width:400px;min-height:640px;background:var(--modal);border:1px solid var(--line);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:16px;position:relative;overflow:hidden}
+.ph{font-size:16px;font-weight:500}.fld{display:flex;flex-direction:column;gap:6px}.lbl{font-size:13px;font-weight:500}
+.in{height:48px;border:1px solid var(--line);background:var(--tile);border-radius:14px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:14px;color:var(--muted);gap:8px}.in svg{width:16px;height:16px}.in b{font-weight:400;color:var(--fg)}
+.hint{font-size:12px;color:var(--muted)}.ghost{opacity:.4;pointer-events:none}
+.pop{border:1px solid var(--line);background:var(--modal);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.12);padding:6px}
+.pr{display:flex;align-items:center;gap:11px;padding:9px 10px;border-radius:11px;font-size:13.5px}.pr:hover,.pr.h{background:var(--tile)}.pr .s{font-size:11.5px;color:var(--muted)}.pr .av{width:32px;height:32px;font-size:11px}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--tile);border-radius:12px;padding:3px}.seg div{text-align:center;padding:8px;border-radius:9px;font-size:13px;color:var(--muted)}.seg .on{background:var(--modal);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.chip2{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:99px;padding:6px 12px 6px 6px;font-size:13px}.chip2 .av{width:26px;height:26px;font-size:9.5px}
+.lnk{font-size:13px;text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line)}
+.cols{display:grid;grid-template-columns:1fr 150px;gap:14px}.side{border-left:1px solid var(--line);padding-left:12px;display:flex;flex-direction:column;gap:2px}
+.side .pr{padding:7px 6px;font-size:12.5px}.side .pr .av{width:24px;height:24px;font-size:8.5px}
+.sheetb{position:absolute;left:0;right:0;bottom:0;background:var(--modal);border-top:1px solid var(--line);border-radius:20px 20px 0 0;padding:14px 16px;box-shadow:0 -10px 30px rgba(0,0,0,.12);display:flex;flex-direction:column;gap:4px}
+.sec{font-size:12px;color:var(--muted);margin-bottom:2px}
+</style></head><body>
+<header class="top"><div><h1>Saved recipients inside a payment rail: 10 ways</h1><p>The customer already saw their beneficiaries on the chooser screen and picked "Other banks". These are 10 ways the next screen can handle saved recipients without repeating a row of them at the top. Shown: Send to another bank.</p></div><button class="theme" onclick="document.body.classList.toggle('dark')">Light / dark</button></header>
+<main id="root"></main>
+<script>
+const I=n=>`<i data-lucide="${n}"></i>`;
+const A=(t)=>`<span class="av" style="background:var(--av);color:var(--avi)">${t}</span>`;
+const P=[["Abena Osei","Stanbic · ··· 1100","AO"],["Kwesi Amoah","GCB · ··· 7781","KA"],["Esi Badu","Absa · ··· 2204","EB"],["Accra Fabrics Ltd","Absa · ··· 8890","AF"]];
+const row=(p,h)=>`<div class="pr ${h?"h":""}">${A(p[2])}<div style="flex:1"><div>${p[0]}</div><div class="s">${p[1]}</div></div></div>`;
+const FROM=`<div class="fld"><div class="lbl">From</div><div class="in"><b>GCB Current · GHS 12,480.00</b>${I("chevron-down")}</div></div>`;
+const AMT=`<div class="fld ghost"><div class="lbl">Amount</div><div class="in">GHS 0.00</div></div>`;
+const bank=`<div class="fld"><div class="lbl">Bank</div><div class="in">Select bank${I("chevron-down")}</div></div>`;
+const acct=()=>`<div class="fld"><div class="lbl">Account number</div><div class="in">Enter account number</div></div>`;
+const V=[
+{n:"1 · One field that finds anyone",goal:"Goal: a single recipient field, saved people included",why:"No strip, no tabs. 'Who are you paying?' is one field. Tap it and your saved people are the first suggestions; type and it filters; a number you type that isn't saved is just a new recipient.",
+ b:`${FROM}<div class="fld"><div class="lbl">Recipient</div><div class="in" style="border-color:var(--fg)"><b>Ab</b>${I("search")}</div></div><div class="pop">${row(P[0],1)}<div class="pr"><span class="av" style="background:var(--tile);color:var(--muted)">${I("plus")}</span><div>Pay a new account</div></div></div>`},
+{n:"2 · Suggestions as you type",goal:"Goal: don't interrupt, only help when it's useful",why:"The form starts empty and clean: bank and number. As soon as the first digits match someone saved, a single line offers them ('Abena Osei, Stanbic'). Ignore it and carry on.",
+ b:`${FROM}${bank}<div class="fld"><div class="lbl">Account number</div><div class="in" style="border-color:var(--fg)"><b>1089</b></div><div class="pop" style="padding:4px">${row(P[0],1)}</div></div>${AMT}`},
+{n:"3 · Saved or new, one switch",goal:"Goal: be explicit about the two ways in",why:"A two-way switch at the top of the recipient section: Saved | New. 'Saved' shows a searchable list (not a strip), 'New' shows the bank and number fields. Only one is on screen at a time.",
+ b:`${FROM}<div class="fld"><div class="lbl">Recipient</div><div class="seg"><div class="on">Saved</div><div>New</div></div></div><div class="pop" style="box-shadow:none">${P.map((p,i)=>row(p,i==0)).join("")}</div>`},
+{n:"4 · Arrive already chosen",goal:"Goal: trust the choice made on the chooser screen",why:"If the person tapped a saved recipient on the chooser, the form opens with them already in place as a confirmed card, with 'Change'. No row at all. The saved list only appears if they came without choosing anyone.",
+ b:`${FROM}<div class="fld"><div class="lbl">Recipient</div><div class="in" style="height:64px;background:var(--modal)"><span style="display:flex;gap:11px;align-items:center">${A("AO")}<span><div style="color:var(--fg)">Abena Osei</div><div class="hint">Stanbic Bank Ghana · 1089 3322 1100</div></span></span><span class="lnk">Change</span></div></div><div class="fld"><div class="lbl">Amount</div><div class="in" style="border-color:var(--fg)">GHS 0.00</div></div>`},
+{n:"5 · A quiet 'Choose saved' link",goal:"Goal: lightest touch, zero visual weight",why:"The form is the form. Under the account number field is a small text link: 'Choose from saved (6)'. It opens a picker only when asked. Best for people who mostly pay new accounts.",
+ b:`${FROM}${bank}${acct()}<div><span class="lnk" style="display:inline-flex;gap:6px;align-items:center">${I("users")}Choose from saved (6)</span></div>${AMT}`},
+{n:"6 · Pay again, one suggestion",goal:"Goal: predict the likely recipient, show only one",why:"Not a row, a single smart chip above the form: the person you most likely mean (last paid on this rail, or paid at this time of month). One tap fills the form. Dismiss and it's gone.",
+ b:`${FROM}<div class="fld"><div class="hint">You usually pay</div><div><span class="chip2">${A("AO")}Abena Osei · GHS 250 ${I("arrow-right")}</span></div></div>${bank}${acct()}${AMT}`},
+{n:"7 · Recents inside the field",goal:"Goal: recognition over recall, only on focus",why:"Tapping the account number field opens a short panel of the last three people paid on this rail, with search. Nothing is on the page until the person focuses the field.",
+ b:`${FROM}${bank}<div class="fld"><div class="lbl">Account number</div><div class="in" style="border-color:var(--fg)">Enter account number${I("clock")}</div><div class="pop"><div class="hint" style="padding:6px 10px">Paid recently</div>${P.slice(0,3).map(p=>row(p)).join("")}</div></div>`},
+{n:"8 · Side panel on desktop",goal:"Goal: use the width, keep the form clean",why:"On wide screens saved recipients live in a narrow column beside the form, always one glance away and never above it. On phones the column turns into the 'Choose from saved' link of option 5.",
+ b:`${FROM}<div class="cols"><div style="display:flex;flex-direction:column;gap:14px">${bank}${acct()}${AMT}</div><div class="side"><div class="hint" style="padding:4px 6px">Saved</div>${P.map(p=>row(p)).join("")}</div></div>`},
+{n:"9 · Picker sheet with search",goal:"Goal: scale to hundreds of beneficiaries",why:"A 'Saved' button in the field opens a bottom sheet with search and groups (Recent, then A to Z). Built for people with many beneficiaries, where a strip or short list stops working.",
+ b:`${FROM}<div class="fld"><div class="lbl">Recipient</div><div class="in">Search or enter account${I("book-user")}</div></div>${AMT}<div class="sheetb"><div class="in" style="height:42px">${I("search")}Search saved</div><div class="hint" style="padding:6px 4px 2px">Recent</div>${P.slice(0,2).map(p=>row(p)).join("")}<div class="hint" style="padding:6px 4px 2px">All</div>${row(P[3])}</div>`},
+{n:"10 · Filtered by the bank you pick",goal:"Goal: context decides what is shown",why:"Bank first, as today. Once a bank is chosen, saved recipients at that bank appear right under the number field ('Saved at Absa'), because those are the only ones that can apply. No bank, no list.",
+ b:`${FROM}<div class="fld"><div class="lbl">Bank</div><div class="in"><b>Absa Bank Ghana</b>${I("chevron-down")}</div></div>${acct()}<div class="fld"><div class="hint">Saved at Absa</div><div class="pop" style="box-shadow:none">${[P[2],P[3]].map(p=>row(p)).join("")}</div></div>`},
+];
+const root=document.getElementById("root");
+V.forEach(v=>root.insertAdjacentHTML("beforeend",`<section class="v"><h2>${v.n}</h2><div class="goal">${v.goal}</div><p class="why">${v.why}</p><div class="page"><div class="ph">Other banks</div>${v.b}</div></section>`));
+lucide.createIcons();
+</script></body></html>

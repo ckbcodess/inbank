@@ -92,7 +92,7 @@ const SCENARIO_LABEL = Object.fromEntries(ACCOUNTS_SCENARIOS.map((s) => [s.id, s
 function SectionHeading({ id, title, action }: { id: string; title: string; action?: React.ReactNode }) {
   return (
     <div className="flex min-h-8 items-center justify-between gap-4 px-1">
-      <h2 id={id} className="text-[16px] font-medium tracking-[-0.01em] text-foreground">
+      <h2 id={id} className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">
         {title}
       </h2>
       {action}
@@ -160,7 +160,7 @@ function AccountRow({
         </TileChip>
         <span className="flex min-w-0 flex-1 flex-col gap-1">
           <span className="flex flex-wrap items-center gap-1.5">
-            <span className="truncate text-[15px] font-medium tracking-[-0.01em] text-foreground">{account.name}</span>
+            <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">{account.name}</span>
             {showDefault && isDefault && <Badge variant="brand">Default</Badge>}
             {account.isJoint && <Badge variant="outline">Joint</Badge>}
             {dormant && <Badge variant="warning">Dormant</Badge>}
@@ -194,7 +194,7 @@ function SourceRow({ source, onRemove }: { source: LinkedSource; onRemove: () =>
     <li className="flex items-center gap-4 rounded-xl py-4 pl-3 pr-1 sm:pl-4 sm:pr-2">
       <SourceMark type={source.type} operator={source.operator} title={source.title} />
       <span className="flex min-w-0 flex-1 flex-col gap-1">
-        <span className="truncate text-[15px] font-medium tracking-[-0.01em] text-foreground">{source.title}</span>
+        <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">{source.title}</span>
         <span className="truncate text-[13px] text-muted-foreground tabular">{source.subtitle}</span>
       </span>
       <RowMenu label={`More actions for ${source.title}`}>
@@ -521,7 +521,7 @@ function AccountsContent() {
               <div className="flex size-24 items-center justify-center rounded-full bg-primary/15 text-foreground shadow-[0_0_60px_20px_color-mix(in_oklab,var(--primary)_18%,transparent)]">
                 <HandCoins size={40} strokeWidth={1.5} aria-hidden="true" />
               </div>
-              <DialogTitle className="text-[22px] tracking-[-0.02em]">You&apos;re Almost There…</DialogTitle>
+              <DialogTitle className="text-[22px] tracking-[var(--ls-heading)]">You&apos;re Almost There…</DialogTitle>
               <p className="max-w-[320px] text-[14px] leading-relaxed text-muted-foreground">
                 Deposit to unlock instant banking. Fund your account today for quick payments and everyday
                 convenience.

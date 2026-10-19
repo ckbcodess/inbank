@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Direction indicator: 10 variations</title>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root { --bg:#fafafa; --card:#fff; --fg:#0a0a0a; --muted:#737373; --line:#ececec; --tile:#f4f4f3; --success:#15803d; --warn:#b45309;
+    --yellow:#fef9c3; --teal:#e4f1f4; --sand:#ebe8de; --lilac:#f5ebf7; --green:#e0eedd; --pink:#fce7f3; --lemon:#fef08a; --blue:#dbeafe;
+    --yellow-i:#8a6d00; --teal-i:#1b6b78; --sand-i:#6b5f3a; --lilac-i:#7a3f8a; --green-i:#2f6b3c; --pink-i:#a23464; --lemon-i:#7a6700; --blue-i:#1e4fa0;
+    --yellow-s:#e0a800; --teal-s:#1f8a9c; --sand-s:#a08a45; --lilac-s:#9b5bb0; --green-s:#3f9a54; --pink-s:#d6498a; --lemon-s:#c9a400; --blue-s:#3b7be0; }
+  .dark { --bg:#0b0b0b; --card:#181818; --fg:#f5f5f5; --muted:#9a9a9a; --line:#262626; --tile:#232323; --success:#4ade80; --warn:#f0b34a;
+    --yellow:#3a3410; --teal:#173238; --sand:#37321f; --lilac:#35283d; --green:#1f3524; --pink:#40233a; --lemon:#3a3608; --blue:#1b2b4b;
+    --yellow-i:#f2d86a; --teal-i:#8fd3df; --sand-i:#e0d29a; --lilac-i:#dcb4e8; --green-i:#a3dcb0; --pink-i:#f0b3d0; --lemon-i:#ece07a; --blue-i:#a7c4f2; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Open Sans",system-ui,sans-serif; background:var(--bg); color:var(--fg); font-size:14px; }
+  header { position:sticky; top:0; z-index:5; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 24px; background:var(--bg); border-bottom:1px solid var(--line); }
+  header h1 { font-size:18px; font-weight:500; margin:0; letter-spacing:-0.02em; } header p { margin:2px 0 0; color:var(--muted); font-size:12.5px; }
+  button.theme { border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:10px; padding:8px 14px; cursor:pointer; font:inherit; }
+  main { display:grid; grid-template-columns:repeat(auto-fill,minmax(430px,1fr)); gap:28px; padding:24px; max-width:1500px; margin:0 auto; }
+  section.v { display:flex; flex-direction:column; gap:10px; } section.v h2 { font-size:15px; font-weight:500; margin:0; }
+  section.v .why { color:var(--muted); font-size:12.5px; line-height:1.5; margin:0; min-height:56px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:14px; display:flex; flex-direction:column; gap:14px; }
+  .strip { display:flex; flex-wrap:wrap; gap:14px; padding:4px 4px 10px; border-bottom:1px solid var(--line); }
+  .row { display:flex; align-items:center; gap:12px; padding:6px 4px; }
+  .mid { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; } .name { font-size:14px; } .meta { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:5px; }
+  .end { text-align:right; display:flex; flex-direction:column; gap:3px; align-items:flex-end; } .amt { font-variant-numeric:tabular-nums; } .in{color:var(--success);font-weight:500} .hold{color:var(--muted)} .fail{color:var(--muted);text-decoration:line-through}
+  .st { font-size:12px; color:var(--warn); }
+  .mk { position:relative; width:40px; height:40px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .mk svg.lucide { width:18px; height:18px; stroke-width:1.7; }
+  .badge { position:absolute; right:-4px; bottom:-4px; width:18px; height:18px; border-radius:99px; background:var(--card); box-shadow:0 0 0 1px var(--line); display:flex; align-items:center; justify-content:center; color:var(--muted); }
+  .badge.in { color:var(--success); } .badge svg.lucide { width:11px; height:11px; stroke-width:2.2; }
+</style>
+</head>
+<body>
+<header>
+  <div><h1>Direction indicator: 10 variations</h1><p>The duotone tile stays; each card changes only how direction (money in or out) is shown on it. Green means money in.</p></div>
+  <button class="theme" onclick="document.body.classList.toggle('dark')">Light / dark</button>
+</header>
+<main id="root"></main>
+<script>
+const K = [
+ {k:"Bank",ic:"landmark",c:"blue"},{k:"Mobile money",ic:"smartphone",c:"yellow"},{k:"Wallet to bank",ic:"wallet",c:"yellow"},{k:"Airtime",ic:"signal",c:"teal"},
+ {k:"Data",ic:"wifi",c:"teal"},{k:"GCB Pay",ic:"receipt",c:"sand"},{k:"Card",ic:"credit-card",c:"lilac"},{k:"Scan & Pay",ic:"qr-code",c:"green"},
+ {k:"PAPSS",ic:"globe",c:"pink"},{k:"Own account",ic:"arrow-left-right",c:"lemon"},{k:"Cash-out",ic:"banknote",c:"lemon"}
+];
+const R = [
+ {who:"Melcom Stores",kind:"Scan & Pay",ic:"qr-code",c:"green",dir:"out",amt:"500.00",st:"ok",date:"11 Aug",mono:"ME"},
+ {who:"MTN Ghana",kind:"Airtime",ic:"signal",c:"teal",dir:"out",amt:"100.00",st:"failed",date:"11 Aug",mono:"MT"},
+ {who:"My MTN Mobile Money",kind:"Wallet to bank",ic:"wallet",c:"yellow",dir:"in",amt:"452.00",st:"pending",date:"11 Aug",mono:"MM"},
+ {who:"Landlord Properties",kind:"Bank transfer",ic:"landmark",c:"blue",dir:"out",amt:"2,500.00",st:"ok",date:"9 Aug",mono:"LP"},
+ {who:"Employer Ltd",kind:"Salary",ic:"landmark",c:"blue",dir:"in",amt:"4,200.00",st:"ok",date:"8 Aug",mono:"EL"},
+ {who:"K. Mensah",kind:"PAPSS",ic:"globe",c:"pink",dir:"out",amt:"3,500.00",st:"ok",date:"7 Aug",mono:"KM"},
+];
+const arrow = d => d==="in" ? "arrow-down-left" : "arrow-up-right";
+const I = (n,s="") => `<i data-lucide="${n}" ${s}></i>`;
+const cls = t => t.st==="failed"?"fail":t.st==="pending"?"hold":(t.dir==="in"?"in":"");
+const end = t => `<div class="end"><span class="amt ${cls(t)}">${t.dir==="out"?"−":"+"} GHS ${t.amt}</span>${t.st==="ok"?"":`<span class="st">${t.st==="failed"?"Failed":"Pending"}</span>`}</div>`;
+const rowOf = (mark, t, metaPrefix="") => `<div class="row">${mark}<div class="mid"><span class="name">${t.who}</span><span class="meta">${metaPrefix}${t.kind} · ${t.date}</span></div>${end(t)}</div>`;
+const bdg = t => `<span class="badge ${t.dir==="in"?"in":""}">${I(arrow(t.dir))}</span>`;
+
+const tile = (t, inner="") => `<div class="mk" style="border-radius:12px;background:var(--${t.c});color:var(--${t.c}-i)">${I(t.ic)}${inner}</div>`;
+const V = [
+ {n:"1 · Current: round badge on the corner", why:"A white round badge with a small arrow, green when money came in and grey when it went out. Familiar, but it hangs off the tile and the arrow is tiny.",
+  m:t=>tile(t,bdg(t))},
+ {n:"2 · Solid badge", why:"The badge is filled: green with a white arrow for money in, the tile's own ink for money out. Stronger and easier to see at a glance.",
+  m:t=>tile(t,`<span class="badge" style="background:${t.dir==="in"?"var(--success)":"var(--"+t.c+"-i)"};color:#fff;box-shadow:0 0 0 2px var(--card)">${I(arrow(t.dir))}</span>`)},
+ {n:"3 · Badge in the tile's hue", why:"The badge takes the tile's own tint and ink, so it reads as part of the same object. Direction shows in the arrow shape only; calm, but weaker on its own.",
+  m:t=>tile(t,`<span class="badge" style="background:var(--${t.c}-i);color:var(--${t.c});box-shadow:0 0 0 2px var(--card)">${I(arrow(t.dir))}</span>`)},
+ {n:"4 · Arrow inside the tile", why:"No badge: a tiny arrow tucked into the tile's top-right. Nothing sticks out, so it never clips in a tight row.",
+  m:t=>tile(t,`<span style="position:absolute;right:4px;top:4px;display:flex;color:${t.dir==="in"?"var(--success)":"inherit"};opacity:${t.dir==="in"?1:.7}">${I(arrow(t.dir),'style="width:10px;height:10px;stroke-width:2.6"')}</span>`)},
+ {n:"4b · Plus and minus", why:"A plus on money in, a minus on money out, on the corner. It matches the signs already in front of the amounts.",
+  m:t=>tile(t,`<span class="badge ${t.dir==="in"?"in":""}" style="font-size:12px;font-weight:700;line-height:1">${t.dir==="in"?"+":"−"}</span>`)},
+ {n:"5 · Only money in is marked", why:"Most transactions are money out, so mark the exception. A green corner badge appears on credits only; debits are just the tile. The least noise.",
+  m:t=>tile(t,t.dir==="in"?`<span class="badge in" style="background:var(--success);color:#fff;box-shadow:0 0 0 2px var(--card)">${I("arrow-down-left")}</span>`:"")},
+ {n:"6 · Green ring for money in", why:"No glyph at all: a green ring around the tile means money came in. Debits have no ring. The shape of the tile stays pure.",
+  m:t=>`<div class="mk" style="border-radius:12px;background:var(--${t.c});color:var(--${t.c}-i);box-shadow:${t.dir==="in"?"0 0 0 2px var(--card),0 0 0 3.5px var(--success)":"none"}">${I(t.ic)}</div>`},
+ {n:"7 · Colour edge", why:"A slim coloured edge on the tile's left: green for money in. Out has none. Reads like a ledger margin and costs no space.",
+  m:t=>`<div class="mk" style="border-radius:12px;background:var(--${t.c});color:var(--${t.c}-i);overflow:hidden">${I(t.ic)}${t.dir==="in"?`<span style="position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--success)"></span>`:""}</div>`},
+ {n:"8 · Dog-ear corner", why:"A small folded corner in the tile's top-right: green for money in, a neutral fold for out. A paper-receipt feel that fits the ticket pages.",
+  m:t=>`<div class="mk" style="border-radius:12px;background:var(--${t.c});color:var(--${t.c}-i);overflow:hidden">${I(t.ic)}<span style="position:absolute;right:0;top:0;width:13px;height:13px;background:${t.dir==="in"?"var(--success)":"color-mix(in srgb,var(--"+t.c+"-i) 35%,transparent)"};clip-path:polygon(0 0,100% 0,100% 100%)"></span></div>`},
+ {n:"9 · Larger arrow, bottom right, no ring", why:"A bigger bare arrow glyph sitting on the corner with no badge behind it, tinted green or ink. Simple, and the arrow is easier to read than in a badge.",
+  m:t=>tile(t,`<span style="position:absolute;right:-5px;bottom:-5px;display:flex;color:${t.dir==="in"?"var(--success)":"var(--"+t.c+"-i)"};background:var(--card);border-radius:99px;padding:1px">${I(arrow(t.dir),'style="width:15px;height:15px;stroke-width:2.6"')}</span>`)},
+ {n:"10 · Words, not symbols", why:"A tiny In / Out label under the tile. Unmistakable, no decoding, but it adds height and weight to every row.",
+  m:t=>`<div style="display:flex;flex-direction:column;align-items:center;gap:3px">${tile(t)}<span style="font-size:9.5px;letter-spacing:.02em;color:${t.dir==="in"?"var(--success)":"var(--muted)"}">${t.dir==="in"?"IN":"OUT"}</span></div>`},
+];
+
+const root = document.getElementById("root");
+V.forEach(v => {
+  const mk = (k, dir) => `<div style="display:flex;flex-direction:column;align-items:center;gap:6px">${v.m({...k,dir,st:"ok",mono:k.k.slice(0,2).toUpperCase()})}<span style="font-size:10.5px;color:var(--muted)">${k.k} ${dir==="in"?"in":"out"}</span></div>`;
+  const strip = K.slice(0,6).map(k => mk(k,"out")).join("") + K.slice(0,6).map(k => mk(k,"in")).join("");
+  const rows = R.map(t => rowOf(v.m(t), t, v.pre ? v.pre(t) : "")).join("");
+  root.insertAdjacentHTML("beforeend", `<section class="v"><h2>${v.n}</h2><p class="why">${v.why}</p><div class="card"><div class="strip">${strip}</div>${rows}</div></section>`);
+});
+lucide.createIcons();
+</script>
+</body>
+</html>

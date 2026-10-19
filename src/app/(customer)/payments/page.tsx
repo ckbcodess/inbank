@@ -193,7 +193,7 @@ function ActionSection({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex min-h-8 items-center px-1">
-        <h2 className="text-[16px] font-medium tracking-[-0.01em] text-foreground">{title}</h2>
+        <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">{title}</h2>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {actions.map((action) => (

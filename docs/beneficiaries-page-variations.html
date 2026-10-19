@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Beneficiaries page: 5 simpler versions</title>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root { --bg:#f1f1f0; --page:#fafafa; --card:#fff; --fg:#0a0a0a; --muted:#737373; --line:#ececec; --tile:#f4f4f3; --field:#fff; --fieldline:#e4e4e4;
+    --primary:#ffc423; --pfg:#171717; --success:#15803d;
+    --c1:#e0eedd; --c2:#dbeafe; --c3:#f5ebf7; --c4:#ebe8de; --c5:#fce7f3; --c6:#e4f1f4; --i1:#2f6b3c; --i2:#1e4fa0; --i3:#7a3f8a; --i4:#6b5f3a; --i5:#a23464; --i6:#1b6b78; }
+  .dark { --bg:#050505; --page:#0b0b0b; --card:#181818; --fg:#f5f5f5; --muted:#9a9a9a; --line:#262626; --tile:#232323; --field:#181818; --fieldline:#2e2e2e; --success:#4ade80;
+    --c1:#1f3524; --c2:#1b2b4b; --c3:#35283d; --c4:#37321f; --c5:#40233a; --c6:#173238; --i1:#a3dcb0; --i2:#a7c4f2; --i3:#dcb4e8; --i4:#e0d29a; --i5:#f0b3d0; --i6:#8fd3df; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Open Sans",system-ui,sans-serif; background:var(--bg); color:var(--fg); font-size:14px; }
+  header.top { position:sticky; top:0; z-index:9; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 24px; background:var(--page); border-bottom:1px solid var(--line); }
+  header.top h1 { font-size:18px; font-weight:500; margin:0; letter-spacing:-0.02em; } header.top p { margin:2px 0 0; color:var(--muted); font-size:12.5px; }
+  button.theme { border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:10px; padding:8px 14px; cursor:pointer; font:inherit; }
+  main { display:grid; grid-template-columns:repeat(auto-fill,minmax(440px,1fr)); gap:32px; padding:28px; max-width:1600px; margin:0 auto; }
+  section.v h2 { font-size:15px; font-weight:500; margin:0 0 4px; } section.v .why { color:var(--muted); font-size:12.5px; line-height:1.5; margin:0 0 12px; min-height:58px; }
+  .frame { background:var(--page); border:1px solid var(--line); border-radius:20px; padding:22px; display:flex; flex-direction:column; gap:18px; min-height:640px; }
+  .ph { display:flex; align-items:center; justify-content:space-between; } .ph h3 { font-size:20px; font-weight:500; margin:0; letter-spacing:-0.02em; }
+  .btn { border:0; background:var(--primary); color:var(--pfg); border-radius:10px; padding:9px 14px; font:inherit; font-weight:500; display:inline-flex; align-items:center; gap:6px; cursor:pointer; }
+  .btn.ghost { background:transparent; border:1px solid var(--fieldline); color:var(--fg); font-weight:400; }
+  .search { display:flex; align-items:center; gap:10px; background:var(--field); border:1px solid var(--fieldline); border-radius:14px; padding:0 14px; height:46px; color:var(--muted); }
+  .search svg { width:17px; height:17px; } .search span { font-size:14px; }
+  .select { display:inline-flex; align-items:center; gap:8px; background:var(--field); border:1px solid var(--fieldline); border-radius:12px; padding:0 14px; height:46px; font-size:13.5px; }
+  .list { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:6px; }
+  .row { display:flex; align-items:center; gap:12px; padding:11px 10px; border-radius:12px; cursor:pointer; } .row:hover { background:var(--tile); }
+  .av { width:40px; height:40px; border-radius:99px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; flex-shrink:0; }
+  .mid { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; } .nm { font-size:14px; } .dt { font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .chev { color:var(--muted); width:16px; height:16px; }
+  .tabs { display:inline-flex; background:var(--tile); border-radius:12px; padding:4px; width:fit-content; }
+  .tabs button { border:0; background:transparent; color:var(--muted); padding:8px 16px; border-radius:9px; font:inherit; font-size:13px; cursor:pointer; }
+  .tabs button.on { background:var(--card); color:var(--fg); font-weight:500; box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  .head { font-size:12px; color:var(--muted); padding:12px 10px 4px; display:flex; justify-content:space-between; }
+  details { border-bottom:1px solid var(--line); } details:last-child { border-bottom:0; }
+  summary { list-style:none; display:flex; align-items:center; gap:10px; padding:14px 12px; cursor:pointer; font-size:14px; } summary::-webkit-details-marker { display:none; }
+  summary .count { margin-left:auto; color:var(--muted); font-size:12.5px; } summary svg.c { transition:transform .15s; width:16px; height:16px; color:var(--muted); } details[open] summary svg.c { transform:rotate(90deg); }
+  .letter { position:sticky; top:0; background:var(--card); font-size:12px; color:var(--muted); padding:10px 10px 4px; }
+  .rail { display:flex; flex-direction:column; align-items:center; gap:3px; font-size:10px; color:var(--muted); padding-top:6px; }
+  .rail span:hover { color:var(--fg); }
+  .note { font-size:12px; color:var(--muted); text-align:center; padding:4px 0; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div><h1>Beneficiaries page: 5 simpler versions</h1><p>The same 14 people and 3 groups in each. Each version removes something the current page makes you think about.</p></div>
+  <button class="theme" onclick="document.body.classList.toggle('dark')">Light / dark</button>
+</header>
+<main id="root"></main>
+<script>
+const P = [
+ ["Kofi Mensah","MTN Mobile Money · 0244 ••• 677","wallet",2,"KM",1],["Esther Appiah","Stanbic Bank Ghana · 0122 ••• 5566","bank",3,"EA",0],
+ ["Mum (Yaa Gyan)","MTN Mobile Money · 0244 ••• 900","wallet",2,"YG",1],["Landlord Properties","Stanbic Bank Ghana · 0122 ••• 5566","bank",3,"LP",0],
+ ["Akua Mansah","GCB Bank · 0313 ••• 4421","bank",1,"AM",0],["ECG Prepaid","Meter · 0300 ••• 6677","bill",4,"EC",0],
+ ["DStv","Smartcard · 4412 ••• 908","bill",4,"DS",0],["Ghana Water","Account · 0300 ••• 7788","bill",4,"GW",0],
+ ["Abena Osei","Stanbic Bank Ghana · 0044 ••• 9080","bank",3,"AO",0],["Telecel line","Telecel Cash · 0200 ••• 456","wallet",6,"TL",0],
+ ["K. Mensah","KCB Bank Kenya · Kenya","intl",5,"KM",0],["Tema Logistics","Ecobank Ghana · 0554 ••• 2200","bank",3,"TL",0],
+ ["Justice Oduro","Standard Chartered · 0231 ••• 8890","bank",2,"JO",0],["Kumasi Supplies","GCB Bank · 0551 ••• 4455","bank",1,"KS",0],
+];
+const G = [["Family monthly","4 members · GHS 200 each"],["Susu circle","8 members · GHS 500 each"],["Office lunch","6 members · custom split"]];
+const KIND = {wallet:"Mobile Numbers",bank:"Bank Accounts",bill:"Billers",intl:"International"};
+const ic=(n,s="")=>`<i data-lucide="${n}" ${s}></i>`;
+const av=p=>`<div class="av" style="background:var(--c${p[3]});color:var(--i${p[3]})">${p[4]}</div>`;
+const row=p=>`<div class="row">${av(p)}<div class="mid"><span class="nm">${p[0]}</span><span class="dt">${p[1]}</span></div>${p[5]?ic("star",'class="chev" style="fill:currentColor"'):""}</div>`;
+const grow=g=>`<div class="row"><div class="av" style="background:var(--tile)">${ic("users",'style="width:18px;height:18px"')}</div><div class="mid"><span class="nm">${g[0]}</span><span class="dt">${g[1]}</span></div>${ic("chevron-right",'class="chev"')}</div>`;
+const search=t=>`<div class="search">${ic("search")}<span>${t}</span></div>`;
+const head=(t,btn)=>`<div class="ph"><h3>${t}</h3>${btn||`<button class="btn">${ic("plus",'style="width:15px;height:15px"')}Add</button>`}</div>`;
+const sorted=[...P].sort((a,b)=>a[0].localeCompare(b[0]));
+
+const V = [
+ {n:"1 · One list, one search", why:"Strip everything off: no tabs, no filters, no groups of groups. A search box and one A to Z list. Payment groups are a single row at the top that opens its own page.",
+  h:()=>head("Beneficiaries")+search("Search by name, bank or number")+`<div class="list"><div class="row" style="border-bottom:1px solid var(--line);border-radius:12px 12px 0 0"><div class="av" style="background:var(--tile)">${ic("users",'style="width:18px;height:18px"')}</div><div class="mid"><span class="nm">Payment groups</span><span class="dt">3 groups</span></div>${ic("chevron-right",'class="chev"')}</div>${sorted.map(row).join("")}</div>`},
+ {n:"2 · Two tabs, one filter", why:"Beneficiaries and Groups are the only two things, so they are the only two tabs. Inside Beneficiaries there is one flat list and a single 'All types' dropdown beside the search.",
+  h:()=>head("Beneficiaries")+`<div class="tabs" id="t2"><button class="on">Beneficiaries <span style="opacity:.6">14</span></button><button>Groups <span style="opacity:.6">3</span></button></div><div style="display:flex;gap:8px">${`<div class="search" style="flex:1">${ic("search")}<span>Search</span></div>`}<div class="select">All types ${ic("chevron-down",'style="width:15px;height:15px"')}</div></div><div class="list" id="l2">${sorted.map(row).join("")}</div>`},
+ {n:"3 · Collapsed by kind", why:"The list is folded into five lines with counts: Bank Accounts 6, Mobile Numbers 3, and so on. Nothing is open until you open it, so the page is short and the kinds are visible at once.",
+  h:()=>head("Beneficiaries")+search("Search")+`<div class="list">${Object.entries(KIND).map(([k,l])=>`<details><summary>${ic("chevron-right",'class="c"')}${l}<span class="count">${P.filter(p=>p[2]===k).length}</span></summary>${P.filter(p=>p[2]===k).map(row).join("")}</details>`).join("")}<details><summary>${ic("chevron-right",'class="c"')}Groups<span class="count">3</span></summary>${G.map(grow).join("")}</details></div>`},
+ {n:"4 · Search first, recent below", why:"The page opens on a big search and the five people you paid most recently. Everyone else appears when you search or tap See all. For someone with a few hundred beneficiaries it is the shortest path to the one they want.",
+  h:()=>head("Beneficiaries")+search("Who do you want to pay?")+`<div class="head" style="padding-left:2px"><span>Recent</span></div><div class="list">${P.slice(0,5).map(row).join("")}</div><div class="note"><a style="color:var(--fg);text-decoration:underline;cursor:pointer">See all 14 beneficiaries and 3 groups</a></div>`},
+ {n:"5 · Contacts A to Z", why:"Like a phone's contacts: a sticky letter for each group of names and a small letter rail on the right to jump. Familiar, scales to a long list, and needs no filters.",
+  h:()=>{let cur="",o="";sorted.forEach(p=>{const l=p[0][0].toUpperCase();if(l!==cur){cur=l;o+=`<div class="letter">${l}</div>`;}o+=row(p);});return head("Beneficiaries")+search("Search")+`<div style="display:flex;gap:6px"><div class="list" style="flex:1;max-height:440px;overflow:auto;padding-top:0">${o}</div><div class="rail">${[..."ADEGJKLMT"].map(c=>`<span>${c}</span>`).join("")}</div></div>`;}},
+];
+const root=document.getElementById("root");
+V.forEach(v=>root.insertAdjacentHTML("beforeend",`<section class="v"><h2>${v.n}</h2><p class="why">${v.why}</p><div class="frame">${v.h()}</div></section>`));
+// tab behaviour for variant 2
+const t2=document.getElementById("t2"),l2=document.getElementById("l2");
+t2.querySelectorAll("button").forEach((b,i)=>b.onclick=()=>{t2.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");l2.innerHTML=i?G.map(grow).join(""):sorted.map(row).join("");lucide.createIcons();});
+lucide.createIcons();
+</script>
+</body>
+</html>

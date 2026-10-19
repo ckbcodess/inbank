@@ -50,7 +50,7 @@ function StatTile({
       {loading ? (
         <Bone className="h-5 w-24 sm:h-6 sm:w-32" />
       ) : (
-        <span className={`tabular shrink-0 text-[15px] leading-none tracking-[-0.01em] sm:text-[22px] ${tone === "positive" ? "text-success" : "text-foreground"}`}>
+        <span className={`tabular shrink-0 text-[15px] leading-none tracking-[var(--ls-tight)] sm:text-[22px] ${tone === "positive" ? "text-success" : "text-foreground"}`}>
           {value}
         </span>
       )}

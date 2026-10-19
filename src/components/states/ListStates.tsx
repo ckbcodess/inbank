@@ -51,7 +51,7 @@ export function TrueEmptyState({
       <div className="mb-8 text-muted-foreground/60 flex items-center justify-center">
         {illustration ? <StateIllustration id={illustration} fallback={fallbackIcon} /> : fallbackIcon}
       </div>
-      <p className="text-[18px] sm:text-[20px] font-medium tracking-[-0.01em] text-foreground">{title}</p>
+      <p className="text-[18px] sm:text-[20px] font-medium tracking-[var(--ls-tight)] text-foreground">{title}</p>
       {description && <p className="mt-2.5 max-w-xl text-[14px] leading-relaxed text-muted-foreground">{description}</p>}
       {action && <div className="mt-7">{action}</div>}
     </div>

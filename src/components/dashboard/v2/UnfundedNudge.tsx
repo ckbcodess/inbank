@@ -37,7 +37,7 @@ export function UnfundedNudge({ onFundClick, className }: UnfundedNudgeProps) {
         </div>
 
         <div className="flex min-w-0 flex-col gap-0.5">
-          <h3 className="text-[15.5px] tracking-[-0.01em] text-foreground sm:text-[16.5px]">
+          <h3 className="text-[15.5px] tracking-[var(--ls-tight)] text-foreground sm:text-[16.5px]">
             Fund your virtual account to get started
           </h3>
           <p className="text-[13px] leading-relaxed text-muted-foreground sm:text-[13.5px]">

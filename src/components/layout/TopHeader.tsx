@@ -223,7 +223,7 @@ export default function TopHeader({
                 {initials}
               </div>
               <div className="flex min-w-0 flex-col">
-                <span className="truncate text-[14.5px] font-medium text-foreground tracking-[-0.01em]">{actor.name}</span>
+                <span className="truncate text-[14.5px] font-medium text-foreground tracking-[var(--ls-tight)]">{actor.name}</span>
                 <span className="truncate text-[12px] text-muted-foreground">{actor.email}</span>
               </div>
             </div>
@@ -302,8 +302,9 @@ export default function TopHeader({
             <DropdownMenuSeparator className="my-1" />
 
             <DropdownMenuItem
+              variant="destructive"
               onClick={() => setLogoutOpen(true)}
-              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-destructive hover:bg-destructive/10 transition-colors"
+              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg transition-colors"
             >
               <span className="flex items-center gap-3">
                 <LogOut size={16} strokeWidth={1.8} className="shrink-0" aria-hidden="true" />

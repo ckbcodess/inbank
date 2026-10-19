@@ -10,6 +10,10 @@
  * hide-amounts toggle and uses semantic tokens only.
  */
 
+import { TransactionStatusText } from "@/components/StatusBadge";
+import { amountStyling, hasStatusWord } from "@/lib/transaction-display";
+import { TransactionMark } from "@/components/transactions/TransactionMark";
+import { getTransactionType } from "@/lib/transaction-type";
 import { NetworkLogo } from "@/components/cards/NetworkLogo";
 import Link from "next/link";
 import { useId, useState } from "react";
@@ -18,7 +22,6 @@ import {
   EyeOff,
   ArrowUpRight,
   ArrowDownRight,
-  ArrowDownLeft,
   ChevronDown,
   ChevronRight,
   Lock,
@@ -27,7 +30,10 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { maskDigits } from "@/components/providers/AmountVisibilityProvider";
-import { FX_RATES, FX_PUBLISHED_AT, type Account, type Transaction, type PaymentCard } from "@/lib/mock-data";
+import { FX_RATES, FX_PUBLISHED_AT, setCardStatus, type Account, type Transaction, type PaymentCard } from "@/lib/mock-data";
+import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
+import { BlockReasonDialog } from "@/components/cards/BlockReasonDialog";
+import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
 import type {
   BalancePoint,
   Slice,
@@ -157,7 +163,7 @@ export function BalanceHeadline({
           {showAmounts ? <Eye size={14} strokeWidth={1.8} /> : <EyeOff size={14} strokeWidth={1.8} />}
         </button>
       </div>
-      <div className={cn("tabular leading-[0.95] tracking-[-0.03em] text-foreground", sizes[size])}>
+      <div className={cn("tabular leading-[0.95] tracking-[var(--ls-display)] text-foreground", sizes[size])}>
         {showAmounts ? (
           <>
             GHS {intPart}
@@ -353,7 +359,7 @@ export function AccountRows({
               <span
                 className={cn(
                   "truncate text-foreground transition-colors group-hover:text-muted-foreground",
-                  size === "lg" ? "text-[17px] tracking-[-0.01em]" : "text-[14px]",
+                  size === "lg" ? "text-[17px] tracking-[var(--ls-tight)]" : "text-[14px]",
                 )}
               >
                 {shortName(a.name)}
@@ -608,65 +614,54 @@ export function RecentTransactions({
   showAmounts: boolean;
   limit?: number;
 }) {
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
+
   if (txns.length === 0) {
     return (
       <p className="py-8 text-center text-[13px] text-muted-foreground">No activity yet.</p>
     );
   }
   return (
-    <ul className="flex flex-col gap-0.5">
-      {txns.slice(0, limit).map((t) => {
-        const credit = t.direction === "credit";
-        const failed = typeof t.state === "string" && t.state.startsWith("failed");
-        const pending = t.state === "pending";
-        return (
-          <li key={t.id}>
-            <Link
-              href={`/transactions/${t.id}`}
-              className="group flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition-colors hover:bg-item-hover -mx-2"
-            >
-              <span
-                className={cn(
-                  "flex size-9 shrink-0 items-center justify-center rounded-full transition-transform group-hover:scale-105",
-                  credit ? "bg-pill-success text-success" : "bg-tile text-muted-foreground",
-                )}
+    <>
+      <ul className="flex flex-col gap-0.5">
+        {txns.slice(0, limit).map((t) => {
+          return (
+            <li key={t.id}>
+              <button
+                type="button"
+                onClick={() => setSelectedTx(t)}
+                className="group flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition-colors hover:bg-item-hover -mx-2 cursor-pointer"
               >
-                {credit ? (
-                  <ArrowDownLeft className="size-4 stroke-[2]" />
-                ) : (
-                  <ArrowUpRight className="size-4 stroke-[2]" />
-                )}
-              </span>
-              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="truncate text-[13.5px] font-medium text-foreground">
-                  {t.counterparty || t.description}
+                <TransactionMark transaction={t} />
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <span className="truncate text-[13.5px] font-medium text-foreground">
+                    {t.counterparty || t.description}
+                  </span>
+                  <span className="text-[12px] text-muted-foreground">{getTransactionType(t)} · <span className="tabular">{friendlyDate(t.date)}</span></span>
                 </span>
-                <span className="text-[12px] text-muted-foreground tabular">{friendlyDate(t.date)}</span>
-              </span>
-              <span className="flex shrink-0 flex-col items-end gap-0.5">
-                <span
-                  className={cn(
-                    "tabular text-[13.5px] font-medium",
-                    credit ? "text-success" : "text-foreground",
+                <span className="flex shrink-0 flex-col items-end gap-0.5">
+                  <span className={cn("tabular text-[13.5px]", amountStyling(t).colorClass)}>
+                    {amountStyling(t).prefix}
+                    {fmtGHS(Math.abs(t.amount), showAmounts)}
+                  </span>
+                  {/* A word only when it isn't Completed; a failed payment is amber, not red */}
+                  {hasStatusWord(t) && (
+                    <TransactionStatusText state={t.state} className="text-[11px]" />
                   )}
-                >
-                  {credit ? "+ " : "− "}
-                  {fmtGHS(Math.abs(t.amount), showAmounts)}
                 </span>
-                <span
-                  className={cn(
-                    "text-[11px]",
-                    failed ? "text-destructive-text font-medium" : pending ? "text-warning-text" : "text-muted-foreground",
-                  )}
-                >
-                  {failed ? "Failed" : pending ? "Pending" : t.category || "Completed"}
-                </span>
-              </span>
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      <TransactionDetailSheet
+        transaction={selectedTx}
+        open={Boolean(selectedTx)}
+        onOpenChange={(o) => {
+          if (!o) setSelectedTx(null);
+        }}
+      />
+    </>
   );
 }
 
@@ -685,7 +680,7 @@ export function SpendDetail({
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-1">
         <span className="text-[12px] text-muted-foreground">Total spend</span>
-        <span className="tabular text-[24px] leading-none tracking-[-0.02em] text-foreground">
+        <span className="tabular text-[24px] leading-none tracking-[var(--ls-heading)] text-foreground">
           {fmtGHS(breakdown.total, showAmounts)}
         </span>
         <span className="text-[12px] text-muted-foreground tabular">
@@ -708,6 +703,8 @@ export function CardsMini({
 }) {
   const { t } = useTranslation();
   const [blocked, setBlocked] = useState<Record<string, boolean>>({});
+  const [reasonFor, setReasonFor] = useState<PaymentCard | null>(null);
+  const [unblockFor, setUnblockFor] = useState<PaymentCard | null>(null);
   const shown = cards.slice(0, limit);
 
   if (shown.length === 0) {
@@ -717,19 +714,23 @@ export function CardsMini({
   const setCardBlocked = (id: string, value: boolean) =>
     setBlocked((prev) => ({ ...prev, [id]: value }));
 
-  // Blocking is a safety move, so it is one tap and instantly reversible.
-  const toggle = (c: PaymentCard, isBlocked: boolean) => {
-    const next = !isBlocked;
-    setCardBlocked(c.id, next);
-    toast(next ? `${c.name} is blocked` : `${c.name} is unblocked`, {
-      description: next
-        ? "New payments stop until you unblock it. Nothing else changes."
-        : "You can use it for payments right away.",
-      action: { label: t("common.undo", "Undo"), onClick: () => setCardBlocked(c.id, isBlocked) },
-    });
+  // The same rules as the card page: blocking is instant (it only ever makes the card safer) and then asks why;
+  // unblocking asks for the code first. Both write to the shared card store, so every screen agrees.
+
+  const block = (c: PaymentCard) => {
+    setCardBlocked(c.id, true);
+    setCardStatus(c.id, "Blocked");
+    setReasonFor(c);
+  };
+
+  const unblock = (c: PaymentCard) => {
+    setCardBlocked(c.id, false);
+    setCardStatus(c.id, "Active");
+    toast.success("Card unblocked and active");
   };
 
   return (
+    <>
     <ul className="flex flex-col">
       {shown.map((c) => {
         const isBlocked = blocked[c.id] ?? c.status === "Blocked";
@@ -746,7 +747,7 @@ export function CardsMini({
             </span>
             <button
               type="button"
-              onClick={() => toggle(c, isBlocked)}
+              onClick={() => (isBlocked ? setUnblockFor(c) : block(c))}
               aria-pressed={isBlocked}
               className={cn(
                 "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px] transition-colors cursor-pointer",
@@ -762,6 +763,21 @@ export function CardsMini({
         );
       })}
     </ul>
+
+    <TransactionOtpModal
+      open={Boolean(unblockFor)}
+      onOpenChange={(o) => !o && setUnblockFor(null)}
+      onSuccess={() => {
+        if (unblockFor) unblock(unblockFor);
+        setUnblockFor(null);
+      }}
+      title="Authorize Unblock"
+    />
+    <BlockReasonDialog
+      open={Boolean(reasonFor)}
+      onOpenChange={(o) => !o && setReasonFor(null)}
+    />
+    </>
   );
 }
 

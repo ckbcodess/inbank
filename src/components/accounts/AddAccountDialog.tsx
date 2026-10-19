@@ -215,7 +215,7 @@ export default function AddAccountDialog({
               <div className="flex size-14 items-center justify-center rounded-2xl bg-muted text-foreground">
                 <Landmark size={26} strokeWidth={1.7} aria-hidden="true" />
               </div>
-              <p className="text-[15px] tracking-[-0.01em] text-foreground">
+              <p className="text-[15px] tracking-[var(--ls-tight)] text-foreground">
                 We didn&apos;t find a GCB account under your Ghana Card
               </p>
               <p className="max-w-[340px] text-[13.5px] leading-relaxed text-muted-foreground">
@@ -251,7 +251,7 @@ export default function AddAccountDialog({
                         <Landmark size={20} strokeWidth={1.8} aria-hidden="true" />
                       </TileChip>
                       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <span className="truncate text-[15px] font-medium tracking-[-0.01em] text-foreground">
+                        <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">
                           {account.name}
                         </span>
                         <span className="truncate text-[13px] text-muted-foreground tabular">
@@ -288,7 +288,7 @@ export default function AddAccountDialog({
                     <Wallet size={14} strokeWidth={1.8} aria-hidden="true" />
                     GCB Virtual Account
                   </span>
-                  <span className="text-[20px] tracking-[-0.02em] text-foreground tabular">
+                  <span className="text-[20px] tracking-[var(--ls-heading)] text-foreground tabular">
                     {formatMoney(wallet.balance, "GHS", true)}
                   </span>
                 </span>
@@ -319,7 +319,7 @@ export default function AddAccountDialog({
               <div className="flex size-14 items-center justify-center rounded-2xl bg-success/10 text-success">
                 <CheckCircle2 size={30} strokeWidth={1.8} aria-hidden="true" />
               </div>
-              <p className="text-[17px] tracking-[-0.01em] text-foreground">
+              <p className="text-[17px] tracking-[var(--ls-tight)] text-foreground">
                 {pickedAccounts.length > 1
                   ? `${pickedAccounts.length} Accounts Added`
                   : `${(added ?? pickedAccounts[0])?.name ?? "Account"} is added`}

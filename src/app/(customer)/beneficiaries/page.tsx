@@ -13,13 +13,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import {
-  CheckCircle2,
-  ChevronDown,
+  ChevronRight,
   Globe,
   Landmark,
-  LayoutGrid,
-  List,
   Pencil,
   Plus,
   Search,
@@ -34,7 +32,6 @@ import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/layout/PageHeader";
 import { Badge } from "@/components/ui/badge";
-import { AppliedFilters, FilterPanel, type FilterGroup } from "@/components/ui/filter-panel";
 import { SimpleTooltip } from "@/components/ui/tooltip";
 import {
   Select,
@@ -49,12 +46,21 @@ import {
 import { BILLERS } from "@/lib/mock-data";
 import {
   Dialog,
-  DialogBody,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetBody,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { GroupDetailSheet } from "@/components/beneficiaries/GroupDetailSheet";
+import { BeneficiaryDetailSheet } from "@/components/beneficiaries/BeneficiaryDetailSheet";
 import {
   FilteredEmptyState,
   TrueEmptyState,
@@ -68,15 +74,13 @@ import { useGroupsStore, type PaymentGroup } from "@/lib/groups-store";
 import { useSession } from "@/lib/session-store";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import EditGroupModal from "@/components/payments/EditGroupModal";
-import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { PhoneInput } from "@/components/ui/phone-input";
 
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
-type ActiveTab = "people" | "billers" | "groups";
+type ActiveTab = "people" | "groups";
 type TypeFilter = "all" | TransactionType;
-type GroupByOption = "type" | "none";
 
 interface TypeMeta {
   label: string;
@@ -304,19 +308,6 @@ const INITIAL_FORM: FormState = {
   nickname: "",
 };
 
-function initials(name: string) {
-  return (
-    name
-      .replace(/[^a-zA-Z ]/g, "")
-      .split(" ")
-      .filter(Boolean)
-      .map((w) => w[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase() || "#"
-  );
-}
-
 export default function BeneficiariesPage() {
   const activeProfile = useSession((s) => s.activeProfile);
   const isCorporate = activeProfile?.kind === "CORPORATE";
@@ -330,14 +321,16 @@ export default function BeneficiariesPage() {
 
   const { groups, deleteGroup } = useGroupsStore();
 
-  // 3 Major Segmented Control Tabs (People, Billers, Groups)
+  // Two tabs: Beneficiaries (people and billers together) and Groups
   const [activeTab, setActiveTab] = useState<ActiveTab>("people");
 
   // Open a specific tab when deep-linked (e.g. "Manage groups" → ?tab=groups).
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const t = params.get("tab");
-    if (t === "people" || t === "billers" || t === "groups") setActiveTab(t);
+    if (t === "groups") setActiveTab("groups");
+    // The old Billers tab is now the Bills filter on the one list
+    else if (t === "billers") setTypeFilter("bill");
 
     const editId = params.get("edit");
     if (editId) {
@@ -353,12 +346,9 @@ export default function BeneficiariesPage() {
   // Search and Filters
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
-  const [groupBy, setGroupBy] = useState<GroupByOption>("type");
 
-  // Collapsible Dropdown States
-  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
-
-  // Modal States
+  // Modal & Sheet States
+  const [selectedBeneficiary, setSelectedBeneficiary] = useState<BeneficiaryRecord | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
   const [removeId, setRemoveId] = useState<string | null>(null);
@@ -384,40 +374,24 @@ export default function BeneficiariesPage() {
   const [createGroupModalOpen, setCreateGroupModalOpen] = useState(false);
   const [editGroupModalOpen, setEditGroupModalOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<PaymentGroup | null>(null);
+  const [selectedGroup, setSelectedGroup] = useState<PaymentGroup | null>(null);
   const [removeGroupId, setRemoveGroupId] = useState<string | null>(null);
 
-  // Split beneficiaries into People and Billers
-  const peopleBeneficiaries = useMemo(() => {
-    return beneficiaries.filter((b) => PEOPLE_TYPES.includes(b.transactionType));
+  // How many of each kind there are: the type dropdown only offers kinds that exist
+  const typeCounts = useMemo(() => {
+    const out: Partial<Record<TransactionType, number>> = {};
+    for (const b of beneficiaries) out[b.transactionType] = (out[b.transactionType] ?? 0) + 1;
+    return out;
   }, [beneficiaries]);
-
-  const billerBeneficiaries = useMemo(() => {
-    return beneficiaries.filter((b) => BILLER_TYPES.includes(b.transactionType));
-  }, [beneficiaries]);
-
-  const counts = useMemo(() => {
-    return {
-      people: peopleBeneficiaries.length,
-      billers: billerBeneficiaries.length,
-      groups: groups.length,
-      bank: beneficiaries.filter((b) => b.transactionType === "bank").length,
-      wallet: beneficiaries.filter((b) => b.transactionType === "wallet").length,
-      proxy: beneficiaries.filter((b) => b.transactionType === "proxy").length,
-      bill: beneficiaries.filter((b) => b.transactionType === "bill").length,
-      airtime: beneficiaries.filter((b) => b.transactionType === "airtime").length,
-      swift: beneficiaries.filter((b) => b.transactionType === "swift").length,
-      papss: beneficiaries.filter((b) => b.transactionType === "papss").length,
-    };
-  }, [beneficiaries, peopleBeneficiaries, billerBeneficiaries, groups]);
+  const kindsPresent = (Object.keys(TYPE_CONFIG) as TransactionType[]).filter((t) => (typeCounts[t] ?? 0) > 0);
 
   const q = query.trim().toLowerCase();
 
-  // Filtered dataset according to active tab
+  // One flat list, A to Z
   const filteredList = useMemo(() => {
     if (activeTab === "groups") return [];
-    const source = activeTab === "people" ? peopleBeneficiaries : billerBeneficiaries;
 
-    return source
+    return beneficiaries
       .filter((b) => {
         if (typeFilter !== "all" && b.transactionType !== typeFilter) return false;
         if (!q) return true;
@@ -434,7 +408,7 @@ export default function BeneficiariesPage() {
         );
       })
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [activeTab, peopleBeneficiaries, billerBeneficiaries, typeFilter, q]);
+  }, [activeTab, beneficiaries, typeFilter, q]);
 
   // Filtered groups for Groups tab
   const filteredGroups = useMemo(() => {
@@ -451,21 +425,6 @@ export default function BeneficiariesPage() {
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [activeTab, groups, q]);
 
-  const toggleSectionCollapse = (key: string) => {
-    setCollapsedSections((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  };
-
-  const expandAllSections = () => setCollapsedSections(new Set());
-  const collapseAllSections = () => {
-    const allKeys = activeTab === "people" ? PEOPLE_TYPES : BILLER_TYPES;
-    setCollapsedSections(new Set(allKeys));
-  };
-
   // "Add someone" from elsewhere (e.g. the dashboard's Pay again) → ?add=1
   // opens the same form the hub uses.
   useEffect(() => {
@@ -473,14 +432,6 @@ export default function BeneficiariesPage() {
     setForm(INITIAL_FORM);
     setFormOpen(true);
   }, []);
-
-  function openAddForType(type: TransactionType) {
-    setForm({
-      ...INITIAL_FORM,
-      transactionType: type,
-    });
-    setFormOpen(true);
-  }
 
   function openEdit(b: BeneficiaryRecord) {
     setForm({
@@ -601,20 +552,6 @@ export default function BeneficiariesPage() {
     setTypeFilter("all");
   };
 
-  const filterGroups: FilterGroup[] = [
-    {
-      id: "method",
-      kind: "single",
-      label: "Method",
-      options: (activeTab === "people" ? PEOPLE_TYPES : BILLER_TYPES)
-        .filter((t) => counts[t] > 0 || t === typeFilter)
-        .map((t) => ({ value: t, label: `${TYPE_CONFIG[t].plural} (${counts[t]})` })),
-      value: typeFilter,
-      onChange: (v) => setTypeFilter(v as TypeFilter),
-      chipLabel: (v) => TYPE_CONFIG[v as TransactionType]?.plural ?? v,
-    },
-  ];
-
   // Render a beneficiary list item
   function renderBeneficiaryRow(b: BeneficiaryRecord) {
     const config = TYPE_CONFIG[b.transactionType] || TYPE_CONFIG.bank;
@@ -629,43 +566,32 @@ export default function BeneficiariesPage() {
     return (
       <li
         key={b.id}
-        className="flex items-center justify-between gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-muted/50 sm:px-4"
+        onClick={() => setSelectedBeneficiary(b)}
+        className="group flex items-center justify-between gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-muted/50 cursor-pointer sm:px-4"
       >
         <div className="flex min-w-0 flex-1 items-center gap-3.5">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted/70 text-foreground text-[13px] font-medium select-none">
-            {b.transactionType === "bank" ? (
-              <span className="tabular">{initials(b.name)}</span>
-            ) : (
-              <Icon size={17} strokeWidth={1.8} className="text-muted-foreground" />
-            )}
-          </span>
+          <PayeeAvatar
+            name={b.name}
+            icon={b.transactionType === "bill" || b.transactionType === "airtime" ? Icon : undefined}
+          />
 
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="truncate text-[14px] font-medium text-foreground leading-snug">{b.name}</span>
-              {b.verified ? (
-                <CheckCircle2
-                  size={13}
-                  strokeWidth={2}
-                  className="shrink-0 text-success-text"
-                  aria-label="Verified"
-                />
-              ) : (
-                <Badge variant="warning" className="text-[10px] py-0 px-1.5">Pending</Badge>
-              )}
+              {/* A tick on every row says nothing; only the exception is marked */}
+              {!b.verified && <Badge variant="warning" className="text-[10px] py-0 px-1.5">Pending approval</Badge>}
             </div>
             <div className="mt-0.5 flex items-center gap-2 text-[12px] text-muted-foreground tabular flex-wrap">
               <span>{b.detail}</span>
-              {groupBy === "none" && (
-                <span className="rounded-md bg-muted px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground">
-                  {config.label}
-                </span>
-              )}
             </div>
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center gap-2.5 text-muted-foreground">
+        {/* Pay, Edit and Remove appear on hover or keyboard focus (always shown where there is no hover, as on touch) */}
+        <div
+          className="hidden shrink-0 items-center gap-2.5 text-muted-foreground [&>*]:shrink-0 [@media(hover:hover)]:flex transition-[width,opacity,margin] duration-reveal ease-settle focus-within:opacity-100 [@media(hover:hover)]:w-0 [@media(hover:hover)]:overflow-hidden [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:ml-3 [@media(hover:hover)]:group-hover:w-[92px] [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:focus-within:ml-3 [@media(hover:hover)]:focus-within:w-[92px]"
+          onClick={(e) => e.stopPropagation()}
+        >
           <SimpleTooltip content={`Send to ${b.name}`}>
             <Link
               href={sendHref}
@@ -701,6 +627,7 @@ export default function BeneficiariesPage() {
             </button>
           </SimpleTooltip>
         </div>
+        <ChevronRight size={18} strokeWidth={1.7} className="shrink-0 text-muted-foreground [@media(hover:hover)]:hidden" aria-hidden />
       </li>
     );
   }
@@ -715,17 +642,12 @@ export default function BeneficiariesPage() {
     return (
       <li
         key={g.id}
-        className="flex items-center justify-between gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-muted/50 cursor-pointer sm:px-4"
-        onClick={() => {
-          setEditingGroup(g);
-          setEditGroupModalOpen(true);
-        }}
+        className="group flex items-center justify-between gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-muted/50 cursor-pointer sm:px-4"
+        onClick={() => setSelectedGroup(g)}
       >
         {/* Left: Brand-tinted Group Avatar + Group Name & Member Count */}
         <div className="flex items-center gap-3.5 min-w-0">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 dark:bg-primary/20 text-primary text-[13px] select-none">
-            {initials(g.name)}
-          </div>
+          <PayeeAvatar name={g.name} />
 
           <div className="flex flex-col min-w-0">
             <span className="truncate text-[14px] text-foreground leading-snug">
@@ -738,8 +660,8 @@ export default function BeneficiariesPage() {
         </div>
 
         {/* Right: Total Amount + Per-member Split + Minimal Action Icons */}
-        <div className="flex items-center gap-5 sm:gap-6 shrink-0">
-          <div className="flex flex-col text-right">
+        <div className="flex items-center gap-5 sm:gap-6 shrink-0 [@media(hover:hover)]:gap-0">
+          <div className="flex flex-col text-right ">
             <span className="text-[14px] text-foreground tabular-nums numorainput leading-snug">
               GHS {totalAmt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
@@ -750,7 +672,11 @@ export default function BeneficiariesPage() {
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5 text-muted-foreground shrink-0" onClick={(e) => e.stopPropagation()}>
+          {/* The same as a beneficiary row: the actions show on hover or focus, and always on touch */}
+          <div
+            className="hidden items-center gap-2.5 text-muted-foreground shrink-0 [&>*]:shrink-0 [@media(hover:hover)]:flex transition-[width,opacity,margin] duration-reveal ease-settle focus-within:opacity-100 [@media(hover:hover)]:w-0 [@media(hover:hover)]:overflow-hidden [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:ml-3 [@media(hover:hover)]:group-hover:w-[92px] [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:focus-within:ml-3 [@media(hover:hover)]:focus-within:w-[92px]"
+            onClick={(e) => e.stopPropagation()}
+          >
             <SimpleTooltip content={`Send to ${g.name}`}>
               <Link
                 href={`/payments/send?rail=group&group=${encodeURIComponent(g.name)}`}
@@ -790,11 +716,10 @@ export default function BeneficiariesPage() {
             </SimpleTooltip>
           </div>
         </div>
+        <ChevronRight size={18} strokeWidth={1.7} className="shrink-0 text-muted-foreground [@media(hover:hover)]:hidden" aria-hidden />
       </li>
     );
   }
-
-  const activeRailList = activeTab === "people" ? PEOPLE_TYPES : BILLER_TYPES;
 
   return (
     <div className="flex flex-col gap-6">
@@ -814,81 +739,50 @@ export default function BeneficiariesPage() {
           ) : (
             <Button
               onClick={() => {
-                setForm({
-                  ...INITIAL_FORM,
-                  transactionType: activeTab === "billers" ? "bill" : "bank",
-                });
+                setForm({ ...INITIAL_FORM, transactionType: "bank" });
                 setFormOpen(true);
               }}
               className="shrink-0"
             >
               <Plus size={15} strokeWidth={2} />
-              {activeTab === "billers" ? "Add biller" : "Add beneficiary"}
+              Add beneficiary
             </Button>
           )
         }
       />
 
-      {/* 3 Major Segmented Tabs: People, Billers, Groups (Figma Node 1374:35963) */}
+      {/* Two tabs: Beneficiaries and Groups */}
       <div className="flex items-center justify-between">
         <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-chip p-1">
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab("people");
-              setTypeFilter("all");
-            }}
-            className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition cursor-pointer ${
-              activeTab === "people"
-                ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
-                : "text-chip-foreground hover:text-chip-selected-foreground"
-            }`}
-          >
-            <span>People</span>
-            <span className="text-[11px] text-muted-foreground font-normal tabular">
-              {counts.people}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab("billers");
-              setTypeFilter("all");
-            }}
-            className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition cursor-pointer ${
-              activeTab === "billers"
-                ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
-                : "text-chip-foreground hover:text-chip-selected-foreground"
-            }`}
-          >
-            <span>Billers</span>
-            <span className="text-[11px] text-muted-foreground font-normal tabular">
-              {counts.billers}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              setActiveTab("groups");
-              setTypeFilter("all");
-            }}
-            className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition cursor-pointer ${
-              activeTab === "groups"
-                ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
-                : "text-chip-foreground hover:text-chip-selected-foreground"
-            }`}
-          >
-            <span>Groups</span>
-            <span className="text-[11px] text-muted-foreground font-normal tabular">
-              {counts.groups}
-            </span>
-          </button>
+          {(
+            [
+              { id: "people", label: "Beneficiaries", count: beneficiaries.length },
+              { id: "groups", label: "Groups", count: groups.length },
+            ] as const
+          ).map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => {
+                setActiveTab(t.id);
+                setTypeFilter("all");
+                setQuery("");
+              }}
+              aria-pressed={activeTab === t.id}
+              className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition cursor-pointer ${
+                activeTab === t.id
+                  ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
+                  : "text-chip-foreground hover:text-chip-selected-foreground"
+              }`}
+            >
+              <span>{t.label}</span>
+              <span className="text-[11px] text-muted-foreground font-normal tabular">{t.count}</span>
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Full-width Search Bar with the Filters button beside it */}
+      {/* Search, with one type dropdown beside it */}
       <div className="flex w-full items-center gap-2">
         <div className="relative flex-1">
           <Search
@@ -901,9 +795,7 @@ export default function BeneficiariesPage() {
             onChange={(e) => setQuery(e.target.value)}
             placeholder={
               activeTab === "people"
-                ? "Search by name, account number, phone, or proxy..."
-                : activeTab === "billers"
-                ? "Search by utility provider, meter number, or network..."
+                ? "Search by name, bank, number or biller"
                 : "Search by group title, description, or member name..."
             }
             className="pl-11 pr-10"
@@ -920,220 +812,97 @@ export default function BeneficiariesPage() {
           )}
         </div>
 
-        {activeTab !== "groups" && (
-          <>
-            <FilterPanel groups={filterGroups} onClear={() => setTypeFilter("all")} className="h-12 px-4" />
-            {/* View: flat list or grouped by rail */}
-            <div role="group" aria-label="View" className="inline-flex items-center rounded-xl bg-chip p-1">
-              {(
-                [
-                  { value: "none", label: "Flat List", Icon: List },
-                  { value: "type", label: "Grouped by Method", Icon: LayoutGrid },
-                ] as const
-              ).map(({ value, label, Icon }) => {
-                const on = groupBy === value;
-                return (
-                  <SimpleTooltip key={value} content={label}>
-                    <button
-                      type="button"
-                      aria-pressed={on}
-                      aria-label={label}
-                      onClick={() => setGroupBy(value)}
-                      className={cn(
-                        "flex size-10 cursor-pointer items-center justify-center rounded-lg transition-colors duration-hover ease-settle",
-                        on
-                          ? "bg-chip-selected text-chip-selected-foreground shadow-xs"
-                          : "text-chip-foreground hover:text-chip-selected-foreground",
-                      )}
-                    >
-                      <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
-                    </button>
-                  </SimpleTooltip>
-                );
-              })}
-            </div>
-          </>
+        {activeTab === "people" && kindsPresent.length > 1 && (
+          <Select value={typeFilter} onValueChange={(v) => v && setTypeFilter(v as TypeFilter)}>
+            <SelectTrigger aria-label="Type" className="h-12 w-auto min-w-[10.5rem] shrink-0">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent align="end">
+              <SelectItem value="all" label="All types">
+                All types
+              </SelectItem>
+              {kindsPresent.map((t) => (
+                <SelectItem key={t} value={t} label={TYPE_CONFIG[t].plural}>
+                  {TYPE_CONFIG[t].plural}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         )}
       </div>
 
-      {/* Filter Toolbar (for People & Billers) */}
-      {activeTab !== "groups" && (typeFilter !== "all" || groupBy !== "none") && (
-        <div className="w-full">
-          <div className="flex w-full flex-wrap items-center gap-2.5">
-            <AppliedFilters groups={filterGroups} />
-
-            {/* Expand / Collapse All Toggle (Visible when grouped) */}
-            {groupBy !== "none" && (
-              <button
-                type="button"
-                onClick={collapsedSections.size === 0 ? collapseAllSections : expandAllSections}
-                className="shrink-0 whitespace-nowrap text-[12px] text-muted-foreground hover:text-foreground cursor-pointer font-medium transition-colors"
-              >
-                {collapsedSections.size === 0 ? "Collapse all" : "Expand all"}
-              </button>
-            )}
+      {/* BENEFICIARIES LIST: one flat list, A to Z */}
+      {activeTab === "people" &&
+        (filteredList.length === 0 ? (
+          hasActiveFilters ? (
+            <FilteredEmptyState
+              onReset={clearAllFilters}
+              description="No beneficiaries match your search or type."
+            />
+          ) : (
+            <TrueEmptyState
+              illustration="empty-people"
+              title="No beneficiaries saved yet"
+              description="Save people, accounts and billers for faster payments."
+              action={
+                <Button
+                  onClick={() => {
+                    setForm({ ...INITIAL_FORM, transactionType: "bank" });
+                    setFormOpen(true);
+                  }}
+                >
+                  <Plus size={14} className="mr-1.5" />
+                  Add beneficiary
+                </Button>
+              }
+            />
+          )
+        ) : (
+          <div className="rounded-2xl border border-border bg-card">
+            <ul className="flex flex-col gap-0.5 p-2">{filteredList.map(renderBeneficiaryRow)}</ul>
           </div>
-        </div>
-      )}
+        ))}
 
-        {/* PEOPLE & BILLERS LIST */}
-        {activeTab !== "groups" && (
-          filteredList.length === 0 ? (
-            hasActiveFilters ? (
-              <FilteredEmptyState
-                onReset={clearAllFilters}
-                description={
-                  activeTab === "people"
-                    ? "No people match your active search or filters."
-                    : "No billers match your active search or filters."
-                }
-              />
-            ) : (
-              <TrueEmptyState illustration="empty-people"
-                title={activeTab === "people" ? "No people saved yet" : "No billers saved yet"}
-                description={
-                  activeTab === "people"
-                    ? "Save payees and bank accounts for faster transfers."
-                    : "Save your regular billers for one-tap bill payments."
-                }
-                action={
-                  <Button
-                    onClick={() => {
-                      setForm({
-                        ...INITIAL_FORM,
-                        transactionType: activeTab === "billers" ? "bill" : "bank",
-                      });
-                      setFormOpen(true);
-                    }}
-                    className=""
-                  >
-                    <Plus size={14} className="mr-1.5" />
-                    {activeTab === "billers" ? "Add biller" : "Add beneficiary"}
-                  </Button>
-                }
-              />
-            )
-          ) : groupBy === "type" ? (
-            /* ── Collapsible Grouping by Rail Type ─────────────────────────────── */
-            <div className="rounded-2xl border border-border/80 dark:border-white/[0.1] bg-card overflow-hidden shadow-xs divide-y divide-border">
-              {activeRailList.map((typeKey) => {
-                const items = filteredList.filter((b) => b.transactionType === typeKey);
-                if (items.length === 0) return null;
-
-                const isCollapsed = collapsedSections.has(typeKey);
-                const config = TYPE_CONFIG[typeKey];
-                const Icon = config.icon;
-
-                return (
-                  <div key={typeKey} className="flex flex-col">
-                    {/* Collapsible Accordion Header */}
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => toggleSectionCollapse(typeKey)}
-                      className="flex items-center justify-between bg-muted/30 px-5 py-2.5 text-[13px] hover:bg-muted/50 transition-colors cursor-pointer select-none"
-                    >
-                      <span className="flex items-center gap-2.5 font-medium text-foreground">
-                        <ChevronDown
-                          size={16}
-                          className={cn("transition-transform duration-200 text-muted-foreground", isCollapsed && "-rotate-90 text-muted-foreground/60")}
-                        />
-                        <Icon size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
-                        <span>{config.plural}</span>
-                        <span className="rounded-full bg-muted/80 dark:bg-white/[0.08] px-2 py-0.5 text-[11px] font-normal tabular text-muted-foreground">
-                          {items.length}
-                        </span>
-                      </span>
-
-                      <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          variant="ghost"
-                          size="xs"
-                          onClick={() => openAddForType(typeKey)}
-                          className="h-7 gap-1 px-2.5 text-[12px] text-muted-foreground hover:text-foreground hover:bg-background/80 rounded-md transition-colors"
-                        >
-                          <Plus size={12} strokeWidth={2} />
-                          <span>Add</span>
-                        </Button>
-                        <SimpleTooltip content={`Send via ${config.label}`}>
-                          <Link
-                            href={`/payments/send?rail=${config.rail}`}
-                            className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-background/80 transition-colors"
-                            aria-label={`Send via ${config.label}`}
-                          >
-                            <Send size={14} strokeWidth={1.6} />
-                          </Link>
-                        </SimpleTooltip>
-                      </div>
-                    </div>
-
-                    {/* Collapsible Rows */}
-                    {!isCollapsed && (
-                      <ul className="flex flex-col gap-0.5 p-2">
-                        {items.map(renderBeneficiaryRow)}
-                      </ul>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+      {/* PAYMENT GROUPS LIST */}
+      {activeTab === "groups" &&
+        (filteredGroups.length === 0 ? (
+          query ? (
+            <FilteredEmptyState
+              onReset={() => setQuery("")}
+              description="No payment groups match your search query."
+            />
           ) : (
-            /* ── Flat List ─────────────────────────────────────────────────────── */
-            <div className="rounded-2xl border border-border bg-card">
-              <ul className="flex flex-col gap-0.5 p-2">
-                {filteredList.map(renderBeneficiaryRow)}
-              </ul>
-            </div>
+            <TrueEmptyState
+              illustration="empty-groups"
+              title="No payment groups created"
+              description="Send to several people or run Susu in one step."
+              action={
+                <Button nativeButton={false} render={<Link href="/beneficiaries/groups/new" />}>
+                  <Plus size={14} className="mr-1.5" /> Create first group
+                </Button>
+              }
+            />
           )
-        )}
+        ) : (
+          <div className="rounded-2xl border border-border bg-card">
+            <ul className="flex flex-col gap-0.5 p-2">{filteredGroups.map(renderGroupRow)}</ul>
+          </div>
+        ))}
 
-        {/* PAYMENT GROUPS LIST */}
-        {activeTab === "groups" && (
-          filteredGroups.length === 0 ? (
-            query ? (
-              <FilteredEmptyState
-                onReset={() => setQuery("")}
-                description="No payment groups match your search query."
-              />
-            ) : (
-              <TrueEmptyState illustration="empty-groups"
-                title="No payment groups created"
-                description="Send to several people or run Susu in one step."
-                action={
-                  <Button
-                    nativeButton={false}
-                    render={<Link href="/beneficiaries/groups/new" />}
-                  >
-                    <Plus size={14} className="mr-1.5" /> Create first group
-                  </Button>
-                }
-              />
-            )
-          ) : (
-            <div className="rounded-2xl border border-border bg-card">
-              <ul className="flex flex-col gap-0.5 p-2">
-                {filteredGroups.map(renderGroupRow)}
-              </ul>
-            </div>
-          )
-        )}
-
-      {/* ── Progressive Add / Edit Beneficiary Modal / Mobile Bottom Sheet ── */}
-      <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent size="md">
+      {/* ── Progressive Add / Edit Beneficiary Sheet ── */}
+      <Sheet open={formOpen} onOpenChange={setFormOpen}>
+        <SheetContent side="right" className="flex flex-col">
           {/* Header */}
-          <DialogHeader>
-            <DialogTitle>
+          <SheetHeader>
+            <SheetTitle>
               {form.id
                 ? "Edit Beneficiary"
-                : activeTab === "billers"
-                ? "Add Biller"
                 : "Add Beneficiary"}
-            </DialogTitle>
-          </DialogHeader>
+            </SheetTitle>
+          </SheetHeader>
 
-          {/* Modal Content with Progressive Disclosure */}
-          <DialogBody>
+          {/* Sheet Body with Progressive Disclosure */}
+          <SheetBody className="gap-5">
             {/* Step 1: Destination Rail (Dropdown) */}
             <Field label="Payment Rail">
               <Select
@@ -1158,7 +927,7 @@ export default function BeneficiariesPage() {
                   </div>
                 </SelectTrigger>
                 <SelectContent className="min-w-[260px]">
-                  {(activeTab === "billers" ? BILLER_TYPES : PEOPLE_TYPES).map((t) => {
+                  {[...PEOPLE_TYPES, ...BILLER_TYPES].map((t) => {
                     const meta = TYPE_CONFIG[t];
                     const Icon = meta.icon;
                     return (
@@ -1488,12 +1257,12 @@ export default function BeneficiariesPage() {
             )}
 
             {/* Step 3: Beneficiary Legal Name / Biller Nickname */}
-            <Field label={activeTab === "billers" ? "Biller Name" : "Beneficiary Full Name"}>
+            <Field label={form.transactionType === "bill" || form.transactionType === "airtime" ? "Biller Name" : "Beneficiary Full Name"}>
               <Input
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                placeholder={activeTab === "billers" ? "e.g. ECG PowerApp" : "e.g. Kojo Mensah"}
+                placeholder={form.transactionType === "bill" || form.transactionType === "airtime" ? "e.g. ECG PowerApp" : "e.g. Kojo Mensah"}
                 
               />
 </Field>
@@ -1507,26 +1276,54 @@ export default function BeneficiariesPage() {
                 placeholder="e.g. Landlord, Monthly Groceries"
               />
             </Field>
-          </DialogBody>
+          </SheetBody>
 
-          {/* Sticky Footer with Primary Button */}
-          <DialogFooter>
-            <Button
-              variant="ghost"
-              onClick={() => setFormOpen(false)}
-            >
-              Cancel
-            </Button>
+          {/* Sheet Footer with Primary Lime Action */}
+          <SheetFooter className="gap-2.5">
             <Button
               onClick={handleSaveBeneficiary}
               disabled={!form.name.trim()}
-              className="px-4"
+              className="h-12 w-full rounded-full bg-primary text-primary-foreground hover:bg-primary-hover font-medium transition-all cursor-pointer text-[14.5px] disabled:opacity-40 shadow-xs"
             >
               {form.id ? "Save Changes" : "Save Beneficiary"}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <Button
+              variant="ghost"
+              onClick={() => setFormOpen(false)}
+              className="h-10 w-full rounded-full text-foreground/80 hover:text-foreground text-[14px]"
+            >
+              Cancel
+            </Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+
+      {/* ── Beneficiary Details Sheet matching user's design ── */}
+      <BeneficiaryDetailSheet
+        beneficiary={selectedBeneficiary}
+        open={Boolean(selectedBeneficiary)}
+        onOpenChange={(open) => {
+          if (!open) setSelectedBeneficiary(null);
+        }}
+        onEdit={(b) => {
+          openEdit(b);
+        }}
+        onRemove={(b) => setRemoveId(b.id)}
+      />
+
+      {/* ── Group summary: who is in it and what it pays; editing is one tap further ── */}
+      <GroupDetailSheet
+        group={selectedGroup}
+        open={Boolean(selectedGroup)}
+        onOpenChange={(open) => {
+          if (!open) setSelectedGroup(null);
+        }}
+        onEdit={(g) => {
+          setEditingGroup(g);
+          setEditGroupModalOpen(true);
+        }}
+        onDelete={(g) => setRemoveGroupId(g.id)}
+      />
 
       {/* ── Delete Confirmation Dialogs (Responsive Bottom Sheet on Mobile) ── */}
       <Dialog open={Boolean(removeId)} onOpenChange={(o) => !o && setRemoveId(null)}>

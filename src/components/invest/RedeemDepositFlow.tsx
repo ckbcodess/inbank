@@ -153,7 +153,7 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
           <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200">
             <section className="flex flex-col gap-1.5 px-1">
               <span className="text-[13px] text-muted-foreground">You receive today</span>
-              <span className="tabular text-[40px] leading-none tracking-[-0.02em] text-foreground">{money(cost.receive)}</span>
+              <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(cost.receive)}</span>
             </section>
             <dl className="flex flex-col gap-3 px-1 text-[14px]">
               <div className="flex items-baseline justify-between gap-6">

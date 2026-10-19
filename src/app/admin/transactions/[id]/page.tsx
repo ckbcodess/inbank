@@ -78,7 +78,7 @@ export default function OpsTransactionDetailsPage({ params }: { params: Promise<
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5">
           <div>
             <span className="text-[12px] text-muted-foreground">Amount</span>
-            <p className="mt-1.5 text-[28px] leading-none tracking-[-0.02em] text-foreground tabular">
+            <p className="mt-1.5 text-[28px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
               {formatMoney(txn.amount, txn.currency)}
             </p>
           </div>

@@ -15,13 +15,13 @@
  *     transactions list filtered to this account — one tap further).
  */
 
+import { TransactionMark } from "@/components/transactions/TransactionMark";
+import { getTransactionType } from "@/lib/transaction-type";
 import { use, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowDownLeft,
   ArrowLeftRight,
-  ArrowUpRight,
   Eye,
   EyeOff,
   Files,
@@ -56,6 +56,7 @@ import { RoundAction } from "@/components/ui/round-action";
 import { ToggleTile } from "@/components/ui/toggle-tile";
 import { ShareDetailsDialog } from "@/components/accounts/ShareDetailsDialog";
 import { AccountDetailBody } from "@/components/states/PageSkeletons";
+import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
 
 const BASELINE: readonly BaselineState[] = ["loading", "empty", "populated", "error"] as const;
 const MINI_STATEMENT_SIZE = 10;
@@ -138,6 +139,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
   const [fundOpen, setFundOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [recentOpen, setRecentOpen] = useState(false);
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   const [fundResume, setFundResume] = useState<{
     screen: ModalScreen;
     sourceId?: string;
@@ -300,7 +302,23 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
         targetAccount={account}
       />
       <ShareDetailsDialog open={shareOpen} onOpenChange={setShareOpen} account={account} holderName={holderName} />
-      <RecentTransactionsDialog open={recentOpen} onOpenChange={setRecentOpen} account={account} transactions={recent} />
+      <RecentTransactionsDialog
+        open={recentOpen}
+        onOpenChange={setRecentOpen}
+        account={account}
+        transactions={recent}
+        onSelectTransaction={(t) => {
+          setRecentOpen(false);
+          setSelectedTx(t);
+        }}
+      />
+      <TransactionDetailSheet
+        transaction={selectedTx}
+        open={Boolean(selectedTx)}
+        onOpenChange={(o) => {
+          if (!o) setSelectedTx(null);
+        }}
+      />
     </div>
   );
 }
@@ -383,29 +401,29 @@ function BalanceCard({ account, isDefault }: { account: Account; isDefault: bool
 
 /* ── Last 10 transactions ──────────────────────────────────────────────────── */
 
-function ActivityRow({ t }: { t: Transaction }) {
+function ActivityRow({
+  t,
+  onSelect,
+}: {
+  t: Transaction;
+  onSelect: (t: Transaction) => void;
+}) {
   const isCredit = t.direction === "credit";
   const isFailed = t.state.startsWith("failed") || t.state === "reversed" || t.state === "disputed";
   const isPending = t.state === "pending" || t.state === "awaiting-approval";
 
   return (
     <li>
-      <Link
-        href={`/transactions/${t.id}`}
-        className="flex items-center gap-4 rounded-xl px-3 py-3.5 sm:py-4 transition-colors hover:bg-item-hover sm:px-4"
+      <button
+        type="button"
+        onClick={() => onSelect(t)}
+        className="flex w-full text-left items-center gap-4 rounded-xl px-3 py-3.5 sm:py-4 transition-colors hover:bg-item-hover cursor-pointer sm:px-4"
       >
-        <span
-          className={cn(
-            "flex size-9 shrink-0 items-center justify-center rounded-full",
-            isCredit ? "bg-pill-success text-success" : "bg-tile text-muted-foreground",
-          )}
-        >
-          {isCredit ? <ArrowDownLeft size={16} strokeWidth={2} /> : <ArrowUpRight size={16} strokeWidth={2} />}
-        </span>
+        <TransactionMark transaction={t} />
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="truncate text-[14px] text-foreground">{t.counterparty || t.description}</span>
           <span className="truncate text-[12px] text-muted-foreground">
-            <span className="tabular">{formatDate(t.date)}</span> · {t.category || t.paymentMethod || "Payment"}
+            {getTransactionType(t)} · <span className="tabular">{formatDate(t.date)}</span>
           </span>
         </span>
         <span className="flex shrink-0 flex-col items-end gap-0.5">
@@ -419,7 +437,7 @@ function ActivityRow({ t }: { t: Transaction }) {
             <span className="text-[11.5px] text-warning">Pending</span>
           ) : null}
         </span>
-      </Link>
+      </button>
     </li>
   );
 }
@@ -430,11 +448,13 @@ function RecentTransactionsDialog({
   onOpenChange,
   account,
   transactions,
+  onSelectTransaction,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   account: Account;
   transactions: Transaction[];
+  onSelectTransaction: (t: Transaction) => void;
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -451,7 +471,7 @@ function RecentTransactionsDialog({
           ) : (
             <ul className="-mx-2 flex flex-col gap-0.5">
               {transactions.map((t) => (
-                <ActivityRow key={t.id} t={t} />
+                <ActivityRow key={t.id} t={t} onSelect={onSelectTransaction} />
               ))}
             </ul>
           )}

@@ -1,5 +1,6 @@
 "use client";
 
+import { SavedSuggestions } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
 import { Loader2, Search } from "lucide-react";
 import { Account, BILLERS } from "@/lib/mock-data";
@@ -282,7 +283,8 @@ export function BillsPaymentFlow({
                 </div>
 
                 <div className="relative">
-                  <Input
+                  <SavedSuggestions query={state.ecgMeter}>
+<Input
                     type="text"
                     value={state.ecgMeter}
                     onChange={(e) => {
@@ -302,6 +304,7 @@ export function BillsPaymentFlow({
                     placeholder="Enter meter number"
                     className="tabular pr-20"
                   />
+</SavedSuggestions>
                   {renderVerifyButton()}
                 </div>
               </>
@@ -330,7 +333,8 @@ export function BillsPaymentFlow({
                 </Select>
 
                 <div className="relative">
-                  <Input
+                  <SavedSuggestions query={state.govRef}>
+<Input
                     type="text"
                     value={state.govRef}
                     onChange={(e) => {
@@ -350,6 +354,7 @@ export function BillsPaymentFlow({
                     placeholder="Enter PRN or invoice number"
                     className="tabular pr-20"
                   />
+</SavedSuggestions>
                   {renderVerifyButton()}
                 </div>
               </>
@@ -378,7 +383,8 @@ export function BillsPaymentFlow({
                 </Select>
 
                 <div className="relative">
-                  <Input
+                  <SavedSuggestions query={state.billRef}>
+<Input
                     type="text"
                     value={state.billRef}
                     onChange={(e) => {
@@ -398,6 +404,7 @@ export function BillsPaymentFlow({
                     placeholder={selectedBiller ? `Enter ${selectedBiller.reference.toLowerCase()}` : "Enter account or reference number"}
                     className="tabular pr-20"
                   />
+</SavedSuggestions>
                   {renderVerifyButton()}
                 </div>
               </>

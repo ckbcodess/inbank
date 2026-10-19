@@ -8,11 +8,13 @@
  * day. The balance, cards and rates sit in a quiet rail beside it.
  */
 
+import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowDownLeft, ArrowUpRight, CalendarClock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatMoney, type Transaction } from "@/lib/mock-data";
+import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import type { UpcomingPayment } from "@/lib/dashboard-insights";
 import {
@@ -62,13 +64,25 @@ function ScheduledRow({ p, showAmounts }: { p: UpcomingPayment; showAmounts: boo
   );
 }
 
-function TxnRow({ t: txn, showAmounts }: { t: Transaction; showAmounts: boolean }) {
+function TxnRow({
+  t: txn,
+  showAmounts,
+  onSelect,
+}: {
+  t: Transaction;
+  showAmounts: boolean;
+  onSelect: (t: Transaction) => void;
+}) {
   const credit = txn.direction === "credit";
   const failed = typeof txn.state === "string" && txn.state.startsWith("failed");
   const pending = txn.state === "pending";
   return (
     <li>
-      <Link href={`/transactions/${txn.id}`} className="flex items-center gap-3.5 py-3">
+      <button
+        type="button"
+        onClick={() => onSelect(txn)}
+        className="flex w-full text-left items-center gap-3.5 py-3 hover:opacity-80 transition-opacity cursor-pointer"
+      >
         <span
           className={cn(
             "flex size-9 shrink-0 items-center justify-center rounded-full",
@@ -92,13 +106,14 @@ function TxnRow({ t: txn, showAmounts }: { t: Transaction; showAmounts: boolean 
           {credit ? "+ " : "− "}
           {formatMoney(Math.abs(txn.amount), txn.currency, showAmounts)}
         </span>
-      </Link>
+      </button>
     </li>
   );
 }
 
 function Feed({ data, loading, showAmounts }: Pick<DashViewProps, "data" | "showAmounts"> & { loading: boolean }) {
   const { t } = useTranslation();
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
 
   if (loading) return <PanelSkeleton rows={7} />;
 
@@ -116,26 +131,35 @@ function Feed({ data, loading, showAmounts }: Pick<DashViewProps, "data" | "show
   }
 
   return (
-    <ul className="flex flex-col">
-      <DayHeading>{t("dashboard.comingUp", "Coming up")}</DayHeading>
-      {data.upcoming.length === 0 ? (
-        <li>
-          <ComingUpEmpty accountId={data.selectedAccountId} />
-        </li>
-      ) : (
-        data.upcoming.map((p) => <ScheduledRow key={p.id} p={p} showAmounts={showAmounts} />)
-      )}
-      {days.map((d) => (
-        <li key={d.day}>
-          <ul className="flex flex-col">
-            <DayHeading>{dayLabel(d.day)}</DayHeading>
-            {d.items.map((txn) => (
-              <TxnRow key={txn.id} t={txn} showAmounts={showAmounts} />
-            ))}
-          </ul>
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul className="flex flex-col">
+        <DayHeading>{t("dashboard.comingUp", "Coming up")}</DayHeading>
+        {data.upcoming.length === 0 ? (
+          <li>
+            <ComingUpEmpty accountId={data.selectedAccountId} />
+          </li>
+        ) : (
+          data.upcoming.map((p) => <ScheduledRow key={p.id} p={p} showAmounts={showAmounts} />)
+        )}
+        {days.map((d) => (
+          <li key={d.day}>
+            <ul className="flex flex-col">
+              <DayHeading>{dayLabel(d.day)}</DayHeading>
+              {d.items.map((txn) => (
+                <TxnRow key={txn.id} t={txn} showAmounts={showAmounts} onSelect={setSelectedTx} />
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+      <TransactionDetailSheet
+        transaction={selectedTx}
+        open={Boolean(selectedTx)}
+        onOpenChange={(o) => {
+          if (!o) setSelectedTx(null);
+        }}
+      />
+    </>
   );
 }
 

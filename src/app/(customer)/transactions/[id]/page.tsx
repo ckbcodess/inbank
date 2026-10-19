@@ -73,6 +73,8 @@ function getTransactionMethodLabel(t: Transaction): string {
   if (t.paymentMethod === "rtgs") return "RTGS Transfer";
   if (t.paymentMethod === "momo") return "Mobile Money Transfer";
   if (t.paymentMethod === "own-account") return "Transfer Between Accounts";
+  if (t.paymentMethod === "qr") return "Scan & Pay";
+  if (t.paymentMethod === "cardless") return "ATM Cash-out Code";
   if (t.paymentMethod === "card") return "Card Payment";
   if (t.paymentMethod === "bill") return "Bill Payment";
   if (t.channel === "Mobile App") return "GCB Mobile Transfer";
@@ -260,7 +262,7 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
         backTo={
           fromSuccess
             ? { href: "/payments", label: "Payments" }
-            : { href: "/transactions", label: "Transactions" }
+            : { href: "/transactions", label: "Transaction History" }
         }
       />
 
@@ -278,7 +280,7 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
           <span className="text-[16px] font-medium text-foreground">{getTransactionType(txn)}</span>
           <span
             className={cn(
-              "tabular text-[34px] tracking-[-0.02em] sm:text-[42px]",
+              "tabular text-[34px] tracking-[var(--ls-heading)] sm:text-[42px]",
               isCredit ? "text-success" : "text-foreground",
             )}
           >
@@ -344,7 +346,7 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
               ],
               [
                 { label: "Amount", value: formatMoney(txn.amount, txn.currency, true) },
-                { label: "Processing Fee", value: feeAmount > 0 ? formatMoney(feeAmount, "GHS", true) : "GHS 0.00" },
+                { label: "Fee", value: feeAmount > 0 ? formatMoney(feeAmount, "GHS", true) : "GHS 0.00" },
                 { label: isCredit ? "Total Credited" : "Total Debited", value: formatMoney(totalDebit, "GHS", true), strong: true },
               ],
             ].map((group, gi) => (

@@ -1,5 +1,6 @@
 "use client";
 
+import { SavedSuggestions } from "./SavedRecipients";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Account } from "@/lib/mock-data";
 import {
@@ -12,8 +13,6 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   AccountVerificationStatus,
-  VerifiedAccountBadge,
-  ResolvingAccountBadge,
   CollapsedDetailsBadge,
   NETWORKS,
   SchedulePaymentSection,
@@ -104,6 +103,8 @@ export function MobileWalletFlow({
   const isDetailsEntered = isPhoneValid && isNetworkValid;
 
   const [resolving, setResolving] = useState(false);
+  // What is typed when the person is searching saved recipients by name rather than entering a number
+  const [nameQuery, setNameQuery] = useState("");
 
   useEffect(() => {
     if (!isSelf && isDetailsEntered) {
@@ -174,8 +175,12 @@ export function MobileWalletFlow({
                   options={NETWORKS}
                 />
 
+                <SavedSuggestions provider={state.wNetwork} requireProvider query={nameQuery || state.wPhone} onPicked={() => setNameQuery("")}>
                 <PhoneInput
                   value={state.wPhone}
+                  search={nameQuery}
+                  onSearch={setNameQuery}
+                  placeholder="24 123 4567 or a saved name"
                   onValueChange={(val) => {
                     onChange("wPhone", val);
                     const detected = detectTelcoNetwork(val);
@@ -189,6 +194,7 @@ export function MobileWalletFlow({
                   }}
                   aria-label="Mobile number"
                 />
+              </SavedSuggestions>
               </>
             )}
 

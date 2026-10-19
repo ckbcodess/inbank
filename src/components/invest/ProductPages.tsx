@@ -27,7 +27,7 @@ function Group({ title, line, offers }: { title?: string; line?: string; offers:
     <section className="flex flex-col gap-3">
       {(title || line) && (
         <div className="flex flex-col gap-1 px-1">
-          {title && <h2 className="text-[16px] font-medium tracking-[-0.01em] text-foreground">{title}</h2>}
+          {title && <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">{title}</h2>}
           {line && <p className="text-[13px] text-muted-foreground">{line}</p>}
         </div>
       )}

@@ -196,7 +196,7 @@ export function RecommendedForYouCard({
           className="relative z-10 flex flex-1 flex-col items-center justify-between text-center"
         >
           <div className="flex flex-1 flex-col items-center justify-center gap-2 px-2">
-            <p className="text-[19px] font-medium leading-[1.35] tracking-[-0.01em] text-foreground sm:text-[21px]">
+            <p className="text-[19px] font-medium leading-[1.35] tracking-[var(--ls-tight)] text-foreground sm:text-[21px]">
               {words.map((w, n) => (
                 <Fragment key={n}>
                   <motion.span className="inline-block" {...reveal(n * WORD_STEP)}>

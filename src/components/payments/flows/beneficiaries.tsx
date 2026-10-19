@@ -1,5 +1,6 @@
 "use client";
 
+import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -434,12 +435,7 @@ export function RailBeneficiaryStrip({
             className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
             title={`Select ${item.name} (${item.subtitle || item.bank || item.acct})`}
           >
-            <span
-              className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85] shadow-xs border border-black/5 dark:border-white/10"
-              style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
-            >
-              {item.initials}
-            </span>
+            <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
             <div className="flex flex-col w-full px-0.5">
               <span className="text-[12px] font-medium text-foreground truncate w-full" title={item.name}>
                 {item.name}

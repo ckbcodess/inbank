@@ -31,6 +31,9 @@ interface PhoneInputProps
   country?: string;
   /** Turns the fixed "+233" into a country picker. */
   onCountryChange?: (code: string) => void;
+  /** Lets the field double as a lookup: letters typed are handed to `onSearch` (and shown via `search`) instead of being stripped. */
+  search?: string;
+  onSearch?: (text: string) => void;
 }
 
 const GHANA = "GH";
@@ -130,6 +133,8 @@ export function PhoneInput({
   inputClassName,
   country = GHANA,
   onCountryChange,
+  search,
+  onSearch,
   placeholder,
   autoComplete = "tel-national",
   disabled,
@@ -137,6 +142,7 @@ export function PhoneInput({
 }: PhoneInputProps) {
   const picker = Boolean(onCountryChange);
   const ghana = !picker || country === GHANA;
+  const searching = Boolean(search);
 
   return (
     <div
@@ -150,7 +156,7 @@ export function PhoneInput({
         className
       )}
     >
-      {picker ? (
+      {searching ? null : picker ? (
         <CountryDropdown country={country} onChange={onCountryChange!} disabled={disabled} />
       ) : (
         <span className="tabular shrink-0 text-muted-foreground select-none" aria-hidden="true">
@@ -158,13 +164,20 @@ export function PhoneInput({
         </span>
       )}
       <input
-        type="tel"
-        inputMode="numeric"
+        type={onSearch ? "text" : "tel"}
+        inputMode={onSearch ? "text" : "numeric"}
         autoComplete={autoComplete}
-        value={ghana ? formatNationalMobile(value) : value}
-        onChange={(e) =>
-          onValueChange(ghana ? toLocalMobile(e.target.value) : e.target.value.replace(/\D/g, "").slice(0, MAX_INTERNATIONAL_DIGITS))
-        }
+        value={searching ? search : ghana ? formatNationalMobile(value) : value}
+        onChange={(e) => {
+          const raw = e.target.value;
+          if (onSearch && /[a-z]/i.test(raw)) {
+            onSearch(raw);
+            if (value) onValueChange("");
+            return;
+          }
+          onSearch?.("");
+          onValueChange(ghana ? toLocalMobile(raw) : raw.replace(/\D/g, "").slice(0, MAX_INTERNATIONAL_DIGITS));
+        }}
         placeholder={placeholder ?? (ghana ? "24 123 4567" : "Phone number")}
         disabled={disabled}
         className={cn(

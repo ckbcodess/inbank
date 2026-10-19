@@ -15,6 +15,7 @@ export function Field({
   optional,
   hint,
   error,
+  action,
   className,
   children,
 }: {
@@ -25,15 +26,20 @@ export function Field({
   hint?: React.ReactNode
   /** Error about what was just typed. Shown under the control, replacing the hint. */
   error?: string | null | false
+  /** A small control at the end of the label row, such as a "Saved" link. */
+  action?: React.ReactNode
   className?: string
   children: React.ReactNode
 }) {
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      <Label htmlFor={htmlFor}>
-        {label}
-        {optional ? <span className="text-[12px] font-normal italic text-muted-foreground">(optional)</span> : null}
-      </Label>
+      <div className="flex items-center justify-between gap-3">
+        <Label htmlFor={htmlFor}>
+          {label}
+          {optional ? <span className="text-[12px] font-normal italic text-muted-foreground">(optional)</span> : null}
+        </Label>
+        {action}
+      </div>
       {children}
       {error ? (
         <p role="alert" className="text-[12px] text-destructive">

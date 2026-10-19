@@ -62,7 +62,7 @@ export default function HoldingAdvicePage() {
       <div className="mx-auto flex w-full max-w-[760px] flex-col gap-8">
         <section className="flex flex-col gap-1.5 px-1">
           <span className="text-[14px] text-muted-foreground">{h.title}</span>
-          <span className="tabular text-[40px] leading-none tracking-[-0.02em] text-foreground">{money(h.cost)}</span>
+          <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(h.cost)}</span>
           <span className="text-[14px] leading-relaxed text-muted-foreground">
             {source
               ? `Bought for you and paid from ${source.name} (${source.number}) on ${formatDate(h.boughtOn)}.`
@@ -74,7 +74,7 @@ export default function HoldingAdvicePage() {
 
         <section className="flex flex-col gap-4">
           <div className="flex min-h-8 items-center px-1">
-            <h2 className="text-[16px] font-medium tracking-[-0.01em] text-foreground">What it pays</h2>
+            <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">What it pays</h2>
           </div>
           <ul className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2 text-[14px]">
             {coupons.map((d, i) => (

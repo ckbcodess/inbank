@@ -101,7 +101,7 @@ export function OtpHelp({
           <span className="text-[18px] text-foreground">Dial</span>
           <a
             href={`tel:${OTP_SHORTCODE.replace("#", "%23")}`}
-            className="tabular text-[36px] leading-none tracking-[-0.02em] text-foreground"
+            className="tabular text-[36px] leading-none tracking-[var(--ls-heading)] text-foreground"
           >
             {OTP_SHORTCODE}
           </a>

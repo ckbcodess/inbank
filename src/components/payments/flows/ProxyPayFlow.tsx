@@ -1,5 +1,6 @@
 "use client";
 
+import { SavedSuggestions } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
 import {
@@ -16,7 +17,6 @@ import {
   resolveAccountName,
 } from "./shared";
 
-import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
 export interface ProxyPayFormState {
@@ -110,7 +110,8 @@ export function ProxyPayFlow({
         ) : (
           <div className="flex flex-col gap-3">
             <div className="relative flex items-center">
-              <Input
+              <SavedSuggestions query={state.pxId}>
+<Input
                 type="text"
                 value={state.pxId}
                 onChange={(e) => {
@@ -121,29 +122,10 @@ export function ProxyPayFlow({
                     onChange("benName", resolved);
                   }
                 }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && isPxValid) {
-                    e.preventDefault();
-                    setResolving(true);
-                    setTimeout(() => setResolving(false), 200);
-                  }
-                }}
                 placeholder="Enter Ghana Card, phone, email or handle"
-                className="pr-10"
+                
               />
-              <button
-                type="button"
-                onClick={() => {
-                  if (isPxValid) {
-                    setResolving(true);
-                    setTimeout(() => setResolving(false), 200);
-                  }
-                }}
-                aria-label="Search and verify proxy ID"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
-              >
-                <Search size={16} strokeWidth={1.8} />
-              </button>
+</SavedSuggestions>
             </div>
             {/* Verification Status */}
             <AccountVerificationStatus

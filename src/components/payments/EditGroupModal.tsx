@@ -306,12 +306,12 @@ export default function EditGroupModal({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side="right"
-          className="w-full sm:max-w-lg md:max-w-xl p-0 flex flex-col gap-0 h-full overflow-hidden bg-card border-l border-border/80 text-foreground"
+          className="p-0 flex flex-col gap-0 overflow-hidden sm:max-w-lg md:max-w-xl"
           showCloseButton={false}
         >
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4.5 border-b border-border/60 shrink-0">
-            <SheetTitle className="text-[18px] font-medium text-foreground tracking-[-0.01em] truncate max-w-[380px]">
+            <SheetTitle className="truncate max-w-[380px]">
               Edit {group.name}
             </SheetTitle>
             <button
@@ -326,13 +326,9 @@ export default function EditGroupModal({
 
           {/* Scrollable Sheet Content Body */}
           <div className="flex-1 min-h-0 overflow-y-auto px-6 py-6 flex flex-col gap-5 overscroll-contain custom-scrollbar">
-            {/* Group Name & Description */}
+            {/* Name and the amount: the only two things most edits touch */}
             <div className="flex flex-col gap-4">
-              {/* Group Name */}
-              <div className="flex flex-col gap-2">
-                <Label>
-                  Group Name <span className="text-destructive">*</span>
-                </Label>
+              <Field label="Group Name" error={errors.name}>
                 <Input
                   type="text"
                   value={name}
@@ -342,76 +338,19 @@ export default function EditGroupModal({
                     if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
                   }}
                   placeholder="e.g. Family Susu"
-                  className={cn(
-                    "",
-                    errors.name && "border-destructive focus:border-destructive focus:ring-destructive/30"
-                  )}
-                />
-                {errors.name && (
-                  <p className="text-[12px] text-destructive">{errors.name}</p>
-                )}
-              </div>
-
-              {/* Description */}
-              <Field label="Description" optional>
-                <Input
-                  type="text"
-                  value={description}
-                  maxLength={120}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Optional description or circle purpose"
+                  aria-invalid={Boolean(errors.name)}
                 />
               </Field>
-            </div>
 
-            {/* Split Type & Amount Configuration */}
-            <div className="flex flex-col gap-3 pt-2">
-              <Label>
-                Contribution Rule
-              </Label>
-
-              {/* Segmented Pill Toggle: Equal / Custom */}
-              <div className="rounded-2xl bg-chip p-1 border border-border/80 flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => setSplitType("equal")}
-                  className={cn(
-                    "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition cursor-pointer",
-                    splitType === "equal"
-                      ? "bg-chip-selected text-chip-selected-foreground shadow-xs border border-border/60"
-                      : "text-chip-foreground hover:text-chip-selected-foreground"
-                  )}
-                >
-                  Equal Split
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSplitType("custom")}
-                  className={cn(
-                    "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition cursor-pointer",
-                    splitType === "custom"
-                      ? "bg-chip-selected text-chip-selected-foreground shadow-xs border border-border/60"
-                      : "text-chip-foreground hover:text-chip-selected-foreground"
-                  )}
-                >
-                  Custom Amounts
-                </button>
-              </div>
-
-              {/* Amount per person */}
-              <div className="flex flex-col gap-2 mt-1">
-                <Label>
-                  {splitType === "equal" ? "Amount per Person" : "Baseline Amount"}
-                </Label>
+              <div className="flex flex-col gap-2">
+                <Label>{splitType === "equal" ? "Amount per Person" : "Starting Amount"}</Label>
                 <div
                   className={cn(
                     "h-13 w-full rounded-2xl border border-field-border bg-field px-4 flex items-center gap-2 focus-within:border-field-border-focus focus-within:ring-0 transition",
                     errors.amount && "border-destructive focus-within:border-destructive"
                   )}
                 >
-                  <span className="text-[14px] font-medium text-muted-foreground select-none">
-                    GHS
-                  </span>
+                  <span className="text-[14px] font-medium text-muted-foreground select-none">GHS</span>
                   <input
                     type="text"
                     inputMode="decimal"
@@ -425,14 +364,19 @@ export default function EditGroupModal({
                     className="w-full bg-transparent text-[14px] font-normal text-foreground placeholder:text-muted-foreground/60 outline-none tabular-nums"
                   />
                 </div>
-                {errors.amount && (
-                  <p className="text-[12px] text-destructive">{errors.amount}</p>
-                )}
+                {errors.amount && <p className="text-[12px] text-destructive">{errors.amount}</p>}
+                <button
+                  type="button"
+                  onClick={() => setSplitType(splitType === "equal" ? "custom" : "equal")}
+                  className="self-start text-[12px] text-muted-foreground underline underline-offset-4 decoration-border hover:text-foreground transition-colors cursor-pointer"
+                >
+                  {splitType === "equal" ? "Set a different amount for each person" : "Give everyone the same amount"}
+                </button>
               </div>
             </div>
 
             {/* Members Section Header + Add Button */}
-            <div className="flex flex-col gap-3 pt-3 border-t border-border/60">
+            <div className="flex flex-col gap-3 pt-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-[14px] font-medium text-foreground">
@@ -712,54 +656,33 @@ export default function EditGroupModal({
               )}
             </div>
 
-            {/* Total Amount Summary Row */}
-            <div className="flex items-center justify-between pt-3 border-t border-border/60">
-              <span className="text-[14px] font-medium text-muted-foreground">
-                Total ({members.length} {members.length === 1 ? "member" : "members"}):
+            {/* Total */}
+            <div className="flex items-center justify-between">
+              <span className="text-[13px] text-muted-foreground">
+                Total for {members.length} {members.length === 1 ? "member" : "members"}
               </span>
-              <span className="text-[18px] font-normal text-foreground tracking-[-0.01em] tabular-nums numorainput">
+              <span className="text-[18px] font-normal text-foreground tracking-[var(--ls-tight)] tabular-nums numorainput">
                 GHS {totalAmount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
-
-            {/* Danger Zone: Pinned at bottom */}
-            <div className="mt-2 rounded-2xl border border-destructive/30 bg-destructive/5 p-4 flex items-center justify-between gap-3">
-              <div className="flex flex-col">
-                <span className="text-[13.5px] font-medium text-foreground">Delete this group</span>
-                <span className="text-[12px] text-muted-foreground">
-                  Permanently remove this circle. Counterparties remain saved.
-                </span>
-              </div>
-              <Button
-                type="button"
-                variant="destructive"
-                size="sm"
-                onClick={() => setShowDeleteGroupConfirm(true)}
-                className="h-9 px-3.5 text-[12.5px] shrink-0 font-normal cursor-pointer"
-              >
-                Delete Group
-              </Button>
-            </div>
           </div>
 
-          {/* Sticky Sheet Footer Actions */}
-          <div className="px-6 py-4 border-t border-border/60 bg-muted/20 flex items-center justify-end gap-3 shrink-0">
-            <Button
+          {/* Save is the one main action; deleting is a quiet link, no harder to reach than creating was */}
+          <div className="px-6 py-4 border-t border-border/60 flex items-center justify-between gap-3 shrink-0">
+            <button
               type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="h-11 px-5 rounded-xl border-border/80 text-[13.5px] font-normal cursor-pointer"
+              onClick={() => setShowDeleteGroupConfirm(true)}
+              className="text-[13px] text-destructive-text underline underline-offset-4 decoration-transparent hover:decoration-current transition-colors cursor-pointer"
             >
-              Cancel
-            </Button>
-
+              Delete group
+            </button>
             <Button
               type="button"
               onClick={handleSaveChanges}
               disabled={!name.trim() || members.length === 0}
-              className="h-11 px-6 rounded-xl text-[13.5px] bg-primary hover:bg-primary-hover text-primary-foreground font-normal cursor-pointer shadow-xs disabled:opacity-50"
+              className="h-11 px-6 rounded-xl text-[13.5px] cursor-pointer"
             >
-              Save Changes
+              Save changes
             </Button>
           </div>
         </SheetContent>

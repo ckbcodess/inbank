@@ -110,7 +110,7 @@ here. Never fall back to dense, boxed layouts.
   (`success`, `warning`, `destructive`, `info` for fills). If a colour is missing, add a token to `globals.css` for
   **both** themes. Never hardcode it, and never use Tailwind palette colours (`text-emerald-600`).
 - **Light and dark come from the tokens.** No `dark:` workarounds where a token would do.
-- **Primary is GCB amber** (`#FFC423`, hover `#EBB420`) with dark text on top.
+- **Primary is GCB amber** (`#FFC423`, hover `#ffd966`, lighter in both themes) with dark text on top.
 - **Amber is never text on a light surface,** because it fails contrast. Use amber for filled
   buttons and badges (with dark text), icon accents (`--tile-accent`, duotone fills) and dark-mode
   accents. Text links use `text-foreground` with an underline, or `text-muted-foreground` turning to
@@ -131,6 +131,7 @@ here. Never fall back to dense, boxed layouts.
 
 - **Open Sans everywhere** (`--font-sans`; `--font-mono` is an alias for it). There are no monospace
   faces.
+- **Letter-spacing is a token, not a number.** Use `tracking-[var(--ls-tight)]`, `--ls-heading`, `--ls-display` or `--ls-label` (globals.css), never a raw `tracking-[-0.02em]`. Kerning is the font's own and stays on.
 - **Two weights.** Regular (400) for body text and numbers. Medium (`font-medium`, 500) for headings,
   section titles, form labels and buttons. **Semibold and bold are banned.** `globals.css` resets
   text elements to `font-weight: inherit`; `font-medium` overrides that on purpose.
@@ -145,8 +146,8 @@ here. Never fall back to dense, boxed layouts.
 
 | Use | Classes |
 |---|---|
-| Page title (via `PageHeader`) | `text-[18px] sm:text-[20px] lg:text-[22px] font-medium tracking-[-0.02em]` |
-| Hero figure | `text-[40px]`–`[76px]`, `tracking-[-0.02em]`, regular, `.tabular` |
+| Page title (via `PageHeader`) | `text-[18px] sm:text-[20px] lg:text-[22px] font-medium tracking-[var(--ls-heading)]` |
+| Hero figure | `text-[40px]`–`[76px]`, `tracking-[var(--ls-heading)]` (`--ls-display` for the biggest), regular, `.tabular` |
 | Section / panel heading | `text-[16px] font-medium` (14px under `sm` where space is tight) |
 | Row primary text | `text-[14px] text-foreground` |
 | Body, table cells | `text-[13px] text-foreground` |

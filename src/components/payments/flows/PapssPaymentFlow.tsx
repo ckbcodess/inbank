@@ -1,5 +1,6 @@
 "use client";
 
+import { SavedSuggestions } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
 import { Account } from "@/lib/mock-data";
 import {
@@ -250,7 +251,8 @@ export function PapssPaymentFlow({
               </Select>
             </div>
 
-            <Input
+            <SavedSuggestions query={state.wIban}>
+<Input
               type="text"
               value={state.wIban}
               onChange={(e) => {
@@ -264,6 +266,7 @@ export function PapssPaymentFlow({
               placeholder="Enter account number"
               className="tabular"
             />
+</SavedSuggestions>
 
             {/* Verification Status */}
             <AccountVerificationStatus

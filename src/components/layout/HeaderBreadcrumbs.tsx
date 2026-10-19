@@ -41,7 +41,7 @@ const ROUTE_LABELS: Record<string, string> = {
   bills: "GCB Pay",
   bulk: "Bulk Payments",
   cards: "Cards",
-  transactions: "Transactions",
+  transactions: "Transaction History",
   trade: "Trade Finance",
   approvals: "Approvals",
   reports: "Reports",

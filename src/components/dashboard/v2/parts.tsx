@@ -8,6 +8,7 @@
  * every outbound link carries it (`?from=` / `?account=`).
  */
 
+import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -209,7 +210,7 @@ export function Greeting({ firstName, className }: { firstName: string; classNam
     <h1
       // Quieter on a phone so the balance, not the hello, is the loudest thing on screen.
       className={cn(
-        "text-[18px] font-medium leading-[24px] tracking-[-0.02em] text-foreground sm:text-[20px] sm:leading-[28px] lg:text-[22px]",
+        "text-[18px] font-medium leading-[24px] tracking-[var(--ls-heading)] text-foreground sm:text-[20px] sm:leading-[28px] lg:text-[22px]",
         className,
       )}
       suppressHydrationWarning
@@ -686,25 +687,6 @@ export function ComingUpCard({
 
 /* ── Pay again (saved payees) ────────────────────────────────────────────── */
 
-const AVATAR_TINTS = [
-  "bg-avatar-teal text-primary-foreground border border-black/5 dark:border-white/10",
-  "bg-avatar-sand text-primary-foreground border border-black/5 dark:border-white/10",
-  "bg-avatar-green text-primary-foreground border border-black/5 dark:border-white/10",
-  "bg-avatar-lilac text-primary-foreground border border-black/5 dark:border-white/10",
-  "bg-avatar-blue text-primary-foreground border border-black/5 dark:border-white/10",
-  "bg-avatar-yellow text-primary-foreground border border-black/5 dark:border-white/10",
-  "bg-avatar-pink text-primary-foreground border border-black/5 dark:border-white/10",
-];
-
-function initials(name: string): string {
-  const clean = name.replace(/[()[\]]/g, " ").trim();
-  const parts = clean.split(/\s+/).filter(Boolean);
-  if (parts.length >= 2) {
-    return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase();
-  }
-  return (clean.slice(0, 2) || "??").toUpperCase();
-}
-
 /**
  * This customer's regular payees (lib/payees), each deep-linked into its own
  * rail with the recipient prefilled and the selected account as the source — a
@@ -739,21 +721,14 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
       ) : data.payAgain.length <= 3 ? (
         // When there are 1 to 3 payees (e.g. single-account user), render as clean payee rows starting from the top
         <div className="flex flex-1 flex-col justify-start gap-1">
-          {data.payAgain.map((p, i) => (
+          {data.payAgain.map((p) => (
             <Link
               key={p.href}
               href={withFrom(p.href, data.selectedAccountId)}
               className="group flex items-center gap-3 py-2.5 transition-colors hover:bg-item-hover rounded-xl px-2 -mx-2"
               aria-label={`Pay ${p.name}, ${p.detail}`}
             >
-              <span
-                className={cn(
-                  "flex size-9 shrink-0 items-center justify-center rounded-full text-[13px] font-medium tracking-[0.02em]",
-                  AVATAR_TINTS[i % AVATAR_TINTS.length],
-                )}
-              >
-                {initials(p.name)}
-              </span>
+              <PayeeAvatar name={p.name} size="sm" />
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                 <span className="truncate text-[13.5px] font-medium text-foreground">
                   {p.name}
@@ -773,21 +748,14 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
         // When 4 or more payees, render as a balanced 4-column avatar grid
         <div className="flex flex-1 flex-col justify-around">
           <div className="grid grid-cols-4 gap-x-2 gap-y-3.5">
-            {data.payAgain.slice(0, 8).map((p, i) => (
+            {data.payAgain.slice(0, 8).map((p) => (
               <Link
                 key={p.href}
                 href={withFrom(p.href, data.selectedAccountId)}
                 className="group flex min-w-0 flex-col items-center gap-1.5 text-center"
                 aria-label={`Pay ${p.name}, ${p.detail}`}
               >
-                <span
-                  className={cn(
-                    "flex size-10 items-center justify-center rounded-full text-[13px] tracking-[0.02em] transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85] sm:size-11 sm:text-[13.5px]",
-                    AVATAR_TINTS[i % AVATAR_TINTS.length],
-                  )}
-                >
-                  {initials(p.name)}
-                </span>
+                <PayeeAvatar name={p.name} size="md" />
                 <span className="flex w-full min-w-0 flex-col gap-0.5">
                   <span className="truncate text-[12px] leading-tight text-foreground font-medium">{p.name}</span>
                   <span className="truncate text-[11px] leading-tight text-muted-foreground">{p.detail}</span>

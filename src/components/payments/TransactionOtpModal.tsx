@@ -159,7 +159,7 @@ export default function TransactionOtpModal({
                 <span className="tabular whitespace-nowrap font-medium text-foreground">{displayPhone}</span>
               </>
             }
-            titleClass="mt-5 text-[22px] font-medium tracking-[-0.02em] text-foreground"
+            titleClass="mt-5 text-[22px] font-medium tracking-[var(--ls-heading)] text-foreground"
             descClass="mt-2 max-w-xs text-[13px] text-muted-foreground"
           />
 

@@ -776,7 +776,7 @@ export default function LinkSourceAccountModal({
                 </div>
 
                 <div className="flex flex-col gap-1.5" role="status">
-                  <h3 className="text-[17px] text-foreground tracking-[-0.01em]">Approve on your phone</h3>
+                  <h3 className="text-[17px] text-foreground tracking-[var(--ls-tight)]">Approve on your phone</h3>
                   <p className="text-[13px] leading-relaxed text-muted-foreground tabular">
                     We&apos;ve sent a request to {displayGhanaMobile(newMomoNumber)}. Approve it with your{" "}
                     {newMomoOperator} MoMo PIN, then come back here to confirm.

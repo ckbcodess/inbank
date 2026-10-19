@@ -571,7 +571,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
           >
             <ChevronLeft size={22} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
             Select a standing order
           </h1>
         </div>
@@ -682,7 +682,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Standing Order Summary
           </h1>
         </div>
@@ -745,7 +745,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
         >
           <ChevronLeft size={20} strokeWidth={1.8} />
         </button>
-        <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
+        <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
           {railConfig.title} Standing Order
         </h1>
       </div>

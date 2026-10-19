@@ -70,7 +70,7 @@ export function AuthSummary({ headline, amount, rows }: { headline: string; amou
     <div className="flex flex-col gap-3 rounded-xl bg-muted/40 p-4">
       <div className="flex flex-col gap-1">
         <span className="text-[13px] text-muted-foreground">{headline}</span>
-        {amount && <span className="tabular text-[22px] leading-none tracking-[-0.01em] text-foreground">{amount}</span>}
+        {amount && <span className="tabular text-[22px] leading-none tracking-[var(--ls-tight)] text-foreground">{amount}</span>}
       </div>
       {rows && rows.length > 0 && (
         <div className="flex flex-col gap-1.5 text-[13px]">

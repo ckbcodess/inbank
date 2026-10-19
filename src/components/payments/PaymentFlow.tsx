@@ -11,6 +11,7 @@
  *   Receipt: Full transaction receipt with Share, Repeat, and Done actions.
  */
 
+import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -32,7 +33,6 @@ import {
   Ticket,
 } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ActionTile } from "@/components/ui/action-tile";
 import {
@@ -65,6 +65,7 @@ import TransactionOtpModal from "./TransactionOtpModal";
 import { useAuthorisation } from "./useAuthorisation";
 import { REGISTERED_WALLET } from "./flows/OwnWalletPicker";
 import { groupAvatarTint } from "./flows/beneficiaries";
+import { SavedRecipientsProvider } from "./flows/SavedRecipients";
 import { useDevUserStore } from "@/lib/dev-user-simulation";
 import { OwnAccountFlow } from "./flows/OwnAccountFlow";
 import { OtherGcbFlow } from "./flows/OtherGcbFlow";
@@ -825,47 +826,6 @@ function HorizontalScrollStrip({
           </button>
         </div>
       )}
-    </div>
-  );
-}
-
-function RailBeneficiaryStrip({
-  items,
-  onSelect,
-}: {
-  title?: string;
-  items: RecentPayeeAvatar[];
-  onSelect: (item: RecentPayeeAvatar) => void;
-}) {
-  if (!items || items.length === 0) return null;
-  return (
-    <div className="pb-2">
-      <HorizontalScrollStrip>
-        {items.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => onSelect(item)}
-            className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
-            title={`Select ${item.name} (${item.subtitle || item.bank || item.acct})`}
-          >
-            <span
-              className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85] shadow-xs border border-black/5 dark:border-white/10"
-              style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
-            >
-              {item.initials}
-            </span>
-            <div className="flex flex-col w-full px-0.5">
-              <span className="text-[12px] font-medium text-foreground truncate w-full" title={item.name}>
-                {item.name}
-              </span>
-              <span className="text-[11px] text-muted-foreground truncate w-full" title={item.subtitle || item.bank}>
-                {item.subtitle || item.bank}
-              </span>
-            </div>
-          </button>
-        ))}
-      </HorizontalScrollStrip>
     </div>
   );
 }
@@ -2142,7 +2102,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Which bank do you want to send to?
           </h1>
         </div>
@@ -2156,12 +2116,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               onClick={() => selectBeneficiary(item)}
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
-              <span
-                className="flex size-14 items-center justify-center rounded-full text-[20px] text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
-                style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
-              >
-                {item.initials}
-              </span>
+              <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
               <div className="flex flex-col">
                 <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
                   {item.name.split(" ")[0]}
@@ -2254,7 +2209,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Which wallet do you want to send to?
           </h1>
         </div>
@@ -2268,12 +2223,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               onClick={() => selectBeneficiary(item)}
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
-              <span
-                className="flex size-14 items-center justify-center rounded-full text-[20px] text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
-                style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
-              >
-                {item.initials}
-              </span>
+              <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
               <div className="flex flex-col">
                 <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
                   {item.name.split(" ")[0]}
@@ -2345,7 +2295,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Who is this code for?
           </h1>
         </div>
@@ -2371,12 +2321,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               }}
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
-              <span
-                className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85] shadow-xs border border-black/5 dark:border-white/10"
-                style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
-              >
-                {item.initials}
-              </span>
+              <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
               <div className="flex flex-col w-full">
                 <span className="text-[12px] font-medium text-foreground truncate w-full">
                   {item.name.split(" ")[0]}
@@ -2480,7 +2425,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Which card do you want to top up?
           </h1>
         </div>
@@ -2527,7 +2472,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             GCB Pay
           </h1>
         </div>
@@ -2541,12 +2486,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               onClick={() => selectBeneficiary(item)}
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
-              <span
-                className="flex size-14 items-center justify-center rounded-full text-[14px] font-semibold text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85] shadow-xs border border-black/5 dark:border-white/10"
-                style={{ backgroundColor: item.colorBg || "var(--avatar-yellow)" }}
-              >
-                {item.initials}
-              </span>
+              <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
               <div className="flex flex-col w-full">
                 <span className="text-[12px] font-medium text-foreground truncate w-full">
                   {item.name.split(" ")[0]}
@@ -2595,7 +2535,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Proxy Payments
           </h1>
         </div>
@@ -2733,7 +2673,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Group Payments
           </h1>
         </div>
@@ -2811,7 +2751,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             {isData ? "Who is this internet bundle for?" : "Who is this airtime for?"}
           </h1>
         </div>
@@ -2825,12 +2765,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               onClick={() => selectBeneficiary(item)}
               className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
             >
-              <span
-                className="flex size-14 items-center justify-center rounded-full text-[18px] text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
-                style={{ backgroundColor: item.colorBg || "var(--avatar-teal)" }}
-              >
-                {item.initials}
-              </span>
+              <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
               <div className="flex flex-col">
                 <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
                   {item.name.split(" ")[0]}
@@ -2915,8 +2850,15 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     );
   }
 
+  // Saved recipients are offered from the "Saved" link on the beneficiary field, never as a row above the form
+  const savedForThisPayment =
+    bankCategory !== "own" && walletCategory !== "self" && topupCategory !== "self" && topupCategory !== "broadband" && rail !== "group"
+      ? activeRailBeneficiaries
+      : [];
+
   // Unified Progressive Disclosure Experience across ALL Services
   return (
+    <SavedRecipientsProvider items={savedForThisPayment} onSelect={selectBeneficiary}>
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
       {/* Header with back button */}
       <div className="flex items-center justify-between gap-3 min-w-0">
@@ -2957,7 +2899,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
+          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             {getPageTitle()}
           </h1>
         </div>
@@ -2979,40 +2921,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
          * =================================================================== */}
         {stage === 1 && (
           <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
-            {/* Top-Level Quick Beneficiaries Strip */}
-            {activeRailBeneficiaries.length > 0 && bankCategory !== "own" && walletCategory !== "self" && topupCategory !== "self" && topupCategory !== "broadband" && rail !== "group" && (
-              <div className="flex flex-col gap-6 -mb-1 animate-in fade-in duration-150">
-                <RailBeneficiaryStrip
-                  items={activeRailBeneficiaries}
-                  onSelect={selectBeneficiary}
-                />
-                <div className="relative flex items-center justify-center">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-border/60" />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setStage1Collapsed(false);
-                      setF((p) => ({
-                        ...p,
-                        benAcct: "",
-                        benName: "",
-                        wPhone: "",
-                        wName: "",
-                        aPhone: "",
-                        pxId: "",
-                        billRef: "",
-                      }));
-                    }}
-                    className="relative bg-card px-3 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                  >
-                    Or enter new details
-                  </button>
-                </div>
-              </div>
-            )}
-
             {/* Flow 1: Between My Accounts */}
             {rail === "bank" && bankCategory === "own" && (
               <OwnAccountFlow
@@ -3716,7 +3624,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 {/* Total Row */}
                 <div className="flex items-center justify-between px-4 py-3.5 w-full bg-muted/40 dark:bg-muted/20">
                   <span className="text-[13.5px] text-foreground font-normal">Total Debit</span>
-                  <span className="text-[26px] sm:text-[28px] font-semibold text-foreground tracking-[-0.03em] tabular">
+                  <span className="text-[26px] sm:text-[28px] font-semibold text-foreground tracking-[var(--ls-display)] tabular">
                     {formatMoney(totalDebit, "GHS", true)}
                   </span>
                 </div>
@@ -3784,5 +3692,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         />
       </div>
     </div>
+    </SavedRecipientsProvider>
   );
 }

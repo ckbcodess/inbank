@@ -222,7 +222,7 @@ export function AuthorisePanel({
           </div>
 
           {/* Heading */}
-          <h2 className="mt-6 text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground">
+          <h2 className="mt-6 text-[26px] font-medium leading-[32px] tracking-[var(--ls-heading)] text-foreground">
             Enter your 4-digit PIN to authorise
           </h2>
 
@@ -328,7 +328,7 @@ export function AuthorisePanel({
                 <span className="font-medium text-foreground tabular whitespace-nowrap">{REGISTERED_PHONE}</span>
               </>
             }
-            titleClass="mt-6 text-[26px] font-medium leading-[32px] tracking-[-0.02em] text-foreground"
+            titleClass="mt-6 text-[26px] font-medium leading-[32px] tracking-[var(--ls-heading)] text-foreground"
             descClass="mt-2 text-[13.5px] text-muted-foreground max-w-xs"
           />
 

@@ -62,7 +62,7 @@ function customerNav(actor: Actor, activeProfile?: Profile | null): NavItem[] {
 
   // More Services — a collapsible dropdown gathering the secondary surfaces.
   items.push(
-    { key: "transactions", label: "Transactions", path: "/transactions", icon: "ArrowLeftRight", group: "More Services" },
+    { key: "transactions", label: "Transaction History", path: "/transactions", icon: "ArrowLeftRight", group: "More Services" },
     { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "More Services" },
     { key: "fx-rates", label: "FX Rates", path: "/fx-rates", icon: "TrendingUp", group: "More Services" },
     { key: "locate-us", label: "Locate Us", path: "/locate-us", icon: "MapPin", group: "More Services" },
