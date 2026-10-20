@@ -216,7 +216,6 @@ function AccountsContent() {
     accounts,
     defaultId,
     defaultAccount,
-    isRetail,
     isWalletCustomer,
     ghanaCardAccountIds,
     walletMigration,
@@ -305,8 +304,7 @@ function AccountsContent() {
 
   const devGroups = useMemo<DevStateGroup[] | undefined>(
     () =>
-      isRetail
-        ? [
+      [
             {
               label: "Screen state",
               states: SCREEN_STATES.map((s) => ({ id: s, label: SCREEN_STATE_LABEL[s] })),
@@ -322,9 +320,8 @@ function AccountsContent() {
               value: selfieMatch,
               onChange: (v: string) => setSelfieMatch(v as "match" | "no-match"),
             },
-          ]
-        : undefined,
-    [isRetail, screenState, selfieMatch],
+          ],
+    [screenState, selfieMatch],
   );
 
   // Removing stops top-ups from that source, so it asks first; Undo stays as a safety net.
@@ -342,7 +339,7 @@ function AccountsContent() {
     ? walletMigration.dismissed
       ? null
       : walletMigration.amount
-    : isRetail && scenario.migrated && !migratedDismissed
+    : scenario.migrated && !migratedDismissed
       ? scenario.migrated.amount
       : null;
   const multiple = accounts.length > 1;
@@ -354,7 +351,7 @@ function AccountsContent() {
       <PageHeader
         title="My Accounts"
         actions={
-          isRetail && screenState !== "loading" && screenState !== "error" ? (
+          screenState !== "loading" && screenState !== "error" ? (
             <Button
               type="button"
               onClick={() => {
@@ -373,25 +370,15 @@ function AccountsContent() {
         }
       />
 
-      {isRetail ? (
-        <StateSwitcher
-          section="S06"
-          label="Customer"
-          states={SCENARIO_IDS}
-          value={scenario.id}
-          onChange={applyScenario}
-          labels={SCENARIO_LABEL}
-          groups={devGroups}
-        />
-      ) : (
-        <StateSwitcher
-          section="S06"
-          states={SCREEN_STATES}
-          value={screenState}
-          onChange={setScreenState}
-          labels={SCREEN_STATE_LABEL}
-        />
-      )}
+      <StateSwitcher
+        section="S06"
+        label="Customer"
+        states={SCENARIO_IDS}
+        value={scenario.id}
+        onChange={applyScenario}
+        labels={SCENARIO_LABEL}
+        groups={devGroups}
+      />
 
       {/* Just moved from wallet to a GCB account */}
       {migratedAmount !== null && defaultAccount && screenState === "populated" && (
@@ -444,7 +431,7 @@ function AccountsContent() {
       </section>
 
       {/* ── Sources of funds (linked wallets & cards) ── */}
-      {isRetail && screenState !== "error" && (
+      {screenState !== "error" && (
         <section className="flex flex-col gap-3" aria-labelledby="sources-heading">
           <SectionHeading
             id="sources-heading"

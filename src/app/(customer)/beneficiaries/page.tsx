@@ -72,7 +72,6 @@ import {
 } from "@/lib/beneficiaries-store";
 import { useGroupsStore, type PaymentGroup } from "@/lib/groups-store";
 import { useSession } from "@/lib/session-store";
-import { isBusinessProfile } from "@/lib/profile";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import EditGroupModal from "@/components/payments/EditGroupModal";
 import { toast } from "sonner";
@@ -310,9 +309,6 @@ const INITIAL_FORM: FormState = {
 };
 
 export default function BeneficiariesPage() {
-  const activeProfile = useSession((s) => s.activeProfile);
-  const isCorporate = isBusinessProfile(activeProfile);
-
   const {
     beneficiaries,
     addBeneficiary,
@@ -500,7 +496,7 @@ export default function BeneficiariesPage() {
       });
       toast.success(`Beneficiary "${form.name.trim()}" updated successfully.`);
     } else {
-      const verified = !isCorporate;
+      const verified = true;
       addBeneficiary({
         name: form.name.trim(),
         transactionType: form.transactionType,

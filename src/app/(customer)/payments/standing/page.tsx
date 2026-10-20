@@ -14,7 +14,7 @@ import { TrueEmptyState } from "@/components/states/ListStates";
 import PageHeader from "@/components/layout/PageHeader";
 import { STANDING_INSTRUCTIONS, findAccount, formatMoney, type StandingInstruction } from "@/lib/mock-data";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
-import { profileKindOf, rowKind } from "@/lib/profile";
+import { rowKind } from "@/lib/profile";
 import { dayLabel, frequencyLabel, orderTitle, orderType, runsPerMonth } from "@/lib/standing-display";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { cn } from "@/lib/utils";
@@ -22,9 +22,8 @@ import { cn } from "@/lib/utils";
 export default function StandingOrdersPage() {
   const { showAmounts } = useAmountVisibility();
 
-  // Only the signed-in profile's orders (personal and business orders live on different accounts).
-  const kind = profileKindOf(useSession((s) => s.activeProfile));
-  const mine = STANDING_INSTRUCTIONS.filter((s) => rowKind(findAccount(s.accountId)) === kind);
+  // Only orders on personal accounts (a company's standing orders are business's own).
+  const mine = STANDING_INSTRUCTIONS.filter((s) => rowKind(findAccount(s.accountId)) === "RETAIL");
   const active = mine.filter((s) => s.status === "Active").sort((a, b) => a.nextRun.localeCompare(b.nextRun));
   const paused = mine.filter((s) => s.status === "Paused").sort((a, b) => orderTitle(a).localeCompare(orderTitle(b)));
 

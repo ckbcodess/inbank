@@ -17,13 +17,13 @@ import { toLocalEquivalent } from "@/lib/mock-data";
 import { APPROVAL_QUEUE } from "@/lib/corporate/approvals";
 import { sumMoney } from "@/lib/money";
 import { isApprover } from "@/lib/corporate/roles";
-import { useCustomerAccounts } from "@/lib/use-customer-accounts";
+import { businessAccounts } from "@/lib/corporate/accounts";
 import { useSession } from "@/lib/session-store";
 
 export default function BusinessOverviewPage() {
   const actor = useSession((s) => s.actor);
   const activeProfile = useSession((s) => s.activeProfile);
-  const { accounts } = useCustomerAccounts();
+  const accounts = useMemo(() => businessAccounts(), []);
 
   const totalAvailable = useMemo(
     () => sumMoney(accounts.map((a) => toLocalEquivalent(a.available, a.currency) ?? a.available)),

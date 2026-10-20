@@ -50,7 +50,6 @@ import {
   type PaymentCard,
 } from "@/lib/mock-data";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
-import { profileKindOf } from "@/lib/profile";
 import { readyCache } from "@/lib/ready-cache";
 import { useCardAssetsReady } from "@/components/cards/useCardAssetsReady";
 import { CardsPageSkeleton, CardsSkeleton } from "@/components/cards/CardParts";
@@ -158,22 +157,22 @@ function CardsPageContent() {
   const [refreshCount, setRefreshCount] = useState(0);
 
   const availableAccounts = useMemo(
-    () => (activeProfile ? accountsForProfile(activeProfile.kind) : []),
+    () => (activeProfile ? accountsForProfile("RETAIL") : []),
     [activeProfile],
   );
 
   const allCards = useMemo(() => {
     void refreshCount;
-    return cardsForProfile(activeProfile?.kind);
-  }, [activeProfile, refreshCount]);
+    return cardsForProfile("RETAIL");
+  }, [refreshCount]);
 
   const { cards, activeSimulatedCard } = useMemo(() => {
     return getEffectiveCardsForProfile(
-      profileKindOf(activeProfile),
+      "RETAIL",
       allCards,
       devState,
     );
-  }, [activeProfile, allCards, devState]);
+  }, [allCards, devState]);
 
   const devGroups = useMemo<DevStateGroup[]>(() => {
     const cardOptions = [
@@ -281,7 +280,7 @@ function CardsPageContent() {
       fundable: isPrepaid || isVirtualCard,
       isVirtual: isVirtualCard,
       singleUse: isVirtualCard ? isSingleUse : false,
-      profileKind: profileKindOf(activeProfile),
+      profileKind: "RETAIL",
     };
 
     addCard(newCard);

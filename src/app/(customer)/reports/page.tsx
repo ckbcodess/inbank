@@ -1,17 +1,16 @@
 "use client";
 
 /**
- * Reports — BRD FR-23 and NFR-25.
- *
- * NFR-25 names the capabilities explicitly: standard reports, role-based
- * dashboards, filtering, drill-down to transaction level, and export in common
- * formats. All five are present here:
+ * Reports — BRD FR-23 and NFR-25, for personal banking: standard reports, filtering, drill-down to transaction
+ * level and export, over the customer's own ledger.
  *
  *   - standard reports  → the report selector
- *   - role-based        → the report list is filtered by the actor's role
- *   - filtering         → date range + status
+ *   - filtering         → date range + search
  *   - drill-down        → rows link to Transaction Details
  *   - export            → CSV download of exactly what is on screen
+ *
+ * The administrator's "user activity" report is business banking's (a company has users to account for), so it is
+ * not here; see WORKING_LOG.
  *
  * State model: 13.1 for the results table (a report that returns nothing after
  * filtering is filtered-empty, not true-empty — the distinction matters most
@@ -20,7 +19,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { BarChart3, Download, FileText, Search } from "lucide-react";
+import { BarChart3, Download, Search } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,9 +32,7 @@ import {
   TrueEmptyState,
 } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
-import { useSession } from "@/lib/session-store";
-import { canViewAdminReports } from "@/lib/roles";
-import { AUDIT_EVENTS, TRANSACTIONS, formatDate, formatMoney } from "@/lib/mock-data";
+import { formatDate, formatMoney, transactionsForProfile } from "@/lib/mock-data";
 
 import { Field } from "@/components/ui/field";
 const LIST_STATES: readonly ListState[] = [
@@ -46,14 +43,12 @@ const LIST_STATES: readonly ListState[] = [
   "error",
 ] as const;
 
-type ReportKey = "transactions" | "payments" | "activity";
+type ReportKey = "transactions" | "payments";
 
 interface ReportDef {
   key: ReportKey;
   label: string;
   description: string;
-  /** NFR-25 "role-based" — user activity is an administrator's report. */
-  adminOnly?: boolean;
 }
 
 const REPORTS: ReportDef[] = [
@@ -67,41 +62,23 @@ const REPORTS: ReportDef[] = [
     label: "Outgoing payments",
     description: "Debits only — useful for reconciling what left the account.",
   },
-  {
-    key: "activity",
-    label: "User activity",
-    description: "Who did what, and when. Drawn from the audit trail.",
-    adminOnly: true,
-  },
 ];
 
 export default function ReportsPage() {
-  const { actor } = useSession();
   const [state, setState] = useState<ListState>("populated");
   const [report, setReport] = useState<ReportKey>("transactions");
   const [from, setFrom] = useState("2026-01-01");
   const [to, setTo] = useState("2026-08-11");
   const [query, setQuery] = useState("");
 
-  const available = useMemo(
-    () => REPORTS.filter((r) => !r.adminOnly || (actor && canViewAdminReports(actor.role))),
-    [actor],
-  );
-
-  // Keep the selection valid if the actor can't see the selected report.
-  const activeKey: ReportKey = available.some((r) => r.key === report) ? report : "transactions";
-  const active = available.find((r) => r.key === activeKey) ?? REPORTS[0];
-
-  const inRange = (iso: string) => {
-    const d = iso.slice(0, 10);
-    return d >= from && d <= to;
-  };
+  const active = REPORTS.find((r) => r.key === report) ?? REPORTS[0];
 
   const txRows = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return TRANSACTIONS.filter((t) => {
-      if (!inRange(t.date)) return false;
-      if (activeKey === "payments" && t.direction !== "debit") return false;
+    return transactionsForProfile("RETAIL").filter((t) => {
+      const d = t.date.slice(0, 10);
+      if (d < from || d > to) return false;
+      if (report === "payments" && t.direction !== "debit") return false;
       if (!q) return true;
       return (
         t.description.toLowerCase().includes(q) ||
@@ -109,21 +86,9 @@ export default function ReportsPage() {
         t.reference.toLowerCase().includes(q)
       );
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeKey, from, to, query]);
+  }, [report, from, to, query]);
 
-  const activityRows = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return AUDIT_EVENTS.filter((e) => {
-      if (!inRange(e.timestamp)) return false;
-      if (!q) return true;
-      return e.actor.toLowerCase().includes(q) || e.action.toLowerCase().includes(q);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [from, to, query]);
-
-  const isActivity = activeKey === "activity";
-  const rowCount = isActivity ? activityRows.length : txRows.length;
+  const rowCount = txRows.length;
   const filtersApplied = query.trim() !== "";
 
   const effective: ListState =
@@ -136,31 +101,25 @@ export default function ReportsPage() {
 
   /** NFR-25 export — exports exactly the filtered rows on screen, nothing more. */
   function handleExport() {
-    const headers = isActivity
-      ? ["Timestamp", "Actor", "Role", "Action", "Target"]
-      : ["Reference", "Date", "Description", "Counterparty", "Direction", "Amount", "Currency", "Status"];
-
+    const headers = ["Reference", "Date", "Description", "Counterparty", "Direction", "Amount", "Currency", "Status"];
     const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
-
-    const body = isActivity
-      ? activityRows.map((e) => [e.timestamp, escape(e.actor), escape(e.role), escape(e.action), escape(e.target)])
-      : txRows.map((t) => [
-          t.reference,
-          t.date,
-          escape(t.description),
-          escape(t.counterparty),
-          t.direction,
-          String(t.amount),
-          t.currency,
-          t.state,
-        ]);
+    const body = txRows.map((t) => [
+      t.reference,
+      t.date,
+      escape(t.description),
+      escape(t.counterparty),
+      t.direction,
+      String(t.amount),
+      t.currency,
+      t.state,
+    ]);
 
     const csv = [headers.join(","), ...body.map((r) => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${activeKey}-report_${from}_to_${to}.csv`;
+    link.download = `${report}-report_${from}_to_${to}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -181,24 +140,20 @@ export default function ReportsPage() {
 
       {/* Report selection */}
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-        {available.map((r) => (
+        {REPORTS.map((r) => (
           <button
             key={r.key}
             type="button"
             onClick={() => setReport(r.key)}
-            aria-pressed={activeKey === r.key}
+            aria-pressed={report === r.key}
             className={`flex flex-col rounded-2xl border p-3 text-left transition-colors ${
-              activeKey === r.key
+              report === r.key
                 ? "border-[var(--active-border)] bg-[var(--active-bg)]"
                 : "border-border bg-card hover:bg-muted/50"
             }`}
           >
             <span className="flex size-7 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-              {r.key === "activity" ? (
-                <FileText size={15} strokeWidth={1.8} aria-hidden="true" />
-              ) : (
-                <BarChart3 size={15} strokeWidth={1.8} aria-hidden="true" />
-              )}
+              <BarChart3 size={15} strokeWidth={1.8} aria-hidden="true" />
             </span>
             <span className="mt-2 text-[14px] text-foreground">{r.label}</span>
             <span className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
@@ -213,10 +168,10 @@ export default function ReportsPage() {
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Field label="From" htmlFor="rep-from">
             <Input id="rep-from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
-</Field>
+          </Field>
           <Field label="To" htmlFor="rep-to">
             <Input id="rep-to" type="date" value={to} onChange={(e) => setTo(e.target.value)} />
-</Field>
+          </Field>
           <Field label="Search" optional htmlFor="rep-q" className="sm:col-span-2">
             <div className="relative">
               <Search
@@ -229,23 +184,21 @@ export default function ReportsPage() {
                 id="rep-q"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder={isActivity ? "Actor or action" : "Description, counterparty or reference"}
+                placeholder="Description, counterparty or reference"
                 className="pl-8"
               />
             </div>
           </Field>
         </div>
 
-        {!isActivity && (
-          <div className="mt-4 flex flex-wrap items-baseline justify-between gap-2 border-t border-border pt-4">
-            <span className="text-[13px] text-muted-foreground">
-              {rowCount} {rowCount === 1 ? "record" : "records"} · total debits
-            </span>
-            <span className="text-[18px] leading-tight text-foreground tabular">
-              {formatMoney(total)}
-            </span>
-          </div>
-        )}
+        <div className="mt-4 flex flex-wrap items-baseline justify-between gap-2 border-t border-border pt-4">
+          <span className="text-[13px] text-muted-foreground">
+            {rowCount} {rowCount === 1 ? "record" : "records"} · total debits
+          </span>
+          <span className="text-[18px] leading-tight text-foreground tabular">
+            {formatMoney(total)}
+          </span>
+        </div>
       </section>
 
       {/* Results */}
@@ -286,64 +239,41 @@ export default function ReportsPage() {
       {effective === "populated" && (
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <div className="overflow-x-auto">
-            {isActivity ? (
-              <table className="w-full min-w-[640px] text-[13px]">
-                <thead>
-                  <tr className="border-b border-border text-left text-muted-foreground">
-                    <th className="px-3 py-2 font-normal">When</th>
-                    <th className="px-3 py-2 font-normal">Actor</th>
-                    <th className="px-3 py-2 font-normal">Action</th>
-                    <th className="px-3 py-2 font-normal">Target</th>
+            <table className="w-full min-w-[720px] text-[13px]">
+              <thead>
+                <tr className="border-b border-border text-left text-muted-foreground">
+                  <th className="px-3 py-2 font-normal">Reference</th>
+                  <th className="px-3 py-2 font-normal">Date</th>
+                  <th className="px-3 py-2 font-normal">Description</th>
+                  <th className="px-3 py-2 text-right font-normal">Amount</th>
+                  <th className="px-3 py-2 font-normal">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {txRows.map((t) => (
+                  <tr key={t.id} className="transition-colors hover:bg-muted/50">
+                    <td className="px-3 py-3">
+                      {/* NFR-25 drill-down to transaction level */}
+                      <Link
+                        href={`/transactions/${t.id}`}
+                        className="text-foreground underline-offset-4 hover:underline tabular"
+                      >
+                        {t.reference}
+                      </Link>
+                    </td>
+                    <td className="px-3 py-3 text-muted-foreground tabular">{formatDate(t.date)}</td>
+                    <td className="px-3 py-3 text-foreground">{t.description}</td>
+                    <td className="px-3 py-3 text-right text-foreground tabular">
+                      {t.direction === "debit" ? "−" : "+"}
+                      {formatMoney(t.amount, t.currency)}
+                    </td>
+                    <td className="px-3 py-3">
+                      <TransactionStatusBadge state={t.state} />
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {activityRows.map((e) => (
-                    <tr key={e.id} className="transition-colors hover:bg-muted/50">
-                      <td className="px-3 py-3 text-muted-foreground tabular">{formatDate(e.timestamp)}</td>
-                      <td className="px-3 py-3 text-foreground">{e.actor}</td>
-                      <td className="px-3 py-3 text-foreground">{e.action}</td>
-                      <td className="px-3 py-3 text-muted-foreground">{e.target}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <table className="w-full min-w-[720px] text-[13px]">
-                <thead>
-                  <tr className="border-b border-border text-left text-muted-foreground">
-                    <th className="px-3 py-2 font-normal">Reference</th>
-                    <th className="px-3 py-2 font-normal">Date</th>
-                    <th className="px-3 py-2 font-normal">Description</th>
-                    <th className="px-3 py-2 text-right font-normal">Amount</th>
-                    <th className="px-3 py-2 font-normal">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {txRows.map((t) => (
-                    <tr key={t.id} className="transition-colors hover:bg-muted/50">
-                      <td className="px-3 py-3">
-                        {/* NFR-25 drill-down to transaction level */}
-                        <Link
-                          href={`/transactions/${t.id}`}
-                          className="text-foreground underline-offset-4 hover:underline tabular"
-                        >
-                          {t.reference}
-                        </Link>
-                      </td>
-                      <td className="px-3 py-3 text-muted-foreground tabular">{formatDate(t.date)}</td>
-                      <td className="px-3 py-3 text-foreground">{t.description}</td>
-                      <td className="px-3 py-3 text-right text-foreground tabular">
-                        {t.direction === "debit" ? "−" : "+"}
-                        {formatMoney(t.amount, t.currency)}
-                      </td>
-                      <td className="px-3 py-3">
-                        <TransactionStatusBadge state={t.state} />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

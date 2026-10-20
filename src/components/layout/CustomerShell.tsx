@@ -99,10 +99,10 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
       if (actor.profiles.length > 0) selectProfile(actor.profiles[0]);
       else router.replace(loginPath);
     }
-    // Personal and business banking are separate surfaces. `/business/*` is business-only, and a business
-    // relationship's home is `/business/overview`, not the personal dashboard.
+    // Personal and business banking are separate apps. `/business/*` is business-only, and a business
+    // relationship never rests on a personal URL: it goes to its own home.
     else if (activeProfile.kind === "RETAIL" && pathname.startsWith("/business")) router.replace("/overview");
-    else if (activeProfile.kind === "CORPORATE" && pathname === "/overview") router.replace("/business/overview");
+    else if (activeProfile.kind === "CORPORATE" && !pathname.startsWith("/business")) router.replace("/business/overview");
   }, [hydrated, actor, mfaVerified, activeProfile, pathname, router, selectProfile, loginPath]);
 
   const toggleCollapse = useCallback(() => {

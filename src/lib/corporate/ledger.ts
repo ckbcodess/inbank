@@ -6,7 +6,7 @@
  * Types come from `mock-data` (type-only imports, so there is no runtime cycle).
  */
 
-import type { Account, CardTransaction, PaymentCard, StandingInstruction, Transaction } from "../mock-data";
+import type { Account, AppNotification, CardTransaction, PaymentCard, StandingInstruction, Transaction } from "../mock-data";
 import type { Actor, Profile } from "../roles";
 
 export const CORPORATE_PROFILE: Profile = {
@@ -892,5 +892,53 @@ export const CORPORATE_STANDING_INSTRUCTIONS: StandingInstruction[] = [
     status: "Paused",
     shortName: "Cleaning",
     transactionType: "To Bank",
+  },
+];
+
+/** Business's notifications (approvals, trade, bulk, cards). No business screen reads them yet: see WORKING_LOG. */
+export const CORPORATE_NOTIFICATIONS: AppNotification[] = [
+  {
+    id: "ntf-001",
+    kind: "approval",
+    title: "Payment approved",
+    body: "GHS 84,200.00 to Ridge Logistics Ltd was approved by Kwabena Mensah.",
+    date: "2026-08-11T09:14:00Z",
+    read: false,
+    href: "/business/transactions/txn-001",
+  },
+  {
+    id: "ntf-002",
+    kind: "rejection",
+    title: "Trade request returned for clarification",
+    body: "LC-2026-0043 needs a corrected commercial invoice before it can proceed.",
+    date: "2026-08-11T07:52:00Z",
+    read: false,
+    href: "/business/trade/trd-001",
+  },
+  {
+    id: "ntf-003",
+    kind: "status",
+    title: "Bulk batch partially failed",
+    body: "3 of 128 records in PAYROLL-AUG-2026 failed validation and need correction.",
+    date: "2026-08-10T16:20:00Z",
+    read: false,
+    href: "/business/payments/bulk/bat-001",
+  },
+  {
+    id: "ntf-004",
+    kind: "submission",
+    title: "Payment submitted for approval",
+    body: "GHS 12,000.00 to Nsawam Foods Ltd is awaiting approver action.",
+    date: "2026-08-10T11:05:00Z",
+    read: true,
+    href: "/business/transactions/txn-004",
+  },
+  {
+    id: "ntf-005",
+    kind: "status",
+    title: "Card blocked",
+    body: "Payroll Prepaid ∗∗∗∗ 6654 was blocked at your request.",
+    date: "2026-08-09T14:41:00Z",
+    read: true,
   },
 ];

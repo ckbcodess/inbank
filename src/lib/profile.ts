@@ -18,11 +18,6 @@ export type { ProfileKind } from "./roles";
  */
 export const DEFAULT_PROFILE_KIND: ProfileKind = "CORPORATE";
 
-/** The relationship a session is acting in. */
-export function profileKindOf(profile: Pick<Profile, "kind"> | null | undefined): ProfileKind {
-  return profile?.kind ?? DEFAULT_PROFILE_KIND;
-}
-
 /** The relationship a ledger row (account, transaction, card) belongs to. */
 export function rowKind(row: { profileKind?: ProfileKind } | null | undefined): ProfileKind {
   return row?.profileKind ?? DEFAULT_PROFILE_KIND;

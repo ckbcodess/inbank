@@ -72,14 +72,6 @@ export const SHELL_OF_ROLE: Record<Role, Shell> = {
   BANK_ADMIN: "admin",
 };
 
-/**
- * Who can read the administrator's reports (user activity, NFR-25). A capability, asked by shared screens
- * such as Reports, so they never test for a business role themselves.
- */
-export function canViewAdminReports(role: Role): boolean {
-  return role === "CORPORATE_ADMIN";
-}
-
 export function isInternalStaff(role: Role): boolean {
   return SHELL_OF_ROLE[role] === "admin";
 }

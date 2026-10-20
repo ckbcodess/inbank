@@ -14,7 +14,6 @@
  * money into savings is never shown as an expense.
  */
 
-import { rowKind } from "@/lib/profile";
 import { useMemo, useState } from "react";
 import { Calendar, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -43,10 +42,6 @@ import {
 } from "@/lib/insights";
 import { roundMoney } from "@/lib/money";
 import type { BaselineState } from "@/lib/states";
-
-function kindOf(account: Account) {
-  return rowKind(account);
-}
 
 function percent(share: number): string {
   const p = share * 100;
@@ -77,7 +72,7 @@ export function AccountExpensesView({
   const [view, setView] = useState<ExpenseView>("category");
   const [selected, setSelected] = useState<string | null>(null);
   const data = useMemo(
-    () => accountExpenses(kindOf(account), account.id, period, view),
+    () => accountExpenses("RETAIL", account.id, period, view),
     [account, period, view],
   );
   const periodLabel = EXPENSE_PERIOD_LABEL[period];
