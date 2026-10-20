@@ -19,7 +19,6 @@ interface TransactionDetailSheetProps {
   transaction: Transaction | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  showFullPageLink?: boolean;
   /**
    * Where "Repeat" goes for this transaction, or null to hide it. Left out, it is the personal Send & Pay link;
    * business passes its own so the sheet never leads out of the business app.

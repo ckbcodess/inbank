@@ -1993,7 +1993,6 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         message={receipt.msg}
         transactionId={receipt.trn}
         receiptRows={receipt.rows}
-        onViewReceipt={() => router.push(`/transactions/${receipt.trn}?from=success`)}
         onSecondaryAction={() => {
           setPhase("form");
           setStage(1);

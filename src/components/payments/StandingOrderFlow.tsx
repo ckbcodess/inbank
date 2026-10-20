@@ -626,7 +626,6 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
         message={`We’ll automatically send ${formatMoney(numAmount, "GHS", true)} ${f.frequency === "Once" ? "once" : frequencyText.toLowerCase()} for “${orderName}”.`}
         transactionId={createdId}
         receiptRows={receiptRows}
-        onViewReceipt={() => router.push(`/transactions/${createdId}`)}
         onSecondaryAction={resetAll}
         secondaryActionLabel="Create another"
         onPrimaryAction={() => {

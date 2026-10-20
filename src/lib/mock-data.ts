@@ -1933,7 +1933,7 @@ export const NOTIFICATIONS: AppNotification[] = [
     body: "GHS 452.00 from My MTN Mobile Money reached your account.",
     date: "2026-08-11T09:14:00Z",
     read: false,
-    href: "/transactions/txn-ret-003",
+    href: "/transactions?open=txn-ret-003",
   },
   {
     id: "ntf-ret-002",
@@ -1942,7 +1942,7 @@ export const NOTIFICATIONS: AppNotification[] = [
     body: "GHS 500.00 to Melcom Stores was paid from your account.",
     date: "2026-08-10T16:20:00Z",
     read: false,
-    href: "/transactions/txn-ret-001",
+    href: "/transactions?open=txn-ret-001",
   },
   {
     id: "ntf-ret-003",
@@ -1951,7 +1951,7 @@ export const NOTIFICATIONS: AppNotification[] = [
     body: "GHS 100.00 of MTN airtime was added.",
     date: "2026-08-09T14:41:00Z",
     read: true,
-    href: "/transactions/txn-ret-002",
+    href: "/transactions?open=txn-ret-002",
   },
 ];
 

@@ -255,7 +255,7 @@ export default function ReportsPage() {
                     <td className="px-3 py-3">
                       {/* NFR-25 drill-down to transaction level */}
                       <Link
-                        href={`/transactions/${t.id}`}
+                        href={`/transactions?open=${encodeURIComponent(t.id)}`}
                         className="text-foreground underline-offset-4 hover:underline tabular"
                       >
                         {t.reference}

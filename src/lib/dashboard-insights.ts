@@ -411,7 +411,7 @@ export function attentionItemsForProfile(
         tone: "warning",
         title: "Payment didn't go through",
         detail: `${t.counterparty || t.description} · see why and retry`,
-        href: `/transactions/${t.id}`,
+        href: `/transactions?open=${encodeURIComponent(t.id)}`,
         accountId: t.accountId,
       });
     }

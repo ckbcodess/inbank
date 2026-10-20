@@ -61,7 +61,6 @@ function SuccessContent() {
       message={`“${groupName}” is all set up with ${memberCount} members and ready for group payments.`}
       transactionId={queryRef}
       receiptRows={receiptRows}
-      onViewReceipt={() => router.push(`/transactions/${queryRef}`)}
       onSecondaryAction={() => router.push("/payments/groups/new")}
       secondaryActionLabel="Create another"
       onPrimaryAction={() => router.push("/beneficiaries")}
@@ -89,9 +88,6 @@ function SuccessContent() {
           id: "receipt",
           label: "View Receipt",
           icon: Receipt,
-          onClick: () => {
-            router.push(`/transactions/${queryRef}`);
-          },
         },
       ]}
     />

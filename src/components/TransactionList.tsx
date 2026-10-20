@@ -187,6 +187,19 @@ export default function TransactionList({
   // Selected transaction for details sheet
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
+  // A link such as /transactions?open=<id> (a notification, a report) opens that payment's sheet over the list.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("open");
+    if (!id) return;
+    const match = transactions.find((t) => t.id === id || t.reference === id);
+    if (match) setSelectedTransaction(match);
+    params.delete("open");
+    const rest = params.toString();
+    window.history.replaceState(null, "", window.location.pathname + (rest ? `?${rest}` : ""));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;

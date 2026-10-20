@@ -20,6 +20,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
+import { findTransaction } from "@/lib/mock-data";
 
 export interface SuccessActionCard {
   id: string;
@@ -56,10 +58,8 @@ export interface PaymentSuccessScreenProps {
   title: string;
   /** Explanatory message below the title */
   message: string;
-  /** Transaction ID or Reference to navigate to when viewing receipt */
+  /** Transaction ID or Reference shown in the receipt sheet when the customer taps View Receipt */
   transactionId?: string;
-  /** Callback when user clicks View Receipt card */
-  onViewReceipt?: () => void;
   /** Structured rows for the transaction details breakdown (retained for backward compatibility) */
   receiptRows?: Array<[string, React.ReactNode]>;
   /** Callback when user clicks secondary button (e.g. "Send another") */
@@ -213,7 +213,6 @@ export function PaymentSuccessScreen({
   title,
   message,
   transactionId,
-  onViewReceipt,
   receiptRows = [],
   onSecondaryAction,
   secondaryActionLabel = "Send another",
@@ -370,13 +369,9 @@ export function PaymentSuccessScreen({
     return "txn-ret-020";
   }, [transactionId, receiptRows]);
 
-  const handleViewReceipt = () => {
-    if (onViewReceipt) {
-      onViewReceipt();
-    } else {
-      router.push(`/transactions/${encodeURIComponent(effectiveTxnId)}?from=success`);
-    }
-  };
+  // The receipt opens as a sheet over this page; there is no separate transaction page to leave for.
+  const [receiptOpen, setReceiptOpen] = useState(false);
+  const handleViewReceipt = () => setReceiptOpen(true);
 
   const handleSchedule = () => {
     if (onSchedulePayment) {
@@ -765,6 +760,12 @@ export function PaymentSuccessScreen({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <TransactionDetailSheet
+        transaction={receiptOpen ? findTransaction(effectiveTxnId) ?? null : null}
+        open={receiptOpen}
+        onOpenChange={setReceiptOpen}
+      />
     </div>
   );
 }
