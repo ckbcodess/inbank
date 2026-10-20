@@ -201,10 +201,20 @@ function LoginForm() {
   );
 }
 
+/**
+ * The form reads `?type=` and `?state=` once, when it is built. Keying it on them rebuilds it whenever they change
+ * while the page stays mounted (the Demo hub moves between the personal and business doors, and to the error
+ * state, without leaving `/login`), so the URL and the screen can't disagree.
+ */
+function LoginDoor() {
+  const params = useSearchParams();
+  return <LoginForm key={`${params.get("type") ?? ""}|${params.get("state") ?? ""}`} />;
+}
+
 export default function LoginPage() {
   return (
     <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
-      <LoginForm />
+      <LoginDoor />
     </Suspense>
   );
 }

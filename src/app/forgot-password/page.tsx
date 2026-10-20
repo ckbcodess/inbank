@@ -377,10 +377,16 @@ function ForgotPasswordFlow() {
   );
 }
 
+/** Keyed on `?stage=` so a change to it while the page stays open (the Demo hub) rebuilds the flow on that stage. */
+function ForgotPasswordDoor() {
+  const stage = useSearchParams().get("stage") ?? "";
+  return <ForgotPasswordFlow key={stage} />;
+}
+
 export default function ForgotPasswordPage() {
   return (
     <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
-      <ForgotPasswordFlow />
+      <ForgotPasswordDoor />
     </Suspense>
   );
 }

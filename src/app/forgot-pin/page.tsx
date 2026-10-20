@@ -429,10 +429,16 @@ function ForgotPinContent() {
   );
 }
 
+/** Keyed on `?stage=` so a change to it while the page stays open (the Demo hub) rebuilds the flow on that stage. */
+function ForgotPinDoor() {
+  const stage = useSearchParams().get("stage") ?? "";
+  return <ForgotPinContent key={stage} />;
+}
+
 export default function ForgotPinPage() {
   return (
     <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
-      <ForgotPinContent />
+      <ForgotPinDoor />
     </Suspense>
   );
 }
