@@ -58,6 +58,14 @@ function iconFor(t: Pick<Transaction, "paymentMethod">): IconType {
 }
 
 /**
+ * A logo is a claim: "this is the real company". So it is only drawn where the name comes from the system (a biller
+ * list, a merchant record, the card network, the customer's own wallet), never from a name a person typed. Payments to
+ * people (mobile money, bank transfers, PAPSS, cash-out codes) keep the grey kind icon, so a payee nicknamed "MTN
+ * Ghana" cannot borrow MTN's logo. The lasting fix is a biller or merchant id on the transaction (WORKING_LOG).
+ */
+const LOGO_RAILS = new Set(["bill", "qr", "card", "airtime", "data", "wallet-to-bank"]);
+
+/**
  * The leading mark of a transaction row: one quiet circle, a hairline outline with a grey line icon for the kind of
  * payment (what it was). A company we have a logo for shows its logo instead, because that is recognition rather than
  * decoration. Money that came in gets a small grey arrow on the corner, a hairline disc with no colour; money out has
@@ -73,7 +81,12 @@ export function TransactionMark({
   const Icon = iconFor(transaction);
   const incoming = transaction.direction === "credit";
   // A company we have a logo for is shown by its logo filling the circle; between my own accounts it is GCB. Everything else is the kind icon.
-  const logo = transaction.paymentMethod === "own-account" ? brandLogo("GCB") : brandLogo(transaction.counterparty);
+  const logo =
+    transaction.paymentMethod === "own-account"
+      ? brandLogo("GCB")
+      : LOGO_RAILS.has(transaction.paymentMethod ?? "")
+        ? brandLogo(transaction.counterparty)
+        : null;
   return (
     <div
       className={cn(
