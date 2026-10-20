@@ -25,7 +25,7 @@ export function getTransactionType(t: Transaction): string {
     case "card":
       return "Card Payment";
     case "bill":
-      return "GCB Pay";
+      return "Bills";
     case "bulk":
       return "Bulk Payment";
     case "trade":

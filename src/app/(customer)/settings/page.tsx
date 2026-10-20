@@ -6,8 +6,6 @@ import {
   Bell,
   Check,
   Copy,
-  Eye,
-  EyeOff,
   Lock,
   Moon,
   Sun,
@@ -26,7 +24,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useSession } from "@/lib/session-store";
-import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { useTheme } from "next-themes";
 import { switchTheme } from "@/lib/theme-transition";
 import { forgetThisDevice, useTrustedDevice } from "@/lib/device-trust";
@@ -38,7 +35,6 @@ type SettingsTab = "profile" | "security" | "notifications" | "preferences";
 
 export default function SettingsPage() {
   const { actor } = useSession();
-  const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
   const { resolvedTheme, setTheme } = useTheme();
   const trustedDevice = useTrustedDevice();
 
@@ -500,26 +496,6 @@ export default function SettingsPage() {
                     Dark
                   </button>
                 </div>
-              </div>
-
-              {/* Amount Masking */}
-              <div className="flex items-center justify-between py-3.5">
-                <div className="flex flex-col">
-                  <span className="text-[13.5px] font-medium text-foreground">Cash Balance Visibility</span>
-                  <span className="text-[12px] text-muted-foreground">
-                    Currently: {showAmounts ? "Amounts visible on screen" : "Amounts masked (∗∗∗∗∗∗)"}
-                  </span>
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="text-[12px] h-8"
-                  onClick={toggleAmountVisibility}
-                >
-                  {showAmounts ? <EyeOff size={14} className="mr-1.5" /> : <Eye size={14} className="mr-1.5" />}
-                  {showAmounts ? "Mask Balances" : "Show Balances"}
-                </Button>
               </div>
             </div>
           </div>

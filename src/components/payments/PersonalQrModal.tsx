@@ -113,7 +113,7 @@ export function PersonalQrModal({ open, onOpenChange }: PersonalQrModalProps) {
           </div>
 
           <Link
-            href="/payments/send?rail=qr"
+            href="/payments/send?rail=qr&mode=myqr"
             onClick={() => onOpenChange(false)}
             className="flex items-center justify-center gap-1.5 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors pt-1 cursor-pointer"
           >

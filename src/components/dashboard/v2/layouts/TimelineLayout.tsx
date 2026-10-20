@@ -140,7 +140,7 @@ function Feed({ data, loading, showAmounts }: Pick<DashViewProps, "data" | "show
 }
 
 export function TimelineLayout(props: DashViewProps) {
-  const { data, status, updatedAt, showAmounts, onToggle, onSelectAccount, onRefresh } = props;
+  const { data, status, updatedAt, showAmounts, onSelectAccount, onRefresh } = props;
   const { t } = useTranslation();
   const loading = status === "loading";
 
@@ -167,7 +167,7 @@ export function TimelineLayout(props: DashViewProps) {
         <aside className="flex flex-col gap-4 sm:gap-6 lg:sticky lg:top-6 lg:order-2">
           <Card className="sm:gap-4">
             <AccountSwitcher data={data} onSelect={onSelectAccount} />
-            <BalanceFigure data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} size="md" />
+            <BalanceFigure data={data} loading={loading} size="md" />
             {!loading && <BalanceMeta data={data} showAmounts={showAmounts} updatedAt={updatedAt} />}
             <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-3 sm:hidden" />
           </Card>

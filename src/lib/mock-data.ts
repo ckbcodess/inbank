@@ -9,7 +9,6 @@ import type { CardScheme } from "@/lib/card-schemes";
 import { toLocalMobile } from "./phone";
 import type { Actor, Profile } from "./roles";
 import type { TransactionKind, TransactionState, TradeApprovalState } from "./states";
-import { getGlobalShowAmounts } from "@/components/providers/AmountVisibilityProvider";
 
 /* ── Actors ────────────────────────────────────────────────────────────────── */
 
@@ -492,8 +491,19 @@ export function accountsForProfile(kind: "RETAIL" | "CORPORATE" = "CORPORATE"): 
   );
 }
 
+/**
+ * Accounts a dashboard state builds for itself (Dev Mode's wealth, new-customer
+ * and similar states). The dashboard links to them, so their detail pages must
+ * resolve them too; without this they read "Account Not Found".
+ */
+const SCENARIO_ACCOUNTS = new Map<string, Account>();
+
+export function registerScenarioAccounts(accounts: Account[]): void {
+  for (const a of accounts) SCENARIO_ACCOUNTS.set(a.id, a);
+}
+
 export function findAccount(id: string): Account | undefined {
-  return ACCOUNTS.find((a) => a.id === id);
+  return ACCOUNTS.find((a) => a.id === id) ?? SCENARIO_ACCOUNTS.get(id);
 }
 
 /* ── Transactions ──────────────────────────────────────────────────────────── */
@@ -2958,7 +2968,7 @@ export const FEE_CONCESSIONS: FeeConcession[] = [
 /* ── Formatting helpers ────────────────────────────────────────────────────── */
 
 export function formatMoney(amount: number, currency = "GHS", showAmounts?: boolean): string {
-  const visible = showAmounts ?? getGlobalShowAmounts();
+  const visible = showAmounts ?? true;
   if (!visible) {
     const symbol =
       currency.toUpperCase() === "USD"

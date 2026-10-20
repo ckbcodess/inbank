@@ -19,6 +19,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useScheduleHandoff } from "@/lib/schedule-handoff";
 import {
   ArrowLeftRight,
   ChevronLeft,
@@ -179,14 +180,36 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     accounts[0]?.id ??
     "";
 
-  const [rail, setRail] = useState<TransactionType | null>(null);
+  // A completed payment handed over for scheduling. Its details fill the form, and the customer only chooses the schedule.
+  const [handoff] = useState(() => useScheduleHandoff.getState().draft);
+  useEffect(() => {
+    useScheduleHandoff.getState().setDraft(null);
+  }, []);
+  const isScheduled = Boolean(handoff && STANDING_ORDER_OPTIONS.some((o) => o.id === handoff.rail));
+  const prefill = handoff && isScheduled
+    ? {
+        fromId: accounts.some((a) => a.id === handoff.fromId) ? handoff.fromId : initialFromId,
+        destination: handoff.rail === "proxy" || handoff.rail === "group" ? "" : handoff.recipient,
+        proxyId: handoff.rail === "proxy" ? handoff.recipient : "",
+        groupName: handoff.rail === "group" ? handoff.recipient : "",
+        bank: handoff.bank || "GCB Bank",
+        walletNetwork: handoff.network || "MTN Mobile Money",
+        network: handoff.network || "MTN Ghana",
+        amount: handoff.amount,
+        narration: handoff.narration,
+      }
+    : {};
+
+  const [rail, setRail] = useState<TransactionType | null>(
+    handoff && isScheduled ? (handoff.rail as TransactionType) : null,
+  );
   const [screen, setScreen] = useState<"form" | "review" | "success">("form");
   const [createdId, setCreatedId] = useState("");
   const [createGroupOpen, setCreateGroupOpen] = useState(false);
   const [pinModalOpen, setPinModalOpen] = useState(false);
-  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  const [detailsCollapsed, setDetailsCollapsed] = useState(isScheduled);
   // Progressive disclosure: everything after the recipient stays hidden until the recipient is real.
-  const [revealed, setRevealed] = useState(false);
+  const [revealed, setRevealed] = useState(isScheduled);
 
   // Form State
   const [f, setF] = useState({
@@ -210,6 +233,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
     endDate: "",
     saveBeneficiary: false,
     beneficiaryNickname: "",
+    ...prefill,
   });
 
   const set = (k: keyof typeof f, v: unknown) => setF((p) => ({ ...p, [k]: v }));
@@ -752,7 +776,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
       <div className="flex flex-col gap-6">
         {/* 1. Beneficiaries Avatars Strip */}
-        {activeRailBeneficiaries.length > 0 && (
+        {!isScheduled && activeRailBeneficiaries.length > 0 && (
           <div className="flex flex-col gap-5 -mb-1 animate-in fade-in duration-150">
             <RailBeneficiaryStrip
               items={activeRailBeneficiaries}
@@ -780,13 +804,31 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
         )}
 
         {/* 2. From Account Selector Card */}
-        <FromAccountSelector
-          accounts={accounts}
-          value={f.fromId}
-          onChange={(id) => set("fromId", id)}
-        />
+        {!isScheduled && (
+          <FromAccountSelector
+            accounts={accounts}
+            value={f.fromId}
+            onChange={(id) => set("fromId", id)}
+          />
+        )}
 
-        {/* 3. Beneficiary Details Card */}
+        {/* 3. Beneficiary Details Card. A scheduled payment shows its recipient as a summary instead. */}
+        {isScheduled && (
+          <div className="flex flex-col gap-3 rounded-2xl border border-border/80 bg-card p-4">
+            {[
+              { label: "To", value: resolvedName || f.destination || f.proxyId || f.groupName },
+              { label: "From", value: fromAccount?.name ?? "" },
+              { label: "Amount", value: formatMoney(Number(f.amount) || 0, "GHS", true) },
+              ...(f.narration ? [{ label: "Narration", value: f.narration }] : []),
+            ].map((row) => (
+              <div key={row.label} className="flex items-baseline justify-between gap-4 text-[14px]">
+                <span className="text-muted-foreground">{row.label}</span>
+                <span className="tabular text-right text-foreground">{row.value}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        {!isScheduled && (
         <Field label="Beneficiary Details">
 
           {isDestinationValid && detailsCollapsed ? (
@@ -989,27 +1031,32 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             </div>
           )}
 </Field>
+        )}
 
         {/* Everything below appears once the recipient is verified */}
         {revealed && (
           <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-1 duration-200">
-            {/* 4. Amount Input */}
-            <AmountInput
-              value={f.amount}
-              onChange={(val) => set("amount", val)}
-              onFocus={() => {
-                if (isDestinationValid) setDetailsCollapsed(true);
-              }}
-              error={
-                overBalance ? (
-                  <InsufficientFundsAlert />
-                ) : undefined
-              }
-            />
+            {/* 4. Amount Input (a scheduled payment keeps the amount it was made for) */}
+            {!isScheduled && (
+              <AmountInput
+                value={f.amount}
+                onChange={(val) => set("amount", val)}
+                onFocus={() => {
+                  if (isDestinationValid) setDetailsCollapsed(true);
+                }}
+                error={
+                  overBalance ? (
+                    <InsufficientFundsAlert />
+                  ) : undefined
+                }
+              />
+            )}
 
             {numAmount > 0 && !overBalance && (
               <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-1 duration-200">
-                {/* 5. Short name and category */}
+                {/* 5. Short name, category and narration: not asked again for a scheduled payment */}
+                {!isScheduled && (
+                  <>
                 <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
                   <Field label="Short Name" htmlFor="so-short-name">
                     <Input
@@ -1029,6 +1076,8 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                 </div>
 
                 <NarrationInput value={f.narration} onChange={(val) => set("narration", val)} />
+                  </>
+                )}
 
                 {/* 6. Frequency */}
                 <Field label="Frequency">

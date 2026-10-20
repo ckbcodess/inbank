@@ -27,8 +27,6 @@ import {
   Copy,
   Gauge,
   ArrowLeftRight,
-  Eye,
-  EyeOff,
   Lock,
   Unlock,
 } from "lucide-react";
@@ -59,7 +57,7 @@ import { CardFace, themeForCard } from "@/components/cards/CardFace";
 import { EmvChip } from "@/components/cards/EmvChip";
 import { GcbCardLogo } from "@/components/cards/GcbCardLogo";
 import { TiltCard3D } from "@/components/cards/TiltCard3D";
-import { RevealingAmount, useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
+import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { CardDeliveryTrackerModal } from "@/components/cards/CardDeliveryTracker";
 import type { DevStateGroup } from "@/components/providers/DevStateProvider";
@@ -796,7 +794,6 @@ export function VirtualCardDetailsView({
     ],
     [extraDevGroups, typeSim, statusSim, activitySim, spentSim, limitSim, spentCustom, limitCustom, dailySpent, dailyLimit],
   );
-  const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
   const isInactive = effectiveCard.status === "Inactive";
   const isInactiveDelivery = Boolean(
     effectiveCard.deliveryStatus &&
@@ -987,14 +984,6 @@ export function VirtualCardDetailsView({
       <span className="tabular font-medium text-foreground">
         <RevealingAmount amount={funds} currency={fundsCurrency} />
       </span>
-      <button
-        type="button"
-        onClick={toggleAmountVisibility}
-        aria-label={showAmounts ? "Hide balances" : "Show balances"}
-        className="-mx-1.5 flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors duration-hover hover:text-foreground"
-      >
-        {showAmounts ? <EyeOff size={15} strokeWidth={1.8} aria-hidden="true" /> : <Eye size={15} strokeWidth={1.8} aria-hidden="true" />}
-      </button>
     </div>
   ) : fundsAccount ? (
     <Link

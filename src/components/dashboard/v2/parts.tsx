@@ -40,7 +40,7 @@ import type {
   CashFlow,
   UpcomingPayment,
 } from "@/lib/dashboard-insights";
-import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
+import { RevealingAmount, useBalanceVisibility } from "@/components/providers/AmountVisibilityProvider";
 import { ListSkeleton } from "@/components/states/ListStates";
 import {
   DropdownMenu,
@@ -90,7 +90,6 @@ export interface DashViewProps {
   /** When the data on screen was last fetched (ms epoch). */
   updatedAt: number;
   showAmounts: boolean;
-  onToggle: () => void;
   onSelectAccount: (id: string) => void;
   onRefresh: () => void;
   onOpenFundModal?: () => void;
@@ -259,7 +258,7 @@ export function MoneyActions({
   const [kind, setKind] = useState<MoneyActionKind>("send");
   const actions: { kind: MoneyActionKind; icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>; label: string; primary: boolean }[] = [
     { kind: "send", icon: Send, label: t("dashboard.sendMoney", "Send Money"), primary: true },
-    { kind: "bill", icon: CediReceiptIcon, label: t("dashboard.payBill", "GCB Pay"), primary: false },
+    { kind: "bill", icon: CediReceiptIcon, label: t("dashboard.payBill", "Bills"), primary: false },
     { kind: "topup", icon: Download, label: t("dashboard.topUp", "Top-Up"), primary: false },
   ];
   const hero = tone === "hero";
@@ -464,23 +463,20 @@ const FIGURE_SIZE = {
   xl: "text-[34px] sm:text-[52px]",
 } as const;
 
-/** The balance number + eye toggle. */
+/** The balance number + eye toggle. The eye hides this figure only. */
 export function BalanceFigure({
   data,
   loading,
-  showAmounts,
-  onToggle,
   size = "lg",
   className,
 }: {
   data: DashData;
   loading: boolean;
-  showAmounts: boolean;
-  onToggle: () => void;
   size?: keyof typeof FIGURE_SIZE;
   className?: string;
 }) {
   const { t } = useTranslation();
+  const [showBalance, toggleBalance] = useBalanceVisibility();
   const account = selectedAccount(data);
   if (!account) return null;
   return (
@@ -491,16 +487,16 @@ export function BalanceFigure({
         <span className={cn("tabular leading-none tracking-[0.01em] text-foreground", FIGURE_SIZE[size])}>
           {/* A smaller currency code on a phone lets the digits carry the line. */}
           <span className="text-[0.6em] text-muted-foreground sm:text-[1em]">{account.currency}</span>{" "}
-          <RevealingAmount amount={account.balance ?? 0} currency="" />
+          <RevealingAmount amount={account.balance ?? 0} currency="" showAmounts={showBalance} />
         </span>
       )}
       <button
         type="button"
-        onClick={onToggle}
+        onClick={toggleBalance}
         className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
-        aria-label={showAmounts ? t("header.hideAmounts", "Hide balances") : t("header.showAmounts", "Show balances")}
+        aria-label={showBalance ? t("header.hideAmounts", "Hide balances") : t("header.showAmounts", "Show balances")}
       >
-        {showAmounts ? <Eye size={18} strokeWidth={1.8} /> : <EyeOff size={18} strokeWidth={1.8} />}
+        {showBalance ? <Eye size={18} strokeWidth={1.8} /> : <EyeOff size={18} strokeWidth={1.8} />}
       </button>
     </div>
   );

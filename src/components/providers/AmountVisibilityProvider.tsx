@@ -1,38 +1,22 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { RollingText } from "@kitlangton/rolling-number/react";
 import "@kitlangton/rolling-number/styles.css";
 
-const STORAGE_KEY = "nibs-show-amounts";
-
-/** Hidden until the customer chooses to show them; their choice is remembered. */
-let globalShowAmounts = false;
-
-export function getGlobalShowAmounts(): boolean {
-  return globalShowAmounts;
-}
-
-export function setGlobalShowAmounts(show: boolean): void {
-  globalShowAmounts = show;
-}
+const BALANCE_STORAGE_KEY = "nibs-show-balance";
 
 /**
- * Helper to mask currency strings (e.g. "GHS 124,500.00" -> "GHS ******").
- * Only masks strings that explicitly contain a recognized currency symbol/code (GH₵, GHS, $, €, £, USD, EUR, GBP).
- * Non-monetary counts (e.g. "2", "0", "Awaiting 3 approvals") remain completely untouched.
- */
-/**
- * Mask an amount for the hidden view: drop grouping commas and the decimal
- * point, then replace every digit with a centred asterisk (∗), so the mask is pure asterisks
- * with no punctuation, and its length reflects the magnitude (a 7-figure amount
- * shows 7 asterisks). Currency symbols and the +/− sign are left in place.
+ * Mask an amount's digits: drop grouping commas and the decimal point, then
+ * replace every digit with a centred asterisk (∗), so the mask has no
+ * punctuation and its length follows the magnitude. Currency symbols and the
+ * +/− sign stay in place.
  */
 export function maskDigits(str: string): string {
   return str.replace(/[.,]/g, "").replace(/[0-9]/g, "∗");
 }
 
-/** Format an amount as a string, masking digits when amounts are hidden. */
+/** Format an amount for display, with its digits masked when `show` is false. */
 function formatMasked(amount: number, currency: string, show: boolean): string {
   const formatted =
     currency.toUpperCase() === "GHS" || currency === "GH₵"
@@ -49,33 +33,6 @@ function formatMasked(amount: number, currency: string, show: boolean): string {
   return show ? formatted : maskDigits(formatted);
 }
 
-/** Fallback formatter for the hook used outside the provider. */
-function fallbackFormat(amount: number, currency = "GHS"): string {
-  return formatMasked(amount, currency, globalShowAmounts);
-}
-
-export function maskCurrencyString(val: string | number): string {
-  if (val === null || val === undefined) return "";
-  const str = String(val);
-  if (!str) return str;
-
-  // Regex requiring an explicit currency symbol or code before numbers
-  const currencyRegex = /([+\-−]?\s*(?:GH₵|\$|€|£|GHS|USD|EUR|GBP)\s*[\d,]+(?:\.\d{1,4})?)/gi;
-
-  if (!currencyRegex.test(str)) {
-    // No currency symbol found — return original string unchanged
-    return str;
-  }
-
-  // Mask only the digits inside a currency-prefixed amount; keep the symbol,
-  // sign, commas and decimal point so width and structure are preserved.
-  return str.replace(currencyRegex, (match) => maskDigits(match));
-}
-
-/**
- * Helper to separate static currency prefix (USD, GHS, $, etc.) from the animated numeric/asterisk text.
- * Keeps currency codes like "USD" or "GHS" static so only digits and asterisks animate.
- */
 export function splitCurrencyAndAmount(
   amount?: number,
   currency = "GHS",
@@ -130,89 +87,47 @@ export function splitCurrencyAndAmount(
   return { prefix: "", numericText: "" };
 }
 
-interface AmountVisibilityContextType {
-  showAmounts: boolean;
-  toggleAmountVisibility: () => void;
-  setShowAmounts: (show: boolean) => void;
-  formatAmount: (amount: number, currency?: string) => string;
-  formatMoney: (amount: number, currency?: string) => string;
-}
 
-const AmountVisibilityContext = createContext<AmountVisibilityContextType | undefined>(undefined);
-
-export function AmountVisibilityProvider({ children }: { children: React.ReactNode }) {
-  const [showAmounts, setShowAmountsState] = useState<boolean>(false);
+/**
+ * Whether the dashboard balance is showing. It starts hidden, and the
+ * customer's choice is remembered on this device. Only the balance figure on
+ * Home reads it; nothing else in the app is tied to it.
+ */
+export function useBalanceVisibility(): [boolean, () => void] {
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored !== null) {
-        const val = stored === "true";
-        setShowAmountsState(val);
-        setGlobalShowAmounts(val);
-      }
+      const stored = localStorage.getItem(BALANCE_STORAGE_KEY);
+      if (stored !== null) setShow(stored === "true");
     } catch {
       // localStorage may be unavailable
     }
   }, []);
 
-  const setShowAmounts = useCallback((show: boolean) => {
-    setShowAmountsState(show);
-    setGlobalShowAmounts(show);
-    try {
-      localStorage.setItem(STORAGE_KEY, String(show));
-    } catch {}
-  }, []);
-
-  const toggleAmountVisibility = useCallback(() => {
-    setShowAmountsState((prev) => {
+  const toggle = () => {
+    setShow((prev) => {
       const next = !prev;
-      setGlobalShowAmounts(next);
       try {
-        localStorage.setItem(STORAGE_KEY, String(next));
+        localStorage.setItem(BALANCE_STORAGE_KEY, String(next));
       } catch {}
       return next;
     });
-  }, []);
+  };
 
-  const formatAmount = useCallback(
-    (amount: number, currency = "GHS"): string => formatMasked(amount, currency, showAmounts),
-    [showAmounts]
-  );
-
-  // Memoised: an inline object here is a new value on every provider render,
-  // which re-renders every consumer in the tree whether or not the flag
-  // actually changed.
-  const value = useMemo(
-    () => ({
-      showAmounts,
-      toggleAmountVisibility,
-      setShowAmounts,
-      formatAmount,
-      formatMoney: formatAmount,
-    }),
-    [showAmounts, toggleAmountVisibility, setShowAmounts, formatAmount],
-  );
-
-  return (
-    <AmountVisibilityContext.Provider value={value}>
-      {children}
-    </AmountVisibilityContext.Provider>
-  );
+  return [show, toggle];
 }
 
+/**
+ * Amounts outside the dashboard balance always show. The hook keeps the
+ * formatting call sites as they are.
+ */
 export function useAmountVisibility() {
-  const context = useContext(AmountVisibilityContext);
-  if (!context) {
-    return {
-      showAmounts: globalShowAmounts,
-      toggleAmountVisibility: () => {},
-      setShowAmounts: () => {},
-      formatAmount: (amount: number, currency = "GHS") => fallbackFormat(amount, currency),
-      formatMoney: (amount: number, currency = "GHS") => fallbackFormat(amount, currency),
-    };
-  }
-  return context;
+  return {
+    showAmounts: true,
+    formatAmount: (amount: number, currency = "GHS") => formatMasked(amount, currency, true),
+    formatMoney: (amount: number, currency = "GHS") => formatMasked(amount, currency, true),
+  };
 }
 
 /**
@@ -224,14 +139,14 @@ export function RevealingAmount({
   currency = "GHS",
   value,
   className = "",
+  showAmounts = true,
 }: {
   amount?: number;
   currency?: string;
   value?: string;
   className?: string;
+  showAmounts?: boolean;
 }) {
-  const { showAmounts } = useAmountVisibility();
-
   const { prefix, numericText } = splitCurrencyAndAmount(amount, currency, value, showAmounts);
 
   return (

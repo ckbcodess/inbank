@@ -33,14 +33,14 @@ import {
 } from "../parts";
 
 export function ActionsLayout(props: DashViewProps) {
-  const { data, status, updatedAt, showAmounts, onToggle, onSelectAccount, onRefresh } = props;
+  const { data, status, updatedAt, showAmounts, onSelectAccount, onRefresh } = props;
   const { t } = useTranslation();
   const loading = status === "loading";
   const from = data.selectedAccountId;
 
   const tiles = [
     { icon: Send, title: t("dashboard.sendMoney", "Send Money"), href: withFrom("/payments/send", from) },
-    { icon: CediReceiptIcon, title: t("dashboard.payBill", "GCB Pay"), href: withFrom("/payments/bills", from) },
+    { icon: CediReceiptIcon, title: t("dashboard.payBill", "Bills"), href: withFrom("/payments/bills", from) },
     { icon: Smartphone, title: t("dashboard.airtimeData", "Airtime & Data"), href: withFrom("/payments/send?rail=airtime", from) },
     // Only meaningful with somewhere else to move money to.
     ...(data.accounts.length > 1
@@ -60,7 +60,7 @@ export function ActionsLayout(props: DashViewProps) {
       <div className="flex flex-col gap-6 sm:gap-8">
         <div className="flex flex-col gap-3 sm:gap-4">
           <AccountSwitcher data={data} onSelect={onSelectAccount} />
-          <BalanceFigure data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
+          <BalanceFigure data={data} loading={loading} />
           {!loading && <BalanceMeta data={data} showAmounts={showAmounts} updatedAt={updatedAt} />}
         </div>
 

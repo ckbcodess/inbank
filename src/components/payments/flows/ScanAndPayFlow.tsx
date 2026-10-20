@@ -187,6 +187,25 @@ export function ScanAndPayFlow({
           {/* Mode 1: My QR — centered in remaining space below toggles */}
           {activeMode === "myqr" ? (
             <div className="flex flex-1 flex-col justify-center gap-6 my-auto pt-6 animate-in fade-in duration-200">
+              {/* Account Switcher above the QR code, styled like the account fields in Send & Pay */}
+              {accounts.length > 1 && (
+                <div className="w-full">
+                  <FromAccountSelector
+                    accounts={accounts}
+                    value={receiveAccountId}
+                    onChange={(id: string) => {
+                      setReceiveAccountId(id);
+                      const selected = accounts.find((a) => a.id === id);
+                      if (selected) {
+                        toast.success(`Receiving account changed to ${selected.name}`);
+                      }
+                    }}
+                    label="Receiving Account"
+                    placeholder="Select account to receive funds"
+                  />
+                </div>
+              )}
+
               {/* Canvas with identical footprint without border so buttons don't shift */}
               <div className="relative flex min-h-[46vh] sm:min-h-0 sm:aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl p-4">
                 {/* Centered QR Container */}
@@ -215,25 +234,6 @@ export function ScanAndPayFlow({
                   </div>
                 </div>
               </div>
-
-              {/* Account Switcher underneath the QR code — styled like the account fields in Send & Pay */}
-              {accounts.length > 1 && (
-                <div className="w-full">
-                  <FromAccountSelector
-                    accounts={accounts}
-                    value={receiveAccountId}
-                    onChange={(id: string) => {
-                      setReceiveAccountId(id);
-                      const selected = accounts.find((a) => a.id === id);
-                      if (selected) {
-                        toast.success(`Receiving account changed to ${selected.name}`);
-                      }
-                    }}
-                    label="Receiving Account"
-                    placeholder="Select account to receive funds"
-                  />
-                </div>
-              )}
 
               {/* Two Action Buttons: Outline on left, Primary on right */}
               <div className="flex w-full items-center gap-4">

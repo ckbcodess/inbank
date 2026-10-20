@@ -25,31 +25,32 @@ export interface NavItem {
   group?: string;
 }
 
-/** The secondary surfaces, gathered in the collapsible "More Services" dropdown. */
+/** The secondary products and services, gathered in the collapsible "More Services" dropdown. */
 const MORE_SERVICES: NavItem[] = [
-  { key: "transactions", label: "Transaction History", path: "/transactions", icon: "ArrowLeftRight", group: "More Services" },
-  { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "More Services" },
-  { key: "fx-rates", label: "FX Rates", path: "/fx-rates", icon: "TrendingUp", group: "More Services" },
-  { key: "locate-us", label: "Locate Us", path: "/locate-us", icon: "MapPin", group: "More Services" },
-  { key: "settings", label: "Settings", path: "/settings", icon: "Settings", group: "More Services" },
+  { key: "transactions", label: "Transactions", path: "/transactions", icon: "ArrowLeftRight", group: "More Services" },
   { key: "lifestyle", label: "Lifestyle", path: "/lifestyle", icon: "Sparkles", group: "More Services" },
+  { key: "eaglesave", label: "EagleSave", path: "/eaglesave", icon: "PiggyBank", group: "More Services" },
+  { key: "fx-rates", label: "FX Rates", path: "/fx-rates", icon: "TrendingUp", group: "More Services" },
 ];
 
 /**
- * Personal banking shell — section 12.4. Groups are separated by spacing, not
- * section titles (the Sidebar renders no group headings), except "More
- * Services", which is a collapsible dropdown.
+ * Personal banking shell. Groups are separated by spacing, not section titles
+ * (the Sidebar renders no group headings), except "More Services", which is a
+ * collapsible dropdown.
  */
 function retailNav(): NavItem[] {
   return [
     { key: "overview", label: "Home", path: "/overview", icon: "Home", group: "primary" },
     { key: "accounts", label: "Accounts", path: "/accounts", icon: "Wallet", group: "primary" },
+    { key: "payments", label: "Send & Pay", path: "/payments", icon: "Send", group: "primary" },
     { key: "cards", label: "Cards", path: "/cards", icon: "CreditCard", group: "primary" },
-    { key: "payments", label: "Send & Pay", path: "/payments", icon: "Send", group: "move" },
-    { key: "insure", label: "Insure", path: "/insure", icon: "Shield", group: "move" },
-    { key: "invest", label: "Invest", path: "/invest", icon: "LineChart", group: "move" },
-    { key: "loans", label: "Loans", path: "/loans", icon: "Landmark", group: "move" },
+    { key: "insure", label: "Insure", path: "/insure", icon: "Shield", group: "products" },
+    { key: "invest", label: "Invest", path: "/invest", icon: "LineChart", group: "products" },
+    { key: "loans", label: "Loans", path: "/loans", icon: "Landmark", group: "products" },
+    { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "products" },
     ...MORE_SERVICES,
+    { key: "help", label: "Help & Support", path: "/help", icon: "CircleHelp", group: "support" },
+    { key: "profile", label: "My Profile", path: "/settings", icon: "Settings", group: "support" },
   ];
 }
 

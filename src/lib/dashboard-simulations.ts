@@ -10,6 +10,7 @@ import {
   accountsForProfile,
   transactionsForProfile,
   cardsForProfile,
+  registerScenarioAccounts,
   type Account,
   type PaymentCard,
   type Transaction,
@@ -372,6 +373,7 @@ export function getSimulatedDashboardData({
       break;
   }
 
+  registerScenarioAccounts(accounts);
   const defaultId = resolveDefaultAccountId(accounts, defaultAccountId);
   const selectedId = accounts.some((a) => a.id === pickedId) ? (pickedId as string) : defaultId;
 

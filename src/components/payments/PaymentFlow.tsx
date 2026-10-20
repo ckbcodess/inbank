@@ -14,6 +14,7 @@
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useScheduleHandoff } from "@/lib/schedule-handoff";
 import {
   ArrowLeftRight,
   CheckCircle2,
@@ -32,7 +33,6 @@ import {
   Ticket,
 } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ActionTile } from "@/components/ui/action-tile";
 import {
@@ -139,6 +139,29 @@ const RATES: Record<string, number> = {
   ZMW: 0.58,
 };
 
+/** The standing order rail each payment rail schedules as. Rails missing here have no Schedule Payment. */
+const SCHEDULABLE_RAILS: Partial<Record<Rail, string>> = {
+  bank: "bank",
+  "wallet-to-bank": "wallet-to-bank",
+  wallet: "wallet",
+  momo: "wallet",
+  proxy: "proxy",
+  group: "group",
+  airtime: "airtime",
+  data: "data",
+};
+
+/** The amount field each rail's Pay again repeat fills. Data bundles are priced by the bundle, so they have none. */
+const REPEAT_AMOUNT_FIELD: Partial<Record<Rail, "bankAmount" | "wAmount" | "airtimeAmount" | "ecgAmount" | "billAmount" | "cardAmount">> = {
+  bank: "bankAmount",
+  wallet: "wAmount",
+  momo: "wAmount",
+  airtime: "airtimeAmount",
+  ecg: "ecgAmount",
+  bill: "billAmount",
+  "card-topup": "cardAmount",
+};
+
 const RAIL_FACTS: Record<Rail, { fee: number; arrives: string; instant: boolean }> = {
   bank: { fee: 0, arrives: "Instantly", instant: true },
   ach: { fee: 12.5, arrives: "Same day", instant: false },
@@ -172,7 +195,7 @@ const RAIL_LABEL: Record<Rail, string> = {
   airtime: "Airtime Top-up",
   data: "Bundles",
   ecg: "ECG Prepaid",
-  bill: "GCB Pay / Bills",
+  bill: "Bills",
   ghanagov: "Ghana.gov",
   "card-topup": "Card Top up",
   qr: "QR Payment",
@@ -502,7 +525,7 @@ const ALL_RECENT_AVATARS: RecentPayeeAvatar[] = [
     colorBg: "var(--avatar-pink)",
   },
 
-  // Bills (GCB Pay One-Tap Beneficiaries categorized by Pay Type)
+  // Bills (Bills One-Tap Beneficiaries categorized by Pay Type)
   // 1. Bills & Utilities
   {
     id: "rec-bill1",
@@ -1542,6 +1565,13 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       setRail("bank");
     }
 
+    // Pay again repeats the last amount. It fills the rail's amount field and stays editable.
+    const repeatAmount = searchParams.get("amount");
+    const repeatField = r ? REPEAT_AMOUNT_FIELD[r] : undefined;
+    if (repeatAmount && repeatField) {
+      setF((p) => ({ ...p, [repeatField]: repeatAmount }));
+    }
+
     if (r === "wallet-to-bank") {
       setRail("wallet-to-bank");
       setF((p) => ({ ...p, bank: p.bank || "GCB Bank" }));
@@ -1986,7 +2016,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
       return "Authorization";
     }
     if (rail === "bill") {
-      return billCategory || "GCB Pay";
+      return billCategory || "Bills";
     }
     if (rail === "bank") {
       if (bankCategory === "own") return "Between My Accounts";
@@ -2102,7 +2132,27 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         }
         initialSaveBeneficiary={f.saveBeneficiary}
         onSaveBeneficiaryChange={(saved) => set("saveBeneficiary", saved)}
-        onSchedulePayment={() => router.push("/payments/standing/new")}
+        hideSchedule={!SCHEDULABLE_RAILS[rail]}
+        onSchedulePayment={() => {
+          // The completed payment's details go to the schedule form, which asks only for the schedule.
+          useScheduleHandoff.getState().setDraft({
+            rail: SCHEDULABLE_RAILS[rail] ?? "",
+            recipient:
+              rail === "bank" || rail === "wallet-to-bank"
+                ? f.benAcct
+                : rail === "proxy"
+                ? f.pxId
+                : rail === "group"
+                ? f.groupName
+                : f.wPhone || f.aPhone,
+            bank: f.bank,
+            network: f.wNetwork,
+            fromId: f.fromId,
+            amount: String(currentAmount),
+            narration: f.bankRef || f.wRef,
+          });
+          router.push("/payments/standing/new");
+        }}
         beneficiaryName={
           f.beneficiaryNickname ||
           resolvedName ||
@@ -2514,7 +2564,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
     );
   }
 
-  // Intermediary Screen: GCB Pay Category Selection Hub (Figma Node 1176:28982)
+  // Intermediary Screen: Bills Category Selection Hub (Figma Node 1176:28982)
   if (rail === "bill" && !billCategory) {
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
@@ -2528,11 +2578,11 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
           <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[-0.02em] text-foreground truncate">
-            GCB Pay
+            Bills
           </h1>
         </div>
 
-        {/* All Recent GCB Pay Beneficiaries Avatars */}
+        {/* All Recent Bills Beneficiaries Avatars */}
         <HorizontalScrollStrip>
           {RECENT_AVATARS.filter((item) => item.rail === "bill").map((item) => (
             <button

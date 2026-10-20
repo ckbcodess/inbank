@@ -14,8 +14,6 @@ import { NetworkLogo } from "@/components/cards/NetworkLogo";
 import Link from "next/link";
 import { useId, useState } from "react";
 import {
-  Eye,
-  EyeOff,
   ArrowUpRight,
   ArrowDownRight,
   ArrowDownLeft,
@@ -110,64 +108,6 @@ export function Eyebrow({
     >
       {children}
     </span>
-  );
-}
-
-/** The giant, thin balance figure with an eyebrow and an eye toggle. */
-export function BalanceHeadline({
-  label = "Total balance",
-  amount,
-  showAmounts,
-  onToggle,
-  size = "xl",
-  align = "left",
-}: {
-  label?: string;
-  amount: number;
-  showAmounts: boolean;
-  onToggle: () => void;
-  size?: "lg" | "xl" | "2xl";
-  align?: "left" | "center";
-}) {
-  const intPart = new Intl.NumberFormat("en-GH", {
-    maximumFractionDigits: 0,
-  }).format(Math.floor(amount));
-  const frac = (amount % 1).toFixed(2).substring(1);
-  const sizes = {
-    lg: "text-[34px] sm:text-[40px]",
-    xl: "text-[46px] sm:text-[60px]",
-    "2xl": "text-[56px] sm:text-[76px]",
-  } as const;
-  const fracSizes = {
-    lg: "text-[18px]",
-    xl: "text-[24px] sm:text-[28px]",
-    "2xl": "text-[26px] sm:text-[34px]",
-  } as const;
-
-  return (
-    <div className={cn("flex flex-col gap-2", align === "center" && "items-center text-center")}>
-      <div className="flex items-center gap-2">
-        <Eyebrow>{label}</Eyebrow>
-        <button
-          type="button"
-          onClick={onToggle}
-          className="cursor-pointer p-0.5 text-muted-foreground transition-colors hover:text-foreground"
-          aria-label={showAmounts ? "Hide balances" : "Show balances"}
-        >
-          {showAmounts ? <Eye size={14} strokeWidth={1.8} /> : <EyeOff size={14} strokeWidth={1.8} />}
-        </button>
-      </div>
-      <div className={cn("tabular leading-[0.95] tracking-[-0.03em] text-foreground", sizes[size])}>
-        {showAmounts ? (
-          <>
-            GHS {intPart}
-            <span className={cn("text-muted-foreground", fracSizes[size])}>{frac}</span>
-          </>
-        ) : (
-          "GHS ∗∗∗∗∗∗"
-        )}
-      </div>
-    </div>
   );
 }
 

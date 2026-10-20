@@ -3,7 +3,6 @@ import type { Metadata, Viewport } from "next";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import { AmountVisibilityProvider } from "@/components/providers/AmountVisibilityProvider";
 import { Toaster } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -62,22 +61,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <LanguageProvider>
             <RouteLoadingProvider>
               <TooltipProvider delay={350} closeDelay={100} timeout={300}>
-                <AmountVisibilityProvider>
-                  <AndroidRippleProvider>
-                    <DevStateProvider>
-                      <Toaster position="top-right" style={{ zIndex: 999999 }} />
-                      {children}
-                      {SHOW_DEMO_HUB && (
-                        <Suspense fallback={null}>
-                          <PersonaFlowSwitcher />
-                        </Suspense>
-                      )}
-                      {SHOW_DEMO_TOOLS && <ColorTuner />}
-                      <TourOverlay />
-                      <SidiAssistantWidget />
-                    </DevStateProvider>
-                  </AndroidRippleProvider>
-                </AmountVisibilityProvider>
+                <AndroidRippleProvider>
+                  <DevStateProvider>
+                    <Toaster position="top-right" style={{ zIndex: 999999 }} />
+                    {children}
+                    {SHOW_DEMO_HUB && (
+                      <Suspense fallback={null}>
+                        <PersonaFlowSwitcher />
+                      </Suspense>
+                    )}
+                    {SHOW_DEMO_TOOLS && <ColorTuner />}
+                    <TourOverlay />
+                    <SidiAssistantWidget />
+                  </DevStateProvider>
+                </AndroidRippleProvider>
               </TooltipProvider>
             </RouteLoadingProvider>
           </LanguageProvider>

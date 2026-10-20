@@ -28,7 +28,7 @@ import {
 } from "../parts";
 
 export function OverviewLayout(props: DashViewProps) {
-  const { data, status, updatedAt, showAmounts, onToggle, onSelectAccount, onRefresh } = props;
+  const { data, status, updatedAt, showAmounts, onSelectAccount, onRefresh } = props;
   const loading = status === "loading";
 
   return (
@@ -44,7 +44,7 @@ export function OverviewLayout(props: DashViewProps) {
       <div className="flex flex-col gap-6 sm:gap-8">
         <div className="flex flex-col gap-3 sm:gap-4">
           <AccountSwitcher data={data} onSelect={onSelectAccount} />
-          <BalanceFigure data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
+          <BalanceFigure data={data} loading={loading} />
           {!loading && <BalanceMeta data={data} showAmounts={showAmounts} updatedAt={updatedAt} />}
           {/* On a phone the actions sit under the balance, in thumb reach. */}
           <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-3 sm:hidden" />

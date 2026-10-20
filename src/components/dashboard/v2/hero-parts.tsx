@@ -33,7 +33,7 @@ import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { useSession } from "@/lib/session-store";
 import { heroWaveVars, useHeroWave } from "@/lib/hero-wave";
 import { decodeImage, holdSplash } from "@/lib/app-splash";
-import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
+import { RevealingAmount, useBalanceVisibility } from "@/components/providers/AmountVisibilityProvider";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -354,7 +354,7 @@ export function HeroFxAction({ className }: { className?: string }) {
   );
 }
 
-/** FX Rates as one of the hero's action buttons (beside Send Money, GCB Pay and Top-Up): both flags and the label. */
+/** FX Rates as one of the hero's action buttons (beside Send Money, Bills and Top-Up): both flags and the label. */
 export function HeroFxRatesButton({ className }: { className?: string }) {
   const [ratesOpen, setRatesOpen] = useState(false);
   return (
@@ -426,23 +426,20 @@ const HERO_FIGURE = {
   xl: "text-[28px] leading-[32px] sm:text-[44px] sm:leading-[48px]",
 } as const;
 
-/** The selected account's balance in hero type, with the eye toggle. */
+/** The selected account's balance in hero type, with the eye toggle. The eye hides this figure only. */
 export function HeroBalance({
   data,
   loading,
-  showAmounts,
-  onToggle,
   size = "lg",
   className,
 }: {
   data: DashData;
   loading: boolean;
-  showAmounts: boolean;
-  onToggle: () => void;
   size?: keyof typeof HERO_FIGURE;
   className?: string;
 }) {
   const { t } = useTranslation();
+  const [showBalance, toggleBalance] = useBalanceVisibility();
   const account = selectedAccount(data);
   if (!account) return null;
   return (
@@ -454,16 +451,16 @@ export function HeroBalance({
         />
       ) : (
         <span className={cn("tabular whitespace-nowrap tracking-[-0.02em]", HERO_FIGURE[size])}>
-          {account.currency} <RevealingAmount amount={account.balance ?? 0} currency="" />
+          {account.currency} <RevealingAmount amount={account.balance ?? 0} currency="" showAmounts={showBalance} />
         </span>
       )}
       <button
         type="button"
-        onClick={onToggle}
+        onClick={toggleBalance}
         className="flex size-8 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-[color-mix(in_oklch,var(--hero-foreground)_12%,transparent)] cursor-pointer"
-        aria-label={showAmounts ? t("header.hideAmounts", "Hide balances") : t("header.showAmounts", "Show balances")}
+        aria-label={showBalance ? t("header.hideAmounts", "Hide balances") : t("header.showAmounts", "Show balances")}
       >
-        {showAmounts ? <Eye size={18} strokeWidth={1.8} /> : <EyeOff size={18} strokeWidth={1.8} />}
+        {showBalance ? <Eye size={18} strokeWidth={1.8} /> : <EyeOff size={18} strokeWidth={1.8} />}
       </button>
     </div>
   );
