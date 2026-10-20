@@ -68,7 +68,7 @@ export const BRANDS: Brand[] = [
   { id: "gotv", name: "GOtv", match: /\bgotv\b/i, logo: "/brands/gotv.png", round: true },
   { id: "startimes", name: "StarTimes", match: /\bstartimes?\b/i },
   { id: "surfline", name: "Surfline", match: /\bsurfline\b/i, logo: "/brands/surfline.png", round: true },
-  { id: "melcom", name: "Melcom", match: /\bmelcom\b/i, logo: "/brands/melcom-mark.svg", round: true },
+  { id: "melcom", name: "Melcom", match: /\bmelcom\b/i, logo: "/brands/melcom-centred.svg", round: true },
   { id: "shoprite", name: "Shoprite", match: /\bshoprite\b/i, logo: "/brands/shoprite.png", round: true },
   { id: "shell", name: "Shell", match: /\bshell\b/i, logo: "/brands/shell.png", round: true },
   { id: "totalenergies", name: "TotalEnergies", match: /\btotal(energies)?\b/i },
