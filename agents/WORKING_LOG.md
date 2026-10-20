@@ -185,6 +185,10 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-10-20
+- Decision: branch `feat/beneficiaries-transactions` joins design-exploration (beneficiaries, sheets, brand logos, `TransactionMark`, detail sheet), main (business onboarding) and the transaction display redesign. Where the last two clashed, the logo marks and the detail sheet won.
+- Gap: `TransactionIcon` and `TransactionItem` (category icons, from feat/transaction-display-v2) are in the repo but nothing uses them. Either fold the category tint into `TransactionMark` or delete them.
+
 ### 2026-10-19
 - Decision: one `PayeeAvatar` (`components/ui/payee-avatar.tsx`) for every saved person: tinted circle, initials, colour picked from the name, so someone looks the same on every screen. Icon only for billers and airtime. Used on the Beneficiaries page, Pay again and the Send & Pay strips.
 - Gap: still hand-rolled avatars in `CreateGroupFlow` (member rows), `StandingOrderFlow`, and `PayeeChip` in `payments/flows/shared.tsx`. Move them to `PayeeAvatar`.
