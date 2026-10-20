@@ -1,4 +1,5 @@
 import {
+  ArrowDownLeft,
   ArrowLeftRight,
   Banknote,
   CreditCard,
@@ -59,7 +60,8 @@ function iconFor(t: Pick<Transaction, "paymentMethod">): IconType {
 /**
  * The leading mark of a transaction row: one quiet circle, a hairline outline with a grey line icon for the kind of
  * payment (what it was). A company we have a logo for shows its logo instead, because that is recognition rather than
- * decoration. Which way the money went is the sign on the amount, so the mark carries no colour and no direction badge.
+ * decoration. Money that came in gets a small grey arrow on the corner, a hairline disc with no colour; money out has
+ * none (the minus sign on the amount already says it). The arrow sits over whatever the mark shows, a logo or an icon.
  */
 export function TransactionMark({
   transaction,
@@ -69,12 +71,13 @@ export function TransactionMark({
   className?: string;
 }) {
   const Icon = iconFor(transaction);
+  const incoming = transaction.direction === "credit";
   // A company we have a logo for is shown by its logo filling the circle; between my own accounts it is GCB. Everything else is the kind icon.
   const logo = transaction.paymentMethod === "own-account" ? brandLogo("GCB") : brandLogo(transaction.counterparty);
   return (
     <div
       className={cn(
-        "flex size-9 shrink-0 items-center justify-center rounded-full",
+        "relative flex size-9 shrink-0 items-center justify-center rounded-full",
         logo ? (!logo.round || logo.disc) && "bg-[var(--logo-disc)]" : "border border-border bg-card text-muted-foreground",
         className,
       )}
@@ -89,6 +92,16 @@ export function TransactionMark({
           className={logo.round ? "size-full rounded-full object-cover" : "size-5 object-contain"}
         />
       ) : <Icon size={17} strokeWidth={1.6} />}
+      {/* Only money in is marked: most rows are money out, so the exception is what gets the arrow */}
+      {incoming && (
+        <span
+          role="img"
+          aria-label="Money in"
+          className="absolute -bottom-1 -right-1 flex size-[17px] items-center justify-center rounded-full bg-card text-muted-foreground shadow-[0_0_0_2px_var(--card),0_0_0_3px_var(--border)]"
+        >
+          <ArrowDownLeft size={10} strokeWidth={2.2} aria-hidden="true" />
+        </span>
+      )}
     </div>
   );
 }
