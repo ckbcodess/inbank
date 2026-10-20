@@ -3,6 +3,11 @@
 /**
  * Demo hub — one plain panel for jumping to any onboarding step.
  *
+ *   Switch app: open the personal or the business app, either signed straight in as a demo user or at its
+ *   own log-in screen. The hub also shows on both homes, so the switch works from either side.
+ *   Personal / Business: the onboarding flows of each app, spelled out step by step (the Business view is
+ *   `BusinessFlowSections`).
+ *   Log in: every sign-in and recovery screen for both apps (`LoginFlowSections`).
  *   GCB account holder (/activate): pick the demo customer, then a step.
  *   New to GCB (/signup): a step, or straight to linking after sign-up.
  *   Returning customers: the trusted-device power user, a first-timer on a
@@ -21,6 +26,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/u
 import { useSession } from "@/lib/session-store";
 import { useTour } from "@/lib/tour-store";
 import { ACTORS } from "@/lib/mock-data";
+import { BusinessFlowSections } from "./BusinessFlowSections";
+import { LoginFlowSections, type LoginApp } from "./LoginFlowSections";
+import { homePathForActor } from "@/lib/navigation";
 import { ACTIVATION_STEPS, SIGNUP_STEPS, parseOnboardingStep } from "@/lib/onboarding-steps";
 import { forgetThisDevice, setFirstRun, setPendingFundPrompt, setPendingReferral, trustThisDevice } from "@/lib/device-trust";
 import { LEGACY_DEMO_MOBILE, MIGRATION_STEPS, parseMigrationStep } from "@/lib/migration";
@@ -35,7 +43,15 @@ const PERSONAS = [
 ] as const;
 type PersonaId = (typeof PERSONAS)[number]["id"];
 
-const ONBOARDING_PATHS = ["/", "/signup", "/business/signup", "/activate", "/get-started", "/select-banking", "/login", "/mfa", "/forgot-password", "/migrate", "/overview"];
+/** Business demo users by role: the navigation differs (Approvals for an approver, Administration for an admin). */
+const BUSINESS_USERS = [
+  { id: "u-dual", label: "Maker" },
+  { id: "u-approver", label: "Approver" },
+  { id: "u-corpadmin", label: "Admin" },
+] as const;
+type BusinessUserId = (typeof BUSINESS_USERS)[number]["id"];
+
+const ONBOARDING_PATHS = ["/", "/signup", "/business/signup", "/activate", "/get-started", "/select-banking", "/login", "/mfa", "/forgot-password", "/migrate", "/overview", "/business/overview"];
 
 function PersonaFlowSwitcherContent() {
   const router = useRouter();
@@ -45,6 +61,9 @@ function PersonaFlowSwitcherContent() {
   const activeTourId = useTour((s) => s.activeTourId);
   const devToolsHidden = useDevToolsHidden();
   const [open, setOpen] = useState(false);
+  const activeKind = useSession((s) => s.activeProfile?.kind);
+  const [businessUser, setBusinessUser] = useState<BusinessUserId>("u-dual");
+  const [view, setView] = useState<"personal" | "business" | "login">("personal");
 
   const urlPersona = searchParams.get("persona");
   const [persona, setPersona] = useState<PersonaId>(
@@ -95,6 +114,16 @@ function PersonaFlowSwitcherContent() {
     }
   }
 
+  /** Sign straight in as a demo user and open that app's home: no log-in screen, no code. */
+  function switchApp(actorId: string, to?: string) {
+    const actor = ACTORS.find((a) => a.id === actorId);
+    if (!actor) return;
+    signIn(actor);
+    if (actor.profiles.length > 0) selectProfile(actor.profiles[0]);
+    verifyMfa();
+    go(to ?? homePathForActor(actor));
+  }
+
   /** A regular on their own laptop: this browser already trusts them, so login is one tap. */
   function goPowerUser() {
     const actor = ACTORS[0];
@@ -104,10 +133,33 @@ function PersonaFlowSwitcherContent() {
   }
 
   /** The ordinary log-in screen. This browser forgets any trusted device first, so it opens on the full form. */
-  function goLogin(type: "personal" | "business") {
+  function goLogin(type: LoginApp, state?: "error") {
     signOut();
     forgetThisDevice();
+    const params = new URLSearchParams();
+    if (type === "business") params.set("type", "business");
+    if (state) params.set("state", state);
+    const query = params.toString();
+    go(query ? `/login?${query}` : "/login");
+  }
+
+  /** The demo user a log-in screen stands in for: a business maker, or the default personal customer. */
+  function loginActor(type: LoginApp) {
+    return ACTORS.find((a) => a.id === (type === "business" ? "u-dual" : "u-retail")) ?? ACTORS[0];
+  }
+
+  /** A trusted device for that app's demo user, then its log-in screen: greeted by name, password only. */
+  function goWelcomeBack(type: LoginApp) {
+    signOut();
+    trustThisDevice(loginActor(type));
     go(type === "business" ? "/login?type=business" : "/login");
+  }
+
+  /** The step after the password: signed in as that app's demo user but not yet verified. */
+  function goEnterPin(type: LoginApp, newDevice: boolean) {
+    signOut();
+    signIn(loginActor(type));
+    go(newDevice ? "/mfa?device=new" : "/mfa");
   }
 
   /** First internet-banking sign-in, on a device we've never seen: activation, then the welcome. */
@@ -164,7 +216,10 @@ function PersonaFlowSwitcherContent() {
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setView(activeKind === "CORPORATE" || pathname?.startsWith("/business") || searchParams.get("type") === "business" ? "business" : "personal");
+          setOpen(true);
+        }}
         className="fixed bottom-4 left-1/2 z-40 flex h-8 -translate-x-1/2 cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-3 text-[13px] text-foreground shadow-lg transition-colors hover:bg-muted"
       >
         Demo
@@ -189,6 +244,98 @@ function PersonaFlowSwitcherContent() {
             </button>
           </DialogHeader>
           <DialogBody>
+            {/* Switch app */}
+            <section className="mb-5 flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-border/60 pb-5">
+              <h3 className="px-2 text-[14px] font-medium text-foreground">Switch app</h3>
+              <div
+                className={cn(
+                  "flex flex-col gap-1 rounded-lg px-3 py-2 transition-colors",
+                  activeKind === "RETAIL" && "bg-muted",
+                )}
+              >
+                <span className="text-[13.5px] text-foreground">Personal banking</span>
+                <span className="flex items-center gap-3 text-[12px] text-muted-foreground">
+                  <button type="button" onClick={() => switchApp("u-retail")} className="cursor-pointer hover:text-foreground hover:underline">
+                    Signed in
+                  </button>
+                  <button type="button" onClick={() => goLogin("personal")} className="cursor-pointer hover:text-foreground hover:underline">
+                    Log in screen
+                  </button>
+                </span>
+              </div>
+              <div
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors",
+                  activeKind === "CORPORATE" && "bg-muted",
+                )}
+              >
+                <div className="flex flex-col gap-1">
+                  <span className="text-[13.5px] text-foreground">Business banking</span>
+                  <span className="flex items-center gap-3 text-[12px] text-muted-foreground">
+                    <button type="button" onClick={() => switchApp(businessUser)} className="cursor-pointer hover:text-foreground hover:underline">
+                      Signed in
+                    </button>
+                    <button type="button" onClick={() => goLogin("business")} className="cursor-pointer hover:text-foreground hover:underline">
+                      Log in screen
+                    </button>
+                  </span>
+                </div>
+                <Select value={businessUser} onValueChange={(v) => v && setBusinessUser(v as BusinessUserId)}>
+                  <SelectTrigger className="h-7 w-[110px] rounded-lg text-[13px]">
+                    <span className="truncate">{BUSINESS_USERS.find((u) => u.id === businessUser)?.label}</span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {BUSINESS_USERS.map((u) => (
+                      <SelectItem key={u.id} value={u.id} label={u.label} className="text-[13px]">
+                        {u.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </section>
+
+            {/* Onboarding flows: Personal or Business */}
+            <div className="mb-4 flex items-center gap-3">
+              <h3 className="px-2 text-[14px] font-medium text-foreground">Flows</h3>
+              <div className="inline-flex rounded-lg border border-border p-0.5" role="tablist" aria-label="Flows">
+                {(["personal", "business", "login"] as const).map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    role="tab"
+                    aria-selected={view === v}
+                    onClick={() => setView(v)}
+                    className={cn(
+                      "rounded-sm px-3 py-1 text-[13px] transition-colors cursor-pointer",
+                      view === v ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    {v === "personal" ? "Personal onboarding" : v === "business" ? "Business onboarding" : "Log in"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {view === "login" ? (
+              <LoginFlowSections
+                stepRow={stepRow}
+                actions={{ login: goLogin, welcomeBack: goWelcomeBack, enterPin: goEnterPin }}
+                pathname={pathname}
+                stage={searchParams.get("stage")}
+                type={searchParams.get("type")}
+              />
+            ) : view === "business" ? (
+              <BusinessFlowSections
+                stepRow={stepRow}
+                go={go}
+                signInAs={switchApp}
+                pathname={pathname}
+                scenario={searchParams.get("scenario")}
+                step={searchParams.get("step")}
+                reference={searchParams.get("ref")}
+              />
+            ) : (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {/* GCB account holder */}
               <section className="flex flex-col gap-2">
@@ -338,6 +485,7 @@ function PersonaFlowSwitcherContent() {
                 </ol>
               </section>
             </div>
+            )}
           </DialogBody>
         </DialogContent>
       </Dialog>

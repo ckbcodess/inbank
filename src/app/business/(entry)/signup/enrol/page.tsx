@@ -13,7 +13,7 @@
  *   6. Submitted (Reference & link to status tracker)
  */
 
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -212,6 +212,15 @@ function CorporateEnrolmentFlow() {
       setAttachedFileSize("2.4 MB");
     }
   }, [runLookup]);
+
+  // `?scenario=` opens the flow on that screen (the Demo hub deep-links with it).
+  const scenarioParam = searchParams.get("scenario");
+  const appliedScenario = useRef<string | null>(null);
+  useEffect(() => {
+    if (!scenarioParam || appliedScenario.current === scenarioParam) return;
+    appliedScenario.current = scenarioParam;
+    applyScenario(scenarioParam);
+  }, [scenarioParam, applyScenario]);
 
   // Back button handler
   function handleBack() {

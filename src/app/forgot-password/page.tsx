@@ -24,8 +24,8 @@
  * Sits outside both shells — it is reached from Login, before authentication.
  */
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CheckCircle2, Landmark, ScanFace } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PhoneInput } from "@/components/ui/phone-input";
@@ -39,6 +39,8 @@ import { maskMobile } from "@/lib/auth-shared";
 
 import { Field } from "@/components/ui/field";
 type Stage = "mobile" | "selfie" | "no_match" | "branch" | "otp" | "password" | "done";
+
+const STAGES: readonly Stage[] = ["mobile", "selfie", "no_match", "branch", "otp", "password", "done"];
 
 const STEP_NUMBER: Partial<Record<Stage, number>> = {
   mobile: 1,
@@ -57,13 +59,16 @@ function selfieMatches(mobile: string): boolean {
   return !mobile.endsWith("0000");
 }
 
-export default function ForgotPasswordPage() {
+function ForgotPasswordFlow() {
   const router = useRouter();
-  const [stage, setStage] = useState<Stage>("mobile");
+  // `?stage=` opens the flow on that stage (the Demo hub deep-links with it).
+  const stageParam = useSearchParams().get("stage");
+  const startStage = STAGES.find((s) => s === stageParam);
+  const [stage, setStage] = useState<Stage>(startStage ?? "mobile");
   const [busy, setBusy] = useState(false);
 
   const [country, setCountry] = useState("GH");
-  const [mobile, setMobile] = useState("");
+  const [mobile, setMobile] = useState(startStage ? "0244123821" : "");
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [otpDigits, setOtpDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
@@ -369,5 +374,13 @@ export default function ForgotPasswordPage() {
         </Button>
       )}
     </AuthLayout>
+  );
+}
+
+export default function ForgotPasswordPage() {
+  return (
+    <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
+      <ForgotPasswordFlow />
+    </Suspense>
   );
 }

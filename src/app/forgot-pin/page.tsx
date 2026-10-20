@@ -11,7 +11,7 @@
  */
 
 import { Suspense, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CheckCircle2, Landmark, ScanFace } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PhoneInput } from "@/components/ui/phone-input";
@@ -27,6 +27,8 @@ import { homePathForActor } from "@/lib/navigation";
 import { Field } from "@/components/ui/field";
 
 type Stage = "mobile" | "selfie" | "no_match" | "branch" | "pin" | "confirm_pin" | "done";
+
+const STAGES: readonly Stage[] = ["mobile", "selfie", "no_match", "branch", "pin", "confirm_pin", "done"];
 
 const STEP_NUMBER_WITH_MOBILE: Partial<Record<Stage, number>> = {
   mobile: 1,
@@ -55,11 +57,14 @@ function ForgotPinContent() {
   const { actor } = useSession();
 
   const hasExistingSession = Boolean(actor?.phone || actor);
-  const [stage, setStage] = useState<Stage>(() => (hasExistingSession ? "selfie" : "mobile"));
+  // `?stage=` opens the flow on that stage (the Demo hub deep-links with it).
+  const stageParam = useSearchParams().get("stage");
+  const startStage = STAGES.find((s) => s === stageParam);
+  const [stage, setStage] = useState<Stage>(() => startStage ?? (hasExistingSession ? "selfie" : "mobile"));
   const [busy, setBusy] = useState(false);
 
   const [country, setCountry] = useState("GH");
-  const [mobile, setMobile] = useState(actor?.phone ?? "");
+  const [mobile, setMobile] = useState(actor?.phone ?? (startStage ? "0244123821" : ""));
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [failedAttempts, setFailedAttempts] = useState(0);
 

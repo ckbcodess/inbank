@@ -12,7 +12,8 @@
  * (bottom-right).
  */
 
-import { useCallback, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   Building2,
@@ -72,7 +73,7 @@ function newSignatoryId() {
   return `sig-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-export default function BusinessSignupPage() {
+function BusinessSignupFlow() {
   const [step, setStep] = useState<BusinessSignupStep>("choice");
   const [variant, setVariant] = useState<BusinessSignupVariant>("default");
   const [busy, setBusy] = useState(false);
@@ -127,6 +128,15 @@ export default function BusinessSignupPage() {
 
     setReference(target.step === "submitted" ? generateReference() : "");
   }, []);
+
+  // `?scenario=` opens the flow on that screen (the Demo hub deep-links with it).
+  const scenarioParam = useSearchParams().get("scenario");
+  const appliedScenario = useRef<string | null>(null);
+  useEffect(() => {
+    if (!scenarioParam || appliedScenario.current === scenarioParam) return;
+    appliedScenario.current = scenarioParam;
+    applyScenario(scenarioParam);
+  }, [scenarioParam, applyScenario]);
 
   function handleCompanySubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -795,4 +805,12 @@ function resolveHeadings(step: BusinessSignupStep, variant: BusinessSignupVarian
   return variant === "existingCustomer"
     ? { icon: CheckCircle2, title: "Already a GCB Customer", description: "This company is already registered with GCB." }
     : { icon: Building2, title: "Open a Business Account", description: "Enter your company details to begin." };
+}
+
+export default function BusinessSignupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
+      <BusinessSignupFlow />
+    </Suspense>
+  );
 }

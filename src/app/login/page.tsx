@@ -37,7 +37,7 @@ function LoginForm() {
   const [country, setCountry] = useState("GH");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [state, setState] = useState<LoginState>("idle");
+  const [state, setState] = useState<LoginState>(() => (searchParams.get("state") === "error" ? "error" : "idle"));
 
   function handleTypeChange(nextType: "personal" | "business") {
     setBankingType(nextType);
