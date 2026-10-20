@@ -16,7 +16,7 @@ import { toLocalMobile } from "@/lib/phone";
 import { useTrustedDevice, type TrustedDevice } from "@/lib/device-trust";
 import { homePathForActor } from "@/lib/navigation";
 import { findLegacyUser } from "@/lib/migration";
-import { SIGN_IN_OPEN } from "@/lib/launch";
+import { BUSINESS_SIGN_IN_OPEN, signInOpenFor } from "@/lib/launch";
 import { WorkInProgress } from "@/components/states/WorkInProgress";
 
 import { Field } from "@/components/ui/field";
@@ -36,6 +36,8 @@ function LoginForm() {
   const [notYou, setNotYou] = useState(false);
   // Set when sign-in is closed: the form is replaced by the work-in-progress screen.
   const [closed, setClosed] = useState(false);
+  // Business sign-in is closed for now (lib/launch.ts). Retail sign-in is open.
+  const doorOpen = bankingType !== "business" || BUSINESS_SIGN_IN_OPEN;
 
   const [mobile, setMobile] = useState("");
   const [country, setCountry] = useState("GH");
@@ -56,13 +58,14 @@ function LoginForm() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!SIGN_IN_OPEN) {
-      setClosed(true);
-      return;
-    }
     setState("submitting");
 
     window.setTimeout(() => {
+      // Business sign-in is closed for now: the work-in-progress screen, whatever credentials were entered.
+      if (!doorOpen) {
+        setClosed(true);
+        return;
+      }
       // An old internet-banking customer: this person is moving to the new system.
       if (findLegacyUser(mobile)) {
         router.push(`/migrate?user=${encodeURIComponent(toLocalMobile(mobile))}`);
@@ -75,8 +78,16 @@ function LoginForm() {
           bankingType === "business"
             ? (ACTORS.find((a) => a.role.startsWith("CORPORATE_")) ?? ACTORS[5])
             : (ACTORS.find((a) => a.id === "u-retail") ?? ACTORS[0]);
+        if (!signInOpenFor(defaultActor)) {
+          setClosed(true);
+          return;
+        }
         signIn(defaultActor);
         router.push("/mfa");
+        return;
+      }
+      if (!signInOpenFor(actor)) {
+        setClosed(true);
         return;
       }
       signIn(actor);
@@ -99,7 +110,7 @@ function LoginForm() {
   }
 
   if (trusted && !notYou) {
-    return <ReturningSignIn trusted={trusted} onNotYou={() => setNotYou(true)} />;
+    return <ReturningSignIn trusted={trusted} onNotYou={() => setNotYou(true)} doorOpen={doorOpen} />;
   }
 
   return (
@@ -250,7 +261,15 @@ export default function LoginPage() {
  * asked for their password. No mobile number to retype and no one-time code — the
  * device itself is the second factor. "Use another account" drops back to the full form.
  */
-function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotYou: () => void }) {
+function ReturningSignIn({
+  trusted,
+  onNotYou,
+  doorOpen,
+}: {
+  trusted: TrustedDevice;
+  onNotYou: () => void;
+  doorOpen: boolean;
+}) {
   const router = useRouter();
   const { signIn, verifyMfa } = useSession();
   const [password, setPassword] = useState("");
@@ -269,6 +288,11 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
 
   function finish() {
     const actor = ACTORS.find((a) => a.id === trusted.actorId) ?? ACTORS[0];
+    if (!doorOpen || !signInOpenFor(actor)) {
+      setSubmitting(false);
+      setClosed(true);
+      return;
+    }
     signIn(actor);
     verifyMfa();
     router.push(homePathForActor(actor));
@@ -276,10 +300,6 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!SIGN_IN_OPEN) {
-      setClosed(true);
-      return;
-    }
     setSubmitting(true);
     window.setTimeout(finish, 600);
   }
