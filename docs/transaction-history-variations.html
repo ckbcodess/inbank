@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transaction history: 10 calmer ways</title>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root {
+    --bg:#fafafa; --card:#ffffff; --fg:#0a0a0a; --muted:#737373; --line:#ececec; --tile:#f4f4f3; --field:#f6f6f5; --hover:rgba(0,0,0,.04);
+    --warn:#8a4b00; --success:#15803d; --primary:#ffc423; --primary-fg:#290e00;
+  }
+  .dark { --bg:#0b0b0b; --card:#161616; --fg:#f5f5f5; --muted:#9a9a9a; --line:#262626; --tile:#222; --field:#1d1d1d; --hover:rgba(255,255,255,.05);
+    --warn:#f0b34a; --success:#4ade80; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Open Sans",system-ui,sans-serif; background:var(--bg); color:var(--fg); font-size:14px; }
+  .tabular, .amt, .num { font-variant-numeric:tabular-nums; }
+  header.top { position:sticky; top:0; z-index:5; background:var(--bg); border-bottom:1px solid var(--line); padding:14px 24px; display:flex; gap:24px; align-items:flex-start; justify-content:space-between; }
+  header.top h1 { font-size:18px; font-weight:500; margin:0; letter-spacing:-.02em; }
+  header.top p { margin:4px 0 0; color:var(--muted); font-size:12.5px; line-height:1.55; max-width:880px; }
+  button.theme { border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:10px; padding:8px 14px; cursor:pointer; font:inherit; white-space:nowrap; }
+  main { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(500px,100%),1fr)); gap:40px 32px; padding:28px 16px 60px; max-width:1560px; margin:0 auto; }
+  section.v { display:flex; flex-direction:column; gap:10px; min-width:0; }
+  section.v.wide { grid-column:1 / -1; }
+  section.v h2 { font-size:15px; font-weight:500; margin:0; }
+  section.v .why { color:var(--muted); font-size:12.5px; line-height:1.55; margin:0; }
+  section.v .cut { color:var(--muted); font-size:12px; line-height:1.5; margin:0 0 4px; }
+  section.v .cut b { color:var(--fg); font-weight:500; }
+  .frame { min-width:0; background:var(--bg); border:1px solid var(--line); border-radius:20px; padding:24px 22px 18px; }
+  .frame.card { background:var(--card); }
+
+  /* page furniture */
+  .ph { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
+  .ph h3 { margin:0; font-size:20px; font-weight:500; letter-spacing:-.02em; }
+  .ghost { display:inline-flex; align-items:center; gap:6px; border:0; background:transparent; color:var(--muted); font:inherit; font-size:13px; cursor:pointer; padding:6px 8px; border-radius:8px; }
+  .ghost:hover { background:var(--hover); color:var(--fg); }
+  .ghost svg { width:15px; height:15px; stroke-width:1.7; }
+  .sf { display:flex; gap:8px; margin-bottom:6px; }
+  .search { flex:1; display:flex; align-items:center; gap:10px; background:var(--field); border-radius:12px; padding:0 14px; height:40px; color:var(--muted); font-size:14px; }
+  .search svg { width:16px; height:16px; stroke-width:1.7; }
+  .fbtn { display:inline-flex; align-items:center; gap:7px; height:40px; padding:0 14px; border-radius:12px; background:var(--field); color:var(--fg); font-size:13px; border:0; font-family:inherit; }
+  .fbtn svg { width:15px; height:15px; stroke-width:1.7; }
+
+  /* rows */
+  .day { color:var(--muted); font-size:12px; padding:20px 0 6px; display:flex; justify-content:space-between; }
+  .day:first-child { padding-top:10px; }
+  .row { display:flex; align-items:center; gap:14px; padding:12px 8px; margin:0 -8px; border-radius:12px; }
+  .row:hover { background:var(--hover); }
+  .mid { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .name { font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .meta { font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .end { display:flex; flex-direction:column; align-items:flex-end; gap:3px; flex-shrink:0; }
+  .amt { font-size:14px; }
+  .amt.fail { color:var(--muted); text-decoration:line-through; }
+  .amt.hold { color:var(--muted); }
+  .st { font-size:12px; color:var(--warn); }
+  .mark { width:36px; height:36px; border-radius:999px; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--muted); flex-shrink:0; background:var(--card); overflow:hidden; }
+  .mark svg { width:16px; height:16px; stroke-width:1.6; }
+  .mark img { width:100%; height:100%; object-fit:cover; }
+  .foot { display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:12.5px; padding:14px 0 2px; }
+  .more { border:0; background:transparent; color:var(--fg); font:inherit; font-size:13px; text-decoration:underline; text-underline-offset:4px; cursor:pointer; }
+
+  /* variation specifics */
+  .big { font-size:44px; font-weight:300; letter-spacing:-.03em; line-height:1.1; }
+  .sub { color:var(--muted); font-size:13px; margin-top:6px; }
+  .seg { display:inline-flex; gap:2px; background:var(--field); border-radius:10px; padding:3px; margin:18px 0 4px; }
+  .seg span { padding:6px 14px; border-radius:8px; font-size:13px; color:var(--muted); }
+  .seg span.on { background:var(--card); color:var(--fg); box-shadow:0 0 0 1px var(--line); }
+  .attn { padding:4px 0 10px; }
+  .attn .row { align-items:flex-start; }
+  .attn .act { font-size:12.5px; color:var(--fg); text-decoration:underline; text-underline-offset:3px; cursor:pointer; margin-top:2px; }
+  .cols { display:grid; grid-template-columns:minmax(0,1fr) 380px; gap:36px; }
+  @media (max-width:900px){ .cols { grid-template-columns:minmax(0,1fr); } .detail { border-left:0; padding-left:0; border-top:1px solid var(--line); padding-top:20px; } header.top { flex-direction:column; padding:14px 16px; } .tblwrap { overflow-x:auto; } }
+  .detail { border-left:1px solid var(--line); padding-left:32px; display:flex; flex-direction:column; gap:18px; }
+  .detail dl { margin:0; display:grid; grid-template-columns:110px 1fr; gap:10px 12px; font-size:13px; }
+  .detail dt { color:var(--muted); } .detail dd { margin:0; }
+  .row.sel { background:var(--hover); }
+  .btns { display:flex; gap:8px; }
+  .btn { border:0; border-radius:10px; padding:9px 16px; font:inherit; font-size:13px; font-weight:500; cursor:pointer; }
+  .btn.p { background:var(--primary); color:var(--primary-fg); }
+  .btn.o { background:transparent; color:var(--fg); box-shadow:inset 0 0 0 1px var(--line); }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { text-align:left; font-weight:500; color:var(--muted); font-size:12px; padding:8px 8px; border-bottom:1px solid var(--line); }
+  td { padding:13px 8px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  tr:last-child td { border-bottom:0; }
+  th.r, td.r { text-align:right; }
+  td .sub2 { color:var(--muted); font-size:12px; }
+  .sentence { font-size:15px; line-height:1.9; margin:2px 0 8px; }
+  .sentence u { text-decoration-color:var(--muted); text-underline-offset:5px; text-decoration-thickness:1px; cursor:pointer; }
+  .cat { color:var(--muted); }
+  .line { display:grid; grid-template-columns:52px minmax(0,1fr) auto auto; gap:14px; align-items:baseline; padding:10px 8px; margin:0 -8px; border-radius:10px; }
+  .line:hover { background:var(--hover); }
+  .line .d { color:var(--muted); font-size:12.5px; }
+  .line .k { color:var(--muted); font-size:12.5px; }
+  .month { display:flex; justify-content:space-between; align-items:baseline; padding:26px 0 2px; font-size:16px; font-weight:500; }
+  .month:first-child { padding-top:8px; }
+  .month span { color:var(--muted); font-size:12.5px; font-weight:400; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>Transaction history: 10 calmer ways</h1>
+    <p><b style="font-weight:500">The moment:</b> someone checking "did that go through, and where did my money go?", often a little worried. <b style="font-weight:500">The one action:</b> find a payment and know its status at a glance. What every version here drops: the tinted tile per kind, the corner direction badges, green on every credit, and the boxed card around the list. Direction is the + sign. A word appears only when a payment isn't Completed, and it is amber, never red. Totals and counts are worked out from the ledger below, not typed in.</p>
+  </div>
+  <button class="theme" onclick="document.body.classList.toggle('dark')">Light / dark</button>
+</header>
+<main id="root"></main>
+
+<script>
+/* Same 15 payments in every version. amt is a number; st: ok | pending | failed */
+const T = [
+  { who:"Melcom Stores",       kind:"Scan & Pay",     acct:"Current ••6789", icon:"qr-code",          dir:"out", amt:500,  st:"ok",      d:"Tue 11 Aug", s:"11 Aug", time:"09:12", logo:"melcom.jpg",   cat:"Shopping",     m:"Aug" },
+  { who:"MTN Ghana",           kind:"Airtime",        acct:"Current ••6789", icon:"signal",           dir:"out", amt:100,  st:"failed",  d:"Tue 11 Aug", s:"11 Aug", time:"08:40", cat:"Airtime",      m:"Aug", note:"MTN couldn't complete this. You weren't charged." },
+  { who:"My MTN Mobile Money", kind:"Wallet to bank", acct:"Current ••6789", icon:"wallet",           dir:"in",  amt:452,  st:"pending", d:"Tue 11 Aug", s:"11 Aug", time:"08:02", cat:"Transfers",    m:"Aug", note:"Waiting on MTN. This usually lands within a few minutes." },
+  { who:"Kofi Mensah",         kind:"Mobile money",   acct:"Current ••6789", icon:"smartphone",       dir:"out", amt:200,  st:"ok",      d:"Mon 10 Aug", s:"10 Aug", time:"18:25", cat:"Family",       m:"Aug" },
+  { who:"Telecel Ghana",       kind:"Data bundle",    acct:"Current ••6789", icon:"wifi",             dir:"out", amt:60,   st:"ok",      d:"Mon 10 Aug", s:"10 Aug", time:"12:03", cat:"Data",         m:"Aug" },
+  { who:"Landlord Properties", kind:"Bank transfer",  acct:"Current ••6789", icon:"landmark",         dir:"out", amt:2500, st:"ok",      d:"Sun 9 Aug",  s:"9 Aug",  time:"10:30", logo:"stanbic.png",  cat:"Rent",         m:"Aug" },
+  { who:"Employer Ltd",        kind:"Salary",         acct:"Current ••6789", icon:"landmark",         dir:"in",  amt:4200, st:"ok",      d:"Sat 8 Aug",  s:"8 Aug",  time:"06:00", logo:"absa.svg",     cat:"Income",       m:"Aug" },
+  { who:"ECG Prepaid",         kind:"GCB Pay",        acct:"Current ••6789", icon:"zap",              dir:"out", amt:250,  st:"ok",      d:"Sat 8 Aug",  s:"8 Aug",  time:"15:44", logo:"ecg.png",      cat:"Utilities",    m:"Aug" },
+  { who:"K. Mensah",           kind:"PAPSS",          acct:"Current ••6789", icon:"globe",            dir:"out", amt:3500, st:"ok",      d:"Fri 7 Aug",  s:"7 Aug",  time:"11:15", cat:"Remittances",  m:"Aug" },
+  { who:"Savings Account",     kind:"Between my accounts", acct:"Current ••6789", icon:"arrow-left-right", dir:"in", amt:1500, st:"ok", d:"Fri 7 Aug", s:"7 Aug", time:"09:00", cat:"Savings", m:"Aug" },
+  { who:"GCB ATM, High Street",kind:"Cash-out code",  acct:"Current ••6789", icon:"banknote",         dir:"out", amt:600,  st:"ok",      d:"Thu 6 Aug",  s:"6 Aug",  time:"17:20", cat:"Cash",         m:"Aug" },
+  { who:"Shoprite Ghana",      kind:"Card",           acct:"Card ••4210",    icon:"credit-card",      dir:"out", amt:320.4,st:"ok",      d:"Thu 6 Aug",  s:"6 Aug",  time:"13:08", logo:"shoprite.png", cat:"Food",         m:"Aug" },
+  { who:"Employer Ltd",        kind:"Salary",         acct:"Current ••6789", icon:"landmark",         dir:"in",  amt:4200, st:"ok",      d:"Tue 28 Jul", s:"28 Jul", time:"06:00", logo:"absa.svg",     cat:"Income",       m:"Jul" },
+  { who:"Landlord Properties", kind:"Bank transfer",  acct:"Current ••6789", icon:"landmark",         dir:"out", amt:2500, st:"ok",      d:"Mon 20 Jul", s:"20 Jul", time:"10:30", logo:"stanbic.png",  cat:"Rent",         m:"Jul" },
+  { who:"Shoprite Ghana",      kind:"Card",           acct:"Card ••4210",    icon:"credit-card",      dir:"out", amt:412.9,st:"ok",      d:"Sat 18 Jul", s:"18 Jul", time:"14:50", logo:"shoprite.png", cat:"Food",         m:"Jul" },
+];
+const A = T.slice(0, 12), AUG = T.filter(t=>t.m==="Aug");
+const fmt = n => n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+const sgn = t => t.dir==="out" ? "−" : "+";
+const money = t => `${sgn(t)} GHS ${fmt(t.amt)}`;
+const cls = t => t.st==="failed" ? "fail" : t.st==="pending" ? "hold" : "";
+const amt = t => `<span class="amt ${cls(t)}">${money(t)}</span>`;
+const word = t => t.st==="ok" ? "" : `<span class="st">${t.st==="failed"?"Failed":"Pending"}</span>`;
+const end = t => `<div class="end">${amt(t)}${word(t)}</div>`;
+const ic = n => `<i data-lucide="${n}"></i>`;
+const sum = (list, dir) => list.filter(t=>t.st==="ok" && t.dir===dir).reduce((a,t)=>a+t.amt,0);
+const groupBy = (list,key) => { const m=new Map(); list.forEach(t=>{ if(!m.has(t[key])) m.set(t[key],[]); m.get(t[key]).push(t); }); return [...m]; };
+const head = (extra="") => `<div class="ph"><h3>Transaction history</h3><button class="ghost">${ic("download")}Export</button></div>${extra}`;
+const searchBar = `<div class="sf"><div class="search">${ic("search")}Search by name or reference</div><button class="fbtn">${ic("sliders-horizontal")}Filters</button></div>`;
+const mark = t => `<span class="mark">${t.logo?`<img src="../public/brands/${t.logo}" alt="">`:ic(t.icon)}</span>`;
+const plainRow = t => `<div class="row"><div class="mid"><span class="name">${t.who}</span><span class="meta">${t.kind} · ${t.acct}</span></div>${end(t)}</div>`;
+
+const V = [
+ { n:"1 · Quiet ledger", wide:false,
+   why:"Typography only. No icons, no tiles, no box: day headings, then name and amount. What it was and which account sit in one grey line. The calmest option, and the one that holds up best in long histories.",
+   cut:"<b>Cut:</b> every icon and logo, the card around the list, green credits, the 'cases' counter.",
+   html:()=>head(searchBar)+groupBy(A,"d").map(([d,l])=>`<div class="day">${d}</div>`+l.map(plainRow).join("")).join("")+`<div class="foot"><span>12 payments since 6 Aug</span><button class="more">Show earlier</button></div>` },
+
+ { n:"2 · Grey marks, real logos kept", wide:false,
+   why:"Keeps a leading mark so the eye has something to land on, but it is one quiet circle: a hairline outline with a grey line icon. Where a business has a real logo (Melcom, ECG, Shoprite) the logo shows, because it is recognition, not decoration.",
+   cut:"<b>Cut:</b> the per-kind tint colours and the corner arrows. Direction is the + sign.",
+   html:()=>head(searchBar)+`<div style="height:6px"></div>`+A.map(t=>`<div class="row">${mark(t)}<div class="mid"><span class="name">${t.who}</span><span class="meta">${t.kind} · ${t.s}</span></div>${end(t)}</div>`).join("")+`<div class="foot"><span>Showing 12 of 15</span><button class="more">Show more</button></div>` },
+
+ { n:"3 · Day groups with a day total", wide:false,
+   why:"Each day heading carries what left that day, worked out from the ledger. It answers 'how much did I spend on Saturday?' without opening anything. Pending and failed payments are left out of the total, and the heading says so.",
+   cut:"<b>Cut:</b> the date from every row (the heading holds it), and all icons.",
+   html:()=>head(searchBar)+groupBy(A,"d").map(([d,l])=>{ const o=sum(l,"out"); return `<div class="day"><span>${d}</span><span class="num">${o?`Out GHS ${fmt(o)}`:"Nothing out"}</span></div>`+l.map(t=>`<div class="row"><div class="mid"><span class="name">${t.who}</span><span class="meta">${t.kind}</span></div>${end(t)}</div>`).join(""); }).join("")+`<div class="foot"><span>Completed payments only in daily totals</span><button class="more">Show earlier</button></div>` },
+
+ { n:"4 · Summary first, in and out as tabs", wide:false,
+   why:"One loud thing: how much went out this month, large and thin. 'Came in' sits beneath in grey. The All / Money in / Money out control replaces the direction filter, so the toolbar loses a control and the person gets the answer before the list.",
+   cut:"<b>Cut:</b> the direction entry inside Filters (it is now the tabs), all icons.",
+   html:()=>head()+`<div class="big num">GHS ${fmt(sum(AUG,"out"))}</div><div class="sub">went out in August · GHS ${fmt(sum(AUG,"in"))} came in</div><div class="seg"><span class="on">All</span><span>Money in</span><span>Money out</span></div>${searchBar}`+A.map(t=>`<div class="row"><div class="mid"><span class="name">${t.who}</span><span class="meta">${t.kind} · ${t.s}</span></div>${end(t)}</div>`).join("")+`<div class="foot"><span>Showing 12 of 15</span><button class="more">Show more</button></div>` },
+
+ { n:"5 · What needs you, pinned above the history", wide:false,
+   why:"Pending and failed payments leave the chronological list and sit at the top in plain sentences, each with its next step. Everything below is settled and quiet. If nothing needs attention the block simply isn't there.",
+   cut:"<b>Cut:</b> status words scattered through the list. They live in one place now.",
+   html:()=>{ const need=A.filter(t=>t.st!=="ok"), rest=A.filter(t=>t.st==="ok");
+     return head(searchBar)+`<div class="day">Needs a look</div><div class="attn">`+need.map(t=>`<div class="row"><div class="mid"><span class="name">${t.who} <span class="num" style="color:var(--muted)">· ${t.dir==="in"?"+":"−"} GHS ${fmt(t.amt)}</span></span><span class="meta" style="white-space:normal">${t.note}</span>${t.st==="failed"?`<span class="act">Try again</span>`:`<span class="act">See details</span>`}</div><div class="end"><span class="st">${t.st==="failed"?"Failed":"Pending"}</span></div></div>`).join("")+`</div>`+groupBy(rest,"d").map(([d,l])=>`<div class="day">${d}</div>`+l.map(plainRow).join("")).join("")+`<div class="foot"><span>10 completed payments since 6 Aug</span><button class="more">Show earlier</button></div>`; } },
+
+ { n:"6 · List and detail side by side", wide:true,
+   why:"On desktop the sheet goes away. Pick a row and its detail sits beside the list, so scanning and checking a payment never leaves the page. The list stays quiet; the detail carries the number and the actions. On a phone this falls back to the sheet.",
+   cut:"<b>Cut:</b> the slide-over sheet on desktop, icons, the second line of detail in the list.",
+   html:()=>{ const s=A[2]; return head()+`<div class="cols"><div>${searchBar}`+groupBy(A.slice(0,8),"d").map(([d,l])=>`<div class="day">${d}</div>`+l.map(t=>`<div class="row ${t===s?"sel":""}"><div class="mid"><span class="name">${t.who}</span><span class="meta">${t.kind}</span></div>${end(t)}</div>`).join("")).join("")+`</div><aside class="detail"><div><div class="meta">${s.kind} · ${s.d}, ${s.time}</div><div class="big num" style="font-size:36px;margin-top:6px">GHS ${fmt(s.amt)}</div><div class="st" style="margin-top:8px">Pending. ${s.note}</div></div><dl><dt>From</dt><dd>${s.who}</dd><dt>Into</dt><dd>${s.acct}</dd><dt>Reference</dt><dd class="num">WB-20260811-0412</dd><dt>Fee</dt><dd class="num">GHS 0.00</dd></dl><div class="btns"><button class="btn o">Download receipt</button><button class="btn o">Report a problem</button></div></aside></div>`; } },
+
+ { n:"7 · Statement table", wide:true,
+   why:"For people who check against a statement. Hairline rows, five columns, nothing decorative. The account column is what makes it useful for a customer with several accounts. Collapses to the quiet ledger on a phone.",
+   cut:"<b>Cut:</b> icons, tiles, boxes. Status shows only in the Status column and only when not Completed.",
+   html:()=>head(searchBar)+`<div class="tblwrap"><table><thead><tr><th>Date</th><th>Payee</th><th>Method</th><th>Account</th><th>Status</th><th class="r">Amount</th></tr></thead><tbody>`+A.map(t=>`<tr><td class="num">${t.s}</td><td>${t.who}</td><td class="cat">${t.kind}</td><td class="cat num">${t.acct}</td><td>${word(t)}</td><td class="r">${amt(t)}</td></tr>`).join("")+`</tbody></table></div><div class="foot"><span>Showing 12 of 15</span><button class="more">Show more</button></div>` },
+
+ { n:"8 · Filters as a sentence", wide:false,
+   why:"The toolbar becomes one readable line: 'All payments from all accounts in the last 30 days.' Each underlined phrase opens its own choice. People see exactly what they're looking at, and 'no results' always has an obvious fix.",
+   cut:"<b>Cut:</b> the Filters button, the applied-filter chips row, the separate date controls. Search stays.",
+   html:()=>head(`<div class="sentence">Showing <u>all payments</u> from <u>all accounts</u> in the <u>last 30 days</u></div><div class="sf"><div class="search">${ic("search")}Search by name or reference</div></div>`)+groupBy(A,"d").map(([d,l])=>`<div class="day">${d}</div>`+l.map(plainRow).join("")).join("")+`<div class="foot"><span>15 payments</span><button class="more">Show earlier</button></div>` },
+
+ { n:"9 · Months, with the category as a word", wide:false,
+   why:"Month headings carry the month's totals, and the second line names what the money was for ('Rent', 'Food') in plain grey instead of an icon or colour. Good for 'where did August go?' without a chart.",
+   cut:"<b>Cut:</b> category colours and icons. The word does the job, and the category colours stay in Insights.",
+   html:()=>head(searchBar)+groupBy(T,"m").map(([m,l])=>`<div class="month"><span style="color:var(--fg);font-size:16px">${m==="Aug"?"August":"July"} 2026</span><span class="num">Out GHS ${fmt(sum(l,"out"))} · In GHS ${fmt(sum(l,"in"))}</span></div>`+l.map(t=>`<div class="row"><div class="mid"><span class="name">${t.who}</span><span class="meta"><span>${t.cat}</span> · ${t.kind} · ${t.s}</span></div>${end(t)}</div>`).join("")).join("")+`<div class="foot"><span>All 15 payments since 18 Jul</span><span></span></div>` },
+
+ { n:"10 · One line each, with Show more", wide:false,
+   why:"The densest. Date, name, kind and amount on one line, no second line at all. It fits twice as many payments on screen, and 'Show 10 more' replaces numbered pages. The footer counts payments, not 'cases'.",
+   cut:"<b>Cut:</b> the second line, icons, page numbers, Previous/Next.",
+   html:()=>head(searchBar)+`<div style="height:8px"></div>`+A.map(t=>`<div class="line"><span class="d num">${t.s}</span><span class="name">${t.who}</span><span class="k">${t.kind}${t.st!=="ok"?` · <span class="st">${t.st==="failed"?"Failed":"Pending"}</span>`:""}</span>${amt(t)}</div>`).join("")+`<div class="foot"><span>12 of 15 payments</span><button class="more">Show 3 more</button></div>` },
+];
+
+const root = document.getElementById("root");
+V.forEach(v => root.insertAdjacentHTML("beforeend",
+  `<section class="v ${v.wide?"wide":""}"><h2>${v.n}</h2><p class="why">${v.why}</p><p class="cut">${v.cut}</p><div class="frame">${v.html()}</div></section>`));
+lucide.createIcons();
+</script>
+</body>
+</html>

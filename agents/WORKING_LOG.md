@@ -186,6 +186,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 ## Inbox
 
 ### 2026-10-20
+- Question: Transaction History feels busy (tinted marks, corner arrows, green credits, boxed list). Ten calmer versions are in `docs/transaction-history-variations.html`; none chosen yet. Build the chosen one behind a Dev Mode switch, then delete the rest.
 - Decision: branch `feat/beneficiaries-transactions` joins design-exploration (beneficiaries, sheets, brand logos, `TransactionMark`, detail sheet), main (business onboarding) and the transaction display redesign. Where the last two clashed, the logo marks and the detail sheet won.
 - Gap: `TransactionIcon` and `TransactionItem` (category icons, from feat/transaction-display-v2) are in the repo but nothing uses them. Either fold the category tint into `TransactionMark` or delete them.
 - Discovery: how GCB onboards companies to internet banking today (Esther, call of 2026-10-16). A request letter on company letterhead plus the IB application form, sent by email, post or at a branch. The form holds the account number and name; each user's email, phone and date of birth; signatories' names and designations; and each user's role (Initiator, Authorizer, Viewer). The RM, or CBD and retail groups where there's no RM, checks the signatures against Flexcube; a mismatch stops the request. Requests go to the RM, the branch (by branch code) or a central pool, where someone approves or declines. On approval the user gets their username by SMS and a set-password link by email.
