@@ -352,6 +352,22 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
   - Name the mechanism and the next step on bad news.
   - "Block", never "Freeze"; "Internet", not "Data Bundle"; "Proceed" on onboarding steps.
 
+### 23. Shared screens between personal and business
+
+Personal and business banking are separate surfaces (CONSTITUTION §10), but some screens are still shared
+until each gets a business version. A shared screen:
+
+- reads the relationship through `lib/profile.ts` (`profileKindOf`, `rowKind`, `isBusinessProfile`), never by
+  writing `"CORPORATE"` or a business role check. Reference: `payments/standing/page.tsx`.
+- asks for a capability, not a role, when access differs (`canViewAdminReports` in `lib/roles.ts`).
+- never hides business-only UI behind a flag. If a capability exists only for business, build it under
+  `/business`.
+- takes its data from `accountsForProfile`, `transactionsForProfile` and `cardsForProfile`. Business rows live
+  in `lib/corporate/ledger.ts`; `lib/mock-data.ts` assembles one ledger from both.
+
+When a shared screen needs a business version, copy it under `src/app/business/`, delete the profile branch
+from both, and remove it from the borrowed list in WORKING_LOG.
+
 ## Engineering notes (each one has already caused a bug)
 
 - **Next.js 15:** route `params` and `searchParams` are async (`await params`). `devIndicators: false`

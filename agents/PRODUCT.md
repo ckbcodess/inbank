@@ -61,8 +61,12 @@ Open questions live in [WORKING_LOG.md](WORKING_LOG.md), not here.
 - Prototype state:
   - Personas are single-view, except Samuel Quartey, who switches between his personal and joint
     profiles.
-  - `src/lib/navigation.ts` still adds Trade, Approvals and Administration to the customer nav based on
-    role, so the D1 split isn't finished. See WORKING_LOG.
+  - The split is done at the surface level: business banking lives under `/business` with its own
+    navigation (`lib/corporate/navigation.ts`), home (`/business/overview`) and data (`lib/corporate/`).
+    A business sign-in lands on `/business/overview`; a personal one on `/overview`. A signed-in customer
+    is held to their own relationship's surface.
+  - Business still borrows personal screens at personal URLs (accounts, cards, payments, beneficiaries,
+    transactions, reports, settings, invest, loans). See WORKING_LOG for the list.
 
 ## 4. Information architecture
 
@@ -107,11 +111,16 @@ Open questions live in [WORKING_LOG.md](WORKING_LOG.md), not here.
   - Prepaid card top-up
 - **Scheduled:** standing orders
 
-**Business view** (screen spec §12.4, without the profile switcher):
-- Overview, Accounts, Payments (single and bulk)
-- Trade, if the customer is eligible
-- Approvals, for approvers
-- Administration, for corporate admins
+**Business view** (screen spec §12.4, without the profile switcher), as it stands in
+`lib/corporate/navigation.ts`:
+- Home (`/business/overview`): total available cash, what is waiting for the person's approval
+  (approvers only), the company's accounts, and the two payment doors (Send a Payment, Pay in Bulk)
+- Accounts, Cards, Send & Pay, Insure, Invest, Loans: shared with the personal view for now
+- Trade (`/business/trade`), if the customer is eligible
+- Approvals (`/business/approvals`), for approvers
+- Administration (`/business/administration`), for corporate admins
+- Bulk payments (`/business/payments/bulk`), reached from Send & Pay and Home
+- More services: the same group as the personal view
 
 **Admin portal:** Overview, Transactions, Exceptions, Trade, Customers, Fee concessions, Audit log.
 

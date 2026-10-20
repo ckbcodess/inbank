@@ -223,10 +223,23 @@ here. Never fall back to dense, boxed layouts.
 
 ## 10. Engineering invariants
 
-- **Two firewalled shells.** `(customer)` and `admin` share only `/login` and `/mfa`. Never
-  cross-import between them. `shell` is fixed on the actor credential, never a runtime toggle.
-- **Personal and Business are separate views, chosen before sign-in.** No business control ever
-  appears on a personal screen.
+- **Three firewalled surfaces.** Personal banking (`(customer)`), business banking (`business`, served at
+  `/business/*`) and the admin portal (`admin`) are separate products. Never cross-import between them: code
+  under `(customer)` never imports `src/app/business`, `components/corporate` or `lib/corporate`, and the
+  reverse. `eslint.config.mjs` enforces it. Personal and business share only sign-in (`/login`, `/mfa`) and
+  the onboarding routes; admin shares only `/login` and `/mfa`. `shell` is fixed on the actor credential,
+  never a runtime toggle.
+- **What they share.** `components/ui`, the tokens, `motion`, `money`, i18n, the authorisation gate
+  (`useAuthorisation`, `TransactionOtpModal`), the layout chrome and the plain libs. Anything specific to one
+  relationship (its data, roles, navigation, copy) lives in that surface's own folders (`lib/corporate/`,
+  `components/corporate/`), so it can be lifted out whole.
+- **Shared screens ask, they don't compare.** Until a shared screen gets a business version, it reads the
+  relationship through `lib/profile.ts` and asks for capabilities (`canViewAdminReports`). It never writes
+  `"CORPORATE"` or a business role check. A capability that exists only for business is built under
+  `/business`, never behind a flag on a personal screen.
+- **Personal and Business are separate views, chosen before sign-in.** No business control ever appears on a
+  personal screen. Each has its own home (`/overview`, `/business/overview`), and a customer holding both
+  signs in through the door they want.
 - **Navigation is data.** Add items in `getNavigation()` in `src/lib/navigation.ts`, and add the icon to
   `ICON_MAP` in `components/layout/Sidebar.tsx`. Never hardcode links in a layout. Object-detail routes sit under their list parent, carry
   `PageHeader backTo` and never appear in the nav.
