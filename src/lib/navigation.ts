@@ -13,7 +13,8 @@
  */
 
 import type { Actor, Profile, Role, Shell } from "./roles";
-import { isApprover, isCorporateAdmin } from "./roles";
+import { businessNav } from "./corporate/navigation";
+import { ENROLMENT_PORTAL_OPEN } from "./launch";
 
 export interface NavItem {
   key: string;
@@ -24,18 +25,23 @@ export interface NavItem {
   group?: string;
 }
 
-/**
- * Customer / Corporate shell — section 12.4.
- *
- * Nav is context-aware: corporate-only functions (Approvals, Administration)
- * appear only when an active CORPORATE profile/relationship is selected.
- */
-function customerNav(actor: Actor, activeProfile?: Profile | null): NavItem[] {
-  const isCorporate = activeProfile ? activeProfile.kind === "CORPORATE" : true;
+/** The secondary surfaces, gathered in the collapsible "More Services" dropdown. */
+const MORE_SERVICES: NavItem[] = [
+  { key: "transactions", label: "Transaction History", path: "/transactions", icon: "ArrowLeftRight", group: "More Services" },
+  { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "More Services" },
+  { key: "fx-rates", label: "FX Rates", path: "/fx-rates", icon: "TrendingUp", group: "More Services" },
+  { key: "locate-us", label: "Locate Us", path: "/locate-us", icon: "MapPin", group: "More Services" },
+  { key: "settings", label: "Settings", path: "/settings", icon: "Settings", group: "More Services" },
+  { key: "lifestyle", label: "Lifestyle", path: "/lifestyle", icon: "Sparkles", group: "More Services" },
+];
 
-  // Groups are separated by spacing, not section titles (the Sidebar renders no
-  // group headings) — except "More Services", which is a collapsible dropdown.
-  const items: NavItem[] = [
+/**
+ * Personal banking shell — section 12.4. Groups are separated by spacing, not
+ * section titles (the Sidebar renders no group headings), except "More
+ * Services", which is a collapsible dropdown.
+ */
+function retailNav(): NavItem[] {
+  return [
     { key: "overview", label: "Home", path: "/overview", icon: "Home", group: "primary" },
     { key: "accounts", label: "Accounts", path: "/accounts", icon: "Wallet", group: "primary" },
     { key: "cards", label: "Cards", path: "/cards", icon: "CreditCard", group: "primary" },
@@ -43,34 +49,8 @@ function customerNav(actor: Actor, activeProfile?: Profile | null): NavItem[] {
     { key: "insure", label: "Insure", path: "/insure", icon: "Shield", group: "move" },
     { key: "invest", label: "Invest", path: "/invest", icon: "LineChart", group: "move" },
     { key: "loans", label: "Loans", path: "/loans", icon: "Landmark", group: "move" },
+    ...MORE_SERVICES,
   ];
-
-  // Trade — hidden if not eligible or if retail profile (section 12.4).
-  if (isCorporate && actor.tradeEligible) {
-    items.push({ key: "trade", label: "Trade", path: "/trade", icon: "Ship", group: "move" });
-  }
-
-  // Approvals — hidden unless active relationship is Corporate and role = Approver (section 12.4).
-  if (isCorporate && isApprover(actor.role)) {
-    items.push({ key: "approvals", label: "Approvals", path: "/approvals", icon: "CheckCircle2", group: "control" });
-  }
-
-  // Administration — hidden unless active relationship is Corporate and role = Corporate Admin (section 12.4).
-  if (isCorporate && isCorporateAdmin(actor.role)) {
-    items.push({ key: "administration", label: "Administration", path: "/administration", icon: "Users", group: "control" });
-  }
-
-  // More Services — a collapsible dropdown gathering the secondary surfaces.
-  items.push(
-    { key: "transactions", label: "Transaction History", path: "/transactions", icon: "ArrowLeftRight", group: "More Services" },
-    { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "More Services" },
-    { key: "fx-rates", label: "FX Rates", path: "/fx-rates", icon: "TrendingUp", group: "More Services" },
-    { key: "locate-us", label: "Locate Us", path: "/locate-us", icon: "MapPin", group: "More Services" },
-    { key: "settings", label: "Settings", path: "/settings", icon: "Settings", group: "More Services" },
-    { key: "lifestyle", label: "Lifestyle", path: "/lifestyle", icon: "Sparkles", group: "More Services" },
-  );
-
-  return items;
 }
 
 /**
@@ -97,6 +77,10 @@ function adminNav(role: Role): NavItem[] {
     items.push({ key: "admin-fees", label: "Fee Concessions", path: "/admin/fee-concessions", icon: "Percent", group: "CONTROL" });
   }
 
+  if (ENROLMENT_PORTAL_OPEN && (role === "RELATIONSHIP_MANAGER" || role === "OPERATIONS_USER" || role === "BANK_ADMIN")) {
+    items.push({ key: "admin-enrolments", label: "Enrolments", path: "/admin/enrolments", icon: "ClipboardCheck", group: "OPERATIONS" });
+  }
+
   if (role === "BANK_ADMIN" || role === "OPERATIONS_USER") {
     items.push({ key: "admin-audit", label: "Audit Log", path: "/admin/audit", icon: "Receipt", group: "CONTROL" });
   }
@@ -105,10 +89,21 @@ function adminNav(role: Role): NavItem[] {
 }
 
 export function getNavigation(actor: Actor, activeProfile?: Profile | null): NavItem[] {
-  return actor.shell === "admin" ? adminNav(actor.role) : customerNav(actor, activeProfile);
+  if (actor.shell === "admin") return adminNav(actor.role);
+  return activeProfile?.kind === "CORPORATE" ? businessNav(actor) : retailNav();
 }
 
 /** Landing route after authentication, per shell. */
 export function homePathForShell(shell: Shell): string {
   return shell === "admin" ? "/admin" : "/overview";
+}
+
+/** Where a signed-in person lands after sign-in: their own surface's home. */
+export function homePathForActor(actor: Actor): string {
+  return actor.shell === "admin" ? homePathForShell("admin") : homePathForProfile(actor.profiles[0]);
+}
+
+/** Where a signed-in customer lands: business banking has its own home, personal banking keeps `/overview`. */
+export function homePathForProfile(profile: Profile | null | undefined): string {
+  return profile?.kind === "CORPORATE" ? "/business/overview" : "/overview";
 }
