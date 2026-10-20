@@ -113,7 +113,7 @@ export function SavedSuggestions({
         <ul
           role="listbox"
           aria-label="Saved recipients"
-          className="absolute inset-x-0 top-full z-30 mt-1.5 rounded-2xl border border-border bg-menu p-1.5 shadow-lg animate-in fade-in duration-150"
+          className="absolute inset-x-0 top-full z-30 mt-2 rounded-2xl border border-border bg-menu p-2 shadow-lg animate-in fade-in duration-150"
         >
           {matches.map((item) => (
             <li key={item.id} role="option" aria-selected={false}>
@@ -125,7 +125,7 @@ export function SavedSuggestions({
                   onPicked?.();
                   setFocused(false);
                 }}
-                className="group flex w-full cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2 text-left transition-colors hover:bg-muted/60"
+                className="group flex w-full cursor-pointer items-center gap-2 rounded-xl px-2 py-2 text-left transition-colors hover:bg-muted/60"
               >
                 <PayeeAvatar name={item.name} initials={item.initials} size="sm" />
                 <span className="flex min-w-0 flex-1 flex-col">

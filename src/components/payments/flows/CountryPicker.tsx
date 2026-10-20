@@ -42,7 +42,7 @@ export function CountryPicker({
         onClick={() => setOpen(true)}
         className={
           triggerClassName ??
-          "flex h-13 w-full cursor-pointer items-center gap-3 rounded-2xl border border-field-border bg-field px-4 text-left text-[14px] transition-colors hover:bg-field-hover"
+          "flex h-11 w-full cursor-pointer items-center gap-2 rounded-2xl border border-field-border bg-field px-3 text-left text-[14px] transition-colors hover:bg-field-hover"
         }
       >
         {selected && <CountryFlag code={selected.code} size={24} />}
@@ -63,12 +63,12 @@ export function CountryPicker({
           <DialogHeader onClose={() => setOpen(false)}>
             <DialogTitle>Select Destination Country</DialogTitle>
           </DialogHeader>
-          <div className="flex flex-col gap-3 px-5 pb-2 pt-4 sm:px-6">
+          <div className="flex flex-col gap-2 px-4 pb-2 pt-3 sm:px-5">
             <div className="relative">
               <Search
                 size={16}
                 strokeWidth={1.8}
-                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                 aria-hidden="true"
               />
               <input
@@ -78,17 +78,17 @@ export function CountryPicker({
                 placeholder="Search"
                 aria-label="Search countries"
                 autoComplete="off"
-                className="h-11 w-full rounded-xl border border-field-border bg-field pl-10 pr-3 text-[14px] text-foreground outline-none transition focus:border-field-border-focus focus:ring-0"
+                className="h-10 w-full rounded-xl border border-field-border bg-field pl-10 pr-2 text-[14px] text-foreground outline-none transition focus:border-field-border-focus focus:ring-0"
               />
             </div>
           </div>
-          <ul className="max-h-[55vh] overflow-y-auto px-5 pb-4 sm:px-6">
+          <ul className="max-h-[55vh] overflow-y-auto px-4 pb-3 sm:px-5">
             {matches.map((country) => (
               <li key={country.code} className="border-b border-border/60 last:border-b-0">
                 <button
                   type="button"
                   onClick={() => pick(country)}
-                  className="flex w-full cursor-pointer items-center gap-3.5 py-3 text-left transition-colors hover:bg-muted/30"
+                  className="flex w-full cursor-pointer items-center gap-3 py-2 text-left transition-colors hover:bg-muted/30"
                 >
                   <CountryFlag code={country.code} size={28} />
                   <span className="flex-1 truncate text-[14.5px] text-foreground">{country.name}</span>
@@ -97,7 +97,7 @@ export function CountryPicker({
               </li>
             ))}
             {matches.length === 0 && (
-              <li className="py-8 text-center text-[13.5px] text-muted-foreground">
+              <li className="py-6 text-center text-[13.5px] text-muted-foreground">
                 No country matches &ldquo;{query.trim()}&rdquo;.
               </li>
             )}

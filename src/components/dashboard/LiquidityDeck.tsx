@@ -65,18 +65,18 @@ export function LiquidityDeck({
   const monthlyOutflow = isCorporate ? 342100.00 : 4210.00;
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-card via-card to-muted/40 p-5 md:p-6 shadow-sm">
+    <section className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-br from-card via-card to-muted/40 p-4 md:p-5 shadow-sm">
       {/* Decorative ambient subtle background glow */}
       <div
-        className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full bg-primary/5 blur-3xl"
+        className="pointer-events-none absolute -right-14 -top-14 size-56 rounded-full bg-primary/5 blur-3xl"
         aria-hidden="true"
       />
 
-      <div className="relative flex flex-col gap-6">
+      <div className="relative flex flex-col gap-5">
         {/* Top Header: Eyebrow + Currency Switcher + Eye Toggle */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-muted text-foreground">
+            <span className="flex size-6 items-center justify-center rounded-lg bg-muted text-foreground">
               <Wallet size={15} strokeWidth={2} />
             </span>
             <span className="text-[12.5px] font-medium text-muted-foreground uppercase tracking-wider">
@@ -86,7 +86,7 @@ export function LiquidityDeck({
               <button
                 type="button"
                 onClick={toggleAmountVisibility}
-                className="flex size-6 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+                className="flex size-5 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
                 aria-label={showAmounts ? "Hide balances" : "Show balances"}
               >
                 {showAmounts ? <Eye size={13} /> : <EyeOff size={13} />}
@@ -120,7 +120,7 @@ export function LiquidityDeck({
               <span className="text-[32px] md:text-[38px] font-medium text-foreground tracking-tight">
                 {showAmounts ? (
                   <>
-                    <span className="text-[20px] md:text-[24px] text-muted-foreground mr-1.5 font-normal">
+                    <span className="text-[20px] md:text-[24px] text-muted-foreground mr-2 font-normal">
                       {selectedCurrency}
                     </span>
                     {convertedAmount.toLocaleString("en-US", {
@@ -137,7 +137,7 @@ export function LiquidityDeck({
             <p className="text-[12px] text-muted-foreground mt-1">
               Across <strong className="text-foreground">{accounts.length}</strong> active account{accounts.length === 1 ? "" : "s"}
               {heldGhs > 0.01 && (
-                <span className="ml-1.5 text-warning-text">
+                <span className="ml-2 text-warning-text">
                   · ({formatMoney(heldGhs, "GHS", showAmounts)} in transit)
                 </span>
               )}
@@ -145,9 +145,9 @@ export function LiquidityDeck({
           </div>
 
           {/* Mini Cashflow Pill */}
-          <div className="flex items-center gap-2 bg-muted/50 border border-border/70 rounded-2xl p-2.5 text-[12px]">
-            <div className="flex items-center gap-1.5 pr-2.5 border-r border-border">
-              <span className="flex size-5 items-center justify-center rounded-full bg-success/10 text-success-text">
+          <div className="flex items-center gap-2 bg-muted/50 border border-border/70 rounded-2xl p-2 text-[12px]">
+            <div className="flex items-center gap-2 pr-2 border-r border-border">
+              <span className="flex size-4 items-center justify-center rounded-full bg-success/10 text-success-text">
                 <ArrowDownLeft size={12} strokeWidth={2.5} />
               </span>
               <div>
@@ -157,8 +157,8 @@ export function LiquidityDeck({
                 </span>
               </div>
             </div>
-            <div className="flex items-center gap-1.5 pl-1">
-              <span className="flex size-5 items-center justify-center rounded-full bg-destructive/10 text-destructive-text">
+            <div className="flex items-center gap-2 pl-1">
+              <span className="flex size-4 items-center justify-center rounded-full bg-destructive/10 text-destructive-text">
                 <ArrowUpRight size={12} strokeWidth={2.5} />
               </span>
               <div>
@@ -172,13 +172,13 @@ export function LiquidityDeck({
         </div>
 
         {/* 1-Tap Quick Action Icons Deck (Mobile-First Thumb Reachable) */}
-        <div className="grid grid-cols-4 sm:grid-cols-5 gap-2.5 pt-3 border-t border-border/60">
+        <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 pt-2 border-t border-border/60">
           <button
             type="button"
             onClick={onOpenTransfer}
-            className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-primary text-primary-foreground hover:bg-primary-hover active:scale-[0.97] transition shadow-xs group cursor-pointer"
+            className="flex flex-col items-center justify-center gap-2 p-2 rounded-2xl bg-primary text-primary-foreground hover:bg-primary-hover active:scale-[0.97] transition shadow-xs group cursor-pointer"
           >
-            <span className="flex size-9 items-center justify-center rounded-full bg-black/10 text-primary-foreground transition-transform">
+            <span className="flex size-8 items-center justify-center rounded-full bg-black/10 text-primary-foreground transition-transform">
               <Send size={16} strokeWidth={2.2} />
             </span>
             <span className="text-[12px] font-medium">Send &amp; Pay</span>
@@ -187,9 +187,9 @@ export function LiquidityDeck({
           <button
             type="button"
             onClick={onOpenBillPay}
-            className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group cursor-pointer"
+            className="flex flex-col items-center justify-center gap-2 p-2 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group cursor-pointer"
           >
-            <span className="flex size-9 items-center justify-center rounded-full bg-muted text-foreground transition-transform">
+            <span className="flex size-8 items-center justify-center rounded-full bg-muted text-foreground transition-transform">
               <CediReceiptIcon size={16} strokeWidth={2} />
             </span>
             <span className="text-[12px] font-medium text-foreground">Pay Bills</span>
@@ -198,9 +198,9 @@ export function LiquidityDeck({
           <button
             type="button"
             onClick={onOpenBillPay}
-            className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group cursor-pointer"
+            className="flex flex-col items-center justify-center gap-2 p-2 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group cursor-pointer"
           >
-            <span className="flex size-9 items-center justify-center rounded-full bg-info/10 text-info-text transition-transform">
+            <span className="flex size-8 items-center justify-center rounded-full bg-info/10 text-info-text transition-transform">
               <Smartphone size={16} strokeWidth={2} />
             </span>
             <span className="text-[12px] font-medium text-foreground">Airtime/Data</span>
@@ -209,9 +209,9 @@ export function LiquidityDeck({
           <button
             type="button"
             onClick={onOpenTopUp}
-            className="flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group cursor-pointer"
+            className="flex flex-col items-center justify-center gap-2 p-2 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group cursor-pointer"
           >
-            <span className="flex size-9 items-center justify-center rounded-full bg-success/10 text-success-text transition-transform">
+            <span className="flex size-8 items-center justify-center rounded-full bg-success/10 text-success-text transition-transform">
               <CreditCard size={16} strokeWidth={2} />
             </span>
             <span className="text-[12px] font-medium text-foreground">Top Up Card</span>
@@ -220,9 +220,9 @@ export function LiquidityDeck({
           {isCorporate ? (
             <Link
               href="/payments/bulk"
-              className="hidden sm:flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group"
+              className="hidden sm:flex flex-col items-center justify-center gap-2 p-2 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group"
             >
-              <span className="flex size-9 items-center justify-center rounded-full bg-info/10 text-info-text transition-transform">
+              <span className="flex size-8 items-center justify-center rounded-full bg-info/10 text-info-text transition-transform">
                 <Layers size={16} strokeWidth={2} />
               </span>
               <span className="text-[12px] font-medium text-foreground">Bulk Payroll</span>
@@ -230,9 +230,9 @@ export function LiquidityDeck({
           ) : (
             <Link
               href="/payments"
-              className="hidden sm:flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group"
+              className="hidden sm:flex flex-col items-center justify-center gap-2 p-2 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group"
             >
-              <span className="flex size-9 items-center justify-center rounded-full bg-info/10 text-info-text transition-transform">
+              <span className="flex size-8 items-center justify-center rounded-full bg-info/10 text-info-text transition-transform">
                 <Sparkles size={16} strokeWidth={2} />
               </span>
               <span className="text-[12px] font-medium text-foreground">More Services</span>

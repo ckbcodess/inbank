@@ -27,12 +27,12 @@ export function UnfundedNudge({ onFundClick, className }: UnfundedNudgeProps) {
     <div
       role="region"
       aria-label="Virtual account funding nudge"
-      className={`relative flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:p-6 ${
+      className={`relative flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-5 sm:p-5 ${
         className ?? ""
       }`}
     >
-      <div className="flex min-w-0 items-center gap-4 pr-8 sm:pr-0">
-        <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+      <div className="flex min-w-0 items-center gap-3 pr-6 sm:pr-0">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
           <Wallet size={20} strokeWidth={1.9} aria-hidden="true" />
         </div>
 
@@ -46,21 +46,21 @@ export function UnfundedNudge({ onFundClick, className }: UnfundedNudgeProps) {
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+      <div className="flex shrink-0 items-center gap-2 sm:gap-2">
         <Button
           type="button"
           onClick={onFundClick}
-          className="h-11 flex-1 cursor-pointer px-5 text-[14px] active:scale-[0.97] transition-transform duration-150 sm:flex-none"
+          className="h-10 flex-1 cursor-pointer px-4 text-[14px] active:scale-[0.97] transition-transform duration-150 sm:flex-none"
         >
           <span>Fund Virtual Account</span>
-          <ArrowRight size={15} strokeWidth={1.8} className="ml-1.5" />
+          <ArrowRight size={15} strokeWidth={1.8} className="ml-2" />
         </Button>
 
         <button
           type="button"
           onClick={handleDismiss}
           aria-label="Dismiss notification"
-          className="absolute right-3.5 top-3.5 flex size-8 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:static"
+          className="absolute right-3 top-3 flex size-7 cursor-pointer items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:static"
         >
           <X size={15} strokeWidth={1.8} />
         </button>

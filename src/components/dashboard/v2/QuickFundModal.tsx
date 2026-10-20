@@ -211,7 +211,7 @@ export function QuickFundFlow({
             setStage("select");
           }
         }}
-        className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1 mr-1"
+        className="flex size-6 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1 mr-1"
         aria-label="Back"
       >
         <ChevronLeft size={18} strokeWidth={2} />
@@ -220,7 +220,7 @@ export function QuickFundFlow({
       <button
         type="button"
         onClick={onBack}
-        className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1 mr-1"
+        className="flex size-6 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1 mr-1"
         aria-label="Back"
       >
         <ChevronLeft size={18} strokeWidth={2} />
@@ -243,13 +243,13 @@ export function QuickFundFlow({
   const body = (
     <>
           {stage === "otp" && (
-            <p className="text-[13.5px] text-muted-foreground mb-4 leading-relaxed">
+            <p className="text-[13.5px] text-muted-foreground mb-3 leading-relaxed">
               Enter the 6-digit code sent to <span className="font-medium text-foreground">{maskMobile(displayGhanaMobile(phone))}</span>.
             </p>
           )}
           {/* STAGE 0: SELECT PAYMENT METHOD */}
           {stage === "select" && (
-            <div className="flex flex-col gap-4 pt-1">
+            <div className="flex flex-col gap-3 pt-1">
               <ActionTile
                 icon={Smartphone}
                 title="Fund with Mobile Money Wallet"
@@ -273,10 +273,10 @@ export function QuickFundFlow({
 
           {/* STAGE 1: FORM */}
           {stage === "form" && (
-            <form onSubmit={handleFormSubmit} className="flex flex-col gap-4">
+            <form onSubmit={handleFormSubmit} className="flex flex-col gap-3">
 
               {method === "momo" ? (
-                <div className="flex flex-col gap-3.5">
+                <div className="flex flex-col gap-3">
                   {/* Phone Input with +233 */}
                   <Field label="Mobile Number" htmlFor="quickFundPhone">
                     <PhoneInput id="quickFundPhone" value={phone} onValueChange={setPhone} required />
@@ -295,7 +295,7 @@ export function QuickFundFlow({
 </Field>
                 </div>
               ) : (
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
                   <Field label="Card Number" htmlFor="quickFundCard">
                     <Input
                       id="quickFundCard"
@@ -307,7 +307,7 @@ onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                       required
                     />
 </Field>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2">
                     <Field label="Expiry" htmlFor="quickFundExp">
                       <Input
                         id="quickFundExp"
@@ -345,7 +345,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                 variant="default"
                 size="lg"
                 disabled={!amount} loading={busy}
-                className="mt-2 h-11 w-full text-[14px] cursor-pointer"
+                className="mt-2 h-10 w-full text-[14px] cursor-pointer"
               >
                 <span>Continue</span>
               </Button>
@@ -354,7 +354,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
 
           {/* STAGE 2: OTP */}
           {stage === "otp" && (
-            <div className="flex flex-col items-center gap-5 py-2">
+            <div className="flex flex-col items-center gap-4 py-2">
               <OtpInput
                 value={otpDigits}
                 onChange={(next: string[]) => {
@@ -405,8 +405,8 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
 
           {/* STAGE 3: USSD PROMPT */}
           {stage === "ussd" && (
-            <div className="flex flex-col items-center text-center gap-4 py-4">
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-2xs">
+            <div className="flex flex-col items-center text-center gap-3 py-3">
+              <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-2xs">
                 <Smartphone size={24} strokeWidth={1.8} />
               </div>
               <div className="flex flex-col gap-1">
@@ -426,8 +426,8 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
 
           {/* STAGE 4: SUCCESS */}
           {stage === "success" && (
-            <div className="flex flex-col items-center text-center gap-4 py-4">
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-success/15 text-success-text shadow-2xs">
+            <div className="flex flex-col items-center text-center gap-3 py-3">
+              <div className="flex size-12 items-center justify-center rounded-2xl bg-success/15 text-success-text shadow-2xs">
                 <CheckCircle2 size={24} strokeWidth={1.9} />
               </div>
 
@@ -445,7 +445,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                 variant="default"
                 size="lg"
                 onClick={handleFinish}
-                className="mt-3 h-10.5 w-full text-[13.5px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
+                className="mt-2 h-9 w-full text-[13.5px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
               >
                 <span>Continue</span>
               </Button>
@@ -456,7 +456,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
 
   if (variant === "split" || variant === "inline") {
     return (
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-4">
         <div className="flex items-center gap-2">
           {back}
           <DialogTitle className="text-[20px] font-medium tracking-tight text-foreground sm:text-[22px]">{title}</DialogTitle>
@@ -474,7 +474,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
           <DialogTitle>{title}</DialogTitle>
         </div>
       </DialogHeader>
-      <DialogBody className="px-6 pb-6 pt-4">{body}</DialogBody>
+      <DialogBody className="px-5 pb-5 pt-3">{body}</DialogBody>
     </>
   );
 }

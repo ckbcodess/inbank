@@ -77,7 +77,7 @@ export function ActiveCodeDialog({
           </div>
         }
       >
-        <div className="flex flex-col items-center gap-3 pb-2 pt-4 text-center">
+        <div className="flex flex-col items-center gap-2 pb-2 pt-3 text-center">
           <CashoutTicket code={code.code} amount={amount} recipientPhone={code.phone ?? REGISTERED_WALLET.phone} />
           <p className="max-w-[300px] text-balance text-[13px] text-muted-foreground">
             {code.expires}. Anyone with this code can take the cash.
@@ -112,7 +112,7 @@ export function ActiveCodeDialog({
           </div>
         }
       >
-        <div className="flex flex-col gap-3 py-2">
+        <div className="flex flex-col gap-2 py-2">
           <p className="text-[14px] leading-relaxed text-foreground">
             The code <span className="tabular">{code.code}</span> for <span className="tabular">GHS {amount}</span> will stop
             working. It can&apos;t be used at an ATM afterwards, and this can&apos;t be undone.

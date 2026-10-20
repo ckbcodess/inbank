@@ -15,7 +15,7 @@ export default function StubNotice({
   states?: string;
 }) {
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-dashed border-border bg-muted/30 px-4 py-3.5">
+    <div className="flex items-start gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-3 py-3">
       <Construction size={16} strokeWidth={1.8} className="mt-px shrink-0 text-muted-foreground" />
       <div className="text-[12.5px] leading-relaxed text-muted-foreground">
         <span className="text-foreground">Static stub.</span> Structure and placement per {section}.

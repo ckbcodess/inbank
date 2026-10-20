@@ -70,7 +70,7 @@ function LanguageSelect() {
         aria-label={t("header.language", "Language")}
         value={language}
         onChange={(e) => setLanguage(e.target.value as typeof language)}
-        className="h-9 cursor-pointer appearance-none rounded-lg border border-field-border bg-field py-0 pl-3 pr-8 text-[14px] text-foreground outline-none transition-colors duration-hover hover:bg-field-hover focus-visible:border-field-border-focus focus-visible:bg-field-focus"
+        className="h-8 cursor-pointer appearance-none rounded-lg border border-field-border bg-field py-0 pl-2 pr-6 text-[14px] text-foreground outline-none transition-colors duration-hover hover:bg-field-hover focus-visible:border-field-border-focus focus-visible:bg-field-focus"
       >
         {languages.map((lang) => (
           <option key={lang.code} value={lang.code}>
@@ -78,7 +78,7 @@ function LanguageSelect() {
           </option>
         ))}
       </select>
-      <ChevronDown size={14} strokeWidth={1.8} aria-hidden="true" className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+      <ChevronDown size={14} strokeWidth={1.8} aria-hidden="true" className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
     </div>
   );
 }
@@ -105,7 +105,7 @@ function ThemeSegmented() {
             aria-checked={active === value}
             aria-label={label}
             onClick={() => choose(value)}
-            className={`flex size-8 cursor-pointer items-center justify-center rounded-full transition-colors duration-hover ${
+            className={`flex size-7 cursor-pointer items-center justify-center rounded-full transition-colors duration-hover ${
               active === value ? "bg-chip-selected text-chip-selected-foreground shadow-xs dark:bg-background" : "text-chip-foreground hover:text-chip-selected-foreground"
             }`}
           >
@@ -140,31 +140,31 @@ export default function TopHeader({
   const unreadCount = NOTIFICATIONS.filter((n) => !n.read).length;
 
   return (
-    <header className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between gap-4 border-b border-border/60 bg-[var(--shell-header)] px-4 backdrop-blur-xl backdrop-saturate-150 sm:px-6 lg:px-8">
-      <div className="flex min-w-0 items-center gap-3">
+    <header className="absolute inset-x-0 top-0 z-20 flex h-12 items-center justify-between gap-3 border-b border-border/60 bg-[var(--shell-header)] px-3 backdrop-blur-xl backdrop-saturate-150 sm:px-5 lg:px-6">
+      <div className="flex min-w-0 items-center gap-2">
         <Button variant="ghost" size="icon-sm" onClick={onMenuToggle} className="lg:hidden shrink-0" aria-label="Open menu">
           <Menu size={17} strokeWidth={1.9} />
         </Button>
         <Suspense fallback={null}><HeaderBreadcrumbs /></Suspense>
       </div>
 
-      <div className="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
+      <div className="flex shrink-0 items-center gap-2 sm:gap-2">
         {/* Dev Mode Dropdown Menu — hidden in capture mode so it stays out of Figma captures */}
         {!captureMode && !devToolsHidden && (
           <DropdownMenu>
-            <DropdownMenuTrigger className="h-8 gap-1.5 rounded-lg border border-dashed border-warning/50 bg-warning/10 px-2.5 text-warning-text hover:bg-warning/20 hover:text-warning-text dark:hover:text-warning-text text-[12px] font-medium transition-colors flex items-center outline-none cursor-pointer whitespace-nowrap shrink-0">
+            <DropdownMenuTrigger className="h-7 gap-2 rounded-lg border border-dashed border-warning/50 bg-warning/10 px-2 text-warning-text hover:bg-warning/20 hover:text-warning-text dark:hover:text-warning-text text-[12px] font-medium transition-colors flex items-center outline-none cursor-pointer whitespace-nowrap shrink-0">
               <Layers size={13} strokeWidth={2} className="shrink-0" />
               <span className="hidden sm:inline whitespace-nowrap">Dev Mode</span>
-              <span className="rounded bg-warning/20 px-1 py-0.5 text-[10px] shrink-0 font-medium">
+              <span className="rounded-sm bg-warning/20 px-1 py-0.5 text-[10px] shrink-0 font-medium">
                 {simBadge}
               </span>
               {devState?.section && (
-                <span className="rounded bg-warning/20 px-1 py-0.5 text-[10px] shrink-0 hidden md:inline">
+                <span className="rounded-sm bg-warning/20 px-1 py-0.5 text-[10px] shrink-0 hidden md:inline">
                   {devState.section}
                 </span>
               )}
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-72 max-h-[85vh] overflow-y-auto">
+            <DropdownMenuContent align="end" className="w-63 max-h-[85vh] overflow-y-auto">
               <DevStateMenuItems devState={devState} />
             </DropdownMenuContent>
           </DropdownMenu>
@@ -191,7 +191,7 @@ export default function TopHeader({
               <Bell size={16} strokeWidth={1.9} />
               {unreadCount > 0 && (
                 <span
-                  className="absolute right-1 top-1 size-2 rounded-full bg-destructive ring-2 ring-card"
+                  className="absolute right-1 top-1 size-1.5 rounded-full bg-destructive ring-2 ring-card"
                   aria-hidden
                 />
               )}
@@ -204,7 +204,7 @@ export default function TopHeader({
             className="hover-surface flex shrink-0 items-center gap-2 rounded-lg px-2 py-1 outline-none cursor-pointer"
             aria-label="Account menu"
           >
-            <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-medium text-primary-foreground">
+            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-medium text-primary-foreground">
               {initials}
             </span>
             {/* Customers get the avatar alone (the name is in the menu and the greeting, and a full name
@@ -216,10 +216,10 @@ export default function TopHeader({
               </span>
             )}
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" sideOffset={6} className="w-[280px] p-1.5 rounded-2xl bg-menu/97! dark:bg-menu/92! backdrop-blur-3xl">
+          <DropdownMenuContent align="end" sideOffset={6} className="w-[280px] p-2 rounded-2xl bg-menu/97! dark:bg-menu/92! backdrop-blur-3xl">
             {/* Header: Avatar beside Name & Email */}
-            <div className="flex items-center gap-3 px-3 pt-3 pb-2.5">
-              <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-muted border border-border/80 text-foreground font-medium text-[15px] shadow-2xs">
+            <div className="flex items-center gap-2 px-2 pt-2 pb-2">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted border border-border/80 text-foreground font-medium text-[15px] shadow-2xs">
                 {initials}
               </div>
               <div className="flex min-w-0 flex-col">
@@ -233,9 +233,9 @@ export default function TopHeader({
             {/* Core Navigation Links */}
             <DropdownMenuItem
               onClick={() => router.push(actor.shell === "customer" ? "/settings?tab=profile" : "/settings")}
-              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
+              className="flex items-center justify-between py-2 px-2 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
             >
-              <span className="flex items-center gap-3">
+              <span className="flex items-center gap-2">
                 <User size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.profile", "Profile")}</span>
               </span>
@@ -243,9 +243,9 @@ export default function TopHeader({
 
             <DropdownMenuItem
               onClick={() => router.push("/settings")}
-              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
+              className="flex items-center justify-between py-2 px-2 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
             >
-              <span className="flex items-center gap-3">
+              <span className="flex items-center gap-2">
                 <Settings size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.settings", "Settings")}</span>
               </span>
@@ -253,9 +253,9 @@ export default function TopHeader({
 
             <DropdownMenuItem
               onClick={() => router.push(actor.shell === "customer" ? "/settings?tab=security" : "/settings?tab=security")}
-              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
+              className="flex items-center justify-between py-2 px-2 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
             >
-              <span className="flex items-center gap-3">
+              <span className="flex items-center gap-2">
                 <ShieldCheck size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.security", "Security")}</span>
               </span>
@@ -265,9 +265,9 @@ export default function TopHeader({
             {process.env.NODE_ENV !== "production" && (
               <DropdownMenuItem
                 onClick={toggleDevToolsHidden}
-                className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
+                className="flex items-center justify-between py-2 px-2 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
               >
-                <span className="flex items-center gap-3">
+                <span className="flex items-center gap-2">
                   {devToolsHidden ? (
                     <Eye size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                   ) : (
@@ -275,15 +275,15 @@ export default function TopHeader({
                   )}
                   <span>{devToolsHidden ? "Show floating dev tools" : "Hide floating dev tools"}</span>
                 </span>
-                <span className="text-[10px] font-mono text-muted-foreground/70 bg-muted px-1.5 py-0.5 rounded">Ctrl+Shift+D</span>
+                <span className="text-[10px] font-mono text-muted-foreground/70 bg-muted px-2 py-0.5 rounded-sm">Ctrl+Shift+D</span>
               </DropdownMenuItem>
             )}
 
             <DropdownMenuSeparator className="my-1" />
 
             {/* Theme: Light / Dark / System */}
-            <div className="flex items-center justify-between gap-3 px-3 py-2">
-              <span className="flex items-center gap-3 text-[13.5px] text-foreground">
+            <div className="flex items-center justify-between gap-2 px-2 py-2">
+              <span className="flex items-center gap-2 text-[13.5px] text-foreground">
                 <SunMoon size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.theme", "Theme")}</span>
               </span>
@@ -291,8 +291,8 @@ export default function TopHeader({
             </div>
 
             {/* Language */}
-            <div className="flex items-center justify-between gap-3 px-3 py-2">
-              <span className="flex items-center gap-3 text-[13.5px] text-foreground">
+            <div className="flex items-center justify-between gap-2 px-2 py-2">
+              <span className="flex items-center gap-2 text-[13.5px] text-foreground">
                 <Globe size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.language", "Language")}</span>
               </span>
@@ -304,9 +304,9 @@ export default function TopHeader({
             <DropdownMenuItem
               variant="destructive"
               onClick={() => setLogoutOpen(true)}
-              className="flex items-center justify-between py-2 px-3 text-[13.5px] cursor-pointer rounded-lg transition-colors"
+              className="flex items-center justify-between py-2 px-2 text-[13.5px] cursor-pointer rounded-lg transition-colors"
             >
-              <span className="flex items-center gap-3">
+              <span className="flex items-center gap-2">
                 <LogOut size={16} strokeWidth={1.8} className="shrink-0" aria-hidden="true" />
                 <span>{t("header.signOut", "Log out")}</span>
               </span>
@@ -314,8 +314,8 @@ export default function TopHeader({
 
             <DropdownMenuSeparator className="my-1" />
 
-            <div className="px-3 py-2 text-[12px] text-muted-foreground">
-              <span className="flex items-center gap-3">
+            <div className="px-2 py-2 text-[12px] text-muted-foreground">
+              <span className="flex items-center gap-2">
                 {[
                   { key: "privacy", label: t("header.privacy", "Privacy"), href: "https://www.gcbbank.com.gh/privacy-policy" },
                   { key: "terms", label: t("header.terms", "Terms"), href: "https://www.gcbbank.com.gh" },

@@ -67,7 +67,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
   const [wizardState, setWizardState] = useState<WizardStepState>("valid");
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Kwame Boateng"
         description={`kwame.boateng@example.com · ${id}`}
@@ -88,9 +88,9 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
 
       <StubNotice section="section 5" states="13.7" />
 
-      <section className="rounded-2xl border border-border bg-card p-5">
-        <div className="flex items-center gap-3">
-          <span className="flex size-10 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+      <section className="rounded-2xl border border-border bg-card p-4">
+        <div className="flex items-center gap-2">
+          <span className="flex size-9 items-center justify-center rounded-xl bg-muted text-muted-foreground">
             <UserCog size={19} strokeWidth={1.8} aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">
@@ -105,18 +105,18 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
         </div>
 
         {/* Role selector drives the dependency demonstration below */}
-        <div className="mt-5">
+        <div className="mt-4">
           <p className="mb-2 text-[11px] uppercase tracking-wider text-muted-foreground">
             Selected role (step 2)
           </p>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {(["Viewer", "Maker", "Approver", "Corporate Admin"] as const).map((r) => (
               <button
                 key={r}
                 type="button"
                 onClick={() => setRole(r)}
                 aria-pressed={role === r}
-                className={`rounded-lg border px-3 py-1.5 text-[12.5px] transition ${
+                className={`rounded-lg border px-2 py-2 text-[12.5px] transition ${
                   role === r
                     ? "border-primary bg-[var(--active-bg)] text-foreground"
                     : "border-border bg-background text-muted-foreground hover:text-foreground"
@@ -130,7 +130,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
       </section>
 
       <section className="rounded-2xl border border-border bg-card">
-        <h2 className="border-b border-border px-5 py-4 text-[15px] text-foreground">
+        <h2 className="border-b border-border px-4 py-3 text-[15px] text-foreground">
           User Access Wizard
         </h2>
         <ol className="divide-y divide-border">
@@ -138,9 +138,9 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
             const reason = step.lockedReason(role);
             const locked = reason !== null;
             return (
-              <li key={step.n} className="flex items-start gap-3.5 px-5 py-4">
+              <li key={step.n} className="flex items-start gap-3 px-4 py-3">
                 <span
-                  className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[12px] ${
+                  className={`flex size-6 shrink-0 items-center justify-center rounded-full text-[12px] ${
                     locked
                       ? "bg-muted text-muted-foreground"
                       : "bg-primary text-primary-foreground"
@@ -155,7 +155,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
                   </p>
                   {/* 13.7: the reason is stated explicitly — never a silent grey-out */}
                   {locked && (
-                    <p className="mt-1 flex items-start gap-1.5 text-[12.5px] text-warning-text">
+                    <p className="mt-1 flex items-start gap-2 text-[12.5px] text-warning-text">
                       <Info size={13} strokeWidth={1.9} aria-hidden="true" className="mt-px shrink-0" />
                       {reason}
                     </p>

@@ -41,9 +41,9 @@ export function HeroLayout(props: DashViewProps) {
   const hasOtherAccounts = data.accounts.length > 1;
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-12">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-5 sm:gap-10">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex flex-col gap-2">
           <Greeting firstName={data.firstName} />
           <LastLogin />
         </div>
@@ -52,8 +52,8 @@ export function HeroLayout(props: DashViewProps) {
 
       <HeroStack
         hero={
-          <HeroSurface className="flex flex-col items-center gap-6 rounded-t-3xl px-4 pb-16 pt-14 sm:pb-28 sm:pt-20">
-            <div className="absolute right-4 top-4 sm:right-6 sm:top-6 z-10 flex items-center gap-2">
+          <HeroSurface className="flex flex-col items-center gap-5 rounded-t-3xl px-3 pb-12 pt-12 sm:pb-24 sm:pt-16">
+            <div className="absolute right-3.5 top-3.5 sm:right-5 sm:top-5 z-10 flex items-center gap-2">
               <HeroQrAction />
               <HeroFxAction />
             </div>
@@ -75,7 +75,7 @@ export function HeroLayout(props: DashViewProps) {
 
         <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
 
-        <AccountScoped accountId={data.selectedAccountId} className="dash-grid items-stretch gap-3 sm:gap-5">
+        <AccountScoped accountId={data.selectedAccountId} className="dash-grid items-stretch gap-2 sm:gap-4">
           <ActivityCard
             data={data}
             loading={loading}

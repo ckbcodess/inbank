@@ -13,7 +13,7 @@ interface GCBLogoProps extends React.SVGProps<SVGSVGElement> {
  * In dark mode, GCB text is pure white.
  */
 export function GCBLogo({
-  className = "size-8",
+  className = "size-7",
   showWordmark = true,
   eagleColor = "#FFC423",
   wordmarkColor = "currentColor",

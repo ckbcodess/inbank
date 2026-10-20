@@ -323,8 +323,8 @@ export function DotLegend({
   return (
     <ul className="flex flex-col">
       {slices.map((s, i) => (
-        <li key={`${s.label}-${i}`} className="flex items-center gap-3 py-3.5">
-          <span className="size-2.5 shrink-0 rounded-full" style={{ background: s.color }} aria-hidden="true" />
+        <li key={`${s.label}-${i}`} className="flex items-center gap-2 py-3">
+          <span className="size-2 shrink-0 rounded-full" style={{ background: s.color }} aria-hidden="true" />
           <span className="flex-1 truncate text-[13.5px] text-foreground">{s.label}</span>
           {!compact && <span className="tabular text-[12px] text-muted-foreground">{pct(s.share)}</span>}
           <span className="tabular text-[13.5px] text-foreground">
@@ -353,7 +353,7 @@ export function AccountRows({
         <li key={a.id}>
           <Link
             href={`/accounts/${a.id}`}
-            className="group flex items-baseline justify-between gap-4 py-4 transition-colors"
+            className="group flex items-baseline justify-between gap-3 py-3 transition-colors"
           >
             <span className="flex min-w-0 flex-col gap-0.5">
               <span
@@ -392,7 +392,7 @@ export function LatestTransactions({
       {txns.slice(0, limit).map((t) => {
         const credit = t.direction === "credit";
         return (
-          <li key={t.id} className="flex items-center justify-between gap-3 py-2.5">
+          <li key={t.id} className="flex items-center justify-between gap-2 py-2">
             <span className="min-w-0 flex-1 truncate text-[13px] text-foreground">
               {t.counterparty || t.description}
             </span>
@@ -418,7 +418,7 @@ const ACTIONS = [
 
 export function QuickActionsText({ className }: { className?: string }) {
   return (
-    <div className={cn("flex flex-wrap items-center gap-x-6 gap-y-2", className)}>
+    <div className={cn("flex flex-wrap items-center gap-x-5 gap-y-2", className)}>
       {ACTIONS.map((a) => (
         <Link
           key={a.href}
@@ -449,7 +449,7 @@ export function RangeTabs({
           type="button"
           onClick={() => onChange(r)}
           className={cn(
-            "cursor-pointer rounded-full px-2.5 py-1 text-[12px] tabular transition-colors",
+            "cursor-pointer rounded-full px-2 py-1 text-[12px] tabular transition-colors",
             value === r ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground",
           )}
         >
@@ -495,7 +495,7 @@ export function AccountsDisclosure({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-4 px-6 py-4 cursor-pointer"
+        className="flex w-full items-center gap-3 px-5 py-3 cursor-pointer"
         aria-expanded={open}
       >
         <span className="flex shrink-0 items-center gap-2">
@@ -512,7 +512,7 @@ export function AccountsDisclosure({
         />
       </button>
       {open && (
-        <div className="border-t border-border px-6 pb-4 pt-1">
+        <div className="border-t border-border px-5 pb-3 pt-1">
           <AccountRows accounts={accounts} showAmounts={showAmounts} />
         </div>
       )}
@@ -533,17 +533,17 @@ export function AttentionBand({ items }: { items: AttentionItem[] }) {
   if (items.length === 0) return null;
   return (
     <div className="rounded-2xl border border-border bg-card">
-      <div className="px-4 pt-4 sm:px-6 sm:pt-5">
+      <div className="px-3 pt-3 sm:px-5 sm:pt-4">
         <span className="text-[15px] font-medium leading-none text-foreground sm:text-[16px]">Needs attention</span>
       </div>
-      <ul className="flex flex-col divide-y divide-border/50 px-4 pb-2 pt-1 sm:px-6">
+      <ul className="flex flex-col divide-y divide-border/50 px-3 pb-2 pt-1 sm:px-5">
         {items.map((it) => (
           <li key={it.id}>
             <Link
               href={it.href}
-              className="group flex items-center gap-3 py-3 transition-colors"
+              className="group flex items-center gap-2 py-2 transition-colors"
             >
-              <span className={cn("size-2 shrink-0 rounded-full", TONE_DOT[it.tone])} aria-hidden="true" />
+              <span className={cn("size-1.5 shrink-0 rounded-full", TONE_DOT[it.tone])} aria-hidden="true" />
               {/* Title over detail on a phone; one line from sm up. */}
               <span className="flex min-w-0 flex-1 flex-col gap-0.5 sm:block">
                 <span className="text-[13.5px] text-foreground">{it.title}</span>
@@ -598,7 +598,7 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col gap-5 rounded-2xl border border-border bg-card p-6", className)}>
+    <div className={cn("flex flex-col gap-4 rounded-2xl border border-border bg-card p-5", className)}>
       {children}
     </div>
   );
@@ -618,7 +618,7 @@ export function RecentTransactions({
 
   if (txns.length === 0) {
     return (
-      <p className="py-8 text-center text-[13px] text-muted-foreground">No activity yet.</p>
+      <p className="py-6 text-center text-[13px] text-muted-foreground">No activity yet.</p>
     );
   }
   return (
@@ -630,7 +630,7 @@ export function RecentTransactions({
               <button
                 type="button"
                 onClick={() => setSelectedTx(t)}
-                className="group flex w-full items-center gap-3 rounded-xl px-2 py-2.5 text-left transition-colors hover:bg-item-hover -mx-2 cursor-pointer"
+                className="group flex w-full items-center gap-2 rounded-xl px-2 py-2 text-left transition-colors hover:bg-item-hover -mx-2 cursor-pointer"
               >
                 <TransactionMark transaction={t} />
                 <span className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -674,10 +674,10 @@ export function SpendDetail({
   showAmounts: boolean;
 }) {
   if (breakdown.slices.length === 0) {
-    return <p className="py-8 text-center text-[13px] text-muted-foreground">No spending yet.</p>;
+    return <p className="py-6 text-center text-[13px] text-muted-foreground">No spending yet.</p>;
   }
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
         <span className="text-[12px] text-muted-foreground">Total spend</span>
         <span className="tabular text-[24px] leading-none tracking-[var(--ls-heading)] text-foreground">
@@ -708,7 +708,7 @@ export function CardsMini({
   const shown = cards.slice(0, limit);
 
   if (shown.length === 0) {
-    return <p className="py-8 text-center text-[13px] text-muted-foreground">{t("dashboard.noCards", "No cards yet.")}</p>;
+    return <p className="py-6 text-center text-[13px] text-muted-foreground">{t("dashboard.noCards", "No cards yet.")}</p>;
   }
 
   const setCardBlocked = (id: string, value: boolean) =>
@@ -735,9 +735,9 @@ export function CardsMini({
       {shown.map((c) => {
         const isBlocked = blocked[c.id] ?? c.status === "Blocked";
         return (
-          <li key={c.id} className="flex items-center gap-3 py-3.5">
-            <span className="flex h-6 w-9 shrink-0 items-center justify-center rounded-[5px] bg-muted text-foreground">
-              <NetworkLogo scheme={c.scheme} className="h-2.5" />
+          <li key={c.id} className="flex items-center gap-2 py-3">
+            <span className="flex h-5 w-8 shrink-0 items-center justify-center rounded-sm bg-muted text-foreground">
+              <NetworkLogo scheme={c.scheme} className="h-2" />
             </span>
             <span className="flex min-w-0 flex-1 flex-col gap-0.5">
               <span className="truncate text-[13.5px] text-foreground">{c.name}</span>
@@ -750,7 +750,7 @@ export function CardsMini({
               onClick={() => (isBlocked ? setUnblockFor(c) : block(c))}
               aria-pressed={isBlocked}
               className={cn(
-                "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px] transition-colors cursor-pointer",
+                "flex items-center gap-2 rounded-full border px-2 py-1 text-[12px] transition-colors cursor-pointer",
                 isBlocked
                   ? "border-transparent bg-muted text-foreground"
                   : "border-border text-muted-foreground hover:text-foreground",
@@ -807,12 +807,12 @@ export function FxRatesMini() {
     minute: "2-digit",
   });
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2">
       <ul className="flex flex-col">
         {rows.map((f) => (
-          <li key={f.pair} className="flex items-center justify-between gap-4 py-2.5">
+          <li key={f.pair} className="flex items-center justify-between gap-3 py-2">
             <span className="text-[13.5px] text-foreground tabular">{f.base} / {f.quote}</span>
-            <span className="flex items-baseline gap-3">
+            <span className="flex items-baseline gap-2">
               <span
                 className={cn(
                   "text-[12px] tabular",
@@ -827,7 +827,7 @@ export function FxRatesMini() {
           </li>
         ))}
       </ul>
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-3">
         <span className="text-[11.5px] text-muted-foreground tabular">Mid-rate · published {published}</span>
         <Link href="/fx-rates" className="text-[12.5px] text-muted-foreground transition-colors hover:text-foreground">
           {t("dashboard.allRates", "All rates")}

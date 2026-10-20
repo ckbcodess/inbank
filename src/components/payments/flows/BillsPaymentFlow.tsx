@@ -217,7 +217,7 @@ export function BillsPaymentFlow({
       onClick={handleVerify}
       disabled={!canVerify || isVerifying}
       className={cn(
-        "absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-2.5 py-1 text-[12.5px] font-medium transition-all rounded-lg select-none",
+        "absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2 px-2 py-1 text-[12.5px] font-medium transition-all rounded-lg select-none",
         canVerify
           ? "text-muted-foreground hover:text-foreground hover:bg-muted/70 active:scale-95 cursor-pointer"
           : "text-muted-foreground/35 cursor-not-allowed pointer-events-none"
@@ -225,7 +225,7 @@ export function BillsPaymentFlow({
     >
       {isVerifying ? (
         <>
-          <Loader2 className="size-3.5 animate-spin text-muted-foreground" />
+          <Loader2 className="size-3 animate-spin text-muted-foreground" />
           <span className="text-muted-foreground text-[12px]">Verifying...</span>
         </>
       ) : isVerified ? (
@@ -251,7 +251,7 @@ export function BillsPaymentFlow({
   const isValid = Boolean(state.fromId) && isDestinationValid && isVerified && Boolean(verifiedName) && numAmount > 0 && !overBalance;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
       {/* 1. From Account */}
       <FromAccountSelector
         accounts={accounts}
@@ -275,10 +275,10 @@ export function BillsPaymentFlow({
             onChange={() => setCollapsed(false)}
           />
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             {state.subType === "ecg" ? (
               <>
-                <div className="flex h-13 items-center rounded-2xl border border-border/80 bg-muted/30 px-4 text-[15px] font-medium text-foreground">
+                <div className="flex h-11 items-center rounded-2xl border border-border/80 bg-muted/30 px-3 text-[15px] font-medium text-foreground">
                   Electricity Company of Ghana (ECG)
                 </div>
 
@@ -302,7 +302,7 @@ export function BillsPaymentFlow({
                       }
                     }}
                     placeholder="Enter meter number"
-                    className="tabular pr-20"
+                    className="tabular pr-16"
                   />
 </SavedSuggestions>
                   {renderVerifyButton()}
@@ -352,7 +352,7 @@ export function BillsPaymentFlow({
                       }
                     }}
                     placeholder="Enter PRN or invoice number"
-                    className="tabular pr-20"
+                    className="tabular pr-16"
                   />
 </SavedSuggestions>
                   {renderVerifyButton()}
@@ -402,7 +402,7 @@ export function BillsPaymentFlow({
                       }
                     }}
                     placeholder={selectedBiller ? `Enter ${selectedBiller.reference.toLowerCase()}` : "Enter account or reference number"}
-                    className="tabular pr-20"
+                    className="tabular pr-16"
                   />
 </SavedSuggestions>
                   {renderVerifyButton()}
@@ -415,7 +415,7 @@ export function BillsPaymentFlow({
             )}
 
             {isVerified && (
-              <div className="flex flex-col gap-2 rounded-2xl border border-border/80 bg-muted/30 p-3.5 mt-1 animate-in fade-in duration-200">
+              <div className="flex flex-col gap-2 rounded-2xl border border-border/80 bg-muted/30 p-3 mt-1 animate-in fade-in duration-200">
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[12.5px] text-muted-foreground">Name of Biller</span>
                   <span className="text-[13px] text-foreground font-medium">
@@ -438,7 +438,7 @@ export function BillsPaymentFlow({
 
       {/* Progressive Disclosure: Only reveal Amount & onwards after destination details are entered & verified */}
       {isDestinationValid && isVerified && (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+        <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* Subscription Package (e.g. DSTV Compact Plus) */}
           {tvPackages && tvPackages.length > 0 && (
             <Field label="Subscription Package">

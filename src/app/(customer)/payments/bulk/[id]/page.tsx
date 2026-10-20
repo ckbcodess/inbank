@@ -36,7 +36,7 @@ export default function BatchCorrectionPage({ params }: { params: Promise<{ id: 
   const [state, setState] = useState<BulkUploadState>("mixed");
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Batch Correction"
         description={`Batch ${id} · payroll-august-2026.csv`}
@@ -47,7 +47,7 @@ export default function BatchCorrectionPage({ params }: { params: Promise<{ id: 
 
       <StubNotice section="section 3 failure recovery" states="13.8" />
 
-      <div className="flex items-start gap-3 rounded-2xl border border-border bg-muted/40 p-4">
+      <div className="flex items-start gap-2 rounded-2xl border border-border bg-muted/40 p-3">
         <AlertCircle size={16} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0 text-muted-foreground" />
         <p className="text-[13px] leading-relaxed text-muted-foreground">
           139 of 140 records in this batch settled successfully. Only the failed record below needs
@@ -56,13 +56,13 @@ export default function BatchCorrectionPage({ params }: { params: Promise<{ id: 
       </div>
 
       <section className="rounded-2xl border border-border bg-card">
-        <h2 className="border-b border-border px-5 py-4 text-[15px] text-foreground">
+        <h2 className="border-b border-border px-4 py-3 text-[15px] text-foreground">
           Records needing correction
         </h2>
         <ul className="divide-y divide-border">
           {FAILED_RECORDS.map((r) => (
-            <li key={r.row} className="flex items-center gap-4 bg-destructive/5 px-5 py-3.5">
-              <span className="w-8 shrink-0 text-[12.5px] text-muted-foreground tabular">{r.row}</span>
+            <li key={r.row} className="flex items-center gap-3 bg-destructive/5 px-4 py-3">
+              <span className="w-7 shrink-0 text-[12.5px] text-muted-foreground tabular">{r.row}</span>
               <span className="flex min-w-0 flex-1 flex-col">
                 <span className="truncate text-[13px] text-foreground">{r.name}</span>
                 <span className="truncate text-[12px] text-muted-foreground tabular">{r.account}</span>
@@ -70,7 +70,7 @@ export default function BatchCorrectionPage({ params }: { params: Promise<{ id: 
               </span>
               <span className="shrink-0 text-[13px] text-foreground tabular">{formatMoney(r.amount)}</span>
               <Badge variant="destructive">Failed</Badge>
-              <div className="flex shrink-0 gap-1.5">
+              <div className="flex shrink-0 gap-2">
                 <Button variant="outline" size="xs" disabled>
                   Correct
                 </Button>

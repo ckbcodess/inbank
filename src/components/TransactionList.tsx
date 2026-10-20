@@ -384,8 +384,8 @@ export default function TransactionList({
           : (DATE_OPTIONS.find((o) => o.value === v)?.label ?? v),
       extra:
         datePreset === "custom" ? (
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <div className="flex min-w-0 flex-col gap-1.5">
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className="flex min-w-0 flex-col gap-2">
               <Label htmlFor="txn-from">
                 From
               </Label>
@@ -397,7 +397,7 @@ export default function TransactionList({
                 className="tabular"
               />
             </div>
-            <div className="flex min-w-0 flex-col gap-1.5">
+            <div className="flex min-w-0 flex-col gap-2">
               <Label htmlFor="txn-to">
                 To
               </Label>
@@ -515,7 +515,7 @@ export default function TransactionList({
           type="button"
           onClick={() => setCurrentPage(page)}
           className={cn(
-            "min-w-8 h-8 px-2 rounded-md text-[13px] font-medium transition-colors cursor-pointer",
+            "min-w-7 h-7 px-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer",
             isActive
               ? "bg-muted/80 text-foreground border border-border/80 shadow-xs"
               : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
@@ -528,7 +528,7 @@ export default function TransactionList({
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       {showStateSwitcher && (
         <StateSwitcher
           section="13.1"
@@ -540,14 +540,14 @@ export default function TransactionList({
       )}
 
       {/* ── Page Header: Title & Export Action (no description underneath) ── */}
-      <div className="flex items-center justify-between gap-3 w-full">
+      <div className="flex items-center justify-between gap-2 w-full">
         <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
           Transaction History
         </h1>
         <Button
           variant="outline"
           onClick={() => exportTransactionsCSV(results)}
-          className="h-9 gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 text-[13px] border-border/80 bg-card hover:bg-muted/50 rounded-lg shadow-xs shrink-0"
+          className="h-8 gap-2 sm:gap-2 px-2 sm:px-3 text-[13px] border-border/80 bg-card hover:bg-muted/50 rounded-lg shadow-xs shrink-0"
         >
           <ArrowDownToLine size={14} className="text-muted-foreground shrink-0" />
           <span className="hidden sm:inline">Export Transactions</span>
@@ -560,21 +560,21 @@ export default function TransactionList({
         <div className="relative flex-1">
           <Search
             size={18}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
           />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by reference ID,  recipient ...."
-            className="w-full h-11 sm:h-12 pl-11 pr-10 rounded-xl border border-field-border bg-field text-[14px] sm:text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-0 focus:border-field-border-focus focus:bg-field-focus transition-colors"
+            className="w-full h-10 sm:h-10 pl-10 pr-10 rounded-xl border border-field-border bg-field text-[14px] sm:text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-0 focus:border-field-border-focus focus:bg-field-focus transition-colors"
           />
           {query && (
             <button
               type="button"
               onClick={() => setQuery("")}
               aria-label="Clear search"
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 cursor-pointer"
             >
               <X size={15} />
             </button>
@@ -583,7 +583,7 @@ export default function TransactionList({
         <FilterPanel
           groups={filterGroups}
           onClear={clearFilterGroups}
-          className="h-11 sm:h-12 px-4"
+          className="h-10 sm:h-10 px-3"
         />
       </div>
 
@@ -591,14 +591,14 @@ export default function TransactionList({
 
       {/* Custom Date Range Controls (Desktop) */}
       {datePreset === "custom" && (
-        <div className="hidden sm:flex flex-wrap items-center gap-3 p-3 rounded-lg border border-border/60 bg-muted/20 animate-in fade-in slide-in-from-top-1 duration-150">
+        <div className="hidden sm:flex flex-wrap items-center gap-2 p-2 rounded-lg border border-border/60 bg-muted/20 animate-in fade-in slide-in-from-top-1 duration-150">
           <div className="flex items-center gap-2">
             <span className="text-[12px] font-medium text-muted-foreground">From:</span>
             <Input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="h-8 tabular"
+              className="h-7 tabular"
             />
           </div>
           <div className="flex items-center gap-2">
@@ -607,7 +607,7 @@ export default function TransactionList({
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="h-8 tabular"
+              className="h-7 tabular"
             />
           </div>
           {(dateFrom || dateTo) && (
@@ -636,7 +636,7 @@ export default function TransactionList({
           title={emptyTitle}
           description={emptyDescription}
           action={
-            <Button nativeButton={false} render={<Link href="/payments" />} className="h-9 rounded-lg px-4 text-[13px]">
+            <Button nativeButton={false} render={<Link href="/payments" />} className="h-8 rounded-lg px-3 text-[13px]">
               Start a transaction
             </Button>
           }
@@ -667,7 +667,7 @@ export default function TransactionList({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18 }}
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-3"
           >
           {/* One list at every breakpoint — the same rows as the dashboard's Recent activity. */}
           <div className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">
@@ -678,17 +678,17 @@ export default function TransactionList({
                 <div
                   key={t.id}
                   onClick={() => setSelectedTransaction(t)}
-                  className="flex items-center gap-4 rounded-xl px-3 py-3.5 sm:py-4 transition-colors hover:bg-item-hover cursor-pointer active:bg-item-hover/80 sm:px-4"
+                  className="flex items-center gap-3 rounded-xl px-2 py-3 sm:py-3 transition-colors hover:bg-item-hover cursor-pointer active:bg-item-hover/80 sm:px-3"
                 >
                   {/* What it was, with a corner arrow for which way it went */}
                   <TransactionMark transaction={t} />
 
                   {/* Counterparty & Metadata */}
-                  <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+                  <div className="flex-1 min-w-0 flex flex-col gap-2">
                     <span className="font-normal text-foreground text-[14px] leading-tight truncate">
                       {t.counterparty || t.description}
                     </span>
-                    <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground truncate">
+                    <div className="flex items-center gap-2 text-[12px] text-muted-foreground truncate">
                       <span className="truncate">{getTransactionType(t)}</span>
                       <span>·</span>
                       <span>{formatTableDate(t.date)}</span>
@@ -696,7 +696,7 @@ export default function TransactionList({
                   </div>
 
                   {/* Amount & State / Account Number */}
-                  <div className="shrink-0 flex flex-col items-end gap-1.5">
+                  <div className="shrink-0 flex flex-col items-end gap-2">
                     <span className={cn("tabular text-[14px]", colorClass)}>
                       {prefix}
                       {t.currency}{" "}
@@ -718,20 +718,20 @@ export default function TransactionList({
           {effective === "partial-load" && <PartialLoadFooter />}
 
           {/* Pagination Footer */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1 text-[13px] text-muted-foreground">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-1 text-[13px] text-muted-foreground">
             <div>
               Showing {rows.length === 0 ? 0 : startIndex + 1}–
               {Math.min(startIndex + pageSize, rows.length)} of {rows.length} cases
             </div>
 
             {totalPages > 1 && (
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="sm"
                   disabled={currentPage <= 1}
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="h-8 gap-1 px-2.5 text-[12.5px] text-muted-foreground hover:text-foreground disabled:opacity-40"
+                  className="h-7 gap-1 px-2 text-[12.5px] text-muted-foreground hover:text-foreground disabled:opacity-40"
                 >
                   <ChevronLeft size={14} />
                   Previous
@@ -744,7 +744,7 @@ export default function TransactionList({
                   size="sm"
                   disabled={currentPage >= totalPages}
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  className="h-8 gap-1 px-2.5 text-[12.5px] text-muted-foreground hover:text-foreground disabled:opacity-40"
+                  className="h-7 gap-1 px-2 text-[12.5px] text-muted-foreground hover:text-foreground disabled:opacity-40"
                 >
                   Next
                   <ChevronRight size={14} />

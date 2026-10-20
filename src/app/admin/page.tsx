@@ -33,7 +33,7 @@ export default function AdminOverviewPage() {
   const isBankAdmin = actor.role === "BANK_ADMIN";
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Operations Overview"
         description={`${ROLE_LABEL[actor.role]} · internal staff portal`}
@@ -43,7 +43,7 @@ export default function AdminOverviewPage() {
 
       <StubNotice section="sitemap 12.5" />
 
-      <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
         {isOps && (
           <>
             <SummaryCard label="Transactions today" value="1,284" hint="Across all customers" />
@@ -71,14 +71,14 @@ export default function AdminOverviewPage() {
       </section>
 
       {/* Each internal role gets its own work queue, per the 12.3 matrix */}
-      <section className="rounded-2xl border border-border bg-card p-5">
+      <section className="rounded-2xl border border-border bg-card p-4">
         <h2 className="text-[15px] text-foreground">Your work queue</h2>
         <p className="mt-1 text-[13px] text-muted-foreground">
           The Admin Portal shows only what your internal role covers — customer banking surfaces are
           never visible here.
         </p>
 
-        <div className="mt-4 flex flex-col gap-2">
+        <div className="mt-3 flex flex-col gap-2">
           {isOps && (
             <>
               <QueueLink href="/admin/transactions" icon={<ArrowLeftRight size={16} strokeWidth={1.8} aria-hidden="true" />} label="Transaction Monitoring" hint="Operational scanning and filtering" />
@@ -111,9 +111,9 @@ function QueueLink({
   return (
     <Link
       href={href}
-      className="group flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3 transition-colors hover:border-primary/40 hover:bg-muted/40 active:scale-[0.99] transition-transform"
+      className="group flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 transition-colors hover:border-primary/40 hover:bg-muted/40 active:scale-[0.99] transition-transform"
     >
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
         {icon}
       </span>
       <span className="flex min-w-0 flex-1 flex-col">

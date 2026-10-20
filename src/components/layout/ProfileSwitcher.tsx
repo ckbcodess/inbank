@@ -40,7 +40,7 @@ export default function ProfileSwitcher({ profiles, active, onSelect }: ProfileS
 
   if (profiles.length < 2) {
     return (
-      <div className="flex items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-1.5">
+      <div className="flex items-center gap-2 rounded-lg border border-border bg-background px-2 py-2">
         <ActiveIcon size={14} strokeWidth={1.9} className="text-muted-foreground" />
         <span className="text-[13px] leading-none text-foreground">{active.name}</span>
         <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] leading-none text-muted-foreground">
@@ -54,7 +54,7 @@ export default function ProfileSwitcher({ profiles, active, onSelect }: ProfileS
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="hover-surface flex items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-1.5 outline-none transition-colors"
+        className="hover-surface flex items-center gap-2 rounded-lg border border-border bg-background px-2 py-2 outline-none transition-colors"
         aria-label="Switch banking relationship"
       >
         <ActiveIcon size={14} strokeWidth={1.9} className="text-muted-foreground" />
@@ -74,18 +74,18 @@ export default function ProfileSwitcher({ profiles, active, onSelect }: ProfileS
         <ChevronsUpDown size={13} strokeWidth={1.8} className="text-muted-foreground" />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="start" className="w-64">
+      <DropdownMenuContent align="start" className="w-56">
         <DropdownMenuLabel>Banking relationship</DropdownMenuLabel>
         {profiles.map((p) => {
           const Icon = p.kind === "CORPORATE" ? Building2 : User;
           const isActive = p.id === active.id;
           return (
-            <DropdownMenuItem key={p.id} onClick={() => handleSelect(p)} className="gap-2.5">
+            <DropdownMenuItem key={p.id} onClick={() => handleSelect(p)} className="gap-2">
               <Icon size={15} strokeWidth={1.8} className="text-muted-foreground" />
               <span className="flex min-w-0 flex-1 flex-col">
-                <span className="flex items-center gap-1.5">
+                <span className="flex items-center gap-2">
                   <span className="truncate text-[13px] text-foreground">{p.name}</span>
-                  <span className="rounded-full bg-muted px-1.5 py-0.2 text-[9px] text-muted-foreground">
+                  <span className="rounded-full bg-muted px-2 py-0.2 text-[9px] text-muted-foreground">
                     {p.kind === "CORPORATE" ? "Corporate" : "Personal"}
                   </span>
                 </span>

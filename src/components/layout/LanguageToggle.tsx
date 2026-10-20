@@ -31,7 +31,7 @@ export default function LanguageToggle({
       <SimpleTooltip content={t("header.language", "Language")} side="bottom">
         <DropdownMenuTrigger
           className={cn(
-            "flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg px-2 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground outline-none cursor-pointer",
+            "flex h-8 shrink-0 items-center justify-center gap-2 rounded-lg px-2 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground outline-none cursor-pointer",
             className
           )}
           aria-label={t("header.language", "Change language")}
@@ -45,7 +45,7 @@ export default function LanguageToggle({
         </DropdownMenuTrigger>
       </SimpleTooltip>
 
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent align="end" className="w-42">
         <DropdownMenuLabel className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
           {t("header.language", "Select Language")}
         </DropdownMenuLabel>
@@ -58,7 +58,7 @@ export default function LanguageToggle({
               onClick={() => setLanguage(lang.code)}
               className="flex items-center justify-between py-2 text-[13px] cursor-pointer"
             >
-              <div className="flex items-center gap-2.5 min-w-0">
+              <div className="flex items-center gap-2 min-w-0">
                 <span className="text-[15px] select-none shrink-0" aria-hidden="true">
                   {lang.flag}
                 </span>

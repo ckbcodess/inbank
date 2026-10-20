@@ -792,11 +792,11 @@ function HorizontalScrollStrip({
     <div className={`relative w-full ${className}`}>
       {/* Contextual Left Chevron with gradient mask */}
       {canScrollLeft && (
-        <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center pr-5 pl-0 bg-gradient-to-r from-card via-card/70 to-transparent dark:via-card/40 pointer-events-none animate-in fade-in duration-200">
+        <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center pr-4 pl-0 bg-gradient-to-r from-card via-card/70 to-transparent dark:via-card/40 pointer-events-none animate-in fade-in duration-200">
           <button
             type="button"
             onClick={() => scroll("left")}
-            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 text-foreground shadow-sm backdrop-blur-md transition active:scale-95 cursor-pointer -ml-1"
+            className="pointer-events-auto flex size-7 items-center justify-center rounded-full border border-border/80 bg-card/90 text-foreground shadow-sm backdrop-blur-md transition active:scale-95 cursor-pointer -ml-1"
             aria-label="Scroll left"
           >
             <ChevronLeft size={16} strokeWidth={2.2} />
@@ -808,18 +808,18 @@ function HorizontalScrollStrip({
       <div
         ref={scrollRef}
         onScroll={checkScroll}
-        className="flex items-center gap-3 overflow-x-auto pb-1.5 scrollbar-none scroll-smooth"
+        className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none scroll-smooth"
       >
         {children}
       </div>
 
       {/* Contextual Right Smart Chevron with gradient mask */}
       {canScrollRight && (
-        <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center pl-6 pr-0 bg-gradient-to-l from-card via-card/70 to-transparent dark:via-card/40 pointer-events-none animate-in fade-in duration-200">
+        <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center pl-5 pr-0 bg-gradient-to-l from-card via-card/70 to-transparent dark:via-card/40 pointer-events-none animate-in fade-in duration-200">
           <button
             type="button"
             onClick={() => scroll("right")}
-            className="pointer-events-auto flex size-8 items-center justify-center rounded-full border border-border/80 bg-card/90 text-foreground shadow-sm backdrop-blur-md transition active:scale-95 cursor-pointer -mr-1"
+            className="pointer-events-auto flex size-7 items-center justify-center rounded-full border border-border/80 bg-card/90 text-foreground shadow-sm backdrop-blur-md transition active:scale-95 cursor-pointer -mr-1"
             aria-label="Scroll right"
           >
             <ChevronRight size={16} strokeWidth={2.2} />
@@ -2092,12 +2092,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   // Intermediary Screen: "Which bank do you want to send to?" (Figma Node 837:9937 / 859:23459)
   if (rail === "bank" && !bankCategory) {
     return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
+        <div className="flex items-center gap-2 sm:gap-2 min-w-0">
           <button
             type="button"
             onClick={handleBackNavigation}
-            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
+            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to Send & Pay"
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
@@ -2114,7 +2114,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               key={item.id}
               type="button"
               onClick={() => selectBeneficiary(item)}
-              className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
+              className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
               <div className="flex flex-col">
@@ -2130,7 +2130,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </HorizontalScrollStrip>
 
         {/* 4 Category Cards */}
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-3">
           {/* Card 1: Between My Accounts */}
           <ActionTile
             icon={ArrowLeftRight}
@@ -2149,12 +2149,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage(1);
               setStage1Collapsed(false);
             }}
-            className="p-4.5"
+            className="p-4"
           />
 
           {/* Card 2: Other GCB Accounts */}
           <ActionTile
-            leading={<GCBLogo className="h-7 w-auto" />}
+            leading={<GCBLogo className="h-6 w-auto" />}
             title="Other GCB Accounts"
             onClick={() => {
               setBankCategory("gcb");
@@ -2162,7 +2162,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage(1);
               setStage1Collapsed(false);
             }}
-            className="p-4.5"
+            className="p-4"
           />
 
           {/* Card 3: Other Local Banks */}
@@ -2175,7 +2175,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage(1);
               setStage1Collapsed(false);
             }}
-            className="p-4.5"
+            className="p-4"
           />
 
           {/* Card 4: International */}
@@ -2189,7 +2189,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage(1);
               setStage1Collapsed(false);
             }}
-            className="p-4.5"
+            className="p-4"
           />
         </div>
       </div>
@@ -2199,12 +2199,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   // Intermediary Screen: "Which wallet do you want to send to?"
   if ((rail === "wallet" || rail === "momo") && !walletCategory) {
     return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
+        <div className="flex items-center gap-2 sm:gap-2 min-w-0">
           <button
             type="button"
             onClick={handleBackNavigation}
-            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
+            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to Send & Pay"
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
@@ -2221,7 +2221,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               key={item.id}
               type="button"
               onClick={() => selectBeneficiary(item)}
-              className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
+              className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
               <div className="flex flex-col">
@@ -2237,7 +2237,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </HorizontalScrollStrip>
 
         {/* 2 Category Cards */}
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-3">
           {/* Card 1: Send to Self */}
           <ActionTile
             icon={Smartphone}
@@ -2255,7 +2255,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage(1);
               setStage1Collapsed(true);
             }}
-            className="p-4.5"
+            className="p-4"
           />
 
           {/* Card 2: Send to Others */}
@@ -2275,7 +2275,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage(1);
               setStage1Collapsed(false);
             }}
-            className="p-4.5"
+            className="p-4"
           />
         </div>
       </div>
@@ -2285,12 +2285,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   // Intermediary Screen: Cardless Withdrawal Selection Hub (1:1 matching user design image)
   if (rail === "cardless" && !cardlessCategory) {
     return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
+        <div className="flex items-center gap-2 sm:gap-2 min-w-0">
           <button
             type="button"
             onClick={handleBackNavigation}
-            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
+            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to Send & Pay"
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
@@ -2319,7 +2319,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 setStage(1);
                 setStage1Collapsed(true);
               }}
-              className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
+              className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
               <div className="flex flex-col w-full">
@@ -2335,7 +2335,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </HorizontalScrollStrip>
 
         {/* 2 Separate Category Cards */}
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-3">
           {/* Card 1: Generate Token for myself */}
           <ActionTile
             icon={Smartphone}
@@ -2354,7 +2354,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage(1);
               setStage1Collapsed(false);
             }}
-            className="p-4.5"
+            className="p-4"
           />
 
           {/* Card 2: Generate Token for others */}
@@ -2376,7 +2376,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage(1);
               setStage1Collapsed(false);
             }}
-            className="p-4.5"
+            className="p-4"
           />
         </div>
 
@@ -2387,7 +2387,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               Active codes <span className="tabular text-muted-foreground">({activeCodes.length})</span>
             </h3>
             {/* The same tile as the accounts and hub rows: icon, title, a second line, chevron */}
-            <div className="flex flex-col gap-3.5">
+            <div className="flex flex-col gap-3">
               {activeCodes.map((c) => (
                 <ActionTile
                   key={c.code}
@@ -2395,7 +2395,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   title={`For ${c.who}`}
                   description={`GHS ${c.amount.toFixed(2)} · ${c.expires}`}
                   onClick={() => setOpenCode(c.code)}
-                  className="p-4.5"
+                  className="p-4"
                 />
               ))}
             </div>
@@ -2415,12 +2415,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   // Intermediary Screen: Card Top up Chooser ("Which card do you want to top up?")
   if (rail === "card-topup" && !cardTopupCategory) {
     return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
+        <div className="flex items-center gap-2 sm:gap-2 min-w-0">
           <button
             type="button"
             onClick={handleBackNavigation}
-            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
+            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to Send & Pay"
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
@@ -2430,7 +2430,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           </h1>
         </div>
 
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-3">
           {/* Card 1: My GCB Cards */}
           <ActionTile
             icon={CreditCard}
@@ -2440,7 +2440,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage(1);
               setStage1Collapsed(false);
             }}
-            className="p-4.5"
+            className="p-4"
           />
 
           {/* Card 2: Other GCB Cards */}
@@ -2452,7 +2452,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage(1);
               setStage1Collapsed(false);
             }}
-            className="p-4.5"
+            className="p-4"
           />
         </div>
       </div>
@@ -2462,12 +2462,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   // Intermediary Screen: GCB Pay Category Selection Hub (Figma Node 1176:28982)
   if (rail === "bill" && !billCategory) {
     return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
+        <div className="flex items-center gap-2 sm:gap-2 min-w-0">
           <button
             type="button"
             onClick={handleBackNavigation}
-            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
+            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to Send & Pay"
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
@@ -2484,7 +2484,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               key={item.id}
               type="button"
               onClick={() => selectBeneficiary(item)}
-              className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
+              className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
               <div className="flex flex-col w-full">
@@ -2500,7 +2500,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </HorizontalScrollStrip>
 
         {/* 7 Category Cards (2-column Grid matching Figma Node 1176:28982) */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {GCB_PAY_CATEGORIES.map((cat) => {
             const Icon = cat.icon;
             return (
@@ -2525,12 +2525,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   // Proxy — chooser: transfer to a proxy ID, or manage your own proxy ID.
   if (rail === "proxy" && !proxyCategory) {
     return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
+        <div className="flex items-center gap-2 sm:gap-2 min-w-0">
           <button
             type="button"
             onClick={handleBackNavigation}
-            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
+            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to Send & Pay"
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
@@ -2542,9 +2542,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
         {/* Your own proxy ID status */}
         {myProxy ? (
-          <div className="flex items-center justify-between rounded-2xl border border-border bg-muted/30 px-4 py-3">
-            <div className="flex items-center gap-3">
-              <span className="flex size-9 items-center justify-center rounded-full bg-warning/10 text-warning-text dark:bg-primary/20">
+          <div className="flex items-center justify-between rounded-2xl border border-border bg-muted/30 px-3 py-2">
+            <div className="flex items-center gap-2">
+              <span className="flex size-8 items-center justify-center rounded-full bg-warning/10 text-warning-text dark:bg-primary/20">
                 <User size={17} strokeWidth={1.8} />
               </span>
               <div className="flex flex-col">
@@ -2557,12 +2557,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             </div>
           </div>
         ) : (
-          <p className="rounded-2xl border border-dashed border-border bg-muted/20 px-4 py-3 text-[12.5px] text-muted-foreground">
+          <p className="rounded-2xl border border-dashed border-border bg-muted/20 px-3 py-2 text-[12.5px] text-muted-foreground">
             You don&apos;t have a proxy ID yet. Create one so others can pay you with your number.
           </p>
         )}
 
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-3">
           {/* Transfer to a proxy ID */}
           <ActionTile
             icon={ArrowLeftRight}
@@ -2573,7 +2573,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage(1);
               setStage1Collapsed(false);
             }}
-            className="p-4.5"
+            className="p-4"
           />
 
           {myProxy ? (
@@ -2586,7 +2586,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   setProxyModalMode("edit");
                   setProxyModalOpen(true);
                 }}
-                className="p-4.5"
+                className="p-4"
               />
 
               {/* Deregister proxy ID */}
@@ -2594,7 +2594,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 leading={<Trash2 size={20} strokeWidth={1.8} className="text-destructive" />}
                 title="Deregister Proxy ID"
                 onClick={() => setProxyDeregisterOpen(true)}
-                className="p-4.5"
+                className="p-4"
               />
             </>
           ) : (
@@ -2606,7 +2606,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 setProxyModalMode("create");
                 setProxyModalOpen(true);
               }}
-              className="p-4.5"
+              className="p-4"
             />
           )}
         </div>
@@ -2629,7 +2629,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 Deregister your proxy ID?
               </DialogTitle>
             </DialogHeader>
-            <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
+            <div className="px-4 sm:px-5 py-4 text-[13.5px] text-muted-foreground leading-relaxed">
               People will no longer be able to pay you using{" "}
               <span className="text-foreground tabular">{myProxy?.value}</span>. You can register a new
               one at any time.
@@ -2663,12 +2663,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   // Group — chooser: transfer to a group, or manage groups.
   if (rail === "group" && !groupCategory) {
     return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
+        <div className="flex items-center gap-2 sm:gap-2 min-w-0">
           <button
             type="button"
             onClick={handleBackNavigation}
-            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
+            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to Send & Pay"
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
@@ -2695,10 +2695,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                     rail: "group",
                   })
                 }
-                className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
+                className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
               >
                 <span
-                  className="flex size-14 items-center justify-center rounded-full text-[20px] text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
+                  className="flex size-12 items-center justify-center rounded-full text-[20px] text-primary-foreground transition-[filter] duration-150 group-hover:saturate-150 group-hover:brightness-[0.97] dark:group-hover:saturate-200 dark:group-hover:brightness-[0.85]"
                   style={{ backgroundColor: groupAvatarTint(g.id) }}
                 >
                   {g.name.slice(0, 2).toUpperCase()}
@@ -2711,7 +2711,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           </HorizontalScrollStrip>
         )}
 
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-3">
           {/* Transfer to group */}
           <ActionTile
             icon={Users}
@@ -2722,7 +2722,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage(1);
               setStage1Collapsed(false);
             }}
-            className="p-4.5"
+            className="p-4"
           />
 
           {/* Manage group */}
@@ -2730,7 +2730,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             icon={Pencil}
             title="Manage Groups"
             onClick={() => router.push("/beneficiaries?tab=groups")}
-            className="p-4.5"
+            className="p-4"
           />
         </div>
       </div>
@@ -2741,12 +2741,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   if ((rail === "airtime" || rail === "data") && !topupCategory) {
     const isData = rail === "data";
     return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
-        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
+        <div className="flex items-center gap-2 sm:gap-2 min-w-0">
           <button
             type="button"
             onClick={handleBackNavigation}
-            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
+            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to Send & Pay"
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
@@ -2763,7 +2763,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               key={item.id}
               type="button"
               onClick={() => selectBeneficiary(item)}
-              className="group flex flex-col items-center gap-2.5 w-[84px] shrink-0 text-center cursor-pointer"
+              className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
             >
               <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
               <div className="flex flex-col">
@@ -2779,7 +2779,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </HorizontalScrollStrip>
 
         {/* 2 Category Cards */}
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-3">
           {/* Card 1: Self */}
           <ActionTile
             icon={Smartphone}
@@ -2800,7 +2800,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage(1);
               setStage1Collapsed(true);
             }}
-            className="p-4.5"
+            className="p-4"
           />
 
           {/* Card 2: Others */}
@@ -2820,7 +2820,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               setStage(1);
               setStage1Collapsed(false);
             }}
-            className="p-4.5"
+            className="p-4"
           />
 
           {/* Card 3: Broadband (Internet only): a connection at a home or office, not a phone */}
@@ -2842,7 +2842,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 setStage(1);
                 setStage1Collapsed(false);
               }}
-              className="p-4.5"
+              className="p-4"
             />
           )}
         </div>
@@ -2859,10 +2859,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
   // Unified Progressive Disclosure Experience across ALL Services
   return (
     <SavedRecipientsProvider items={savedForThisPayment} onSelect={selectBeneficiary}>
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
       {/* Header with back button */}
-      <div className="flex items-center justify-between gap-3 min-w-0">
-        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+      <div className="flex items-center justify-between gap-2 min-w-0">
+        <div className="flex items-center gap-2 sm:gap-2 min-w-0">
           <button
             type="button"
             onClick={() => {
@@ -2894,7 +2894,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 handleBackNavigation();
               }
             }}
-            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
+            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to previous screen"
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
@@ -2908,19 +2908,19 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           <button
             type="button"
             aria-label="Help & Information"
-            className="flex size-7 items-center justify-center rounded-full bg-primary text-black font-semibold text-[13px] shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
+            className="flex size-6 items-center justify-center rounded-full bg-primary text-black font-semibold text-[13px] shadow-xs hover:opacity-90 transition-opacity cursor-pointer"
           >
             ?
           </button>
         )}
       </div>
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         {/* ===================================================================
          * STAGE 1: Payment Details (Modularized Subcomponents)
          * =================================================================== */}
         {stage === 1 && (
-          <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+          <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
             {/* Flow 1: Between My Accounts */}
             {rail === "bank" && bankCategory === "own" && (
               <OwnAccountFlow
@@ -3481,12 +3481,12 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
          * STAGE 2: Dedicated Review Screen (Figma Nodes 1253:14800 & 1253:15001)
          * =================================================================== */}
         {stage === 2 && (
-          <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-            <div className="flex flex-col gap-3 items-center justify-center w-full">
+          <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+            <div className="flex flex-col gap-2 items-center justify-center w-full">
               {/* Card 1: Transaction Details */}
-              <div className="flex flex-col w-full rounded-[15.75px] border border-border bg-card overflow-hidden divide-y divide-border/60 shadow-xs">
+              <div className="flex flex-col w-full rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60 shadow-xs">
                 {/* From Row */}
-                <div className="flex items-center justify-between px-4 py-3 w-full">
+                <div className="flex items-center justify-between px-3 py-2 w-full">
                   <span className="text-[13.5px] text-muted-foreground">From</span>
                   <span className="text-[13.5px] font-normal text-foreground">
                     {rail === "wallet-to-bank" ? "MTN Mobile Money (∗∗∗3821)" : `${account?.name} (∗∗∗${account?.number.slice(-4)})`}
@@ -3494,7 +3494,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 </div>
 
                 {/* To Row */}
-                <div className="flex items-center justify-between px-4 py-3 w-full">
+                <div className="flex items-center justify-between px-3 py-2 w-full">
                   <span className="text-[13.5px] text-muted-foreground">To</span>
                   <span className="text-[13.5px] font-normal text-foreground">
                     {recipientDisplayName}
@@ -3503,7 +3503,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
                 {/* Destination Account / Number Row */}
                 {reviewAccountValue && (
-                  <div className="flex items-center justify-between px-4 py-3 w-full">
+                  <div className="flex items-center justify-between px-3 py-2 w-full">
                     <span className="text-[13.5px] text-muted-foreground">{reviewAccountLabel}</span>
                     <span className="text-[13.5px] font-normal text-foreground tabular">
                       {reviewAccountValue}
@@ -3513,7 +3513,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
                 {/* Bank / Provider Row */}
                 {reviewInstitutionValue && (
-                  <div className="flex items-center justify-between px-4 py-3 w-full">
+                  <div className="flex items-center justify-between px-3 py-2 w-full">
                     <span className="text-[13.5px] text-muted-foreground">{reviewInstitutionLabel}</span>
                     <span className="text-[13.5px] font-normal text-foreground">
                       {reviewInstitutionValue}
@@ -3534,7 +3534,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   ]
                     .filter(([, value]) => value)
                     .map(([label, value]) => (
-                      <div key={label} className="flex items-center justify-between gap-4 px-4 py-3 w-full">
+                      <div key={label} className="flex items-center justify-between gap-3 px-3 py-2 w-full">
                         <span className="text-[13.5px] text-muted-foreground shrink-0">{label}</span>
                         <span className="text-[13.5px] font-normal text-foreground text-right truncate max-w-[260px]">
                           {value}
@@ -3544,7 +3544,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
                 {/* Payment Method Row */}
                 {((rail === "bank" && bankCategory === "other") || rail === "ach") && f.paymentMethod && (
-                  <div className="flex items-center justify-between px-4 py-3 w-full">
+                  <div className="flex items-center justify-between px-3 py-2 w-full">
                     <span className="text-[13.5px] text-muted-foreground">Payment Method</span>
                     <span className="text-[13.5px] font-normal text-foreground">
                       {getPaymentMethodName(f.paymentMethod)}
@@ -3554,7 +3554,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
                 {/* Reference Row */}
                 {(f.bankRef || f.wRef || f.pxRef || f.grpRef || (rail === "data" ? bundle?.name : "")) && (
-                  <div className="flex items-center justify-between px-4 py-3 w-full">
+                  <div className="flex items-center justify-between px-3 py-2 w-full">
                     <span className="text-[13.5px] text-muted-foreground">Reference</span>
                     <span className="text-[13.5px] font-normal text-foreground truncate max-w-[220px]">
                       {f.bankRef || f.wRef || f.pxRef || f.grpRef || (rail === "data" ? bundle?.name : "")}
@@ -3563,7 +3563,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 )}
 
                 {/* Payment Timing / Schedule Row */}
-                <div className="flex items-center justify-between px-4 py-3 w-full">
+                <div className="flex items-center justify-between px-3 py-2 w-full">
                   <span className="text-[13.5px] text-muted-foreground">Payment Timing</span>
                   <span className="text-[13.5px] font-normal text-foreground">
                     {f.isScheduled
@@ -3574,9 +3574,9 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
 
                 {/* Save Beneficiary Row */}
                 {f.saveBeneficiary && (
-                  <div className="flex items-center justify-between px-4 py-3 w-full">
+                  <div className="flex items-center justify-between px-3 py-2 w-full">
                     <span className="text-[13.5px] text-muted-foreground">Save Beneficiary</span>
-                    <span className="text-[13.5px] font-normal text-success-text flex items-center gap-1.5">
+                    <span className="text-[13.5px] font-normal text-success-text flex items-center gap-2">
                       <CheckCircle2 size={14} strokeWidth={1.9} className="shrink-0" />
                       <span>Yes {f.beneficiaryNickname ? `(“${f.beneficiaryNickname}”)` : ""}</span>
                     </span>
@@ -3584,7 +3584,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 )}
 
                 {/* Arrives Row */}
-                <div className="flex items-center justify-between px-4 py-3 w-full">
+                <div className="flex items-center justify-between px-3 py-2 w-full">
                   <span className="text-[13.5px] text-muted-foreground">Arrives</span>
                   <span className="text-[13.5px] font-normal text-foreground">
                     {f.isScheduled ? `Executes on ${f.scheduleDate}` : deliverySpeed}
@@ -3596,15 +3596,15 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
               <div className="w-full border-t border-border/70 my-1" />
 
               {/* Card 2: Amount & Fee Breakdown Container (Visible by default) */}
-              <div className="flex flex-col w-full rounded-[15.75px] border border-border bg-card overflow-hidden shadow-xs divide-y divide-border/60">
-                <div className="flex items-center justify-between px-4 py-3 w-full">
+              <div className="flex flex-col w-full rounded-2xl border border-border bg-card overflow-hidden shadow-xs divide-y divide-border/60">
+                <div className="flex items-center justify-between px-3 py-2 w-full">
                   <span className="text-[13.5px] text-muted-foreground">Transfer Amount</span>
                   <span className="text-[13.5px] font-normal text-foreground tabular">
                     {formatMoney(currentAmount, isForeign ? f.wCurrency : "GHS", true)}
                   </span>
                 </div>
                 {feeDetails.feeAmount > 0 && (
-                  <div className="flex items-center justify-between px-4 py-3 w-full">
+                  <div className="flex items-center justify-between px-3 py-2 w-full">
                     <span className="text-[13.5px] text-muted-foreground">
                       Fee
                       {rail === "swift" && f.wCharges === "recipient" ? " (taken from the amount)" : ""}
@@ -3615,14 +3615,14 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                   </div>
                 )}
                 {isForeign && (
-                  <div className="flex items-center justify-between px-4 py-3 w-full">
+                  <div className="flex items-center justify-between px-3 py-2 w-full">
                     <span className="text-[13.5px] text-muted-foreground">Exchange Rate</span>
                     <span className="text-[13.5px] font-normal text-foreground tabular">1 {f.wCurrency} = {rate} GHS</span>
                   </div>
                 )}
 
                 {/* Total Row */}
-                <div className="flex items-center justify-between px-4 py-3.5 w-full bg-muted/40 dark:bg-muted/20">
+                <div className="flex items-center justify-between px-3 py-3 w-full bg-muted/40 dark:bg-muted/20">
                   <span className="text-[13.5px] text-foreground font-normal">Total Debit</span>
                   <span className="text-[26px] sm:text-[28px] font-semibold text-foreground tracking-[var(--ls-display)] tabular">
                     {formatMoney(totalDebit, "GHS", true)}
@@ -3632,20 +3632,20 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
             </div>
 
             {/* Disclaimer */}
-            <p className="text-[12px] text-muted-foreground text-center px-4 -mt-1">
+            <p className="text-[12px] text-muted-foreground text-center px-3 -mt-1">
               {f.isScheduled
                 ? "Clicking “Proceed & Schedule” authorizes GCB Bank PLC to schedule the payment order."
                 : "Clicking “Proceed to Pay” authorizes GCB Bank PLC to initiate the transaction."}
             </p>
 
             {/* Action Buttons */}
-            <div className="flex gap-4 items-center w-full pt-1">
+            <div className="flex gap-3 items-center w-full pt-1">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setStage(1)}
                 disabled={phase === "submitting"}
-                className="flex-1 h-11 rounded-lg text-[14px] border-border"
+                className="flex-1 h-10 rounded-lg text-[14px] border-border"
               >
                 Back
               </Button>
@@ -3655,7 +3655,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
                 onClick={() => {
                   setPinModalOpen(true);
                 }}
-                className="flex-1 h-11 rounded-lg text-[14px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+                className="flex-1 h-10 rounded-lg text-[14px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
               >
                 {f.isScheduled ? "Proceed & Schedule" : "Proceed to Pay"}
               </Button>

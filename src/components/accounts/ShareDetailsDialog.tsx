@@ -53,17 +53,17 @@ export function ShareDetailsDialog({
           <DialogTitle>Share Account Details</DialogTitle>
         </DialogHeader>
         <DialogBody>
-          <p className="mb-3 text-[13px] text-muted-foreground">Give these to anyone sending money to this account.</p>
+          <p className="mb-2 text-[13px] text-muted-foreground">Give these to anyone sending money to this account.</p>
           <dl className="flex flex-col divide-y divide-border/50">
             {rows.map((r) => (
-              <div key={r.key} className="flex items-center justify-between gap-3 py-3">
+              <div key={r.key} className="flex items-center justify-between gap-2 py-2">
                 <dt className="text-[13px] text-muted-foreground">{r.label}</dt>
-                <dd className="flex min-w-0 items-center gap-1.5">
+                <dd className="flex min-w-0 items-center gap-2">
                   <span className="truncate text-[14px] text-foreground tabular">{r.value}</span>
                   <button
                     type="button"
                     onClick={() => copy(r.key, r.copy ?? r.value)}
-                    className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+                    className="shrink-0 rounded-lg p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
                     aria-label={`Copy ${r.label.toLowerCase()}`}
                   >
                     {copiedKey === r.key ? (
@@ -78,7 +78,7 @@ export function ShareDetailsDialog({
           </dl>
         </DialogBody>
         <DialogFooter>
-          <Button onClick={copyAll} className="h-10 w-full gap-1.5 rounded-lg text-[13.5px]">
+          <Button onClick={copyAll} className="h-9 w-full gap-2 rounded-lg text-[13.5px]">
             <Copy size={15} strokeWidth={1.8} />
             Copy all
           </Button>

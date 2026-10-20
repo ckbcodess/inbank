@@ -113,7 +113,7 @@ export default function TransactionDetailsPage({ params }: { params: Promise<{ i
 
   if (!txn) {
     return (
-      <div className="mx-auto flex max-w-[480px] flex-col items-center justify-center gap-4 py-16 text-center">
+      <div className="mx-auto flex max-w-[480px] flex-col items-center justify-center gap-3 py-12 text-center">
         <h1 className="text-[20px] text-foreground">Transaction not found</h1>
         <p className="text-[14px] text-muted-foreground">
           The transaction record you requested could not be located.
@@ -255,7 +255,7 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
   };
 
   return (
-    <div className="w-full flex flex-col gap-8">
+    <div className="w-full flex flex-col gap-6">
       {/* Page Header with Back, Title, Status, and Action Controls */}
       <PageHeader
         title="Transaction Details"
@@ -267,15 +267,15 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
       />
 
       {/* Official GCB Digital Transaction Receipt */}
-      <div className="relative mx-auto flex w-full max-w-xl flex-col gap-8 rounded-2xl border border-border/80 bg-card p-6 sm:p-8 overflow-hidden shadow-xs">
+      <div className="relative mx-auto flex w-full max-w-xl flex-col gap-6 rounded-2xl border border-border/80 bg-card p-5 sm:p-6 overflow-hidden shadow-xs">
         {/* Subtle background eagle watermark */}
-        <div className="pointer-events-none absolute -top-10 -right-10 size-80 opacity-[0.03] select-none text-foreground">
+        <div className="pointer-events-none absolute -top-9 -right-9 size-70 opacity-[0.03] select-none text-foreground">
           <GCBLogo className="size-full" showWordmark={false} />
         </div>
 
         <section className="relative z-10 flex flex-col items-center gap-2 pt-2 text-center">
           <div className="mb-2 flex items-center justify-center">
-            <GCBLogo className="h-8 w-auto text-foreground" />
+            <GCBLogo className="h-7 w-auto text-foreground" />
           </div>
           <span className="text-[16px] font-medium text-foreground">{getTransactionType(txn)}</span>
           <span
@@ -315,7 +315,7 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
                         <button
                           type="button"
                           onClick={handleCopyReference}
-                          className="cursor-pointer rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                          className="cursor-pointer rounded-lg p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                           aria-label="Copy reference"
                         >
                           {copied ? <Check size={13} className="text-success-text" /> : <Copy size={13} strokeWidth={1.8} />}
@@ -350,9 +350,9 @@ ${masked ? '<p class="note">Amounts are hidden on this receipt.</p>' : ""}
                 { label: isCredit ? "Total Credited" : "Total Debited", value: formatMoney(totalDebit, "GHS", true), strong: true },
               ],
             ].map((group, gi) => (
-              <dl key={gi} className="flex flex-col gap-3 py-5 first:pt-3 last:pb-0">
+              <dl key={gi} className="flex flex-col gap-2 py-4 first:pt-2 last:pb-0">
                 {group.map((row) => (
-                  <div key={row.label} className="flex items-baseline justify-between gap-6">
+                  <div key={row.label} className="flex items-baseline justify-between gap-5">
                     <dt className="shrink-0 text-[13px] text-muted-foreground">{row.label}</dt>
                     <dd className={cn("tabular min-w-0 text-right text-[14px] text-foreground", "strong" in row && row.strong && "text-[15px]")}>
                       {row.value}
@@ -417,12 +417,12 @@ function StateBand({
             {txn.failureReason ??
               "The receiving bank rejected this payment. No funds left your account."}
           </p>
-          <p className="mt-1.5 text-muted-foreground">
+          <p className="mt-2 text-muted-foreground">
             Nothing was debited. Duplicating creates a new draft with these details so you can correct and resubmit.
           </p>
-          <div className="mt-3">
+          <div className="mt-2">
             <Button size="sm" nativeButton={false} render={<Link href={`/payments/send?duplicate=${txn.id}`} />}>
-              <Copy size={14} strokeWidth={1.8} className="mr-1.5" />
+              <Copy size={14} strokeWidth={1.8} className="mr-2" />
               Duplicate &amp; Edit
             </Button>
           </div>
@@ -433,17 +433,17 @@ function StateBand({
       return (
         <Band tone="destructive" icon={<Layers size={17} strokeWidth={1.8} aria-hidden="true" />} title="Failed within a batch">
           <p>{txn.failureReason ?? "This record failed as part of a bulk payment batch."}</p>
-          <p className="mt-1.5 text-muted-foreground">
+          <p className="mt-2 text-muted-foreground">
             Records in a batch are corrected together in batch validation.
           </p>
-          <div className="mt-3">
+          <div className="mt-2">
             <Button
               size="sm"
               variant="outline"
               nativeButton={false}
               render={<Link href={`/payments/bulk/${txn.batchId ?? "batch-0090"}`} />}
             >
-              <ArrowRight size={14} strokeWidth={1.8} className="mr-1.5" />
+              <ArrowRight size={14} strokeWidth={1.8} className="mr-2" />
               Open Batch Correction
             </Button>
           </div>
@@ -454,23 +454,23 @@ function StateBand({
       return (
         <Band tone="warning" icon={<FileWarning size={17} strokeWidth={1.8} aria-hidden="true" />} title="Returned by bank operations">
           <p>{txn.failureReason ?? "This trade request was returned for correction."}</p>
-          <div className="mt-3 rounded-xl border border-border bg-card">
-            <p className="flex items-center gap-1.5 border-b border-border px-3 py-2 text-[12px] uppercase tracking-wider text-muted-foreground">
+          <div className="mt-2 rounded-xl border border-border bg-card">
+            <p className="flex items-center gap-2 border-b border-border px-2 py-2 text-[12px] uppercase tracking-wider text-muted-foreground">
               <History size={13} strokeWidth={1.8} />
               Version history
             </p>
             <ul className="divide-y divide-border">
               {TRADE_VERSIONS.map((v) => (
-                <li key={v.version} className="flex items-center gap-3 px-3 py-2 text-[13px]">
-                  <span className="w-8 shrink-0 text-muted-foreground tabular-nums numorainput">v{v.version}</span>
+                <li key={v.version} className="flex items-center gap-2 px-2 py-2 text-[13px]">
+                  <span className="w-7 shrink-0 text-muted-foreground tabular-nums numorainput">v{v.version}</span>
                   <span className="min-w-0 flex-1 truncate text-foreground">{v.summary}</span>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="mt-3 flex gap-2">
+          <div className="mt-2 flex gap-2">
             <Button size="sm" nativeButton={false} render={<Link href={`/trade/${txn.tradeId ?? "trade-0417"}`} />}>
-              <RotateCcw size={14} strokeWidth={1.8} className="mr-1.5" />
+              <RotateCcw size={14} strokeWidth={1.8} className="mr-2" />
               Resubmit as v{TRADE_VERSIONS.length + 1}
             </Button>
           </div>
@@ -528,8 +528,8 @@ function Band({
   }[tone];
 
   return (
-    <section className={cn("rounded-2xl border p-4 text-[13.5px]", toneClasses)}>
-      <div className="flex items-start gap-3">
+    <section className={cn("rounded-2xl border p-3 text-[13.5px]", toneClasses)}>
+      <div className="flex items-start gap-2">
         <span className="mt-0.5 shrink-0">{icon}</span>
         <div className="min-w-0 flex-1">
           <p className="text-[14px]">{title}</p>

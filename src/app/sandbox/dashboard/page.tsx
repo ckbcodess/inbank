@@ -5,7 +5,7 @@
  * Route: /sandbox/dashboard
  *
  * 1:1 Design Language Specs:
- * - Left Sidebar (w-64, dark neutral background, Section headers: BANKING, MOVE MONEY, REFERENCE)
+ * - Left Sidebar (w-56, dark neutral background, Section headers: BANKING, MOVE MONEY, REFERENCE)
  * - Clean White Canvas with Header (Personal Banking switcher, Dev Mode pill, Notification badge, Eye amount toggle, AS user menu)
  * - Greeting ("Good day, Ransford", Date subline "Thursday, August 15")
  * - Hero Balance ("Total available", large "GHS 18,070.50")
@@ -86,13 +86,13 @@ export default function FigmaDesignFidelityDashboard() {
       {/* ============================================================
           1. FIGMA SIDEBAR (Node 315:53322)
           ============================================================ */}
-      <aside className={`bg-[#ffffff] border-r border-[#e8ecef] flex flex-col justify-between shrink-0 transition-all duration-200 ${sidebarCollapsed ? "w-16" : "w-64"}`}>
+      <aside className={`bg-[#ffffff] border-r border-[#e8ecef] flex flex-col justify-between shrink-0 transition-all duration-200 ${sidebarCollapsed ? "w-14" : "w-56"}`}>
         <div className="flex flex-col">
           
           {/* Logo container */}
-          <div className="h-14 px-4 flex items-center justify-between border-b border-[#e8ecef]">
-            <div className="flex items-center gap-2.5">
-              <div className="size-6 rounded-md bg-[#18181b] text-white flex items-center justify-center font-black text-xs">
+          <div className="h-12 px-3 flex items-center justify-between border-b border-[#e8ecef]">
+            <div className="flex items-center gap-2">
+              <div className="size-5 rounded-lg bg-[#18181b] text-white flex items-center justify-center font-black text-xs">
                 ⇗
               </div>
               {!sidebarCollapsed && (
@@ -101,7 +101,7 @@ export default function FigmaDesignFidelityDashboard() {
             </div>
             <button 
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="p-1 rounded-md text-[#71717a] hover:text-[#18181b] hover:bg-[#f4f4f5] transition-colors"
+              className="p-1 rounded-lg text-[#71717a] hover:text-[#18181b] hover:bg-[#f4f4f5] transition-colors"
               title="Collapse sidebar"
             >
               <SlidersHorizontal size={14} />
@@ -109,12 +109,12 @@ export default function FigmaDesignFidelityDashboard() {
           </div>
 
           {/* Navigation Links */}
-          <div className="p-3 space-y-6 text-xs">
+          <div className="p-2 space-y-5 text-xs">
             
             {/* Group 1: BANKING */}
             <div className="space-y-1">
               {!sidebarCollapsed && (
-                <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#8c9ba5] mb-2">
+                <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-[#8c9ba5] mb-2">
                   Banking
                 </p>
               )}
@@ -130,7 +130,7 @@ export default function FigmaDesignFidelityDashboard() {
                   <button
                     key={item.name}
                     onClick={() => setActiveNav(item.name)}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-xs transition-colors ${
+                    className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg font-medium text-xs transition-colors ${
                       isActive 
                         ? "bg-[#f1f3f5] text-[#18181b] font-semibold" 
                         : "text-[#5d7079] hover:text-[#18181b] hover:bg-[#f8f9fa]"
@@ -146,13 +146,13 @@ export default function FigmaDesignFidelityDashboard() {
             {/* Group 2: MOVE MONEY */}
             <div className="space-y-1">
               {!sidebarCollapsed && (
-                <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#8c9ba5] mb-2">
+                <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-[#8c9ba5] mb-2">
                   Move Money
                 </p>
               )}
               <button
                 onClick={() => setActiveNav("Payments")}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-xs transition-colors ${
+                className={`w-full flex items-center gap-2 px-2 py-2 rounded-lg font-medium text-xs transition-colors ${
                   activeNav === "Payments" 
                     ? "bg-[#f1f3f5] text-[#18181b] font-semibold" 
                     : "text-[#5d7079] hover:text-[#18181b] hover:bg-[#f8f9fa]"
@@ -166,20 +166,20 @@ export default function FigmaDesignFidelityDashboard() {
             {/* Group 3: REFERENCE */}
             <div className="space-y-1">
               {!sidebarCollapsed && (
-                <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#8c9ba5] mb-2">
+                <p className="px-2 text-[10px] font-bold uppercase tracking-wider text-[#8c9ba5] mb-2">
                   Reference
                 </p>
               )}
               <button
                 onClick={() => setActiveNav("Reports")}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-xs text-[#5d7079] hover:text-[#18181b] hover:bg-[#f8f9fa] transition-colors"
+                className="w-full flex items-center gap-2 px-2 py-2 rounded-lg font-medium text-xs text-[#5d7079] hover:text-[#18181b] hover:bg-[#f8f9fa] transition-colors"
               >
                 <FileText size={16} strokeWidth={1.75} className="text-[#71717a]" />
                 {!sidebarCollapsed && <span>Reports</span>}
               </button>
               <button
                 onClick={() => setActiveNav("FX rates")}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-xs text-[#5d7079] hover:text-[#18181b] hover:bg-[#f8f9fa] transition-colors"
+                className="w-full flex items-center gap-2 px-2 py-2 rounded-lg font-medium text-xs text-[#5d7079] hover:text-[#18181b] hover:bg-[#f8f9fa] transition-colors"
               >
                 <Zap size={16} strokeWidth={1.75} className="text-[#71717a]" />
                 {!sidebarCollapsed && <span>FX rates</span>}
@@ -191,9 +191,9 @@ export default function FigmaDesignFidelityDashboard() {
 
         {/* User Account / Profile at bottom */}
         {!sidebarCollapsed && (
-          <div className="p-3 border-t border-[#e8ecef]">
-            <div className="p-2 rounded-xl hover:bg-[#f4f4f5] flex items-center gap-2.5 cursor-pointer transition-colors">
-              <div className="size-8 rounded-full bg-[#18181b] text-white flex items-center justify-center font-bold text-xs">
+          <div className="p-2 border-t border-[#e8ecef]">
+            <div className="p-2 rounded-xl hover:bg-[#f4f4f5] flex items-center gap-2 cursor-pointer transition-colors">
+              <div className="size-7 rounded-full bg-[#18181b] text-white flex items-center justify-center font-bold text-xs">
                 AS
               </div>
               <div className="min-w-0">
@@ -211,29 +211,29 @@ export default function FigmaDesignFidelityDashboard() {
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         
         {/* Top Header Bar (Node 315:53400) */}
-        <header className="h-14 bg-white border-b border-[#e8ecef] px-6 lg:px-10 flex items-center justify-between sticky top-0 z-20">
+        <header className="h-12 bg-white border-b border-[#e8ecef] px-5 lg:px-10 flex items-center justify-between sticky top-0 z-20">
           <div className="flex items-center gap-2 text-xs">
-            <div className="size-2 rounded-full bg-[#10b981]" />
+            <div className="size-1.5 rounded-full bg-[#10b981]" />
             <span className="font-semibold text-[#18181b]">Personal Banking</span>
-            <span className="text-[#71717a] text-[11px] bg-[#f4f4f5] px-2 py-0.5 rounded-md">
+            <span className="text-[#71717a] text-[11px] bg-[#f4f4f5] px-2 py-0.5 rounded-lg">
               Personal · ∗∗∗∗ 4821
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5">
-            <div className="hidden sm:flex items-center gap-1.5 bg-[#f4f4f5] px-2.5 py-1 rounded-md text-[11px] font-medium text-[#71717a]">
+          <div className="flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-2 bg-[#f4f4f5] px-2 py-1 rounded-lg text-[11px] font-medium text-[#71717a]">
               <span>Dev Mode</span>
               <span className="text-[#18181b] font-bold">13.9</span>
             </div>
 
-            <button className="size-8 rounded-md hover:bg-[#f4f4f5] flex items-center justify-center text-[#71717a] relative">
+            <button className="size-7 rounded-lg hover:bg-[#f4f4f5] flex items-center justify-center text-[#71717a] relative">
               <Bell size={15} />
               <span className="size-1.5 rounded-full bg-[#ef4444] absolute top-1.5 right-1.5" />
             </button>
 
             <button 
               onClick={() => setShowAmounts(!showAmounts)}
-              className="size-8 rounded-md hover:bg-[#f4f4f5] flex items-center justify-center text-[#71717a]"
+              className="size-7 rounded-lg hover:bg-[#f4f4f5] flex items-center justify-center text-[#71717a]"
               title="Toggle cash amounts visibility"
             >
               {showAmounts ? <Eye size={15} /> : <EyeOff size={15} />}
@@ -242,7 +242,7 @@ export default function FigmaDesignFidelityDashboard() {
         </header>
 
         {/* Content Container (Node 315:53444) */}
-        <main className="page-stagger max-w-6xl w-full mx-auto px-8 lg:px-16 py-14 space-y-12">
+        <main className="page-stagger max-w-6xl w-full mx-auto px-6 lg:px-12 py-12 space-y-10">
           
           {/* Greeting Section (Node 315:53445) */}
           <div className="space-y-0.5">
@@ -259,7 +259,7 @@ export default function FigmaDesignFidelityDashboard() {
           </section>
 
           {/* 4 Action Cards Row (Node 315:53457) */}
-          <section className="space-y-3">
+          <section className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-[#71717a]">Frequent Actions</span>
               <button 
@@ -271,14 +271,14 @@ export default function FigmaDesignFidelityDashboard() {
               </button>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               
               {/* Action 1: Send money */}
               <button
                 onClick={() => openAction("Send money")}
-                className="p-5 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-32 transition-all hover:shadow-xs active:scale-[0.97]"
+                className="p-4 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-28 transition-all hover:shadow-xs active:scale-[0.97]"
               >
-                <div className="size-8 rounded-xl bg-[#f4f4f5] flex items-center justify-center text-[#18181b]">
+                <div className="size-7 rounded-xl bg-[#f4f4f5] flex items-center justify-center text-[#18181b]">
                   <Send size={15} />
                 </div>
                 <span className="text-sm font-bold text-[#18181b]">Send money</span>
@@ -287,9 +287,9 @@ export default function FigmaDesignFidelityDashboard() {
               {/* Action 2: Pay Bill */}
               <button
                 onClick={() => openAction("Pay Bill")}
-                className="p-5 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-32 transition-all hover:shadow-xs active:scale-[0.97]"
+                className="p-4 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-28 transition-all hover:shadow-xs active:scale-[0.97]"
               >
-                <div className="size-8 rounded-xl bg-[#f4f4f5] flex items-center justify-center text-[#18181b]">
+                <div className="size-7 rounded-xl bg-[#f4f4f5] flex items-center justify-center text-[#18181b]">
                   <Receipt size={15} />
                 </div>
                 <span className="text-sm font-bold text-[#18181b]">Pay Bill</span>
@@ -298,9 +298,9 @@ export default function FigmaDesignFidelityDashboard() {
               {/* Action 3: Quick pay */}
               <button
                 onClick={() => openAction("Quick pay")}
-                className="p-5 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-32 transition-all hover:shadow-xs active:scale-[0.97]"
+                className="p-4 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-28 transition-all hover:shadow-xs active:scale-[0.97]"
               >
-                <div className="size-8 rounded-xl bg-[#f4f4f5] flex items-center justify-center text-[#18181b]">
+                <div className="size-7 rounded-xl bg-[#f4f4f5] flex items-center justify-center text-[#18181b]">
                   <Zap size={15} />
                 </div>
                 <span className="text-sm font-bold text-[#18181b]">Quick pay</span>
@@ -309,9 +309,9 @@ export default function FigmaDesignFidelityDashboard() {
               {/* Action 4: View Loans */}
               <button
                 onClick={() => alert("Viewing loans and credit facilities")}
-                className="p-5 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-32 transition-all hover:shadow-xs active:scale-[0.97]"
+                className="p-4 rounded-2xl bg-white border border-[#e8ecef] hover:border-[#18181b] text-left flex flex-col justify-between h-28 transition-all hover:shadow-xs active:scale-[0.97]"
               >
-                <div className="size-8 rounded-xl bg-[#f4f4f5] flex items-center justify-center text-[#18181b]">
+                <div className="size-7 rounded-xl bg-[#f4f4f5] flex items-center justify-center text-[#18181b]">
                   <Briefcase size={15} />
                 </div>
                 <span className="text-sm font-bold text-[#18181b]">View Loans</span>
@@ -323,12 +323,12 @@ export default function FigmaDesignFidelityDashboard() {
           {/* ============================================================
               SPLIT SECTION 1: Accounts & Your Cards (Node 315:53514)
               ============================================================ */}
-          <section className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
             
             {/* Accounts Panel (Node 315:53516) */}
             <div className="bg-white rounded-2xl border border-[#e8ecef] shadow-2xs overflow-hidden flex flex-col justify-between">
               <div>
-                <div className="p-4 border-b border-[#f1f3f5] flex items-center justify-between">
+                <div className="p-3 border-b border-[#f1f3f5] flex items-center justify-between">
                   <h2 className="text-sm font-bold text-[#18181b]">Accounts</h2>
                   <Link href="/accounts" className="text-xs text-[#71717a] hover:text-[#18181b] hover:underline">
                     View all accounts
@@ -341,9 +341,9 @@ export default function FigmaDesignFidelityDashboard() {
                     { name: "Current Account", type: "Current", num: "4001 9922 3344", amount: "GHS 5,730.50" },
                     { name: "Investment Pot", type: "Fixed Deposit", num: "4001 9922 8899", amount: "GHS 0.00" },
                   ].map(acc => (
-                    <div key={acc.name} className="p-4 flex items-center justify-between hover:bg-[#fafafa] transition-colors">
-                      <div className="flex items-center gap-3">
-                        <div className="size-8 rounded-lg bg-[#f4f4f5] flex items-center justify-center text-[#71717a]">
+                    <div key={acc.name} className="p-3 flex items-center justify-between hover:bg-[#fafafa] transition-colors">
+                      <div className="flex items-center gap-2">
+                        <div className="size-7 rounded-lg bg-[#f4f4f5] flex items-center justify-center text-[#71717a]">
                           <Landmark size={15} />
                         </div>
                         <div>
@@ -367,7 +367,7 @@ export default function FigmaDesignFidelityDashboard() {
             {/* Cards Panel (Node 315:53601) */}
             <div className="bg-white rounded-2xl border border-[#e8ecef] shadow-2xs overflow-hidden flex flex-col justify-between">
               <div>
-                <div className="p-4 border-b border-[#f1f3f5] flex items-center justify-between">
+                <div className="p-3 border-b border-[#f1f3f5] flex items-center justify-between">
                   <h2 className="text-sm font-bold text-[#18181b]">Your cards</h2>
                   <Link href="/cards" className="text-xs text-[#71717a] hover:text-[#18181b] hover:underline">
                     View all cards
@@ -382,9 +382,9 @@ export default function FigmaDesignFidelityDashboard() {
                     const isBlocked = blockedCards[c.id];
 
                     return (
-                      <div key={c.id} className="p-3 rounded-xl border border-[#e8ecef] bg-[#fafafa] flex items-start justify-between gap-3">
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-7 rounded-md bg-[#18181b] text-white flex items-center justify-center font-bold text-[9px] tracking-tight shrink-0">
+                      <div key={c.id} className="p-2 rounded-xl border border-[#e8ecef] bg-[#fafafa] flex items-start justify-between gap-2">
+                        <div className="flex items-start gap-2">
+                          <div className="w-9 h-6 rounded-lg bg-[#18181b] text-white flex items-center justify-center font-bold text-[9px] tracking-tight shrink-0">
                             {c.scheme}
                           </div>
                           <div className="space-y-2">
@@ -397,7 +397,7 @@ export default function FigmaDesignFidelityDashboard() {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => toggleBlock(c.id)}
-                                className="h-6 text-[11px] px-2 rounded-md gap-1"
+                                className="h-5 text-[11px] px-2 rounded-lg gap-1"
                               >
                                 {isBlocked ? <Unlock size={11} /> : <Lock size={11} />}
                                 {isBlocked ? "Unblock" : "Block"}
@@ -407,7 +407,7 @@ export default function FigmaDesignFidelityDashboard() {
                                   variant="outline"
                                   size="sm"
                                   onClick={() => alert("Top up card")}
-                                  className="h-6 text-[11px] px-2 rounded-md gap-1"
+                                  className="h-5 text-[11px] px-2 rounded-lg gap-1"
                                 >
                                   <Plus size={11} />
                                   Fund card
@@ -432,28 +432,28 @@ export default function FigmaDesignFidelityDashboard() {
           {/* ============================================================
               SPLIT SECTION 2: Where Your Money Goes & Category Breakdown (Node 315:53688)
               ============================================================ */}
-          <section className="space-y-4">
+          <section className="space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <h2 className="text-base font-bold text-[#18181b]">Where your money goes</h2>
               <div className="flex items-center gap-2 text-xs font-medium">
-                <Button variant="outline" size="sm" className="h-7 text-xs">
+                <Button variant="outline" size="sm" className="h-6 text-xs">
                   All Accounts <ChevronDown size={13} className="ml-1" />
                 </Button>
-                <Button variant="outline" size="sm" className="h-7 text-xs">
+                <Button variant="outline" size="sm" className="h-6 text-xs">
                   Last 12 months <ChevronDown size={13} className="ml-1" />
                 </Button>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               
               {/* Left 2 Cols: Monthly Flow Chart */}
-              <div className="lg:col-span-2 bg-white rounded-2xl border border-[#e8ecef] p-5 shadow-2xs space-y-6">
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div className="flex items-center gap-6 text-xs">
+              <div className="lg:col-span-2 bg-white rounded-2xl border border-[#e8ecef] p-4 shadow-2xs space-y-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-5 text-xs">
                     <div>
-                      <div className="flex items-center gap-1.5 text-[#71717a]">
-                        <span className="size-2 rounded-full bg-[#10b981]" />
+                      <div className="flex items-center gap-2 text-[#71717a]">
+                        <span className="size-1.5 rounded-full bg-[#10b981]" />
                         <span>Money in</span>
                       </div>
                       <p className="font-bold text-[#18181b] mt-0.5">
@@ -462,8 +462,8 @@ export default function FigmaDesignFidelityDashboard() {
                     </div>
 
                     <div>
-                      <div className="flex items-center gap-1.5 text-[#71717a]">
-                        <span className="size-2 rounded-full bg-[#ef4444]" />
+                      <div className="flex items-center gap-2 text-[#71717a]">
+                        <span className="size-1.5 rounded-full bg-[#ef4444]" />
                         <span>Money out</span>
                       </div>
                       <p className="font-bold text-[#18181b] mt-0.5">
@@ -472,8 +472,8 @@ export default function FigmaDesignFidelityDashboard() {
                     </div>
 
                     <div>
-                      <div className="flex items-center gap-1.5 text-[#71717a]">
-                        <span className="size-2 rounded-full bg-[#3b82f6]" />
+                      <div className="flex items-center gap-2 text-[#71717a]">
+                        <span className="size-1.5 rounded-full bg-[#3b82f6]" />
                         <span>Net</span>
                       </div>
                       <p className="font-bold text-[#18181b] mt-0.5">
@@ -482,14 +482,14 @@ export default function FigmaDesignFidelityDashboard() {
                     </div>
                   </div>
 
-                  <div className="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md font-medium flex items-center gap-1">
+                  <div className="text-xs text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg font-medium flex items-center gap-1">
                     <TrendingDown size={13} />
                     <span>Spending −3.3% vs previous 12 months</span>
                   </div>
                 </div>
 
                 {/* 12-Month Simulated Bar Flow Chart */}
-                <div className="h-44 flex items-end justify-between gap-2 pt-4 border-t border-[#f1f3f5]">
+                <div className="h-38 flex items-end justify-between gap-2 pt-3 border-t border-[#f1f3f5]">
                   {[
                     { m: "Sep", inH: 70, outH: 45 },
                     { m: "Oct", inH: 55, outH: 50 },
@@ -504,10 +504,10 @@ export default function FigmaDesignFidelityDashboard() {
                     { m: "Jul", inH: 75, outH: 52 },
                     { m: "Aug", inH: 85, outH: 50 },
                   ].map(b => (
-                    <div key={b.m} className="flex-1 flex flex-col items-center gap-1.5 h-full justify-end">
+                    <div key={b.m} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
                       <div className="w-full max-w-[14px] flex items-end justify-center gap-0.5 h-full">
-                        <div className="w-full bg-[#10b981]/70 hover:bg-[#10b981] rounded-t-xs transition-colors" style={{ height: `${b.inH}%` }} title={`Money in: ${b.inH}%`} />
-                        <div className="w-full bg-[#ef4444]/70 hover:bg-[#ef4444] rounded-t-xs transition-colors" style={{ height: `${b.outH}%` }} title={`Money out: ${b.outH}%`} />
+                        <div className="w-full bg-[#10b981]/70 hover:bg-[#10b981] rounded-t-sm transition-colors" style={{ height: `${b.inH}%` }} title={`Money in: ${b.inH}%`} />
+                        <div className="w-full bg-[#ef4444]/70 hover:bg-[#ef4444] rounded-t-sm transition-colors" style={{ height: `${b.outH}%` }} title={`Money out: ${b.outH}%`} />
                       </div>
                       <span className="text-[10px] text-[#71717a]">{b.m}</span>
                     </div>
@@ -516,12 +516,12 @@ export default function FigmaDesignFidelityDashboard() {
               </div>
 
               {/* Right 1 Col: Spending by Category */}
-              <div className="bg-white rounded-2xl border border-[#e8ecef] p-5 shadow-2xs space-y-4 flex flex-col justify-between">
+              <div className="bg-white rounded-2xl border border-[#e8ecef] p-4 shadow-2xs space-y-3 flex flex-col justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-[#18181b]">Spending by category</h3>
                   
                   {/* Category Breakdown list with percentages */}
-                  <div className="space-y-2.5 mt-4 text-xs">
+                  <div className="space-y-2 mt-3 text-xs">
                     {[
                       { name: "Groceries", pct: 32, color: "bg-[#3b82f6]" },
                       { name: "Shopping", pct: 15, color: "bg-[#10b981]" },
@@ -532,10 +532,10 @@ export default function FigmaDesignFidelityDashboard() {
                     ].map(cat => (
                       <div key={cat.name} className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className={`size-2 rounded-full ${cat.color}`} />
+                          <span className={`size-1.5 rounded-full ${cat.color}`} />
                           <span className="text-[#5d7079] font-medium">{cat.name}</span>
                         </div>
-                        <div className="flex items-center gap-3 font-bold">
+                        <div className="flex items-center gap-2 font-bold">
                           <span className="text-[#18181b]">{cat.pct}%</span>
                           <span className="text-[#71717a] text-[11px]">
                             {showAmounts ? `GHS ${(cat.pct * 75).toFixed(0)}` : "GHS ∗∗∗∗"}
@@ -558,7 +558,7 @@ export default function FigmaDesignFidelityDashboard() {
               FULL-WIDTH SECTION: Today's Rates (Node 315:53912)
               ============================================================ */}
           <section className="bg-white rounded-2xl border border-[#e8ecef] shadow-2xs overflow-hidden">
-            <div className="p-4 border-b border-[#f1f3f5] flex items-center justify-between">
+            <div className="p-3 border-b border-[#f1f3f5] flex items-center justify-between">
               <div>
                 <h2 className="text-sm font-bold text-[#18181b]">Today&apos;s rates</h2>
                 <p className="text-[11px] text-[#71717a]">Published 11 Aug 2026, 08:30</p>
@@ -568,8 +568,8 @@ export default function FigmaDesignFidelityDashboard() {
               </Link>
             </div>
 
-            <div className="p-6 space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+            <div className="p-5 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
                 
                 <div>
                   <label className="text-xs font-bold text-[#71717a] block mb-1">Currency</label>
@@ -577,27 +577,27 @@ export default function FigmaDesignFidelityDashboard() {
                     value={fxCurrency} 
                     onValueChange={(val) => val && setFxCurrency(val)}
                   >
-                    <SelectTrigger className="w-full h-9 px-3 rounded-lg border border-[#e8ecef] dark:border-border text-xs font-bold">
-                      <div className="flex items-center gap-1.5">
+                    <SelectTrigger className="w-full h-8 px-2 rounded-lg border border-[#e8ecef] dark:border-border text-xs font-bold">
+                      <div className="flex items-center gap-2">
                         <CurrencyPairLogos base={fxCurrency} quote="GHS" size={16} />
                         <SelectValue placeholder="Currency" />
                       </div>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="USD">
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-2">
                           <CurrencyLogo currency="USD" size={16} />
                           <span>USD - US Dollar</span>
                         </div>
                       </SelectItem>
                       <SelectItem value="EUR">
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-2">
                           <CurrencyLogo currency="EUR" size={16} />
                           <span>EUR - Euro</span>
                         </div>
                       </SelectItem>
                       <SelectItem value="GBP">
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-2">
                           <CurrencyLogo currency="GBP" size={16} />
                           <span>GBP - British Pound</span>
                         </div>
@@ -615,13 +615,13 @@ export default function FigmaDesignFidelityDashboard() {
                     type="number"
                     value={fxAmount}
                     onChange={(e) => setFxAmount(e.target.value)}
-                    className="w-full h-9 px-3 rounded-lg border border-[#e8ecef] text-xs font-bold"
+                    className="w-full h-8 px-2 rounded-lg border border-[#e8ecef] text-xs font-bold"
                   />
                 </div>
 
                 <div>
                   <Button 
-                    className="w-full h-9 bg-[#18181b] text-white text-xs font-bold gap-1.5"
+                    className="w-full h-8 bg-[#18181b] text-white text-xs font-bold gap-2"
                     onClick={() => openAction("Currency Exchange Transfer")}
                   >
                     Continue to transfer <ArrowRight size={13} />
@@ -631,7 +631,7 @@ export default function FigmaDesignFidelityDashboard() {
               </div>
 
               {/* Conversion Result Box */}
-              <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e8ecef] space-y-1">
+              <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e8ecef] space-y-1">
                 <span className="text-xs text-[#71717a]">You get approximately</span>
                 <div className="flex items-center gap-2">
                   <CurrencyLogo currency="GHS" size={24} />
@@ -650,7 +650,7 @@ export default function FigmaDesignFidelityDashboard() {
               FULL-WIDTH SECTION: Recent Activity (Node 315:53965)
               ============================================================ */}
           <section className="bg-white rounded-2xl border border-[#e8ecef] shadow-2xs overflow-hidden">
-            <div className="p-4 border-b border-[#f1f3f5] flex items-center justify-between">
+            <div className="p-3 border-b border-[#f1f3f5] flex items-center justify-between">
               <div>
                 <h2 className="text-sm font-bold text-[#18181b]">Recent activity</h2>
                 <p className="text-[11px] text-[#71717a]">Your last 5 transactions, with anything that needs review</p>
@@ -671,13 +671,13 @@ export default function FigmaDesignFidelityDashboard() {
                 const isCred = t.dir === "credit";
 
                 return (
-                  <div key={t.title} className="p-4 flex items-center justify-between hover:bg-[#fafafa] transition-colors">
+                  <div key={t.title} className="p-3 flex items-center justify-between hover:bg-[#fafafa] transition-colors">
                     <div>
                       <p className="text-xs font-bold text-[#18181b]">{t.title}</p>
                       <p className="text-[11px] text-[#71717a]">{t.desc}</p>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
                       <span className={`text-xs font-bold tabular ${isCred ? "text-emerald-700" : "text-[#18181b]"}`}>
                         {isCred ? "+ " : "− "}{showAmounts ? t.amount : "GHS ∗∗∗∗∗∗"}
                       </span>
@@ -705,21 +705,21 @@ export default function FigmaDesignFidelityDashboard() {
           </DialogHeader>
 
           <DialogBody>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <label className="text-xs font-medium text-foreground block">Recipient Account / Phone</label>
               <input
                 type="text"
                 placeholder="e.g. 0244 123 456 or 4001 9922 1100"
-                className="w-full h-10 px-3 rounded-xl border border-border bg-transparent text-xs focus:outline-none focus:border-foreground"
+                className="w-full h-9 px-2 rounded-xl border border-border bg-transparent text-xs focus:outline-none focus:border-foreground"
               />
             </div>
 
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2">
               <label className="text-xs font-medium text-foreground block">Amount (GHS)</label>
               <input
                 type="number"
                 defaultValue="100"
-                className="w-full h-10 px-3 rounded-xl border border-border bg-transparent text-base font-medium focus:outline-none focus:border-foreground"
+                className="w-full h-9 px-2 rounded-xl border border-border bg-transparent text-base font-medium focus:outline-none focus:border-foreground"
               />
             </div>
           </DialogBody>

@@ -127,13 +127,13 @@ export function TiltCard3D({
             rotateY,
             transformStyle: "preserve-3d",
           }}
-          className="relative size-full rounded-[20px] will-change-transform overflow-hidden"
+          className="relative size-full rounded-3xl will-change-transform overflow-hidden"
         >
           {children}
 
           {/* Dynamic Specular Card Sheen (Overlay reflection) with enhanced blur diffusion */}
           <motion.div
-            className="pointer-events-none absolute -inset-2 rounded-[24px] mix-blend-overlay blur-[20px] transition-opacity duration-300 z-10"
+            className="pointer-events-none absolute -inset-1.5 rounded-3xl mix-blend-overlay blur-[20px] transition-opacity duration-300 z-10"
             style={{
               opacity: isHovered ? 0.55 : 0,
               background: overlaySheen,
@@ -142,7 +142,7 @@ export function TiltCard3D({
 
           {/* Core Specular Sheen (Color-Dodge) with smooth silky blur */}
           <motion.div
-            className="pointer-events-none absolute -inset-2 rounded-[24px] mix-blend-color-dodge blur-[28px] transition-opacity duration-300 z-10"
+            className="pointer-events-none absolute -inset-1.5 rounded-3xl mix-blend-color-dodge blur-[28px] transition-opacity duration-300 z-10"
             style={{
               opacity: isHovered ? 0.35 : 0,
               background: colorDodgeSheen,
@@ -151,7 +151,7 @@ export function TiltCard3D({
 
           {/* 1.5px Base Ambient Rim Stroke */}
           <div
-            className="pointer-events-none absolute inset-0 rounded-[20px] z-20 transition-opacity duration-300"
+            className="pointer-events-none absolute inset-0 rounded-3xl z-20 transition-opacity duration-300"
             style={{
               boxShadow: "inset 0 0 0 1.5px rgba(255, 255, 255, 0.14)",
             }}
@@ -159,7 +159,7 @@ export function TiltCard3D({
 
           {/* 1.5px Dynamic Light-Reactive Specular Stroke (Tracks mouse glare position) */}
           <motion.div
-            className="pointer-events-none absolute inset-0 rounded-[20px] p-[1.5px] z-20"
+            className="pointer-events-none absolute inset-0 rounded-3xl p-[1.5px] z-20"
             style={{
               background: borderSpecular,
               WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",

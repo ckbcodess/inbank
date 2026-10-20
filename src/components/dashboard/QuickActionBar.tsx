@@ -132,7 +132,7 @@ export function QuickActionBar({
 
   return (
     <>
-      <section className="flex flex-col rounded-2xl border border-border bg-card p-4">
+      <section className="flex flex-col rounded-2xl border border-border bg-card p-3">
         {/* Secondary — real actions, lower frequency, deliberately quieter. */}
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex flex-wrap items-center gap-2">
@@ -170,7 +170,7 @@ export function QuickActionBar({
           <Button
             variant="ghost"
             size="sm"
-            className="gap-1.5 text-muted-foreground hover:text-foreground"
+            className="gap-2 text-muted-foreground hover:text-foreground"
             onClick={() => setActiveModal("customize")}
           >
             <SlidersHorizontal size={14} strokeWidth={1.8} aria-hidden="true" />
@@ -396,7 +396,7 @@ export function QuickActionBar({
             <DialogTitle>Customize Quick Actions</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-2">
               {[
                 "Send money",
                 "Top up a card",
@@ -407,10 +407,10 @@ export function QuickActionBar({
               ].map((act) => (
                 <label
                   key={act}
-                  className="flex cursor-pointer items-center justify-between rounded-xl border border-border p-3 hover:bg-muted/40 transition-colors"
+                  className="flex cursor-pointer items-center justify-between rounded-xl border border-border p-2 hover:bg-muted/40 transition-colors"
                 >
                   <span className="text-[13px] text-foreground">{act}</span>
-                  <input type="checkbox" defaultChecked className="size-4 rounded border-border" />
+                  <input type="checkbox" defaultChecked className="size-3.5 rounded-sm border-border" />
                 </label>
               ))}
             </div>

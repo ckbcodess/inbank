@@ -38,7 +38,7 @@ export function BottomNav({ onOpenDrawer }: BottomNavProps) {
   return (
     <nav
       aria-label="Mobile Navigation"
-      className="fixed inset-x-0 bottom-0 z-30 w-full border-t border-border/70 bg-[var(--shell-top)]/95 backdrop-blur-2xl pt-4 pb-[max(1.5rem,calc(env(safe-area-inset-bottom)+1rem))] px-2 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] md:hidden dark:border-white/10 dark:shadow-[0_-4px_24px_rgba(0,0,0,0.3)]"
+      className="fixed inset-x-0 bottom-0 z-30 w-full border-t border-border/70 bg-[var(--shell-top)]/95 backdrop-blur-2xl pt-3 pb-[max(1.5rem,calc(env(safe-area-inset-bottom)+1rem))] px-2 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] md:hidden dark:border-white/10 dark:shadow-[0_-4px_24px_rgba(0,0,0,0.3)]"
     >
       <div className="mx-auto flex w-full max-w-lg items-center justify-around">
         {tabs.map((tab) => {
@@ -48,7 +48,7 @@ export function BottomNav({ onOpenDrawer }: BottomNavProps) {
           const content = (
             <div
               className={cn(
-                "group relative flex flex-col items-center justify-center gap-1.5 py-1 px-2.5 rounded-xl transition-all duration-150 active:scale-92 cursor-pointer select-none",
+                "group relative flex flex-col items-center justify-center gap-2 py-1 px-2 rounded-xl transition-all duration-150 active:scale-92 cursor-pointer select-none",
                 isActive
                   ? "text-black dark:text-white font-medium"
                   : "text-neutral-400 hover:text-neutral-700 dark:text-white/40 dark:hover:text-white/80",

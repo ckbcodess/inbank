@@ -66,7 +66,7 @@ function ColorTunerInner() {
   if (captureMode || devToolsHidden) return null;
 
   return (
-    <div data-color-tuner className="fixed bottom-5 right-[4.75rem] z-50 flex flex-col items-end gap-3">
+    <div data-color-tuner className="fixed bottom-4 right-[4.75rem] z-50 flex flex-col items-end gap-2">
       {open && <TunerPanel />}
       <button
         type="button"
@@ -75,7 +75,7 @@ function ColorTunerInner() {
         aria-label={open ? "Close the colour tuner" : "Open the colour tuner"}
         title="Colour tuner"
         className={cn(
-          "flex size-12 cursor-pointer items-center justify-center rounded-full border shadow-lg transition-colors",
+          "flex size-10 cursor-pointer items-center justify-center rounded-full border shadow-lg transition-colors",
           open ? "border-transparent bg-primary text-primary-foreground hover:bg-primary-hover" : "border-border bg-card text-foreground hover:bg-muted",
         )}
       >
@@ -124,7 +124,7 @@ function TunerPanel() {
     <div
       role="dialog"
       aria-label="Colour tuner"
-      className="flex max-h-[calc(100dvh-6.5rem)] w-[340px] flex-col gap-3 overflow-y-auto rounded-2xl border border-border bg-card p-4 shadow-lg"
+      className="flex max-h-[calc(100dvh-6.5rem)] w-[340px] flex-col gap-2 overflow-y-auto rounded-2xl border border-border bg-card p-3 shadow-lg"
     >
       <div className="flex flex-col gap-0.5">
         <span className="text-[14px] text-foreground">Colour tuner</span>
@@ -133,9 +133,9 @@ function TunerPanel() {
         </span>
       </div>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <span className="text-[12px] text-muted-foreground">Hero preset</span>
-        <div className="flex gap-1.5">
+        <div className="flex gap-2">
           {TUNER_PRESETS.map((p) => {
             const on = activePreset === p.id;
             return (
@@ -145,7 +145,7 @@ function TunerPanel() {
                 aria-pressed={on}
                 onClick={() => applyTunerPreset(p.id)}
                 className={cn(
-                  "flex-1 cursor-pointer rounded-lg border px-3 py-1.5 text-[12.5px] transition-colors",
+                  "flex-1 cursor-pointer rounded-lg border px-2 py-2 text-[12.5px] transition-colors",
                   on
                     ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
                     : "border-border bg-card text-muted-foreground hover:bg-muted/50 hover:text-foreground",
@@ -159,14 +159,14 @@ function TunerPanel() {
       </div>
 
       <label className="relative block">
-        <Search size={14} strokeWidth={1.8} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+        <Search size={14} strokeWidth={1.8} className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
         <input
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={`Find among ${groups.reduce((n, g) => n + g.tokens.length, 0)} colours`}
           aria-label="Find a colour token"
-          className="h-8 w-full rounded-lg border border-field-border bg-field pl-8 pr-2 text-[12.5px] text-foreground outline-none placeholder:text-muted-foreground focus:border-field-border-focus"
+          className="h-7 w-full rounded-lg border border-field-border bg-field pl-6 pr-2 text-[12.5px] text-foreground outline-none placeholder:text-muted-foreground focus:border-field-border-focus"
         />
       </label>
 
@@ -176,13 +176,13 @@ function TunerPanel() {
         const changed = group.tokens.filter((t) => t.id in mine).length;
         return (
           <details key={group.label} open={q ? true : undefined} className="group/section">
-            <summary className="flex cursor-pointer list-none items-center justify-between border-b border-border pb-1.5 text-[12px] text-muted-foreground [&::-webkit-details-marker]:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between border-b border-border pb-2 text-[12px] text-muted-foreground [&::-webkit-details-marker]:hidden">
               <span>
                 {group.label} <span className="tabular opacity-70">{group.tokens.length}</span>
               </span>
               {changed > 0 && <span className="text-foreground">{changed} changed</span>}
             </summary>
-            <div className="flex flex-col gap-2 pt-2.5">
+            <div className="flex flex-col gap-2 pt-2">
               {tokens.map((t) => (
                 <ColorRow
                   key={t.id}
@@ -200,12 +200,12 @@ function TunerPanel() {
         );
       })}
 
-      <div className="flex items-center gap-2 border-t border-border pt-3">
+      <div className="flex items-center gap-2 border-t border-border pt-2">
         <button
           type="button"
           onClick={resetTunerAll}
           disabled={changedCount === 0}
-          className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg border border-border px-3 py-2 text-[13px] text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-border px-2 py-2 text-[13px] text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
         >
           <RotateCcw size={15} strokeWidth={1.8} />
           Reset all
@@ -213,7 +213,7 @@ function TunerPanel() {
         <button
           type="button"
           onClick={copy}
-          className="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-[13px] text-primary-foreground transition-colors hover:bg-primary-hover"
+          className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-2 py-2 text-[13px] text-primary-foreground transition-colors hover:bg-primary-hover"
         >
           <Copy size={15} strokeWidth={1.8} />
           Copy CSS
@@ -252,26 +252,26 @@ function ColorRow({
   const withAlpha = (a: number) => (a >= 1 ? base : base + Math.round(a * 255).toString(16).padStart(2, "0"));
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex items-center justify-between gap-3">
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-2">
         <button
           type="button"
           onClick={onLocate}
           title="Show where this is used on the page"
-          className="flex min-w-0 cursor-pointer flex-col rounded-md text-left outline-none transition-colors hover:bg-muted/60 focus-visible:ring-1 focus-visible:ring-ring"
+          className="flex min-w-0 cursor-pointer flex-col rounded-lg text-left outline-none transition-colors hover:bg-muted/60 focus-visible:ring-1 focus-visible:ring-ring"
         >
           <span className={cn("truncate text-[12.5px]", changed ? "text-foreground" : "text-muted-foreground")}>{label}</span>
           <span className="flex items-center gap-1 truncate text-[11px] text-muted-foreground/70">
             <Crosshair size={10} strokeWidth={1.8} aria-hidden="true" />--{token}
           </span>
         </button>
-        <span className="flex shrink-0 items-center gap-1.5">
+        <span className="flex shrink-0 items-center gap-2">
           {changed && (
             <button
               type="button"
               onClick={onReset}
               aria-label={`Reset ${label}`}
-              className="flex size-6 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="flex size-5 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               <RotateCcw size={13} strokeWidth={1.8} aria-hidden="true" />
             </button>
@@ -289,7 +289,7 @@ function ColorRow({
             }}
             onBlur={() => setDraft(null)}
             className={cn(
-              "tabular h-7 rounded-md border border-field-border bg-field px-1.5 text-[12px] text-foreground outline-none focus:border-field-border-focus",
+              "tabular h-6 rounded-lg border border-field-border bg-field px-2 text-[12px] text-foreground outline-none focus:border-field-border-focus",
               seeThrough ? "w-[84px]" : "w-[76px]",
             )}
           />
@@ -301,7 +301,7 @@ function ColorRow({
               setDraft(null);
               onChange(e.target.value + value.slice(7));
             }}
-            className="size-7 shrink-0 cursor-pointer rounded-lg border border-border bg-transparent p-0.5"
+            className="size-6 shrink-0 cursor-pointer rounded-lg border border-border bg-transparent p-0.5"
           />
         </span>
       </div>
@@ -317,7 +317,7 @@ function ColorRow({
             aria-label={`${label} opacity`}
             className="h-1.5 flex-1 cursor-pointer accent-[var(--primary)]"
           />
-          <span className="tabular w-8 text-right">{Math.round(alpha * 100)}%</span>
+          <span className="tabular w-7 text-right">{Math.round(alpha * 100)}%</span>
         </label>
       )}
     </div>

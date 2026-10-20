@@ -39,11 +39,11 @@ export default function StandingOrdersPage() {
       <li key={si.id}>
         <Link
           href={`/payments/standing/${si.id}`}
-          className="flex w-full items-center gap-4 rounded-xl px-3 py-4 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-4"
+          className="flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3"
         >
           <span
             className={cn(
-              "flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted",
+              "flex size-8 shrink-0 items-center justify-center rounded-xl bg-muted",
               isPaused ? "text-muted-foreground" : "text-foreground",
             )}
           >
@@ -87,7 +87,7 @@ export default function StandingOrdersPage() {
           description="Automate rent, susu, airtime, data or savings transfers."
           action={
             <Button nativeButton={false} render={<Link href="/payments/standing/new" />}>
-              <Plus size={14} strokeWidth={2} className="mr-1.5" />
+              <Plus size={14} strokeWidth={2} className="mr-2" />
               Create First Standing Order
             </Button>
           }
@@ -104,8 +104,8 @@ export default function StandingOrdersPage() {
           </section>
 
           {active.length > 0 && (
-            <section className="flex flex-col gap-4">
-              <div className="flex min-h-8 items-center px-1">
+            <section className="flex flex-col gap-3">
+              <div className="flex min-h-7 items-center px-1">
                 <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">Coming up</h2>
               </div>
               <ul className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">
@@ -115,8 +115,8 @@ export default function StandingOrdersPage() {
           )}
 
           {paused.length > 0 && (
-            <section className="flex flex-col gap-4">
-              <div className="flex min-h-8 items-center px-1">
+            <section className="flex flex-col gap-3">
+              <div className="flex min-h-7 items-center px-1">
                 <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">Paused</h2>
               </div>
               <ul className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">

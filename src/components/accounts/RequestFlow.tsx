@@ -282,12 +282,12 @@ export default function RequestFlow({ account }: { account: Account }) {
   const title = !kind ? "What would you like to request?" : phase === "review" ? "Review your request" : KIND_META[kind].title;
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
       <PageHeader title={title} backTo={{ href: backToAccount, label: account.name, onClick: handleBack }} />
 
       {/* ── Chooser ── */}
       {!kind && (
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col gap-3">
           {(Object.keys(KIND_META) as RequestKind[]).map((k) => {
             const disabled = k === "cheque-book" && !chequesAllowed;
             return (
@@ -306,7 +306,7 @@ export default function RequestFlow({ account }: { account: Account }) {
 
       {/* ── Details: each field appears once the one before it is answered ── */}
       {kind && phase === "details" && (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-5">
           {kind === "statement" && (
             <>
               <Field label="Period">
@@ -318,7 +318,7 @@ export default function RequestFlow({ account }: { account: Account }) {
                 />
               </Field>
               {period === "custom" && (
-                <div className="grid grid-cols-2 gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+                <div className="grid grid-cols-2 gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
                   <Field label="From">
                     <Input
                       type="date"
@@ -375,7 +375,7 @@ export default function RequestFlow({ account }: { account: Account }) {
               </Field>
             )}
             {leaves && (
-              <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+              <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
                 <DeliveryModeFields
                   value={chequeDelivery}
                   onChange={(patch) => setChequeDelivery((d) => ({ ...d, ...patch }))}
@@ -426,11 +426,11 @@ export default function RequestFlow({ account }: { account: Account }) {
 
       {/* ── Review — same cards as the Send & Pay review ── */}
       {kind && phase === "review" && summary && (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-          <div className="flex w-full flex-col gap-3">
-            <div className="flex w-full flex-col divide-y divide-border/60 overflow-hidden rounded-[15.75px] border border-border bg-card shadow-xs">
+        <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+          <div className="flex w-full flex-col gap-2">
+            <div className="flex w-full flex-col divide-y divide-border/60 overflow-hidden rounded-2xl border border-border bg-card shadow-xs">
               {[["Request", KIND_META[kind].title] as [string, string], ...summary.rows].map(([label, value]) => (
-                <div key={label} className="flex w-full items-center justify-between gap-4 px-4 py-3">
+                <div key={label} className="flex w-full items-center justify-between gap-3 px-3 py-2">
                   <span className="shrink-0 text-[13.5px] text-muted-foreground">{label}</span>
                   <span className="min-w-0 truncate text-right text-[13.5px] text-foreground tabular">{value}</span>
                 </div>
@@ -439,7 +439,7 @@ export default function RequestFlow({ account }: { account: Account }) {
 
             <div className="my-1 w-full border-t border-border/70" />
 
-            <div className="flex w-full items-center justify-between overflow-hidden rounded-[15.75px] border border-border bg-muted/40 px-4 py-3.5 shadow-xs dark:bg-muted/20">
+            <div className="flex w-full items-center justify-between overflow-hidden rounded-2xl border border-border bg-muted/40 px-3 py-3 shadow-xs dark:bg-muted/20">
               <span className="text-[13.5px] text-foreground">Fee</span>
               <span className="text-[26px] tracking-[var(--ls-display)] text-foreground tabular sm:text-[28px]">
                 {formatMoney(summary.fee, "GHS", true)}
@@ -447,23 +447,23 @@ export default function RequestFlow({ account }: { account: Account }) {
             </div>
           </div>
 
-          <p className="-mt-1 px-4 text-center text-[12px] text-muted-foreground">
+          <p className="-mt-1 px-3 text-center text-[12px] text-muted-foreground">
             Clicking “Submit request” authorises GCB Bank PLC to charge the fee to {account.name} ∗∗ {last4}.
           </p>
 
-          <div className="flex w-full items-center gap-4 pt-1">
+          <div className="flex w-full items-center gap-3 pt-1">
             <Button
               type="button"
               variant="outline"
               onClick={() => setPhase("details")}
-              className="h-11 flex-1 rounded-lg border-border text-[14px]"
+              className="h-10 flex-1 rounded-lg border-border text-[14px]"
             >
               Back
             </Button>
             <Button
               type="button"
               onClick={() => setPinOpen(true)}
-              className="h-11 flex-1 rounded-lg bg-primary text-[14px] text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+              className="h-10 flex-1 rounded-lg bg-primary text-[14px] text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
             >
               Submit request
             </Button>
@@ -530,7 +530,7 @@ function FlowSelect({
       <SelectContent>
         {options.map((o) => (
           <SelectItem key={o.id} value={o.id} label={o.name}>
-            <div className="flex w-full items-center justify-between gap-4 py-0.5">
+            <div className="flex w-full items-center justify-between gap-3 py-0.5">
               <div className="flex flex-col text-left">
                 <span className="font-medium text-foreground">{o.name}</span>
                 {o.description && (
@@ -603,9 +603,9 @@ function Stepper({
   label: string;
 }) {
   const btn =
-    "flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-xl text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent";
+    "flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-xl text-foreground transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent";
   return (
-    <div className="flex h-13 w-full items-center justify-between rounded-2xl border border-field-border bg-field px-2">
+    <div className="flex h-11 w-full items-center justify-between rounded-2xl border border-field-border bg-field px-2">
       <button
         type="button"
         onClick={() => onChange(Math.max(min, value - 1))}

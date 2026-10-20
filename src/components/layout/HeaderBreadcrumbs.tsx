@@ -112,9 +112,9 @@ function BreadcrumbView({ list }: { list: Crumb[] }) {
   if (list.length === 0) return null;
 
   return (
-    <nav aria-label="Breadcrumbs" className="hidden sm:flex items-center gap-1.5 text-[13px] leading-none min-w-0">
+    <nav aria-label="Breadcrumbs" className="hidden sm:flex items-center gap-2 text-[13px] leading-none min-w-0">
       {list.map((crumb, idx) => (
-        <div key={crumb.href || crumb.label} className="flex items-center gap-1.5">
+        <div key={crumb.href || crumb.label} className="flex items-center gap-2">
           {idx > 0 && (
             <ChevronRight
               size={13}

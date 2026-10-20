@@ -115,8 +115,8 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
       {/* ── Returned for clarification — WARNING tone, recoverable.
              Compare with the destructive treatment of a rejection below. ── */}
       {state === "returned-for-clarification" && (
-        <div className="rounded-2xl border border-warning/40 bg-warning/5 p-5">
-          <div className="flex items-start gap-3">
+        <div className="rounded-2xl border border-warning/40 bg-warning/5 p-4">
+          <div className="flex items-start gap-2">
             <MessageSquareWarning
               size={18}
               strokeWidth={1.8}
@@ -130,17 +130,17 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                 </p>
                 <Badge variant="warning">Awaiting response</Badge>
               </div>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-foreground/90">
+              <p className="mt-2 text-[13px] leading-relaxed text-foreground/90">
                 This request is still live. {item.submittedBy} has been asked to respond and will
                 resubmit as v{TRADE_VERSIONS.length + 1}, which you&apos;ll be able to compare against
                 v{currentVersion.version}.
               </p>
               {clarificationNote && (
-                <blockquote className="mt-3 rounded-lg border-l-2 border-warning/50 bg-background/60 px-3.5 py-2.5 text-[13px] text-foreground">
+                <blockquote className="mt-2 rounded-lg border-l-2 border-warning/50 bg-background/60 px-3 py-2 text-[13px] text-foreground">
                   {clarificationNote}
                 </blockquote>
               )}
-              <p className="mt-3 text-[12.5px] text-muted-foreground">
+              <p className="mt-2 text-[12.5px] text-muted-foreground">
                 This is not a rejection — nothing has been cancelled and no new request is needed.
               </p>
             </div>
@@ -151,7 +151,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
       {/* Transient decision confirmation */}
       {state === "decision-submitted" && (
         <div
-          className={`flex items-start gap-3 rounded-2xl border p-5 ${
+          className={`flex items-start gap-2 rounded-2xl border p-4 ${
             outcome === "rejected"
               ? "border-destructive/30 bg-destructive/5"
               : "border-success/30 bg-success/5"
@@ -176,7 +176,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                 ? "This request is closed. A new request is required to proceed."
                 : "The request moves to bank operations for processing."}
             </p>
-            <p className="mt-1.5 flex items-center gap-1.5 text-[13px] text-muted-foreground">
+            <p className="mt-2 flex items-center gap-2 text-[13px] text-muted-foreground">
               <AppLoader size={13} />
               Returning you to the queue…
             </p>
@@ -186,7 +186,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
 
       {/* Documents missing — blocks the decision (13.5) */}
       {state === "documents-incomplete" && (
-        <div className="flex items-start gap-3 rounded-2xl border border-warning/40 bg-warning/5 p-5">
+        <div className="flex items-start gap-2 rounded-2xl border border-warning/40 bg-warning/5 p-4">
           <FileWarning
             size={17}
             strokeWidth={1.8}
@@ -197,7 +197,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             <p className="text-[14px] text-warning-text">
               {missingDocs.length} required document{missingDocs.length === 1 ? "" : "s"} not attached
             </p>
-            <p className="mt-1.5 text-[13px] leading-relaxed text-foreground/90">
+            <p className="mt-2 text-[13px] leading-relaxed text-foreground/90">
               You can&apos;t approve this request until{" "}
               {missingDocs.map((d) => d.name).join(", ")} {missingDocs.length === 1 ? "is" : "are"}{" "}
               provided. Return it for clarification to ask the submitter for the missing paperwork.
@@ -207,14 +207,14 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
       )}
 
       {/* Trade summary */}
-      <section className="rounded-2xl border border-border bg-card p-5">
-        <div className="border-b border-border pb-5">
+      <section className="rounded-2xl border border-border bg-card p-4">
+        <div className="border-b border-border pb-4">
           <span className="text-[12px] text-muted-foreground">Trade value</span>
-          <p className="mt-1.5 text-[28px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
+          <p className="mt-2 text-[28px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
             {formatMoney(item.amount, item.currency)}
           </p>
         </div>
-        <dl className="grid grid-cols-1 gap-x-8 gap-y-4 pt-5 sm:grid-cols-2">
+        <dl className="grid grid-cols-1 gap-x-6 gap-y-3 pt-4 sm:grid-cols-2">
           <Fact label="Reference" value={item.reference} mono />
           <Fact label="Counterparty" value={item.counterparty} />
           <Fact label="Instrument" value={item.description} />
@@ -227,7 +227,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
       {/* ── Version comparison — a real field-level diff, per 13.5 ── */}
       {state === "version-comparison" ? (
         <section className="rounded-2xl border border-border bg-card">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
             <div className="flex items-center gap-2">
               <GitCompare size={16} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
               <h2 className="text-[15px] text-foreground">
@@ -239,7 +239,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             </Button>
           </div>
 
-          <div className="grid grid-cols-[1fr_auto_1fr] gap-x-4 border-b border-border bg-muted/30 px-5 py-2.5 text-[11px] uppercase tracking-wider text-muted-foreground">
+          <div className="grid grid-cols-[1fr_auto_1fr] gap-x-3 border-b border-border bg-muted/30 px-4 py-2 text-[11px] uppercase tracking-wider text-muted-foreground">
             <span>v{previousVersion.version} — {previousVersion.submittedAt}</span>
             <span />
             <span>v{currentVersion.version} — {currentVersion.submittedAt}</span>
@@ -249,10 +249,10 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             {VERSION_DIFF.map((row) => (
               <li
                 key={row.field}
-                className={`px-5 py-3 ${row.changed ? "bg-warning/5" : ""}`}
+                className={`px-4 py-2 ${row.changed ? "bg-warning/5" : ""}`}
               >
-                <p className="mb-1.5 text-[12px] text-muted-foreground">{row.field}</p>
-                <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-4">
+                <p className="mb-2 text-[12px] text-muted-foreground">{row.field}</p>
+                <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-x-3">
                   <span
                     className={`text-[13px] tabular ${
                       row.changed
@@ -280,7 +280,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
             ))}
           </ul>
 
-          <p className="border-t border-border px-5 py-3 text-[12.5px] text-muted-foreground">
+          <p className="border-t border-border px-4 py-2 text-[12.5px] text-muted-foreground">
             {VERSION_DIFF.filter((r) => r.changed).length} of {VERSION_DIFF.length} fields changed
             between these versions.
           </p>
@@ -288,7 +288,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
       ) : (
         /* ── Document viewer — present in the default awaiting-decision state ── */
         <section className="rounded-2xl border border-border bg-card">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
             <h2 className="text-[15px] text-foreground">Documents</h2>
             <Button variant="outline" size="sm" onClick={() => setState("version-comparison")}>
               <GitCompare size={14} strokeWidth={1.9} aria-hidden="true" />
@@ -308,7 +308,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
                       type="button"
                       onClick={() => !isMissing && setActiveDoc(d.id)}
                       disabled={isMissing}
-                      className={`flex w-full items-center gap-2.5 px-4 py-3 text-left transition-colors ${
+                      className={`flex w-full items-center gap-2 px-3 py-2 text-left transition-colors ${
                         isActive && !isMissing ? "bg-[var(--active-bg)]" : "hover:bg-muted/50"
                       } ${isMissing ? "cursor-not-allowed opacity-60" : ""}`}
                     >
@@ -332,7 +332,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
 
             {/* Viewer pane */}
             <div className="flex min-h-[320px] flex-col">
-              <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-3">
+              <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-2">
                 <div className="min-w-0">
                   <p className="truncate text-[13.5px] text-foreground">{doc.name}</p>
                   <p className="text-[12px] text-muted-foreground tabular">
@@ -345,16 +345,16 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
               </div>
 
               {/* Document surface stand-in */}
-              <div className="flex flex-1 items-center justify-center bg-muted/30 p-6">
-                <div className="flex aspect-[1/1.294] w-full max-w-[260px] flex-col gap-2 rounded-lg border border-border bg-background p-5 shadow-sm">
-                  <div className="h-2 w-1/2 rounded bg-muted" />
-                  <div className="h-2 w-3/4 rounded bg-muted" />
-                  <div className="mt-3 h-2 w-full rounded bg-muted" />
-                  <div className="h-2 w-full rounded bg-muted" />
-                  <div className="h-2 w-2/3 rounded bg-muted" />
+              <div className="flex flex-1 items-center justify-center bg-muted/30 p-5">
+                <div className="flex aspect-[1/1.294] w-full max-w-[260px] flex-col gap-2 rounded-lg border border-border bg-background p-4 shadow-sm">
+                  <div className="h-1.5 w-1/2 rounded-sm bg-muted" />
+                  <div className="h-1.5 w-3/4 rounded-sm bg-muted" />
+                  <div className="mt-2 h-1.5 w-full rounded-sm bg-muted" />
+                  <div className="h-1.5 w-full rounded-sm bg-muted" />
+                  <div className="h-1.5 w-2/3 rounded-sm bg-muted" />
                   <div className="mt-auto flex items-center justify-between">
-                    <div className="h-2 w-1/3 rounded bg-muted" />
-                    <div className="h-6 w-6 rounded-full bg-muted" />
+                    <div className="h-1.5 w-1/3 rounded-sm bg-muted" />
+                    <div className="h-5 w-5 rounded-full bg-muted" />
                   </div>
                 </div>
               </div>

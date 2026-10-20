@@ -52,7 +52,7 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
   if (!hydrated) return <FormPageSkeleton fields={2} />;
   if (!d || d.status !== "active") {
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <PageHeader title={title} backTo={{ href: INVEST_HOME, label: "Invest" }} />
         <TrueEmptyState
           icon={<XCircle size={22} strokeWidth={1.8} />}
@@ -125,9 +125,9 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader title={title} backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6 animate-in fade-in duration-200">
+      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5 animate-in fade-in duration-200">
         <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
           {whole
             ? `You’re taking all ${money(d.principal)} out of this deposit and closing it. It would have matured on ${formatDate(d.maturity)}.`
@@ -150,18 +150,18 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
         )}
 
         {valid && (
-          <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200">
-            <section className="flex flex-col gap-1.5 px-1">
+          <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200">
+            <section className="flex flex-col gap-2 px-1">
               <span className="text-[13px] text-muted-foreground">You receive today</span>
               <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(cost.receive)}</span>
             </section>
-            <dl className="flex flex-col gap-3 px-1 text-[14px]">
-              <div className="flex items-baseline justify-between gap-6">
+            <dl className="flex flex-col gap-2 px-1 text-[14px]">
+              <div className="flex items-baseline justify-between gap-5">
                 <dt className="text-muted-foreground">Interest you give up</dt>
                 <dd className="tabular text-right text-foreground">{money(cost.interestGivenUp)}</dd>
               </div>
               {!whole && (
-                <div className="flex items-baseline justify-between gap-6">
+                <div className="flex items-baseline justify-between gap-5">
                   <dt className="text-muted-foreground">Stays in the deposit</dt>
                   <dd className="tabular text-right text-foreground">{money(cost.remaining)}</dd>
                 </div>
@@ -172,7 +172,7 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
 
         <div>
           <ProceedButton disabled={!valid} onClick={() => setAuthOpen(true)} />
-          {valid && <p className="px-1 pt-3 text-center text-[12px] text-muted-foreground">Once it’s paid out, this can’t be undone.</p>}
+          {valid && <p className="px-1 pt-2 text-center text-[12px] text-muted-foreground">Once it’s paid out, this can’t be undone.</p>}
         </div>
       </div>
 

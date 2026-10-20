@@ -35,7 +35,10 @@ interface Props {
   onOpenChange: (open: boolean) => void;
   onConfirm: (payload: { note: string; documents: string[] }) => void;
   reference: string;
-  nextVersion: number;
+  nextVersion?: number;
+  items?: Array<{ id: string; name: string; status?: string }>;
+  itemLabel?: string;
+  subheading?: string;
 }
 
 export default function ReturnForClarificationDialog({
@@ -43,7 +46,10 @@ export default function ReturnForClarificationDialog({
   onOpenChange,
   onConfirm,
   reference,
-  nextVersion,
+  nextVersion = 2,
+  items,
+  itemLabel = "Flag Specific Documents",
+  subheading,
 }: Props) {
   const [note, setNote] = useState("");
   const [flagged, setFlagged] = useState<string[]>([]);
@@ -66,11 +72,10 @@ export default function ReturnForClarificationDialog({
 
         <DialogBody>
           <p className="text-[13px] text-muted-foreground leading-relaxed">
-            This keeps {reference} alive. The submitter answers your questions and resubmits as v
-            {nextVersion}, and you&apos;ll be able to compare it against the current version.
+            {subheading || `This keeps ${reference} alive. The submitter answers your questions and resubmits, and the rest of the application is kept.`}
           </p>
 
-          <div className="flex flex-col gap-4 pt-1">
+          <div className="flex flex-col gap-3 pt-1">
             <Field label="What needs clarifying?" htmlFor="clarify-note">
               <Textarea
                 id="clarify-note"
@@ -84,15 +89,15 @@ export default function ReturnForClarificationDialog({
                   ? "At least 10 characters required."
                   : `${note.trim().length} characters`}
               </p>
-</Field>
+            </Field>
 
-            {/* Document-level flagging — has no equivalent in rejection */}
-            <Field label="Flag Specific Documents" optional>
-              <div className="flex flex-col gap-1.5 rounded-xl border border-border p-3">
-                {TRADE_DOCUMENTS.map((doc) => (
+            {/* Item-level flagging */}
+            <Field label={itemLabel} optional>
+              <div className="flex flex-col gap-2 rounded-xl border border-border p-2">
+                {(items || TRADE_DOCUMENTS).map((doc) => (
                   <label
                     key={doc.id}
-                    className="flex cursor-pointer items-center gap-2.5 rounded-lg px-1.5 py-1 text-[13px] text-foreground hover:bg-muted/50"
+                    className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-[13px] text-foreground hover:bg-muted/50"
                   >
                     <Checkbox
                       checked={flagged.includes(doc.id)}

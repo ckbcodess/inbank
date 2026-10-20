@@ -73,7 +73,7 @@ function GrainSwitch({ value, onChange }: { value: Grain; onChange: (next: Grain
           type="button"
           onClick={() => onChange(grain)}
           aria-pressed={value === grain}
-          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition cursor-pointer ${
+          className={`flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] transition cursor-pointer ${
             value === grain
               ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
               : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -98,10 +98,10 @@ function FlowTotal({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <span className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+      <span className="flex items-center gap-2 text-[12px] text-muted-foreground">
         <span
           aria-hidden="true"
-          className="size-2 shrink-0 rounded-[2px]"
+          className="size-1.5 shrink-0 rounded-[2px]"
           style={{ backgroundColor: color }}
         />
         {label}
@@ -139,9 +139,9 @@ export function InsightsSection({ profileKind }: { profileKind: ProfileKind }) {
   const hasFlow = totals.income > 0 || totals.expense > 0;
 
   return (
-    <section className="flex flex-col gap-3">
+    <section className="flex flex-col gap-2">
       {/* One filter row, above everything it scopes. */}
-      <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <h2 className="text-[15px] text-foreground">Where your money goes</h2>
           {/* Say out loud how the figures are built. A reader who adds up the
@@ -175,13 +175,13 @@ export function InsightsSection({ profileKind }: { profileKind: ProfileKind }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-        <div className="rounded-2xl border border-border bg-card p-5 lg:col-span-2">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="rounded-2xl border border-border bg-card p-4 lg:col-span-2">
           {!hasFlow ? (
             // A dormant account genuinely has nothing to plot. Say so, rather
             // than drawing twelve empty bars and letting the reader wonder
             // whether the chart is broken.
-            <div className="flex h-full min-h-[300px] flex-col items-center justify-center gap-1.5 text-center">
+            <div className="flex h-full min-h-[300px] flex-col items-center justify-center gap-2 text-center">
               <p className="text-[13px] text-foreground">No money moved in this period</p>
               <p className="max-w-xs text-[12px] text-muted-foreground">
                 {scopeLabel} has no settled transactions across {grainCaption(grain).toLowerCase()}.
@@ -190,8 +190,8 @@ export function InsightsSection({ profileKind }: { profileKind: ProfileKind }) {
             </div>
           ) : (
           <>
-          <div className="flex flex-wrap items-start justify-between gap-x-8 gap-y-3">
-            <div className="flex flex-wrap gap-x-8 gap-y-3">
+          <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-2">
+            <div className="flex flex-wrap gap-x-6 gap-y-2">
               <FlowTotal
                 label={CASHFLOW_CONFIG.income.label}
                 value={exactMoney(totals.income, showAmounts)}
@@ -211,7 +211,7 @@ export function InsightsSection({ profileKind }: { profileKind: ProfileKind }) {
             </div>
 
             {totals.expenseChange !== null && (
-              <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+              <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
                 <TrendIcon size={14} strokeWidth={1.9} aria-hidden="true" />
                 <span>
                   Spending {formatSignedPercent(totals.expenseChange)} vs{" "}
@@ -221,19 +221,19 @@ export function InsightsSection({ profileKind }: { profileKind: ProfileKind }) {
             )}
           </div>
 
-          <div className="mt-4">
+          <div className="mt-3">
             <CashflowChart data={series} />
           </div>
           </>
           )}
         </div>
 
-        <div className="rounded-2xl border border-border bg-card p-5">
-          <div className="flex items-center justify-between gap-3">
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <div className="flex items-center justify-between gap-2">
             <h3 className="text-[14px] text-foreground">Spending by category</h3>
             <PieChart size={15} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
           </div>
-          <div className="mt-4">
+          <div className="mt-3">
             <SpendByCategory slices={slices} />
           </div>
         </div>

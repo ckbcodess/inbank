@@ -94,8 +94,8 @@ export function AccountExpensesView({
   };
 
   return (
-    <div className="flex flex-col gap-8 sm:gap-10">
-      <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+    <div className="flex flex-col gap-6 sm:gap-10">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         <ViewTabs value={view} onChange={changeView} />
         <PeriodMenu value={period} onChange={changePeriod} />
       </div>
@@ -128,8 +128,8 @@ export function AccountExpensesView({
       )}
 
       {state === "populated" && !isEmpty && (
-          <section className="grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-12">
-            <div className="flex flex-col items-center gap-5">
+          <section className="grid grid-cols-1 items-center gap-6 md:grid-cols-2 md:gap-10">
+            <div className="flex flex-col items-center gap-4">
               <Donut slices={data.slices} selected={selected}>
                 <span className="max-w-[160px] truncate text-[14px] text-muted-foreground">
                   {activeSlice ? activeSlice.category : "You’ve spent"}
@@ -153,7 +153,7 @@ export function AccountExpensesView({
               />
             </div>
 
-            <div className="flex flex-col gap-4 md:gap-6">
+            <div className="flex flex-col gap-3 md:gap-5">
               {/* Same weight as the section headings on Accounts ("Sources of Funds"). */}
               <h2 className="px-2 text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">
                 {BREAKDOWN_LABEL[view]}
@@ -171,7 +171,7 @@ export function AccountExpensesView({
                         aria-expanded={expandable ? isActive : undefined}
                         onClick={() => setSelected(isActive ? null : s.category)}
                         className={cn(
-                          "flex w-full items-center gap-3 rounded-lg p-2.5 text-left transition-colors cursor-pointer",
+                          "flex w-full items-center gap-2 rounded-lg p-2 text-left transition-colors cursor-pointer",
                           isActive ? "bg-muted" : "hover:bg-muted/50",
                           selected && !isActive && "opacity-55",
                         )}
@@ -216,10 +216,10 @@ export function AccountExpensesView({
                       {expandable && isActive && (
                         <ul
                           aria-label={`${s.category} breakdown`}
-                          className="ml-[23px] mt-1 flex flex-col border-l border-border pl-3 animate-in fade-in slide-in-from-top-1 duration-200"
+                          className="ml-[23px] mt-1 flex flex-col border-l border-border pl-2 animate-in fade-in slide-in-from-top-1 duration-200"
                         >
                           {breakdown.map((b) => (
-                            <li key={b.category} className="flex items-center gap-3 px-2 py-2">
+                            <li key={b.category} className="flex items-center gap-2 px-2 py-2">
                               <span className="flex min-w-0 flex-1 items-baseline gap-2">
                                 <span className="truncate text-[14px] text-foreground">{b.category}</span>
                                 <span className="shrink-0 text-[12.5px] text-muted-foreground tabular">
@@ -258,7 +258,7 @@ function ViewTabs({ value, onChange }: { value: ExpenseView; onChange: (v: Expen
             aria-pressed={isActive}
             onClick={() => onChange(v)}
             className={cn(
-              "whitespace-nowrap rounded-lg px-3.5 py-1.5 text-[13px] transition-colors cursor-pointer",
+              "whitespace-nowrap rounded-lg px-3 py-2 text-[13px] transition-colors cursor-pointer",
               isActive ? "bg-chip-selected text-chip-selected-foreground shadow-xs" : "text-chip-foreground hover:text-chip-selected-foreground",
             )}
           >
@@ -275,14 +275,14 @@ function PeriodMenu({ value, onChange }: { value: ExpensePeriod; onChange: (p: E
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant="outline" className="h-9 gap-1.5 rounded-lg px-3 text-[13.5px]">
+          <Button variant="outline" className="h-8 gap-2 rounded-lg px-2 text-[13.5px]">
             <Calendar size={15} strokeWidth={1.8} className="text-muted-foreground" />
             <span className="tabular">{`Last ${EXPENSE_PERIOD_LABEL[value]}`}</span>
             <ChevronDown size={15} strokeWidth={1.8} className="text-muted-foreground" />
           </Button>
         }
       />
-      <DropdownMenuContent align="start" className="w-44">
+      <DropdownMenuContent align="start" className="w-38">
         {EXPENSE_PERIODS.map((p) => (
           <DropdownMenuItem
             key={p}

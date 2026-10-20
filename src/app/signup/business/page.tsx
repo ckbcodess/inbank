@@ -64,6 +64,8 @@ import { displayGhanaMobile, isCompleteGhanaMobile } from "@/lib/phone";
 
 import { Field } from "@/components/ui/field";
 import { isCompleteGhanaCard } from "@/lib/ghana-card";
+import { ReviewSection, Row } from "@/components/auth/BusinessFormShared";
+
 const EMPTY_COMPANY: CompanyDetails = { name: "", tin: "", businessType: BUSINESS_TYPES[0] };
 const EMPTY_CONTACT: PrimaryContact = { name: "", role: SIGNATORY_ROLES[0], ghanaCard: "", mobile: "", email: "" };
 
@@ -72,7 +74,7 @@ function newSignatoryId() {
 }
 
 export default function BusinessSignupPage() {
-  const [step, setStep] = useState<BusinessSignupStep>("company");
+  const [step, setStep] = useState<BusinessSignupStep>("choice");
   const [variant, setVariant] = useState<BusinessSignupVariant>("default");
   const [busy, setBusy] = useState(false);
 
@@ -164,6 +166,8 @@ export default function BusinessSignupPage() {
       setStep("contact");
     } else if (step === "contact") {
       setStep("company");
+    } else if (step === "company") {
+      setStep("choice");
     }
   }
 
@@ -186,13 +190,13 @@ export default function BusinessSignupPage() {
         title={headings.title}
         description={headings.description}
         align={step === "submitted" || variant === "existingCustomer" ? "center" : "left"}
-        onBack={step !== "submitted" && step !== "company" ? handleBackStep : undefined}
-        backHref={step === "company" && variant !== "existingCustomer" ? "/login" : undefined}
-        backLabel={step === "company" ? "Back to login" : "Back to previous step"}
+        onBack={step !== "submitted" && step !== "choice" ? handleBackStep : undefined}
+        backHref={step === "choice" ? "/login" : undefined}
+        backLabel={step === "choice" ? "Back to login" : "Back to previous step"}
         width="wide"
         footer={
-          step === "company" && variant !== "existingCustomer" ? (
-            <div className="mt-5 text-center">
+          step === "choice" || (step === "company" && variant !== "existingCustomer") ? (
+            <div className="mt-4 text-center">
               <p className="text-[13px] text-muted-foreground">
                 Already have an account?{" "}
                 <Link
@@ -206,10 +210,10 @@ export default function BusinessSignupPage() {
           ) : null
         }
       >
-        {step !== "submitted" && (
-          <ol className="mb-5 flex items-center gap-1.5">
+        {step !== "submitted" && step !== "choice" && (
+          <ol className="mb-4 flex items-center gap-2">
             {["Company", "Contact", "Signatories", "Documents", "Review"].map((label, i) => (
-              <li key={label} className="flex flex-1 flex-col items-center gap-1.5">
+              <li key={label} className="flex flex-1 flex-col items-center gap-2">
                 <span
                   className={`h-1 w-full rounded-full ${
                     i <= stepIndex ? "bg-primary" : "bg-muted"
@@ -222,9 +226,69 @@ export default function BusinessSignupPage() {
           </ol>
         )}
 
+        {/* ── Choice (Entry Point) ─────────────────────────────────────────── */}
+        {step === "choice" && (
+          <div className="flex flex-col gap-3">
+            <Link
+              href="/signup/business/enrol"
+              className="group flex flex-col gap-2 rounded-2xl border border-border bg-card p-4 transition-all duration-hover ease-settle hover:border-foreground/30 hover:bg-muted/40 cursor-pointer"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex size-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                    <Building2 size={18} strokeWidth={1.9} />
+                  </span>
+                  <div>
+                    <p className="text-[14.5px] font-medium text-foreground">
+                      Set up internet banking
+                    </p>
+                    <p className="text-[12px] text-muted-foreground">
+                      Your company already banks with GCB
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[14px] text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all">
+                  &rarr;
+                </span>
+              </div>
+              <p className="text-[12.5px] leading-relaxed text-muted-foreground">
+                Enrol an existing company account for Corporate Internet Banking, define signing mandates, and download your wet-ink authorisation pack.
+              </p>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setStep("company")}
+              className="group flex flex-col gap-2 rounded-2xl border border-border bg-card p-4 text-left transition-all duration-hover ease-settle hover:border-foreground/30 hover:bg-muted/40 cursor-pointer"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex size-9 items-center justify-center rounded-xl bg-muted text-foreground">
+                    <UserPlus size={18} strokeWidth={1.9} />
+                  </span>
+                  <div>
+                    <p className="text-[14.5px] font-medium text-foreground">
+                      Open a business account
+                    </p>
+                    <p className="text-[12px] text-muted-foreground">
+                      New corporate relationship
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[14px] text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all">
+                  &rarr;
+                </span>
+              </div>
+              <p className="text-[12.5px] leading-relaxed text-muted-foreground">
+                Apply to establish a new corporate account with GCB with company incorporation documents, TIN registration, and authorized directors.
+              </p>
+            </button>
+          </div>
+        )}
+
         {/* ── Company ──────────────────────────────────────────────────────── */}
         {step === "company" && variant !== "existingCustomer" && (
-          <form onSubmit={handleCompanySubmit} className="flex flex-col gap-5">
+          <form onSubmit={handleCompanySubmit} className="flex flex-col gap-4">
             <Field label="Registered Business Name" htmlFor="companyName">
               <Input
                 id="companyName"
@@ -270,7 +334,7 @@ export default function BusinessSignupPage() {
               variant="default"
               size="lg"
               disabled={company.name.trim() === "" || company.tin.trim() === ""} loading={busy}
-              className="mt-2 h-11 w-full text-[14px]"
+              className="mt-2 h-10 w-full text-[14px]"
             >
               Proceed
             </Button>
@@ -278,25 +342,37 @@ export default function BusinessSignupPage() {
         )}
 
         {step === "company" && variant === "existingCustomer" && (
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4">
             <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-              {EXISTING_COMPANY_NAME} already banks with GCB, so a new application isn&apos;t
-              needed. Internet banking access for your company is granted by your Corporate Admin
-              from Administration — ask them to send you an invitation.
+              {EXISTING_COMPANY_NAME} already banks with GCB, so a new account application isn&apos;t
+              needed. If you need user access, ask your Corporate Admin to invite you from
+              Administration. If your company is ready to set up Corporate Internet Banking for
+              the first time, you can enrol now.
             </p>
-            <p className="text-[12.5px] text-muted-foreground">
+            <div className="flex flex-col gap-2 pt-2">
+              <Button
+                variant="default"
+                size="lg"
+                nativeButton={false}
+                render={<Link href="/signup/business/enrol?account=100123456789" />}
+                className="h-10 w-full text-[14px]"
+              >
+                Set up internet banking
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                nativeButton={false}
+                render={<Link href="/login" />}
+                className="h-10 w-full text-[14px]"
+              >
+                Back to login
+              </Button>
+            </div>
+            <p className="text-[12px] text-muted-foreground">
               Not sure who that is, or think this is a mistake? Call us on{" "}
               <span className="tabular text-foreground">{SUPPORT_LINE}</span>.
             </p>
-            <Button
-              variant="default"
-              size="lg"
-              nativeButton={false}
-              render={<Link href="/login" />}
-              className="mt-2 h-11 w-full text-[14px]"
-            >
-              Back to login
-            </Button>
           </div>
         )}
 
@@ -307,7 +383,7 @@ export default function BusinessSignupPage() {
               e.preventDefault();
               setStep("signatories");
             }}
-            className="flex flex-col gap-5"
+            className="flex flex-col gap-4"
           >
             <p className="text-[12.5px] leading-relaxed text-muted-foreground">
               You — the person filling this in. Once we approve the application, we&apos;ll send
@@ -315,7 +391,7 @@ export default function BusinessSignupPage() {
               Corporate Admin.
             </p>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Full Name" htmlFor="contactName">
                 <Input
                   id="contactName"
@@ -352,7 +428,7 @@ export default function BusinessSignupPage() {
               />
 </Field>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Mobile Number" htmlFor="contactMobile">
                 <PhoneInput
                   id="contactMobile"
@@ -379,7 +455,7 @@ export default function BusinessSignupPage() {
               variant="default"
               size="lg"
               disabled={contact.name.trim() === "" || !isCompleteGhanaCard(contact.ghanaCard) || !isCompleteGhanaMobile(contact.mobile) || contact.email.trim() === ""}
-              className="mt-2 h-11 w-full text-[14px]"
+              className="mt-2 h-10 w-full text-[14px]"
             >
               Proceed
             </Button>
@@ -388,14 +464,14 @@ export default function BusinessSignupPage() {
 
         {/* ── Signatories ──────────────────────────────────────────────────── */}
         {step === "signatories" && (
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4">
             <p className="text-[12.5px] leading-relaxed text-muted-foreground">
               Anyone who can act for the company on this account — approve payments, view
               statements. Add as many as you need; you can always add more later from
               Administration.
             </p>
 
-            <label className="flex cursor-pointer items-start gap-3.5 rounded-2xl border border-border bg-card-item p-4 transition-colors hover:border-primary/40">
+            <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-card-item p-3 transition-colors hover:border-primary/40">
               <Checkbox
                 checked={contactIsSignatory}
                 onCheckedChange={(checked) => setContactIsSignatory(!!checked)}
@@ -412,8 +488,8 @@ export default function BusinessSignupPage() {
             </label>
 
             {signatories.map((sig) => (
-              <div key={sig.id} className="flex items-center gap-3.5 rounded-2xl border border-border bg-card-item p-4">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+              <div key={sig.id} className="flex items-center gap-3 rounded-2xl border border-border bg-card-item p-3">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
                   <Users size={18} strokeWidth={1.8} aria-hidden="true" />
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
@@ -426,7 +502,7 @@ export default function BusinessSignupPage() {
                   type="button"
                   onClick={() => setSignatories((prev) => prev.filter((s) => s.id !== sig.id))}
                   aria-label={`Remove ${sig.name || "this signatory"}`}
-                  className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive cursor-pointer"
+                  className="flex size-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive cursor-pointer"
                 >
                   <Trash2 size={16} strokeWidth={1.8} />
                 </button>
@@ -440,7 +516,7 @@ export default function BusinessSignupPage() {
               size="lg"
               onClick={() => setStep("documents")}
               disabled={effectiveSignatories.length === 0}
-              className="mt-2 h-11 w-full text-[14px]"
+              className="mt-2 h-10 w-full text-[14px]"
             >
               Proceed
             </Button>
@@ -454,7 +530,7 @@ export default function BusinessSignupPage() {
 
         {/* ── Documents ────────────────────────────────────────────────────── */}
         {step === "documents" && (
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4">
             <p className="text-[12.5px] leading-relaxed text-muted-foreground">
               Bank of Ghana requires all four before an application can be reviewed. PDF or a clear
               photo, up to 10MB each.
@@ -465,11 +541,11 @@ export default function BusinessSignupPage() {
               return (
                 <div
                   key={doc.id}
-                  className={`flex items-center gap-3.5 rounded-2xl border p-4 transition-colors ${
+                  className={`flex items-center gap-3 rounded-2xl border p-3 transition-colors ${
                     filename ? "border-primary/40 bg-primary/5" : "border-border bg-card-item"
                   }`}
                 >
-                  <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
                     {filename ? (
                       <Check size={18} strokeWidth={1.9} className="text-primary" aria-hidden="true" />
                     ) : (
@@ -496,9 +572,9 @@ export default function BusinessSignupPage() {
                     variant="outline"
                     size="sm"
                     onClick={() => fileInputs.current[doc.id]?.click()}
-                    className="shrink-0 h-9"
+                    className="shrink-0 h-8"
                   >
-                    <Paperclip size={14} strokeWidth={1.8} className="mr-1.5" aria-hidden="true" />
+                    <Paperclip size={14} strokeWidth={1.8} className="mr-2" aria-hidden="true" />
                     {filename ? "Replace" : "Attach"}
                   </Button>
                 </div>
@@ -510,7 +586,7 @@ export default function BusinessSignupPage() {
               size="lg"
               onClick={() => setStep("review")}
               disabled={!allDocsAttached}
-              className="mt-2 h-11 w-full text-[14px]"
+              className="mt-2 h-10 w-full text-[14px]"
             >
               Proceed
             </Button>
@@ -524,9 +600,9 @@ export default function BusinessSignupPage() {
 
         {/* ── Review ───────────────────────────────────────────────────────── */}
         {step === "review" && (
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4">
             <ReviewSection title="Company" onEdit={() => setStep("company")}>
-              <dl className="grid grid-cols-1 gap-y-2.5 text-[13.5px]">
+              <dl className="grid grid-cols-1 gap-y-2 text-[13.5px]">
                 <Row label="Name" value={company.name} />
                 <Row label="TIN" value={company.tin} tabular />
                 <Row label="Type" value={company.businessType} />
@@ -534,7 +610,7 @@ export default function BusinessSignupPage() {
             </ReviewSection>
 
             <ReviewSection title="Primary contact" onEdit={() => setStep("contact")}>
-              <dl className="grid grid-cols-1 gap-y-2.5 text-[13.5px]">
+              <dl className="grid grid-cols-1 gap-y-2 text-[13.5px]">
                 <Row label="Name" value={contact.name} />
                 <Row label="Role" value={contact.role} />
                 <Row label="Mobile" value={displayGhanaMobile(contact.mobile)} tabular />
@@ -565,7 +641,7 @@ export default function BusinessSignupPage() {
 
             <div
               role="note"
-              className="flex items-start gap-3 rounded-2xl bg-muted p-4 text-[12.5px] leading-relaxed text-muted-foreground"
+              className="flex items-start gap-2 rounded-2xl bg-muted p-3 text-[12.5px] leading-relaxed text-muted-foreground"
             >
               <ClipboardCheck size={16} strokeWidth={1.8} aria-hidden="true" className="mt-0.5 shrink-0" />
               <span>
@@ -579,7 +655,7 @@ export default function BusinessSignupPage() {
               size="lg"
               onClick={handleSubmitApplication}
               loading={busy}
-              className="mt-2 h-11 w-full text-[14px]"
+              className="mt-2 h-10 w-full text-[14px]"
             >
               Submit application
             </Button>
@@ -588,12 +664,12 @@ export default function BusinessSignupPage() {
 
         {/* ── Submitted ────────────────────────────────────────────────────── */}
         {step === "submitted" && (
-          <div className="flex flex-col gap-6">
-            <div className="rounded-2xl border border-border bg-muted/30 p-5 text-center">
+          <div className="flex flex-col gap-5">
+            <div className="rounded-2xl border border-border bg-muted/30 p-4 text-center">
               <p className="text-[12px] font-medium uppercase text-muted-foreground">
                 Application reference
               </p>
-              <p className="mt-1.5 text-[20px] font-medium text-foreground tabular">{reference}</p>
+              <p className="mt-2 text-[20px] font-medium text-foreground tabular">{reference}</p>
             </div>
 
             <p className="text-[13.5px] leading-relaxed text-muted-foreground">
@@ -610,7 +686,7 @@ export default function BusinessSignupPage() {
               size="lg"
               nativeButton={false}
               render={<Link href="/login" />}
-              className="h-11 w-full text-[14px]"
+              className="h-10 w-full text-[14px]"
             >
               Back to login
             </Button>
@@ -628,42 +704,6 @@ export default function BusinessSignupPage() {
 
 /* ── Small building blocks ─────────────────────────────────────────────────── */
 
-function Row({ label, value, tabular = false }: { label: string; value: string; tabular?: boolean }) {
-  return (
-    <div className="flex items-center justify-between gap-4">
-      <dt className="text-muted-foreground">{label}</dt>
-      <dd className={`text-foreground ${tabular ? "tabular" : ""}`}>{value || "—"}</dd>
-    </div>
-  );
-}
-
-function ReviewSection({
-  title,
-  onEdit,
-  children,
-}: {
-  title: string;
-  onEdit: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-2xl border border-border bg-card-item p-5">
-      <div className="mb-3.5 flex items-center justify-between">
-        <p className="text-[13.5px] font-medium text-foreground">{title}</p>
-        <button
-          type="button"
-          onClick={onEdit}
-          className="flex items-center gap-1.5 text-[12.5px] font-medium text-foreground underline underline-offset-4 hover:text-foreground/80 cursor-pointer"
-        >
-          <Pencil size={13} strokeWidth={1.9} aria-hidden="true" />
-          Edit
-        </button>
-      </div>
-      {children}
-    </div>
-  );
-}
-
 function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -672,7 +712,7 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
 
   if (!open) {
     return (
-      <Button type="button" variant="outline" onClick={() => setOpen(true)} className="h-11 w-full text-[14px]">
+      <Button type="button" variant="outline" onClick={() => setOpen(true)} className="h-10 w-full text-[14px]">
         <UserPlus size={16} strokeWidth={1.9} className="mr-2" aria-hidden="true" />
         Add another signatory
       </Button>
@@ -680,8 +720,8 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
   }
 
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-dashed border-border p-4">
-      <div className="grid gap-3 sm:grid-cols-2">
+    <div className="flex flex-col gap-3 rounded-2xl border border-dashed border-border p-3">
+      <div className="grid gap-2 sm:grid-cols-2">
         <Input
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -709,7 +749,7 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
         aria-label="Signatory mobile number"
       />
       <div className="flex gap-2">
-        <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)} className="h-9">
+        <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)} className="h-8">
           Cancel
         </Button>
         <Button
@@ -723,7 +763,7 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
             setMobile("");
             setOpen(false);
           }}
-          className="h-9"
+          className="h-8"
         >
           Add signatory
         </Button>
@@ -735,6 +775,9 @@ function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
 /* ── Headings ──────────────────────────────────────────────────────────────── */
 
 function resolveHeadings(step: BusinessSignupStep, variant: BusinessSignupVariant) {
+  if (step === "choice") {
+    return { icon: Building2, title: "Business Banking", description: "Choose how you would like to get started with GCB Bank." };
+  }
   if (step === "submitted") {
     return { icon: CheckCircle2, title: "Application Submitted", description: "We'll review your application within 2 business days." };
   }

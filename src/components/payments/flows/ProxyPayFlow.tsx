@@ -90,7 +90,7 @@ export function ProxyPayFlow({
   const isValid = Boolean(state.fromId) && isVerified && numAmount > 0 && !overBalance;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
       {/* 1. From Account */}
       <FromAccountSelector
         accounts={accounts}
@@ -108,7 +108,7 @@ export function ProxyPayFlow({
             onChange={() => setCollapsed(false)}
           />
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <div className="relative flex items-center">
               <SavedSuggestions query={state.pxId}>
 <Input
@@ -139,7 +139,7 @@ export function ProxyPayFlow({
 
       {/* Progressive Disclosure: Only reveal Amount & subsequent form fields after Proxy ID is entered */}
       {isPxValid && (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+        <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount */}
           <AmountInput
             value={state.amount}

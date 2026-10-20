@@ -26,7 +26,7 @@ export interface CardDeliveryTrackerProps {
 }
 
 // 6-dot matrix keypad icon matching Figma
-function KeypadMatrixIcon({ className = "size-5" }: { className?: string }) {
+function KeypadMatrixIcon({ className = "size-4" }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 20 20"
@@ -150,13 +150,13 @@ export function CardDeliveryTracker({
     card.deliveryStatus === "ready_for_pickup" || card.deliveryStatus === "delivered";
 
   return (
-    <div className={cn("flex flex-col gap-6 w-full", className)}>
+    <div className={cn("flex flex-col gap-5 w-full", className)}>
       {/* Subheader: Delivery Progress + Status Badge */}
       <div className="flex items-center justify-between">
         <h3 className="text-[17px] font-medium text-foreground tracking-[var(--ls-tight)]">
           Delivery Progress
         </h3>
-        <span className="rounded-full bg-pill-warning px-3 py-0.5 text-[12px] font-medium text-pill-warning-text">
+        <span className="rounded-full bg-pill-warning px-2 py-0.5 text-[12px] font-medium text-pill-warning-text">
           {isReadyForPickup ? "Ready" : "Pending"}
         </span>
       </div>
@@ -169,7 +169,7 @@ export function CardDeliveryTracker({
           const isCurrentActive = idx === currentStepIndex;
 
           return (
-            <div key={step.key} className="relative flex items-start gap-4 pb-6 last:pb-0">
+            <div key={step.key} className="relative flex items-start gap-3 pb-5 last:pb-0">
               {/* Connecting vertical stroke line */}
               {!isLast && (
                 <div
@@ -185,7 +185,7 @@ export function CardDeliveryTracker({
               {/* Node indicator */}
               <div
                 className={cn(
-                  "size-7 rounded-full flex items-center justify-center shrink-0 transition z-10 select-none",
+                  "size-6 rounded-full flex items-center justify-center shrink-0 transition z-10 select-none",
                   isCompleted
                     ? "bg-primary text-primary-foreground font-medium"
                     : "bg-muted text-muted-foreground text-[12px] border border-border"
@@ -234,8 +234,8 @@ export function CardDeliveryTracker({
 
       {/* Branch Location Item (Shows when branch details exist) */}
       {isBranchPickup && isReadyForPickup && (
-        <div className="flex items-center gap-3 pt-2">
-          <div className="size-10 rounded-xl bg-muted/60 flex items-center justify-center shrink-0 text-foreground">
+        <div className="flex items-center gap-2 pt-2">
+          <div className="size-9 rounded-xl bg-muted/60 flex items-center justify-center shrink-0 text-foreground">
             <Building2 size={20} strokeWidth={1.8} />
           </div>
           <div className="flex flex-col min-w-0">
@@ -251,9 +251,9 @@ export function CardDeliveryTracker({
 
       {/* Rider Contact Card (Shows when doorstep delivery has assigned rider) */}
       {!isBranchPickup && card.courierRider && (card.deliveryStatus === "out_for_delivery" || card.deliveryStatus === "in_transit") && (
-        <div className="rounded-2xl border border-border/80 bg-muted/40 p-4 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="size-10 rounded-full bg-primary/15 text-foreground flex items-center justify-center shrink-0">
+        <div className="rounded-2xl border border-border/80 bg-muted/40 p-3 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="size-9 rounded-full bg-primary/15 text-foreground flex items-center justify-center shrink-0">
               <Bike size={20} strokeWidth={1.8} />
             </div>
             <div className="flex flex-col min-w-0">
@@ -261,7 +261,7 @@ export function CardDeliveryTracker({
                 <span className="text-[14.5px] font-medium text-foreground truncate">
                   {card.courierRider.name}
                 </span>
-                <span className="text-[10.5px] px-1.5 py-0.5 rounded-full bg-pill-success text-pill-success-text font-medium border border-success/20">
+                <span className="text-[10.5px] px-2 py-0.5 rounded-full bg-pill-success text-pill-success-text font-medium border border-success/20">
                   Rider
                 </span>
               </div>
@@ -272,7 +272,7 @@ export function CardDeliveryTracker({
           </div>
           <a
             href={`tel:${card.courierRider.phone}`}
-            className="flex size-9 items-center justify-center rounded-full bg-card hover:bg-muted border border-border text-foreground transition-colors cursor-pointer shrink-0"
+            className="flex size-8 items-center justify-center rounded-full bg-card hover:bg-muted border border-border text-foreground transition-colors cursor-pointer shrink-0"
             title={`Call rider: ${card.courierRider.phone}`}
             aria-label="Call dispatch rider"
           >
@@ -286,11 +286,11 @@ export function CardDeliveryTracker({
         <button
           type="button"
           onClick={onShowPickupCode}
-          className="w-full rounded-2xl bg-tile dark:bg-muted/70 hover:bg-tile-hover dark:hover:bg-muted transition-colors p-4 flex items-center justify-between gap-3 text-left cursor-pointer group"
+          className="w-full rounded-2xl bg-tile dark:bg-muted/70 hover:bg-tile-hover dark:hover:bg-muted transition-colors p-3 flex items-center justify-between gap-2 text-left cursor-pointer group"
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="text-foreground shrink-0">
-              <KeypadMatrixIcon className="size-5 text-foreground" />
+              <KeypadMatrixIcon className="size-4 text-foreground" />
             </div>
             <span className="text-[15px] font-medium text-foreground">
               Show Pickup Code
@@ -346,15 +346,15 @@ export function CardDeliveryTrackerModal({
         else onOpenChange(next);
       }}
     >
-      <DialogContent size="md" className="p-0 overflow-hidden rounded-[20px]">
+      <DialogContent size="md" className="p-0 overflow-hidden rounded-3xl">
         {/* Custom Header matching Figma Node 1646:4485 */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-2">
+        <div className="flex items-center justify-between px-5 pt-5 pb-2">
           <div className="flex items-center gap-2">
             {view === "pickup-code" && initialView === "timeline" && (
               <button
                 type="button"
                 onClick={() => setView("timeline")}
-                className="flex size-8 items-center justify-center rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer mr-1"
+                className="flex size-7 items-center justify-center rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer mr-1"
                 aria-label="Back to timeline"
                 title="Back to timeline"
               >
@@ -373,14 +373,14 @@ export function CardDeliveryTrackerModal({
           <button
             type="button"
             onClick={handleClose}
-            className="flex size-9 items-center justify-center rounded-full bg-tile dark:bg-muted text-muted-foreground hover:text-foreground hover:bg-tile-hover dark:hover:bg-muted/80 transition-colors cursor-pointer"
+            className="flex size-8 items-center justify-center rounded-full bg-tile dark:bg-muted text-muted-foreground hover:text-foreground hover:bg-tile-hover dark:hover:bg-muted/80 transition-colors cursor-pointer"
             aria-label="Close dialog"
           >
             <X size={18} strokeWidth={2} />
           </button>
         </div>
 
-        <DialogBody className="px-6 pb-7 pt-3">
+        <DialogBody className="px-5 pb-6 pt-2">
           {view === "timeline" ? (
             <CardDeliveryTracker
               card={card}
@@ -388,9 +388,9 @@ export function CardDeliveryTrackerModal({
             />
           ) : isBranchPickup ? (
             /* Branch Pickup Code View matching Figma Node 1646:4485 & Screenshot 3 */
-            <div className="flex flex-col items-center justify-center py-4 text-center gap-8">
+            <div className="flex flex-col items-center justify-center py-3 text-center gap-6">
               {/* Huge Bold Pickup Code */}
-              <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col items-center gap-3">
                 <span className="text-[46px] sm:text-[48px] font-medium tracking-[4px] text-foreground tabular-nums select-all">
                   {pickupCode}
                 </span>
@@ -411,14 +411,14 @@ export function CardDeliveryTrackerModal({
             </div>
           ) : (
             /* Doorstep Courier Handover Code View */
-            <div className="flex flex-col items-center justify-center py-4 text-center gap-6">
+            <div className="flex flex-col items-center justify-center py-3 text-center gap-5">
               {/* Huge Bold Handover Code */}
-              <div className="flex flex-col items-center gap-3">
+              <div className="flex flex-col items-center gap-2">
                 <span className="text-[46px] sm:text-[48px] font-medium tracking-[6px] text-foreground tabular-nums select-all">
                   {card.deliveryCode || card.pickupCode || "8419"}
                 </span>
 
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/15 text-foreground text-[12px] font-medium">
+                <div className="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-primary/15 text-foreground text-[12px] font-medium">
                   <ShieldCheck size={14} className="text-foreground" />
                   <span>Handover Verification Code</span>
                 </div>
@@ -434,7 +434,7 @@ export function CardDeliveryTrackerModal({
               </div>
 
               {/* Security Hint */}
-              <div className="w-full rounded-xl bg-muted/40 border border-border/80 px-4 py-3 text-[12.5px] text-muted-foreground text-center">
+              <div className="w-full rounded-xl bg-muted/40 border border-border/80 px-3 py-2 text-[12.5px] text-muted-foreground text-center">
                 <span>Do not share this code via phone or SMS. Present it only in person upon delivery.</span>
               </div>
             </div>

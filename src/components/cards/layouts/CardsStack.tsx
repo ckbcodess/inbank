@@ -22,7 +22,7 @@ export function CardsStack({ cards }: CardsLayoutProps) {
   const peekWidthPct = (CARD_H * PEEK) / 100;
 
   return (
-    <div className="mx-auto flex w-full max-w-[460px] flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-[460px] flex-col gap-5">
       <div className="relative w-full" style={{ paddingBottom: `${CARD_H + (order.length - 1) * peekWidthPct}%` }}>
         {order.map((card, slot) => {
           const isFront = card.id === active.id;

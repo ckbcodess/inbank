@@ -47,14 +47,14 @@ function SquareAction({
   onClick?: () => void;
   disabled?: boolean;
 }) {
-  const tileClass = `flex size-14 shrink-0 items-center justify-center rounded-xl transition-colors ${
+  const tileClass = `flex size-12 shrink-0 items-center justify-center rounded-xl transition-colors ${
     disabled
       ? "cursor-not-allowed bg-muted text-muted-foreground/50"
       : "bg-primary text-primary-foreground hover:bg-primary-hover active:scale-[0.97] transition-transform"
   }`;
 
   return (
-    <div className="flex flex-col items-center gap-1.5">
+    <div className="flex flex-col items-center gap-2">
       {href && !disabled ? (
         <Link href={href} className={tileClass} aria-label={label}>
           <Icon size={18} strokeWidth={1.9} aria-hidden="true" />
@@ -105,16 +105,16 @@ export function LiquidityRail({
   const headlineHeld = selected ? selectedHeld : held;
 
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex flex-col gap-6 rounded-2xl border border-border bg-muted/60 p-6 sm:flex-row sm:items-center sm:justify-between">
+    <section className="flex flex-col gap-2">
+      <div className="flex flex-col gap-5 rounded-2xl border border-border bg-muted/60 p-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <span className="text-[12px] text-muted-foreground">
             {selected ? selected.name : "Total spendable cash"}
           </span>
-          <div className="mt-1.5 text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
+          <div className="mt-2 text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
             <RevealingAmount value={formatMoney(headlineAmount, headlineCurrency, showAmounts)} />
           </div>
-          <p className="mt-1.5 text-[12px] text-muted-foreground">
+          <p className="mt-2 text-[12px] text-muted-foreground">
             {selected
               ? `${selected.type} · ${selected.number}`
               : `Across ${accounts.length} account${accounts.length === 1 ? "" : "s"} · cleared and ready`}
@@ -127,7 +127,7 @@ export function LiquidityRail({
           </p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <SquareAction icon={Send} label="Send money" href="/payments/send" />
           <SquareAction
             icon={CreditCard}
@@ -146,7 +146,7 @@ export function LiquidityRail({
         <button
           type="button"
           onClick={() => onSelectAccount(null)}
-          className={`rounded-full border px-4 py-2 text-[13px] transition-colors ${
+          className={`rounded-full border px-3 py-2 text-[13px] transition-colors ${
             !selected
               ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
               : "border-border text-muted-foreground hover:text-foreground"
@@ -159,7 +159,7 @@ export function LiquidityRail({
             key={acc.id}
             type="button"
             onClick={() => onSelectAccount(acc.id)}
-            className={`flex items-center gap-2 rounded-full border px-4 py-2 text-[13px] transition-colors ${
+            className={`flex items-center gap-2 rounded-full border px-3 py-2 text-[13px] transition-colors ${
               selectedAccountId === acc.id
                 ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
                 : "border-border text-muted-foreground hover:text-foreground"

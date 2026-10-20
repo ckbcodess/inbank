@@ -153,7 +153,7 @@ export default function AddAccountDialog({
                   }
                   setStep(back);
                 }}
-                className="-ml-1 mr-1 flex size-7 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="-ml-1 mr-1 flex size-6 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 aria-label="Back"
               >
                 <ChevronLeft size={18} strokeWidth={1.8} />
@@ -165,8 +165,8 @@ export default function AddAccountDialog({
 
         <DialogBody>
           {view === "confirm" && (
-            <div className="flex flex-col items-center gap-4 py-2 text-center">
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-muted text-foreground">
+            <div className="flex flex-col items-center gap-3 py-2 text-center">
+              <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground">
                 <ScanFace size={28} strokeWidth={1.7} aria-hidden="true" />
               </div>
               <p className="max-w-[340px] text-[14px] leading-relaxed text-muted-foreground">
@@ -187,8 +187,8 @@ export default function AddAccountDialog({
           )}
 
           {view === "no_match" && (
-            <div className="flex flex-col items-center gap-4 py-2 text-center">
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-muted text-foreground">
+            <div className="flex flex-col items-center gap-3 py-2 text-center">
+              <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground">
                 <ScanFace size={28} strokeWidth={1.7} aria-hidden="true" />
               </div>
               <p className="max-w-[340px] text-[14px] leading-relaxed text-muted-foreground">
@@ -199,8 +199,8 @@ export default function AddAccountDialog({
           )}
 
           {view === "branch" && (
-            <div className="flex flex-col items-center gap-4 py-2 text-center">
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-muted text-foreground">
+            <div className="flex flex-col items-center gap-3 py-2 text-center">
+              <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground">
                 <Landmark size={26} strokeWidth={1.7} aria-hidden="true" />
               </div>
               <p className="max-w-[340px] text-[14px] leading-relaxed text-muted-foreground">
@@ -211,8 +211,8 @@ export default function AddAccountDialog({
           )}
 
           {view === "choose" && held.length === 0 && (
-            <div className="flex flex-col items-center gap-3 py-2 text-center">
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-muted text-foreground">
+            <div className="flex flex-col items-center gap-2 py-2 text-center">
+              <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground">
                 <Landmark size={26} strokeWidth={1.7} aria-hidden="true" />
               </div>
               <p className="text-[15px] tracking-[var(--ls-tight)] text-foreground">
@@ -225,9 +225,9 @@ export default function AddAccountDialog({
           )}
 
           {view === "choose" && held.length > 0 && (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               <p className="text-[13.5px] text-muted-foreground">Accounts held under your Ghana Card</p>
-              <div role="group" aria-label="Accounts" className="flex flex-col gap-2.5">
+              <div role="group" aria-label="Accounts" className="flex flex-col gap-2">
                 {held.map((account) => {
                   const already = existingIds.includes(account.id);
                   const selected = pickedIds.includes(account.id);
@@ -240,7 +240,7 @@ export default function AddAccountDialog({
                       disabled={already}
                       onClick={() => togglePicked(account.id)}
                       className={cn(
-                        "flex items-center gap-4 rounded-[16px] border p-4 text-left transition-colors",
+                        "flex items-center gap-3 rounded-2xl border p-3 text-left transition-colors",
                         selected
                           ? "border-foreground bg-transparent"
                           : "border-[var(--border)] bg-transparent hover:bg-muted/50",
@@ -265,7 +265,7 @@ export default function AddAccountDialog({
                       ) : selected ? (
                         <CheckBadge />
                       ) : (
-                        <div className="size-5 rounded-md border border-border shrink-0" />
+                        <div className="size-4 rounded-lg border border-border shrink-0" />
                       )}
                     </button>
                   );
@@ -280,11 +280,11 @@ export default function AddAccountDialog({
           )}
 
           {view === "move" && picked && wallet && (
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-4">
               {/* From → to, with the amount, so nothing moves unseen. */}
-              <div className="flex items-center gap-3 rounded-[16px] border border-[var(--border)] bg-transparent p-4">
+              <div className="flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-transparent p-3">
                 <span className="flex min-w-0 flex-1 flex-col items-start gap-1">
-                  <span className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
+                  <span className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
                     <Wallet size={14} strokeWidth={1.8} aria-hidden="true" />
                     GCB Virtual Account
                   </span>
@@ -294,7 +294,7 @@ export default function AddAccountDialog({
                 </span>
                 <ArrowRight size={18} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
                 <span className="flex min-w-0 flex-1 flex-col items-end gap-1 text-right">
-                  <span className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
+                  <span className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
                     <Landmark size={14} strokeWidth={1.8} aria-hidden="true" />
                     {picked.type}
                   </span>
@@ -302,7 +302,7 @@ export default function AddAccountDialog({
                 </span>
               </div>
 
-              <ul className="flex flex-col gap-2.5 text-[13.5px] leading-relaxed text-muted-foreground">
+              <ul className="flex flex-col gap-2 text-[13.5px] leading-relaxed text-muted-foreground">
                 {movesBalance && (
                   <li className="tabular">
                     Your wallet balance of {formatMoney(wallet.balance, "GHS", true)} moves to {picked.name}. No fees.
@@ -315,8 +315,8 @@ export default function AddAccountDialog({
           )}
 
           {view === "done" && (added || pickedAccounts.length > 0) && (
-            <div className="flex flex-col items-center gap-3 py-2 text-center" role="status">
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-success/10 text-success">
+            <div className="flex flex-col items-center gap-2 py-2 text-center" role="status">
+              <div className="flex size-12 items-center justify-center rounded-2xl bg-success/10 text-success">
                 <CheckCircle2 size={30} strokeWidth={1.8} aria-hidden="true" />
               </div>
               <p className="text-[17px] tracking-[var(--ls-tight)] text-foreground">
@@ -346,7 +346,7 @@ export default function AddAccountDialog({
           </DialogFooter>
         )}
         {view === "no_match" && (
-          <DialogFooter className="justify-between gap-4">
+          <DialogFooter className="justify-between gap-3">
             <p className="text-[12.5px] text-muted-foreground">
               <span className="tabular">{triesLeft}</span> {triesLeft === 1 ? "try" : "tries"} left before we ask you
               to visit a branch

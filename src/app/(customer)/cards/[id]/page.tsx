@@ -66,7 +66,7 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
 
   if (!card) {
     return (
-      <div className="flex flex-col gap-4 p-6">
+      <div className="flex flex-col gap-3 p-5">
         <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
           <Link href="/cards" className="hover:underline">
             Cards
@@ -80,7 +80,7 @@ export default function CardDetailsPage({ params }: { params: Promise<{ id: stri
   }
 
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className="flex flex-col gap-5 w-full">
       {/* Prototype Baseline State Switcher (Active when not populated) */}
       {state !== "populated" && (
         <StateSwitcher

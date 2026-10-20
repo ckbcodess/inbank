@@ -54,7 +54,7 @@ export default function TradeTypeSelectionPage() {
   const [state, setState] = useState<TradeState>("draft");
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="New Trade Request"
         description="Choose the instrument — the request form changes to match it."
@@ -65,15 +65,15 @@ export default function TradeTypeSelectionPage() {
 
       <StubNotice section="section 6" states="13.3 form pattern" />
 
-      <div className="grid grid-cols-1 gap-3">
+      <div className="grid grid-cols-1 gap-2">
         {TRADE_TYPES.map((t) => {
           const Icon = t.icon;
           return (
             <div
               key={t.key}
-              className="flex items-start gap-4 rounded-2xl border border-border bg-card p-5"
+              className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4"
             >
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
                 <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
               </span>
               <div className="min-w-0 flex-1">
@@ -91,12 +91,12 @@ export default function TradeTypeSelectionPage() {
         })}
       </div>
 
-      <section className="rounded-2xl border border-border bg-card p-5">
+      <section className="rounded-2xl border border-border bg-card p-4">
         <h2 className="flex items-center gap-2 text-[15px] text-foreground">
           <FileText size={16} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
           Remaining steps
         </h2>
-        <ol className="mt-3 flex flex-col gap-2 text-[13px] text-muted-foreground">
+        <ol className="mt-2 flex flex-col gap-2 text-[13px] text-muted-foreground">
           <li>2. Trade Request — type-specific fields</li>
           <li>3. Documents — attached within the request workflow, not a separate screen</li>
           <li>4. Trade Review — strong confirmation before submission</li>

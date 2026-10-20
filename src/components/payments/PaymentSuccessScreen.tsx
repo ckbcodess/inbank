@@ -433,14 +433,14 @@ export function PaymentSuccessScreen({
   });
 
   return (
-    <div className="success-entrance relative mx-auto flex w-full max-w-[500px] min-h-[75vh] flex-col items-center justify-center gap-7 py-10 px-4 text-center overflow-visible">
+    <div className="success-entrance relative mx-auto flex w-full max-w-[500px] min-h-[75vh] flex-col items-center justify-center gap-6 py-10 px-3 text-center overflow-visible">
       {/* ── Replay control — DEV/testing only, stripped from production builds ── */}
       {process.env.NODE_ENV !== "production" && (
         <button
           type="button"
           onClick={handleReplay}
           aria-label="Replay animation"
-          className="absolute right-1 top-1 z-30 flex items-center gap-1.5 rounded-full border border-border/70 bg-card/80 px-3 py-1.5 text-[12px] text-muted-foreground shadow-xs backdrop-blur transition-colors hover:bg-muted/60 hover:text-foreground cursor-pointer"
+          className="absolute right-1 top-1 z-30 flex items-center gap-2 rounded-full border border-border/70 bg-card/80 px-2 py-2 text-[12px] text-muted-foreground shadow-xs backdrop-blur transition-colors hover:bg-muted/60 hover:text-foreground cursor-pointer"
         >
           <RotateCcw size={13} strokeWidth={1.8} />
           <span>Replay</span>
@@ -452,7 +452,7 @@ export function PaymentSuccessScreen({
       <motion.div
         layout="position"
         transition={{ layout: { duration: 0.62, ease: [0.22, 1, 0.36, 1] } }}
-        className="relative flex flex-col items-center gap-4 text-center w-full"
+        className="relative flex flex-col items-center gap-3 text-center w-full"
       >
         {/* Badge Anchor & Interactive Burst Area */}
         <div className="relative flex size-[130px] sm:size-[140px] items-center justify-center my-1 select-none">
@@ -586,7 +586,7 @@ export function PaymentSuccessScreen({
           initial={{ opacity: 0, y: -8, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -8 }}
-          className="w-full max-w-[460px] rounded-[10px] bg-success/10 border border-success/20 text-success-text text-center py-2.5 px-3 text-[13.5px]"
+          className="w-full max-w-[460px] rounded-lg bg-success/10 border border-success/20 text-success-text text-center py-2 px-2 text-[13.5px]"
         >
           🎉 Thank you! Your feedback helps us improve GCB Internet Banking.
         </motion.div>
@@ -598,7 +598,7 @@ export function PaymentSuccessScreen({
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="flex items-center justify-between px-[18px] py-[16px] rounded-[14px] border border-border dark:border-border bg-tile dark:bg-card w-full max-w-[460px] shadow-xs"
+          className="flex items-center justify-between px-[18px] py-[16px] rounded-xl border border-border dark:border-border bg-tile dark:bg-card w-full max-w-[460px] shadow-xs"
         >
           <span className="text-[14px] font-normal text-foreground">{saveBeneficiaryLabel}</span>
           <motion.button
@@ -608,7 +608,7 @@ export function PaymentSuccessScreen({
             onClick={handleToggleBeneficiary}
             whileTap={{ scale: 0.92 }}
             className={cn(
-              "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-hidden",
+              "relative inline-flex h-5 w-10 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-hidden",
               saveBeneficiary ? "bg-primary" : "bg-muted dark:bg-muted/60"
             )}
           >
@@ -616,8 +616,8 @@ export function PaymentSuccessScreen({
               layout
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
               className={cn(
-                "pointer-events-none inline-block size-5 transform rounded-full bg-white shadow-sm ring-0",
-                saveBeneficiary ? "translate-x-5" : "translate-x-0"
+                "pointer-events-none inline-block size-4 transform rounded-full bg-white shadow-sm ring-0",
+                saveBeneficiary ? "translate-x-4" : "translate-x-0"
               )}
             />
           </motion.button>
@@ -630,7 +630,7 @@ export function PaymentSuccessScreen({
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-          className={cn("grid gap-3 w-full max-w-[460px]", actionCards.length === 3 ? "grid-cols-3" : "grid-cols-2")}
+          className={cn("grid gap-2 w-full max-w-[460px]", actionCards.length === 3 ? "grid-cols-3" : "grid-cols-2")}
         >
           {actionCards.map((card) => {
             const Icon = card.icon;
@@ -641,7 +641,7 @@ export function PaymentSuccessScreen({
                 type="button"
                 onClick={card.onClick}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-3.5 rounded-[12px] border border-border dark:border-border bg-tile dark:bg-card py-4 px-2.5 hover:bg-muted/50 active:scale-[0.98] transition cursor-pointer group text-center shadow-xs",
+                  "flex flex-col items-center justify-center gap-3 rounded-xl border border-border dark:border-border bg-tile dark:bg-card py-3 px-2 hover:bg-muted/50 active:scale-[0.98] transition cursor-pointer group text-center shadow-xs",
                   card.active && "border-primary ring-1 ring-primary/40 bg-muted/25"
                 )}
               >
@@ -664,13 +664,13 @@ export function PaymentSuccessScreen({
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="flex items-center gap-4 w-full max-w-[460px] pt-1"
+        className="flex items-center gap-3 w-full max-w-[460px] pt-1"
       >
         {onSecondaryAction && (
           <button
             type="button"
             onClick={onSecondaryAction}
-            className="flex-1 rounded-[8px] border border-border dark:border-border bg-card px-5 py-3 text-[14px] font-medium text-foreground hover:bg-muted/60 active:scale-[0.99] transition cursor-pointer text-center shadow-xs"
+            className="flex-1 rounded-lg border border-border dark:border-border bg-card px-4 py-2 text-[14px] font-medium text-foreground hover:bg-muted/60 active:scale-[0.99] transition cursor-pointer text-center shadow-xs"
           >
             {secondaryActionLabel}
           </button>
@@ -678,7 +678,7 @@ export function PaymentSuccessScreen({
         <button
           type="button"
           onClick={onPrimaryAction}
-          className="relative overflow-hidden flex-1 rounded-[8px] bg-primary hover:bg-primary-hover text-primary-foreground px-5 py-3 text-[14px] font-medium active:scale-[0.99] transition cursor-pointer text-center shadow-xs"
+          className="relative overflow-hidden flex-1 rounded-lg bg-primary hover:bg-primary-hover text-primary-foreground px-4 py-2 text-[14px] font-medium active:scale-[0.99] transition cursor-pointer text-center shadow-xs"
         >
           {/* Single light sweep as the button arrives — then it stays still */}
           <motion.div
@@ -694,17 +694,17 @@ export function PaymentSuccessScreen({
 
       {/* ── Interactive Share Feedback Modal ── */}
       <Dialog open={showFeedbackModal} onOpenChange={setShowFeedbackModal}>
-        <DialogContent className="max-w-[420px] p-6">
+        <DialogContent className="max-w-[420px] p-5">
           <DialogHeader>
             <DialogTitle className="text-[17px] font-medium text-foreground">
               Share Feedback
             </DialogTitle>
           </DialogHeader>
-          <DialogBody className="flex flex-col gap-4 py-2">
+          <DialogBody className="flex flex-col gap-3 py-2">
             <p className="text-[13.5px] text-muted-foreground">
               How was your payment experience today?
             </p>
-            <div className="grid grid-cols-3 gap-2.5">
+            <div className="grid grid-cols-3 gap-2">
               {[
                 { id: "great", label: "Great", emoji: "😊" },
                 { id: "okay", label: "Okay", emoji: "😐" },
@@ -715,7 +715,7 @@ export function PaymentSuccessScreen({
                   type="button"
                   onClick={() => setFeedbackRating(opt.id as "great" | "okay" | "bad")}
                   className={cn(
-                    "flex flex-col items-center justify-center gap-1.5 rounded-xl border p-3 text-center transition-colors cursor-pointer",
+                    "flex flex-col items-center justify-center gap-2 rounded-xl border p-2 text-center transition-colors cursor-pointer",
                     feedbackRating === opt.id
                       ? "border-primary bg-primary/10 text-primary font-medium"
                       : "border-border/70 hover:bg-muted/50 text-foreground"
@@ -726,7 +726,7 @@ export function PaymentSuccessScreen({
                 </button>
               ))}
             </div>
-            <div className="flex flex-col gap-1.5 pt-1">
+            <div className="flex flex-col gap-2 pt-1">
               <label htmlFor="feedback-comment" className="text-[12.5px] text-muted-foreground">
                 Comments (optional)
               </label>
@@ -736,7 +736,7 @@ export function PaymentSuccessScreen({
                 onChange={(e) => setFeedbackComment(e.target.value)}
                 placeholder="Tell us what went well or what we can improve..."
                 rows={3}
-                className="w-full rounded-lg border border-border/70 bg-card p-2.5 text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:border-primary"
+                className="w-full rounded-lg border border-border/70 bg-card p-2 text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:border-primary"
               />
             </div>
           </DialogBody>

@@ -42,7 +42,7 @@ export default function AccountExpensesPage({ params }: { params: Promise<{ id: 
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[880px] flex-col gap-8 sm:gap-10">
+    <div className="mx-auto flex w-full max-w-[880px] flex-col gap-6 sm:gap-10">
       <PageHeader
         title="My Spends"
         backTo={{ href: `/accounts/${account.id}`, label: account.name }}

@@ -375,7 +375,7 @@ export default function LinkSourceAccountModal({
                         setScreen("choice");
                       }
                     }}
-                    className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1 mr-1"
+                    className="flex size-6 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1 mr-1"
                     aria-label="Back"
                   >
                     <ChevronLeft size={18} strokeWidth={2} />
@@ -401,11 +401,11 @@ export default function LinkSourceAccountModal({
                 SCREEN 1: CHOICE MENU (2 Main Options)
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_choice" && onboarding && (
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-5">
                 <p className="text-[15px] leading-relaxed text-muted-foreground">
                   Choose an account or payment method to link to your new account.
                 </p>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                   {([
                     {
                       to: "link_new_momo",
@@ -427,7 +427,7 @@ export default function LinkSourceAccountModal({
             )}
 
             {screen === "link_choice" && !onboarding && (
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3">
                 {([
                   { to: "link_new_momo", icon: Smartphone, title: "Mobile money wallet", hint: "MTN MoMo, Telecel Cash, AT Money, GhanaPay or G-Money" },
                   { to: "link_new_card", icon: CreditCard, title: "Bank card", hint: "Visa, Mastercard or UnionPay" },
@@ -438,8 +438,8 @@ export default function LinkSourceAccountModal({
             )}
 
             {screen === "choice" && (
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-4 pt-1">
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 pt-1">
                   {/* Transfer between accounts: only with another account to move from */}
                   {canTransferBetween && (
                     <ActionTile
@@ -464,9 +464,9 @@ export default function LinkSourceAccountModal({
                 SCREEN 2: INTERNAL TRANSFER FORM (Standardized Fields)
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "internal_transfer" && (
-              <form onSubmit={handleInternalTransferSubmit} className="flex flex-col gap-5">
+              <form onSubmit={handleInternalTransferSubmit} className="flex flex-col gap-4">
                 {!canTransferBetween ? (
-                  <div className="flex flex-col gap-3 py-4 text-center">
+                  <div className="flex flex-col gap-2 py-3 text-center">
                     <p className="text-[13px] text-muted-foreground">
                       No other internal accounts available to transfer from.
                     </p>
@@ -533,8 +533,8 @@ export default function LinkSourceAccountModal({
                 SCREEN 3: INTERNAL TRANSFER SUCCESS
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "internal_success" && (
-              <div className="flex flex-col items-center gap-4 text-center py-2">
-                <div className="flex size-14 items-center justify-center rounded-2xl bg-success/10 text-success-text">
+              <div className="flex flex-col items-center gap-3 text-center py-2">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-success/10 text-success-text">
                   <CheckCircle2 size={32} strokeWidth={1.8} />
                 </div>
 
@@ -547,7 +547,7 @@ export default function LinkSourceAccountModal({
                   </p>
                 </div>
 
-                <div className="w-full rounded-2xl border border-border/80 bg-muted/20 p-4 text-left text-[13px] flex flex-col gap-2">
+                <div className="w-full rounded-2xl border border-border/80 bg-muted/20 p-3 text-left text-[13px] flex flex-col gap-2">
                   <div className="flex justify-between py-0.5 text-muted-foreground">
                     <span>From:</span>
                     <span className="font-medium text-foreground">{selectedSourceAccount?.name}</span>
@@ -579,7 +579,7 @@ export default function LinkSourceAccountModal({
                 SCREEN 4: LINKED SOURCE SELECT (Wallets & Cards)
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "linked_source_select" && (
-              <form onSubmit={handleLinkedSourceSubmit} className="flex flex-col gap-5">
+              <form onSubmit={handleLinkedSourceSubmit} className="flex flex-col gap-4">
                 {/* Payment Method Select Dropdown */}
                 <div className="flex flex-col gap-2">
                   <Field label="Payment Method">
@@ -587,13 +587,13 @@ export default function LinkSourceAccountModal({
                       value={selectedSourceId || (linkedSources[0]?.id ?? "")}
                       onValueChange={(val) => val && setSelectedSourceId(val)}
                     >
-                      <SelectTrigger className="w-full h-14 rounded-2xl border-field-border bg-field px-4">
+                      <SelectTrigger className="w-full h-12 rounded-2xl border-field-border bg-field px-3">
                         <SelectValue placeholder="Select payment method" />
                       </SelectTrigger>
                       <SelectContent>
                         {linkedSources.map((source) => (
-                          <SelectItem key={source.id} value={source.id} className="py-2.5 cursor-pointer">
-                            <div className="flex items-center gap-3">
+                          <SelectItem key={source.id} value={source.id} className="py-2 cursor-pointer">
+                            <div className="flex items-center gap-2">
                               <SourceMark type={source.type} operator={source.operator} title={source.title} />
                               <div className="flex flex-col text-left">
                                 <span className="text-[14px] font-medium text-foreground">
@@ -612,7 +612,7 @@ export default function LinkSourceAccountModal({
 
                   {/* Only sources already linked can fund an account here; linking lives on Accounts. */}
                   {linkedSources.length === 0 && (
-                    <p className="rounded-2xl border border-border/80 bg-muted/20 px-4 py-3.5 text-[13px] text-muted-foreground">
+                    <p className="rounded-2xl border border-border/80 bg-muted/20 px-3 py-3 text-[13px] text-muted-foreground">
                       You haven&apos;t linked a wallet or card yet.{" "}
                       <Link
                         href="/accounts?link_source=true"
@@ -647,8 +647,8 @@ export default function LinkSourceAccountModal({
                 SCREEN 5: MOMO WAITING FOR APPROVAL
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "momo_waiting" && (
-              <div className="flex flex-col items-center gap-4 text-center py-2">
-                <div className="flex size-14 items-center justify-center rounded-2xl bg-muted text-foreground animate-pulse">
+              <div className="flex flex-col items-center gap-3 text-center py-2">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground animate-pulse">
                   <Smartphone size={28} strokeWidth={1.8} />
                 </div>
 
@@ -667,8 +667,8 @@ export default function LinkSourceAccountModal({
                 SCREEN 7: LINKED FUNDING SUCCESS
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "funding_success" && (
-              <div className="flex flex-col items-center gap-4 text-center py-2">
-                <div className="flex size-14 items-center justify-center rounded-2xl bg-success/10 text-success-text">
+              <div className="flex flex-col items-center gap-3 text-center py-2">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-success/10 text-success-text">
                   <CheckCircle2 size={32} strokeWidth={1.8} />
                 </div>
 
@@ -681,7 +681,7 @@ export default function LinkSourceAccountModal({
                   </p>
                 </div>
 
-                <div className="w-full rounded-2xl border border-border/80 bg-muted/20 p-4 text-left text-[13px] flex flex-col gap-2">
+                <div className="w-full rounded-2xl border border-border/80 bg-muted/20 p-3 text-left text-[13px] flex flex-col gap-2">
                   <div className="flex justify-between py-0.5 text-muted-foreground">
                     <span>Source:</span>
                     <span className="font-medium text-foreground">{activeLinkedSource?.title}</span>
@@ -709,7 +709,7 @@ export default function LinkSourceAccountModal({
                 SCREEN 8: LINK NEW MOMO WALLET
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_new_momo" && (
-              <form id={`${modalId}-momo-form`} onSubmit={handleAddNewMomo} className="flex flex-col gap-5">
+              <form id={`${modalId}-momo-form`} onSubmit={handleAddNewMomo} className="flex flex-col gap-4">
                 <Field label="Mobile Number" htmlFor={`${modalId}-momoNum`}>
                   <PhoneInput
                     id={`${modalId}-momoNum`}
@@ -721,7 +721,7 @@ export default function LinkSourceAccountModal({
 
                 {/* The verified name reads the same here as under every payment field. */}
                 {isCompleteGhanaMobile(newMomoNumber) && (
-                  <VerifiedAccountBadge name={actor?.name || "Ransford Gyasi"} className="-mt-3" />
+                  <VerifiedAccountBadge name={actor?.name || "Ransford Gyasi"} className="-mt-2" />
                 )}
 
                 <Field label="Network Operator">
@@ -734,7 +734,7 @@ export default function LinkSourceAccountModal({
                 SCREEN 8b: NEW MOMO — WAITING FOR APPROVAL ON THE PHONE
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_momo_code" && (
-              <div className="flex flex-col items-center gap-5 py-2 text-center">
+              <div className="flex flex-col items-center gap-4 py-2 text-center">
                 <p className="text-[13.5px] leading-relaxed text-muted-foreground">
                   Enter the 6-digit code sent to{" "}
                   <span className="text-foreground tabular">{displayGhanaMobile(newMomoNumber)}</span>.
@@ -770,12 +770,12 @@ export default function LinkSourceAccountModal({
             )}
 
             {screen === "link_momo_pending" && (
-              <div className="flex flex-col items-center gap-4 text-center py-2">
-                <div className="flex size-14 items-center justify-center rounded-2xl bg-muted text-foreground animate-pulse">
+              <div className="flex flex-col items-center gap-3 text-center py-2">
+                <div className="flex size-12 items-center justify-center rounded-2xl bg-muted text-foreground animate-pulse">
                   <Smartphone size={28} strokeWidth={1.8} aria-hidden="true" />
                 </div>
 
-                <div className="flex flex-col gap-1.5" role="status">
+                <div className="flex flex-col gap-2" role="status">
                   <h3 className="text-[17px] text-foreground tracking-[var(--ls-tight)]">Approve on your phone</h3>
                   <p className="text-[13px] leading-relaxed text-muted-foreground tabular">
                     We&apos;ve sent a request to {displayGhanaMobile(newMomoNumber)}. Approve it with your{" "}
@@ -789,7 +789,7 @@ export default function LinkSourceAccountModal({
                 SCREEN 9: LINK NEW CARD
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_new_card" && (
-              <form id={`${modalId}-card-form`} onSubmit={handleAddNewCard} className="flex flex-col gap-5">
+              <form id={`${modalId}-card-form`} onSubmit={handleAddNewCard} className="flex flex-col gap-4">
                 <Field label="Card Number" htmlFor={`${modalId}-cardNum`}>
                   <Input
                     id={`${modalId}-cardNum`}
@@ -808,7 +808,7 @@ export default function LinkSourceAccountModal({
                   />
 </Field>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2">
                   <Field label="Expiry Date" htmlFor={`${modalId}-cardExp`}>
                     <Input
                       id={`${modalId}-cardExp`}

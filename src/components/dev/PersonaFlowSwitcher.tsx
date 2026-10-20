@@ -131,11 +131,11 @@ function PersonaFlowSwitcherContent() {
         type="button"
         onClick={() => go(href)}
         className={cn(
-          "flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left text-[13.5px] transition-colors cursor-pointer",
+          "flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13.5px] transition-colors cursor-pointer",
           active ? "bg-muted text-foreground" : "text-foreground hover:bg-muted/60",
         )}
       >
-        <span className="w-4 shrink-0 text-right text-[12px] text-muted-foreground tabular">{n}</span>
+        <span className="w-3.5 shrink-0 text-right text-[12px] text-muted-foreground tabular">{n}</span>
         {label}
       </button>
     </li>
@@ -149,11 +149,11 @@ function PersonaFlowSwitcherContent() {
           type="button"
           onClick={() => triggerWelcome(stage)}
           className={cn(
-            "flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left text-[13.5px] transition-colors cursor-pointer",
+            "flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13.5px] transition-colors cursor-pointer",
             active ? "bg-muted text-foreground" : "text-foreground hover:bg-muted/60",
           )}
         >
-          <span className="w-4 shrink-0 text-right text-[12px] text-muted-foreground tabular">{n}</span>
+          <span className="w-3.5 shrink-0 text-right text-[12px] text-muted-foreground tabular">{n}</span>
           {label}
         </button>
       </li>
@@ -165,7 +165,7 @@ function PersonaFlowSwitcherContent() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-5 left-1/2 z-40 flex h-9 -translate-x-1/2 cursor-pointer items-center gap-1.5 rounded-full border border-border bg-card px-4 text-[13px] text-foreground shadow-lg transition-colors hover:bg-muted"
+        className="fixed bottom-4 left-1/2 z-40 flex h-8 -translate-x-1/2 cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-3 text-[13px] text-foreground shadow-lg transition-colors hover:bg-muted"
       >
         Demo
         <ChevronDown size={14} strokeWidth={1.8} className="text-muted-foreground" aria-hidden="true" />
@@ -181,7 +181,7 @@ function PersonaFlowSwitcherContent() {
                 setOpen(false);
                 setDevToolsHidden(true);
               }}
-              className="mr-6 flex items-center gap-1.5 rounded-lg border border-border/80 px-2.5 py-1 text-[12px] text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+              className="mr-5 flex items-center gap-2 rounded-lg border border-border/80 px-2 py-1 text-[12px] text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
               title="Hide all floating dev tools. Press Ctrl+Shift+D to show them again anytime."
             >
               <EyeOff size={13} strokeWidth={1.8} />
@@ -189,14 +189,14 @@ function PersonaFlowSwitcherContent() {
             </button>
           </DialogHeader>
           <DialogBody>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {/* GCB account holder */}
-              <section className="flex flex-col gap-2.5">
-                <h3 className="px-2.5 text-[14px] font-medium text-foreground">GCB account holder</h3>
-                <div className="flex items-center justify-between gap-3 px-2.5 text-[13px] text-muted-foreground">
+              <section className="flex flex-col gap-2">
+                <h3 className="px-2 text-[14px] font-medium text-foreground">GCB account holder</h3>
+                <div className="flex items-center justify-between gap-2 px-2 text-[13px] text-muted-foreground">
                   Customer
                   <Select value={persona} onValueChange={(v) => v && setPersona(v as PersonaId)}>
-                    <SelectTrigger className="h-8 w-[170px] rounded-lg text-[13px]">
+                    <SelectTrigger className="h-7 w-[170px] rounded-lg text-[13px]">
                       <span className="truncate">{PERSONAS.find((p) => p.id === persona)?.label}</span>
                     </SelectTrigger>
                     <SelectContent>
@@ -221,9 +221,9 @@ function PersonaFlowSwitcherContent() {
               </section>
 
               {/* New to GCB */}
-              <section className="flex flex-col gap-2.5">
-                <h3 className="px-2.5 text-[14px] font-medium text-foreground">New to GCB</h3>
-                <div className="h-8" aria-hidden="true" />
+              <section className="flex flex-col gap-2">
+                <h3 className="px-2 text-[14px] font-medium text-foreground">New to GCB</h3>
+                <div className="h-7" aria-hidden="true" />
                 <ol className="flex flex-col">
                   {SIGNUP_STEPS.map((s, i) =>
                     stepRow(`/signup?step=${s.id}`, s.label, i + 1, pathname === "/signup" && currentStep === s.id),
@@ -232,9 +232,9 @@ function PersonaFlowSwitcherContent() {
                     <button
                       type="button"
                       onClick={goLinkAfterSignup}
-                      className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left text-[13.5px] text-foreground transition-colors hover:bg-muted/60 cursor-pointer"
+                      className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-[13.5px] text-foreground transition-colors hover:bg-muted/60 cursor-pointer"
                     >
-                      <span className="w-4 shrink-0 text-right text-[12px] text-muted-foreground tabular">
+                      <span className="w-3.5 shrink-0 text-right text-[12px] text-muted-foreground tabular">
                         {SIGNUP_STEPS.length + 1}
                       </span>
                       Link Source Account
@@ -244,11 +244,11 @@ function PersonaFlowSwitcherContent() {
               </section>
 
               {/* Post-onboarding cards */}
-              <section className="flex flex-col gap-2.5">
-                <div className="flex items-center justify-between px-2.5">
+              <section className="flex flex-col gap-2">
+                <div className="flex items-center justify-between px-2">
                   <h3 className="text-[14px] font-medium text-foreground">Post-onboarding cards</h3>
                 </div>
-                <div className="flex h-8 items-center px-2.5">
+                <div className="flex h-7 items-center px-2">
                   <button
                     type="button"
                     onClick={() => triggerWelcome("all")}
@@ -266,9 +266,9 @@ function PersonaFlowSwitcherContent() {
               </section>
 
               {/* Returning customers */}
-              <section className="flex flex-col gap-2.5">
-                <h3 className="px-2.5 text-[14px] font-medium text-foreground">Returning customers</h3>
-                <div className="h-8" aria-hidden="true" />
+              <section className="flex flex-col gap-2">
+                <h3 className="px-2 text-[14px] font-medium text-foreground">Returning customers</h3>
+                <div className="h-7" aria-hidden="true" />
                 <ol className="flex flex-col">
                   <li>
                     <button
@@ -278,7 +278,7 @@ function PersonaFlowSwitcherContent() {
                         forgetThisDevice();
                         go("/select-banking");
                       }}
-                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
+                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
                     >
                       <span className="text-[13.5px] text-foreground">Choose personal or business</span>
                       <span className="text-[12px] text-muted-foreground">The old landing screen</span>
@@ -288,7 +288,7 @@ function PersonaFlowSwitcherContent() {
                     <button
                       type="button"
                       onClick={() => goLogin("personal")}
-                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
+                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
                     >
                       <span className="text-[13.5px] text-foreground">Personal banking log in</span>
                       <span className="text-[12px] text-muted-foreground">The front door</span>
@@ -298,7 +298,7 @@ function PersonaFlowSwitcherContent() {
                     <button
                       type="button"
                       onClick={() => goLogin("business")}
-                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
+                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
                     >
                       <span className="text-[13.5px] text-foreground">Business banking log in</span>
                       <span className="text-[12px] text-muted-foreground">With the way back to personal</span>
@@ -308,7 +308,7 @@ function PersonaFlowSwitcherContent() {
                     <button
                       type="button"
                       onClick={goPowerUser}
-                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
+                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
                     >
                       <span className="text-[13.5px] text-foreground">Welcome back screen</span>
                       <span className="text-[12px] text-muted-foreground">Trusted device, greeted by name, password only</span>
@@ -318,14 +318,14 @@ function PersonaFlowSwitcherContent() {
                     <button
                       type="button"
                       onClick={goFirstTimer}
-                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
+                      className="flex w-full flex-col items-start gap-0.5 rounded-lg px-2 py-2 text-left transition-colors hover:bg-muted/60 cursor-pointer"
                     >
                       <span className="text-[13.5px] text-foreground">First time, new device</span>
                       <span className="text-[12px] text-muted-foreground">Activation, remember device, welcome</span>
                     </button>
                   </li>
                 </ol>
-                <span className="mt-2 px-2.5 text-[12.5px] text-muted-foreground">Moving from old internet banking</span>
+                <span className="mt-2 px-2 text-[12.5px] text-muted-foreground">Moving from old internet banking</span>
                 <ol className="flex flex-col">
                   {MIGRATION_STEPS.map((s, i) =>
                     stepRow(

@@ -38,7 +38,7 @@ export function DatePicker({
         id={id}
         disabled={disabled}
         className={cn(
-          "flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-border bg-transparent px-3 py-2 text-sm whitespace-nowrap transition-all outline-none",
+          "flex h-8 w-full items-center justify-between gap-2 rounded-lg border border-border bg-transparent px-2 py-2 text-sm whitespace-nowrap transition-all outline-none",
           "focus-visible:border-field-border-focus focus-visible:ring-1 focus-visible:ring-field-border-focus",
           "disabled:cursor-not-allowed disabled:opacity-50 dark:bg-border/30 dark:hover:bg-border/50",
           !selected && "text-muted-foreground",
@@ -46,7 +46,7 @@ export function DatePicker({
         )}
       >
         {selected ? format(selected, "PP") : placeholder}
-        <CalendarIcon className="size-4 shrink-0 text-muted-foreground" />
+        <CalendarIcon className="size-3.5 shrink-0 text-muted-foreground" />
       </PopoverTrigger>
       <PopoverContent className="p-0" align="start">
         <Calendar

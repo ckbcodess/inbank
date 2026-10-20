@@ -43,7 +43,7 @@ export function CardsPanel({
 
   return (
     <div className="flex h-full flex-col rounded-2xl border border-border bg-card">
-      <div className="flex items-center justify-between border-b border-border px-5 py-4">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <h2 className="text-[15px] text-foreground">Your cards</h2>
         <Link href="/cards" className="text-[12px] text-foreground underline-offset-4 hover:underline">
           View all cards
@@ -51,7 +51,7 @@ export function CardsPanel({
       </div>
 
       {cards.length === 0 ? (
-        <p className="px-5 py-8 text-center text-[13px] text-muted-foreground">
+        <p className="px-4 py-6 text-center text-[13px] text-muted-foreground">
           No cards on this relationship yet.
         </p>
       ) : (
@@ -62,8 +62,8 @@ export function CardsPanel({
             const canFund = card.fundable && card.balance !== null && !blocked && !expired;
 
             return (
-              <li key={card.id} className="px-5 py-3.5">
-                <div className="flex items-center gap-3">
+              <li key={card.id} className="px-4 py-3">
+                <div className="flex items-center gap-2">
                   <MiniCardThumbnail card={card} />
                   <Link
                     href={`/cards/${card.id}`}
@@ -103,11 +103,11 @@ export function CardsPanel({
                   )}
                 </div>
 
-                <div className="mt-2.5 flex flex-wrap items-center gap-2 pl-[52px]">
+                <div className="mt-2 flex flex-wrap items-center gap-2 pl-[52px]">
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 gap-1.5 px-2.5 text-[12px]"
+                    className="h-6 gap-2 px-2 text-[12px]"
                     onClick={() => toggleBlock(card)}
                     disabled={expired}
                     aria-label={blocked ? `Unblock ${card.name}` : `Block ${card.name}`}
@@ -124,7 +124,7 @@ export function CardsPanel({
                     <Button
                       variant="outline"
                       size="sm"
-                      className="h-7 gap-1.5 px-2.5 text-[12px]"
+                      className="h-6 gap-2 px-2 text-[12px]"
                       onClick={() => onTopUp(card.id)}
                       aria-label={`Fund ${card.name}`}
                     >

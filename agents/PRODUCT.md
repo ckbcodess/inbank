@@ -245,6 +245,12 @@ Open questions live in [WORKING_LOG.md](WORKING_LOG.md), not here.
 - `[DECIDED 2026-10-08]` **Invest rails separation (Term Deposits vs Treasury).** Term Deposits are
   direct bank fixed deposits (no CSD securities account required, instant creation). Treasury Bills &
   Bonds are government securities held at the CSD and require an active securities account (7-day setup).
+- `[DECIDED 2026-10-19]` **Corporate Internet Banking Enrolment ("Two journeys, one store").** Existing
+  business account holders self-serve onboarding at `/signup/business/enrol` (lookup → applicant OTP
+  → users & mandate roles → review → wet-ink pack download & upload). Applications track progress
+  at `/signup/business/status` and are reviewed in the staff queue at `/admin/enrolments` by the RM or
+  Corporate Operations with side-by-side specimen comparison and mandatory security callback verification.
+  Approval issues one corporate activation link per listed user into `/activate?invite=1`.
 
 ## 8. Scope
 

@@ -103,7 +103,7 @@ export function OtherBankFlow({
   const isValid = Boolean(state.fromId) && isVerified && numAmount > 0 && !overBalance;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
       {/* 1. From Account */}
       <FromAccountSelector
         accounts={accounts}
@@ -121,7 +121,7 @@ export function OtherBankFlow({
             onChange={() => setCollapsed(false)}
           />
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <BankSelect value={state.bank || ""} onChange={(val) => onChange("bank", val)} options={OTHER_BANKS} />
 
             <div className="relative flex items-center">
@@ -164,7 +164,7 @@ export function OtherBankFlow({
 
       {/* Progressive Disclosure: Only reveal Payment Method, Amount & onwards after details are verified */}
       {isVerified && (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+        <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Payment Method */}
           <Field label="Payment Method">
             <PaymentMethodSelect value={state.paymentMethod || "gip"} onChange={(val) => onChange("paymentMethod", val)} />

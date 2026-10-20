@@ -168,7 +168,7 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader title="Reports" />
 
       <StateSwitcher
@@ -180,27 +180,27 @@ export default function ReportsPage() {
       />
 
       {/* Report selection */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {available.map((r) => (
           <button
             key={r.key}
             type="button"
             onClick={() => setReport(r.key)}
             aria-pressed={activeKey === r.key}
-            className={`flex flex-col rounded-2xl border p-4 text-left transition-colors ${
+            className={`flex flex-col rounded-2xl border p-3 text-left transition-colors ${
               activeKey === r.key
                 ? "border-[var(--active-border)] bg-[var(--active-bg)]"
                 : "border-border bg-card hover:bg-muted/50"
             }`}
           >
-            <span className="flex size-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+            <span className="flex size-7 items-center justify-center rounded-lg bg-muted text-muted-foreground">
               {r.key === "activity" ? (
                 <FileText size={15} strokeWidth={1.8} aria-hidden="true" />
               ) : (
                 <BarChart3 size={15} strokeWidth={1.8} aria-hidden="true" />
               )}
             </span>
-            <span className="mt-3 text-[14px] text-foreground">{r.label}</span>
+            <span className="mt-2 text-[14px] text-foreground">{r.label}</span>
             <span className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
               {r.description}
             </span>
@@ -209,8 +209,8 @@ export default function ReportsPage() {
       </div>
 
       {/* Filters */}
-      <section className="rounded-2xl border border-border bg-card p-5">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="rounded-2xl border border-border bg-card p-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Field label="From" htmlFor="rep-from">
             <Input id="rep-from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
 </Field>
@@ -223,21 +223,21 @@ export default function ReportsPage() {
                 size={15}
                 strokeWidth={1.9}
                 aria-hidden="true"
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
               />
               <Input
                 id="rep-q"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={isActivity ? "Actor or action" : "Description, counterparty or reference"}
-                className="pl-9"
+                className="pl-8"
               />
             </div>
           </Field>
         </div>
 
         {!isActivity && (
-          <div className="mt-5 flex flex-wrap items-baseline justify-between gap-2 border-t border-border pt-5">
+          <div className="mt-4 flex flex-wrap items-baseline justify-between gap-2 border-t border-border pt-4">
             <span className="text-[13px] text-muted-foreground">
               {rowCount} {rowCount === 1 ? "record" : "records"} · total debits
             </span>
@@ -290,19 +290,19 @@ export default function ReportsPage() {
               <table className="w-full min-w-[640px] text-[13px]">
                 <thead>
                   <tr className="border-b border-border text-left text-muted-foreground">
-                    <th className="px-4 py-3 font-normal">When</th>
-                    <th className="px-4 py-3 font-normal">Actor</th>
-                    <th className="px-4 py-3 font-normal">Action</th>
-                    <th className="px-4 py-3 font-normal">Target</th>
+                    <th className="px-3 py-2 font-normal">When</th>
+                    <th className="px-3 py-2 font-normal">Actor</th>
+                    <th className="px-3 py-2 font-normal">Action</th>
+                    <th className="px-3 py-2 font-normal">Target</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {activityRows.map((e) => (
                     <tr key={e.id} className="transition-colors hover:bg-muted/50">
-                      <td className="px-4 py-3.5 text-muted-foreground tabular">{formatDate(e.timestamp)}</td>
-                      <td className="px-4 py-3.5 text-foreground">{e.actor}</td>
-                      <td className="px-4 py-3.5 text-foreground">{e.action}</td>
-                      <td className="px-4 py-3.5 text-muted-foreground">{e.target}</td>
+                      <td className="px-3 py-3 text-muted-foreground tabular">{formatDate(e.timestamp)}</td>
+                      <td className="px-3 py-3 text-foreground">{e.actor}</td>
+                      <td className="px-3 py-3 text-foreground">{e.action}</td>
+                      <td className="px-3 py-3 text-muted-foreground">{e.target}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -311,17 +311,17 @@ export default function ReportsPage() {
               <table className="w-full min-w-[720px] text-[13px]">
                 <thead>
                   <tr className="border-b border-border text-left text-muted-foreground">
-                    <th className="px-4 py-3 font-normal">Reference</th>
-                    <th className="px-4 py-3 font-normal">Date</th>
-                    <th className="px-4 py-3 font-normal">Description</th>
-                    <th className="px-4 py-3 text-right font-normal">Amount</th>
-                    <th className="px-4 py-3 font-normal">Status</th>
+                    <th className="px-3 py-2 font-normal">Reference</th>
+                    <th className="px-3 py-2 font-normal">Date</th>
+                    <th className="px-3 py-2 font-normal">Description</th>
+                    <th className="px-3 py-2 text-right font-normal">Amount</th>
+                    <th className="px-3 py-2 font-normal">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {txRows.map((t) => (
                     <tr key={t.id} className="transition-colors hover:bg-muted/50">
-                      <td className="px-4 py-3.5">
+                      <td className="px-3 py-3">
                         {/* NFR-25 drill-down to transaction level */}
                         <Link
                           href={`/transactions/${t.id}`}
@@ -330,13 +330,13 @@ export default function ReportsPage() {
                           {t.reference}
                         </Link>
                       </td>
-                      <td className="px-4 py-3.5 text-muted-foreground tabular">{formatDate(t.date)}</td>
-                      <td className="px-4 py-3.5 text-foreground">{t.description}</td>
-                      <td className="px-4 py-3.5 text-right text-foreground tabular">
+                      <td className="px-3 py-3 text-muted-foreground tabular">{formatDate(t.date)}</td>
+                      <td className="px-3 py-3 text-foreground">{t.description}</td>
+                      <td className="px-3 py-3 text-right text-foreground tabular">
                         {t.direction === "debit" ? "−" : "+"}
                         {formatMoney(t.amount, t.currency)}
                       </td>
-                      <td className="px-4 py-3.5">
+                      <td className="px-3 py-3">
                         <TransactionStatusBadge state={t.state} />
                       </td>
                     </tr>

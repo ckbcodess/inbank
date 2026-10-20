@@ -193,6 +193,16 @@ export const ACTORS: Actor[] = [
     profiles: [],
     tradeEligible: false,
   },
+  {
+    id: "u-rm",
+    name: "Kwame Asante",
+    email: "kwame.asante@bank.internal",
+    phone: "0244400514",
+    role: "RELATIONSHIP_MANAGER",
+    shell: "admin",
+    profiles: [],
+    tradeEligible: false,
+  },
   // Appended, not inserted: the login fallback indexes into ACTORS.
   {
     id: "u-legacy",
@@ -214,6 +224,14 @@ export function findActorByPhone(phone: string): Actor | undefined {
 
 /* ── Accounts ──────────────────────────────────────────────────────────────── */
 
+export interface AccountSignatory {
+  name: string;
+  role: string;
+  email: string;
+  mobile: string;
+  specimenUrl?: string;
+}
+
 export interface Account {
   id: string;
   name: string;
@@ -226,7 +244,10 @@ export interface Account {
   profileKind?: "RETAIL" | "CORPORATE";
   isJoint?: boolean;
   jointHolders?: string[];
-  mandate?: "Either to sign" | "Both to sign";
+  mandate?: "Either to sign" | "Both to sign" | "Any two to sign" | string;
+  companyName?: string;
+  relationshipManager?: { name: string; email: string; phone: string } | null;
+  signatories?: AccountSignatory[];
   /**
    * Only reachable through a Dev Mode customer configuration on `/accounts`
    * (wallet customer, dormant account, just-migrated). Resolvable by id so
@@ -286,6 +307,18 @@ export const ACCOUNTS: Account[] = [
     available: 1_190_000.0,
     status: "Active",
     profileKind: "CORPORATE",
+    companyName: "Adinkra Textiles Ltd",
+    mandate: "Both to sign",
+    relationshipManager: {
+      name: "Kwame Asante",
+      email: "kwame.asante@gcb.com.gh",
+      phone: "+233 24 499 1821",
+    },
+    signatories: [
+      { name: "Yaw Oppong", role: "Managing Director (Signatory A)", email: "yaw.oppong@adinkratextiles.com", mobile: "0244123456", specimenUrl: "/signatures/specimen-yaw.svg" },
+      { name: "Esther Appiah", role: "Finance Director (Signatory B)", email: "esther.appiah@adinkratextiles.com", mobile: "0244300412", specimenUrl: "/signatures/specimen-esther.svg" },
+      { name: "Kwame Boateng", role: "Executive Director (Signatory A)", email: "kwame.boateng@adinkratextiles.com", mobile: "0244300411", specimenUrl: "/signatures/specimen-kwame.svg" },
+    ],
   },
   {
     id: "acc-002",
@@ -297,6 +330,13 @@ export const ACCOUNTS: Account[] = [
     available: 342_118.9,
     status: "Active",
     profileKind: "CORPORATE",
+    companyName: "Adinkra Textiles Ltd",
+    mandate: "Both to sign",
+    relationshipManager: {
+      name: "Kwame Asante",
+      email: "kwame.asante@gcb.com.gh",
+      phone: "+233 24 499 1821",
+    },
   },
   {
     id: "acc-003",
@@ -308,6 +348,71 @@ export const ACCOUNTS: Account[] = [
     available: 452_000.0,
     status: "Active",
     profileKind: "CORPORATE",
+    companyName: "Adinkra Textiles Ltd",
+    mandate: "Both to sign",
+    relationshipManager: {
+      name: "Kwame Asante",
+      email: "kwame.asante@gcb.com.gh",
+      phone: "+233 24 499 1821",
+    },
+  },
+  {
+    id: "acc-volta-1",
+    name: "Commercial Operating Account",
+    number: "1001 8844 2200",
+    type: "Current",
+    currency: "GHS",
+    balance: 780_400.0,
+    available: 780_400.0,
+    status: "Active",
+    profileKind: "CORPORATE",
+    companyName: "Volta River Logistics Ltd",
+    mandate: "Either to sign",
+    relationshipManager: null, // Assigned to Corporate Banking Team (Operations)
+    signatories: [
+      { name: "Kofi Mensah", role: "Chief Executive Officer", email: "kofi.mensah@voltariver.com", mobile: "0201200314", specimenUrl: "/signatures/specimen-kofi.svg" },
+      { name: "Ama Serwaa", role: "Chief Operating Officer", email: "ama.serwaa@voltariver.com", mobile: "0244889911", specimenUrl: "/signatures/specimen-ama.svg" },
+    ],
+  },
+  {
+    id: "acc-gold-1",
+    name: "Primary Operating Account",
+    number: "1001 9922 4411",
+    type: "Current",
+    currency: "GHS",
+    balance: 3_500_000.0,
+    available: 3_500_000.0,
+    status: "Active",
+    profileKind: "CORPORATE",
+    companyName: "Gold Coast Mining Services Ltd",
+    mandate: "Any two to sign",
+    relationshipManager: {
+      name: "Abena Owusu",
+      email: "abena.owusu@gcb.com.gh",
+      phone: "+233 24 440 0512",
+    },
+    signatories: [
+      { name: "Nana Addo Dankwa", role: "Chairman", email: "nana.addo@goldcoastmining.com", mobile: "0244400511", specimenUrl: "/signatures/specimen-nana.svg" },
+      { name: "Kwabena Mensah", role: "Managing Director", email: "kmensah@goldcoastmining.com", mobile: "0244112233", specimenUrl: "/signatures/specimen-kmensah.svg" },
+    ],
+  },
+  {
+    id: "acc-gold-2",
+    name: "Equipment Escrow Account",
+    number: "1001 9922 4412",
+    type: "Current",
+    currency: "GHS",
+    balance: 1_200_000.0,
+    available: 1_200_000.0,
+    status: "Active",
+    profileKind: "CORPORATE",
+    companyName: "Gold Coast Mining Services Ltd",
+    mandate: "Any two to sign",
+    relationshipManager: {
+      name: "Abena Owusu",
+      email: "abena.owusu@gcb.com.gh",
+      phone: "+233 24 440 0512",
+    },
   },
   {
     id: "acc-004",

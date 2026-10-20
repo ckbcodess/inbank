@@ -90,7 +90,7 @@ export default function AuditLogPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Audit Log"
         description="Every user action, configuration change and transaction decision, with the actor, the time and the reason given. Entries are append-only and cannot be edited or removed."
@@ -105,7 +105,7 @@ export default function AuditLogPage() {
       />
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <FilterPanel groups={filterGroups} onClear={() => setChannel("all")} align="start" />
           <AppliedFilters groups={filterGroups} />
@@ -116,7 +116,7 @@ export default function AuditLogPage() {
           onChange={setQuery}
           placeholder="Search by actor, role, action or target..."
           tooltip="Search audit log"
-          inputWidthClassName="w-64 sm:w-80"
+          inputWidthClassName="w-56 sm:w-70"
         />
       </div>
 
@@ -152,8 +152,8 @@ export default function AuditLogPage() {
         <div className="rounded-2xl border border-border bg-card overflow-hidden">
           <ul className="divide-y divide-border">
             {rows.map((event) => (
-              <li key={event.id} className="flex items-start gap-4 px-4 py-4">
-                <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <li key={event.id} className="flex items-start gap-3 px-3 py-3">
+                <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                   <Lock size={15} strokeWidth={1.8} aria-hidden="true" />
                 </span>
 
@@ -167,7 +167,7 @@ export default function AuditLogPage() {
                   <span className="mt-0.5 break-words text-[13px] text-muted-foreground">
                     {event.target}
                   </span>
-                  <span className="mt-1.5 text-[12px] text-muted-foreground">
+                  <span className="mt-2 text-[12px] text-muted-foreground">
                     {event.actor} · {event.role} · IP {event.ip}
                   </span>
                 </div>

@@ -155,7 +155,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
           setOpen(true);
           inputRef.current?.focus();
         }}
-        className={`h-13 px-4 w-full rounded-2xl border text-left transition shadow-none flex items-center gap-3 cursor-text ${
+        className={`h-11 px-3 w-full rounded-2xl border text-left transition shadow-none flex items-center gap-2 cursor-text ${
           open
             ? "border-field-border-focus bg-field-focus"
             : "border-field-border bg-field hover:bg-field-hover"
@@ -176,7 +176,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
           <button
             type="button"
             onClick={handleClear}
-            className="size-6 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
+            className="size-5 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
             aria-label="Clear branch"
           >
             <X size={14} strokeWidth={2} />
@@ -201,7 +201,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
 
       {open && (
         <div
-          className={`absolute left-0 right-0 z-50 rounded-2xl border border-border/80 bg-popover/95 backdrop-blur-md shadow-lg p-1.5 max-h-60 overflow-y-auto animate-in fade-in zoom-in-95 duration-150 ${
+          className={`absolute left-0 right-0 z-50 rounded-2xl border border-border/80 bg-popover/95 backdrop-blur-md shadow-lg p-2 max-h-52 overflow-y-auto animate-in fade-in zoom-in-95 duration-150 ${
             placement === "top"
               ? "bottom-[calc(100%+6px)] origin-bottom"
               : "top-[calc(100%+6px)] origin-top"
@@ -222,7 +222,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
                     aria-selected={isSelected}
                     onClick={() => handleSelect(branch)}
                     onMouseEnter={() => setHighlightedIndex(index)}
-                    className={`w-full text-left px-3.5 py-2.5 rounded-xl text-[14px] font-medium transition-colors flex items-center justify-between cursor-pointer ${
+                    className={`w-full text-left px-3 py-2 rounded-xl text-[14px] font-medium transition-colors flex items-center justify-between cursor-pointer ${
                       isHighlighted || isSelected
                         ? "bg-muted text-foreground"
                         : "text-foreground hover:bg-muted/60"
@@ -237,7 +237,7 @@ export function BranchCombobox({ value, onChange, branches }: BranchComboboxProp
               })}
             </div>
           ) : (
-            <div className="p-3 text-center text-[13.5px] text-muted-foreground">
+            <div className="p-2 text-center text-[13.5px] text-muted-foreground">
               <span>No branches found matching &ldquo;{query}&rdquo;</span>
             </div>
           )}

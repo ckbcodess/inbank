@@ -39,7 +39,7 @@ export function OfferDetail() {
   if (!hydrated) return <OfferDetailSkeleton />;
   if (!offer) {
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <PageHeader title="Investment" backTo={back} />
         <TrueEmptyState
           icon={<SearchX size={22} strokeWidth={1.8} />}
@@ -132,12 +132,12 @@ export function OfferDetail() {
     : `/invest/profile?next=${encodeURIComponent(offer.href)}&label=${encodeURIComponent(offer.label)}`;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader title={offer.title} backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-8">
+      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6">
         <FactsPanel rows={facts} />
 
-        <section className="flex flex-col gap-3">
+        <section className="flex flex-col gap-2">
           <div className="px-1 text-[13px] text-muted-foreground">{`For example, ${money(EXAMPLE)}`}</div>
           <FactsPanel rows={exampleRows} />
           {offer.group === "primary" && (
@@ -145,11 +145,11 @@ export function OfferDetail() {
           )}
         </section>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           {note && <p className="px-1 text-center text-[13px] text-muted-foreground">{note}</p>}
           <Button
             type="button"
-            className="h-13 w-full rounded-2xl text-[16px]"
+            className="h-11 w-full rounded-2xl text-[16px]"
             disabled={!canStart}
             nativeButton={!(canStart && hasAccess)}
             render={canStart && hasAccess ? <Link href={startHref} /> : undefined}

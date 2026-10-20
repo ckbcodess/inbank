@@ -625,8 +625,8 @@ export function AccountSelectTriggerContent({
 }) {
   if (!account) {
     return (
-      <div className="flex items-center gap-3 min-w-0 flex-1">
-        <span className="flex size-9 shrink-0 items-center justify-center text-muted-foreground">
+      <div className="flex items-center gap-2 min-w-0 flex-1">
+        <span className="flex size-8 shrink-0 items-center justify-center text-muted-foreground">
           <Landmark size={20} strokeWidth={1.8} className="shrink-0" />
         </span>
         <span className="text-[14px] text-muted-foreground font-normal truncate">
@@ -637,10 +637,10 @@ export function AccountSelectTriggerContent({
   }
 
   return (
-    <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
+    <div className="flex items-center justify-between min-w-0 flex-1 gap-2">
       {/* Left: Icon + Account Name + Account Number */}
-      <div className="flex items-center gap-3 min-w-0">
-        <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
+      <div className="flex items-center gap-2 min-w-0">
+        <span className="flex size-8 shrink-0 items-center justify-center text-foreground">
           <Landmark size={20} strokeWidth={1.8} className="shrink-0" />
         </span>
         <div className="flex flex-col min-w-0 text-left gap-0.5">
@@ -692,7 +692,7 @@ export function FromAccountSelector({
         </SelectTrigger>
         <SelectContent>
           {accounts.map((a) => (
-            <SelectItem key={a.id} value={a.id} className="py-2.5">
+            <SelectItem key={a.id} value={a.id} className="py-2">
               <AccountSelectTriggerContent account={a} />
             </SelectItem>
           ))}
@@ -739,7 +739,7 @@ export function DualAmountFields({
   const ghsShown = ghs !== "" ? ghs : numForeign > 0 ? String(Math.round(numForeign * rate * 100) / 100) : "";
 
   return (
-    <div className="relative grid grid-cols-1 items-center gap-3 md:grid-cols-2">
+    <div className="relative grid grid-cols-1 items-center gap-2 md:grid-cols-2">
       <AmountInput
         value={ghsShown}
         onChange={(val) => {
@@ -754,7 +754,7 @@ export function DualAmountFields({
       />
 
       <div className="absolute left-1/2 top-[calc(50%+14px)] z-10 hidden -translate-x-1/2 -translate-y-1/2 md:flex">
-        <div className="flex size-9 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm">
+        <div className="flex size-8 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm">
           <ArrowLeftRight size={15} strokeWidth={2} />
         </div>
       </div>
@@ -965,7 +965,7 @@ export function AmountInput({
         onClick={handleClick}
         onAnimationEnd={() => setNudge(false)}
         className={cn(
-          "relative flex h-[68px] min-h-[68px] w-full items-center justify-center rounded-2xl border bg-field transition-colors px-4",
+          "relative flex h-[68px] min-h-[68px] w-full items-center justify-center rounded-2xl border bg-field transition-colors px-3",
           nudge && "animate-amount-shake",
           disabled ? "bg-muted/30 cursor-not-allowed opacity-80" : "hover:bg-field-hover cursor-text",
           isError
@@ -973,7 +973,7 @@ export function AmountInput({
             : "border-field-border focus-within:border-field-border-focus focus-within:bg-field-focus focus-within:ring-1 focus-within:ring-field-border-focus"
         )}
       >
-        <div className="inline-flex items-center justify-center gap-2.5">
+        <div className="inline-flex items-center justify-center gap-2">
           <span
             className={cn(
               "font-medium select-none transition-colors transition-[font-size] duration-150",
@@ -1170,7 +1170,7 @@ export function ProceedButton({
       <Button
         type="button"
         data-proceed-cta="true"
-        className="w-full h-13 rounded-2xl text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
+        className="w-full h-11 rounded-2xl text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none"
         disabled={disabled}
         loading={loading}
         onClick={onClick}
@@ -1197,7 +1197,7 @@ export function AccountVerificationStatus({
 }) {
   if (resolving) {
     return (
-      <div className={cn("flex items-center gap-2 pt-1.5 text-[13px] text-muted-foreground select-none animate-verify-in", className)}>
+      <div className={cn("flex items-center gap-2 pt-2 text-[13px] text-muted-foreground select-none animate-verify-in", className)}>
         <span className="flex items-center justify-center shrink-0 animate-in zoom-in-75 duration-200">
           <AppLoader size={14} className="text-muted-foreground" />
         </span>
@@ -1210,8 +1210,8 @@ export function AccountVerificationStatus({
 
   if (name) {
     return (
-      <div className={cn("flex items-center gap-2 pt-1.5 text-[13.5px] text-foreground select-none animate-verify-in", className)}>
-        <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop">
+      <div className={cn("flex items-center gap-2 pt-2 text-[13.5px] text-foreground select-none animate-verify-in", className)}>
+        <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop">
           <Check size={10} strokeWidth={3} className="shrink-0" />
         </span>
         <span className="truncate font-normal animate-in fade-in-0 duration-200">
@@ -1227,8 +1227,8 @@ export function AccountVerificationStatus({
 export function VerifiedAccountBadge({ name, className }: { name: string; className?: string }) {
   if (!name) return null;
   return (
-    <div className={cn("flex items-center gap-2 pt-1.5 text-[13.5px] text-foreground select-none animate-verify-in", className)}>
-      <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop">
+    <div className={cn("flex items-center gap-2 pt-2 text-[13.5px] text-foreground select-none animate-verify-in", className)}>
+      <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop">
         <Check size={10} strokeWidth={3} className="shrink-0" />
       </span>
       <span className="truncate font-normal animate-in fade-in-0 duration-200">
@@ -1246,7 +1246,7 @@ export function ResolvingAccountBadge({
   className?: string;
 }) {
   return (
-    <div className={cn("flex items-center gap-2 pt-1.5 text-[13px] text-muted-foreground select-none animate-verify-in", className)}>
+    <div className={cn("flex items-center gap-2 pt-2 text-[13px] text-muted-foreground select-none animate-verify-in", className)}>
       <span className="flex items-center justify-center shrink-0 animate-in zoom-in-75 duration-200">
         <AppLoader size={14} className="text-muted-foreground" />
       </span>
@@ -1302,23 +1302,23 @@ export function CollapsedDetailsBadge({
 }) {
   const initials = initialsOf(title);
   return (
-    <div className="flex min-h-[58px] items-center justify-between gap-3 rounded-2xl border border-field-border bg-field px-4.5 py-2.5 transition-colors animate-in fade-in duration-150 ease-out hover:bg-field-hover">
-      <div className="flex min-w-0 items-center gap-3">
+    <div className="flex min-h-[58px] items-center justify-between gap-2 rounded-2xl border border-field-border bg-field px-4 py-2 transition-colors animate-in fade-in duration-150 ease-out hover:bg-field-hover">
+      <div className="flex min-w-0 items-center gap-2">
         {icon ? (
-          <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full text-foreground">
+          <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full text-foreground">
             {icon}
           </span>
         ) : (
-          <span className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-[12px] text-muted-foreground font-medium">
+          <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-border bg-muted text-[12px] text-muted-foreground font-medium">
             {initials || <User size={16} strokeWidth={1.8} aria-hidden="true" />}
           </span>
         )}
         <div className="flex min-w-0 flex-col gap-0.5 text-left">
-          <span className="flex min-w-0 items-center gap-1.5">
+          <span className="flex min-w-0 items-center gap-2">
             <span className="truncate text-[14.5px] font-medium leading-tight tracking-[var(--ls-tight)] text-foreground">{title}</span>
             {nameCheck?.confirmed && (
               <span
-                className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop"
+                className="flex size-3 shrink-0 items-center justify-center rounded-full bg-[#059669] text-white shadow-xs animate-badge-pop"
                 title={`Name confirmed${nameCheck.by ? ` by ${nameCheck.by}` : ""}`}
               >
                 <Check size={9} strokeWidth={3} className="shrink-0" />
@@ -1367,19 +1367,19 @@ export function SaveBeneficiaryCheckbox({
 }) {
   return (
     <div className="flex flex-col gap-2 pt-1">
-      <label className="flex items-center gap-2.5 cursor-pointer select-none">
+      <label className="flex items-center gap-2 cursor-pointer select-none">
         <input
           type="checkbox"
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}
-          className="size-4.5 rounded-[5px] border-border text-foreground focus:ring-ring accent-foreground cursor-pointer"
+          className="size-4 rounded-sm border-border text-foreground focus:ring-ring accent-foreground cursor-pointer"
         />
         <span className="text-[14px] font-medium text-foreground">
           {label}
         </span>
       </label>
       {checked && onNicknameChange && (
-        <div className="pl-7 animate-in fade-in slide-in-from-top-1 duration-150">
+        <div className="pl-6 animate-in fade-in slide-in-from-top-1 duration-150">
           <Field label="Beneficiary Nickname" optional>
             <Input
               type="text"
@@ -1414,7 +1414,7 @@ export function SchedulePaymentSection({
   onChange: (updates: Partial<ScheduleState>) => void;
 }) {
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-border/80 bg-card p-4 transition">
+    <div className="flex flex-col gap-2 rounded-2xl border border-border/80 bg-card p-3 transition">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <span className="text-[14px] font-medium text-foreground">Schedule Payment</span>
@@ -1429,13 +1429,13 @@ export function SchedulePaymentSection({
             onChange={(e) => onChange({ enabled: e.target.checked })}
             className="sr-only peer"
           />
-          <div className="w-11 h-6 bg-muted-foreground/25 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition peer-checked:bg-primary"></div>
+          <div className="w-10 h-5 bg-muted-foreground/25 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-4 after:w-4 after:transition peer-checked:bg-primary"></div>
         </label>
       </div>
 
       {state.enabled && (
-        <div className="flex flex-col gap-3 pt-2 border-t border-border/60 animate-in fade-in slide-in-from-top-1 duration-150">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="flex flex-col gap-2 pt-2 border-t border-border/60 animate-in fade-in slide-in-from-top-1 duration-150">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <Field label="Execution Date">
               <Input
                 type="date"
@@ -1488,7 +1488,7 @@ export function NetworkSelect({
   return (
     <Select value={value} onValueChange={(val) => val && onChange(val)}>
       <SelectTrigger>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <OperatorLogo name={value} size={36} />
           <span className={cn("text-[14px] text-foreground", !value && "text-muted-foreground")}>
             {value || placeholder}
@@ -1498,7 +1498,7 @@ export function NetworkSelect({
       <SelectContent>
         {options.map((n) => (
           <SelectItem key={n} value={n}>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {operatorFromName(n) && <OperatorLogo name={n} size={28} />}
               <span>{n}</span>
             </div>
@@ -1571,7 +1571,7 @@ export function PaymentMethodSelect({ value, onChange }: { value: string; onChan
       <SelectContent>
         {PAYMENT_METHODS.map((m) => (
           <SelectItem key={m.id} value={m.id} label={m.name}>
-            <div className="flex w-full items-center justify-between gap-4 py-0.5">
+            <div className="flex w-full items-center justify-between gap-3 py-0.5">
               <div className="flex flex-col text-left">
                 <span className="font-medium text-foreground">{m.name}</span>
                 <span className="text-[12px] font-normal text-muted-foreground">{m.description}</span>

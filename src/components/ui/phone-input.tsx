@@ -72,7 +72,7 @@ function CountryDropdown({
       <PopoverTrigger
         disabled={disabled}
         aria-label={`Country: ${selected?.name ?? "Ghana"}. Change country`}
-        className="-ml-1 flex h-8 shrink-0 cursor-pointer items-center gap-1.5 rounded-md px-1 outline-none transition-colors hover:bg-foreground/5 focus-visible:bg-foreground/5"
+        className="-ml-1 flex h-7 shrink-0 cursor-pointer items-center gap-2 rounded-lg px-1 outline-none transition-colors hover:bg-foreground/5 focus-visible:bg-foreground/5"
       >
         <CountryFlag code={country} size={20} />
         <span className="tabular text-muted-foreground">+{dialCodeFor(country)}</span>
@@ -84,7 +84,7 @@ function CountryDropdown({
             <Search
               size={15}
               strokeWidth={1.8}
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
               aria-hidden="true"
             />
             <input
@@ -94,7 +94,7 @@ function CountryDropdown({
               placeholder="Search country or code"
               aria-label="Search countries"
               autoComplete="off"
-              className="h-10 w-full rounded-lg border border-field-border bg-field pl-9 pr-3 text-[14px] text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-field-border-focus focus:bg-field-focus"
+              className="h-9 w-full rounded-lg border border-field-border bg-field pl-8 pr-2 text-[14px] text-foreground outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-field-border-focus focus:bg-field-focus"
             />
           </div>
           <ul className="max-h-[260px] overflow-y-auto" role="listbox" aria-label="Countries">
@@ -108,7 +108,7 @@ function CountryDropdown({
                     setQuery("");
                   }}
                   className={cn(
-                    "flex w-full cursor-pointer items-center gap-3 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors hover:bg-muted/70",
+                    "flex w-full cursor-pointer items-center gap-2 rounded-lg px-2 py-2 text-left text-[13px] transition-colors hover:bg-muted/70",
                     c.code === country && "bg-muted/70",
                   )}
                 >
@@ -118,7 +118,7 @@ function CountryDropdown({
                 </button>
               </li>
             ))}
-            {matches.length === 0 && <li className="px-2.5 py-3 text-[13px] text-muted-foreground">No country matches that.</li>}
+            {matches.length === 0 && <li className="px-2 py-2 text-[13px] text-muted-foreground">No country matches that.</li>}
           </ul>
         </div>
       </PopoverContent>
@@ -148,7 +148,7 @@ export function PhoneInput({
     <div
       data-slot="phone-input"
       className={cn(
-        "flex h-13 w-full items-center gap-2 rounded-xl border border-field-border bg-field px-4 text-[14px] transition-all outline-none",
+        "flex h-11 w-full items-center gap-2 rounded-xl border border-field-border bg-field px-3 text-[14px] transition-all outline-none",
         "focus-within:outline-none focus-within:border-field-border-focus focus-within:ring-1 focus-within:ring-field-border-focus",
         "hover:bg-field-hover focus-within:bg-field-focus",
         "has-aria-invalid:border-destructive has-aria-invalid:ring-1 has-aria-invalid:ring-destructive dark:has-aria-invalid:ring-destructive",

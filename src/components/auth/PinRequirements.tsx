@@ -17,17 +17,17 @@ export default function PinRequirements({
   const confirmMatch = isConfirm && originalPin ? pin.length === 4 && pin === originalPin : false;
 
   return (
-    <div className="w-full rounded-2xl border border-border/80 bg-muted/20 p-4 text-left">
-      <p className="mb-2.5 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
+    <div className="w-full rounded-2xl border border-border/80 bg-muted/20 p-3 text-left">
+      <p className="mb-2 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
         PIN Requirements
       </p>
-      <ul className="grid grid-cols-1 gap-2.5 text-[12.5px] sm:grid-cols-2" aria-label="PIN requirements">
+      <ul className="grid grid-cols-1 gap-2 text-[12.5px] sm:grid-cols-2" aria-label="PIN requirements">
         {PIN_RULES.map((rule) => {
           const met = rule.test(pin);
           return (
             <li key={rule.id} className="flex items-center gap-2">
               <span
-                className={`flex size-4 shrink-0 items-center justify-center rounded-full text-[10px] transition-colors ${
+                className={`flex size-3.5 shrink-0 items-center justify-center rounded-full text-[10px] transition-colors ${
                   met ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                 }`}
               >
@@ -43,7 +43,7 @@ export default function PinRequirements({
         {isConfirm && (
           <li className="flex items-center gap-2">
             <span
-              className={`flex size-4 shrink-0 items-center justify-center rounded-full text-[10px] transition-colors ${
+              className={`flex size-3.5 shrink-0 items-center justify-center rounded-full text-[10px] transition-colors ${
                 confirmMatch ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
               }`}
             >

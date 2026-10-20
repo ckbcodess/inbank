@@ -25,8 +25,8 @@ export function SummaryCard({
         : "text-foreground";
 
   return (
-    <div className="rounded-xl border border-border bg-card px-5 py-4">
-      <div className="flex items-center justify-between gap-3">
+    <div className="rounded-xl border border-border bg-card px-4 py-3">
+      <div className="flex items-center justify-between gap-2">
         <span className="text-[12px] text-muted-foreground">{label}</span>
         {icon && <span className="text-muted-foreground" aria-hidden="true">{icon}</span>}
       </div>

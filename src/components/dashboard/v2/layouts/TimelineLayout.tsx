@@ -41,14 +41,14 @@ const FEED_LIMIT = 10;
 
 function DayHeading({ children }: { children: React.ReactNode }) {
   return (
-    <li className="pb-1 pt-5 text-[12px] text-muted-foreground tabular first:pt-0">{children}</li>
+    <li className="pb-1 pt-4 text-[12px] text-muted-foreground tabular first:pt-0">{children}</li>
   );
 }
 
 function ScheduledRow({ p, showAmounts }: { p: UpcomingPayment; showAmounts: boolean }) {
   return (
-    <li className="flex items-center gap-3.5 py-3">
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-dashed border-border text-muted-foreground">
+    <li className="flex items-center gap-3 py-2">
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-dashed border-border text-muted-foreground">
         <CalendarClock size={16} strokeWidth={1.8} />
       </span>
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -81,11 +81,11 @@ function TxnRow({
       <button
         type="button"
         onClick={() => onSelect(txn)}
-        className="flex w-full text-left items-center gap-3.5 py-3 hover:opacity-80 transition-opacity cursor-pointer"
+        className="flex w-full text-left items-center gap-3 py-2 hover:opacity-80 transition-opacity cursor-pointer"
       >
         <span
           className={cn(
-            "flex size-9 shrink-0 items-center justify-center rounded-full",
+            "flex size-8 shrink-0 items-center justify-center rounded-full",
             credit ? "bg-success/10 text-success" : "bg-muted text-muted-foreground",
           )}
         >
@@ -169,10 +169,10 @@ export function TimelineLayout(props: DashViewProps) {
   const loading = status === "loading";
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-8">
-      <div className="flex items-center justify-between gap-4 sm:flex-wrap">
+    <div className="flex flex-col gap-5 sm:gap-6">
+      <div className="flex items-center justify-between gap-3 sm:flex-wrap">
         <Greeting firstName={data.firstName} />
-        <div className="flex items-center gap-3 sm:flex-wrap">
+        <div className="flex items-center gap-2 sm:flex-wrap">
           <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} className="hidden sm:flex" />
           <RefreshControl updatedAt={updatedAt} refreshing={loading} onRefresh={onRefresh} />
         </div>
@@ -185,15 +185,15 @@ export function TimelineLayout(props: DashViewProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={SPRING}
-        className="grid grid-cols-1 items-start gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_360px]"
+        className="grid grid-cols-1 items-start gap-3 sm:gap-5 lg:grid-cols-[minmax(0,1fr)_360px]"
       >
         {/* The rail comes first on small screens so the balance still leads. */}
-        <aside className="flex flex-col gap-4 sm:gap-6 lg:sticky lg:top-6 lg:order-2">
-          <Card className="sm:gap-4">
+        <aside className="flex flex-col gap-3 sm:gap-5 lg:sticky lg:top-5 lg:order-2">
+          <Card className="sm:gap-3">
             <AccountSwitcher data={data} onSelect={onSelectAccount} />
             <BalanceFigure data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} size="md" />
             {!loading && <BalanceMeta data={data} showAmounts={showAmounts} updatedAt={updatedAt} />}
-            <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-3 sm:hidden" />
+            <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-2 sm:hidden" />
           </Card>
           <CardsCard data={data} loading={loading} />
         </aside>

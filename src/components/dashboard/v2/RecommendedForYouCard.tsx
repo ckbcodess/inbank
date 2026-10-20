@@ -130,10 +130,10 @@ function reveal(delay: number) {
 
 function Chevrons({ i, total, onChange }: { i: number; total: number; onChange: (n: number) => void }) {
   const btn =
-    "flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors duration-hover enabled:hover:bg-item-hover enabled:hover:text-foreground disabled:opacity-30";
+    "flex size-7 items-center justify-center rounded-full text-muted-foreground transition-colors duration-hover enabled:hover:bg-item-hover enabled:hover:text-foreground disabled:opacity-30";
   return (
     // Contextual: shown while the pointer is over the card or keyboard focus is on a control in it (not after a mouse click, which leaves focus behind). Touch screens can't hover, so they keep them.
-    <div className="-my-1.5 flex items-center opacity-0 pointer-events-none transition-opacity duration-hover group-hover/rec:pointer-events-auto group-hover/rec:opacity-100 group-has-[:focus-visible]/rec:pointer-events-auto group-has-[:focus-visible]/rec:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100">
+    <div className="-my-2 flex items-center opacity-0 pointer-events-none transition-opacity duration-hover group-hover/rec:pointer-events-auto group-hover/rec:opacity-100 group-has-[:focus-visible]/rec:pointer-events-auto group-has-[:focus-visible]/rec:opacity-100 pointer-coarse:pointer-events-auto pointer-coarse:opacity-100">
       <button type="button" aria-label="Previous recommendation" disabled={i === 0} onClick={() => onChange(i - 1)} className={btn}>
         <ChevronLeft size={16} strokeWidth={1.8} />
       </button>
@@ -155,19 +155,19 @@ export function RecommendedForYouCard({
   const [index, setIndex] = useState(0);
 
   const shell = cn(
-    "group/rec relative flex h-[260px] flex-col gap-3 overflow-hidden rounded-2xl border border-border bg-panel p-4 sm:p-5",
+    "group/rec relative flex h-[260px] flex-col gap-2 overflow-hidden rounded-2xl border border-border bg-panel p-3 sm:p-4",
     className,
   );
 
   if (loading) {
     return (
       <div className={shell}>
-        <Bone className="h-4 w-36 rounded-md" />
-        <div className="flex flex-1 flex-col items-center justify-center gap-2.5">
-          <Bone className="h-5 w-56 rounded-md" />
-          <Bone className="h-5 w-40 rounded-md" />
+        <Bone className="h-3.5 w-31 rounded-lg" />
+        <div className="flex flex-1 flex-col items-center justify-center gap-2">
+          <Bone className="h-4 w-49 rounded-lg" />
+          <Bone className="h-4 w-35 rounded-lg" />
         </div>
-        <Bone className="mx-auto h-3.5 w-20 rounded-md" />
+        <Bone className="mx-auto h-3 w-17 rounded-lg" />
       </div>
     );
   }
@@ -213,7 +213,7 @@ export function RecommendedForYouCard({
           <motion.div {...reveal(reasonAt + WORD_STEP * 2)}>
             <Link
               href={r.ctaHref}
-              className="group -my-2 inline-flex items-center gap-1.5 py-2 text-[13px] text-foreground transition-colors duration-hover hover:text-foreground/80"
+              className="group -my-2 inline-flex items-center gap-2 py-2 text-[13px] text-foreground transition-colors duration-hover hover:text-foreground/80"
             >
               {r.ctaLabel}
               <ArrowRight size={14} strokeWidth={1.8} className="transition-transform duration-hover group-hover:translate-x-0.5" />

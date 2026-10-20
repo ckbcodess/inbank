@@ -23,11 +23,11 @@ export function CardsList({ cards }: CardsLayoutProps) {
                 href={`/cards/${card.id}`}
                 onClick={() => setNavigatingId(card.id)}
                 className={cn(
-                  "group flex items-center justify-between gap-3 rounded-xl px-3 py-4 transition-colors hover:bg-item-hover sm:gap-4 sm:px-4",
+                  "group flex items-center justify-between gap-2 rounded-xl px-2 py-3 transition-colors hover:bg-item-hover sm:gap-3 sm:px-3",
                   isNavigating && "bg-item-hover",
                 )}
               >
-                <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
+                <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
                   <MiniCardThumbnail card={card} />
                   <div className="flex min-w-0 flex-1 flex-col">
                     <div className="flex flex-wrap items-center gap-2">

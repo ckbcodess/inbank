@@ -47,13 +47,13 @@ export function TrueEmptyState({
 }) {
   const fallbackIcon = icon ?? <Inbox size={22} strokeWidth={1.5} />;
   return (
-    <div className="flex flex-col items-center justify-center px-4 py-14 sm:py-16 text-center">
-      <div className="mb-8 text-muted-foreground/60 flex items-center justify-center">
+    <div className="flex flex-col items-center justify-center px-3 py-12 sm:py-12 text-center">
+      <div className="mb-6 text-muted-foreground/60 flex items-center justify-center">
         {illustration ? <StateIllustration id={illustration} fallback={fallbackIcon} /> : fallbackIcon}
       </div>
       <p className="text-[18px] sm:text-[20px] font-medium tracking-[var(--ls-tight)] text-foreground">{title}</p>
-      {description && <p className="mt-2.5 max-w-xl text-[14px] leading-relaxed text-muted-foreground">{description}</p>}
-      {action && <div className="mt-7">{action}</div>}
+      {description && <p className="mt-2 max-w-xl text-[14px] leading-relaxed text-muted-foreground">{description}</p>}
+      {action && <div className="mt-6">{action}</div>}
     </div>
   );
 }
@@ -73,13 +73,13 @@ export function FilteredEmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center px-4 py-14 sm:py-16 text-center">
-      <div className="mb-3 text-muted-foreground/60 flex items-center justify-center">
+    <div className="flex flex-col items-center justify-center px-3 py-12 sm:py-12 text-center">
+      <div className="mb-2 text-muted-foreground/60 flex items-center justify-center">
         <StateIllustration id="no-results" fallback={<SearchX size={22} strokeWidth={1.5} />} />
       </div>
       <p className="text-[14.5px] font-medium text-foreground">No results found</p>
       <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>
-      <Button variant="outline" size="sm" className="mt-4 h-8 px-3 rounded-lg text-[13px]" onClick={onReset}>
+      <Button variant="outline" size="sm" className="mt-3 h-7 px-2 rounded-lg text-[13px]" onClick={onReset}>
         <RefreshCw size={13} strokeWidth={1.8} />
         Reset filters
       </Button>
@@ -97,13 +97,13 @@ export function ListErrorState({
   description?: string;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center px-4 py-14 sm:py-16 text-center">
-      <div className="mb-3 text-destructive/80 flex items-center justify-center">
+    <div className="flex flex-col items-center justify-center px-3 py-12 sm:py-12 text-center">
+      <div className="mb-2 text-destructive/80 flex items-center justify-center">
         <StateIllustration id="load-error" fallback={<AlertCircle size={22} strokeWidth={1.5} />} />
       </div>
       <p className="text-[14.5px] font-medium text-foreground">Couldn&apos;t load records</p>
       <p className="mt-1 max-w-sm text-[13px] leading-relaxed text-muted-foreground">{description}</p>
-      <Button variant="outline" size="sm" className="mt-4 h-8 px-3 rounded-lg text-[13px]" onClick={onRetry}>
+      <Button variant="outline" size="sm" className="mt-3 h-7 px-2 rounded-lg text-[13px]" onClick={onRetry}>
         <RefreshCw size={13} strokeWidth={1.8} />
         Retry
       </Button>
@@ -117,7 +117,7 @@ export function ListErrorState({
  */
 export function PartialLoadFooter() {
   return (
-    <div className="flex items-center justify-center gap-2 border-t border-border/60 px-4 py-3.5 text-[13px] text-muted-foreground">
+    <div className="flex items-center justify-center gap-2 border-t border-border/60 px-3 py-3 text-[13px] text-muted-foreground">
       <RefreshCw size={13} strokeWidth={1.8} className="animate-spin" />
       Loading more records…
     </div>

@@ -38,7 +38,7 @@ const TRADES = [
 export default function TradeHubPage() {
   const [state, setState] = useState<ListState>("populated");
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Trade"
         actions={
@@ -60,7 +60,7 @@ export default function TradeHubPage() {
       <StubNotice section="section 6 / sitemap 12.4" states="13.6 Trade Details" />
 
       <section className="rounded-2xl border border-border bg-card">
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h2 className="text-[15px] text-foreground">My trades</h2>
           <span className="text-[12px] text-muted-foreground">{TRADES.length} active</span>
         </div>
@@ -69,9 +69,9 @@ export default function TradeHubPage() {
             <li key={t.id}>
               <Link
                 href={`/trade/${t.id}`}
-                className="flex items-center gap-4 px-5 py-4 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
               >
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                   <Ship size={16} strokeWidth={1.8} aria-hidden="true" />
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
@@ -91,9 +91,9 @@ export default function TradeHubPage() {
         </ul>
       </section>
 
-      <section className="rounded-2xl border border-border bg-card p-5">
-        <div className="flex items-center gap-3">
-          <span className="flex size-9 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+      <section className="rounded-2xl border border-border bg-card p-4">
+        <div className="flex items-center gap-2">
+          <span className="flex size-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
             <FileText size={17} strokeWidth={1.8} aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">

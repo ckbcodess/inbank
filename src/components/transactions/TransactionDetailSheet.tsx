@@ -252,26 +252,26 @@ export function TransactionDetailSheet({
           showCloseButton={true}
         >
           {/* ── Scrollable Content Area ── */}
-          <div className="relative z-10 flex-1 overflow-y-auto px-6 sm:px-9 pt-14 pb-6 no-scrollbar flex flex-col">
+          <div className="relative z-10 flex-1 overflow-y-auto px-5 sm:px-8 pt-12 pb-5 no-scrollbar flex flex-col">
             {/* Centred in the space above the buttons; scrolls if the receipt is taller than that */}
             <div className="my-auto">
               {/* ── Hero Section (Channel, Big Amount, Date & Time) ── */}
-              <div className="flex flex-col items-center text-center pb-6">
+              <div className="flex flex-col items-center text-center pb-5">
                 <span className="text-[13px] font-normal text-muted-foreground tracking-normal">
                   {channelType}
                 </span>
-                <h2 className="mt-5 text-[32px] sm:text-[40px] font-normal text-foreground tracking-[var(--ls-display)] leading-none tabular">
+                <h2 className="mt-4 text-[32px] sm:text-[40px] font-normal text-foreground tracking-[var(--ls-display)] leading-none tabular">
                   {formattedAmount}
                 </h2>
-                <span className="mt-5 text-[12.5px] text-muted-foreground/80 tracking-normal">
+                <span className="mt-4 text-[12.5px] text-muted-foreground/80 tracking-normal">
                   {dateTimeString}
                 </span>
               </div>
 
               {/* ── Section 1: who and where, for this kind of transaction ── */}
-              <div className="flex flex-col gap-4 py-6">
+              <div className="flex flex-col gap-3 py-5">
                 {detailFields.map((f, i) => (
-                  <div key={f.label} className="flex items-center justify-between gap-4 text-[13.5px]">
+                  <div key={f.label} className="flex items-center justify-between gap-3 text-[13.5px]">
                     <span className="text-muted-foreground font-normal">{f.label}</span>
                     <span
                       className={cn(
@@ -286,12 +286,12 @@ export function TransactionDetailSheet({
               </div>
 
               {/* ── Section 2: Status / Transaction ID / From Account ── */}
-              <div className="flex flex-col gap-4 relative py-6 before:absolute before:inset-x-0 before:top-0 before:h-px before:content-[''] before:bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]">
+              <div className="flex flex-col gap-3 relative py-5 before:absolute before:inset-x-0 before:top-0 before:h-px before:content-[''] before:bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]">
                 <div className="flex items-center justify-between text-[13.5px]">
                   <span className="text-muted-foreground font-normal">Status</span>
                   <span
                     className={cn(
-                      "inline-flex items-center px-2.5 py-0.5 rounded-full text-[11.5px] font-medium",
+                      "inline-flex items-center px-2 py-0.5 rounded-full text-[11.5px] font-medium",
                       isFailed
                         ? "bg-pill-destructive text-pill-destructive-text"
                         : isPending
@@ -308,7 +308,7 @@ export function TransactionDetailSheet({
                   <button
                     type="button"
                     onClick={handleCopyRef}
-                    className="group flex items-center gap-1.5 text-foreground font-medium tabular cursor-pointer"
+                    className="group flex items-center gap-2 text-foreground font-medium tabular cursor-pointer"
                     title="Copy"
                   >
                     <span>{transaction.reference}</span>
@@ -333,7 +333,7 @@ export function TransactionDetailSheet({
               </div>
 
               {/* ── Section 3: Narration & Category ── */}
-              <div className="flex flex-col gap-4 relative py-6 before:absolute before:inset-x-0 before:top-0 before:h-px before:content-[''] before:bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]">
+              <div className="flex flex-col gap-3 relative py-5 before:absolute before:inset-x-0 before:top-0 before:h-px before:content-[''] before:bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]">
                 <div className="flex items-center justify-between text-[13.5px]">
                   <span className="text-muted-foreground font-normal">Narration</span>
                   <span className="text-foreground font-medium text-right truncate max-w-[200px]">
@@ -349,7 +349,7 @@ export function TransactionDetailSheet({
               </div>
 
               {/* ── Section 4: Breakdown (Amount, Fee, Total Debited) ── */}
-              <div className="flex flex-col gap-4 relative py-6 before:absolute before:inset-x-0 before:top-0 before:h-px before:content-[''] before:bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]">
+              <div className="flex flex-col gap-3 relative py-5 before:absolute before:inset-x-0 before:top-0 before:h-px before:content-[''] before:bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]">
                 <div className="flex items-center justify-between text-[13.5px]">
                   <span className="text-muted-foreground font-normal">Amount</span>
                   <span className="text-foreground font-medium tabular text-right">
@@ -373,16 +373,16 @@ export function TransactionDetailSheet({
           </div>
 
           {/* ── Bottom Circular Action Buttons (Share, Save as PDF, Repeat): pinned to the foot of the sheet ── */}
-          <div className="relative z-10 shrink-0 px-6 sm:px-9 pb-8 pt-4">
+          <div className="relative z-10 shrink-0 px-5 sm:px-8 pb-6 pt-3">
             <div>
-              <div className="flex items-center justify-center gap-7">
+              <div className="flex items-center justify-center gap-6">
                 {/* Share Action */}
                 <button
                   type="button"
                   onClick={() => setShareFormat("text")}
                   className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
                 >
-                  <div className="size-13 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
+                  <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
                     <Share2 size={20} strokeWidth={2} />
                   </div>
                   <span className="text-[12.5px] font-normal text-foreground tracking-tight">
@@ -396,7 +396,7 @@ export function TransactionDetailSheet({
                   onClick={() => setShareFormat("pdf")}
                   className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
                 >
-                  <div className="size-13 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
+                  <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
                     <FileDown size={20} strokeWidth={2} />
                   </div>
                   <span className="text-[12.5px] font-normal text-foreground tracking-tight">
@@ -410,7 +410,7 @@ export function TransactionDetailSheet({
                   onClick={handleRepeat}
                   className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
                 >
-                  <div className="size-13 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
+                  <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
                     <RotateCw size={20} strokeWidth={2} />
                   </div>
                   <span className="text-[12.5px] font-normal text-foreground tracking-tight">

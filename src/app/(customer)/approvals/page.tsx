@@ -89,7 +89,7 @@ export default function ApprovalQueuePage() {
   ];
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader title="Approvals" />
 
       <StateSwitcher
@@ -101,7 +101,7 @@ export default function ApprovalQueuePage() {
       />
 
       {/* Filter and Search Ribbon */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <FilterPanel groups={filterGroups} onClear={() => setTypeFilter("all")} align="start" />
           <AppliedFilters groups={filterGroups} />
@@ -112,7 +112,7 @@ export default function ApprovalQueuePage() {
           onChange={setQuery}
           placeholder="Search reference, description or counterparty..."
           tooltip="Search approvals"
-          inputWidthClassName="w-60 sm:w-80"
+          inputWidthClassName="w-52 sm:w-70"
         />
       </div>
 
@@ -156,9 +156,9 @@ export default function ApprovalQueuePage() {
                         ? `/approvals/payment/${item.id}`
                         : `/approvals/trade/${item.id}`
                     }
-                    className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                    className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
                   >
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                       {item.type === "payment" ? (
                         <Send size={16} strokeWidth={1.8} aria-hidden="true" />
                       ) : (

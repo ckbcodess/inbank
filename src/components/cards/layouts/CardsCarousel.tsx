@@ -17,7 +17,7 @@ export function CardsCarousel({ cards }: CardsLayoutProps) {
     const el = track.current;
     const first = el?.firstElementChild as HTMLElement | null;
     if (!el || !first) return;
-    const step = first.offsetWidth + 16; // slide + gap-4
+    const step = first.offsetWidth + 12; // slide + gap-3 (12px)
     setIndex(Math.max(0, Math.min(slides - 1, Math.round(el.scrollLeft / step))));
   };
 
@@ -25,15 +25,15 @@ export function CardsCarousel({ cards }: CardsLayoutProps) {
     const el = track.current;
     const first = el?.firstElementChild as HTMLElement | null;
     if (!el || !first) return;
-    el.scrollTo({ left: i * (first.offsetWidth + 16), behavior: "smooth" });
+    el.scrollTo({ left: i * (first.offsetWidth + 12), behavior: "smooth" });
   };
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <div
         ref={track}
         onScroll={onScroll}
-        className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-[9vw] py-3 sm:mx-0 sm:px-[calc(50%-220px)]"
+        className="no-scrollbar -mx-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-[9vw] py-2 sm:mx-0 sm:px-[calc(50%-220px)]"
       >
         {cards.map((card) => (
           <div key={card.id} className="w-[82vw] max-w-[440px] shrink-0 snap-center sm:w-[440px]">
@@ -53,7 +53,7 @@ export function CardsCarousel({ cards }: CardsLayoutProps) {
             onClick={() => goTo(i)}
             className={cn(
               "h-1.5 cursor-pointer rounded-full transition-[width,background-color]",
-              i === index ? "w-5 bg-foreground" : "w-1.5 bg-border hover:bg-muted-foreground/50",
+              i === index ? "w-4 bg-foreground" : "w-1.5 bg-border hover:bg-muted-foreground/50",
             )}
           />
         ))}

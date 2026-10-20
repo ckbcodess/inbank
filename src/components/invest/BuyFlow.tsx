@@ -94,7 +94,7 @@ export function BuyFlow() {
   if (screen !== "success") {
     if (!sec) {
       return (
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-6">
           <PageHeader title="Buy" backTo={backTo} />
           <TrueEmptyState
             icon={<SearchX size={22} strokeWidth={1.8} />}
@@ -118,7 +118,7 @@ export function BuyFlow() {
     if (csd.status !== "active") return <AccountRequired status={csd.status} title={sec.title} backTo={backTo} />;
     if (!marketOpen) {
       return (
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-6">
           <PageHeader title={sec.title} backTo={backTo} />
           <TrueEmptyState
             icon={<Clock size={22} strokeWidth={1.8} />}
@@ -185,10 +185,10 @@ export function BuyFlow() {
       ["When it matures", instructionLabel(instruction)],
     ];
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <PageHeader title="Review and Confirm" backTo={{ href: backTo.href, label: "Buy", onClick: () => setScreen("form") }} />
-        <div className="mx-auto flex w-full max-w-[600px] flex-col gap-8">
-          <section className="flex flex-col gap-1.5 px-1">
+        <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6">
+          <section className="flex flex-col gap-2 px-1">
             <span className="text-[13px] text-muted-foreground">You pay</span>
             <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(cost)}</span>
             {sec.kind === "bill" && (
@@ -203,11 +203,11 @@ export function BuyFlow() {
               The final rate is set at the auction, so what you pay and what you receive can shift slightly.
             </p>
           )}
-          <div className="flex gap-3">
-            <Button type="button" variant="outline" className="h-13 flex-1 rounded-2xl text-[15px]" onClick={() => setScreen("form")}>
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" className="h-11 flex-1 rounded-2xl text-[15px]" onClick={() => setScreen("form")}>
               Back to Edit
             </Button>
-            <Button type="button" className="h-13 flex-1 rounded-2xl text-[16px]" onClick={() => setAuthOpen(true)}>
+            <Button type="button" className="h-11 flex-1 rounded-2xl text-[16px]" onClick={() => setAuthOpen(true)}>
               Confirm
             </Button>
           </div>
@@ -242,9 +242,9 @@ export function BuyFlow() {
   ];
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader title={sec.title} backTo={backTo} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6 animate-in fade-in duration-200">
+      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5 animate-in fade-in duration-200">
         {accounts.length === 0 ? (
           <TrueEmptyState
             title="You don’t have an account to pay from"
@@ -254,7 +254,7 @@ export function BuyFlow() {
           <>
             <FromAccountSelector accounts={accounts} value={fromId} onChange={setPickedFrom} />
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               <SegmentedControl aria-label="Calculate by" options={BASES} value={basis} onChange={changeBasis} />
               <p className="px-1 text-[12px] text-muted-foreground">{BASIS_HINT[basis]}</p>
             </div>
@@ -276,10 +276,10 @@ export function BuyFlow() {
             </div>
 
             {valid && (
-              <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200">
-                <dl className="flex flex-col gap-3 px-1 text-[14px]">
+              <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200">
+                <dl className="flex flex-col gap-2 px-1 text-[14px]">
                   {breakdown.map(([label, value]) => (
-                    <div key={label} className="flex items-baseline justify-between gap-6">
+                    <div key={label} className="flex items-baseline justify-between gap-5">
                       <dt className="text-muted-foreground">{label}</dt>
                       <dd className="tabular text-right text-foreground">{value}</dd>
                     </div>
@@ -291,7 +291,7 @@ export function BuyFlow() {
 
             <div>
               <ProceedButton disabled={!valid} onClick={() => setScreen("review")} />
-              <p className="px-1 pt-3 text-center text-[12px] text-muted-foreground">
+              <p className="px-1 pt-2 text-center text-[12px] text-muted-foreground">
                 By continuing, you agree to the Terms &amp; Conditions of treasury bills and bonds.
               </p>
             </div>

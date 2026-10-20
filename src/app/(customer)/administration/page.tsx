@@ -19,6 +19,8 @@ import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { FilteredEmptyState, TrueEmptyState } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
 
+import { getAllEnrolments } from "@/lib/enrolment-store";
+
 const LIST_STATES: readonly ListState[] = [
   "loading",
   "empty",
@@ -39,20 +41,52 @@ export default function UserManagementPage() {
   const [state, setState] = useState<ListState>("populated");
   const [query, setQuery] = useState("");
 
+  const allUsers = useMemo(() => {
+    const list = [...USERS];
+    try {
+      const enrolments = getAllEnrolments();
+      const approved = enrolments.filter((e) => e.status === "approved");
+      for (const app of approved) {
+        for (const u of app.users) {
+          if (!list.some((existing) => existing.email.toLowerCase() === u.email.toLowerCase())) {
+            list.push({
+              id: u.id,
+              name: u.name,
+              email: u.email,
+              role: u.role,
+              status: u.inviteStatus === "used" ? "Active" : "Invited",
+              access:
+                u.role === "Corporate Admin"
+                  ? "Full access"
+                  : u.role === "Approver"
+                  ? "Payments, Trade, Approvals"
+                  : u.role === "Maker"
+                  ? "Payments, Trade"
+                  : "View only",
+            });
+          }
+        }
+      }
+    } catch {
+      // Ignore
+    }
+    return list;
+  }, []);
+
   const filteredUsers = useMemo(() => {
-    if (!query.trim()) return USERS;
+    if (!query.trim()) return allUsers;
     const q = query.toLowerCase();
-    return USERS.filter(
+    return allUsers.filter(
       (u) =>
         u.name.toLowerCase().includes(q) ||
         u.email.toLowerCase().includes(q) ||
         u.role.toLowerCase().includes(q) ||
         u.access.toLowerCase().includes(q)
     );
-  }, [query]);
+  }, [allUsers, query]);
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Administration"
         actions={
@@ -74,7 +108,7 @@ export default function UserManagementPage() {
       <StubNotice section="section 5 / sitemap 12.4" states="13.1 list, 13.7 wizard" />
 
       <section className="rounded-2xl border border-border bg-card">
-        <div className="flex items-center justify-between gap-3 p-4">
+        <div className="flex items-center justify-between gap-2 p-3">
           <span className="text-[13px] font-medium text-foreground">
             Users ({filteredUsers.length})
           </span>
@@ -107,16 +141,16 @@ export default function UserManagementPage() {
               <li key={u.id}>
                 <Link
                   href={`/administration/${u.id}`}
-                  className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                  className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
                 >
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                     <UserCog size={16} strokeWidth={1.8} aria-hidden="true" />
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-[13.5px] text-foreground">{u.name}</span>
                     <span className="truncate text-[12px] text-muted-foreground">{u.email}</span>
                   </span>
-                  <span className="hidden shrink-0 text-[12.5px] text-muted-foreground sm:block sm:w-44">
+                  <span className="hidden shrink-0 text-[12.5px] text-muted-foreground sm:block sm:w-38">
                     {u.access}
                   </span>
                   <Badge variant="outline">{u.role}</Badge>

@@ -32,7 +32,7 @@ export function ShareReceiptDialog({ format, onClose, onShare }: ShareReceiptDia
         <DialogHeader>
           <DialogTitle>{format === "pdf" ? "Save as PDF" : "Share Receipt"}</DialogTitle>
         </DialogHeader>
-        <DialogBody className="gap-3">
+        <DialogBody className="gap-2">
           <ActionTile icon={format === "pdf" ? FileDown : Share} title="With Transaction Details" onClick={() => choose(false)} />
           <ActionTile icon={EyeOff} title="Hide Transaction Details" description="Amounts, fees and totals are left out" onClick={() => choose(true)} />
         </DialogBody>

@@ -17,7 +17,7 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
 - **When:** every customer and admin page.
 - **Structure:**
   ```tsx
-  <div className="flex flex-col gap-5">
+  <div className="flex flex-col gap-4">
     <PageHeader title="…" actions={…} backTo={/* detail pages only */} />
     <StateSwitcher … />          {/* prototype review affordance where the page has dev states */}
     {/* content: calm sections, or one rounded-2xl panel */}
@@ -45,7 +45,7 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
 - **When:** a collection of objects (accounts, cards, transactions, beneficiaries, standing orders,
   approvals).
 - **Structure:**
-  - Sections: a 16px medium heading row, then `gap-4`, then the list.
+  - Sections: a 16px medium heading row, then `gap-3`, then the list.
   - The list sits in one `rounded-2xl` container with `p-2`.
   - Each row is the whole-row link: icon tile, then a flexible column (`min-w-0 truncate`) with the
     primary text at 14px over the meta at 12px muted, then a fixed column on the right (`shrink-0`,
@@ -72,7 +72,7 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
 ### 3. Data table
 - **When:** the admin portal and genuinely tabular data. Customer lists use pattern 2.
 - **Structure:** `overflow-x-auto` around `table.w-full.min-w-[720px].text-[13px]`; muted
-  `th.font-normal`; `tbody.divide-y` with rows `hover:bg-muted/50`; cells `px-4 py-3.5`.
+  `th.font-normal`; `tbody.divide-y` with rows `hover:bg-muted/50`; cells `px-3 py-3`.
 - **Don't:** use `font-medium` on a header (muted colour carries it), or let the page scroll sideways.
 - **Examples:** `admin/fee-concessions/page.tsx`.
 
@@ -80,7 +80,7 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
 - **Structure:** the search field, then one `FilterPanel` button beside it (or on the left, with
   `ExpandableSearch` on the right, when search is the collapsed icon). `AppliedFilters` sits under
   the row and renders nothing until a filter is on.
-  - The search input has a 15px Lucide `Search` icon inside, `pl-9`, and an `aria-label`.
+  - The search input has a 15px Lucide `Search` icon inside, `pl-8`, and an `aria-label`.
   - One `FilterGroup[]` per page drives both the panel and the chips. A group is `single` (one
     choice or Any) or `multi` (none means Any). Fields that need more, like a custom date range, go
     in `extra`.
@@ -150,7 +150,7 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
   - `ActionTile` (`components/ui/action-tile.tsx`): the tile surface (`--tile`), a white chip, a 16px
     label, an optional second line, and a chevron. It renders a link when given `href`, otherwise a
     button.
-  - Grids are `grid-cols-2 gap-4` (`gap-3` on phones).
+  - Grids are `grid-cols-2 gap-3` (`gap-2` on phones).
   - `ToggleTile` has the same layout with a switch.
 - **Behavior:**
   - Add a second line only where the name doesn't explain itself (Proxy, Group, PAPSS, GCB Pay,

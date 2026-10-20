@@ -20,7 +20,7 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
   const [front, back] = top;
 
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-5">
+    <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-4">
       <div className="flex items-center justify-between">
         <h2 className="text-[15px] text-foreground">Cards</h2>
         <Link href="/cards" className="text-[12px] text-foreground underline-offset-4 hover:underline">
@@ -29,15 +29,15 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
       </div>
 
       {!front ? (
-        <p className="mt-6 flex-1 text-center text-[13px] text-muted-foreground">
+        <p className="mt-5 flex-1 text-center text-[13px] text-muted-foreground">
           No cards on this relationship yet.
         </p>
       ) : (
         <>
-          <div className="relative mt-4 h-[186px]">
+          <div className="relative mt-3 h-[186px]">
             {back && (
               <div
-                className="absolute inset-x-4 top-6 flex h-32 flex-col justify-between rounded-xl bg-primary p-3.5 text-primary-foreground shadow-sm"
+                className="absolute inset-x-3.5 top-5 flex h-28 flex-col justify-between rounded-xl bg-primary p-3 text-primary-foreground shadow-sm"
                 style={{ transform: "rotate(-2.2deg)" }}
               >
                 <div className="flex items-center justify-between text-[10.5px] opacity-90">
@@ -51,9 +51,9 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
               </div>
             )}
 
-            <div className="absolute inset-x-0 top-10 flex h-[132px] flex-col justify-between rounded-xl bg-foreground p-4 text-background shadow-md">
+            <div className="absolute inset-x-0 top-9 flex h-[132px] flex-col justify-between rounded-xl bg-foreground p-3 text-background shadow-md">
               <div className="flex items-center justify-between">
-                <span className="h-[19px] w-[26px] rounded-[5px] bg-background/20" aria-hidden="true" />
+                <span className="h-[19px] w-[26px] rounded-sm bg-background/20" aria-hidden="true" />
                 <Badge variant={front.status === "Active" ? "success" : "destructive"} className="text-[9px]">
                   {front.status}
                 </Badge>
@@ -76,16 +76,16 @@ export function CardsStack({ cards }: { cards: PaymentCard[] }) {
           </div>
 
           {top.length > 1 && (
-            <div className="mt-3 flex justify-center gap-1.5" aria-hidden="true">
-              <span className="h-1 w-3.5 rounded-full bg-foreground" />
+            <div className="mt-2 flex justify-center gap-2" aria-hidden="true">
+              <span className="h-1 w-3 rounded-full bg-foreground" />
               <span className="h-1 w-1 rounded-full bg-border" />
             </div>
           )}
 
-          <ul className="mt-4 divide-y divide-border rounded-xl border border-border">
+          <ul className="mt-3 divide-y divide-border rounded-xl border border-border">
             {top.map((card) => (
-              <li key={card.id} className="flex items-center gap-3 px-4 py-3">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <li key={card.id} className="flex items-center gap-2 px-3 py-2">
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                   <CreditCard size={15} strokeWidth={1.8} aria-hidden="true" />
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">

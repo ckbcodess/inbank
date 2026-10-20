@@ -51,7 +51,7 @@ export function CashoutTicket({
         <path d={OUTLINE} fill="var(--ticket-paper)" />
       </svg>
 
-      <div className="absolute inset-x-0 top-10 flex h-10 justify-center">
+      <div className="absolute inset-x-0 top-9 flex h-9 justify-center">
         <Image
           src="/illustrations/cashout-ticket-logo-color-v2.svg"
           alt="GCB"
@@ -59,7 +59,7 @@ export function CashoutTicket({
           height={40}
           unoptimized
           draggable={false}
-          className="h-10 w-auto select-none"
+          className="h-9 w-auto select-none"
         />
       </div>
 
@@ -74,15 +74,15 @@ export function CashoutTicket({
       </p>
 
       <div
-        className="absolute inset-x-8 top-[244px] h-px"
+        className="absolute inset-x-7 top-[244px] h-px"
         style={{ backgroundImage: "repeating-linear-gradient(to right, var(--ticket-rule) 0 8px, transparent 8px 15px)" }}
       />
 
-      <div className="absolute inset-x-8 top-[272px] flex items-center justify-between text-[14px] leading-5">
+      <div className="absolute inset-x-7 top-[272px] flex items-center justify-between text-[14px] leading-5">
         <span>Amount</span>
         <span className="tabular">GHS {amount}</span>
       </div>
-      <div className="absolute inset-x-8 top-[306px] flex items-center justify-between text-[14px] leading-5">
+      <div className="absolute inset-x-7 top-[306px] flex items-center justify-between text-[14px] leading-5">
         <span>To</span>
         <span className="tabular">{maskMobile(recipientPhone)}</span>
       </div>

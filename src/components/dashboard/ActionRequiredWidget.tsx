@@ -80,20 +80,20 @@ export function ActionRequiredWidget() {
   };
 
   return (
-    <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-colors">
+    <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-colors">
       {/* Top Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <h2 className="text-[15px] font-medium text-foreground">Action Required</h2>
           {activeItemsCount > 0 && (
-            <span className="flex size-5 items-center justify-center rounded-full bg-destructive text-[10.5px] font-medium text-destructive-foreground tabular">
+            <span className="flex size-4 items-center justify-center rounded-full bg-destructive text-[10.5px] font-medium text-destructive-foreground tabular">
               {activeItemsCount}
             </span>
           )}
         </div>
 
         {/* Carousel / Navigation Controls */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <span className="text-[12px] text-muted-foreground tabular mr-1">
             {page + 1}/{allPages.length}
           </span>
@@ -101,7 +101,7 @@ export function ActionRequiredWidget() {
             type="button"
             onClick={() => setPage((p) => Math.max(0, p - 1))}
             disabled={page === 0}
-            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-35 active:scale-[0.96] transition-transform cursor-pointer"
+            className="flex size-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-35 active:scale-[0.96] transition-transform cursor-pointer"
             aria-label="Previous items"
           >
             <ChevronLeft size={16} strokeWidth={1.8} />
@@ -110,7 +110,7 @@ export function ActionRequiredWidget() {
             type="button"
             onClick={() => setPage((p) => Math.min(allPages.length - 1, p + 1))}
             disabled={page >= allPages.length - 1}
-            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-35 active:scale-[0.96] transition-transform cursor-pointer"
+            className="flex size-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-35 active:scale-[0.96] transition-transform cursor-pointer"
             aria-label="Next items"
           >
             <ChevronRight size={16} strokeWidth={1.8} />
@@ -125,12 +125,12 @@ export function ActionRequiredWidget() {
           return (
             <div
               key={item.id}
-              className={`group flex items-center justify-between py-2.5 px-2.5 -mx-2.5 rounded-xl transition-colors first:pt-1.5 last:pb-1.5 ${
+              className={`group flex items-center justify-between py-2 px-2 -mx-2 rounded-xl transition-colors first:pt-2 last:pb-2 ${
                 item.resolved ? "opacity-40 line-through" : "hover:bg-muted/40"
               }`}
             >
-              <Link href={item.href} className="flex items-center gap-3.5 flex-1 min-w-0">
-                <div className={`flex size-9 shrink-0 items-center justify-center rounded-xl border border-border/50 text-foreground ${
+              <Link href={item.href} className="flex items-center gap-3 flex-1 min-w-0">
+                <div className={`flex size-8 shrink-0 items-center justify-center rounded-xl border border-border/50 text-foreground ${
                   item.resolved ? "bg-muted/40" : "bg-muted text-foreground"
                 }`}>
                   <Icon size={16} strokeWidth={1.8} />
@@ -141,18 +141,18 @@ export function ActionRequiredWidget() {
                 </div>
               </Link>
 
-              <div className="flex items-center gap-1.5 shrink-0">
+              <div className="flex items-center gap-2 shrink-0">
                 {!item.resolved && (
                   <button
                     type="button"
                     onClick={(e) => handleResolveItem(e, item.id, item.title)}
                     title="Mark completed"
-                    className="flex size-7.5 items-center justify-center rounded-lg text-muted-foreground opacity-60 hover:opacity-100 hover:bg-muted hover:text-success-text active:scale-[0.96] transition-transform cursor-pointer"
+                    className="flex size-7 items-center justify-center rounded-lg text-muted-foreground opacity-60 hover:opacity-100 hover:bg-muted hover:text-success-text active:scale-[0.96] transition-transform cursor-pointer"
                   >
                     <Check size={14} strokeWidth={2} />
                   </button>
                 )}
-                <Link href={item.href} className="flex size-7.5 items-center justify-center rounded-lg text-muted-foreground group-hover:text-foreground">
+                <Link href={item.href} className="flex size-7 items-center justify-center rounded-lg text-muted-foreground group-hover:text-foreground">
                   <ChevronRight
                     size={14}
                     strokeWidth={1.8}

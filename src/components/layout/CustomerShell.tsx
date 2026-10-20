@@ -152,7 +152,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
           onToggleCollapse={toggleCollapse}
         />
 
-        <div className="flex min-w-0 flex-1 flex-col overflow-hidden p-0 sm:p-3 lg:p-3.5">
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden p-0 sm:p-2 lg:p-3">
           <div className="shell-card relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-none border-0 shadow-none sm:rounded-2xl sm:border sm:border-border">
             <TopHeader
               actor={actor}
@@ -162,13 +162,13 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
 
             <main
               key={activeProfile.id}
-              className="custom-scrollbar animate-in fade-in flex-1 overflow-y-auto pt-14 duration-200"
+              className="custom-scrollbar animate-in fade-in flex-1 overflow-y-auto pt-12 duration-200"
               style={{ scrollbarGutter: "stable" }}
             >
               <div
                 key={pathname}
                 className={cn(
-                  "@container page-stagger mx-auto w-full px-4 pt-6 pb-32 sm:px-8 sm:pt-10 sm:pb-14 lg:px-10 lg:pt-12 lg:pb-16 xl:px-10",
+                  "@container page-stagger mx-auto w-full px-3 pt-5 pb-28 sm:px-6 sm:pt-10 sm:pb-12 lg:px-10 lg:pt-10 lg:pb-12 xl:px-10",
                   pathname === "/overview" ? "max-w-[1440px]" : "max-w-[960px]",
                 )}
               >

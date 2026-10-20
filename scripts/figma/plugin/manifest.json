@@ -1,0 +1,7 @@
+{
+  "name": "Phase 1 TOKENS Deletion",
+  "id": "phase1-tokens-deletion",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"]
+}

@@ -10,7 +10,7 @@ export function CardsEmptyIllustration() {
   return (
     <div className="relative mb-2 h-[132px] w-[200px]" aria-hidden="true">
       <div
-        className="absolute left-3 top-2 aspect-[1.586/1] w-[128px] -rotate-[10deg] rounded-xl shadow-md"
+        className="absolute left-2.5 top-1.5 aspect-[1.586/1] w-[128px] -rotate-[10deg] rounded-xl shadow-md"
         style={{ backgroundColor: back }}
       />
       <div
@@ -18,16 +18,16 @@ export function CardsEmptyIllustration() {
         style={{ backgroundColor: middle }}
       />
       <div
-        className="absolute left-[30px] top-[22px] flex aspect-[1.586/1] w-[140px] flex-col justify-between rounded-xl p-3 shadow-lg"
+        className="absolute left-[30px] top-[22px] flex aspect-[1.586/1] w-[140px] flex-col justify-between rounded-xl p-2 shadow-lg"
         style={{ backgroundColor: front }}
       >
-        <div className="h-4 w-6 rounded-[4px] bg-warning/90" />
-        <div className="flex flex-col gap-1.5">
-          <div className="h-1.5 w-20 rounded-full bg-white/35" />
-          <div className="h-1.5 w-10 rounded-full bg-white/20" />
+        <div className="h-3.5 w-5 rounded-sm bg-warning/90" />
+        <div className="flex flex-col gap-2">
+          <div className="h-1.5 w-17 rounded-full bg-white/35" />
+          <div className="h-1.5 w-9 rounded-full bg-white/20" />
         </div>
       </div>
-      <span className="absolute right-3 top-1 flex size-7 items-center justify-center rounded-full bg-foreground text-background shadow-md">
+      <span className="absolute right-2.5 top-1 flex size-6 items-center justify-center rounded-full bg-foreground text-background shadow-md">
         <Plus size={15} strokeWidth={2} />
       </span>
     </div>

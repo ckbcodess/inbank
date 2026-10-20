@@ -74,7 +74,7 @@ export function GroupPaymentFlow({
   const isValid = Boolean(state.fromId) && Boolean(state.groupName) && numAmount > 0 && !overBalance;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
       {/* 1. From Account */}
       <FromAccountSelector
         accounts={accounts}
@@ -93,7 +93,7 @@ export function GroupPaymentFlow({
             onChange={() => setCollapsed(false)}
           />
         ) : groups.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-6 rounded-2xl border border-dashed border-border/80 text-center gap-3">
+          <div className="flex flex-col items-center justify-center p-5 rounded-2xl border border-dashed border-border/80 text-center gap-2">
             <Users size={28} className="text-muted-foreground" />
             <p className="text-[14px] text-muted-foreground">No groups created yet.</p>
             <button
@@ -119,8 +119,8 @@ export function GroupPaymentFlow({
           >
             <SelectTrigger className="min-h-[52px] h-auto border-border/80 bg-card text-left flex items-center">
               {!selectedGroup ? (
-                <div className="flex items-center gap-3.5 min-w-0 flex-1">
-                  <span className="flex size-9 shrink-0 items-center justify-center text-muted-foreground">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <span className="flex size-8 shrink-0 items-center justify-center text-muted-foreground">
                     <Users size={20} strokeWidth={1.8} />
                   </span>
                   <span className="text-[15px] text-muted-foreground font-normal truncate">
@@ -128,9 +128,9 @@ export function GroupPaymentFlow({
                   </span>
                 </div>
               ) : (
-                <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
-                  <div className="flex items-center gap-3.5 min-w-0">
-                    <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
+                <div className="flex items-center justify-between min-w-0 flex-1 gap-2">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="flex size-8 shrink-0 items-center justify-center text-foreground">
                       <Users size={20} strokeWidth={1.8} />
                     </span>
                     <div className="flex flex-col min-w-0 text-left gap-0.5">
@@ -163,7 +163,7 @@ export function GroupPaymentFlow({
 
       {/* Progressive Disclosure: Only reveal Amount & subsequent form fields after group is selected */}
       {Boolean(selectedGroup) && (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+        <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount */}
           <div className="flex flex-col gap-2">
             <AmountInput

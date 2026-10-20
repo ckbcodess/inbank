@@ -69,7 +69,7 @@ export function OtpHelp({
   const setOpen = (fn: (v: boolean) => boolean) => (controlled ? onShortcodeOpenChange(fn(open)) : setLocalOpen(fn(open)));
 
   return (
-    <div className={cn("flex w-full flex-col items-center gap-4", className)}>
+    <div className={cn("flex w-full flex-col items-center gap-3", className)}>
       <div className="flex flex-wrap items-center justify-center gap-x-2 text-[13px]">
         <button
           type="button"
@@ -97,7 +97,7 @@ export function OtpHelp({
       </div>
 
       {open && !controlled && (
-        <div className="flex w-full flex-col items-center gap-2.5 py-3 text-center animate-in fade-in duration-150">
+        <div className="flex w-full flex-col items-center gap-2 py-2 text-center animate-in fade-in duration-150">
           <span className="text-[18px] text-foreground">Dial</span>
           <a
             href={`tel:${OTP_SHORTCODE.replace("#", "%23")}`}
@@ -106,7 +106,7 @@ export function OtpHelp({
             {OTP_SHORTCODE}
           </a>
           <span className="text-[16px] text-foreground">to see your code</span>
-          <span aria-hidden="true" className="mt-1.5 h-0.5 w-5 rounded-full bg-primary" />
+          <span aria-hidden="true" className="mt-2 h-0.5 w-4 rounded-full bg-primary" />
         </div>
       )}
     </div>

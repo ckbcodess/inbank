@@ -37,7 +37,7 @@ const QUEUE = [
 export default function TradeMonitoringPage() {
   const [state, setState] = useState<ListState>("populated");
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Trade Monitoring"
         description="Internal operational queue for trade transactions."
@@ -54,7 +54,7 @@ export default function TradeMonitoringPage() {
       <StubNotice section="section 6 / sitemap 12.5" />
 
       <section className="rounded-2xl border border-border bg-card">
-        <h2 className="border-b border-border px-5 py-4 text-[15px] text-foreground">
+        <h2 className="border-b border-border px-4 py-3 text-[15px] text-foreground">
           Awaiting officer action
         </h2>
         <ul className="divide-y divide-border">
@@ -62,9 +62,9 @@ export default function TradeMonitoringPage() {
             <li key={t.id}>
               <Link
                 href={`/admin/trade/${t.id}`}
-                className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
               >
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                   <Ship size={16} strokeWidth={1.8} aria-hidden="true" />
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">

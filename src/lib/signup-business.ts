@@ -27,6 +27,7 @@
 /* ── Flow model ────────────────────────────────────────────────────────────── */
 
 export type BusinessSignupStep =
+  | "choice"
   | "company"
   | "contact"
   | "signatories"
@@ -44,6 +45,7 @@ export interface BusinessSignupScenario {
 }
 
 export const BUSINESS_SIGNUP_SCENARIOS: readonly BusinessSignupScenario[] = [
+  { id: "choice", label: "Get started choice", step: "choice", variant: "default" },
   { id: "company", label: "Company details", step: "company", variant: "default" },
   { id: "company-existing", label: "Company already a customer", step: "company", variant: "existingCustomer" },
   { id: "contact", label: "Primary contact", step: "contact", variant: "default" },

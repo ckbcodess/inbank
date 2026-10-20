@@ -124,7 +124,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
   const isValid = Boolean(state.fromId) && isVerified && Boolean(selected) && !overBalance;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
       {/* 1. From account */}
       <FromAccountSelector accounts={accounts} value={state.fromId} onChange={(id) => onChange("fromId", id)} />
 
@@ -190,12 +190,12 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
 
       {/* 4. Only once the account is verified: the package and what it costs */}
       {isVerified && (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+        <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {activeOnly ? (
             <div className="flex flex-col gap-2">
               <Label id="broadband-package-label">Your Active Package</Label>
               {selected ? (
-                <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
+                <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
                   <OperatorLogo name={provider?.name} size={36} />
                   <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <span className="text-[14px] text-foreground">{selected.label}</span>
@@ -218,7 +218,7 @@ export function BroadbandFlow({ accounts, state, onChange, onProceed, detailsCol
                 onChange={setPickedGroup}
               />
             )}
-            <div role="radiogroup" aria-labelledby="broadband-package-label" className="flex flex-col gap-2.5">
+            <div role="radiogroup" aria-labelledby="broadband-package-label" className="flex flex-col gap-2">
               {activeItems.map((p) => (
                 <OptionTile
                   key={p.id}

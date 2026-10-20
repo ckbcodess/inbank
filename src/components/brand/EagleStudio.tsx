@@ -98,7 +98,7 @@ function LookColor({ label, k }: { label: string; k: "color" | "litColor" | "hot
           type="color"
           value={value}
           onChange={(e) => setLook(theme, { [k]: e.target.value })}
-          className="h-7 w-10 cursor-pointer rounded border border-border bg-transparent"
+          className="h-6 w-9 cursor-pointer rounded-sm border border-border bg-transparent"
         />
         <span className="tabular text-foreground">{value}</span>
       </span>
@@ -132,7 +132,7 @@ function MatchOtherMode() {
 
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-2.5 border-t border-border pt-3">
+    <div className="flex flex-col gap-2 border-t border-border pt-2">
       <span className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">{title}</span>
       {children}
     </div>
@@ -199,9 +199,9 @@ function DotEditor({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 p-4" role="dialog" aria-label="Paint eagle dots">
-      <div className="flex max-h-full w-full max-w-[860px] flex-col gap-3 rounded-2xl border border-border bg-card p-4 shadow-xl">
-        <div className="flex items-center justify-between gap-3">
+    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 p-3" role="dialog" aria-label="Paint eagle dots">
+      <div className="flex max-h-full w-full max-w-[860px] flex-col gap-2 rounded-2xl border border-border bg-card p-3 shadow-xl">
+        <div className="flex items-center justify-between gap-2">
           <span className="text-[14px] text-foreground">Paint dots</span>
           <span className="hidden text-[12px] text-muted-foreground sm:block">
             Drag to turn dots on or off. Hollow rings are dots you removed.
@@ -210,7 +210,7 @@ function DotEditor({ onClose }: { onClose: () => void }) {
             <button
               type="button"
               onClick={() => set({ edits: [] })}
-              className="rounded-lg border border-border px-2.5 py-1.5 text-[12px] text-foreground hover:bg-muted"
+              className="rounded-lg border border-border px-2 py-2 text-[12px] text-foreground hover:bg-muted"
             >
               Clear edits
             </button>
@@ -218,7 +218,7 @@ function DotEditor({ onClose }: { onClose: () => void }) {
               type="button"
               onClick={onClose}
               aria-label="Close dot editor"
-              className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
             >
               <X size={16} strokeWidth={1.8} />
             </button>
@@ -279,7 +279,7 @@ export default function EagleStudio() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-4 left-4 z-[70] flex h-9 items-center gap-2 rounded-full border border-border bg-card px-3.5 text-[12px] text-muted-foreground shadow-sm transition-colors hover:text-foreground"
+        className="fixed bottom-3.5 left-3.5 z-[70] flex h-8 items-center gap-2 rounded-full border border-border bg-card px-3 text-[12px] text-muted-foreground shadow-sm transition-colors hover:text-foreground"
       >
         <SlidersHorizontal size={15} strokeWidth={1.8} aria-hidden="true" />
         Eagle
@@ -289,14 +289,14 @@ export default function EagleStudio() {
 
   return (
     <>
-      <div className="fixed bottom-4 left-4 z-[70] flex max-h-[80dvh] w-[320px] max-w-[calc(100vw-2rem)] flex-col gap-3 overflow-y-auto rounded-2xl border border-border bg-card p-4 shadow-xl">
+      <div className="fixed bottom-3.5 left-3.5 z-[70] flex max-h-[80dvh] w-[320px] max-w-[calc(100vw-2rem)] flex-col gap-2 overflow-y-auto rounded-2xl border border-border bg-card p-3 shadow-xl">
         <div className="flex items-center justify-between">
           <span className="text-[14px] text-foreground">Eagle studio</span>
           <button
             type="button"
             onClick={() => setOpen(false)}
             aria-label="Close eagle studio"
-            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="flex size-6 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
           >
             <X size={16} strokeWidth={1.8} />
           </button>
@@ -320,14 +320,14 @@ export default function EagleStudio() {
         </Group>
 
         <Group title="Dots">
-          <div className="flex gap-1.5">
+          <div className="flex gap-2">
             {SHAPES.map((sh) => (
               <button
                 key={sh}
                 type="button"
                 onClick={() => set({ shape: sh })}
                 className={cn(
-                  "h-8 flex-1 rounded-lg border text-[12px] capitalize transition-colors",
+                  "h-7 flex-1 rounded-lg border text-[12px] capitalize transition-colors",
                   cfg.shape === sh
                     ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
                     : "border-border text-muted-foreground hover:text-foreground",
@@ -348,7 +348,7 @@ export default function EagleStudio() {
           <button
             type="button"
             onClick={() => setPainting(true)}
-            className="flex h-9 items-center justify-center gap-2 rounded-lg border border-border text-[12.5px] text-foreground hover:bg-muted"
+            className="flex h-8 items-center justify-center gap-2 rounded-lg border border-border text-[12.5px] text-foreground hover:bg-muted"
           >
             <Brush size={15} strokeWidth={1.8} aria-hidden="true" />
             Paint dots{cfg.edits.length ? ` · ${cfg.edits.length} edited` : ""}
@@ -394,11 +394,11 @@ export default function EagleStudio() {
           <Toggle label="Slow drift" k="drift" />
         </Group>
 
-        <div className="flex gap-2 border-t border-border pt-3">
+        <div className="flex gap-2 border-t border-border pt-2">
           <button
             type="button"
             onClick={copyJson}
-            className="flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg border border-border text-[12px] text-foreground hover:bg-muted"
+            className="flex h-8 flex-1 items-center justify-center gap-2 rounded-lg border border-border text-[12px] text-foreground hover:bg-muted"
           >
             {copied ? <Check size={15} strokeWidth={1.8} /> : <Copy size={15} strokeWidth={1.8} />}
             {copied ? "Copied" : "Copy JSON"}
@@ -406,7 +406,7 @@ export default function EagleStudio() {
           <button
             type="button"
             onClick={downloadSvg}
-            className="flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg border border-border text-[12px] text-foreground hover:bg-muted"
+            className="flex h-8 flex-1 items-center justify-center gap-2 rounded-lg border border-border text-[12px] text-foreground hover:bg-muted"
           >
             <Download size={15} strokeWidth={1.8} />
             SVG
@@ -416,7 +416,7 @@ export default function EagleStudio() {
             onClick={reset}
             aria-label="Reset to defaults"
             title={`Reset (${DEFAULT_EAGLE.shape} defaults)`}
-            className="flex size-9 items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground"
+            className="flex size-8 items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground"
           >
             <RotateCcw size={15} strokeWidth={1.8} />
           </button>

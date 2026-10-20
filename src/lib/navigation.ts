@@ -97,6 +97,10 @@ function adminNav(role: Role): NavItem[] {
     items.push({ key: "admin-fees", label: "Fee Concessions", path: "/admin/fee-concessions", icon: "Percent", group: "CONTROL" });
   }
 
+  if (role === "RELATIONSHIP_MANAGER" || role === "OPERATIONS_USER" || role === "BANK_ADMIN") {
+    items.push({ key: "admin-enrolments", label: "Enrolments", path: "/admin/enrolments", icon: "ClipboardCheck", group: "OPERATIONS" });
+  }
+
   if (role === "BANK_ADMIN" || role === "OPERATIONS_USER") {
     items.push({ key: "admin-audit", label: "Audit Log", path: "/admin/audit", icon: "Receipt", group: "CONTROL" });
   }

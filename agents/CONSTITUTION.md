@@ -100,6 +100,12 @@ here. Never fall back to dense, boxed layouts.
 
 ## 4. Colour
 
+- **Three layers, one direction.** Raw colours live only in the primitives block at the top of globals.css
+  (ramps `gray`, `amber`, `orange`, `red`, `pink`, `green`, `teal`, `blue`, `violet`, `smoke`, 50–950, plus
+  `white`/`black`). Semantic and component tokens point at primitives (`--destructive: var(--red-600)`), and
+  translucent ones use `color-mix(in srgb, var(--prim) N%, transparent)`. Components use semantic tokens only.
+  The one exception is illustration families (avatar, tx, tint, banner, duotone icon, spend, ticket), which keep
+  raw values. Figma mirrors this: Color Primitives ← Theme core groups ← `component/`, plus `illustration/`.
 - **Semantic tokens only.** No hex values and no Tailwind palette colours (`text-blue-500`,
   `bg-gray-100`) in components. Use `bg-background`, `bg-card`, `bg-muted`, `text-foreground`,
   `text-muted-foreground`, `border-border`, `bg-primary`, `text-primary-foreground`,
@@ -135,8 +141,8 @@ here. Never fall back to dense, boxed layouts.
 - **Two weights.** Regular (400) for body text and numbers. Medium (`font-medium`, 500) for headings,
   section titles, form labels and buttons. **Semibold and bold are banned.** `globals.css` resets
   text elements to `font-weight: inherit`; `font-medium` overrides that on purpose.
-- **The root font size is 14px,** so rem-based utilities are smaller than their nominal px
-  (`p-6` is 21px).
+- **The root font size is 14px; spacing and radius are in px.** `--spacing: 4px` (globals.css), so a step is
+  4px. Rem-based values outside those scales (`text-xs`, `max-w-md`) still follow the 14px root.
 - **All numbers carry `.tabular`:** money, dates, account numbers, references, percentages and rates.
 - **Casing:**
   - Never all caps or letter-spaced labels. Older `uppercase` uses get converted when a file is touched.
@@ -158,13 +164,18 @@ here. Never fall back to dense, boxed layouts.
 
 ## 6. Shape and spacing
 
-- **Radius:** panels `rounded-2xl`, insets `rounded-xl`, controls and icon tiles `rounded-lg`, badges
-  and pills `rounded-full`. Never `rounded-md` on a panel. For concentric corners, derive the outer
-  radius from the variables: `rounded-[calc(var(--radius)*2.2+var(--spacing)*N)]`.
-- **Page rhythm:** the page root is `flex flex-col gap-5`. Between sections on a calm page use
-  `gap-10`. Each section has a 16px medium heading row (`min-h-8`) and `gap-4` down to its content.
-- **Phone (below `sm`):** a 16px gutter, panels `p-4 gap-3` (going to `sm:p-6 sm:gap-6`) and page
-  top padding `pt-6`. See *Phone scale* in PATTERNS.md.
+- **Spacing scale (padding, margin, gap): 2 · 4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 64**, i.e. steps
+  `0.5 1 2 3 4 5 6 8 10 12 16`. Nothing in between (no `p-1.5`, `gap-2.5`, `p-7`). Bigger values are layout
+  clearances (the phone tab bar), not spacing. Component sizes (`h-*`, `size-*`, `w-*`) aren't spacing tokens.
+- **Radius: five values plus full.** `rounded-sm` 4 (small bits), `rounded-lg` 8 (controls, icon tiles),
+  `rounded-xl` 12 (insets), `rounded-2xl` 16 (panels), `rounded-3xl` 20 (hero and large sheets), `rounded-full`
+  (badges and pills). Don't write `rounded`, `-md`, `-xs`, `-4xl` or px radii (the only exceptions are swatches
+  of 3px or less). For concentric corners, add padding and border to the inner radius:
+  `rounded-[calc(var(--radius-3xl)+var(--spacing)*N+1px)]`.
+- **Page rhythm:** the page root is `flex flex-col gap-4`. Between sections on a calm page use
+  `gap-10`. Each section has a 16px medium heading row (`min-h-6`) and `gap-3` down to its content.
+- **Phone (below `sm`):** a 12px gutter (`px-3`), panels `p-3 gap-2` (going to `sm:p-5 sm:gap-5`) and page
+  top padding `pt-5`. See *Phone scale* in PATTERNS.md.
 
 ## 7. Icons
 

@@ -49,7 +49,7 @@ export default function CustomerManagementPage() {
   }, [query]);
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader title="Customers" description="Internal customer directory." />
 
       <StateSwitcher
@@ -63,7 +63,7 @@ export default function CustomerManagementPage() {
       <StubNotice section="section 7 / sitemap 12.5" states="13.1 list" />
 
       <section className="rounded-2xl border border-border bg-card">
-        <div className="flex items-center justify-between gap-3 p-4">
+        <div className="flex items-center justify-between gap-2 p-3">
           <span className="text-[13px] font-medium text-foreground">
             Customers ({filtered.length})
           </span>
@@ -96,9 +96,9 @@ export default function CustomerManagementPage() {
               <li key={c.id}>
                 <Link
                   href={`/admin/customers/${c.id}`}
-                  className="flex items-center gap-4 px-4 py-4 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                  className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
                 >
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                     <Building2 size={16} strokeWidth={1.8} aria-hidden="true" />
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col">

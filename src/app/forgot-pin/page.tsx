@@ -244,7 +244,7 @@ function ForgotPinContent() {
             e.preventDefault();
             if (mobileValid && !busy) advance("selfie");
           }}
-          className="flex flex-col gap-5"
+          className="flex flex-col gap-4"
         >
           <Field label="Mobile Number" htmlFor="mobile">
             <PhoneInput
@@ -267,7 +267,7 @@ function ForgotPinContent() {
             size="lg"
             disabled={!mobileValid}
             loading={busy}
-            className="mt-2 h-11 w-full text-[14px]"
+            className="mt-2 h-10 w-full text-[14px]"
           >
             Proceed
           </Button>
@@ -290,7 +290,7 @@ function ForgotPinContent() {
             e.preventDefault();
             handlePinSubmit();
           }}
-          className="flex flex-col items-center gap-6"
+          className="flex flex-col items-center gap-5"
         >
           <div className="w-full" data-tour="reset-pin">
             <OtpInput
@@ -312,12 +312,12 @@ function ForgotPinContent() {
           <PinRequirements pin={pinDigits.join("")} />
 
           {errorMsg && (
-            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
               {errorMsg}
             </p>
           )}
           {!errorMsg && pinNote && (
-            <p className="-mt-3 text-center text-[13px] text-muted-foreground">{pinNote}</p>
+            <p className="-mt-2 text-center text-[13px] text-muted-foreground">{pinNote}</p>
           )}
 
           {busy && (
@@ -335,7 +335,7 @@ function ForgotPinContent() {
             e.preventDefault();
             handleConfirmPinSubmit();
           }}
-          className="flex flex-col items-center gap-6"
+          className="flex flex-col items-center gap-5"
         >
           <div className="w-full" data-tour="reset-confirm-pin">
             <OtpInput
@@ -360,7 +360,7 @@ function ForgotPinContent() {
           />
 
           {errorMsg && (
-            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
               {errorMsg}
             </p>
           )}
@@ -375,8 +375,8 @@ function ForgotPinContent() {
       )}
 
       {stage === "no_match" && (
-        <div className="flex flex-col gap-3">
-          <Button variant="default" size="lg" onClick={retrySelfie} className="h-11 w-full text-[14px]">
+        <div className="flex flex-col gap-2">
+          <Button variant="default" size="lg" onClick={retrySelfie} className="h-10 w-full text-[14px]">
             Try again
           </Button>
           <p className="text-center text-[12.5px] text-muted-foreground tabular">
@@ -388,13 +388,13 @@ function ForgotPinContent() {
       )}
 
       {stage === "branch" && (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <Button
             variant="default"
             size="lg"
             nativeButton={false}
             render={<a href={BRANCH_LOCATOR_URL} target="_blank" rel="noreferrer" />}
-            className="h-11 w-full text-[14px]"
+            className="h-10 w-full text-[14px]"
           >
             Find a branch
           </Button>
@@ -402,7 +402,7 @@ function ForgotPinContent() {
             variant="ghost"
             size="lg"
             onClick={() => router.push(actor ? "/overview" : "/login")}
-            className="h-11 w-full text-[14px]"
+            className="h-10 w-full text-[14px]"
           >
             {actor ? "Back to dashboard" : "Back to login"}
           </Button>
@@ -414,7 +414,7 @@ function ForgotPinContent() {
           variant="default"
           size="lg"
           onClick={() => router.push(actor ? "/overview" : "/login")}
-          className="h-11 w-full text-[14px]"
+          className="h-10 w-full text-[14px]"
         >
           {actor ? "Back to dashboard" : "Back to login"}
         </Button>

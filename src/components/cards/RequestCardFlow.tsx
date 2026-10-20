@@ -426,7 +426,7 @@ export function RequestCardFlow() {
   }
 
   return (
-    <div className="flex flex-col w-full py-4 sm:py-8">
+    <div className="flex flex-col w-full py-3 sm:py-6">
       <AnimatePresence mode="wait">
         {/* ───────────────────────────────────────────────────────────── */}
         {/* STEP 1: SELECT CARD TYPE                                      */}
@@ -437,14 +437,14 @@ export function RequestCardFlow() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="w-full max-w-[540px] mx-auto flex flex-col gap-6"
+            className="w-full max-w-[540px] mx-auto flex flex-col gap-5"
           >
           {/* Header Row: Back Link & Title */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={handleBackNavigation}
-              className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+              className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               title="Back"
               aria-label="Back"
             >
@@ -456,7 +456,7 @@ export function RequestCardFlow() {
           </div>
 
           {/* List of Card Types */}
-          <div className="flex flex-col gap-4 w-full">
+          <div className="flex flex-col gap-3 w-full">
             {CARD_TYPE_OPTIONS.map((opt) => (
               <ActionTile
                 key={opt.type}
@@ -492,16 +492,16 @@ export function RequestCardFlow() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="w-full max-w-[540px] mx-auto flex flex-col gap-6"
+          className="w-full max-w-[540px] mx-auto flex flex-col gap-5"
         >
           {/* Header Row: Back to Step 1 & Title */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() =>
                 replacing ? handleBackNavigation() : setStep("select-type")
               }
-              className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+              className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               aria-label="Back"
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
@@ -512,7 +512,7 @@ export function RequestCardFlow() {
           </div>
 
           {/* Form Container */}
-          <div className="flex flex-col gap-5 w-full">
+          <div className="flex flex-col gap-4 w-full">
             {/* Source Account Selector */}
             <FromAccountSelector
               accounts={availableAccounts}
@@ -545,7 +545,7 @@ export function RequestCardFlow() {
                     label="Initial Funding Amount"
                   />
                 ) : (
-                  <div className="flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-muted/30 px-4 py-3.5">
+                  <div className="flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-muted/30 px-3 py-3">
                   <span className="text-[13.5px] text-muted-foreground">Balance moving to the new card</span>
                   <span className="tabular text-[14px] text-foreground">{fmtGhs(carriedBalance ?? 0, currency)}</span>
                 </div>
@@ -557,7 +557,7 @@ export function RequestCardFlow() {
                     type="button"
                     disabled={!isDetailsValid}
                     onClick={() => setStep("customize")}
-                    className="w-full h-12 rounded-xl text-[14px]"
+                    className="w-full h-10 rounded-xl text-[14px]"
                   >
                     Continue
                   </Button>
@@ -574,7 +574,7 @@ export function RequestCardFlow() {
                     }}
                   >
                     <SelectTrigger className="h-auto">
-                      <div className="flex min-w-0 flex-1 items-center gap-2.5">
+                      <div className="flex min-w-0 flex-1 items-center gap-2">
                         <NetworkChip scheme={cardScheme} />
                         <span className="text-[14.5px] font-medium text-foreground truncate">{cardScheme}</span>
                       </div>
@@ -582,7 +582,7 @@ export function RequestCardFlow() {
                     <SelectContent>
                       {CARD_SCHEMES.map((scheme) => (
                         <SelectItem key={scheme} value={scheme}>
-                          <div className="flex items-center gap-2.5 py-0.5">
+                          <div className="flex items-center gap-2 py-0.5">
                             <NetworkChip scheme={scheme} />
                             <span className="text-[14px] font-medium text-foreground">{scheme}</span>
                           </div>
@@ -631,7 +631,7 @@ export function RequestCardFlow() {
 
                 {/* Progressive Disclosure: Disclose funding and fulfillment ONLY after network type is selected */}
                 <SmoothCollapse open={Boolean(networkType)} className="w-full">
-                  <div className="flex flex-col gap-5 w-full pt-1">
+                  <div className="flex flex-col gap-4 w-full pt-1">
                     {/* Initial Funding - for Prepaid Physical Cards */}
                     {cardType === "Prepaid" && needsFunding && (
                       <AmountInput
@@ -642,14 +642,14 @@ export function RequestCardFlow() {
                       />
                     )}
                     {cardType === "Prepaid" && !needsFunding && (
-                      <div className="flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-muted/30 px-4 py-3.5">
+                      <div className="flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-muted/30 px-3 py-3">
                   <span className="text-[13.5px] text-muted-foreground">Balance moving to the new card</span>
                   <span className="tabular text-[14px] text-foreground">{fmtGhs(carriedBalance ?? 0, currency)}</span>
                 </div>
                     )}
 
                     {/* Mode of Delivery */}
-                    <div className="flex flex-col gap-4 pt-2 border-t border-border/80">
+                    <div className="flex flex-col gap-3 pt-2 border-t border-border/80">
                       <DeliveryModeFields
                         value={{
                           method: deliveryMethod,
@@ -676,7 +676,7 @@ export function RequestCardFlow() {
                         type="button"
                         disabled={!isDetailsValid}
                         onClick={() => setStep("customize")}
-                        className="w-full h-12 rounded-xl text-[14px]"
+                        className="w-full h-10 rounded-xl text-[14px]"
                       >
                         Continue
                       </Button>
@@ -698,14 +698,14 @@ export function RequestCardFlow() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="w-full max-w-[540px] mx-auto flex flex-col items-center gap-6"
+          className="w-full max-w-[540px] mx-auto flex flex-col items-center gap-5"
         >
           {/* Header Row: Back to Step 2 & Title */}
-          <div className="flex items-center gap-3 w-full">
+          <div className="flex items-center gap-2 w-full">
             <button
               type="button"
               onClick={() => setStep("details")}
-              className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+              className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               aria-label="Back"
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
@@ -716,14 +716,14 @@ export function RequestCardFlow() {
           </div>
 
           {/* Interactive Full Card Preview with 3D Mouse Tilt & Smooth Color Crossfades */}
-          <div className="w-full flex flex-col items-center gap-6">
+          <div className="w-full flex flex-col items-center gap-5">
             <TiltCard3D className="w-full max-w-[500px]">
               <motion.div
                 animate={{
                   backgroundColor: selectedTheme.colorHex,
                 }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                className={`relative w-full aspect-[1.586/1] rounded-[20px] p-6 sm:p-8 flex flex-col justify-between overflow-hidden select-none shadow-xl transition-colors duration-400 [transform-style:preserve-3d] ${selectedTheme.textColor}`}
+                className={`relative w-full aspect-[1.586/1] rounded-3xl p-5 sm:p-6 flex flex-col justify-between overflow-hidden select-none shadow-xl transition-colors duration-400 [transform-style:preserve-3d] ${selectedTheme.textColor}`}
               >
                 {/* Pre-rendered Stacked Theme Backgrounds for Silky 60fps GPU Crossfade */}
                 {CARD_THEMES.map((theme) => {
@@ -749,7 +749,7 @@ export function RequestCardFlow() {
 
                 {/* Top Row: GCB Logo (Left) & Unboxed Card Type (Right) */}
                 <div className="relative z-10 flex items-center justify-between transition-colors duration-300">
-                  <GcbCardLogo themeId={selectedTheme.id} className="h-8 sm:h-9 w-auto aspect-[37.1621/32] drop-shadow-xs shrink-0 transition-colors duration-300" />
+                  <GcbCardLogo themeId={selectedTheme.id} className="h-7 sm:h-8 w-auto aspect-[37.1621/32] drop-shadow-xs shrink-0 transition-colors duration-300" />
                   <span className="text-[14px] sm:text-[15.5px] font-normal tracking-wide opacity-90 capitalize transition-colors duration-300 shrink-0">
                     {cardType}
                   </span>
@@ -759,14 +759,14 @@ export function RequestCardFlow() {
                 {cardType === "Virtual" ? (
                   <div className="my-auto" aria-hidden="true" />
                 ) : (
-                  <div className="relative z-10 my-auto py-2 flex items-center gap-3.5">
+                  <div className="relative z-10 my-auto py-2 flex items-center gap-3">
                     <EmvChip />
                     <Wifi size={22} strokeWidth={2.4} className="rotate-90 opacity-85 shrink-0 transition-colors duration-300" />
                   </div>
                 )}
 
                 {/* Bottom Row: CARD HOLDER (Left), EXP (Center), VISA/Mastercard (Right) */}
-                <div className="relative z-10 flex items-end justify-between whitespace-nowrap gap-4 transition-colors duration-300">
+                <div className="relative z-10 flex items-end justify-between whitespace-nowrap gap-3 transition-colors duration-300">
                   <div className="flex flex-col gap-0.5 text-left">
                     <span className="text-[10.5px] sm:text-[11px] font-medium opacity-60 leading-[16px] uppercase tracking-wider">
                       CARD HOLDER
@@ -788,7 +788,7 @@ export function RequestCardFlow() {
                   <div className="shrink-0 flex items-end justify-end pl-2">
                     <NetworkLogo
                       scheme={cardScheme}
-                      className={cardScheme === "Visa" ? "h-5 sm:h-6 drop-shadow-xs" : "h-7 sm:h-8 drop-shadow-xs"}
+                      className={cardScheme === "Visa" ? "h-4 sm:h-5 drop-shadow-xs" : "h-6 sm:h-7 drop-shadow-xs"}
                     />
                   </div>
                 </div>
@@ -796,7 +796,7 @@ export function RequestCardFlow() {
             </TiltCard3D>
 
             {/* 7 Flat Color Circles with generous responsive spacing */}
-            <div className="w-full flex items-center justify-center gap-3 sm:gap-4 md:gap-5 px-2 sm:px-4 py-3 flex-wrap">
+            <div className="w-full flex items-center justify-center gap-2 sm:gap-3 md:gap-4 px-2 sm:px-3 py-2 flex-wrap">
               {CARD_THEMES.map((theme) => {
                 const isSelected = selectedTheme.id === theme.id;
                 const isDarkIcon =
@@ -809,7 +809,7 @@ export function RequestCardFlow() {
                     aria-label={`Select ${theme.name} card color`}
                     aria-pressed={isSelected}
                     onClick={() => setSelectedTheme(theme)}
-                    className={`relative size-9 sm:size-10 rounded-full cursor-pointer flex items-center justify-center transition duration-200 border border-black/10 dark:border-white/15 ${
+                    className={`relative size-8 sm:size-9 rounded-full cursor-pointer flex items-center justify-center transition duration-200 border border-black/10 dark:border-white/15 ${
                       isSelected
                         ? "ring-2 ring-foreground ring-offset-2 ring-offset-background scale-105 shadow-sm"
                         : "hover:scale-105 opacity-90 hover:opacity-100"
@@ -843,7 +843,7 @@ export function RequestCardFlow() {
               <Button
                 type="button"
                 onClick={() => setStep("review")}
-                className="w-full h-12 rounded-xl text-[14px]"
+                className="w-full h-10 rounded-xl text-[14px]"
               >
                 Continue
               </Button>
@@ -861,14 +861,14 @@ export function RequestCardFlow() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="w-full max-w-[540px] mx-auto flex flex-col gap-6"
+          className="w-full max-w-[540px] mx-auto flex flex-col gap-5"
         >
           {/* Header Row: Back to Customize & Title */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setStep("customize")}
-              className="flex size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+              className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
               aria-label="Back"
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
@@ -879,9 +879,9 @@ export function RequestCardFlow() {
           </div>
 
           {/* Mini Card Spec Banner */}
-          <div className="rounded-2xl border border-border/80 bg-card p-4 flex items-center gap-4">
+          <div className="rounded-2xl border border-border/80 bg-card p-3 flex items-center gap-3">
             <div
-              className={`relative w-16 aspect-[1.586/1] rounded-lg overflow-hidden ${selectedTheme.textColor} p-1.5 flex flex-col justify-between shrink-0 shadow-xs`}
+              className={`relative w-14 aspect-[1.586/1] rounded-lg overflow-hidden ${selectedTheme.textColor} p-2 flex flex-col justify-between shrink-0 shadow-xs`}
             >
               <img
                 src={selectedTheme.bgImage}
@@ -889,7 +889,7 @@ export function RequestCardFlow() {
                 className="absolute inset-0 size-full object-cover pointer-events-none select-none"
               />
               <div className="relative z-10 flex items-center justify-between">
-                <GcbCardLogo themeId={selectedTheme.id} className="h-3 w-auto aspect-[37.1621/32] shrink-0" />
+                <GcbCardLogo themeId={selectedTheme.id} className="h-2.5 w-auto aspect-[37.1621/32] shrink-0" />
                 <span className="text-[6px] font-medium uppercase opacity-80 shrink-0">{cardType}</span>
               </div>
               <div className="relative z-10 flex items-end justify-between">
@@ -913,14 +913,14 @@ export function RequestCardFlow() {
 
           {/* Detailed Summary Rows */}
           <div className="rounded-2xl border border-border/80 bg-card divide-y divide-border/80 overflow-hidden">
-            <div className="p-4 flex items-center justify-between gap-4">
+            <div className="p-3 flex items-center justify-between gap-3">
               <span className="text-[13.5px] text-muted-foreground">Card Nickname</span>
               <span className="text-[14px] font-medium text-foreground truncate">
                 {cardName.trim() || `${cardType} Card`}
               </span>
             </div>
 
-            <div className="p-4 flex items-center justify-between gap-4">
+            <div className="p-3 flex items-center justify-between gap-3">
               <span className="text-[13.5px] text-muted-foreground">Source account</span>
               <div className="flex flex-col items-end text-right">
                 <span className="text-[14px] font-medium text-foreground">
@@ -932,7 +932,7 @@ export function RequestCardFlow() {
               </div>
             </div>
 
-            <div className="p-4 flex items-center justify-between gap-4">
+            <div className="p-3 flex items-center justify-between gap-3">
               <span className="text-[13.5px] text-muted-foreground">Cardholder</span>
               <span className="text-[14px] font-medium text-foreground">
                 {actor?.name ?? "Ransford Gyasi"}
@@ -940,7 +940,7 @@ export function RequestCardFlow() {
             </div>
 
             {cardType !== "Virtual" && (
-              <div className="p-4 flex items-center justify-between gap-4">
+              <div className="p-3 flex items-center justify-between gap-3">
                 <span className="text-[13.5px] text-muted-foreground">Card Network</span>
                 <span className="text-[14px] font-medium text-foreground">
                   {cardScheme} • {networkType}
@@ -949,7 +949,7 @@ export function RequestCardFlow() {
             )}
 
             {isFundable && (
-              <div className="p-4 flex items-center justify-between gap-4">
+              <div className="p-3 flex items-center justify-between gap-3">
                 <span className="text-[13.5px] text-muted-foreground">
                   {isReplacement ? "Balance carried over" : "Initial funding"}
                 </span>
@@ -959,7 +959,7 @@ export function RequestCardFlow() {
               </div>
             )}
 
-            <div className="p-4 flex items-start justify-between gap-4">
+            <div className="p-3 flex items-start justify-between gap-3">
               <span className="text-[13.5px] text-muted-foreground pt-0.5">Mode of delivery</span>
               <div className="flex flex-col items-end text-right max-w-[280px]">
                 {isPhysical ? (
@@ -990,7 +990,7 @@ export function RequestCardFlow() {
               </div>
             </div>
 
-            <div className="p-4 flex items-center justify-between gap-4">
+            <div className="p-3 flex items-center justify-between gap-3">
               <span className="text-[13.5px] text-muted-foreground">
                 {isReplacement ? "Replacement fee" : "Issuance fee"}
               </span>
@@ -1004,11 +1004,11 @@ export function RequestCardFlow() {
           </div>
 
           {/* Authorize CTA Button */}
-          <div className="w-full flex flex-col gap-2.5 pt-2">
+          <div className="w-full flex flex-col gap-2 pt-2">
             <Button
               type="button"
               onClick={() => setAuthModalOpen(true)}
-              className="w-full h-12 rounded-xl text-[14.5px] cursor-pointer"
+              className="w-full h-10 rounded-xl text-[14.5px] cursor-pointer"
             >
               Authorize
             </Button>
@@ -1016,7 +1016,7 @@ export function RequestCardFlow() {
               variant="ghost"
               type="button"
               onClick={() => setStep("customize")}
-              className="w-full h-10 rounded-xl text-[13.5px] text-muted-foreground hover:text-foreground"
+              className="w-full h-9 rounded-xl text-[13.5px] text-muted-foreground hover:text-foreground"
             >
               Back
             </Button>
@@ -1033,13 +1033,13 @@ export function RequestCardFlow() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="relative mx-auto flex w-full max-w-[460px] min-h-[65vh] flex-col items-center justify-center gap-8 py-10 px-4 text-center overflow-visible"
+          className="relative mx-auto flex w-full max-w-[460px] min-h-[65vh] flex-col items-center justify-center gap-6 py-10 px-3 text-center overflow-visible"
         >
           {/* 1. Dynamic Hero Stage: Standalone Eagle -> Morph -> Emerald Check */}
           <motion.div
             layout="position"
             transition={{ layout: { duration: 0.62, ease: [0.22, 1, 0.36, 1] } }}
-            className="relative flex flex-col items-center gap-4 text-center w-full"
+            className="relative flex flex-col items-center gap-3 text-center w-full"
           >
             {/* Badge Anchor */}
             <div className="relative flex size-[130px] sm:size-[140px] items-center justify-center my-1 select-none">
@@ -1141,7 +1141,7 @@ export function RequestCardFlow() {
             </div>
 
             {/* 2. Header rises in; subtitle waits for revealRest */}
-            <div className="flex flex-col gap-1.5 items-center w-full max-w-[420px] text-center">
+            <div className="flex flex-col gap-2 items-center w-full max-w-[420px] text-center">
               <motion.h1
                 key={`title-${burstKey}`}
                 initial={{ opacity: 0, y: 12 }}
@@ -1177,7 +1177,7 @@ export function RequestCardFlow() {
               <button
                 type="button"
                 onClick={() => router.replace(`/cards/${createdCard.id}`)}
-                className="relative overflow-hidden w-full rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground px-5 py-3.5 text-[14.5px] font-medium active:scale-[0.99] transition cursor-pointer text-center shadow-xs"
+                className="relative overflow-hidden w-full rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground px-4 py-3 text-[14.5px] font-medium active:scale-[0.99] transition cursor-pointer text-center shadow-xs"
               >
                 {/* Single light sweep as the button arrives */}
                 <motion.div

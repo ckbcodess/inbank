@@ -109,23 +109,23 @@ export function DashboardAnalyticsWidget() {
   });
 
   return (
-    <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-colors">
+    <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-colors">
       {/* Top Header with Account Switcher & View All */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           <h2 className="text-[15px] font-medium text-foreground">Analytics</h2>
           <div className="relative">
             <button
               type="button"
               onClick={() => setShowAccountMenu(!showAccountMenu)}
-              className="flex items-center gap-1.5 rounded-full border border-border/80 bg-muted/60 px-3 py-0.5 text-[11.5px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
+              className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-[11.5px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
             >
               <span>{selectedAccount}</span>
               <ChevronDown size={12} className="text-muted-foreground" />
             </button>
 
             {showAccountMenu && (
-              <div className="absolute left-0 top-full z-30 mt-1.5 w-44 rounded-xl border border-border bg-card py-1 shadow-lg animate-in fade-in zoom-in-95 duration-100">
+              <div className="absolute left-0 top-full z-30 mt-2 w-38 rounded-xl border border-border bg-card py-1 shadow-lg animate-in fade-in zoom-in-95 duration-100">
                 {accountOptions.map((acc) => (
                   <button
                     key={acc}
@@ -134,7 +134,7 @@ export function DashboardAnalyticsWidget() {
                       setSelectedAccount(acc);
                       setShowAccountMenu(false);
                     }}
-                    className={`flex w-full items-center px-3.5 py-2 text-left text-[12px] transition-colors cursor-pointer ${
+                    className={`flex w-full items-center px-3 py-2 text-left text-[12px] transition-colors cursor-pointer ${
                       selectedAccount === acc
                         ? "bg-muted font-medium text-foreground"
                         : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
@@ -159,7 +159,7 @@ export function DashboardAnalyticsWidget() {
 
       {/* Main Analytics Content: Interactive Ring Donut & Category Breakdown */}
       <div className="my-auto py-2">
-        <div className="grid grid-cols-1 sm:grid-cols-12 items-center gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-12 items-center gap-3 sm:gap-5">
           {/* Left: Donut Ring with Center Summary */}
           <div className="sm:col-span-5 flex items-center justify-center">
             <div className="relative size-[165px] shrink-0">
@@ -237,7 +237,7 @@ export function DashboardAnalyticsWidget() {
                   onClick={() =>
                     setActiveCategory(activeCategory === cat.label ? null : cat.label)
                   }
-                  className={`flex items-center justify-between rounded-lg px-2.5 py-1.5 transition-colors cursor-pointer ${
+                  className={`flex items-center justify-between rounded-lg px-2 py-2 transition-colors cursor-pointer ${
                     isHovered
                       ? "bg-muted/80"
                       : isDimmed
@@ -247,7 +247,7 @@ export function DashboardAnalyticsWidget() {
                 >
                   <div className="flex items-center gap-2 min-w-0">
                     <span
-                      className="size-2.5 shrink-0 rounded-full transition-transform"
+                      className="size-2 shrink-0 rounded-full transition-transform"
                       style={{ backgroundColor: cat.color }}
                     />
                     <span className="truncate text-[12.5px] font-medium text-foreground">
@@ -272,7 +272,7 @@ export function DashboardAnalyticsWidget() {
       </div>
 
       {/* Time Switcher Tabs */}
-      <div className="flex items-center gap-1.5 border-t border-border/50 pt-3.5">
+      <div className="flex items-center gap-2 border-t border-border/50 pt-3">
         {ranges.map((r) => {
           const isActive = selectedRange === r;
           return (

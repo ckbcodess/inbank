@@ -229,29 +229,29 @@ export default function LocateUsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-5xl mx-auto py-2">
+    <div className="flex flex-col gap-5 w-full max-w-5xl mx-auto py-2">
       <PageHeader
         title="Locate Us"
         description="Find GCB Bank branches, prestige lounges, 24/7 cash withdrawal ATMs, and instant deposit terminals nationwide."
       />
 
       {/* ── Search & Filter Controls ── */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
           {/* Search Bar */}
           <div className="relative flex-1 max-w-md">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search branch name, suburb, city, or service..."
-              className="pl-9 pr-8 h-10 text-[13px] bg-card border-border"
+              className="pl-8 pr-6 h-9 text-[13px] bg-card border-border"
             />
             {query && (
               <button
                 type="button"
                 onClick={() => setQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 aria-label="Clear search"
               >
                 <X size={15} />
@@ -259,7 +259,7 @@ export default function LocateUsPage() {
             )}
           </div>
 
-          <FilterPanel groups={filterGroups} onClear={clearFilters} className="h-10" />
+          <FilterPanel groups={filterGroups} onClear={clearFilters} className="h-9" />
         </div>
         <AppliedFilters groups={filterGroups} />
       </div>
@@ -286,7 +286,7 @@ export default function LocateUsPage() {
           />
         )
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {filteredLocations.map((loc) => {
             const mapsQuery = encodeURIComponent(`GCB Bank ${loc.name}, ${loc.address}, ${loc.city}`);
             const directionsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
@@ -294,11 +294,11 @@ export default function LocateUsPage() {
             return (
               <div
                 key={loc.id}
-                className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5 transition-shadow hover:shadow-sm"
+                className="flex flex-col justify-between rounded-2xl border border-border bg-card p-4 transition-shadow hover:shadow-sm"
               >
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
                   {/* Header Row: Title & Type Pill */}
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start justify-between gap-2">
                     <div className="flex flex-col">
                       <span className="text-[15px] font-medium text-foreground tracking-tight">
                         {loc.name}
@@ -308,7 +308,7 @@ export default function LocateUsPage() {
                       </span>
                     </div>
                     <span
-                      className={`text-[11px] font-medium px-2 py-0.5 rounded-md shrink-0 uppercase tracking-wider ${
+                      className={`text-[11px] font-medium px-2 py-0.5 rounded-lg shrink-0 uppercase tracking-wider ${
                         loc.type === "branch"
                           ? "bg-warning/10 text-warning-text"
                           : loc.type === "atm"
@@ -321,7 +321,7 @@ export default function LocateUsPage() {
                   </div>
 
                   {/* Hours & Contact */}
-                  <div className="flex flex-col gap-1.5 text-[12.5px] text-muted-foreground pt-1 border-t border-border/50">
+                  <div className="flex flex-col gap-2 text-[12.5px] text-muted-foreground pt-1 border-t border-border/50">
                     <div className="flex items-center gap-2">
                       <Clock size={14} className="shrink-0 text-muted-foreground" />
                       <span>{loc.hours}</span>
@@ -337,11 +337,11 @@ export default function LocateUsPage() {
                   </div>
 
                   {/* Services Chips */}
-                  <div className="flex flex-wrap gap-1.5 pt-1">
+                  <div className="flex flex-wrap gap-2 pt-1">
                     {loc.services.map((svc) => (
                       <span
                         key={svc}
-                        className="text-[11px] bg-muted/60 text-muted-foreground px-2 py-0.5 rounded-md"
+                        className="text-[11px] bg-muted/60 text-muted-foreground px-2 py-0.5 rounded-lg"
                       >
                         {svc}
                       </span>
@@ -350,9 +350,9 @@ export default function LocateUsPage() {
                 </div>
 
                 {/* Actions Footer */}
-                <div className="flex items-center justify-between gap-2 pt-4 mt-3 border-t border-border/60">
-                  <div className="flex items-center gap-1.5 text-[11.5px] text-success-text">
-                    <span className="size-2 rounded-full bg-success" />
+                <div className="flex items-center justify-between gap-2 pt-3 mt-2 border-t border-border/60">
+                  <div className="flex items-center gap-2 text-[11.5px] text-success-text">
+                    <span className="size-1.5 rounded-full bg-success" />
                     <span>Open for Service</span>
                   </div>
 
@@ -360,7 +360,7 @@ export default function LocateUsPage() {
                     href={directionsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-primary hover:underline"
+                    className="inline-flex items-center gap-2 text-[12.5px] font-medium text-primary hover:underline"
                   >
                     <Navigation size={13} strokeWidth={2} />
                     <span>Get Directions</span>

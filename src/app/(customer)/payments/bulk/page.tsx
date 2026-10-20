@@ -43,7 +43,7 @@ export default function BulkUploadPage() {
   const invalidCount = 2;
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Bulk Payments"
         backTo={{ href: "/payments", label: "Send & Pay" }}
@@ -53,9 +53,9 @@ export default function BulkUploadPage() {
 
       <StubNotice section="section 3" states="13.8" />
 
-      <section className="rounded-2xl border border-border bg-card p-5">
-        <div className="flex items-center gap-3 border-b border-border pb-4">
-          <span className="flex size-9 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+      <section className="rounded-2xl border border-border bg-card p-4">
+        <div className="flex items-center gap-2 border-b border-border pb-3">
+          <span className="flex size-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
             <FileSpreadsheet size={17} strokeWidth={1.8} aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">
@@ -69,7 +69,7 @@ export default function BulkUploadPage() {
         </div>
 
         {/* 13.8 core "mixed" state — both counts shown prominently */}
-        <div className="grid grid-cols-1 gap-3 pt-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-2 pt-3 sm:grid-cols-3">
           <SummaryCard
             label="Valid records"
             value={String(validCount)}
@@ -88,7 +88,7 @@ export default function BulkUploadPage() {
       </section>
 
       <section className="rounded-2xl border border-border bg-card">
-        <div className="flex items-center justify-between border-b border-border px-5 py-4">
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
           <h2 className="text-[15px] text-foreground">Records</h2>
           <span className="text-[12px] text-muted-foreground">
             Showing rows 35–39 of 140
@@ -98,9 +98,9 @@ export default function BulkUploadPage() {
           {RECORDS.map((r) => (
             <li
               key={r.row}
-              className={`flex items-center gap-4 px-5 py-3.5 ${r.valid ? "" : "bg-destructive/5"}`}
+              className={`flex items-center gap-3 px-4 py-3 ${r.valid ? "" : "bg-destructive/5"}`}
             >
-              <span className="w-8 shrink-0 text-[12.5px] text-muted-foreground tabular">{r.row}</span>
+              <span className="w-7 shrink-0 text-[12.5px] text-muted-foreground tabular">{r.row}</span>
               <span className="flex min-w-0 flex-1 flex-col">
                 <span className="truncate text-[13px] text-foreground">{r.name}</span>
                 <span className="truncate text-[12px] text-muted-foreground tabular">{r.account}</span>
@@ -112,7 +112,7 @@ export default function BulkUploadPage() {
               {r.valid ? (
                 <Badge variant="success">Valid</Badge>
               ) : (
-                <div className="flex shrink-0 gap-1.5">
+                <div className="flex shrink-0 gap-2">
                   <Button variant="outline" size="xs" disabled>
                     Correct
                   </Button>
@@ -124,7 +124,7 @@ export default function BulkUploadPage() {
             </li>
           ))}
         </ul>
-        <p className="border-t border-border px-5 py-3 text-[12.5px] text-muted-foreground">
+        <p className="border-t border-border px-4 py-2 text-[12.5px] text-muted-foreground">
           Records are corrected inline and revalidated individually — the full batch is never
           re-uploaded (13.8).
         </p>

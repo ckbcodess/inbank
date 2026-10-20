@@ -142,7 +142,7 @@ export function DataBundleFlow({
     />
   );
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
       {/* 1. From Account */}
       <FromAccountSelector
         accounts={accounts}
@@ -163,7 +163,7 @@ export function DataBundleFlow({
             onChange={() => setCollapsed(false)}
           />
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <NetworkSelect
               value={state.wNetwork ? normalizeNetworkName(state.wNetwork) : ""}
               onChange={(val) => {
@@ -202,7 +202,7 @@ export function DataBundleFlow({
 
       {/* Progressive Disclosure: Only reveal Bundle Selection & onwards after phone number & network are valid */}
       {isPhoneValid && isNetworkValid && (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+        <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Bundle Selection */}
           <Field label="Bundles">
             <Select
@@ -215,7 +215,7 @@ export function DataBundleFlow({
             >
               <SelectTrigger
                 className={cn(
-                  "h-13 min-h-[52px] w-full rounded-2xl border bg-card px-4 text-left shadow-none transition-colors",
+                  "h-11 min-h-[52px] w-full rounded-2xl border bg-card px-3 text-left shadow-none transition-colors",
                   overBalance
                     ? "border-destructive/70 focus:border-destructive focus:ring-1 focus:ring-destructive/30"
                     : "border-border/80"
@@ -226,13 +226,13 @@ export function DataBundleFlow({
                     Select internet bundle
                   </span>
                 ) : (
-                  <div className="flex items-center justify-between w-full min-w-0 pr-1.5">
+                  <div className="flex items-center justify-between w-full min-w-0 pr-2">
                     <span className="text-[15px] font-normal text-foreground truncate">
                       {selectedBundle.name}
                     </span>
                     <span
                       className={cn(
-                        "text-[15px] font-normal tabular shrink-0 ml-3",
+                        "text-[15px] font-normal tabular shrink-0 ml-2",
                         overBalance ? "text-destructive" : "text-foreground"
                       )}
                     >
@@ -244,7 +244,7 @@ export function DataBundleFlow({
               <SelectContent>
                 {bundles.map((b) => (
                   <SelectItem key={b.id} value={b.id}>
-                    <div className="flex items-center justify-between w-full gap-4">
+                    <div className="flex items-center justify-between w-full gap-3">
                       <span>{b.name}</span>
                       <span className="tabular text-muted-foreground font-normal">
                         {formatMoney(b.price, "GHS", true)}

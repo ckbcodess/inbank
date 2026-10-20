@@ -35,17 +35,17 @@ export default function SelectBankingPage() {
       titleClassName="text-[19.5px] sm:text-[21.5px] sm:whitespace-nowrap"
       width="compact"
     >
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2">
         {options.map(({ type, tour, icon: Icon, title, description }) => (
           <button
             key={type}
             type="button"
             data-tour={tour}
             onClick={() => router.push(`/login?type=${type}`)}
-            className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+            className="group flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card-item p-4 sm:p-4 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
           >
-            <div className="flex items-center gap-3.5">
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+            <div className="flex items-center gap-3">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
                 <Icon size={18} strokeWidth={2.2} />
               </div>
               <div className="flex flex-col">

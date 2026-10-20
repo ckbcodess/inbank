@@ -567,9 +567,9 @@ export default function BeneficiariesPage() {
       <li
         key={b.id}
         onClick={() => setSelectedBeneficiary(b)}
-        className="group flex items-center justify-between gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-muted/50 cursor-pointer sm:px-4"
+        className="group flex items-center justify-between gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-muted/50 cursor-pointer sm:px-3"
       >
-        <div className="flex min-w-0 flex-1 items-center gap-3.5">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           <PayeeAvatar
             name={b.name}
             icon={b.transactionType === "bill" || b.transactionType === "airtime" ? Icon : undefined}
@@ -579,7 +579,7 @@ export default function BeneficiariesPage() {
             <div className="flex items-center gap-2 flex-wrap">
               <span className="truncate text-[14px] font-medium text-foreground leading-snug">{b.name}</span>
               {/* A tick on every row says nothing; only the exception is marked */}
-              {!b.verified && <Badge variant="warning" className="text-[10px] py-0 px-1.5">Pending approval</Badge>}
+              {!b.verified && <Badge variant="warning" className="text-[10px] py-0 px-2">Pending approval</Badge>}
             </div>
             <div className="mt-0.5 flex items-center gap-2 text-[12px] text-muted-foreground tabular flex-wrap">
               <span>{b.detail}</span>
@@ -589,13 +589,13 @@ export default function BeneficiariesPage() {
 
         {/* Pay, Edit and Remove appear on hover or keyboard focus (always shown where there is no hover, as on touch) */}
         <div
-          className="hidden shrink-0 items-center gap-2.5 text-muted-foreground [&>*]:shrink-0 [@media(hover:hover)]:flex transition-[width,opacity,margin] duration-reveal ease-settle focus-within:opacity-100 [@media(hover:hover)]:w-0 [@media(hover:hover)]:overflow-hidden [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:ml-3 [@media(hover:hover)]:group-hover:w-[92px] [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:focus-within:ml-3 [@media(hover:hover)]:focus-within:w-[92px]"
+          className="hidden shrink-0 items-center gap-2 text-muted-foreground [&>*]:shrink-0 [@media(hover:hover)]:flex transition-[width,opacity,margin] duration-reveal ease-settle focus-within:opacity-100 [@media(hover:hover)]:w-0 [@media(hover:hover)]:overflow-hidden [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:ml-2 [@media(hover:hover)]:group-hover:w-[92px] [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:focus-within:ml-2 [@media(hover:hover)]:focus-within:w-[92px]"
           onClick={(e) => e.stopPropagation()}
         >
           <SimpleTooltip content={`Send to ${b.name}`}>
             <Link
               href={sendHref}
-              className="flex size-7 items-center justify-center rounded-md hover:text-foreground hover:bg-muted/60 transition-colors"
+              className="flex size-6 items-center justify-center rounded-lg hover:text-foreground hover:bg-muted/60 transition-colors"
               aria-label={`Send to ${b.name}`}
               title={`Send to ${b.name}`}
             >
@@ -607,7 +607,7 @@ export default function BeneficiariesPage() {
             <button
               type="button"
               onClick={() => openEdit(b)}
-              className="flex size-7 items-center justify-center rounded-md hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
+              className="flex size-6 items-center justify-center rounded-lg hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
               aria-label={`Edit ${b.name}`}
               title={`Edit ${b.name}`}
             >
@@ -619,7 +619,7 @@ export default function BeneficiariesPage() {
             <button
               type="button"
               onClick={() => setRemoveId(b.id)}
-              className="flex size-7 items-center justify-center rounded-md hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+              className="flex size-6 items-center justify-center rounded-lg hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
               aria-label={`Remove ${b.name}`}
               title={`Remove ${b.name}`}
             >
@@ -642,11 +642,11 @@ export default function BeneficiariesPage() {
     return (
       <li
         key={g.id}
-        className="group flex items-center justify-between gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-muted/50 cursor-pointer sm:px-4"
+        className="group flex items-center justify-between gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-muted/50 cursor-pointer sm:px-3"
         onClick={() => setSelectedGroup(g)}
       >
         {/* Left: Brand-tinted Group Avatar + Group Name & Member Count */}
-        <div className="flex items-center gap-3.5 min-w-0">
+        <div className="flex items-center gap-3 min-w-0">
           <PayeeAvatar name={g.name} />
 
           <div className="flex flex-col min-w-0">
@@ -660,7 +660,7 @@ export default function BeneficiariesPage() {
         </div>
 
         {/* Right: Total Amount + Per-member Split + Minimal Action Icons */}
-        <div className="flex items-center gap-5 sm:gap-6 shrink-0 [@media(hover:hover)]:gap-0">
+        <div className="flex items-center gap-4 sm:gap-5 shrink-0 [@media(hover:hover)]:gap-0">
           <div className="flex flex-col text-right ">
             <span className="text-[14px] text-foreground tabular-nums numorainput leading-snug">
               GHS {totalAmt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -674,13 +674,13 @@ export default function BeneficiariesPage() {
 
           {/* The same as a beneficiary row: the actions show on hover or focus, and always on touch */}
           <div
-            className="hidden items-center gap-2.5 text-muted-foreground shrink-0 [&>*]:shrink-0 [@media(hover:hover)]:flex transition-[width,opacity,margin] duration-reveal ease-settle focus-within:opacity-100 [@media(hover:hover)]:w-0 [@media(hover:hover)]:overflow-hidden [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:ml-3 [@media(hover:hover)]:group-hover:w-[92px] [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:focus-within:ml-3 [@media(hover:hover)]:focus-within:w-[92px]"
+            className="hidden items-center gap-2 text-muted-foreground shrink-0 [&>*]:shrink-0 [@media(hover:hover)]:flex transition-[width,opacity,margin] duration-reveal ease-settle focus-within:opacity-100 [@media(hover:hover)]:w-0 [@media(hover:hover)]:overflow-hidden [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:ml-2 [@media(hover:hover)]:group-hover:w-[92px] [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:focus-within:ml-2 [@media(hover:hover)]:focus-within:w-[92px]"
             onClick={(e) => e.stopPropagation()}
           >
             <SimpleTooltip content={`Send to ${g.name}`}>
               <Link
                 href={`/payments/send?rail=group&group=${encodeURIComponent(g.name)}`}
-                className="flex size-7 items-center justify-center rounded-md hover:text-foreground hover:bg-muted/60 transition-colors"
+                className="flex size-6 items-center justify-center rounded-lg hover:text-foreground hover:bg-muted/60 transition-colors"
                 aria-label={`Send to ${g.name}`}
                 title={`Send to ${g.name}`}
               >
@@ -695,7 +695,7 @@ export default function BeneficiariesPage() {
                   setEditingGroup(g);
                   setEditGroupModalOpen(true);
                 }}
-                className="flex size-7 items-center justify-center rounded-md hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
+                className="flex size-6 items-center justify-center rounded-lg hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
                 aria-label={`Edit ${g.name}`}
                 title={`Edit ${g.name}`}
               >
@@ -707,7 +707,7 @@ export default function BeneficiariesPage() {
               <button
                 type="button"
                 onClick={() => setRemoveGroupId(g.id)}
-                className="flex size-7 items-center justify-center rounded-md hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+                className="flex size-6 items-center justify-center rounded-lg hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
                 aria-label={`Delete ${g.name}`}
                 title={`Delete ${g.name}`}
               >
@@ -722,7 +722,7 @@ export default function BeneficiariesPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       {/* ── Page Header: Title & Action (no description underneath) ── */}
       <PageHeader
         title="Beneficiaries"
@@ -769,7 +769,7 @@ export default function BeneficiariesPage() {
                 setQuery("");
               }}
               aria-pressed={activeTab === t.id}
-              className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-4 py-2 text-[13px] transition cursor-pointer ${
+              className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-3 py-2 text-[13px] transition cursor-pointer ${
                 activeTab === t.id
                   ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
                   : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -787,7 +787,7 @@ export default function BeneficiariesPage() {
         <div className="relative flex-1">
           <Search
             size={18}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
           />
           <Input
             type="text"
@@ -798,13 +798,13 @@ export default function BeneficiariesPage() {
                 ? "Search by name, bank, number or biller"
                 : "Search by group title, description, or member name..."
             }
-            className="pl-11 pr-10"
+            className="pl-10 pr-10"
           />
           {query && (
             <button
               type="button"
               onClick={() => setQuery("")}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 cursor-pointer"
               aria-label="Clear search query"
             >
               <X size={15} />
@@ -814,7 +814,7 @@ export default function BeneficiariesPage() {
 
         {activeTab === "people" && kindsPresent.length > 1 && (
           <Select value={typeFilter} onValueChange={(v) => v && setTypeFilter(v as TypeFilter)}>
-            <SelectTrigger aria-label="Type" className="h-12 w-auto min-w-[10.5rem] shrink-0">
+            <SelectTrigger aria-label="Type" className="h-10 w-auto min-w-[10.5rem] shrink-0">
               <SelectValue />
             </SelectTrigger>
             <SelectContent align="end">
@@ -851,7 +851,7 @@ export default function BeneficiariesPage() {
                     setFormOpen(true);
                   }}
                 >
-                  <Plus size={14} className="mr-1.5" />
+                  <Plus size={14} className="mr-2" />
                   Add beneficiary
                 </Button>
               }
@@ -878,7 +878,7 @@ export default function BeneficiariesPage() {
               description="Send to several people or run Susu in one step."
               action={
                 <Button nativeButton={false} render={<Link href="/beneficiaries/groups/new" />}>
-                  <Plus size={14} className="mr-1.5" /> Create first group
+                  <Plus size={14} className="mr-2" /> Create first group
                 </Button>
               }
             />
@@ -902,7 +902,7 @@ export default function BeneficiariesPage() {
           </SheetHeader>
 
           {/* Sheet Body with Progressive Disclosure */}
-          <SheetBody className="gap-5">
+          <SheetBody className="gap-4">
             {/* Step 1: Destination Rail (Dropdown) */}
             <Field label="Payment Rail">
               <Select
@@ -913,7 +913,7 @@ export default function BeneficiariesPage() {
                 }}
               >
                 <SelectTrigger className="shadow-xs">
-                  <div className="flex items-center gap-2.5 truncate">
+                  <div className="flex items-center gap-2 truncate">
                     {(() => {
                       const meta = TYPE_CONFIG[form.transactionType] || TYPE_CONFIG.bank;
                       const Icon = meta.icon;
@@ -932,7 +932,7 @@ export default function BeneficiariesPage() {
                     const Icon = meta.icon;
                     return (
                       <SelectItem key={t} value={t} className="text-[13px] py-2">
-                        <div className="flex items-center gap-2.5">
+                        <div className="flex items-center gap-2">
                           <Icon size={15} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
                           <span>{meta.label}</span>
                         </div>
@@ -946,7 +946,7 @@ export default function BeneficiariesPage() {
             {/* Step 2: Rail-Specific Provider / Destination / Network Dropdowns & Details */}
             {/* Mobile Wallet Rail */}
             {form.transactionType === "wallet" && (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 <Field label="Network Provider">
                   <Select
                     value={form.network}
@@ -977,7 +977,7 @@ export default function BeneficiariesPage() {
 
             {/* Domestic Bank Rail (GCB / Other Banks) */}
             {form.transactionType === "bank" && (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 <Field label="Destination Bank">
                   <Select
                     value={form.bankName}
@@ -986,7 +986,7 @@ export default function BeneficiariesPage() {
                     <SelectTrigger className="shadow-xs">
                       <SelectValue placeholder="Select destination bank" />
                     </SelectTrigger>
-                    <SelectContent className="max-h-56">
+                    <SelectContent className="max-h-49">
                       {GHANA_BANKS.map((b) => (
                         <SelectItem key={b} value={b}>
                           {b}
@@ -1010,7 +1010,7 @@ export default function BeneficiariesPage() {
 
             {/* Bills & Utilities Rail */}
             {form.transactionType === "bill" && (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 <Field label="Bill / Service Provider">
                   <Select
                     value={matchedBiller?.name || form.billerName}
@@ -1034,18 +1034,18 @@ export default function BeneficiariesPage() {
                     <SelectTrigger >
                       <SelectValue placeholder="Select bill / utility provider" />
                     </SelectTrigger>
-                    <SelectContent className="max-h-72">
+                    <SelectContent className="max-h-63">
                       {BILLER_CATEGORIES.map((cat, idx) => {
                         const catBillers = BILLERS.filter((b) => b.category === cat);
                         if (catBillers.length === 0) return null;
                         return (
                           <SelectGroup key={cat}>
-                            <SelectLabel className="px-2.5 py-1.5 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
+                            <SelectLabel className="px-2 py-2 text-[11px] font-semibold tracking-wider text-muted-foreground uppercase">
                               {cat}
                             </SelectLabel>
                             {catBillers.map((b) => (
                               <SelectItem key={b.id} value={b.name} label={b.name} className="py-2 text-[13px]">
-                                <div className="flex items-center justify-between w-full gap-3">
+                                <div className="flex items-center justify-between w-full gap-2">
                                   <span className="font-medium text-foreground">{b.name}</span>
                                   <span className="text-[11.5px] text-muted-foreground/75 font-normal shrink-0">
                                     {b.reference}
@@ -1075,7 +1075,7 @@ export default function BeneficiariesPage() {
 
             {/* Airtime Rail */}
             {form.transactionType === "airtime" && (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 <Field label="Network Provider">
                   <Select
                     value={form.network}
@@ -1108,7 +1108,7 @@ export default function BeneficiariesPage() {
             {form.transactionType === "proxy" && (
               <Field label="Proxy Identifier">
                 <div className="relative flex items-center">
-                  <span className="absolute left-3.5 text-[15px] font-semibold text-muted-foreground select-none pointer-events-none">
+                  <span className="absolute left-3 text-[15px] font-semibold text-muted-foreground select-none pointer-events-none">
                     @
                   </span>
                   <Input
@@ -1119,7 +1119,7 @@ export default function BeneficiariesPage() {
                       setForm((p) => ({ ...p, proxyId: cleaned ? `@${cleaned}` : "" }));
                     }}
                     placeholder="kwame.b"
-                    className="pl-8 pr-3.5"
+                    className="pl-6 pr-3"
                   />
                 </div>
 </Field>
@@ -1127,8 +1127,8 @@ export default function BeneficiariesPage() {
 
             {/* SWIFT International Wire */}
             {form.transactionType === "swift" && (
-              <div className="flex flex-col gap-3">
-                <div className="grid grid-cols-2 gap-2.5">
+              <div className="flex flex-col gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   <Field label="Country">
                     <Select
                       value={form.country}
@@ -1141,7 +1141,7 @@ export default function BeneficiariesPage() {
                       <SelectTrigger >
                         <SelectValue placeholder="Country" />
                       </SelectTrigger>
-                      <SelectContent className="max-h-56">
+                      <SelectContent className="max-h-49">
                         {SWIFT_COUNTRIES.map((c) => (
                           <SelectItem key={c.name} value={c.name}>
                             {c.name} ({c.currency})
@@ -1159,7 +1159,7 @@ export default function BeneficiariesPage() {
                       <SelectTrigger >
                         <SelectValue placeholder="Select bank" />
                       </SelectTrigger>
-                      <SelectContent className="max-h-56">
+                      <SelectContent className="max-h-49">
                         {(INTERNATIONAL_BANKS_BY_COUNTRY[form.country] || INTERNATIONAL_BANKS_BY_COUNTRY["United Kingdom"]).map((bank) => (
                           <SelectItem key={bank} value={bank}>
                             {bank}
@@ -1170,7 +1170,7 @@ export default function BeneficiariesPage() {
 </Field>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-2 gap-2">
                   <Field label="SWIFT / BIC Code">
                     <Input
                       type="text"
@@ -1206,7 +1206,7 @@ export default function BeneficiariesPage() {
 
             {/* PAPSS Cross-Border Rail */}
             {form.transactionType === "papss" && (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 <Field label="Destination Country">
                   <Select
                     value={form.country}
@@ -1219,7 +1219,7 @@ export default function BeneficiariesPage() {
                     <SelectTrigger >
                       <SelectValue placeholder="Select African destination" />
                     </SelectTrigger>
-                    <SelectContent className="max-h-56">
+                    <SelectContent className="max-h-49">
                       {PAPSS_COUNTRIES.map((c) => (
                         <SelectItem key={c.name} value={c.name}>
                           {c.name} ({c.currency})
@@ -1229,7 +1229,7 @@ export default function BeneficiariesPage() {
                   </Select>
 </Field>
 
-                <div className="grid grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-2 gap-2">
                   <Select
                     value={form.bankName}
                     onValueChange={(val) => val && setForm((p) => ({ ...p, bankName: val }))}
@@ -1237,7 +1237,7 @@ export default function BeneficiariesPage() {
                     <SelectTrigger >
                       <SelectValue placeholder="Select bank" />
                     </SelectTrigger>
-                    <SelectContent className="max-h-56">
+                    <SelectContent className="max-h-49">
                       {(PAPSS_BANKS_BY_COUNTRY[form.country] || PAPSS_BANKS_BY_COUNTRY["Nigeria"]).map((bank) => (
                         <SelectItem key={bank} value={bank}>
                           {bank}
@@ -1279,18 +1279,18 @@ export default function BeneficiariesPage() {
           </SheetBody>
 
           {/* Sheet Footer with Primary Lime Action */}
-          <SheetFooter className="gap-2.5">
+          <SheetFooter className="gap-2">
             <Button
               onClick={handleSaveBeneficiary}
               disabled={!form.name.trim()}
-              className="h-12 w-full rounded-full bg-primary text-primary-foreground hover:bg-primary-hover font-medium transition-all cursor-pointer text-[14.5px] disabled:opacity-40 shadow-xs"
+              className="h-10 w-full rounded-full bg-primary text-primary-foreground hover:bg-primary-hover font-medium transition-all cursor-pointer text-[14.5px] disabled:opacity-40 shadow-xs"
             >
               {form.id ? "Save Changes" : "Save Beneficiary"}
             </Button>
             <Button
               variant="ghost"
               onClick={() => setFormOpen(false)}
-              className="h-10 w-full rounded-full text-foreground/80 hover:text-foreground text-[14px]"
+              className="h-9 w-full rounded-full text-foreground/80 hover:text-foreground text-[14px]"
             >
               Cancel
             </Button>
@@ -1333,7 +1333,7 @@ export default function BeneficiariesPage() {
               Remove Beneficiary
             </DialogTitle>
           </DialogHeader>
-          <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground">
+          <div className="px-4 sm:px-5 py-4 text-[13.5px] text-muted-foreground">
             Are you sure you want to remove <span className="text-foreground">{toRemove?.name}</span>? This will not affect past transactions.
           </div>
           <DialogFooter>
@@ -1354,7 +1354,7 @@ export default function BeneficiariesPage() {
               Delete Payment Group
             </DialogTitle>
           </DialogHeader>
-          <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground">
+          <div className="px-4 sm:px-5 py-4 text-[13.5px] text-muted-foreground">
             Are you sure you want to delete <span className="text-foreground">{toRemoveGroup?.name}</span>? Group members will remain in your individual beneficiaries directory.
           </div>
           <DialogFooter>

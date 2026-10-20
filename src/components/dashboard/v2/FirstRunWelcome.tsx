@@ -77,7 +77,7 @@ type FlowStep =
 /** The money flows' field look (Send & Pay, Add money): rounded-2xl, 14px medium labels, the shared AmountInput. */
 
 const BUTTON =
-  "h-10.5 w-full text-[14px] font-medium active:scale-[0.96] transition-transform duration-150 cursor-pointer";
+  "h-9 w-full text-[14px] font-medium active:scale-[0.96] transition-transform duration-150 cursor-pointer";
 
 const slideVariants: Variants = {
   enter: (dir: "forward" | "backward") => ({
@@ -405,7 +405,7 @@ export function FirstRunWelcome({
     <Dialog open onOpenChange={() => {}}>
       <DialogContent
         size="lg"
-        className="overflow-hidden sm:max-w-[812px] p-2.5 sm:p-3 border border-border/80 bg-modal shadow-2xl sm:rounded-[20px]"
+        className="overflow-hidden sm:max-w-[812px] p-2 sm:p-2 border border-border/80 bg-modal shadow-2xl sm:rounded-3xl"
       >
         <button
           type="button"
@@ -413,13 +413,13 @@ export function FirstRunWelcome({
           disabled={moneyInFlight}
           aria-label={moneyInFlight ? "Close (available once your payment finishes)" : "Close"}
           title={moneyInFlight ? "Available once your payment finishes" : undefined}
-          className="absolute right-4 top-4 z-20 flex size-8 cursor-pointer items-center justify-center rounded-full border border-border/60 bg-card/85 text-foreground backdrop-blur transition-colors hover:bg-card active:scale-[0.94] disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100"
+          className="absolute right-3.5 top-3.5 z-20 flex size-7 cursor-pointer items-center justify-center rounded-full border border-border/60 bg-card/85 text-foreground backdrop-blur transition-colors hover:bg-card active:scale-[0.94] disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100"
         >
           <X size={15} strokeWidth={1.9} aria-hidden="true" />
         </button>
         <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)] min-h-[440px] max-h-[calc(92vh-2rem)] overflow-hidden">
           {/* Left Column: Interactive sliding view */}
-          <div className="relative flex flex-col justify-between overflow-hidden p-5 sm:px-6 sm:py-7 min-h-[440px] min-w-0">
+          <div className="relative flex flex-col justify-between overflow-hidden p-4 sm:px-5 sm:py-6 min-h-[440px] min-w-0">
             <AnimatePresence mode="wait" custom={slideDirection} initial={false}>
               <motion.div
                 key={step}
@@ -433,9 +433,9 @@ export function FirstRunWelcome({
                 {/* STEP 1: WELCOME (1:1 Figma Showcase Node 5858:70291) */}
                 {step === "welcome" && (
                   <div className="flex flex-1 flex-col justify-between h-full">
-                    <div className="flex flex-col gap-6 sm:gap-8">
+                    <div className="flex flex-col gap-5 sm:gap-6">
                       <div className="flex items-center">
-                        <GCBLogo className="h-9 w-auto" />
+                        <GCBLogo className="h-8 w-auto" />
                       </div>
 
                       <div className="flex flex-col gap-2">
@@ -448,7 +448,7 @@ export function FirstRunWelcome({
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-2.5 pt-6 sm:pt-0">
+                    <div className="flex flex-col gap-2 pt-5 sm:pt-0">
                       <Button
                         type="button"
                         onClick={() => goTo("method")}
@@ -471,12 +471,12 @@ export function FirstRunWelcome({
                 {/* STEP 2: CHOOSE FUNDING METHOD */}
                 {step === "method" && (
                   <div className="flex flex-1 flex-col justify-between h-full">
-                    <div className="flex flex-col gap-5">
+                    <div className="flex flex-col gap-4">
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => goBack("welcome")}
-                          className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1.5"
+                          className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-2"
                           aria-label="Back to welcome"
                         >
                           <ChevronLeft size={18} strokeWidth={2} />
@@ -490,7 +490,7 @@ export function FirstRunWelcome({
                         Select how you would like to fund your virtual account.
                       </p>
 
-                      <div className="flex flex-col gap-4 pt-1">
+                      <div className="flex flex-col gap-3 pt-1">
                         <ActionTile
                           icon={Smartphone}
                           title="Fund with Mobile Money Wallet"
@@ -520,12 +520,12 @@ export function FirstRunWelcome({
                       </div>
                     </div>
 
-                    <div className="pt-4">
+                    <div className="pt-3">
                       <Button
                         type="button"
                         variant="ghost"
                         onClick={skipFunding}
-                        className="h-9 w-full text-[13px] text-muted-foreground hover:text-foreground cursor-pointer"
+                        className="h-8 w-full text-[13px] text-muted-foreground hover:text-foreground cursor-pointer"
                       >
                         I&apos;ll do this later
                       </Button>
@@ -536,12 +536,12 @@ export function FirstRunWelcome({
                 {/* STEP 2B: MOMO NUMBER CHOICE */}
                 {step === "momo-choice" && (
                   <div className="flex flex-1 flex-col justify-between h-full">
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-3">
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => goBack("method")}
-                          className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1.5"
+                          className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-2"
                           aria-label="Back to methods"
                         >
                           <ChevronLeft size={18} strokeWidth={2} />
@@ -552,7 +552,7 @@ export function FirstRunWelcome({
                       </div>
 
                       {/* Verified Number Tile (Matches screenshot 1:1) */}
-                      <div className="flex items-center gap-3.5 rounded-2xl border border-border/80 bg-muted/20 p-3.5 text-left sm:p-4">
+                      <div className="flex items-center gap-3 rounded-2xl border border-border/80 bg-muted/20 p-3 text-left sm:p-3">
                         <OperatorLogo operator={operator} size={44} />
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-[14px] font-medium tracking-[var(--ls-tight)] text-foreground sm:text-[14.5px]">
@@ -569,7 +569,7 @@ export function FirstRunWelcome({
                       </p>
                     </div>
 
-                    <div className="flex flex-col gap-2.5 pt-4">
+                    <div className="flex flex-col gap-2 pt-3">
                       <Button
                         type="button"
                         className={BUTTON}
@@ -604,7 +604,7 @@ export function FirstRunWelcome({
                 {/* STEP 3: REQUIRED FIELDS FORM */}
                 {step === "form" && (
                   <form onSubmit={handleFormSubmit} className="flex flex-1 flex-col justify-between h-full">
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-3">
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
@@ -615,7 +615,7 @@ export function FirstRunWelcome({
                               goBack("method");
                             }
                           }}
-                          className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1.5"
+                          className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-2"
                           aria-label="Back"
                         >
                           <ChevronLeft size={18} strokeWidth={2} />
@@ -628,8 +628,8 @@ export function FirstRunWelcome({
                       {method === "momo" ? (
                         !isCustomNumber ? (
                           /* ── Branch 1: Same verified number (NO phone field, NO network field) ── */
-                          <div className="flex flex-col gap-4">
-                            <div className="flex items-center gap-3 rounded-2xl border border-border/80 bg-muted/20 p-3 sm:p-3.5 text-left">
+                          <div className="flex flex-col gap-3">
+                            <div className="flex items-center gap-2 rounded-2xl border border-border/80 bg-muted/20 p-2 sm:p-3 text-left">
                               <OperatorLogo operator={operator} size={44} />
                               <div className="min-w-0 flex-1">
                                 <p className="truncate text-[13.5px] font-medium tracking-[var(--ls-tight)] text-foreground">
@@ -646,7 +646,7 @@ export function FirstRunWelcome({
                           </div>
                         ) : (
                           /* ── Branch 2: Different number (HAS phone field + network selector + Amount) ── */
-                          <div className="flex flex-col gap-3.5">
+                          <div className="flex flex-col gap-3">
                             {/* Mobile Number input */}
                             <Field label="Mobile Number" htmlFor="momoPhone">
                               <PhoneInput
@@ -671,7 +671,7 @@ export function FirstRunWelcome({
                           </div>
                         )
                       ) : (
-                        <div className="flex flex-col gap-3.5">
+                        <div className="flex flex-col gap-3">
                           <Field label="Card Number" htmlFor="cardNum">
                             <Input
                               id="cardNum"
@@ -683,7 +683,7 @@ onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
                               required
                             />
 </Field>
-                          <div className="grid grid-cols-2 gap-2.5">
+                          <div className="grid grid-cols-2 gap-2">
                             <Field label="Expiry" htmlFor="cardExp">
                               <Input
                                 id="cardExp"
@@ -714,7 +714,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                       <AlertToast when={errorMsg} message={errorMsg} />
                     </div>
 
-                    <div className="pt-4">
+                    <div className="pt-3">
                       <Button
                         type="submit"
                         disabled={!amount}
@@ -730,12 +730,12 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                 {/* STEP 4A: OTP VERIFICATION (Only when using non-registered phone) */}
                 {step === "otp" && (
                   <div className="flex flex-1 flex-col justify-between h-full">
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-3">
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => goBack("form")}
-                          className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-1.5"
+                          className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer -ml-2"
                           aria-label="Back to form"
                         >
                           <ChevronLeft size={18} strokeWidth={2} />
@@ -752,7 +752,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                         </span>.
                       </p>
 
-                      <div className="flex flex-col items-center gap-4 py-3">
+                      <div className="flex flex-col items-center gap-3 py-2">
                         <OtpInput
                           value={otpDigits}
                           onChange={(next: string[]) => {
@@ -803,8 +803,8 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
 
                 {/* STEP 4B: USSD APPROVAL PROMPT */}
                 {step === "ussd" && (
-                  <div className="flex flex-1 flex-col items-center justify-center text-center gap-4 py-6">
-                    <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-2xs">
+                  <div className="flex flex-1 flex-col items-center justify-center text-center gap-3 py-5">
+                    <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-2xs">
                       <Smartphone size={26} strokeWidth={1.8} className="animate-pulse" />
                     </div>
                     <div className="flex flex-col gap-1">
@@ -825,12 +825,12 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                 {/* STEP 5: DEPOSIT SUCCESS */}
                 {step === "success" && (
                   <div className="flex flex-1 flex-col justify-between h-full">
-                    <div className="my-auto flex flex-1 flex-col items-center justify-center gap-4 py-8 text-center">
-                      <div className="flex size-16 items-center justify-center rounded-2xl bg-success/15 text-success-text shadow-2xs">
+                    <div className="my-auto flex flex-1 flex-col items-center justify-center gap-3 py-6 text-center">
+                      <div className="flex size-14 items-center justify-center rounded-2xl bg-success/15 text-success-text shadow-2xs">
                         <CheckCircle2 size={32} strokeWidth={1.9} />
                       </div>
 
-                      <div className="flex max-w-[320px] flex-col gap-1.5">
+                      <div className="flex max-w-[320px] flex-col gap-2">
                         <DialogTitle className="tabular-nums text-[22px] font-medium tracking-tight text-foreground sm:text-[24px]">
                           GHS {parseFloat(amount).toFixed(2)} deposited
                         </DialogTitle>
@@ -840,7 +840,7 @@ onChange={(e) => setCardCvv(formatCardCvv(e.target.value, cardNumber.replace(/\D
                       </div>
                     </div>
 
-                    <div className="pt-4">
+                    <div className="pt-3">
                       <Button
                         type="button"
                         onClick={() => goTo("source")}
@@ -894,13 +894,13 @@ function SaveSourcePane({
   const { save, heading, saveLabel } = useSaveSource(source, onDone);
   return (
     <div className="flex flex-1 flex-col justify-between h-full">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         <DialogTitle className="text-[20px] font-medium tracking-tight text-foreground sm:text-[22px]">
           {heading}
         </DialogTitle>
         <SourceSummary source={source} />
       </div>
-      <div className="flex flex-col gap-2.5 pt-4">
+      <div className="flex flex-col gap-2 pt-3">
         <Button type="button" onClick={save} className={BUTTON}>
           {saveLabel}
         </Button>
@@ -932,7 +932,7 @@ const PersistentSplitArt = memo(function PersistentSplitArt() {
           "radial-gradient(ellipse at center, #ffd400 0%, #ffbb00 100%)",
       }}
     >
-      <div className="absolute left-[79px] top-[98px] h-[538px] w-[625px] rounded-[8px] border-8 border-[var(--device-frame)] overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.22)] bg-[var(--device-screen)]">
+      <div className="absolute left-[79px] top-[98px] h-[538px] w-[625px] rounded-lg border-8 border-[var(--device-frame)] overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.22)] bg-[var(--device-screen)]">
         <Image
           src="/welcome-dashboard-preview.webp"
           alt=""

@@ -67,7 +67,7 @@ export function DemoUserSwitcherSection() {
     <>
       <DropdownMenuLabel className="flex items-center justify-between text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
         <span>Demo User Type</span>
-        <span className="rounded bg-warning/20 px-1 py-0.5 text-[10px] text-warning-text font-medium">
+        <span className="rounded-sm bg-warning/20 px-1 py-0.5 text-[10px] text-warning-text font-medium">
           {DEMO_USER_CONFIGS[userType]?.badgeLabel || "Everyday"}
         </span>
       </DropdownMenuLabel>
@@ -78,7 +78,7 @@ export function DemoUserSwitcherSection() {
           <DropdownMenuItem
             key={u.id}
             onClick={() => switchUserType(u.id)}
-            className="flex cursor-pointer items-start justify-between py-2 px-2.5 text-[13px] gap-2 rounded-lg"
+            className="flex cursor-pointer items-start justify-between py-2 px-2 text-[13px] gap-2 rounded-lg"
           >
             <div className="flex flex-col min-w-0">
               <span className={`font-medium leading-snug ${isSelected ? "text-primary" : "text-foreground"}`}>

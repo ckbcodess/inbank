@@ -18,6 +18,7 @@ export type Role =
   // Admin Portal shell — internal staff only
   | "TRADE_OFFICER"
   | "OPERATIONS_USER"
+  | "RELATIONSHIP_MANAGER"
   | "BANK_ADMIN";
 
 /** Banking relationship a customer identity holds (section 12.2). */
@@ -56,6 +57,7 @@ export const ROLE_LABEL: Record<Role, string> = {
   CORPORATE_ADMIN: "Corporate Admin",
   TRADE_OFFICER: "Trade Officer",
   OPERATIONS_USER: "Operations User",
+  RELATIONSHIP_MANAGER: "Relationship Manager",
   BANK_ADMIN: "Bank Admin",
 };
 
@@ -66,6 +68,7 @@ export const SHELL_OF_ROLE: Record<Role, Shell> = {
   CORPORATE_ADMIN: "customer",
   TRADE_OFFICER: "admin",
   OPERATIONS_USER: "admin",
+  RELATIONSHIP_MANAGER: "admin",
   BANK_ADMIN: "admin",
 };
 

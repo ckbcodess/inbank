@@ -91,7 +91,7 @@ const SCENARIO_LABEL = Object.fromEntries(ACCOUNTS_SCENARIOS.map((s) => [s.id, s
 
 function SectionHeading({ id, title, action }: { id: string; title: string; action?: React.ReactNode }) {
   return (
-    <div className="flex min-h-8 items-center justify-between gap-4 px-1">
+    <div className="flex min-h-7 items-center justify-between gap-3 px-1">
       <h2 id={id} className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">
         {title}
       </h2>
@@ -118,11 +118,11 @@ function RowMenu({ label, children }: { label: string; children: React.ReactNode
     <DropdownMenu>
       <DropdownMenuTrigger
         aria-label={label}
-        className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-1 focus-visible:ring-ring"
+        className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-1 focus-visible:ring-ring"
       >
         <MoreHorizontal size={17} strokeWidth={1.8} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-52">
+      <DropdownMenuContent align="end" className="w-45">
         {children}
       </DropdownMenuContent>
     </DropdownMenu>
@@ -149,7 +149,7 @@ function AccountRow({
     <li>
       <Link
         href={`/accounts/${account.id}`}
-        className="group flex items-center gap-4 rounded-xl px-3 py-4 transition-colors hover:bg-item-hover sm:px-4"
+        className="group flex items-center gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-item-hover sm:px-3"
       >
         <TileChip tone="onCard">
           {isWallet ? (
@@ -159,7 +159,7 @@ function AccountRow({
           )}
         </TileChip>
         <span className="flex min-w-0 flex-1 flex-col gap-1">
-          <span className="flex flex-wrap items-center gap-1.5">
+          <span className="flex flex-wrap items-center gap-2">
             <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">{account.name}</span>
             {showDefault && isDefault && <Badge variant="brand">Default</Badge>}
             {account.isJoint && <Badge variant="outline">Joint</Badge>}
@@ -170,7 +170,7 @@ function AccountRow({
             {account.isJoint && otherHolder ? ` · with ${otherHolder}` : ""}
           </span>
           {pending && (
-            <span className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
+            <span className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
               <Clock size={13} strokeWidth={1.8} className="shrink-0 text-warning" aria-hidden="true" />
               <span className="tabular">
                 {formatMoney(pending.amount, "GHS", true)} from {pending.from} on its way · usually arrives within minutes
@@ -191,14 +191,14 @@ function AccountRow({
 
 function SourceRow({ source, onRemove }: { source: LinkedSource; onRemove: () => void }) {
   return (
-    <li className="flex items-center gap-4 rounded-xl py-4 pl-3 pr-1 sm:pl-4 sm:pr-2">
+    <li className="flex items-center gap-3 rounded-xl py-3 pl-2 pr-1 sm:pl-3 sm:pr-2">
       <SourceMark type={source.type} operator={source.operator} title={source.title} />
       <span className="flex min-w-0 flex-1 flex-col gap-1">
         <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">{source.title}</span>
         <span className="truncate text-[13px] text-muted-foreground tabular">{source.subtitle}</span>
       </span>
       <RowMenu label={`More actions for ${source.title}`}>
-        <DropdownMenuItem onClick={onRemove} className="gap-2.5 text-[13px]">
+        <DropdownMenuItem onClick={onRemove} className="gap-2 text-[13px]">
           <Trash2 size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
           Remove
         </DropdownMenuItem>
@@ -395,7 +395,7 @@ function AccountsContent() {
 
       {/* Just moved from wallet to a GCB account */}
       {migratedAmount !== null && defaultAccount && screenState === "populated" && (
-        <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4 sm:p-5" role="status">
+        <div className="flex items-start gap-2 rounded-2xl border border-border bg-card p-3 sm:p-4" role="status">
           <CheckCircle2 size={18} strokeWidth={1.8} className="mt-0.5 shrink-0 text-success" aria-hidden="true" />
           <div className="flex min-w-0 flex-1 flex-col gap-1">
             <p className="text-[14.5px] text-foreground">Your GCB account is ready</p>
@@ -408,7 +408,7 @@ function AccountsContent() {
             type="button"
             onClick={() => (walletMigration ? dismissWalletMigration() : setMigratedDismissed(true))}
             aria-label="Dismiss"
-            className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <X size={16} strokeWidth={1.8} />
           </button>
@@ -445,7 +445,7 @@ function AccountsContent() {
 
       {/* ── Sources of funds (linked wallets & cards) ── */}
       {isRetail && screenState !== "error" && (
-        <section className="flex flex-col gap-4" aria-labelledby="sources-heading">
+        <section className="flex flex-col gap-3" aria-labelledby="sources-heading">
           <SectionHeading
             id="sources-heading"
             title="Other Funding Sources"
@@ -517,8 +517,8 @@ function AccountsContent() {
       <Dialog open={fundPrompt !== null} onOpenChange={(o) => !o && setFundPrompt(null)}>
         <DialogContent size="sm">
           <DialogBody>
-            <div className="flex flex-col items-center gap-4 pt-4 text-center">
-              <div className="flex size-24 items-center justify-center rounded-full bg-primary/15 text-foreground shadow-[0_0_60px_20px_color-mix(in_oklab,var(--primary)_18%,transparent)]">
+            <div className="flex flex-col items-center gap-3 pt-3 text-center">
+              <div className="flex size-21 items-center justify-center rounded-full bg-primary/15 text-foreground shadow-[0_0_60px_20px_color-mix(in_oklab,var(--primary)_18%,transparent)]">
                 <HandCoins size={40} strokeWidth={1.5} aria-hidden="true" />
               </div>
               <DialogTitle className="text-[22px] tracking-[var(--ls-heading)]">You&apos;re Almost There…</DialogTitle>
@@ -528,14 +528,14 @@ function AccountsContent() {
               </p>
             </div>
           </DialogBody>
-          <DialogFooter className="flex-col gap-2.5 sm:flex-col">
+          <DialogFooter className="flex-col gap-2 sm:flex-col">
             <Button
               type="button"
               onClick={() => {
                 setFundWith(fundPrompt);
                 setFundPrompt(null);
               }}
-              className="h-11 w-full rounded-lg text-[14px]"
+              className="h-10 w-full rounded-lg text-[14px]"
             >
               Fund My Account Now
             </Button>
@@ -543,7 +543,7 @@ function AccountsContent() {
               type="button"
               variant="outline"
               onClick={() => setFundPrompt(null)}
-              className="h-11 w-full rounded-lg text-[14px]"
+              className="h-10 w-full rounded-lg text-[14px]"
             >
               Skip For Now
             </Button>
@@ -574,7 +574,7 @@ function AccountsContent() {
             <DialogTitle>Remove {removing?.title}?</DialogTitle>
           </DialogHeader>
           <DialogBody>
-            <div className="flex items-start gap-3">
+            <div className="flex items-start gap-2">
               <AlertTriangle size={18} strokeWidth={1.8} aria-hidden="true" className="mt-0.5 shrink-0 text-warning" />
               <p className="text-[13.5px] leading-relaxed text-muted-foreground tabular">
                 {removing?.type === "card"
@@ -584,14 +584,14 @@ function AccountsContent() {
             </div>
           </DialogBody>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setRemoving(null)} className="h-10 flex-1 rounded-lg text-[13.5px]">
+            <Button type="button" variant="outline" onClick={() => setRemoving(null)} className="h-9 flex-1 rounded-lg text-[13.5px]">
               Cancel
             </Button>
             <Button
               type="button"
               variant="destructive"
               onClick={() => removing && handleRemoveSource(removing)}
-              className="h-10 flex-1 rounded-lg text-[13.5px]"
+              className="h-9 flex-1 rounded-lg text-[13.5px]"
             >
               {removing?.type === "card" ? "Remove Card" : "Remove"}
             </Button>

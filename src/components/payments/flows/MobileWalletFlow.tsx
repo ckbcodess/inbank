@@ -130,7 +130,7 @@ export function MobileWalletFlow({
   const isValid = Boolean(state.fromId) && isVerified && numAmount > 0 && !overBalance;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
       {/* 1. From Account */}
       <FromAccountSelector
         accounts={accounts}
@@ -146,7 +146,7 @@ export function MobileWalletFlow({
             subtitle={
               isSelf
                 ? (
-                    <span className="flex items-center gap-1.5">
+                    <span className="flex items-center gap-2">
                       <span className="truncate">{formatGhPhone(ownPhone)}</span>
                       <WalletTag tag={own.selected?.tag ?? "Registered"} />
                     </span>
@@ -158,7 +158,7 @@ export function MobileWalletFlow({
             onChange={() => setCollapsed(false)}
           />
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             {isSelf ? (
               <OwnWalletPicker
                 wallets={own.wallets}
@@ -210,7 +210,7 @@ export function MobileWalletFlow({
 
       {/* Progressive Disclosure: Only reveal Amount & subsequent sections after verification */}
       {isVerified && (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+        <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount */}
           <AmountInput
             value={state.amount}

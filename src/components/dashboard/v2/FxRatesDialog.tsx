@@ -15,7 +15,7 @@ import { BOG_WEIGHTED_MEDIAN_RATE, FX_PUBLISHED_AT, FX_RATES, formatDate } from 
 
 const rateText = (n: number) => n.toFixed(n < 0.1 ? 5 : 4);
 
-const COLS = "grid grid-cols-[1fr_72px_72px_72px] items-center gap-x-4";
+const COLS = "grid grid-cols-[1fr_72px_72px_72px] items-center gap-x-3";
 
 export function FxRatesDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   return (
@@ -24,7 +24,7 @@ export function FxRatesDialog({ open, onOpenChange }: { open: boolean; onOpenCha
         <DialogHeader>
           <DialogTitle>FX Rates</DialogTitle>
         </DialogHeader>
-        <DialogBody className="custom-scrollbar gap-6 py-6">
+        <DialogBody className="custom-scrollbar gap-5 py-5">
           <div>
             <p className="text-[12px] text-muted-foreground">US dollar weighted median</p>
             <p className="mt-1 text-[32px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
@@ -33,7 +33,7 @@ export function FxRatesDialog({ open, onOpenChange }: { open: boolean; onOpenCha
           </div>
 
           <div>
-            <div className={`${COLS} pb-3 text-[12px] text-muted-foreground`}>
+            <div className={`${COLS} pb-2 text-[12px] text-muted-foreground`}>
               <span />
               <span className="text-right">Buy</span>
               <span className="text-right">Sell</span>
@@ -43,8 +43,8 @@ export function FxRatesDialog({ open, onOpenChange }: { open: boolean; onOpenCha
               {FX_RATES.map((r) => {
                 const Trend = r.changePct >= 0 ? TrendingUp : TrendingDown;
                 return (
-                  <li key={r.pair} className={`${COLS} py-3.5`}>
-                    <div className="flex min-w-0 items-center gap-3">
+                  <li key={r.pair} className={`${COLS} py-3`}>
+                    <div className="flex min-w-0 items-center gap-2">
                       <CurrencyLogo currency={r.base} size={24} showBorder={false} />
                       <p className="truncate text-[14px] text-foreground">{r.currencyName}</p>
                     </div>

@@ -8,13 +8,13 @@ import { StatusPill, type CardsLayoutProps } from "@/components/cards/CardParts"
 
 export function CardsGallery({ cards }: CardsLayoutProps) {
   return (
-    <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid grid-cols-1 gap-x-5 gap-y-6 sm:grid-cols-2 xl:grid-cols-3">
       {cards.map((card) => (
-        <Link key={card.id} href={`/cards/${card.id}`} className="group flex flex-col gap-3">
+        <Link key={card.id} href={`/cards/${card.id}`} className="group flex flex-col gap-2">
           <div className="transition-transform duration-300 ease-out group-hover:-translate-y-1">
             <CardFace card={card} />
           </div>
-          <div className="flex items-center justify-between gap-3 px-1">
+          <div className="flex items-center justify-between gap-2 px-1">
             <span className="truncate text-[14px] font-medium text-foreground">{card.name}</span>
             <StatusPill card={card} includeActive />
           </div>

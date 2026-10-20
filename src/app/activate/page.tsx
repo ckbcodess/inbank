@@ -2,10 +2,13 @@
 
 import { AlertToast } from "@/components/ui/alert-toast";
 import Image from "next/image";
+import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { parseOnboardingStep, type OnboardingStep } from "@/lib/onboarding-steps";
 import {
+  AlertTriangle,
+  Building2,
   Check,
   User,
   Users,
@@ -45,6 +48,11 @@ const RESEND_SECONDS = 30;
 function ActivateContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const inviteParam = searchParams.get("invite");
+  const scenarioParam = searchParams.get("scenario");
+  const isCorpInvite = inviteParam === "1" || Boolean(scenarioParam && scenarioParam.startsWith("corp-"));
+  const isCorpExpired = scenarioParam === "corp-invite-expired" || searchParams.get("expired") === "1";
+
   const personaParam = searchParams.get("persona") as
     | "single"
     | "multi"
@@ -276,7 +284,9 @@ function ActivateContent() {
 
     // Finalize onboarding and log user into appropriate dashboard profile
     setTimeout(() => {
-      const actor = ACTORS.find((a) => a.id === activePersona.actorId) || ACTORS[0];
+      const actor = isCorpInvite
+        ? ACTORS.find((a) => a.id === "u-dual") || ACTORS[0]
+        : ACTORS.find((a) => a.id === activePersona.actorId) || ACTORS[0];
       signIn(actor);
       if (actor.profiles.length > 0) {
         selectProfile(actor.profiles[0]);
@@ -284,7 +294,7 @@ function ActivateContent() {
       verifyMfa();
       // First time in internet banking: the dashboard opens with a short welcome,
       // and offers the referral code there (same as new-to-GCB), not mid-flow.
-      setPendingReferral(true);
+      setPendingReferral(!isCorpInvite);
       setFirstRun("new");
       router.push("/overview");
     }, 800);
@@ -307,7 +317,7 @@ function ActivateContent() {
       setStep("otp");
     } else if (step === "otp") {
       setDigits(Array(OTP_LENGTH).fill(""));
-      setStep("review_details");
+      setStep(isCorpInvite ? "ghana_card" : "review_details");
     } else if (step === "review_details") {
       setSelfieImage(null);
       setStep("selfie");
@@ -325,7 +335,17 @@ function ActivateContent() {
   return (
     <AuthLayout
       title={
-        step === "ghana_card"
+        isCorpInvite
+          ? step === "ghana_card"
+            ? "Corporate Banking Invitation"
+            : step === "otp"
+            ? "Confirm Your Code"
+            : step === "password"
+            ? "Create Your Password"
+            : step === "pin"
+            ? "Set Your PIN"
+            : "Confirm Your PIN"
+          : step === "ghana_card"
           ? "Verify Your Identity"
           : step === "selfie"
           ? "Selfie Match"
@@ -344,7 +364,17 @@ function ActivateContent() {
           : "Confirm Your PIN"
       }
       description={
-        step === "ghana_card"
+        isCorpInvite
+          ? step === "ghana_card"
+            ? "You have been authorized to access GCB Corporate Internet Banking."
+            : step === "otp"
+            ? `A 6-digit code has been sent to ${maskMobile("+233241234567")}. Please enter it below.`
+            : step === "password"
+            ? "Choose a password you will remember."
+            : step === "pin"
+            ? "Set a 4-digit PIN for secure access."
+            : "Re-enter your 4-digit PIN to confirm."
+          : step === "ghana_card"
           ? "We will securely verify your identity using your Ghana Card."
           : step === "selfie"
           ? "Center your face in the frame."
@@ -370,26 +400,110 @@ function ActivateContent() {
       backLabel="Back to previous step"
       align="left"
       stepProgress={{
-        current: stepNumberMap[step],
-        total: 7,
+        current: isCorpInvite
+          ? step === "ghana_card"
+            ? 1
+            : step === "otp"
+            ? 2
+            : step === "password"
+            ? 3
+            : 4
+          : stepNumberMap[step],
+        total: isCorpInvite ? 4 : 7,
       }}
       width="compact"
       animateHeight={true}
     >
+      {/* STEP 1: Corporate Invitation Acceptance */}
+      {step === "ghana_card" && isCorpInvite && (
+        <div className="flex flex-col gap-4">
+          <div className="rounded-2xl border border-border bg-card p-4 flex flex-col gap-3">
+            <div className="flex items-center gap-2.5 border-b border-border pb-3">
+              <span className="flex size-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                <Building2 size={18} strokeWidth={1.9} />
+              </span>
+              <div>
+                <p className="text-[14.5px] font-medium text-foreground">
+                  Adinkra Textiles Ltd
+                </p>
+                <p className="text-[12px] text-muted-foreground">
+                  Corporate Internet Banking Access
+                </p>
+              </div>
+            </div>
+
+            <dl className="grid grid-cols-1 gap-y-2 text-[13px]">
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Assigned Role</dt>
+                <dd className="font-medium text-foreground">Corporate Maker</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Invited By</dt>
+                <dd className="font-medium text-foreground">Yaw Oppong (Corporate Admin)</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-muted-foreground">Verification Phone</dt>
+                <dd className="font-medium text-foreground tabular">{maskMobile("+233241234567")}</dd>
+              </div>
+            </dl>
+          </div>
+
+          {isCorpExpired ? (
+            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 flex flex-col gap-3 text-[13px]">
+              <div className="flex items-start gap-2 text-amber-800 dark:text-amber-300">
+                <AlertTriangle size={18} className="shrink-0 mt-0.5" />
+                <p className="font-medium">Invitation link has expired</p>
+              </div>
+              <p className="text-muted-foreground text-[12.5px] leading-relaxed">
+                For security, corporate access invitation links expire after 7 days. You can request a new link from the status tracker or ask your Corporate Admin.
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                nativeButton={false}
+                render={<Link href="/signup/business/status" />}
+                className="mt-1"
+              >
+                Go to Status Tracker to resend
+              </Button>
+            </div>
+          ) : (
+            <Button
+              type="button"
+              variant="default"
+              size="lg"
+              loading={busy}
+              onClick={() => {
+                setBusy(true);
+                setTimeout(() => {
+                  setBusy(false);
+                  setDigits(Array(OTP_LENGTH).fill(""));
+                  setStep("otp");
+                  setCountdown(RESEND_SECONDS);
+                }, 400);
+              }}
+              className="mt-2 h-10 w-full text-[14px]"
+            >
+              Accept Invitation & Verify
+            </Button>
+          )}
+        </div>
+      )}
+
       {/* STEP 1: Enter Ghana Card */}
-      {step === "ghana_card" && (
-        <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-5">
+      {step === "ghana_card" && !isCorpInvite && (
+        <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-4">
           {/* Demo persona picker — dev only, never in the live build */}
           {process.env.NODE_ENV !== "production" && (
-          <div className="flex items-center justify-between rounded-xl bg-muted/40 px-3.5 py-2.5 text-[12.5px] text-muted-foreground">
+          <div className="flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2 text-[12.5px] text-muted-foreground">
             <span className="font-medium text-foreground">Interactive Demo Mode</span>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               {(["single", "multi", "joint", "mobile_sync"] as const).map((key) => (
                 <button
                   key={key}
                   type="button"
                   onClick={() => applyPersona(key)}
-                  className={`rounded-md px-2 py-0.5 text-[11px] font-medium transition-colors cursor-pointer ${
+                  className={`rounded-lg px-2 py-0.5 text-[11px] font-medium transition-colors cursor-pointer ${
                     activePersonaKey === key
                       ? "bg-primary text-primary-foreground"
                       : "bg-background text-muted-foreground hover:text-foreground"
@@ -420,14 +534,14 @@ function ActivateContent() {
 
           <AlertToast when={errorMsg} message={errorMsg} />
 
-          <div className="mt-4 flex flex-col gap-4">
+          <div className="mt-3 flex flex-col gap-3">
             <Button
               type="submit"
               variant="default"
               size="lg"
               data-tour="activate-card"
               loading={busy}
-              className="h-11 w-full text-[14px]"
+              className="h-10 w-full text-[14px]"
             >
               Continue
             </Button>
@@ -457,11 +571,11 @@ function ActivateContent() {
 
       {/* STEP 3: Review Details & Primary Account Picker */}
       {step === "review_details" && (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4">
           {/* Verified Customer Header Info */}
-          <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-muted/15 px-4 py-3.5">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary overflow-hidden">
+          <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-muted/15 px-3 py-3">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary overflow-hidden">
                 {selfieImage ? (
                   <Image src={selfieImage} alt={activePersona.holderName} width={36} height={36} unoptimized className="size-full object-cover" />
                 ) : isJoint ? (
@@ -500,7 +614,7 @@ function ActivateContent() {
                 >
                   <SelectTrigger
                     id="primary-account-select"
-                    className="min-h-11 text-left cursor-pointer flex items-center justify-between"
+                    className="min-h-10 text-left cursor-pointer flex items-center justify-between"
                   >
                     <SelectValue placeholder="Select default account">
                       {selectedPrimaryAccount ? (
@@ -512,7 +626,7 @@ function ActivateContent() {
                             **** {selectedPrimaryAccount.number.slice(-4)}
                           </span>
                           {selectedPrimaryAccount.isJoint && (
-                            <span className="inline-flex items-center gap-1 rounded-md bg-primary/15 px-1.5 py-0.2 text-[10px] font-medium text-foreground shrink-0">
+                            <span className="inline-flex items-center gap-1 rounded-lg bg-primary/15 px-2 py-0.2 text-[10px] font-medium text-foreground shrink-0">
                               <Users size={10} className="text-primary" />
                               Joint
                             </span>
@@ -528,14 +642,14 @@ function ActivateContent() {
                         value={acc.id}
                         label={`${acc.name} · ∗∗∗∗ ${acc.number.slice(-4)}`}
                       >
-                        <div className="flex items-center justify-between w-full gap-3 py-0.5">
+                        <div className="flex items-center justify-between w-full gap-2 py-0.5">
                           <div className="flex items-center gap-2 truncate">
                             <span className="font-medium text-foreground truncate">{acc.name}</span>
-                            <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10.5px] text-muted-foreground shrink-0">
+                            <span className="rounded-lg bg-muted px-2 py-0.5 text-[10.5px] text-muted-foreground shrink-0">
                               {acc.type}
                             </span>
                             {acc.isJoint && (
-                              <span className="inline-flex items-center gap-1 rounded-md bg-primary/15 px-1.5 py-0.5 text-[10.5px] font-medium text-foreground shrink-0">
+                              <span className="inline-flex items-center gap-1 rounded-lg bg-primary/15 px-2 py-0.5 text-[10.5px] font-medium text-foreground shrink-0">
                                 <Users size={11} className="text-primary" />
                                 Joint
                               </span>
@@ -553,8 +667,8 @@ function ActivateContent() {
 
               {/* Dynamic Mandate Disclosure if selected account is Joint */}
               {selectedPrimaryAccount?.isJoint && (
-                <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-left animate-in fade-in duration-200">
-                  <div className="flex items-start gap-2.5">
+                <div className="rounded-xl border border-primary/20 bg-primary/5 p-2 text-left animate-in fade-in duration-200">
+                  <div className="flex items-start gap-2">
                     <Users size={15} className="text-primary mt-0.5 shrink-0" />
                     <div>
                       <span className="text-[12.5px] font-medium text-foreground block">
@@ -572,8 +686,8 @@ function ActivateContent() {
 
           {/* CASE B: Single Account Display */}
           {!isMultiAccount && (
-            <div className="rounded-xl border border-border/80 bg-muted/20 p-4 divide-y divide-border/60">
-              <div className="flex items-center justify-between pb-3">
+            <div className="rounded-xl border border-border/80 bg-muted/20 p-3 divide-y divide-border/60">
+              <div className="flex items-center justify-between pb-2">
                 <span className="text-[13px] text-muted-foreground">Default Account</span>
                 <div className="text-right">
                   <span className="text-[14px] font-medium text-foreground block">
@@ -584,11 +698,11 @@ function ActivateContent() {
                   </span>
                 </div>
               </div>
-              <div className="flex items-center justify-between py-3">
+              <div className="flex items-center justify-between py-2">
                 <span className="text-[13px] text-muted-foreground">Registered Phone</span>
                 <span className="text-[13.5px] font-medium text-foreground">{activePersona.phone}</span>
               </div>
-              <div className="flex items-center justify-between pt-3">
+              <div className="flex items-center justify-between pt-2">
                 <span className="text-[13px] text-muted-foreground">Registered Email</span>
                 <span className="text-[13.5px] font-medium text-foreground">{activePersona.email}</span>
               </div>
@@ -602,7 +716,7 @@ function ActivateContent() {
             data-tour="activate-review"
             onClick={handleVerifyDetails}
             disabled={(isMultiAccount && !selectedPrimaryAccountId)} loading={busy}
-            className="mt-1 h-11 w-full text-[14px]"
+            className="mt-1 h-10 w-full text-[14px]"
           >
             Proceed
           </Button>
@@ -624,7 +738,7 @@ function ActivateContent() {
             e.preventDefault();
             handleOtpSubmit();
           }}
-          className="flex flex-col gap-6"
+          className="flex flex-col gap-5"
         >
           <div data-tour="activate-otp">
             <OtpInput
@@ -641,13 +755,13 @@ function ActivateContent() {
           </div>
 
           {errorMsg && (
-            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
               {errorMsg}
             </p>
           )}
 
           {/* Recovery path */}
-          <div className="flex flex-col items-center gap-5">
+          <div className="flex flex-col items-center gap-4">
             <button
               type="button"
               disabled={countdown > 0}
@@ -672,7 +786,7 @@ function ActivateContent() {
           </div>
 
           {isJoint && (
-            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3.5 text-[12.5px] text-muted-foreground">
+            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-3 text-[12.5px] text-muted-foreground">
               <span className="font-medium text-foreground">Joint mandate notice:</span> Notice sent to co-holder Esther ({activePersona.coSignatoryPhone}).
             </div>
           )}
@@ -690,7 +804,7 @@ function ActivateContent() {
 
       {/* STEP 5: Password Creation */}
       {step === "password" && (
-        <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-5">
+        <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-4">
           <NewPasswordFields
             password={password}
             confirm={confirmPassword}
@@ -714,7 +828,7 @@ function ActivateContent() {
             data-tour="activate-password"
             disabled={!newPasswordReady(password, confirmPassword)}
             loading={busy}
-            className="mt-2 h-11 w-full text-[14px]"
+            className="mt-2 h-10 w-full text-[14px]"
           >
             Proceed
           </Button>
@@ -728,7 +842,7 @@ function ActivateContent() {
             e.preventDefault();
             handlePinSubmit();
           }}
-          className="flex flex-col items-center gap-6"
+          className="flex flex-col items-center gap-5"
         >
           <div className="w-full" data-tour="activate-pin">
             <OtpInput
@@ -750,12 +864,12 @@ function ActivateContent() {
           <PinRequirements pin={pinDigits.join("")} />
 
           {errorMsg && (
-            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
               {errorMsg}
             </p>
           )}
           {!errorMsg && pinNote && (
-            <p className="-mt-3 text-center text-[13px] text-muted-foreground">{pinNote}</p>
+            <p className="-mt-2 text-center text-[13px] text-muted-foreground">{pinNote}</p>
           )}
 
           {busy && (
@@ -775,7 +889,7 @@ function ActivateContent() {
             e.preventDefault();
             handleConfirmPinSubmit();
           }}
-          className="flex flex-col items-center gap-6"
+          className="flex flex-col items-center gap-5"
         >
           <div className="w-full" data-tour="activate-confirm-pin">
             <OtpInput
@@ -800,7 +914,7 @@ function ActivateContent() {
           />
 
           {errorMsg && (
-            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
               {errorMsg}
             </p>
           )}

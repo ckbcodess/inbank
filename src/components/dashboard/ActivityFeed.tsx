@@ -51,8 +51,8 @@ function FailureDetail({ txn }: { txn: Transaction }) {
   const { href, label, icon: Icon } = recovery(txn);
 
   return (
-    <div className="mt-2.5 rounded-xl border border-destructive/30 bg-destructive/5 px-3.5 py-3">
-      <div className="flex gap-2.5">
+    <div className="mt-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2">
+      <div className="flex gap-2">
         <AlertCircle
           size={15}
           strokeWidth={1.9}
@@ -64,11 +64,11 @@ function FailureDetail({ txn }: { txn: Transaction }) {
             {txn.failureReason ??
               "The receiving bank rejected this payment. No funds left your account."}
           </p>
-          <div className="mt-2.5">
+          <div className="mt-2">
             <Button
               size="sm"
               variant="outline"
-              className="h-7 gap-1.5 px-2.5 text-[12px]"
+              className="h-6 gap-2 px-2 text-[12px]"
               nativeButton={false}
               render={<Link href={href} />}
             >
@@ -88,7 +88,7 @@ export function ActivityFeed({ transactions }: { transactions: Transaction[] }) 
 
   return (
     <section className="rounded-2xl border border-border bg-card">
-      <div className="flex items-center justify-between border-b border-border px-5 py-4">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
         <div>
           <h2 className="text-[15px] text-foreground">Recent activity</h2>
           <p className="mt-0.5 text-[12px] text-muted-foreground">
@@ -101,7 +101,7 @@ export function ActivityFeed({ transactions }: { transactions: Transaction[] }) 
       </div>
 
       {recent.length === 0 ? (
-        <p className="px-5 py-8 text-center text-[13px] text-muted-foreground">
+        <p className="px-4 py-6 text-center text-[13px] text-muted-foreground">
           No transactions yet.
         </p>
       ) : (
@@ -110,11 +110,11 @@ export function ActivityFeed({ transactions }: { transactions: Transaction[] }) 
             const failed = FAILED_STATES.has(t.state);
 
             return (
-              <li key={t.id} className="px-5 py-3.5">
+              <li key={t.id} className="px-4 py-3">
                 <button
                   type="button"
                   onClick={() => setSelectedTx(t)}
-                  className="flex w-full text-left items-center gap-3 rounded-lg transition-colors hover:opacity-80 cursor-pointer"
+                  className="flex w-full text-left items-center gap-2 rounded-lg transition-colors hover:opacity-80 cursor-pointer"
                 >
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-[13px] text-foreground">{t.description}</span>

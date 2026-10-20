@@ -49,7 +49,7 @@ export function BlockReasonDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
-          <DialogBody className="space-y-3">
+          <DialogBody className="space-y-2">
             <div role="radiogroup" aria-label="Reason for blocking card" className="flex flex-col">
               {BLOCK_REASONS.map((item) => {
                 const isSelected = reason === item.id;
@@ -60,12 +60,12 @@ export function BlockReasonDialog({
                     role="radio"
                     aria-checked={isSelected}
                     onClick={() => setReason(item.id)}
-                    className="flex w-full cursor-pointer items-center justify-between gap-3 rounded-xl px-3 py-3 text-left transition-colors duration-hover outline-none hover:bg-muted/50 focus-visible:ring-1 focus-visible:ring-ring"
+                    className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-xl px-2 py-2 text-left transition-colors duration-hover outline-none hover:bg-muted/50 focus-visible:ring-1 focus-visible:ring-ring"
                   >
                     <span className="text-[13.5px] text-foreground">{item.title}</span>
                     <span
                       className={cn(
-                        "flex size-4 shrink-0 items-center justify-center rounded-full border transition-colors",
+                        "flex size-3.5 shrink-0 items-center justify-center rounded-full border transition-colors",
                         isSelected ? "border-primary bg-primary" : "border-muted-foreground/40",
                       )}
                     >
@@ -78,7 +78,7 @@ export function BlockReasonDialog({
 
 
             {reason === "other" && (
-              <div className="px-3 animate-in fade-in duration-150">
+              <div className="px-2 animate-in fade-in duration-150">
                 <Field label="Tell us why" optional>
                   <Input
                     autoFocus

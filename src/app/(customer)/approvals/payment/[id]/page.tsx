@@ -102,7 +102,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
       {/* Transient confirmation before leaving the queue (13.4) */}
       {state === "decision-submitted" && (
         <div
-          className={`flex items-start gap-3 rounded-2xl border p-5 ${
+          className={`flex items-start gap-2 rounded-2xl border p-4 ${
             outcome === "rejected"
               ? "border-destructive/30 bg-destructive/5"
               : "border-success/30 bg-success/5"
@@ -117,7 +117,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
             <p className="text-[14px] text-foreground">
               {outcome === "rejected" ? "Payment rejected" : "Payment approved"}
             </p>
-            <p className="mt-1 flex items-center gap-1.5 text-[13px] text-muted-foreground">
+            <p className="mt-1 flex items-center gap-2 text-[13px] text-muted-foreground">
               <AppLoader size={13} />
               Returning you to the queue…
             </p>
@@ -127,16 +127,16 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
 
       {/* Authority band — 13.4 within-limit vs exceeds-limit */}
       {state === "exceeds-limit" && (
-        <div className="flex items-start gap-3 rounded-2xl border border-destructive/30 bg-destructive/5 p-5">
+        <div className="flex items-start gap-2 rounded-2xl border border-destructive/30 bg-destructive/5 p-4">
           <ShieldAlert size={17} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0 text-destructive" />
           <div className="min-w-0">
             <p className="text-[14px] text-destructive">This is above your approval limit</p>
-            <p className="mt-1.5 text-[13px] leading-relaxed text-foreground/90">
+            <p className="mt-2 text-[13px] leading-relaxed text-foreground/90">
               {formatMoney(item.amount, item.currency)} exceeds your authority of{" "}
               {formatMoney(item.approvalLimit, item.currency)}. You can review the payment and refer
               it upward, but you can&apos;t approve it yourself.
             </p>
-            <p className="mt-2 flex items-start gap-1.5 text-[12.5px] text-muted-foreground">
+            <p className="mt-2 flex items-start gap-2 text-[12.5px] text-muted-foreground">
               <Info size={13} strokeWidth={1.9} aria-hidden="true" className="mt-px shrink-0" />
               Exact behaviour above an approver&apos;s limit is an open item in the consolidation doc
               (13.4) — to be confirmed against the BRD.
@@ -146,7 +146,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
       )}
 
       {state === "within-limit" && (
-        <div className="flex items-start gap-3 rounded-2xl border border-border bg-muted/40 p-4">
+        <div className="flex items-start gap-2 rounded-2xl border border-border bg-muted/40 p-3">
           <CheckCircle2 size={16} strokeWidth={1.8} aria-hidden="true" className="mt-px shrink-0 text-muted-foreground" />
           <p className="text-[13px] text-muted-foreground">
             Within your approval authority of {formatMoney(item.approvalLimit, item.currency)}.
@@ -155,15 +155,15 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
       )}
 
       {/* Payment facts */}
-      <section className="rounded-2xl border border-border bg-card p-5">
-        <div className="border-b border-border pb-5">
+      <section className="rounded-2xl border border-border bg-card p-4">
+        <div className="border-b border-border pb-4">
           <span className="text-[12px] text-muted-foreground">Amount requested</span>
-          <p className="mt-1.5 text-[28px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
+          <p className="mt-2 text-[28px] leading-none tracking-[var(--ls-heading)] text-foreground tabular">
             {formatMoney(item.amount, item.currency)}
           </p>
         </div>
 
-        <dl className="grid grid-cols-1 gap-x-8 gap-y-4 pt-5 sm:grid-cols-2">
+        <dl className="grid grid-cols-1 gap-x-6 gap-y-3 pt-4 sm:grid-cols-2">
           <Fact label="Reference" value={item.reference} mono />
           <Fact label="Beneficiary" value={item.counterparty} />
           <Fact label="Description" value={item.description} />
@@ -173,10 +173,10 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
           <Fact label="Your approval limit" value={formatMoney(item.approvalLimit, item.currency)} mono />
         </dl>
 
-        <div className="mt-5 border-t border-border pt-4">
+        <div className="mt-4 border-t border-border pt-3">
           <Link
             href="/transactions/txn-008"
-            className="inline-flex items-center gap-1.5 text-[13px] text-primary underline-offset-4 hover:underline"
+            className="inline-flex items-center gap-2 text-[13px] text-primary underline-offset-4 hover:underline"
           >
             View full transaction record
             <ArrowUpRight size={14} strokeWidth={1.8} aria-hidden="true" />

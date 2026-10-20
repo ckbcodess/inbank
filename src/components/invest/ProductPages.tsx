@@ -24,7 +24,7 @@ const back = { href: PRODUCTS_HREF, label: "Products" };
 function Group({ title, line, offers }: { title?: string; line?: string; offers: Offer[] }) {
   const { showAmounts } = useAmountVisibility();
   return (
-    <section className="flex flex-col gap-3">
+    <section className="flex flex-col gap-2">
       {(title || line) && (
         <div className="flex flex-col gap-1 px-1">
           {title && <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">{title}</h2>}
@@ -44,7 +44,7 @@ export function TermDepositProducts() {
   const hydrated = useTreasuryHydrated();
   if (!hydrated) return <InvestProductsSkeleton groups={1} rows={3} />;
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader title="Term Deposits" backTo={back} />
       <InvestDevTools section="Invest" />
       <Group offers={termOffers()} />
@@ -59,7 +59,7 @@ export function TreasuryProducts() {
   if (!hydrated) return <InvestProductsSkeleton groups={2} rows={2} />;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader title="Treasury Bills & Bonds" backTo={back} />
       <InvestDevTools section="Invest" />
       {!marketOpen ? (

@@ -21,7 +21,7 @@ export function MiniCardThumbnail({ card, className }: MiniCardThumbnailProps) {
     <div
       style={{ backgroundColor: theme.colorHex }}
       className={cn(
-        "relative aspect-[1.586/1] w-12 shrink-0 rounded-[7px] p-1.5 shadow-2xs overflow-hidden flex flex-col justify-between select-none ring-1 ring-inset ring-black/10 dark:ring-white/15",
+        "relative aspect-[1.586/1] w-10 shrink-0 rounded-lg p-2 shadow-2xs overflow-hidden flex flex-col justify-between select-none ring-1 ring-inset ring-black/10 dark:ring-white/15",
         theme.textColor,
         isBlocked && "opacity-60 saturate-50",
         className
@@ -36,12 +36,12 @@ export function MiniCardThumbnail({ card, className }: MiniCardThumbnailProps) {
 
       {/* Top Row: Mini EMV Chip / Contact element */}
       <div className="relative z-10 flex items-center justify-between">
-        <div className="size-2 rounded-[2px] bg-warning/90 border border-warning/40 shadow-2xs" />
+        <div className="size-1.5 rounded-[2px] bg-warning/90 border border-warning/40 shadow-2xs" />
       </div>
 
       {/* Bottom Row: Clean Scheme Brand Logo */}
       <div className="relative z-10 flex items-end justify-end leading-none mt-auto">
-        <NetworkLogo scheme={card.scheme} className="h-2" />
+        <NetworkLogo scheme={card.scheme} className="h-1.5" />
       </div>
     </div>
   );

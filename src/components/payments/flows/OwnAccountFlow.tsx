@@ -85,7 +85,7 @@ export function OwnAccountFlow({
     !overBalance;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
       {/* 1. From Account */}
       <FromAccountSelector
         accounts={accounts}
@@ -102,11 +102,11 @@ export function OwnAccountFlow({
       {/* 2. To Account */}
       <Field label="To Account">
         {accounts.filter((a) => a.id !== state.fromId).length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-4 text-[13px] text-muted-foreground">
+          <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-3 text-[13px] text-muted-foreground">
             <p>You have one active account. Link another account under your Ghana Card to transfer between them.</p>
             <Link
               href="/accounts"
-              className="mt-2 inline-flex items-center gap-1.5 text-primary hover:underline font-medium text-[12.5px]"
+              className="mt-2 inline-flex items-center gap-2 text-primary hover:underline font-medium text-[12.5px]"
             >
               Go to Accounts &amp; Cards to link an account &rarr;
             </Link>
@@ -139,7 +139,7 @@ export function OwnAccountFlow({
               {accounts
                 .filter((a) => a.id !== state.fromId)
                 .map((a) => (
-                  <SelectItem key={a.id} value={a.id} className="py-2.5">
+                  <SelectItem key={a.id} value={a.id} className="py-2">
                     <AccountSelectTriggerContent account={a} />
                   </SelectItem>
                 ))}
@@ -156,7 +156,7 @@ export function OwnAccountFlow({
 
       {/* Progressive Disclosure: Only reveal Amount & subsequent sections after destination account is selected */}
       {isDetailsValid && (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+        <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount */}
           <AmountInput
             value={state.amount}

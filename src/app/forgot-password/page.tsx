@@ -193,7 +193,7 @@ export default function ForgotPasswordPage() {
             e.preventDefault();
             if (mobileValid && !busy) advance("selfie");
           }}
-          className="flex flex-col gap-5"
+          className="flex flex-col gap-4"
         >
           <Field label="Mobile Number" htmlFor="mobile">
             <PhoneInput
@@ -215,7 +215,7 @@ export default function ForgotPasswordPage() {
             variant="default"
             size="lg"
             disabled={!mobileValid} loading={busy}
-            className="mt-2 h-11 w-full text-[14px]"
+            className="mt-2 h-10 w-full text-[14px]"
           >
             Proceed
           </Button>
@@ -238,7 +238,7 @@ export default function ForgotPasswordPage() {
             e.preventDefault();
             handleOtpSubmit();
           }}
-          className="flex flex-col gap-6"
+          className="flex flex-col gap-5"
         >
           <div data-tour="reset-otp">
             <OtpInput
@@ -255,7 +255,7 @@ export default function ForgotPasswordPage() {
           </div>
 
           {errorMsg && (
-            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
               {errorMsg}
             </p>
           )}
@@ -299,7 +299,7 @@ export default function ForgotPasswordPage() {
             e.preventDefault();
             if (canReset && !busy) advance("done");
           }}
-          className="flex flex-col gap-5"
+          className="flex flex-col gap-4"
         >
           <NewPasswordFields
             password={password}
@@ -316,7 +316,7 @@ export default function ForgotPasswordPage() {
             variant="default"
             size="lg"
             disabled={!canReset} loading={busy}
-            className="mt-2 h-11 w-full text-[14px]"
+            className="mt-2 h-10 w-full text-[14px]"
           >
             Reset password
           </Button>
@@ -324,8 +324,8 @@ export default function ForgotPasswordPage() {
       )}
 
       {stage === "no_match" && (
-        <div className="flex flex-col gap-3">
-          <Button variant="default" size="lg" onClick={retrySelfie} className="h-11 w-full text-[14px]">
+        <div className="flex flex-col gap-2">
+          <Button variant="default" size="lg" onClick={retrySelfie} className="h-10 w-full text-[14px]">
             Try again
           </Button>
           <p className="text-center text-[12.5px] text-muted-foreground tabular">
@@ -337,13 +337,13 @@ export default function ForgotPasswordPage() {
       )}
 
       {stage === "branch" && (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <Button
             variant="default"
             size="lg"
             nativeButton={false}
             render={<a href={BRANCH_LOCATOR_URL} target="_blank" rel="noreferrer" />}
-            className="h-11 w-full text-[14px]"
+            className="h-10 w-full text-[14px]"
           >
             Find a branch
           </Button>
@@ -351,7 +351,7 @@ export default function ForgotPasswordPage() {
             variant="ghost"
             size="lg"
             onClick={() => router.push("/login")}
-            className="h-11 w-full text-[14px]"
+            className="h-10 w-full text-[14px]"
           >
             Back to login
           </Button>
@@ -363,7 +363,7 @@ export default function ForgotPasswordPage() {
           variant="default"
           size="lg"
           onClick={() => router.push("/login")}
-          className="h-11 w-full text-[14px]"
+          className="h-10 w-full text-[14px]"
         >
           Back to login
         </Button>

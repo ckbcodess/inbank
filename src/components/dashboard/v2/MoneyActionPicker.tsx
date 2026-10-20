@@ -65,16 +65,16 @@ export function MoneyActionPicker({
   };
 
   return (
-    <Modal open={open} onOpenChange={onOpenChange} title={TITLE[kind]} size="sm" bodyClassName="gap-4 pb-5">
+    <Modal open={open} onOpenChange={onOpenChange} title={TITLE[kind]} size="sm" bodyClassName="gap-3 pb-4">
       {/* Topping up your own account comes first: it's what "top up" means before anything else. */}
       {kind === "topup" && (
         <ActionTile icon={Wallet} title="My Account" description="Mobile money or any bank card" onClick={fundAccount} />
       )}
 
       {groups.map((group, i) => (
-        <section key={group.label ?? i} className="flex flex-col gap-4">
+        <section key={group.label ?? i} className="flex flex-col gap-3">
           {group.label && <h3 className="text-[12px] text-muted-foreground">{group.label}</h3>}
-          <ul className="flex flex-col gap-4">
+          <ul className="flex flex-col gap-3">
             {group.options.map((o) => (
               <li key={o.id}>
                 <ActionTile
@@ -93,7 +93,7 @@ export function MoneyActionPicker({
       <Link
         href={withFrom(MORE[kind].href, accountId)}
         onClick={() => onOpenChange(false)}
-        className="group -mb-1 flex items-center justify-center gap-1 rounded-xl py-2.5 text-[13.5px] text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
+        className="group -mb-1 flex items-center justify-center gap-1 rounded-xl py-2 text-[13.5px] text-muted-foreground transition-colors hover:bg-muted/50 hover:text-foreground"
       >
         {MORE[kind].label}
         <ChevronRight size={14} strokeWidth={1.8} aria-hidden="true" className="transition-transform group-hover:translate-x-0.5" />

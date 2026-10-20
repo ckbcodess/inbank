@@ -33,7 +33,7 @@ export function ExpandableSearch({
   placeholder = "Search...",
   tooltip = "Search",
   className,
-  inputWidthClassName = "w-56 sm:w-72",
+  inputWidthClassName = "w-49 sm:w-63",
   side = "left",
   ariaLabel,
 }: ExpandableSearchProps) {
@@ -82,7 +82,7 @@ export function ExpandableSearch({
         <div className="relative flex items-center animate-in fade-in slide-in-from-right-3 duration-200">
           <Search
             size={15}
-            className="absolute left-3 text-muted-foreground pointer-events-none"
+            className="absolute left-2.5 text-muted-foreground pointer-events-none"
             aria-hidden="true"
           />
           <input
@@ -102,7 +102,7 @@ export function ExpandableSearch({
             placeholder={placeholder}
             aria-label={label}
             className={cn(
-              "h-9 rounded-xl border border-field-border bg-field pl-9 pr-8 text-[14px] text-foreground shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-field-border-focus focus:ring-0",
+              "h-8 rounded-xl border border-field-border bg-field pl-8 pr-6 text-[14px] text-foreground shadow-sm outline-none transition placeholder:text-muted-foreground focus:border-field-border-focus focus:ring-0",
               inputWidthClassName
             )}
           />
@@ -113,7 +113,7 @@ export function ExpandableSearch({
                 onChange("");
                 inputRef.current?.focus();
               }}
-              className="absolute right-2.5 flex size-5 items-center justify-center rounded-md text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              className="absolute right-2 flex size-4 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               aria-label="Clear search"
             >
               <X size={13} strokeWidth={2} />
@@ -125,7 +125,7 @@ export function ExpandableSearch({
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="flex size-9 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/70 active:scale-95 transition cursor-pointer"
+            className="flex size-8 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/70 active:scale-95 transition cursor-pointer"
             aria-label={label}
           >
             <Search size={18} strokeWidth={1.8} />

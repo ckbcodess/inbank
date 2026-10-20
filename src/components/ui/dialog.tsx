@@ -101,8 +101,8 @@ function DialogContent({
         {...props}
       >
         {showDragHandle && size !== "full" && (
-          <div className="sm:hidden flex justify-center pt-2.5 pb-1 select-none shrink-0">
-            <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+          <div className="sm:hidden flex justify-center pt-2 pb-1 select-none shrink-0">
+            <div className="w-9 h-1 rounded-full bg-muted-foreground/30" />
           </div>
         )}
 
@@ -114,7 +114,7 @@ function DialogContent({
             render={
               <button
                 type="button"
-                className="absolute top-3.5 right-4 sm:right-6 flex size-7 items-center justify-center rounded-full bg-muted after:absolute after:-inset-2 after:content-[''] text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
+                className="absolute top-3 right-3.5 sm:right-5 flex size-6 items-center justify-center rounded-full bg-muted after:absolute after:-inset-1.5 after:content-[''] text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
                 aria-label="Close"
               >
                 <X size={15} strokeWidth={1.8} />
@@ -143,12 +143,12 @@ function DialogHeader({
     <div
       data-slot="dialog-header"
       className={cn(
-        "flex items-center justify-between px-5 sm:px-6 py-3.5 sm:py-4 border-b border-border/60 shrink-0",
+        "flex items-center justify-between px-4 sm:px-5 py-3 sm:py-3 border-b border-border/60 shrink-0",
         className
       )}
       {...props}
     >
-      <div className="flex items-center gap-2.5 min-w-0 flex-1">
+      <div className="flex items-center gap-2 min-w-0 flex-1">
         {children}
       </div>
 
@@ -157,7 +157,7 @@ function DialogHeader({
           <button
             type="button"
             onClick={onClose}
-            className="relative flex size-7 shrink-0 items-center justify-center rounded-full bg-muted after:absolute after:-inset-2 after:content-[''] text-muted-foreground hover:text-foreground transition-colors cursor-pointer ml-3"
+            className="relative flex size-6 shrink-0 items-center justify-center rounded-full bg-muted after:absolute after:-inset-1.5 after:content-[''] text-muted-foreground hover:text-foreground transition-colors cursor-pointer ml-2"
             aria-label="Close"
           >
             <X size={15} strokeWidth={1.8} />
@@ -167,7 +167,7 @@ function DialogHeader({
             render={
               <button
                 type="button"
-                className="relative flex size-7 shrink-0 items-center justify-center rounded-full bg-muted after:absolute after:-inset-2 after:content-[''] text-muted-foreground hover:text-foreground transition-colors cursor-pointer ml-3"
+                className="relative flex size-6 shrink-0 items-center justify-center rounded-full bg-muted after:absolute after:-inset-1.5 after:content-[''] text-muted-foreground hover:text-foreground transition-colors cursor-pointer ml-2"
                 aria-label="Close"
               >
                 <X size={15} strokeWidth={1.8} />
@@ -185,7 +185,7 @@ function DialogBody({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="dialog-body"
       className={cn(
-        "max-h-[calc(90vh-130px)] sm:max-h-[75vh] overflow-y-auto px-5 sm:px-6 py-5 flex flex-col gap-4",
+        "max-h-[calc(90vh-130px)] sm:max-h-[75vh] overflow-y-auto px-4 sm:px-5 py-4 flex flex-col gap-3",
         className
       )}
       {...props}
@@ -205,7 +205,7 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        "flex items-center justify-end gap-2 px-5 sm:px-6 py-3.5 border-t border-border/60 shrink-0 max-sm:[&>*]:flex-1",
+        "flex items-center justify-end gap-2 px-4 sm:px-5 py-3 border-t border-border/60 shrink-0 max-sm:[&>*]:flex-1",
         className
       )}
       {...props}

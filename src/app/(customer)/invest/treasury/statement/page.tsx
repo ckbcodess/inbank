@@ -62,9 +62,9 @@ export default function TreasuryStatementPage() {
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader title="Statement" backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
         <Field label="Email Address" htmlFor="treasury-statement-email" error={email.trim() !== "" && !emailOk && "Enter a valid email address."}>
           <Input id="treasury-statement-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
         </Field>
@@ -75,7 +75,7 @@ export default function TreasuryStatementPage() {
 
         <div>
           <ProceedButton disabled={!valid} onClick={() => setAuthOpen(true)} />
-          <p className="px-1 pt-3 text-center text-[12px] text-muted-foreground">
+          <p className="px-1 pt-2 text-center text-[12px] text-muted-foreground">
             {count === 0 ? (type === "active" ? "You have no active investments yet." : "You have no closed investments yet.") : "We’ll email it to the address above."}
           </p>
         </div>

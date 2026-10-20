@@ -120,36 +120,36 @@ function MigrateContent() {
       }
     >
       {step === "welcome" && (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-5">
           <p className="text-[14px] leading-relaxed text-muted-foreground">
             GCB Internet Banking has a new home. Everything you had comes with you — this takes about two
             minutes, and you only need to set a new password.
           </p>
-          <div className="flex flex-col gap-3 rounded-2xl border border-border bg-muted/20 p-4">
+          <div className="flex flex-col gap-2 rounded-2xl border border-border bg-muted/20 p-3">
             <span className="text-[13px] text-muted-foreground">Staying the same</span>
             {[
               "Your accounts and balances",
               "Your saved payees and standing orders",
               "Your transaction PIN",
             ].map((item) => (
-              <span key={item} className="flex items-center gap-2.5 text-[14px] text-foreground">
+              <span key={item} className="flex items-center gap-2 text-[14px] text-foreground">
                 <Check size={16} strokeWidth={1.9} className="shrink-0 text-success" aria-hidden="true" />
                 {item}
               </span>
             ))}
           </div>
-          <div className="flex flex-col gap-3 px-1">
+          <div className="flex flex-col gap-2 px-1">
             <span className="text-[13px] text-muted-foreground">What&apos;s new</span>
             <span className="text-[14px] text-foreground">A clearer dashboard, faster payments to saved payees, and passkey login on your own devices.</span>
           </div>
-          <Button size="lg" onClick={next} className="h-11 w-full text-[14.5px]">
+          <Button size="lg" onClick={next} className="h-10 w-full text-[14.5px]">
             Get started
           </Button>
         </div>
       )}
 
       {step === "verify" && (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-5">
           <p className="text-center text-[14px] text-muted-foreground">
             A 6-digit code has been sent to the phone on your account, ending <span className="tabular">118</span>.<br />Please enter the code below.
           </p>
@@ -174,7 +174,7 @@ function MigrateContent() {
       )}
 
       {step === "carried" && (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4">
           <p className="text-[14px] text-muted-foreground">
             Here&apos;s what we brought across from your old internet banking (last used{" "}
             <span className="tabular">{lastVisit}</span>).
@@ -183,7 +183,7 @@ function MigrateContent() {
             <CarriedGroup icon={Landmark} title="Accounts" items={MIGRATED_DATA.accounts.map((a) => ({ name: a.name, detail: a.number }))} />
             <CarriedGroup icon={Users} title="Saved payees" items={MIGRATED_DATA.payees} />
             <CarriedGroup icon={CalendarClock} title="Standing orders" items={MIGRATED_DATA.standingOrders} />
-            <div className="flex items-center gap-3 px-4 py-3.5">
+            <div className="flex items-center gap-2 px-3 py-3">
               <KeyRound size={17} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
               <span className="flex-1 text-[14px] text-foreground">Transaction PIN</span>
               <span className="text-[13px] text-muted-foreground">Unchanged</span>
@@ -192,11 +192,11 @@ function MigrateContent() {
           <p className="text-[12.5px] text-muted-foreground">
             Something missing? You can tell us from Help once you&apos;re in — nothing on your accounts has changed.
           </p>
-          <div className="flex gap-3">
-            <Button variant="outline" size="lg" onClick={back} className="h-11 flex-1 text-[14.5px]">
+          <div className="flex gap-2">
+            <Button variant="outline" size="lg" onClick={back} className="h-10 flex-1 text-[14.5px]">
               Back
             </Button>
-            <Button size="lg" onClick={next} className="h-11 flex-[2] text-[14.5px]">
+            <Button size="lg" onClick={next} className="h-10 flex-[2] text-[14.5px]">
               Looks right
             </Button>
           </div>
@@ -210,7 +210,7 @@ function MigrateContent() {
             setBusy(true);
             window.setTimeout(next, 500);
           }}
-          className="flex flex-col gap-5"
+          className="flex flex-col gap-4"
         >
           <p className="text-[14px] text-muted-foreground">
             Old passwords can&apos;t be moved across safely, so choose a new one for the new internet banking.
@@ -222,15 +222,15 @@ function MigrateContent() {
             onConfirmChange={setConfirm}
             autoFocus
           />
-          <Button type="submit" size="lg" disabled={!newPasswordReady(password, confirm)} loading={busy} className="mt-1 h-11 w-full text-[14.5px]">
+          <Button type="submit" size="lg" disabled={!newPasswordReady(password, confirm)} loading={busy} className="mt-1 h-10 w-full text-[14.5px]">
             Proceed
           </Button>
         </form>
       )}
 
       {step === "finish" && (
-        <div className="flex flex-col gap-5">
-          <label className="flex items-start gap-3 rounded-2xl border border-border px-4 py-3.5 text-[14px] text-foreground cursor-pointer select-none">
+        <div className="flex flex-col gap-4">
+          <label className="flex items-start gap-2 rounded-2xl border border-border px-3 py-3 text-[14px] text-foreground cursor-pointer select-none">
             <Checkbox
               checked={acceptTerms}
               onCheckedChange={(c) => setAcceptTerms(!!c)}
@@ -244,7 +244,7 @@ function MigrateContent() {
               </span>
             </span>
           </label>
-          <Button size="lg" onClick={finish} disabled={!acceptTerms} loading={busy} className="h-11 w-full text-[14.5px]">
+          <Button size="lg" onClick={finish} disabled={!acceptTerms} loading={busy} className="h-10 w-full text-[14.5px]">
             Go to my dashboard
           </Button>
         </div>
@@ -269,7 +269,7 @@ function CarriedGroup({
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        className="flex items-center gap-3 px-4 py-3.5 text-left cursor-pointer"
+        className="flex items-center gap-2 px-3 py-3 text-left cursor-pointer"
       >
         <Icon size={17} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
         <span className="flex-1 text-[14px] text-foreground">{title}</span>
@@ -277,9 +277,9 @@ function CarriedGroup({
         <Check size={15} strokeWidth={2} className="text-success" aria-label="Carried across" />
       </button>
       {open && (
-        <ul className="flex flex-col gap-2 px-4 pb-3.5 pl-11">
+        <ul className="flex flex-col gap-2 px-3 pb-3 pl-10">
           {items.map((it) => (
-            <li key={it.name} className="flex items-baseline justify-between gap-3 text-[13px]">
+            <li key={it.name} className="flex items-baseline justify-between gap-2 text-[13px]">
               <span className="truncate text-foreground">{it.name}</span>
               <span className="shrink-0 tabular text-muted-foreground">{it.detail}</span>
             </li>

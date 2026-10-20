@@ -66,7 +66,7 @@ export function FxPulse() {
 
   return (
     <div className="flex h-full flex-col rounded-2xl border border-border bg-card">
-      <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
+      <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-3">
         <div>
           <h2 className="text-[15px] text-foreground">Today&apos;s rates</h2>
           <p className="mt-0.5 text-[12px] text-muted-foreground">
@@ -78,9 +78,9 @@ export function FxPulse() {
         </Link>
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 p-5">
+      <div className="flex flex-1 flex-col gap-2 p-4">
         <div className="flex items-end gap-2">
-          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
             <Label htmlFor="fx-pair">
               Currency
             </Label>
@@ -107,7 +107,7 @@ export function FxPulse() {
           <Button
             variant="outline"
             size="icon-sm"
-            className="mb-0.5 size-9 shrink-0 cursor-pointer"
+            className="mb-0.5 size-8 shrink-0 cursor-pointer"
             onClick={() => setDirection((d) => (d === "to-ghs" ? "from-ghs" : "to-ghs"))}
             aria-label={
               direction === "to-ghs"
@@ -121,7 +121,7 @@ export function FxPulse() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor="fx-amount" className="flex items-center gap-1.5">
+          <Label htmlFor="fx-amount" className="flex items-center gap-2">
             <CurrencyLogo currency={fromCurrency} size={14} />
             <span>Amount in {fromCurrency}</span>
           </Label>
@@ -135,7 +135,7 @@ export function FxPulse() {
           />
         </div>
 
-        <div className="rounded-xl border border-border bg-muted/40 px-4 py-3">
+        <div className="rounded-xl border border-border bg-muted/40 px-3 py-2">
           <p className="text-[12px] text-muted-foreground">You get approximately</p>
           <div className="mt-1 flex items-center gap-2">
             <CurrencyLogo currency={toCurrency} size={22} />
@@ -143,7 +143,7 @@ export function FxPulse() {
               {valid ? format(result, toCurrency, showAmounts) : "—"}
             </p>
           </div>
-          <p className="mt-1.5 text-[11.5px] text-muted-foreground tabular">
+          <p className="mt-2 text-[11.5px] text-muted-foreground tabular">
             {direction === "to-ghs" ? "Bank buys" : "Bank sells"} at {appliedRate.toFixed(4)} ·{" "}
             <span className={rate.changePct >= 0 ? "text-success-text font-medium" : "text-destructive font-medium"}>
               <RateTrend size={11} strokeWidth={2} aria-hidden="true" className="inline align-[-1px]" />{" "}
