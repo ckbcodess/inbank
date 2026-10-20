@@ -1,5 +1,6 @@
 "use client";
 
+import { personalRepeatHref } from "@/lib/repeat-payment";
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Copy, Check, Share2, FileDown, RotateCw } from "lucide-react";
@@ -19,6 +20,11 @@ interface TransactionDetailSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   showFullPageLink?: boolean;
+  /**
+   * Where "Repeat" goes for this transaction, or null to hide it. Left out, it is the personal Send & Pay link;
+   * business passes its own so the sheet never leads out of the business app.
+   */
+  repeatHref?: ((t: Transaction) => string | null) | null;
 }
 
 function formatFullDate(dateStr: string, timeStr?: string): string {
@@ -50,6 +56,7 @@ export function TransactionDetailSheet({
   transaction: incoming,
   open,
   onOpenChange,
+  repeatHref = personalRepeatHref,
 }: TransactionDetailSheetProps) {
   const router = useRouter();
   const [copied, setCopied] = React.useState(false);
@@ -96,8 +103,6 @@ export function TransactionDetailSheet({
     maximumFractionDigits: 2,
   })}`;
 
-  const recipientName =
-    transaction.counterparty || transaction.description || "Akua Gyasi";
   const channelType = getTransactionType(transaction) || "Channel Type";
   const dateTimeString = formatFullDate(transaction.date, transaction.time || "8:42 AM");
 
@@ -125,13 +130,11 @@ export function TransactionDetailSheet({
     }
   };
 
+  const repeatTo = repeatHref ? repeatHref(transaction) : null;
   const handleRepeat = () => {
+    if (!repeatTo) return;
     onOpenChange(false);
-    router.push(
-      `/payments/send?duplicate=${transaction.id}&amount=${transaction.amount}&payee=${encodeURIComponent(
-        recipientName
-      )}`
-    );
+    router.push(repeatTo);
   };
 
   // Receipt text copy / share
@@ -404,19 +407,21 @@ export function TransactionDetailSheet({
                   </span>
                 </button>
 
-                {/* Repeat Action */}
-                <button
-                  type="button"
-                  onClick={handleRepeat}
-                  className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
-                >
-                  <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
-                    <RotateCw size={20} strokeWidth={2} />
-                  </div>
-                  <span className="text-[12.5px] font-normal text-foreground tracking-tight">
-                    Repeat
-                  </span>
-                </button>
+                {/* Repeat Action: only where the app has somewhere to repeat it to */}
+                {repeatTo && (
+                  <button
+                    type="button"
+                    onClick={handleRepeat}
+                    className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
+                  >
+                    <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
+                      <RotateCw size={20} strokeWidth={2} />
+                    </div>
+                    <span className="text-[12.5px] font-normal text-foreground tracking-tight">
+                      Repeat
+                    </span>
+                  </button>
+                )}
               </div>
             </div>
           </div>

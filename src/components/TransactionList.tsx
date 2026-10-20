@@ -16,7 +16,6 @@ import { TransactionStatusText } from "@/components/StatusBadge";
 import { amountStyling } from "@/lib/transaction-display";
 import { TransactionMark } from "@/components/transactions/TransactionMark";
 import { useMemo, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import {
   ArrowDownToLine,
   ChevronLeft,
@@ -46,13 +45,12 @@ import {
 } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
 import {
-  accountsForProfile,
   findAccount,
   TRANSACTION_CATEGORIES,
   TRANSACTION_RAILS,
+  type Account,
   type Transaction,
 } from "@/lib/mock-data";
-import { useSession } from "@/lib/session-store";
 import { cn } from "@/lib/utils";
 
 const LIST_STATES: readonly ListState[] = [
@@ -149,8 +147,12 @@ function exportTransactionsCSV(txns: Transaction[]) {
 
 interface TransactionListProps {
   transactions: Transaction[];
-  /** Route prefix for the detail destination. */
-  detailBase?: string;
+  /** The accounts the account filter offers: the signed-in relationship's own. */
+  accounts: Account[];
+  /** Where "Start a transaction" goes when the list is empty. Left out, the empty list has no action. */
+  startHref?: string;
+  /** Where "Repeat" goes from a transaction's sheet (see `TransactionDetailSheet`). */
+  repeatHref?: ((t: Transaction) => string | null) | null;
   /** Show the 13.1 state switcher — off when embedded in a screen that owns its own. */
   showStateSwitcher?: boolean;
   emptyTitle?: string;
@@ -161,14 +163,14 @@ interface TransactionListProps {
 
 export default function TransactionList({
   transactions,
-  detailBase = "/transactions",
+  accounts,
+  startHref,
+  repeatHref,
   showStateSwitcher = true,
   emptyTitle = "No transactions yet",
   emptyDescription = "Activity will appear here once money moves.",
   initialAccountId,
 }: TransactionListProps) {
-  const router = useRouter();
-  const activeProfile = useSession((s) => s.activeProfile);
 
   const [state, setState] = useState<ListState>("populated");
   const [query, setQuery] = useState("");
@@ -189,9 +191,7 @@ export default function TransactionList({
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
 
-  const availableAccounts = useMemo(() => {
-    return accountsForProfile(activeProfile?.kind);
-  }, [activeProfile?.kind]);
+  const availableAccounts = accounts;
 
   const results = useMemo(() => {
     return transactions.filter((t) => {
@@ -636,9 +636,11 @@ export default function TransactionList({
           title={emptyTitle}
           description={emptyDescription}
           action={
-            <Button nativeButton={false} render={<Link href="/payments" />} className="h-8 rounded-lg px-3 text-[13px]">
-              Start a transaction
-            </Button>
+            startHref ? (
+              <Button nativeButton={false} render={<Link href={startHref} />} className="h-8 rounded-lg px-3 text-[13px]">
+                Start a transaction
+              </Button>
+            ) : undefined
           }
         />
       )}
@@ -759,6 +761,7 @@ export default function TransactionList({
       {/* Transaction Details Sheet */}
       <TransactionDetailSheet
         transaction={selectedTransaction}
+        repeatHref={repeatHref}
         open={Boolean(selectedTransaction)}
         onOpenChange={(open) => {
           if (!open) setSelectedTransaction(null);

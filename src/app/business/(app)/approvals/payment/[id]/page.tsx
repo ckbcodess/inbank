@@ -176,7 +176,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
 
         <div className="mt-4 border-t border-border pt-3">
           <Link
-            href="/transactions/txn-008"
+            href="/business/transactions/txn-008"
             className="inline-flex items-center gap-2 text-[13px] text-primary underline-offset-4 hover:underline"
           >
             View full transaction record
