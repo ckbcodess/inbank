@@ -111,7 +111,9 @@ export default function BusinessStatementPage({ params }: { params: Promise<{ id
                 <div>
                   <h2 className="text-[15px] font-medium text-foreground">Preview</h2>
                   <p className="mt-0.5 text-[12px] text-muted-foreground tabular">
-                    {formatDate(from)} – {formatDate(to)} · {rows.length} transaction{rows.length === 1 ? "" : "s"}
+                    {rows.length === 1
+                      ? `${formatDate(from)} – ${formatDate(to)} · 1 transaction`
+                      : `${formatDate(from)} – ${formatDate(to)} · ${rows.length} transactions`}
                   </p>
                 </div>
                 <Button size="sm" disabled={rows.length === 0}>

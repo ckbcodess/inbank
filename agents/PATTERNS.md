@@ -352,21 +352,30 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
   - Name the mechanism and the next step on bad news.
   - "Block", never "Freeze"; "Internet", not "Data Bundle"; "Proceed" on onboarding steps.
 
-### 23. Shared screens between personal and business
+### 23. Personal and business share building blocks, not screens
 
-Personal and business banking are separate surfaces (CONSTITUTION §10), but some screens are still shared
-until each gets a business version. A shared screen:
+Personal and business banking are separate apps (CONSTITUTION §10): each has its own screens, flows and
+navigation, and neither links into the other. What they share are building blocks, and a block never reads which
+app it is in; the screen that uses it passes where it leads.
 
-- reads the relationship through `lib/profile.ts` (`profileKindOf`, `rowKind`, `isBusinessProfile`), never by
-  writing `"CORPORATE"` or a business role check. Reference: `payments/standing/page.tsx`.
-- asks for a capability, not a role, when access differs (`canViewAdminReports` in `lib/roles.ts`).
-- never hides business-only UI behind a flag. If a capability exists only for business, build it under
-  `/business`.
-- takes its data from `accountsForProfile`, `transactionsForProfile` and `cardsForProfile`. Business rows live
-  in `lib/corporate/ledger.ts`; `lib/mock-data.ts` assembles one ledger from both.
+- **Props, not profile checks.** `TransactionList` takes its `accounts`, `startHref` and `repeatHref`;
+  `TransactionReceipt` takes `list`, `success`, `repeatHref`, `extraStates` and `renderBand`. Personal passes
+  `/transactions`, `/payments`, `personalRepeatHref`; business passes `/business/...`, `businessRepeatHref` and
+  its batch and trade failure panels. References: `(customer)/transactions/[id]/page.tsx` and
+  `business/(app)/transactions/[id]/page.tsx`.
+- **Field widgets are shared** (`components/payments/flows/shared`: `BankSelect`, `AmountInput`,
+  `FromAccountSelector`, `resolveAccountName`...), and so is the one-time-code gate (`TransactionOtpModal`). The
+  screen around them is each app's own. Reference: `components/corporate/payments/SupplierPaymentFlow.tsx`.
+- **Business-only code lives in `lib/corporate/`, `components/corporate/` and `app/business/`**, and writes only
+  `/business/*` paths. Lint rejects a personal path there (`eslint.config.mjs`).
+- **Data stays in one ledger for the prototype.** Business rows live in `lib/corporate/ledger.ts`;
+  `lib/mock-data.ts` assembles one ledger from both, and a screen asks for its own side
+  (`accountsForProfile`, `transactionsForProfile`, `cardsForProfile`, or `lib/corporate/accounts.ts`).
+- **Maker to approver:** a business payment is *submitted*, not sent. `lib/corporate/payments.ts` puts it in the
+  approval queue and on the ledger as awaiting approval; `decideApproval` settles it.
 
-When a shared screen needs a business version, copy it under `src/app/business/`, delete the profile branch
-from both, and remove it from the borrowed list in WORKING_LOG.
+When business needs a screen personal banking has (cards, beneficiaries, settings), build it under
+`src/app/business/` from the building blocks. Do not reach into a personal page.
 
 ## Engineering notes (each one has already caused a bug)
 

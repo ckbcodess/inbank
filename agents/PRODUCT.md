@@ -65,8 +65,10 @@ Open questions live in [WORKING_LOG.md](WORKING_LOG.md), not here.
     navigation (`lib/corporate/navigation.ts`), home (`/business/overview`) and data (`lib/corporate/`).
     A business sign-in lands on `/business/overview`; a personal one on `/overview`. A signed-in customer
     is held to their own relationship's surface.
-  - Business still borrows personal screens at personal URLs (accounts, cards, payments, beneficiaries,
-    transactions, reports, settings, invest, loans). See WORKING_LOG for the list.
+  - The two apps are fully separate: a business relationship never rests on a personal URL, Back never
+    crosses apps, and business code cannot write a personal path (lint). Business has screens only for what
+    the BRD confirms for it (Accounts, Send & Pay, Transactions, Trade, Approvals, Administration); the rest
+    of the personal app has no business version yet. See WORKING_LOG.
 
 ## 4. Information architecture
 
@@ -115,12 +117,19 @@ Open questions live in [WORKING_LOG.md](WORKING_LOG.md), not here.
 `lib/corporate/navigation.ts`:
 - Home (`/business/overview`): total available cash, what is waiting for the person's approval
   (approvers only), the company's accounts, and the two payment doors (Send a Payment, Pay in Bulk)
-- Accounts, Cards, Send & Pay, Insure, Invest, Loans: shared with the personal view for now
+- Accounts (`/business/accounts`): the company's accounts with balances; details show the available balance,
+  recent activity, the mandate explained in place, signatories and the bank contact; statement
+- Send & Pay (`/business/payments`): Pay a Supplier, Pay in Bulk, Standing Orders
+  - **Pay a Supplier:** a maker picks the account and supplier (the name is looked up from the account number),
+    enters the amount and an invoice reference, reviews, and confirms with a one-time code. The payment is
+    **submitted for approval**: it shows in the approvers' queue and on the ledger as "awaiting approval", and
+    nothing leaves the account until an approver decides. `[DECIDED 2026-10-20]`
+  - Standing orders (list, new, detail with pause and cancel) and bulk payments sit under the same hub
+- Transactions (`/business/transactions`): the company's ledger; the receipt also carries the failures only a
+  company has (a record that failed in a batch, a trade returned by operations)
 - Trade (`/business/trade`), if the customer is eligible
-- Approvals (`/business/approvals`), for approvers
+- Approvals (`/business/approvals`), for approvers: an approver's decision settles the same transaction
 - Administration (`/business/administration`), for corporate admins
-- Bulk payments (`/business/payments/bulk`), reached from Send & Pay and Home
-- More services: the same group as the personal view
 
 **Admin portal:** Overview, Transactions, Exceptions, Trade, Customers, Fee concessions, Audit log.
 
