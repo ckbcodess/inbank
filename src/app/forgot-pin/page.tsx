@@ -23,6 +23,7 @@ import { AppLoader } from "@/components/ui/loader";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 import { hasConsecutiveDigits, hasRepeatingDigits } from "@/lib/auth-shared";
 import { useSession } from "@/lib/session-store";
+import { homePathForActor } from "@/lib/navigation";
 import { Field } from "@/components/ui/field";
 
 type Stage = "mobile" | "selfie" | "no_match" | "branch" | "pin" | "confirm_pin" | "done";
@@ -214,7 +215,7 @@ function ForgotPinContent() {
       onBack={stage !== "done" && stage !== "branch" && (stage !== "mobile" || hasExistingSession) ? handleBack : undefined}
       backHref={
         stage === "mobile"
-          ? (actor ? "/overview" : "/login")
+          ? (actor ? homePathForActor(actor) : "/login")
           : (stage === "selfie" && hasExistingSession)
             ? "/mfa"
             : undefined
@@ -401,7 +402,7 @@ function ForgotPinContent() {
           <Button
             variant="ghost"
             size="lg"
-            onClick={() => router.push(actor ? "/overview" : "/login")}
+            onClick={() => router.push(actor ? homePathForActor(actor) : "/login")}
             className="h-10 w-full text-[14px]"
           >
             {actor ? "Back to dashboard" : "Back to login"}
@@ -413,7 +414,7 @@ function ForgotPinContent() {
         <Button
           variant="default"
           size="lg"
-          onClick={() => router.push(actor ? "/overview" : "/login")}
+          onClick={() => router.push(actor ? homePathForActor(actor) : "/login")}
           className="h-10 w-full text-[14px]"
         >
           {actor ? "Back to dashboard" : "Back to login"}

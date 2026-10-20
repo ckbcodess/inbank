@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Corporate Internet Banking Enrolment Flow — /signup/business/enrol
+ * Corporate Internet Banking Enrolment Flow — /business/signup/enrol
  *
  * For companies that already bank with GCB.
  * Customer steps:
@@ -225,7 +225,7 @@ function CorporateEnrolmentFlow() {
       if (contactSubstep === "otp") setContactSubstep("details");
       else setStep("account");
     } else if (step === "account") {
-      // Handled by AuthLayout backHref to /signup/business
+      // Handled by AuthLayout backHref to /business/signup
     }
   }
 
@@ -455,7 +455,7 @@ function CorporateEnrolmentFlow() {
         }
         align={step === "submitted" ? "center" : "left"}
         onBack={step !== "submitted" && step !== "account" ? handleBack : undefined}
-        backHref={step === "account" ? "/signup/business" : undefined}
+        backHref={step === "account" ? "/business/signup" : undefined}
         backLabel={step === "account" ? "Back to business options" : "Back to previous step"}
         width="wide"
         footer={
@@ -556,7 +556,7 @@ function CorporateEnrolmentFlow() {
                         variant="outline"
                         size="sm"
                         nativeButton={false}
-                        render={<Link href="/signup/business/status" />}
+                        render={<Link href="/business/signup/status" />}
                       >
                         Check application status
                       </Button>
@@ -1160,7 +1160,7 @@ function CorporateEnrolmentFlow() {
                 variant="default"
                 size="lg"
                 nativeButton={false}
-                render={<Link href={`/signup/business/status?ref=${encodeURIComponent(reference)}`} />}
+                render={<Link href={`/business/signup/status?ref=${encodeURIComponent(reference)}`} />}
                 className="h-10 w-full text-[14px]"
               >
                 Track application status

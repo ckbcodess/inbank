@@ -97,6 +97,11 @@ export function homePathForShell(shell: Shell): string {
   return shell === "admin" ? "/admin" : "/overview";
 }
 
+/** Where a signed-in person lands after sign-in: their own surface's home. */
+export function homePathForActor(actor: Actor): string {
+  return actor.shell === "admin" ? homePathForShell("admin") : homePathForProfile(actor.profiles[0]);
+}
+
 /** Where a signed-in customer lands: business banking has its own home, personal banking keeps `/overview`. */
 export function homePathForProfile(profile: Profile | null | undefined): string {
   return profile?.kind === "CORPORATE" ? "/business/overview" : "/overview";

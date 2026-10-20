@@ -14,6 +14,7 @@ import { useSession } from "@/lib/session-store";
 import { ACTORS, findActorByPhone } from "@/lib/mock-data";
 import { toLocalMobile } from "@/lib/phone";
 import { useTrustedDevice, type TrustedDevice } from "@/lib/device-trust";
+import { homePathForActor } from "@/lib/navigation";
 import { findLegacyUser } from "@/lib/migration";
 
 import { Field } from "@/components/ui/field";
@@ -74,7 +75,7 @@ function LoginForm() {
       // This device is already trusted for them: no one-time code.
       if (trusted?.actorId === actor.id) {
         verifyMfa();
-        router.push("/overview");
+        router.push(homePathForActor(actor));
         return;
       }
       if (actor.id === "u-yaw") {
@@ -187,7 +188,7 @@ function LoginForm() {
 
           <Button
             nativeButton={false}
-            render={<Link href={bankingType === "business" ? "/signup/business" : "/get-started"} data-tour="login-get-started" />}
+            render={<Link href={bankingType === "business" ? "/business/signup" : "/get-started"} data-tour="login-get-started" />}
             variant="outline"
             size="lg"
             className="h-10 sm:h-10 w-full text-[14.5px]"
@@ -233,7 +234,7 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
     const actor = ACTORS.find((a) => a.id === trusted.actorId) ?? ACTORS[0];
     signIn(actor);
     verifyMfa();
-    router.push("/overview");
+    router.push(homePathForActor(actor));
   }
 
   function handleSubmit(e: React.FormEvent) {

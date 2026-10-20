@@ -213,7 +213,7 @@ npm run build                          # only when explicitly asked
 ## Repo map (only the non-obvious parts)
 
 - `src/app/(customer)/` is personal banking, `src/app/business/` is business banking (`/business/*`) and `src/app/admin/` is the bank's internal portal. They never import each other (lint-enforced); business data and logic live in `src/lib/corporate/`, and business components go in `src/components/corporate/` (not created yet).
-- Onboarding and auth routes sit outside the shells: `/signup`, `/activate`, `/migrate`, `/forgot-password`, `/get-started`, `/card-verification`.
+- Onboarding and auth routes sit outside the shells: `/business/signup` (in `business/(entry)`, signed out, so it never meets the shell's sign-in guard), `/signup`, `/activate`, `/migrate`, `/forgot-password`, `/get-started`, `/card-verification`.
 - `src/lib/navigation.ts` builds the nav for each actor (`getNavigation`). Its icons map in `components/layout/Sidebar.tsx` (`ICON_MAP`).
 - `src/lib/mock-data.ts` holds the demo personas, accounts, ledger and standing orders.
 - `src/components/payments/PaymentFlow.tsx` is the single payment state machine for Send & Pay.

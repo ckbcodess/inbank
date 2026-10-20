@@ -21,7 +21,6 @@ import {
   ClipboardCheck,
   FileText,
   Paperclip,
-  Pencil,
   Trash2,
   UserPlus,
   Users,
@@ -230,7 +229,7 @@ export default function BusinessSignupPage() {
         {step === "choice" && (
           <div className="flex flex-col gap-3">
             <Link
-              href="/signup/business/enrol"
+              href="/business/signup/enrol"
               className="group flex flex-col gap-2 rounded-2xl border border-border bg-card p-4 transition-all duration-hover ease-settle hover:border-foreground/30 hover:bg-muted/40 cursor-pointer"
             >
               <div className="flex items-center justify-between">
@@ -354,7 +353,7 @@ export default function BusinessSignupPage() {
                 variant="default"
                 size="lg"
                 nativeButton={false}
-                render={<Link href="/signup/business/enrol?account=100123456789" />}
+                render={<Link href="/business/signup/enrol?account=100123456789" />}
                 className="h-10 w-full text-[14px]"
               >
                 Set up internet banking

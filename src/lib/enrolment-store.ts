@@ -2,8 +2,8 @@
  * Shared Enrolment Store.
  *
  * Implements "Two journeys, one store" (CONSTITUTION §1):
- * A single store shared by the customer flow (/signup/business/enrol),
- * the status tracker (/signup/business/status), and the staff review queue (/admin/enrolments).
+ * A single store shared by the customer flow (/business/signup/enrol),
+ * the status tracker (/business/signup/status), and the staff review queue (/admin/enrolments).
  *
  * Persisted in browser localStorage (with in-memory fallback), seeded with realistic scenarios.
  */

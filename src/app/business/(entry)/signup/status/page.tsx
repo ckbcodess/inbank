@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Corporate Enrolment Status Tracker — /signup/business/status
+ * Corporate Enrolment Status Tracker — /business/signup/status
  *
  * Allows applicants to track their application status using their reference number
  * and mobile number verification, before any login credentials exist.
@@ -179,7 +179,7 @@ function StatusTrackerContent() {
           ? () => setStage("search")
           : undefined
       }
-      backHref={stage === "search" || initialRef ? "/signup/business" : undefined}
+      backHref={stage === "search" || initialRef ? "/business/signup" : undefined}
       backLabel="Back to business options"
       width="wide"
     >

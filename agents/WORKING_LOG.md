@@ -195,7 +195,9 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - Gap: `DEFAULT_PROFILE_KIND` is still `CORPORATE`, the prototype's old default for unmarked data. Every seeded row has an explicit kind, so it only decides a standing order whose account is missing. Make it explicit or drop it.
 - Gap: `BENEFICIARIES` (suppliers, a Shenzhen trade payee) and the approval-flavoured notifications in `mock-data.ts` are business data that wasn't moved.
 - Gap: dead code in `components/dashboard/`: `LiquidityDeck`, `LiquidityRail`, `LiquidityCore`, `QuickActionBar`, `ActionRequiredWidget` have no importers, use hardcoded cashflow figures and decorative glow. Delete them, don't promote them to the business dashboard.
-- Gap: login, activate, migrate, signup and forgot-pin still push `/overview` and rely on the shell guard to send business users to `/business/overview`. `mfa` already routes by profile.
+- Decision: `/business` has two route groups. `(app)` is the signed-in shell (home, approvals, administration, trade, bulk payments). `(entry)` is signed-out business signup at `/business/signup`, `/business/signup/enrol` and `/business/signup/status`. Business signs in at `/login?type=business`, and signing out or an expired session returns to that door.
+- Decision: `/select-banking` is demo-only. It shows wherever the Demo hub does (`SHOW_DEMO_HUB`) or in dev (`SHOW_DEMO_TOOLS`), and 404s otherwise. Gating on `SHOW_DEMO_TOOLS` alone would 404 it in the live build, where the hub is deliberately on.
+- Gap: `migrate`, `signup` and the personal sign-in paths still push `/overview`; that is right for personal flows. Login (trusted device), activate and forgot-pin now use `homePathForActor`.
 
 ### 2026-10-19
 - Decision: one `PayeeAvatar` (`components/ui/payee-avatar.tsx`) for every saved person: tinted circle, initials, colour picked from the name, so someone looks the same on every screen. Icon only for billers and airtime. Used on the Beneficiaries page, Pay again and the Send & Pay strips.

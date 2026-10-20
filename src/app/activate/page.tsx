@@ -30,6 +30,7 @@ import PinRequirements from "@/components/auth/PinRequirements";
 import SelfieCapture from "@/components/auth/SelfieCapture";
 import NewPasswordFields, { newPasswordReady } from "@/components/auth/NewPasswordFields";
 import { useSession } from "@/lib/session-store";
+import { homePathForActor } from "@/lib/navigation";
 import { setFirstRun, setPendingReferral } from "@/lib/device-trust";
 import { ACTORS } from "@/lib/mock-data";
 import {
@@ -296,7 +297,7 @@ function ActivateContent() {
       // and offers the referral code there (same as new-to-GCB), not mid-flow.
       setPendingReferral(!isCorpInvite);
       setFirstRun("new");
-      router.push("/overview");
+      router.push(homePathForActor(actor));
     }, 800);
   }
 
@@ -461,7 +462,7 @@ function ActivateContent() {
                 variant="outline"
                 size="sm"
                 nativeButton={false}
-                render={<Link href="/signup/business/status" />}
+                render={<Link href="/business/signup/status" />}
                 className="mt-1"
               >
                 Go to Status Tracker to resend

@@ -22,6 +22,7 @@ import {
   splashWorkSettled,
 } from "@/lib/app-splash";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
+import { isBusinessProfile } from "@/lib/profile";
 import { getNavigation } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
@@ -83,20 +84,26 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
   // Route guard: an unauthenticated or half-authenticated visitor never sees
   // the shell. Internal staff are bounced to their own shell (section 12.1).
   // Switching to a relationship that lacks permission for the active route redirects to /overview.
+  // Each relationship signs in through its own door; remember which one this session used so signing out
+  // (which clears the profile first) and an expired session both send the person back to it.
+  const businessDoor = useRef(false);
+  if (activeProfile) businessDoor.current = isBusinessProfile(activeProfile);
+  const loginPath = businessDoor.current || pathname.startsWith("/business") ? "/login?type=business" : "/login";
+
   useEffect(() => {
     if (!hydrated) return;
-    if (!actor) router.replace("/login");
+    if (!actor) router.replace(loginPath);
     else if (!mfaVerified) router.replace("/mfa");
     else if (actor.shell === "admin") router.replace("/admin");
     else if (!activeProfile) {
       if (actor.profiles.length > 0) selectProfile(actor.profiles[0]);
-      else router.replace("/login");
+      else router.replace(loginPath);
     }
     // Personal and business banking are separate surfaces. `/business/*` is business-only, and a business
     // relationship's home is `/business/overview`, not the personal dashboard.
     else if (activeProfile.kind === "RETAIL" && pathname.startsWith("/business")) router.replace("/overview");
     else if (activeProfile.kind === "CORPORATE" && pathname === "/overview") router.replace("/business/overview");
-  }, [hydrated, actor, mfaVerified, activeProfile, pathname, router, selectProfile]);
+  }, [hydrated, actor, mfaVerified, activeProfile, pathname, router, selectProfile, loginPath]);
 
   const toggleCollapse = useCallback(() => {
     setCollapsed((prev) => {
@@ -108,8 +115,8 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
 
   const handleSignOut = useCallback(() => {
     signOut();
-    router.replace("/login");
-  }, [signOut, router]);
+    router.replace(loginPath);
+  }, [signOut, router, loginPath]);
 
   // `ready` covers these; restated so TypeScript narrows them below.
   if (!ready || !actor || !activeProfile) {

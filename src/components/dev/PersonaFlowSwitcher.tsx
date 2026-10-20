@@ -35,7 +35,7 @@ const PERSONAS = [
 ] as const;
 type PersonaId = (typeof PERSONAS)[number]["id"];
 
-const ONBOARDING_PATHS = ["/", "/signup", "/activate", "/get-started", "/select-banking", "/login", "/mfa", "/forgot-password", "/migrate", "/overview"];
+const ONBOARDING_PATHS = ["/", "/signup", "/business/signup", "/activate", "/get-started", "/select-banking", "/login", "/mfa", "/forgot-password", "/migrate", "/overview"];
 
 function PersonaFlowSwitcherContent() {
   const router = useRouter();
