@@ -14,6 +14,7 @@
 
 import type { Actor, Profile, Role, Shell } from "./roles";
 import { businessNav } from "./corporate/navigation";
+import { ENROLMENT_PORTAL_OPEN } from "./launch";
 
 export interface NavItem {
   key: string;
@@ -76,7 +77,7 @@ function adminNav(role: Role): NavItem[] {
     items.push({ key: "admin-fees", label: "Fee Concessions", path: "/admin/fee-concessions", icon: "Percent", group: "CONTROL" });
   }
 
-  if (role === "RELATIONSHIP_MANAGER" || role === "OPERATIONS_USER" || role === "BANK_ADMIN") {
+  if (ENROLMENT_PORTAL_OPEN && (role === "RELATIONSHIP_MANAGER" || role === "OPERATIONS_USER" || role === "BANK_ADMIN")) {
     items.push({ key: "admin-enrolments", label: "Enrolments", path: "/admin/enrolments", icon: "ClipboardCheck", group: "OPERATIONS" });
   }
 

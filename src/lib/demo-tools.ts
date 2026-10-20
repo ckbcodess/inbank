@@ -4,5 +4,5 @@
  */
 export const SHOW_DEMO_TOOLS = process.env.NODE_ENV !== "production";
 
-/** The Demo hub (persona and flow switcher). Deliberately on in the live build, so the prototype can be walked through. Set to `false` to take it out. */
-export const SHOW_DEMO_HUB = true;
+/** The Demo hub (persona and flow switcher). On in dev. Off in production: it signs people in directly, which would bypass the sign-in gate (lib/launch.ts). */
+export const SHOW_DEMO_HUB = process.env.NODE_ENV !== "production";

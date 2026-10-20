@@ -16,6 +16,8 @@ import { toLocalMobile } from "@/lib/phone";
 import { useTrustedDevice, type TrustedDevice } from "@/lib/device-trust";
 import { homePathForActor } from "@/lib/navigation";
 import { findLegacyUser } from "@/lib/migration";
+import { SIGN_IN_OPEN } from "@/lib/launch";
+import { WorkInProgress } from "@/components/states/WorkInProgress";
 
 import { Field } from "@/components/ui/field";
 type LoginState = "idle" | "submitting" | "error";
@@ -32,6 +34,8 @@ function LoginForm() {
   const trusted = useTrustedDevice();
   // "Not you?" switches to the full form for this visit; the device stays trusted.
   const [notYou, setNotYou] = useState(false);
+  // Set when sign-in is closed: the form is replaced by the work-in-progress screen.
+  const [closed, setClosed] = useState(false);
 
   const [mobile, setMobile] = useState("");
   const [country, setCountry] = useState("GH");
@@ -52,6 +56,10 @@ function LoginForm() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!SIGN_IN_OPEN) {
+      setClosed(true);
+      return;
+    }
     setState("submitting");
 
     window.setTimeout(() => {
@@ -84,6 +92,10 @@ function LoginForm() {
         router.push("/mfa");
       }
     }, 600);
+  }
+
+  if (closed) {
+    return <SignInClosed onBack={() => setClosed(false)} />;
   }
 
   if (trusted && !notYou) {
@@ -201,6 +213,20 @@ function LoginForm() {
   );
 }
 
+/** Shown in place of the sign-in form while sign-in is closed. Nothing is signed in. */
+function SignInClosed({ onBack }: { onBack: () => void }) {
+  return (
+    <AuthLayout vAlign="center" title="Sign in" width="compact">
+      <div className="flex flex-col gap-5">
+        <WorkInProgress title="Online banking sign-in" />
+        <Button variant="outline" onClick={onBack}>
+          Back to sign in
+        </Button>
+      </div>
+    </AuthLayout>
+  );
+}
+
 /**
  * The form reads `?type=` and `?state=` once, when it is built. Keying it on them rebuilds it whenever they change
  * while the page stays mounted (the Demo hub moves between the personal and business doors, and to the error
@@ -230,6 +256,7 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [closed, setClosed] = useState(false);
 
   const firstName = trusted.name.split(" ")[0];
   const initials = trusted.name
@@ -249,8 +276,16 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!SIGN_IN_OPEN) {
+      setClosed(true);
+      return;
+    }
     setSubmitting(true);
     window.setTimeout(finish, 600);
+  }
+
+  if (closed) {
+    return <SignInClosed onBack={() => setClosed(false)} />;
   }
 
   return (
