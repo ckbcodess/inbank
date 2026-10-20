@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Money in: 9 quiet ways</title>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+  :root { --bg:#fafafa; --card:#fff; --fg:#0a0a0a; --muted:#737373; --line:#e4e4e2; --field:#f6f6f5; --hover:rgba(0,0,0,.04); --warn:#8a4b00; --success:#15803d; --pill:#e0f2e6; --pillfg:#166534; --tile:#f1f1ef; }
+  .dark { --bg:#0b0b0b; --card:#161616; --fg:#f5f5f5; --muted:#9a9a9a; --line:#2a2a2a; --field:#1d1d1d; --hover:rgba(255,255,255,.05); --warn:#f0b34a; --success:#4ade80; --pill:#173a24; --pillfg:#86efac; --tile:#222; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Open Sans",system-ui,sans-serif; background:var(--bg); color:var(--fg); font-size:14px; }
+  header.top { position:sticky; top:0; z-index:5; background:var(--bg); border-bottom:1px solid var(--line); padding:14px 24px; display:flex; gap:24px; justify-content:space-between; align-items:flex-start; }
+  header.top h1 { font-size:18px; font-weight:500; margin:0; letter-spacing:-.02em; }
+  header.top p { margin:4px 0 0; color:var(--muted); font-size:12.5px; line-height:1.55; max-width:860px; }
+  button.theme { border:1px solid var(--line); background:var(--card); color:var(--fg); border-radius:10px; padding:8px 14px; cursor:pointer; font:inherit; white-space:nowrap; }
+  main { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(440px,100%),1fr)); gap:36px 28px; padding:28px 16px 60px; max-width:1500px; margin:0 auto; }
+  section.v { min-width:0; display:flex; flex-direction:column; gap:8px; }
+  section.v h2 { font-size:15px; font-weight:500; margin:0; }
+  section.v p { margin:0; color:var(--muted); font-size:12.5px; line-height:1.55; min-height:58px; }
+  .frame { background:var(--bg); border:1px solid var(--line); border-radius:20px; padding:12px 22px; }
+  .row { display:flex; align-items:center; gap:14px; padding:12px 8px; margin:0 -8px; border-radius:12px; position:relative; }
+  .row:hover { background:var(--hover); }
+  .mid { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .name { font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .meta { font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .end { display:flex; flex-direction:column; align-items:flex-end; gap:3px; flex-shrink:0; }
+  .amt { font-size:14px; font-variant-numeric:tabular-nums; }
+  .amt.hold { color:var(--muted); }
+  .st { font-size:12px; color:var(--warn); }
+  .mark { position:relative; width:36px; height:36px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--muted); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .mark.logo { border:0; background:transparent; }
+  .mark.logo img { width:100%; height:100%; object-fit:cover; border-radius:999px; background:#fff; }
+  .mark svg { width:17px; height:17px; stroke-width:1.6; }
+  /* indicators */
+  .badge { position:absolute; right:-4px; bottom:-4px; width:17px; height:17px; border-radius:999px; background:var(--card); box-shadow:0 0 0 2px var(--card), 0 0 0 3px var(--line); display:flex; align-items:center; justify-content:center; color:var(--muted); }
+  .badge svg { width:10px; height:10px; stroke-width:2.2; }
+  .badge.solid { background:var(--fg); color:var(--bg); box-shadow:0 0 0 2px var(--bg); }
+  .dot { position:absolute; right:-1px; bottom:-1px; width:11px; height:11px; border-radius:999px; background:var(--success); box-shadow:0 0 0 2px var(--bg); }
+  .mark.ring { box-shadow:0 0 0 1.5px var(--fg); border-color:transparent; }
+  .mark.logo.ring { box-shadow:0 0 0 1.5px var(--fg); }
+  .mark.arrow { background:var(--tile); border-color:transparent; color:var(--fg); }
+  .amt.pillamt { background:var(--tile); padding:2px 9px; border-radius:999px; }
+  .edge { position:absolute; left:-10px; top:12px; bottom:12px; width:2px; border-radius:2px; background:var(--fg); opacity:.55; }
+  .amt.green { color:var(--success); }
+  .foot { color:var(--muted); font-size:12px; padding:10px 0 6px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>Money in: 9 quiet ways to show it</h1>
+    <p>Transaction History now uses one grey mark per row and a + or − sign. These are ways to make incoming money easier to spot without bringing back the tinted tiles or the green badge. Same eight payments in every frame: three are money in (the MTN wallet transfer, Employer Ltd with its logo, and the Savings transfer).</p>
+  </div>
+  <button class="theme" onclick="document.body.classList.toggle('dark')">Light / dark</button>
+</header>
+<main id="root"></main>
+<script>
+const R = [
+  { who:"Melcom Stores",       kind:"Scan & Pay",          s:"11 Aug", icon:"qr-code",          dir:"out", amt:"500.00",   st:"ok",      logo:"melcom-centred.svg" },
+  { who:"My MTN Mobile Money", kind:"Wallet to bank",      s:"11 Aug", icon:"wallet",           dir:"in",  amt:"452.00",   st:"pending" },
+  { who:"Kofi Mensah",         kind:"Mobile money",        s:"10 Aug", icon:"smartphone",       dir:"out", amt:"200.00",   st:"ok" },
+  { who:"Landlord Properties", kind:"Bank transfer",       s:"9 Aug",  icon:"landmark",         dir:"out", amt:"2,500.00", st:"ok",      logo:"stanbic.png" },
+  { who:"Employer Ltd",        kind:"Salary",              s:"8 Aug",  icon:"landmark",         dir:"in",  amt:"4,200.00", st:"ok",      logo:"absa.svg" },
+  { who:"Telecel Ghana",       kind:"Data bundle",         s:"7 Aug",  icon:"wifi",             dir:"out", amt:"60.00",    st:"ok" },
+  { who:"Savings Account",     kind:"Between my accounts", s:"7 Aug",  icon:"arrow-left-right", dir:"in",  amt:"1,500.00", st:"ok" },
+  { who:"Shoprite Ghana",      kind:"Card",                s:"6 Aug",  icon:"credit-card",      dir:"out", amt:"320.40",   st:"ok",      logo:"shoprite.png" },
+];
+const ic = n => `<i data-lucide="${n}"></i>`;
+const base = r => r.logo ? `<img src="../public/brands/${r.logo}" alt="">` : ic(r.icon);
+const word = r => r.st==="ok" ? "" : `<span class="st">${r.st==="failed"?"Failed":"Pending"}</span>`;
+const amount = (r,extra="") => `<span class="amt ${r.st==="pending"?"hold":""} ${extra}">${r.dir==="out"?"−":"+"} GHS ${r.amt}</span>`;
+const row = (r,o={}) => {
+  const inn = r.dir==="in";
+  const markCls = ["mark", r.logo?"logo":"", inn&&o.ring?"ring":"", inn&&o.arrowMark&&!r.logo?"arrow":""].join(" ");
+  const mark = `<span class="${markCls}">${inn&&o.arrowMark&&!r.logo?ic("arrow-down-left"):base(r)}${inn&&o.badge?`<span class="badge ${o.badge}">${ic("arrow-down-left")}</span>`:""}${inn&&o.dot?`<span class="dot"></span>`:""}</span>`;
+  const meta = (inn&&o.word?`Received · `:"")+`${r.kind} · ${r.s}`;
+  return `<div class="row">${inn&&o.edge?`<span class="edge"></span>`:""}${mark}<div class="mid"><span class="name">${r.who}</span><span class="meta">${meta}</span></div><div class="end">${amount(r,inn&&o.pill?"pillamt":(inn&&o.green?"green":""))}${word(r)}</div></div>`;
+};
+const V = [
+ { n:"0 · Now (the reference)", why:"What is built today: a + sign and nothing else. Money in is only told apart by reading the sign.", o:{} },
+ { n:"1 · Quiet corner arrow", why:"The old badge, drained of colour: a small grey down-left arrow in a hairline disc on the mark's corner. Same place people learned it, no green.", o:{badge:""} },
+ { n:"2 · Solid corner arrow", why:"The same corner badge, filled in the text colour (black in light, white in dark). Stronger than grey, still no hue, so it reads as a marker, not decoration.", o:{badge:"solid"} },
+ { n:"3 · One green dot", why:"A small green dot on the corner, nothing else. The only colour on the page, and only for money in. Less shape than an arrow, easy to notice.", o:{dot:true} },
+ { n:"4 · The word 'Received'", why:"No badge. The grey line says 'Received · Salary · 8 Aug'. It is the clearest for new users and for screen readers, and adds nothing to the mark.", o:{word:true} },
+ { n:"5 · A darker ring on the mark", why:"Money in gets a 1.5px ring in the text colour around its circle; everything else keeps the hairline. Very subtle: a shape you notice without being told.", o:{ring:true} },
+ { n:"6 · The mark becomes the arrow", why:"Where there is no logo, an incoming row's icon is the arrow itself on a soft tile. Logo rows are left alone (recognition wins), so it only helps some rows.", o:{arrowMark:true} },
+ { n:"7 · The amount sits on a quiet pill", why:"Only incoming amounts get a soft grey pill behind them. It is the biggest change to the right-hand column and leaves the mark alone.", o:{pill:true} },
+ { n:"8 · A tick on the left edge", why:"A thin line on the row's left edge for money in. It works like an unread marker: a bit of margin, no change to the mark or the amount.", o:{edge:true} },
+];
+const root=document.getElementById("root");
+V.forEach(v=>root.insertAdjacentHTML("beforeend",`<section class="v"><h2>${v.n}</h2><p>${v.why}</p><div class="frame">${R.map(r=>row(r,v.o)).join("")}</div></section>`));
+lucide.createIcons();
+</script>
+</body>
+</html>
