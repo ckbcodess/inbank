@@ -6,7 +6,7 @@
  * Structure:
  *   - Header: "Send & Pay" with "Manage Beneficiaries" and "View Standing Orders" pill buttons
  *   - Send: 6 cards (To Bank, To Wallet, To Proxy, To Group, Wallet to Bank, PAPSS Payments)
- *   - Pay: 4 cards (GCB Pay, Internet, Airtime, Card Top up)
+ *   - Pay: 4 cards (Bills, Internet, Airtime, Card Top up)
  */
 
 import Link from "next/link";
@@ -102,7 +102,7 @@ const SEND_ACTIONS: PaymentAction[] = [
 const PAY_ACTIONS: PaymentAction[] = [
   {
     id: "gcb-pay",
-    title: "GCB Pay",
+    title: "Bills",
     href: "/payments/send?rail=bill",
     icon: Receipt,
     tone: "amber",
@@ -143,7 +143,7 @@ const PAY_ACTIONS: PaymentAction[] = [
   {
     id: "qr",
     title: "Scan & Pay",
-    href: "/payments/send?rail=qr",
+    href: "/payments/send?rail=qr&mode=scan",
     icon: Qr,
     tone: "rose",
     accent: rectRegion(12.5, 12.5, 11, 11),

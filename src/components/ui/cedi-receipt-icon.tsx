@@ -9,7 +9,7 @@ export interface CediReceiptIconProps extends React.SVGProps<SVGSVGElement> {
 
 /**
  * Receipt icon with the Ghanaian Cedi symbol (₵) inside.
- * Drop-in replacement for Lucide Receipt icon in GCB Pay / Bills actions.
+ * Drop-in replacement for Lucide Receipt icon in Bills actions.
  */
 export const CediReceiptIcon = React.forwardRef<SVGSVGElement, CediReceiptIconProps>(
   ({ size = 24, strokeWidth = 2, className, ...props }, ref) => {

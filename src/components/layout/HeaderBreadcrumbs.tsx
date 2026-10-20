@@ -7,7 +7,7 @@ import { findOffer } from "@/components/invest/offers";
 
 /** The full name of each Send & Pay flow, as the person knows it, never a clipped form of it. */
 const RAIL_BREADCRUMB_LABELS: Record<string, string> = {
-  bill: "GCB Pay",
+  bill: "Bills",
   bank: "Bank Transfer",
   ach: "Bank Transfer",
   wallet: "Mobile Money Transfer",
@@ -38,7 +38,7 @@ const ROUTE_LABELS: Record<string, string> = {
   standing: "Standing Orders",
   payees: "Beneficiaries",
   beneficiaries: "Beneficiaries",
-  bills: "GCB Pay",
+  bills: "Bills",
   bulk: "Bulk Payments",
   cards: "Cards",
   transactions: "Transaction History",

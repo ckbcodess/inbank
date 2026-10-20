@@ -26,7 +26,7 @@ export type MoneyActionKind = "send" | "bill" | "topup";
 
 const TITLE: Record<MoneyActionKind, string> = {
   send: "Send money to…",
-  bill: "GCB Pay",
+  bill: "Bills",
   topup: "Top up",
 };
 

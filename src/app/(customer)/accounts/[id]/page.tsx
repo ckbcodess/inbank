@@ -22,8 +22,6 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowLeftRight,
-  Eye,
-  EyeOff,
   Files,
   Landmark,
   PieChart,
@@ -45,7 +43,7 @@ import { useSession } from "@/lib/session-store";
 import { accountHolderName } from "@/lib/account-holder";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
 import { useAccountPrefs } from "@/lib/accounts-store";
-import { useAmountVisibility, RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
+import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
 import LinkSourceAccountModal, { type ModalScreen } from "@/components/dashboard/LinkSourceAccountModal";
 import { useCardLinkReturn } from "@/lib/card-link";
 import { useCardPaymentReturn } from "@/lib/card-payment";
@@ -340,7 +338,6 @@ function HeaderPill({ onClick, children }: { onClick: () => void; children: Reac
 /* ── Balance card ──────────────────────────────────────────────────────────── */
 
 function BalanceCard({ account, isDefault }: { account: Account; isDefault: boolean }) {
-  const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
   // Type and currency are already on the card, and "Active" is the expected state: only a status that needs attention is said.
   const needsAttention = account.status !== "Active";
 
@@ -382,17 +379,6 @@ function BalanceCard({ account, isDefault }: { account: Account; isDefault: bool
           currency={account.currency}
           className="text-[30px] leading-[1.25] tracking-[-0.015em] text-foreground tabular sm:text-[36px]"
         />
-        {/* Same switch as the header eye — one control, not two. */}
-        <button
-          type="button"
-          onClick={toggleAmountVisibility}
-          className="-ml-1 flex size-9 shrink-0 items-center justify-center rounded-full text-foreground transition-colors hover:bg-background/60 cursor-pointer"
-          aria-label={showAmounts ? "Hide balance" : "Show balance"}
-          aria-pressed={!showAmounts}
-          title={showAmounts ? "Hide balance" : "Show balance"}
-        >
-          {showAmounts ? <Eye size={18} strokeWidth={1.8} /> : <EyeOff size={18} strokeWidth={1.8} />}
-        </button>
       </div>
     </section>
   );

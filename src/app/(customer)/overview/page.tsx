@@ -48,7 +48,7 @@ function OverviewContent() {
   const actor = useSession((s) => s.actor);
   const activeProfile = useSession((s) => s.activeProfile);
   const defaultAccountId = useAccountPrefs((s) => s.defaultAccountId);
-  const { showAmounts, toggleAmountVisibility } = useAmountVisibility();
+  const { showAmounts } = useAmountVisibility();
   // Opens on the clean Active state; Dev Mode's Data state switches it.
   const [usageType, setUsageType] = useState<DashboardUsageType>("active");
   const [layout, setLayout] = useState<DashboardLayout>(readLayout);
@@ -147,7 +147,6 @@ function OverviewContent() {
         status={status}
         updatedAt={updatedAt}
         showAmounts={showAmounts}
-        onToggle={toggleAmountVisibility}
         onSelectAccount={selectAccount}
         onRefresh={refresh}
         onOpenFundModal={() => setFundModalOpen(true)}

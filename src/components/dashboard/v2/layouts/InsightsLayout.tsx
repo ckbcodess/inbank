@@ -98,7 +98,7 @@ function TopCategories({ data, loading, showAmounts }: { data: DashData; loading
 }
 
 export function InsightsLayout(props: DashViewProps) {
-  const { data, status, updatedAt, showAmounts, onToggle, onSelectAccount, onRefresh } = props;
+  const { data, status, updatedAt, showAmounts, onSelectAccount, onRefresh } = props;
   const loading = status === "loading";
   const currency = selectedAccount(data)?.currency ?? "GHS";
   const money = (n: number) => formatMoney(n, currency, showAmounts);
@@ -116,7 +116,7 @@ export function InsightsLayout(props: DashViewProps) {
       <div className="flex flex-col gap-5 sm:gap-6">
         <div className="flex flex-col gap-2 sm:gap-3">
           <AccountSwitcher data={data} onSelect={onSelectAccount} />
-          <BalanceFigure data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
+          <BalanceFigure data={data} loading={loading} />
           {/* In/out lives in the tiles below, so only the hold line here. */}
           {!loading && <BalanceMeta data={data} showAmounts={showAmounts} showFlow={false} updatedAt={updatedAt} />}
           <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-2 sm:hidden" />

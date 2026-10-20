@@ -23,14 +23,18 @@ function payHref(rail: Rail, recipient: string, extra: Record<string, string> = 
 }
 
 /** The demo customer's regulars (matched by name against the flows' saved payees). */
+/*
+ * Each payee carries the amount of their last payment, so Pay again repeats it:
+ * the form opens with that amount filled in, and the customer can change it.
+ */
 const DEFAULT_PAYEES: PayAgainPayee[] = [
-  { name: "Ransford Gyasi", detail: "MTN MoMo", href: payHref("wallet", "Ransford Gyasi") },
-  { name: "Lester Adjei", detail: "ECG prepaid", href: payHref("ecg", "Lester Adjei") },
-  { name: "Kwame Boateng", detail: "GCB Bank", href: payHref("bank", "Kwame Boateng") },
-  { name: "Yaa Asantewaa", detail: "MTN Airtime", href: payHref("airtime", "Yaa Asantewaa") },
-  { name: "Abena Osei", detail: "Stanbic Bank", href: payHref("bank", "Abena Osei") },
-  { name: "Yaw Mensah", detail: "Telecel Cash", href: payHref("wallet", "Yaw Mensah") },
-  { name: "Kofi Boateng", detail: "AT Airtime", href: payHref("airtime", "Kofi Boateng") },
+  { name: "Ransford Gyasi", detail: "MTN MoMo", href: payHref("wallet", "Ransford Gyasi", { amount: "150" }) },
+  { name: "Lester Adjei", detail: "ECG prepaid", href: payHref("ecg", "Lester Adjei", { amount: "120" }) },
+  { name: "Kwame Boateng", detail: "GCB Bank", href: payHref("bank", "Kwame Boateng", { amount: "500" }) },
+  { name: "Yaa Asantewaa", detail: "MTN Airtime", href: payHref("airtime", "Yaa Asantewaa", { amount: "20" }) },
+  { name: "Abena Osei", detail: "Stanbic Bank", href: payHref("bank", "Abena Osei", { amount: "1200" }) },
+  { name: "Yaw Mensah", detail: "Telecel Cash", href: payHref("wallet", "Yaw Mensah", { amount: "80" }) },
+  { name: "Kofi Boateng", detail: "AT Airtime", href: payHref("airtime", "Kofi Boateng", { amount: "10" }) },
   { name: "Home MiFi", detail: "Telecel Data", href: payHref("data", "Home Router (MiFi)") },
 ];
 
@@ -47,8 +51,8 @@ function migratedPayees(): PayAgainPayee[] {
 }
 
 const SINGLE_PAYEES: PayAgainPayee[] = [
-  { name: "Mum (Yaa Gyan)", detail: "MTN MoMo", href: payHref("wallet", "Mum (Yaa Gyan)", { account: "0244889900" }) },
-  { name: "ECG Electricity", detail: "ECG prepaid", href: payHref("bill", "ECG Electricity", { ref: "P-992014" }) },
+  { name: "Mum (Yaa Gyan)", detail: "MTN MoMo", href: payHref("wallet", "Mum (Yaa Gyan)", { account: "0244889900", amount: "100" }) },
+  { name: "ECG Electricity", detail: "ECG prepaid", href: payHref("bill", "ECG Electricity", { ref: "P-992014", amount: "180" }) },
 ];
 
 export function payAgainFor(actorId: string): PayAgainPayee[] {

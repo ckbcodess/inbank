@@ -5,7 +5,7 @@
  *
  * Strength: reading order on a wide screen. The account sits at the top left and
  * My QR at the top right; below them the balance on the left and the actions
- * (Send Money, GCB Pay, Top-Up, FX Rates) on the right, on one line. Same sheet
+ * (Send Money, Bills, Top-Up, FX Rates) on the right, on one line. Same sheet
  * of panels below.
  */
 
@@ -35,7 +35,7 @@ import {
 } from "../hero-parts";
 
 export function HeroSplitLayout(props: DashViewProps) {
-  const { data, status, showAmounts, onToggle, onSelectAccount, onRefresh } = props;
+  const { data, status, showAmounts, onSelectAccount, onRefresh } = props;
   const loading = status === "loading";
   const hasOtherAccounts = data.accounts.length > 1;
 
@@ -62,7 +62,7 @@ export function HeroSplitLayout(props: DashViewProps) {
             </div>
 
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-              <HeroBalance data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
+              <HeroBalance data={data} loading={loading} />
               <MoneyActions
                 accountId={data.selectedAccountId}
                 hasOtherAccounts={hasOtherAccounts}

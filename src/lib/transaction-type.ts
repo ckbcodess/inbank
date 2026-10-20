@@ -52,7 +52,7 @@ export function getTransactionType(t: Transaction): string {
     case "card":
       return "Card Payment";
     case "bill":
-      return "GCB Pay";
+      return "Bills";
     case "qr":
       return "Scan & Pay";
     case "cardless":

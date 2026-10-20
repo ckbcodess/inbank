@@ -431,7 +431,7 @@ const TELECEL_BROADBAND: BroadbandPackage[] = [
  * The broadband products, in the order they are offered. Each one has its own account (the field label and the rule it
  * is checked against) and its own packages. `packageGroups` limits a product to some of its network's plan groups.
  *
- * [ASSUMPTION] The Telecel user ID rule (8 to 20 letters or numbers) is a placeholder until Telecel confirms its format.
+ * [ASSUMPTION] The Telecel account number rule (8 to 20 letters or numbers) is a placeholder until Telecel confirms its format.
  * The MTN Fibre rule is likewise a guess until MTN confirms its account number format.
  */
 export type BroadbandProvider = {
@@ -450,14 +450,14 @@ export type BroadbandProvider = {
 };
 
 /**
- * The Telecel package each user ID is on right now. [MOCK] Pinned IDs are listed; any other ID resolves to one of the
+ * The Telecel package each account number is on right now. [MOCK] Pinned IDs are listed; any other ID resolves to one of the
  * Telecel plans by hash, so every demo user has an active package. Replace with the provider's lookup.
  */
 const TELECEL_ACTIVE_PACKAGE_IDS: Record<string, string> = {
   TEL12345678: "bb-tel-family-m",
 };
 
-/** When the active Telecel package is next due, as an ISO date. [MOCK] Two to twenty-six days from today, by user ID. */
+/** When the active Telecel package is next due, as an ISO date. [MOCK] Two to twenty-six days from today, by account number. */
 export function activeTelecelDueDate(userId: string): string {
   let hash = 0;
   for (let i = 0; i < userId.length; i++) {
@@ -503,9 +503,9 @@ export const BROADBAND_PROVIDERS: readonly BroadbandProvider[] = [
   },
   {
     name: "Telecel Broadband",
-    accountLabel: "User ID",
-    accountPlaceholder: "Enter your user ID",
-    accountError: "Enter a valid Telecel user ID (8 to 20 letters or numbers).",
+    accountLabel: "Telecel Broadband Account Number",
+    accountPlaceholder: "Enter your account number",
+    accountError: "Enter a valid Telecel Broadband account number (8 to 20 letters or numbers).",
     maxLength: 20,
     inputMode: "text",
     sanitize: (raw) => raw.replace(/[^a-zA-Z0-9]/g, "").toUpperCase(),

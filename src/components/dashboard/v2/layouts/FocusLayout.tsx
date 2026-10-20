@@ -65,7 +65,7 @@ function Section({ children }: { children: React.ReactNode }) {
 }
 
 export function FocusLayout(props: DashViewProps) {
-  const { data, status, updatedAt, showAmounts, onToggle, onSelectAccount, onRefresh } = props;
+  const { data, status, updatedAt, showAmounts, onSelectAccount, onRefresh } = props;
   const { t } = useTranslation();
   const loading = status === "loading";
 
@@ -86,7 +86,7 @@ export function FocusLayout(props: DashViewProps) {
       {/* Hero — the left pad offsets the eye button so the number reads centred. */}
       <div className="flex flex-col items-center gap-3 text-center sm:gap-4">
         <AccountSwitcher data={data} onSelect={onSelectAccount} align="center" />
-        <BalanceFigure data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} size="xl" className="pl-10 sm:pl-10" />
+        <BalanceFigure data={data} loading={loading} size="xl" className="pl-10 sm:pl-12" />
         {!loading && <Forecast data={data} showAmounts={showAmounts} />}
         <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} className="mt-2 hidden justify-center sm:flex" />
         <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-2 w-full sm:hidden" />

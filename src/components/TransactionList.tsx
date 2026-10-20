@@ -156,7 +156,6 @@ interface TransactionListProps {
   /** Show the 13.1 state switcher — off when embedded in a screen that owns its own. */
   showStateSwitcher?: boolean;
   emptyTitle?: string;
-  emptyDescription?: string;
   /** Start filtered to one account (e.g. "View All Transactions" from Account Details). */
   initialAccountId?: string;
 }
@@ -168,7 +167,6 @@ export default function TransactionList({
   repeatHref,
   showStateSwitcher = true,
   emptyTitle = "No transactions yet",
-  emptyDescription = "Activity will appear here once money moves.",
   initialAccountId,
 }: TransactionListProps) {
 
@@ -647,7 +645,7 @@ export default function TransactionList({
         <TrueEmptyState
           illustration="empty-activity"
           title={emptyTitle}
-          description={emptyDescription}
+          description="Activity will appear here once money moves."
           action={
             startHref ? (
               <Button nativeButton={false} render={<Link href={startHref} />} className="h-8 rounded-lg px-3 text-[13px]">

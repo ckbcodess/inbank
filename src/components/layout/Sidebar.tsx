@@ -18,6 +18,7 @@ import {
   ChevronDown,
   ClipboardCheck,
   CreditCard,
+  CircleHelp,
   Home,
   Landmark,
   LayoutDashboard,
@@ -25,6 +26,7 @@ import {
   LineChart,
   MapPin,
   PanelLeftClose,
+  PiggyBank,
   PanelLeftOpen,
   Percent,
   Receipt,
@@ -69,6 +71,8 @@ const ICON_MAP: Record<string, React.ElementType> = {
   Sparkles,
   LayoutGrid,
   MapPin,
+  CircleHelp,
+  PiggyBank,
   Settings,
 };
 

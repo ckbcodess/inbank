@@ -19,7 +19,6 @@ import {
   CORPORATE_STANDING_INSTRUCTIONS,
   CORPORATE_TRANSACTIONS,
 } from "./corporate/ledger";
-import { getGlobalShowAmounts } from "@/components/providers/AmountVisibilityProvider";
 
 /* ── Actors ────────────────────────────────────────────────────────────────── */
 
@@ -444,8 +443,19 @@ export function accountsForProfile(kind: ProfileKind = DEFAULT_PROFILE_KIND): Ac
   );
 }
 
+/**
+ * Accounts a dashboard state builds for itself (Dev Mode's wealth, new-customer
+ * and similar states). The dashboard links to them, so their detail pages must
+ * resolve them too; without this they read "Account Not Found".
+ */
+const SCENARIO_ACCOUNTS = new Map<string, Account>();
+
+export function registerScenarioAccounts(accounts: Account[]): void {
+  for (const a of accounts) SCENARIO_ACCOUNTS.set(a.id, a);
+}
+
 export function findAccount(id: string): Account | undefined {
-  return ACCOUNTS.find((a) => a.id === id);
+  return ACCOUNTS.find((a) => a.id === id) ?? SCENARIO_ACCOUNTS.get(id);
 }
 
 /* ── Transactions ──────────────────────────────────────────────────────────── */
@@ -504,7 +514,7 @@ export const TRANSACTION_RAILS = [
   { id: "outside-ghana", name: "Outside Ghana" },
   { id: "wallet", name: "Mobile Money" },
   { id: "airtime-data", name: "Airtime & Data" },
-  { id: "bill", name: "GCB Pay" },
+  { id: "bill", name: "Bills" },
   { id: "qr", name: "Scan & Pay" },
   { id: "card", name: "Card & POS" },
   { id: "cardless", name: "ATM Cash-out Code" },
@@ -2091,7 +2101,7 @@ export const FEE_CONCESSIONS: FeeConcession[] = [
 /* ── Formatting helpers ────────────────────────────────────────────────────── */
 
 export function formatMoney(amount: number, currency = "GHS", showAmounts?: boolean): string {
-  const visible = showAmounts ?? getGlobalShowAmounts();
+  const visible = showAmounts ?? true;
   if (!visible) {
     const symbol =
       currency.toUpperCase() === "USD"
