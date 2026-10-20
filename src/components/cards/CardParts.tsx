@@ -2,6 +2,7 @@
 
 /** Shared pieces for the four Cards layouts, so they can't drift apart. */
 
+import { rowKind } from "@/lib/profile";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { accountsForProfile, formatMoney, type PaymentCard } from "@/lib/mock-data";
@@ -54,7 +55,7 @@ export function cardStatusNote(card: PaymentCard, includeActive = false): Status
 /** Prepaid and virtual cards carry their own money; debit draws on an account. */
 export function cardFigure(card: PaymentCard): { label: string; value: string } {
   if (card.balance !== null) return { label: "Balance", value: formatMoney(card.balance, card.currency) };
-  const account = accountsForProfile(card.profileKind ?? "CORPORATE").find((a) => a.id === card.linkedAccountId);
+  const account = accountsForProfile(rowKind(card)).find((a) => a.id === card.linkedAccountId);
   return { label: "Linked account", value: account?.name ?? "—" };
 }
 

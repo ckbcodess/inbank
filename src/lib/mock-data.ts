@@ -7,8 +7,18 @@
 
 import type { CardScheme } from "@/lib/card-schemes";
 import { toLocalMobile } from "./phone";
+import { DEFAULT_PROFILE_KIND, rowKind, type ProfileKind } from "./profile";
 import type { Actor, Profile } from "./roles";
-import type { TransactionKind, TransactionState, TradeApprovalState } from "./states";
+import type { TransactionKind, TransactionState } from "./states";
+import type { CORPORATE_CATEGORIES } from "./corporate/ledger";
+import {
+  CORPORATE_ACCOUNTS,
+  CORPORATE_ACTORS,
+  CORPORATE_CARD_TRANSACTIONS,
+  CORPORATE_CARDS,
+  CORPORATE_STANDING_INSTRUCTIONS,
+  CORPORATE_TRANSACTIONS,
+} from "./corporate/ledger";
 import { getGlobalShowAmounts } from "@/components/providers/AmountVisibilityProvider";
 
 /* ── Actors ────────────────────────────────────────────────────────────────── */
@@ -39,13 +49,6 @@ const JOINT_PROFILE: Profile = {
   kind: "RETAIL",
   name: "Samuel Quartey & Esther Appiah (Joint)",
   reference: "JOINT-8844",
-};
-
-const CORPORATE_PROFILE: Profile = {
-  id: "prof-corp",
-  kind: "CORPORATE",
-  name: "Adinkra Textiles Ltd",
-  reference: "CORP-90114",
 };
 
 /**
@@ -133,36 +136,7 @@ export const ACTORS: Actor[] = [
     profiles: [RETAIL_PROFILE],
     tradeEligible: false,
   },
-  {
-    id: "u-dual",
-    name: "Kwame Boateng",
-    email: "kwame.boateng@example.com",
-    phone: "0244300411",
-    role: "CORPORATE_MAKER",
-    shell: "customer",
-    profiles: [CORPORATE_PROFILE],
-    tradeEligible: true,
-  },
-  {
-    id: "u-approver",
-    name: "Esther Appiah",
-    email: "esther.appiah@example.com",
-    phone: "0244300412",
-    role: "CORPORATE_APPROVER",
-    shell: "customer",
-    profiles: [CORPORATE_PROFILE],
-    tradeEligible: true,
-  },
-  {
-    id: "u-corpadmin",
-    name: "Yaw Oppong (Corporate Admin)",
-    email: "yaw.corp@example.com",
-    phone: "0541300413",
-    role: "CORPORATE_ADMIN",
-    shell: "customer",
-    profiles: [CORPORATE_PROFILE],
-    tradeEligible: true,
-  },
+  ...CORPORATE_ACTORS,
   {
     id: "u-tradeofficer",
     name: "Nana Addo",
@@ -241,7 +215,7 @@ export interface Account {
   balance: number;
   available: number;
   status: "Active" | "Dormant";
-  profileKind?: "RETAIL" | "CORPORATE";
+  profileKind?: ProfileKind;
   isJoint?: boolean;
   jointHolders?: string[];
   mandate?: "Either to sign" | "Both to sign" | "Any two to sign" | string;
@@ -297,134 +271,7 @@ export const ACCOUNTS: Account[] = [
     jointHolders: ["Elias Ayettey", "Akosua Appiah"],
     mandate: "Either to sign",
   },
-  {
-    id: "acc-001",
-    name: "Corporate Current Account",
-    number: "1001 2345 6789",
-    type: "Current",
-    currency: "GHS",
-    balance: 1_284_530.44,
-    available: 1_190_000.0,
-    status: "Active",
-    profileKind: "CORPORATE",
-    companyName: "Adinkra Textiles Ltd",
-    mandate: "Both to sign",
-    relationshipManager: {
-      name: "Kwame Asante",
-      email: "kwame.asante@gcb.com.gh",
-      phone: "+233 24 499 1821",
-    },
-    signatories: [
-      { name: "Yaw Oppong", role: "Managing Director (Signatory A)", email: "yaw.oppong@adinkratextiles.com", mobile: "0244123456", specimenUrl: "/signatures/specimen-yaw.svg" },
-      { name: "Esther Appiah", role: "Finance Director (Signatory B)", email: "esther.appiah@adinkratextiles.com", mobile: "0244300412", specimenUrl: "/signatures/specimen-esther.svg" },
-      { name: "Kwame Boateng", role: "Executive Director (Signatory A)", email: "kwame.boateng@adinkratextiles.com", mobile: "0244300411", specimenUrl: "/signatures/specimen-kwame.svg" },
-    ],
-  },
-  {
-    id: "acc-002",
-    name: "Payroll Account",
-    number: "1001 2345 7710",
-    type: "Current",
-    currency: "GHS",
-    balance: 342_118.9,
-    available: 342_118.9,
-    status: "Active",
-    profileKind: "CORPORATE",
-    companyName: "Adinkra Textiles Ltd",
-    mandate: "Both to sign",
-    relationshipManager: {
-      name: "Kwame Asante",
-      email: "kwame.asante@gcb.com.gh",
-      phone: "+233 24 499 1821",
-    },
-  },
-  {
-    id: "acc-003",
-    name: "USD Trade Account",
-    number: "2200 8891 0043",
-    type: "Foreign Currency",
-    currency: "USD",
-    balance: 486_220.15,
-    available: 452_000.0,
-    status: "Active",
-    profileKind: "CORPORATE",
-    companyName: "Adinkra Textiles Ltd",
-    mandate: "Both to sign",
-    relationshipManager: {
-      name: "Kwame Asante",
-      email: "kwame.asante@gcb.com.gh",
-      phone: "+233 24 499 1821",
-    },
-  },
-  {
-    id: "acc-volta-1",
-    name: "Commercial Operating Account",
-    number: "1001 8844 2200",
-    type: "Current",
-    currency: "GHS",
-    balance: 780_400.0,
-    available: 780_400.0,
-    status: "Active",
-    profileKind: "CORPORATE",
-    companyName: "Volta River Logistics Ltd",
-    mandate: "Either to sign",
-    relationshipManager: null, // Assigned to Corporate Banking Team (Operations)
-    signatories: [
-      { name: "Kofi Mensah", role: "Chief Executive Officer", email: "kofi.mensah@voltariver.com", mobile: "0201200314", specimenUrl: "/signatures/specimen-kofi.svg" },
-      { name: "Ama Serwaa", role: "Chief Operating Officer", email: "ama.serwaa@voltariver.com", mobile: "0244889911", specimenUrl: "/signatures/specimen-ama.svg" },
-    ],
-  },
-  {
-    id: "acc-gold-1",
-    name: "Primary Operating Account",
-    number: "1001 9922 4411",
-    type: "Current",
-    currency: "GHS",
-    balance: 3_500_000.0,
-    available: 3_500_000.0,
-    status: "Active",
-    profileKind: "CORPORATE",
-    companyName: "Gold Coast Mining Services Ltd",
-    mandate: "Any two to sign",
-    relationshipManager: {
-      name: "Abena Owusu",
-      email: "abena.owusu@gcb.com.gh",
-      phone: "+233 24 440 0512",
-    },
-    signatories: [
-      { name: "Nana Addo Dankwa", role: "Chairman", email: "nana.addo@goldcoastmining.com", mobile: "0244400511", specimenUrl: "/signatures/specimen-nana.svg" },
-      { name: "Kwabena Mensah", role: "Managing Director", email: "kmensah@goldcoastmining.com", mobile: "0244112233", specimenUrl: "/signatures/specimen-kmensah.svg" },
-    ],
-  },
-  {
-    id: "acc-gold-2",
-    name: "Equipment Escrow Account",
-    number: "1001 9922 4412",
-    type: "Current",
-    currency: "GHS",
-    balance: 1_200_000.0,
-    available: 1_200_000.0,
-    status: "Active",
-    profileKind: "CORPORATE",
-    companyName: "Gold Coast Mining Services Ltd",
-    mandate: "Any two to sign",
-    relationshipManager: {
-      name: "Abena Owusu",
-      email: "abena.owusu@gcb.com.gh",
-      phone: "+233 24 440 0512",
-    },
-  },
-  {
-    id: "acc-004",
-    name: "Reserve Savings",
-    number: "3300 1122 5566",
-    type: "Savings",
-    currency: "GHS",
-    balance: 95_400.0,
-    available: 95_400.0,
-    status: "Dormant",
-    profileKind: "CORPORATE",
-  },
+  ...CORPORATE_ACCOUNTS,
   {
     id: "acc-clean-001",
     name: "Current Account",
@@ -577,10 +424,10 @@ export function getSimulatedRetailUser(): "clean" | "single" | "everyday" {
  * `acc-003` stays in ACCOUNTS purely so trade records and USD cards that
  * reference it still resolve through `findAccount`.
  */
-export function accountsForProfile(kind: "RETAIL" | "CORPORATE" = "CORPORATE"): Account[] {
+export function accountsForProfile(kind: ProfileKind = DEFAULT_PROFILE_KIND): Account[] {
   if (kind === "CORPORATE") {
     return ACCOUNTS.filter(
-      (a) => (a.profileKind ?? "CORPORATE") === "CORPORATE" && a.type !== "Foreign Currency" && !a.scenarioOnly,
+      (a) => rowKind(a) === "CORPORATE" && a.type !== "Foreign Currency" && !a.scenarioOnly,
     );
   }
 
@@ -593,7 +440,7 @@ export function accountsForProfile(kind: "RETAIL" | "CORPORATE" = "CORPORATE"): 
   }
 
   return ACCOUNTS.filter(
-    (a) => (a.profileKind ?? "CORPORATE") === "RETAIL" && a.type !== "Foreign Currency" && !a.scenarioOnly && a.id !== "acc-clean-001" && a.id !== "acc-single-001",
+    (a) => rowKind(a) === "RETAIL" && a.type !== "Foreign Currency" && !a.scenarioOnly && a.id !== "acc-clean-001" && a.id !== "acc-single-001",
   );
 }
 
@@ -608,20 +455,6 @@ export function findAccount(id: string): Account | undefined {
  * line and a personal one has no "Payroll" line. Both lists are capped at eight
  * so the dashboard breakdown never has to invent a colour; see `insights.ts`.
  */
-export const CORPORATE_CATEGORIES = [
-  "Payroll",
-  "Suppliers",
-  "Trade & Imports",
-  "Rent & Facilities",
-  "Utilities",
-  "Travel",
-  "Taxes & Levies",
-  "Bank Charges",
-  "Fees",
-  "Transport",
-  "Airtime & Data",
-] as const;
-
 export const RETAIL_CATEGORIES = [
   "Bills",
   "Data",
@@ -718,7 +551,7 @@ export interface Transaction {
   state: TransactionState;
   channel: string;
   paymentMethod?: string;
-  profileKind?: "RETAIL" | "CORPORATE";
+  profileKind?: ProfileKind;
   /** Spend classification — debits only; credits are income, not a spend line. */
   category?: SpendCategory;
   /** Populated for failed states — drives the recovery path. */
@@ -733,302 +566,7 @@ export interface Transaction {
 }
 
 export const TRANSACTIONS: Transaction[] = [
-  {
-    id: "txn-001",
-    reference: "NIB-2026-884213",
-    date: "2026-08-10",
-    valueDate: "2026-08-10",
-    description: "Supplier payment — Accra Fabrics",
-    counterparty: "Accra Fabrics Ltd",
-    counterpartyAccount: "0231 4455 8890",
-    counterpartyBank: "Absa Bank Ghana",
-    accountId: "acc-001",
-    currency: "GHS",
-    amount: 48_500.0,
-    direction: "debit",
-    kind: "single",
-    state: "completed",
-    channel: "Internet Banking",
-    paymentMethod: "ach",
-    fee: 12.5,
-    category: "Suppliers",
-    profileKind: "CORPORATE",
-  },
-  {
-    id: "txn-002",
-    reference: "NIB-2026-884219",
-    date: "2026-08-10",
-    valueDate: "2026-08-11",
-    description: "Payroll batch — August",
-    counterparty: "Multiple (142 beneficiaries)",
-    counterpartyAccount: "—",
-    accountId: "acc-002",
-    currency: "GHS",
-    amount: 286_400.0,
-    direction: "debit",
-    kind: "bulk",
-    state: "pending",
-    channel: "Bulk Upload",
-    paymentMethod: "bulk",
-    batchId: "batch-0091",
-    category: "Payroll",
-    profileKind: "CORPORATE",
-  },
-  {
-    id: "txn-003",
-    reference: "NIB-2026-884101",
-    date: "2026-08-09",
-    valueDate: "2026-08-09",
-    description: "Vendor settlement — Tema Logistics",
-    counterparty: "Tema Logistics",
-    counterpartyAccount: "0554 7781 2200",
-    counterpartyBank: "Ecobank Ghana",
-    accountId: "acc-001",
-    currency: "GHS",
-    amount: 15_750.0,
-    direction: "debit",
-    kind: "single",
-    state: "failed-single",
-    channel: "Internet Banking",
-    paymentMethod: "gip",
-    failureReason:
-      "Beneficiary account name does not match the account number at the receiving bank (FR-32).",
-    category: "Suppliers",
-    profileKind: "CORPORATE",
-  },
-  {
-    id: "txn-004",
-    reference: "NIB-2026-883940",
-    date: "2026-08-08",
-    valueDate: "2026-08-08",
-    description: "Payroll record — K. Amoah",
-    counterparty: "Kwesi Amoah",
-    counterpartyAccount: "0119 2234 7781",
-    accountId: "acc-002",
-    currency: "GHS",
-    amount: 4_200.0,
-    direction: "debit",
-    kind: "bulk",
-    state: "failed-bulk",
-    channel: "Bulk Upload",
-    paymentMethod: "bulk",
-    batchId: "batch-0090",
-    failureReason: "Record 37 of 140 — beneficiary account closed.",
-    category: "Payroll",
-    profileKind: "CORPORATE",
-  },
-  {
-    id: "txn-005",
-    reference: "TRD-2026-00417",
-    date: "2026-08-07",
-    valueDate: "2026-08-07",
-    description: "Documentary collection — cotton import",
-    counterparty: "Shenzhen Textile Group",
-    counterpartyAccount: "CN-8891-40023",
-    accountId: "acc-003",
-    currency: "USD",
-    amount: 128_000.0,
-    direction: "debit",
-    kind: "trade",
-    state: "failed-trade",
-    channel: "Trade Portal",
-    paymentMethod: "trade",
-    tradeId: "trade-0417",
-    failureReason:
-      "Returned by bank operations — commercial invoice does not match the bill of lading quantity.",
-    category: "Trade & Imports",
-    profileKind: "CORPORATE",
-  },
-  {
-    id: "txn-006",
-    reference: "NIB-2026-883712",
-    date: "2026-08-06",
-    valueDate: "2026-08-06",
-    description: "Incoming transfer — Ghana Cocoa Board",
-    counterparty: "Ghana Cocoa Board",
-    counterpartyAccount: "0044 1123 9080",
-    counterpartyBank: "Bank of Ghana",
-    accountId: "acc-001",
-    currency: "GHS",
-    amount: 512_000.0,
-    direction: "credit",
-    kind: "single",
-    state: "completed",
-    channel: "RTGS",
-    paymentMethod: "rtgs",
-    profileKind: "CORPORATE",
-  },
-  {
-    id: "txn-007",
-    reference: "NIB-2026-883550",
-    date: "2026-08-05",
-    valueDate: "2026-08-05",
-    description: "Corporate Travel POS — Flight Booking",
-    counterparty: "Ghana Airways",
-    counterpartyAccount: "0099 2211 4400",
-    accountId: "acc-001",
-    currency: "GHS",
-    amount: 3_850.0,
-    direction: "debit",
-    kind: "single",
-    state: "completed",
-    channel: "POS Card",
-    paymentMethod: "card",
-    category: "Travel",
-    profileKind: "CORPORATE",
-  },
-  {
-    id: "txn-008",
-    reference: "NIB-2026-883490",
-    date: "2026-08-04",
-    valueDate: "2026-08-04",
-    description: "Executive Mobile Pay — Utility Bill",
-    counterparty: "ECG Ghana",
-    counterpartyAccount: "0012 9944 8811",
-    accountId: "acc-001",
-    currency: "GHS",
-    amount: 1_200.0,
-    direction: "debit",
-    kind: "single",
-    state: "completed",
-    channel: "Mobile Banking",
-    paymentMethod: "bill",
-    category: "Utilities",
-    profileKind: "CORPORATE",
-  },
-  {
-    id: "txn-009",
-    reference: "NIB-2026-883310",
-    date: "2026-08-11",
-    valueDate: "2026-08-11",
-    description: "Monthly Account Maintenance Fee",
-    counterparty: "GCB Bank Charges",
-    counterpartyAccount: "GCB-SYS-001",
-    accountId: "acc-001",
-    currency: "GHS",
-    amount: 45.0,
-    direction: "debit",
-    kind: "single",
-    state: "completed",
-    channel: "Internet Banking",
-    paymentMethod: "bill",
-    category: "Fees",
-    profileKind: "CORPORATE",
-  },
-  {
-    id: "txn-010",
-    reference: "NIB-2026-883204",
-    date: "2026-08-10",
-    valueDate: "2026-08-10",
-    description: "Corporate Fleet Fuel & Transit — Shell Airport",
-    counterparty: "Shell Ghana Ltd",
-    counterpartyAccount: "0123 9988 7744",
-    accountId: "acc-001",
-    currency: "GHS",
-    amount: 2_400.0,
-    direction: "debit",
-    kind: "single",
-    state: "completed",
-    channel: "POS Card",
-    paymentMethod: "card",
-    category: "Transport",
-    profileKind: "CORPORATE",
-  },
-  {
-    id: "txn-011",
-    reference: "NIB-2026-883199",
-    date: "2026-08-09",
-    valueDate: "2026-08-09",
-    description: "Wallet to Bank pull — MTN MoMo Merchant",
-    counterparty: "MTN Mobile Money Merchant",
-    counterpartyAccount: "0244 8899 00",
-    accountId: "acc-001",
-    currency: "GHS",
-    amount: 14_500.0,
-    direction: "credit",
-    kind: "single",
-    state: "completed",
-    channel: "Mobile Banking",
-    paymentMethod: "wallet-to-bank",
-    profileKind: "CORPORATE",
-  },
-  {
-    id: "txn-012",
-    reference: "NIB-2026-883042",
-    date: "2026-08-08",
-    valueDate: "2026-08-08",
-    description: "PAPSS cross-border settlement — Ecobank Lagos",
-    counterparty: "Lagos Commodities Trading",
-    counterpartyAccount: "NG-ECO-992100",
-    counterpartyBank: "Ecobank Nigeria",
-    accountId: "acc-001",
-    currency: "GHS",
-    amount: 36_800.0,
-    direction: "debit",
-    kind: "single",
-    state: "completed",
-    channel: "Internet Banking",
-    paymentMethod: "papss",
-    category: "Trade & Imports",
-    profileKind: "CORPORATE",
-  },
-  {
-    id: "txn-013",
-    reference: "NIB-2026-882980",
-    date: "2026-08-07",
-    valueDate: "2026-08-07",
-    description: "GhIPSS Instant Pay (GIP) — Fidelity Bank",
-    counterparty: "Kaneshie Paper Mill",
-    counterpartyAccount: "0551 2233 4455",
-    counterpartyBank: "Fidelity Bank",
-    accountId: "acc-001",
-    currency: "GHS",
-    amount: 8_200.0,
-    direction: "debit",
-    kind: "single",
-    state: "completed",
-    channel: "Internet Banking",
-    paymentMethod: "gip",
-    category: "Suppliers",
-    profileKind: "CORPORATE",
-  },
-  {
-    id: "txn-014",
-    reference: "NIB-2026-882850",
-    date: "2026-08-05",
-    valueDate: "2026-08-05",
-    description: "Internal Transfer Between My Accounts",
-    counterparty: "GCB Operating to GCB Reserve",
-    counterpartyAccount: "acc-002",
-    accountId: "acc-001",
-    currency: "GHS",
-    amount: 50_000.0,
-    direction: "debit",
-    kind: "single",
-    state: "completed",
-    channel: "Internet Banking",
-    paymentMethod: "own-account",
-    profileKind: "CORPORATE",
-  },
-  {
-    id: "txn-015",
-    reference: "NIB-2026-882710",
-    date: "2026-08-03",
-    valueDate: "2026-08-03",
-    description: "Turbonet Office Data Bundle — MTN 200GB",
-    counterparty: "MTN Ghana",
-    counterpartyAccount: "0244 0000 01",
-    accountId: "acc-001",
-    currency: "GHS",
-    amount: 650.0,
-    direction: "debit",
-    kind: "single",
-    state: "completed",
-    channel: "Data",
-    paymentMethod: "data",
-    category: "Airtime & Data",
-    profileKind: "CORPORATE",
-  },
+  ...CORPORATE_TRANSACTIONS,
   {
     id: "txn-ret-001",
     reference: "NIB-2026-901124",
@@ -1616,16 +1154,16 @@ export function transactionsForAccount(accountId: string): Transaction[] {
   return TRANSACTIONS.filter((t) => t.accountId === accountId);
 }
 
-export function transactionsForProfile(kind: "RETAIL" | "CORPORATE" = "CORPORATE"): Transaction[] {
+export function transactionsForProfile(kind: ProfileKind = DEFAULT_PROFILE_KIND): Transaction[] {
   if (kind === "CORPORATE") {
-    return TRANSACTIONS.filter((t) => (t.profileKind ?? "CORPORATE") === "CORPORATE");
+    return TRANSACTIONS.filter((t) => rowKind(t) === "CORPORATE");
   }
 
   const sim = getSimulatedRetailUser();
   if (sim === "clean") return [];
   if (sim === "single") return SINGLE_USER_TRANSACTIONS;
 
-  return TRANSACTIONS.filter((t) => (t.profileKind ?? "CORPORATE") === "RETAIL");
+  return TRANSACTIONS.filter((t) => rowKind(t) === "RETAIL");
 }
 
 /* ── Beneficiaries ─────────────────────────────────────────────────────────── */
@@ -1645,134 +1183,6 @@ export const BENEFICIARIES: Beneficiary[] = [
   { id: "ben-4", name: "Kumasi Supplies", accountNumber: "0788 3312 0091", bank: "GCB Bank", currency: "GHS" },
   { id: "ben-5", name: "Shenzhen Textile Group", accountNumber: "CN-8891-40023", bank: "Bank of China", currency: "USD" },
 ];
-
-/* ── Approval queue ────────────────────────────────────────────────────────── */
-
-export interface ApprovalItem {
-  id: string;
-  reference: string;
-  type: "payment" | "trade";
-  description: string;
-  counterparty: string;
-  currency: string;
-  amount: number;
-  submittedBy: string;
-  submittedAt: string;
-  /** Approver authority check — drives 13.4 within-limit vs exceeds-limit. */
-  approvalLimit: number;
-  priority: "standard" | "urgent";
-}
-
-export const APPROVAL_QUEUE: ApprovalItem[] = [
-  {
-    id: "apr-001",
-    reference: "NIB-2026-884260",
-    type: "payment",
-    description: "Equipment purchase — Volta Machinery",
-    counterparty: "Volta Machinery Ltd",
-    currency: "GHS",
-    amount: 96_000.0,
-    submittedBy: "Kwame Boateng",
-    submittedAt: "2026-08-11 09:14",
-    approvalLimit: 250_000.0,
-    priority: "standard",
-  },
-  {
-    id: "apr-002",
-    reference: "NIB-2026-884288",
-    type: "payment",
-    description: "Quarterly supplier settlement",
-    counterparty: "Accra Fabrics Ltd",
-    currency: "GHS",
-    amount: 480_000.0,
-    submittedBy: "Kwame Boateng",
-    submittedAt: "2026-08-11 10:02",
-    approvalLimit: 250_000.0, // exceeds → 13.4 exceeds-limit
-    priority: "urgent",
-  },
-  {
-    id: "apr-003",
-    reference: "TRD-2026-00421",
-    type: "trade",
-    description: "Letter of credit — cotton import Q3",
-    counterparty: "Shenzhen Textile Group",
-    currency: "USD",
-    amount: 210_000.0,
-    submittedBy: "Kwame Boateng",
-    submittedAt: "2026-08-10 16:41",
-    approvalLimit: 500_000.0,
-    priority: "standard",
-  },
-  {
-    id: "apr-004",
-    reference: "TRD-2026-00423",
-    type: "trade",
-    description: "Documentary collection — machinery parts",
-    counterparty: "Hamburg Werke GmbH",
-    currency: "USD",
-    amount: 74_500.0,
-    submittedBy: "Yaw Oppong",
-    submittedAt: "2026-08-11 08:30",
-    approvalLimit: 500_000.0,
-    priority: "standard",
-  },
-];
-
-export function findApproval(id: string): ApprovalItem | undefined {
-  return APPROVAL_QUEUE.find((a) => a.id === id);
-}
-
-/* ── Trade documents & versions (13.5) ─────────────────────────────────────── */
-
-export interface TradeDocument {
-  id: string;
-  name: string;
-  type: string;
-  pages: number;
-  uploadedAt: string;
-  status: "received" | "missing" | "superseded";
-}
-
-export const TRADE_DOCUMENTS: TradeDocument[] = [
-  { id: "doc-1", name: "Commercial Invoice", type: "PDF", pages: 3, uploadedAt: "2026-08-10 16:38", status: "received" },
-  { id: "doc-2", name: "Bill of Lading", type: "PDF", pages: 2, uploadedAt: "2026-08-10 16:39", status: "received" },
-  { id: "doc-3", name: "Packing List", type: "PDF", pages: 4, uploadedAt: "2026-08-10 16:40", status: "received" },
-  { id: "doc-4", name: "Certificate of Origin", type: "PDF", pages: 1, uploadedAt: "—", status: "missing" },
-  { id: "doc-5", name: "Insurance Certificate", type: "PDF", pages: 2, uploadedAt: "2026-08-10 16:41", status: "received" },
-];
-
-export interface TradeVersion {
-  version: number;
-  submittedAt: string;
-  submittedBy: string;
-  summary: string;
-}
-
-export const TRADE_VERSIONS: TradeVersion[] = [
-  { version: 1, submittedAt: "2026-08-04 11:20", submittedBy: "Kwame Boateng", summary: "Initial submission" },
-  { version: 2, submittedAt: "2026-08-08 09:55", submittedBy: "Kwame Boateng", summary: "Corrected invoice quantity after clarification" },
-  { version: 3, submittedAt: "2026-08-10 16:41", submittedBy: "Kwame Boateng", summary: "Added insurance certificate, revised incoterms" },
-];
-
-/** Field-level diff between v(n-1) and v(n) — 13.5 requires a visual diff. */
-export interface VersionFieldDiff {
-  field: string;
-  previous: string;
-  current: string;
-  changed: boolean;
-}
-
-export const VERSION_DIFF: VersionFieldDiff[] = [
-  { field: "Goods description", previous: "Raw cotton, grade A", current: "Raw cotton, grade A", changed: false },
-  { field: "Quantity", previous: "18,000 kg", current: "16,400 kg", changed: true },
-  { field: "Unit price", previous: "USD 7.10 / kg", current: "USD 7.80 / kg", changed: true },
-  { field: "Total value", previous: "USD 127,800.00", current: "USD 127,920.00", changed: true },
-  { field: "Incoterms", previous: "FOB Shenzhen", current: "CIF Tema", changed: true },
-  { field: "Latest shipment date", previous: "2026-09-15", current: "2026-09-15", changed: false },
-  { field: "Beneficiary", previous: "Shenzhen Textile Group", current: "Shenzhen Textile Group", changed: false },
-];
-
-export const TRADE_APPROVAL_DEFAULT_STATE: TradeApprovalState = "awaiting-decision";
 
 /* ── Cards — FR-33 (fund prepaid card), FR-34 (block / unblock) ─────────────── */
 
@@ -1879,7 +1289,7 @@ export interface PaymentCard {
   fundable: boolean;
   isVirtual?: boolean;
   singleUse?: boolean;
-  profileKind?: "RETAIL" | "CORPORATE";
+  profileKind?: ProfileKind;
   colorTheme?: string;
   /** Fulfillment and Delivery Tracking */
   deliveryMethod?: DeliveryMethod;
@@ -1894,186 +1304,7 @@ export interface PaymentCard {
 }
 
 export const CARDS: PaymentCard[] = [
-  {
-    id: "card-v01",
-    name: "AWS & SaaS",
-    maskedNumber: "∗∗∗∗ 9102",
-    fullNumber: "4532 8910 4421 9102",
-    cvv: "814",
-    type: "Virtual",
-    scheme: "Visa",
-    currency: "USD",
-    balance: 5_000.0,
-    spendLimit: 10_000.0,
-    linkedAccountId: "acc-003",
-    holder: "Kwame Boateng",
-    expiry: "12/28",
-    status: "Active",
-    fundable: true,
-    isVirtual: true,
-    singleUse: false,
-    profileKind: "CORPORATE",
-    colorTheme: "blue",
-  },
-  {
-    id: "card-v02",
-    name: "Google Ads Marketing",
-    maskedNumber: "∗∗∗∗ 3194",
-    fullNumber: "5412 7719 3320 3194",
-    cvv: "492",
-    type: "Virtual",
-    scheme: "Mastercard",
-    currency: "GHS",
-    balance: 2_500.0,
-    spendLimit: 5_000.0,
-    linkedAccountId: "acc-001",
-    holder: "Kwame Boateng",
-    expiry: "06/27",
-    status: "Active",
-    fundable: true,
-    isVirtual: true,
-    singleUse: false,
-    profileKind: "CORPORATE",
-    colorTheme: "silver",
-  },
-  {
-    id: "card-001",
-    name: "Corporate Travel",
-    maskedNumber: "∗∗∗∗ 4412",
-    fullNumber: "4532 1100 8820 4412",
-    cvv: "219",
-    type: "Prepaid",
-    scheme: "Visa",
-    currency: "GHS",
-    balance: 12_450.0,
-    linkedAccountId: "acc-001",
-    holder: "Ransford Gyasi",
-    expiry: "09/28",
-    status: "Active",
-    fundable: true,
-    profileKind: "CORPORATE",
-    colorTheme: "maroon",
-  },
-  {
-    id: "card-002",
-    name: "Corporate Procurement",
-    maskedNumber: "∗∗∗∗ 8830",
-    fullNumber: "5412 6601 2290 8830",
-    cvv: "614",
-    type: "Prepaid",
-    scheme: "Mastercard",
-    currency: "USD",
-    balance: 3_180.5,
-    linkedAccountId: "acc-003",
-    holder: "Kwabena Mensah",
-    expiry: "02/27",
-    status: "Active",
-    fundable: true,
-    profileKind: "CORPORATE",
-    colorTheme: "black",
-  },
-  {
-    id: "card-003",
-    name: "Main Operating",
-    maskedNumber: "∗∗∗∗ 1207",
-    type: "Debit",
-    scheme: "Visa",
-    currency: "GHS",
-    balance: null,
-    linkedAccountId: "acc-001",
-    holder: "Ransford Gyasi",
-    expiry: "11/29",
-    status: "Active",
-    fundable: false,
-    profileKind: "CORPORATE",
-    colorTheme: "gold",
-  },
-  {
-    id: "card-004",
-    name: "Payroll Disbursements",
-    maskedNumber: "∗∗∗∗ 6654",
-    type: "Prepaid",
-    scheme: "Mastercard",
-    currency: "GHS",
-    balance: 0,
-    linkedAccountId: "acc-002",
-    holder: "Yaw Boateng",
-    expiry: "05/26",
-    status: "Blocked",
-    fundable: true,
-    profileKind: "CORPORATE",
-    colorTheme: "blue",
-  },
-  {
-    id: "card-005",
-    name: "Executive Operating",
-    maskedNumber: "∗∗∗∗ 3719",
-    fullNumber: "5412 8840 1920 3719",
-    cvv: "721",
-    type: "Debit",
-    scheme: "Mastercard",
-    currency: "GHS",
-    balance: null,
-    linkedAccountId: "acc-001",
-    holder: "Kwame Boateng",
-    expiry: "10/30",
-    status: "Inactive",
-    fundable: false,
-    profileKind: "CORPORATE",
-    colorTheme: "black",
-    deliveryMethod: "DELIVERY",
-    deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
-    deliveryStatus: "in_transit",
-    trackingNumber: "GCB-CRD-947201",
-    estimatedDeliveryDate: "3-5 business days",
-  },
-  {
-    id: "card-006",
-    name: "Branch Operations Card",
-    maskedNumber: "∗∗∗∗ 6128",
-    fullNumber: "4532 9901 3344 6128",
-    cvv: "392",
-    type: "Debit",
-    scheme: "Visa",
-    currency: "GHS",
-    balance: null,
-    linkedAccountId: "acc-001",
-    holder: "Ransford Gyasi",
-    expiry: "11/29",
-    status: "Inactive",
-    fundable: false,
-    profileKind: "CORPORATE",
-    colorTheme: "gold",
-    deliveryMethod: "BRANCH_PICKUP",
-    deliveryBranch: "GCB Head Office Branch (High Street, Accra)",
-    deliveryStatus: "ready_for_pickup",
-    trackingNumber: "GCB-CRD-771920",
-    estimatedDeliveryDate: "Ready for Pickup",
-    pickupCode: "4920",
-  },
-  {
-    id: "card-007",
-    name: "Field Logistics Prepaid",
-    maskedNumber: "∗∗∗∗ 7841",
-    fullNumber: "5412 1188 4402 7841",
-    cvv: "563",
-    type: "Prepaid",
-    scheme: "Mastercard",
-    currency: "GHS",
-    balance: 1_200.0,
-    linkedAccountId: "acc-002",
-    holder: "Kwabena Mensah",
-    expiry: "07/28",
-    status: "Inactive",
-    fundable: true,
-    profileKind: "CORPORATE",
-    colorTheme: "maroon",
-    deliveryMethod: "DELIVERY",
-    deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
-    deliveryStatus: "delivered",
-    trackingNumber: "GCB-CRD-491028",
-    estimatedDeliveryDate: "Delivered on Sep 17, 2026",
-  },
+  ...CORPORATE_CARDS,
   {
     id: "card-ret-001",
     name: "Everyday Checking",
@@ -2178,38 +1409,6 @@ export const CARDS: PaymentCard[] = [
     estimatedDeliveryDate: "Delivered on Sep 17, 2026",
   },
   {
-    id: "card-008",
-    name: "Premier Gold Corporate",
-    maskedNumber: "∗∗∗∗ 8821",
-    fullNumber: "5412 8821 7701 8821",
-    cvv: "629",
-    type: "Debit",
-    scheme: "Mastercard",
-    currency: "GHS",
-    balance: null,
-    linkedAccountId: "acc-001",
-    holder: "Kwame Boateng",
-    expiry: "08/30",
-    status: "Inactive",
-    fundable: false,
-    profileKind: "CORPORATE",
-    colorTheme: "gold",
-    deliveryMethod: "DELIVERY",
-    deliveryAddress: "No. 14 Ridge Road, Cantonments, Accra",
-    deliveryStatus: "out_for_delivery",
-    trackingNumber: "GCB-EXP-992104",
-    estimatedDeliveryDate: "Today • 2:00 PM - 3:30 PM",
-    deliveryCode: "7392",
-    courierRider: {
-      name: "Kofi Mensah",
-      phone: "+233 24 456 7890",
-      company: "GCB Express Courier",
-      vehicleType: "Dispatch Motorbike",
-      vehiclePlate: "GT-5842-24",
-      estimatedArrival: "Today between 2:00 PM – 3:30 PM",
-    },
-  },
-  {
     id: "card-ret-005",
     name: "Executive Premier Card",
     maskedNumber: "∗∗∗∗ 3491",
@@ -2284,9 +1483,9 @@ export const CARDS: PaymentCard[] = [
   },
 ];
 
-export function cardsForProfile(kind: "RETAIL" | "CORPORATE" = "CORPORATE"): PaymentCard[] {
+export function cardsForProfile(kind: ProfileKind = DEFAULT_PROFILE_KIND): PaymentCard[] {
   if (kind === "CORPORATE") {
-    return CARDS.filter((c) => (c.profileKind ?? "CORPORATE") === "CORPORATE");
+    return CARDS.filter((c) => rowKind(c) === "CORPORATE");
   }
 
   const sim = getSimulatedRetailUser();
@@ -2298,7 +1497,7 @@ export function cardsForProfile(kind: "RETAIL" | "CORPORATE" = "CORPORATE"): Pay
   }
 
   return CARDS.filter(
-    (c) => (c.profileKind ?? "CORPORATE") === "RETAIL" && c.id !== "card-single-001",
+    (c) => rowKind(c) === "RETAIL" && c.id !== "card-single-001",
   );
 }
 
@@ -2343,151 +1542,7 @@ export interface CardTransaction {
 }
 
 export const CARD_TRANSACTIONS: CardTransaction[] = [
-  // card-v01 (AWS & SaaS)
-  {
-    id: "c-act-1",
-    cardId: "card-v01",
-    title: "AWS Cloud Infrastructure",
-    category: "Cloud Services",
-    date: "14 Aug 2026",
-    amount: 142.5,
-    direction: "debit",
-    status: "completed",
-  },
-  {
-    id: "c-act-2",
-    cardId: "card-v01",
-    title: "Google Workspace EMEA",
-    category: "Software & SaaS",
-    date: "11 Aug 2026",
-    amount: 36.0,
-    direction: "debit",
-    status: "completed",
-  },
-  {
-    id: "c-act-3",
-    cardId: "card-v01",
-    title: "Card Balance Top Up",
-    category: "Between Accounts",
-    date: "08 Aug 2026",
-    amount: 2000.0,
-    direction: "credit",
-    status: "completed",
-  },
-  {
-    id: "c-act-4",
-    cardId: "card-v01",
-    title: "GitHub Enterprise Subscription",
-    category: "Developer Tools",
-    date: "02 Aug 2026",
-    amount: 84.0,
-    direction: "debit",
-    status: "completed",
-  },
-  // card-v02 (Google Ads Marketing)
-  {
-    id: "c-act-201",
-    cardId: "card-v02",
-    title: "Google Ads Global Campaign",
-    category: "Advertising",
-    date: "15 Aug 2026",
-    amount: 850.0,
-    direction: "debit",
-    status: "completed",
-  },
-  {
-    id: "c-act-202",
-    cardId: "card-v02",
-    title: "Meta Business Ads",
-    category: "Advertising",
-    date: "12 Aug 2026",
-    amount: 420.0,
-    direction: "debit",
-    status: "completed",
-  },
-  // card-001 (Corporate Travel)
-  {
-    id: "c-act-101",
-    cardId: "card-001",
-    title: "Africa World Airlines",
-    category: "Airlines",
-    date: "15 Aug 2026",
-    amount: 1850.0,
-    direction: "debit",
-    status: "completed",
-  },
-  {
-    id: "c-act-102",
-    cardId: "card-001",
-    title: "Kempinski Hotel Gold Coast",
-    category: "Hotels",
-    date: "13 Aug 2026",
-    amount: 2400.0,
-    direction: "debit",
-    status: "completed",
-  },
-  {
-    id: "c-act-103",
-    cardId: "card-001",
-    title: "Uber Business Ghana",
-    category: "Transport",
-    date: "10 Aug 2026",
-    amount: 320.0,
-    direction: "debit",
-    status: "completed",
-  },
-  // card-002 (Corporate Procurement)
-  {
-    id: "c-act-301",
-    cardId: "card-002",
-    title: "Alibaba B2B Procurement",
-    category: "Procurement",
-    date: "14 Aug 2026",
-    amount: 1450.0,
-    direction: "debit",
-    status: "completed",
-  },
-  {
-    id: "c-act-302",
-    cardId: "card-002",
-    title: "DHL Express Logistics",
-    category: "Logistics",
-    date: "10 Aug 2026",
-    amount: 280.0,
-    direction: "debit",
-    status: "completed",
-  },
-  // card-003 (Main Operating)
-  {
-    id: "c-act-401",
-    cardId: "card-003",
-    title: "Shell Airport Station",
-    category: "Fuel & Transit",
-    date: "16 Aug 2026",
-    amount: 450.0,
-    direction: "debit",
-    status: "completed",
-  },
-  {
-    id: "c-act-402",
-    cardId: "card-003",
-    title: "Melcom Plus Supermarket",
-    category: "Groceries",
-    date: "12 Aug 2026",
-    amount: 620.0,
-    direction: "debit",
-    status: "completed",
-  },
-  {
-    id: "c-act-403",
-    cardId: "card-003",
-    title: "TotalEnergies Fuel",
-    category: "Fuel & Transit",
-    date: "08 Aug 2026",
-    amount: 380.0,
-    direction: "debit",
-    status: "completed",
-  },
+  ...CORPORATE_CARD_TRANSACTIONS,
   // card-ret-001 (Everyday Checking)
   {
     id: "c-act-501",
@@ -2717,42 +1772,7 @@ export interface StandingInstruction {
 }
 
 export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
-  {
-    id: "si-001",
-    beneficiary: "Adom Facilities Ltd — Office rent",
-    accountId: "acc-001",
-    amount: 18_500,
-    currency: "GHS",
-    frequency: "Monthly",
-    nextRun: "2026-09-01",
-    status: "Active",
-    shortName: "Office rent",
-    transactionType: "To Bank",
-  },
-  {
-    id: "si-002",
-    beneficiary: "SIC Insurance — Fleet premium",
-    accountId: "acc-001",
-    amount: 4_200,
-    currency: "GHS",
-    frequency: "Quarterly",
-    nextRun: "2026-10-01",
-    status: "Active",
-    shortName: "Fleet premium",
-    transactionType: "To Bank",
-  },
-  {
-    id: "si-003",
-    beneficiary: "Zenith Cleaning Services",
-    accountId: "acc-002",
-    amount: 2_750,
-    currency: "GHS",
-    frequency: "Monthly",
-    nextRun: "2026-09-05",
-    status: "Paused",
-    shortName: "Cleaning",
-    transactionType: "To Bank",
-  },
+  ...CORPORATE_STANDING_INSTRUCTIONS,
   // Retail
   {
     id: "si-r01",

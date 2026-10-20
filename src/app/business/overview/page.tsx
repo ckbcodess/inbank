@@ -13,9 +13,10 @@ import { ChevronRight } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { RevealingAmount } from "@/components/providers/AmountVisibilityProvider";
-import { APPROVAL_QUEUE, toLocalEquivalent } from "@/lib/mock-data";
+import { toLocalEquivalent } from "@/lib/mock-data";
+import { APPROVAL_QUEUE } from "@/lib/corporate/approvals";
 import { sumMoney } from "@/lib/money";
-import { isApprover } from "@/lib/roles";
+import { isApprover } from "@/lib/corporate/roles";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
 import { useSession } from "@/lib/session-store";
 

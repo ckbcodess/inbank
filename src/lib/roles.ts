@@ -72,13 +72,11 @@ export const SHELL_OF_ROLE: Record<Role, Shell> = {
   BANK_ADMIN: "admin",
 };
 
-/** Approvals nav is visible only to an Approver (section 12.3 / 12.4). */
-export function isApprover(role: Role): boolean {
-  return role === "CORPORATE_APPROVER";
-}
-
-/** Administration nav is visible only to a Corporate Admin (section 12.3 / 12.4). */
-export function isCorporateAdmin(role: Role): boolean {
+/**
+ * Who can read the administrator's reports (user activity, NFR-25). A capability, asked by shared screens
+ * such as Reports, so they never test for a business role themselves.
+ */
+export function canViewAdminReports(role: Role): boolean {
   return role === "CORPORATE_ADMIN";
 }
 

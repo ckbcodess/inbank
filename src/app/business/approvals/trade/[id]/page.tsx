@@ -38,13 +38,8 @@ import { StateSwitcher } from "@/components/states/StateSwitcher";
 import RejectionDialog from "@/components/approvals/RejectionDialog";
 import ReturnForClarificationDialog from "@/components/approvals/ReturnForClarificationDialog";
 import type { TradeApprovalState } from "@/lib/states";
-import {
-  TRADE_DOCUMENTS,
-  TRADE_VERSIONS,
-  VERSION_DIFF,
-  findApproval,
-  formatMoney,
-} from "@/lib/mock-data";
+import { formatMoney } from "@/lib/mock-data";
+import { TRADE_DOCUMENTS, TRADE_VERSIONS, VERSION_DIFF, findApproval } from "@/lib/corporate/approvals";
 
 const STATES: readonly TradeApprovalState[] = [
   "awaiting-decision",

@@ -31,7 +31,8 @@ import {
   TrueEmptyState,
 } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
-import { APPROVAL_QUEUE, formatMoney } from "@/lib/mock-data";
+import { formatMoney } from "@/lib/mock-data";
+import { APPROVAL_QUEUE } from "@/lib/corporate/approvals";
 
 const LIST_STATES: readonly ListState[] = [
   "loading",

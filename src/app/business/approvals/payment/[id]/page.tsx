@@ -32,7 +32,8 @@ import { Button } from "@/components/ui/button";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import RejectionDialog from "@/components/approvals/RejectionDialog";
 import type { PaymentApprovalState } from "@/lib/states";
-import { findApproval, formatMoney } from "@/lib/mock-data";
+import { formatMoney } from "@/lib/mock-data";
+import { findApproval } from "@/lib/corporate/approvals";
 
 const STATES: readonly PaymentApprovalState[] = [
   "awaiting-decision",

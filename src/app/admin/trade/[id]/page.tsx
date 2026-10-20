@@ -21,7 +21,8 @@ import StubNotice from "@/components/StubNotice";
 import { Badge } from "@/components/ui/badge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import type { TradeApprovalState } from "@/lib/states";
-import { TRADE_DOCUMENTS, TRADE_VERSIONS, formatMoney } from "@/lib/mock-data";
+import { formatMoney } from "@/lib/mock-data";
+import { TRADE_DOCUMENTS, TRADE_VERSIONS } from "@/lib/corporate/approvals";
 
 const TRADE_APPROVAL_STATES: readonly TradeApprovalState[] = [
   "awaiting-decision",

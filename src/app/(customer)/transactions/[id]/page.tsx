@@ -42,14 +42,8 @@ import { RoundAction } from "@/components/ui/round-action";
 import { TransactionStatusBadge, transactionStatusLabel } from "@/components/StatusBadge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import { TRANSACTION_STATE_LABEL, type TransactionState } from "@/lib/states";
-import {
-  findTransaction,
-  findAccount,
-  formatDate,
-  formatMoney,
-  TRADE_VERSIONS,
-  type Transaction,
-} from "@/lib/mock-data";
+import { findTransaction, findAccount, formatDate, formatMoney, type Transaction } from "@/lib/mock-data";
+import { TRADE_VERSIONS } from "@/lib/corporate/approvals";
 import { cn } from "@/lib/utils";
 
 const ALL_STATES: readonly TransactionState[] = [

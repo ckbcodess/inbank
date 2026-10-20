@@ -27,7 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { TRADE_DOCUMENTS } from "@/lib/mock-data";
+import { TRADE_DOCUMENTS } from "@/lib/corporate/approvals";
 
 import { Field } from "@/components/ui/field";
 interface Props {

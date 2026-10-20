@@ -13,7 +13,7 @@
  */
 
 import type { Actor, Profile, Role, Shell } from "./roles";
-import { isApprover, isCorporateAdmin } from "./roles";
+import { businessNav } from "./corporate/navigation";
 
 export interface NavItem {
   key: string;
@@ -53,40 +53,6 @@ function retailNav(): NavItem[] {
 }
 
 /**
- * Business banking shell — section 12.4. Trade, Approvals and Administration
- * appear by role (section 12.3); the rest are the pages business shares with
- * personal banking until they get business versions of their own.
- */
-function businessNav(actor: Actor): NavItem[] {
-  const items: NavItem[] = [
-    { key: "overview", label: "Home", path: "/business/overview", icon: "Home", group: "primary" },
-    { key: "accounts", label: "Accounts", path: "/accounts", icon: "Wallet", group: "primary" },
-    { key: "cards", label: "Cards", path: "/cards", icon: "CreditCard", group: "primary" },
-    { key: "payments", label: "Send & Pay", path: "/payments", icon: "Send", group: "move" },
-    { key: "insure", label: "Insure", path: "/insure", icon: "Shield", group: "move" },
-    { key: "invest", label: "Invest", path: "/invest", icon: "LineChart", group: "move" },
-    { key: "loans", label: "Loans", path: "/loans", icon: "Landmark", group: "move" },
-  ];
-
-  // Trade — hidden when the actor is not trade-eligible (section 12.4).
-  if (actor.tradeEligible) {
-    items.push({ key: "trade", label: "Trade", path: "/business/trade", icon: "Ship", group: "move" });
-  }
-
-  // Approvals — hidden unless the role is Approver (section 12.4).
-  if (isApprover(actor.role)) {
-    items.push({ key: "approvals", label: "Approvals", path: "/business/approvals", icon: "CheckCircle2", group: "control" });
-  }
-
-  // Administration — hidden unless the role is Corporate Admin (section 12.4).
-  if (isCorporateAdmin(actor.role)) {
-    items.push({ key: "administration", label: "Administration", path: "/business/administration", icon: "Users", group: "control" });
-  }
-
-  return [...items, ...MORE_SERVICES];
-}
-
-/**
  * Admin Portal shell — section 12.5.
  */
 function adminNav(role: Role): NavItem[] {
@@ -123,7 +89,7 @@ function adminNav(role: Role): NavItem[] {
 
 export function getNavigation(actor: Actor, activeProfile?: Profile | null): NavItem[] {
   if (actor.shell === "admin") return adminNav(actor.role);
-  return activeProfile?.kind === "CORPORATE" ? businessNav(actor) : retailNav();
+  return activeProfile?.kind === "CORPORATE" ? businessNav(actor, MORE_SERVICES) : retailNav();
 }
 
 /** Landing route after authentication, per shell. */

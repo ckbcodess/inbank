@@ -72,6 +72,7 @@ import {
 } from "@/lib/beneficiaries-store";
 import { useGroupsStore, type PaymentGroup } from "@/lib/groups-store";
 import { useSession } from "@/lib/session-store";
+import { isBusinessProfile } from "@/lib/profile";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import EditGroupModal from "@/components/payments/EditGroupModal";
 import { toast } from "sonner";
@@ -310,7 +311,7 @@ const INITIAL_FORM: FormState = {
 
 export default function BeneficiariesPage() {
   const activeProfile = useSession((s) => s.activeProfile);
-  const isCorporate = activeProfile?.kind === "CORPORATE";
+  const isCorporate = isBusinessProfile(activeProfile);
 
   const {
     beneficiaries,

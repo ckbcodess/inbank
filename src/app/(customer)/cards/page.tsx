@@ -50,6 +50,7 @@ import {
   type PaymentCard,
 } from "@/lib/mock-data";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
+import { profileKindOf } from "@/lib/profile";
 import { readyCache } from "@/lib/ready-cache";
 import { useCardAssetsReady } from "@/components/cards/useCardAssetsReady";
 import { CardsPageSkeleton, CardsSkeleton } from "@/components/cards/CardParts";
@@ -168,7 +169,7 @@ function CardsPageContent() {
 
   const { cards, activeSimulatedCard } = useMemo(() => {
     return getEffectiveCardsForProfile(
-      activeProfile?.kind ?? "CORPORATE",
+      profileKindOf(activeProfile),
       allCards,
       devState,
     );
@@ -280,7 +281,7 @@ function CardsPageContent() {
       fundable: isPrepaid || isVirtualCard,
       isVirtual: isVirtualCard,
       singleUse: isVirtualCard ? isSingleUse : false,
-      profileKind: activeProfile?.kind ?? "CORPORATE",
+      profileKind: profileKindOf(activeProfile),
     };
 
     addCard(newCard);

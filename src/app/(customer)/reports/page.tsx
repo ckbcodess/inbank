@@ -34,7 +34,7 @@ import {
 } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
 import { useSession } from "@/lib/session-store";
-import { isCorporateAdmin } from "@/lib/roles";
+import { canViewAdminReports } from "@/lib/roles";
 import { AUDIT_EVENTS, TRANSACTIONS, formatDate, formatMoney } from "@/lib/mock-data";
 
 import { Field } from "@/components/ui/field";
@@ -84,7 +84,7 @@ export default function ReportsPage() {
   const [query, setQuery] = useState("");
 
   const available = useMemo(
-    () => REPORTS.filter((r) => !r.adminOnly || (actor && isCorporateAdmin(actor.role))),
+    () => REPORTS.filter((r) => !r.adminOnly || (actor && canViewAdminReports(actor.role))),
     [actor],
   );
 

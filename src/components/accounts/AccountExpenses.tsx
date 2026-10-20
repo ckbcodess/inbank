@@ -14,6 +14,7 @@
  * money into savings is never shown as an expense.
  */
 
+import { rowKind } from "@/lib/profile";
 import { useMemo, useState } from "react";
 import { Calendar, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -44,7 +45,7 @@ import { roundMoney } from "@/lib/money";
 import type { BaselineState } from "@/lib/states";
 
 function kindOf(account: Account) {
-  return account.profileKind ?? "CORPORATE";
+  return rowKind(account);
 }
 
 function percent(share: number): string {

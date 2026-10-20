@@ -13,6 +13,7 @@
 
 import { useMemo } from "react";
 import { accountsForProfile, findAccount, type Account } from "@/lib/mock-data";
+import { isBusinessProfile } from "@/lib/profile";
 import { useSession } from "@/lib/session-store";
 import { resolveDefaultAccountId, useAccountPrefs } from "@/lib/accounts-store";
 import { findScenario, useAccountsScenario } from "@/lib/accounts-scenarios";
@@ -20,7 +21,7 @@ import { sumMoney } from "@/lib/money";
 
 export function useCustomerAccounts() {
   const activeProfile = useSession((s) => s.activeProfile);
-  const isRetail = activeProfile?.kind !== "CORPORATE";
+  const isRetail = !isBusinessProfile(activeProfile);
   const scenario = findScenario(useAccountsScenario((s) => s.scenarioId));
   const storedDefaultId = useAccountPrefs((s) => s.defaultAccountId);
   const addedAccountIds = useAccountPrefs((s) => s.addedAccountIds);

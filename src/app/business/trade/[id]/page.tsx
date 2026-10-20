@@ -15,7 +15,8 @@ import StubNotice from "@/components/StubNotice";
 import { Badge } from "@/components/ui/badge";
 import { StateSwitcher } from "@/components/states/StateSwitcher";
 import type { TradeState } from "@/lib/states";
-import { TRADE_DOCUMENTS, TRADE_VERSIONS, formatMoney } from "@/lib/mock-data";
+import { formatMoney } from "@/lib/mock-data";
+import { TRADE_DOCUMENTS, TRADE_VERSIONS } from "@/lib/corporate/approvals";
 
 const TRADE_STATES: readonly TradeState[] = [
   "draft",

@@ -54,6 +54,12 @@ const shellFirewall = [
     },
   },
   {
+    // Shared for now: the transaction receipt is also the business's, and a failed trade or bulk payment shows
+    // its version history there. It reads business data until business gets its own transaction detail.
+    files: ["src/app/(customer)/transactions/**"],
+    rules: { "no-restricted-imports": "off" },
+  },
+  {
     // Business never imports retail code.
     files: BUSINESS_ZONE,
     rules: {
