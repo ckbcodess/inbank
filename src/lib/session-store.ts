@@ -10,6 +10,7 @@
 
 import { useEffect, useState } from "react";
 import { create } from "zustand";
+import { SIGN_IN_OPEN } from "./launch";
 import { persist } from "zustand/middleware";
 import type { Actor, Profile } from "./roles";
 import { MIGRATED_DATA } from "./migration";
@@ -54,8 +55,9 @@ export const useSession = create<SessionState>()(
       previousSignIn: null,
       signIns: SEEDED_SIGN_INS,
 
+      // While sign-in is closed (see lib/launch.ts) no session starts, whichever door the call came from.
       signIn: (actor) =>
-        set((s) => ({
+        !SIGN_IN_OPEN ? undefined : set((s) => ({
           actor,
           mfaVerified: false,
           activeProfile: null,

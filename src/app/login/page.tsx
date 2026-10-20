@@ -14,7 +14,10 @@ import { useSession } from "@/lib/session-store";
 import { ACTORS, findActorByPhone } from "@/lib/mock-data";
 import { toLocalMobile } from "@/lib/phone";
 import { useTrustedDevice, type TrustedDevice } from "@/lib/device-trust";
+import { homePathForActor } from "@/lib/navigation";
 import { findLegacyUser } from "@/lib/migration";
+import { SIGN_IN_OPEN } from "@/lib/launch";
+import { WorkInProgress } from "@/components/states/WorkInProgress";
 
 import { Field } from "@/components/ui/field";
 type LoginState = "idle" | "submitting" | "error";
@@ -31,12 +34,14 @@ function LoginForm() {
   const trusted = useTrustedDevice();
   // "Not you?" switches to the full form for this visit; the device stays trusted.
   const [notYou, setNotYou] = useState(false);
+  // Set when sign-in is closed: the form is replaced by the work-in-progress screen.
+  const [closed, setClosed] = useState(false);
 
   const [mobile, setMobile] = useState("");
   const [country, setCountry] = useState("GH");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [state, setState] = useState<LoginState>("idle");
+  const [state, setState] = useState<LoginState>(() => (searchParams.get("state") === "error" ? "error" : "idle"));
 
   function handleTypeChange(nextType: "personal" | "business") {
     setBankingType(nextType);
@@ -51,6 +56,10 @@ function LoginForm() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!SIGN_IN_OPEN) {
+      setClosed(true);
+      return;
+    }
     setState("submitting");
 
     window.setTimeout(() => {
@@ -74,7 +83,7 @@ function LoginForm() {
       // This device is already trusted for them: no one-time code.
       if (trusted?.actorId === actor.id) {
         verifyMfa();
-        router.push("/overview");
+        router.push(homePathForActor(actor));
         return;
       }
       if (actor.id === "u-yaw") {
@@ -83,6 +92,10 @@ function LoginForm() {
         router.push("/mfa");
       }
     }, 600);
+  }
+
+  if (closed) {
+    return <SignInClosed onBack={() => setClosed(false)} />;
   }
 
   if (trusted && !notYou) {
@@ -95,14 +108,14 @@ function LoginForm() {
       title={bankingType === "business" ? "GCB Business Internet Banking" : "Log in to GCB Internet Banking"}
       width="compact"
       footer={
-        <div className="flex flex-col items-center gap-2.5 text-center">
+        <div className="flex flex-col items-center gap-2 text-center">
           {/* Personal is the front door. Only a business sign-in (reached by link) offers the way back. */}
           {bankingType === "business" && (
             <button
               type="button"
               data-tour="entry-personal"
               onClick={() => handleTypeChange("personal")}
-              className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
+              className="inline-flex items-center gap-2 text-[12.5px] font-medium text-muted-foreground transition-colors hover:text-foreground underline underline-offset-4 cursor-pointer"
             >
               <User size={13.5} strokeWidth={1.8} className="shrink-0" />
               <span>Switch to Personal Banking</span>
@@ -113,7 +126,7 @@ function LoginForm() {
     >
       <form onSubmit={handleSubmit} className="flex flex-col">
         {/* Fields Group */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           {/* Mobile number */}
           <Field label="Mobile Number" htmlFor="mobile">
             <PhoneInput
@@ -135,7 +148,7 @@ function LoginForm() {
 </Field>
 
           {/* Password Input */}
-          <div className={`flex flex-col gap-1.5 ${state === "error" ? "animate-pin-shake" : ""}`}>
+          <div className={`flex flex-col gap-2 ${state === "error" ? "animate-pin-shake" : ""}`}>
             <Label htmlFor="password">
               Password
             </Label>
@@ -150,14 +163,14 @@ function LoginForm() {
                   setPassword(e.target.value);
                   if (state === "error") setState("idle");
                 }}
-                className="pr-12"
+                className="pr-10"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? "Hide password" : "Show password"}
-                className="absolute right-2 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/50 cursor-pointer"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/50 cursor-pointer"
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -174,25 +187,25 @@ function LoginForm() {
         <AlertToast when={state === "error"} message="The mobile number or password entered is incorrect. Please try again." />
 
         {/* Action Buttons Group */}
-        <div className="mt-6 flex flex-col gap-2.5">
+        <div className="mt-5 flex flex-col gap-2">
           <Button
             type="submit"
             variant="default"
             size="lg"
             loading={state === "submitting"}
-            className="h-11 sm:h-11.5 w-full text-[14.5px]"
+            className="h-10 sm:h-10 w-full text-[14.5px]"
           >
             Log in
           </Button>
 
           <Button
             nativeButton={false}
-            render={<Link href={bankingType === "business" ? "/signup/business" : "/get-started"} data-tour="login-get-started" />}
+            render={<Link href={bankingType === "business" ? "/business/signup" : "/get-started"} data-tour="login-get-started" />}
             variant="outline"
             size="lg"
-            className="h-11 sm:h-11.5 w-full text-[14.5px]"
+            className="h-10 sm:h-10 w-full text-[14.5px]"
           >
-            {bankingType === "business" ? "Don’t have an account? Apply for business account" : "New to Internet Banking? Register"}
+            {bankingType === "business" ? "New to Business Internet Banking? Register" : "New to Internet Banking? Register"}
           </Button>
         </div>
       </form>
@@ -200,10 +213,34 @@ function LoginForm() {
   );
 }
 
+/** Shown in place of the sign-in form while sign-in is closed. Nothing is signed in. */
+function SignInClosed({ onBack }: { onBack: () => void }) {
+  return (
+    <AuthLayout vAlign="center" title="Sign in" width="compact">
+      <div className="flex flex-col gap-5">
+        <WorkInProgress title="Online banking sign-in" />
+        <Button variant="outline" onClick={onBack}>
+          Back to sign in
+        </Button>
+      </div>
+    </AuthLayout>
+  );
+}
+
+/**
+ * The form reads `?type=` and `?state=` once, when it is built. Keying it on them rebuilds it whenever they change
+ * while the page stays mounted (the Demo hub moves between the personal and business doors, and to the error
+ * state, without leaving `/login`), so the URL and the screen can't disagree.
+ */
+function LoginDoor() {
+  const params = useSearchParams();
+  return <LoginForm key={`${params.get("type") ?? ""}|${params.get("state") ?? ""}`} />;
+}
+
 export default function LoginPage() {
   return (
     <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
-      <LoginForm />
+      <LoginDoor />
     </Suspense>
   );
 }
@@ -219,6 +256,7 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [closed, setClosed] = useState(false);
 
   const firstName = trusted.name.split(" ")[0];
   const initials = trusted.name
@@ -233,13 +271,21 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
     const actor = ACTORS.find((a) => a.id === trusted.actorId) ?? ACTORS[0];
     signIn(actor);
     verifyMfa();
-    router.push("/overview");
+    router.push(homePathForActor(actor));
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!SIGN_IN_OPEN) {
+      setClosed(true);
+      return;
+    }
     setSubmitting(true);
     window.setTimeout(finish, 600);
+  }
+
+  if (closed) {
+    return <SignInClosed onBack={() => setClosed(false)} />;
   }
 
   return (
@@ -248,21 +294,21 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
       title={`Welcome back, ${firstName}`}
       width="compact"
     >
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center gap-3 rounded-2xl border border-border bg-muted/20 px-4 py-3.5">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-[13px] text-primary-foreground">
+      <div className="flex flex-col gap-5">
+        <div className="flex items-center gap-2 rounded-2xl border border-border bg-muted/20 px-3 py-3">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-[13px] text-primary-foreground">
             {initials}
           </span>
           <span className="flex min-w-0 flex-col">
             <span className="truncate text-[14px] text-foreground">{trusted.name}</span>
-            <span className="flex items-center gap-1.5 text-[12.5px] text-muted-foreground">
+            <span className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
               <ShieldCheck size={13} strokeWidth={1.9} aria-hidden="true" />
               <span className="tabular">Trusted device until {until}</span>
             </span>
           </span>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <Field label="Password" htmlFor="returning-password">
             <div className="relative">
               <Input
@@ -273,14 +319,14 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
                 autoFocus
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pr-12"
+                className="pr-10"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? "Hide password" : "Show password"}
-                className="absolute right-2 top-1/2 -translate-y-1/2 flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/50 cursor-pointer"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground hover:bg-muted/50 cursor-pointer"
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -292,7 +338,7 @@ function ReturningSignIn({ trusted, onNotYou }: { trusted: TrustedDevice; onNotY
               Forgot password?
             </Link>
 </Field>
-          <Button type="submit" variant="default" size="lg" loading={submitting} className="h-11 sm:h-11.5 w-full text-[14.5px]">
+          <Button type="submit" variant="default" size="lg" loading={submitting} className="h-10 sm:h-10 w-full text-[14.5px]">
             Log in
           </Button>
         </form>

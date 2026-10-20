@@ -12,12 +12,14 @@ export type Shell = "customer" | "admin";
 export type Role =
   // Customer / Corporate shell
   | "RETAIL_CUSTOMER"
+  | "SOLE_PROPRIETOR"
   | "CORPORATE_MAKER"
   | "CORPORATE_APPROVER"
   | "CORPORATE_ADMIN"
   // Admin Portal shell — internal staff only
   | "TRADE_OFFICER"
   | "OPERATIONS_USER"
+  | "RELATIONSHIP_MANAGER"
   | "BANK_ADMIN";
 
 /** Banking relationship a customer identity holds (section 12.2). */
@@ -51,34 +53,32 @@ export interface Actor {
 
 export const ROLE_LABEL: Record<Role, string> = {
   RETAIL_CUSTOMER: "Retail Customer",
+  SOLE_PROPRIETOR: "Sole Proprietor",
   CORPORATE_MAKER: "Corporate Maker",
   CORPORATE_APPROVER: "Corporate Approver",
   CORPORATE_ADMIN: "Corporate Admin",
   TRADE_OFFICER: "Trade Officer",
   OPERATIONS_USER: "Operations User",
+  RELATIONSHIP_MANAGER: "Relationship Manager",
   BANK_ADMIN: "Bank Admin",
 };
 
 export const SHELL_OF_ROLE: Record<Role, Shell> = {
   RETAIL_CUSTOMER: "customer",
+  SOLE_PROPRIETOR: "customer",
   CORPORATE_MAKER: "customer",
   CORPORATE_APPROVER: "customer",
   CORPORATE_ADMIN: "customer",
   TRADE_OFFICER: "admin",
   OPERATIONS_USER: "admin",
+  RELATIONSHIP_MANAGER: "admin",
   BANK_ADMIN: "admin",
 };
 
-/** Approvals nav is visible only to an Approver (section 12.3 / 12.4). */
-export function isApprover(role: Role): boolean {
-  return role === "CORPORATE_APPROVER";
-}
-
-/** Administration nav is visible only to a Corporate Admin (section 12.3 / 12.4). */
-export function isCorporateAdmin(role: Role): boolean {
-  return role === "CORPORATE_ADMIN";
-}
-
 export function isInternalStaff(role: Role): boolean {
   return SHELL_OF_ROLE[role] === "admin";
+}
+
+export function isCorporateAdmin(role: Role): boolean {
+  return role === "CORPORATE_ADMIN";
 }
