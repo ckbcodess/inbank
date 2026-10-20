@@ -71,7 +71,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
       <PageHeader
         title="Kwame Boateng"
         description={`kwame.boateng@example.com · ${id}`}
-        backTo={{ href: "/administration", label: "Administration" }}
+        backTo={{ href: "/business/administration", label: "Administration" }}
         actions={
           <Button
             variant="destructive"
@@ -172,7 +172,7 @@ export default function UserDetailsPage({ params }: { params: Promise<{ id: stri
       </section>
 
       <div>
-        <Button variant="outline" nativeButton={false} render={<Link href="/administration" />}>
+        <Button variant="outline" nativeButton={false} render={<Link href="/business/administration" />}>
           Back to Administration
         </Button>
       </div>

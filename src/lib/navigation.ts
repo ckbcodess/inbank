@@ -24,19 +24,42 @@ export interface NavItem {
   group?: string;
 }
 
-/**
- * Customer / Corporate shell — section 12.4.
- *
- * Nav is context-aware: corporate-only functions (Approvals, Administration)
- * appear only when an active CORPORATE profile/relationship is selected.
- */
-function customerNav(actor: Actor, activeProfile?: Profile | null): NavItem[] {
-  const isCorporate = activeProfile ? activeProfile.kind === "CORPORATE" : true;
+/** The secondary surfaces, gathered in the collapsible "More Services" dropdown. Shared by both customer shells. */
+const MORE_SERVICES: NavItem[] = [
+  { key: "transactions", label: "Transaction History", path: "/transactions", icon: "ArrowLeftRight", group: "More Services" },
+  { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "More Services" },
+  { key: "fx-rates", label: "FX Rates", path: "/fx-rates", icon: "TrendingUp", group: "More Services" },
+  { key: "locate-us", label: "Locate Us", path: "/locate-us", icon: "MapPin", group: "More Services" },
+  { key: "settings", label: "Settings", path: "/settings", icon: "Settings", group: "More Services" },
+  { key: "lifestyle", label: "Lifestyle", path: "/lifestyle", icon: "Sparkles", group: "More Services" },
+];
 
-  // Groups are separated by spacing, not section titles (the Sidebar renders no
-  // group headings) — except "More Services", which is a collapsible dropdown.
-  const items: NavItem[] = [
+/**
+ * Personal banking shell — section 12.4. Groups are separated by spacing, not
+ * section titles (the Sidebar renders no group headings), except "More
+ * Services", which is a collapsible dropdown.
+ */
+function retailNav(): NavItem[] {
+  return [
     { key: "overview", label: "Home", path: "/overview", icon: "Home", group: "primary" },
+    { key: "accounts", label: "Accounts", path: "/accounts", icon: "Wallet", group: "primary" },
+    { key: "cards", label: "Cards", path: "/cards", icon: "CreditCard", group: "primary" },
+    { key: "payments", label: "Send & Pay", path: "/payments", icon: "Send", group: "move" },
+    { key: "insure", label: "Insure", path: "/insure", icon: "Shield", group: "move" },
+    { key: "invest", label: "Invest", path: "/invest", icon: "LineChart", group: "move" },
+    { key: "loans", label: "Loans", path: "/loans", icon: "Landmark", group: "move" },
+    ...MORE_SERVICES,
+  ];
+}
+
+/**
+ * Business banking shell — section 12.4. Trade, Approvals and Administration
+ * appear by role (section 12.3); the rest are the pages business shares with
+ * personal banking until they get business versions of their own.
+ */
+function businessNav(actor: Actor): NavItem[] {
+  const items: NavItem[] = [
+    { key: "overview", label: "Home", path: "/business/overview", icon: "Home", group: "primary" },
     { key: "accounts", label: "Accounts", path: "/accounts", icon: "Wallet", group: "primary" },
     { key: "cards", label: "Cards", path: "/cards", icon: "CreditCard", group: "primary" },
     { key: "payments", label: "Send & Pay", path: "/payments", icon: "Send", group: "move" },
@@ -45,32 +68,22 @@ function customerNav(actor: Actor, activeProfile?: Profile | null): NavItem[] {
     { key: "loans", label: "Loans", path: "/loans", icon: "Landmark", group: "move" },
   ];
 
-  // Trade — hidden if not eligible or if retail profile (section 12.4).
-  if (isCorporate && actor.tradeEligible) {
-    items.push({ key: "trade", label: "Trade", path: "/trade", icon: "Ship", group: "move" });
+  // Trade — hidden when the actor is not trade-eligible (section 12.4).
+  if (actor.tradeEligible) {
+    items.push({ key: "trade", label: "Trade", path: "/business/trade", icon: "Ship", group: "move" });
   }
 
-  // Approvals — hidden unless active relationship is Corporate and role = Approver (section 12.4).
-  if (isCorporate && isApprover(actor.role)) {
-    items.push({ key: "approvals", label: "Approvals", path: "/approvals", icon: "CheckCircle2", group: "control" });
+  // Approvals — hidden unless the role is Approver (section 12.4).
+  if (isApprover(actor.role)) {
+    items.push({ key: "approvals", label: "Approvals", path: "/business/approvals", icon: "CheckCircle2", group: "control" });
   }
 
-  // Administration — hidden unless active relationship is Corporate and role = Corporate Admin (section 12.4).
-  if (isCorporate && isCorporateAdmin(actor.role)) {
-    items.push({ key: "administration", label: "Administration", path: "/administration", icon: "Users", group: "control" });
+  // Administration — hidden unless the role is Corporate Admin (section 12.4).
+  if (isCorporateAdmin(actor.role)) {
+    items.push({ key: "administration", label: "Administration", path: "/business/administration", icon: "Users", group: "control" });
   }
 
-  // More Services — a collapsible dropdown gathering the secondary surfaces.
-  items.push(
-    { key: "transactions", label: "Transaction History", path: "/transactions", icon: "ArrowLeftRight", group: "More Services" },
-    { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "More Services" },
-    { key: "fx-rates", label: "FX Rates", path: "/fx-rates", icon: "TrendingUp", group: "More Services" },
-    { key: "locate-us", label: "Locate Us", path: "/locate-us", icon: "MapPin", group: "More Services" },
-    { key: "settings", label: "Settings", path: "/settings", icon: "Settings", group: "More Services" },
-    { key: "lifestyle", label: "Lifestyle", path: "/lifestyle", icon: "Sparkles", group: "More Services" },
-  );
-
-  return items;
+  return [...items, ...MORE_SERVICES];
 }
 
 /**
@@ -109,10 +122,16 @@ function adminNav(role: Role): NavItem[] {
 }
 
 export function getNavigation(actor: Actor, activeProfile?: Profile | null): NavItem[] {
-  return actor.shell === "admin" ? adminNav(actor.role) : customerNav(actor, activeProfile);
+  if (actor.shell === "admin") return adminNav(actor.role);
+  return activeProfile?.kind === "CORPORATE" ? businessNav(actor) : retailNav();
 }
 
 /** Landing route after authentication, per shell. */
 export function homePathForShell(shell: Shell): string {
   return shell === "admin" ? "/admin" : "/overview";
+}
+
+/** Where a signed-in customer lands: business banking has its own home, personal banking keeps `/overview`. */
+export function homePathForProfile(profile: Profile | null | undefined): string {
+  return profile?.kind === "CORPORATE" ? "/business/overview" : "/overview";
 }

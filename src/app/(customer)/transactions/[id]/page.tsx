@@ -441,7 +441,7 @@ function StateBand({
               size="sm"
               variant="outline"
               nativeButton={false}
-              render={<Link href={`/payments/bulk/${txn.batchId ?? "batch-0090"}`} />}
+              render={<Link href={`/business/payments/bulk/${txn.batchId ?? "batch-0090"}`} />}
             >
               <ArrowRight size={14} strokeWidth={1.8} className="mr-2" />
               Open Batch Correction
@@ -469,7 +469,7 @@ function StateBand({
             </ul>
           </div>
           <div className="mt-2 flex gap-2">
-            <Button size="sm" nativeButton={false} render={<Link href={`/trade/${txn.tradeId ?? "trade-0417"}`} />}>
+            <Button size="sm" nativeButton={false} render={<Link href={`/business/trade/${txn.tradeId ?? "trade-0417"}`} />}>
               <RotateCcw size={14} strokeWidth={1.8} className="mr-2" />
               Resubmit as v{TRADE_VERSIONS.length + 1}
             </Button>

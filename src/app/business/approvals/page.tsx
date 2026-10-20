@@ -153,8 +153,8 @@ export default function ApprovalQueuePage() {
                   <Link
                     href={
                       item.type === "payment"
-                        ? `/approvals/payment/${item.id}`
-                        : `/approvals/trade/${item.id}`
+                        ? `/business/approvals/payment/${item.id}`
+                        : `/business/approvals/trade/${item.id}`
                     }
                     className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
                   >

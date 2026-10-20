@@ -1,11 +1,11 @@
 "use client";
 
 /**
- * Customer / Corporate application shell — section 12.4.
+ * Customer application chrome — section 12.4. Both the personal layout (`(customer)`) and the business
+ * layout (`/business`) render it; which navigation it shows follows the active relationship
+ * (`getNavigation`), and the guard below keeps each relationship on its own surface.
  *
- * Floating-card layout carried over from the Halepulse dashboard. Renders the
- * customer navigation only — Personal and Business are chosen before sign-in,
- * so there's no in-session profile switcher. It shares no navigation chrome
+ * Floating-card layout carried over from the Halepulse dashboard. It shares no navigation chrome
  * with the Admin Portal shell (section 12.1).
  */
 
@@ -92,18 +92,10 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
       if (actor.profiles.length > 0) selectProfile(actor.profiles[0]);
       else router.replace("/login");
     }
-    else if (activeProfile.kind === "RETAIL") {
-      const isCorporateRoute =
-        pathname.startsWith("/approvals") ||
-        pathname.startsWith("/administration") ||
-        pathname.startsWith("/trade") ||
-        // Bulk payment files are a corporate capability — a personal
-        // relationship has no batch to upload.
-        pathname.startsWith("/payments/bulk");
-      if (isCorporateRoute) {
-        router.replace("/overview");
-      }
-    }
+    // Personal and business banking are separate surfaces. `/business/*` is business-only, and a business
+    // relationship's home is `/business/overview`, not the personal dashboard.
+    else if (activeProfile.kind === "RETAIL" && pathname.startsWith("/business")) router.replace("/overview");
+    else if (activeProfile.kind === "CORPORATE" && pathname === "/overview") router.replace("/business/overview");
   }, [hydrated, actor, mfaVerified, activeProfile, pathname, router, selectProfile]);
 
   const toggleCollapse = useCallback(() => {
@@ -169,7 +161,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
                 key={pathname}
                 className={cn(
                   "@container page-stagger mx-auto w-full px-3 pt-5 pb-28 sm:px-6 sm:pt-10 sm:pb-12 lg:px-10 lg:pt-10 lg:pb-12 xl:px-10",
-                  pathname === "/overview" ? "max-w-[1440px]" : "max-w-[960px]",
+                  pathname === "/overview" || pathname === "/business/overview" ? "max-w-[1440px]" : "max-w-[960px]",
                 )}
               >
                 {children}

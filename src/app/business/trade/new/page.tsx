@@ -58,7 +58,7 @@ export default function TradeTypeSelectionPage() {
       <PageHeader
         title="New Trade Request"
         description="Choose the instrument — the request form changes to match it."
-        backTo={{ href: "/trade", label: "Trade Finance" }}
+        backTo={{ href: "/business/trade", label: "Trade Finance" }}
       />
 
       <StateSwitcher section="13.6" states={TRADE_STATES} value={state} onChange={setState} />
@@ -105,7 +105,7 @@ export default function TradeTypeSelectionPage() {
       </section>
 
       <div>
-        <Button variant="outline" nativeButton={false} render={<Link href="/trade" />}>
+        <Button variant="outline" nativeButton={false} render={<Link href="/business/trade" />}>
           Back to Trade
         </Button>
       </div>

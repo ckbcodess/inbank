@@ -11,6 +11,7 @@ import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { OtpHelp } from "@/components/payments/OtpHelp";
 import { OTP_SHORTCODE, PIN_LENGTH, REGISTERED_PHONE, useAuthorisation } from "@/components/payments/useAuthorisation";
+import { homePathForProfile } from "@/lib/navigation";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
 
 /**
@@ -40,7 +41,7 @@ function PinContent() {
     setVerifying(true);
     window.setTimeout(() => {
       verifyMfa();
-      router.push(actor.shell === "admin" ? "/admin" : "/overview");
+      router.push(actor.shell === "admin" ? "/admin" : homePathForProfile(actor.profiles[0]));
     }, 500);
   }
 

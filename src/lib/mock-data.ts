@@ -2922,7 +2922,7 @@ export const NOTIFICATIONS: AppNotification[] = [
     body: "LC-2026-0043 needs a corrected commercial invoice before it can proceed.",
     date: "2026-08-11T07:52:00Z",
     read: false,
-    href: "/trade/trd-001",
+    href: "/business/trade/trd-001",
   },
   {
     id: "ntf-003",
@@ -2931,7 +2931,7 @@ export const NOTIFICATIONS: AppNotification[] = [
     body: "3 of 128 records in PAYROLL-AUG-2026 failed validation and need correction.",
     date: "2026-08-10T16:20:00Z",
     read: false,
-    href: "/payments/bulk/bat-001",
+    href: "/business/payments/bulk/bat-001",
   },
   {
     id: "ntf-004",

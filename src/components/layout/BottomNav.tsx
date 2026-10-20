@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CreditCard, Home, LayoutGrid, Send, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { homePathForProfile } from "@/lib/navigation";
+import { useSession } from "@/lib/session-store";
 
 interface BottomNavProps {
   onOpenDrawer: () => void;
@@ -20,15 +22,17 @@ interface TabItem {
 export function BottomNav({ onOpenDrawer }: BottomNavProps) {
   const pathname = usePathname();
 
+  const homePath = homePathForProfile(useSession((s) => s.activeProfile));
+
   const getIsActive = (path?: string) => {
     if (!path) return false;
     if (pathname === path) return true;
-    if (path !== "/overview" && pathname.startsWith(path)) return true;
+    if (path !== homePath && pathname.startsWith(path)) return true;
     return false;
   };
 
   const tabs: TabItem[] = [
-    { key: "overview", label: "Home", path: "/overview", icon: Home },
+    { key: "overview", label: "Home", path: homePath, icon: Home },
     { key: "accounts", label: "Accounts", path: "/accounts", icon: Wallet },
     { key: "payments", label: "Send & Pay", path: "/payments", icon: Send },
     { key: "cards", label: "Cards", path: "/cards", icon: CreditCard },

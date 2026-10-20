@@ -174,6 +174,18 @@ const business: Entry[] = [
   ["Return to submitter", "Renvoyer au demandeur", "Devolver al solicitante", "退回提交人"],
   ["Flag Specific Documents (Optional)", "Signaler des documents précis (facultatif)", "Marcar documentos concretos (opcional)", "标记具体文件（选填）"],
   ["Reason for Rejection", "Motif du refus", "Motivo del rechazo", "拒绝原因"],
+  ["Business Banking", "Banque entreprises", "Banca empresarial", "企业银行"],
+  ["Available cash", "Liquidités disponibles", "Efectivo disponible", "可用资金"],
+  ["Available in 1 account", "Disponible sur 1 compte", "Disponible en 1 cuenta", "1 个账户可用"],
+  ["Available across {0} accounts", "Disponible sur {0} comptes", "Disponible en {0} cuentas", "{0} 个账户可用"],
+  ["Waiting for you", "En attente de votre action", "Esperando tu acción", "等待您处理"],
+  ["1 request needs your approval", "1 demande attend votre approbation", "1 solicitud necesita tu aprobación", "1 项请求待您审批"],
+  ["{0} requests need your approval", "{0} demandes attendent votre approbation", "{0} solicitudes necesitan tu aprobación", "{0} 项请求待您审批"],
+  ["· {0} marked urgent", "· {0} marquées urgentes", "· {0} marcadas como urgentes", "· {0} 项标记为紧急"],
+  ["Review Approvals", "Examiner les approbations", "Revisar aprobaciones", "查看审批"],
+  ["No accounts are linked to this business yet.", "Aucun compte n’est encore lié à cette entreprise.", "Todavía no hay cuentas vinculadas a esta empresa.", "此企业尚未关联任何账户。"],
+  ["Send a Payment", "Envoyer un paiement", "Enviar un pago", "发起付款"],
+  ["Pay in Bulk", "Payer en masse", "Pagar en lote", "批量付款"],
 ];
 
 export default business;

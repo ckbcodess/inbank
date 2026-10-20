@@ -66,7 +66,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
 
   if (!item || item.type !== "payment") {
     return (
-      <PageHeader title="Approval Not Found" backTo={{ href: "/approvals", label: "Approvals" }} />
+      <PageHeader title="Approval Not Found" backTo={{ href: "/business/approvals", label: "Approvals" }} />
     );
   }
 
@@ -75,7 +75,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
     setState("decision-submitted");
     // Result becomes the updated transaction state (section 4), so the approver
     // is returned to the queue rather than left on a result screen.
-    window.setTimeout(() => router.push("/approvals"), 1600);
+    window.setTimeout(() => router.push("/business/approvals"), 1600);
   }
 
   const exceeds = state === "exceeds-limit";
@@ -85,7 +85,7 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
       <PageHeader
         title="Payment Approval"
         description={`${item.reference} · submitted by ${item.submittedBy}`}
-        backTo={{ href: "/approvals", label: "Approvals" }}
+        backTo={{ href: "/business/approvals", label: "Approvals" }}
       />
 
       <StateSwitcher

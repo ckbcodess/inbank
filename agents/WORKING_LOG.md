@@ -185,6 +185,14 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 
 ## Inbox
 
+### 2026-10-20
+- Decision: business banking is its own surface under `/business` (approvals, administration, trade, bulk payments, `/business/overview`), split from retail `(customer)`. A lint firewall (`eslint.config.mjs`) stops either side importing the other. The split is staged: shell and routes first, shared libs and borrowed pages next.
+- Discovery: corporate users had no dashboard. `/overview` was the retail `GcbDashboard`. `/business/overview` is now a small ledger-derived home (total available, approvals waiting, accounts, two payment doors).
+- Gap: business still borrows retail pages (accounts, payments, cards, beneficiaries, transactions, reports, settings, invest, loans) at retail URLs. Crossing to one remounts the shell. Each needs a business version or a shared body that takes its base path.
+- Gap: retail code still branches on CORPORATE (lint reports 8 errors in 6 files: beneficiaries, cards, standing, reports, `AccountExpenses`, `CardParts`) and the shared libs (`mock-data`, `roles`, `insights`, `dashboard-insights`, `cards-dev-store`, `use-customer-accounts`, `account-holder`) mix both worlds.
+- Gap: dead code in `components/dashboard/`: `LiquidityDeck`, `LiquidityRail`, `LiquidityCore`, `QuickActionBar`, `ActionRequiredWidget` have no importers, use hardcoded cashflow figures and decorative glow. Delete them, don't promote them to the business dashboard.
+- Gap: login, activate, migrate, signup and forgot-pin still push `/overview` and rely on the shell guard to send business users to `/business/overview`. `mfa` already routes by profile.
+
 ### 2026-10-19
 - Decision: one `PayeeAvatar` (`components/ui/payee-avatar.tsx`) for every saved person: tinted circle, initials, colour picked from the name, so someone looks the same on every screen. Icon only for billers and airtime. Used on the Beneficiaries page, Pay again and the Send & Pay strips.
 - Gap: still hand-rolled avatars in `CreateGroupFlow` (member rows), `StandingOrderFlow`, and `PayeeChip` in `payments/flows/shared.tsx`. Move them to `PayeeAvatar`.

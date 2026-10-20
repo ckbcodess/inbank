@@ -42,7 +42,7 @@ export default function TradeHubPage() {
       <PageHeader
         title="Trade"
         actions={
-          <Button nativeButton={false} render={<Link href="/trade/new" />}>
+          <Button nativeButton={false} render={<Link href="/business/trade/new" />}>
             <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
             New trade request
           </Button>
@@ -68,7 +68,7 @@ export default function TradeHubPage() {
           {TRADES.map((t) => (
             <li key={t.id}>
               <Link
-                href={`/trade/${t.id}`}
+                href={`/business/trade/${t.id}`}
                 className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
               >
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
@@ -102,7 +102,7 @@ export default function TradeHubPage() {
               Trade Type Selection → Trade Request → Documents → Trade Review
             </p>
           </div>
-          <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/trade/new" />}>
+          <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/business/trade/new" />}>
             Begin
           </Button>
         </div>

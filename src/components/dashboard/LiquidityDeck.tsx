@@ -219,7 +219,7 @@ export function LiquidityDeck({
 
           {isCorporate ? (
             <Link
-              href="/payments/bulk"
+              href="/business/payments/bulk"
               className="hidden sm:flex flex-col items-center justify-center gap-2 p-2 rounded-2xl bg-card border border-border hover:bg-muted/60 active:scale-[0.97] transition group"
             >
               <span className="flex size-8 items-center justify-center rounded-full bg-info/10 text-info-text transition-transform">

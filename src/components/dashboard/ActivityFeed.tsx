@@ -32,13 +32,13 @@ function recovery(txn: Transaction): { href: string; label: string; icon: React.
   switch (txn.state) {
     case "failed-bulk":
       return {
-        href: `/payments/bulk/${txn.batchId ?? "batch-0090"}`,
+        href: `/business/payments/bulk/${txn.batchId ?? "batch-0090"}`,
         label: "Open batch",
         icon: Layers,
       };
     case "failed-trade":
       return {
-        href: `/trade/${txn.tradeId ?? txn.id}`,
+        href: `/business/trade/${txn.tradeId ?? txn.id}`,
         label: "Review & resubmit",
         icon: RefreshCw,
       };

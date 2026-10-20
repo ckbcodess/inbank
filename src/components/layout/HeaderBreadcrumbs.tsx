@@ -186,13 +186,13 @@ export default function HeaderBreadcrumbs() {
   }
 
   // An approval is one page, named for what is being approved. Its "payment" or "trade" segment is not a page.
-  if (segments[0] === "approvals" && (segments[1] === "payment" || segments[1] === "trade") && segments.length > 2) {
+  if (segments[0] === "business" && segments[1] === "approvals" && (segments[2] === "payment" || segments[2] === "trade") && segments.length > 3) {
     return (
       <BreadcrumbView
         list={[
-          { label: "Approvals", href: "/approvals", isLast: false },
+          { label: "Approvals", href: "/business/approvals", isLast: false },
           {
-            label: segments[1] === "payment" ? "Payment Approval" : "Trade Approval",
+            label: segments[2] === "payment" ? "Payment Approval" : "Trade Approval",
             href: pathname,
             isLast: true,
           },
@@ -275,6 +275,9 @@ export default function HeaderBreadcrumbs() {
           .join(" ");
       }
     }
+
+    // `/business` is the business surface, not a page: it is the root, so it is not a crumb.
+    if (index === 0 && key === "business") return;
 
     // The treasury, term deposit and products "homes" are just the Invest page, so they aren't a step of their own.
     if (!isLast && (currentPath === "/invest/treasury" || currentPath === "/invest/term-deposits" || currentPath === "/invest/products")) return;

@@ -90,7 +90,7 @@ export default function UserManagementPage() {
       <PageHeader
         title="Administration"
         actions={
-          <Button nativeButton={false} render={<Link href="/administration/user-1" />}>
+          <Button nativeButton={false} render={<Link href="/business/administration/user-1" />}>
             <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
             Add user
           </Button>
@@ -140,7 +140,7 @@ export default function UserManagementPage() {
             {filteredUsers.map((u) => (
               <li key={u.id}>
                 <Link
-                  href={`/administration/${u.id}`}
+                  href={`/business/administration/${u.id}`}
                   className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
                 >
                   <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">

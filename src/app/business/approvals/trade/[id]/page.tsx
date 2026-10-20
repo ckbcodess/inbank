@@ -75,7 +75,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
   const [clarificationNote, setClarificationNote] = useState("");
 
   if (!item || item.type !== "trade") {
-    return <PageHeader title="Approval Not Found" backTo={{ href: "/approvals", label: "Approvals" }} />;
+    return <PageHeader title="Approval Not Found" backTo={{ href: "/business/approvals", label: "Approvals" }} />;
   }
 
   const currentVersion = TRADE_VERSIONS[TRADE_VERSIONS.length - 1];
@@ -90,7 +90,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
   function submitDecision(kind: "approved" | "rejected") {
     setOutcome(kind);
     setState("decision-submitted");
-    window.setTimeout(() => router.push("/approvals"), 1600);
+    window.setTimeout(() => router.push("/business/approvals"), 1600);
   }
 
   return (
@@ -98,7 +98,7 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
       <PageHeader
         title="Trade Approval"
         description={`${item.reference} · submitted by ${item.submittedBy}`}
-        backTo={{ href: "/approvals", label: "Approvals" }}
+        backTo={{ href: "/business/approvals", label: "Approvals" }}
       />
 
       <StateSwitcher

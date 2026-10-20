@@ -137,7 +137,7 @@ export function LiquidityRail({
           />
           <SquareAction icon={CalendarClock} label="Quick pay" href="/payments?mode=standing" />
           {isCorporate && (
-            <SquareAction icon={FileSpreadsheet} label="Bulk pay" href="/payments/bulk" />
+            <SquareAction icon={FileSpreadsheet} label="Bulk pay" href="/business/payments/bulk" />
           )}
         </div>
       </div>
