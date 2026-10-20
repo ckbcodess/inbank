@@ -83,8 +83,9 @@ export function TransactionMark({
         <Image
           src={logo.src}
           alt=""
-          width={40}
-          height={40}
+          // Asked for at twice the drawn size, so phone screens (2x and 3x) get a sharp copy
+          width={72}
+          height={72}
           className={logo.round ? "size-full rounded-full object-cover" : "size-5 object-contain"}
         />
       ) : <Icon size={17} strokeWidth={1.6} />}
