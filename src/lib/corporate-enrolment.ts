@@ -1,105 +1,101 @@
 /**
- * Corporate Internet Banking Enrolment.
+ * Corporate Internet Banking enrolment: a company that already banks with GCB asks for internet banking.
  *
- * Enables companies that already hold accounts with GCB Bank to self-serve
- * onboarding onto Corporate Internet Banking.
+ * This follows how GCB onboards companies today (Esther, 2026-10-16): a request letter on company letterhead
+ * plus the internet banking application form, signed per the mandate. The bank checks the signatures against
+ * the specimens in Flexcube, the RM, branch or central team approves, and each user then gets their sign-in
+ * details. The online journey only changes how the paperwork starts: the customer fills the form here, we write
+ * the letter for them, and they upload it signed (or email it, post it or bring it to a branch). Applications
+ * captured by branch staff land in the same queue (FR-ADM-05), so there is one store and one status.
  *
- * Flow:
- *   Account lookup -> Applicant verification -> Users & roles configuration
- *   -> Review -> Wet-ink mandate pack download & upload -> Submitted
- *
- * Staff Review (Admin portal):
- *   RM or Corporate Operations review -> Signature specimen comparison
- *   -> Verification phone call log -> Approval (or Return/Reject)
- *   -> Activation invite links issued to all listed corporate users.
+ *   Customer (/business/signup/enrol):
+ *     Account -> Who's applying -> Code -> Users -> Review -> Letter -> Submitted
+ *   Customer (/business/signup/status): reference -> code -> status, re-upload in place
+ *   Staff (/admin/enrolments): signature check against Flexcube -> callback -> approve, return or decline
  */
 
-/* ── Flow Steps & Dev Scenarios ────────────────────────────────────────────── */
+/* ── Flow steps and Demo hub scenarios ─────────────────────────────────────── */
 
 export type CorporateEnrolmentStep =
   | "account"
-  | "contact"
+  | "applicant"
+  | "otp"
   | "users"
   | "review"
-  | "sign"
+  | "letter"
   | "submitted";
 
-export type CorporateEnrolmentVariant =
-  | "default"
-  | "notFound"
-  | "alreadyEnrolled"
-  | "multiAccount"
-  | "noRm";
+/** The steps that count towards the progress bar (Submitted is the end state, not a step). */
+export const ENROLMENT_PROGRESS_STEPS: CorporateEnrolmentStep[] = [
+  "account",
+  "applicant",
+  "otp",
+  "users",
+  "review",
+  "letter",
+];
+
+export type CorporateEnrolmentOutcome = "not-found" | "already-enrolled";
 
 export interface CorporateEnrolmentScenario {
   id: string;
   label: string;
-  step: CorporateEnrolmentStep;
-  variant: CorporateEnrolmentVariant;
+  step?: CorporateEnrolmentStep;
+  outcome?: CorporateEnrolmentOutcome;
+  /** Which demo account the scenario opens with. */
+  account?: string;
 }
 
 export const CORPORATE_ENROLMENT_SCENARIOS: readonly CorporateEnrolmentScenario[] = [
-  { id: "enrol-account", label: "Step 1 · Find account", step: "account", variant: "default" },
-  { id: "enrol-not-found", label: "Step 1 · Account not found", step: "account", variant: "notFound" },
-  { id: "enrol-already-enrolled", label: "Step 1 · Already enrolled", step: "account", variant: "alreadyEnrolled" },
-  { id: "enrol-multi-account", label: "Step 1 · Multi-account company", step: "account", variant: "multiAccount" },
-  { id: "enrol-no-rm", label: "Step 1 · Company without RM", step: "account", variant: "noRm" },
-  { id: "enrol-contact", label: "Step 2 · Applicant details & OTP", step: "contact", variant: "default" },
-  { id: "enrol-users", label: "Step 3 · Users & role mandate", step: "users", variant: "default" },
-  { id: "enrol-review", label: "Step 4 · Review application", step: "review", variant: "default" },
-  { id: "enrol-sign", label: "Step 5 · Download & upload pack", step: "sign", variant: "default" },
-  { id: "enrol-submitted", label: "Step 6 · Submitted", step: "submitted", variant: "default" },
+  { id: "account", label: "Find your company", step: "account" },
+  { id: "applicant", label: "Who's applying", step: "applicant" },
+  { id: "otp", label: "Confirm code", step: "otp" },
+  { id: "users", label: "Users and roles", step: "users" },
+  { id: "review", label: "Review", step: "review" },
+  { id: "letter", label: "Sign the letter", step: "letter" },
+  { id: "submitted", label: "Submitted", step: "submitted" },
+  { id: "no-rm", label: "Company without an RM", step: "account", account: "1001 8844 2200" },
+  { id: "not-found", label: "Account not found", outcome: "not-found" },
+  { id: "already-enrolled", label: "Already on internet banking", outcome: "already-enrolled" },
 ];
-
-export const CORPORATE_ENROLMENT_SCENARIO_LABELS: Record<string, string> = Object.fromEntries(
-  CORPORATE_ENROLMENT_SCENARIOS.map((s) => [s.id, s.label]),
-);
-
-export const CORPORATE_ENROLMENT_SCENARIO_IDS = CORPORATE_ENROLMENT_SCENARIOS.map((s) => s.id);
 
 export function findCorporateEnrolmentScenario(id: string): CorporateEnrolmentScenario | undefined {
   return CORPORATE_ENROLMENT_SCENARIOS.find((s) => s.id === id);
 }
 
-/* ── Roles & Descriptions ──────────────────────────────────────────────────── */
+/* ── Roles ─────────────────────────────────────────────────────────────────── */
 
-export type CorporateAppRole = "Maker" | "Approver" | "Corporate Admin" | "Viewer";
+/**
+ * The roles on the bank's application form. The form says Initiator; BRD v2 calls the same role Inputter, and
+ * the invitation already says Inputter, so we use that. Viewer is on the form but not in v2, and v2's Reviewer
+ * is an approval level the bank configures, not a form category. Both are open questions in WORKING_LOG.
+ */
+export type CorporateAppRole = "Inputter" | "Authoriser" | "Viewer";
 
-export interface RoleExplanation {
-  role: CorporateAppRole;
-  title: string;
-  tagline: string;
-  description: string;
-}
+export const CORPORATE_ROLES: readonly CorporateAppRole[] = ["Inputter", "Authoriser", "Viewer"];
 
-export const CORPORATE_ROLE_EXPLANATIONS: Record<CorporateAppRole, RoleExplanation> = {
-  Maker: {
-    role: "Maker",
-    title: "Maker",
-    tagline: "Maker · initiates payments & transfers",
-    description: "Can create payments, upload bulk files, and draft trade requests. Cannot authorise them.",
-  },
-  Approver: {
-    role: "Approver",
-    title: "Approver",
-    tagline: "Approver · authorises payments & trade",
-    description: "Reviews and approves transactions in line with the signing mandate before money leaves.",
-  },
-  "Corporate Admin": {
-    role: "Corporate Admin",
-    title: "Corporate Admin",
-    tagline: "Admin · manages users & access",
-    description: "Provisions company users, manages user permissions, and reviews organization audit logs.",
-  },
-  Viewer: {
-    role: "Viewer",
-    title: "Viewer",
-    tagline: "Viewer · view and statement access only",
-    description: "Read-only access to view balances, account activity, and download statements.",
-  },
+export const CORPORATE_ROLE_LINE: Record<CorporateAppRole, string> = {
+  Inputter: "Prepares payments. Someone else authorises them.",
+  Authoriser: "Approves payments before they leave.",
+  Viewer: "Sees balances, statements and history.",
 };
 
-/* ── Domain Model ──────────────────────────────────────────────────────────── */
+/** Authorisers must be named on the mandate (BRL-03), so someone added by the applicant can't be one. */
+export function rolesFor(isFromMandate: boolean): readonly CorporateAppRole[] {
+  return isFromMandate ? CORPORATE_ROLES : CORPORATE_ROLES.filter((r) => r !== "Authoriser");
+}
+
+/** A company needs someone to prepare payments and someone else to approve them (BRL-04). */
+export function usersReady(users: Pick<CorporateUserDraft, "role">[]): string {
+  const hasInputter = users.some((u) => u.role === "Inputter");
+  const hasAuthoriser = users.some((u) => u.role === "Authoriser");
+  if (!hasInputter && !hasAuthoriser) return "Add at least one Inputter and one Authoriser.";
+  if (!hasInputter) return "Add at least one Inputter, so someone can prepare payments.";
+  if (!hasAuthoriser) return "Make at least one signatory an Authoriser, so payments can be approved.";
+  return "";
+}
+
+/* ── Domain model ──────────────────────────────────────────────────────────── */
 
 export interface CorporateUserDraft {
   id: string;
@@ -107,6 +103,8 @@ export interface CorporateUserDraft {
   email: string;
   mobile: string;
   role: CorporateAppRole;
+  /** Signatories carry their designation from the mandate. */
+  designation?: string;
   ghanaCard?: string;
   dateAppointed?: string;
   isFromMandate?: boolean;
@@ -120,6 +118,7 @@ export interface EnrolledAccountSummary {
   number: string;
   currency: string;
   type: string;
+  /** Staff-side only. The customer journey never shows balances. */
   balance?: number;
 }
 
@@ -169,6 +168,7 @@ export interface EnrolmentTimelineEvent {
 }
 
 export type EnrolmentStatus =
+  | "awaiting_letter"
   | "received"
   | "rm_review"
   | "checking_signatures"
@@ -176,6 +176,20 @@ export type EnrolmentStatus =
   | "approved"
   | "returned"
   | "rejected";
+
+/** How the application reached the bank. Email, post and branch are captured by staff. */
+export type EnrolmentChannel = "online" | "email" | "post" | "branch";
+
+/** How the signed letter reached the bank. */
+export type LetterChannel = "upload" | "email" | "post" | "branch";
+
+export const CHANNEL_LABEL: Record<EnrolmentChannel | LetterChannel, string> = {
+  online: "Online",
+  upload: "Uploaded online",
+  email: "Email",
+  post: "Post",
+  branch: "Branch",
+};
 
 export interface EnrolmentStaffAssignment {
   type: "rm" | "operations";
@@ -188,6 +202,7 @@ export interface EnrolmentApplication {
   reference: string;
   createdAt: string;
   updatedAt: string;
+  channel: EnrolmentChannel;
   companyName: string;
   companyTin: string;
   companyAddress?: string;
@@ -201,6 +216,7 @@ export interface EnrolmentApplication {
     uploadedFileName?: string;
     uploadedFileSize?: string;
     uploadedAt?: string;
+    receivedVia?: LetterChannel;
   };
   status: EnrolmentStatus;
   assignedTo: EnrolmentStaffAssignment;
@@ -211,59 +227,55 @@ export interface EnrolmentApplication {
   timeline: EnrolmentTimelineEvent[];
 }
 
-/* ── Lookup helpers ────────────────────────────────────────────────────────── */
+/* ── Company lookup (mock Flexcube) ────────────────────────────────────────── */
 
-export interface MockCompanyLookupResult {
-  found: boolean;
-  alreadyEnrolled?: boolean;
-  companyName?: string;
-  tin?: string;
-  accounts?: EnrolledAccountSummary[];
-  mandate?: string;
-  approvalRule?: string;
-  relationshipManager?: { name: string; email: string; phone: string } | null;
-  mandateSignatories?: Array<{
-    name: string;
-    role: string;
-    email: string;
-    mobile: string;
-    specimenUrl?: string;
-  }>;
+export interface MandateSignatory {
+  name: string;
+  /** The designation held on the mandate, e.g. "Managing Director". */
+  designation: string;
+  /** The signing class, where the mandate uses one. */
+  signingClass?: "A" | "B";
+  email: string;
+  mobile: string;
+  ghanaCard: string;
+  specimenUrl?: string;
 }
 
-/**
- * Normalises account number entry (removes spaces and hyphens).
- */
+export interface CorporateCompanyRecord {
+  companyName: string;
+  tin: string;
+  address: string;
+  alreadyEnrolled?: boolean;
+  mandate: string;
+  /** The signing rule in plain words, used on the letter and the status page. */
+  signingRule: string;
+  approvalRule: string;
+  relationshipManager: { name: string; email: string; phone: string } | null;
+  accounts: EnrolledAccountSummary[];
+  signatories: MandateSignatory[];
+}
+
+/** Who reviews an application when the company has no RM. */
+export const CORPORATE_BANKING_TEAM = {
+  name: "Corporate Banking Team",
+  email: "corporate.onboarding@gcb.com.gh",
+  phone: "+233 30 268 1521",
+};
+
+/** Strips spaces and hyphens from a typed account number. */
 export function cleanAccountNumber(input: string): string {
   return input.replace(/[\s-]/g, "");
 }
 
-/**
- * Known mock corporate accounts for demo lookup.
- */
-export const MOCK_CORPORATE_COMPANIES: Record<string, {
-  companyName: string;
-  tin: string;
-  alreadyEnrolled?: boolean;
-  mandate: string;
-  approvalRule: string;
-  relationshipManager: { name: string; email: string; phone: string } | null;
-  accounts: EnrolledAccountSummary[];
-  signatories: Array<{
-    name: string;
-    role: string;
-    email: string;
-    mobile: string;
-    specimenUrl?: string;
-  }>;
-}> = {
-  // 1. Adinkra Textiles Ltd - Multi-account company with dedicated RM
+export const MOCK_CORPORATE_COMPANIES: Record<string, CorporateCompanyRecord> = {
+  // Several accounts and a dedicated RM
   "100123456789": {
     companyName: "Adinkra Textiles Ltd",
     tin: "C0012345678",
-    alreadyEnrolled: false,
+    address: "Plot 14 Industrial Area, North Kaneshie, Accra",
     mandate: "Both to sign",
-    approvalRule: "Dual authorization: 1 Signatory A (Director) + 1 Signatory B (Finance)",
+    signingRule: "one Signatory A and one Signatory B",
+    approvalRule: "Dual authorisation: 1 Signatory A (Director) + 1 Signatory B (Finance)",
     relationshipManager: {
       name: "Kwame Asante",
       email: "kwame.asante@gcb.com.gh",
@@ -271,37 +283,40 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, {
     },
     accounts: [
       { id: "acc-001", name: "Corporate Current Account", number: "1001 2345 6789", currency: "GHS", type: "Current", balance: 1284530.44 },
-      { id: "acc-002", name: "Payroll Account", number: "1001 2345 7710", currency: "GHS", type: "Current", balance: 342118.90 },
+      { id: "acc-002", name: "Payroll Account", number: "1001 2345 7710", currency: "GHS", type: "Current", balance: 342118.9 },
       { id: "acc-003", name: "USD Trade Account", number: "2200 8891 0043", currency: "USD", type: "Foreign Currency", balance: 486220.15 },
     ],
     signatories: [
-      { name: "Yaw Oppong", role: "Managing Director (Signatory A)", email: "yaw.oppong@adinkratextiles.com", mobile: "0244123456", specimenUrl: "/signatures/specimen-yaw.svg" },
-      { name: "Esther Appiah", role: "Finance Director (Signatory B)", email: "esther.appiah@adinkratextiles.com", mobile: "0244300412", specimenUrl: "/signatures/specimen-esther.svg" },
-      { name: "Kwame Boateng", role: "Executive Director (Signatory A)", email: "kwame.boateng@adinkratextiles.com", mobile: "0244300411", specimenUrl: "/signatures/specimen-kwame.svg" },
+      { name: "Yaw Oppong", designation: "Managing Director", signingClass: "A", email: "yaw.oppong@adinkratextiles.com", mobile: "0244123456", ghanaCard: "GHA-789012345-1", specimenUrl: "/signatures/specimen-yaw.svg" },
+      { name: "Esther Appiah", designation: "Finance Director", signingClass: "B", email: "esther.appiah@adinkratextiles.com", mobile: "0244300412", ghanaCard: "GHA-345678901-2", specimenUrl: "/signatures/specimen-esther.svg" },
+      { name: "Kwame Boateng", designation: "Executive Director", signingClass: "A", email: "kwame.boateng@adinkratextiles.com", mobile: "0244300411", ghanaCard: "GHA-334455667-8", specimenUrl: "/signatures/specimen-kwame.svg" },
     ],
   },
-  // 2. Volta River Logistics - Single account company, no dedicated RM (handled by Operations Team)
+  // One account, no RM: the Corporate Banking Team reviews it
   "100188442200": {
     companyName: "Volta River Logistics Ltd",
     tin: "C0098765432",
-    alreadyEnrolled: false,
+    address: "Harbour Road, Tema",
     mandate: "Either to sign",
-    approvalRule: "Single authorization: Any registered Signatory can approve up to GHS 500,000",
-    relationshipManager: null, // Assigned to Corporate Banking Team
+    signingRule: "either signatory",
+    approvalRule: "Single authorisation: any registered signatory can approve up to GHS 500,000",
+    relationshipManager: null,
     accounts: [
-      { id: "acc-volta-1", name: "Commercial Operating Account", number: "1001 8844 2200", currency: "GHS", type: "Current", balance: 780400.00 },
+      { id: "acc-volta-1", name: "Commercial Operating Account", number: "1001 8844 2200", currency: "GHS", type: "Current", balance: 780400 },
     ],
     signatories: [
-      { name: "Kofi Mensah", role: "Chief Executive Officer", email: "kofi.mensah@voltariver.com", mobile: "0201200314", specimenUrl: "/signatures/specimen-kofi.svg" },
-      { name: "Ama Serwaa", role: "Chief Operating Officer", email: "ama.serwaa@voltariver.com", mobile: "0244889911", specimenUrl: "/signatures/specimen-ama.svg" },
+      { name: "Kofi Mensah", designation: "Chief Executive Officer", email: "kofi.mensah@voltariver.com", mobile: "0201200314", ghanaCard: "GHA-901234567-3", specimenUrl: "/signatures/specimen-kofi.svg" },
+      { name: "Ama Serwaa", designation: "Chief Operating Officer", email: "ama.serwaa@voltariver.com", mobile: "0244889911", ghanaCard: "GHA-123456789-0", specimenUrl: "/signatures/specimen-ama.svg" },
     ],
   },
-  // 3. Gold Coast Agro Processing - Already enrolled demo
+  // Already on internet banking
   "100199224411": {
     companyName: "Gold Coast Agro Processing Ltd",
     tin: "C0044556677",
+    address: "Spintex Road, Accra",
     alreadyEnrolled: true,
     mandate: "Any two to sign",
+    signingRule: "any two signatories",
     approvalRule: "Two approvers required for any disbursement above GHS 100,000",
     relationshipManager: {
       name: "Abena Owusu",
@@ -309,41 +324,42 @@ export const MOCK_CORPORATE_COMPANIES: Record<string, {
       phone: "+233 24 440 0512",
     },
     accounts: [
-      { id: "acc-agro-1", name: "Primary Treasury", number: "1001 9922 4411", currency: "GHS", type: "Current", balance: 3500000.00 },
+      { id: "acc-agro-1", name: "Primary Treasury", number: "1001 9922 4411", currency: "GHS", type: "Current", balance: 3500000 },
     ],
     signatories: [
-      { name: "Nana Addo Dankwa", role: "Chairman", email: "nana.addo@goldcoastagro.com", mobile: "0244400511", specimenUrl: "/signatures/specimen-nana.svg" },
+      { name: "Nana Addo Dankwa", designation: "Chairman", email: "nana.addo@goldcoastagro.com", mobile: "0244400511", ghanaCard: "GHA-556677889-1", specimenUrl: "/signatures/specimen-nana.svg" },
     ],
   },
 };
 
-/**
- * Looks up a company by account number.
- */
-export function lookupCorporateAccount(rawAccountNumber: string): MockCompanyLookupResult {
-  const cleaned = cleanAccountNumber(rawAccountNumber);
-  const found = MOCK_CORPORATE_COMPANIES[cleaned];
+export const ENROLMENT_DEMO_ACCOUNTS = {
+  default: "1001 2345 6789",
+  noRm: "1001 8844 2200",
+  alreadyEnrolled: "1001 9922 4411",
+  notFound: "9999 0000 1111",
+} as const;
 
-  if (!found) {
-    return { found: false };
-  }
-
-  return {
-    found: true,
-    alreadyEnrolled: found.alreadyEnrolled,
-    companyName: found.companyName,
-    tin: found.tin,
-    accounts: found.accounts,
-    mandate: found.mandate,
-    approvalRule: found.approvalRule,
-    relationshipManager: found.relationshipManager,
-    mandateSignatories: found.signatories,
-  };
+export function lookupCorporateAccount(rawAccountNumber: string): CorporateCompanyRecord | null {
+  return MOCK_CORPORATE_COMPANIES[cleanAccountNumber(rawAccountNumber)] ?? null;
 }
 
-/**
- * Formats enrolment reference for display.
- */
-export function formatEnrolmentRef(ref: string): string {
-  return ref.toUpperCase();
+/** "Managing Director · Signatory A" */
+export function signatoryLabel(s: Pick<MandateSignatory, "designation" | "signingClass">): string {
+  return s.signingClass ? `${s.designation} · Signatory ${s.signingClass}` : s.designation;
+}
+
+/** "•••• 6789" */
+export function lastFour(accountNumber: string): string {
+  return `•••• ${accountNumber.replace(/\s/g, "").slice(-4)}`;
+}
+
+/** Who will review the application, in a sentence-ready form. */
+export function reviewerFor(record: Pick<CorporateCompanyRecord, "relationshipManager">): EnrolmentStaffAssignment {
+  return record.relationshipManager
+    ? { type: "rm", ...record.relationshipManager }
+    : { type: "operations", ...CORPORATE_BANKING_TEAM };
+}
+
+export function newEnrolmentReference(): string {
+  return `ENR-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
 }

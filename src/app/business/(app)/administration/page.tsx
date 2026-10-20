@@ -56,11 +56,9 @@ export default function UserManagementPage() {
               role: u.role,
               status: u.inviteStatus === "used" ? "Active" : "Invited",
               access:
-                u.role === "Corporate Admin"
-                  ? "Full access"
-                  : u.role === "Approver"
+                u.role === "Authoriser"
                   ? "Payments, Trade, Approvals"
-                  : u.role === "Maker"
+                  : u.role === "Inputter"
                   ? "Payments, Trade"
                   : "View only",
             });

@@ -8,9 +8,8 @@
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import TransactionList from "@/components/TransactionList";
-import { businessAccounts } from "@/lib/corporate/accounts";
+import { businessAccounts, businessTransactions } from "@/lib/corporate/accounts";
 import { businessRepeatHref } from "@/lib/corporate/repeat-payment";
-import { transactionsForProfile } from "@/lib/mock-data";
 
 function BusinessTransactionsContent() {
   const accountId = useSearchParams().get("account") ?? undefined;
@@ -19,7 +18,7 @@ function BusinessTransactionsContent() {
     <div className="flex flex-col">
       <TransactionList
         key={accountId ?? "all"}
-        transactions={transactionsForProfile("CORPORATE")}
+        transactions={businessTransactions()}
         accounts={businessAccounts()}
         startHref="/business/payments"
         repeatHref={businessRepeatHref}

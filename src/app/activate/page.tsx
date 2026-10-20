@@ -2,13 +2,13 @@
 
 import { AlertToast } from "@/components/ui/alert-toast";
 import Image from "next/image";
-import Link from "next/link";
+
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { parseOnboardingStep, type OnboardingStep } from "@/lib/onboarding-steps";
 import {
-  AlertTriangle,
-  Building2,
+
+
   Check,
   User,
   Users,
@@ -49,10 +49,10 @@ const RESEND_SECONDS = 30;
 function ActivateContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const inviteParam = searchParams.get("invite");
-  const scenarioParam = searchParams.get("scenario");
-  const isCorpInvite = inviteParam === "1" || Boolean(scenarioParam && scenarioParam.startsWith("corp-"));
-  const isCorpExpired = scenarioParam === "corp-invite-expired" || searchParams.get("expired") === "1";
+
+
+
+
 
   const personaParam = searchParams.get("persona") as
     | "single"
@@ -285,9 +285,9 @@ function ActivateContent() {
 
     // Finalize onboarding and log user into appropriate dashboard profile
     setTimeout(() => {
-      const actor = isCorpInvite
-        ? ACTORS.find((a) => a.id === "u-dual") || ACTORS[0]
-        : ACTORS.find((a) => a.id === activePersona.actorId) || ACTORS[0];
+      const actor = ACTORS.find((a) => a.id === activePersona.actorId) || ACTORS[0];
+
+
       signIn(actor);
       if (actor.profiles.length > 0) {
         selectProfile(actor.profiles[0]);
@@ -295,7 +295,7 @@ function ActivateContent() {
       verifyMfa();
       // First time in internet banking: the dashboard opens with a short welcome,
       // and offers the referral code there (same as new-to-GCB), not mid-flow.
-      setPendingReferral(!isCorpInvite);
+      setPendingReferral(true);
       setFirstRun("new");
       router.push(homePathForActor(actor));
     }, 800);
@@ -318,7 +318,7 @@ function ActivateContent() {
       setStep("otp");
     } else if (step === "otp") {
       setDigits(Array(OTP_LENGTH).fill(""));
-      setStep(isCorpInvite ? "ghana_card" : "review_details");
+      setStep("review_details");
     } else if (step === "review_details") {
       setSelfieImage(null);
       setStep("selfie");
@@ -336,17 +336,17 @@ function ActivateContent() {
   return (
     <AuthLayout
       title={
-        isCorpInvite
-          ? step === "ghana_card"
-            ? "Corporate Banking Invitation"
-            : step === "otp"
-            ? "Confirm Your Code"
-            : step === "password"
-            ? "Create Your Password"
-            : step === "pin"
-            ? "Set Your PIN"
-            : "Confirm Your PIN"
-          : step === "ghana_card"
+
+
+
+
+
+
+
+
+
+
+        step === "ghana_card"
           ? "Verify Your Identity"
           : step === "selfie"
           ? "Selfie Match"
@@ -365,17 +365,17 @@ function ActivateContent() {
           : "Confirm Your PIN"
       }
       description={
-        isCorpInvite
-          ? step === "ghana_card"
-            ? "You have been authorized to access GCB Corporate Internet Banking."
-            : step === "otp"
-            ? `A 6-digit code has been sent to ${maskMobile("+233241234567")}. Please enter it below.`
-            : step === "password"
-            ? "Choose a password you will remember."
-            : step === "pin"
-            ? "Set a 4-digit PIN for secure access."
-            : "Re-enter your 4-digit PIN to confirm."
-          : step === "ghana_card"
+
+
+
+
+
+
+
+
+
+
+        step === "ghana_card"
           ? "We will securely verify your identity using your Ghana Card."
           : step === "selfie"
           ? "Center your face in the frame."
@@ -401,98 +401,24 @@ function ActivateContent() {
       backLabel="Back to previous step"
       align="left"
       stepProgress={{
-        current: isCorpInvite
-          ? step === "ghana_card"
-            ? 1
-            : step === "otp"
-            ? 2
-            : step === "password"
-            ? 3
-            : 4
-          : stepNumberMap[step],
-        total: isCorpInvite ? 4 : 7,
+        current: stepNumberMap[step],
+        total: 7,
+
+
+
+
+
+
+
+
+
       }}
       width="compact"
       animateHeight={true}
     >
-      {/* STEP 1: Corporate Invitation Acceptance */}
-      {step === "ghana_card" && isCorpInvite && (
-        <div className="flex flex-col gap-4">
-          <div className="rounded-2xl border border-border bg-card p-4 flex flex-col gap-3">
-            <div className="flex items-center gap-2.5 border-b border-border pb-3">
-              <span className="flex size-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
-                <Building2 size={18} strokeWidth={1.9} />
-              </span>
-              <div>
-                <p className="text-[14.5px] font-medium text-foreground">
-                  Adinkra Textiles Ltd
-                </p>
-                <p className="text-[12px] text-muted-foreground">
-                  Corporate Internet Banking Access
-                </p>
-              </div>
-            </div>
-
-            <dl className="grid grid-cols-1 gap-y-2 text-[13px]">
-              <div className="flex justify-between">
-                <dt className="text-muted-foreground">Assigned Role</dt>
-                <dd className="font-medium text-foreground">Corporate Maker</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-muted-foreground">Invited By</dt>
-                <dd className="font-medium text-foreground">Yaw Oppong (Corporate Admin)</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-muted-foreground">Verification Phone</dt>
-                <dd className="font-medium text-foreground tabular">{maskMobile("+233241234567")}</dd>
-              </div>
-            </dl>
-          </div>
-
-          {isCorpExpired ? (
-            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 flex flex-col gap-3 text-[13px]">
-              <div className="flex items-start gap-2 text-amber-800 dark:text-amber-300">
-                <AlertTriangle size={18} className="shrink-0 mt-0.5" />
-                <p className="font-medium">Invitation link has expired</p>
-              </div>
-              <p className="text-muted-foreground text-[12.5px] leading-relaxed">
-                For security, corporate access invitation links expire after 7 days. You can request a new link from the status tracker or ask your Corporate Admin.
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                nativeButton={false}
-                render={<Link href="/business/signup/status" />}
-                className="mt-1"
-              >
-                Go to Status Tracker to resend
-              </Button>
-            </div>
-          ) : (
-            <Button
-              type="button"
-              variant="default"
-              size="lg"
-              loading={busy}
-              onClick={() => {
-                setBusy(true);
-                setTimeout(() => {
-                  setBusy(false);
-                  setDigits(Array(OTP_LENGTH).fill(""));
-                  setStep("otp");
-                  setCountdown(RESEND_SECONDS);
-                }, 400);
-              }}
-              className="mt-2 h-10 w-full text-[14px]"
-            >
-              Accept Invitation & Verify
-            </Button>
-          )}
-        </div>
-      )}
 
       {/* STEP 1: Enter Ghana Card */}
-      {step === "ghana_card" && !isCorpInvite && (
+      {step === "ghana_card" && (
         <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-4">
           {/* Demo persona picker — dev only, never in the live build */}
           {process.env.NODE_ENV !== "production" && (

@@ -62,6 +62,7 @@ Open questions live in [WORKING_LOG.md](WORKING_LOG.md), not here.
 | Joint account holder | Personal view | The same, on a jointly held account | `[DECIDED]` prototype persona |
 | Wallet or card onboarder | Personal view | New to GCB, onboarded with MoMo or a card. Their main account is the GCB Wallet | `[DECIDED]` 2026-09-23 |
 | Migrating customer | Personal view | Moving from the old internet banking with their payees, standing orders and PIN | `[CONFIRMED v1]` FR-26; `[DECIDED]` the flow |
+| Sole proprietor | Business view | The business's only user: initiates and pays, no approval leg | `[CONFIRMED v2]` §5.1 self-onboarding; `[DECIDED 2026-10-20]` no approvals |
 | Corporate inputter | Business view | Initiates single and bulk payments and uploads files within an assigned limit. Cannot approve or release. Need not be on the mandate | `[CONFIRMED v2]` §17, BRL-03, FR-COR-04 |
 | Corporate reviewer | Business view | Reviews submitted transactions and batches within a limit; approves to the next level or rejects with a comment. Any number of levels. Must be named on the mandate | `[CONFIRMED v2]` FR-COR-05, BRL-03, BRL-07 |
 | Corporate authoriser | Business view, approval app | Final authorisation within a limit, from the portal or the approval app. Must be named on the mandate | `[CONFIRMED v2]` FR-COR-06, FR-COR-02, BRL-03 |
@@ -276,12 +277,20 @@ to RPT-17; Trade monitoring is `[NOT IN v2]`.
     authorisation first; the token goes to the recipient and is redeemed once at a GCB ATM; unredeemed tokens
     expire (BRL-27, BRL-28; what happens to the funds is OI-10).
   - **Corporate password reset:** the bank-approved method (OI-01), a lockout rule, then in-branch recovery.
-  - **Onboarding and setup:** the branch captures the application; bank administrators configure companies,
-    subsidiaries, users, roles, mandates, limits and workflows, and activate H2H if chosen.
-  - **Prototype today:** supplier payments submit for approval; approvals and administration as built before
-    v2; bulk is the original stub; online enrolment (below) `[CONFLICT v2]`; trade initiation and lifecycle
-    tracking `[NOT IN v2]`; user administration is Profile → Roles & Services → Limits → Approval matrices →
-    Review `[CONFLICT v2]`.
+  - **Onboarding and setup:**
+    - Companies apply online at `/business/signup/enrol` `[DECIDED 2026-10-20]`, following the bank's real process
+      (Esther, 2026-10-16): account number → a signatory proves it with a code to their number on file → users and roles
+      (signatories pre-filled from the mandate) → review → we write the request letter, they sign it on letterhead and
+      upload it, or email, post or bring it in. Staff check signatures against Flexcube, call, then approve at
+      `/admin/enrolments`; letters that arrive outside the app are recorded there, so branch capture (FR-ADM-05) and online
+      share one queue. Status at `/business/signup/status`. On approval each user activates at `/business/activate`
+      (Ghana Card number match, OTP, password, PIN; 3 mismatches lock out to branch).
+    - Sole proprietors self-onboard online at `/business/signup/sole-proprietor` (Ghana Card verification, liveness
+      selfie, account discovery, OTP, password, PIN) and land directly on `/business/overview`.
+  - **Prototype today:** sole proprietor payments send directly without an approval leg (`paysWithoutApproval`);
+    company payments submit for approval; approvals and administration as built before v2; bulk is the original stub;
+    online account opening is deleted (out of Phase 1); trade initiation and lifecycle
+    tracking `[NOT IN v2]`; user administration is Profile → Roles & Services → Limits → Approval matrices → Review `[CONFLICT v2]`.
 - **Admin portal:** transaction monitoring and exceptions, trade monitoring, customers, fee
   concessions, audit log.
 
@@ -419,14 +428,18 @@ to RPT-17; Trade monitoring is `[NOT IN v2]`.
   direct bank fixed deposits (no CSD securities account required, instant creation). Treasury Bills &
   Bonds are government securities held at the CSD and require an active securities account (7-day setup).
   `[CONFLICT v2]` OS-05 excludes a standalone treasury bill service; term deposits stay.
-- `[DECIDED 2026-10-19]` **Corporate Internet Banking Enrolment ("Two journeys, one store").** Existing
-  business account holders self-serve onboarding at `/business/signup/enrol` (lookup → applicant OTP
-  → users & mandate roles → review → wet-ink pack download & upload). Applications track progress
-  at `/business/signup/status` and are reviewed in the staff queue at `/admin/enrolments` by the RM or
-  Corporate Operations with side-by-side specimen comparison and mandatory security callback verification.
-  Approval issues one corporate activation link per listed user into `/activate?invite=1`.
-  `[CONFLICT v2]` v2 has the branch capture the corporate application (FR-ADM-05), and only sole proprietors
-  self-onboard. New business account opening (`/business/signup`) is not in v2 either.
+- `[DECIDED 2026-10-20]` **Business onboarding.** Companies apply online with a letter we write; sole proprietors self-onboard.
+  - Companies: the online application above replaces "set up at your branch" (designer, after the Esther call). It
+    deviates from a strict reading of FR-ADM-05 (branch capture) but feeds the same bank review; the bank still checks
+    signatures and approves everything. Branch staff record letters that arrive by email, post or at the counter.
+  - Roles on the application: Inputter, Authoriser, Viewer (the bank's form says Initiator, Authorizer, Viewer). Only
+    mandate signatories can be Authorisers (BRL-03); an application needs at least one Inputter and one Authoriser.
+  - Users added by the applicant give a Ghana Card number, because activation matches it; signatories' come from Flexcube.
+  - Invited users activate at `/business/activate` by confirming that Ghana Card number, an OTP, password and PIN.
+  - Sole proprietors self-onboard at `/business/signup/sole-proprietor` (Ghana Card, liveness selfie, account discovery
+    without balances, OTP, password, PIN) and land on `/business/overview`. Passport is held (BRL-01).
+  - Sole proprietor payments need no approval leg (`paysWithoutApproval`) and leave after the OTP.
+  - Online account opening is removed. `/activate` is personal activation only.
 - `[DECIDED 2026-10-20]` **A business payment is submitted, not sent.** A maker confirms with a one-time code;
   it lands in the approvers' queue and on the ledger as awaiting approval; an approver's decision settles it.
   Recent suppliers come from the ledger; there is no saved-suppliers list yet.
@@ -527,6 +540,7 @@ The Loans, Lifestyle, Cardless and QR scope conflicts are listed in WORKING_LOG.
 | Kofi Mensah | `u-kofi` | COOS persona |
 | Yaw Oppong | `u-yaw` | Retail customer on a new device |
 | Justice Oduro | `u-legacy` | Migrating from the old internet banking |
+| Akosua Darko | `u-sole` | Sole proprietor, Akosua Darko Enterprises |
 | Kwame Boateng | `u-dual` | Corporate maker (v2: inputter), Adinkra Textiles (the id is a leftover name) |
 | Esther Appiah | `u-approver` | Corporate approver (v2: authoriser), Adinkra Textiles |
 | Yaw Oppong (Corporate Admin) | `u-corpadmin` | Corporate admin |

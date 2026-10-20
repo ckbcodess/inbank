@@ -27,6 +27,7 @@ let installed = false;
 /** Which app a path belongs to. Sign-in, onboarding and recovery pages are "public": Back never returns to them. */
 export function surfaceOf(pathname: string): "business" | "admin" | "retail" | "public" {
   if (pathname.startsWith("/business/signup")) return "public";
+  if (pathname.startsWith("/business/activate")) return "public";
   if (pathname === "/business" || pathname.startsWith("/business/")) return "business";
   if (pathname === "/admin" || pathname.startsWith("/admin/")) return "admin";
   if (/^\/(login|mfa|signup|activate|migrate|get-started|forgot-password|forgot-pin|select-banking|card-verification)(\/|$)/.test(pathname) || pathname === "/") {

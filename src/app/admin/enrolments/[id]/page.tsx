@@ -7,7 +7,8 @@
  *
  * Staff capabilities:
  *   - Summary of company, enrolled accounts, applicant, mandate, and users
- *   - Signature verification: Side-by-side comparison of registered specimen vs uploaded pack
+ *   - Signed letter: uploaded online, or recorded by staff when it arrives by email, post or at a branch
+ *   - Signature verification: Side-by-side comparison of the Flexcube specimen vs the signed letter
  *   - Security callback log: phone called, who answered, outcome
  *   - Approval action: Gated until all signatures match AND callback is verified
  *   - Return for clarification: Reuses ReturnForClarificationDialog
@@ -47,9 +48,11 @@ import {
 } from "@/components/ui/select";
 import ReturnForClarificationDialog from "@/components/approvals/ReturnForClarificationDialog";
 import RejectionDialog from "@/components/approvals/RejectionDialog";
+import { CHANNEL_LABEL, type LetterChannel } from "@/lib/corporate-enrolment";
 import {
   approveEnrolment,
   getEnrolment,
+  recordLetterReceived,
   reassignEnrolment,
   rejectEnrolment,
   returnEnrolment,
@@ -79,6 +82,7 @@ export default function AdminEnrolmentDetailPage({
   const [callOutcome, setCallOutcome] = useState<"verified" | "unreachable" | "failed">("verified");
   const [callNotes, setCallNotes] = useState("");
   const [callLogged, setCallLogged] = useState(false);
+  const [letterVia, setLetterVia] = useState<Exclude<LetterChannel, "upload">>("email");
 
   // Load application
   useEffect(() => {
@@ -155,6 +159,22 @@ export default function AdminEnrolmentDetailPage({
       setApplication(updated);
       setCallLogged(true);
       setFeedbackMsg("Verification call logged successfully.");
+      setTimeout(() => setFeedbackMsg(""), 3500);
+    }
+  }
+
+  // A signed letter that reached the bank outside the app
+  function handleRecordLetter() {
+    if (!application) return;
+    const updated = recordLetterReceived(
+      application.reference,
+      letterVia,
+      application.assignedTo.name,
+      application.assignedTo.type === "rm" ? "Relationship Manager" : "Corporate Operations User",
+    );
+    if (updated) {
+      setApplication(updated);
+      setFeedbackMsg(`Signed letter recorded as received by ${letterVia}.`);
       setTimeout(() => setFeedbackMsg(""), 3500);
     }
   }
@@ -238,11 +258,14 @@ export default function AdminEnrolmentDetailPage({
   const matchedSignatures = application.signatureChecks.filter((s) => s.status === "match").length;
   const allSignaturesMatch = totalSignatures > 0 && matchedSignatures === totalSignatures;
   const isCallVerified = application.verificationCall.logged && application.verificationCall.outcome === "verified";
-  const canApprove = allSignaturesMatch && isCallVerified && application.status !== "approved";
+  const letterIn = application.status !== "awaiting_letter";
+  const canApprove = letterIn && allSignaturesMatch && isCallVerified && application.status !== "approved";
 
   const approvalBlockReason =
     application.status === "approved"
       ? "This application has already been approved."
+      : !letterIn
+      ? "Waiting for the signed letter. Record it here when it arrives by email, post or at a branch."
       : !allSignaturesMatch && !isCallVerified
       ? `Requires all signatures verified as Match (${matchedSignatures}/${totalSignatures}) and security callback logged as Verified.`
       : !allSignaturesMatch
@@ -255,7 +278,7 @@ export default function AdminEnrolmentDetailPage({
     <div className="flex flex-col gap-4">
       <PageHeader
         title={application.companyName}
-        description={`${application.reference} · Mandate: ${application.mandate}`}
+        description={`${application.reference} · ${CHANNEL_LABEL[application.channel]} · Mandate: ${application.mandate}`}
         backTo={{ href: "/admin/enrolments", label: "Enrolments queue" }}
       />
 
@@ -391,13 +414,40 @@ export default function AdminEnrolmentDetailPage({
             ))}
           </div>
 
-          <div className="mt-auto pt-2 border-t border-border/50 flex items-center justify-between text-[12px] text-muted-foreground">
-            <span>Uploaded Mandate Pack:</span>
-            <span className="flex items-center gap-1 font-medium text-foreground truncate max-w-[200px]">
-              <FileCheck2 size={13} className="text-primary shrink-0" />
-              {application.pack.uploadedFileName || "Mandate_Pack.pdf"}
-            </span>
-          </div>
+          {letterIn ? (
+            <div className="mt-auto pt-2 border-t border-border/50 flex items-center justify-between text-[12px] text-muted-foreground">
+              <span>Signed letter</span>
+              <span className="flex items-center gap-1 font-medium text-foreground truncate max-w-[240px]">
+                <FileCheck2 size={13} className="text-primary shrink-0" />
+                {application.pack.uploadedFileName ??
+                  `Received by ${CHANNEL_LABEL[application.pack.receivedVia ?? "branch"].toLowerCase()}`}
+              </span>
+            </div>
+          ) : (
+            <div className="mt-auto flex flex-col gap-2 pt-2 border-t border-border/50">
+              <p className="text-[12px] text-muted-foreground">
+                Signed letter not received yet. Record it when it arrives.
+              </p>
+              <div className="flex items-center gap-2">
+                <Select
+                  value={letterVia}
+                  onValueChange={(v) => v && setLetterVia(v as Exclude<LetterChannel, "upload">)}
+                >
+                  <SelectTrigger aria-label="How the letter arrived" className="w-[140px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="email">Email</SelectItem>
+                    <SelectItem value="post">Post</SelectItem>
+                    <SelectItem value="branch">Branch</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button variant="outline" onClick={handleRecordLetter}>
+                  Record Letter Received
+                </Button>
+              </div>
+            </div>
+          )}
         </section>
       </div>
 
@@ -411,7 +461,7 @@ export default function AdminEnrolmentDetailPage({
                 Wet-Ink Signature Verification ({matchedSignatures}/{totalSignatures} Matched)
               </h2>
               <p className="text-[12px] text-muted-foreground">
-                Compare signatures on the uploaded document against specimen cards on file.
+                Compare the signatures on the letter with the specimen signatures in Flexcube.
               </p>
             </div>
           </div>
@@ -450,6 +500,7 @@ export default function AdminEnrolmentDetailPage({
                     type="button"
                     variant={check.status === "match" ? "default" : "outline"}
                     size="xs"
+                    disabled={!letterIn}
                     onClick={() => handleSignatureDecision(idx, "match")}
                     className={`h-7 text-[12px] ${check.status === "match" ? "bg-emerald-600 hover:bg-emerald-700 text-white" : ""}`}
                   >
@@ -460,6 +511,7 @@ export default function AdminEnrolmentDetailPage({
                     type="button"
                     variant={check.status === "no_match" ? "destructive" : "outline"}
                     size="xs"
+                    disabled={!letterIn}
                     onClick={() => handleSignatureDecision(idx, "no_match")}
                     className="h-7 text-[12px]"
                   >

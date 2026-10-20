@@ -1,816 +1,168 @@
 "use client";
 
 /**
- * Business signup — a company applying to bank with GCB for the first time.
- *
- * The reasoning for why this is a submit-and-review flow rather than an
- * instant one lives in `src/lib/signup-business.ts`. In short: a business has
- * documents to check, not a selfie to match, and that check can't be
- * instant — so this ends in a reference number, not a session.
- *
- * Every reachable instance is addressable from the Dev Mode switcher
- * (bottom-right).
+ * Business registration door. Sole proprietors self-onboard online (BRD v2 §5.1). Companies apply online with
+ * a letter we write for their signatories, or at a branch; both reach the same bank review (FR-ADM-05).
  */
 
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import {
-  Building2,
-  Check,
-  CheckCircle2,
-  ClipboardCheck,
-  FileText,
-  Paperclip,
-  Trash2,
-  UserPlus,
-  Users,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Building2, ChevronRight, Store } from "lucide-react";
 import AuthLayout from "@/components/auth/AuthLayout";
-import { StateSwitcher } from "@/components/states/StateSwitcher";
-import DevStatePanel from "@/components/states/DevStatePanel";
-import {
-  BUSINESS_SIGNUP_SCENARIO_IDS,
-  BUSINESS_SIGNUP_SCENARIO_LABELS,
-  BUSINESS_TYPES,
-  EXISTING_COMPANY_NAME,
-  EXISTING_COMPANY_TIN,
-  REQUIRED_DOCUMENTS,
-  REVIEW_TIMELINE,
-  SIGNATORY_ROLES,
-  SUPPORT_LINE,
-  businessScenarioIdFor,
-  findBusinessScenario,
-  generateReference,
-  lookupTin,
-  type BusinessSignupStep,
-  type BusinessSignupVariant,
-  type CompanyDetails,
-  type PrimaryContact,
-  type Signatory,
-} from "@/lib/signup-business";
-import { PhoneInput } from "@/components/ui/phone-input";
-import { displayGhanaMobile, isCompleteGhanaMobile } from "@/lib/phone";
+import { Button } from "@/components/ui/button";
+import FindBranchDialog from "@/components/corporate/FindBranchDialog";
 
-import { Field } from "@/components/ui/field";
-import { isCompleteGhanaCard } from "@/lib/ghana-card";
-import { ReviewSection, Row } from "@/components/auth/BusinessFormShared";
+function BusinessSignupContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialType = searchParams.get("type");
 
-const EMPTY_COMPANY: CompanyDetails = { name: "", tin: "", businessType: BUSINESS_TYPES[0] };
-const EMPTY_CONTACT: PrimaryContact = { name: "", role: SIGNATORY_ROLES[0], ghanaCard: "", mobile: "", email: "" };
-
-function newSignatoryId() {
-  return `sig-${Math.random().toString(36).slice(2, 9)}`;
-}
-
-function BusinessSignupFlow() {
-  const [step, setStep] = useState<BusinessSignupStep>("choice");
-  const [variant, setVariant] = useState<BusinessSignupVariant>("default");
-  const [busy, setBusy] = useState(false);
-
-  const [company, setCompany] = useState<CompanyDetails>(EMPTY_COMPANY);
-  const [contact, setContact] = useState<PrimaryContact>(EMPTY_CONTACT);
-  const [contactIsSignatory, setContactIsSignatory] = useState(true);
-  const [signatories, setSignatories] = useState<Signatory[]>([]);
-  const [attached, setAttached] = useState<Record<string, string>>({});
-  const [reference, setReference] = useState("");
-
-  const fileInputs = useRef<Record<string, HTMLInputElement | null>>({});
-
-  const allDocsAttached = REQUIRED_DOCUMENTS.every((d) => attached[d.id]);
-  const effectiveSignatories = contactIsSignatory
-    ? [{ id: "contact", name: contact.name, role: contact.role, mobile: contact.mobile }, ...signatories]
-    : signatories;
-
-  const applyScenario = useCallback((id: string) => {
-    const target = findBusinessScenario(id);
-    if (!target) return;
-
-    setStep(target.step);
-    setVariant(target.variant);
-    setBusy(false);
-
-    if (target.variant === "existingCustomer") {
-      setCompany({ name: EXISTING_COMPANY_NAME, tin: EXISTING_COMPANY_TIN, businessType: BUSINESS_TYPES[0] });
-      return;
-    }
-
-    const seedsBeyondCompany = target.step !== "company";
-    setCompany(seedsBeyondCompany ? { name: "Adinkra Fabrics Ltd", tin: "C0099887766", businessType: BUSINESS_TYPES[0] } : EMPTY_COMPANY);
-
-    const seedsBeyondContact = target.step === "signatories" || target.step === "documents" || target.step === "review" || target.step === "submitted";
-    setContact(
-      seedsBeyondContact
-        ? { name: "Abena Owusu-Mensah", role: "Director", ghanaCard: "GHA-077788899-1", mobile: "+233241112233", email: "abena@adinkrafabrics.com" }
-        : EMPTY_CONTACT,
-    );
-    setContactIsSignatory(true);
-
-    const seedsBeyondSignatories = target.step === "documents" || target.step === "review" || target.step === "submitted";
-    setSignatories(seedsBeyondSignatories ? [{ id: "sig-demo", name: "Kojo Anim", role: "Finance Manager", mobile: "+233247778899" }] : []);
-
-    const seedsBeyondDocuments = target.step === "review" || target.step === "submitted";
-    setAttached(
-      seedsBeyondDocuments
-        ? Object.fromEntries(REQUIRED_DOCUMENTS.map((d) => [d.id, `${d.id}.pdf`]))
-        : {},
-    );
-
-    setReference(target.step === "submitted" ? generateReference() : "");
-  }, []);
-
-  // `?scenario=` opens the flow on that screen (the Demo hub deep-links with it).
-  const scenarioParam = useSearchParams().get("scenario");
-  const appliedScenario = useRef<string | null>(null);
-  useEffect(() => {
-    if (!scenarioParam || appliedScenario.current === scenarioParam) return;
-    appliedScenario.current = scenarioParam;
-    applyScenario(scenarioParam);
-  }, [scenarioParam, applyScenario]);
-
-  function handleCompanySubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    window.setTimeout(() => {
-      setBusy(false);
-      const result = lookupTin(company.tin);
-      if (result === "existingCustomer") {
-        setVariant("existingCustomer");
-        return;
-      }
-      setStep("contact");
-    }, 700);
-  }
-
-  function handleAttach(docId: string, file: File | undefined) {
-    if (!file) return;
-    setAttached((prev) => ({ ...prev, [docId]: file.name }));
-  }
-
-  function handleSubmitApplication() {
-    setBusy(true);
-    window.setTimeout(() => {
-      setBusy(false);
-      setReference(generateReference());
-      setStep("submitted");
-    }, 900);
-  }
-
-  function handleBackStep() {
-    if (step === "review") {
-      setStep("documents");
-    } else if (step === "documents") {
-      setStep("signatories");
-    } else if (step === "signatories") {
-      setStep("contact");
-    } else if (step === "contact") {
-      setStep("company");
-    } else if (step === "company") {
-      setStep("choice");
-    }
-  }
-
-  const headings = resolveHeadings(step, variant);
-  const stepIndex = ["company", "contact", "signatories", "documents", "review"].indexOf(step);
-
-  return (
-    <>
-      <StateSwitcher
-        section="12.1"
-        states={BUSINESS_SIGNUP_SCENARIO_IDS}
-        value={businessScenarioIdFor(step, variant)}
-        onChange={applyScenario}
-        labels={BUSINESS_SIGNUP_SCENARIO_LABELS}
-      />
-      <DevStatePanel />
-
-      <AuthLayout
-        icon={headings.icon}
-        title={headings.title}
-        description={headings.description}
-        align={step === "submitted" || variant === "existingCustomer" ? "center" : "left"}
-        onBack={step !== "submitted" && step !== "choice" ? handleBackStep : undefined}
-        backHref={step === "choice" ? "/login" : undefined}
-        backLabel={step === "choice" ? "Back to login" : "Back to previous step"}
-        width="wide"
-        footer={
-          step === "choice" || (step === "company" && variant !== "existingCustomer") ? (
-            <div className="mt-4 text-center">
-              <p className="text-[13px] text-muted-foreground">
-                Already have an account?{" "}
-                <Link
-                  href="/login"
-                  className="font-medium text-foreground underline underline-offset-4 hover:text-foreground"
-                >
-                  Login
-                </Link>
-              </p>
-            </div>
-          ) : null
-        }
-      >
-        {step !== "submitted" && step !== "choice" && (
-          <ol className="mb-4 flex items-center gap-2">
-            {["Company", "Contact", "Signatories", "Documents", "Review"].map((label, i) => (
-              <li key={label} className="flex flex-1 flex-col items-center gap-2">
-                <span
-                  className={`h-1 w-full rounded-full ${
-                    i <= stepIndex ? "bg-primary" : "bg-muted"
-                  }`}
-                  aria-hidden="true"
-                />
-                <span className="hidden text-[10px] text-muted-foreground sm:block">{label}</span>
-              </li>
-            ))}
-          </ol>
-        )}
-
-        {/* ── Choice (Entry Point) ─────────────────────────────────────────── */}
-        {step === "choice" && (
-          <div className="flex flex-col gap-3">
-            <Link
-              href="/business/signup/enrol"
-              className="group flex flex-col gap-2 rounded-2xl border border-border bg-card p-4 transition-all duration-hover ease-settle hover:border-foreground/30 hover:bg-muted/40 cursor-pointer"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <span className="flex size-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
-                    <Building2 size={18} strokeWidth={1.9} />
-                  </span>
-                  <div>
-                    <p className="text-[14.5px] font-medium text-foreground">
-                      Set up internet banking
-                    </p>
-                    <p className="text-[12px] text-muted-foreground">
-                      Your company already banks with GCB
-                    </p>
-                  </div>
-                </div>
-                <span className="text-[14px] text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all">
-                  &rarr;
-                </span>
-              </div>
-              <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-                Enrol an existing company account for Corporate Internet Banking, define signing mandates, and download your wet-ink authorisation pack.
-              </p>
-            </Link>
-
-            <button
-              type="button"
-              onClick={() => setStep("company")}
-              className="group flex flex-col gap-2 rounded-2xl border border-border bg-card p-4 text-left transition-all duration-hover ease-settle hover:border-foreground/30 hover:bg-muted/40 cursor-pointer"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <span className="flex size-9 items-center justify-center rounded-xl bg-muted text-foreground">
-                    <UserPlus size={18} strokeWidth={1.9} />
-                  </span>
-                  <div>
-                    <p className="text-[14.5px] font-medium text-foreground">
-                      Open a business account
-                    </p>
-                    <p className="text-[12px] text-muted-foreground">
-                      New corporate relationship
-                    </p>
-                  </div>
-                </div>
-                <span className="text-[14px] text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all">
-                  &rarr;
-                </span>
-              </div>
-              <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-                Apply to establish a new corporate account with GCB with company incorporation documents, TIN registration, and authorized directors.
-              </p>
-            </button>
-          </div>
-        )}
-
-        {/* ── Company ──────────────────────────────────────────────────────── */}
-        {step === "company" && variant !== "existingCustomer" && (
-          <form onSubmit={handleCompanySubmit} className="flex flex-col gap-4">
-            <Field label="Registered Business Name" htmlFor="companyName">
-              <Input
-                id="companyName"
-                value={company.name}
-                onChange={(e) => setCompany((c) => ({ ...c, name: e.target.value }))}
-                placeholder="Adinkra Fabrics Ltd"
-                
-                required
-              />
-</Field>
-
-            <Field label="Taxpayer Identification Number (TIN)" htmlFor="tin">
-              <Input
-                id="tin"
-                value={company.tin}
-                onChange={(e) => setCompany((c) => ({ ...c, tin: e.target.value }))}
-                placeholder="C0099887766"
-                className="uppercase tabular"
-                required
-              />
-</Field>
-
-            <Field label="Business Type" htmlFor="businessType">
-              <Select
-                value={company.businessType}
-                onValueChange={(v) => v && setCompany((c) => ({ ...c, businessType: v }))}
-              >
-                <SelectTrigger id="businessType" >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {BUSINESS_TYPES.map((t) => (
-                    <SelectItem key={t} value={t}>
-                      {t}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-</Field>
-
-            <Button
-              type="submit"
-              variant="default"
-              size="lg"
-              disabled={company.name.trim() === "" || company.tin.trim() === ""} loading={busy}
-              className="mt-2 h-10 w-full text-[14px]"
-            >
-              Proceed
-            </Button>
-          </form>
-        )}
-
-        {step === "company" && variant === "existingCustomer" && (
-          <div className="flex flex-col gap-4">
-            <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-              {EXISTING_COMPANY_NAME} already banks with GCB, so a new account application isn&apos;t
-              needed. If you need user access, ask your Corporate Admin to invite you from
-              Administration. If your company is ready to set up Corporate Internet Banking for
-              the first time, you can enrol now.
-            </p>
-            <div className="flex flex-col gap-2 pt-2">
-              <Button
-                variant="default"
-                size="lg"
-                nativeButton={false}
-                render={<Link href="/business/signup/enrol?account=100123456789" />}
-                className="h-10 w-full text-[14px]"
-              >
-                Set up internet banking
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                nativeButton={false}
-                render={<Link href="/login" />}
-                className="h-10 w-full text-[14px]"
-              >
-                Back to login
-              </Button>
-            </div>
-            <p className="text-[12px] text-muted-foreground">
-              Not sure who that is, or think this is a mistake? Call us on{" "}
-              <span className="tabular text-foreground">{SUPPORT_LINE}</span>.
-            </p>
-          </div>
-        )}
-
-        {/* ── Primary contact ──────────────────────────────────────────────── */}
-        {step === "contact" && (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setStep("signatories");
-            }}
-            className="flex flex-col gap-4"
-          >
-            <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-              You — the person filling this in. Once we approve the application, we&apos;ll send
-              this person the activation link that sets them up as the company&apos;s first
-              Corporate Admin.
-            </p>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Full Name" htmlFor="contactName">
-                <Input
-                  id="contactName"
-                  value={contact.name}
-                  onChange={(e) => setContact((c) => ({ ...c, name: e.target.value }))}
-                  
-                  required
-                />
-</Field>
-              <Field label="Your Role" htmlFor="contactRole">
-                <Select value={contact.role} onValueChange={(v) => v && setContact((c) => ({ ...c, role: v }))}>
-                  <SelectTrigger id="contactRole" >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {SIGNATORY_ROLES.map((r) => (
-                      <SelectItem key={r} value={r}>
-                        {r}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-</Field>
-            </div>
-
-            <Field label="Ghana Card Number" htmlFor="contactGhanaCard">
-              <Input
-                id="contactGhanaCard"
-                value={contact.ghanaCard}
-                onChange={(e) => setContact((c) => ({ ...c, ghanaCard: e.target.value }))}
-                placeholder="GHA-012345678-9"
-                className="uppercase tabular"
-                required
-              />
-</Field>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Field label="Mobile Number" htmlFor="contactMobile">
-                <PhoneInput
-                  id="contactMobile"
-                  value={contact.mobile}
-                  onValueChange={(v) => setContact((c) => ({ ...c, mobile: v }))}
-                  className="text-[14.5px]"
-                  required
-                />
-</Field>
-              <Field label="Email" htmlFor="contactEmail">
-                <Input
-                  id="contactEmail"
-                  type="email"
-                  value={contact.email}
-                  onChange={(e) => setContact((c) => ({ ...c, email: e.target.value }))}
-                  
-                  required
-                />
-</Field>
-            </div>
-
-            <Button
-              type="submit"
-              variant="default"
-              size="lg"
-              disabled={contact.name.trim() === "" || !isCompleteGhanaCard(contact.ghanaCard) || !isCompleteGhanaMobile(contact.mobile) || contact.email.trim() === ""}
-              className="mt-2 h-10 w-full text-[14px]"
-            >
-              Proceed
-            </Button>
-          </form>
-        )}
-
-        {/* ── Signatories ──────────────────────────────────────────────────── */}
-        {step === "signatories" && (
-          <div className="flex flex-col gap-4">
-            <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-              Anyone who can act for the company on this account — approve payments, view
-              statements. Add as many as you need; you can always add more later from
-              Administration.
-            </p>
-
-            <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-card-item p-3 transition-colors hover:border-primary/40">
-              <Checkbox
-                checked={contactIsSignatory}
-                onCheckedChange={(checked) => setContactIsSignatory(!!checked)}
-                className="mt-0.5"
-              />
-              <span className="flex min-w-0 flex-col">
-                <span className="text-[13.5px] font-medium text-foreground">
-                  {contact.name || "You"} — {contact.role}
-                </span>
-                <span className="mt-0.5 text-[12.5px] text-muted-foreground">
-                  Included automatically as the primary contact, unless removed here.
-                </span>
-              </span>
-            </label>
-
-            {signatories.map((sig) => (
-              <div key={sig.id} className="flex items-center gap-3 rounded-2xl border border-border bg-card-item p-3">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-                  <Users size={18} strokeWidth={1.8} aria-hidden="true" />
-                </span>
-                <span className="flex min-w-0 flex-1 flex-col">
-                  <span className="truncate text-[13.5px] font-medium text-foreground">{sig.name || "Unnamed signatory"}</span>
-                  <span className="mt-0.5 text-[12.5px] text-muted-foreground tabular">
-                    {sig.role} · {sig.mobile ? displayGhanaMobile(sig.mobile) : "no number yet"}
-                  </span>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setSignatories((prev) => prev.filter((s) => s.id !== sig.id))}
-                  aria-label={`Remove ${sig.name || "this signatory"}`}
-                  className="flex size-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive cursor-pointer"
-                >
-                  <Trash2 size={16} strokeWidth={1.8} />
-                </button>
-              </div>
-            ))}
-
-            <SignatoryForm onAdd={(sig) => setSignatories((prev) => [...prev, sig])} />
-
-            <Button
-              variant="default"
-              size="lg"
-              onClick={() => setStep("documents")}
-              disabled={effectiveSignatories.length === 0}
-              className="mt-2 h-10 w-full text-[14px]"
-            >
-              Proceed
-            </Button>
-            {effectiveSignatories.length === 0 && (
-              <p className="text-center text-[12.5px] text-muted-foreground">
-                At least one signatory is required to open the account.
-              </p>
-            )}
-          </div>
-        )}
-
-        {/* ── Documents ────────────────────────────────────────────────────── */}
-        {step === "documents" && (
-          <div className="flex flex-col gap-4">
-            <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-              Bank of Ghana requires all four before an application can be reviewed. PDF or a clear
-              photo, up to 10MB each.
-            </p>
-
-            {REQUIRED_DOCUMENTS.map((doc) => {
-              const filename = attached[doc.id];
-              return (
-                <div
-                  key={doc.id}
-                  className={`flex items-center gap-3 rounded-2xl border p-3 transition-colors ${
-                    filename ? "border-primary/40 bg-primary/5" : "border-border bg-card-item"
-                  }`}
-                >
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
-                    {filename ? (
-                      <Check size={18} strokeWidth={1.9} className="text-primary" aria-hidden="true" />
-                    ) : (
-                      <FileText size={18} strokeWidth={1.8} aria-hidden="true" />
-                    )}
-                  </span>
-                  <span className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-[13.5px] font-medium text-foreground">{doc.label}</span>
-                    <span className="mt-0.5 truncate text-[12.5px] text-muted-foreground">
-                      {filename ?? doc.hint}
-                    </span>
-                  </span>
-                  <input
-                    ref={(el) => {
-                      fileInputs.current[doc.id] = el;
-                    }}
-                    type="file"
-                    accept="application/pdf,image/*"
-                    className="hidden"
-                    onChange={(e) => handleAttach(doc.id, e.target.files?.[0])}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fileInputs.current[doc.id]?.click()}
-                    className="shrink-0 h-8"
-                  >
-                    <Paperclip size={14} strokeWidth={1.8} className="mr-2" aria-hidden="true" />
-                    {filename ? "Replace" : "Attach"}
-                  </Button>
-                </div>
-              );
-            })}
-
-            <Button
-              variant="default"
-              size="lg"
-              onClick={() => setStep("review")}
-              disabled={!allDocsAttached}
-              className="mt-2 h-10 w-full text-[14px]"
-            >
-              Proceed
-            </Button>
-            {!allDocsAttached && (
-              <p className="text-center text-[12.5px] text-muted-foreground">
-                All four documents are needed before we can review this.
-              </p>
-            )}
-          </div>
-        )}
-
-        {/* ── Review ───────────────────────────────────────────────────────── */}
-        {step === "review" && (
-          <div className="flex flex-col gap-4">
-            <ReviewSection title="Company" onEdit={() => setStep("company")}>
-              <dl className="grid grid-cols-1 gap-y-2 text-[13.5px]">
-                <Row label="Name" value={company.name} />
-                <Row label="TIN" value={company.tin} tabular />
-                <Row label="Type" value={company.businessType} />
-              </dl>
-            </ReviewSection>
-
-            <ReviewSection title="Primary contact" onEdit={() => setStep("contact")}>
-              <dl className="grid grid-cols-1 gap-y-2 text-[13.5px]">
-                <Row label="Name" value={contact.name} />
-                <Row label="Role" value={contact.role} />
-                <Row label="Mobile" value={displayGhanaMobile(contact.mobile)} tabular />
-                <Row label="Email" value={contact.email} />
-              </dl>
-            </ReviewSection>
-
-            <ReviewSection title={`Signatories (${effectiveSignatories.length})`} onEdit={() => setStep("signatories")}>
-              <ul className="flex flex-col gap-2 text-[13.5px]">
-                {effectiveSignatories.map((sig) => (
-                  <li key={sig.id} className="text-foreground">
-                    {sig.name} <span className="text-muted-foreground">· {sig.role}</span>
-                  </li>
-                ))}
-              </ul>
-            </ReviewSection>
-
-            <ReviewSection title="Documents" onEdit={() => setStep("documents")}>
-              <ul className="flex flex-col gap-2 text-[13.5px] text-foreground">
-                {REQUIRED_DOCUMENTS.map((doc) => (
-                  <li key={doc.id} className="flex items-center gap-2">
-                    <Check size={15} strokeWidth={1.9} className="text-primary" aria-hidden="true" />
-                    {doc.label}
-                  </li>
-                ))}
-              </ul>
-            </ReviewSection>
-
-            <div
-              role="note"
-              className="flex items-start gap-2 rounded-2xl bg-muted p-3 text-[12.5px] leading-relaxed text-muted-foreground"
-            >
-              <ClipboardCheck size={16} strokeWidth={1.8} aria-hidden="true" className="mt-0.5 shrink-0" />
-              <span>
-                Submitting sends this for review — it doesn&apos;t open the account yet. We&apos;ll
-                email {contact.email || "your primary contact"} within {REVIEW_TIMELINE}.
-              </span>
-            </div>
-
-            <Button
-              variant="default"
-              size="lg"
-              onClick={handleSubmitApplication}
-              loading={busy}
-              className="mt-2 h-10 w-full text-[14px]"
-            >
-              Submit application
-            </Button>
-          </div>
-        )}
-
-        {/* ── Submitted ────────────────────────────────────────────────────── */}
-        {step === "submitted" && (
-          <div className="flex flex-col gap-5">
-            <div className="rounded-2xl border border-border bg-muted/30 p-4 text-center">
-              <p className="text-[12px] font-medium uppercase text-muted-foreground">
-                Application reference
-              </p>
-              <p className="mt-2 text-[20px] font-medium text-foreground tabular">{reference}</p>
-            </div>
-
-            <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-              We review applications within <span className="text-foreground">{REVIEW_TIMELINE}</span>.
-              We&apos;ll email <span className="text-foreground">{contact.email}</span> either way — if
-              anything&apos;s missing, we&apos;ll say exactly what. Once approved,{" "}
-              <span className="text-foreground">{contact.name}</span> receives an activation link to
-              log in as the company&apos;s first Corporate Admin, and can invite the rest of the
-              team from Administration.
-            </p>
-
-            <Button
-              variant="default"
-              size="lg"
-              nativeButton={false}
-              render={<Link href="/login" />}
-              className="h-10 w-full text-[14px]"
-            >
-              Back to login
-            </Button>
-
-            <p className="text-center text-[12.5px] text-muted-foreground">
-              Keep this reference — quote it if you call us on{" "}
-              <span className="tabular text-foreground">{SUPPORT_LINE}</span>.
-            </p>
-          </div>
-        )}
-      </AuthLayout>
-    </>
+  const [screen, setScreen] = useState<"choose" | "company">(
+    initialType === "company" ? "company" : "choose",
   );
-}
+  const [showBranchDialog, setShowBranchDialog] = useState(false);
 
-/* ── Small building blocks ─────────────────────────────────────────────────── */
+  function handleChooseSoleProprietor() {
+    router.push("/business/signup/sole-proprietor");
+  }
 
-function SignatoryForm({ onAdd }: { onAdd: (sig: Signatory) => void }) {
-  const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [role, setRole] = useState<string>(SIGNATORY_ROLES[0]);
-  const [mobile, setMobile] = useState("");
+  function handleChooseCompany() {
+    setScreen("company");
+  }
 
-  if (!open) {
+  if (screen === "company") {
     return (
-      <Button type="button" variant="outline" onClick={() => setOpen(true)} className="h-10 w-full text-[14px]">
-        <UserPlus size={16} strokeWidth={1.9} className="mr-2" aria-hidden="true" />
-        Add another signatory
-      </Button>
+      <>
+        <AuthLayout
+          title="Set Up Your Company"
+          description="Apply online with any account your company holds. We write the request letter for your signatories to sign."
+          icon={Building2}
+          align="center"
+          onBack={() => setScreen("choose")}
+          backLabel="Back to business options"
+          width="compact"
+        >
+          <div className="flex flex-col gap-3">
+            <Button
+              size="lg"
+              className="h-10 w-full text-[14px]"
+              onClick={() => router.push("/business/signup/enrol")}
+            >
+              Apply Online
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="h-10 w-full text-[14px]"
+              onClick={() => router.push("/business/signup/status")}
+            >
+              Track an Application
+            </Button>
+            <p className="pt-2 text-center text-[13px] text-muted-foreground">
+              Prefer to apply in person?{" "}
+              <button
+                type="button"
+                onClick={() => setShowBranchDialog(true)}
+                className="cursor-pointer font-medium text-foreground underline underline-offset-4 hover:text-foreground/80"
+              >
+                Find a branch
+              </button>
+            </p>
+          </div>
+        </AuthLayout>
+
+        <FindBranchDialog
+          open={showBranchDialog}
+          onOpenChange={setShowBranchDialog}
+        />
+      </>
     );
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-2xl border border-dashed border-border p-3">
-      <div className="grid gap-2 sm:grid-cols-2">
-        <Input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Full name"
-          aria-label="Signatory name"
-          
-        />
-        <Select value={role} onValueChange={(v) => v && setRole(v)}>
-          <SelectTrigger aria-label="Signatory role" >
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {SIGNATORY_ROLES.map((r) => (
-              <SelectItem key={r} value={r}>
-                {r}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+    <AuthLayout
+      title="How Is Your Business Set Up?"
+      description="Choose the option that describes your business."
+      backHref="/login?type=business"
+      backLabel="Back to login"
+      width="compact"
+    >
+      <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-2">
+          {/* Option 1: Sole Proprietor */}
+          <button
+            type="button"
+            onClick={handleChooseSoleProprietor}
+            className="group flex cursor-pointer items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card-item p-4 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs sm:p-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                <Store size={18} strokeWidth={2} />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[15.5px] font-medium tracking-[var(--ls-tight)] text-foreground sm:text-[16.5px]">
+                  Sole Proprietor
+                </span>
+                <span className="mt-0.5 text-[13px] leading-snug text-muted-foreground sm:text-[13.5px]">
+                  I run the business in my own name.
+                </span>
+              </div>
+            </div>
+
+            <ChevronRight
+              size={20}
+              strokeWidth={2.2}
+              className="shrink-0 text-foreground/70 transition duration-200 group-hover:text-foreground"
+            />
+          </button>
+
+          {/* Option 2: Company or Organisation */}
+          <button
+            type="button"
+            onClick={handleChooseCompany}
+            className="group flex cursor-pointer items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card-item p-4 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs sm:p-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                <Building2 size={18} strokeWidth={2} />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[15.5px] font-medium tracking-[var(--ls-tight)] text-foreground sm:text-[16.5px]">
+                  Company or Organisation
+                </span>
+                <span className="mt-0.5 text-[13px] leading-snug text-muted-foreground sm:text-[13.5px]">
+                  Limited company, partnership, NGO and others.
+                </span>
+              </div>
+            </div>
+
+            <ChevronRight
+              size={20}
+              strokeWidth={2.2}
+              className="shrink-0 text-foreground/70 transition duration-200 group-hover:text-foreground"
+            />
+          </button>
+        </div>
+
+        <p className="text-center text-[13px] text-muted-foreground">
+          Already registered?{" "}
+          <Link
+            href="/login?type=business"
+            className="font-medium text-foreground underline underline-offset-4 hover:text-foreground/80"
+          >
+            Login
+          </Link>
+        </p>
       </div>
-      <PhoneInput
-        value={mobile}
-        onValueChange={setMobile}
-        className="text-[14px]"
-        aria-label="Signatory mobile number"
-      />
-      <div className="flex gap-2">
-        <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)} className="h-8">
-          Cancel
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          disabled={name.trim() === "" || !isCompleteGhanaMobile(mobile)}
-          onClick={() => {
-            onAdd({ id: newSignatoryId(), name, role, mobile });
-            setName("");
-            setRole(SIGNATORY_ROLES[0]);
-            setMobile("");
-            setOpen(false);
-          }}
-          className="h-8"
-        >
-          Add signatory
-        </Button>
-      </div>
-    </div>
+    </AuthLayout>
   );
-}
-
-/* ── Headings ──────────────────────────────────────────────────────────────── */
-
-function resolveHeadings(step: BusinessSignupStep, variant: BusinessSignupVariant) {
-  if (step === "choice") {
-    return { icon: Building2, title: "Business Banking", description: "Choose how you would like to get started with GCB Bank." };
-  }
-  if (step === "submitted") {
-    return { icon: CheckCircle2, title: "Application Submitted", description: "We'll review your application within 2 business days." };
-  }
-  if (step === "review") {
-    return { icon: ClipboardCheck, title: "Review Your Application", description: "Review and confirm your application details." };
-  }
-  if (step === "documents") {
-    return { icon: FileText, title: "Upload Your Documents", description: "Required documents for business registration." };
-  }
-  if (step === "signatories") {
-    return { icon: Users, title: "Authorised Signatories", description: "People authorised to operate this account." };
-  }
-  if (step === "contact") {
-    return { icon: UserPlus, title: "Primary Contact", description: "Contact person for this application." };
-  }
-  return variant === "existingCustomer"
-    ? { icon: CheckCircle2, title: "Already a GCB Customer", description: "This company is already registered with GCB." }
-    : { icon: Building2, title: "Open a Business Account", description: "Enter your company details to begin." };
 }
 
 export default function BusinessSignupPage() {
   return (
-    <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
-      <BusinessSignupFlow />
+    <Suspense fallback={null}>
+      <BusinessSignupContent />
     </Suspense>
   );
 }

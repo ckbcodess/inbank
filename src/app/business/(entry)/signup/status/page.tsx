@@ -1,581 +1,424 @@
 "use client";
 
 /**
- * Corporate Enrolment Status Tracker — /business/signup/status
+ * Where a company follows its internet banking application — /business/signup/status.
  *
- * Allows applicants to track their application status using their reference number
- * and mobile number verification, before any login credentials exist.
- *
- * Reads directly from `enrolment-store.ts`.
- * Features:
- *   - Honest timeline of progress
- *   - Security callback disclosure
- *   - In-place re-upload for returned applications
- *   - Setup invite link tracking & resend actions after approval
+ * Before anyone has sign-in details, the reference plus a code to the applicant's number on file is the key.
+ * The page answers one question, "where is it and what's next?", and puts the one thing the customer can do
+ * right where they need it: upload the signed letter if it's still to come, send a corrected one if it was
+ * returned, or resend a user's sign-in details once approved. Reads and writes `lib/enrolment-store.ts`.
  */
 
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import {
-  AlertTriangle,
-  Building2,
-  Check,
-  CheckCircle2,
-  ExternalLink,
-  FileText,
-  RotateCcw,
-  UserCheck,
-} from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
+import { AlertCircle, Check, FileText } from "lucide-react";
 import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
-import { DocumentAttachRow } from "@/components/auth/BusinessFormShared";
+import LetterUpload, { type AttachedFile } from "@/components/corporate/onboarding/LetterUpload";
+import { openRequestLetter } from "@/components/corporate/onboarding/request-letter";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
-import { PhoneInput } from "@/components/ui/phone-input";
-import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { maskMobile } from "@/lib/auth-shared";
+import { lookupCorporateAccount } from "@/lib/corporate-enrolment";
+import { SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import {
   getEnrolment,
   resendUserInvite,
   resubmitReturnedEnrolment,
+  uploadEnrolmentLetter,
   type EnrolmentApplication,
 } from "@/lib/enrolment-store";
 
-export default function CorporateStatusTrackerPage() {
-  return (
-    <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
-      <StatusTrackerContent />
-    </Suspense>
-  );
+type Stage = "search" | "otp" | "tracking";
+
+const RESEND_SECONDS = 30;
+
+function statusLine(app: EnrolmentApplication): string {
+  switch (app.status) {
+    case "awaiting_letter":
+      return "Waiting for your signed letter.";
+    case "returned":
+      return "Returned to you. One thing to fix.";
+    case "rejected":
+      return "This application was declined.";
+    case "approved":
+      return "Approved. Sign-in details sent.";
+    case "call_verification":
+      return "Signatures checked. We'll call to confirm.";
+    default:
+      return "We're checking the signatures.";
+  }
 }
 
-function StatusTrackerContent() {
+function StatusContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const initialRef = searchParams.get("ref") || "";
+  const refParam = searchParams.get("ref");
 
-  // Lookup state
-  const [reference, setReference] = useState(initialRef || "ENR-2026-0814");
-  const [mobile, setMobile] = useState("0244123456");
-  const [stage, setStage] = useState<"search" | "otp" | "tracking">(initialRef ? "tracking" : "search");
-  const [otpDigits, setOtpDigits] = useState<string[]>(() => Array(OTP_LENGTH).fill(""));
+  const [stage, setStage] = useState<Stage>("search");
+  const [reference, setReference] = useState("");
+  const [application, setApplication] = useState<EnrolmentApplication | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [busy, setBusy] = useState(false);
+  const [digits, setDigits] = useState<string[]>(() => Array<string>(OTP_LENGTH).fill(""));
+  const [countdown, setCountdown] = useState(RESEND_SECONDS);
+  const [letter, setLetter] = useState<AttachedFile | null>(null);
 
-  // Loaded application
-  const [application, setApplication] = useState<EnrolmentApplication | null>(null);
-
-  // Return re-upload state
-  const [reuploadFile, setReuploadFile] = useState<File | null>(null);
-  const [reuploadBusy, setReuploadBusy] = useState(false);
-  const [reuploadSuccess, setReuploadSuccess] = useState(false);
-
-  // Invite resend feedback
-  const [resendStatus, setResendStatus] = useState<Record<string, string>>({});
-
-  // Load application on initial load if ref provided
+  // Arriving from the application (or a Demo hub link) with a reference: the applicant has just proved who they are.
   useEffect(() => {
-    if (initialRef) {
-      const app = getEnrolment(initialRef);
-      if (app) {
-        setApplication(app);
-        setStage("tracking");
-      }
+    if (!refParam) return;
+    const app = getEnrolment(refParam);
+    if (app) {
+      setReference(app.reference);
+      setApplication(app);
+      setLetter(null);
+      setStage("tracking");
     }
-  }, [initialRef]);
+  }, [refParam]);
 
-  // Handle Search Submit
-  function handleSearchSubmit(e: React.FormEvent) {
+  useEffect(() => {
+    if (stage !== "otp" || countdown <= 0) return;
+    const t = window.setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => window.clearTimeout(t);
+  }, [stage, countdown]);
+
+  function handleFind(e: React.FormEvent) {
     e.preventDefault();
-    setErrorMsg("");
-    const app = getEnrolment(reference);
+    const app = getEnrolment(reference.trim());
     if (!app) {
-      setErrorMsg("Application reference not found. Please check your confirmation email.");
+      setErrorMsg("We couldn't find that reference. It starts with ENR and is on your letter.");
       return;
     }
+    setErrorMsg("");
     setApplication(app);
+    setDigits(Array(OTP_LENGTH).fill(""));
+    setCountdown(RESEND_SECONDS);
     setStage("otp");
   }
 
-  // Handle OTP Verify
   function handleOtpSubmit(incomingCode?: string) {
-    const code = incomingCode ?? otpDigits.join("");
-    if (code.length < OTP_LENGTH) return;
+    const code = incomingCode ?? digits.join("");
+    if (code.length < OTP_LENGTH || busy) return;
+    if (code === "000000") {
+      setErrorMsg("The code entered is incorrect or has expired. Please try again or request a new code.");
+      setDigits(Array(OTP_LENGTH).fill(""));
+      return;
+    }
+    setErrorMsg("");
     setBusy(true);
-    setTimeout(() => {
+    window.setTimeout(() => {
       setBusy(false);
       setStage("tracking");
-    }, 400);
+    }, 500);
   }
 
-  // Quick switch demo reference
-  function pickDemoReference(ref: string) {
-    setReference(ref);
-    setErrorMsg("");
-    const app = getEnrolment(ref);
-    if (app) {
-      setApplication(app);
-      setStage("tracking");
-      setReuploadFile(null);
-      setReuploadSuccess(false);
-    }
-  }
-
-  // Handle In-Place Re-upload for returned applications
-  function handleReuploadSubmit() {
-    if (!reuploadFile || !application) return;
-    setReuploadBusy(true);
-    setTimeout(() => {
-      const sizeStr = `${(reuploadFile.size / (1024 * 1024)).toFixed(1)} MB`;
-      const updated = resubmitReturnedEnrolment(application.reference, reuploadFile.name, sizeStr);
-      setReuploadBusy(false);
+  function handleSendLetter() {
+    if (!application || !letter) return;
+    setBusy(true);
+    window.setTimeout(() => {
+      const updated =
+        application.status === "returned"
+          ? resubmitReturnedEnrolment(application.reference, letter.name, letter.size)
+          : uploadEnrolmentLetter(application.reference, letter.name, letter.size);
+      setBusy(false);
       if (updated) {
         setApplication(updated);
-        setReuploadSuccess(true);
+        setLetter(null);
+        toast.success("Letter sent", { description: "We're checking the signatures again." });
       }
     }, 600);
   }
 
-  // Handle Resending Invite
-  function handleResend(userId: string) {
+  function handleResend(userId: string, name: string) {
     if (!application) return;
-    setResendStatus((prev) => ({ ...prev, [userId]: "sending" }));
-    setTimeout(() => {
-      const updated = resendUserInvite(application.reference, userId);
-      if (updated) setApplication(updated);
-      setResendStatus((prev) => ({ ...prev, [userId]: "sent" }));
-      setTimeout(() => {
-        setResendStatus((prev) => {
-          const next = { ...prev };
-          delete next[userId];
-          return next;
-        });
-      }, 3000);
-    }, 500);
+    const updated = resendUserInvite(application.reference, userId);
+    if (updated) {
+      setApplication(updated);
+      toast.success(`Sign-in details sent to ${name}`);
+    }
   }
+
+  function handleBack() {
+    setErrorMsg("");
+    if (stage === "otp") setStage("search");
+    else if (stage === "tracking" && !refParam) setStage("search");
+    else router.push("/business/signup?type=company");
+  }
+
+  if (stage === "search") {
+    return (
+      <AuthLayout
+        title="Track Your Application"
+        description="Enter the reference on your request letter."
+        onBack={handleBack}
+        backLabel="Back to business options"
+        width="compact"
+      >
+        <form onSubmit={handleFind} className="flex flex-col gap-6">
+          <Field label="Reference" htmlFor="reference" error={errorMsg}>
+            <Input
+              id="reference"
+              autoComplete="off"
+              placeholder="ENR-2026-0000"
+              className="tabular"
+              value={reference}
+              onChange={(e) => {
+                setReference(e.target.value.toUpperCase());
+                if (errorMsg) setErrorMsg("");
+              }}
+            />
+          </Field>
+          <Button type="submit" size="lg" disabled={!reference.trim()} className="h-10 w-full text-[14px]">
+            Continue
+          </Button>
+        </form>
+      </AuthLayout>
+    );
+  }
+
+  if (stage === "otp" && application) {
+    return (
+      <AuthLayout
+        title="Confirm Your Code"
+        description={
+          <>
+            A 6-digit code has been sent to {maskMobile(application.applicant.mobile)}.
+            <br />
+            Please enter the code below.
+          </>
+        }
+        onBack={handleBack}
+        backLabel="Back to reference"
+        width="compact"
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleOtpSubmit();
+          }}
+          className="flex flex-col gap-5"
+        >
+          <OtpInput
+            value={digits}
+            onChange={(next) => {
+              setDigits(next);
+              if (errorMsg) setErrorMsg("");
+            }}
+            onComplete={(code) => handleOtpSubmit(code)}
+            disabled={busy}
+            invalid={Boolean(errorMsg)}
+            autoFocus
+          />
+          {errorMsg && (
+            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
+              {errorMsg}
+            </p>
+          )}
+          <button
+            type="button"
+            disabled={countdown > 0}
+            onClick={() => setCountdown(RESEND_SECONDS)}
+            className="cursor-pointer self-center text-[13px] text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80 disabled:cursor-default disabled:text-muted-foreground disabled:no-underline"
+          >
+            {countdown > 0 ? (
+              <>
+                Resend code in <span className="tabular">{countdown}s</span>
+              </>
+            ) : (
+              "Resend code"
+            )}
+          </button>
+        </form>
+      </AuthLayout>
+    );
+  }
+
+  if (!application) return null;
+
+  const app = application;
+  const company = lookupCorporateAccount(app.accounts[0]?.number ?? "");
+  const reviewer = app.assignedTo;
+  const openReturn = app.status === "returned" ? app.returns.find((r) => !r.resolved) ?? app.returns[0] : null;
+  const needsLetter = app.status === "awaiting_letter" || app.status === "returned";
 
   return (
     <AuthLayout
-      icon={stage === "tracking" ? Building2 : FileText}
-      title={
-        stage === "tracking" && application
-          ? application.companyName
-          : stage === "otp"
-          ? "Verify Mobile"
-          : "Track Application"
-      }
+      title={app.companyName}
       description={
-        stage === "tracking" && application
-          ? `Reference: ${application.reference} · Submitted on ${new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" }).format(new Date(application.createdAt))}`
-          : stage === "otp"
-          ? `Enter the 6-digit verification code sent to ${mobile}.`
-          : "Check the review progress of your Corporate Internet Banking application."
+        <>
+          <span className="tabular">{app.reference}</span> · {statusLine(app)}
+        </>
       }
-      align="left"
-      onBack={
-        stage === "otp"
-          ? () => setStage("search")
-          : stage === "tracking" && !initialRef
-          ? () => setStage("search")
-          : undefined
-      }
-      backHref={stage === "search" || initialRef ? "/business/signup" : undefined}
-      backLabel="Back to business options"
-      width="wide"
+      onBack={handleBack}
+      backLabel={refParam ? "Back to business options" : "Back to reference"}
+      width="compact"
     >
-      {/* ── STAGE 1: SEARCH LOOKUP ────────────────────────────────────────── */}
-      {stage === "search" && (
-        <form onSubmit={handleSearchSubmit} className="flex flex-col gap-4">
-          <Field
-            label="Application Reference"
-            htmlFor="reference"
-            error={errorMsg}
-            hint="Format: ENR-2026-XXXX from your confirmation email."
-          >
-            <Input
-              id="reference"
-              value={reference}
-              onChange={(e) => {
-                setReference(e.target.value);
-                if (errorMsg) setErrorMsg("");
-              }}
-              placeholder="ENR-2026-0814"
-              className="tabular uppercase"
-              required
-            />
-          </Field>
-
-          <Field
-            label="Applicant Mobile Number"
-            htmlFor="mobile"
-            hint="The registered mobile number entered during enrolment."
-          >
-            <PhoneInput
-              id="mobile"
-              value={mobile}
-              onValueChange={setMobile}
-              required
-            />
-          </Field>
-
-          <Button
-            type="submit"
-            variant="default"
-            size="lg"
-            className="mt-2 h-10 w-full text-[14px]"
-          >
-            Check status
-          </Button>
-
-          {/* Quick Demo Switcher Presets */}
-          <div className="rounded-2xl border border-dashed border-border p-3.5 mt-2 flex flex-col gap-2">
-            <span className="text-[12px] font-medium text-muted-foreground">Demo Status Scenarios</span>
-            <div className="grid grid-cols-2 gap-2 text-[12px]">
-              <button
-                type="button"
-                onClick={() => pickDemoReference("ENR-2026-0814")}
-                className="rounded-lg border border-border bg-card p-2 text-left hover:bg-muted/50 transition-colors cursor-pointer"
-              >
-                <p className="font-medium text-foreground">Signature Check</p>
-                <p className="text-muted-foreground text-[11px] tabular">ENR-2026-0814</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => pickDemoReference("ENR-2026-0812")}
-                className="rounded-lg border border-border bg-card p-2 text-left hover:bg-muted/50 transition-colors cursor-pointer"
-              >
-                <p className="font-medium text-foreground">Callback Pending</p>
-                <p className="text-muted-foreground text-[11px] tabular">ENR-2026-0812</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => pickDemoReference("ENR-2026-0790")}
-                className="rounded-lg border border-border bg-card p-2 text-left hover:bg-muted/50 transition-colors cursor-pointer"
-              >
-                <p className="font-medium text-foreground">Returned for Fix</p>
-                <p className="text-muted-foreground text-[11px] tabular">ENR-2026-0790</p>
-              </button>
-              <button
-                type="button"
-                onClick={() => pickDemoReference("ENR-2026-0720")}
-                className="rounded-lg border border-border bg-card p-2 text-left hover:bg-muted/50 transition-colors cursor-pointer"
-              >
-                <p className="font-medium text-foreground">Approved & Invites</p>
-                <p className="text-muted-foreground text-[11px] tabular">ENR-2026-0720</p>
-              </button>
-            </div>
-          </div>
-        </form>
-      )}
-
-      {/* ── STAGE 2: OTP VERIFICATION ────────────────────────────────────── */}
-      {stage === "otp" && (
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col items-center gap-1 text-center py-2">
-            <p className="text-[13px] text-muted-foreground">
-              To view this application, enter the 6-digit code sent to
-            </p>
-            <p className="text-[14px] font-medium text-foreground tabular">{mobile}</p>
-          </div>
-
-          <div className="flex justify-center py-2">
-            <OtpInput
-              length={OTP_LENGTH}
-              value={otpDigits}
-              onChange={(digits) => {
-                setOtpDigits(digits);
-                if (digits.every((d) => d !== "")) {
-                  handleOtpSubmit(digits.join(""));
-                }
-              }}
-              autoFocus
-            />
-          </div>
-
-          <p className="text-center text-[12px] text-muted-foreground">
-            Demo code: enter any 6 digits
-          </p>
-
-          <Button
-            variant="default"
-            size="lg"
-            loading={busy}
-            disabled={otpDigits.some((d) => d === "")}
-            onClick={() => handleOtpSubmit()}
-            className="h-10 w-full text-[14px]"
-          >
-            View application status
-          </Button>
-        </div>
-      )}
-
-      {/* ── STAGE 3: TRACKER TIMELINE VIEW ───────────────────────────────── */}
-      {stage === "tracking" && application && (
-        <div className="flex flex-col gap-4 animate-in fade-in duration-reveal">
-          {/* Top Quick Status Pill & Switcher */}
-          <div className="flex items-center justify-between gap-2 rounded-2xl border border-border bg-card p-3">
+      <div className="flex flex-col gap-10">
+        {/* The one thing to do now */}
+        {openReturn && (
+          <section className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <span className="text-[12px] text-muted-foreground">Status:</span>
-              <Badge
-                variant={
-                  application.status === "approved"
-                    ? "success"
-                    : application.status === "returned"
-                    ? "warning"
-                    : application.status === "rejected"
-                    ? "destructive"
-                    : "outline"
-                }
-              >
-                {application.status === "approved"
-                  ? "Approved · Invites Sent"
-                  : application.status === "returned"
-                  ? "Returned for Clarification"
-                  : application.status === "rejected"
-                  ? "Declined"
-                  : application.status === "checking_signatures"
-                  ? "Checking Signatures"
-                  : application.status === "call_verification"
-                  ? "Callback In Progress"
-                  : "In Review"}
-              </Badge>
+              <AlertCircle size={16} strokeWidth={1.8} className="shrink-0 text-warning-text" aria-hidden="true" />
+              <h2 className="text-[14px] font-medium text-foreground">{openReturn.reason}</h2>
             </div>
+            <p className="text-[13px] leading-relaxed text-muted-foreground">{openReturn.details}</p>
+          </section>
+        )}
 
-            <button
-              type="button"
-              onClick={() => setStage("search")}
-              className="text-[12px] font-medium text-foreground underline underline-offset-4 hover:text-foreground/80 cursor-pointer"
-            >
-              Switch application
-            </button>
-          </div>
-
-          {/* Assigned Staff Notice */}
-          <div className="flex items-start gap-3 rounded-2xl border border-border bg-muted/20 p-3.5 text-[13px]">
-            <span className="flex size-8 items-center justify-center rounded-xl bg-primary/15 text-primary shrink-0 mt-0.5">
-              <UserCheck size={16} strokeWidth={1.9} />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="font-medium text-foreground">
-                Assigned to: {application.assignedTo.name}
-              </p>
-              <p className="text-[12px] text-muted-foreground leading-relaxed">
-                {application.assignedTo.type === "rm"
-                  ? `Your dedicated Relationship Manager is managing this application.`
-                  : `GCB Corporate Operations Desk is processing this application.`}
-              </p>
-            </div>
-          </div>
-
-          {/* RETURNED STATE: SPECIFIC ACTIONABLE RETURN CARD */}
-          {application.status === "returned" && application.returns.length > 0 && (
-            <div className="rounded-2xl border border-amber-500/40 bg-amber-500/5 p-4 flex flex-col gap-3">
-              <div className="flex items-start gap-2.5">
-                <AlertTriangle size={18} strokeWidth={2} className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-[14px] font-medium text-amber-800 dark:text-amber-300">
-                    Action Required: {application.returns[0].reason}
-                  </p>
-                  <p className="mt-1 text-[12.5px] leading-relaxed text-amber-900/90 dark:text-amber-200/90">
-                    {application.returns[0].details}
-                  </p>
-                </div>
-              </div>
-
-              {application.returns[0].flaggedItems.length > 0 && (
-                <div className="rounded-xl bg-background/60 p-3 text-[12px] flex flex-col gap-1 border border-border/50">
-                  <span className="font-medium text-foreground">Flagged items to correct:</span>
-                  <ul className="list-disc list-inside text-muted-foreground space-y-0.5">
-                    {application.returns[0].flaggedItems.map((item, idx) => (
-                      <li key={idx}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Re-upload in place */}
-              <div className="flex flex-col gap-2 pt-2 border-t border-border/40">
-                <p className="text-[13px] font-medium text-foreground">
-                  Re-upload corrected request pack
-                </p>
-                <DocumentAttachRow
-                  id="reupload-pack"
-                  label="Corrected Mandate Pack"
-                  description="Upload the newly signed and stamped request pack."
-                  attachedFileName={reuploadFile ? reuploadFile.name : undefined}
-                  onAttach={(file) => setReuploadFile(file)}
-                />
-
-                <Button
-                  variant="default"
-                  disabled={!reuploadFile || reuploadBusy}
-                  loading={reuploadBusy}
-                  onClick={handleReuploadSubmit}
-                  className="mt-1 h-9 text-[13px] w-full"
-                >
-                  <RotateCcw size={14} className="mr-1.5" />
-                  Submit corrected document
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {reuploadSuccess && (
-            <div className="flex items-center gap-2 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 p-3 text-[12.5px] text-emerald-800 dark:text-emerald-300">
-              <Check size={15} strokeWidth={2.5} />
-              Corrected pack submitted! Your application is now back in review with operations.
-            </div>
-          )}
-
-          {/* APPROVED STATE: USER INVITE MANAGEMENT */}
-          {application.status === "approved" && (
-            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-4 flex flex-col gap-3">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 size={18} strokeWidth={2} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
-                <p className="text-[14px] font-medium text-emerald-800 dark:text-emerald-300">
-                  Application Approved · Setup Links Issued
-                </p>
-              </div>
-              <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-                All approved corporate users have been emailed an invitation link to set up their credentials.
-              </p>
-
-              {/* Users list with invite status and resend button */}
-              <div className="flex flex-col gap-2 pt-1">
-                <span className="text-[12px] font-medium text-foreground">Corporate Users & Setup Status:</span>
-                <div className="flex flex-col gap-2">
-                  {application.users.map((u) => {
-                    const status = u.inviteStatus || "sent";
-                    const isSending = resendStatus[u.id] === "sending";
-                    const isSent = resendStatus[u.id] === "sent";
-
-                    return (
-                      <div
-                        key={u.id}
-                        className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card p-3"
-                      >
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-[13px] font-medium text-foreground">{u.name}</span>
-                            <Badge variant="outline" className="text-[11px] py-0">
-                              {u.role}
-                            </Badge>
-                          </div>
-                          <p className="text-[11.5px] text-muted-foreground truncate">{u.email}</p>
-                        </div>
-
-                        <div className="flex items-center gap-2 shrink-0">
-                          {status === "used" ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 text-[11px] font-medium">
-                              <Check size={11} strokeWidth={2.5} /> Active
-                            </span>
-                          ) : status === "expired" ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 px-2 py-0.5 text-[11px] font-medium">
-                              Expired
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-muted text-muted-foreground px-2 py-0.5 text-[11px] font-medium">
-                              Link sent
-                            </span>
-                          )}
-
-                          {status !== "used" && (
-                            <Button
-                              variant="outline"
-                              size="xs"
-                              disabled={isSending}
-                              loading={isSending}
-                              onClick={() => handleResend(u.id)}
-                              className="text-[11.5px] h-7"
-                            >
-                              <RotateCcw size={12} className="mr-1" />
-                              {isSent ? "Sent!" : "Resend"}
-                            </Button>
-                          )}
-
-                          {/* Demo shortcut to test /activate directly */}
-                          <Link
-                            href={`/activate?invite=1&user=${u.id}`}
-                            title="Test user activation"
-                            className="p-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
-                          >
-                            <ExternalLink size={13} />
-                          </Link>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <Button
-                  variant="default"
-                  nativeButton={false}
-                  render={<Link href="/login" />}
-                  className="w-full h-9 text-[13px]"
-                >
-                  Go to Corporate Banking login
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* TIMELINE SECTION */}
-          <div className="rounded-2xl border border-border bg-card p-4 flex flex-col gap-3">
-            <p className="text-[14px] font-medium text-foreground">Application Timeline</p>
-
-            <ol className="relative border-l border-border/80 ml-3 space-y-4 py-1">
-              {application.timeline.map((item, idx) => (
-                <li key={idx} className="ml-4">
-                  <span
-                    className={`absolute -left-2 flex size-4 items-center justify-center rounded-full ring-4 ring-background ${
-                      item.done
-                        ? "bg-emerald-500 text-white"
-                        : item.current
-                        ? "bg-primary animate-pulse text-primary-foreground"
-                        : "bg-muted"
-                    }`}
+        {needsLetter && (
+          <section className="flex flex-col gap-4">
+            {app.status === "awaiting_letter" && (
+              <div className="flex flex-col gap-3">
+                <h2 className="text-[14px] font-medium text-foreground">Upload Your Signed Letter</h2>
+                {company && (
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="h-10 w-full text-[14px]"
+                    onClick={() =>
+                      openRequestLetter({ reference: app.reference, company, accounts: app.accounts, users: app.users })
+                    }
                   >
-                    {item.done && <Check size={10} strokeWidth={3} />}
-                  </span>
-                  <div className="flex flex-col gap-0.5">
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <p className={`text-[13.5px] font-medium ${item.current ? "text-foreground" : item.done ? "text-foreground" : "text-muted-foreground"}`}>
-                        {item.label}
+                    <FileText size={16} strokeWidth={1.8} />
+                    Open Letter to Print
+                  </Button>
+                )}
+              </div>
+            )}
+            <LetterUpload
+              id="status"
+              label={app.status === "returned" ? "Corrected Letter" : "Signed Letter"}
+              file={letter}
+              onChange={setLetter}
+            />
+            <Button size="lg" loading={busy} disabled={!letter} onClick={handleSendLetter} className="h-10 w-full text-[14px]">
+              Send Letter
+            </Button>
+            <p className="text-center text-[12px] text-muted-foreground">
+              {`Or email it to ${reviewer.email ?? "your relationship manager"}, post it, or bring it to any branch.`}
+            </p>
+          </section>
+        )}
+
+        {app.status === "rejected" && (
+          <section className="flex flex-col gap-2">
+            <h2 className="text-[14px] font-medium text-foreground">Why It Was Declined</h2>
+            <p className="text-[13px] leading-relaxed text-muted-foreground">
+              {app.rejectionReason ?? "The bank couldn't approve this application."}
+            </p>
+            <p className="text-[13px] leading-relaxed text-muted-foreground">
+              {`${reviewer.name} can tell you what to do next.`}
+              {reviewer.phone && <span className="tabular"> {reviewer.phone}</span>}
+            </p>
+          </section>
+        )}
+
+        {app.status === "approved" && (
+          <section className="flex flex-col gap-3">
+            <h2 className="text-[14px] font-medium text-foreground">Users</h2>
+            <ul className="flex flex-col gap-1">
+              {app.users.map((u) => {
+                const used = u.inviteStatus === "used";
+                const expired = u.inviteStatus === "expired";
+                return (
+                  <li key={u.id} className="flex items-center justify-between gap-3 py-1">
+                    <div className="min-w-0">
+                      <p className="truncate text-[14px] text-foreground">{u.name}</p>
+                      <p className="truncate text-[12px] text-muted-foreground">
+                        {u.role} · {used ? "Signed in" : expired ? "Link expired" : "Details sent"}
                       </p>
-                      <span className="text-[11.5px] text-muted-foreground tabular">{item.timestamp}</span>
                     </div>
-                    <p className="text-[12px] text-muted-foreground leading-relaxed">
-                      {item.description}
-                    </p>
+                    {!used && (
+                      <div className="flex shrink-0 items-center gap-1">
+                        {SHOW_DEMO_TOOLS && (
+                          <Button
+                            variant="ghost"
+                            size="lg"
+                            nativeButton={false}
+                            render={<Link href="/business/activate" />}
+                          >
+                            Activate
+                          </Button>
+                        )}
+                        <Button variant="outline" size="lg" onClick={() => handleResend(u.id, u.name)}>
+                          Resend
+                        </Button>
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+            <p className="text-[12px] text-muted-foreground">
+              Each person gets their username by SMS and a link to set their password by email.
+            </p>
+          </section>
+        )}
+
+        {/* Where it is */}
+        <section className="flex flex-col gap-3">
+          <h2 className="text-[14px] font-medium text-foreground">Progress</h2>
+          <ol className="flex flex-col">
+            {app.timeline.map((item, i) => {
+              const last = i === app.timeline.length - 1;
+              return (
+                <li key={`${item.status}-${i}`} className="flex gap-3">
+                  <div className="flex flex-col items-center">
+                    <span
+                      className={`mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full ${
+                        item.done
+                          ? "bg-pill-success text-pill-success-text"
+                          : item.current
+                          ? "border-2 border-primary bg-background"
+                          : "border border-border bg-background"
+                      }`}
+                      aria-hidden="true"
+                    >
+                      {item.done && <Check size={10} strokeWidth={3} />}
+                    </span>
+                    {!last && <span className="w-px flex-1 bg-border" aria-hidden="true" />}
+                  </div>
+                  <div className={`flex min-w-0 flex-1 flex-col gap-0.5 ${last ? "" : "pb-5"}`}>
+                    <div className="flex items-baseline justify-between gap-3">
+                      <p className={`text-[14px] ${item.done || item.current ? "text-foreground" : "text-muted-foreground"}`}>
+                        {item.label}
+                        <span className="sr-only">{item.done ? " (done)" : item.current ? " (now)" : " (to come)"}</span>
+                      </p>
+                      <span className="tabular shrink-0 text-[12px] text-muted-foreground">{item.timestamp}</span>
+                    </div>
+                    <p className="text-[12px] leading-relaxed text-muted-foreground">{item.description}</p>
                   </div>
                 </li>
-              ))}
-            </ol>
-          </div>
+              );
+            })}
+          </ol>
+          <p className="text-[12px] text-muted-foreground">
+            {reviewer.type === "rm" ? `${reviewer.name}, your relationship manager, is handling this.` : `Our ${reviewer.name} is handling this.`}
+            {reviewer.email ? ` ${reviewer.email}` : ""}
+          </p>
+        </section>
 
-          {/* Enrolled Accounts Card */}
-          <div className="rounded-2xl border border-border bg-card p-4 flex flex-col gap-2">
-            <p className="text-[13px] font-medium text-foreground">Enrolled Accounts</p>
-            <div className="divide-y divide-border/50 text-[12.5px]">
-              {application.accounts.map((acc) => (
-                <div key={acc.id} className="flex items-center justify-between py-2">
-                  <div>
-                    <span className="font-medium text-foreground">{acc.name}</span>
-                    <span className="text-muted-foreground text-[11.5px] ml-1.5 tabular">
-                      {acc.type} · {acc.number}
-                    </span>
-                  </div>
-                  <Badge variant="outline" className="text-[10.5px]">
-                    {acc.currency}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+        {app.status === "approved" && (
+          <Button
+            size="lg"
+            className="h-10 w-full text-[14px]"
+            onClick={() => router.push("/login?type=business")}
+          >
+            Go to Login
+          </Button>
+        )}
+      </div>
     </AuthLayout>
+  );
+}
+
+export default function CorporateStatusPage() {
+  return (
+    <Suspense fallback={null}>
+      <StatusContent />
+    </Suspense>
   );
 }

@@ -45,13 +45,14 @@ type PersonaId = (typeof PERSONAS)[number]["id"];
 
 /** Business demo users by role: the navigation differs (Approvals for an approver, Administration for an admin). */
 const BUSINESS_USERS = [
+  { id: "u-sole", label: "Sole Proprietor" },
   { id: "u-dual", label: "Maker" },
   { id: "u-approver", label: "Approver" },
   { id: "u-corpadmin", label: "Admin" },
 ] as const;
 type BusinessUserId = (typeof BUSINESS_USERS)[number]["id"];
 
-const ONBOARDING_PATHS = ["/", "/signup", "/business/signup", "/activate", "/get-started", "/select-banking", "/login", "/mfa", "/forgot-password", "/migrate", "/overview", "/business/overview"];
+const ONBOARDING_PATHS = ["/", "/signup", "/business/signup", "/business/activate", "/activate", "/get-started", "/select-banking", "/login", "/mfa", "/forgot-password", "/migrate", "/overview", "/business/overview"];
 
 function PersonaFlowSwitcherContent() {
   const router = useRouter();
@@ -331,9 +332,15 @@ function PersonaFlowSwitcherContent() {
                 go={go}
                 signInAs={switchApp}
                 pathname={pathname}
-                scenario={searchParams.get("scenario")}
+
                 step={searchParams.get("step")}
-                reference={searchParams.get("ref")}
+                outcome={searchParams.get("outcome")}
+                expired={searchParams.get("expired")}
+                type={searchParams.get("type")}
+                scenario={searchParams.get("scenario")}
+                ref_={searchParams.get("ref")}
+
+
               />
             ) : (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">

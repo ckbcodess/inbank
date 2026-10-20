@@ -1,20 +1,27 @@
 /**
  * Shared Enrolment Store.
  *
- * Implements "Two journeys, one store" (CONSTITUTION §1):
- * A single store shared by the customer flow (/business/signup/enrol),
- * the status tracker (/business/signup/status), and the staff review queue (/admin/enrolments).
+ * Two journeys, one store (CONSTITUTION §1): the customer's online application (/business/signup/enrol), the
+ * status page (/business/signup/status) and the staff queue (/admin/enrolments) all read and write here. An
+ * application that arrives by email, post or at a branch is captured by staff into the same store.
  *
  * Persisted in browser localStorage (with in-memory fallback), seeded with realistic scenarios.
  */
 
-import type {
-  EnrolmentApplication,
-  EnrolmentReturnRecord,
-  EnrolmentStaffAssignment,
-  EnrolmentStatus,
-  SignatureCheckItem,
-  VerificationCallLog,
+import {
+  reviewerFor,
+  type CorporateCompanyRecord,
+  type CorporateUserDraft,
+  type EnrolledAccountSummary,
+  type EnrolmentApplication,
+  type EnrolmentReturnRecord,
+  type EnrolmentStaffAssignment,
+  type EnrolmentStatus,
+  type EnrolmentTimelineEvent,
+  type LetterChannel,
+  type MandateSignatory,
+  type SignatureCheckItem,
+  type VerificationCallLog,
 } from "./corporate-enrolment";
 import { AUDIT_EVENTS } from "./mock-data";
 
@@ -27,7 +34,7 @@ export type {
   VerificationCallLog,
 };
 
-const STORAGE_KEY = "nibs_corporate_enrolments_v1";
+const STORAGE_KEY = "nibs_corporate_enrolments_v2";
 
 /* ── Seed Applications ──────────────────────────────────────────────────────── */
 
@@ -37,6 +44,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
     reference: "ENR-2026-0814",
     createdAt: "2026-10-18T10:30:00Z",
     updatedAt: "2026-10-19T08:15:00Z",
+    channel: "online",
     companyName: "Adinkra Textiles Ltd",
     companyTin: "C0012345678",
     companyAddress: "Plot 14 Industrial Area, North Kaneshie, Accra",
@@ -59,7 +67,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
         name: "Yaw Oppong",
         email: "yaw.oppong@adinkratextiles.com",
         mobile: "0541300413",
-        role: "Corporate Admin",
+        role: "Authoriser",
         ghanaCard: "GHA-789012345-1",
         dateAppointed: "2018-04-12",
         isFromMandate: true,
@@ -70,7 +78,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
         name: "Kwame Boateng",
         email: "kwame.boateng@adinkratextiles.com",
         mobile: "0244300411",
-        role: "Maker",
+        role: "Inputter",
         ghanaCard: "GHA-567890123-4",
         dateAppointed: "2020-09-01",
         isFromMandate: true,
@@ -81,7 +89,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
         name: "Esther Appiah",
         email: "esther.appiah@adinkratextiles.com",
         mobile: "0244300412",
-        role: "Approver",
+        role: "Authoriser",
         ghanaCard: "GHA-345678901-2",
         dateAppointed: "2019-01-15",
         isFromMandate: true,
@@ -150,8 +158,8 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       },
       {
         status: "checking_signatures",
-        label: "Checking wet signatures",
-        description: "Comparing uploaded mandate signatures against cards on file.",
+        label: "Checking signatures",
+        description: "Comparing the signed letter with the specimen signatures in our records.",
         timestamp: "19 Oct 2026, 08:15 AM",
         done: false,
         current: true,
@@ -166,8 +174,8 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       },
       {
         status: "approved",
-        label: "Approved & setup links sent",
-        description: "Activation email invitations issued to all enrolled users.",
+        label: "Approved, sign-in details sent",
+        description: "Each user gets their username by SMS and a link to set their password by email.",
         timestamp: "Pending",
         done: false,
         current: false,
@@ -180,6 +188,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
     reference: "ENR-2026-0812",
     createdAt: "2026-10-17T14:10:00Z",
     updatedAt: "2026-10-18T16:20:00Z",
+    channel: "online",
     companyName: "Volta River Logistics Ltd",
     companyTin: "C0098765432",
     companyAddress: "Heavy Industrial Area, Tema Harbour Road, Tema",
@@ -200,7 +209,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
         name: "Kofi Mensah",
         email: "kofi.mensah@voltariver.com",
         mobile: "0201200314",
-        role: "Corporate Admin",
+        role: "Authoriser",
         isFromMandate: true,
         inviteStatus: "pending",
       },
@@ -209,7 +218,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
         name: "Ama Serwaa",
         email: "ama.serwaa@voltariver.com",
         mobile: "0244889911",
-        role: "Approver",
+        role: "Inputter",
         isFromMandate: true,
         inviteStatus: "pending",
       },
@@ -261,7 +270,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       },
       {
         status: "checking_signatures",
-        label: "Checking wet signatures",
+        label: "Checking signatures",
         description: "All signatures verified against specimen on file.",
         timestamp: "18 Oct 2026, 04:20 PM",
         done: true,
@@ -277,8 +286,8 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       },
       {
         status: "approved",
-        label: "Approved & setup links sent",
-        description: "Activation email invitations issued to all enrolled users.",
+        label: "Approved, sign-in details sent",
+        description: "Each user gets their username by SMS and a link to set their password by email.",
         timestamp: "Pending",
         done: false,
         current: false,
@@ -291,6 +300,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
     reference: "ENR-2026-0790",
     createdAt: "2026-10-15T09:12:00Z",
     updatedAt: "2026-10-16T14:45:00Z",
+    channel: "branch",
     companyName: "Accra Timber Merchants Ltd",
     companyTin: "C0055443322",
     companyAddress: "Timber Market, Old Fadama Road, Accra",
@@ -311,7 +321,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
         name: "Kwabena Yeboah",
         email: "kyeboah@accratimber.com",
         mobile: "0243112233",
-        role: "Corporate Admin",
+        role: "Authoriser",
         isFromMandate: true,
         inviteStatus: "pending",
       },
@@ -320,7 +330,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
         name: "Emmanuel Adjei",
         email: "eadjei@accratimber.com",
         mobile: "0277889900",
-        role: "Approver",
+        role: "Inputter",
         isFromMandate: true,
         inviteStatus: "pending",
       },
@@ -361,11 +371,10 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
         id: "ret-1",
         at: "2026-10-16T14:45:00Z",
         by: "Kwame Asante (Relationship Manager)",
-        reason: "Signature mismatch on request form page 2",
-        details: "The signature provided for Kwabena Yeboah on page 2 does not match the specimen card on file at High Street Branch. Please ensure the authorised signatory signs using their registered signature format and re-upload the signed document.",
+        reason: "One signature doesn't match our records",
+        details: "Kwabena Yeboah's signature on the letter doesn't match the specimen we hold. Ask them to sign again the way they signed for the bank, then upload the letter here. If their signature has changed, Kwame Asante can update your mandate first.",
         flaggedItems: [
           "Signature of Kwabena Yeboah (Managing Director, Signatory A)",
-          "Page 2 corporate indemnity clause signature box",
         ],
         resolved: false,
       },
@@ -390,7 +399,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       {
         status: "returned",
         label: "Returned for clarification",
-        description: "Signature mismatch identified. Please re-upload signed document.",
+        description: "One signature doesn't match our records.",
         timestamp: "16 Oct 2026, 02:45 PM",
         done: false,
         current: true,
@@ -403,6 +412,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
     reference: "ENR-2026-0720",
     createdAt: "2026-10-10T08:00:00Z",
     updatedAt: "2026-10-12T11:00:00Z",
+    channel: "email",
     companyName: "Ashanti Agro Exports Ltd",
     companyTin: "C0033221100",
     companyAddress: "Kumasi Industrial Park, Kaase, Kumasi",
@@ -424,7 +434,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
         name: "Nana Akua Osei",
         email: "akua.osei@ashantiagro.com",
         mobile: "0244778899",
-        role: "Corporate Admin",
+        role: "Authoriser",
         isFromMandate: true,
         inviteStatus: "used",
         inviteToken: "corp-inv-001",
@@ -434,7 +444,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
         name: "Osei Kwadwo",
         email: "okwadwo@ashantiagro.com",
         mobile: "0554112233",
-        role: "Maker",
+        role: "Inputter",
         isFromMandate: true,
         inviteStatus: "sent",
         inviteToken: "corp-inv-002",
@@ -444,7 +454,7 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
         name: "Akosua Mansah",
         email: "amansah@ashantiagro.com",
         mobile: "0209445566",
-        role: "Approver",
+        role: "Authoriser",
         isFromMandate: true,
         inviteStatus: "sent",
         inviteToken: "corp-inv-003",
@@ -521,13 +531,82 @@ export const INITIAL_ENROLMENTS: EnrolmentApplication[] = [
       },
       {
         status: "approved",
-        label: "Approved & setup links sent",
-        description: "Access invitations issued to all company users.",
+        label: "Approved, sign-in details sent",
+        description: "Each user gets their username by SMS and a link to set their password by email.",
         timestamp: "12 Oct 2026, 11:00 AM",
         done: true,
         current: true,
       },
     ],
+  },
+
+  // 5. Waiting for the signed letter: applied online, chose to email the letter to their RM
+  {
+    reference: "ENR-2026-0821",
+    createdAt: "2026-10-20T09:05:00Z",
+    updatedAt: "2026-10-20T09:05:00Z",
+    channel: "online",
+    companyName: "Volta River Logistics Ltd",
+    companyTin: "C0098765432",
+    companyAddress: "Harbour Road, Tema",
+    accounts: [
+      { id: "acc-volta-1", name: "Commercial Operating Account", number: "1001 8844 2200", currency: "GHS", type: "Current", balance: 780400 },
+    ],
+    applicant: {
+      name: "Kofi Mensah",
+      mobile: "0201200314",
+      email: "kofi.mensah@voltariver.com",
+      ghanaCard: "GHA-901234567-3",
+    },
+    mandate: "Either to sign",
+    approvalRule: "Single authorisation: any registered signatory can approve up to GHS 500,000",
+    users: [
+      {
+        id: "u-volta-new-1",
+        name: "Kofi Mensah",
+        email: "kofi.mensah@voltariver.com",
+        mobile: "0201200314",
+        role: "Authoriser",
+        designation: "Chief Executive Officer",
+        isFromMandate: true,
+        inviteStatus: "pending",
+      },
+      {
+        id: "u-volta-new-2",
+        name: "Efua Badu",
+        email: "efua.badu@voltariver.com",
+        mobile: "0245567788",
+        role: "Inputter",
+        ghanaCard: "GHA-667788990-4",
+        isFromMandate: false,
+        inviteStatus: "pending",
+      },
+    ],
+    pack: {},
+    status: "awaiting_letter",
+    assignedTo: {
+      type: "operations",
+      name: "Corporate Banking Team",
+      email: "corporate.onboarding@gcb.com.gh",
+      phone: "+233 30 268 1521",
+    },
+    signatureChecks: [
+      { signatoryName: "Kofi Mensah", role: "Chief Executive Officer", specimenUrl: "/signatures/specimen-kofi.svg", status: "unreviewed" },
+      { signatoryName: "Ama Serwaa", role: "Chief Operating Officer", specimenUrl: "/signatures/specimen-ama.svg", status: "unreviewed" },
+    ],
+    verificationCall: {
+      logged: false,
+      calledNumber: "0201200314",
+      answeredBy: "",
+      outcome: null,
+    },
+    returns: [],
+    timeline: enrolmentTimeline(
+      "awaiting_letter",
+      { type: "operations", name: "Corporate Banking Team" },
+      "0201200314",
+      "20 Oct 2026, 09:05 AM",
+    ),
   },
 ];
 
@@ -896,4 +975,194 @@ export function resendUserInvite(reference: string, userId: string): EnrolmentAp
   return updateEnrolment(reference, {
     users: updatedUsers,
   });
+}
+
+/* ── Online applications and the signed letter ─────────────────────────────── */
+
+function stampNow(): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date());
+}
+
+function maskedMobile(mobile: string): string {
+  const digits = mobile.replace(/\D/g, "");
+  return `${digits.slice(0, 3)} ••• ${digits.slice(-4)}`;
+}
+
+function reviewerPhrase(assignedTo: Pick<EnrolmentStaffAssignment, "type" | "name">): string {
+  return assignedTo.type === "rm" ? `${assignedTo.name}, your relationship manager,` : `Our ${assignedTo.name}`;
+}
+
+/** The customer-facing timeline for a new application, before or after the signed letter arrives. */
+export function enrolmentTimeline(
+  status: "awaiting_letter" | "checking_signatures",
+  assignedTo: Pick<EnrolmentStaffAssignment, "type" | "name">,
+  applicantMobile: string,
+  stamp: string,
+): EnrolmentTimelineEvent[] {
+  const waiting = status === "awaiting_letter";
+  return [
+    {
+      status: "received",
+      label: waiting ? "Application started" : "Application received",
+      description: waiting ? "Your details are saved under this reference." : "We have your signed letter.",
+      timestamp: stamp,
+      done: true,
+      current: false,
+    },
+    ...(waiting
+      ? [
+          {
+            status: "awaiting_letter",
+            label: "Waiting for your signed letter",
+            description: "Upload it here, email it, post it or bring it to any branch.",
+            timestamp: "Now",
+            done: false,
+            current: true,
+          },
+        ]
+      : []),
+    {
+      status: "checking_signatures",
+      label: "Checking signatures",
+      description: `${reviewerPhrase(assignedTo)} compares the letter with the specimen signatures in our records.`,
+      timestamp: waiting ? "Next" : "In review",
+      done: false,
+      current: !waiting,
+    },
+    {
+      status: "call_verification",
+      label: "Confirming by phone",
+      description: `We'll call ${maskedMobile(applicantMobile)} to confirm. We will never ask for a code or password.`,
+      timestamp: "Next",
+      done: false,
+      current: false,
+    },
+    {
+      status: "approved",
+      label: "Approved, sign-in details sent",
+      description: "Each user gets their username by SMS and a link to set their password by email.",
+      timestamp: "Next",
+      done: false,
+      current: false,
+    },
+  ];
+}
+
+export interface NewEnrolmentInput {
+  reference: string;
+  company: CorporateCompanyRecord;
+  accounts: EnrolledAccountSummary[];
+  applicant: MandateSignatory;
+  users: CorporateUserDraft[];
+  /** The signed letter, when uploaded now. Without it the application waits for the letter. */
+  letter?: { fileName: string; fileSize: string };
+}
+
+/** Customer: submits an online application, with or without the signed letter. */
+export function submitEnrolment(input: NewEnrolmentInput): EnrolmentApplication {
+  const nowIso = new Date().toISOString();
+  const assignedTo = reviewerFor(input.company);
+  const status = input.letter ? "checking_signatures" : "awaiting_letter";
+  const application: EnrolmentApplication = {
+    reference: input.reference,
+    createdAt: nowIso,
+    updatedAt: nowIso,
+    channel: "online",
+    companyName: input.company.companyName,
+    companyTin: input.company.tin,
+    companyAddress: input.company.address,
+    accounts: input.accounts,
+    applicant: {
+      name: input.applicant.name,
+      mobile: input.applicant.mobile,
+      email: input.applicant.email,
+      ghanaCard: input.applicant.ghanaCard,
+    },
+    users: input.users.map((u) => ({ ...u, inviteStatus: "pending" })),
+    mandate: input.company.mandate,
+    approvalRule: input.company.approvalRule,
+    pack: input.letter
+      ? {
+          uploadedFileName: input.letter.fileName,
+          uploadedFileSize: input.letter.fileSize,
+          uploadedAt: nowIso,
+          receivedVia: "upload",
+        }
+      : {},
+    status,
+    assignedTo,
+    signatureChecks: input.company.signatories.map((sig) => ({
+      signatoryName: sig.name,
+      role: sig.designation,
+      specimenUrl: sig.specimenUrl,
+      status: "unreviewed",
+    })),
+    verificationCall: {
+      logged: false,
+      calledNumber: input.applicant.mobile,
+      answeredBy: "",
+      outcome: null,
+    },
+    returns: [],
+    timeline: enrolmentTimeline(status, assignedTo, input.applicant.mobile, stampNow()),
+  };
+  saveEnrolment(application);
+  return application;
+}
+
+function letterArrived(
+  app: EnrolmentApplication,
+  via: LetterChannel,
+  file?: { fileName: string; fileSize: string },
+): EnrolmentApplication | undefined {
+  return updateEnrolment(app.reference, {
+    status: "checking_signatures",
+    pack: {
+      uploadedFileName: file?.fileName,
+      uploadedFileSize: file?.fileSize,
+      uploadedAt: new Date().toISOString(),
+      receivedVia: via,
+    },
+    timeline: enrolmentTimeline("checking_signatures", app.assignedTo, app.applicant.mobile, stampNow()),
+  });
+}
+
+/** Customer: uploads the signed letter for an application that was waiting for it. */
+export function uploadEnrolmentLetter(
+  reference: string,
+  fileName: string,
+  fileSize: string,
+): EnrolmentApplication | undefined {
+  const app = getEnrolment(reference);
+  if (!app || app.status !== "awaiting_letter") return undefined;
+  return letterArrived(app, "upload", { fileName, fileSize });
+}
+
+/** Staff: records a signed letter that arrived by email, post or at a branch. */
+export function recordLetterReceived(
+  reference: string,
+  via: Exclude<LetterChannel, "upload">,
+  staffName: string,
+  staffRole: string,
+): EnrolmentApplication | undefined {
+  const app = getEnrolment(reference);
+  if (!app || app.status !== "awaiting_letter") return undefined;
+  const updated = letterArrived(app, via);
+  AUDIT_EVENTS.unshift({
+    id: `aud-${Date.now()}`,
+    timestamp: new Date().toISOString(),
+    actor: staffName,
+    role: staffRole,
+    action: `Recorded signed letter received by ${via}`,
+    target: `${app.companyName} · ${app.reference}`,
+    channel: "Admin Portal",
+    ip: "10.0.4.12",
+  });
+  return updated;
 }

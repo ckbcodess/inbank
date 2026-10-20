@@ -12,6 +12,7 @@ export type Shell = "customer" | "admin";
 export type Role =
   // Customer / Corporate shell
   | "RETAIL_CUSTOMER"
+  | "SOLE_PROPRIETOR"
   | "CORPORATE_MAKER"
   | "CORPORATE_APPROVER"
   | "CORPORATE_ADMIN"
@@ -52,6 +53,7 @@ export interface Actor {
 
 export const ROLE_LABEL: Record<Role, string> = {
   RETAIL_CUSTOMER: "Retail Customer",
+  SOLE_PROPRIETOR: "Sole Proprietor",
   CORPORATE_MAKER: "Corporate Maker",
   CORPORATE_APPROVER: "Corporate Approver",
   CORPORATE_ADMIN: "Corporate Admin",
@@ -63,6 +65,7 @@ export const ROLE_LABEL: Record<Role, string> = {
 
 export const SHELL_OF_ROLE: Record<Role, Shell> = {
   RETAIL_CUSTOMER: "customer",
+  SOLE_PROPRIETOR: "customer",
   CORPORATE_MAKER: "customer",
   CORPORATE_APPROVER: "customer",
   CORPORATE_ADMIN: "customer",

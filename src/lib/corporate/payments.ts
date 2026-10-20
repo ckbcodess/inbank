@@ -1,8 +1,8 @@
 /**
- * Business payments, maker to approver. A maker prepares a supplier payment and submits it; it is held in the
- * approvers' queue and recorded as "awaiting approval" on the company's ledger, and nothing leaves the account
- * until an approver decides. The approver's decision then settles the same transaction, so the two screens tell
- * one story.
+ * Business payments: makers submit for approval; a sole proprietor's payment goes straight out after the code.
+ * When a maker prepares a supplier payment, it is held in the approvers' queue and recorded as "awaiting approval"
+ * on the company's ledger, and nothing leaves the account until an approver decides. The approver's decision then
+ * settles the same transaction, so the two screens tell one story.
  *
  * Mock data, in memory: a reload returns to the seeded queue and ledger, like the rest of the prototype's store.
  */
@@ -35,11 +35,10 @@ function stamp(date = new Date()) {
   return { day, time };
 }
 
-/** Submit a supplier payment for approval. Returns the ledger entry and the queue item it created. */
-export function submitSupplierPayment(
+function buildSupplierTransaction(
   request: SupplierPaymentRequest,
-  submittedBy: string,
-): { transaction: Transaction; approval: ApprovalItem } {
+  state: Transaction["state"],
+): { transaction: Transaction; suffix: string } {
   sequence += 1;
   const { day, time } = stamp();
   const suffix = `${Date.now().toString(36)}${sequence}`;
@@ -60,25 +59,41 @@ export function submitSupplierPayment(
     amount: roundMoney(request.amount),
     direction: "debit",
     kind: "single",
-    state: "awaiting-approval",
+    state,
     channel: "Internet Banking",
     paymentMethod: request.method,
     fee: request.fee,
     category: "Suppliers",
     profileKind: "CORPORATE",
   };
+  return { transaction, suffix };
+}
+
+/** Send a supplier payment directly (sole proprietors). Goes straight out with state: "pending", no approval queue. */
+export function sendSupplierPayment(request: SupplierPaymentRequest): { transaction: Transaction } {
+  const { transaction } = buildSupplierTransaction(request, "pending");
+  recordTransaction(transaction);
+  return { transaction };
+}
+
+/** Submit a supplier payment for approval. Returns the ledger entry and the queue item it created. */
+export function submitSupplierPayment(
+  request: SupplierPaymentRequest,
+  submittedBy: string,
+): { transaction: Transaction; approval: ApprovalItem } {
+  const { transaction, suffix } = buildSupplierTransaction(request, "awaiting-approval");
   recordTransaction(transaction);
 
   const approval: ApprovalItem = {
     id: `apr-${suffix}`,
-    reference,
+    reference: transaction.reference,
     type: "payment",
     description: request.reference ? `${request.reference} — ${request.supplierName}` : `Supplier payment — ${request.supplierName}`,
     counterparty: request.supplierName,
     currency: "GHS",
     amount: roundMoney(request.amount),
     submittedBy,
-    submittedAt: `${day} ${time}`,
+    submittedAt: `${transaction.date} ${transaction.time ?? ""}`.trim(),
     approvalLimit: DEFAULT_APPROVAL_LIMIT,
     priority: "standard",
   };

@@ -8,8 +8,13 @@
 import { Building2, FileSpreadsheet, Repeat } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { ActionTile } from "@/components/ui/action-tile";
+import { paysWithoutApproval } from "@/lib/corporate/roles";
+import { useSession } from "@/lib/session-store";
 
 export default function BusinessPaymentsPage() {
+  const actor = useSession((s) => s.actor);
+  const direct = actor ? paysWithoutApproval(actor.role) : false;
+
   return (
     <div className="flex flex-col gap-10">
       <PageHeader title="Send & Pay" />
@@ -19,7 +24,7 @@ export default function BusinessPaymentsPage() {
           href="/business/payments/supplier"
           icon={Building2}
           title="Pay a Supplier"
-          description="One bank transfer, sent for approval"
+          description={direct ? "One bank transfer to a supplier" : "One bank transfer, sent for approval"}
         />
         <ActionTile
           href="/business/payments/bulk"

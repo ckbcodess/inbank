@@ -1,10 +1,11 @@
 "use client";
 
 /**
- * Pay a Supplier — the business payment a maker prepares. One bank transfer to one supplier, in four quiet
- * steps: where it comes from, who it goes to (the name is looked up from the account number, never typed),
- * how much and what for, then a review that says plainly what leaves the account, what it costs and that an
- * approver sees it first. It ends in "submitted for approval", not "sent": nothing leaves until an approver decides.
+ * Pay a Supplier — the business payment a maker prepares, or a sole proprietor sends directly.
+ * A maker prepares a payment and submits it for approval; a sole proprietor's payment goes straight out after the code.
+ * One bank transfer to one supplier, in four quiet steps: where it comes from, who it goes to (the name is looked
+ * up from the account number, never typed), how much and what for, then a review that says plainly what leaves
+ * the account, what it costs and whether an approver sees it first.
  *
  * Reuses the shared field widgets (`flows/shared`) and the shared one-time-code gate (`TransactionOtpModal`); the
  * screen, the copy and every link are business's own. Suppliers are not a saved list yet (see WORKING_LOG): the
@@ -34,9 +35,10 @@ import {
   ProceedButton,
   resolveAccountName,
 } from "@/components/payments/flows/shared";
-import { businessAccounts } from "@/lib/corporate/accounts";
-import { submitSupplierPayment } from "@/lib/corporate/payments";
-import { findTransaction, formatMoney, transactionsForProfile } from "@/lib/mock-data";
+import { businessAccounts, businessTransactions } from "@/lib/corporate/accounts";
+import { sendSupplierPayment, submitSupplierPayment } from "@/lib/corporate/payments";
+import { paysWithoutApproval } from "@/lib/corporate/roles";
+import { findTransaction, formatMoney } from "@/lib/mock-data";
 import { roundMoney } from "@/lib/money";
 import { useSession } from "@/lib/session-store";
 
@@ -63,7 +65,7 @@ interface RecentSupplier {
 function recentSuppliers(): RecentSupplier[] {
   const seen = new Set<string>();
   const out: RecentSupplier[] = [];
-  for (const t of transactionsForProfile("CORPORATE")) {
+  for (const t of businessTransactions()) {
     if (t.direction !== "debit" || t.kind !== "single" || !t.counterpartyAccount) continue;
     const key = digits(t.counterpartyAccount);
     if (seen.has(key)) continue;
@@ -79,6 +81,7 @@ function recentSuppliers(): RecentSupplier[] {
 export default function SupplierPaymentFlow() {
   const search = useSearchParams();
   const actor = useSession((s) => s.actor);
+  const direct = actor ? paysWithoutApproval(actor.role) : false;
 
   const accounts = useMemo(() => businessAccounts().filter((a) => a.status === "Active"), []);
   const suppliers = useMemo(() => recentSuppliers(), []);
@@ -134,20 +137,23 @@ export default function SupplierPaymentFlow() {
 
   function confirm() {
     if (!fromAccount) return;
-    const { transaction } = submitSupplierPayment(
-      {
-        fromAccountId: fromAccount.id,
-        supplierName,
-        supplierBank: bank,
-        supplierAccount: account,
-        amount: numAmount,
-        fee,
-        method,
-        reference,
-      },
-      actor?.name ?? "A maker",
-    );
-    setSubmitted({ transactionId: transaction.id, reference: transaction.reference });
+    const request = {
+      fromAccountId: fromAccount.id,
+      supplierName,
+      supplierBank: bank,
+      supplierAccount: account,
+      amount: numAmount,
+      fee,
+      method,
+      reference,
+    };
+    if (direct) {
+      const { transaction } = sendSupplierPayment(request);
+      setSubmitted({ transactionId: transaction.id, reference: transaction.reference });
+    } else {
+      const { transaction } = submitSupplierPayment(request, actor?.name ?? "A maker");
+      setSubmitted({ transactionId: transaction.id, reference: transaction.reference });
+    }
     setStep("submitted");
   }
 
@@ -157,10 +163,21 @@ export default function SupplierPaymentFlow() {
         <div className="flex flex-col items-start gap-3">
           <CheckCircle2 size={24} strokeWidth={1.8} className="text-success-text" aria-hidden="true" />
           <div className="flex flex-col gap-1">
-            <h1 className="text-[22px] font-medium tracking-[var(--ls-heading)] text-foreground">Submitted for approval</h1>
+            <h1 className="text-[22px] font-medium tracking-[var(--ls-heading)] text-foreground">
+              {direct ? "Payment on its way" : "Submitted for approval"}
+            </h1>
             <p className="text-[14px] leading-relaxed text-muted-foreground">
-              <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} is with an approver. Nothing leaves{" "}
-              {fromAccount.name} until it is approved. You will see the result in Transactions.
+              {direct ? (
+                <>
+                  <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} has left{" "}
+                  {fromAccount.name}. You will see it settle in Transactions.
+                </>
+              ) : (
+                <>
+                  <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} is with an approver. Nothing leaves{" "}
+                  {fromAccount.name} until it is approved. You will see the result in Transactions.
+                </>
+              )}
             </p>
             <p className="tabular text-[12px] text-muted-foreground">Reference {submitted.reference}</p>
           </div>
@@ -206,7 +223,9 @@ export default function SupplierPaymentFlow() {
             {formatMoney(numAmount, "GHS", true)}
           </span>
           <span className="tabular text-[13px] text-muted-foreground">
-            {formatMoney(total, "GHS", true)} leaves {fromAccount.name} once approved, fee included.
+            {direct
+              ? `${formatMoney(total, "GHS", true)} leaves ${fromAccount.name}, fee included.`
+              : `${formatMoney(total, "GHS", true)} leaves ${fromAccount.name} once approved, fee included.`}
           </span>
         </section>
 
@@ -219,13 +238,15 @@ export default function SupplierPaymentFlow() {
           ))}
         </dl>
 
-        <p className="text-[13px] leading-relaxed text-muted-foreground">
-          This goes to an approver first. {fromAccount.mandate ? `The account's mandate is ${fromAccount.mandate.toLowerCase()}. ` : ""}
-          Nothing is sent, and nothing is debited, until it is approved, and you can follow it in Transactions.
-        </p>
+        {!direct && (
+          <p className="text-[13px] leading-relaxed text-muted-foreground">
+            This goes to an approver first. {fromAccount.mandate ? `The account's mandate is ${fromAccount.mandate.toLowerCase()}. ` : ""}
+            Nothing is sent, and nothing is debited, until it is approved, and you can follow it in Transactions.
+          </p>
+        )}
 
         <div className="flex flex-wrap items-center gap-3">
-          <Button onClick={() => setOtpOpen(true)}>Submit for Approval</Button>
+          <Button onClick={() => setOtpOpen(true)}>{direct ? "Pay Supplier" : "Submit for Approval"}</Button>
           <Button variant="ghost" onClick={() => setStep("details")}>
             Edit
           </Button>
@@ -241,7 +262,15 @@ export default function SupplierPaymentFlow() {
           }}
           summary={
             <p className="text-[13.5px] text-foreground">
-              Submit <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} from {fromAccount.name} for approval.
+              {direct ? (
+                <>
+                  Pay <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} from {fromAccount.name}.
+                </>
+              ) : (
+                <>
+                  Submit <span className="tabular">{formatMoney(numAmount, "GHS", true)}</span> to {supplierName} from {fromAccount.name} for approval.
+                </>
+              )}
             </p>
           }
         />

@@ -4,23 +4,39 @@
  * customer configurations that a company has none of).
  */
 
-import { accountsForProfile, findAccount, type Account } from "../mock-data";
-import { rowKind } from "../profile";
+import { accountsForProfile, type Account, type Transaction, transactionsForProfile } from "../mock-data";
+import { useSession } from "../session-store";
+import { CORPORATE_PROFILE } from "./ledger";
+
+function activeProfileName(): string {
+  const session = useSession.getState();
+  return session.activeProfile?.name ?? session.actor?.profiles[0]?.name ?? CORPORATE_PROFILE.name;
+}
 
 /** Every account the company can see and pay from. */
 export function businessAccounts(): Account[] {
-  return accountsForProfile("CORPORATE");
+  const company = activeProfileName();
+  return accountsForProfile("CORPORATE").filter(
+    (a) => (a.companyName ?? CORPORATE_PROFILE.name) === company,
+  );
 }
 
 /** An account by id, only if it is the company's (a personal account id resolves to nothing here). */
 export function findBusinessAccount(id: string): Account | undefined {
-  const account = findAccount(id);
-  return account && rowKind(account) === "CORPORATE" ? account : undefined;
+  return businessAccounts().find((a) => a.id === id);
+}
+
+/** Transactions for the signed-in business's accounts. */
+export function businessTransactions(): Transaction[] {
+  const accountIds = new Set(businessAccounts().map((a) => a.id));
+  return transactionsForProfile("CORPORATE").filter((t) => t.accountId && accountIds.has(t.accountId));
 }
 
 /** What a mandate means, in place, wherever it is named. */
 export function explainMandate(mandate: string | undefined): string {
   switch (mandate) {
+    case "Sole signatory":
+      return "You are the only person who can authorise payments from this account.";
     case "Either to sign":
       return "Any one of the signatories can authorise a payment.";
     case "Both to sign":

@@ -14,3 +14,11 @@ export function isApprover(role: Role): boolean {
 export function isCorporateAdmin(role: Role): boolean {
   return role === "CORPORATE_ADMIN";
 }
+
+/**
+ * A sole proprietor is the business's only user, so there is no one else to approve their payments: the
+ * one-time code is the authorisation (designer decision 2026-10-20; BRL-04's segregation needs two people).
+ */
+export function paysWithoutApproval(role: Role): boolean {
+  return role === "SOLE_PROPRIETOR";
+}

@@ -258,6 +258,14 @@ const business: Entry[] = [
   ["How It's Sent", "Mode d’envoi", "Cómo se envía", "发送方式"],
   ["Invoice or Reference", "Facture ou référence", "Factura o referencia", "发票或参考号"],
   ["For example, Invoice 4471", "Par exemple, facture 4471", "Por ejemplo, factura 4471", "例如：发票 4471"],
+  // ── Business payment & onboarding updates ──
+  ["Pay Supplier", "Payer le fournisseur", "Pagar al proveedor", "支付供应商"],
+  ["Payment on its way", "Paiement en cours d’envoi", "Pago en camino", "付款正在处理中"],
+  ["One bank transfer to a supplier", "Un virement bancaire à un fournisseur", "Una transferencia bancaria a un proveedor", "向供应商单笔银行转账"],
+  ["New to Business Internet Banking? Register", "Nouveau sur la banque en ligne pour entreprises ? S’inscrire", "¿Nuevo en la banca en línea para empresas? Registrarse", "初次使用企业网上银行？立即注册"],
+  ["{0} leaves {1}, fee included.", "{0} quittent {1}, frais compris.", "{0} saldrán de {1}, comisión incluida.", "{0} 将从 {1} 扣除（含手续费）。"],
+  ["has left", "a quitté", "ha salido de", "已扣自"],
+  [". You will see it settle in Transactions.", ". Vous le verrez se régler dans Transactions.", ". Lo verá liquidado en Transacciones.", "。您将在“交易”中看到其结算状态。"],
 ];
 
 export default business;

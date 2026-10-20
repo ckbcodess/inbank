@@ -27,6 +27,7 @@ import {
   TrueEmptyState,
 } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
+import { CHANNEL_LABEL } from "@/lib/corporate-enrolment";
 import { getAllEnrolments } from "@/lib/enrolment-store";
 
 const LIST_STATES: readonly ListState[] = [
@@ -39,7 +40,7 @@ const LIST_STATES: readonly ListState[] = [
 ] as const;
 
 type AssignmentFilter = "all" | "assigned-to-me" | "team-unassigned";
-type StageFilter = "all" | "waiting-signatures" | "waiting-call" | "returned" | "approved";
+type StageFilter = "all" | "waiting-letter" | "waiting-signatures" | "waiting-call" | "returned" | "approved";
 
 export default function AdminEnrolmentsPage() {
   const [state, setState] = useState<ListState>("populated");
@@ -73,7 +74,9 @@ export default function AdminEnrolmentsPage() {
       }
 
       // 3. Stage filter
-      if (stageFilter === "waiting-signatures") {
+      if (stageFilter === "waiting-letter") {
+        if (app.status !== "awaiting_letter") return false;
+      } else if (stageFilter === "waiting-signatures") {
         if (app.status !== "checking_signatures") return false;
       } else if (stageFilter === "waiting-call") {
         if (app.status !== "call_verification") return false;
@@ -157,6 +160,7 @@ export default function AdminEnrolmentsPage() {
               className="h-8 rounded-lg border border-border bg-background px-2.5 text-[12.5px] text-foreground outline-hidden cursor-pointer"
             >
               <option value="all">All Stages</option>
+              <option value="waiting-letter">Waiting on signed letter</option>
               <option value="waiting-signatures">Waiting on signatures</option>
               <option value="waiting-call">Waiting on security call</option>
               <option value="returned">Returned for clarification</option>
@@ -232,7 +236,7 @@ export default function AdminEnrolmentsPage() {
                   </div>
 
                   <p className="text-[12.5px] text-muted-foreground mt-0.5">
-                    Applicant: <span className="text-foreground">{app.applicant.name}</span> ({app.applicant.mobile}) · {app.accounts.length} account{app.accounts.length === 1 ? "" : "s"}
+                    Applicant: <span className="text-foreground">{app.applicant.name}</span> ({app.applicant.mobile}) · {app.accounts.length} account{app.accounts.length === 1 ? "" : "s"} · {CHANNEL_LABEL[app.channel]}
                   </p>
 
                   <div className="flex items-center gap-3 text-[11.5px] text-muted-foreground mt-1">
@@ -265,6 +269,8 @@ export default function AdminEnrolmentsPage() {
                     ? "Returned"
                     : app.status === "rejected"
                     ? "Declined"
+                    : app.status === "awaiting_letter"
+                    ? "Awaiting Letter"
                     : app.status === "checking_signatures"
                     ? "Signatures Pending"
                     : app.status === "call_verification"
