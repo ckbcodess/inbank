@@ -186,6 +186,8 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 ## Inbox
 
 ### 2026-10-20
+- Decision: Transaction History uses variation 2 (docs/transaction-history-variations.html). One quiet mark per row (hairline circle, grey icon, real logo where we have one), no box around the list, no corner arrows, no tint colours, no green credits: direction is the + / − sign. Shared by every list through `TransactionMark` and `amountStyling`, business included. The `--tx-*` tokens are deleted. Delete the variations file once the design is settled.
+- Gap: `TransactionIcon` is still unused (see above). Money-in is still green in the transaction sheet's hero amount and in notification rows; decide whether those follow the list.
 - Question: Transaction History feels busy (tinted marks, corner arrows, green credits, boxed list). Ten calmer versions are in `docs/transaction-history-variations.html`; none chosen yet. Build the chosen one behind a Dev Mode switch, then delete the rest.
 - Decision: branch `feat/beneficiaries-transactions` joins design-exploration (beneficiaries, sheets, brand logos, `TransactionMark`, detail sheet), main (business onboarding) and the transaction display redesign. Where the last two clashed, the logo marks and the detail sheet won.
 - Gap: `TransactionIcon` and `TransactionItem` (category icons, from feat/transaction-display-v2) are in the repo but nothing uses them. Either fold the category tint into `TransactionMark` or delete them.

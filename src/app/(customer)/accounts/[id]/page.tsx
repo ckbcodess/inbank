@@ -427,7 +427,7 @@ function ActivityRow({
           </span>
         </span>
         <span className="flex shrink-0 flex-col items-end gap-0.5">
-          <span className={cn("text-[14px] tabular", isCredit ? "text-success" : "text-foreground")}>
+          <span className={"text-[14px] tabular text-foreground"}>
             {isCredit ? "+ " : "− "}
             {formatMoney(t.amount, t.currency, true)}
           </span>

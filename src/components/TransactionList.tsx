@@ -8,7 +8,7 @@
  * - Search: Full-width search bar with placeholder "Search by reference ID,  recipient ...."
  * - Filters: one Filters button beside the search (status, date, account, method, category), with the applied filters shown as chips.
  * - Data Table: Date, Recipient, Account (e.g. Current ***4561), Method, Amount (with status/direction color formatting and privacy toggle), Category, Status (Complete, Failed, Pending pill badges).
- * - Pagination: "Showing 1–10 of X cases" + Previous / page numbers / Next.
+ * - Pagination: "Showing 1–10 of X payments" + Previous / page numbers / Next.
  */
 
 import { getTransactionType, transactionRail } from "@/lib/transaction-type";
@@ -685,7 +685,7 @@ export default function TransactionList({
             className="flex flex-col gap-3"
           >
           {/* One list at every breakpoint — the same rows as the dashboard's Recent activity. */}
-          <div className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">
+          <div className="flex flex-col gap-0.5">
             {paginatedRows.map((t) => {
               const { colorClass, prefix } = amountStyling(t);
 
@@ -693,9 +693,9 @@ export default function TransactionList({
                 <div
                   key={t.id}
                   onClick={() => setSelectedTransaction(t)}
-                  className="flex items-center gap-3 rounded-xl px-2 py-3 sm:py-3 transition-colors hover:bg-item-hover cursor-pointer active:bg-item-hover/80 sm:px-3"
+                  className="-mx-2 flex items-center gap-3.5 rounded-xl px-2 py-3 transition-colors hover:bg-item-hover cursor-pointer active:bg-item-hover/80"
                 >
-                  {/* What it was, with a corner arrow for which way it went */}
+                  {/* What it was, as one quiet mark; which way it went is the sign on the amount */}
                   <TransactionMark transaction={t} />
 
                   {/* Counterparty & Metadata */}
@@ -736,7 +736,7 @@ export default function TransactionList({
           <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-1 text-[13px] text-muted-foreground">
             <div>
               Showing {rows.length === 0 ? 0 : startIndex + 1}–
-              {Math.min(startIndex + pageSize, rows.length)} of {rows.length} cases
+              {Math.min(startIndex + pageSize, rows.length)} of {rows.length} payments
             </div>
 
             {totalPages > 1 && (

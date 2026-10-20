@@ -396,7 +396,7 @@ export function LatestTransactions({
             <span className="min-w-0 flex-1 truncate text-[13px] text-foreground">
               {t.counterparty || t.description}
             </span>
-            <span className={cn("tabular text-[13px]", credit ? "text-success" : "text-foreground")}>
+            <span className={"tabular text-[13px] text-foreground"}>
               {credit ? "+" : "−"}
               {fmtGHS(Math.abs(t.amount), showAmounts, { compact: true }).replace("GHS ", "GHS ")}
             </span>

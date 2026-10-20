@@ -1,5 +1,4 @@
 import {
-  ArrowDownLeft,
   ArrowLeftRight,
   Banknote,
   CreditCard,
@@ -58,38 +57,9 @@ function iconFor(t: Pick<Transaction, "paymentMethod">): IconType {
 }
 
 /**
- * Each kind of payment has its own tint (`--tx-<colour>`), with the icon in a deeper shade of the same hue
- * (`--tx-<colour>-ink`), so a list can be read by colour as well as by shape. Colour is never the only signal: the icon and the "kind · date" line say the same thing.
- */
-function tintFor(t: Pick<Transaction, "paymentMethod">): "yellow" | "teal" | "sand" | "lilac" | "green" | "pink" | "lemon" | "blue" {
-  switch (t.paymentMethod) {
-    case "momo":
-    case "wallet-to-bank":
-      return "yellow";
-    case "airtime":
-    case "data":
-      return "teal";
-    case "bill":
-      return "sand";
-    case "card":
-      return "lilac";
-    case "qr":
-      return "green";
-    case "papss":
-      return "pink";
-    case "own-account":
-    case "cardless":
-    case "term-deposit":
-      return "lemon";
-    default:
-      // Bank transfers (GIP, ACH, RTGS), bulk and trade
-      return "blue";
-  }
-}
-
-/**
- * The leading mark of a transaction row: a duotone tile showing the kind of payment. Money that came in gets a small
- * green arrow badge on its corner; money out has none (the minus sign on the amount already says it).
+ * The leading mark of a transaction row: one quiet circle, a hairline outline with a grey line icon for the kind of
+ * payment (what it was). A company we have a logo for shows its logo instead, because that is recognition rather than
+ * decoration. Which way the money went is the sign on the amount, so the mark carries no colour and no direction badge.
  */
 export function TransactionMark({
   transaction,
@@ -99,18 +69,15 @@ export function TransactionMark({
   className?: string;
 }) {
   const Icon = iconFor(transaction);
-  const tint = tintFor(transaction);
-  const incoming = transaction.direction === "credit";
   // A company we have a logo for is shown by its logo filling the circle; between my own accounts it is GCB. Everything else is the kind icon.
   const logo = transaction.paymentMethod === "own-account" ? brandLogo("GCB") : brandLogo(transaction.counterparty);
   return (
     <div
       className={cn(
-        "relative flex size-9 shrink-0 items-center justify-center rounded-full",
-        logo && (!logo.round || logo.disc) && "bg-[var(--logo-disc)]",
+        "flex size-9 shrink-0 items-center justify-center rounded-full",
+        logo ? (!logo.round || logo.disc) && "bg-[var(--logo-disc)]" : "border border-border bg-card text-muted-foreground",
         className,
       )}
-      style={logo ? undefined : { backgroundColor: `var(--tx-${tint})`, color: `var(--tx-${tint}-ink)` }}
     >
       {logo ? (
         <Image
@@ -120,19 +87,7 @@ export function TransactionMark({
           height={40}
           className={logo.round ? "size-full rounded-full object-cover" : "size-5 object-contain"}
         />
-      ) : <Icon size={18} strokeWidth={1.7} />}
-      {/* Only money in is marked: most rows are money out, so the exception is what gets the badge */}
-      {incoming && (
-        // The pill colour is see-through by design, so an opaque card-coloured disc sits under it: the logo or tint behind never shows through
-        <span
-          className="absolute -bottom-0.5 -right-0.5 flex size-[18px] items-center justify-center rounded-full bg-card ring-2 ring-card"
-          aria-label="Money in"
-        >
-          <span className="flex size-full items-center justify-center rounded-full bg-pill-success text-pill-success-text">
-            <ArrowDownLeft size={11} strokeWidth={2} aria-hidden="true" />
-          </span>
-        </span>
-      )}
+      ) : <Icon size={17} strokeWidth={1.6} />}
     </div>
   );
 }
