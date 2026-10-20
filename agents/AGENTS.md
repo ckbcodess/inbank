@@ -26,7 +26,7 @@ It must not live only in a chat, an agent's private memory, or one tool's config
 | [WORKING_LOG.md](WORKING_LOG.md) | Inbox: discoveries, decisions in flight, open questions, known gaps | Every working session |
 
 - **Tool entry points** (`/CLAUDE.md`, `/AGENTS.md`, `/.cursorrules`) only point here. Never put rules in them.
-- **Reference documents are inputs, not memory.** These are the BRD and screen spec (`src/lib/*.docx`),
+- **Reference documents are inputs, not memory.** These are the BRD and screen spec (`src/lib/*.docx`, which is BRD v1; the current BRD v2 is a PDF kept outside the repo, see PRODUCT.md),
   `DESIGN-TIMELINE.md` (the Figma plan), `DESIGN-PLAN.md` (written before decision D1 and partly
   outdated), `docs/STATES.md` (the illustration brief) and `phase-1-features-readiness.*`.
   What they establish has been pulled into PRODUCT.md.
