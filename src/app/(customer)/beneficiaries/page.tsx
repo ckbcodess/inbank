@@ -71,7 +71,6 @@ import {
   type TransactionType,
 } from "@/lib/beneficiaries-store";
 import { useGroupsStore, type PaymentGroup } from "@/lib/groups-store";
-import { useSession } from "@/lib/session-store";
 import CreateGroupModal from "@/components/payments/CreateGroupModal";
 import EditGroupModal from "@/components/payments/EditGroupModal";
 import { toast } from "sonner";
@@ -888,7 +887,7 @@ export default function BeneficiariesPage() {
 
       {/* ── Progressive Add / Edit Beneficiary Sheet ── */}
       <Sheet open={formOpen} onOpenChange={setFormOpen}>
-        <SheetContent side="right" className="flex flex-col">
+        <SheetContent side="right" className="flex flex-col h-[92dvh]">
           {/* Header */}
           <SheetHeader>
             <SheetTitle>

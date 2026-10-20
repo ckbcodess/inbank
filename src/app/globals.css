@@ -1458,6 +1458,24 @@ input[type="number"] {
   will-change: transform;
 }
 
+/* Below sm, left and right sheets are bottom sheets, so they rise from the bottom edge like the bottom side does. */
+@media (max-width: 639px) {
+  [data-slot="sheet-content"][data-side="right"][data-open],
+  [data-slot="sheet-content"][data-side="left"][data-open] {
+    animation: sheet-mobile-in 340ms cubic-bezier(0.32, 0.72, 0, 1) both;
+  }
+
+  [data-slot="sheet-content"][data-side="right"][data-closed],
+  [data-slot="sheet-content"][data-side="left"][data-closed] {
+    animation: sheet-mobile-out 240ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  }
+}
+
+/* A sheet swiped away by hand leaves by its inline transform, not by the close animation. */
+[data-slot="sheet-content"][data-dragged][data-closed] {
+  animation: none;
+}
+
 [data-slot="sheet-overlay"][data-open] {
   animation: modal-fade-in 300ms ease-out forwards;
   will-change: opacity;

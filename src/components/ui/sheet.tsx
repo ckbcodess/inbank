@@ -34,6 +34,94 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
   );
 }
 
+/**
+ * Below `sm`, side sheets are bottom sheets: pinned to the bottom edge, as tall as their content up to 92% of the
+ * screen, rounded on top, clear of the home indicator. A tall form can pass `h-[92dvh]` to keep one height across steps.
+ * `sm` and up put these back to floating side panels (the `sm:` classes on each side).
+ */
+const SHEET_MOBILE_BOTTOM =
+  "inset-x-0 bottom-0 top-auto h-auto max-h-[92dvh] w-full rounded-t-3xl border-t pb-[env(safe-area-inset-bottom)] sm:rounded-3xl sm:pb-0";
+
+/** Dragged further than this (px), or flicked faster than DISMISS_VELOCITY (px/ms), and the sheet closes. */
+const DISMISS_DISTANCE = 110;
+const DISMISS_VELOCITY = 0.55;
+
+/**
+ * Swipe down to close: a grab handle at the top edge of a bottom sheet. The sheet follows the finger, then either
+ * settles back or leaves. Left and right sheets only offer it below `sm`, where they are bottom sheets.
+ */
+function SheetHandle({
+  popupRef,
+  onDismiss,
+  mobileOnly,
+}: {
+  popupRef: React.RefObject<HTMLElement | null>;
+  onDismiss: () => void;
+  mobileOnly: boolean;
+}) {
+  const drag = React.useRef<{ startY: number; lastY: number; lastT: number; velocity: number } | null>(null);
+
+  const active = () => !mobileOnly || window.matchMedia("(max-width: 639px)").matches;
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!active() || !popupRef.current) return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    drag.current = { startY: e.clientY, lastY: e.clientY, lastT: e.timeStamp, velocity: 0 };
+    popupRef.current.style.transition = "none";
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    const el = popupRef.current;
+    if (!d || !el) return;
+    const dy = Math.max(0, e.clientY - d.startY);
+    const dt = e.timeStamp - d.lastT;
+    if (dt > 0) d.velocity = (e.clientY - d.lastY) / dt;
+    d.lastY = e.clientY;
+    d.lastT = e.timeStamp;
+    el.style.transform = `translate3d(0, ${dy}px, 0)`;
+  };
+
+  const finish = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current;
+    const el = popupRef.current;
+    drag.current = null;
+    if (!d || !el) return;
+    const dy = Math.max(0, e.clientY - d.startY);
+    const settle = "transform 260ms cubic-bezier(0.32, 0.72, 0, 1)";
+    if (dy > DISMISS_DISTANCE || d.velocity > DISMISS_VELOCITY) {
+      // Hand the exit to the inline transform so the close animation doesn't restart from the top.
+      el.setAttribute("data-dragged", "");
+      el.style.transition = settle;
+      el.style.transform = "translate3d(0, 100%, 0)";
+      onDismiss();
+    } else {
+      el.style.transition = settle;
+      el.style.transform = "translate3d(0, 0, 0)";
+      window.setTimeout(() => {
+        el.style.transition = "";
+        el.style.transform = "";
+      }, 270);
+    }
+  };
+
+  return (
+    <div
+      data-slot="sheet-handle"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={finish}
+      onPointerCancel={finish}
+      className={cn(
+        "absolute left-1/2 top-0 z-30 flex h-8 w-28 -translate-x-1/2 cursor-grab touch-none items-start justify-center pt-2.5 select-none active:cursor-grabbing",
+        mobileOnly && "sm:hidden"
+      )}
+    >
+      <span className="h-1 w-9 rounded-full bg-muted-foreground/30" />
+    </div>
+  );
+}
+
 function SheetContent({
   className,
   children,
@@ -44,25 +132,33 @@ function SheetContent({
   side?: "top" | "right" | "bottom" | "left";
   showCloseButton?: boolean;
 }) {
+  const popupRef = React.useRef<HTMLDivElement | null>(null);
+  const closeRef = React.useRef<HTMLButtonElement | null>(null);
+  const swipeable = side !== "top";
+
   return (
     <SheetPortal>
       <SheetOverlay />
       <SheetPrimitive.Popup
+        ref={popupRef}
+        // Open with focus on the sheet itself, not its first button (a copy icon would light up with a ring for no
+        // reason). Tab still moves inside the sheet, and a caller can pass its own `initialFocus`.
+        initialFocus={popupRef}
         data-slot="sheet-content"
         data-side={side}
         className={cn(
-          "fixed z-50 flex flex-col bg-modal text-foreground overflow-hidden",
-          // Right side sheet: floating on desktop with balanced surrounding gap (top, bottom, right)
+          "fixed z-50 flex flex-col bg-modal text-foreground overflow-hidden outline-none",
+          // Right side sheet: a bottom sheet below `sm`, floating on desktop with balanced surrounding gap (top, bottom, right)
           side === "right" && [
-            "inset-y-0 right-0 h-full w-full border-l",
-            "sm:inset-y-3 sm:right-3 sm:left-auto sm:h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-28px)] sm:w-[440px] sm:max-w-md",
+            SHEET_MOBILE_BOTTOM,
+            "sm:inset-y-3 sm:h-[calc(100dvh-28px)] sm:right-3 sm:left-auto sm:max-h-[calc(100dvh-28px)] sm:w-[440px] sm:max-w-md",
             "sm:border sm:border-black/[0.08] dark:sm:border-white/[0.1] sm:rounded-3xl",
             "shadow-2xl sm:shadow-[0_24px_64px_rgba(0,0,0,0.22),0_1px_3px_rgba(0,0,0,0.06)] dark:sm:shadow-[0_28px_72px_rgba(0,0,0,0.72)]",
           ],
-          // Left side sheet: floating on desktop with balanced surrounding gap (top, bottom, left)
+          // Left side sheet: a bottom sheet below `sm`, floating on desktop with balanced surrounding gap (top, bottom, left)
           side === "left" && [
-            "inset-y-0 left-0 h-full w-full border-r",
-            "sm:inset-y-3 sm:left-3 sm:right-auto sm:h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-28px)] sm:w-[440px] sm:max-w-md",
+            SHEET_MOBILE_BOTTOM,
+            "sm:inset-y-3 sm:h-[calc(100dvh-28px)] sm:left-3 sm:right-auto sm:max-h-[calc(100dvh-28px)] sm:w-[440px] sm:max-w-md",
             "sm:border sm:border-black/[0.08] dark:sm:border-white/[0.1] sm:rounded-3xl",
             "shadow-2xl sm:shadow-[0_24px_64px_rgba(0,0,0,0.22),0_1px_3px_rgba(0,0,0,0.06)] dark:sm:shadow-[0_28px_72px_rgba(0,0,0,0.72)]",
           ],
@@ -79,6 +175,16 @@ function SheetContent({
         {...props}
       >
         {children}
+        {swipeable && (
+          <>
+            <SheetHandle
+              popupRef={popupRef}
+              mobileOnly={side !== "bottom"}
+              onDismiss={() => closeRef.current?.click()}
+            />
+            <SheetPrimitive.Close ref={closeRef} tabIndex={-1} aria-hidden className="hidden" />
+          </>
+        )}
         {showCloseButton && (
           <SheetPrimitive.Close
             data-slot="sheet-close"
