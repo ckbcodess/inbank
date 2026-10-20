@@ -168,7 +168,7 @@ export function ScanAndPayFlow({
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       {/* ── STAGE A: IDENTIFY / VIEW QR (When no merchant is selected yet) ── */}
       {!isMerchantSelected ? (
         <div className="flex flex-col w-full max-w-xl mx-auto min-h-[calc(100dvh-200px)] sm:min-h-[calc(100dvh-240px)]">
@@ -186,9 +186,9 @@ export function ScanAndPayFlow({
 
           {/* Mode 1: My QR — centered in remaining space below toggles */}
           {activeMode === "myqr" ? (
-            <div className="flex flex-1 flex-col justify-center gap-6 my-auto pt-6 animate-in fade-in duration-200">
+            <div className="flex flex-1 flex-col justify-center gap-5 my-auto pt-5 animate-in fade-in duration-200">
               {/* Canvas with identical footprint without border so buttons don't shift */}
-              <div className="relative flex min-h-[46vh] sm:min-h-0 sm:aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl p-4">
+              <div className="relative flex min-h-[46vh] sm:min-h-0 sm:aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl p-3">
                 {/* Centered QR Container */}
                 <div className="flex flex-col items-center justify-center text-foreground p-2 w-[320px] sm:w-[350px]">
                   <QrCode
@@ -200,14 +200,14 @@ export function ScanAndPayFlow({
                     centerLogo={
                       <div className="flex items-center justify-center">
                         <GCBLogo
-                          className="w-12 h-auto"
+                          className="w-10 h-auto"
                           eagleColor="#FFC423"
                           wordmarkColor="currentColor"
                         />
                       </div>
                     }
                   />
-                  <div className="mt-4 flex flex-col items-center text-center">
+                  <div className="mt-3 flex flex-col items-center text-center">
                     <span className="text-[14.5px] font-semibold text-foreground tracking-tight">{userName}</span>
                     <span className="text-[12px] text-muted-foreground font-mono mt-0.5">
                       {receiveAccount?.name || "Operating Account"} ∗∗∗∗ {(receiveAccount?.number || "0313").replace(/\s+/g, "").slice(-4)}
@@ -236,18 +236,18 @@ export function ScanAndPayFlow({
               )}
 
               {/* Two Action Buttons: Outline on left, Primary on right */}
-              <div className="flex w-full items-center gap-4">
+              <div className="flex w-full items-center gap-3">
                 <Button
                   type="button"
                   variant="outline"
-                  className="flex-1 h-12 text-[14px] font-medium rounded-xl border-border/80 bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
+                  className="flex-1 h-10 text-[14px] font-medium rounded-xl border-border/80 bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
                   onClick={handleShareMyQr}
                 >
                   Share QR Code
                 </Button>
                 <Button
                   type="button"
-                  className="flex-1 h-12 text-[14px] font-medium rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs cursor-pointer"
+                  className="flex-1 h-10 text-[14px] font-medium rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs cursor-pointer"
                   onClick={handleDownloadMyQr}
                 >
                   Download
@@ -256,7 +256,7 @@ export function ScanAndPayFlow({
             </div>
           ) : (
             /* Mode 2: Scan & Pay — centered in remaining space below toggles */
-            <div className="flex flex-1 flex-col justify-center gap-6 my-auto pt-6 animate-in fade-in duration-200">
+            <div className="flex flex-1 flex-col justify-center gap-5 my-auto pt-5 animate-in fade-in duration-200">
               {/* Viewfinder Canvas (Solid black camera feed look) */}
               <div
                 className="relative flex min-h-[58vh] sm:min-h-0 sm:aspect-[4/3] w-full flex-col items-center justify-center overflow-hidden rounded-2xl bg-black border border-black/80 text-white cursor-pointer group shadow-md"
@@ -269,7 +269,7 @@ export function ScanAndPayFlow({
                 title="Tap to scan or select from gallery below"
               >
                 {/* Crosshairs Viewfinder target box */}
-                <div className="relative size-44 sm:size-52 flex flex-col items-center justify-center transition-transform duration-300 group-hover:scale-[1.02]">
+                <div className="relative size-38 sm:size-45 flex flex-col items-center justify-center transition-transform duration-300 group-hover:scale-[1.02]">
                   {/* Four Corner Crosshair Brackets matching user reference */}
                   <svg
                     viewBox="0 0 200 200"
@@ -309,7 +309,7 @@ export function ScanAndPayFlow({
                 </div>
 
                 {/* Subtitle helper placed directly underneath the crosshairs */}
-                <p className="mt-4 text-center px-4 text-[13.5px] font-medium text-white/90 tracking-tight drop-shadow-sm">
+                <p className="mt-3 text-center px-3 text-[13.5px] font-medium text-white/90 tracking-tight drop-shadow-sm">
                   Scan the QR code to pay
                 </p>
 
@@ -325,18 +325,18 @@ export function ScanAndPayFlow({
               </div>
 
               {/* Two Action Buttons: Outline on left, Primary on right */}
-              <div className="flex w-full items-center gap-4">
+              <div className="flex w-full items-center gap-3">
                 <Button
                   type="button"
                   variant="outline"
-                  className="flex-1 h-12 text-[14px] font-medium rounded-xl border-border/80 bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
+                  className="flex-1 h-10 text-[14px] font-medium rounded-xl border-border/80 bg-background hover:bg-muted text-foreground transition-colors cursor-pointer"
                   onClick={() => galleryInputRef.current?.click()}
                 >
                   Select from Gallery
                 </Button>
                 <Button
                   type="button"
-                  className="flex-1 h-12 text-[14px] font-medium rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs cursor-pointer"
+                  className="flex-1 h-10 text-[14px] font-medium rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover shadow-xs cursor-pointer"
                   onClick={() => {
                     setTerminalInput("");
                     setTerminalDialogOpen(true);
@@ -352,14 +352,14 @@ export function ScanAndPayFlow({
           <Dialog open={terminalDialogOpen} onOpenChange={setTerminalDialogOpen}>
             <DialogContent size="sm" className="rounded-3xl p-0 overflow-hidden shadow-2xl border border-border/70 bg-card text-foreground">
               {/* Header: Title on left, close on right */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-border/60">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-border/60">
                 <span className="text-[16px] font-medium text-foreground tracking-tight">
                   Merchant ID
                 </span>
                 <button
                   type="button"
                   onClick={() => setTerminalDialogOpen(false)}
-                  className="flex size-7 items-center justify-center rounded-full bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
+                  className="flex size-6 items-center justify-center rounded-full bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors cursor-pointer"
                   aria-label="Close"
                 >
                   <X size={15} strokeWidth={2} />
@@ -367,14 +367,14 @@ export function ScanAndPayFlow({
               </div>
 
               {/* Body: Centered store icon, headline, and pill-bordered input */}
-              <div className="flex flex-col items-center px-6 pt-7 pb-6">
+              <div className="flex flex-col items-center px-5 pt-6 pb-5">
                 {/* Green store badge */}
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-600 dark:text-emerald-400 shadow-sm mb-4">
+                <div className="flex size-10 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-emerald-600 dark:text-emerald-400 shadow-sm mb-3">
                   <Store size={22} strokeWidth={1.75} />
                 </div>
 
                 {/* Headline */}
-                <h3 className="text-[20px] sm:text-[22px] font-semibold text-foreground tracking-tight text-center mb-5">
+                <h3 className="text-[20px] sm:text-[22px] font-semibold text-foreground tracking-tight text-center mb-4">
                   Enter the merchant ID
                 </h3>
 
@@ -385,7 +385,7 @@ export function ScanAndPayFlow({
                     value={terminalInput}
                     onChange={(e) => setTerminalInput(e.target.value.toUpperCase())}
                     placeholder="E.G. GCB-QR-88210"
-                    className="h-12 w-full rounded-2xl border border-border bg-background px-4 text-center font-mono uppercase text-[15px] tracking-wider placeholder:text-muted-foreground/60 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+                    className="h-10 w-full rounded-2xl border border-border bg-background px-3 text-center font-mono uppercase text-[15px] tracking-wider placeholder:text-muted-foreground/60 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                     autoFocus
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && terminalInput.trim()) {
@@ -398,7 +398,7 @@ export function ScanAndPayFlow({
               </div>
 
               {/* Footer: Right-aligned Cancel button (and Continue if text is typed) */}
-              <div className="flex items-center justify-end px-6 py-4 border-t border-border/60">
+              <div className="flex items-center justify-end px-5 py-3 border-t border-border/60">
                 <button
                   type="button"
                   onClick={() => setTerminalDialogOpen(false)}
@@ -409,7 +409,7 @@ export function ScanAndPayFlow({
                 {terminalInput.trim() && (
                   <Button
                     type="button"
-                    className="ml-3 h-9 px-4 rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover font-medium shadow-xs cursor-pointer"
+                    className="ml-2 h-8 px-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary-hover font-medium shadow-xs cursor-pointer"
                     onClick={() => handleConfirmTerminal(terminalInput)}
                   >
                     Continue
@@ -421,7 +421,7 @@ export function ScanAndPayFlow({
         </div>
       ) : (
         /* ── STAGE B: MERCHANT IDENTIFIED -> PAYMENT DETAILS ── */
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+        <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* Source Account Selector */}
           <FromAccountSelector
             accounts={accounts}
@@ -440,17 +440,17 @@ export function ScanAndPayFlow({
                 onChange={() => setCollapsed(false)}
               />
             ) : (
-              <div className="flex items-center justify-between rounded-xl border border-success/30 bg-success/5 p-3.5">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-success/15 text-success">
+              <div className="flex items-center justify-between rounded-xl border border-success/30 bg-success/5 p-3">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-success/15 text-success">
                     <Store size={20} strokeWidth={1.8} />
                   </div>
                   <div className="flex flex-col min-w-0">
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-2">
                       <span className="text-[14px] font-medium text-foreground truncate">
                         {state.qrMerchant}
                       </span>
-                      <span className="flex size-3.5 shrink-0 items-center justify-center rounded-full bg-success text-success-foreground shadow-xs">
+                      <span className="flex size-3 shrink-0 items-center justify-center rounded-full bg-success text-success-foreground shadow-xs">
                         <Check size={9} strokeWidth={3} className="shrink-0" />
                       </span>
                     </div>
@@ -464,7 +464,7 @@ export function ScanAndPayFlow({
                   variant="ghost"
                   size="sm"
                   onClick={handleClearMerchant}
-                  className="text-xs text-muted-foreground hover:text-foreground h-8 px-2.5 cursor-pointer"
+                  className="text-xs text-muted-foreground hover:text-foreground h-7 px-2 cursor-pointer"
                   aria-label="Change merchant"
                 >
                   Change

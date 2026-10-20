@@ -120,7 +120,7 @@ export function CardlessWithdrawalFlow({
   const isValid = Boolean(state.fromId) && isVerified && numAmount > 0 && !overBalance;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
       <FromAccountSelector accounts={accounts} value={state.fromId} onChange={(id) => onChange("fromId", id)} />
 
       {/* Yourself: pick which of your numbers gets the code */}
@@ -148,7 +148,7 @@ export function CardlessWithdrawalFlow({
               onChange={() => setCollapsed(false)}
             />
           ) : (
-            <div className="flex flex-col gap-3 animate-in fade-in duration-150">
+            <div className="flex flex-col gap-2 animate-in fade-in duration-150">
               <NetworkSelect
                 value={state.wNetwork || ""}
                 onChange={(val) => onChange("wNetwork", val)}
@@ -176,7 +176,7 @@ export function CardlessWithdrawalFlow({
       )}
 
       {isVerified && (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+        <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           <div className="flex flex-col gap-2">
             <AmountInput
               value={state.amount}

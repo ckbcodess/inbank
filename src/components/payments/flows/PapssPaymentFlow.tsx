@@ -190,7 +190,7 @@ export function PapssPaymentFlow({
     Boolean(state.fromId) && isDestinationValid && numForeign > 0 && !overBalance;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
       {/* 1. From Account */}
       <FromAccountSelector
         accounts={accounts}
@@ -208,8 +208,8 @@ export function PapssPaymentFlow({
             onChange={() => setCollapsed(false)}
           />
         ) : (
-          <div className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-2">
+            <div className="grid grid-cols-2 gap-2">
               <Select
                 value={currentCountry}
                 onValueChange={(val) => {
@@ -280,7 +280,7 @@ export function PapssPaymentFlow({
 
       {/* Progressive Disclosure: Only reveal Foreign Amount & onwards after PAPSS details are entered */}
       {isDestinationValid && (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+        <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount Section: You Send (GHS) vs Recipient Gets (Foreign) with switcher */}
           <Field label="Transfer Amount">
 

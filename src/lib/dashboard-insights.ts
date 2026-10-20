@@ -18,6 +18,7 @@ import {
   type InstructionFrequency,
   type Transaction,
 } from "./mock-data";
+import type { ProfileKind } from "./roles";
 
 export interface Slice {
   label: string;
@@ -89,7 +90,7 @@ function daysBefore(iso: string, days: number): string {
  * on one account. The window stays anchored on the profile's latest entry so
  * every account shares the same calendar.
  */
-function spendingDebits(kind: "RETAIL" | "CORPORATE", days?: number, accountId?: string): Transaction[] {
+function spendingDebits(kind: ProfileKind, days?: number, accountId?: string): Transaction[] {
   const all = transactionsForProfile(kind);
   const latest = latestLedgerDate(all);
   const from = days && latest ? daysBefore(latest, days) : null;
@@ -109,7 +110,7 @@ function spendingDebits(kind: "RETAIL" | "CORPORATE", days?: number, accountId?:
  * With `days`, only the trailing window ending on the latest ledger entry.
  */
 export function spendBreakdownForProfile(
-  kind: "RETAIL" | "CORPORATE" = "RETAIL",
+  kind: ProfileKind = "RETAIL",
   days?: number,
   accountId?: string,
 ): SpendBreakdown {
@@ -148,7 +149,7 @@ const SPEND_RANGE_DAYS: Record<SpendRange, number> = {
  * last). Slices can be zero in a short range; the chart collapses them.
  */
 export function spendByRangeForProfile(
-  kind: "RETAIL" | "CORPORATE" = "RETAIL",
+  kind: ProfileKind = "RETAIL",
   accountId?: string,
 ): Record<SpendRange, SpendBreakdown> {
   // Windows are nested, so every shorter range's categories fit this set.
@@ -214,7 +215,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
  * true balance on each day money moved.
  */
 export function balanceTrendForProfile(
-  kind: "RETAIL" | "CORPORATE" = "RETAIL",
+  kind: ProfileKind = "RETAIL",
 ): BalanceTrend {
   const current = sumMoney(accountsForProfile(kind).map((a) => a.balance ?? 0));
   const completed = transactionsForProfile(kind)
@@ -270,7 +271,7 @@ export interface CashFlow {
  * recent ledger entry so the figure always reflects real movement.
  */
 export function cashFlowForProfile(
-  kind: "RETAIL" | "CORPORATE" = "RETAIL",
+  kind: ProfileKind = "RETAIL",
   days = 30,
 ): CashFlow {
   return cashFlowFor(transactionsForProfile(kind), undefined, days);
@@ -396,7 +397,7 @@ function parseExpiry(expiry: string): Date | null {
  * it stays a glanceable strip, never a wall.
  */
 export function attentionItemsForProfile(
-  kind: "RETAIL" | "CORPORATE" = "RETAIL",
+  kind: ProfileKind = "RETAIL",
 ): AttentionItem[] {
   const items: AttentionItem[] = [];
   const now = Date.now();

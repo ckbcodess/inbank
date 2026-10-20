@@ -11,6 +11,7 @@ import AuthLayout from "@/components/auth/AuthLayout";
 import OtpInput, { OTP_LENGTH } from "@/components/auth/OtpInput";
 import { OtpHelp } from "@/components/payments/OtpHelp";
 import { OTP_SHORTCODE, PIN_LENGTH, REGISTERED_PHONE, useAuthorisation } from "@/components/payments/useAuthorisation";
+import { homePathForProfile } from "@/lib/navigation";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
 
 /**
@@ -40,7 +41,7 @@ function PinContent() {
     setVerifying(true);
     window.setTimeout(() => {
       verifyMfa();
-      router.push(actor.shell === "admin" ? "/admin" : "/overview");
+      router.push(actor.shell === "admin" ? "/admin" : homePathForProfile(actor.profiles[0]));
     }, 500);
   }
 
@@ -65,8 +66,8 @@ function PinContent() {
     >
       {/* New device: what we saw, so the person can tell if it was them. */}
       {isNewDevice && (
-        <div data-tour="mfa-device-info" className="mb-6 rounded-2xl border border-primary/20 bg-primary/5 p-4 text-left space-y-2.5">
-          <div className="flex items-center gap-2.5 text-[13.5px] font-medium text-foreground">
+        <div data-tour="mfa-device-info" className="mb-5 rounded-2xl border border-primary/20 bg-primary/5 p-3 text-left space-y-2">
+          <div className="flex items-center gap-2 text-[13.5px] font-medium text-foreground">
             <Laptop size={17} className="text-primary" />
             <span>Windows PC · Google Chrome</span>
           </div>
@@ -77,7 +78,7 @@ function PinContent() {
         </div>
       )}
 
-      <div className="flex flex-col items-center gap-6">
+      <div className="flex flex-col items-center gap-5">
         <div data-tour="mfa-pin">
           {usingPin ? (
             <OtpInput
@@ -112,7 +113,7 @@ function PinContent() {
               ? "That PIN isn’t right. Try again, or get a code by SMS instead."
               : "That code isn’t right or has expired. Resend it below.")
           }
-          className="-mt-3"
+          className="-mt-2"
         />
         <AlertToast when={auth.state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${REGISTERED_PHONE}.`} />
 
@@ -129,7 +130,7 @@ function PinContent() {
             Forgot PIN?
           </Link>
         ) : (
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center gap-2">
             <OtpHelp resend={auth.resend} onResend={auth.requestResend} shortcodeOpen={shortcodeOpen} onShortcodeOpenChange={setShortcodeOpen} />
             <button
               type="button"

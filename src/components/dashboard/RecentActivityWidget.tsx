@@ -140,24 +140,24 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
 
   return (
     <>
-      <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-colors">
+      <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-colors">
         {/* Top Section */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <h2 className="text-[15px] font-medium text-foreground">Recent activity</h2>
             {/* Account Filter Pill Dropdown */}
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setShowFilterMenu(!showFilterMenu)}
-                className="flex items-center gap-1.5 rounded-full border border-border/80 bg-muted/60 px-3 py-0.5 text-[11.5px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
+                className="flex items-center gap-2 rounded-full border border-border/80 bg-muted/60 px-2 py-0.5 text-[11.5px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
               >
                 <span>{selectedAccount}</span>
                 <ChevronDown size={12} className="text-muted-foreground" />
               </button>
 
               {showFilterMenu && (
-                <div className="absolute left-0 top-full z-30 mt-1.5 w-48 rounded-xl border border-border bg-card py-1 shadow-lg animate-in fade-in zoom-in-95 duration-100">
+                <div className="absolute left-0 top-full z-30 mt-2 w-42 rounded-xl border border-border bg-card py-1 shadow-lg animate-in fade-in zoom-in-95 duration-100">
                   {accountOptions.map((opt) => (
                     <button
                       key={opt.id}
@@ -166,7 +166,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                         setSelectedAccount(opt.label);
                         setShowFilterMenu(false);
                       }}
-                      className={`flex w-full items-center px-3.5 py-2 text-left text-[12px] transition-colors cursor-pointer ${
+                      className={`flex w-full items-center px-3 py-2 text-left text-[12px] transition-colors cursor-pointer ${
                         selectedAccount === opt.label
                           ? "bg-muted font-medium text-foreground"
                           : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
@@ -202,21 +202,21 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                 key={item.id}
                 data-ripple="true"
                 onClick={() => setSelectedTx(item)}
-                className="group relative overflow-hidden flex items-center gap-3.5 py-3 px-2 -mx-2 rounded-xl cursor-pointer hover:bg-item-hover transition-colors"
+                className="group relative overflow-hidden flex items-center gap-3 py-2 px-2 -mx-2 rounded-xl cursor-pointer hover:bg-item-hover transition-colors"
               >
                 {/* Direction Anchor Icon */}
                 <div
                   className={cn(
-                    "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
+                    "flex size-8 shrink-0 items-center justify-center rounded-full transition-colors",
                     isCredit
                       ? "bg-pill-success text-success"
                       : "bg-tile text-muted-foreground"
                   )}
                 >
                   {isCredit ? (
-                    <ArrowDownLeft className="size-4 stroke-[2]" />
+                    <ArrowDownLeft className="size-3.5 stroke-[2]" />
                   ) : (
-                    <ArrowUpRight className="size-4 stroke-[2]" />
+                    <ArrowUpRight className="size-3.5 stroke-[2]" />
                   )}
                 </div>
 
@@ -225,7 +225,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                   <span className="font-normal text-foreground text-[14px] leading-tight truncate">
                     {item.title}
                   </span>
-                  <div className="flex items-center gap-1.5 text-[12px] text-muted-foreground truncate">
+                  <div className="flex items-center gap-2 text-[12px] text-muted-foreground truncate">
                     <span>{item.subtitle}</span>
                   </div>
                 </div>
@@ -270,8 +270,8 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
             </DialogHeader>
 
             <DialogBody>
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border/60">
-                <div className={`flex size-10 items-center justify-center rounded-full shrink-0 ${
+              <div className="flex items-center gap-2 p-2 rounded-xl bg-muted/40 border border-border/60">
+                <div className={`flex size-9 items-center justify-center rounded-full shrink-0 ${
                   selectedTx.direction === "debit" ? "bg-destructive/10 text-destructive-text" : "bg-success/10 text-success-text"
                 }`}>
                   {selectedTx.direction === "debit" ? <ArrowUpRight size={20} /> : <ArrowDownLeft size={20} />}
@@ -283,12 +283,12 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
               </div>
 
               {/* Receipt Summary */}
-              <div className="my-1 flex flex-col items-center justify-center rounded-xl bg-muted/30 p-4 text-center">
+              <div className="my-1 flex flex-col items-center justify-center rounded-xl bg-muted/30 p-3 text-center">
                 <span className="text-[12px] text-muted-foreground">Amount transferred</span>
                 <span className="mt-1 text-[24px] font-medium tabular text-foreground">
                   GHS {selectedTx.amount.toFixed(2)}
                 </span>
-                <span className="mt-1.5 inline-flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                <span className="mt-2 inline-flex items-center gap-2 text-[12px] text-muted-foreground">
                   <span className="size-1.5 rounded-full bg-success/80 shrink-0" />
                   {selectedTx.status}
                 </span>
@@ -321,7 +321,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                 onClick={() => {
                   toast.success("Receipt PDF downloaded to your device.");
                 }}
-                className="gap-1.5"
+                className="gap-2"
               >
                 <Download size={14} />
                 Download PDF
@@ -331,7 +331,7 @@ export function RecentActivityWidget({ transactions = [] }: RecentActivityWidget
                   toast.success(`Repeat transfer of GHS ${selectedTx.amount} queued.`);
                   setSelectedTx(null);
                 }}
-                className="gap-1.5"
+                className="gap-2"
               >
                 <RotateCw size={14} />
                 Repeat payment

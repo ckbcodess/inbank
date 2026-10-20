@@ -11,7 +11,7 @@
  */
 
 import { Suspense, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CheckCircle2, Landmark, ScanFace } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PhoneInput } from "@/components/ui/phone-input";
@@ -23,9 +23,12 @@ import { AppLoader } from "@/components/ui/loader";
 import { isCompleteGhanaMobile } from "@/lib/phone";
 import { hasConsecutiveDigits, hasRepeatingDigits } from "@/lib/auth-shared";
 import { useSession } from "@/lib/session-store";
+import { homePathForActor } from "@/lib/navigation";
 import { Field } from "@/components/ui/field";
 
 type Stage = "mobile" | "selfie" | "no_match" | "branch" | "pin" | "confirm_pin" | "done";
+
+const STAGES: readonly Stage[] = ["mobile", "selfie", "no_match", "branch", "pin", "confirm_pin", "done"];
 
 const STEP_NUMBER_WITH_MOBILE: Partial<Record<Stage, number>> = {
   mobile: 1,
@@ -54,11 +57,14 @@ function ForgotPinContent() {
   const { actor } = useSession();
 
   const hasExistingSession = Boolean(actor?.phone || actor);
-  const [stage, setStage] = useState<Stage>(() => (hasExistingSession ? "selfie" : "mobile"));
+  // `?stage=` opens the flow on that stage (the Demo hub deep-links with it).
+  const stageParam = useSearchParams().get("stage");
+  const startStage = STAGES.find((s) => s === stageParam);
+  const [stage, setStage] = useState<Stage>(() => startStage ?? (hasExistingSession ? "selfie" : "mobile"));
   const [busy, setBusy] = useState(false);
 
   const [country, setCountry] = useState("GH");
-  const [mobile, setMobile] = useState(actor?.phone ?? "");
+  const [mobile, setMobile] = useState(actor?.phone ?? (startStage ? "0244123821" : ""));
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [failedAttempts, setFailedAttempts] = useState(0);
 
@@ -214,7 +220,7 @@ function ForgotPinContent() {
       onBack={stage !== "done" && stage !== "branch" && (stage !== "mobile" || hasExistingSession) ? handleBack : undefined}
       backHref={
         stage === "mobile"
-          ? (actor ? "/overview" : "/login")
+          ? (actor ? homePathForActor(actor) : "/login")
           : (stage === "selfie" && hasExistingSession)
             ? "/mfa"
             : undefined
@@ -244,7 +250,7 @@ function ForgotPinContent() {
             e.preventDefault();
             if (mobileValid && !busy) advance("selfie");
           }}
-          className="flex flex-col gap-5"
+          className="flex flex-col gap-4"
         >
           <Field label="Mobile Number" htmlFor="mobile">
             <PhoneInput
@@ -267,7 +273,7 @@ function ForgotPinContent() {
             size="lg"
             disabled={!mobileValid}
             loading={busy}
-            className="mt-2 h-11 w-full text-[14px]"
+            className="mt-2 h-10 w-full text-[14px]"
           >
             Proceed
           </Button>
@@ -290,7 +296,7 @@ function ForgotPinContent() {
             e.preventDefault();
             handlePinSubmit();
           }}
-          className="flex flex-col items-center gap-6"
+          className="flex flex-col items-center gap-5"
         >
           <div className="w-full" data-tour="reset-pin">
             <OtpInput
@@ -312,12 +318,12 @@ function ForgotPinContent() {
           <PinRequirements pin={pinDigits.join("")} />
 
           {errorMsg && (
-            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
               {errorMsg}
             </p>
           )}
           {!errorMsg && pinNote && (
-            <p className="-mt-3 text-center text-[13px] text-muted-foreground">{pinNote}</p>
+            <p className="-mt-2 text-center text-[13px] text-muted-foreground">{pinNote}</p>
           )}
 
           {busy && (
@@ -335,7 +341,7 @@ function ForgotPinContent() {
             e.preventDefault();
             handleConfirmPinSubmit();
           }}
-          className="flex flex-col items-center gap-6"
+          className="flex flex-col items-center gap-5"
         >
           <div className="w-full" data-tour="reset-confirm-pin">
             <OtpInput
@@ -360,7 +366,7 @@ function ForgotPinContent() {
           />
 
           {errorMsg && (
-            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
               {errorMsg}
             </p>
           )}
@@ -375,8 +381,8 @@ function ForgotPinContent() {
       )}
 
       {stage === "no_match" && (
-        <div className="flex flex-col gap-3">
-          <Button variant="default" size="lg" onClick={retrySelfie} className="h-11 w-full text-[14px]">
+        <div className="flex flex-col gap-2">
+          <Button variant="default" size="lg" onClick={retrySelfie} className="h-10 w-full text-[14px]">
             Try again
           </Button>
           <p className="text-center text-[12.5px] text-muted-foreground tabular">
@@ -388,21 +394,21 @@ function ForgotPinContent() {
       )}
 
       {stage === "branch" && (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <Button
             variant="default"
             size="lg"
             nativeButton={false}
             render={<a href={BRANCH_LOCATOR_URL} target="_blank" rel="noreferrer" />}
-            className="h-11 w-full text-[14px]"
+            className="h-10 w-full text-[14px]"
           >
             Find a branch
           </Button>
           <Button
             variant="ghost"
             size="lg"
-            onClick={() => router.push(actor ? "/overview" : "/login")}
-            className="h-11 w-full text-[14px]"
+            onClick={() => router.push(actor ? homePathForActor(actor) : "/login")}
+            className="h-10 w-full text-[14px]"
           >
             {actor ? "Back to dashboard" : "Back to login"}
           </Button>
@@ -413,8 +419,8 @@ function ForgotPinContent() {
         <Button
           variant="default"
           size="lg"
-          onClick={() => router.push(actor ? "/overview" : "/login")}
-          className="h-11 w-full text-[14px]"
+          onClick={() => router.push(actor ? homePathForActor(actor) : "/login")}
+          className="h-10 w-full text-[14px]"
         >
           {actor ? "Back to dashboard" : "Back to login"}
         </Button>
@@ -423,10 +429,16 @@ function ForgotPinContent() {
   );
 }
 
+/** Keyed on `?stage=` so a change to it while the page stays open (the Demo hub) rebuilds the flow on that stage. */
+function ForgotPinDoor() {
+  const stage = useSearchParams().get("stage") ?? "";
+  return <ForgotPinContent key={stage} />;
+}
+
 export default function ForgotPinPage() {
   return (
     <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
-      <ForgotPinContent />
+      <ForgotPinDoor />
     </Suspense>
   );
 }

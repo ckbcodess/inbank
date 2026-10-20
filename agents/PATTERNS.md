@@ -17,7 +17,7 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
 - **When:** every customer and admin page.
 - **Structure:**
   ```tsx
-  <div className="flex flex-col gap-5">
+  <div className="flex flex-col gap-4">
     <PageHeader title="…" actions={…} backTo={/* detail pages only */} />
     <StateSwitcher … />          {/* prototype review affordance where the page has dev states */}
     {/* content: calm sections, or one rounded-2xl panel */}
@@ -45,7 +45,7 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
 - **When:** a collection of objects (accounts, cards, transactions, beneficiaries, standing orders,
   approvals).
 - **Structure:**
-  - Sections: a 16px medium heading row, then `gap-4`, then the list.
+  - Sections: a 16px medium heading row, then `gap-3`, then the list.
   - The list sits in one `rounded-2xl` container with `p-2`.
   - Each row is the whole-row link: icon tile, then a flexible column (`min-w-0 truncate`) with the
     primary text at 14px over the meta at 12px muted, then a fixed column on the right (`shrink-0`,
@@ -72,7 +72,7 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
 ### 3. Data table
 - **When:** the admin portal and genuinely tabular data. Customer lists use pattern 2.
 - **Structure:** `overflow-x-auto` around `table.w-full.min-w-[720px].text-[13px]`; muted
-  `th.font-normal`; `tbody.divide-y` with rows `hover:bg-muted/50`; cells `px-4 py-3.5`.
+  `th.font-normal`; `tbody.divide-y` with rows `hover:bg-muted/50`; cells `px-3 py-3`.
 - **Don't:** use `font-medium` on a header (muted colour carries it), or let the page scroll sideways.
 - **Examples:** `admin/fee-concessions/page.tsx`.
 
@@ -80,7 +80,7 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
 - **Structure:** the search field, then one `FilterPanel` button beside it (or on the left, with
   `ExpandableSearch` on the right, when search is the collapsed icon). `AppliedFilters` sits under
   the row and renders nothing until a filter is on.
-  - The search input has a 15px Lucide `Search` icon inside, `pl-9`, and an `aria-label`.
+  - The search input has a 15px Lucide `Search` icon inside, `pl-8`, and an `aria-label`.
   - One `FilterGroup[]` per page drives both the panel and the chips. A group is `single` (one
     choice or Any) or `multi` (none means Any). Fields that need more, like a custom date range, go
     in `extra`.
@@ -150,7 +150,7 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
   - `ActionTile` (`components/ui/action-tile.tsx`): the tile surface (`--tile`), a white chip, a 16px
     label, an optional second line, and a chevron. It renders a link when given `href`, otherwise a
     button.
-  - Grids are `grid-cols-2 gap-4` (`gap-3` on phones).
+  - Grids are `grid-cols-2 gap-3` (`gap-2` on phones).
   - `ToggleTile` has the same layout with a switch.
 - **Behavior:**
   - Add a second line only where the name doesn't explain itself (Proxy, Group, PAPSS, GCB Pay,
@@ -351,6 +351,31 @@ Each pattern has the same fields: **When** · **Structure** · **Behavior** · *
   - Questions as chooser headers.
   - Name the mechanism and the next step on bad news.
   - "Block", never "Freeze"; "Internet", not "Data Bundle"; "Proceed" on onboarding steps.
+
+### 23. Personal and business share building blocks, not screens
+
+Personal and business banking are separate apps (CONSTITUTION §10): each has its own screens, flows and
+navigation, and neither links into the other. What they share are building blocks, and a block never reads which
+app it is in; the screen that uses it passes where it leads.
+
+- **Props, not profile checks.** `TransactionList` takes its `accounts`, `startHref` and `repeatHref`;
+  `TransactionReceipt` takes `list`, `success`, `repeatHref`, `extraStates` and `renderBand`. Personal passes
+  `/transactions`, `/payments`, `personalRepeatHref`; business passes `/business/...`, `businessRepeatHref` and
+  its batch and trade failure panels. References: `(customer)/transactions/[id]/page.tsx` and
+  `business/(app)/transactions/[id]/page.tsx`.
+- **Field widgets are shared** (`components/payments/flows/shared`: `BankSelect`, `AmountInput`,
+  `FromAccountSelector`, `resolveAccountName`...), and so is the one-time-code gate (`TransactionOtpModal`). The
+  screen around them is each app's own. Reference: `components/corporate/payments/SupplierPaymentFlow.tsx`.
+- **Business-only code lives in `lib/corporate/`, `components/corporate/` and `app/business/`**, and writes only
+  `/business/*` paths. Lint rejects a personal path there (`eslint.config.mjs`).
+- **Data stays in one ledger for the prototype.** Business rows live in `lib/corporate/ledger.ts`;
+  `lib/mock-data.ts` assembles one ledger from both, and a screen asks for its own side
+  (`accountsForProfile`, `transactionsForProfile`, `cardsForProfile`, or `lib/corporate/accounts.ts`).
+- **Maker to approver:** a business payment is *submitted*, not sent. `lib/corporate/payments.ts` puts it in the
+  approval queue and on the ledger as awaiting approval; `decideApproval` settles it.
+
+When business needs a screen personal banking has (cards, beneficiaries, settings), build it under
+`src/app/business/` from the building blocks. Do not reach into a personal page.
 
 ## Engineering notes (each one has already caused a bug)
 

@@ -248,21 +248,21 @@ export function HeroAccountOptionsMenu({
             <Button
               variant="glass"
               size="icon"
-              className={cn(HERO_GLASS_EXTRA, "h-9 w-9 sm:h-10 sm:w-10 aria-expanded:bg-white/18", className)}
+              className={cn(HERO_GLASS_EXTRA, "h-8 w-8 sm:h-9 sm:w-9 aria-expanded:bg-white/18", className)}
               aria-label={`Account options for ${account.name}`}
             />
           }
         >
           <MoreVertical size={17} strokeWidth={1.9} className="size-[17px]" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" sideOffset={6} className="w-[240px] rounded-2xl p-1.5">
+        <DropdownMenuContent align="start" sideOffset={6} className="w-[240px] rounded-2xl p-2">
           {/* Inbound & Sharing */}
-          <DropdownMenuItem onClick={handleCopyNumber} className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70">
+          <DropdownMenuItem onClick={handleCopyNumber} className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70">
             <Copy size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
             <span className="text-[13.5px]">Copy Account Number</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={() => setShareOpen(true)} className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70">
+          <DropdownMenuItem onClick={() => setShareOpen(true)} className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70">
             <Share2 size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
             <span className="text-[13.5px]">Share Account Details</span>
           </DropdownMenuItem>
@@ -272,7 +272,7 @@ export function HeroAccountOptionsMenu({
           {/* Records & Activity */}
           <DropdownMenuItem
             onClick={() => router.push(`/accounts/${account.id}/requests?type=statement`)}
-            className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
+            className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70"
           >
             <FileText size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
             <span className="text-[13.5px]">Download E-Statement</span>
@@ -280,7 +280,7 @@ export function HeroAccountOptionsMenu({
 
           <DropdownMenuItem
             onClick={() => router.push(`/transactions?account=${account.id}&limit=10`)}
-            className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
+            className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70"
           >
             <ArrowLeftRight size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
             <span className="text-[13.5px]">View Last 10 Transactions</span>
@@ -288,7 +288,7 @@ export function HeroAccountOptionsMenu({
 
           <DropdownMenuItem
             onClick={() => router.push("/accounts")}
-            className="cursor-pointer gap-3 rounded-lg px-3 py-2 hover:bg-muted/70"
+            className="cursor-pointer gap-2 rounded-lg px-2 py-2 hover:bg-muted/70"
           >
             <LayoutGrid size={16} strokeWidth={1.8} className="text-muted-foreground shrink-0" />
             <span className="text-[13.5px]">View All Accounts</span>
@@ -314,13 +314,13 @@ export function HeroQrAction({ className }: { className?: string }) {
       className={cn(
         buttonVariants({ variant: "glass", size: "icon-lg" }),
         HERO_GLASS_EXTRA,
-        "h-16 w-16 rounded-full max-sm:h-12 max-sm:w-12 relative z-10",
+        "h-14 w-14 rounded-full max-sm:h-10 max-sm:w-10 relative z-10",
         className
       )}
       aria-label="My QR Code"
       title="My QR Code"
     >
-      <QrCode size={32} strokeWidth={1.7} className="size-8 max-sm:size-6" />
+      <QrCode size={32} strokeWidth={1.7} className="size-7 max-sm:size-5" />
     </Link>
   );
 }
@@ -337,13 +337,13 @@ export function HeroFxAction({ className }: { className?: string }) {
         type="button"
         variant="glass"
         onClick={() => setRatesOpen(true)}
-        className={cn(HERO_GLASS_EXTRA, "h-10 gap-2.5 px-2.5 max-sm:h-9 max-sm:gap-1.5 max-sm:px-2 relative z-10", className)}
+        className={cn(HERO_GLASS_EXTRA, "h-9 gap-2 px-2 max-sm:h-8 max-sm:gap-2 max-sm:px-2 relative z-10", className)}
         aria-label={`FX Rates. 1 USD is ${usd.mid.toFixed(2)} GHS`}
         title="FX Rates"
       >
         <span className="relative flex shrink-0 items-center">
           <span className="max-sm:hidden"><CurrencyLogo currency="GHS" size={20} showBorder={false} /></span>
-          <CurrencyLogo currency="USD" size={20} showBorder={false} className="-ml-1.5 max-sm:ml-0" />
+          <CurrencyLogo currency="USD" size={20} showBorder={false} className="-ml-2 max-sm:ml-0" />
         </span>
         <span className="tabular text-[14px] tracking-[var(--ls-tight)] max-sm:text-[13px]"><span className="max-sm:hidden">USD </span>{usd.mid.toFixed(2)}</span>
         <RateTrend size={15} strokeWidth={2} className={cn("size-[15px]", usd.changePct >= 0 ? "text-success-text" : "text-destructive-text")} />
@@ -368,7 +368,7 @@ export function HeroFxRatesButton({ className }: { className?: string }) {
       >
         <span className="relative flex shrink-0 items-center max-sm:hidden">
           <CurrencyLogo currency="GHS" size={20} showBorder={false} />
-          <CurrencyLogo currency="USD" size={20} showBorder={false} className="-ml-1.5" />
+          <CurrencyLogo currency="USD" size={20} showBorder={false} className="-ml-2" />
         </span>
         <span className="truncate">FX Rates</span>
       </Button>
@@ -408,7 +408,7 @@ export function ManageAccountsLink({
     <Link
       href="/accounts"
       className={cn(
-        "relative flex w-fit items-center gap-0.5 rounded-lg py-1.5 text-[13px] leading-none transition-opacity hover:opacity-80 sm:text-[16px]",
+        "relative flex w-fit items-center gap-0.5 rounded-lg py-2 text-[13px] leading-none transition-opacity hover:opacity-80 sm:text-[16px]",
         className,
       )}
     >
@@ -449,7 +449,7 @@ export function HeroBalance({
     <div className={cn("relative flex items-center gap-2 text-[var(--hero-balance-foreground)]", className)}>
       {loading ? (
         <span
-          className="h-[28px] w-56 skeleton-shimmer sm:h-[44px] rounded-lg bg-[color-mix(in_oklch,var(--hero-foreground)_15%,transparent)] sm:w-72"
+          className="h-[28px] w-49 skeleton-shimmer sm:h-[44px] rounded-lg bg-[color-mix(in_oklch,var(--hero-foreground)_15%,transparent)] sm:w-63"
           aria-label={t("dashboard.loadingBalance", "Loading balance")}
         />
       ) : (
@@ -460,7 +460,7 @@ export function HeroBalance({
       <button
         type="button"
         onClick={onToggle}
-        className="flex size-8 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-[color-mix(in_oklch,var(--hero-foreground)_12%,transparent)] cursor-pointer"
+        className="flex size-7 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-[color-mix(in_oklch,var(--hero-foreground)_12%,transparent)] cursor-pointer"
         aria-label={showAmounts ? t("header.hideAmounts", "Hide balances") : t("header.showAmounts", "Show balances")}
       >
         {showAmounts ? <Eye size={18} strokeWidth={1.8} /> : <EyeOff size={18} strokeWidth={1.8} />}
@@ -566,10 +566,9 @@ export function HeroSheet({ children, className }: { children: React.ReactNode; 
       ref={rimRef}
       className={cn(
         // Concentric with the rounded-3xl panels inside: outer radius = their radius
-        // (--radius × 2.2, as in globals.css) + this padding + the 1px border — all
-        // rem-based or fixed, so it holds at any root font size.
-        "@container relative flex flex-col gap-4 overflow-hidden border border-transparent p-3 sm:gap-6 sm:p-6",
-        "rounded-[calc(var(--radius)*2.2+var(--spacing)*3+1px)] sm:rounded-[calc(var(--radius)*2.2+var(--spacing)*6+1px)]",
+        // (--radius-3xl, 20px) + this padding (p-2 / sm:p-5) + the 1px border.
+        "@container relative flex flex-col gap-3 overflow-hidden border border-transparent p-2 sm:gap-5 sm:p-5",
+        "rounded-[calc(var(--radius-3xl)+var(--spacing)*2+1px)] sm:rounded-[calc(var(--radius-3xl)+var(--spacing)*5+1px)]",
         className,
       )}
       style={{ background: SHEET_BACKGROUND, transition: "--rim-o 300ms ease-out", ...heroWaveVars(wave) }}
@@ -591,7 +590,7 @@ export function HeroSheet({ children, className }: { children: React.ReactNode; 
 export function HeroStack({ hero, children }: { hero: React.ReactNode; children: React.ReactNode }) {
   return (
     <div className="flex flex-col">
-      <div className="-mb-8 px-0 sm:px-3">{hero}</div>
+      <div className="-mb-7 px-0 sm:px-3">{hero}</div>
       <HeroSheet>{children}</HeroSheet>
     </div>
   );

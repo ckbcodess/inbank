@@ -465,6 +465,9 @@ const recent: Entry[] = [
   ["I Pay All Charges", "Je prends tous les frais en charge", "Yo pago todos los gastos", "由我承担全部费用"],
   ["On a Date", "À une date", "En una fecha", "指定日期"],
   ["Recipient Pays", "Le bénéficiaire paie", "Paga el destinatario", "由收款人承担"],
+  ["Money received", "Argent reçu", "Dinero recibido", "已收到款项"],
+  ["Payment sent", "Paiement envoyé", "Pago enviado", "付款已发送"],
+  ["Airtime topped up", "Crédit de communication rechargé", "Saldo recargado", "话费已充值"],
 ];
 
 export default recent;

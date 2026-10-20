@@ -67,14 +67,14 @@ export default function ChangeMaturityPage() {
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader title="When It Matures" backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
         <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
           {`Your ${h.title} matures on ${formatDate(h.maturity)}. Choose what happens then. You can change it any time before.`}
         </p>
 
-        <div role="radiogroup" aria-label="Maturity instruction" className="flex flex-col gap-3">
+        <div role="radiogroup" aria-label="Maturity instruction" className="flex flex-col gap-2">
           {MATURITY_INSTRUCTIONS.map((m) => (
             <OptionTile
               key={m.id}
@@ -89,11 +89,11 @@ export default function ChangeMaturityPage() {
 
         <div>
           <div className="pt-2">
-            <Button type="button" className="h-13 w-full rounded-2xl text-[16px]" disabled={!changed} onClick={apply}>
+            <Button type="button" className="h-11 w-full rounded-2xl text-[16px]" disabled={!changed} onClick={apply}>
               Proceed
             </Button>
           </div>
-          {!changed && <p className="px-1 pt-3 text-center text-[12px] text-muted-foreground">Choose a different option to change it.</p>}
+          {!changed && <p className="px-1 pt-2 text-center text-[12px] text-muted-foreground">Choose a different option to change it.</p>}
         </div>
       </div>
 

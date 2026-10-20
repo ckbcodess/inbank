@@ -30,10 +30,10 @@ export function InvestWelcome() {
         <DialogHeader showCloseButton={false}>
           <DialogTitle>Welcome to Invest</DialogTitle>
         </DialogHeader>
-        <DialogBody className="gap-6 py-6">
+        <DialogBody className="gap-5 py-5">
           {BENEFITS.map(({ icon: Icon, title, detail }) => (
-            <div key={title} className="flex items-start gap-4">
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
+            <div key={title} className="flex items-start gap-3">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
                 <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
               </span>
               <div className="flex min-w-0 flex-col gap-0.5">

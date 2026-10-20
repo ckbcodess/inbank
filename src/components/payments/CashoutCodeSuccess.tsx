@@ -69,14 +69,14 @@ export function CashoutCodeSuccess({
   }
 
   return (
-    <div className="relative mx-auto flex w-full max-w-[440px] flex-col items-center gap-8 py-9">
+    <div className="relative mx-auto flex w-full max-w-[440px] flex-col items-center gap-6 py-8">
       {/* Replay control: dev/testing only, stripped from production builds, same as the Send & Pay success screen */}
       {process.env.NODE_ENV !== "production" && (
         <button
           type="button"
           onClick={() => setRun((n) => n + 1)}
           aria-label="Replay animation"
-          className="absolute right-1 top-1 z-30 flex items-center gap-1.5 rounded-full border border-border/70 bg-card/80 px-3 py-1.5 text-[12px] text-muted-foreground shadow-xs backdrop-blur transition-colors hover:bg-muted/60 hover:text-foreground cursor-pointer"
+          className="absolute right-1 top-1 z-30 flex items-center gap-2 rounded-full border border-border/70 bg-card/80 px-2 py-2 text-[12px] text-muted-foreground shadow-xs backdrop-blur transition-colors hover:bg-muted/60 hover:text-foreground cursor-pointer"
         >
           <RotateCcw size={13} strokeWidth={1.8} />
           <span>Replay</span>
@@ -105,7 +105,7 @@ export function CashoutCodeSuccess({
         </AnimatePresence>
       </div>
 
-      <div className="flex flex-col items-center gap-4 text-center">
+      <div className="flex flex-col items-center gap-3 text-center">
         {/* Fades in beside the eagle (no movement), then slides down into its place under the ticket (a transform, so it stays smooth) */}
         <motion.p
           key={`title-${run}`}
@@ -144,7 +144,7 @@ export function CashoutCodeSuccess({
         <Button type="button" variant="outline" onClick={share} className="px-[21px]">
           Share Code
         </Button>
-        <Button type="button" onClick={onDone} className="px-7">
+        <Button type="button" onClick={onDone} className="px-6">
           Done
         </Button>
       </motion.div>

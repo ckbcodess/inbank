@@ -60,10 +60,10 @@ export function NetworkLogo({ scheme, className }: { scheme: CardScheme | string
 
 /** Per-network heights that fit the marks into the same 48 by 24 box, so a list of them lines up. */
 const CHIP_HEIGHT: Record<string, string> = {
-  Visa: "h-3",
-  Mastercard: "h-4.5",
-  "GH-Link": "h-3",
-  UnionPay: "h-5",
+  Visa: "h-2.5",
+  Mastercard: "h-4",
+  "GH-Link": "h-2.5",
+  UnionPay: "h-4",
 };
 
 /**
@@ -83,12 +83,12 @@ export function NetworkChip({
   return (
     <span
       className={cn(
-        "flex w-12 shrink-0 items-center justify-center",
-        size === "lg" ? "h-9 rounded-lg border border-black/5 bg-muted/60 dark:border-white/10" : "h-6 rounded-md bg-muted/40",
+        "flex w-10 shrink-0 items-center justify-center",
+        size === "lg" ? "h-8 rounded-lg border border-black/5 bg-muted/60 dark:border-white/10" : "h-5 rounded-lg bg-muted/40",
         className,
       )}
     >
-      <NetworkLogo scheme={scheme} className={cn(CHIP_HEIGHT[scheme] ?? "h-3", "text-foreground")} />
+      <NetworkLogo scheme={scheme} className={cn(CHIP_HEIGHT[scheme] ?? "h-2.5", "text-foreground")} />
     </span>
   );
 }

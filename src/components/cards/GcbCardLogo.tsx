@@ -11,7 +11,7 @@ interface GcbCardLogoProps {
   themeId?: string;
 }
 
-export function GcbCardLogo({ className = "h-8 w-auto" }: GcbCardLogoProps) {
+export function GcbCardLogo({ className = "h-7 w-auto" }: GcbCardLogoProps) {
   const tilt = useTiltContext();
   const maskId = useId();
   const gradientId = useId();

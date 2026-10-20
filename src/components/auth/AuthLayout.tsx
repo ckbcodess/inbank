@@ -58,9 +58,9 @@ interface AuthLayoutProps {
   vAlign?: "top" | "center";
   /** Quiet only. Faint dotted golden eagle behind the content. */
   eagle?: boolean;
-  /** Vertical padding of the card, as Tailwind `py-*` classes. Defaults to `py-10 sm:py-14`, the shared onboarding rhythm. */
+  /** Vertical padding of the card, as Tailwind `py-*` classes. Defaults to `py-10 sm:py-12`, the shared onboarding rhythm. */
   padY?: string;
-  /** Space under the title block, as a Tailwind `mb-*` class. Defaults to `mb-8 sm:mb-10`. */
+  /** Space under the title block, as a Tailwind `mb-*` class. Defaults to `mb-6 sm:mb-10`. */
   headerGap?: string;
 }
 
@@ -114,8 +114,8 @@ export default function AuthLayout({
 
   const hasBack = Boolean(onBack || backHref);
   const cardClassName = quiet
-    ? cn("px-1", padY ?? "py-10 sm:py-14")
-    : cn("rounded-[20px] border border-border/80 bg-card-auth/95 px-6 sm:px-8", padY ?? "py-10 sm:py-14", "shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden");
+    ? cn("px-1", padY ?? "py-10 sm:py-12")
+    : cn("rounded-3xl border border-border/80 bg-card-auth/95 px-5 sm:px-6", padY ?? "py-10 sm:py-12", "shadow-[0_20px_50px_rgba(0,0,0,0.06)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl overflow-hidden");
 
 
   return (
@@ -128,7 +128,7 @@ export default function AuthLayout({
       <AuthHeader />
 
       {/* Decorative Brand Hero Banner Background */}
-      {!quiet && <div className="absolute top-16 inset-x-0 h-[240px] sm:h-[280px] lg:h-[300px] overflow-hidden pointer-events-none z-0">
+      {!quiet && <div className="absolute top-14 inset-x-0 h-[240px] sm:h-[280px] lg:h-[300px] overflow-hidden pointer-events-none z-0">
         <Image
           src="/images/auth-banner.webp"
           alt="GCB Internet Banking"
@@ -143,7 +143,7 @@ export default function AuthLayout({
       {/* Main Container - Vertically and horizontally centered in available viewport */}
       <main
         className={cn(
-          "relative z-10 flex min-h-[calc(100dvh-4rem)] w-full justify-center px-4 sm:px-6 py-8 mt-16",
+          "relative z-10 flex min-h-[calc(100dvh-4rem)] w-full justify-center px-3 sm:px-5 py-6 mt-12",
           // Quiet screens anchor to the top so the title never jumps when a step's height changes.
           newLayout && vAlign === "top" ? "items-start pt-10 sm:pt-[12vh]" : "items-center"
         )}
@@ -155,14 +155,14 @@ export default function AuthLayout({
               <>
                 {/* In-Card Back Navigation Trigger */}
                 {hasBack && (
-                  <div className={newLayout ? (stepProgress ? "mb-6 -ml-1 flex items-center" : "mb-10 -ml-1 flex items-center") : "mb-5 flex items-center"}>
+                  <div className={newLayout ? (stepProgress ? "mb-5 -ml-1 flex items-center" : "mb-10 -ml-1 flex items-center") : "mb-4 flex items-center"}>
                     {backHref ? (
                       <Link
                         href={backHref}
                         aria-label={backLabel}
-                        className="group inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95"
+                        className="group inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95"
                       >
-                        <div className={newLayout ? "flex size-7 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground" : "flex size-7.5 items-center justify-center rounded-lg border border-border/70 bg-muted/30 transition-colors group-hover:bg-muted group-hover:border-border"}>
+                        <div className={newLayout ? "flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground" : "flex size-7 items-center justify-center rounded-lg border border-border/70 bg-muted/30 transition-colors group-hover:bg-muted group-hover:border-border"}>
                           <ChevronLeft size={16} strokeWidth={2.2} className="transition-transform" />
                         </div>
                         <span>Back</span>
@@ -172,9 +172,9 @@ export default function AuthLayout({
                         type="button"
                         onClick={onBack}
                         aria-label={backLabel}
-                        className="group inline-flex items-center gap-1.5 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95 cursor-pointer"
+                        className="group inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-foreground active:scale-95 cursor-pointer"
                       >
-                        <div className={newLayout ? "flex size-7 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground" : "flex size-7.5 items-center justify-center rounded-lg border border-border/70 bg-muted/30 transition-colors group-hover:bg-muted group-hover:border-border"}>
+                        <div className={newLayout ? "flex size-6 items-center justify-center rounded-full text-muted-foreground transition-colors group-hover:bg-muted group-hover:text-foreground" : "flex size-7 items-center justify-center rounded-lg border border-border/70 bg-muted/30 transition-colors group-hover:bg-muted group-hover:border-border"}>
                           <ChevronLeft size={16} strokeWidth={2.2} className="transition-transform" />
                         </div>
                         <span>Back</span>
@@ -185,7 +185,7 @@ export default function AuthLayout({
 
                 {/* Step Progress Segments (Full Width across the card) */}
                 {stepProgress && (
-                  <div className={cn("flex items-center gap-2 px-0.5", newLayout ? "mb-8" : "mb-6")}>
+                  <div className={cn("flex items-center gap-2 px-0.5", newLayout ? "mb-6" : "mb-5")}>
                     {Array.from({ length: stepProgress.total }).map((_, i) => {
                       const isActive = i + 1 <= stepProgress.current;
                       const isCurrent = i + 1 === stepProgress.current;
@@ -207,8 +207,8 @@ export default function AuthLayout({
 
                 {/* Optional Step Icon */}
                 {Icon && (
-                  <div className={cn("mb-6 flex", align === "center" ? "justify-center" : "justify-start sm:justify-center")}>
-                    <div className="flex size-11 items-center justify-center rounded-xl bg-primary/15 text-primary shadow-xs">
+                  <div className={cn("mb-5 flex", align === "center" ? "justify-center" : "justify-start sm:justify-center")}>
+                    <div className="flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary shadow-xs">
                       <Icon size={22} strokeWidth={2} aria-hidden="true" />
                     </div>
                   </div>
@@ -216,8 +216,8 @@ export default function AuthLayout({
 
                 {/* Optional GCB Logo (only if explicitly enabled) */}
                 {showLogo && (
-                  <div className={cn("mb-6 flex", align === "center" ? "justify-center" : "justify-start sm:justify-center")}>
-                    <GCBLogo className="h-9 w-auto text-foreground" />
+                  <div className={cn("mb-5 flex", align === "center" ? "justify-center" : "justify-start sm:justify-center")}>
+                    <GCBLogo className="h-8 w-auto text-foreground" />
                   </div>
                 )}
 
@@ -225,7 +225,7 @@ export default function AuthLayout({
                 {(title || description) && (
                   <div
                     className={cn(
-                      headerGap ?? "mb-8 sm:mb-10",
+                      headerGap ?? "mb-6 sm:mb-10",
                       align === "center" ? "text-center mx-auto max-w-[440px]" : "text-left sm:text-center sm:mx-auto sm:max-w-[440px]"
                     )}
                   >
@@ -245,7 +245,7 @@ export default function AuthLayout({
                           {description && (
                             <div
                               className={cn(
-                                "mt-1.5 text-[13.5px] leading-relaxed text-balance text-muted-foreground",
+                                "mt-2 text-[13.5px] leading-relaxed text-balance text-muted-foreground",
                                 descriptionClassName
                               )}
                             >
@@ -274,7 +274,7 @@ export default function AuthLayout({
                             {swap.description && (
                               <div
                                 className={cn(
-                                  "mt-1.5 text-[13.5px] leading-relaxed text-balance text-muted-foreground",
+                                  "mt-2 text-[13.5px] leading-relaxed text-balance text-muted-foreground",
                                   descriptionClassName
                                 )}
                               >
@@ -312,12 +312,12 @@ export default function AuthLayout({
               <motion.div
                 layout
                 transition={SPRING.settle}
-                className="mt-5 w-full"
+                className="mt-4 w-full"
               >
                 {footer}
               </motion.div>
             ) : (
-              <div className="mt-5 w-full">{footer}</div>
+              <div className="mt-4 w-full">{footer}</div>
             )
           )}
         </div>
@@ -328,7 +328,7 @@ export default function AuthLayout({
           type="button"
           onClick={cycleLook}
           title="Cycle onboarding layout (Press Ctrl+Shift+D to hide dev tools)"
-          className="fixed bottom-4 right-4 z-50 rounded-full border border-border bg-card-auth/95 px-3 py-1.5 text-[12px] text-muted-foreground shadow-sm backdrop-blur transition-colors hover:text-foreground active:scale-95 cursor-pointer"
+          className="fixed bottom-3.5 right-3.5 z-50 rounded-full border border-border bg-card-auth/95 px-2 py-2 text-[12px] text-muted-foreground shadow-sm backdrop-blur transition-colors hover:text-foreground active:scale-95 cursor-pointer"
         >
           Layout: {AUTH_LOOK_LABEL[look]}
         </button>

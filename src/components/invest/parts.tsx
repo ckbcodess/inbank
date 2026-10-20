@@ -44,7 +44,7 @@ export const TREASURY_HOME = "/invest/treasury";
 export function SecurityIcon({ kind, muted = false }: { kind: SecurityKind; muted?: boolean }) {
   const Icon = kind === "bond" ? Landmark : FileText;
   return (
-    <span className={cn("flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted", muted ? "text-muted-foreground" : "text-foreground")}>
+    <span className={cn("flex size-8 shrink-0 items-center justify-center rounded-xl bg-muted", muted ? "text-muted-foreground" : "text-foreground")}>
       <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
     </span>
   );
@@ -55,7 +55,7 @@ export function FactsPanel({ rows }: { rows: Array<[string, React.ReactNode]> })
   return (
     <div className="flex flex-col rounded-2xl border border-border bg-card p-2 text-[14px]">
       {rows.map(([label, value]) => (
-        <div key={label} className="flex items-center justify-between gap-6 rounded-xl px-3 py-3.5">
+        <div key={label} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3">
           <span className="shrink-0 text-muted-foreground">{label}</span>
           <span className="tabular min-w-0 text-right text-foreground">{value}</span>
         </div>
@@ -67,15 +67,15 @@ export function FactsPanel({ rows }: { rows: Array<[string, React.ReactNode]> })
 /** What is being approved, restated above the code boxes: the one number, then who and from where. */
 export function AuthSummary({ headline, amount, rows }: { headline: string; amount?: string; rows?: Array<[string, string]> }) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl bg-muted/40 p-4">
+    <div className="flex flex-col gap-2 rounded-xl bg-muted/40 p-3">
       <div className="flex flex-col gap-1">
         <span className="text-[13px] text-muted-foreground">{headline}</span>
         {amount && <span className="tabular text-[22px] leading-none tracking-[var(--ls-tight)] text-foreground">{amount}</span>}
       </div>
       {rows && rows.length > 0 && (
-        <div className="flex flex-col gap-1.5 text-[13px]">
+        <div className="flex flex-col gap-2 text-[13px]">
           {rows.map(([label, value]) => (
-            <div key={label} className="flex items-baseline justify-between gap-4">
+            <div key={label} className="flex items-baseline justify-between gap-3">
               <span className="shrink-0 text-muted-foreground">{label}</span>
               <span className="tabular min-w-0 truncate text-right text-foreground">{value}</span>
             </div>
@@ -124,7 +124,7 @@ export function MaturityInstructionField({
 /** A holding that isn't there: it may have been cashed in or matured. Says so and goes back to the list. */
 export function HoldingNotFound({ title = "Investment" }: { title?: string }) {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader title={title} backTo={{ href: INVEST_HOME, label: "Invest" }} />
       <TrueEmptyState
         icon={<FileText size={22} strokeWidth={1.8} />}
@@ -155,7 +155,7 @@ export function AccountRequired({
 }) {
   const pending = status === "pending";
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader title={title} backTo={backTo} />
       <TrueEmptyState
         icon={<ShieldCheck size={22} strokeWidth={1.8} />}

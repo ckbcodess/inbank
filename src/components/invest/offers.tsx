@@ -67,7 +67,7 @@ const ICONS = { deposit: PiggyBank, bill: FileText, bond: Landmark };
 export function OfferIcon({ icon }: { icon: Offer["icon"] }) {
   const Icon = ICONS[icon];
   return (
-    <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
+    <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
       <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
     </span>
   );
@@ -99,7 +99,7 @@ export function OfferRow({ offer, showAmounts }: { offer: Offer; showAmounts: bo
     <li>
       <Link
         href={detailsHref(offer)}
-        className="flex w-full items-center gap-4 rounded-xl px-3 py-4 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-4"
+        className="flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3"
       >
         <OfferIcon icon={offer.icon} />
         <span className="flex min-w-0 flex-1 flex-col">

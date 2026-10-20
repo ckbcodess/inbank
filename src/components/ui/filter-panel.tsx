@@ -140,7 +140,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
           <Button
             variant="outline"
             className={cn(
-              "h-9 shrink-0 gap-2 rounded-xl px-3.5 text-[13px] transition-transform duration-150 active:scale-[0.98]",
+              "h-8 shrink-0 gap-2 rounded-xl px-3 text-[13px] transition-transform duration-150 active:scale-[0.98]",
               className
             )}
           />
@@ -149,7 +149,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
         <SlidersHorizontal size={15} strokeWidth={1.8} className="text-muted-foreground" aria-hidden="true" />
         <span>Filters</span>
         {active > 0 && (
-          <span className="flex size-4 items-center justify-center rounded-full bg-foreground text-[10px] leading-none text-background tabular">
+          <span className="flex size-3.5 items-center justify-center rounded-full bg-foreground text-[10px] leading-none text-background tabular">
             {active}
           </span>
         )}
@@ -160,7 +160,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
         sideOffset={6}
         className={cn(
           "max-w-[calc(100vw-2rem)] rounded-xl p-1",
-          multipleGroups ? "w-56 sm:w-60" : "w-64 sm:w-72"
+          multipleGroups ? "w-49 sm:w-52" : "w-56 sm:w-63"
         )}
       >
         {multipleGroups ? (
@@ -192,7 +192,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                         ▸
                       </span>
                     }
-                    className="group gap-2.5 px-2.5 py-1.5 text-[13px] cursor-pointer"
+                    className="group gap-2 px-2 py-2 text-[13px] cursor-pointer"
                   >
                     <Icon size={14} strokeWidth={1.8} className="shrink-0 text-muted-foreground/80" />
                     <span className="truncate text-foreground font-medium">{group.label}</span>
@@ -207,13 +207,13 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                     side="right"
                     sideOffset={4}
                     align="start"
-                    className="w-60 sm:w-68 max-w-[calc(100vw-2rem)] max-h-[min(26rem,75vh)] overflow-y-auto p-1"
+                    className="w-52 sm:w-59 max-w-[calc(100vw-2rem)] max-h-[min(26rem,75vh)] overflow-y-auto p-1"
                   >
                     {/* "All" reset option */}
                     <DropdownMenuItem
                       onClick={clear}
                       closeOnClick={false}
-                      className="justify-between px-2.5 py-1.5 text-[13px] cursor-pointer"
+                      className="justify-between px-2 py-2 text-[13px] cursor-pointer"
                     >
                       <span className="truncate">{anyLabel}</span>
                       {anyOn && (
@@ -231,7 +231,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                           key={o.value}
                           onClick={() => select(o.value)}
                           closeOnClick={false}
-                          className="justify-between px-2.5 py-1.5 text-[13px] cursor-pointer"
+                          className="justify-between px-2 py-2 text-[13px] cursor-pointer"
                         >
                           <span className="truncate">{o.label}</span>
                           {isSelected && (
@@ -244,7 +244,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                     {/* Extra controls (e.g. custom date range inputs) */}
                     {group.kind === "single" && group.extra && (
                       <div
-                        className="mt-1.5 border-t border-border/40 p-2"
+                        className="mt-2 border-t border-border/40 p-2"
                         onClick={(e) => e.stopPropagation()}
                         onKeyDown={(e) => e.stopPropagation()}
                       >
@@ -261,7 +261,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                 <div className="my-1 border-t border-border/50" role="separator" />
                 <DropdownMenuItem
                   onClick={onClear}
-                  className="gap-2 px-2.5 py-1.5 text-[12px] text-muted-foreground hover:text-foreground justify-center cursor-pointer"
+                  className="gap-2 px-2 py-2 text-[12px] text-muted-foreground hover:text-foreground justify-center cursor-pointer"
                 >
                   <X size={13} strokeWidth={1.8} aria-hidden="true" />
                   Clear all filters
@@ -295,7 +295,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                   <DropdownMenuItem
                     onClick={clear}
                     closeOnClick={false}
-                    className="justify-between px-2.5 py-1.5 text-[13px] cursor-pointer"
+                    className="justify-between px-2 py-2 text-[13px] cursor-pointer"
                   >
                     <span className="truncate">{anyLabel}</span>
                     {anyOn && (
@@ -313,7 +313,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                         key={o.value}
                         onClick={() => select(o.value)}
                         closeOnClick={false}
-                        className="justify-between px-2.5 py-1.5 text-[13px] cursor-pointer"
+                        className="justify-between px-2 py-2 text-[13px] cursor-pointer"
                       >
                         <span className="truncate">{o.label}</span>
                         {isSelected && (
@@ -325,7 +325,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
 
                   {group.kind === "single" && group.extra && (
                     <div
-                      className="mt-1.5 border-t border-border/40 p-2"
+                      className="mt-2 border-t border-border/40 p-2"
                       onClick={(e) => e.stopPropagation()}
                       onKeyDown={(e) => e.stopPropagation()}
                     >
@@ -338,7 +338,7 @@ export function FilterPanel({ groups, onClear, className, align = "end" }: Filte
                       <div className="my-1 border-t border-border/50" role="separator" />
                       <DropdownMenuItem
                         onClick={onClear}
-                        className="gap-2 px-2.5 py-1.5 text-[12px] text-muted-foreground hover:text-foreground justify-center cursor-pointer"
+                        className="gap-2 px-2 py-2 text-[12px] text-muted-foreground hover:text-foreground justify-center cursor-pointer"
                       >
                         <X size={13} strokeWidth={1.8} aria-hidden="true" />
                         Clear filter
@@ -381,14 +381,14 @@ export function AppliedFilters({ groups, className }: { groups: FilterGroup[]; c
   }
   if (chips.length === 0) return null;
   return (
-    <ul className={cn("flex flex-wrap items-center gap-1.5", className)} aria-label="Applied filters">
+    <ul className={cn("flex flex-wrap items-center gap-2", className)} aria-label="Applied filters">
       {chips.map((c) => (
         <li key={c.key}>
           <button
             type="button"
             onClick={c.remove}
             aria-label={`Remove filter: ${c.label}`}
-            className="flex h-7 cursor-pointer items-center gap-1.5 rounded-full bg-muted pl-3 pr-2 text-[12px] text-foreground transition-colors duration-hover ease-settle hover:bg-muted/70"
+            className="flex h-6 cursor-pointer items-center gap-2 rounded-full bg-muted pl-2 pr-2 text-[12px] text-foreground transition-colors duration-hover ease-settle hover:bg-muted/70"
           >
             <span>{c.label}</span>
             <X size={12} strokeWidth={1.9} className="text-muted-foreground" aria-hidden="true" />

@@ -45,10 +45,10 @@ function StatTile({
 }) {
   // A row of the grouped stats panel on a phone; its own tile from sm up.
   return (
-    <div className="flex items-center justify-between gap-3 px-4 py-3.5 sm:flex-col sm:items-start sm:justify-start sm:rounded-2xl sm:border sm:border-border sm:bg-card sm:p-5">
+    <div className="flex items-center justify-between gap-2 px-3 py-3 sm:flex-col sm:items-start sm:justify-start sm:rounded-2xl sm:border sm:border-border sm:bg-card sm:p-4">
       <span className="text-[13px] text-muted-foreground sm:text-[12.5px]">{label}</span>
       {loading ? (
-        <Bone className="h-5 w-24 sm:h-6 sm:w-32" />
+        <Bone className="h-4 w-21 sm:h-5 sm:w-28" />
       ) : (
         <span className={`tabular shrink-0 text-[15px] leading-none tracking-[var(--ls-tight)] sm:text-[22px] ${tone === "positive" ? "text-success" : "text-foreground"}`}>
           {value}
@@ -72,10 +72,10 @@ function TopCategories({ data, loading, showAmounts }: { data: DashData; loading
       ) : slices.length === 0 ? (
         <PanelEmpty text="No spending on this account in the past month." />
       ) : (
-        <ul className="flex flex-col gap-3.5 sm:gap-4">
+        <ul className="flex flex-col gap-3 sm:gap-3">
           {slices.map((s) => (
             <li key={s.label} className="flex flex-col gap-2">
-              <span className="flex items-baseline justify-between gap-3 text-[13.5px]">
+              <span className="flex items-baseline justify-between gap-2 text-[13.5px]">
                 <span className="truncate text-foreground">{s.label}</span>
                 <span className="shrink-0 tabular text-muted-foreground">
                   {formatMoney(s.amount, "GHS", showAmounts)}
@@ -104,22 +104,22 @@ export function InsightsLayout(props: DashViewProps) {
   const money = (n: number) => formatMoney(n, currency, showAmounts);
 
   return (
-    <div className="@container flex flex-col gap-6 sm:gap-10">
-      <div className="flex items-center justify-between gap-4 sm:flex-wrap">
+    <div className="@container flex flex-col gap-5 sm:gap-10">
+      <div className="flex items-center justify-between gap-3 sm:flex-wrap">
         <Greeting firstName={data.firstName} />
-        <div className="flex items-center gap-3 sm:flex-wrap">
+        <div className="flex items-center gap-2 sm:flex-wrap">
           <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} className="hidden sm:flex" />
           <RefreshControl updatedAt={updatedAt} refreshing={loading} onRefresh={onRefresh} />
         </div>
       </div>
 
-      <div className="flex flex-col gap-6 sm:gap-8">
-        <div className="flex flex-col gap-3 sm:gap-4">
+      <div className="flex flex-col gap-5 sm:gap-6">
+        <div className="flex flex-col gap-2 sm:gap-3">
           <AccountSwitcher data={data} onSelect={onSelectAccount} />
           <BalanceFigure data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
           {/* In/out lives in the tiles below, so only the hold line here. */}
           {!loading && <BalanceMeta data={data} showAmounts={showAmounts} showFlow={false} updatedAt={updatedAt} />}
-          <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-3 sm:hidden" />
+          <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-2 sm:hidden" />
         </div>
 
         <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
@@ -129,10 +129,10 @@ export function InsightsLayout(props: DashViewProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={SPRING}
-          className="flex flex-col gap-4 sm:gap-6"
+          className="flex flex-col gap-3 sm:gap-5"
         >
           {/* One panel of three rows on a phone instead of three stacked boxes. */}
-          <div className="grid grid-cols-1 divide-y divide-border/60 rounded-2xl border border-border bg-card sm:grid-cols-3 sm:gap-4 sm:divide-y-0 sm:rounded-none sm:border-0 sm:bg-transparent">
+          <div className="grid grid-cols-1 divide-y divide-border/60 rounded-2xl border border-border bg-card sm:grid-cols-3 sm:gap-3 sm:divide-y-0 sm:rounded-none sm:border-0 sm:bg-transparent">
             <StatTile
               label={`Money in · last ${data.cashFlow.days} days`}
               value={`+ ${money(data.cashFlow.moneyIn)}`}
@@ -147,7 +147,7 @@ export function InsightsLayout(props: DashViewProps) {
             <StatTile label="Scheduled · next 30 days" value={money(data.scheduledNext30)} loading={loading} />
           </div>
 
-          <div className="dash-grid items-stretch gap-4 sm:gap-6">
+          <div className="dash-grid items-stretch gap-3 sm:gap-5">
             <AnalyticsCard data={data} loading={loading} showAmounts={showAmounts} />
             <TopCategories data={data} loading={loading} showAmounts={showAmounts} />
             <ActivityCard data={data} loading={loading} showAmounts={showAmounts} limit={5} />

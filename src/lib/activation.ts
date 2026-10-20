@@ -16,11 +16,11 @@
  * default account, referral code, transaction PIN, card/wallet linking — moves
  * into the app, behind a dismissible strip on the overview.
  *
- * Two modes share the machine:
- *   retail     — self-service activation from the login screen
- *   corporate  — invite issued by a Corporate Admin (Administration), so the
- *                relationship, role and permissions are already known and the
- *                "how would you like to register?" branch disappears entirely
+ * Business users activate separately at /business/activate after being set up by the bank.
+
+
+
+
  */
 
 import { ACTORS } from "./mock-data";
@@ -38,7 +38,7 @@ export type { PasswordRule, ApprovalMethod, ApprovalOption } from "./auth-shared
 
 /* ── Flow model ────────────────────────────────────────────────────────────── */
 
-export type ActivationMode = "retail" | "corporate";
+export type ActivationMode = "retail";
 
 export type ActivationStep = "identify" | "verify" | "setup" | "done";
 
@@ -53,8 +53,8 @@ export type ActivationVariant =
   | "notFound"
   | "alreadyActive"
   | "codeError"
-  | "codeLocked"
-  | "inviteExpired";
+  | "codeLocked";
+
 
 export interface ActivationScenario {
   id: string;
@@ -79,11 +79,11 @@ export const ACTIVATION_SCENARIOS: readonly ActivationScenario[] = [
   { id: "retail-code-locked", label: "Retail · Attempts used up", mode: "retail", step: "verify", variant: "codeLocked" },
   { id: "retail-setup", label: "Retail · Set up login", mode: "retail", step: "setup", variant: "default" },
   { id: "retail-done", label: "Retail · Activated", mode: "retail", step: "done", variant: "default" },
-  { id: "corp-invite", label: "Corporate · Invitation", mode: "corporate", step: "identify", variant: "default" },
-  { id: "corp-invite-expired", label: "Corporate · Invitation expired", mode: "corporate", step: "identify", variant: "inviteExpired" },
-  { id: "corp-verify", label: "Corporate · Enter code", mode: "corporate", step: "verify", variant: "default" },
-  { id: "corp-setup", label: "Corporate · Set up login", mode: "corporate", step: "setup", variant: "default" },
-  { id: "corp-done", label: "Corporate · Activated", mode: "corporate", step: "done", variant: "default" },
+
+
+
+
+
 ];
 
 export const ACTIVATION_SCENARIO_LABELS: Record<string, string> = Object.fromEntries(

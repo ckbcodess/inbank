@@ -13,17 +13,17 @@ export function CardsSpotlight({ cards }: CardsLayoutProps) {
   const active = cards.find((c) => c.id === activeId) ?? cards[0];
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
-      <div className="flex flex-col gap-5">
-        <div className="flex items-center justify-center rounded-2xl bg-muted/50 px-4 py-10 sm:px-10 sm:py-14">
+    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-center rounded-2xl bg-muted/50 px-3 py-10 sm:px-10 sm:py-12">
           <TiltCard3D className="w-full max-w-[480px]">
-            <CardFace card={active} className="rounded-[20px]" />
+            <CardFace card={active} className="rounded-3xl" />
           </TiltCard3D>
         </div>
         <CardDetails card={active} />
       </div>
 
-      <div className="flex flex-row gap-3 overflow-x-auto no-scrollbar lg:flex-col lg:overflow-visible" role="tablist" aria-label="Cards">
+      <div className="flex flex-row gap-2 overflow-x-auto no-scrollbar lg:flex-col lg:overflow-visible" role="tablist" aria-label="Cards">
         {cards.map((card) => {
           const selected = card.id === active.id;
           return (
@@ -34,7 +34,7 @@ export function CardsSpotlight({ cards }: CardsLayoutProps) {
               aria-selected={selected}
               onClick={() => setActiveId(card.id)}
               className={cn(
-                "flex min-w-[240px] shrink-0 cursor-pointer items-center gap-3 rounded-xl border p-3 text-left transition-colors lg:min-w-0",
+                "flex min-w-[240px] shrink-0 cursor-pointer items-center gap-2 rounded-xl border p-2 text-left transition-colors lg:min-w-0",
                 selected ? "border-[var(--active-border)] bg-[var(--active-bg)]" : "border-border bg-card hover:bg-muted/50",
               )}
             >

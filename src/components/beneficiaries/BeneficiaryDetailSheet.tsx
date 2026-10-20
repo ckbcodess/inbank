@@ -101,18 +101,18 @@ export function BeneficiaryDetailSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="flex flex-col">
         {/* Who it is, then the details listed out; the block is centred in the space above the actions, like the receipt */}
-        <div className="flex flex-1 flex-col justify-center overflow-y-auto px-6 pt-14 pb-6 no-scrollbar sm:px-9">
-          <div className="flex flex-col items-center gap-1 pb-7 text-center">
+        <div className="flex flex-1 flex-col justify-center overflow-y-auto px-5 pt-12 pb-5 no-scrollbar sm:px-8">
+          <div className="flex flex-col items-center gap-1 pb-6 text-center">
             <PayeeAvatar
               name={beneficiary.name}
               size="xl"
               icon={isCompany ? (beneficiary.transactionType === "bill" ? Zap : Smartphone) : undefined}
             />
-            <SheetTitle className="mt-4">{beneficiary.name}</SheetTitle>
+            <SheetTitle className="mt-3">{beneficiary.name}</SheetTitle>
             <SheetDescription className="flex flex-wrap items-center justify-center gap-2 text-[13px] text-muted-foreground">
               {getBeneficiaryCategory(beneficiary.transactionType)}
               {!beneficiary.verified && (
-                <Badge variant="warning" className="text-[10px] py-0 px-1.5">
+                <Badge variant="warning" className="text-[10px] py-0 px-2">
                   Pending approval
                 </Badge>
               )}
@@ -126,7 +126,7 @@ export function BeneficiaryDetailSheet({
                 <button
                   type="button"
                   onClick={handleCopyIdentifier}
-                  className="group flex items-center gap-1.5 text-foreground font-medium tabular cursor-pointer"
+                  className="group flex items-center gap-2 text-foreground font-medium tabular cursor-pointer"
                   title="Copy"
                 >
                   <span>{identifier}</span>
@@ -152,8 +152,8 @@ export function BeneficiaryDetailSheet({
         </div>
 
         {/* Round actions, pinned to the foot of the sheet */}
-        <div className="shrink-0 px-6 pb-8 pt-4 sm:px-9">
-          <div className="flex items-center justify-center gap-6">
+        <div className="shrink-0 px-5 pb-6 pt-3 sm:px-8">
+          <div className="flex items-center justify-center gap-5">
             <RoundAction label="Send" icon={Send} onClick={handleSendMoney} />
             <RoundAction
               label="Edit"

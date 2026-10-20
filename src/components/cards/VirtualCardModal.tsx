@@ -113,10 +113,10 @@ export function VirtualCardView({
   };
 
   return (
-    <div className={`w-full max-w-[440px] p-6 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden ${className}`}>
+    <div className={`w-full max-w-[440px] p-5 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden ${className}`}>
       {/* Header */}
       {showTitleHeader && (
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800/80">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80">
           <h2 className="text-[17px] font-medium text-slate-900 dark:text-white tracking-tight">
             Virtual Card
           </h2>
@@ -124,7 +124,7 @@ export function VirtualCardView({
             <button
               type="button"
               onClick={onClose}
-              className="flex size-7 items-center justify-center rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              className="flex size-6 items-center justify-center rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               aria-label="Close"
             >
               <X size={18} strokeWidth={2} />
@@ -134,10 +134,10 @@ export function VirtualCardView({
       )}
 
       {/* Card Graphic Container */}
-      <div className={`relative mt-4 overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-gradient-to-br from-slate-50/90 via-white to-slate-100/70 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 p-5 shadow-xs select-none ${isFrozen ? "opacity-75 saturate-50" : ""}`}>
+      <div className={`relative mt-3 overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-gradient-to-br from-slate-50/90 via-white to-slate-100/70 dark:from-slate-900 dark:via-slate-950 dark:to-slate-900 p-4 shadow-xs select-none ${isFrozen ? "opacity-75 saturate-50" : ""}`}>
         {/* Abstract Line Artwork in Top Right */}
         <svg
-          className="absolute right-0 top-0 h-full w-52 text-slate-200/70 dark:text-slate-800/50 pointer-events-none"
+          className="absolute right-0 top-0 h-full w-45 text-slate-200/70 dark:text-slate-800/50 pointer-events-none"
           viewBox="0 0 200 200"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -149,10 +149,10 @@ export function VirtualCardView({
 
         {/* Top Row: Blue Icon, Contactless & Active Badge on Left; Mastercard on Right */}
         <div className="relative z-10 flex items-start justify-between">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             {/* Blue Circular Icon */}
-            <div className="flex size-9 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-xs shrink-0">
-              <svg className="size-5" viewBox="0 0 24 24" fill="none">
+            <div className="flex size-8 items-center justify-center rounded-full bg-[#2563EB] text-white shadow-xs shrink-0">
+              <svg className="size-4" viewBox="0 0 24 24" fill="none">
                 <path d="M7 15L13 7H9L3 15H7Z" fill="currentColor" />
                 <path d="M15 17L21 9H17L11 17H15Z" fill="currentColor" opacity="0.85" />
               </svg>
@@ -160,7 +160,7 @@ export function VirtualCardView({
 
             {/* Contactless Signal */}
             <div className="flex items-center text-slate-400 dark:text-slate-500">
-              <svg className="size-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+              <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
                 <path d="M12 18a6 6 0 0 0 0-12" />
                 <path d="M15 20a9 9 0 0 0 0-16" />
                 <path d="M9 16a3 3 0 0 0 0-6" />
@@ -168,12 +168,12 @@ export function VirtualCardView({
             </div>
 
             {/* Status Badge */}
-            <div className={`inline-flex items-center gap-1.5 rounded-[7px] border px-2.5 py-1 text-[12px] font-medium shadow-2xs ${
+            <div className={`inline-flex items-center gap-2 rounded-lg border px-2 py-1 text-[12px] font-medium shadow-2xs ${
               isFrozen
                 ? "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-300"
                 : "border-slate-200/90 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200"
             }`}>
-              <span className={`flex size-3.5 items-center justify-center rounded-full text-white text-[8px] font-medium ${isFrozen ? "bg-amber-500" : "bg-[#22c55e]"}`}>
+              <span className={`flex size-3 items-center justify-center rounded-full text-white text-[8px] font-medium ${isFrozen ? "bg-amber-500" : "bg-[#22c55e]"}`}>
                 {isFrozen ? "!" : "✓"}
               </span>
               <span>{isFrozen ? "Blocked" : "Active"}</span>
@@ -181,11 +181,11 @@ export function VirtualCardView({
           </div>
 
           {/* Network Logo: Mastercard */}
-          <NetworkLogo scheme="Mastercard" className="h-6.5" />
+          <NetworkLogo scheme="Mastercard" className="h-6" />
         </div>
 
         {/* Middle & Bottom Content of Card Graphic */}
-        <div className="relative z-10 mt-8 flex items-end justify-between">
+        <div className="relative z-10 mt-6 flex items-end justify-between">
           <div className="flex flex-col">
             <span className="text-[13.5px] font-normal text-slate-500 dark:text-slate-400">
               {activeCard.name ?? "Savings Card"}
@@ -201,7 +201,7 @@ export function VirtualCardView({
               <button
                 type="button"
                 onClick={handlePrev}
-                className="px-2.5 py-1 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-r border-slate-200 dark:border-slate-700 cursor-pointer"
+                className="px-2 py-1 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-r border-slate-200 dark:border-slate-700 cursor-pointer"
                 aria-label="Previous card"
               >
                 <ChevronLeft size={14} strokeWidth={2.2} />
@@ -209,7 +209,7 @@ export function VirtualCardView({
               <button
                 type="button"
                 onClick={handleNext}
-                className="px-2.5 py-1 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                className="px-2 py-1 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                 aria-label="Next card"
               >
                 <ChevronRight size={14} strokeWidth={2.2} />
@@ -221,7 +221,7 @@ export function VirtualCardView({
 
 
       {/* Card Details Key-Value List */}
-      <div className="mt-5 space-y-3.5 text-[13.5px]">
+      <div className="mt-4 space-y-3 text-[13.5px]">
         <div className="flex items-center justify-between">
           <span className="text-slate-500 dark:text-slate-400 font-normal">Card number</span>
           <span className="font-medium text-slate-900 dark:text-slate-100 tabular tracking-wide">
@@ -255,7 +255,7 @@ export function VirtualCardView({
 
       {/* Adjust Limit Form overlay when active */}
       {adjustingLimit && (
-        <div className="mt-4 flex flex-col gap-2.5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-3.5">
+        <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-3">
           <Label htmlFor="card-view-limit-input">
             New Monthly Limit ({activeCard.currency ?? "USD"})
           </Label>
@@ -267,10 +267,10 @@ export function VirtualCardView({
               placeholder="12000.00"
               className="tabular bg-white dark:bg-slate-900"
             />
-            <Button variant="ghost" size="sm" onClick={() => setAdjustingLimit(false)} className="h-9 px-2 text-[12.5px]">
+            <Button variant="ghost" size="sm" onClick={() => setAdjustingLimit(false)} className="h-8 px-2 text-[12.5px]">
               Cancel
             </Button>
-            <Button size="sm" onClick={handleSaveLimit} className="h-9 px-3 text-[12.5px]">
+            <Button size="sm" onClick={handleSaveLimit} className="h-8 px-2 text-[12.5px]">
               Save
             </Button>
           </div>
@@ -279,7 +279,7 @@ export function VirtualCardView({
 
       {/* Security Channels Panel */}
       {showSecurityModal && (
-        <div className="mt-4 flex flex-col gap-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-3.5 text-[12.5px]">
+        <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-850 p-3 text-[12.5px]">
           <div className="flex items-center justify-between font-medium text-slate-800 dark:text-slate-200 pb-1 border-b border-slate-200 dark:border-slate-800">
             <span>Card Security Channels</span>
             <button type="button" onClick={() => setShowSecurityModal(false)} className="text-slate-400 hover:text-slate-600">
@@ -288,26 +288,26 @@ export function VirtualCardView({
           </div>
           <label className="flex items-center justify-between cursor-pointer">
             <span>Online Checkout</span>
-            <input type="checkbox" checked={onlineEnabled} onChange={(e) => setOnlineEnabled(e.target.checked)} className="size-4 rounded" />
+            <input type="checkbox" checked={onlineEnabled} onChange={(e) => setOnlineEnabled(e.target.checked)} className="size-3.5 rounded-sm" />
           </label>
           <label className="flex items-center justify-between cursor-pointer">
             <span>ATM Cash Withdrawal</span>
-            <input type="checkbox" checked={atmEnabled} onChange={(e) => setAtmEnabled(e.target.checked)} className="size-4 rounded" />
+            <input type="checkbox" checked={atmEnabled} onChange={(e) => setAtmEnabled(e.target.checked)} className="size-3.5 rounded-sm" />
           </label>
           <label className="flex items-center justify-between cursor-pointer">
             <span>International Usage</span>
-            <input type="checkbox" checked={intlEnabled} onChange={(e) => setIntlEnabled(e.target.checked)} className="size-4 rounded" />
+            <input type="checkbox" checked={intlEnabled} onChange={(e) => setIntlEnabled(e.target.checked)} className="size-3.5 rounded-sm" />
           </label>
         </div>
       )}
 
       {/* More Options Dropdown Panel */}
       {showMoreMenu && (
-        <div className="mt-4 flex flex-col divide-y divide-slate-100 dark:divide-slate-800 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-850/90 text-[13px] overflow-hidden shadow-sm">
+        <div className="mt-3 flex flex-col divide-y divide-slate-100 dark:divide-slate-800 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-850/90 text-[13px] overflow-hidden shadow-sm">
           <button
             type="button"
             onClick={handleToggleFreeze}
-            className="flex items-center gap-2.5 px-4 py-2.5 text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-800 dark:text-slate-200 cursor-pointer"
+            className="flex items-center gap-2 px-3 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-800 dark:text-slate-200 cursor-pointer"
           >
             {isFrozen ? <Unlock size={15} className="text-slate-400" /> : <Lock size={15} className="text-slate-400" />}
             <span>{isFrozen ? "Unblock Card" : "Block Card"}</span>
@@ -319,7 +319,7 @@ export function VirtualCardView({
               setShowSecurityModal((prev) => !prev);
               setShowMoreMenu(false);
             }}
-            className="flex items-center gap-2.5 px-4 py-2.5 text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-800 dark:text-slate-200 cursor-pointer"
+            className="flex items-center gap-2 px-3 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-slate-800 dark:text-slate-200 cursor-pointer"
           >
             <ShieldAlert size={15} className="text-slate-400" />
             <span>Security Channels</span>
@@ -331,7 +331,7 @@ export function VirtualCardView({
               toast.success("Replacement request submitted.");
               setShowMoreMenu(false);
             }}
-            className="flex items-center gap-2.5 px-4 py-2.5 text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-rose-600 dark:text-rose-400 cursor-pointer"
+            className="flex items-center gap-2 px-3 py-2 text-left hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-rose-600 dark:text-rose-400 cursor-pointer"
           >
             <RefreshCw size={15} className="text-rose-500" />
             <span>Request Replacement</span>
@@ -340,11 +340,11 @@ export function VirtualCardView({
       )}
 
       {/* Bottom Actions Row */}
-      <div className="mt-6 grid grid-cols-3 gap-2.5">
+      <div className="mt-5 grid grid-cols-3 gap-2">
         <Button
           variant="outline"
           onClick={handleToggleUnhide}
-          className="h-10 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
+          className="h-9 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
         >
           {unhidden ? "Hide" : "Unhide"}
         </Button>
@@ -352,7 +352,7 @@ export function VirtualCardView({
         <Button
           variant="outline"
           onClick={handleStartAdjustLimit}
-          className="h-10 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
+          className="h-9 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
         >
           Adjust Limit
         </Button>
@@ -363,7 +363,7 @@ export function VirtualCardView({
             setShowMoreMenu((prev) => !prev);
             setAdjustingLimit(false);
           }}
-          className="h-10 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
+          className="h-9 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-[13.5px] text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors shadow-2xs cursor-pointer"
         >
           More
         </Button>
@@ -386,7 +386,7 @@ export function VirtualCardModal({
         <DialogHeader>
           <DialogTitle>Virtual Card</DialogTitle>
         </DialogHeader>
-        <DialogBody className="p-5 sm:p-6 overflow-y-auto">
+        <DialogBody className="p-4 sm:p-5 overflow-y-auto">
           <VirtualCardView
             card={card}
             cards={cards}

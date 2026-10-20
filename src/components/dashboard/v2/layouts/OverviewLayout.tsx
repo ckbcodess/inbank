@@ -32,22 +32,22 @@ export function OverviewLayout(props: DashViewProps) {
   const loading = status === "loading";
 
   return (
-    <div className="@container flex flex-col gap-6 sm:gap-10">
-      <div className="flex items-center justify-between gap-4 sm:flex-wrap">
+    <div className="@container flex flex-col gap-5 sm:gap-10">
+      <div className="flex items-center justify-between gap-3 sm:flex-wrap">
         <Greeting firstName={data.firstName} />
-        <div className="flex items-center gap-3 sm:flex-wrap">
+        <div className="flex items-center gap-2 sm:flex-wrap">
           <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} className="hidden sm:flex" />
           <RefreshControl updatedAt={updatedAt} refreshing={loading} onRefresh={onRefresh} />
         </div>
       </div>
 
-      <div className="flex flex-col gap-6 sm:gap-8">
-        <div className="flex flex-col gap-3 sm:gap-4">
+      <div className="flex flex-col gap-5 sm:gap-6">
+        <div className="flex flex-col gap-2 sm:gap-3">
           <AccountSwitcher data={data} onSelect={onSelectAccount} />
           <BalanceFigure data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
           {!loading && <BalanceMeta data={data} showAmounts={showAmounts} updatedAt={updatedAt} />}
           {/* On a phone the actions sit under the balance, in thumb reach. */}
-          <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-3 sm:hidden" />
+          <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-2 sm:hidden" />
         </div>
 
         <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
@@ -58,7 +58,7 @@ export function OverviewLayout(props: DashViewProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={SPRING}
-          className="dash-grid items-stretch gap-4 sm:gap-6"
+          className="dash-grid items-stretch gap-3 sm:gap-5"
         >
           <ActivityCard
             data={data}

@@ -10,17 +10,23 @@
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import TransactionList from "@/components/TransactionList";
-import { transactionsForProfile } from "@/lib/mock-data";
-import { useSession } from "@/lib/session-store";
+import { accountsForProfile, transactionsForProfile } from "@/lib/mock-data";
+import { personalRepeatHref } from "@/lib/repeat-payment";
 
 function TransactionsContent() {
-  const activeProfile = useSession((s) => s.activeProfile);
-  const transactions = transactionsForProfile(activeProfile?.kind);
+  const transactions = transactionsForProfile("RETAIL");
   const accountId = useSearchParams().get("account") ?? undefined;
 
   return (
     <div className="flex flex-col">
-      <TransactionList key={accountId ?? "all"} transactions={transactions} initialAccountId={accountId} />
+      <TransactionList
+        key={accountId ?? "all"}
+        transactions={transactions}
+        accounts={accountsForProfile("RETAIL")}
+        startHref="/payments"
+        repeatHref={personalRepeatHref}
+        initialAccountId={accountId}
+      />
     </div>
   );
 }

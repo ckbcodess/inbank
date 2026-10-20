@@ -114,7 +114,7 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader title="Notifications" />
       <StateSwitcher
         section="13.1"
@@ -136,7 +136,7 @@ export default function NotificationsPage() {
             variant="ghost"
             size="sm"
             onClick={() => setReadIds(NOTIFICATIONS.map((n) => n.id))}
-            className="shrink-0 whitespace-nowrap text-xs gap-1.5 text-muted-foreground hover:text-foreground ml-auto h-8 px-3"
+            className="shrink-0 whitespace-nowrap text-xs gap-2 text-muted-foreground hover:text-foreground ml-auto h-7 px-2"
           >
             <CheckCheck size={14} strokeWidth={1.9} aria-hidden="true" />
             Mark all read
@@ -182,7 +182,7 @@ export default function NotificationsPage() {
               const Icon = meta.icon;
               const row = (
                 <>
-                  <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted">
+                  <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted">
                     <Icon size={16} strokeWidth={1.8} aria-hidden="true" className={meta.className} />
                   </span>
 
@@ -212,14 +212,14 @@ export default function NotificationsPage() {
                     <Link
                       href={n.href}
                       onClick={() => markRead(n.id)}
-                      className="flex items-start gap-4 px-4 py-3.5 transition-colors hover:bg-muted/50"
+                      className="flex items-start gap-3 px-3 py-3 transition-colors hover:bg-muted/50"
                     >
                       {row}
                     </Link>
                   ) : (
                     <div
                       onClick={() => markRead(n.id)}
-                      className="flex items-start gap-4 px-4 py-3.5"
+                      className="flex items-start gap-3 px-3 py-3"
                     >
                       {row}
                     </div>
@@ -234,16 +234,16 @@ export default function NotificationsPage() {
       )}
 
       {/* FR-22 — "delivered via configured channels" */}
-      <section className="rounded-2xl border border-border bg-card p-5">
+      <section className="rounded-2xl border border-border bg-card p-4">
         <h2 className="text-[15px] text-foreground">Delivery preferences</h2>
         <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
           Choose how you receive notifications. In-app delivery can&apos;t be turned off, because
           some notifications carry actions you must be able to find later.
         </p>
 
-        <div className="mt-4 flex flex-col gap-3">
+        <div className="mt-3 flex flex-col gap-2">
           {CHANNELS.map((c) => (
-            <div key={c.key} className="flex items-start gap-3">
+            <div key={c.key} className="flex items-start gap-2">
               <Checkbox
                 id={`channel-${c.key}`}
                 checked={channels[c.key]}

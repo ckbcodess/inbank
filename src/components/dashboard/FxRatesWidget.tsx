@@ -75,7 +75,7 @@ export function FxRatesWidget() {
     .join(" ");
 
   return (
-    <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-colors">
+    <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-colors">
       {/* Top Header with Convert / Chart Switcher */}
       <div className="flex items-center justify-between">
         <h2 className="text-[15px] font-medium text-foreground">FX Rates</h2>
@@ -83,7 +83,7 @@ export function FxRatesWidget() {
           <button
             type="button"
             onClick={() => setActiveTab("convert")}
-            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
+            className={`flex items-center gap-2 rounded-lg px-2 py-1 text-[12px] transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
               activeTab === "convert"
                 ? "bg-card text-foreground shadow-2xs font-medium"
                 : "text-muted-foreground hover:text-foreground"
@@ -94,7 +94,7 @@ export function FxRatesWidget() {
           <button
             type="button"
             onClick={() => setActiveTab("chart")}
-            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
+            className={`flex items-center gap-2 rounded-lg px-2 py-1 text-[12px] transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
               activeTab === "chart"
                 ? "bg-card text-foreground shadow-2xs font-medium"
                 : "text-muted-foreground hover:text-foreground"
@@ -107,7 +107,7 @@ export function FxRatesWidget() {
 
       {activeTab === "convert" ? (
         /* Converter Form */
-        <div className="mx-auto my-auto flex w-full max-w-[360px] flex-col items-center gap-2.5 py-2">
+        <div className="mx-auto my-auto flex w-full max-w-[360px] flex-col items-center gap-2 py-2">
           {/* Live Rate Label */}
           <div className="text-center text-[13px] text-muted-foreground tabular">
             1 {fromCurrency} = {exchangeRate >= 1 ? exchangeRate.toFixed(2) : exchangeRate.toFixed(4)} {toCurrency}
@@ -115,7 +115,7 @@ export function FxRatesWidget() {
 
           {/* From Input */}
           <div className="relative w-full">
-            <div className="flex w-full items-center justify-between rounded-xl border border-field-border bg-field px-4 py-2.5 transition-colors focus-within:border-field-border-focus focus-within:bg-field-focus">
+            <div className="flex w-full items-center justify-between rounded-xl border border-field-border bg-field px-3 py-2 transition-colors focus-within:border-field-border-focus focus-within:bg-field-focus">
               <input
                 type="number"
                 min="0"
@@ -131,7 +131,7 @@ export function FxRatesWidget() {
                   setShowFromMenu(!showFromMenu);
                   setShowToMenu(false);
                 }}
-                className="flex items-center gap-2 rounded-lg bg-card px-2.5 py-1 text-[13px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
+                className="flex items-center gap-2 rounded-lg bg-card px-2 py-1 text-[13px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
               >
                 <CurrencyLogo currency={fromCurrency} size={17} />
                 <span>{fromCurrency}</span>
@@ -140,7 +140,7 @@ export function FxRatesWidget() {
             </div>
 
             {showFromMenu && (
-              <div className="absolute right-0 top-full z-40 mt-1 max-h-48 w-48 overflow-auto rounded-xl border border-border bg-card py-1 shadow-xl animate-in fade-in zoom-in-95 duration-100">
+              <div className="absolute right-0 top-full z-40 mt-1 max-h-42 w-42 overflow-auto rounded-xl border border-border bg-card py-1 shadow-xl animate-in fade-in zoom-in-95 duration-100">
                 {CURRENCIES.map((c) => (
                   <button
                     key={c.code}
@@ -149,7 +149,7 @@ export function FxRatesWidget() {
                       setFromCurrency(c.code);
                       setShowFromMenu(false);
                     }}
-                    className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] transition-colors cursor-pointer ${
+                    className={`flex w-full items-center gap-2 px-2 py-2 text-left text-[12px] transition-colors cursor-pointer ${
                       fromCurrency === c.code ? "bg-muted font-medium" : "hover:bg-muted/50"
                     }`}
                   >
@@ -166,7 +166,7 @@ export function FxRatesWidget() {
           <button
             type="button"
             onClick={handleSwap}
-            className="flex size-7.5 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-foreground hover:text-background active:scale-[0.96] transition-transform cursor-pointer shadow-2xs"
+            className="flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-foreground hover:text-background active:scale-[0.96] transition-transform cursor-pointer shadow-2xs"
             aria-label="Swap currencies"
           >
             <ArrowUpDown size={14} strokeWidth={2} />
@@ -174,7 +174,7 @@ export function FxRatesWidget() {
 
           {/* To Input */}
           <div className="relative w-full">
-            <div className="flex w-full items-center justify-between rounded-xl border border-border bg-muted/40 px-4 py-2.5 transition-colors">
+            <div className="flex w-full items-center justify-between rounded-xl border border-border bg-muted/40 px-3 py-2 transition-colors">
               <span className="w-1/2 text-[20px] font-medium text-foreground tabular truncate">
                 {calculatedToAmount}
               </span>
@@ -184,7 +184,7 @@ export function FxRatesWidget() {
                   setShowToMenu(!showToMenu);
                   setShowFromMenu(false);
                 }}
-                className="flex items-center gap-2 rounded-lg bg-card px-2.5 py-1 text-[13px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
+                className="flex items-center gap-2 rounded-lg bg-card px-2 py-1 text-[13px] font-medium text-foreground shadow-2xs border border-border/60 hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
               >
                 <CurrencyLogo currency={toCurrency} size={17} />
                 <span>{toCurrency}</span>
@@ -193,7 +193,7 @@ export function FxRatesWidget() {
             </div>
 
             {showToMenu && (
-              <div className="absolute right-0 top-full z-40 mt-1 max-h-48 w-48 overflow-auto rounded-xl border border-border bg-card py-1 shadow-xl animate-in fade-in zoom-in-95 duration-100">
+              <div className="absolute right-0 top-full z-40 mt-1 max-h-42 w-42 overflow-auto rounded-xl border border-border bg-card py-1 shadow-xl animate-in fade-in zoom-in-95 duration-100">
                 {CURRENCIES.map((c) => (
                   <button
                     key={c.code}
@@ -202,7 +202,7 @@ export function FxRatesWidget() {
                       setToCurrency(c.code);
                       setShowToMenu(false);
                     }}
-                    className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[12px] transition-colors cursor-pointer ${
+                    className={`flex w-full items-center gap-2 px-2 py-2 text-left text-[12px] transition-colors cursor-pointer ${
                       toCurrency === c.code ? "bg-muted font-medium" : "hover:bg-muted/50"
                     }`}
                   >
@@ -217,7 +217,7 @@ export function FxRatesWidget() {
         </div>
       ) : (
         /* Historical Rate Chart View */
-        <div className="mx-auto my-auto flex w-full max-w-[360px] flex-col items-center gap-3 py-2">
+        <div className="mx-auto my-auto flex w-full max-w-[360px] flex-col items-center gap-2 py-2">
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">
               <span className="text-[12px] text-muted-foreground">Pair Trend</span>
@@ -231,7 +231,7 @@ export function FxRatesWidget() {
                   key={r}
                   type="button"
                   onClick={() => setChartRange(r)}
-                  className={`rounded-md px-2 py-0.5 text-[11px] font-medium transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
+                  className={`rounded-lg px-2 py-0.5 text-[11px] font-medium transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
                     chartRange === r ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"
                   }`}
                 >
@@ -274,7 +274,7 @@ export function FxRatesWidget() {
       )}
 
       {/* Symmetrical Footer */}
-      <div className="flex items-center justify-center gap-1.5 border-t border-border/50 pt-3 text-[12px] text-muted-foreground">
+      <div className="flex items-center justify-center gap-2 border-t border-border/50 pt-2 text-[12px] text-muted-foreground">
         <RefreshCw size={12} strokeWidth={1.8} />
         <span>Updated 2 mins ago</span>
       </div>

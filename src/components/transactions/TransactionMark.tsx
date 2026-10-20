@@ -106,7 +106,7 @@ export function TransactionMark({
   return (
     <div
       className={cn(
-        "relative flex size-10 shrink-0 items-center justify-center rounded-full",
+        "relative flex size-9 shrink-0 items-center justify-center rounded-full",
         logo && (!logo.round || logo.disc) && "bg-[var(--logo-disc)]",
         className,
       )}
@@ -118,7 +118,7 @@ export function TransactionMark({
           alt=""
           width={40}
           height={40}
-          className={logo.round ? "size-full rounded-full object-cover" : "size-6 object-contain"}
+          className={logo.round ? "size-full rounded-full object-cover" : "size-5 object-contain"}
         />
       ) : <Icon size={18} strokeWidth={1.7} />}
       {/* Only money in is marked: most rows are money out, so the exception is what gets the badge */}

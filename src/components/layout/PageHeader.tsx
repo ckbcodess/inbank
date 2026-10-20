@@ -20,14 +20,14 @@ interface PageHeaderProps {
 
 export default function PageHeader({ title, badge, actions, backTo }: PageHeaderProps) {
   return (
-    <div className="flex items-center justify-between gap-3 w-full">
-      <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+    <div className="flex items-center justify-between gap-2 w-full">
+      <div className="flex items-center gap-2 sm:gap-2 min-w-0 flex-1">
         {backTo && (
           backTo.onClick ? (
             <button
               type="button"
               onClick={backTo.onClick}
-              className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer after:absolute after:-inset-1 after:content-['']"
+              className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer after:absolute after:-inset-1 after:content-['']"
               title={`Back to ${backTo.label}`}
               aria-label={`Back to ${backTo.label}`}
             >
@@ -36,7 +36,7 @@ export default function PageHeader({ title, badge, actions, backTo }: PageHeader
           ) : (
             <BackLink
               href={backTo.href}
-              className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer after:absolute after:-inset-1 after:content-['']"
+              className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer after:absolute after:-inset-1 after:content-['']"
               title={`Back to ${backTo.label}`}
             >
               <ChevronLeft size={20} strokeWidth={1.8} />
@@ -48,7 +48,7 @@ export default function PageHeader({ title, badge, actions, backTo }: PageHeader
         </h1>
         {badge && <div className="shrink-0">{badge}</div>}
       </div>
-      {actions && <div className="flex shrink-0 items-center gap-2 sm:gap-3">{actions}</div>}
+      {actions && <div className="flex shrink-0 items-center gap-2 sm:gap-2">{actions}</div>}
     </div>
   );
 }

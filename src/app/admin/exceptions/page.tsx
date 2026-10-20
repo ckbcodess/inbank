@@ -35,7 +35,7 @@ export default function ExceptionsPage() {
   );
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Exceptions"
         description="A filtered view of transaction monitoring — items needing investigation."
@@ -52,7 +52,7 @@ export default function ExceptionsPage() {
       <StubNotice section="sitemap 12.5" states="13.1 list" />
 
       <section className="rounded-2xl border border-border bg-card">
-        <div className="flex items-center gap-2 border-b border-border px-5 py-4">
+        <div className="flex items-center gap-2 border-b border-border px-4 py-3">
           <AlertTriangle size={16} strokeWidth={1.8} aria-hidden="true" className="text-warning-text" />
           <h2 className="text-[15px] text-foreground">{exceptions.length} open exceptions</h2>
         </div>
@@ -62,7 +62,7 @@ export default function ExceptionsPage() {
             <li key={t.id}>
               <Link
                 href={`/admin/transactions/${t.id}`}
-                className="flex items-center gap-4 px-4 py-3.5 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
               >
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-[13.5px] text-foreground">{t.description}</span>

@@ -558,15 +558,15 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
    * ========================================================================= */
   if (!rail) {
     return (
-      <div className="mx-auto flex w-full max-w-[580px] flex-col gap-6 py-2">
-        <div className="flex items-center gap-3">
+      <div className="mx-auto flex w-full max-w-[580px] flex-col gap-5 py-2">
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => {
               if (onDone) onDone();
               else handleBackNavigation();
             }}
-            className="flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+            className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
             aria-label="Back to Standing Orders"
           >
             <ChevronLeft size={22} strokeWidth={1.8} />
@@ -576,7 +576,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
           </h1>
         </div>
 
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-2">
           {STANDING_ORDER_OPTIONS.map((opt) => {
             const Icon = opt.icon;
             return (
@@ -671,13 +671,13 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       ["Total per payment", formatMoney(totalPerCycle, "GHS", true)],
     ];
     return (
-      <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
         {/* Header with back button */}
-        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+        <div className="flex items-center gap-2 sm:gap-2 min-w-0">
           <button
             type="button"
             onClick={() => setScreen("form")}
-            className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
+            className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
             aria-label="Back to form"
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
@@ -687,29 +687,29 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
           </h1>
         </div>
 
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4">
           {/* Review: label on the left, value on the right, one line each, no dividers */}
           <div className="flex flex-col rounded-2xl border border-border bg-card p-2 text-[14px]">
             {reviewRows.map(([label, value]) => (
-              <div key={label} className="flex items-center justify-between gap-6 rounded-xl px-3 py-3.5">
+              <div key={label} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3">
                 <span className="shrink-0 text-muted-foreground">{label}</span>
                 <span className="tabular min-w-0 truncate text-right text-foreground">{value}</span>
               </div>
             ))}
           </div>
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex gap-2 pt-2">
             <Button
               type="button"
               variant="outline"
-              className="flex-1 h-13 rounded-2xl text-[15px]"
+              className="flex-1 h-11 rounded-2xl text-[15px]"
               onClick={() => setScreen("form")}
             >
               Back to Edit
             </Button>
             <Button
               type="button"
-              className="flex-1 h-13 rounded-2xl text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
+              className="flex-1 h-11 rounded-2xl text-[16px] bg-primary text-primary-foreground drop-shadow-sm active:scale-[0.98] cursor-pointer"
               onClick={() => setPinModalOpen(true)}
             >
               Authorize &amp; Schedule
@@ -734,13 +734,13 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
    * SCREEN 4: Form Screen (The New Unified Layout)
    * ========================================================================= */
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 animate-in fade-in duration-200 ease-out">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
       {/* Header with back button */}
-      <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+      <div className="flex items-center gap-2 sm:gap-2 min-w-0">
         <button
           type="button"
           onClick={() => setRail(null)}
-          className="relative flex size-8 sm:size-9 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
+          className="relative flex size-7 sm:size-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer -ml-1 sm:ml-0"
           aria-label="Back to Select a standing order"
         >
           <ChevronLeft size={20} strokeWidth={1.8} />
@@ -750,10 +750,10 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
         </h1>
       </div>
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-5">
         {/* 1. Beneficiaries Avatars Strip */}
         {activeRailBeneficiaries.length > 0 && (
-          <div className="flex flex-col gap-5 -mb-1 animate-in fade-in duration-150">
+          <div className="flex flex-col gap-4 -mb-1 animate-in fade-in duration-150">
             <RailBeneficiaryStrip
               items={activeRailBeneficiaries}
               onSelect={handleSelectBeneficiary}
@@ -771,7 +771,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   set("groupName", "");
                   setResolvedName("");
                 }}
-                className="relative bg-background px-3 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                className="relative bg-background px-2 text-[12px] font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 Or enter new details
               </button>
@@ -809,7 +809,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               onChange={() => setDetailsCollapsed(false)}
             />
           ) : (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               {/* TO BANK / WALLET TO BANK */}
               {(rail === "bank" || rail === "wallet-to-bank") && (
                 <>
@@ -854,7 +854,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
               {/* TO PROXY */}
               {rail === "proxy" && (
                 <div className="relative flex items-center">
-                  <span className="absolute left-4 text-[16px] font-semibold text-muted-foreground select-none pointer-events-none">
+                  <span className="absolute left-3.5 text-[16px] font-semibold text-muted-foreground select-none pointer-events-none">
                     @
                   </span>
                   <Input
@@ -865,7 +865,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                       set("proxyId", cleaned ? `@${cleaned}` : "");
                     }}
                     placeholder="kwame.b"
-                    className="pl-9 pr-4 tabular"
+                    className="pl-8 pr-3 tabular"
                   />
                 </div>
               )}
@@ -992,7 +992,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
         {/* Everything below appears once the recipient is verified */}
         {revealed && (
-          <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-1 duration-200">
+          <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-bottom-1 duration-200">
             {/* 4. Amount Input */}
             <AmountInput
               value={f.amount}
@@ -1008,9 +1008,9 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
             />
 
             {numAmount > 0 && !overBalance && (
-              <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-1 duration-200">
+              <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-bottom-1 duration-200">
                 {/* 5. Short name and category */}
-                <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Field label="Short Name" htmlFor="so-short-name">
                     <Input
                       id="so-short-name"
@@ -1049,7 +1049,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                   </Select>
 
                   {f.frequency === "Custom" && (
-                    <div className="flex items-center gap-3 animate-in fade-in duration-150">
+                    <div className="flex items-center gap-2 animate-in fade-in duration-150">
                       <span className="text-[13px] text-muted-foreground">Repeat after</span>
                       <Input
                         type="text"
@@ -1057,7 +1057,7 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
                         aria-label="Number of days"
                         value={f.intervalDays}
                         onChange={(e) => set("intervalDays", e.target.value.replace(/[^0-9]/g, "").slice(0, 3))}
-                        className="tabular w-20 text-center"
+                        className="tabular w-17 text-center"
                       />
                       <span className="text-[13px] text-muted-foreground">days</span>
                     </div>
@@ -1066,9 +1066,9 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
 
                 {/* Everything else waits for a frequency (and the days, when it is every X days) */}
                 {f.frequency && (f.frequency !== "Custom" || Number(f.intervalDays) >= 1) && (
-                  <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-1 duration-200">
+                  <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-bottom-1 duration-200">
                   {/* 7. First run, and when it stops */}
-                  <div className={cn("grid grid-cols-1 gap-3.5", f.frequency !== "Once" && "sm:grid-cols-2")}>
+                  <div className={cn("grid grid-cols-1 gap-3", f.frequency !== "Once" && "sm:grid-cols-2")}>
                     <Field label={f.frequency === "Once" ? "Payment Date" : "First Payment"} htmlFor="so-first-run">
                       <Input
                         id="so-first-run"

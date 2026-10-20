@@ -21,7 +21,7 @@ export function SourceMark({
 }) {
   if (type === "momo") {
     return (
-      <span className="flex h-9 w-12 shrink-0 items-center justify-center">
+      <span className="flex h-8 w-10 shrink-0 items-center justify-center">
         <OperatorLogo operator={operator} name={title} size={36} />
       </span>
     );
@@ -29,7 +29,7 @@ export function SourceMark({
   const scheme = schemeFromText(title);
   if (scheme) return <NetworkChip scheme={scheme} size="lg" />;
   return (
-    <span className="flex h-9 w-12 shrink-0 items-center justify-center rounded-lg border border-black/5 bg-muted/60 text-foreground dark:border-white/10">
+    <span className="flex h-8 w-10 shrink-0 items-center justify-center rounded-lg border border-black/5 bg-muted/60 text-foreground dark:border-white/10">
       <CreditCard size={18} strokeWidth={1.8} aria-hidden="true" />
     </span>
   );

@@ -137,7 +137,7 @@ export default function FxRatesPage() {
         });
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Foreign Exchange Rates"
         actions={
@@ -174,9 +174,9 @@ export default function FxRatesPage() {
       {state === "populated" && (
         <>
           {/* Indicative converter */}
-          <section className="rounded-2xl border border-border bg-card p-5 sm:p-6 w-full">
+          <section className="rounded-2xl border border-border bg-card p-4 sm:p-5 w-full">
             <div className="w-full">
-              <div className="mb-4">
+              <div className="mb-3">
                 <h2 className="text-[15px] font-medium text-foreground">Currency converter</h2>
                 <p className="text-[12.5px] text-muted-foreground">
                   Indicative calculator based on today&apos;s published rates.
@@ -186,8 +186,8 @@ export default function FxRatesPage() {
               {/* Stacked Pills with Overlap Swap */}
               <div className="flex flex-col w-full">
                 {/* Top Input Card */}
-                <div className="flex items-center justify-between rounded-2xl border border-field-border bg-field px-4 py-3.5 sm:px-5 sm:py-4 shadow-xs transition-colors focus-within:border-field-border-focus focus-within:bg-field-focus">
-                  <div className="relative flex-1 min-w-0 flex items-center pr-3">
+                <div className="flex items-center justify-between rounded-2xl border border-field-border bg-field px-3 py-3 sm:px-4 sm:py-3 shadow-xs transition-colors focus-within:border-field-border-focus focus-within:bg-field-focus">
+                  <div className="relative flex-1 min-w-0 flex items-center pr-2">
                     <span
                       aria-hidden="true"
                       className={`pointer-events-none whitespace-pre text-2xl sm:text-3xl font-sans font-bold tracking-tight tabular-nums select-none leading-none numorainput ${
@@ -225,7 +225,7 @@ export default function FxRatesPage() {
                     <SelectContent align="end">
                       {CURRENCIES.filter((c) => c.code !== toCcy).map((c) => (
                         <SelectItem key={c.code} value={c.code} label={c.code}>
-                          <div className="flex items-center gap-2.5">
+                          <div className="flex items-center gap-2">
                             <CurrencyLogo currency={c.code} size={20} />
                             <span className="font-semibold tabular">{c.code}</span>
                             <span className="text-[12px] text-muted-foreground">· {c.name}</span>
@@ -245,15 +245,15 @@ export default function FxRatesPage() {
                     onClick={handleSwap}
                     aria-label="Swap currencies"
                     title="Swap currencies"
-                    className="size-10 rounded-full border border-border bg-background shadow-xs hover:bg-muted text-muted-foreground hover:text-foreground cursor-pointer transition-transform active:scale-95"
+                    className="size-9 rounded-full border border-border bg-background shadow-xs hover:bg-muted text-muted-foreground hover:text-foreground cursor-pointer transition-transform active:scale-95"
                   >
                     <ArrowUpDown size={19} strokeWidth={2.2} aria-hidden="true" />
                   </Button>
                 </div>
 
                 {/* Bottom Output Card */}
-                <div className="flex items-center justify-between rounded-2xl border border-field-border bg-field px-4 py-3.5 sm:px-5 sm:py-4 shadow-xs transition-colors">
-                  <div className="min-w-0 flex-1 truncate text-2xl sm:text-3xl font-bold tabular tracking-tight text-foreground numorainput pr-3">
+                <div className="flex items-center justify-between rounded-2xl border border-field-border bg-field px-3 py-3 sm:px-4 sm:py-3 shadow-xs transition-colors">
+                  <div className="min-w-0 flex-1 truncate text-2xl sm:text-3xl font-bold tabular tracking-tight text-foreground numorainput pr-2">
                     <TextMorph ease={{ stiffness: 400, damping: 30 }}>
                       {convertedFormatted}
                     </TextMorph>
@@ -275,7 +275,7 @@ export default function FxRatesPage() {
                     <SelectContent align="end">
                       {CURRENCIES.filter((c) => c.code !== fromCcy).map((c) => (
                         <SelectItem key={c.code} value={c.code} label={c.code}>
-                          <div className="flex items-center gap-2.5">
+                          <div className="flex items-center gap-2">
                             <CurrencyLogo currency={c.code} size={20} />
                             <span className="font-semibold tabular">{c.code}</span>
                             <span className="text-[12px] text-muted-foreground">· {c.name}</span>
@@ -287,7 +287,7 @@ export default function FxRatesPage() {
                 </div>
               </div>
 
-              <p className="mt-3.5 text-center text-[12.5px] font-medium text-muted-foreground tabular">
+              <p className="mt-3 text-center text-[12.5px] font-medium text-muted-foreground tabular">
                 1 {fromCcy} = {formatRate(conversion.rate)} {toCcy}
               </p>
             </div>
@@ -301,8 +301,8 @@ export default function FxRatesPage() {
                 const up = rate.changePct >= 0;
                 const meta = getCurrencyMeta(rate.base);
                 return (
-                  <div key={rate.pair} className="flex items-center justify-between p-3.5 gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
+                  <div key={rate.pair} className="flex items-center justify-between p-3 gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
                       <CurrencyPairLogos base={rate.base} quote={rate.quote} size={26} />
                       <div className="flex flex-col min-w-0">
                         <span className="font-medium text-[14px] text-foreground tabular">
@@ -344,11 +344,11 @@ export default function FxRatesPage() {
               <table className="w-full min-w-[560px] text-[13px]">
                 <thead>
                   <tr className="border-b border-border text-left text-muted-foreground">
-                    <th className="px-4 py-3 font-normal">Currency pair</th>
-                    <th className="px-4 py-3 text-right font-normal">Bank buys</th>
-                    <th className="px-4 py-3 text-right font-normal">Bank sells</th>
-                    <th className="px-4 py-3 text-right font-normal">Mid</th>
-                    <th className="px-4 py-3 text-right font-normal">Change</th>
+                    <th className="px-3 py-2 font-normal">Currency pair</th>
+                    <th className="px-3 py-2 text-right font-normal">Bank buys</th>
+                    <th className="px-3 py-2 text-right font-normal">Bank sells</th>
+                    <th className="px-3 py-2 text-right font-normal">Mid</th>
+                    <th className="px-3 py-2 text-right font-normal">Change</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -357,8 +357,8 @@ export default function FxRatesPage() {
                     const meta = getCurrencyMeta(rate.base);
                     return (
                       <tr key={rate.pair} className="transition-colors hover:bg-muted/50">
-                        <td className="px-4 py-3.5">
-                          <div className="flex items-center gap-3">
+                        <td className="px-3 py-3">
+                          <div className="flex items-center gap-2">
                             <CurrencyPairLogos base={rate.base} quote={rate.quote} size={28} />
                             <div className="flex flex-col">
                               <span className="font-medium text-foreground tabular">
@@ -370,16 +370,16 @@ export default function FxRatesPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-3.5 text-right text-foreground tabular font-medium">
+                        <td className="px-3 py-3 text-right text-foreground tabular font-medium">
                           {formatRate(rate.buy)}
                         </td>
-                        <td className="px-4 py-3.5 text-right text-foreground tabular font-medium">
+                        <td className="px-3 py-3 text-right text-foreground tabular font-medium">
                           {formatRate(rate.sell)}
                         </td>
-                        <td className="px-4 py-3.5 text-right text-muted-foreground tabular">
+                        <td className="px-3 py-3 text-right text-muted-foreground tabular">
                           {formatRate(rate.mid)}
                         </td>
-                        <td className="px-4 py-3.5 text-right">
+                        <td className="px-3 py-3 text-right">
                           <span
                             className={`inline-flex items-center justify-end gap-1 tabular font-medium ${
                               up ? "text-success-text" : "text-destructive"

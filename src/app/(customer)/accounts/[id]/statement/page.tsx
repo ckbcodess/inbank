@@ -44,7 +44,7 @@ export default function StatementConfigurationPage({ params }: { params: Promise
   });
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Statement"
         description={`${account.name} · ${account.number}`}
@@ -71,13 +71,13 @@ export default function StatementConfigurationPage({ params }: { params: Promise
 
       {pageState === "populated" && (
         <>
-          <section className="rounded-2xl border border-border bg-card p-5">
+          <section className="rounded-2xl border border-border bg-card p-4">
             <h2 className="text-[15px] text-foreground">Configure</h2>
             <p className="mt-1 text-[13px] text-muted-foreground">
               Choose a date range, then narrow by counterparty or amount before previewing.
             </p>
 
-            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field label="From" htmlFor="from">
                 <Input id="from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
 </Field>
@@ -112,7 +112,7 @@ export default function StatementConfigurationPage({ params }: { params: Promise
               </Field>
             </div>
 
-            <div className="mt-5 flex items-center gap-2">
+            <div className="mt-4 flex items-center gap-2">
               <Button onClick={() => setShowPreview(true)}>
                 <FileText size={15} strokeWidth={1.9} aria-hidden="true" />
                 Preview Statement
@@ -127,8 +127,8 @@ export default function StatementConfigurationPage({ params }: { params: Promise
 
           {/* Preview precedes download, per the section 2 statement flow */}
           {showPreview && (
-            <section className="flex flex-col gap-3">
-              <div className="flex flex-wrap items-center justify-between gap-3 px-1">
+            <section className="flex flex-col gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2 px-1">
                 <div>
                   <h2 className="text-[15px] font-medium text-foreground">Preview</h2>
                   <p className="mt-0.5 text-[12px] text-muted-foreground tabular">
@@ -155,8 +155,8 @@ export default function StatementConfigurationPage({ params }: { params: Promise
                 <div className="rounded-2xl border border-border bg-card overflow-hidden">
                   <ul className="divide-y divide-border">
                     {rows.map((t) => (
-                      <li key={t.id} className="flex items-center gap-4 px-5 py-3">
-                        <span className="w-24 shrink-0 text-[12.5px] text-muted-foreground tabular">
+                      <li key={t.id} className="flex items-center gap-3 px-4 py-2">
+                        <span className="w-21 shrink-0 text-[12.5px] text-muted-foreground tabular">
                           {formatDate(t.date)}
                         </span>
                         <span className="min-w-0 flex-1 truncate text-[13px] text-foreground">{t.description}</span>

@@ -88,21 +88,21 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
 
   return (
     <>
-      <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-colors">
+      <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-colors">
         {/* Top section: Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-[15px] font-medium text-foreground">Suggested for you</h2>
           <button
             type="button"
             onClick={() => setShowEditModal(true)}
-            className="rounded-lg px-2.5 py-1 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
+            className="rounded-lg px-2 py-1 text-[12.5px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
           >
             Customize
           </button>
         </div>
 
         {/* Row 1: 4 Quick Actions */}
-        <div className="my-auto py-2.5 grid grid-cols-4 gap-2">
+        <div className="my-auto py-2 grid grid-cols-4 gap-2">
           {quickActions.map((action) => {
             const Icon = action.icon;
             return (
@@ -126,7 +126,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
         </div>
 
         {/* Row 2: 4 Frequent Contacts */}
-        <div className="grid grid-cols-4 gap-2 border-t border-border/50 pt-3.5">
+        <div className="grid grid-cols-4 gap-2 border-t border-border/50 pt-3">
           {frequentBeneficiaries.map((b, idx) => (
             <button
               key={idx}
@@ -159,8 +159,8 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
 
             <form onSubmit={handleSendPayment}>
               <DialogBody>
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border/60">
-                  <div className={`flex size-9 items-center justify-center rounded-full text-[14px] font-medium shrink-0 ${activeBeneficiary.bg}`}>
+                <div className="flex items-center gap-2 p-2 rounded-xl bg-muted/40 border border-border/60">
+                  <div className={`flex size-8 items-center justify-center rounded-full text-[14px] font-medium shrink-0 ${activeBeneficiary.bg}`}>
                     {activeBeneficiary.initial}
                   </div>
                   <div>
@@ -170,7 +170,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                 </div>
 
                 <Field label="Amount (GHS)">
-                  <div className="flex items-center rounded-xl border border-field-border bg-field px-3.5 py-2 focus-within:border-field-border-focus focus-within:bg-field-focus">
+                  <div className="flex items-center rounded-xl border border-field-border bg-field px-3 py-2 focus-within:border-field-border-focus focus-within:bg-field-focus">
                     <span className="text-[14px] font-medium text-muted-foreground mr-2">GHS</span>
                     <input
                       type="number"
@@ -192,7 +192,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                       key={preset}
                       type="button"
                       onClick={() => setPayAmount(preset)}
-                      className={`flex-1 rounded-xl border py-1.5 text-[12px] transition-colors cursor-pointer ${
+                      className={`flex-1 rounded-xl border py-2 text-[12px] transition-colors cursor-pointer ${
                         payAmount === preset
                           ? "border-primary bg-primary/10 text-primary font-medium"
                           : "border-border bg-muted/40 text-foreground hover:bg-muted"
@@ -203,7 +203,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                   ))}
                 </div>
 
-                <div className="rounded-xl bg-muted/40 p-3 text-[12px] text-muted-foreground flex items-center gap-2">
+                <div className="rounded-xl bg-muted/40 p-2 text-[12px] text-muted-foreground flex items-center gap-2">
                   <ShieldCheck size={16} className="text-success-text shrink-0" />
                   <span>Zero transaction fees applied for instant wallet transfers.</span>
                 </div>
@@ -220,7 +220,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                 <Button
                   type="submit"
                   loading={isProcessing}
-                  className="gap-1.5"
+                  className="gap-2"
                 >
                   Confirm & send
                   <ArrowRight size={14} strokeWidth={1.8} />
@@ -245,9 +245,9 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
 
             <div className="flex flex-col divide-y divide-border/60">
               {quickActions.map((action, idx) => (
-                <div key={action.id} className="flex items-center justify-between py-2.5">
-                  <div className="flex items-center gap-3">
-                    <div className="flex size-8 items-center justify-center rounded-full bg-muted text-foreground">
+                <div key={action.id} className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-7 items-center justify-center rounded-full bg-muted text-foreground">
                       <action.icon size={15} />
                     </div>
                     <span className="text-[13.5px] font-medium text-foreground">{action.label}</span>
@@ -259,7 +259,7 @@ export function SuggestedForYouCard({ onQuickAction }: SuggestedForYouCardProps)
                         prev.map((a, i) => (i === idx ? { ...a, enabled: !a.enabled } : a))
                       );
                     }}
-                    className={`flex size-5 items-center justify-center rounded-md border transition-colors cursor-pointer ${
+                    className={`flex size-4 items-center justify-center rounded-lg border transition-colors cursor-pointer ${
                       action.enabled
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-border bg-muted/40 text-transparent"

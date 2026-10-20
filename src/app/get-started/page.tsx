@@ -56,17 +56,17 @@ export default function GetStartedPage() {
         width="compact"
       >
         {screen === 1 ? (
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-2">
             {/* Option 1: GCB Account Holder -> Immediate route to /activate */}
             <button
               type="button"
               data-tour="gs-existing"
               onClick={handleChooseExisting}
-              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card-item p-4 sm:p-4 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
-              <div className="flex items-center gap-3.5">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+              <div className="flex items-center gap-3">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <UserCheck size={18} strokeWidth={2.2} />
                 </div>
                 <div className="flex flex-col">
@@ -91,10 +91,10 @@ export default function GetStartedPage() {
               type="button"
               data-tour="gs-new"
               onClick={handleChooseNew}
-              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card-item p-4 sm:p-4 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
-              <div className="flex items-center gap-3.5">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+              <div className="flex items-center gap-3">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <Plus size={19} strokeWidth={2.4} />
                 </div>
                 <div className="flex flex-col">
@@ -126,17 +126,17 @@ export default function GetStartedPage() {
             </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-2">
             {/* Step 2 Option 1: Open a GCB Account -> Immediate COOS modal */}
             <button
               type="button"
               data-tour="gs-cos"
               onClick={handleChooseCoos}
-              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card-item p-4 sm:p-4 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
-              <div className="flex items-center gap-3.5">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+              <div className="flex items-center gap-3">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <Landmark size={18} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">
@@ -149,7 +149,7 @@ export default function GetStartedPage() {
                 </div>
               </div>
 
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition duration-200 group-hover:text-foreground">
+              <div className="flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground/60 transition duration-200 group-hover:text-foreground">
                 <ExternalLink size={18} strokeWidth={2} />
               </div>
             </button>
@@ -159,10 +159,10 @@ export default function GetStartedPage() {
               type="button"
               data-tour="gs-walletcard"
               onClick={handleChooseWalletCard}
-              className="group flex items-center justify-between gap-4 rounded-2xl border border-border/80 bg-card-item p-4.5 sm:p-5 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
+              className="group flex items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card-item p-4 sm:p-4 text-left transition duration-200 hover:border-primary/50 hover:bg-muted/40 hover:shadow-xs cursor-pointer"
             >
-              <div className="flex items-center gap-3.5">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+              <div className="flex items-center gap-3">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <Plus size={18} strokeWidth={2} />
                 </div>
                 <div className="flex flex-col">

@@ -52,15 +52,15 @@ export default function HoldingAdvicePage() {
   ];
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader
         title="Advice"
         badge={<Badge variant="secondary">{kindLabel(h.kind)}</Badge>}
         backTo={{ href: `${TREASURY_HOME}/holdings/${h.id}`, label: h.title }}
       />
 
-      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-8">
-        <section className="flex flex-col gap-1.5 px-1">
+      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
+        <section className="flex flex-col gap-2 px-1">
           <span className="text-[14px] text-muted-foreground">{h.title}</span>
           <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(h.cost)}</span>
           <span className="text-[14px] leading-relaxed text-muted-foreground">
@@ -72,13 +72,13 @@ export default function HoldingAdvicePage() {
 
         <FactsPanel rows={rows} />
 
-        <section className="flex flex-col gap-4">
-          <div className="flex min-h-8 items-center px-1">
+        <section className="flex flex-col gap-3">
+          <div className="flex min-h-7 items-center px-1">
             <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">What it pays</h2>
           </div>
           <ul className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2 text-[14px]">
             {coupons.map((d, i) => (
-              <li key={d} className="flex items-center justify-between gap-6 rounded-xl px-3 py-3.5">
+              <li key={d} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3">
                 <span className="flex items-center gap-2 text-foreground">
                   <span className="tabular">{formatDate(d)}</span>
                   {i === 0 && <span className="text-[12px] text-muted-foreground">Next</span>}
@@ -86,7 +86,7 @@ export default function HoldingAdvicePage() {
                 <span className="tabular text-foreground">{money(coupon)}</span>
               </li>
             ))}
-            <li className="flex items-center justify-between gap-6 rounded-xl px-3 py-3.5">
+            <li className="flex items-center justify-between gap-5 rounded-xl px-2 py-3">
               <span className="tabular text-foreground">{formatDate(h.maturity)}</span>
               <span className="tabular text-foreground">{money(h.kind === "bond" ? sumMoney([h.face, coupon]) : h.face)}</span>
             </li>

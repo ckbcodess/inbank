@@ -203,18 +203,18 @@ export const SPRING = {
 `;
 
   return (
-    <div className="min-h-screen bg-[#090b10] text-slate-100 p-4 md:p-8 font-sans selection:bg-amber-500/30 selection:text-amber-200">
+    <div className="min-h-screen bg-[#090b10] text-slate-100 p-3 md:p-6 font-sans selection:bg-amber-500/30 selection:text-amber-200">
       {/* Top Header */}
-      <header className="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+      <header className="max-w-7xl mx-auto mb-6 flex flex-col md:flex-row md:items-center justify-between gap-3 pb-5 border-b border-slate-800">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <span className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
-              <Sparkles className="w-6 h-6" />
+              <Sparkles className="w-5 h-5" />
             </span>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-3">
+              <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
                 NIBS Motion Lab & Tokenizer
-                <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                   Live Runtime Sync
                 </span>
               </h1>
@@ -228,50 +228,50 @@ export const SPRING = {
         <div className="flex items-center gap-2">
           <button
             onClick={resetDefaults}
-            className="flex items-center gap-2 px-3 py-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
+            className="flex items-center gap-2 px-2 py-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <RotateCcw className="w-3 h-3" />
             Reset Defaults
           </button>
           <button
             onClick={triggerReplay}
-            className="flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 transition active:scale-95"
+            className="flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 transition active:scale-95"
           >
-            <Play className="w-3.5 h-3.5 fill-current" />
+            <Play className="w-3 h-3 fill-current" />
             Play All Previews
           </button>
         </div>
       </header>
 
       {/* Main Grid: Left Control Panel, Right Live Inspection View */}
-      <main className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* ========================================================= */}
         {/* LEFT COLUMN: Easing Curve Editor & All Timing Controls    */}
         {/* ========================================================= */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-5 space-y-5">
           
           {/* Curve Editor Card */}
-          <section className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl backdrop-blur">
-            <div className="flex items-center justify-between mb-4">
+          <section className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl backdrop-blur">
+            <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Sliders className="w-4 h-4 text-amber-400" />
+                <Sliders className="w-3.5 h-3.5 text-amber-400" />
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
                   Curve & Easing Presets
                 </h2>
               </div>
-              <span className="text-xs font-mono text-amber-400/90 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+              <span className="text-xs font-mono text-amber-400/90 bg-amber-500/10 px-2 py-0.5 rounded-sm border border-amber-500/20">
                 {currentEaseCss}
               </span>
             </div>
 
             {/* Ease Token Picker */}
-            <div className="grid grid-cols-5 gap-1.5 p-1 bg-slate-950 rounded-xl mb-5 border border-slate-800/80">
+            <div className="grid grid-cols-5 gap-2 p-1 bg-slate-950 rounded-xl mb-4 border border-slate-800/80">
               {(Object.keys(eases) as (keyof EasesConfig)[]).map((key) => (
                 <button
                   key={key}
                   onClick={() => setSelectedEaseKey(key)}
-                  className={`py-1.5 px-2 rounded-lg text-xs font-medium capitalize transition-all ${
+                  className={`py-2 px-2 rounded-lg text-xs font-medium capitalize transition-all ${
                     selectedEaseKey === key
                       ? "bg-amber-500 text-slate-950 font-bold shadow-sm"
                       : "text-slate-400 hover:text-white hover:bg-slate-800/50"
@@ -283,25 +283,25 @@ export const SPRING = {
             </div>
 
             {/* Bezier Canvas Graph */}
-            <div className="relative mb-5 bg-[#05070a] rounded-xl border border-slate-800/80 p-4">
+            <div className="relative mb-4 bg-[#05070a] rounded-xl border border-slate-800/80 p-3">
               <BezierCurveCanvas
                 points={currentEase}
                 onChange={(newPoints) => {
                   setEases((prev) => ({ ...prev, [selectedEaseKey]: newPoints }));
                 }}
               />
-              <div className="mt-2 text-[11px] text-slate-400 text-center flex items-center justify-center gap-3">
+              <div className="mt-2 text-[11px] text-slate-400 text-center flex items-center justify-center gap-2">
                 <span className="flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 inline-block"></span> Handle 1 (p1x, p1y)
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 inline-block"></span> Handle 1 (p1x, p1y)
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span> Handle 2 (p2x, p2y)
+                  <span className="w-2 h-2 rounded-full bg-amber-400 inline-block"></span> Handle 2 (p2x, p2y)
                 </span>
               </div>
             </div>
 
             {/* 4 Coordinate Sliders */}
-            <div className="grid grid-cols-2 gap-4 bg-slate-950/60 p-3.5 rounded-xl border border-slate-800/60">
+            <div className="grid grid-cols-2 gap-3 bg-slate-950/60 p-3 rounded-xl border border-slate-800/60">
               <div>
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-cyan-400 font-mono">P1.X</span>
@@ -369,10 +369,10 @@ export const SPRING = {
           </section>
 
           {/* All Animation Durations Card */}
-          <section className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl backdrop-blur">
-            <div className="flex items-center justify-between mb-4">
+          <section className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl backdrop-blur">
+            <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-emerald-400" />
+                <Zap className="w-3.5 h-3.5 text-emerald-400" />
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
                   Every Animation Timing (Durations)
                 </h2>
@@ -380,7 +380,7 @@ export const SPRING = {
               <span className="text-xs text-slate-400">Total: 7 tokens</span>
             </div>
 
-            <div className="space-y-3.5">
+            <div className="space-y-3">
               {(Object.keys(durations) as (keyof DurationsConfig)[]).map((key) => {
                 const val = durations[key];
                 const isActive = activeDurationKey === key;
@@ -388,13 +388,13 @@ export const SPRING = {
                   <div
                     key={key}
                     onClick={() => setActiveDurationKey(key)}
-                    className={`p-3 rounded-xl border transition-all cursor-pointer ${
+                    className={`p-2 rounded-xl border transition-all cursor-pointer ${
                       isActive
                         ? "bg-slate-800/80 border-amber-500/50 shadow-md ring-1 ring-amber-500/30"
                         : "bg-slate-950/60 border-slate-800/80 hover:border-slate-700"
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-semibold capitalize text-slate-200">
                           {key}
@@ -430,10 +430,10 @@ export const SPRING = {
           </section>
 
           {/* Spring Physics Parameters (Optional tuning) */}
-          <section className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl backdrop-blur">
-            <div className="flex items-center justify-between mb-3">
+          <section className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl backdrop-blur">
+            <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-cyan-400" />
+                <Layers className="w-3.5 h-3.5 text-cyan-400" />
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
                   Framer Spring Physics
                 </h2>
@@ -441,7 +441,7 @@ export const SPRING = {
               <span className="text-xs text-slate-400">Physics Tokens</span>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2">
               <div>
                 <span className="text-[11px] text-slate-400 block mb-1">Stiffness</span>
                 <input
@@ -453,7 +453,7 @@ export const SPRING = {
                       settle: { ...s.settle, stiffness: Number(e.target.value) },
                     }))
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-cyan-300"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-sm px-2 py-1 text-xs font-mono text-cyan-300"
                 />
               </div>
               <div>
@@ -467,7 +467,7 @@ export const SPRING = {
                       settle: { ...s.settle, damping: Number(e.target.value) },
                     }))
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-cyan-300"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-sm px-2 py-1 text-xs font-mono text-cyan-300"
                 />
               </div>
               <div>
@@ -482,7 +482,7 @@ export const SPRING = {
                       settle: { ...s.settle, mass: Number(e.target.value) },
                     }))
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-xs font-mono text-cyan-300"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-sm px-2 py-1 text-xs font-mono text-cyan-300"
                 />
               </div>
             </div>
@@ -492,11 +492,11 @@ export const SPRING = {
         {/* ========================================================= */}
         {/* RIGHT COLUMN: Interactive Playgrounds & Visual Verifiers */}
         {/* ========================================================= */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="lg:col-span-7 space-y-5">
           
           {/* Active Preview Hero Banner */}
-          <section className="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-800/80">
+          <section className="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-5 shadow-2xl relative overflow-hidden">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-5 pb-3 border-b border-slate-800/80">
               <div>
                 <div className="text-xs uppercase tracking-wider text-slate-400 mb-0.5">
                   Live Timing & Curve Tester
@@ -510,25 +510,25 @@ export const SPRING = {
 
               <button
                 onClick={triggerReplay}
-                className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 transition active:scale-95 border border-slate-700"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 transition active:scale-95 border border-slate-700"
               >
-                <RefreshCw className="w-3.5 h-3.5" />
+                <RefreshCw className="w-3 h-3" />
                 Re-trigger
               </button>
             </div>
 
             {/* Visual Runway Runners */}
-            <div className="space-y-4 mb-6">
+            <div className="space-y-3 mb-5">
               {/* Linear comparison runner */}
               <div>
                 <div className="flex justify-between text-xs text-slate-400 mb-1">
                   <span>Linear (Standard robotic benchmark)</span>
                   <span className="font-mono text-[10px]">linear</span>
                 </div>
-                <div className="h-10 bg-slate-950/80 rounded-xl border border-slate-800 relative overflow-hidden flex items-center px-1">
+                <div className="h-9 bg-slate-950/80 rounded-xl border border-slate-800 relative overflow-hidden flex items-center px-1">
                   <div
                     key={`linear-${liveTestKey}`}
-                    className="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center text-xs font-bold shadow"
+                    className="w-7 h-7 rounded-lg bg-slate-700 flex items-center justify-center text-xs font-bold shadow"
                     style={{
                       animation: `runway ${activeDurationSec}s linear infinite alternate`,
                     }}
@@ -544,10 +544,10 @@ export const SPRING = {
                   <span>Your Tuned Easing ({selectedEaseKey})</span>
                   <span className="font-mono text-[10px] text-amber-400">{currentEaseCss}</span>
                 </div>
-                <div className="h-12 bg-slate-950 rounded-xl border border-amber-500/30 relative overflow-hidden flex items-center px-1 shadow-inner">
+                <div className="h-10 bg-slate-950 rounded-xl border border-amber-500/30 relative overflow-hidden flex items-center px-1 shadow-inner">
                   <div
                     key={`tuned-${liveTestKey}`}
-                    className="w-10 h-10 rounded-lg bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 flex items-center justify-center font-bold text-sm shadow-lg shadow-amber-500/30"
+                    className="w-9 h-9 rounded-lg bg-gradient-to-tr from-amber-500 to-amber-300 text-slate-950 flex items-center justify-center font-bold text-sm shadow-lg shadow-amber-500/30"
                     style={{
                       animation: `runway ${activeDurationSec}s ${currentEaseCss} infinite alternate`,
                     }}
@@ -559,40 +559,40 @@ export const SPRING = {
             </div>
 
             {/* Quick Micro Simulation Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2">
               {/* Card 1: Scale In */}
-              <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 text-center flex flex-col items-center justify-center h-28">
+              <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-800/80 text-center flex flex-col items-center justify-center h-24">
                 <span className="text-[11px] text-slate-400 mb-2">Scale & Settle</span>
                 <div
                   key={`scale-${liveTestKey}`}
-                  className="w-10 h-10 rounded-xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 font-bold"
+                  className="w-9 h-9 rounded-xl bg-cyan-500/20 border border-cyan-400 flex items-center justify-center text-cyan-300 font-bold"
                   style={{
                     animation: `pulse-scale ${activeDurationSec}s ${currentEaseCss} infinite alternate`,
                   }}
                 >
-                  <Eye className="w-4 h-4" />
+                  <Eye className="w-3.5 h-3.5" />
                 </div>
               </div>
 
               {/* Card 2: Fade Slide */}
-              <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 text-center flex flex-col items-center justify-center h-28">
+              <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-800/80 text-center flex flex-col items-center justify-center h-24">
                 <span className="text-[11px] text-slate-400 mb-2">Fade & Translate</span>
                 <div
                   key={`slide-${liveTestKey}`}
-                  className="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-400 flex items-center justify-center text-purple-300 font-bold"
+                  className="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-400 flex items-center justify-center text-purple-300 font-bold"
                   style={{
                     animation: `slide-fade ${activeDurationSec}s ${currentEaseCss} infinite alternate`,
                   }}
                 >
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </div>
               </div>
 
               {/* Card 3: Button Press Effect */}
-              <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 text-center flex flex-col items-center justify-center h-28">
+              <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-800/80 text-center flex flex-col items-center justify-center h-24">
                 <span className="text-[11px] text-slate-400 mb-2">Tactile Press</span>
                 <button
-                  className="px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs shadow hover:bg-amber-400 active:scale-90 transition-transform"
+                  className="px-2 py-2 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs shadow hover:bg-amber-400 active:scale-90 transition-transform"
                   style={{
                     transitionDuration: `${durations.press}s`,
                     transitionTimingFunction: currentEaseCss,
@@ -603,10 +603,10 @@ export const SPRING = {
               </div>
 
               {/* Card 4: Hover Elevation */}
-              <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 text-center flex flex-col items-center justify-center h-28">
+              <div className="bg-slate-950/60 p-2 rounded-xl border border-slate-800/80 text-center flex flex-col items-center justify-center h-24">
                 <span className="text-[11px] text-slate-400 mb-2">Card Hover</span>
                 <div
-                  className="w-16 h-8 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-300 hover:-translate-y-1 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/10 cursor-pointer"
+                  className="w-14 h-7 rounded-sm bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] text-slate-300 hover:-translate-y-1 hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/10 cursor-pointer"
                   style={{
                     transitionDuration: `${durations.hover}s`,
                     transitionTimingFunction: currentEaseCss,
@@ -619,10 +619,10 @@ export const SPRING = {
           </section>
 
           {/* Real-World NIBS Banking Component Simulators */}
-          <section className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl backdrop-blur">
-            <div className="flex items-center justify-between mb-4">
+          <section className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl backdrop-blur">
+            <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-amber-400" />
+                <Layers className="w-3.5 h-3.5 text-amber-400" />
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
                   Real Banking Component Playground
                 </h2>
@@ -630,15 +630,15 @@ export const SPRING = {
               <span className="text-xs text-slate-400">Click to preview in action</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {/* Simulation 1: Modal Dialog */}
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+              <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-semibold text-slate-200">Confirmation Modal</span>
                     <span className="text-[10px] text-slate-400">Uses dur.modal ({Math.round(durations.modal * 1000)}ms)</span>
                   </div>
-                  <p className="text-xs text-slate-400 mb-4">
+                  <p className="text-xs text-slate-400 mb-3">
                     Tests backdrop fade + modal zoom settling curve.
                   </p>
                 </div>
@@ -651,13 +651,13 @@ export const SPRING = {
               </div>
 
               {/* Simulation 2: Toast Notification */}
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+              <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-semibold text-slate-200">Payment Toast Alert</span>
                     <span className="text-[10px] text-slate-400">Uses dur.toast ({Math.round(durations.toast * 1000)}ms)</span>
                   </div>
-                  <p className="text-xs text-slate-400 mb-4">
+                  <p className="text-xs text-slate-400 mb-3">
                     Tests bottom slide-up bounce and settlement.
                   </p>
                 </div>
@@ -670,13 +670,13 @@ export const SPRING = {
               </div>
 
               {/* Simulation 3: Side Drawer / Sheet */}
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+              <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-semibold text-slate-200">Slide Sheet / Drawer</span>
                     <span className="text-[10px] text-slate-400">Uses dur.move ({Math.round(durations.move * 1000)}ms)</span>
                   </div>
-                  <p className="text-xs text-slate-400 mb-4">
+                  <p className="text-xs text-slate-400 mb-3">
                     Tests large sheet translation with smooth soft landing.
                   </p>
                 </div>
@@ -689,13 +689,13 @@ export const SPRING = {
               </div>
 
               {/* Simulation 4: Expanding Accordion / Reveal */}
-              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+              <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-semibold text-slate-200">Account Details Accordion</span>
                     <span className="text-[10px] text-slate-400">Uses dur.reveal ({Math.round(durations.reveal * 1000)}ms)</span>
                   </div>
-                  <p className="text-xs text-slate-400 mb-4">
+                  <p className="text-xs text-slate-400 mb-3">
                     Tests height expansion without jitter or sudden stops.
                   </p>
                 </div>
@@ -711,7 +711,7 @@ export const SPRING = {
             {/* Accordion Expand Area */}
             {accordionOpen && (
               <div
-                className="mt-4 p-4 rounded-xl bg-slate-950 border border-amber-500/30 overflow-hidden"
+                className="mt-3 p-3 rounded-xl bg-slate-950 border border-amber-500/30 overflow-hidden"
                 style={{
                   animation: `accordion-down ${durations.reveal}s ${currentEaseCss}`,
                 }}
@@ -728,10 +728,10 @@ export const SPRING = {
           </section>
 
           {/* Export & Tokenize Section */}
-          <section className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-xl backdrop-blur">
-            <div className="flex items-center justify-between mb-4">
+          <section className="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl backdrop-blur">
+            <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <Code className="w-4 h-4 text-amber-400" />
+                <Code className="w-3.5 h-3.5 text-amber-400" />
                 <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
                   Export & Tokenize Across App
                 </h2>
@@ -739,55 +739,55 @@ export const SPRING = {
               <span className="text-xs text-slate-400">Click Copy to sync directly</span>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Token Block 1: TypeScript (motion.ts) */}
               <div>
-                <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-mono text-slate-300">src/lib/motion.ts</span>
                   <button
                     onClick={() => copyToClipboard(motionTsExport, "motion-ts")}
-                    className="flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 font-medium"
+                    className="flex items-center gap-2 text-xs text-amber-400 hover:text-amber-300 font-medium"
                   >
                     {copiedSection === "motion-ts" ? (
                       <>
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <Check className="w-3 h-3 text-emerald-400" />
                         <span className="text-emerald-400">Copied!</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="w-3.5 h-3.5" />
+                        <Copy className="w-3 h-3" />
                         <span>Copy TypeScript Tokens</span>
                       </>
                     )}
                   </button>
                 </div>
-                <pre className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-[11px] font-mono text-slate-300 overflow-x-auto max-h-48 scrollbar-thin">
+                <pre className="p-2 bg-slate-950 rounded-xl border border-slate-800 text-[11px] font-mono text-slate-300 overflow-x-auto max-h-42 scrollbar-thin">
                   {motionTsExport}
                 </pre>
               </div>
 
               {/* Token Block 2: CSS Theme (globals.css) */}
               <div>
-                <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-mono text-slate-300">src/app/globals.css</span>
                   <button
                     onClick={() => copyToClipboard(globalsCssTokens, "globals-css")}
-                    className="flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 font-medium"
+                    className="flex items-center gap-2 text-xs text-amber-400 hover:text-amber-300 font-medium"
                   >
                     {copiedSection === "globals-css" ? (
                       <>
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <Check className="w-3 h-3 text-emerald-400" />
                         <span className="text-emerald-400">Copied!</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="w-3.5 h-3.5" />
+                        <Copy className="w-3 h-3" />
                         <span>Copy CSS Tokens</span>
                       </>
                     )}
                   </button>
                 </div>
-                <pre className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-[11px] font-mono text-slate-300 overflow-x-auto max-h-36 scrollbar-thin">
+                <pre className="p-2 bg-slate-950 rounded-xl border border-slate-800 text-[11px] font-mono text-slate-300 overflow-x-auto max-h-31 scrollbar-thin">
                   {globalsCssTokens}
                 </pre>
               </div>
@@ -799,36 +799,36 @@ export const SPRING = {
       {/* Floating Modal Preview Simulator */}
       {isModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/70 backdrop-blur-sm"
           style={{
             animation: `backdrop-fade ${durations.modal}s ${currentEaseCss}`,
           }}
           onClick={() => setIsModalOpen(false)}
         >
           <div
-            className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl relative"
+            className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl relative"
             style={{
               animation: `modal-pop ${durations.modal}s ${currentEaseCss}`,
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-4">
-              <Zap className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-3">
+              <Zap className="w-5 h-5" />
             </div>
             <h3 className="text-lg font-bold text-white mb-2">Authorize Transfer of GHS 1,500?</h3>
-            <p className="text-sm text-slate-400 mb-6">
+            <p className="text-sm text-slate-400 mb-5">
               This modal tested the configured <code className="text-amber-300">modal ({Math.round(durations.modal * 1000)}ms)</code> duration and <code className="text-amber-300">{selectedEaseKey}</code> easing curve.
             </p>
-            <div className="flex justify-end gap-3">
+            <div className="flex justify-end gap-2">
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm font-medium text-slate-300"
+                className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm font-medium text-slate-300"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-sm font-semibold text-slate-950"
+                className="px-3 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-sm font-semibold text-slate-950"
               >
                 Confirm & Pay
               </button>
@@ -840,13 +840,13 @@ export const SPRING = {
       {/* Floating Toast Notification Preview Simulator */}
       {isToastOpen && (
         <div
-          className="fixed bottom-6 right-6 z-50 max-w-sm w-full bg-slate-900 border border-emerald-500/30 p-4 rounded-xl shadow-2xl flex items-center justify-between"
+          className="fixed bottom-5 right-5 z-50 max-w-sm w-full bg-slate-900 border border-emerald-500/30 p-3 rounded-xl shadow-2xl flex items-center justify-between"
           style={{
             animation: `toast-slide ${durations.toast}s ${currentEaseCss}`,
           }}
         >
-          <div className="flex items-center gap-3">
-            <span className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
+          <div className="flex items-center gap-2">
+            <span className="w-7 h-7 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">
               ✓
             </span>
             <div>
@@ -870,14 +870,14 @@ export const SPRING = {
           onClick={() => setIsDrawerOpen(false)}
         >
           <div
-            className="w-full max-w-sm h-full bg-slate-900 border-l border-slate-800 p-6 flex flex-col justify-between shadow-2xl"
+            className="w-full max-w-sm h-full bg-slate-900 border-l border-slate-800 p-5 flex flex-col justify-between shadow-2xl"
             style={{
               animation: `drawer-slide ${durations.move}s ${currentEaseCss}`,
             }}
             onClick={(e) => e.stopPropagation()}
           >
             <div>
-              <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-800">
+              <div className="flex items-center justify-between mb-5 pb-2 border-b border-slate-800">
                 <h3 className="text-base font-bold text-white">Quick Beneficiaries</h3>
                 <button
                   onClick={() => setIsDrawerOpen(false)}
@@ -886,12 +886,12 @@ export const SPRING = {
                   ✕
                 </button>
               </div>
-              <p className="text-xs text-slate-400 mb-4">
+              <p className="text-xs text-slate-400 mb-3">
                 Animated using <code className="text-amber-300">move ({Math.round(durations.move * 1000)}ms)</code>. Notice how smoothly it decelerates as it parks into view.
               </p>
               <div className="space-y-2">
                 {["Kofi Boateng", "Ama Serwaa", "MTN Momo Wallet", "Vodafone Cash"].map((name) => (
-                  <div key={name} className="p-3 bg-slate-950 rounded-lg border border-slate-800/80 text-xs font-medium text-slate-200">
+                  <div key={name} className="p-2 bg-slate-950 rounded-lg border border-slate-800/80 text-xs font-medium text-slate-200">
                     {name}
                   </div>
                 ))}
@@ -899,7 +899,7 @@ export const SPRING = {
             </div>
             <button
               onClick={() => setIsDrawerOpen(false)}
-              className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-xs font-semibold rounded-lg text-slate-300"
+              className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs font-semibold rounded-lg text-slate-300"
             >
               Close Drawer
             </button>

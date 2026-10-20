@@ -40,8 +40,8 @@ export function HeroSplitLayout(props: DashViewProps) {
   const hasOtherAccounts = data.accounts.length > 1;
 
   return (
-    <div className="flex flex-col gap-6 sm:gap-12">
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+    <div className="flex flex-col gap-5 sm:gap-10">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
         <Greeting firstName={data.firstName} />
         <LastLogin />
       </div>
@@ -50,9 +50,10 @@ export function HeroSplitLayout(props: DashViewProps) {
         hero={
           // Two rows. Top: the account (pill and options) on the left, My QR on the right. Bottom: the balance on the
           // left and the four actions on the right, on one line (the balance and the buttons share a centre line).
-          // The foot has the 32px the sheet covers added to it.
-          <HeroSurface className="flex flex-col justify-between gap-12 rounded-t-3xl px-4 pb-[56px] pt-6 sm:gap-20 sm:px-10 sm:pb-[72px] sm:pt-8">
-            <div className="relative z-10 flex items-center justify-between gap-3">
+          // The foot has the space the sheet covers added to it. The hero is the one deliberate exception to the
+          // spacing scale (pt-7, gap-18, px-9, still 4px multiples): it keeps the designer's original proportions.
+          <HeroSurface className="flex flex-col justify-between gap-10 rounded-t-3xl px-3 pb-[56px] pt-5 sm:gap-18 sm:px-9 sm:pb-[72px] sm:pt-7">
+            <div className="relative z-10 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <AccountSwitcher data={data} onSelect={onSelectAccount} tone="hero" />
                 <HeroAccountOptionsMenu data={data} />
@@ -60,13 +61,13 @@ export function HeroSplitLayout(props: DashViewProps) {
               <HeroQrAction />
             </div>
 
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
               <HeroBalance data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
               <MoneyActions
                 accountId={data.selectedAccountId}
                 hasOtherAccounts={hasOtherAccounts}
                 tone="hero"
-                className="relative w-full max-sm:gap-1.5 sm:w-auto sm:gap-3 lg:justify-end"
+                className="relative w-full max-sm:gap-2 sm:w-auto sm:gap-2 lg:justify-end"
                 extra={(buttonClassName) => <HeroFxRatesButton className={buttonClassName} />}
               />
             </div>
@@ -75,7 +76,7 @@ export function HeroSplitLayout(props: DashViewProps) {
       >
         <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
 
-        <AccountScoped accountId={data.selectedAccountId} className="dash-grid items-stretch gap-3 sm:gap-5">
+        <AccountScoped accountId={data.selectedAccountId} className="dash-grid items-stretch gap-2 sm:gap-4">
           <ActivityCard
             data={data}
             loading={loading}

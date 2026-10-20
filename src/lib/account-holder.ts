@@ -1,4 +1,5 @@
 import type { Account } from "@/lib/mock-data";
+import { isBusinessProfile } from "@/lib/profile";
 import type { Actor, Profile } from "@/lib/roles";
 
 /**
@@ -13,6 +14,6 @@ export function accountHolderName(
   actor: Actor | null | undefined,
 ): string {
   if (account.isJoint && account.jointHolders?.length) return account.jointHolders.join(" & ");
-  if (profile?.kind === "CORPORATE") return profile.name;
+  if (isBusinessProfile(profile)) return profile!.name;
   return actor?.name || profile?.name || "Account holder";
 }

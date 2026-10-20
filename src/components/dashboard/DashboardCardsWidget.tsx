@@ -94,7 +94,7 @@ export function DashboardCardsWidget() {
 
   return (
     <>
-      <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-colors">
+      <div className="flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-colors">
         {/* Top Header */}
         <div className="flex items-center justify-between">
           <h2 className="text-[15px] font-medium text-foreground">Cards</h2>
@@ -112,12 +112,12 @@ export function DashboardCardsWidget() {
           {cards.map((card) => (
             <div
               key={card.id}
-              className="flex items-center justify-between py-2.5 px-2.5 -mx-2.5 rounded-xl transition-colors hover:bg-item-hover first:pt-1.5 last:pb-1.5"
+              className="flex items-center justify-between py-2 px-2 -mx-2 rounded-xl transition-colors hover:bg-item-hover first:pt-2 last:pb-2"
             >
               {/* Left: Mini Card Graphic & Info */}
               <div
                 data-ripple="true"
-                className="relative overflow-hidden flex items-center gap-3.5 cursor-pointer group rounded-lg p-1.5 -m-1.5 transition-colors"
+                className="relative overflow-hidden flex items-center gap-3 cursor-pointer group rounded-lg p-2 -m-2 transition-colors"
                 onClick={() => setManagingCard(card)}
               >
                 {/* Mini Card Graphic */}
@@ -126,10 +126,10 @@ export function DashboardCardsWidget() {
                   style={{ background: card.gradient }}
                 >
                   {/* Chip */}
-                  <div className="h-2 w-2.5 rounded-xs bg-primary/90" />
+                  <div className="h-1.5 w-2 rounded-sm bg-primary/90" />
                   {/* Network logo */}
                   <div className="flex justify-end">
-                    <NetworkLogo scheme={card.network === "VISA" ? "Visa" : "Mastercard"} className="h-2 text-white" />
+                    <NetworkLogo scheme={card.network === "VISA" ? "Visa" : "Mastercard"} className="h-1.5 text-white" />
                   </div>
                 </div>
 
@@ -152,7 +152,7 @@ export function DashboardCardsWidget() {
                 <button
                   type="button"
                   onClick={() => toggleFreeze(card.id)}
-                  className={`flex h-7.5 items-center gap-1.5 rounded-lg border px-2.5 text-[12px] font-medium transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
+                  className={`flex h-7 items-center gap-2 rounded-lg border px-2 text-[12px] font-medium transition-colors active:scale-[0.96] transition-transform cursor-pointer ${
                     card.frozen
                       ? "border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/20"
                       : "border-border bg-muted/60 text-foreground hover:bg-muted"
@@ -165,7 +165,7 @@ export function DashboardCardsWidget() {
                 <button
                   type="button"
                   onClick={() => setManagingCard(card)}
-                  className="flex h-7.5 items-center rounded-lg border border-border bg-muted/60 px-2.5 text-[12px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
+                  className="flex h-7 items-center rounded-lg border border-border bg-muted/60 px-2 text-[12px] font-medium text-foreground transition-colors hover:bg-muted active:scale-[0.96] transition-transform cursor-pointer"
                 >
                   Manage
                 </button>
@@ -184,12 +184,12 @@ export function DashboardCardsWidget() {
             </DialogHeader>
 
             <DialogBody>
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/40 border border-border/60">
+              <div className="flex items-center gap-2 p-2 rounded-xl bg-muted/40 border border-border/60">
                 <div
-                  className="relative flex h-[34px] w-[52px] shrink-0 flex-col justify-between overflow-hidden rounded-md p-1 shadow-xs"
+                  className="relative flex h-[34px] w-[52px] shrink-0 flex-col justify-between overflow-hidden rounded-lg p-1 shadow-xs"
                   style={{ background: managingCard.gradient }}
                 >
-                  <div className="h-2 w-2.5 rounded-xs bg-primary/90" />
+                  <div className="h-1.5 w-2 rounded-sm bg-primary/90" />
                   <div className="text-[8px] font-medium text-white text-right">{managingCard.network}</div>
                 </div>
                 <div>
@@ -201,9 +201,9 @@ export function DashboardCardsWidget() {
               {/* Controls */}
               <div className="flex flex-col divide-y divide-border/60">
                 {/* Freeze Toggle */}
-                <div className="flex items-center justify-between py-3">
-                  <div className="flex items-center gap-3">
-                    <div className="flex size-8 items-center justify-center rounded-full bg-muted text-foreground">
+                <div className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-7 items-center justify-center rounded-full bg-muted text-foreground">
                       <Lock size={16} />
                     </div>
                     <div>
@@ -214,22 +214,22 @@ export function DashboardCardsWidget() {
                   <button
                     type="button"
                     onClick={() => toggleFreeze(managingCard.id)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
+                    className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors cursor-pointer ${
                       managingCard.frozen ? "bg-destructive" : "bg-muted"
                     }`}
                   >
                     <span
-                      className={`inline-block size-4 transform rounded-full bg-white transition-transform ${
-                        managingCard.frozen ? "translate-x-6" : "translate-x-1"
+                      className={`inline-block size-3.5 transform rounded-full bg-white transition-transform ${
+                        managingCard.frozen ? "translate-x-5" : "translate-x-1"
                       }`}
                     />
                   </button>
                 </div>
 
                 {/* Online Purchases */}
-                <div className="flex items-center justify-between py-3">
-                  <div className="flex items-center gap-3">
-                    <div className="flex size-8 items-center justify-center rounded-full bg-muted text-foreground">
+                <div className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-7 items-center justify-center rounded-full bg-muted text-foreground">
                       <Globe size={16} />
                     </div>
                     <div>
@@ -240,22 +240,22 @@ export function DashboardCardsWidget() {
                   <button
                     type="button"
                     onClick={() => handleToggleCardSetting("onlineEnabled")}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
+                    className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors cursor-pointer ${
                       managingCard.onlineEnabled ? "bg-primary" : "bg-muted"
                     }`}
                   >
                     <span
-                      className={`inline-block size-4 transform rounded-full bg-white transition-transform ${
-                        managingCard.onlineEnabled ? "translate-x-6" : "translate-x-1"
+                      className={`inline-block size-3.5 transform rounded-full bg-white transition-transform ${
+                        managingCard.onlineEnabled ? "translate-x-5" : "translate-x-1"
                       }`}
                     />
                   </button>
                 </div>
 
                 {/* Contactless Payments */}
-                <div className="flex items-center justify-between py-3">
-                  <div className="flex items-center gap-3">
-                    <div className="flex size-8 items-center justify-center rounded-full bg-muted text-foreground">
+                <div className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-2">
+                    <div className="flex size-7 items-center justify-center rounded-full bg-muted text-foreground">
                       <Smartphone size={16} />
                     </div>
                     <div>
@@ -266,13 +266,13 @@ export function DashboardCardsWidget() {
                   <button
                     type="button"
                     onClick={() => handleToggleCardSetting("contactlessEnabled")}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer ${
+                    className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors cursor-pointer ${
                       managingCard.contactlessEnabled ? "bg-primary" : "bg-muted"
                     }`}
                   >
                     <span
-                      className={`inline-block size-4 transform rounded-full bg-white transition-transform ${
-                        managingCard.contactlessEnabled ? "translate-x-6" : "translate-x-1"
+                      className={`inline-block size-3.5 transform rounded-full bg-white transition-transform ${
+                        managingCard.contactlessEnabled ? "translate-x-5" : "translate-x-1"
                       }`}
                     />
                   </button>

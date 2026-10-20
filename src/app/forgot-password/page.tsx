@@ -24,8 +24,8 @@
  * Sits outside both shells — it is reached from Login, before authentication.
  */
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CheckCircle2, Landmark, ScanFace } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PhoneInput } from "@/components/ui/phone-input";
@@ -39,6 +39,8 @@ import { maskMobile } from "@/lib/auth-shared";
 
 import { Field } from "@/components/ui/field";
 type Stage = "mobile" | "selfie" | "no_match" | "branch" | "otp" | "password" | "done";
+
+const STAGES: readonly Stage[] = ["mobile", "selfie", "no_match", "branch", "otp", "password", "done"];
 
 const STEP_NUMBER: Partial<Record<Stage, number>> = {
   mobile: 1,
@@ -57,13 +59,16 @@ function selfieMatches(mobile: string): boolean {
   return !mobile.endsWith("0000");
 }
 
-export default function ForgotPasswordPage() {
+function ForgotPasswordFlow() {
   const router = useRouter();
-  const [stage, setStage] = useState<Stage>("mobile");
+  // `?stage=` opens the flow on that stage (the Demo hub deep-links with it).
+  const stageParam = useSearchParams().get("stage");
+  const startStage = STAGES.find((s) => s === stageParam);
+  const [stage, setStage] = useState<Stage>(startStage ?? "mobile");
   const [busy, setBusy] = useState(false);
 
   const [country, setCountry] = useState("GH");
-  const [mobile, setMobile] = useState("");
+  const [mobile, setMobile] = useState(startStage ? "0244123821" : "");
   const [selfieImage, setSelfieImage] = useState<string | null>(null);
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [otpDigits, setOtpDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
@@ -193,7 +198,7 @@ export default function ForgotPasswordPage() {
             e.preventDefault();
             if (mobileValid && !busy) advance("selfie");
           }}
-          className="flex flex-col gap-5"
+          className="flex flex-col gap-4"
         >
           <Field label="Mobile Number" htmlFor="mobile">
             <PhoneInput
@@ -215,7 +220,7 @@ export default function ForgotPasswordPage() {
             variant="default"
             size="lg"
             disabled={!mobileValid} loading={busy}
-            className="mt-2 h-11 w-full text-[14px]"
+            className="mt-2 h-10 w-full text-[14px]"
           >
             Proceed
           </Button>
@@ -238,7 +243,7 @@ export default function ForgotPasswordPage() {
             e.preventDefault();
             handleOtpSubmit();
           }}
-          className="flex flex-col gap-6"
+          className="flex flex-col gap-5"
         >
           <div data-tour="reset-otp">
             <OtpInput
@@ -255,7 +260,7 @@ export default function ForgotPasswordPage() {
           </div>
 
           {errorMsg && (
-            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
               {errorMsg}
             </p>
           )}
@@ -299,7 +304,7 @@ export default function ForgotPasswordPage() {
             e.preventDefault();
             if (canReset && !busy) advance("done");
           }}
-          className="flex flex-col gap-5"
+          className="flex flex-col gap-4"
         >
           <NewPasswordFields
             password={password}
@@ -316,7 +321,7 @@ export default function ForgotPasswordPage() {
             variant="default"
             size="lg"
             disabled={!canReset} loading={busy}
-            className="mt-2 h-11 w-full text-[14px]"
+            className="mt-2 h-10 w-full text-[14px]"
           >
             Reset password
           </Button>
@@ -324,8 +329,8 @@ export default function ForgotPasswordPage() {
       )}
 
       {stage === "no_match" && (
-        <div className="flex flex-col gap-3">
-          <Button variant="default" size="lg" onClick={retrySelfie} className="h-11 w-full text-[14px]">
+        <div className="flex flex-col gap-2">
+          <Button variant="default" size="lg" onClick={retrySelfie} className="h-10 w-full text-[14px]">
             Try again
           </Button>
           <p className="text-center text-[12.5px] text-muted-foreground tabular">
@@ -337,13 +342,13 @@ export default function ForgotPasswordPage() {
       )}
 
       {stage === "branch" && (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <Button
             variant="default"
             size="lg"
             nativeButton={false}
             render={<a href={BRANCH_LOCATOR_URL} target="_blank" rel="noreferrer" />}
-            className="h-11 w-full text-[14px]"
+            className="h-10 w-full text-[14px]"
           >
             Find a branch
           </Button>
@@ -351,7 +356,7 @@ export default function ForgotPasswordPage() {
             variant="ghost"
             size="lg"
             onClick={() => router.push("/login")}
-            className="h-11 w-full text-[14px]"
+            className="h-10 w-full text-[14px]"
           >
             Back to login
           </Button>
@@ -363,11 +368,25 @@ export default function ForgotPasswordPage() {
           variant="default"
           size="lg"
           onClick={() => router.push("/login")}
-          className="h-11 w-full text-[14px]"
+          className="h-10 w-full text-[14px]"
         >
           Back to login
         </Button>
       )}
     </AuthLayout>
+  );
+}
+
+/** Keyed on `?stage=` so a change to it while the page stays open (the Demo hub) rebuilds the flow on that stage. */
+function ForgotPasswordDoor() {
+  const stage = useSearchParams().get("stage") ?? "";
+  return <ForgotPasswordFlow key={stage} />;
+}
+
+export default function ForgotPasswordPage() {
+  return (
+    <Suspense fallback={<div className="min-h-dvh bg-background animate-pulse" />}>
+      <ForgotPasswordDoor />
+    </Suspense>
   );
 }

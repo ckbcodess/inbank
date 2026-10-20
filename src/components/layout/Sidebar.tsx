@@ -16,6 +16,7 @@ import {
   Building2,
   CheckCircle2,
   ChevronDown,
+  ClipboardCheck,
   CreditCard,
   Home,
   Landmark,
@@ -54,6 +55,7 @@ const ICON_MAP: Record<string, React.ElementType> = {
   UserCheck,
   Ship,
   CheckCircle2,
+  ClipboardCheck,
   Users,
   AlertTriangle,
   Building2,
@@ -172,15 +174,15 @@ export default function Sidebar({
           href={item.path}
           onClick={onClose}
           aria-label={collapsed ? label : undefined}
-          className={`relative flex h-9 items-center gap-2.5 overflow-hidden rounded-lg px-2.5 text-[13px] font-medium transition duration-150 ${
-            indent ? "ml-2.5 w-[calc(100%-0.625rem)]" : "w-full"
+          className={`relative flex h-8 items-center gap-2 overflow-hidden rounded-lg px-2 text-[13px] font-medium transition duration-150 ${
+            indent ? "ml-2 w-[calc(100%-8px)]" : "w-full"
           } ${
             active
               ? "bg-primary text-primary-foreground"
               : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
           }`}
         >
-          <Icon size={17} strokeWidth={active ? 2.1 : 1.8} className="shrink-0" />
+          <Icon size={16} strokeWidth={active ? 2.1 : 1.8} className="shrink-0" />
           {/* A fixed max width (not min-w-0 truncation) so the ellipsis can't move while the sidebar animates. */}
           <span
             className={`max-w-[11rem] shrink-0 truncate leading-normal whitespace-nowrap transition-opacity duration-150 ${
@@ -224,7 +226,7 @@ export default function Sidebar({
       <div
         // Below sm the page card is edge to edge; from sm up it sits inside 12px (14px at lg) of padding and a 1px
         // border, so the header takes the same offset (in rem, like that padding) to put its divider on the same line as the top bar's.
-        className="flex h-14 flex-shrink-0 items-center gap-2.5 overflow-hidden pl-3.5 pr-[0.768rem] sm:h-[calc(3.5rem+0.75rem+1px)] sm:pt-[calc(0.75rem+1px)] lg:h-[calc(3.5rem+0.875rem+1px)] lg:pt-[calc(0.875rem+1px)]"
+        className="flex h-12 flex-shrink-0 items-center gap-2 overflow-hidden px-3 sm:h-[calc(3.5rem+0.75rem+1px)] sm:pt-[calc(0.75rem+1px)] lg:h-[calc(3.5rem+0.875rem+1px)] lg:pt-[calc(0.875rem+1px)]"
       >
         <SimpleTooltip content="Expand sidebar" side="right" sideOffset={12} disabled={!collapsed}>
           <button
@@ -232,7 +234,7 @@ export default function Sidebar({
             onClick={collapsed ? toggleCollapse : undefined}
             tabIndex={collapsed ? 0 : -1}
             aria-label={collapsed ? "Expand sidebar" : brandLabel}
-            className={`relative flex size-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg text-muted-foreground transition-colors ${
+            className={`relative flex size-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg text-muted-foreground transition-colors ${
               collapsed ? "cursor-pointer hover:bg-muted/70 hover:text-foreground" : "pointer-events-none"
             }`}
           >
@@ -244,7 +246,7 @@ export default function Sidebar({
               {shell === "admin" ? (
                 <ShieldCheck size={18} strokeWidth={2.1} className="text-primary" />
               ) : (
-                <GCBLogo className="h-6 w-auto shrink-0" />
+                <GCBLogo className="h-5 w-auto shrink-0" />
               )}
             </span>
             <span
@@ -252,7 +254,7 @@ export default function Sidebar({
                 showExpandHint ? "opacity-100" : "opacity-0"
               }`}
             >
-              <PanelLeftOpen className="size-[17.5px]" strokeWidth={1.8} />
+              <PanelLeftOpen className="size-4.5" strokeWidth={1.8} />
             </span>
           </button>
         </SimpleTooltip>
@@ -268,21 +270,21 @@ export default function Sidebar({
           type="button"
           onClick={toggleCollapse}
           tabIndex={collapsed ? -1 : 0}
-          className={`ml-auto hidden size-9 flex-shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-[color,background-color,opacity] duration-150 hover:bg-muted/70 hover:text-foreground lg:flex ${
+          className={`ml-auto hidden size-8 flex-shrink-0 items-center justify-center rounded-lg text-muted-foreground transition-[color,background-color,opacity] duration-150 hover:bg-muted/70 hover:text-foreground lg:flex ${
             collapsed ? "pointer-events-none opacity-0" : "cursor-pointer opacity-100"
           }`}
           aria-label="Collapse sidebar"
           aria-hidden={collapsed}
         >
-          <PanelLeftClose className="size-[17.5px]" strokeWidth={1.8} />
+          <PanelLeftClose className="size-4.5" strokeWidth={1.8} />
         </button>
       </div>
 
       {/* Navigation */}
-      {/* The side padding is what centres the icons when collapsed (4rem wide): 0.768rem + the link's 0.625rem
-          padding + half the 17px icon = 2rem, the middle of the sidebar. The header's pl-3.5 centres the mark on the
-          same line. The root font is 14px, so these are rem values, not px. */}
-      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-[0.768rem] py-2.5">
+      {/* The side padding is what centres the icons when collapsed (56px wide): the nav's px-3 (12px) + the link's px-2 (8px)
+          + half the 16px icon = 28px, the middle of the sidebar. The header's pl-3 plus half its size-8 mark
+          lands on the same 28px line. */}
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-2">
         <div className="flex flex-col gap-0.5">
           {groups.map((grp, gi) => {
             const hasActiveChild = grp.items.some((i) => isItemActive(i, pathname, items));
@@ -295,16 +297,16 @@ export default function Sidebar({
               const DropIcon = ICON_MAP[DROPDOWN_GROUPS[name].icon] ?? LayoutGrid;
               const open = openGroups[name] ?? hasActiveChild;
               return (
-                <div key={name} className={`flex flex-col gap-0.5 ${gi > 0 ? "mt-3" : ""}`}>
+                <div key={name} className={`flex flex-col gap-0.5 ${gi > 0 ? "mt-2" : ""}`}>
                   <button
                     type="button"
                     onClick={() => setOpenGroups((p) => ({ ...p, [name]: !open }))}
                     aria-expanded={open}
-                    className={`relative flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium transition duration-150 cursor-pointer hover:bg-muted/50 hover:text-foreground ${
+                    className={`relative flex h-8 items-center gap-2 rounded-lg px-2 text-[13px] font-medium transition duration-150 cursor-pointer hover:bg-muted/50 hover:text-foreground ${
                       hasActiveChild && !open ? "text-foreground" : "text-muted-foreground"
                     }`}
                   >
-                    <DropIcon size={17} strokeWidth={1.8} className="shrink-0" />
+                    <DropIcon size={16} strokeWidth={1.8} className="shrink-0" />
                     <span className="leading-normal whitespace-nowrap truncate">
                       {name === "More Services" ? t("nav.moreServices", name) : name}
                     </span>
@@ -328,7 +330,7 @@ export default function Sidebar({
             return (
               <div
                 key={grp.name ?? `g-${gi}`}
-                className={`flex flex-col gap-0.5 ${gi > 0 ? "mt-3" : ""}`}
+                className={`flex flex-col gap-0.5 ${gi > 0 ? "mt-2" : ""}`}
               >
                 {grp.items.map((item) => renderNavLink(item))}
               </div>

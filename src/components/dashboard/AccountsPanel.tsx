@@ -27,7 +27,7 @@ function CopyAccountNumberButton({ number }: { number: string }) {
           setCopied(true);
           setTimeout(() => setCopied(false), 1800);
         }}
-        className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer p-0.5 rounded"
+        className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer p-0.5 rounded-sm"
         aria-label="Copy account number"
       >
         {copied ? (
@@ -44,7 +44,7 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
   const { showAmounts } = useAmountVisibility();
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-[15px] font-medium text-foreground">Your Accounts</h2>
@@ -55,11 +55,11 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
       </div>
 
       {accounts.length === 0 ? (
-        <div className="rounded-2xl border border-border bg-card p-8 text-center text-[13px] text-muted-foreground">
+        <div className="rounded-2xl border border-border bg-card p-6 text-center text-[13px] text-muted-foreground">
           No accounts on this relationship yet.
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {accounts.map((acc, idx) => {
             const localEquivalent = toLocalEquivalent(acc.available, acc.currency);
             const held = acc.balance - acc.available;
@@ -67,24 +67,24 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
             return (
               <div
                 key={acc.id}
-                className="flex flex-col justify-between space-y-4 rounded-2xl border border-border bg-card p-5 transition-colors hover:border-border/80 shadow-2xs"
+                className="flex flex-col justify-between space-y-3 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-border/80 shadow-2xs"
               >
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2.5">
-                      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                         <Building2 size={16} strokeWidth={1.8} aria-hidden="true" />
                       </span>
                       <div className="min-w-0">
                         <p className="truncate text-[13px] font-medium text-foreground">{acc.name}</p>
-                        <p className="flex items-center gap-1.5 text-[11.5px] text-muted-foreground">
+                        <p className="flex items-center gap-2 text-[11.5px] text-muted-foreground">
                           <span>{acc.name.toLowerCase().includes(acc.type.toLowerCase()) ? acc.number : `${acc.type} · ${acc.number}`}</span>
                           <CopyAccountNumberButton number={acc.number} />
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0">
                       {acc.status === "Dormant" && <Badge variant="warning">Dormant</Badge>}
                       <Badge variant={idx === 0 ? "default" : "secondary"} className="text-[10px]">
                         {idx === 0 ? "Primary" : "Secondary"}
@@ -109,7 +109,7 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-border/60 pt-3 text-[12px]">
+                <div className="flex items-center justify-between border-t border-border/60 pt-2 text-[12px]">
                   <Link
                     href={`/accounts/${acc.id}/statement`}
                     className="flex items-center gap-1 font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -120,7 +120,7 @@ export function AccountsPanel({ accounts }: { accounts: Account[] }) {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 text-xs gap-1.5"
+                    className="h-6 text-xs gap-2"
                     nativeButton={false}
                     render={<Link href={`/payments/send?source=${acc.id}`} />}
                   >

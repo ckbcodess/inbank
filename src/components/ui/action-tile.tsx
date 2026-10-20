@@ -55,7 +55,7 @@ export function TileChip({
   return (
     <span
       className={cn(
-        "flex size-[38.5px] shrink-0 items-center justify-center transition-transform duration-150",
+        "flex size-10 shrink-0 items-center justify-center transition-transform duration-150",
         accent ? "text-[var(--tile-accent)]" : "text-foreground",
       )}
     >
@@ -65,7 +65,7 @@ export function TileChip({
 }
 
 const TILE =
-  "group flex w-full items-center justify-between gap-4 rounded-[16px] bg-[var(--tile)] p-4 text-left transition duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99]";
+  "group flex w-full items-center justify-between gap-3 rounded-2xl bg-[var(--tile)] p-3 text-left transition duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99]";
 
 export function ActionTile({
   icon: Icon,
@@ -83,9 +83,9 @@ export function ActionTile({
 }: ActionTileProps) {
   const body = (
     <>
-      <div className={cn("flex min-w-0 items-center gap-4", compactOnMobile && "max-sm:gap-3")}>
+      <div className={cn("flex min-w-0 items-center gap-3", compactOnMobile && "max-sm:gap-2")}>
         {bareIcon && Icon ? (
-          <span className="flex size-[38.5px] shrink-0 items-center justify-center text-foreground">
+          <span className="flex size-10 shrink-0 items-center justify-center text-foreground">
             <Icon size={24} strokeWidth={1.6} aria-hidden="true" />
           </span>
         ) : (
@@ -108,7 +108,7 @@ export function ActionTile({
 
   if (href && !disabled) {
     return (
-      <Link href={href} onClick={onClick} className={cn(TILE, compactOnMobile && "max-sm:p-3.5", className)}>
+      <Link href={href} onClick={onClick} className={cn(TILE, compactOnMobile && "max-sm:p-3", className)}>
         {body}
       </Link>
     );
@@ -121,7 +121,7 @@ export function ActionTile({
       disabled={disabled}
       className={cn(
         TILE,
-        compactOnMobile && "max-sm:p-3.5",
+        compactOnMobile && "max-sm:p-3",
         "cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[var(--tile)] disabled:active:scale-100",
         className,
       )}

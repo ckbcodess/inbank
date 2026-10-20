@@ -108,8 +108,8 @@ export function InvestHome() {
   function status() {
     if (csd?.status === "pending") {
       return (
-        <section className="flex items-start gap-4 rounded-2xl border border-border bg-card p-4 sm:p-5">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
+        <section className="flex items-start gap-3 rounded-2xl border border-border bg-card p-3 sm:p-4">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
             <ShieldCheck size={20} strokeWidth={1.8} aria-hidden="true" />
           </span>
           <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -125,7 +125,7 @@ export function InvestHome() {
     }
     if (csd?.status === "active" && intent) {
       return (
-        <section className="flex flex-col gap-3 px-1">
+        <section className="flex flex-col gap-2 px-1">
           <h2 className="text-[18px] tracking-[var(--ls-tight)] text-foreground">Your securities account is ready</h2>
           <p className="text-[14px] text-muted-foreground">{`Carry on with ${intent.label}.`}</p>
           <div>
@@ -150,10 +150,10 @@ export function InvestHome() {
       <li key={r.id}>
         <Link
           href={r.href}
-          className="flex w-full items-center gap-4 rounded-xl px-3 py-4 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-4"
+          className="flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3"
         >
           {r.icon === "deposit" ? (
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
               <PiggyBank size={16} strokeWidth={1.8} aria-hidden="true" />
             </span>
           ) : (
@@ -176,8 +176,8 @@ export function InvestHome() {
   /** One kind of investment, its own heading and its own total, never mixed with the other. */
   function section(title: string, children: React.ReactNode, action?: React.ReactNode) {
     return (
-      <section className="flex flex-col gap-4">
-        <div className="flex min-h-8 items-center justify-between gap-4 px-1">
+      <section className="flex flex-col gap-3">
+        <div className="flex min-h-7 items-center justify-between gap-3 px-1">
           <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">{title}</h2>
           {action}
         </div>
@@ -190,16 +190,16 @@ export function InvestHome() {
     if (state === "loading") {
       return (
         <div className="flex flex-col gap-10">
-          <div className="flex flex-col gap-4">
-            <div className="flex min-h-8 items-center px-1">
+          <div className="flex flex-col gap-3">
+            <div className="flex min-h-7 items-center px-1">
               <span className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">Term Deposits</span>
             </div>
             <div className="rounded-2xl border border-border bg-card p-1">
               <InvestRowBones rows={2} />
             </div>
           </div>
-          <div className="flex flex-col gap-4">
-            <div className="flex min-h-8 items-center px-1">
+          <div className="flex flex-col gap-3">
+            <div className="flex min-h-7 items-center px-1">
               <span className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">Treasury Bills &amp; Bonds</span>
             </div>
             <div className="rounded-2xl border border-border bg-card p-1">
@@ -216,12 +216,12 @@ export function InvestHome() {
         {status()}
 
         {nothingYet && !(csd?.status === "active" && intent) && (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-1 px-1">
               <h2 className="text-[17px] font-medium text-foreground">Choose an investment type to begin</h2>
               <p className="text-[13.5px] text-muted-foreground">Select between fixed-rate GCB Term Deposits and Government of Ghana Treasury Bills &amp; Bonds.</p>
             </div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <ActionTile
                 icon={TermDepositIcon}
                 bareIcon
@@ -246,7 +246,7 @@ export function InvestHome() {
             <>
               {treasuryRows.map(renderRow)}
               {orders.map((o) => (
-                <li key={o.id} className="flex w-full items-center gap-4 rounded-xl px-3 py-4 sm:px-4">
+                <li key={o.id} className="flex w-full items-center gap-3 rounded-xl px-2 py-3 sm:px-3">
                   <SecurityIcon kind={o.security.kind} muted />
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-[14px] text-muted-foreground">{o.security.title}</span>
@@ -275,8 +275,8 @@ export function InvestHome() {
   /* ── Products ─────────────────────────────────────────────────────────── */
 
   const products = () => (
-    <div className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div className="flex flex-col gap-5">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <ActionTile
           icon={TermDepositIcon}
           bareIcon
@@ -294,7 +294,7 @@ export function InvestHome() {
   );
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader title="Invest" />
       <InvestDevTools section="Invest" states={STATES} value={state} onChange={(v) => setState(v as PageState)} labels={STATE_LABELS} />
       <InvestWelcome />

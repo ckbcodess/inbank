@@ -8,7 +8,7 @@ interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  /** Override width/height etc. Defaults to the standard 342px-wide, h-10 bar. */
+  /** Override width/height etc. Defaults to the standard 342px-wide, h-9 bar. */
   className?: string;
 }
 
@@ -23,7 +23,7 @@ export function SearchBar({ value, onChange, placeholder = 'Search...', classNam
   return (
     <div
       className={cn(
-        'flex items-center gap-[5px] h-10 px-[13px] border border-border rounded-[8px] bg-background focus-within:border-foreground/30 transition-colors w-[342px]',
+        'flex items-center gap-[5px] h-9 px-[13px] border border-border rounded-lg bg-background focus-within:border-foreground/30 transition-colors w-[342px]',
         className,
       )}
     >

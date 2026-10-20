@@ -49,7 +49,7 @@ export function HeroWaveTuner() {
   if (captureMode || devToolsHidden) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-2">
       {open && <TunerPanel />}
       <button
         type="button"
@@ -58,7 +58,7 @@ export function HeroWaveTuner() {
         aria-label={open ? "Close the wave tuner" : "Open the wave tuner"}
         title="Wave tuner"
         className={cn(
-          "flex size-12 items-center justify-center rounded-full border shadow-lg transition-colors cursor-pointer",
+          "flex size-10 items-center justify-center rounded-full border shadow-lg transition-colors cursor-pointer",
           open
             ? "border-transparent bg-primary text-primary-foreground hover:bg-primary-hover"
             : "border-border bg-card text-foreground hover:bg-muted",
@@ -86,7 +86,7 @@ function TunerPanel() {
     <div
       role="dialog"
       aria-label="Wave tuner"
-      className="flex max-h-[calc(100dvh-6.5rem)] w-[300px] flex-col gap-4 overflow-y-auto rounded-2xl border border-border bg-card p-4 shadow-lg"
+      className="flex max-h-[calc(100dvh-6.5rem)] w-[300px] flex-col gap-3 overflow-y-auto rounded-2xl border border-border bg-card p-3 shadow-lg"
     >
       <div className="flex items-center justify-between">
         <span className="text-[14px] text-foreground">Wave tuner</span>
@@ -94,7 +94,7 @@ function TunerPanel() {
           <button
             type="button"
             onClick={() => setHeroWave({ moving: !wave.moving })}
-            className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
             aria-label={wave.moving ? "Pause the wave" : "Play the wave"}
           >
             {wave.moving ? <Pause size={16} strokeWidth={1.8} /> : <Play size={16} strokeWidth={1.8} />}
@@ -106,11 +106,11 @@ function TunerPanel() {
         Colours (card, text, wave, glow) are in the Colour tuner, under Dashboard hero.
       </p>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2">
         {SLIDERS.map(({ key, label, min, max, step, unit }) => {
           const changed = wave[key] !== HERO_WAVE_DEFAULTS[key];
           return (
-            <label key={key} className="flex flex-col gap-1.5">
+            <label key={key} className="flex flex-col gap-2">
               <span className="flex items-center justify-between text-[12.5px] text-muted-foreground">
                 {label}
                 <span className={cn("tabular", changed ? "text-foreground" : "text-muted-foreground")}>
@@ -132,11 +132,11 @@ function TunerPanel() {
         })}
       </div>
 
-      <div className="flex items-center gap-2 border-t border-border pt-3">
+      <div className="flex items-center gap-2 border-t border-border pt-2">
         <button
           type="button"
           onClick={resetHeroWave}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-border px-3 py-2 text-[13px] text-foreground transition-colors hover:bg-muted cursor-pointer"
+          className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-border px-2 py-2 text-[13px] text-foreground transition-colors hover:bg-muted cursor-pointer"
         >
           <RotateCcw size={15} strokeWidth={1.8} />
           Reset
@@ -144,7 +144,7 @@ function TunerPanel() {
         <button
           type="button"
           onClick={copy}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-[13px] text-primary-foreground transition-colors hover:bg-primary-hover cursor-pointer"
+          className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-primary px-2 py-2 text-[13px] text-primary-foreground transition-colors hover:bg-primary-hover cursor-pointer"
         >
           <Copy size={15} strokeWidth={1.8} />
           Copy values

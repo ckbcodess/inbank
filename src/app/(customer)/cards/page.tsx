@@ -157,22 +157,22 @@ function CardsPageContent() {
   const [refreshCount, setRefreshCount] = useState(0);
 
   const availableAccounts = useMemo(
-    () => (activeProfile ? accountsForProfile(activeProfile.kind) : []),
+    () => (activeProfile ? accountsForProfile("RETAIL") : []),
     [activeProfile],
   );
 
   const allCards = useMemo(() => {
     void refreshCount;
-    return cardsForProfile(activeProfile?.kind);
-  }, [activeProfile, refreshCount]);
+    return cardsForProfile("RETAIL");
+  }, [refreshCount]);
 
   const { cards, activeSimulatedCard } = useMemo(() => {
     return getEffectiveCardsForProfile(
-      activeProfile?.kind ?? "CORPORATE",
+      "RETAIL",
       allCards,
       devState,
     );
-  }, [activeProfile, allCards, devState]);
+  }, [allCards, devState]);
 
   const devGroups = useMemo<DevStateGroup[]>(() => {
     const cardOptions = [
@@ -280,7 +280,7 @@ function CardsPageContent() {
       fundable: isPrepaid || isVirtualCard,
       isVirtual: isVirtualCard,
       singleUse: isVirtualCard ? isSingleUse : false,
-      profileKind: activeProfile?.kind ?? "CORPORATE",
+      profileKind: "RETAIL",
     };
 
     addCard(newCard);
@@ -302,7 +302,7 @@ function CardsPageContent() {
   if (!ready) return <CardsPageSkeleton />;
 
   return (
-    <div className="flex flex-col gap-8 w-full">
+    <div className="flex flex-col gap-6 w-full">
       {/* Dev Mode State Switcher (registers automatically to the top navbar) */}
       <StateSwitcher
         section="13.1"
@@ -335,7 +335,7 @@ function CardsPageContent() {
       {devState.simulation !== "clean" &&
         devState.simulation !== "all" &&
         activeSimulatedCard && (
-          <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-4 py-2.5 text-[12.5px]">
+          <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-3 py-2 text-[12.5px]">
             <div className="flex items-center gap-2 min-w-0">
               <Layers
                 size={14}
@@ -354,7 +354,7 @@ function CardsPageContent() {
                 </strong>
               </span>
             </div>
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <Link
                 href={`/cards/${activeSimulatedCard.id}`}
                 className="text-[12px] font-medium text-foreground hover:underline"
@@ -373,7 +373,7 @@ function CardsPageContent() {
         )}
 
       {devState.simulation === "all" && (
-        <div className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-4 py-2.5 text-[12.5px]">
+        <div className="flex items-center justify-between gap-2 rounded-xl border border-dashed border-warning/40 bg-warning/5 px-3 py-2 text-[12.5px]">
           <div className="flex items-center gap-2 min-w-0">
             <Layers
               size={14}
@@ -405,7 +405,7 @@ function CardsPageContent() {
               type="button"
               onClick={() => setTypeFilter(t)}
               aria-pressed={isActive}
-              className={`flex shrink-0 items-center gap-2 rounded-lg px-3 py-1.5 sm:px-4 sm:py-2 text-[12.5px] sm:text-[13px] whitespace-nowrap transition cursor-pointer ${
+              className={`flex shrink-0 items-center gap-2 rounded-lg px-2 py-2 sm:px-3 sm:py-2 text-[12.5px] sm:text-[13px] whitespace-nowrap transition cursor-pointer ${
                 isActive
                   ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
                   : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -434,7 +434,7 @@ function CardsPageContent() {
           title="No cards yet"
           description="Get a virtual card instantly or request a physical one."
           action={
-            <Button nativeButton={false} render={<Link href="/cards/request" />} className="h-9 rounded-lg px-4 text-[13px]">
+            <Button nativeButton={false} render={<Link href="/cards/request" />} className="h-8 rounded-lg px-3 text-[13px]">
               Request a card
             </Button>
           }
@@ -461,7 +461,7 @@ function CardsPageContent() {
 
       {(effective === "populated" || effective === "partial-load") &&
         rows.length > 0 && (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             {layout === "stack" && <CardsStack cards={rows} />}
             {layout === "carousel" && <CardsCarousel cards={rows} />}
             {layout === "gallery" && <CardsGallery cards={rows} />}
@@ -488,7 +488,7 @@ function CardsPageContent() {
               />
 </Field>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               <Field label="Card Type">
                 <Select
                   value={cardType}
@@ -550,7 +550,7 @@ function CardsPageContent() {
 </Field>
 
             {cardType === "Virtual" && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <Field label="Monthly Spend Limit" htmlFor="c-limit">
                   <Input
                     id="c-limit"

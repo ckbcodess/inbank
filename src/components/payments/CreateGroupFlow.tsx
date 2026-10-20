@@ -287,15 +287,15 @@ export default function CreateGroupFlow({
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-[580px] flex-col gap-6 py-6 sm:py-8 animate-in fade-in duration-200 ease-out">
+    <div className="mx-auto flex w-full max-w-[580px] flex-col gap-5 py-5 sm:py-6 animate-in fade-in duration-200 ease-out">
       {/* ────────────────────────────────────────────────────────────────────────── */}
       {/* HEADER: Inline Back Chevron + Screen Title matching Figma mockups          */}
       {/* ────────────────────────────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={handleBack}
-          className="flex size-8 items-center justify-center rounded-lg text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
+          className="flex size-7 items-center justify-center rounded-lg text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
           aria-label="Back"
         >
           <ChevronLeft size={20} strokeWidth={2} />
@@ -309,7 +309,7 @@ export default function CreateGroupFlow({
       {/* STEP 1: SELECT GROUP MEMBERS (Design Mockup 1)                            */}
       {/* ────────────────────────────────────────────────────────────────────────── */}
       {step === 1 && (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4">
           {/* Group Name * */}
           <div className="flex flex-col gap-2">
             <Label>
@@ -338,7 +338,7 @@ export default function CreateGroupFlow({
           </Field>
 
           {/* Select Members Section */}
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <span className="text-[14px] font-medium text-foreground">
                 Select Members{" "}
@@ -359,7 +359,7 @@ export default function CreateGroupFlow({
 
             {/* Inline Add Custom Contact Form */}
             {showNewContact && (
-              <div className="rounded-2xl border border-border/80 bg-card p-4 flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-150 shadow-xs">
+              <div className="rounded-2xl border border-border/80 bg-card p-3 flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-150 shadow-xs">
                 <div className="flex items-center justify-between">
                   <span className="text-[13.5px] text-foreground font-medium">Add Unsaved Counterparty</span>
                   <button
@@ -371,7 +371,7 @@ export default function CreateGroupFlow({
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <Input
                     type="text"
                     value={customName}
@@ -388,13 +388,13 @@ export default function CreateGroupFlow({
                   />
                 </div>
 
-                <div className="flex flex-col gap-2.5 pt-1">
+                <div className="flex flex-col gap-2 pt-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <button
                       type="button"
                       onClick={() => setCustomCategory("gcb")}
                       className={cn(
-                        "px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors cursor-pointer",
+                        "px-2 py-2 rounded-lg text-[12px] font-medium transition-colors cursor-pointer",
                         customCategory === "gcb" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                       )}
                     >
@@ -404,7 +404,7 @@ export default function CreateGroupFlow({
                       type="button"
                       onClick={() => setCustomCategory("other_bank")}
                       className={cn(
-                        "px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors cursor-pointer",
+                        "px-2 py-2 rounded-lg text-[12px] font-medium transition-colors cursor-pointer",
                         customCategory === "other_bank" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                       )}
                     >
@@ -414,7 +414,7 @@ export default function CreateGroupFlow({
                       type="button"
                       onClick={() => setCustomCategory("wallet")}
                       className={cn(
-                        "px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors cursor-pointer",
+                        "px-2 py-2 rounded-lg text-[12px] font-medium transition-colors cursor-pointer",
                         customCategory === "wallet" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                       )}
                     >
@@ -426,7 +426,7 @@ export default function CreateGroupFlow({
                     <select
                       value={customBank}
                       onChange={(e) => setCustomBank(e.target.value)}
-                      className="h-10 w-full rounded-xl border border-input bg-background px-3 text-[13px] text-foreground outline-none"
+                      className="h-9 w-full rounded-xl border border-input bg-background px-2 text-[13px] text-foreground outline-none"
                     >
                       {OTHER_BANKS.map((b) => (
                         <option key={b} value={b}>{b}</option>
@@ -438,7 +438,7 @@ export default function CreateGroupFlow({
                     <select
                       value={customWalletNetwork}
                       onChange={(e) => setCustomWalletNetwork(e.target.value)}
-                      className="h-10 w-full rounded-xl border border-input bg-background px-3 text-[13px] text-foreground outline-none"
+                      className="h-9 w-full rounded-xl border border-input bg-background px-2 text-[13px] text-foreground outline-none"
                     >
                       {WALLET_NETWORKS.map((w) => (
                         <option key={w} value={w}>{w}</option>
@@ -451,7 +451,7 @@ export default function CreateGroupFlow({
                       type="button"
                       size="sm"
                       onClick={handleAddCustomContact}
-                      className="h-9 px-4 rounded-xl text-[13px] bg-primary text-primary-foreground font-normal cursor-pointer"
+                      className="h-8 px-3 rounded-xl text-[13px] bg-primary text-primary-foreground font-normal cursor-pointer"
                     >
                       Add Member
                     </Button>
@@ -464,20 +464,20 @@ export default function CreateGroupFlow({
             <div className="relative w-full">
               <Search
                 size={17}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
               />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search contacts"
-                className="h-13 w-full rounded-2xl border border-field-border bg-field pl-11 pr-10 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                className="h-11 w-full rounded-2xl border border-field-border bg-field pl-10 pr-10 text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
               />
               {search && (
                 <button
                   type="button"
                   onClick={() => setSearch("")}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
                   aria-label="Clear search"
                 >
                   <X size={15} />
@@ -496,12 +496,12 @@ export default function CreateGroupFlow({
                     key={contact.id || contact.destination}
                     onClick={() => toggleMember(contact)}
                     className={cn(
-                      "flex items-center justify-between px-4 py-3.5 hover:bg-muted/30 transition-colors cursor-pointer select-none",
+                      "flex items-center justify-between px-3 py-3 hover:bg-muted/30 transition-colors cursor-pointer select-none",
                       isSelected && "bg-primary/5 dark:bg-primary/10"
                     )}
                   >
-                    <div className="flex items-center gap-3.5 min-w-0">
-                      <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted/70 text-foreground">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted/70 text-foreground">
                         {contact.type === "wallet" ? (
                           <Smartphone size={18} strokeWidth={1.8} />
                         ) : (
@@ -521,7 +521,7 @@ export default function CreateGroupFlow({
                     {/* Selection Indicator */}
                     <div
                       className={cn(
-                        "flex size-5 shrink-0 items-center justify-center rounded-full border transition",
+                        "flex size-4 shrink-0 items-center justify-center rounded-full border transition",
                         isSelected
                           ? "border-primary bg-primary text-primary-foreground"
                           : "border-muted-foreground/30 bg-transparent"
@@ -534,7 +534,7 @@ export default function CreateGroupFlow({
               })}
 
               {filteredContacts.length === 0 && (
-                <div className="py-8 text-center text-muted-foreground text-[13px]">
+                <div className="py-6 text-center text-muted-foreground text-[13px]">
                   No contacts found matching “{search}”.
                 </div>
               )}
@@ -546,7 +546,7 @@ export default function CreateGroupFlow({
             type="button"
             disabled={!name.trim() || members.length === 0}
             onClick={() => setStep(2)}
-            className="w-full h-12 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground text-[14.5px] font-normal cursor-pointer shadow-xs disabled:opacity-50 mt-1"
+            className="w-full h-10 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground text-[14.5px] font-normal cursor-pointer shadow-xs disabled:opacity-50 mt-1"
           >
             Proceed to Amount
           </Button>
@@ -557,14 +557,14 @@ export default function CreateGroupFlow({
       {/* STEP 2: SELECT THE AMOUNT PER PERSON (Design Mockup 2)                     */}
       {/* ────────────────────────────────────────────────────────────────────────── */}
       {step === 2 && (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-5">
           {/* Segmented Tab Pill: [ Equal Split | Custom Amounts ] */}
           <div className="rounded-2xl bg-chip p-1 border border-border/80 flex items-center gap-1">
             <button
               type="button"
               onClick={() => setSplitType("equal")}
               className={cn(
-                "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition cursor-pointer",
+                "flex-1 py-2 px-3 text-center rounded-xl text-[13.5px] font-medium transition cursor-pointer",
                 splitType === "equal"
                   ? "bg-chip-selected text-chip-selected-foreground shadow-xs border border-border/60"
                   : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -576,7 +576,7 @@ export default function CreateGroupFlow({
               type="button"
               onClick={() => setSplitType("custom")}
               className={cn(
-                "flex-1 py-2.5 px-4 text-center rounded-xl text-[13.5px] font-medium transition cursor-pointer",
+                "flex-1 py-2 px-3 text-center rounded-xl text-[13.5px] font-medium transition cursor-pointer",
                 splitType === "custom"
                   ? "bg-chip-selected text-chip-selected-foreground shadow-xs border border-border/60"
                   : "text-chip-foreground hover:text-chip-selected-foreground"
@@ -596,7 +596,7 @@ export default function CreateGroupFlow({
             />
           ) : (
             /* Custom Amounts List */
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               <Label>
                 Individual Contribution Amounts
               </Label>
@@ -604,10 +604,10 @@ export default function CreateGroupFlow({
                 {members.map((member) => (
                   <div
                     key={member.id || member.destination}
-                    className="flex items-center justify-between px-4 py-3"
+                    className="flex items-center justify-between px-3 py-2"
                   >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted/70 text-foreground text-[11px]">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted/70 text-foreground text-[11px]">
                         {initials(member.name)}
                       </div>
                       <div className="flex flex-col min-w-0">
@@ -619,7 +619,7 @@ export default function CreateGroupFlow({
                         </span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5 shrink-0 bg-field border border-field-border rounded-xl px-3 py-1.5 focus-within:border-field-border-focus focus-within:ring-0 transition">
+                    <div className="flex items-center gap-2 shrink-0 bg-field border border-field-border rounded-xl px-2 py-2 focus-within:border-field-border-focus focus-within:ring-0 transition">
                       <span className="text-[12.5px] font-medium text-muted-foreground select-none">GHS</span>
                       <input
                         type="text"
@@ -632,7 +632,7 @@ export default function CreateGroupFlow({
                         onChange={(e) =>
                           updateMemberAmount(member.id || member.destination, e.target.value)
                         }
-                        className="w-24 bg-transparent text-right text-[14px] font-normal tabular-nums outline-none border-none text-foreground"
+                        className="w-21 bg-transparent text-right text-[14px] font-normal tabular-nums outline-none border-none text-foreground"
                       />
                     </div>
                   </div>
@@ -652,12 +652,12 @@ export default function CreateGroupFlow({
           </div>
 
           {/* Action Buttons: [ Back | Create Group ] */}
-          <div className="flex items-center gap-3 w-full">
+          <div className="flex items-center gap-2 w-full">
             <Button
               type="button"
               variant="outline"
               onClick={() => setStep(1)}
-              className="flex-1 h-12 rounded-xl border border-border/80 bg-background hover:bg-muted/40 text-foreground font-normal text-[14.5px] cursor-pointer"
+              className="flex-1 h-10 rounded-xl border border-border/80 bg-background hover:bg-muted/40 text-foreground font-normal text-[14.5px] cursor-pointer"
             >
               Back
             </Button>
@@ -665,7 +665,7 @@ export default function CreateGroupFlow({
               type="button"
               disabled={totalAmount <= 0}
               onClick={handleCreateGroup}
-              className="flex-1 h-12 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground font-normal text-[14.5px] cursor-pointer shadow-xs disabled:opacity-50"
+              className="flex-1 h-10 rounded-xl bg-primary hover:bg-primary-hover text-primary-foreground font-normal text-[14.5px] cursor-pointer shadow-xs disabled:opacity-50"
             >
               Create Group
             </Button>
@@ -681,7 +681,7 @@ export default function CreateGroupFlow({
           <DialogHeader>
             <DialogTitle>Discard unsaved changes?</DialogTitle>
           </DialogHeader>
-          <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
+          <div className="px-4 sm:px-5 py-4 text-[13.5px] text-muted-foreground leading-relaxed">
             You have unsaved changes in this group. Leaving now will discard your entered data.
           </div>
           <DialogFooter>

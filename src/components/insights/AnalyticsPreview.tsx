@@ -30,7 +30,7 @@ export function AnalyticsPreview({ profileKind }: { profileKind: ProfileKind }) 
   const hasFlow = totals.income > 0 || totals.expense > 0;
 
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-5">
+    <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-4">
       <div className="flex items-center justify-between">
         <h2 className="text-[15px] text-foreground">Analytics</h2>
         <Link href="/reports" className="text-[12px] text-foreground underline-offset-4 hover:underline">
@@ -39,17 +39,17 @@ export function AnalyticsPreview({ profileKind }: { profileKind: ProfileKind }) 
       </div>
 
       {!hasFlow ? (
-        <div className="flex flex-1 items-center justify-center py-8 text-center text-[13px] text-muted-foreground">
+        <div className="flex flex-1 items-center justify-center py-6 text-center text-[13px] text-muted-foreground">
           No money moved this month.
         </div>
       ) : (
         <>
-          <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
+          <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
             <div className="flex flex-col gap-1">
-              <span className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+              <span className="flex items-center gap-2 text-[12px] text-muted-foreground">
                 <span
                   aria-hidden="true"
-                  className="size-2 shrink-0 rounded-[2px]"
+                  className="size-1.5 shrink-0 rounded-[2px]"
                   style={{ backgroundColor: CASHFLOW_CONFIG.income.color }}
                 />
                 {CASHFLOW_CONFIG.income.label}
@@ -59,10 +59,10 @@ export function AnalyticsPreview({ profileKind }: { profileKind: ProfileKind }) 
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+              <span className="flex items-center gap-2 text-[12px] text-muted-foreground">
                 <span
                   aria-hidden="true"
-                  className="size-2 shrink-0 rounded-[2px]"
+                  className="size-1.5 shrink-0 rounded-[2px]"
                   style={{ backgroundColor: CASHFLOW_CONFIG.expense.color }}
                 />
                 {CASHFLOW_CONFIG.expense.label}
@@ -73,7 +73,7 @@ export function AnalyticsPreview({ profileKind }: { profileKind: ProfileKind }) 
             </div>
           </div>
 
-          <div className="mt-3 flex-1">
+          <div className="mt-2 flex-1">
             <CashflowChart data={series} />
           </div>
         </>

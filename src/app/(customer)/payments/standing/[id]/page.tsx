@@ -49,9 +49,9 @@ export default function StandingOrderDetailPage() {
 
   if (cancelled) {
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <PageHeader title="Standing Order" backTo={back} />
-        <div className="mx-auto flex w-full max-w-[560px] flex-col items-start gap-4 px-1">
+        <div className="mx-auto flex w-full max-w-[560px] flex-col items-start gap-3 px-1">
           <CheckCircle2 size={22} strokeWidth={1.8} className="text-success-text" aria-hidden="true" />
           <div className="flex flex-col gap-1">
             <span className="text-[18px] text-foreground">Cancelled</span>
@@ -67,9 +67,9 @@ export default function StandingOrderDetailPage() {
 
   if (!si) {
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <PageHeader title="Standing Order" backTo={back} />
-        <div className="mx-auto flex w-full max-w-[560px] flex-col items-start gap-3 px-1">
+        <div className="mx-auto flex w-full max-w-[560px] flex-col items-start gap-2 px-1">
           <span className="text-[18px] text-foreground">We couldn&apos;t find this standing order</span>
           <span className="text-[13.5px] text-muted-foreground">It may have been cancelled.</span>
           <Link href={back.href} className={buttonVariants({ variant: "outline", size: "sm" })}>
@@ -114,11 +114,11 @@ export default function StandingOrderDetailPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader title={title} backTo={back} />
 
-      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-8">
-        <section className="flex flex-col gap-1.5 px-1">
+      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
+        <section className="flex flex-col gap-2 px-1">
           <span className={cn("tabular text-[40px] leading-none tracking-[var(--ls-heading)]", paused ? "text-muted-foreground" : "text-foreground")}>
             {formatMoney(si.amount, si.currency, showAmounts)}
           </span>
@@ -129,14 +129,14 @@ export default function StandingOrderDetailPage() {
 
         <section className="flex flex-col rounded-2xl border border-border bg-card p-2">
           {facts.map(([label, value]) => (
-            <div key={label} className="flex items-center justify-between gap-6 rounded-xl px-3 py-4 text-[14px]">
+            <div key={label} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3 text-[14px]">
               <span className="shrink-0 text-muted-foreground">{label}</span>
               <span className="tabular min-w-0 truncate text-right text-foreground">{value}</span>
             </div>
           ))}
         </section>
 
-        <section className="flex flex-col gap-4">
+        <section className="flex flex-col gap-3">
           <p className="text-center text-[13px] text-muted-foreground">This pays automatically, and you can pause or cancel it anytime.</p>
           <div className="flex items-center justify-end gap-2">
             <Button variant="outline" onClick={togglePause}>
@@ -162,11 +162,11 @@ export default function StandingOrderDetailPage() {
           <DialogHeader>
             <DialogTitle>Cancel this standing order?</DialogTitle>
           </DialogHeader>
-          <DialogBody className="gap-3.5">
+          <DialogBody className="gap-3">
             <p className="text-[13.5px] leading-relaxed text-muted-foreground">
               &quot;{si.beneficiary}&quot; will stop running. You can set it up again anytime.
             </p>
-            <div className="flex items-start gap-3 rounded-xl border border-border bg-muted/40 p-3 text-[12.5px] text-muted-foreground">
+            <div className="flex items-start gap-2 rounded-xl border border-border bg-muted/40 p-2 text-[12.5px] text-muted-foreground">
               <AlertTriangle size={15} strokeWidth={1.8} className="mt-0.5 shrink-0 text-warning-text" aria-hidden="true" />
               <span>If you just want to pause it temporarily, use Pause instead.</span>
             </div>
@@ -176,7 +176,7 @@ export default function StandingOrderDetailPage() {
               Keep It
             </Button>
             <Button variant="destructive" onClick={handleCancel}>
-              <Trash2 size={14} strokeWidth={1.8} aria-hidden="true" className="mr-1.5" />
+              <Trash2 size={14} strokeWidth={1.8} aria-hidden="true" className="mr-2" />
               Cancel Order
             </Button>
           </DialogFooter>

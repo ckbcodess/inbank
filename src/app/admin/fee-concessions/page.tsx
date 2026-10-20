@@ -62,7 +62,7 @@ export default function FeeConcessionsPage() {
   const rows = effective === "partial-load" ? FEE_CONCESSIONS : results;
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Fee Concessions"
         description="Approved concessions are applied automatically at transaction time. Maintaining them here removes the need for manual fee reversals."
@@ -83,7 +83,7 @@ export default function FeeConcessionsPage() {
       />
 
       {/* Search Header */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-2">
         <span className="text-[14px] font-medium text-foreground">
           Concessions ({results.length})
         </span>
@@ -92,7 +92,7 @@ export default function FeeConcessionsPage() {
           onChange={setQuery}
           placeholder="Search by customer or fee type..."
           tooltip="Search fee concessions"
-          inputWidthClassName="w-64 sm:w-80"
+          inputWidthClassName="w-56 sm:w-70"
         />
       </div>
 
@@ -139,29 +139,29 @@ export default function FeeConcessionsPage() {
             <table className="w-full min-w-[720px] text-[13px]">
               <thead>
                 <tr className="border-b border-border text-left text-muted-foreground">
-                  <th className="px-4 py-3 font-normal">Customer</th>
-                  <th className="px-4 py-3 font-normal">Fee type</th>
-                  <th className="px-4 py-3 text-right font-normal">Concession</th>
-                  <th className="px-4 py-3 font-normal">Effective</th>
-                  <th className="px-4 py-3 font-normal">Status</th>
-                  <th className="px-4 py-3 font-normal">Approved by</th>
+                  <th className="px-3 py-2 font-normal">Customer</th>
+                  <th className="px-3 py-2 font-normal">Fee type</th>
+                  <th className="px-3 py-2 text-right font-normal">Concession</th>
+                  <th className="px-3 py-2 font-normal">Effective</th>
+                  <th className="px-3 py-2 font-normal">Status</th>
+                  <th className="px-3 py-2 font-normal">Approved by</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {rows.map((fee) => (
                   <tr key={fee.id} className="transition-colors hover:bg-muted/50">
-                    <td className="px-4 py-3.5 text-foreground">{fee.customer}</td>
-                    <td className="px-4 py-3.5 text-muted-foreground">{fee.feeType}</td>
-                    <td className="px-4 py-3.5 text-right text-foreground tabular">
+                    <td className="px-3 py-3 text-foreground">{fee.customer}</td>
+                    <td className="px-3 py-3 text-muted-foreground">{fee.feeType}</td>
+                    <td className="px-3 py-3 text-right text-foreground tabular">
                       {fee.concessionPct}%
                     </td>
-                    <td className="px-4 py-3.5 text-muted-foreground tabular">
+                    <td className="px-3 py-3 text-muted-foreground tabular">
                       {formatDate(fee.effectiveFrom)} — {formatDate(fee.effectiveTo)}
                     </td>
-                    <td className="px-4 py-3.5">
+                    <td className="px-3 py-3">
                       <Badge variant={STATUS_VARIANT[fee.status]}>{fee.status}</Badge>
                     </td>
-                    <td className="px-4 py-3.5 text-muted-foreground">{fee.approvedBy}</td>
+                    <td className="px-3 py-3 text-muted-foreground">{fee.approvedBy}</td>
                   </tr>
                 ))}
               </tbody>

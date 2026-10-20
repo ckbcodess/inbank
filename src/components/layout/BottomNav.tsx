@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CreditCard, Home, LayoutGrid, Send, Wallet } from "lucide-react";
+import { ArrowLeftRight, CreditCard, Home, LayoutGrid, Send, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { homePathForProfile } from "@/lib/navigation";
+import { isBusinessProfile } from "@/lib/profile";
+import { useSession } from "@/lib/session-store";
 
 interface BottomNavProps {
   onOpenDrawer: () => void;
@@ -20,25 +23,37 @@ interface TabItem {
 export function BottomNav({ onOpenDrawer }: BottomNavProps) {
   const pathname = usePathname();
 
+  const activeProfile = useSession((s) => s.activeProfile);
+  const homePath = homePathForProfile(activeProfile);
+  const business = isBusinessProfile(activeProfile);
+
   const getIsActive = (path?: string) => {
     if (!path) return false;
     if (pathname === path) return true;
-    if (path !== "/overview" && pathname.startsWith(path)) return true;
+    if (path !== homePath && pathname.startsWith(path)) return true;
     return false;
   };
 
-  const tabs: TabItem[] = [
-    { key: "overview", label: "Home", path: "/overview", icon: Home },
-    { key: "accounts", label: "Accounts", path: "/accounts", icon: Wallet },
-    { key: "payments", label: "Send & Pay", path: "/payments", icon: Send },
-    { key: "cards", label: "Cards", path: "/cards", icon: CreditCard },
-    { key: "more", label: "More", icon: LayoutGrid, onClick: onOpenDrawer },
-  ];
+  const tabs: TabItem[] = business
+    ? [
+        { key: "overview", label: "Home", path: homePath, icon: Home },
+        { key: "accounts", label: "Accounts", path: "/business/accounts", icon: Wallet },
+        { key: "payments", label: "Send & Pay", path: "/business/payments", icon: Send },
+        { key: "transactions", label: "Transactions", path: "/business/transactions", icon: ArrowLeftRight },
+        { key: "more", label: "More", icon: LayoutGrid, onClick: onOpenDrawer },
+      ]
+    : [
+        { key: "overview", label: "Home", path: homePath, icon: Home },
+        { key: "accounts", label: "Accounts", path: "/accounts", icon: Wallet },
+        { key: "payments", label: "Send & Pay", path: "/payments", icon: Send },
+        { key: "cards", label: "Cards", path: "/cards", icon: CreditCard },
+        { key: "more", label: "More", icon: LayoutGrid, onClick: onOpenDrawer },
+      ];
 
   return (
     <nav
       aria-label="Mobile Navigation"
-      className="fixed inset-x-0 bottom-0 z-30 w-full border-t border-border/70 bg-[var(--shell-top)]/95 backdrop-blur-2xl pt-4 pb-[max(1.5rem,calc(env(safe-area-inset-bottom)+1rem))] px-2 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] md:hidden dark:border-white/10 dark:shadow-[0_-4px_24px_rgba(0,0,0,0.3)]"
+      className="fixed inset-x-0 bottom-0 z-30 w-full border-t border-border/70 bg-[var(--shell-top)]/95 backdrop-blur-2xl pt-3 pb-[max(1.5rem,calc(env(safe-area-inset-bottom)+1rem))] px-2 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] md:hidden dark:border-white/10 dark:shadow-[0_-4px_24px_rgba(0,0,0,0.3)]"
     >
       <div className="mx-auto flex w-full max-w-lg items-center justify-around">
         {tabs.map((tab) => {
@@ -48,7 +63,7 @@ export function BottomNav({ onOpenDrawer }: BottomNavProps) {
           const content = (
             <div
               className={cn(
-                "group relative flex flex-col items-center justify-center gap-1.5 py-1 px-2.5 rounded-xl transition-all duration-150 active:scale-92 cursor-pointer select-none",
+                "group relative flex flex-col items-center justify-center gap-2 py-1 px-2 rounded-xl transition-all duration-150 active:scale-92 cursor-pointer select-none",
                 isActive
                   ? "text-black dark:text-white font-medium"
                   : "text-neutral-400 hover:text-neutral-700 dark:text-white/40 dark:hover:text-white/80",

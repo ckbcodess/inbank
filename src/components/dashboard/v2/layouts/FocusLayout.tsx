@@ -61,7 +61,7 @@ function Forecast({ data, showAmounts }: { data: DashData; showAmounts: boolean 
 
 /** A quiet section — no card chrome, just a heading and a list. */
 function Section({ children }: { children: React.ReactNode }) {
-  return <section className="flex flex-col gap-4">{children}</section>;
+  return <section className="flex flex-col gap-3">{children}</section>;
 }
 
 export function FocusLayout(props: DashViewProps) {
@@ -77,18 +77,18 @@ export function FocusLayout(props: DashViewProps) {
   ];
 
   return (
-    <div className="flex flex-col gap-8 sm:gap-12">
-      <div className="flex items-center justify-between gap-4">
+    <div className="flex flex-col gap-6 sm:gap-10">
+      <div className="flex items-center justify-between gap-3">
         <Greeting firstName={data.firstName} className="sm:text-[20px] sm:leading-[26px]" />
         <RefreshControl updatedAt={updatedAt} refreshing={loading} onRefresh={onRefresh} />
       </div>
 
       {/* Hero — the left pad offsets the eye button so the number reads centred. */}
-      <div className="flex flex-col items-center gap-4 text-center sm:gap-5">
+      <div className="flex flex-col items-center gap-3 text-center sm:gap-4">
         <AccountSwitcher data={data} onSelect={onSelectAccount} align="center" />
-        <BalanceFigure data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} size="xl" className="pl-10 sm:pl-12" />
+        <BalanceFigure data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} size="xl" className="pl-10 sm:pl-10" />
         {!loading && <Forecast data={data} showAmounts={showAmounts} />}
-        <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} className="mt-3 hidden justify-center sm:flex" />
+        <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} className="mt-2 hidden justify-center sm:flex" />
         <MoneyActions accountId={data.selectedAccountId} hasOtherAccounts={data.accounts.length > 1} variant="row" className="mt-2 w-full sm:hidden" />
       </div>
 
@@ -97,7 +97,7 @@ export function FocusLayout(props: DashViewProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={SPRING}
-        className="mx-auto flex w-full max-w-2xl flex-col gap-8 sm:gap-12"
+        className="mx-auto flex w-full max-w-2xl flex-col gap-6 sm:gap-10"
       >
         <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
 
@@ -117,7 +117,7 @@ export function FocusLayout(props: DashViewProps) {
           <ActivityBody data={data} loading={loading} showAmounts={showAmounts} limit={5} />
         </Section>
 
-        <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-border pt-6">
+        <nav className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 border-t border-border pt-5">
           {elsewhere.map((l) => (
             <Link
               key={l.href}

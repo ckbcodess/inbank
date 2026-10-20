@@ -49,20 +49,20 @@ export function DeliveryModeFields({
         Mode of Delivery
       </Label>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         <button
           type="button"
           role="radio"
           aria-checked={value.method === "BRANCH_PICKUP"}
           onClick={() => onChange({ method: "BRANCH_PICKUP" })}
-          className={`p-3.5 sm:p-4 rounded-2xl border text-left transition cursor-pointer flex items-center gap-3 ${
+          className={`p-3 sm:p-3 rounded-2xl border text-left transition cursor-pointer flex items-center gap-2 ${
             value.method === "BRANCH_PICKUP"
               ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
               : "border-border bg-card hover:bg-muted/50 text-foreground"
           }`}
         >
           <div
-            className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+            className={`size-3.5 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
               value.method === "BRANCH_PICKUP"
                 ? "border-[var(--active-border)] bg-[var(--active-border)]"
                 : "border-border bg-transparent"
@@ -85,14 +85,14 @@ export function DeliveryModeFields({
           role="radio"
           aria-checked={value.method === "DELIVERY"}
           onClick={() => onChange({ method: "DELIVERY" })}
-          className={`p-3.5 sm:p-4 rounded-2xl border text-left transition cursor-pointer flex items-center gap-3 ${
+          className={`p-3 sm:p-3 rounded-2xl border text-left transition cursor-pointer flex items-center gap-2 ${
             value.method === "DELIVERY"
               ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
               : "border-border bg-card hover:bg-muted/50 text-foreground"
           }`}
         >
           <div
-            className={`size-4 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+            className={`size-3.5 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
               value.method === "DELIVERY"
                 ? "border-[var(--active-border)] bg-[var(--active-border)]"
                 : "border-border bg-transparent"
@@ -130,7 +130,7 @@ export function DeliveryModeFields({
         )}
         {value.method === "DELIVERY" && (
           <div key="delivery" className="animate-in fade-in">
-          <div className="flex flex-col gap-3.5 pt-1">
+          <div className="flex flex-col gap-3 pt-1">
             <div className="flex flex-col gap-2">
               <Label>
                 Recipient Name
@@ -155,7 +155,7 @@ export function DeliveryModeFields({
                 
               />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div className="flex flex-col gap-2">
                 <Label>City</Label>
                 <Input
@@ -172,7 +172,7 @@ export function DeliveryModeFields({
                   value={value.phone}
                   onValueChange={(phone) => onChange({ phone })}
                   aria-label="Delivery phone number"
-                  className="h-13 rounded-2xl border-field-border bg-field px-4 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
+                  className="h-11 rounded-2xl border-field-border bg-field px-3 text-[14px] focus-within:border-field-border-focus focus-within:ring-0"
                 />
               </div>
             </div>

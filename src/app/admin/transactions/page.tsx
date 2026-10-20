@@ -238,8 +238,8 @@ export default function TransactionMonitoringPage() {
           : (DATE_OPTIONS.find((o) => o.value === v)?.label ?? v),
       extra:
         datePreset === "custom" ? (
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <div className="flex min-w-0 flex-col gap-1.5">
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className="flex min-w-0 flex-col gap-2">
               <Label htmlFor="mon-from">
                 From
               </Label>
@@ -251,7 +251,7 @@ export default function TransactionMonitoringPage() {
                 className="tabular"
               />
             </div>
-            <div className="flex min-w-0 flex-col gap-1.5">
+            <div className="flex min-w-0 flex-col gap-2">
               <Label htmlFor="mon-to">
                 To
               </Label>
@@ -334,7 +334,7 @@ export default function TransactionMonitoringPage() {
 
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PageHeader
         title="Transaction Monitoring"
         description="Operational queue across all customers. View-only — no execution from this portal."
@@ -351,13 +351,13 @@ export default function TransactionMonitoringPage() {
       <StubNotice section="section 7 / sitemap 12.5" states="13.1 list, 13.2 ops variant" />
 
       <section className="rounded-2xl border border-border bg-card">
-        <div className="flex flex-wrap items-center justify-between gap-3 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 p-3">
           <div className="flex flex-wrap items-center gap-2">
             <FilterPanel groups={filterGroups} onClear={clearFilterGroups} align="start" />
             <AppliedFilters groups={filterGroups} />
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <span className="hidden text-[13px] text-muted-foreground whitespace-nowrap tabular sm:inline">
               {filtered.length} {filtered.length === 1 ? "record" : "records"}
             </span>
@@ -366,7 +366,7 @@ export default function TransactionMonitoringPage() {
               onChange={setQuery}
               placeholder="Search reference, customer or counterparty..."
               tooltip="Search transactions"
-              inputWidthClassName="w-64 sm:w-80"
+              inputWidthClassName="w-56 sm:w-70"
             />
           </div>
         </div>
@@ -393,7 +393,7 @@ export default function TransactionMonitoringPage() {
                 <li key={t.id}>
                   <Link
                     href={`/admin/transactions/${t.id}`}
-                    className="flex items-center gap-4 px-4 py-3.5 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                    className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
                   >
                     <span className="flex min-w-0 flex-1 flex-col">
                       <span className="truncate text-[13.5px] text-foreground">{t.description}</span>

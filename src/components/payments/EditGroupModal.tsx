@@ -310,14 +310,14 @@ export default function EditGroupModal({
           showCloseButton={false}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4.5 border-b border-border/60 shrink-0">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border/60 shrink-0">
             <SheetTitle className="truncate max-w-[380px]">
               Edit {group.name}
             </SheetTitle>
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer shrink-0"
+              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer shrink-0"
               aria-label="Close"
             >
               <X size={17} strokeWidth={1.8} />
@@ -325,9 +325,9 @@ export default function EditGroupModal({
           </div>
 
           {/* Scrollable Sheet Content Body */}
-          <div className="flex-1 min-h-0 overflow-y-auto px-6 py-6 flex flex-col gap-5 overscroll-contain custom-scrollbar">
+          <div className="flex-1 min-h-0 overflow-y-auto px-5 py-5 flex flex-col gap-4 overscroll-contain custom-scrollbar">
             {/* Name and the amount: the only two things most edits touch */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
               <Field label="Group Name" error={errors.name}>
                 <Input
                   type="text"
@@ -346,7 +346,7 @@ export default function EditGroupModal({
                 <Label>{splitType === "equal" ? "Amount per Person" : "Starting Amount"}</Label>
                 <div
                   className={cn(
-                    "h-13 w-full rounded-2xl border border-field-border bg-field px-4 flex items-center gap-2 focus-within:border-field-border-focus focus-within:ring-0 transition",
+                    "h-11 w-full rounded-2xl border border-field-border bg-field px-3 flex items-center gap-2 focus-within:border-field-border-focus focus-within:ring-0 transition",
                     errors.amount && "border-destructive focus-within:border-destructive"
                   )}
                 >
@@ -376,7 +376,7 @@ export default function EditGroupModal({
             </div>
 
             {/* Members Section Header + Add Button */}
-            <div className="flex flex-col gap-3 pt-2">
+            <div className="flex flex-col gap-2 pt-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-[14px] font-medium text-foreground">
@@ -389,7 +389,7 @@ export default function EditGroupModal({
                   size="sm"
                   variant="outline"
                   onClick={() => setShowAddMember((prev) => !prev)}
-                  className="h-8.5 gap-1.5 px-3 text-[12.5px] rounded-xl border-border/80 font-normal cursor-pointer"
+                  className="h-7 gap-2 px-2 text-[12.5px] rounded-xl border-border/80 font-normal cursor-pointer"
                 >
                   <UserPlus size={14} />
                   <span>{showAddMember ? "Close" : "+ Add Member"}</span>
@@ -398,14 +398,14 @@ export default function EditGroupModal({
 
               {/* Expandable Add Member Drawer */}
               {showAddMember && (
-                <div className="rounded-2xl border border-border/80 bg-muted/20 p-4 flex flex-col gap-3.5 animate-in fade-in slide-in-from-top-2 duration-150 shadow-xs">
+                <div className="rounded-2xl border border-border/80 bg-muted/20 p-3 flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-150 shadow-xs">
                   {/* Mode switcher: Saved Beneficiary vs Custom Contact */}
                   <div className="flex items-center gap-2 p-1 bg-card rounded-xl border border-border/70">
                     <button
                       type="button"
                       onClick={() => setAddMode("saved")}
                       className={cn(
-                        "flex-1 py-1.5 rounded-lg text-[12px] font-medium transition cursor-pointer",
+                        "flex-1 py-2 rounded-lg text-[12px] font-medium transition cursor-pointer",
                         addMode === "saved"
                           ? "bg-primary text-primary-foreground shadow-xs"
                           : "text-muted-foreground hover:text-foreground"
@@ -417,7 +417,7 @@ export default function EditGroupModal({
                       type="button"
                       onClick={() => setAddMode("custom")}
                       className={cn(
-                        "flex-1 py-1.5 rounded-lg text-[12px] font-medium transition cursor-pointer",
+                        "flex-1 py-2 rounded-lg text-[12px] font-medium transition cursor-pointer",
                         addMode === "custom"
                           ? "bg-primary text-primary-foreground shadow-xs"
                           : "text-muted-foreground hover:text-foreground"
@@ -433,20 +433,20 @@ export default function EditGroupModal({
                       <div className="relative w-full">
                         <Search
                           size={15}
-                          className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+                          className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
                         />
                         <input
                           type="text"
                           value={savedSearch}
                           onChange={(e) => setSavedSearch(e.target.value)}
                           placeholder="Search saved contacts to add..."
-                          className="h-10 w-full pl-9 pr-7 rounded-xl border border-field-border bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                          className="h-9 w-full pl-8 pr-6 rounded-xl border border-field-border bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                         />
                         {savedSearch && (
                           <button
                             type="button"
                             onClick={() => setSavedSearch("")}
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
                             aria-label="Clear search"
                           >
                             <X size={13} />
@@ -459,10 +459,10 @@ export default function EditGroupModal({
                           availableSavedBeneficiaries.map((b) => (
                             <div
                               key={b.id}
-                              className="flex items-center justify-between px-3.5 py-2.5 hover:bg-muted/30 transition-colors"
+                              className="flex items-center justify-between px-3 py-2 hover:bg-muted/30 transition-colors"
                             >
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
                                   {b.transactionType === "bank" ? (
                                     <Landmark size={13} />
                                   ) : (
@@ -483,14 +483,14 @@ export default function EditGroupModal({
                                 size="sm"
                                 variant="outline"
                                 onClick={() => handleAddSavedBeneficiary(b)}
-                                className="h-7 px-2.5 rounded-lg text-[11.5px] border-border/80 font-normal shrink-0"
+                                className="h-6 px-2 rounded-lg text-[11.5px] border-border/80 font-normal shrink-0"
                               >
                                 <Plus size={12} className="mr-1" /> Add
                               </Button>
                             </div>
                           ))
                         ) : (
-                          <div className="py-6 text-center text-muted-foreground text-[12.5px]">
+                          <div className="py-5 text-center text-muted-foreground text-[12.5px]">
                             {savedSearch
                               ? "No saved beneficiaries match your search."
                               : "All saved beneficiaries are already in this group."}
@@ -500,7 +500,7 @@ export default function EditGroupModal({
                     </div>
                   ) : (
                     /* Mode B: Add Custom Contact Inline */
-                    <div className="flex flex-col gap-2.5">
+                    <div className="flex flex-col gap-2">
                       <Input
                         type="text"
                         value={customName}
@@ -525,7 +525,7 @@ export default function EditGroupModal({
                             setCustomType(t);
                             setCustomBankOrNet(t === "wallet" ? WALLET_NETWORKS[0] : GHANA_BANKS[0]);
                           }}
-                          className="h-10 rounded-xl border border-border/80 bg-card px-2 text-[12px] text-foreground outline-none cursor-pointer"
+                          className="h-9 rounded-xl border border-border/80 bg-card px-2 text-[12px] text-foreground outline-none cursor-pointer"
                         >
                           <option value="wallet">Mobile Wallet</option>
                           <option value="bank">Bank Account</option>
@@ -536,7 +536,7 @@ export default function EditGroupModal({
                         <select
                           value={customBankOrNet}
                           onChange={(e) => setCustomBankOrNet(e.target.value)}
-                          className="h-9 flex-1 rounded-xl border border-border/80 bg-card px-2.5 text-[12px] text-foreground outline-none cursor-pointer"
+                          className="h-8 flex-1 rounded-xl border border-border/80 bg-card px-2 text-[12px] text-foreground outline-none cursor-pointer"
                         >
                           {(customType === "wallet" ? WALLET_NETWORKS : GHANA_BANKS).map((opt) => (
                             <option key={opt} value={opt}>
@@ -549,7 +549,7 @@ export default function EditGroupModal({
                           type="button"
                           size="sm"
                           onClick={handleAddCustomMember}
-                          className="h-9 px-4 rounded-xl text-[12.5px] bg-primary text-primary-foreground font-normal shrink-0 cursor-pointer"
+                          className="h-8 px-3 rounded-xl text-[12.5px] bg-primary text-primary-foreground font-normal shrink-0 cursor-pointer"
                         >
                           Add to Group
                         </Button>
@@ -564,20 +564,20 @@ export default function EditGroupModal({
                 <div className="relative w-full">
                   <Search
                     size={16}
-                    className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
                   />
                   <input
                     type="text"
                     value={searchMember}
                     onChange={(e) => setSearchMember(e.target.value)}
                     placeholder="Search members in this group..."
-                    className="h-11 w-full pl-9.5 pr-8 rounded-xl border border-field-border bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
+                    className="h-10 w-full pl-8 pr-6 rounded-xl border border-field-border bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                   />
                   {searchMember && (
                     <button
                       type="button"
                       onClick={() => setSearchMember("")}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground cursor-pointer"
                       aria-label="Clear search"
                     >
                       <X size={14} />
@@ -591,10 +591,10 @@ export default function EditGroupModal({
                 {filteredMembers.map((m) => (
                   <div
                     key={m.id || m.destination}
-                    className="flex items-center justify-between px-4 py-3 hover:bg-muted/20 transition-colors"
+                    className="flex items-center justify-between px-3 py-2 hover:bg-muted/20 transition-colors"
                   >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
                         {m.type === "wallet" ? (
                           <Smartphone size={16} strokeWidth={1.8} />
                         ) : (
@@ -626,7 +626,7 @@ export default function EditGroupModal({
                             onChange={(e) =>
                               handleUpdateMemberAmount(m.id || m.destination, e.target.value)
                             }
-                            className="w-20 bg-transparent text-right text-[13px] font-normal tabular-nums outline-none border-none text-foreground"
+                            className="w-17 bg-transparent text-right text-[13px] font-normal tabular-nums outline-none border-none text-foreground"
                           />
                         </div>
                       )}
@@ -634,7 +634,7 @@ export default function EditGroupModal({
                       <button
                         type="button"
                         onClick={() => setMemberToDelete(m)}
-                        className="size-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+                        className="size-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
                         title="Remove member"
                         aria-label={`Remove ${m.name}`}
                       >
@@ -645,7 +645,7 @@ export default function EditGroupModal({
                 ))}
 
                 {filteredMembers.length === 0 && (
-                  <div className="py-8 text-center text-muted-foreground text-[13px]">
+                  <div className="py-6 text-center text-muted-foreground text-[13px]">
                     No members found matching “{searchMember}”.
                   </div>
                 )}
@@ -668,7 +668,7 @@ export default function EditGroupModal({
           </div>
 
           {/* Save is the one main action; deleting is a quiet link, no harder to reach than creating was */}
-          <div className="px-6 py-4 border-t border-border/60 flex items-center justify-between gap-3 shrink-0">
+          <div className="px-5 py-3 border-t border-border/60 flex items-center justify-between gap-2 shrink-0">
             <button
               type="button"
               onClick={() => setShowDeleteGroupConfirm(true)}
@@ -680,7 +680,7 @@ export default function EditGroupModal({
               type="button"
               onClick={handleSaveChanges}
               disabled={!name.trim() || members.length === 0}
-              className="h-11 px-6 rounded-xl text-[13.5px] cursor-pointer"
+              className="h-10 px-5 rounded-xl text-[13.5px] cursor-pointer"
             >
               Save changes
             </Button>
@@ -695,7 +695,7 @@ export default function EditGroupModal({
             <DialogTitle>Remove Member</DialogTitle>
           </DialogHeader>
 
-          <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
+          <div className="px-4 sm:px-5 py-4 text-[13.5px] text-muted-foreground leading-relaxed">
             Are you sure you want to remove <span className="text-foreground font-medium">{memberToDelete?.name}</span> from <span className="text-foreground font-medium">{name || group.name}</span>? They will no longer receive disbursements when you send to this group.
           </div>
 
@@ -723,7 +723,7 @@ export default function EditGroupModal({
             <DialogTitle>Delete Payment Group</DialogTitle>
           </DialogHeader>
 
-          <div className="px-5 sm:px-6 py-5 text-[13.5px] text-muted-foreground leading-relaxed">
+          <div className="px-4 sm:px-5 py-4 text-[13.5px] text-muted-foreground leading-relaxed">
             Are you sure you want to delete <span className="text-foreground font-medium">{group.name}</span>? This action cannot be undone. All member contact details will remain safely saved in your individual beneficiaries directory.
           </div>
 

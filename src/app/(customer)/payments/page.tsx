@@ -191,11 +191,11 @@ function ActionSection({
   look: string;
 }) {
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex min-h-8 items-center px-1">
+    <div className="flex flex-col gap-3">
+      <div className="flex min-h-7 items-center px-1">
         <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">{title}</h2>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3">
         {actions.map((action) => (
           <ActionTile key={action.id} href={action.href} icon={LOOKS.get(action.id)?.[look] ?? action.icon} title={action.title} compactOnMobile bareIcon />
         ))}

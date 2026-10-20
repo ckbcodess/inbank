@@ -213,9 +213,9 @@ export function FxQuickModal() {
         className="p-0 sm:max-w-[880px] lg:max-w-[940px] max-h-[92vh] flex flex-col overflow-hidden"
       >
         {/* Modal Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border/70 px-5 pt-4 pb-3.5 sm:px-6 gap-2 shrink-0">
-          <div className="flex items-center gap-2.5">
-            <span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-foreground">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border/70 px-4 pt-3 pb-3 sm:px-5 gap-2 shrink-0">
+          <div className="flex items-center gap-2">
+            <span className="flex size-6 items-center justify-center rounded-lg bg-primary/10 text-foreground">
               <ArrowLeftRight size={15} strokeWidth={2} />
             </span>
             <div>
@@ -228,8 +228,8 @@ export function FxQuickModal() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 pr-8 sm:pr-0">
-            <div className="flex items-center gap-1.5 rounded-lg border border-border/70 bg-muted/40 px-2.5 py-1 text-[11.5px] tabular">
+          <div className="flex items-center gap-2 pr-6 sm:pr-0">
+            <div className="flex items-center gap-2 rounded-lg border border-border/70 bg-muted/40 px-2 py-1 text-[11.5px] tabular">
               <span className="text-muted-foreground">Day&apos;s Weighted Median:</span>
               <span className="font-medium text-foreground">
                 {formatFourDecimals(BOG_WEIGHTED_MEDIAN_RATE)} GHS
@@ -241,8 +241,8 @@ export function FxQuickModal() {
         {/* Modal Body: Side-by-Side Split on Desktop, Stacked on Mobile */}
         <div className="grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-border/60 overflow-y-auto min-h-0 flex-1">
           {/* Left Column: Interactive Fast Currency Converter */}
-          <div className="md:col-span-5 p-5 sm:p-6 flex flex-col justify-between gap-5 bg-card">
-            <div className="flex flex-col gap-3">
+          <div className="md:col-span-5 p-4 sm:p-5 flex flex-col justify-between gap-4 bg-card">
+            <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <span className="text-[12.5px] font-medium tracking-[var(--ls-tight)] text-foreground">
                   Quick Converter
@@ -253,12 +253,12 @@ export function FxQuickModal() {
               {/* Conversion Inputs */}
               <div className="relative flex flex-col gap-2">
                 {/* "You Convert" Container */}
-                <div className="flex flex-col rounded-xl border border-field-border bg-field p-3 transition-colors focus-within:border-field-border-focus focus-within:bg-field-focus">
+                <div className="flex flex-col rounded-xl border border-field-border bg-field p-2 transition-colors focus-within:border-field-border-focus focus-within:bg-field-focus">
                   <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                     <span>You convert</span>
                     <span className="tabular text-[10.5px]">Available balance</span>
                   </div>
-                  <div className="mt-1 flex items-center justify-between gap-3">
+                  <div className="mt-1 flex items-center justify-between gap-2">
                     <div className="relative flex min-w-0 flex-1 items-center">
                       <span
                         aria-hidden="true"
@@ -290,7 +290,7 @@ export function FxQuickModal() {
                           setShowFromPicker((v) => !v);
                           setShowToPicker(false);
                         }}
-                        className="flex items-center gap-1.5 rounded-lg border border-border/70 bg-card px-2.5 py-1.5 text-[13px] font-medium text-foreground shadow-xs transition-colors hover:bg-muted cursor-pointer"
+                        className="flex items-center gap-2 rounded-lg border border-border/70 bg-card px-2 py-2 text-[13px] font-medium text-foreground shadow-xs transition-colors hover:bg-muted cursor-pointer"
                       >
                         <CurrencyLogo currency={fromCcy} size={19} />
                         <span>{fromCcy}</span>
@@ -298,7 +298,7 @@ export function FxQuickModal() {
                       </button>
 
                       {showFromPicker && (
-                        <div className="absolute right-0 top-full z-30 mt-1 max-h-52 w-48 overflow-y-auto rounded-xl border border-border bg-card p-1 shadow-xl">
+                        <div className="absolute right-0 top-full z-30 mt-1 max-h-45 w-42 overflow-y-auto rounded-xl border border-border bg-card p-1 shadow-xl">
                           {availableFromList.map((c) => (
                             <button
                               key={c.code}
@@ -308,7 +308,7 @@ export function FxQuickModal() {
                                 setShowFromPicker(false);
                               }}
                               className={cn(
-                                "flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-[12.5px] hover:bg-muted cursor-pointer",
+                                "flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-[12.5px] hover:bg-muted cursor-pointer",
                                 fromCcy === c.code ? "bg-muted text-foreground" : "text-muted-foreground",
                               )}
                             >
@@ -331,19 +331,19 @@ export function FxQuickModal() {
                     type="button"
                     onClick={handleSwap}
                     aria-label="Swap currencies"
-                    className="flex size-7.5 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm transition-transform hover:text-foreground active:scale-95 cursor-pointer"
+                    className="flex size-7 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm transition-transform hover:text-foreground active:scale-95 cursor-pointer"
                   >
                     <ArrowLeftRight size={13} strokeWidth={2} />
                   </button>
                 </div>
 
                 {/* "You Receive" Container */}
-                <div className="flex flex-col rounded-xl border border-border/80 bg-muted/30 p-3 transition-colors">
+                <div className="flex flex-col rounded-xl border border-border/80 bg-muted/30 p-2 transition-colors">
                   <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                     <span>You receive (indicative)</span>
                     <span className="tabular text-[10.5px]">BOG rate applied</span>
                   </div>
-                  <div className="mt-1 flex items-center justify-between gap-3">
+                  <div className="mt-1 flex items-center justify-between gap-2">
                     <div className="flex min-w-0 flex-1 items-center">
                       <span className="whitespace-pre text-2xl font-medium tracking-tight tabular-nums text-foreground select-none leading-none">
                         <TextMorph ease={{ stiffness: 400, damping: 30 }}>
@@ -360,7 +360,7 @@ export function FxQuickModal() {
                           setShowToPicker((v) => !v);
                           setShowFromPicker(false);
                         }}
-                        className="flex items-center gap-1.5 rounded-lg border border-border/70 bg-card px-2.5 py-1.5 text-[13px] font-medium text-foreground shadow-xs transition-colors hover:bg-muted cursor-pointer"
+                        className="flex items-center gap-2 rounded-lg border border-border/70 bg-card px-2 py-2 text-[13px] font-medium text-foreground shadow-xs transition-colors hover:bg-muted cursor-pointer"
                       >
                         <CurrencyLogo currency={toCcy} size={19} />
                         <span>{toCcy}</span>
@@ -368,7 +368,7 @@ export function FxQuickModal() {
                       </button>
 
                       {showToPicker && (
-                        <div className="absolute right-0 top-full z-30 mt-1 max-h-52 w-48 overflow-y-auto rounded-xl border border-border bg-card p-1 shadow-xl">
+                        <div className="absolute right-0 top-full z-30 mt-1 max-h-45 w-42 overflow-y-auto rounded-xl border border-border bg-card p-1 shadow-xl">
                           {availableToList.map((c) => (
                             <button
                               key={c.code}
@@ -378,7 +378,7 @@ export function FxQuickModal() {
                                 setShowToPicker(false);
                               }}
                               className={cn(
-                                "flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-[12.5px] hover:bg-muted cursor-pointer",
+                                "flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-[12.5px] hover:bg-muted cursor-pointer",
                                 toCcy === c.code ? "bg-muted text-foreground" : "text-muted-foreground",
                               )}
                             >
@@ -397,7 +397,7 @@ export function FxQuickModal() {
               </div>
 
               {/* Rate Detail */}
-              <div className="flex items-center justify-between rounded-lg bg-muted/40 px-3 py-2 text-[11.5px] text-muted-foreground">
+              <div className="flex items-center justify-between rounded-lg bg-muted/40 px-2 py-2 text-[11.5px] text-muted-foreground">
                 <span className="tabular">{conversion.note}</span>
                 <span className="tabular text-[10.5px]">Zero commission</span>
               </div>
@@ -425,21 +425,21 @@ export function FxQuickModal() {
           </div>
 
           {/* Right Column: Bank of Ghana Official Daily Interbank Rates Table */}
-          <div className="md:col-span-7 p-5 sm:p-6 flex flex-col gap-3.5 bg-muted/15 min-h-0">
+          <div className="md:col-span-7 p-4 sm:p-5 flex flex-col gap-3 bg-muted/15 min-h-0">
             {/* Search and Table Header Bar */}
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center justify-between gap-2">
               <div className="relative flex-1">
                 <Search
                   size={14}
                   strokeWidth={2}
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground"
                 />
                 <Input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Filter currencies (e.g. USD, EUR, GBP)..."
-                  className="pl-8 pr-3 focus:border-border"
+                  className="pl-6 pr-2 focus:border-border"
                 />
               </div>
 
@@ -451,7 +451,7 @@ export function FxQuickModal() {
             {/* Rates Table Container */}
             <div className="flex-1 overflow-hidden rounded-xl border border-border/70 bg-card shadow-xs flex flex-col">
               {/* Fixed Header Row */}
-              <div className="grid grid-cols-12 border-b border-border/70 bg-muted/40 px-3.5 py-2 text-[11px] font-medium text-muted-foreground tracking-[var(--ls-tight)] select-none shrink-0">
+              <div className="grid grid-cols-12 border-b border-border/70 bg-muted/40 px-3 py-2 text-[11px] font-medium text-muted-foreground tracking-[var(--ls-tight)] select-none shrink-0">
                 <span className="col-span-4">Currency Pair</span>
                 <span className="col-span-3 text-right">Buying</span>
                 <span className="col-span-2 text-right">Selling</span>
@@ -461,7 +461,7 @@ export function FxQuickModal() {
               {/* Scrollable Rates List */}
               <div className="divide-y divide-border/40 overflow-y-auto max-h-[300px] md:max-h-[360px] flex-1">
                 {filteredRates.length === 0 ? (
-                  <div className="p-6 text-center text-[12px] text-muted-foreground">
+                  <div className="p-5 text-center text-[12px] text-muted-foreground">
                     No currency pairs matching &ldquo;{searchQuery}&rdquo;
                   </div>
                 ) : (
@@ -473,7 +473,7 @@ export function FxQuickModal() {
                         type="button"
                         onClick={() => handleSelectRateRow(r)}
                         className={cn(
-                          "grid grid-cols-12 w-full items-center px-3.5 py-2.5 text-[12.5px] text-left transition-colors cursor-pointer group",
+                          "grid grid-cols-12 w-full items-center px-3 py-2 text-[12.5px] text-left transition-colors cursor-pointer group",
                           isSelected
                             ? "bg-muted/70 ring-1 ring-inset ring-border/80"
                             : "hover:bg-muted/40",

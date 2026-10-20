@@ -51,14 +51,14 @@ export function ActionsLayout(props: DashViewProps) {
   ];
 
   return (
-    <div className="@container flex flex-col gap-6 sm:gap-10">
-      <div className="flex items-center justify-between gap-4">
+    <div className="@container flex flex-col gap-5 sm:gap-10">
+      <div className="flex items-center justify-between gap-3">
         <Greeting firstName={data.firstName} />
         <RefreshControl updatedAt={updatedAt} refreshing={loading} onRefresh={onRefresh} />
       </div>
 
-      <div className="flex flex-col gap-6 sm:gap-8">
-        <div className="flex flex-col gap-3 sm:gap-4">
+      <div className="flex flex-col gap-5 sm:gap-6">
+        <div className="flex flex-col gap-2 sm:gap-3">
           <AccountSwitcher data={data} onSelect={onSelectAccount} />
           <BalanceFigure data={data} loading={loading} showAmounts={showAmounts} onToggle={onToggle} />
           {!loading && <BalanceMeta data={data} showAmounts={showAmounts} updatedAt={updatedAt} />}
@@ -66,7 +66,7 @@ export function ActionsLayout(props: DashViewProps) {
 
         <Notices data={data} status={status} onRefresh={onRefresh} onOpenFundModal={props.onOpenFundModal} />
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
           {tiles.map((tile) => (
             <ActionTile key={tile.title} icon={tile.icon} title={tile.title} href={tile.href} />
           ))}
@@ -77,7 +77,7 @@ export function ActionsLayout(props: DashViewProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={SPRING}
-          className="dash-grid items-stretch gap-4 sm:gap-6"
+          className="dash-grid items-stretch gap-3 sm:gap-5"
         >
           <ActivityCard
             data={data}

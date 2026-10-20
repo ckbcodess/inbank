@@ -41,7 +41,7 @@ export default function NewPasswordFields({
   const mismatch = confirm.length > 0 && confirm !== password;
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <PasswordInput
         id="new-password"
         label={passwordLabel}
@@ -67,17 +67,17 @@ export default function NewPasswordFields({
         {mismatch && <p className="text-[12.5px] text-destructive">These don&apos;t match yet.</p>}
       </div>
 
-      <div className="rounded-2xl border border-border/80 bg-muted/20 p-4">
-        <p className="mb-2.5 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
+      <div className="rounded-2xl border border-border/80 bg-muted/20 p-3">
+        <p className="mb-2 text-[12px] font-medium uppercase tracking-wider text-muted-foreground">
           Password Requirements
         </p>
-        <ul className="grid grid-cols-1 gap-2.5 text-[12.5px] sm:grid-cols-2" aria-label="Password requirements">
+        <ul className="grid grid-cols-1 gap-2 text-[12.5px] sm:grid-cols-2" aria-label="Password requirements">
           {PASSWORD_RULES.map((rule) => {
             const met = rule.test(password);
             return (
               <li key={rule.id} className="flex items-center gap-2">
                 <span
-                  className={`flex size-4 items-center justify-center rounded-full text-[10px] transition-colors ${
+                  className={`flex size-3.5 items-center justify-center rounded-full text-[10px] transition-colors ${
                     met ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                   }`}
                 >
@@ -127,7 +127,7 @@ function PasswordInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="pr-12"
+          className="pr-10"
           aria-invalid={invalid || undefined}
           autoFocus={autoFocus}
           required
@@ -136,7 +136,7 @@ function PasswordInput({
           type="button"
           onClick={onToggle}
           aria-label={shown ? "Hide password" : "Show password"}
-          className="absolute right-2 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+          className="absolute right-1.5 top-1/2 flex size-7 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
         >
           {shown ? <EyeOff size={16} strokeWidth={1.8} /> : <Eye size={16} strokeWidth={1.8} />}
         </button>

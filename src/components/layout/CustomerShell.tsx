@@ -1,11 +1,11 @@
 "use client";
 
 /**
- * Customer / Corporate application shell — section 12.4.
+ * Customer application chrome — section 12.4. Both the personal layout (`(customer)`) and the business
+ * layout (`/business`) render it; which navigation it shows follows the active relationship
+ * (`getNavigation`), and the guard below keeps each relationship on its own surface.
  *
- * Floating-card layout carried over from the Halepulse dashboard. Renders the
- * customer navigation only — Personal and Business are chosen before sign-in,
- * so there's no in-session profile switcher. It shares no navigation chrome
+ * Floating-card layout carried over from the Halepulse dashboard. It shares no navigation chrome
  * with the Admin Portal shell (section 12.1).
  */
 
@@ -22,6 +22,7 @@ import {
   splashWorkSettled,
 } from "@/lib/app-splash";
 import { useSession, useSessionHydrated } from "@/lib/session-store";
+import { isBusinessProfile } from "@/lib/profile";
 import { getNavigation } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
@@ -83,28 +84,26 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
   // Route guard: an unauthenticated or half-authenticated visitor never sees
   // the shell. Internal staff are bounced to their own shell (section 12.1).
   // Switching to a relationship that lacks permission for the active route redirects to /overview.
+  // Each relationship signs in through its own door; remember which one this session used so signing out
+  // (which clears the profile first) and an expired session both send the person back to it.
+  const businessDoor = useRef(false);
+  if (activeProfile) businessDoor.current = isBusinessProfile(activeProfile);
+  const loginPath = businessDoor.current || pathname.startsWith("/business") ? "/login?type=business" : "/login";
+
   useEffect(() => {
     if (!hydrated) return;
-    if (!actor) router.replace("/login");
+    if (!actor) router.replace(loginPath);
     else if (!mfaVerified) router.replace("/mfa");
     else if (actor.shell === "admin") router.replace("/admin");
     else if (!activeProfile) {
       if (actor.profiles.length > 0) selectProfile(actor.profiles[0]);
-      else router.replace("/login");
+      else router.replace(loginPath);
     }
-    else if (activeProfile.kind === "RETAIL") {
-      const isCorporateRoute =
-        pathname.startsWith("/approvals") ||
-        pathname.startsWith("/administration") ||
-        pathname.startsWith("/trade") ||
-        // Bulk payment files are a corporate capability — a personal
-        // relationship has no batch to upload.
-        pathname.startsWith("/payments/bulk");
-      if (isCorporateRoute) {
-        router.replace("/overview");
-      }
-    }
-  }, [hydrated, actor, mfaVerified, activeProfile, pathname, router, selectProfile]);
+    // Personal and business banking are separate apps. `/business/*` is business-only, and a business
+    // relationship never rests on a personal URL: it goes to its own home.
+    else if (activeProfile.kind === "RETAIL" && pathname.startsWith("/business")) router.replace("/overview");
+    else if (activeProfile.kind === "CORPORATE" && !pathname.startsWith("/business")) router.replace("/business/overview");
+  }, [hydrated, actor, mfaVerified, activeProfile, pathname, router, selectProfile, loginPath]);
 
   const toggleCollapse = useCallback(() => {
     setCollapsed((prev) => {
@@ -116,8 +115,8 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
 
   const handleSignOut = useCallback(() => {
     signOut();
-    router.replace("/login");
-  }, [signOut, router]);
+    router.replace(loginPath);
+  }, [signOut, router, loginPath]);
 
   // `ready` covers these; restated so TypeScript narrows them below.
   if (!ready || !actor || !activeProfile) {
@@ -152,7 +151,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
           onToggleCollapse={toggleCollapse}
         />
 
-        <div className="flex min-w-0 flex-1 flex-col overflow-hidden p-0 sm:p-3 lg:p-3.5">
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden p-0 sm:p-2 lg:p-3">
           <div className="shell-card relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-none border-0 shadow-none sm:rounded-2xl sm:border sm:border-border">
             <TopHeader
               actor={actor}
@@ -162,14 +161,14 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
 
             <main
               key={activeProfile.id}
-              className="custom-scrollbar animate-in fade-in flex-1 overflow-y-auto pt-14 duration-200"
+              className="custom-scrollbar animate-in fade-in flex-1 overflow-y-auto pt-12 duration-200"
               style={{ scrollbarGutter: "stable" }}
             >
               <div
                 key={pathname}
                 className={cn(
-                  "@container page-stagger mx-auto w-full px-4 pt-6 pb-32 sm:px-8 sm:pt-10 sm:pb-14 lg:px-10 lg:pt-12 lg:pb-16 xl:px-10",
-                  pathname === "/overview" ? "max-w-[1440px]" : "max-w-[960px]",
+                  "@container page-stagger mx-auto w-full px-3 pt-5 pb-28 sm:px-6 sm:pt-10 sm:pb-12 lg:px-10 lg:pt-10 lg:pb-12 xl:px-10",
+                  pathname === "/overview" || pathname === "/business/overview" ? "max-w-[1440px]" : "max-w-[960px]",
                 )}
               >
                 {children}
@@ -179,7 +178,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
           </div>
         </div>
       </div>
-      <FxQuickModal />
+      {!isBusinessProfile(activeProfile) && <FxQuickModal />}
       {splash !== "off" && <AppSplash leaving={splash === "leaving"} />}
     </>
   );

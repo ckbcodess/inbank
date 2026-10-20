@@ -21,7 +21,7 @@ export function AppSplash({ leaving }: { leaving: boolean }) {
         leaving ? "pointer-events-none opacity-0" : "opacity-100",
       )}
     >
-      <GCBLogo className="splash-breathe size-16" />
+      <GCBLogo className="splash-breathe size-14" />
       <span className="sr-only">Loading your dashboard</span>
     </div>
   );

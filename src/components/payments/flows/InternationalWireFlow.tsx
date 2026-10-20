@@ -247,7 +247,7 @@ export function InternationalWireFlow({
     Boolean(state.fromId) && isDestinationValid && numForeign > 0 && !overBalance;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
       {/* 1. From Account */}
       <FromAccountSelector
         accounts={accounts}
@@ -266,9 +266,9 @@ export function InternationalWireFlow({
 </Field>
       ) : (
         <>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <Label>Destination</Label>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-2 sm:grid-cols-2">
               <Field label="Country">
                 <CountryPicker
                   value={currentCountry}
@@ -320,13 +320,13 @@ export function InternationalWireFlow({
                     className="tabular uppercase tracking-wider placeholder:normal-case placeholder:tracking-normal"
                   />
                 </Field>
-                <p className="px-1 pt-1.5 text-[12.5px] text-muted-foreground">{codeType.hint}</p>
+                <p className="px-1 pt-2 text-[12.5px] text-muted-foreground">{codeType.hint}</p>
               </div>
             )}
           </div>
 
           {codeOk && currentCountry && (
-            <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+            <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
               <Label>Beneficiary Bank</Label>
               <Field label="Bank">
                 {availableBanks.length > 0 ? (
@@ -364,9 +364,9 @@ export function InternationalWireFlow({
           )}
 
           {bankDetailsOk && (
-            <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+            <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
               <Label>Beneficiary Details</Label>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-2 sm:grid-cols-2">
                 <Field label="Account Number">
                   <Input
                     type="text"
@@ -387,7 +387,7 @@ export function InternationalWireFlow({
               </div>
 
               {accountOk && nameOk && (
-                <div className="flex flex-col gap-3 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+                <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
                   <Field label="Address">
                     <Input
                       type="text"
@@ -398,7 +398,7 @@ export function InternationalWireFlow({
                   </Field>
 
                   {optionalOpen ? (
-                    <div className="grid gap-3 animate-in fade-in duration-150 ease-out sm:grid-cols-2">
+                    <div className="grid gap-2 animate-in fade-in duration-150 ease-out sm:grid-cols-2">
                       <Field label="Email Address" optional>
                         <Input
                           type="email"
@@ -441,13 +441,13 @@ export function InternationalWireFlow({
           <DialogHeader onClose={() => setPapssFor(null)}>
             <DialogTitle>PAPSS Is Available for This Transfer</DialogTitle>
           </DialogHeader>
-          <div className="px-5 py-5 sm:px-6">
+          <div className="px-4 py-4 sm:px-5">
             <DialogDescription className="text-[14px] leading-relaxed text-muted-foreground">
               Send money across Africa quickly and conveniently in local African currencies.
             </DialogDescription>
           </div>
-          <DialogFooter className="flex-row gap-2.5 px-5 pb-5 sm:px-6">
-            <Button type="button" variant="outline" onClick={() => setPapssFor(null)} className="h-11 flex-1 text-[15px]">
+          <DialogFooter className="flex-row gap-2 px-4 pb-4 sm:px-5">
+            <Button type="button" variant="outline" onClick={() => setPapssFor(null)} className="h-10 flex-1 text-[15px]">
               Not now
             </Button>
             <Button
@@ -458,7 +458,7 @@ export function InternationalWireFlow({
                 setPapssFor(null);
                 if (name) onUsePapss?.(name, currency);
               }}
-              className="h-11 flex-1 text-[15px]"
+              className="h-10 flex-1 text-[15px]"
             >
               Use PAPSS
             </Button>
@@ -468,7 +468,7 @@ export function InternationalWireFlow({
 
       {/* Progressive Disclosure: Only reveal Foreign Amount & onwards after wire details are entered */}
       {isDestinationValid && (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+        <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount Section: You Send (GHS) vs Recipient Gets (Foreign) with switcher */}
           <Field label="Transfer Amount">
 
@@ -502,7 +502,7 @@ export function InternationalWireFlow({
 </Field>
 
           {numForeign > 0 && (
-            <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+            <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* Who pays the charges */}
           <Field label="Charges">
             <Select value={state.wCharges} onValueChange={(val) => val && onChange("wCharges", val)}>

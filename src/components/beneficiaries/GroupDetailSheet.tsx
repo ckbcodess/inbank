@@ -33,18 +33,18 @@ export function GroupDetailSheet({ group, open, onOpenChange, onEdit, onDelete }
       <SheetContent side="right" className="flex flex-col">
         {/* Centred as a block like the beneficiary sheet. When the members are too many to fit, the name stays put and only the list scrolls */}
         <div className="flex min-h-0 flex-1 flex-col justify-center">
-          <div className="flex shrink-0 flex-col items-center gap-1 px-6 pt-14 pb-6 text-center sm:px-9">
+          <div className="flex shrink-0 flex-col items-center gap-1 px-5 pt-12 pb-5 text-center sm:px-8">
             <PayeeAvatar name={group.name} size="xl" />
-            <SheetTitle className="mt-4">{group.name}</SheetTitle>
+            <SheetTitle className="mt-3">{group.name}</SheetTitle>
             <SheetDescription className="text-[13px] text-muted-foreground tabular">
               {group.members.length} {group.members.length === 1 ? "member" : "members"} · GHS {fmt(total)} in total
             </SheetDescription>
           </div>
 
-          <div className="min-h-0 overflow-y-auto px-6 pb-4 no-scrollbar sm:px-9">
+          <div className="min-h-0 overflow-y-auto px-5 pb-3 no-scrollbar sm:px-8">
             <SheetCard>
             {group.members.map((m) => (
-              <div key={m.id || m.destination} className="flex items-center justify-between gap-4 py-3">
+              <div key={m.id || m.destination} className="flex items-center justify-between gap-3 py-2">
                 <div className="flex min-w-0 flex-col">
                   <span className="truncate text-[13.5px] text-foreground">{m.name}</span>
                   {/* The number is what you check, so it never gets cut; the network name gives way instead */}
@@ -60,8 +60,8 @@ export function GroupDetailSheet({ group, open, onOpenChange, onEdit, onDelete }
           </div>
         </div>
 
-        <div className="shrink-0 px-6 pb-8 pt-2 sm:px-9">
-          <div className="flex items-center justify-center gap-6">
+        <div className="shrink-0 px-5 pb-6 pt-2 sm:px-8">
+          <div className="flex items-center justify-center gap-5">
             <RoundAction
               label="Send"
               icon={Send}

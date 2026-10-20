@@ -33,7 +33,7 @@ export function Field({
 }) {
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-2">
         <Label htmlFor={htmlFor}>
           {label}
           {optional ? <span className="text-[12px] font-normal italic text-muted-foreground">(optional)</span> : null}

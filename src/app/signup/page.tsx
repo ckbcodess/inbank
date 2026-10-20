@@ -324,7 +324,7 @@ function SignupContent() {
     >
       {/* STEP 1: Enter Ghana Card */}
       {step === "ghana_card" && (
-        <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-5">
+        <form onSubmit={handleGhanaCardSubmit} className="flex flex-col gap-4">
           <Field label="Ghana Card Number" htmlFor="ghanaCard">
             <GhanaCardInput
               id="ghanaCard"
@@ -336,14 +336,14 @@ function SignupContent() {
 
           <AlertToast when={errorMsg} message={errorMsg} />
 
-          <div className="mt-4 flex flex-col gap-4">
+          <div className="mt-3 flex flex-col gap-3">
             <Button
               type="submit"
               variant="default"
               size="lg"
               data-tour="signup-card"
               loading={busy}
-              className="h-11 w-full text-[14px]"
+              className="h-10 w-full text-[14px]"
             >
               Continue
             </Button>
@@ -373,11 +373,11 @@ function SignupContent() {
 
       {/* STEP 3: Review Details */}
       {step === "review_details" && (
-        <div className="flex flex-col gap-5">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-muted/15 px-4 py-3.5">
-              <div className="flex min-w-0 items-center gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/15 text-primary">
+        <div className="flex flex-col gap-4">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-muted/15 px-3 py-3">
+              <div className="flex min-w-0 items-center gap-2">
+                <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/15 text-primary">
                   {selfieImage ? (
                     <Image src={selfieImage} alt="Ransford Gyasi" width={36} height={36} unoptimized className="size-full object-cover" />
                   ) : (
@@ -394,7 +394,7 @@ function SignupContent() {
                 Verified
               </span>
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <Label htmlFor="reviewTitle">Title</Label>
               <Select value={title} onValueChange={(val) => val && setTitle(val)}>
                 <SelectTrigger id="reviewTitle" className="border-border text-left flex items-center justify-between">
@@ -407,7 +407,7 @@ function SignupContent() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <Label htmlFor="reviewEmail">Email Address</Label>
               <Input
                 id="reviewEmail"
@@ -420,7 +420,7 @@ function SignupContent() {
                 
               />
             </div>
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <Label htmlFor="reviewMobile">Mobile Number</Label>
               <PhoneInput
                 id="reviewMobile"
@@ -445,7 +445,7 @@ function SignupContent() {
             onClick={handleVerifyDetails}
             disabled={!detailsValid}
             loading={busy}
-            className="mt-3.5 h-11 w-full text-[14px]"
+            className="mt-3 h-10 w-full text-[14px]"
           >
             Verify Mobile Number
           </Button>
@@ -459,7 +459,7 @@ function SignupContent() {
             e.preventDefault();
             handleOtpSubmit();
           }}
-          className="flex flex-col gap-6"
+          className="flex flex-col gap-5"
         >
           <div data-tour="signup-otp">
             <OtpInput
@@ -476,13 +476,13 @@ function SignupContent() {
           </div>
 
           {errorMsg && (
-            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
               {errorMsg}
             </p>
           )}
 
           {/* Recovery path */}
-          <div className="flex flex-col items-center gap-5">
+          <div className="flex flex-col items-center gap-4">
             <button
               type="button"
               disabled={countdown > 0}
@@ -519,7 +519,7 @@ function SignupContent() {
 
       {/* STEP 5: Set up Password — same fields, rules and remember-device offer as activation */}
       {step === "password" && (
-        <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-5">
+        <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-4">
           <NewPasswordFields
             password={password}
             confirm={confirmPassword}
@@ -542,7 +542,7 @@ function SignupContent() {
             size="lg"
             data-tour="signup-password"
             disabled={!newPasswordReady(password, confirmPassword)} loading={busy}
-            className="mt-2 h-11 w-full text-[14px]"
+            className="mt-2 h-10 w-full text-[14px]"
           >
             Proceed
           </Button>
@@ -556,7 +556,7 @@ function SignupContent() {
             e.preventDefault();
             handlePinSubmit();
           }}
-          className="flex flex-col items-center gap-6"
+          className="flex flex-col items-center gap-5"
         >
           <div className="w-full" data-tour="signup-pin">
             <OtpInput
@@ -578,12 +578,12 @@ function SignupContent() {
           <PinRequirements pin={pinDigits.join("")} />
 
           {errorMsg && (
-            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
               {errorMsg}
             </p>
           )}
           {!errorMsg && pinNote && (
-            <p className="-mt-3 text-center text-[13px] text-muted-foreground">{pinNote}</p>
+            <p className="-mt-2 text-center text-[13px] text-muted-foreground">{pinNote}</p>
           )}
 
           {busy && (
@@ -603,7 +603,7 @@ function SignupContent() {
             e.preventDefault();
             handleConfirmPinSubmit();
           }}
-          className="flex flex-col items-center gap-6"
+          className="flex flex-col items-center gap-5"
         >
           <div className="w-full" data-tour="signup-confirm-pin">
             <OtpInput
@@ -628,7 +628,7 @@ function SignupContent() {
           />
 
           {errorMsg && (
-            <p role="alert" className="-mt-3 text-center text-[13px] text-destructive">
+            <p role="alert" className="-mt-2 text-center text-[13px] text-destructive">
               {errorMsg}
             </p>
           )}

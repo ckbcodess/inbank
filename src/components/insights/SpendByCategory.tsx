@@ -39,18 +39,18 @@ function SliceTooltip({
   if (!slice) return null;
 
   return (
-    <div className="rounded-lg border border-border/50 bg-background px-3 py-2 shadow-xl">
+    <div className="rounded-lg border border-border/50 bg-background px-2 py-2 shadow-xl">
       <div className="flex items-center gap-2">
         <span
           aria-hidden="true"
-          className="size-2 shrink-0 rounded-[2px]"
+          className="size-1.5 shrink-0 rounded-[2px]"
           style={{ backgroundColor: slice.color }}
         />
         <span className="text-[12px] text-muted-foreground">{slice.category}</span>
       </div>
       <div className="mt-1 text-[13px] text-foreground tabular">
         {exactMoney(slice.amount, showAmounts)}
-        <span className="ml-1.5 text-[12px] text-muted-foreground">
+        <span className="ml-2 text-[12px] text-muted-foreground">
           {formatPercent(slice.share)}
         </span>
       </div>
@@ -75,7 +75,7 @@ export function SpendByCategory({ slices }: { slices: CategorySlice[] }) {
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4">
       <div className="relative mx-auto w-full max-w-[220px]">
         <ChartContainer config={config} className="aspect-square w-full">
           <PieChart>
@@ -112,10 +112,10 @@ export function SpendByCategory({ slices }: { slices: CategorySlice[] }) {
           magnitude from the printed figure. */}
       <ul className="flex flex-col gap-2">
         {slices.map((s) => (
-          <li key={s.category} className="flex items-center gap-2.5">
+          <li key={s.category} className="flex items-center gap-2">
             <span
               aria-hidden="true"
-              className="size-2 shrink-0 rounded-[2px]"
+              className="size-1.5 shrink-0 rounded-[2px]"
               style={{ backgroundColor: s.color }}
             />
             <span className="min-w-0 flex-1 truncate text-[12px] text-foreground">
@@ -124,7 +124,7 @@ export function SpendByCategory({ slices }: { slices: CategorySlice[] }) {
             <span className="shrink-0 text-[12px] text-muted-foreground tabular">
               {formatPercent(s.share)}
             </span>
-            <span className="w-24 shrink-0 text-right text-[12px] text-foreground tabular">
+            <span className="w-21 shrink-0 text-right text-[12px] text-foreground tabular">
               {compactMoney(s.amount, showAmounts)}
             </span>
           </li>

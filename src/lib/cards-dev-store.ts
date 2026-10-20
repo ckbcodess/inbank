@@ -12,6 +12,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { PaymentCard } from "@/lib/mock-data";
+import { CORPORATE_CLEAN_CARD_IDS, CORPORATE_SIMULATION_PRESET_CARDS } from "@/lib/corporate/cards-dev";
+import type { ProfileKind } from "@/lib/roles";
 
 export type CardLifecycleStage =
   | "active"
@@ -45,19 +47,12 @@ export const CARD_SIMULATION_LABELS: Record<CardSimulationPreset, string> = {
 };
 
 export const CLEAN_CARD_IDS = {
-  CORPORATE: ["card-003", "card-001", "card-v01"], // Main Operating (Debit), Corporate Travel (Prepaid), AWS & SaaS (Virtual)
+  CORPORATE: CORPORATE_CLEAN_CARD_IDS,
   RETAIL: ["card-ret-001", "card-ret-002", "card-ret-007"], // Everyday Checking (Debit), Online Subscriptions (Prepaid), Online Shopping (Virtual)
 } as const;
 
 export const SIMULATION_PRESET_CARDS = {
-  CORPORATE: {
-    out_for_delivery: "card-008", // Premier Gold Corporate
-    ready_for_pickup: "card-006", // Branch Operations Card
-    delivered: "card-007", // Field Logistics Prepaid
-    in_transit: "card-005", // Executive Operating
-    in_production: "card-005",
-    blocked: "card-004", // Payroll Disbursements
-  },
+  CORPORATE: CORPORATE_SIMULATION_PRESET_CARDS,
   RETAIL: {
     out_for_delivery: "card-ret-005", // Executive Premier Card
     ready_for_pickup: "card-ret-001", // Everyday Checking
@@ -198,7 +193,7 @@ export const useCardsDevStore = create<CardsDevState>()(
  * Filter and apply lifecycle mutations to the cards list based on Dev Mode settings.
  */
 export function getEffectiveCardsForProfile(
-  profileKind: "RETAIL" | "CORPORATE",
+  profileKind: ProfileKind,
   allCards: PaymentCard[],
   devState: Pick<CardsDevState, "simulation" | "targetCardId">,
 ): { cards: PaymentCard[]; activeSimulatedCard: PaymentCard | null } {
@@ -251,7 +246,7 @@ export function getEffectiveCard(
   cardId: string,
   rawCard: PaymentCard | undefined,
   devState: Pick<CardsDevState, "simulation" | "targetCardId">,
-  profileKind: "RETAIL" | "CORPORATE" = "CORPORATE",
+  profileKind: ProfileKind = "CORPORATE",
 ): PaymentCard | undefined {
   if (!rawCard) return undefined;
   if (devState.simulation === "clean" || devState.simulation === "all") {

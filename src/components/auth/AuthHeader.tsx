@@ -19,11 +19,11 @@ export default function AuthHeader() {
   useEffect(() => setMounted(true), []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-30 flex h-16 w-full items-center justify-between border-b border-border/40 bg-background/80 px-6 backdrop-blur-md transition-colors lg:px-12">
+    <header className="fixed top-0 left-0 right-0 z-30 flex h-14 w-full items-center justify-between border-b border-border/40 bg-background/80 px-5 backdrop-blur-md transition-colors lg:px-10">
       {/* Brand Logo & Title */}
-      <Link href="/login" className="flex items-center gap-3 transition-opacity hover:opacity-90">
+      <Link href="/login" className="flex items-center gap-2 transition-opacity hover:opacity-90">
         <div className="flex items-center justify-center shrink-0">
-          <GCBLogo className="h-8 w-auto text-foreground" />
+          <GCBLogo className="h-7 w-auto text-foreground" />
         </div>
         <span className="text-[17px] font-medium tracking-tight text-foreground sm:text-[18px]">
           {t("header.brand", "Internet Banking")}
@@ -31,7 +31,7 @@ export default function AuthHeader() {
       </Link>
 
       {/* Header Utilities */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-2 sm:gap-2">
         {/* Global Language Selector */}
         <LanguageToggle />
 

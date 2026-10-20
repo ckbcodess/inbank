@@ -91,18 +91,18 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto py-2">
+    <div className="flex flex-col gap-5 w-full max-w-4xl mx-auto py-2">
       <PageHeader
         title="Settings"
         description="Manage your personal profile, authentication credentials, security preferences, and alerts."
       />
 
       {/* ── Segmented Navigation Tabs ── */}
-      <div className="flex items-center gap-1.5 border-b border-border pb-2 overflow-x-auto scrollbar-none">
+      <div className="flex items-center gap-2 border-b border-border pb-2 overflow-x-auto scrollbar-none">
         <button
           type="button"
           onClick={() => setActiveTab("profile")}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer shrink-0 ${
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer shrink-0 ${
             activeTab === "profile"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -115,7 +115,7 @@ export default function SettingsPage() {
         <button
           type="button"
           onClick={() => setActiveTab("security")}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer shrink-0 ${
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer shrink-0 ${
             activeTab === "security"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -128,7 +128,7 @@ export default function SettingsPage() {
         <button
           type="button"
           onClick={() => setActiveTab("notifications")}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer shrink-0 ${
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer shrink-0 ${
             activeTab === "notifications"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -141,7 +141,7 @@ export default function SettingsPage() {
         <button
           type="button"
           onClick={() => setActiveTab("preferences")}
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer shrink-0 ${
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer shrink-0 ${
             activeTab === "preferences"
               ? "bg-primary text-primary-foreground shadow-xs"
               : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -154,11 +154,11 @@ export default function SettingsPage() {
 
       {/* ── TAB 1: PROFILE & IDENTITY ── */}
       {activeTab === "profile" && (
-        <form onSubmit={handleSaveProfile} className="flex flex-col gap-6 animate-in fade-in duration-150">
-          <div className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-xs">
+        <form onSubmit={handleSaveProfile} className="flex flex-col gap-5 animate-in fade-in duration-150">
+          <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs">
             <h2 className="text-[15px] font-medium text-foreground tracking-tight">Personal & Account Holder Details</h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Field label="Full Legal Name" htmlFor="fullname">
                 <Input
                   id="fullname"
@@ -213,9 +213,9 @@ export default function SettingsPage() {
             </Field>
 
             {/* Proxy ID Card */}
-            <div className="flex items-center justify-between rounded-xl border border-border bg-muted/20 p-4 mt-1">
-              <div className="flex items-center gap-3">
-                <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
+            <div className="flex items-center justify-between rounded-xl border border-border bg-muted/20 p-3 mt-1">
+              <div className="flex items-center gap-2">
+                <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
                   <User size={18} />
                 </div>
                 <div className="flex flex-col">
@@ -232,20 +232,20 @@ export default function SettingsPage() {
                 type="button"
                 variant="outline"
                 size="sm"
-                className="text-[12px] h-8"
+                className="text-[12px] h-7"
                 onClick={() => {
                   navigator.clipboard.writeText(proxyId);
                   toast.success("Proxy ID copied to clipboard");
                 }}
               >
-                <Copy size={13} className="mr-1.5" />
+                <Copy size={13} className="mr-2" />
                 Copy
               </Button>
             </div>
           </div>
 
           <div className="flex justify-end">
-            <Button type="submit" className="h-10 px-5 text-[13px]">
+            <Button type="submit" className="h-9 px-4 text-[13px]">
               Save Profile Changes
             </Button>
           </div>
@@ -254,12 +254,12 @@ export default function SettingsPage() {
 
       {/* ── TAB 2: SECURITY & PIN ── */}
       {activeTab === "security" && (
-        <form onSubmit={handleSaveSecurity} className="flex flex-col gap-6 animate-in fade-in duration-150">
+        <form onSubmit={handleSaveSecurity} className="flex flex-col gap-5 animate-in fade-in duration-150">
           {/* Change Password Card */}
-          <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-xs">
+          <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs">
             <h2 className="text-[15px] font-medium text-foreground tracking-tight">Change Password</h2>
 
-            <div className="flex flex-col gap-3.5 max-w-md">
+            <div className="flex flex-col gap-3 max-w-md">
               <Field label="Current Password" htmlFor="curr-pass">
                 <Input
                   id="curr-pass"
@@ -293,12 +293,12 @@ export default function SettingsPage() {
           </div>
 
           {/* Transaction PIN & Two-Factor */}
-          <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-xs">
+          <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs">
             <h2 className="text-[15px] font-medium text-foreground tracking-tight">Authentication & Authorisation</h2>
 
             <div className="divide-y divide-border/60">
               {/* PIN Item */}
-              <div className="flex items-center justify-between py-3.5">
+              <div className="flex items-center justify-between py-3">
                 <div className="flex flex-col">
                   <span className="text-[13.5px] font-medium text-foreground">Transaction PIN</span>
                   <span className="text-[12px] text-muted-foreground">
@@ -308,7 +308,7 @@ export default function SettingsPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-[12px] h-8"
+                  className="text-[12px] h-7"
                   nativeButton={false}
                   render={<Link href="/forgot-pin" />}
                 >
@@ -317,7 +317,7 @@ export default function SettingsPage() {
               </div>
 
               {/* MFA Item */}
-              <div className="flex items-center justify-between py-3.5">
+              <div className="flex items-center justify-between py-3">
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
                     <span className="text-[13.5px] font-medium text-foreground">Two-Factor Authentication (MFA)</span>
@@ -333,7 +333,7 @@ export default function SettingsPage() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="text-[12px] h-8"
+                  className="text-[12px] h-7"
                   onClick={() => toast.info("MFA settings are enforced by bank security policy")}
                 >
                   Manage
@@ -341,7 +341,7 @@ export default function SettingsPage() {
               </div>
 
               {/* This device — the "Remember this device" choice, visible and reversible. */}
-              <div className="flex items-center justify-between gap-4 py-3.5">
+              <div className="flex items-center justify-between gap-3 py-3">
                 <div className="flex flex-col">
                   <span className="text-[13.5px] font-medium text-foreground">This device</span>
                   <span className="text-[12px] text-muted-foreground tabular">
@@ -355,7 +355,7 @@ export default function SettingsPage() {
                     type="button"
                     variant="outline"
                     size="sm"
-                    className="text-[12px] h-8 shrink-0"
+                    className="text-[12px] h-7 shrink-0"
                     onClick={() => {
                       forgetThisDevice();
                       toast.success("This device will ask for a code next time");
@@ -367,7 +367,7 @@ export default function SettingsPage() {
               </div>
 
               {/* Session Inactivity Timeout */}
-              <div className="flex items-center justify-between py-3.5">
+              <div className="flex items-center justify-between py-3">
                 <div className="flex flex-col">
                   <span className="text-[13.5px] font-medium text-foreground">Inactivity Auto-Logout</span>
                   <span className="text-[12px] text-muted-foreground">
@@ -375,7 +375,7 @@ export default function SettingsPage() {
                   </span>
                 </div>
                 <Select value={sessionTimeout} onValueChange={(val) => { if (val) setSessionTimeout(val); }}>
-                  <SelectTrigger className="w-32 h-8 text-[14px]">
+                  <SelectTrigger className="w-28 h-7 text-[14px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -389,7 +389,7 @@ export default function SettingsPage() {
           </div>
 
           <div className="flex justify-end">
-            <Button type="submit" className="h-10 px-5 text-[13px]">
+            <Button type="submit" className="h-9 px-4 text-[13px]">
               Update Security Credentials
             </Button>
           </div>
@@ -398,12 +398,12 @@ export default function SettingsPage() {
 
       {/* ── TAB 3: ALERTS & NOTIFICATIONS ── */}
       {activeTab === "notifications" && (
-        <div className="flex flex-col gap-6 animate-in fade-in duration-150">
-          <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-xs">
+        <div className="flex flex-col gap-5 animate-in fade-in duration-150">
+          <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs">
             <h2 className="text-[15px] font-medium text-foreground tracking-tight">Transaction Alerts & Delivery</h2>
 
             <div className="divide-y divide-border/60">
-              <div className="flex items-center justify-between py-3.5">
+              <div className="flex items-center justify-between py-3">
                 <div className="flex flex-col">
                   <span className="text-[13.5px] font-medium text-foreground">SMS Transaction Alerts</span>
                   <span className="text-[12px] text-muted-foreground">Receive instant SMS for all account debits and credits.</span>
@@ -411,7 +411,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={() => setSmsAlerts(!smsAlerts)}
-                  className={`size-6 rounded-md flex items-center justify-center border transition-colors cursor-pointer ${
+                  className={`size-5 rounded-lg flex items-center justify-center border transition-colors cursor-pointer ${
                     smsAlerts ? "bg-primary border-primary text-primary-foreground" : "border-border bg-muted/40"
                   }`}
                 >
@@ -419,7 +419,7 @@ export default function SettingsPage() {
                 </button>
               </div>
 
-              <div className="flex items-center justify-between py-3.5">
+              <div className="flex items-center justify-between py-3">
                 <div className="flex flex-col">
                   <span className="text-[13.5px] font-medium text-foreground">Email Transaction Receipts</span>
                   <span className="text-[12px] text-muted-foreground">Detailed PDF receipts dispatched immediately upon transaction execution.</span>
@@ -427,7 +427,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={() => setEmailAlerts(!emailAlerts)}
-                  className={`size-6 rounded-md flex items-center justify-center border transition-colors cursor-pointer ${
+                  className={`size-5 rounded-lg flex items-center justify-center border transition-colors cursor-pointer ${
                     emailAlerts ? "bg-primary border-primary text-primary-foreground" : "border-border bg-muted/40"
                   }`}
                 >
@@ -435,7 +435,7 @@ export default function SettingsPage() {
                 </button>
               </div>
 
-              <div className="flex items-center justify-between py-3.5">
+              <div className="flex items-center justify-between py-3">
                 <div className="flex flex-col">
                   <span className="text-[13.5px] font-medium text-foreground">Monthly Electronic Statements</span>
                   <span className="text-[12px] text-muted-foreground">Receive encrypted monthly statements on the 1st of every month.</span>
@@ -443,7 +443,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={() => setEStatements(!eStatements)}
-                  className={`size-6 rounded-md flex items-center justify-center border transition-colors cursor-pointer ${
+                  className={`size-5 rounded-lg flex items-center justify-center border transition-colors cursor-pointer ${
                     eStatements ? "bg-primary border-primary text-primary-foreground" : "border-border bg-muted/40"
                   }`}
                 >
@@ -456,7 +456,7 @@ export default function SettingsPage() {
           <div className="flex justify-end">
             <Button
               type="button"
-              className="h-10 px-5 text-[13px]"
+              className="h-9 px-4 text-[13px]"
               onClick={() => toast.success("Notification preferences saved")}
             >
               Save Notification Preferences
@@ -467,13 +467,13 @@ export default function SettingsPage() {
 
       {/* ── TAB 4: PREFERENCES ── */}
       {activeTab === "preferences" && (
-        <div className="flex flex-col gap-6 animate-in fade-in duration-150">
-          <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-xs">
+        <div className="flex flex-col gap-5 animate-in fade-in duration-150">
+          <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-xs">
             <h2 className="text-[15px] font-medium text-foreground tracking-tight">Display & Experience</h2>
 
             <div className="divide-y divide-border/60">
               {/* Color Theme */}
-              <div className="flex items-center justify-between py-3.5">
+              <div className="flex items-center justify-between py-3">
                 <div className="flex flex-col">
                   <span className="text-[13.5px] font-medium text-foreground">Appearance Theme</span>
                   <span className="text-[12px] text-muted-foreground">Select between Light mode and Dark mode.</span>
@@ -482,7 +482,7 @@ export default function SettingsPage() {
                   <button
                     type="button"
                     onClick={() => switchTheme("light", () => setTheme("light"))}
-                    className={`flex items-center gap-1.5 px-3 py-1 text-[12px] rounded-md transition-colors cursor-pointer ${
+                    className={`flex items-center gap-2 px-2 py-1 text-[12px] rounded-lg transition-colors cursor-pointer ${
                       resolvedTheme === "light" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"
                     }`}
                   >
@@ -492,7 +492,7 @@ export default function SettingsPage() {
                   <button
                     type="button"
                     onClick={() => switchTheme("dark", () => setTheme("dark"))}
-                    className={`flex items-center gap-1.5 px-3 py-1 text-[12px] rounded-md transition-colors cursor-pointer ${
+                    className={`flex items-center gap-2 px-2 py-1 text-[12px] rounded-lg transition-colors cursor-pointer ${
                       resolvedTheme === "dark" ? "bg-card text-foreground shadow-xs" : "text-muted-foreground"
                     }`}
                   >
@@ -503,7 +503,7 @@ export default function SettingsPage() {
               </div>
 
               {/* Amount Masking */}
-              <div className="flex items-center justify-between py-3.5">
+              <div className="flex items-center justify-between py-3">
                 <div className="flex flex-col">
                   <span className="text-[13.5px] font-medium text-foreground">Cash Balance Visibility</span>
                   <span className="text-[12px] text-muted-foreground">
@@ -514,10 +514,10 @@ export default function SettingsPage() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="text-[12px] h-8"
+                  className="text-[12px] h-7"
                   onClick={toggleAmountVisibility}
                 >
-                  {showAmounts ? <EyeOff size={14} className="mr-1.5" /> : <Eye size={14} className="mr-1.5" />}
+                  {showAmounts ? <EyeOff size={14} className="mr-2" /> : <Eye size={14} className="mr-2" />}
                   {showAmounts ? "Mask Balances" : "Show Balances"}
                 </Button>
               </div>
@@ -527,7 +527,7 @@ export default function SettingsPage() {
           <div className="flex justify-end">
             <Button
               type="button"
-              className="h-10 px-5 text-[13px]"
+              className="h-9 px-4 text-[13px]"
               onClick={() => toast.success("Preferences updated")}
             >
               Save Preferences

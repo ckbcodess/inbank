@@ -63,7 +63,7 @@ export function WalletToBankFlow({
   const isValid = Boolean(selectedAccount) && isPhoneValid && numAmount > 0;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
       {/* 1. Destination Bank Account */}
       <FromAccountSelector
         label="Destination Bank Account"

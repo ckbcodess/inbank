@@ -82,7 +82,7 @@ export function NewDepositFlow() {
 
   if (accounts.length === 0) {
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <PageHeader title="New Term Deposit" backTo={back} />
         <TrueEmptyState
           title="You don’t have an account to deposit from"
@@ -150,10 +150,10 @@ export function NewDepositFlow() {
   /* ── Review ──────────────────────────────────────────────────────────── */
   if (screen === "review" && tenure) {
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <PageHeader title="Review and Confirm" backTo={{ href: back.href, label: "New Term Deposit", onClick: () => setScreen("form") }} />
-        <div className="mx-auto flex w-full max-w-[600px] flex-col gap-8">
-          <section className="flex flex-col gap-1.5 px-1">
+        <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6">
+          <section className="flex flex-col gap-2 px-1">
             <span className="text-[13px] text-muted-foreground">You deposit</span>
             <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(num)}</span>
             <span className="tabular text-[14px] text-muted-foreground">
@@ -172,11 +172,11 @@ export function NewDepositFlow() {
               ["When it matures", depositInstructionLabel(instruction)],
             ]}
           />
-          <div className="flex gap-3">
-            <Button type="button" variant="outline" className="h-13 flex-1 rounded-2xl text-[15px]" onClick={() => setScreen("form")}>
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" className="h-11 flex-1 rounded-2xl text-[15px]" onClick={() => setScreen("form")}>
               Back to Edit
             </Button>
-            <Button type="button" className="h-13 flex-1 rounded-2xl text-[16px]" onClick={() => setAuthOpen(true)}>
+            <Button type="button" className="h-11 flex-1 rounded-2xl text-[16px]" onClick={() => setAuthOpen(true)}>
               Confirm
             </Button>
           </div>
@@ -202,16 +202,16 @@ export function NewDepositFlow() {
 
   /* ── Form ────────────────────────────────────────────────────────────── */
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader title="New Term Deposit" backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6 animate-in fade-in duration-200">
+      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5 animate-in fade-in duration-200">
         <div className="flex flex-col gap-2">
           <FromAccountSelector accounts={accounts} value={fromId} onChange={setPickedFrom} />
           <p className="px-1 text-[12px] text-muted-foreground">This account is debited now, and credited at maturity.</p>
         </div>
 
         <Field label="Deposit Period">
-          <div role="radiogroup" aria-label="Deposit period" className="flex flex-col gap-3">
+          <div role="radiogroup" aria-label="Deposit period" className="flex flex-col gap-2">
             {TENURES.map((t) => (
               <OptionTile
                 key={t.days}
@@ -245,9 +245,9 @@ export function NewDepositFlow() {
         )}
 
         {tenure && valid && (
-          <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200">
             <DepositInstructionField value={instruction} onChange={setInstruction} />
-            <dl className="flex flex-col gap-3 px-1 text-[14px]">
+            <dl className="flex flex-col gap-2 px-1 text-[14px]">
               {(
                 [
                   ["Interest rate", `${rate}%`],
@@ -255,7 +255,7 @@ export function NewDepositFlow() {
                   ["Maturity date", formatDate(maturity)],
                 ] as Array<[string, string]>
               ).map(([label, value]) => (
-                <div key={label} className="flex items-baseline justify-between gap-6">
+                <div key={label} className="flex items-baseline justify-between gap-5">
                   <dt className="text-muted-foreground">{label}</dt>
                   <dd className="tabular text-right text-foreground">{value}</dd>
                 </div>

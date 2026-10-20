@@ -196,7 +196,7 @@ export function OccupationCombobox({
           setOpen(true);
           inputRef.current?.focus();
         }}
-        className={`flex h-13 w-full cursor-text items-center gap-3 rounded-2xl border px-3.5 transition ${
+        className={`flex h-11 w-full cursor-text items-center gap-2 rounded-2xl border px-3 transition ${
           open
             ? "border-foreground bg-field"
             : "border-field-border bg-field hover:bg-field-hover"
@@ -223,7 +223,7 @@ export function OccupationCombobox({
           <button
             type="button"
             onClick={handleClear}
-            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="flex size-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             aria-label="Clear occupation"
           >
             <X size={15} strokeWidth={1.8} />
@@ -237,7 +237,7 @@ export function OccupationCombobox({
             setOpen((prev) => !prev);
             if (!open) inputRef.current?.focus();
           }}
-          className="flex size-7 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+          className="flex size-6 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
           aria-label="Toggle occupation dropdown"
         >
           <ChevronDown
@@ -252,7 +252,7 @@ export function OccupationCombobox({
         <div
           id={`${id}-listbox`}
           role="listbox"
-          className={`absolute left-0 right-0 z-50 max-h-60 overflow-y-auto rounded-2xl border border-border bg-modal p-1.5 shadow-lg animate-in fade-in duration-100 ${
+          className={`absolute left-0 right-0 z-50 max-h-52 overflow-y-auto rounded-2xl border border-border bg-modal p-2 shadow-lg animate-in fade-in duration-100 ${
             placement === "top"
               ? "bottom-[calc(100%+6px)] origin-bottom"
               : "top-[calc(100%+6px)] origin-top"
@@ -271,7 +271,7 @@ export function OccupationCombobox({
                     aria-selected={isSelected}
                     onClick={() => handleSelect(occ)}
                     onMouseEnter={() => setHighlightedIndex(index)}
-                    className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2.5 text-left text-[14px] transition-colors ${
+                    className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-2 py-2 text-left text-[14px] transition-colors ${
                       isHighlighted || isSelected
                         ? "bg-muted text-foreground"
                         : "text-foreground hover:bg-muted/60"
@@ -292,14 +292,14 @@ export function OccupationCombobox({
                 role="option"
                 aria-selected={false}
                 onClick={() => handleSelect(query.trim())}
-                className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-muted/60 px-3 py-2.5 text-left text-[14px] text-foreground hover:bg-muted"
+                className="flex w-full cursor-pointer items-center justify-between rounded-xl bg-muted/60 px-2 py-2 text-left text-[14px] text-foreground hover:bg-muted"
               >
                 <span>Use &ldquo;{query.trim()}&rdquo;</span>
                 <Check size={15} strokeWidth={2} className="ml-2 shrink-0 text-muted-foreground" />
               </button>
             </div>
           ) : (
-            <div className="p-3 text-center text-[13px] text-muted-foreground">
+            <div className="p-2 text-center text-[13px] text-muted-foreground">
               No occupations found
             </div>
           )}
@@ -311,7 +311,7 @@ export function OccupationCombobox({
                 role="option"
                 aria-selected={false}
                 onClick={() => handleSelect(query.trim())}
-                className="flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-left text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="flex w-full cursor-pointer items-center justify-between rounded-xl px-2 py-2 text-left text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
                 <span>Or use &ldquo;{query.trim()}&rdquo;</span>
               </button>

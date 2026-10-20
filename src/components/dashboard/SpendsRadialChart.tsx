@@ -146,7 +146,7 @@ export function SpendsRadialChart({
   return (
     <div
       className={cn(
-        "flex h-[260px] flex-col justify-between gap-2.5 rounded-2xl border border-border bg-panel p-4 shadow-none transition-colors sm:p-5 overflow-hidden",
+        "flex h-[260px] flex-col justify-between gap-2 rounded-2xl border border-border bg-panel p-3 shadow-none transition-colors sm:p-4 overflow-hidden",
         className
       )}
     >

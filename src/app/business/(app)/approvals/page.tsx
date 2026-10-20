@@ -1,0 +1,197 @@
+"use client";
+
+/**
+ * Approval Queue — section 4, state model 13.1.
+ *
+ * One shared queue showing everything requiring the current user's action. The
+ * row's type decides which of the two approval screens it opens:
+ *
+ *   payment -> /approvals/payment/[id]  (13.4)
+ *   trade   -> /approvals/trade/[id]    (13.5)
+ *
+ * These are two separate screens by design (section 4: "Approval Details" was
+ * split into variants), not one screen with conditional content.
+ *
+ * Reachable only by an Approver — the nav hides it otherwise (12.3).
+ */
+
+import { useMemo, useState } from "react";
+import Link from "next/link";
+import { ChevronRight, FileText, Send } from "lucide-react";
+import PageHeader from "@/components/layout/PageHeader";
+import { ExpandableSearch } from "@/components/ui/expandable-search";
+import { AppliedFilters, FilterPanel, type FilterGroup } from "@/components/ui/filter-panel";
+import { Badge } from "@/components/ui/badge";
+import { StateSwitcher } from "@/components/states/StateSwitcher";
+import {
+  FilteredEmptyState,
+  ListErrorState,
+  ListSkeleton,
+  PartialLoadFooter,
+  TrueEmptyState,
+} from "@/components/states/ListStates";
+import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
+import { formatMoney } from "@/lib/mock-data";
+import { APPROVAL_QUEUE } from "@/lib/corporate/approvals";
+
+const LIST_STATES: readonly ListState[] = [
+  "loading",
+  "empty",
+  "filtered-empty",
+  "populated",
+  "partial-load",
+  "error",
+] as const;
+
+type TypeFilter = "all" | "payment" | "trade";
+
+export default function ApprovalQueuePage() {
+  const [state, setState] = useState<ListState>("populated");
+  const [query, setQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
+
+  const results = useMemo(() => {
+    return APPROVAL_QUEUE.filter((item) => {
+      if (typeFilter !== "all" && item.type !== typeFilter) return false;
+      if (!query.trim()) return true;
+      const q = query.toLowerCase();
+      return (
+        item.description.toLowerCase().includes(q) ||
+        item.counterparty.toLowerCase().includes(q) ||
+        item.reference.toLowerCase().includes(q)
+      );
+    });
+  }, [query, typeFilter]);
+
+  const filtersActive = query.trim() !== "" || typeFilter !== "all";
+  const effective: ListState =
+    state === "populated" && filtersActive && results.length === 0 ? "filtered-empty" : state;
+
+  const rows = effective === "partial-load" ? APPROVAL_QUEUE : results;
+
+  function resetFilters() {
+    setQuery("");
+    setTypeFilter("all");
+    setState("populated");
+  }
+
+  const filterGroups: FilterGroup[] = [
+    {
+      id: "type",
+      kind: "single",
+      label: "Type",
+      options: [
+        { value: "payment", label: "Payment" },
+        { value: "trade", label: "Trade" },
+      ],
+      value: typeFilter,
+      onChange: (v) => setTypeFilter(v as TypeFilter),
+    },
+  ];
+
+  return (
+    <div className="flex flex-col gap-4">
+      <PageHeader title="Approvals" />
+
+      <StateSwitcher
+        section="13.1"
+        states={LIST_STATES}
+        value={state}
+        onChange={setState}
+        labels={LIST_STATE_LABEL}
+      />
+
+      {/* Filter and Search Ribbon */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <FilterPanel groups={filterGroups} onClear={() => setTypeFilter("all")} align="start" />
+          <AppliedFilters groups={filterGroups} />
+        </div>
+
+        <ExpandableSearch
+          value={query}
+          onChange={setQuery}
+          placeholder="Search reference, description or counterparty..."
+          tooltip="Search approvals"
+          inputWidthClassName="w-52 sm:w-70"
+        />
+      </div>
+
+      {effective === "loading" && (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+          <ListSkeleton rows={4} />
+        </div>
+      )}
+
+      {effective === "error" && (
+        <ListErrorState
+          onRetry={() => setState("populated")}
+          description="We couldn't load your approval queue. Nothing has been approved or rejected — try again."
+        />
+      )}
+
+      {effective === "empty" && (
+        <TrueEmptyState illustration="caught-up"
+          title="Nothing waiting on you"
+          description="Requests that need your approval will appear here."
+        />
+      )}
+
+      {effective === "filtered-empty" && (
+        <FilteredEmptyState
+          onReset={resetFilters}
+          description="No items match these filters. Clear them to see everything in your queue."
+        />
+      )}
+
+      {(effective === "populated" || effective === "partial-load") && (
+        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+          <ul className="divide-y divide-border">
+            {rows.map((item) => {
+              const exceedsLimit = item.amount > item.approvalLimit;
+              return (
+                <li key={item.id}>
+                  <Link
+                    href={
+                      item.type === "payment"
+                        ? `/business/approvals/payment/${item.id}`
+                        : `/business/approvals/trade/${item.id}`
+                    }
+                    className="flex items-center gap-3 px-3 py-3 transition-colors hover:bg-muted/50 active:scale-[0.99] transition-transform"
+                  >
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                      {item.type === "payment" ? (
+                        <Send size={16} strokeWidth={1.8} aria-hidden="true" />
+                      ) : (
+                        <FileText size={16} strokeWidth={1.8} aria-hidden="true" />
+                      )}
+                    </span>
+
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="flex items-center gap-2">
+                        <span className="truncate text-[13.5px] text-foreground">{item.description}</span>
+                        {item.priority === "urgent" && <Badge variant="warning">Urgent</Badge>}
+                        {exceedsLimit && <Badge variant="destructive">Exceeds your limit</Badge>}
+                      </span>
+                      <span className="mt-0.5 truncate text-[12px] text-muted-foreground tabular">
+                        {item.reference} · {item.submittedBy} · {item.submittedAt}
+                      </span>
+                    </span>
+
+                    <span className="shrink-0 text-[13.5px] text-foreground tabular">
+                      {formatMoney(item.amount, item.currency, true)}
+                    </span>
+
+                    <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+
+          {effective === "partial-load" && <PartialLoadFooter />}
+        </div>
+      )}
+    </div>
+  );
+}

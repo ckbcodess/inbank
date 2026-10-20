@@ -100,9 +100,9 @@ function SignatureUpload({
         }}
       />
       {file ? (
-        <div className="flex min-h-[58px] items-center justify-between gap-3 rounded-2xl border border-field-border bg-field px-3.5 py-2.5">
-          <div className="flex min-w-0 items-center gap-3">
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-muted-foreground">
+        <div className="flex min-h-[58px] items-center justify-between gap-2 rounded-2xl border border-field-border bg-field px-3 py-2">
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-muted text-muted-foreground">
               <FileText size={16} strokeWidth={1.8} aria-hidden="true" />
             </span>
             <span className="flex min-w-0 flex-col">
@@ -114,7 +114,7 @@ function SignatureUpload({
             type="button"
             onClick={() => onChange(null)}
             aria-label="Remove signature"
-            className="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <X size={16} strokeWidth={1.8} aria-hidden="true" />
           </button>
@@ -123,7 +123,7 @@ function SignatureUpload({
         <button
           type="button"
           onClick={() => input.current?.click()}
-          className="flex min-h-[96px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-field-border bg-field px-4 py-5 text-center transition-colors hover:bg-field-hover"
+          className="flex min-h-[96px] w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-field-border bg-field px-3 py-4 text-center transition-colors hover:bg-field-hover"
         >
           <Upload size={18} strokeWidth={1.8} className="text-muted-foreground" aria-hidden="true" />
           <span className="text-[13px] text-muted-foreground">Upload a JPG, PNG or PDF, up to 5 MB</span>
@@ -181,7 +181,7 @@ export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountInten
 
   if (csd) {
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <PageHeader title="Your Securities Account" backTo={back} />
         <TrueEmptyState
           icon={<ShieldCheck size={22} strokeWidth={1.8} />}
@@ -203,7 +203,7 @@ export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountInten
 
   if (accounts.length === 0) {
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <PageHeader title="Open a Securities Account" backTo={back} />
         <TrueEmptyState
           icon={<ShieldCheck size={22} strokeWidth={1.8} />}
@@ -220,9 +220,9 @@ export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountInten
   const emailInvalid = email.trim() !== "" && !EMAIL.test(email.trim());
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader title="Open a Securities Account" backTo={back} />
-      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[600px] flex-col gap-5">
         <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
           {intent
             ? `To invest in ${intent.label}, we first open your securities account. It’s held with the Central Securities Depository, where what you own is recorded.`
@@ -285,7 +285,7 @@ export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountInten
         </Field>
 
         {aboutDone && (
-          <div className={`${reveal} gap-6`}>
+          <div className={`${reveal} gap-5`}>
             <Field label="Postal Address" htmlFor="invest-postal">
               <Input id="invest-postal" value={postal} onChange={(e) => setPostal(e.target.value)} placeholder="For example, P.O. Box GT 454" autoComplete="street-address" />
             </Field>
@@ -299,7 +299,7 @@ export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountInten
         {aboutDone && detailsDone && (
           <div className={reveal}>
             <div className="flex flex-col gap-1">
-              <label className="flex cursor-pointer items-start gap-3 px-1 py-2 text-[13px] leading-relaxed text-foreground">
+              <label className="flex cursor-pointer items-start gap-2 px-1 py-2 text-[13px] leading-relaxed text-foreground">
                 <Checkbox checked={accepted} onCheckedChange={(v) => setAccepted(Boolean(v))} aria-label="Accept the Terms and Conditions" className="mt-0.5" />
                 <span>By checking this box, I acknowledge that I have read and agree to the Terms &amp; Conditions of treasury bills and bonds.</span>
               </label>

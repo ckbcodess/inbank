@@ -70,7 +70,7 @@ export default function ReferralStep({
       data-tour={dataTour}
     >
       {/* Top area */}
-      <div className="flex flex-col gap-1.5">
+      <div className="flex flex-col gap-2">
         <DialogTitle className="text-[20px] font-medium tracking-tight text-foreground sm:text-[22px]">
           Were You Referred by Someone?
         </DialogTitle>
@@ -80,13 +80,13 @@ export default function ReferralStep({
       </div>
 
       {/* Middle area: Centered icon and optional code input */}
-      <div className="flex flex-1 flex-col items-center justify-center py-6 my-auto gap-4">
-        <div className="flex size-16 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-xs">
+      <div className="flex flex-1 flex-col items-center justify-center py-5 my-auto gap-3">
+        <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-xs">
           <PartyPopper size={28} strokeWidth={1.7} aria-hidden="true" />
         </div>
 
         {entering && (
-          <div className="flex flex-col items-center gap-3 w-full max-w-[240px] animate-in fade-in-0 zoom-in-95 duration-200">
+          <div className="flex flex-col items-center gap-2 w-full max-w-[240px] animate-in fade-in-0 zoom-in-95 duration-200">
             <Label htmlFor="referral-code" className="sr-only">
               Branch Code
             </Label>
@@ -119,13 +119,13 @@ export default function ReferralStep({
       </div>
 
       {/* Bottom area: Buttons pinned to bottom, exactly like other screens */}
-      <div className="flex flex-col gap-2.5 pt-4">
+      <div className="flex flex-col gap-2 pt-3">
         {entering ? (
           <Button
             type="submit"
             disabled={!referrer}
             loading={busy}
-            className="h-10.5 w-full text-[14px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
+            className="h-9 w-full text-[14px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
           >
             Apply Code
           </Button>
@@ -134,7 +134,7 @@ export default function ReferralStep({
             type="button"
             disabled={skipping}
             onClick={() => setEntering(true)}
-            className="h-10.5 w-full text-[14px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
+            className="h-9 w-full text-[14px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
           >
             Enter Referral Code
           </Button>
@@ -144,7 +144,7 @@ export default function ReferralStep({
           variant="outline"
           disabled={busy || skipping}
           onClick={skip}
-          className="h-10.5 w-full text-[14px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
+          className="h-9 w-full text-[14px] active:scale-[0.96] transition-transform duration-150 cursor-pointer"
         >
           {skipLabel}
         </Button>

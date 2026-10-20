@@ -31,21 +31,21 @@ export default function DevStatePanel() {
   const active = devState.states.find((s) => s.id === devState.value);
 
   return (
-    <div className="fixed bottom-5 right-5 z-50">
+    <div className="fixed bottom-4 right-4 z-50">
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex h-8 cursor-pointer items-center gap-1.5 rounded-lg border border-dashed border-warning/50 bg-warning/10 px-2.5 text-[12px] font-medium text-warning-text outline-none transition-colors hover:bg-warning/20 hover:text-warning-text dark:hover:text-warning-text">
+        <DropdownMenuTrigger className="flex h-7 cursor-pointer items-center gap-2 rounded-lg border border-dashed border-warning/50 bg-warning/10 px-2 text-[12px] font-medium text-warning-text outline-none transition-colors hover:bg-warning/20 hover:text-warning-text dark:hover:text-warning-text">
           <Layers size={13} strokeWidth={2} />
           <span>Dev Mode</span>
           {active && (
             <span className="hidden max-w-[180px] truncate sm:inline">· {active.label}</span>
           )}
           {devState.section && (
-            <span className="rounded bg-warning/20 px-1 py-0.5 text-[10px]">
+            <span className="rounded-sm bg-warning/20 px-1 py-0.5 text-[10px]">
               {devState.section}
             </span>
           )}
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" side="top" className="w-64">
+        <DropdownMenuContent align="end" side="top" className="w-56">
           <DevStateMenuItems devState={devState} />
         </DropdownMenuContent>
       </DropdownMenu>

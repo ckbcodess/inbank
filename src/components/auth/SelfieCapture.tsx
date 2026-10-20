@@ -315,7 +315,7 @@ export default function SelfieCapture({
   };
 
   return (
-    <div className="flex flex-col items-center gap-6 w-full">
+    <div className="flex flex-col items-center gap-5 w-full">
       {/* Hidden file input fallback for environments without camera */}
       <input
         ref={fileInputRef}
@@ -328,9 +328,9 @@ export default function SelfieCapture({
       />
 
       {/* Circular Viewfinder */}
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-col items-center gap-2">
         <div
-          className={`relative flex size-48 sm:size-56 items-center justify-center overflow-hidden rounded-full border-4 transition-colors duration-200 bg-muted/40 shadow-inner ${
+          className={`relative flex size-42 sm:size-49 items-center justify-center overflow-hidden rounded-full border-4 transition-colors duration-200 bg-muted/40 shadow-inner ${
             capturedImage
               ? "border-success/80"
               : facePosition === "centered"
@@ -350,7 +350,7 @@ export default function SelfieCapture({
               {/* A camera snapshot (data URL) — nothing for the optimiser to do. */}
               <Image src={capturedImage} alt="Captured selfie" fill unoptimized className="object-cover" />
               <div className="absolute inset-0 flex items-center justify-center bg-black/15">
-                <div className="flex size-11 items-center justify-center rounded-full bg-success text-white shadow-sm">
+                <div className="flex size-10 items-center justify-center rounded-full bg-success text-white shadow-sm">
                   <Check size={22} strokeWidth={2.8} />
                 </div>
               </div>
@@ -366,7 +366,7 @@ export default function SelfieCapture({
               />
               {/* Dynamic face centering target ring */}
               <div
-                className={`pointer-events-none absolute inset-3 rounded-full border-2 transition duration-200 ${
+                className={`pointer-events-none absolute inset-2.5 rounded-full border-2 transition duration-200 ${
                   facePosition === "centered"
                     ? "border-success/90 shadow-[0_0_12px_rgba(16,185,129,0.4)]"
                     : facePosition === "off_center" || facePosition === "too_close"
@@ -377,19 +377,19 @@ export default function SelfieCapture({
 
               {/* Crosshair alignment markers */}
               <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-30">
-                <div className="h-4 w-[1px] bg-white absolute top-4" />
-                <div className="h-4 w-[1px] bg-white absolute bottom-4" />
-                <div className="w-4 h-[1px] bg-white absolute left-4" />
-                <div className="w-4 h-[1px] bg-white absolute right-4" />
+                <div className="h-3.5 w-[1px] bg-white absolute top-3.5" />
+                <div className="h-3.5 w-[1px] bg-white absolute bottom-3.5" />
+                <div className="w-3.5 h-[1px] bg-white absolute left-3.5" />
+                <div className="w-3.5 h-[1px] bg-white absolute right-3.5" />
               </div>
             </>
           ) : cameraState === "requesting" ? (
-            <div className="flex flex-col items-center gap-2.5 p-4 text-center text-muted-foreground">
+            <div className="flex flex-col items-center gap-2 p-3 text-center text-muted-foreground">
               <AppLoader size={32} />
               <span className="text-[12.5px] font-medium text-foreground">Starting camera...</span>
             </div>
           ) : (
-            <div className="flex flex-col items-center gap-2 p-5 text-center text-muted-foreground">
+            <div className="flex flex-col items-center gap-2 p-4 text-center text-muted-foreground">
               <CameraOff size={32} strokeWidth={1.8} className="text-muted-foreground/80" />
               <span className="text-[12px] leading-tight">
                 {errorMessage || "Camera unavailable"}
@@ -401,7 +401,7 @@ export default function SelfieCapture({
         {/* Real-time centering guidance banner */}
         {!capturedImage && cameraState === "ready" && (
           <div
-            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-medium transition duration-150 animate-in fade-in ${
+            className={`inline-flex items-center gap-2 rounded-full px-2 py-1 text-[12px] font-medium transition duration-150 animate-in fade-in ${
               facePosition === "centered"
                 ? "bg-success/10 text-success-text"
                 : facePosition === "off_center" || facePosition === "too_close"
@@ -426,7 +426,7 @@ export default function SelfieCapture({
       </div>
 
       {/* Action Controls */}
-      <div className="w-full flex flex-col gap-2.5">
+      <div className="w-full flex flex-col gap-2">
         {capturedImage ? (
           <div className="flex flex-col gap-2">
             <Button
@@ -434,7 +434,7 @@ export default function SelfieCapture({
               variant="default"
               size="lg"
               loading={busy}
-              className="h-11 w-full text-[14px]"
+              className="h-10 w-full text-[14px]"
             >
               Verified ✓
             </Button>
@@ -442,7 +442,7 @@ export default function SelfieCapture({
               <button
                 type="button"
                 onClick={handleRetakeClick}
-                className="inline-flex items-center justify-center gap-1.5 text-[12.5px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
+                className="inline-flex items-center justify-center gap-2 text-[12.5px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer py-1"
               >
                 <RefreshCw size={13} />
                 Retake photo
@@ -457,7 +457,7 @@ export default function SelfieCapture({
             data-tour={dataTour}
             onClick={handleSnap}
             disabled={busy}
-            className="h-11 w-full text-[14px]"
+            className="h-10 w-full text-[14px]"
           >
             <Camera size={16} className="mr-2" />
             Take photo
@@ -469,7 +469,7 @@ export default function SelfieCapture({
               variant="outline"
               size="lg"
               onClick={startCamera}
-              className="h-11 w-full text-[14px]"
+              className="h-10 w-full text-[14px]"
             >
               <RefreshCw size={15} className="mr-2" />
               Try camera again
@@ -479,7 +479,7 @@ export default function SelfieCapture({
               variant="default"
               size="lg"
               onClick={() => fileInputRef.current?.click()}
-              className="h-11 w-full text-[14px]"
+              className="h-10 w-full text-[14px]"
             >
               <Upload size={15} className="mr-2" />
               Upload photo from device
@@ -491,7 +491,7 @@ export default function SelfieCapture({
             variant="default"
             size="lg"
             loading
-            className="h-11 w-full text-[14px]"
+            className="h-10 w-full text-[14px]"
           >
             Preparing camera...
           </Button>

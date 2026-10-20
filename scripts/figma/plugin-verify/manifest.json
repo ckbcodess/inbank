@@ -1,0 +1,7 @@
+{
+  "name": "Phase 1 Verification",
+  "id": "phase1-verification",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"]
+}

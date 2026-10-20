@@ -55,24 +55,24 @@ function SheetContent({
           // Right side sheet: floating on desktop with balanced surrounding gap (top, bottom, right)
           side === "right" && [
             "inset-y-0 right-0 h-full w-full border-l",
-            "sm:inset-y-3.5 sm:right-3.5 sm:left-auto sm:h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-28px)] sm:w-[440px] sm:max-w-md",
-            "sm:border sm:border-black/[0.08] dark:sm:border-white/[0.1] sm:rounded-[26px]",
+            "sm:inset-y-3 sm:right-3 sm:left-auto sm:h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-28px)] sm:w-[440px] sm:max-w-md",
+            "sm:border sm:border-black/[0.08] dark:sm:border-white/[0.1] sm:rounded-3xl",
             "shadow-2xl sm:shadow-[0_24px_64px_rgba(0,0,0,0.22),0_1px_3px_rgba(0,0,0,0.06)] dark:sm:shadow-[0_28px_72px_rgba(0,0,0,0.72)]",
           ],
           // Left side sheet: floating on desktop with balanced surrounding gap (top, bottom, left)
           side === "left" && [
             "inset-y-0 left-0 h-full w-full border-r",
-            "sm:inset-y-3.5 sm:left-3.5 sm:right-auto sm:h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-28px)] sm:w-[440px] sm:max-w-md",
-            "sm:border sm:border-black/[0.08] dark:sm:border-white/[0.1] sm:rounded-[26px]",
+            "sm:inset-y-3 sm:left-3 sm:right-auto sm:h-[calc(100dvh-28px)] sm:max-h-[calc(100dvh-28px)] sm:w-[440px] sm:max-w-md",
+            "sm:border sm:border-black/[0.08] dark:sm:border-white/[0.1] sm:rounded-3xl",
             "shadow-2xl sm:shadow-[0_24px_64px_rgba(0,0,0,0.22),0_1px_3px_rgba(0,0,0,0.06)] dark:sm:shadow-[0_28px_72px_rgba(0,0,0,0.72)]",
           ],
           // Bottom sheet
           side === "bottom" && [
-            "inset-x-0 bottom-0 max-h-[92dvh] rounded-t-[28px] border-t sm:max-w-xl sm:mx-auto",
+            "inset-x-0 bottom-0 max-h-[92dvh] rounded-t-3xl border-t sm:max-w-xl sm:mx-auto",
           ],
           // Top sheet
           side === "top" && [
-            "inset-x-0 top-0 max-h-[92dvh] rounded-b-[28px] border-b sm:max-w-xl sm:mx-auto",
+            "inset-x-0 top-0 max-h-[92dvh] rounded-b-3xl border-b sm:max-w-xl sm:mx-auto",
           ],
           className
         )}
@@ -82,7 +82,7 @@ function SheetContent({
         {showCloseButton && (
           <SheetPrimitive.Close
             data-slot="sheet-close"
-            className="absolute top-5 right-5 z-20 flex size-8 items-center justify-center rounded-full bg-muted/70 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="absolute top-4 right-4 z-20 flex size-7 items-center justify-center rounded-full bg-muted/70 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Close"
           >
             <X size={15} strokeWidth={2} />
@@ -97,7 +97,7 @@ function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sheet-header"
-      className={cn("flex flex-col gap-1 p-6 pb-2 sm:p-7 sm:pb-3 pr-14 shrink-0", className)}
+      className={cn("flex flex-col gap-1 p-5 pb-2 sm:p-6 sm:pb-2 pr-12 shrink-0", className)}
       {...props}
     />
   );
@@ -134,7 +134,7 @@ function SheetBody({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="sheet-body"
       className={cn(
-        "flex-1 overflow-y-auto px-6 sm:px-7 py-3 flex flex-col gap-5 overscroll-contain no-scrollbar",
+        "flex-1 overflow-y-auto px-5 sm:px-6 py-2 flex flex-col gap-4 overscroll-contain no-scrollbar",
         className
       )}
       {...props}
@@ -146,7 +146,7 @@ function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="sheet-footer"
-      className={cn("mt-auto flex flex-col gap-2.5 p-6 pt-2 sm:p-7 sm:pt-4 shrink-0", className)}
+      className={cn("mt-auto flex flex-col gap-2 p-5 pt-2 sm:p-6 sm:pt-3 shrink-0", className)}
       {...props}
     />
   );
@@ -160,7 +160,7 @@ function SheetCard({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="sheet-card"
       className={cn(
-        "rounded-[22px] bg-tile dark:bg-card-item border border-border/70 p-4.5 sm:p-5 flex flex-col divide-y divide-border/60",
+        "rounded-3xl bg-tile dark:bg-card-item border border-border/70 p-4 sm:p-4 flex flex-col divide-y divide-border/60",
         className
       )}
       {...props}
@@ -187,7 +187,7 @@ function SheetRow({
     <div
       data-slot="sheet-row"
       className={cn(
-        "flex items-start sm:items-center justify-between gap-3 py-3 first:pt-0 last:pb-0 text-[13.5px]",
+        "flex items-start sm:items-center justify-between gap-2 py-2 first:pt-0 last:pb-0 text-[13.5px]",
         className
       )}
       {...props}
@@ -240,14 +240,14 @@ function SheetHeroAmount({
   return (
     <div
       data-slot="sheet-amount"
-      className={cn("flex flex-col items-center justify-center py-4", className)}
+      className={cn("flex flex-col items-center justify-center py-3", className)}
       {...props}
     >
       <div className="text-[36px] sm:text-[40px] font-semibold text-foreground tracking-tight leading-none tabular">
         {currency ? `${currency}${formatted}` : formatted}
       </div>
       {label && (
-        <p className="mt-1.5 text-[13px] text-muted-foreground">{label}</p>
+        <p className="mt-2 text-[13px] text-muted-foreground">{label}</p>
       )}
     </div>
   );
@@ -273,13 +273,13 @@ function SheetButton({
       className={cn(
         "rounded-full font-medium transition-all cursor-pointer flex items-center justify-center select-none active:scale-[0.98]",
         (variant === "primary" || variant === "lime") && [
-          "bg-primary text-primary-foreground hover:bg-primary-hover h-12 text-[14.5px] shadow-xs",
+          "bg-primary text-primary-foreground hover:bg-primary-hover h-10 text-[14.5px] shadow-xs",
         ],
         variant === "secondary" && [
-          "bg-muted hover:bg-muted/80 text-foreground h-12 text-[14.5px]",
+          "bg-muted hover:bg-muted/80 text-foreground h-10 text-[14.5px]",
         ],
         variant === "ghost" && [
-          "text-muted-foreground hover:text-foreground hover:bg-muted/50 h-10 text-[14px]",
+          "text-muted-foreground hover:text-foreground hover:bg-muted/50 h-9 text-[14px]",
         ],
         className
       )}

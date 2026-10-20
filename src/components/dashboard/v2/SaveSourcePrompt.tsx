@@ -70,8 +70,8 @@ export function useSaveSource(source: PendingFundingSource, onDone: () => void) 
 export function SourceSummary({ source }: { source: PendingFundingSource }) {
   const { title, subtitle } = describe(source);
   return (
-    <div className="flex flex-col gap-4 text-left">
-      <div className="flex items-center gap-3.5 rounded-xl border border-border/80 bg-muted/30 p-3.5 text-left">
+    <div className="flex flex-col gap-3 text-left">
+      <div className="flex items-center gap-3 rounded-xl border border-border/80 bg-muted/30 p-3 text-left">
         <SourceMark type={source.type} operator={operatorFromName(source.operator)} title={title} />
         <div className="min-w-0 flex-1">
           <p className="truncate text-[14px] tracking-[var(--ls-tight)] text-foreground">{title}</p>
@@ -100,15 +100,15 @@ export function SaveSourcePrompt({
         <DialogHeader onClose={onDone}>
           <DialogTitle>{heading}</DialogTitle>
         </DialogHeader>
-        <DialogBody className="gap-4 text-left">
+        <DialogBody className="gap-3 text-left">
           <SourceSummary source={source} />
         </DialogBody>
-        <DialogFooter className="flex-row gap-2.5 sm:justify-end">
+        <DialogFooter className="flex-row gap-2 sm:justify-end">
           <Button
             type="button"
             variant="ghost"
             onClick={onDone}
-            className="h-10.5 flex-1 px-4 text-[13.5px] text-muted-foreground hover:text-foreground active:scale-[0.96] transition-transform duration-150 sm:flex-none"
+            className="h-9 flex-1 px-3 text-[13.5px] text-muted-foreground hover:text-foreground active:scale-[0.96] transition-transform duration-150 sm:flex-none"
           >
             Not now
           </Button>
@@ -116,7 +116,7 @@ export function SaveSourcePrompt({
             type="button"
             variant="default"
             onClick={save}
-            className="h-10.5 flex-1 px-5 text-[13.5px] active:scale-[0.96] transition-transform duration-150 sm:flex-none"
+            className="h-9 flex-1 px-4 text-[13.5px] active:scale-[0.96] transition-transform duration-150 sm:flex-none"
           >
             {saveLabel}
           </Button>

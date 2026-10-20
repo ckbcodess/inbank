@@ -7,22 +7,22 @@ import { Bone } from "@/components/states/PageSkeletons";
  */
 export default function CardDetailsLoading() {
   return (
-    <div role="status" aria-busy="true" className="mx-auto flex w-full max-w-[440px] flex-col gap-10 sm:gap-12 lg:max-w-[1000px]">
+    <div role="status" aria-busy="true" className="mx-auto flex w-full max-w-[440px] flex-col gap-10 sm:gap-10 lg:max-w-[1000px]">
       <span className="sr-only">Loading</span>
 
       {/* Back arrow and the card's name */}
-      <div className="flex min-w-0 items-center gap-3">
-        <Bone className="size-9 shrink-0 rounded-lg" />
-        <Bone className="h-6 w-44 rounded-lg" />
+      <div className="flex min-w-0 items-center gap-2">
+        <Bone className="size-8 shrink-0 rounded-lg" />
+        <Bone className="h-5 w-38 rounded-lg" />
       </div>
 
-      <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start lg:gap-6">
-        <div className="flex flex-col gap-9">
+      <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start lg:gap-5">
+        <div className="flex flex-col gap-8">
           {/* The card and its caption line */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <Bone className="mx-auto aspect-[1.586/1] w-full max-w-[360px] rounded-2xl lg:w-[78%] lg:max-w-none" />
-            <div className="flex h-8 items-center justify-center">
-              <Bone className="h-4 w-48 rounded" />
+            <div className="flex h-7 items-center justify-center">
+              <Bone className="h-3.5 w-42 rounded-sm" />
             </div>
           </div>
 
@@ -30,20 +30,20 @@ export default function CardDetailsLoading() {
           <div className="mx-auto flex w-full max-w-[360px] items-start justify-between lg:w-[78%] lg:max-w-none">
             {[0, 1, 2].map((i) => (
               <div key={i} className="flex flex-col items-center gap-2">
-                <Bone className="size-14 rounded-full" />
-                <Bone className="h-3.5 w-16 rounded" />
+                <Bone className="size-12 rounded-full" />
+                <Bone className="h-3 w-14 rounded-sm" />
               </div>
             ))}
           </div>
         </div>
 
         {/* The list of tiles */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           {[0, 1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="flex items-center gap-4 rounded-[16px] bg-[var(--tile)] p-4">
-              <Bone className="size-[38.5px] shrink-0 rounded-lg bg-muted" />
-              <Bone className="h-4 w-40 rounded bg-muted" />
-              <Bone className="ml-auto h-4 w-20 rounded bg-muted" />
+            <div key={i} className="flex items-center gap-3 rounded-2xl bg-[var(--tile)] p-3">
+              <Bone className="size-10 shrink-0 rounded-lg bg-muted" />
+              <Bone className="h-3.5 w-35 rounded-sm bg-muted" />
+              <Bone className="ml-auto h-3.5 w-17 rounded-sm bg-muted" />
             </div>
           ))}
         </div>

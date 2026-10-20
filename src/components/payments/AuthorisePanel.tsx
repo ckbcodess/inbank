@@ -108,11 +108,11 @@ export function AuthorisePanel({
   // =========================================================================
   if (variant === "compact") {
     return (
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-4">
         {summary}
 
         {isPin ? (
-          <div className="flex flex-col items-center gap-1.5 text-center">
+          <div className="flex flex-col items-center gap-2 text-center">
             <span className="text-[15.5px] font-medium text-foreground">Enter Transaction PIN</span>
             <span className="text-[13px] text-muted-foreground">Enter your 4-digit transaction PIN created during onboarding</span>
           </div>
@@ -123,7 +123,7 @@ export function AuthorisePanel({
             title="Enter OTP Verification Code"
             description={`A 6-digit one-time code was sent to ${REGISTERED_PHONE}`}
             titleClass="text-[15.5px] font-medium text-foreground"
-            descClass="mt-1.5 text-[13px] text-muted-foreground"
+            descClass="mt-2 text-[13px] text-muted-foreground"
           />
         )}
 
@@ -164,14 +164,14 @@ export function AuthorisePanel({
         <AlertToast when={state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${REGISTERED_PHONE}.`} />
 
         {/* Alternative authentication option & resend affordance */}
-        <div className="flex flex-col items-center gap-2.5 pt-1">
+        <div className="flex flex-col items-center gap-2 pt-1">
           {!isPin && <OtpHelp resend={resend} onResend={onResend} shortcodeOpen={shortcodeOpen} onShortcodeOpenChange={setShortcodeOpen} />}
 
           {onMethodChange && (
             <button
               type="button"
               onClick={() => onMethodChange(isPin ? "otp" : "pin")}
-              className="flex items-center gap-1.5 text-[13px] text-foreground hover:underline font-medium cursor-pointer"
+              className="flex items-center gap-2 text-[13px] text-foreground hover:underline font-medium cursor-pointer"
             >
               {isPin ? (
                 <>
@@ -222,7 +222,7 @@ export function AuthorisePanel({
           </div>
 
           {/* Heading */}
-          <h2 className="mt-6 text-[26px] font-medium leading-[32px] tracking-[var(--ls-heading)] text-foreground">
+          <h2 className="mt-5 text-[26px] font-medium leading-[32px] tracking-[var(--ls-heading)] text-foreground">
             Enter your 4-digit PIN to authorise
           </h2>
 
@@ -232,7 +232,7 @@ export function AuthorisePanel({
             tabIndex={0}
             onClick={handleContainerClick}
             className={cn(
-              "relative mt-16 flex items-center justify-center gap-8 cursor-pointer select-none py-2 focus:outline-none",
+              "relative mt-12 flex items-center justify-center gap-6 cursor-pointer select-none py-2 focus:outline-none",
               state === "error" && "animate-pin-shake"
             )}
             aria-label="Enter 4-digit PIN indicator"
@@ -259,7 +259,7 @@ export function AuthorisePanel({
                 <div
                   key={i}
                   className={cn(
-                    "size-14 rounded-full transition duration-150 flex items-center justify-center",
+                    "size-12 rounded-full transition duration-150 flex items-center justify-center",
                     state === "error"
                       ? "border-2 border-destructive/70 bg-destructive/10 dark:bg-destructive/15"
                       : isFilled
@@ -276,7 +276,7 @@ export function AuthorisePanel({
 
           {/* Bottom Switch to OTP Action */}
           {onMethodChange && (
-            <div className="mt-20 flex items-center justify-center">
+            <div className="mt-16 flex items-center justify-center">
               <button
                 type="button"
                 onClick={() => onMethodChange("otp")}
@@ -328,7 +328,7 @@ export function AuthorisePanel({
                 <span className="font-medium text-foreground tabular whitespace-nowrap">{REGISTERED_PHONE}</span>
               </>
             }
-            titleClass="mt-6 text-[26px] font-medium leading-[32px] tracking-[var(--ls-heading)] text-foreground"
+            titleClass="mt-5 text-[26px] font-medium leading-[32px] tracking-[var(--ls-heading)] text-foreground"
             descClass="mt-2 text-[13.5px] text-muted-foreground max-w-xs"
           />
 
@@ -353,7 +353,7 @@ export function AuthorisePanel({
 
           <AlertToast when={state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${REGISTERED_PHONE}.`} />
 
-          <div className="mt-8 flex flex-col items-center gap-3">
+          <div className="mt-6 flex flex-col items-center gap-2">
             <OtpHelp resend={resend} onResend={onResend} shortcodeOpen={shortcodeOpen} onShortcodeOpenChange={setShortcodeOpen} />
 
             {onMethodChange && (

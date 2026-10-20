@@ -65,10 +65,10 @@ export default function OpenGcbAccountDialog({
             data-tour={dataTourConfirm}
             onClick={executeCoosRedirect}
             loading={isRedirecting}
-            className="gap-1.5"
+            className="gap-2"
           >
             Continue to portal
-            <ExternalLink className="size-3.5" />
+            <ExternalLink className="size-3" />
           </Button>
         </DialogFooter>
       </DialogContent>

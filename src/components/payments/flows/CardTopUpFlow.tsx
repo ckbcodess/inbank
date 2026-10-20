@@ -106,7 +106,7 @@ export function CardTopUpFlow({
   const isValid = Boolean(state.fromId) && isCardValid && numAmount > 0 && !overBalance;
 
   return (
-    <div className="flex flex-col gap-6 animate-in fade-in duration-200 ease-out">
+    <div className="flex flex-col gap-5 animate-in fade-in duration-200 ease-out">
       {/* 1. From Account */}
       <FromAccountSelector
         accounts={accounts}
@@ -128,7 +128,7 @@ export function CardTopUpFlow({
             onChange={() => setCollapsed(false)}
           />
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             {isOtherCard ? (
               <div className="flex flex-col gap-2">
                 <Input
@@ -151,7 +151,7 @@ export function CardTopUpFlow({
                   Enter recipient&apos;s 8-character card top-up reference number
                 </p>
                 {refCode.length === 8 && (
-                  <div className="flex items-center gap-2 rounded-xl bg-muted/40 p-3 text-[13px] text-foreground font-medium animate-in fade-in duration-150">
+                  <div className="flex items-center gap-2 rounded-xl bg-muted/40 p-2 text-[13px] text-foreground font-medium animate-in fade-in duration-150">
                     <CreditCard size={16} className="text-primary shrink-0" />
                     <span>Verified Recipient: GCB Prepaid Card ({refCode})</span>
                   </div>
@@ -168,8 +168,8 @@ export function CardTopUpFlow({
               >
                 <SelectTrigger>
                   {!selectedCard ? (
-                    <div className="flex items-center gap-3 min-w-0 flex-1">
-                      <span className="flex size-9 shrink-0 items-center justify-center text-muted-foreground">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      <span className="flex size-8 shrink-0 items-center justify-center text-muted-foreground">
                         <CreditCard size={20} strokeWidth={1.8} className="shrink-0" />
                       </span>
                       <span className="text-[14px] text-muted-foreground font-normal">
@@ -177,9 +177,9 @@ export function CardTopUpFlow({
                       </span>
                     </div>
                   ) : (
-                    <div className="flex items-center justify-between min-w-0 flex-1 gap-3">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className="flex size-9 shrink-0 items-center justify-center text-foreground">
+                    <div className="flex items-center justify-between min-w-0 flex-1 gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="flex size-8 shrink-0 items-center justify-center text-foreground">
                           <CreditCard size={20} strokeWidth={1.8} className="shrink-0" />
                         </span>
                         <div className="flex flex-col min-w-0 text-left gap-0.5">
@@ -215,7 +215,7 @@ export function CardTopUpFlow({
 
       {/* Progressive Disclosure: Only reveal Amount & onwards after card is selected */}
       {isCardValid && (
-        <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
+        <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
           {/* 3. Amount */}
           <AmountInput
             value={state.amount}

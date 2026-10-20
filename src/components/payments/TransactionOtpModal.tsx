@@ -107,8 +107,8 @@ export default function TransactionOtpModal({
             <DialogTitle>Approve on phone</DialogTitle>
           </DialogHeader>
 
-          <div className="flex flex-col items-center text-center gap-4 px-6 py-8">
-            <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-2xs">
+          <div className="flex flex-col items-center text-center gap-3 px-5 py-6">
+            <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-foreground shadow-2xs">
               <Smartphone size={24} strokeWidth={1.8} />
             </div>
             <div className="flex flex-col gap-1">
@@ -144,9 +144,9 @@ export default function TransactionOtpModal({
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
 
-        <form id={formId} onSubmit={handleConfirm} className="flex flex-col items-center justify-center px-6 py-10 text-center sm:py-12">
-          {summary && <div className="mb-8 w-full text-left">{summary}</div>}
-          <div className="flex size-12 items-center justify-center rounded-full bg-muted text-foreground">
+        <form id={formId} onSubmit={handleConfirm} className="flex flex-col items-center justify-center px-5 py-10 text-center sm:py-10">
+          {summary && <div className="mb-6 w-full text-left">{summary}</div>}
+          <div className="flex size-10 items-center justify-center rounded-full bg-muted text-foreground">
             <Smartphone size={22} strokeWidth={1.9} />
           </div>
 
@@ -159,11 +159,11 @@ export default function TransactionOtpModal({
                 <span className="tabular whitespace-nowrap font-medium text-foreground">{displayPhone}</span>
               </>
             }
-            titleClass="mt-5 text-[22px] font-medium tracking-[var(--ls-heading)] text-foreground"
+            titleClass="mt-4 text-[22px] font-medium tracking-[var(--ls-heading)] text-foreground"
             descClass="mt-2 max-w-xs text-[13px] text-muted-foreground"
           />
 
-          <div className="mt-8 flex w-full justify-center">
+          <div className="mt-6 flex w-full justify-center">
             <OtpInput
               key="otp-modal-input"
               value={auth.otp}
@@ -175,11 +175,11 @@ export default function TransactionOtpModal({
             />
           </div>
 
-          <InlineError message={auth.state === "error" && "That code isn’t right or has expired. Request a new one below."} className="mt-4" />
+          <InlineError message={auth.state === "error" && "That code isn’t right or has expired. Request a new one below."} className="mt-3" />
 
           <AlertToast when={auth.state === "resent"} kind="success" message={`A new 6-digit code has been sent to ${displayPhone}.`} />
 
-          <div className="mt-7 w-full">
+          <div className="mt-6 w-full">
             <OtpHelp resend={auth.resend} onResend={auth.requestResend} shortcodeOpen={shortcodeOpen} onShortcodeOpenChange={setShortcodeOpen} />
           </div>
         </form>

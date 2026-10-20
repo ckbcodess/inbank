@@ -39,15 +39,15 @@ export default function HoldingDetailPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader
         title={h.title}
         badge={<Badge variant="secondary">{kindLabel(h.kind)}</Badge>}
         backTo={{ href: INVEST_HOME, label: "Invest" }}
       />
 
-      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-8">
-        <section className="flex flex-col gap-1.5 px-1">
+      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
+        <section className="flex flex-col gap-2 px-1">
           <span className="text-[13px] text-muted-foreground">Face value, paid at maturity</span>
           <span className={cn("tabular text-[40px] leading-none tracking-[var(--ls-heading)]", cashing ? "text-muted-foreground" : "text-foreground")}>
             {formatMoney(h.face, "GHS", showAmounts)}
@@ -57,7 +57,7 @@ export default function HoldingDetailPage() {
               {`Cash-in requested: ${formatMoney(h.rediscount.receive, "GHS", showAmounts)} will be paid to your account once it’s processed.`}
             </span>
           ) : (
-            <span className="tabular flex gap-1.5 text-[14px] text-muted-foreground">
+            <span className="tabular flex gap-2 text-[14px] text-muted-foreground">
               <span>{formatDate(h.maturity)}</span>
               <span aria-hidden="true">·</span>
               <span>{daysLeftLabel(h.maturity)}</span>
@@ -67,7 +67,7 @@ export default function HoldingDetailPage() {
 
         <FactsPanel rows={rows} />
 
-        <section className="flex flex-col gap-3">
+        <section className="flex flex-col gap-2">
           <ActionTile icon={FileText} title="Advice" description="Your investment confirmation" href={`${base}/advice`} />
           <ActionTile
             icon={CalendarClock}

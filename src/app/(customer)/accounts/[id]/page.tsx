@@ -184,9 +184,9 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
 
   if (!account) {
     return (
-      <div className="mx-auto flex w-full max-w-[440px] flex-col gap-3">
+      <div className="mx-auto flex w-full max-w-[440px] flex-col gap-2">
         <PageHeader title="Account Not Found" backTo={{ href: "/accounts", label: "My Accounts" }} />
-        <p className="pl-11 text-[13px] text-muted-foreground">
+        <p className="pl-10 text-[13px] text-muted-foreground">
           This account isn&apos;t available under the current banking relationship.
         </p>
       </div>
@@ -206,7 +206,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
   const canBeDefault = choosable && !isDefault;
 
   return (
-    <div className="mx-auto flex w-full max-w-[440px] flex-col gap-10 sm:gap-12 lg:max-w-[1000px]">
+    <div className="mx-auto flex w-full max-w-[440px] flex-col gap-10 sm:gap-10 lg:max-w-[1000px]">
       <PageHeader
         title={account.name}
         backTo={{ href: "/accounts", label: "My Accounts" }}
@@ -245,8 +245,8 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
 
       {(state === "populated" || state === "empty") && (
         // Two columns from lg: the card and its two actions on the left, the options on the right. One column below.
-        <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start lg:gap-6">
-          <div className="flex flex-col gap-6 lg:mx-auto lg:w-[78%]">
+        <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-start lg:gap-5">
+          <div className="flex flex-col gap-5 lg:mx-auto lg:w-[78%]">
             <BalanceCard account={account} isDefault={isDefault} />
             <div className="flex w-full items-start justify-evenly">
               <RoundAction icon={Plus} label="Top Up" onClick={() => setFundOpen(true)} />
@@ -255,12 +255,12 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
           </div>
 
           {/* Most used first: what happened, then what to set up or ask for, then the one setting. Even spacing throughout. */}
-          <nav aria-label="Account options" className="flex flex-col gap-4">
-            <div className="flex flex-col gap-4">
+          <nav aria-label="Account options" className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3">
               <ActionTile onClick={() => setRecentOpen(true)} icon={ArrowLeftRight} title="Last 10 Transactions" />
               <ActionTile href={`/accounts/${account.id}/expenses`} icon={PieChart} title="My Spends" />
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
               <ActionTile href="/payments/standing" icon={Repeat} title="Standing Orders" />
               <ActionTile
                 href={`/accounts/${account.id}/requests`}
@@ -331,7 +331,7 @@ function HeaderPill({ onClick, children }: { onClick: () => void; children: Reac
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex h-8 shrink-0 cursor-pointer items-center rounded-[8px] bg-muted px-3 text-[13px] font-medium text-foreground transition-colors hover:bg-muted/80"
+      className="inline-flex h-7 shrink-0 cursor-pointer items-center rounded-lg bg-muted px-2 text-[13px] font-medium text-foreground transition-colors hover:bg-muted/80"
     >
       {children}
     </button>
@@ -348,7 +348,7 @@ function BalanceCard({ account, isDefault }: { account: Account; isDefault: bool
   return (
     <section
       aria-label="Balance"
-      className="relative flex min-h-[220px] flex-col justify-between gap-10 overflow-hidden rounded-xl border border-border bg-[var(--account-card)] p-6"
+      className="relative flex min-h-[220px] flex-col justify-between gap-10 overflow-hidden rounded-xl border border-border bg-[var(--account-card)] p-5"
     >
       {/* Decorative dot map (Figma 1896:15434) */}
       <Image
@@ -361,7 +361,7 @@ function BalanceCard({ account, isDefault }: { account: Account; isDefault: bool
         className="pointer-events-none absolute -right-[207.7px] top-[8.68px] h-[343.429px] w-[430.279px] max-w-none select-none dark:opacity-40"
       />
 
-      {isDefault && <Badge variant="brand" className="absolute right-6 top-6">Default</Badge>}
+      {isDefault && <Badge variant="brand" className="absolute right-5 top-5">Default</Badge>}
 
       <div className="relative flex flex-col gap-2 text-[14px] leading-5 tracking-[-0.005em] text-muted-foreground">
         <span className="flex items-center gap-1">
@@ -387,7 +387,7 @@ function BalanceCard({ account, isDefault }: { account: Account; isDefault: bool
         <button
           type="button"
           onClick={toggleAmountVisibility}
-          className="-ml-1 flex size-10 shrink-0 items-center justify-center rounded-full text-foreground transition-colors hover:bg-background/60 cursor-pointer"
+          className="-ml-1 flex size-9 shrink-0 items-center justify-center rounded-full text-foreground transition-colors hover:bg-background/60 cursor-pointer"
           aria-label={showAmounts ? "Hide balance" : "Show balance"}
           aria-pressed={!showAmounts}
           title={showAmounts ? "Hide balance" : "Show balance"}
@@ -417,7 +417,7 @@ function ActivityRow({
       <button
         type="button"
         onClick={() => onSelect(t)}
-        className="flex w-full text-left items-center gap-4 rounded-xl px-3 py-3.5 sm:py-4 transition-colors hover:bg-item-hover cursor-pointer sm:px-4"
+        className="flex w-full text-left items-center gap-3 rounded-xl px-2 py-3 sm:py-3 transition-colors hover:bg-item-hover cursor-pointer sm:px-3"
       >
         <TransactionMark transaction={t} />
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -481,7 +481,7 @@ function RecentTransactionsDialog({
             variant="outline"
             nativeButton={false}
             render={<Link href={`/transactions?account=${account.id}`} />}
-            className="h-10 w-full rounded-lg text-[13.5px]"
+            className="h-9 w-full rounded-lg text-[13.5px]"
           >
             View All Transactions
           </Button>

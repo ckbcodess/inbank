@@ -149,13 +149,13 @@ export default function TourOverlay() {
 
       {/* Tooltip */}
       <div
-        className="pointer-events-auto fixed w-[284px] max-w-[calc(100vw-16px)] rounded-xl border border-border bg-popover p-3 shadow-xl animate-in fade-in zoom-in-95 duration-150"
+        className="pointer-events-auto fixed w-[284px] max-w-[calc(100vw-16px)] rounded-xl border border-border bg-popover p-2 shadow-xl animate-in fade-in zoom-in-95 duration-150"
         style={tipStyle}
       >
         {/* arrow — points sideways at the ring */}
         {rect && (
           <span
-            className="absolute top-1/2 size-2.5 -translate-y-1/2 rotate-45 border-border bg-popover"
+            className="absolute top-1/2 size-2 -translate-y-1/2 rotate-45 border-border bg-popover"
             style={
               placeRight
                 ? { left: -5, borderLeftWidth: 1, borderBottomWidth: 1 }
@@ -172,7 +172,7 @@ export default function TourOverlay() {
             type="button"
             onClick={stop}
             aria-label="Exit tour"
-            className="-mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
+            className="-mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
           >
             <X size={13} />
           </button>
@@ -180,24 +180,24 @@ export default function TourOverlay() {
 
         {/* On the first step, orient the tester to the whole journey */}
         {stepIndex === 0 && (
-          <p className="mt-1.5 rounded-lg bg-warning/10 px-2 py-1.5 text-[11.5px] leading-snug text-muted-foreground dark:bg-primary/10">
+          <p className="mt-2 rounded-lg bg-warning/10 px-2 py-2 text-[11.5px] leading-snug text-muted-foreground dark:bg-primary/10">
             {tour.summary}
           </p>
         )}
 
-        <h4 className="mt-1.5 text-[13.5px] text-foreground tracking-[var(--ls-tight)]">{step.title}</h4>
+        <h4 className="mt-2 text-[13.5px] text-foreground tracking-[var(--ls-tight)]">{step.title}</h4>
 
         {/* Purpose — what this step does and why it's part of the flow */}
         <p className="mt-1 text-[12px] leading-snug text-muted-foreground">{step.body}</p>
 
         {/* The concrete next click */}
-        <div className="mt-2 flex items-start gap-1.5 rounded-lg bg-muted/50 px-2 py-1.5 text-[12px] text-foreground">
+        <div className="mt-2 flex items-start gap-2 rounded-lg bg-muted/50 px-2 py-2 text-[12px] text-foreground">
           <MousePointerClick size={13} className="mt-0.5 shrink-0 text-warning-text" />
           <span>{step.action}</span>
         </div>
 
         {stepIndex > 0 && (
-          <div className="mt-2.5">
+          <div className="mt-2">
             <button
               type="button"
               onClick={prev}

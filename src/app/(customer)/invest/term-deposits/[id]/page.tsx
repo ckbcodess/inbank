@@ -29,7 +29,7 @@ export default function TermDepositDetailPage() {
   if (!hydrated) return <InvestmentDetailSkeleton />;
   if (!d) {
     return (
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-6">
         <PageHeader title="Term Deposit" backTo={back} />
         <TrueEmptyState
           icon={<XCircle size={22} strokeWidth={1.8} />}
@@ -61,14 +61,14 @@ export default function TermDepositDetailPage() {
   ];
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <PageHeader title={`${d.tenureDays}-day Term Deposit`} backTo={back} />
-      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-8">
-        <section className="flex flex-col gap-1.5 px-1">
+      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-6">
+        <section className="flex flex-col gap-2 px-1">
           <span className="text-[13px] text-muted-foreground">Deposited</span>
           <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(open ? d.principal : 0)}</span>
           {open ? (
-            <span className="tabular flex gap-1.5 text-[14px] text-muted-foreground">
+            <span className="tabular flex gap-2 text-[14px] text-muted-foreground">
               <span>{formatDate(d.maturity)}</span>
               <span aria-hidden="true">·</span>
               <span>{daysLeftLabel(d.maturity)}</span>
@@ -81,7 +81,7 @@ export default function TermDepositDetailPage() {
         <FactsPanel rows={open ? rows : rows.slice(0, 5)} />
 
         {open && (
-          <section className="flex flex-col gap-3">
+          <section className="flex flex-col gap-2">
             <ActionTile icon={CalendarClock} title="Change What Happens at Maturity" description="Choose what happens when it matures" href={`${base}/maturity`} />
             <ActionTile icon={CircleMinus} title="Redeem Part of the Deposit" description="Take some of it out early" href={`${base}/redeem`} />
             <ActionTile icon={XCircle} title="Close the Deposit" description="Take it all out and close it" href={`${base}/close`} />

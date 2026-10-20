@@ -138,7 +138,7 @@ export function dayLabel(iso: string): string {
 export function Card({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     // Phone: 16px inside a 16px gutter, so rows keep their width; desktop keeps the roomier 20px.
-    <div className={cn("flex h-[260px] flex-col gap-3 rounded-2xl border border-border bg-panel p-4 sm:p-5 overflow-hidden", className)}>
+    <div className={cn("flex h-[260px] flex-col gap-2 rounded-2xl border border-border bg-panel p-3 sm:p-4 overflow-hidden", className)}>
       {children}
     </div>
   );
@@ -170,17 +170,17 @@ export function PanelEmpty({
   icon?: React.ComponentType<{ size?: number; className?: string; strokeWidth?: number }>;
 }) {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-2.5 py-6 text-center sm:py-7">
+    <div className="flex flex-1 flex-col items-center justify-center gap-2 py-5 text-center sm:py-6">
       {/* Bare and thin: nothing around it, so an empty panel stays quiet. */}
       {Icon && <Icon size={30} strokeWidth={1.3} className="mb-0.5 text-muted-foreground/70" />}
       <p className="text-[13px] text-muted-foreground">{text}</p>
       {action &&
         (action.href ? (
-          <Button nativeButton={false} render={<Link href={action.href} />} variant="outline" size="sm" className="mt-3">
+          <Button nativeButton={false} render={<Link href={action.href} />} variant="outline" size="sm" className="mt-2">
             {action.label}
           </Button>
         ) : action.onClick ? (
-          <Button onClick={action.onClick} variant="outline" size="sm" className="mt-3">
+          <Button onClick={action.onClick} variant="outline" size="sm" className="mt-2">
             {action.label}
           </Button>
         ) : null)}
@@ -190,7 +190,7 @@ export function PanelEmpty({
 
 export function PanelSkeleton({ rows, avatar = true }: { rows: number; avatar?: boolean }) {
   return (
-    <div className="-mx-4">
+    <div className="-mx-3">
       <ListSkeleton rows={rows} avatar={avatar} />
     </div>
   );
@@ -307,13 +307,13 @@ export function MoneyActions({
   }
 
   const buttonClass = cn(
-    "h-auto gap-2 px-5 py-3 text-[14px] leading-none max-sm:flex-1 max-sm:min-w-0 max-sm:h-10 max-sm:gap-1 max-sm:px-1.5 max-sm:py-2.5 max-sm:text-[11.5px] max-sm:font-semibold max-sm:tracking-tight",
+    "h-auto gap-2 px-4 py-2 text-[14px] leading-none max-sm:flex-1 max-sm:min-w-0 max-sm:h-9 max-sm:gap-1 max-sm:px-2 max-sm:py-2 max-sm:text-[11.5px] max-sm:font-semibold max-sm:tracking-tight",
     // The hero's glass buttons keep the variant's own top highlight; a plain shadow here would replace it.
     hero ? "rounded-xl" : "shadow-xs",
   );
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-3 max-sm:w-full max-sm:gap-1.5", className)}>
+    <div className={cn("flex flex-wrap items-center gap-2 max-sm:w-full max-sm:gap-2", className)}>
       {actions.map(({ kind: k, icon: Icon, label, primary }) => (
         <Button
           key={k}
@@ -323,7 +323,7 @@ export function MoneyActions({
           aria-haspopup="dialog"
           className={cn(buttonClass, hero && primary && HERO_PRIMARY_CLASS)}
         >
-          <Icon size={17} strokeWidth={1.8} className="size-[17px] shrink-0 max-sm:size-3.5" />
+          <Icon size={17} strokeWidth={1.8} className="size-[17px] shrink-0 max-sm:size-3" />
           <span className="truncate">{label}</span>
         </Button>
       ))}
@@ -364,7 +364,7 @@ export function RefreshControl({
       onClick={onRefresh}
       disabled={refreshing}
       title={timeLabel}
-      className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-default cursor-pointer shrink-0"
+      className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-default cursor-pointer shrink-0"
       aria-label={`${t("dashboard.refresh", "Refresh dashboard")} (${timeLabel})`}
     >
       <RefreshCw size={18} strokeWidth={1.8} className={cn(refreshing && "animate-spin")} />
@@ -414,9 +414,9 @@ export function AccountSwitcher({
   const trigger = hero
     ? cn(
         buttonVariants({ variant: "glass" }),
-        "flex w-fit items-center gap-2 h-9 sm:h-10 px-3.5 rounded-xl text-[13.5px] sm:text-[15px] font-medium outline-none transition-[box-shadow,transform] cursor-pointer",
+        "flex w-fit items-center gap-2 h-8 sm:h-9 px-3 rounded-xl text-[13.5px] sm:text-[15px] font-medium outline-none transition-[box-shadow,transform] cursor-pointer",
       )
-    : "-mx-3 flex w-fit items-center gap-2.5 rounded-lg px-3 py-2 text-[15px] leading-none text-foreground outline-none transition-colors hover:bg-muted";
+    : "-mx-2 flex w-fit items-center gap-2 rounded-lg px-2 py-2 text-[15px] leading-none text-foreground outline-none transition-colors hover:bg-muted";
   const chevron = hero ? "text-[var(--hero-foreground)]" : "text-muted-foreground";
 
   if (data.accounts.length < 2) {
@@ -437,14 +437,14 @@ export function AccountSwitcher({
         <AccountLabel account={account} bare={hero} />
         <ChevronDown size={16} strokeWidth={1.8} className={chevron} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align={align} sideOffset={6} className="w-[320px] p-1.5">
+      <DropdownMenuContent align={align} sideOffset={6} className="w-[320px] p-2">
         <DropdownMenuRadioGroup value={account.id} onValueChange={(id) => onSelect(id as string)}>
           {data.accounts.map((a) => (
             <DropdownMenuRadioItem
               key={a.id}
               value={a.id}
               closeOnClick
-              className="gap-2.5 rounded-lg py-3 pl-3 pr-9 text-[14px]"
+              className="gap-2 rounded-lg py-2 pl-2 pr-8 text-[14px]"
             >
               <AccountLabel account={a} full />
               {a.id === data.defaultAccountId && (
@@ -485,9 +485,9 @@ export function BalanceFigure({
   const account = selectedAccount(data);
   if (!account) return null;
   return (
-    <div className={cn("flex items-center gap-2 sm:gap-4", className)}>
+    <div className={cn("flex items-center gap-2 sm:gap-3", className)}>
       {loading ? (
-        <Bone className="h-[34px] w-56 rounded-lg sm:w-64" />
+        <Bone className="h-[34px] w-49 rounded-lg sm:w-56" />
       ) : (
         <span className={cn("tabular leading-none tracking-[0.01em] text-foreground", FIGURE_SIZE[size])}>
           {/* A smaller currency code on a phone lets the digits carry the line. */}
@@ -498,7 +498,7 @@ export function BalanceFigure({
       <button
         type="button"
         onClick={onToggle}
-        className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+        className="flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
         aria-label={showAmounts ? t("header.hideAmounts", "Hide balances") : t("header.showAmounts", "Show balances")}
       >
         {showAmounts ? <Eye size={18} strokeWidth={1.8} /> : <EyeOff size={18} strokeWidth={1.8} />}
@@ -543,7 +543,7 @@ export function BalanceMeta({
   if (onHold <= 0 && !hasFlow && !timeLabel) return null;
 
   return (
-    <div className={cn("flex flex-col gap-1.5 text-[13px] text-muted-foreground", className)}>
+    <div className={cn("flex flex-col gap-2 text-[13px] text-muted-foreground", className)}>
       {onHold > 0 && (
         <span className="tabular">
           {formatMoney(available, account.currency, showAmounts)} available ·{" "}
@@ -551,13 +551,13 @@ export function BalanceMeta({
         </span>
       )}
       {hasFlow && (
-        <span className="flex flex-wrap items-center gap-x-4 gap-y-1">
+        <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <span>{t("dashboard.lastDays", "Last {days} days", { days: cashFlow.days })}</span>
-          <span className="inline-flex items-center gap-1.5">
+          <span className="inline-flex items-center gap-2">
             {t("dashboard.moneyIn", "In")}
             <span className="tabular text-success">+ {formatMoney(cashFlow.moneyIn, account.currency, showAmounts)}</span>
           </span>
-          <span className="inline-flex items-center gap-1.5">
+          <span className="inline-flex items-center gap-2">
             {t("dashboard.moneyOut", "Out")}
             <span className="tabular text-foreground">− {formatMoney(cashFlow.moneyOut, account.currency, showAmounts)}</span>
           </span>
@@ -577,7 +577,7 @@ export function BalanceMeta({
 /** A refresh that failed: say so, keep the last good numbers, offer a retry. */
 export function RefreshFailed({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-card px-4 py-4 sm:px-6">
+    <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-card px-3 py-3 sm:px-5">
       <AlertCircle size={17} strokeWidth={1.8} className="shrink-0 text-warning" />
       <span className="min-w-0 flex-1 text-[13.5px] text-foreground">
         Couldn&apos;t refresh your dashboard.{" "}
@@ -586,7 +586,7 @@ export function RefreshFailed({ onRetry }: { onRetry: () => void }) {
       <button
         type="button"
         onClick={onRetry}
-        className="rounded-lg border border-border px-3 py-1.5 text-[13px] text-foreground transition-colors hover:bg-muted cursor-pointer"
+        className="rounded-lg border border-border px-2 py-2 text-[13px] text-foreground transition-colors hover:bg-muted cursor-pointer"
       >
         Try again
       </button>
@@ -633,7 +633,7 @@ export function UpcomingList({ items, showAmounts }: { items: UpcomingPayment[];
   return (
     <ul className="flex flex-col gap-0.5">
       {items.map((p) => (
-        <li key={p.id} className="flex items-center gap-3.5 py-2 sm:py-2.5 rounded-xl px-2 -mx-2 transition-colors hover:bg-item-hover">
+        <li key={p.id} className="flex items-center gap-3 py-2 sm:py-2 rounded-xl px-2 -mx-2 transition-colors hover:bg-item-hover">
           <span className="flex min-w-0 flex-1 flex-col gap-0.5">
             <span className="truncate text-[13.5px] font-medium text-foreground">{p.payee}</span>
             <span className="text-[12px] text-muted-foreground tabular">
@@ -700,13 +700,13 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
       {loading ? (
         // Balanced grid of avatar skeletons
         <div className="flex flex-1 flex-col justify-around">
-          <div className="grid grid-cols-4 gap-x-2 gap-y-3.5">
+          <div className="grid grid-cols-4 gap-x-2 gap-y-3">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="flex min-w-0 flex-col items-center gap-1.5 sm:gap-2">
-                <Bone className="size-10 rounded-full sm:size-11" style={{ animationDelay: `${i * 50}ms` }} />
+              <div key={i} className="flex min-w-0 flex-col items-center gap-2 sm:gap-2">
+                <Bone className="size-9 rounded-full sm:size-10" style={{ animationDelay: `${i * 50}ms` }} />
                 <div className="flex w-full flex-col items-center gap-1">
-                  <Bone className="h-2.5 w-4/5" style={{ animationDelay: `${i * 50}ms` }} />
-                  <Bone className="h-2 w-3/5" style={{ animationDelay: `${i * 50}ms` }} />
+                  <Bone className="h-2 w-4/5" style={{ animationDelay: `${i * 50}ms` }} />
+                  <Bone className="h-1.5 w-3/5" style={{ animationDelay: `${i * 50}ms` }} />
                 </div>
               </div>
             ))}
@@ -725,7 +725,7 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
             <Link
               key={p.href}
               href={withFrom(p.href, data.selectedAccountId)}
-              className="group flex items-center gap-3 py-2.5 transition-colors hover:bg-item-hover rounded-xl px-2 -mx-2"
+              className="group flex items-center gap-2 py-2 transition-colors hover:bg-item-hover rounded-xl px-2 -mx-2"
               aria-label={`Pay ${p.name}, ${p.detail}`}
             >
               <PayeeAvatar name={p.name} size="sm" />
@@ -747,12 +747,12 @@ export function PayAgainCard({ data, loading = false, className }: { data: DashD
       ) : (
         // When 4 or more payees, render as a balanced 4-column avatar grid
         <div className="flex flex-1 flex-col justify-around">
-          <div className="grid grid-cols-4 gap-x-2 gap-y-3.5">
+          <div className="grid grid-cols-4 gap-x-2 gap-y-3">
             {data.payAgain.slice(0, 8).map((p) => (
               <Link
                 key={p.href}
                 href={withFrom(p.href, data.selectedAccountId)}
-                className="group flex min-w-0 flex-col items-center gap-1.5 text-center"
+                className="group flex min-w-0 flex-col items-center gap-2 text-center"
                 aria-label={`Pay ${p.name}, ${p.detail}`}
               >
                 <PayeeAvatar name={p.name} size="md" />
@@ -852,10 +852,10 @@ export function CardsCard({
       ) : data.cards.length === 0 ? (
         <PanelEmpty icon={CreditCard} text={t("dashboard.noCardsOnAccount", "No card on this account.")} action={{ label: t("dashboard.requestCard", "Request a card"), href: "/cards/request" }} />
       ) : (
-        <div className="flex flex-1 flex-col justify-between gap-3">
+        <div className="flex flex-1 flex-col justify-between gap-2">
           <CardsMini cards={data.cards} />
           {isUnfunded && onOpenFundModal && (
-            <div className="mt-auto flex items-center justify-between rounded-xl bg-muted/40 px-3.5 py-2 text-[12px] text-muted-foreground">
+            <div className="mt-auto flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2 text-[12px] text-muted-foreground">
               <span>Card ready · active once funded</span>
               <button
                 type="button"
@@ -894,7 +894,7 @@ export function AnalyticsCard({
       <div
         role="status"
         aria-busy="true"
-        className={cn("flex h-[260px] flex-col justify-between gap-2.5 rounded-2xl border border-border bg-panel p-4 shadow-none sm:p-5 overflow-hidden", className)}
+        className={cn("flex h-[260px] flex-col justify-between gap-2 rounded-2xl border border-border bg-panel p-3 shadow-none sm:p-4 overflow-hidden", className)}
       >
         <span className="sr-only">Loading</span>
         <div className="flex items-center justify-between">
@@ -911,7 +911,7 @@ export function AnalyticsCard({
         </div>
         <div className="flex w-full items-center gap-2">
           {[0, 1, 2].map((i) => (
-            <Bone key={i} className="h-7 flex-1 rounded-full" style={{ animationDelay: `${i * 60}ms` }} />
+            <Bone key={i} className="h-6 flex-1 rounded-full" style={{ animationDelay: `${i * 60}ms` }} />
           ))}
         </div>
       </div>
@@ -950,13 +950,13 @@ export function FxBar({ defaultOpen = false, className }: { defaultOpen?: boolea
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between gap-6 px-4 py-4 cursor-pointer sm:px-6"
+        className="flex w-full items-center justify-between gap-5 px-3 py-3 cursor-pointer sm:px-5"
         aria-expanded={open}
       >
         <span className="shrink-0 text-[14px] font-medium leading-none text-foreground sm:text-[16px]">
           {t("dashboard.exchangeRates", "Exchange rates")}
         </span>
-        <span className="flex min-w-0 flex-1 items-center justify-end gap-4">
+        <span className="flex min-w-0 flex-1 items-center justify-end gap-3">
           {!open && <span className="text-[13px] text-muted-foreground tabular">{fxPeek()}</span>}
           <ChevronDown
             size={16}
@@ -974,7 +974,7 @@ export function FxBar({ defaultOpen = false, className }: { defaultOpen?: boolea
             transition={SPRING}
             className="overflow-hidden"
           >
-            <div className="border-t border-border px-4 pb-4 pt-1 sm:px-6">
+            <div className="border-t border-border px-3 pb-3 pt-1 sm:px-5">
               <FxRatesMini />
             </div>
           </motion.div>

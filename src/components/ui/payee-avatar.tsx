@@ -19,10 +19,10 @@ export function payeeInitials(name: string): string {
 }
 
 const SIZE = {
-  sm: "size-9 text-[13px]",
-  md: "size-10 text-[13px] sm:size-11 sm:text-[13.5px]",
-  lg: "size-14 text-[16px]",
-  xl: "size-20 text-[26px]",
+  sm: "size-8 text-[13px]",
+  md: "size-9 text-[13px] sm:size-10 sm:text-[13.5px]",
+  lg: "size-12 text-[16px]",
+  xl: "size-17 text-[26px]",
 } as const;
 
 /**

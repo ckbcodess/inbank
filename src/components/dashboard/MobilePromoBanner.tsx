@@ -37,8 +37,8 @@ export function MobilePromoBanner() {
                 Scan with phone camera to install the InBank mobile app.
               </p>
             </div>
-            <div className="mt-3 flex items-center gap-3">
-              <div className="size-[72px] shrink-0 overflow-hidden rounded-lg bg-white p-1.5 shadow-2xs border border-black/10 dark:border-white/10">
+            <div className="mt-2 flex items-center gap-2">
+              <div className="size-[72px] shrink-0 overflow-hidden rounded-lg bg-white p-2 shadow-2xs border border-black/10 dark:border-white/10">
                 <Image
                   src="/images/dashboard/qr-code-1.png"
                   alt="QR Code"
@@ -53,7 +53,7 @@ export function MobilePromoBanner() {
               </span>
             </div>
           </div>
-          <div className="pointer-events-none absolute -bottom-3 -right-2 h-[190px] w-[140px] sm:h-[200px] sm:w-[155px]">
+          <div className="pointer-events-none absolute -bottom-2.5 -right-1.5 h-[190px] w-[140px] sm:h-[200px] sm:w-[155px]">
             <Image
               src="/images/dashboard/phone-app-mockup.webp"
               alt="InBank Mobile App Preview"
@@ -73,7 +73,7 @@ export function MobilePromoBanner() {
       content: (
         <div className="relative z-10 flex flex-col justify-between min-h-[175px] w-full">
           <div className="flex flex-col gap-1">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-pill-success border border-success/20 px-2.5 py-0.5 text-[11px] font-medium text-pill-success-text w-fit">
+            <div className="inline-flex items-center gap-2 rounded-full bg-pill-success border border-success/20 px-2 py-0.5 text-[11px] font-medium text-pill-success-text w-fit">
               <Sparkles size={12} strokeWidth={1.8} /> High Yield Savings
             </div>
             <h3 className="mt-1 text-[17px] font-medium leading-snug tracking-tight text-foreground sm:text-[19px]">
@@ -83,11 +83,11 @@ export function MobilePromoBanner() {
               Guaranteed returns with flexible tenures from 3 to 24 months. Bank of Ghana protected.
             </p>
           </div>
-          <div className="mt-3 flex items-center gap-2.5">
+          <div className="mt-2 flex items-center gap-2">
             <button
               type="button"
               onClick={() => setShowCalculator(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-success px-3.5 py-2 text-[12.5px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl bg-success px-3 py-2 text-[12.5px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform cursor-pointer"
             >
               <Calculator size={14} strokeWidth={1.8} />
               <span>Calculate Returns</span>
@@ -111,7 +111,7 @@ export function MobilePromoBanner() {
       content: (
         <div className="relative z-10 flex flex-col justify-between min-h-[175px] w-full">
           <div className="flex flex-col gap-1">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-pill-info border border-info/20 px-2.5 py-0.5 text-[11px] font-medium text-pill-info-text w-fit">
+            <div className="inline-flex items-center gap-2 rounded-full bg-pill-info border border-info/20 px-2 py-0.5 text-[11px] font-medium text-pill-info-text w-fit">
               <Globe size={12} strokeWidth={1.8} /> Global Payments
             </div>
             <h3 className="mt-1 text-[17px] font-medium leading-snug tracking-tight text-foreground sm:text-[19px]">
@@ -121,10 +121,10 @@ export function MobilePromoBanner() {
               Send directly to UK, USA, Europe, and 45+ African destinations instantly at live interbank rates.
             </p>
           </div>
-          <div className="mt-3 flex items-center gap-2.5">
+          <div className="mt-2 flex items-center gap-2">
             <Link
               href="/payments/send"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-info px-3.5 py-2 text-[12.5px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform"
+              className="inline-flex items-center gap-2 rounded-xl bg-info px-3 py-2 text-[12.5px] font-medium text-white shadow-2xs hover:opacity-90 active:scale-[0.96] transition-transform"
             >
               <span>Send Money Now</span>
               <ArrowRight size={13} strokeWidth={1.8} />
@@ -142,11 +142,11 @@ export function MobilePromoBanner() {
 
   return (
     <>
-      <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs transition-colors">
+      <div className="relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-xs transition-colors">
         {/* Top Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-warning/25 bg-pill-warning px-2.5 py-0.5 text-[11.5px] font-medium text-pill-warning-text">
+            <span className="inline-flex items-center gap-2 rounded-full border border-warning/25 bg-pill-warning px-2 py-0.5 text-[11.5px] font-medium text-pill-warning-text">
               <Sparkles size={12} strokeWidth={1.8} />
               Featured
             </span>
@@ -158,7 +158,7 @@ export function MobilePromoBanner() {
             <button
               type="button"
               onClick={() => setCurrentSlide((s) => (s === 0 ? slides.length - 1 : s - 1))}
-              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
+              className="flex size-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
               aria-label="Previous slide"
             >
               <ChevronLeft size={16} strokeWidth={1.8} />
@@ -166,7 +166,7 @@ export function MobilePromoBanner() {
             <button
               type="button"
               onClick={() => setCurrentSlide((s) => (s === slides.length - 1 ? 0 : s + 1))}
-              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
+              className="flex size-6 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground active:scale-[0.96] transition-transform cursor-pointer"
               aria-label="Next slide"
             >
               <ChevronRight size={16} strokeWidth={1.8} />
@@ -177,16 +177,16 @@ export function MobilePromoBanner() {
         {/* Slide Stage Container */}
         <div className="my-auto py-2">
           <div
-            className={`relative overflow-hidden rounded-xl border p-5 shadow-2xs transition-[background-color,border-color] duration-200 ${slides[currentSlide].containerClass}`}
+            className={`relative overflow-hidden rounded-xl border p-4 shadow-2xs transition-[background-color,border-color] duration-200 ${slides[currentSlide].containerClass}`}
           >
             {slides[currentSlide].content}
           </div>
         </div>
 
         {/* Symmetrical Footer */}
-        <div className="flex items-center justify-between border-t border-border/50 pt-3 text-[12px] text-muted-foreground">
+        <div className="flex items-center justify-between border-t border-border/50 pt-2 text-[12px] text-muted-foreground">
           <span>Special offer · Terms apply</span>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             {slides.map((_, idx) => (
               <button
                 key={idx}
@@ -195,7 +195,7 @@ export function MobilePromoBanner() {
                 aria-label={`Go to slide ${idx + 1}`}
                 className={`rounded-full transition-[width,height,background-color] duration-200 cursor-pointer ${
                   currentSlide === idx
-                    ? "h-1.5 w-4 bg-foreground"
+                    ? "h-1.5 w-3.5 bg-foreground"
                     : "size-1.5 bg-muted-foreground/35 hover:bg-muted-foreground"
                 }`}
               />
@@ -217,7 +217,7 @@ export function MobilePromoBanner() {
             </p>
 
             <Field label="Deposit Amount (GHS)">
-              <div className="flex items-center rounded-xl border border-field-border bg-field px-3.5 py-2 focus-within:border-field-border-focus focus-within:bg-field-focus">
+              <div className="flex items-center rounded-xl border border-field-border bg-field px-3 py-2 focus-within:border-field-border-focus focus-within:bg-field-focus">
                 <span className="text-[14px] font-medium text-muted-foreground mr-2">GHS</span>
                 <input
                   type="number"
@@ -250,7 +250,7 @@ export function MobilePromoBanner() {
 </Field>
 
             {/* Earnings Result Card */}
-            <div className="rounded-xl bg-success/10 p-3.5 dark:bg-success/15 border border-success/20">
+            <div className="rounded-xl bg-success/10 p-3 dark:bg-success/15 border border-success/20">
               <div className="flex justify-between text-[13px] text-muted-foreground">
                 <span>Estimated interest</span>
                 <span className="font-medium text-success-text tabular">
