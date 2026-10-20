@@ -16,7 +16,11 @@ import { canGoBackInApp } from "@/lib/nav-history";
  *
  * Filters and tabs must use `router.replace` so they never become a Back step.
  */
-export function useContextualBack(defaultFallbackUrl: string = "/overview") {
+/**
+ * The fallback is the page's own parent and is required: a default would be one app's home, and a back arrow in
+ * the other app would land there.
+ */
+export function useContextualBack(defaultFallbackUrl: string) {
   const router = useRouter();
 
   const handleBack = useCallback(() => {

@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CreditCard, Home, LayoutGrid, Send, Wallet } from "lucide-react";
+import { ArrowLeftRight, CreditCard, Home, LayoutGrid, Send, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { homePathForProfile } from "@/lib/navigation";
+import { isBusinessProfile } from "@/lib/profile";
 import { useSession } from "@/lib/session-store";
 
 interface BottomNavProps {
@@ -22,7 +23,9 @@ interface TabItem {
 export function BottomNav({ onOpenDrawer }: BottomNavProps) {
   const pathname = usePathname();
 
-  const homePath = homePathForProfile(useSession((s) => s.activeProfile));
+  const activeProfile = useSession((s) => s.activeProfile);
+  const homePath = homePathForProfile(activeProfile);
+  const business = isBusinessProfile(activeProfile);
 
   const getIsActive = (path?: string) => {
     if (!path) return false;
@@ -31,13 +34,21 @@ export function BottomNav({ onOpenDrawer }: BottomNavProps) {
     return false;
   };
 
-  const tabs: TabItem[] = [
-    { key: "overview", label: "Home", path: homePath, icon: Home },
-    { key: "accounts", label: "Accounts", path: "/accounts", icon: Wallet },
-    { key: "payments", label: "Send & Pay", path: "/payments", icon: Send },
-    { key: "cards", label: "Cards", path: "/cards", icon: CreditCard },
-    { key: "more", label: "More", icon: LayoutGrid, onClick: onOpenDrawer },
-  ];
+  const tabs: TabItem[] = business
+    ? [
+        { key: "overview", label: "Home", path: homePath, icon: Home },
+        { key: "accounts", label: "Accounts", path: "/business/accounts", icon: Wallet },
+        { key: "payments", label: "Send & Pay", path: "/business/payments", icon: Send },
+        { key: "transactions", label: "Transactions", path: "/business/transactions", icon: ArrowLeftRight },
+        { key: "more", label: "More", icon: LayoutGrid, onClick: onOpenDrawer },
+      ]
+    : [
+        { key: "overview", label: "Home", path: homePath, icon: Home },
+        { key: "accounts", label: "Accounts", path: "/accounts", icon: Wallet },
+        { key: "payments", label: "Send & Pay", path: "/payments", icon: Send },
+        { key: "cards", label: "Cards", path: "/cards", icon: CreditCard },
+        { key: "more", label: "More", icon: LayoutGrid, onClick: onOpenDrawer },
+      ];
 
   return (
     <nav

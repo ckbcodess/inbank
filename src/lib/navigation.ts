@@ -24,7 +24,7 @@ export interface NavItem {
   group?: string;
 }
 
-/** The secondary surfaces, gathered in the collapsible "More Services" dropdown. Shared by both customer shells. */
+/** The secondary surfaces, gathered in the collapsible "More Services" dropdown. */
 const MORE_SERVICES: NavItem[] = [
   { key: "transactions", label: "Transaction History", path: "/transactions", icon: "ArrowLeftRight", group: "More Services" },
   { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "More Services" },
@@ -89,7 +89,7 @@ function adminNav(role: Role): NavItem[] {
 
 export function getNavigation(actor: Actor, activeProfile?: Profile | null): NavItem[] {
   if (actor.shell === "admin") return adminNav(actor.role);
-  return activeProfile?.kind === "CORPORATE" ? businessNav(actor, MORE_SERVICES) : retailNav();
+  return activeProfile?.kind === "CORPORATE" ? businessNav(actor) : retailNav();
 }
 
 /** Landing route after authentication, per shell. */

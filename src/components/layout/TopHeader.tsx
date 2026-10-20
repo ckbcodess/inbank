@@ -1,5 +1,7 @@
 "use client";
 
+import { isBusinessProfile } from "@/lib/profile";
+import { useSession } from "@/lib/session-store";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -138,6 +140,9 @@ export default function TopHeader({
     .join("");
 
   const unreadCount = NOTIFICATIONS.filter((n) => !n.read).length;
+  // Business banking has no notifications or settings screens yet, so it shows neither (a control that
+  // leads to the other app is worse than none).
+  const business = isBusinessProfile(useSession((s) => s.activeProfile));
 
   return (
     <header className="absolute inset-x-0 top-0 z-20 flex h-12 items-center justify-between gap-3 border-b border-border/60 bg-[var(--shell-header)] px-3 backdrop-blur-xl backdrop-saturate-150 sm:px-5 lg:px-6">
@@ -173,7 +178,7 @@ export default function TopHeader({
         {/* Global FX Header Ticker */}
 
         {/* FR-22 — notifications */}
-        {actor.shell === "customer" && (
+        {actor.shell === "customer" && !business && (
           <SimpleTooltip
             content={unreadCount > 0 ? `${unreadCount} unread notification${unreadCount > 1 ? "s" : ""}` : "Notifications"}
             side="bottom"
@@ -230,6 +235,8 @@ export default function TopHeader({
 
             <DropdownMenuSeparator className="my-1" />
 
+            {!business && (
+              <>
             {/* Core Navigation Links */}
             <DropdownMenuItem
               onClick={() => router.push(actor.shell === "customer" ? "/settings?tab=profile" : "/settings")}
@@ -260,6 +267,9 @@ export default function TopHeader({
                 <span>{t("header.security", "Security")}</span>
               </span>
             </DropdownMenuItem>
+
+              </>
+            )}
 
             {/* Dev Tools Visibility Toggle (dev only, hidden in live build) */}
             {process.env.NODE_ENV !== "production" && (

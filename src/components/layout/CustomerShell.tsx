@@ -178,7 +178,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
           </div>
         </div>
       </div>
-      <FxQuickModal />
+      {!isBusinessProfile(activeProfile) && <FxQuickModal />}
       {splash !== "off" && <AppSplash leaving={splash === "leaving"} />}
     </>
   );

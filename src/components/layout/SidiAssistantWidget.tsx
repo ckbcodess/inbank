@@ -9,6 +9,7 @@ import { useSession } from "@/lib/session-store";
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { DURATION, EASE, SPRING } from "@/lib/motion";
+import { isBusinessProfile } from "@/lib/profile";
 
 interface ChatMessage {
   id: string;
@@ -76,7 +77,7 @@ export function SidiAssistantWidget() {
   const [inputText, setInputText] = useState("");
   const [chatLog, setChatLog] = useState<ChatMessage[]>([]);
 
-  const { actor } = useSession();
+  const { actor, activeProfile } = useSession();
   const firstName = actor?.name?.split(" ")[0];
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -156,6 +157,9 @@ export function SidiAssistantWidget() {
   }
 
   const hasChat = chatLog.length > 0;
+
+  // The assistant answers personal banking questions and links into personal screens; business has none yet.
+  if (isBusinessProfile(activeProfile)) return null;
 
   return (
     <>
