@@ -84,7 +84,7 @@ export default function BatchCorrectionPage({ params }: { params: Promise<{ id: 
       </section>
 
       <div className="flex flex-wrap gap-2">
-        <Button variant="outline" nativeButton={false} render={<Link href="/payments" />}>
+        <Button variant="outline" nativeButton={false} render={<Link href="/business/payments" />}>
           Back to Payments
         </Button>
         <Button disabled>Resubmit Corrected Records</Button>

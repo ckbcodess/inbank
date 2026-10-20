@@ -92,7 +92,7 @@ export default function BusinessOverviewPage() {
       </section>
 
       <section className="flex flex-wrap gap-3">
-        <Button variant="outline" nativeButton={false} render={<Link href="/payments" />}>
+        <Button variant="outline" nativeButton={false} render={<Link href="/business/payments/supplier" />}>
           Send a Payment
         </Button>
         <Button variant="outline" nativeButton={false} render={<Link href="/business/payments/bulk" />}>

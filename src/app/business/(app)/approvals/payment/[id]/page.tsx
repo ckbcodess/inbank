@@ -34,6 +34,7 @@ import RejectionDialog from "@/components/approvals/RejectionDialog";
 import type { PaymentApprovalState } from "@/lib/states";
 import { formatMoney } from "@/lib/mock-data";
 import { findApproval } from "@/lib/corporate/approvals";
+import { decideApproval } from "@/lib/corporate/payments";
 
 const STATES: readonly PaymentApprovalState[] = [
   "awaiting-decision",
@@ -76,7 +77,13 @@ export default function PaymentApprovalDetailsPage({ params }: { params: Promise
     setState("decision-submitted");
     // Result becomes the updated transaction state (section 4), so the approver
     // is returned to the queue rather than left on a result screen.
-    window.setTimeout(() => router.push("/business/approvals"), 1600);
+    // The decision is recorded as the person leaves (the screen reads the item, so removing it sooner would
+    // turn the confirmation into "not found").
+    const approvalId = item?.id;
+    window.setTimeout(() => {
+      if (approvalId) decideApproval(approvalId, kind);
+      router.push("/business/approvals");
+    }, 1600);
   }
 
   const exceeds = state === "exceeds-limit";

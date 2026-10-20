@@ -46,7 +46,7 @@ export default function BulkUploadPage() {
     <div className="flex flex-col gap-4">
       <PageHeader
         title="Bulk Payments"
-        backTo={{ href: "/payments", label: "Send & Pay" }}
+        backTo={{ href: "/business/payments", label: "Send & Pay" }}
       />
 
       <StateSwitcher section="13.8" states={BULK_STATES} value={state} onChange={setState} />
@@ -131,7 +131,7 @@ export default function BulkUploadPage() {
       </section>
 
       <div className="flex flex-wrap gap-2">
-        <Button variant="outline" nativeButton={false} render={<Link href="/payments" />}>
+        <Button variant="outline" nativeButton={false} render={<Link href="/business/payments" />}>
           Cancel
         </Button>
         <Button disabled>Submit {validCount} valid records</Button>
