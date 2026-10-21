@@ -11,7 +11,6 @@
  *   Receipt: Full transaction receipt with Share, Repeat, and Done actions.
  */
 
-import { PayeeAvatar } from "@/components/ui/payee-avatar";
 import { GCBLogo } from "@/components/ui/GCBLogo";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -65,7 +64,7 @@ import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
 import TransactionOtpModal from "./TransactionOtpModal";
 import { useAuthorisation } from "./useAuthorisation";
 import { REGISTERED_WALLET } from "./flows/OwnWalletPicker";
-import { groupAvatarTint } from "./flows/beneficiaries";
+import { groupAvatarTint, RailBeneficiaryStrip } from "./flows/beneficiaries";
 import { SavedRecipientsProvider } from "./flows/SavedRecipients";
 import { useDevUserStore } from "@/lib/dev-user-simulation";
 import { OwnAccountFlow } from "./flows/OwnAccountFlow";
@@ -832,7 +831,7 @@ function HorizontalScrollStrip({
       <div
         ref={scrollRef}
         onScroll={checkScroll}
-        className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none scroll-smooth"
+        className="flex items-center gap-4 overflow-x-auto pb-2 scrollbar-none scroll-smooth"
       >
         {children}
       </div>
@@ -2158,26 +2157,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </div>
 
         {/* Recent Bank Beneficiaries Avatars */}
-        <HorizontalScrollStrip>
-          {RECENT_AVATARS.filter((item) => item.rail === "bank").map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => selectBeneficiary(item)}
-              className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
-            >
-              <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
-              <div className="flex flex-col">
-                <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
-                  {item.name.split(" ")[0]}
-                </span>
-                <span className="text-[11px] text-muted-foreground truncate max-w-[80px]">
-                  {item.bank.split(" ")[0]}
-                </span>
-              </div>
-            </button>
-          ))}
-        </HorizontalScrollStrip>
+        <RailBeneficiaryStrip
+          items={RECENT_AVATARS.filter((item) => item.rail === "bank")}
+          onSelect={selectBeneficiary}
+        />
 
         {/* 4 Category Cards */}
         <div className="flex flex-col gap-3">
@@ -2265,26 +2248,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </div>
 
         {/* Recent Wallet Beneficiaries Avatars */}
-        <HorizontalScrollStrip>
-          {RECENT_AVATARS.filter((item) => item.rail === "wallet").map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => selectBeneficiary(item)}
-              className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
-            >
-              <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
-              <div className="flex flex-col">
-                <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
-                  {item.name.split(" ")[0]}
-                </span>
-                <span className="text-[11px] text-muted-foreground truncate max-w-[80px]">
-                  {item.bank.split(" ")[0]}
-                </span>
-              </div>
-            </button>
-          ))}
-        </HorizontalScrollStrip>
+        <RailBeneficiaryStrip
+          items={RECENT_AVATARS.filter((item) => item.rail === "wallet")}
+          onSelect={selectBeneficiary}
+        />
 
         {/* 2 Category Cards */}
         <div className="flex flex-col gap-3">
@@ -2351,38 +2318,22 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </div>
 
         {/* Recent Beneficiaries Strip */}
-        <HorizontalScrollStrip>
-          {RECENT_AVATARS.filter((item) => item.rail === "wallet" || item.rail === "bank").slice(0, 4).map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => {
-                setCardlessCategory("third-party");
-                setF((p) => ({
-                  ...p,
-                  cardlessType: "third-party",
-                  wPhone: item.acct.replace(/\s+/g, ""),
-                  benName: item.name,
-                  wAmount: "",
-                  wRef: "",
-                }));
-                setStage(1);
-                setStage1Collapsed(true);
-              }}
-              className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
-            >
-              <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
-              <div className="flex flex-col w-full">
-                <span className="text-[12px] font-medium text-foreground truncate w-full">
-                  {item.name.split(" ")[0]}
-                </span>
-                <span className="text-[11px] text-muted-foreground truncate w-full">
-                  {item.bank.split(" ")[0]}
-                </span>
-              </div>
-            </button>
-          ))}
-        </HorizontalScrollStrip>
+        <RailBeneficiaryStrip
+          items={RECENT_AVATARS.filter((item) => item.rail === "wallet" || item.rail === "bank")}
+          onSelect={(item) => {
+            setCardlessCategory("third-party");
+            setF((p) => ({
+              ...p,
+              cardlessType: "third-party",
+              wPhone: item.acct.replace(/\s+/g, ""),
+              benName: item.name,
+              wAmount: "",
+              wRef: "",
+            }));
+            setStage(1);
+            setStage1Collapsed(true);
+          }}
+        />
 
         {/* 2 Separate Category Cards */}
         <div className="flex flex-col gap-3">
@@ -2528,26 +2479,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </div>
 
         {/* All Recent Bills Beneficiaries Avatars */}
-        <HorizontalScrollStrip>
-          {RECENT_AVATARS.filter((item) => item.rail === "bill").map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => selectBeneficiary(item)}
-              className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
-            >
-              <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
-              <div className="flex flex-col w-full">
-                <span className="text-[12px] font-medium text-foreground truncate w-full">
-                  {item.name.split(" ")[0]}
-                </span>
-                <span className="text-[11px] text-muted-foreground truncate w-full">
-                  {item.bank.split(" ")[0]}
-                </span>
-              </div>
-            </button>
-          ))}
-        </HorizontalScrollStrip>
+        <RailBeneficiaryStrip
+          items={RECENT_AVATARS.filter((item) => item.rail === "bill")}
+          onSelect={selectBeneficiary}
+        />
 
         {/* 7 Category Cards (2-column Grid matching Figma Node 1176:28982) */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -2807,26 +2742,10 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         </div>
 
         {/* Recent recipients (excluding the Self shortcut, which is its own card) */}
-        <HorizontalScrollStrip>
-          {RECENT_AVATARS.filter((item) => item.rail === rail && !item.id.includes("self")).map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => selectBeneficiary(item)}
-              className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
-            >
-              <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
-              <div className="flex flex-col">
-                <span className="text-[12px] font-medium text-foreground truncate max-w-[80px]">
-                  {item.name.split(" ")[0]}
-                </span>
-                <span className="text-[11px] text-muted-foreground truncate max-w-[80px]">
-                  {item.subtitle || item.bank.split(" ")[0]}
-                </span>
-              </div>
-            </button>
-          ))}
-        </HorizontalScrollStrip>
+        <RailBeneficiaryStrip
+          items={RECENT_AVATARS.filter((item) => item.rail === rail && !item.id.includes("self"))}
+          onSelect={selectBeneficiary}
+        />
 
         {/* 2 Category Cards */}
         <div className="flex flex-col gap-3">

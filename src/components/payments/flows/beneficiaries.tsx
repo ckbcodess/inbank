@@ -1,8 +1,10 @@
 "use client";
 
 import { PayeeAvatar } from "@/components/ui/payee-avatar";
-import React, { useRef, useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useMemo, useRef, useState, useEffect, useCallback } from "react";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Modal } from "@/components/ui/dialog";
 
 export interface RecentPayeeAvatar {
   id: string;
@@ -392,7 +394,7 @@ export function HorizontalScrollStrip({
       <div
         ref={scrollRef}
         onScroll={checkScroll}
-        className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none scroll-smooth"
+        className="flex items-center gap-4 overflow-x-auto pb-2 scrollbar-none scroll-smooth"
         style={{ maskImage: fade, WebkitMaskImage: fade }}
       >
         {children}
@@ -415,38 +417,147 @@ export function HorizontalScrollStrip({
   );
 }
 
-export function RailBeneficiaryStrip({
+/** What the strip and the picker need from a saved recipient: enough to show them, and to hand back to the flow. */
+export interface StripRecipient {
+  id: string;
+  name: string;
+  bank: string;
+  acct: string;
+  initials: string;
+  subtitle?: string;
+}
+
+/** The most recipients the strip shows. More than this and a "See all" tile opens the full, searchable list. */
+export const STRIP_LIMIT = 5;
+
+/**
+ * The saved recipients on a chooser screen: the first five as quick picks, and, once there are more than that, a
+ * "See all" tile that opens a picker with search. Every chooser that offers saved recipients uses this, so the
+ * strip never grows with the list.
+ */
+export function RailBeneficiaryStrip<T extends StripRecipient>({
   items,
   onSelect,
 }: {
-  title?: string;
-  items: RecentPayeeAvatar[];
-  onSelect: (item: RecentPayeeAvatar) => void;
+  items: T[];
+  onSelect: (item: T) => void;
 }) {
+  const [pickerOpen, setPickerOpen] = useState(false);
   if (!items || items.length === 0) return null;
+  const shown = items.slice(0, STRIP_LIMIT);
   return (
-    <div className="pb-2">
+    <>
       <HorizontalScrollStrip>
-        {items.map((item) => (
+        {shown.map((item) => (
           <button
             key={item.id}
             type="button"
             onClick={() => onSelect(item)}
-            className="group flex flex-col items-center gap-2 w-[84px] shrink-0 text-center cursor-pointer"
-            title={`Select ${item.name} (${item.subtitle || item.bank || item.acct})`}
+            className="group flex w-[84px] shrink-0 cursor-pointer flex-col items-center gap-2 text-center"
+            title={`${item.name} (${item.subtitle || item.bank || item.acct})`}
           >
             <PayeeAvatar name={item.name} initials={item.initials} size="lg" />
-            <div className="flex flex-col w-full px-0.5">
-              <span className="text-[12px] font-medium text-foreground truncate w-full" title={item.name}>
-                {item.name}
-              </span>
-              <span className="text-[11px] text-muted-foreground truncate w-full" title={item.subtitle || item.bank}>
-                {item.subtitle || item.bank}
-              </span>
+            <div className="flex w-full flex-col px-0.5">
+              <span className="w-full truncate text-[12px] font-medium text-foreground">{item.name}</span>
+              <span className="w-full truncate text-[11px] text-muted-foreground">{item.subtitle || item.bank}</span>
             </div>
           </button>
         ))}
+        {items.length > STRIP_LIMIT && (
+          <button
+            type="button"
+            onClick={() => setPickerOpen(true)}
+            className="group flex w-[84px] shrink-0 cursor-pointer flex-col items-center gap-2 text-center"
+          >
+            <span className="flex size-12 items-center justify-center rounded-full border border-dashed border-border bg-card text-foreground transition-colors duration-hover group-hover:bg-muted">
+              <Search size={18} strokeWidth={1.8} aria-hidden="true" />
+            </span>
+            <div className="flex w-full flex-col px-0.5">
+              <span className="text-[12px] font-medium text-foreground">See all</span>
+              <span className="text-[11px] text-muted-foreground">
+                <span className="tabular">{items.length}</span> <span>saved</span>
+              </span>
+            </div>
+          </button>
+        )}
       </HorizontalScrollStrip>
-    </div>
+      <BeneficiaryPicker
+        open={pickerOpen}
+        onOpenChange={setPickerOpen}
+        items={items}
+        onSelect={(item) => {
+          setPickerOpen(false);
+          onSelect(item);
+        }}
+      />
+    </>
+  );
+}
+
+/** Everyone saved for this payment, A to Z, with a search over name, bank and number. */
+export function BeneficiaryPicker<T extends StripRecipient>({
+  open,
+  onOpenChange,
+  items,
+  onSelect,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  items: T[];
+  onSelect: (item: T) => void;
+}) {
+  const [query, setQuery] = useState("");
+  const q = query.trim().toLowerCase();
+  const digits = q.replace(/\D/g, "");
+
+  const rows = useMemo(() => {
+    const sorted = [...items].sort((a, b) => a.name.localeCompare(b.name));
+    if (!q) return sorted;
+    return sorted.filter(
+      (i) =>
+        [i.name, i.bank, i.subtitle, i.acct].some((v) => v && v.toLowerCase().includes(q)) ||
+        (digits.length > 0 && i.acct.replace(/\D/g, "").includes(digits)),
+    );
+  }, [items, q, digits]);
+
+  return (
+    <Modal
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) setQuery("");
+        onOpenChange(next);
+      }}
+      title="Choose a recipient"
+      size="md"
+    >
+      <div className="flex flex-col gap-3">
+        <Input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search by name, bank or number"
+          aria-label="Search recipients"
+        />
+        {rows.length === 0 ? (
+          <p className="py-8 text-center text-[13px] text-muted-foreground">Nobody saved matches that. Clear the search to see everyone.</p>
+        ) : (
+          <div className="custom-scrollbar -mx-1 flex max-h-[50vh] flex-col gap-0.5 overflow-y-auto overscroll-contain px-1">
+            {rows.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onSelect(item)}
+                className="flex w-full cursor-pointer items-center gap-3 rounded-xl p-2 text-left transition-colors duration-hover hover:bg-muted/50"
+              >
+                <PayeeAvatar name={item.name} initials={item.initials} size="md" />
+                <span className="flex min-w-0 flex-col">
+                  <span className="truncate text-[14px] text-foreground">{item.name}</span>
+                  <span className="truncate text-[12px] text-muted-foreground">{item.subtitle || item.bank}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </Modal>
   );
 }
