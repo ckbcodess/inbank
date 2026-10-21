@@ -682,8 +682,9 @@ export default function TransactionList({
             transition={{ duration: 0.18 }}
             className="flex flex-col gap-3"
           >
-          {/* One list at every breakpoint — the same rows as the dashboard's Recent activity. */}
-          <div className="flex flex-col gap-0.5">
+          {/* One list at every breakpoint, in the same white box as Beneficiaries and Accounts. */}
+          <div className="rounded-2xl border border-border bg-card">
+          <div className="flex flex-col gap-0.5 p-2">
             {paginatedRows.map((t) => {
               const { colorClass, prefix } = amountStyling(t);
 
@@ -691,7 +692,7 @@ export default function TransactionList({
                 <div
                   key={t.id}
                   onClick={() => setSelectedTransaction(t)}
-                  className="-mx-2 flex items-center gap-3.5 rounded-xl px-2 py-3 transition-colors hover:bg-item-hover cursor-pointer active:bg-item-hover/80"
+                  className="flex items-center gap-3.5 rounded-xl px-2 py-3 transition-colors hover:bg-item-hover cursor-pointer active:bg-item-hover/80 sm:px-3"
                 >
                   {/* What it was, as one quiet mark; which way it went is the sign on the amount */}
                   <TransactionMark transaction={t} />
@@ -726,6 +727,7 @@ export default function TransactionList({
                 </div>
               );
             })}
+          </div>
           </div>
 
           {effective === "partial-load" && <PartialLoadFooter />}
