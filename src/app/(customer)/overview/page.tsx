@@ -51,7 +51,7 @@ function OverviewContent() {
   const { showAmounts } = useAmountVisibility();
   // Opens on the clean Active state; Dev Mode's Data state switches it.
   const [usageType, setUsageType] = useState<DashboardUsageType>("active");
-  const [layout, setLayout] = useState<DashboardLayout>(readLayout);
+  const [layout] = useState<DashboardLayout>(readLayout);
   const [fundModalOpen, setFundModalOpen] = useState(false);
   // Back from the bank's 3-D Secure page after funding with a card: reopen on the receipt, or on the form.
   const [fundResume, setFundResume] = useState<FundResume | null>(null);

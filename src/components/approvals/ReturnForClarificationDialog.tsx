@@ -46,7 +46,6 @@ export default function ReturnForClarificationDialog({
   onOpenChange,
   onConfirm,
   reference,
-  nextVersion = 2,
   items,
   itemLabel = "Flag Specific Documents",
   subheading,

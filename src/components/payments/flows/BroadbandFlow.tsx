@@ -20,8 +20,6 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   AccountVerificationStatus,
-  VerifiedAccountBadge,
-  ResolvingAccountBadge,
   CollapsedDetailsBadge,
   SchedulePaymentSection,
   ScheduleFrequency,

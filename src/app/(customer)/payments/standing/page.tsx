@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { TrueEmptyState } from "@/components/states/ListStates";
 import PageHeader from "@/components/layout/PageHeader";
 import { STANDING_INSTRUCTIONS, findAccount, formatMoney, type StandingInstruction } from "@/lib/mock-data";
-import { useSession, useSessionHydrated } from "@/lib/session-store";
+import { useSessionHydrated } from "@/lib/session-store";
 import { rowKind } from "@/lib/profile";
 import { dayLabel, frequencyLabel, orderTitle, orderType, runsPerMonth } from "@/lib/standing-display";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";

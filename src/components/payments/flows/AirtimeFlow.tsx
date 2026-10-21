@@ -12,7 +12,6 @@ import {
   InsufficientFundsAlert,
   ProceedButton,
   AccountVerificationStatus,
-  VerifiedAccountBadge,
   CollapsedDetailsBadge,
   TELCO_NETWORKS,
   SchedulePaymentSection,

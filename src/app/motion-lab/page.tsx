@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useId } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Play,
   RotateCcw,
@@ -9,17 +9,11 @@ import {
   Sliders,
   Sparkles,
   Zap,
-  MousePointer,
   Layers,
   ArrowRight,
-  Maximize2,
-  Bell,
   Code,
-  Download,
-  Upload,
   RefreshCw,
   Eye,
-  Info,
 } from "lucide-react";
 
 // Types
@@ -88,7 +82,6 @@ export default function MotionLabPage() {
   // Playground state
   const [activeDurationKey, setActiveDurationKey] = useState<keyof DurationsConfig>("reveal");
   const [liveTestKey, setLiveTestKey] = useState<number>(0);
-  const [motionType, setMotionType] = useState<"css-cubic" | "spring">("css-cubic");
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
 
   // Interactive component simulation states
@@ -96,7 +89,6 @@ export default function MotionLabPage() {
   const [isToastOpen, setIsToastOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [accordionOpen, setAccordionOpen] = useState(false);
-  const [isCardFlipped, setIsCardFlipped] = useState(false);
 
   // Sync with runtime CSS variables so test widgets in the whole page react live!
   useEffect(() => {
