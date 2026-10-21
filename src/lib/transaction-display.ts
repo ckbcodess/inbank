@@ -13,7 +13,8 @@ export function amountStyling(t: Pick<Transaction, "state" | "direction">): { co
     const struck = t.state.startsWith("failed") || t.state === "reversed";
     return { colorClass: cn("text-muted-foreground font-normal", struck && "line-through"), prefix };
   }
-  return { colorClass: "text-foreground font-normal", prefix };
+  // Money that has landed is green; money out stays the foreground colour
+  return { colorClass: t.direction === "credit" ? "text-success-text font-normal" : "text-foreground font-normal", prefix };
 }
 
 /** A state worth saying in words next to an amount: anything that isn't Completed. */
