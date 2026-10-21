@@ -300,7 +300,7 @@ export default function CreateGroupFlow({
         >
           <ChevronLeft size={20} strokeWidth={2} />
         </button>
-        <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
+        <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
           {step === 1 ? "Select group members" : "Select the amount per person"}
         </h1>
       </div>

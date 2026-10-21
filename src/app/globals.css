@@ -42,6 +42,10 @@
 @utility duration-toast { transition-duration: var(--dur-toast); }
 @utility duration-sweep { transition-duration: var(--dur-sweep); }
 
+/* Type scale: sizes that step up at breakpoints. One name per step, so the numbers live here only.
+   Named type-*, not text-*, so tailwind-merge doesn't mistake it for a colour. */
+@utility type-page-title { @apply text-[18px] sm:text-[20px] lg:text-[22px]; }
+
 /* People who ask for less motion get none from transitions or the shared enter/exit animations.
    (Spinners and skeleton pulses keep running: they are status, not decoration.) */
 @media (prefers-reduced-motion: reduce) {
@@ -1582,6 +1586,10 @@ html {
 @media (pointer: coarse) {
   input:not(.numorainput):not([data-preserve-font-size]), textarea, select {
     font-size: 16px !important;
+  }
+  /* The 16px above stops iOS zooming on focus. Typed text needs it; placeholders don't. */
+  input::placeholder, textarea::placeholder {
+    font-size: 14px !important;
   }
 }
 

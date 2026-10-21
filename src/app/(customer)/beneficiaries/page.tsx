@@ -642,7 +642,7 @@ export default function BeneficiariesPage() {
         onClick={() => setSelectedGroup(g)}
       >
         {/* Left: Brand-tinted Group Avatar + Group Name & Member Count */}
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           <PayeeAvatar name={g.name} />
 
           <div className="flex flex-col min-w-0">
@@ -791,8 +791,8 @@ export default function BeneficiariesPage() {
             onChange={(e) => setQuery(e.target.value)}
             placeholder={
               activeTab === "people"
-                ? "Search by name, bank, number or biller"
-                : "Search by group title, description, or member name..."
+                ? "Search by name or number"
+                : "Search by group or member"
             }
             className="pl-10 pr-10"
           />
@@ -1269,7 +1269,7 @@ export default function BeneficiariesPage() {
                 type="text"
                 value={form.nickname}
                 onChange={(e) => setForm((p) => ({ ...p, nickname: e.target.value }))}
-                placeholder="e.g. Landlord, Monthly Groceries"
+                placeholder="e.g. Landlord"
               />
             </Field>
           </SheetBody>

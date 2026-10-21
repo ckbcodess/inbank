@@ -401,7 +401,7 @@ export default function RequestFlow({ account }: { account: Account }) {
                     id="addressee"
                     value={addressee}
                     onChange={(e) => setAddressee(e.target.value)}
-                    placeholder={purpose === "visa" ? "e.g. British High Commission, Accra" : "To Whom It May Concern"}
+                    placeholder={purpose === "visa" ? "e.g. High Commission, Accra" : "To Whom It May Concern"}
                   />
                 </Field>
               )}

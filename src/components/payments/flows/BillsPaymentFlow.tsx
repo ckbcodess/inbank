@@ -2,7 +2,8 @@
 
 import { SavedSuggestions } from "./SavedRecipients";
 import { useState, useMemo, useEffect } from "react";
-import { Loader2, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import { Account, BILLERS } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import {
@@ -225,7 +226,7 @@ export function BillsPaymentFlow({
     >
       {isVerifying ? (
         <>
-          <Loader2 className="size-3 animate-spin text-muted-foreground" />
+          <AppLoader size={12} className="text-muted-foreground" />
           <span className="text-muted-foreground text-[12px]">Verifying...</span>
         </>
       ) : isVerified ? (
@@ -271,6 +272,7 @@ export function BillsPaymentFlow({
                 ? `${state.govService || "Ghana.gov"} · Ref ${state.govRef}`
                 : `${selectedBiller?.name || "Biller"} · ${state.billRef}`
             }
+            provider={state.subType === "ecg" ? "ECG" : state.subType === "ghanagov" ? state.govService || "Ghana.gov" : selectedBiller?.name}
             nameCheck={{ confirmed: Boolean(verifiedName), by: state.subType === "ecg" ? "ECG" : state.subType === "ghanagov" ? "Ghana.gov" : selectedBiller?.name }}
             onChange={() => setCollapsed(false)}
           />
@@ -401,7 +403,7 @@ export function BillsPaymentFlow({
                         handleVerify();
                       }
                     }}
-                    placeholder={selectedBiller ? `Enter ${selectedBiller.reference.toLowerCase()}` : "Enter account or reference number"}
+                    placeholder={selectedBiller ? `Enter ${selectedBiller.reference.toLowerCase()}` : "Account or reference number"}
                     className="tabular pr-16"
                   />
 </SavedSuggestions>

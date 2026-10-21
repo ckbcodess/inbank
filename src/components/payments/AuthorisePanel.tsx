@@ -104,7 +104,7 @@ export function AuthorisePanel({
   };
 
   // =========================================================================
-  // Compact Variant (used by inline multi-step views like Standing Orders)
+  // Compact Variant (used by inline multi-step views like Scheduled Payments)
   // =========================================================================
   if (variant === "compact") {
     return (

@@ -59,7 +59,7 @@ const beneficiaries: Entry[] = [
   ["Groups", "Groupes", "Grupos", "群组"],
   ["Search by name, account number, phone, or proxy...", "Rechercher par nom, numéro de compte, téléphone ou proxy…", "Buscar por nombre, número de cuenta, teléfono o alias…", "按姓名、账号、电话或代理 ID 搜索…"],
   ["Search by utility provider, meter number, or network...", "Rechercher par fournisseur, numéro de compteur ou réseau…", "Buscar por proveedor, número de contador o red…", "按服务商、电表号或网络搜索…"],
-  ["Search by group title, description, or member name...", "Rechercher par nom de groupe, description ou membre…", "Buscar por nombre de grupo, descripción o miembro…", "按群组名称、描述或成员姓名搜索…"],
+  ["Search by group or member", "Rechercher par groupe ou membre", "Buscar por grupo o miembro", "按群组或成员搜索"],
   ["Clear search query", "Effacer la recherche", "Borrar búsqueda", "清除搜索"],
   ["Clear method filter", "Effacer le filtre de moyen", "Quitar filtro de método", "清除方式筛选"],
   ["All Methods", "Tous les moyens", "Todos los métodos", "全部方式"],
@@ -112,7 +112,7 @@ const beneficiaries: Entry[] = [
   ["e.g. ECG PowerApp", "ex. ECG PowerApp", "p. ej. ECG PowerApp", "例如：ECG PowerApp"],
   ["e.g. Kojo Mensah", "ex. Kojo Mensah", "p. ej. Kojo Mensah", "例如：Kojo Mensah"],
   ["Nickname / note", "Surnom / note", "Alias / nota", "昵称/备注"],
-  ["e.g. Landlord, Monthly Groceries", "ex. Propriétaire, courses du mois", "p. ej. Casero, compra mensual", "例如：房东、每月买菜"],
+  ["e.g. Landlord", "ex. Propriétaire", "p. ej., Casero", "例如：房东"],
   ["Save Changes", "Enregistrer les modifications", "Guardar cambios", "保存更改"],
   ["Save Beneficiary", "Enregistrer le bénéficiaire", "Guardar beneficiario", "保存收款人"],
   ["Remove Beneficiary", "Retirer le bénéficiaire", "Quitar beneficiario", "移除收款人"],
@@ -140,6 +140,7 @@ const beneficiaries: Entry[] = [
   ["Payment Rail", "Canal de paiement", "Canal de pago", "付款渠道"],
   ["Proxy Identifier", "Identifiant proxy", "Alias", "代理 ID"],
   ["Recipient Physical Address", "Adresse du bénéficiaire", "Dirección del destinatario", "收款人地址"],
+  ["Search by name or number", "Rechercher par nom ou numéro", "Buscar por nombre o número", "按姓名或号码搜索"],
 ];
 
 export default beneficiaries;

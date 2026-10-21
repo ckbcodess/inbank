@@ -76,7 +76,7 @@ const services: Entry[] = [
   ["Institutional Banking", "Banque institutionnelle", "Banca institucional", "机构银行"],
   ["Locate Us", "Nous trouver", "Encuéntranos", "网点查询"],
   ["Find GCB Bank branches, prestige lounges, 24/7 cash withdrawal ATMs, and instant deposit terminals nationwide.", "Trouvez les agences GCB, salons prestige, GAB 24 h/24 et bornes de dépôt instantané dans tout le pays.", "Encuentra sucursales de GCB, salas prestige, cajeros 24/7 y terminales de depósito instantáneo en todo el país.", "查找全国 GCB 网点、尊享贵宾室、24 小时取款 ATM 和即时存款机。"],
-  ["Search branch name, suburb, city, or service...", "Rechercher une agence, un quartier, une ville ou un service…", "Buscar sucursal, barrio, ciudad o servicio…", "搜索网点名称、区域、城市或服务…"],
+  ["Search branch, city or service", "Rechercher agence, ville ou service", "Buscar sucursal, ciudad o servicio", "搜索网点、城市或服务"],
   ["Clear search", "Effacer la recherche", "Borrar búsqueda", "清除搜索"],
   ["All ({0})", "Tous ({0})", "Todos ({0})", "全部（{0}）"],
   ["All (", "Tous (", "Todos (", "全部（"],

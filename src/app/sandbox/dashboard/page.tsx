@@ -709,7 +709,7 @@ export default function FigmaDesignFidelityDashboard() {
               <label className="text-xs font-medium text-foreground block">Recipient Account / Phone</label>
               <input
                 type="text"
-                placeholder="e.g. 0244 123 456 or 4001 9922 1100"
+                placeholder="Phone or card number"
                 className="w-full h-9 px-2 rounded-xl border border-border bg-transparent text-xs focus:outline-none focus:border-foreground"
               />
             </div>

@@ -31,6 +31,7 @@ import {
   CheckCircle2,
   ChevronRight,
   Clock,
+  Info,
   Landmark,
   MoreHorizontal,
   Plus,
@@ -59,6 +60,9 @@ import { useCustomerAccounts } from "@/lib/use-customer-accounts";
 import PageHeader from "@/components/layout/PageHeader";
 import { TileChip } from "@/components/ui/action-tile";
 import { SourceMark } from "@/components/ui/source-mark";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { digitsOf, REGISTERED_WALLET, WalletTag, type OwnWallet } from "@/components/payments/flows/OwnWalletPicker";
 import {
   ACCOUNTS_SCENARIOS,
   findScenario,
@@ -89,12 +93,63 @@ const SCENARIO_LABEL = Object.fromEntries(ACCOUNTS_SCENARIOS.map((s) => [s.id, s
 
 /* ── Small pieces ─────────────────────────────────────────────────────────── */
 
-function SectionHeading({ id, title, action }: { id: string; title: string; action?: React.ReactNode }) {
+function SectionHeading({
+  id,
+  title,
+  hint,
+  action,
+}: {
+  id: string;
+  title: string;
+  /** A short explanation of the section, shown from an info icon beside the title. */
+  hint?: string;
+  action?: React.ReactNode;
+}) {
+  const [hintOpen, setHintOpen] = useState(false);
+  const iconButton =
+    "-m-3 inline-flex cursor-pointer items-center justify-center rounded-full p-3 text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:text-foreground";
+
   return (
     <div className="flex min-h-7 items-center justify-between gap-3 px-1">
-      <h2 id={id} className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">
-        {title}
-      </h2>
+      <div className="flex items-center gap-2">
+        <h2 id={id} className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">
+          {title}
+        </h2>
+        {hint && (
+          <>
+            {/* A mouse hovers for a tooltip; a finger can't, so on a phone the same icon opens a bottom sheet. */}
+            <Tooltip>
+              <TooltipTrigger
+                delay={0}
+                render={<button type="button" aria-label={`About ${title}`} className={cn(iconButton, "max-sm:hidden")} />}
+              >
+                <Info size={15} strokeWidth={1.8} aria-hidden="true" />
+              </TooltipTrigger>
+              <TooltipContent side="bottom" align="start" className="w-64 whitespace-normal text-[12px] font-normal leading-relaxed">
+                {hint}
+              </TooltipContent>
+            </Tooltip>
+            <button
+              type="button"
+              aria-label={`About ${title}`}
+              onClick={() => setHintOpen(true)}
+              className={cn(iconButton, "sm:hidden")}
+            >
+              <Info size={15} strokeWidth={1.8} aria-hidden="true" />
+            </button>
+            <Dialog open={hintOpen} onOpenChange={setHintOpen}>
+              <DialogContent size="sm" showCloseButton>
+                <DialogHeader showCloseButton={false}>
+                  <DialogTitle>{title}</DialogTitle>
+                </DialogHeader>
+                <DialogBody>
+                  <p className="text-[14px] leading-relaxed text-muted-foreground">{hint}</p>
+                </DialogBody>
+              </DialogContent>
+            </Dialog>
+          </>
+        )}
+      </div>
       {action}
     </div>
   );
@@ -189,14 +244,30 @@ function AccountRow({
   );
 }
 
-function SourceRow({ source, onRemove }: { source: LinkedSource; onRemove: () => void }) {
+/** The verified tick is only for the number registered with the bank; everything else the customer added is linked. */
+function sourceTag(source: LinkedSource): OwnWallet["tag"] {
+  return source.type === "momo" && digitsOf(source.maskedNumber) === digitsOf(REGISTERED_WALLET.phone) ? "Registered" : "Linked";
+}
+
+/** The row opens the source's details; Remove stays in the menu beside it too. */
+function SourceRow({ source, onOpen, onRemove }: { source: LinkedSource; onOpen: () => void; onRemove: () => void }) {
   return (
-    <li className="flex items-center gap-3 rounded-xl py-3 pl-2 pr-1 sm:pl-3 sm:pr-2">
-      <SourceMark type={source.type} operator={source.operator} title={source.title} />
-      <span className="flex min-w-0 flex-1 flex-col gap-1">
-        <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">{source.title}</span>
-        <span className="truncate text-[13px] text-muted-foreground tabular">{source.subtitle}</span>
-      </span>
+    <li className="flex items-center rounded-xl pr-1 transition-colors hover:bg-item-hover sm:pr-2">
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label={`View ${source.title}`}
+        className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-xl py-3 pl-2 text-left outline-none focus-visible:ring-1 focus-visible:ring-ring sm:pl-3"
+      >
+        <SourceMark type={source.type} operator={source.operator} title={source.title} />
+        <span className="flex min-w-0 flex-1 flex-col gap-1">
+          <span className="flex items-center gap-2">
+            <span className="truncate text-[15px] font-medium tracking-[var(--ls-tight)] text-foreground">{source.title}</span>
+            <WalletTag tag={sourceTag(source)} />
+          </span>
+          <span className="truncate text-[13px] text-muted-foreground tabular">{source.subtitle}</span>
+        </span>
+      </button>
       <RowMenu label={`More actions for ${source.title}`}>
         <DropdownMenuItem onClick={onRemove} className="gap-2 text-[13px]">
           <Trash2 size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
@@ -236,6 +307,9 @@ function AccountsContent() {
   // Onboarding, step after linking: "You're almost there…" → fund now or skip.
   const [fundPrompt, setFundPrompt] = useState<LinkedSource | null>(null);
   const [fundWith, setFundWith] = useState<LinkedSource | null>(null);
+  // The open flags are separate from the data, so a closing dialog keeps its content while it animates out.
+  const [viewing, setViewing] = useState<LinkedSource | null>(null);
+  const [viewOpen, setViewOpen] = useState(false);
   // Back from the bank's 3-D Secure page after adding money from a linked card: the receipt, or the form again.
   const [fundResume, setFundResume] = useState<{
     screen: "funding_success" | "linked_source_select";
@@ -256,6 +330,7 @@ function AccountsContent() {
     }
   });
   const [removing, setRemoving] = useState<LinkedSource | null>(null);
+  const [removeOpen, setRemoveOpen] = useState(false);
   const [selfieMatch, setSelfieMatch] = useState<"match" | "no-match">("match");
   const [addAccountOpen, setAddAccountOpen] = useState(false);
   const [openGcbAccountOpen, setOpenGcbAccountOpen] = useState(false);
@@ -326,7 +401,7 @@ function AccountsContent() {
 
   // Removing stops top-ups from that source, so it asks first; Undo stays as a safety net.
   function handleRemoveSource(source: LinkedSource) {
-    setRemoving(null);
+    setRemoveOpen(false);
     const index = sources.findIndex((s) => s.id === source.id);
     removeSource(source.id);
     toast(`${source.title} removed`, {
@@ -436,6 +511,7 @@ function AccountsContent() {
           <SectionHeading
             id="sources-heading"
             title="Other Funding Sources"
+            hint="Mobile money wallets and bank cards you've linked, so you can add money to your accounts from them. Your money stays with them, and you can remove one any time."
             action={
               sources.length > 0 && screenState === "populated" ? (
                 <SectionAction onClick={() => setLinkOpen(true)}>Link a Wallet or Card</SectionAction>
@@ -470,7 +546,14 @@ function AccountsContent() {
             {screenState === "populated" && sources.length > 0 && (
               <ul className="flex flex-col gap-0.5 p-2">
                 {sources.map((source) => (
-                  <SourceRow key={source.id} source={source} onRemove={() => setRemoving(source)} />
+                  <SourceRow key={source.id} source={source} onOpen={() => {
+                      setViewing(source);
+                      setViewOpen(true);
+                    }}
+                    onRemove={() => {
+                      setRemoving(source);
+                      setRemoveOpen(true);
+                    }} />
                 ))}
               </ul>
             )}
@@ -554,8 +637,43 @@ function AccountsContent() {
         accounts={accounts}
       />
 
+      {/* A source's details: what it is, and a way to remove it */}
+      <Dialog open={viewOpen} onOpenChange={setViewOpen}>
+        <DialogContent size="sm" showCloseButton>
+          <DialogBody>
+            <div className="flex flex-col items-center gap-6 pb-4 pt-5 text-center">
+              {viewing && <SourceMark large type={viewing.type} operator={viewing.operator} title={viewing.title} />}
+              <div className="flex flex-col items-center gap-2">
+                <DialogTitle className="text-[18px] tracking-[var(--ls-heading)]">{viewing?.title}</DialogTitle>
+                <p className="text-[14px] text-muted-foreground tabular">{viewing?.subtitle}</p>
+              </div>
+              {viewing && (
+                <span className="flex items-center gap-2 text-[13px] text-foreground">
+                  <WalletTag tag={sourceTag(viewing)} />
+                  {sourceTag(viewing) === "Registered" ? "Verified Number" : viewing.type === "card" ? "Linked Card" : "Linked Wallet"}
+                </span>
+              )}
+            </div>
+          </DialogBody>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => {
+                setRemoving(viewing);
+                setRemoveOpen(true);
+                setViewOpen(false);
+              }}
+              className="h-10 flex-1 rounded-lg text-[14px]"
+            >
+              Remove
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Remove a source of funds — warn first */}
-      <Dialog open={removing !== null} onOpenChange={(o) => !o && setRemoving(null)}>
+      <Dialog open={removeOpen} onOpenChange={setRemoveOpen}>
         <DialogContent size="sm">
           <DialogHeader>
             <DialogTitle>Remove {removing?.title}?</DialogTitle>
@@ -571,7 +689,7 @@ function AccountsContent() {
             </div>
           </DialogBody>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setRemoving(null)} className="h-9 flex-1 rounded-lg text-[13.5px]">
+            <Button type="button" variant="outline" onClick={() => setRemoveOpen(false)} className="h-9 flex-1 rounded-lg text-[13.5px]">
               Cancel
             </Button>
             <Button

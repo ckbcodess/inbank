@@ -65,7 +65,10 @@ export function OtherGcbFlow({
   );
 
   const cleanAcct = state.benAcct.replace(/[\s-]/g, "");
-  const isAcctValid = cleanAcct.length === 13;
+  // A saved recipient is already known to the bank, so picking one verifies without a 13-digit number.
+  // Editing the number afterwards stops it matching, and the normal check applies again.
+  const [pickedAcct, setPickedAcct] = useState("");
+  const isAcctValid = cleanAcct.length === 13 || (pickedAcct !== "" && cleanAcct === pickedAcct);
 
   // Resolving / Verification state
   const [resolving, setResolving] = useState(false);
@@ -109,13 +112,17 @@ export function OtherGcbFlow({
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `GCB Account ${state.benAcct}`}
             subtitle={`GCB Bank PLC · ${state.benAcct}`}
+            provider="GCB Bank"
             nameCheck={{ confirmed: Boolean(verifiedName), by: "GCB" }}
             onChange={() => setCollapsed(false)}
           />
         ) : (
           <div className="flex flex-col gap-2">
             <div className="relative flex items-center">
-              <SavedSuggestions query={nameQuery || state.benAcct} onPicked={() => setNameQuery("")}>
+              <SavedSuggestions query={nameQuery || state.benAcct} onPicked={(item) => {
+                setNameQuery("");
+                setPickedAcct(item.acct.replace(/[\s-]/g, ""));
+              }}>
                 <Input
                   type="text"
                   inputMode="text"
@@ -138,7 +145,7 @@ export function OtherGcbFlow({
                       }
                     }
                   }}
-                  placeholder="Enter 13-digit account number or a saved name"
+                  placeholder="13-digit account or saved name"
                   className="numorainput tabular"
                 />
               </SavedSuggestions>

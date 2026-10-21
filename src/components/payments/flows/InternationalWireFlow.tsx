@@ -261,6 +261,7 @@ export function InternationalWireFlow({
           <CollapsedDetailsBadge
             title={state.wBenName}
             subtitle={`${state.wBank} · ${state.wSwift} · ${state.wIban}`}
+            provider={state.wBank || undefined}
             onChange={() => setCollapsed(false)}
           />
 </Field>
@@ -527,7 +528,7 @@ export function InternationalWireFlow({
             value={state.wPurpose}
             onChange={(val) => onChange("wPurpose", val)}
             label="Transaction Narration"
-            placeholder="e.g. Commercial invoice, tuition fee, investment"
+            placeholder="e.g. Tuition fee"
           />
 
           {/* 5. Transaction Category */}

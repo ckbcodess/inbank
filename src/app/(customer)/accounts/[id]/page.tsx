@@ -9,7 +9,7 @@
  *  1. Balance card — type, number, balance (with its own eye, the same switch
  *     as the header eye) and Type / Currency / Status.
  *  2. Two actions: Top up (the Add money modal) and Share details.
- *  3. Four doors: My Spends, Standing orders, Place a request (statements,
+ *  3. Four doors: My Spends, Scheduled payments, Place a request (statements,
  *     cheque books, bank letters — its own flow) and Last 10 transactions
  *     (a mini statement in a dialog, with "View All Transactions" — the
  *     transactions list filtered to this account — one tap further).
@@ -258,7 +258,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
               <ActionTile href={`/accounts/${account.id}/expenses`} icon={PieChart} title="My Spends" />
             </div>
             <div className="flex flex-col gap-3">
-              <ActionTile href="/payments/standing" icon={Repeat} title="Standing Orders" />
+              <ActionTile href="/payments/standing" icon={Repeat} title="Scheduled Payments" />
               <ActionTile
                 href={`/accounts/${account.id}/requests`}
                 icon={Files}
@@ -322,7 +322,7 @@ export default function AccountDetailsPage({ params }: { params: Promise<{ id: s
 
 /* ── Header action ─────────────────────────────────────────────────────────── */
 
-/** The quiet header pill Send & Pay uses for "Standing Orders". */
+/** The quiet header pill Send & Pay uses for "Scheduled Payments". */
 function HeaderPill({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
   return (
     <button

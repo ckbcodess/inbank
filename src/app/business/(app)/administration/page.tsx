@@ -113,7 +113,7 @@ export default function UserManagementPage() {
           <ExpandableSearch
             value={query}
             onChange={setQuery}
-            placeholder="Search users by name, email or role..."
+            placeholder="Search by name or email"
             tooltip="Search users"
           />
         </div>

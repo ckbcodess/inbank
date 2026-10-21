@@ -4,7 +4,7 @@
  * Send & Pay Hub — 1:1 Match to Figma Design (Node 916:36785)
  *
  * Structure:
- *   - Header: "Send & Pay" with "Manage Beneficiaries" and "View Standing Orders" pill buttons
+ *   - Header: "Send & Pay" with "Manage Beneficiaries" and "View Scheduled Payments" pill buttons
  *   - Send: 6 cards (To Bank, To Wallet, To Proxy, To Group, Wallet to Bank, PAPSS Payments)
  *   - Pay: 4 cards (Bills, Internet, Airtime, Card Top up)
  */
@@ -228,7 +228,7 @@ export default function SendAndPayPage() {
         actions={
           <Button nativeButton={false} render={<Link href="/payments/standing" />} variant="tile">
             <Repeat size={15} strokeWidth={1.8} aria-hidden="true" className="size-[15px]" />
-            View Standing Orders
+            View Scheduled Payments
           </Button>
         }
       />

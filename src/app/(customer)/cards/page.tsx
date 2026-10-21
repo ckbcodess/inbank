@@ -482,7 +482,7 @@ function CardsPageContent() {
             <Field label="Card Name / Nickname" htmlFor="c-name">
               <Input
                 id="c-name"
-                placeholder="e.g. AWS Subscription / Google Ads"
+                placeholder="e.g. AWS, Google Ads"
                 value={cardName}
                 onChange={(e) => setCardName(e.target.value)}
               />

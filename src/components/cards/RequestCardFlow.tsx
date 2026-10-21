@@ -450,7 +450,7 @@ export function RequestCardFlow() {
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
-            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
+            <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
               Request a Card
             </h1>
           </div>
@@ -506,7 +506,7 @@ export function RequestCardFlow() {
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
-            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
+            <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
               {isReplacement ? "Replace" : "Configure"} {cardType} Card
             </h1>
           </div>
@@ -526,7 +526,7 @@ export function RequestCardFlow() {
               <Input
                 id="card-name-input"
                 type="text"
-                placeholder="How the card shows up in the app"
+                placeholder="Card nickname"
                 value={cardName}
                 onChange={(e) => setCardName(e.target.value)}
                 
@@ -710,7 +710,7 @@ export function RequestCardFlow() {
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
-            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
+            <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
               Customize card
             </h1>
           </div>
@@ -873,7 +873,7 @@ export function RequestCardFlow() {
             >
               <ChevronLeft size={22} strokeWidth={1.8} />
             </button>
-            <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
+            <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground">
               {isReplacement ? "Review replacement" : "Review request"}
             </h1>
           </div>

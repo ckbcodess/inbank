@@ -8,7 +8,7 @@
  *
  *   welcome → verify it's you → what came across → new password → finish
  *
- * Their transaction PIN, accounts, payees and standing orders carry over, so
+ * Their transaction PIN, accounts, payees and scheduled payments carry over, so
  * none are re-entered. Only the password is new (old ones can't be carried
  * across safely). Terms and "remember this device" share the last screen.
  */

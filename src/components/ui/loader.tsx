@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Snake } from "loading-dev";
+import { Classic } from "loading-dev";
 import { cn } from "@/lib/utils";
 
 export interface SpinnerProps {
@@ -11,8 +11,9 @@ export interface SpinnerProps {
 }
 
 /**
- * Standard app-wide loader component powered by `Snake` from `loading-dev`.
- * Automatically inherits current text color unless specified otherwise.
+ * The one spinner in the app: twelve dashes around a ring that fade as they turn (`Classic` from `loading-dev`).
+ * It takes the current text colour unless told otherwise. Use this for every "working on it" state, never a
+ * hand-made rotating icon.
  */
 export function AppLoader({ size = 20, className, color }: SpinnerProps) {
   return (
@@ -21,14 +22,9 @@ export function AppLoader({ size = 20, className, color }: SpinnerProps) {
       role="status"
       aria-label="Loading"
     >
-      <Snake size={size} color={color} />
+      <Classic size={size} color={color} />
     </span>
   );
 }
 
-export function SnakeDemo() {
-  return <Snake size={48} />;
-}
-
-export { Snake };
 export default AppLoader;

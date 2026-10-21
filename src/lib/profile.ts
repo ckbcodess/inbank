@@ -14,7 +14,7 @@ export type { ProfileKind } from "./roles";
 /**
  * What a row or a session with no stated relationship counts as. It is the prototype's original default
  * (unmarked data was the business ledger); every seeded row now carries an explicit kind, so it only
- * decides the unlikely cases: a standing order whose account is missing, a signed-out read.
+ * decides the unlikely cases: a scheduled payment whose account is missing, a signed-out read.
  */
 export const DEFAULT_PROFILE_KIND: ProfileKind = "CORPORATE";
 

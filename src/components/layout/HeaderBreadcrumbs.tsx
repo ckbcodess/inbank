@@ -35,7 +35,7 @@ const ROUTE_LABELS: Record<string, string> = {
   requests: "Place a Request",
   payments: "Send & Pay",
   send: "Send Money",
-  standing: "Standing Orders",
+  standing: "Scheduled Payments",
   payees: "Beneficiaries",
   beneficiaries: "Beneficiaries",
   bills: "Bills",
@@ -85,14 +85,14 @@ const DETAIL_LABELS: Record<string, string> = {
   administration: "User Details",
   trade: "Application Details",
   bulk: "Batch Correction",
-  standing: "Standing Order Details",
+  standing: "Scheduled Payment Details",
   customers: "Customer Details",
   "term-deposits": "Deposit Details",
 };
 
 /** A "new" page under each list is named for what it creates. */
 const NEW_LABELS: Record<string, string> = {
-  standing: "New Standing Order",
+  standing: "New Scheduled Payment",
   trade: "New Trade Request",
   groups: "Create Group",
   "term-deposits": "New Term Deposit",

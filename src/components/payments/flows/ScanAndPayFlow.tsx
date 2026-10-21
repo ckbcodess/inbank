@@ -488,7 +488,7 @@ export function ScanAndPayFlow({
           <NarrationInput
             value={state.narration}
             onChange={(val: string) => onChange("narration", val)}
-            placeholder="e.g. Counter Checkout / Table 4"
+            placeholder="e.g. Table 4"
           />
 
           {/* Category */}

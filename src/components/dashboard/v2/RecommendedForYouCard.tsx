@@ -53,7 +53,7 @@ const RECOMMENDATIONS: Recommendation[] = [
     id: "wealth-goal",
     headline: "You could save GHS 600 in a year",
     reason: "Set aside GHS 50 a month.",
-    ctaLabel: "Set up a standing order",
+    ctaLabel: "Set up a scheduled payment",
     ctaHref: "/payments/standing/new",
   },
 ];

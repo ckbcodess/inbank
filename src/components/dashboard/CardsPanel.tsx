@@ -15,7 +15,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Loader2, Lock, Plus, Unlock } from "lucide-react";
+import { ChevronRight, Lock, Plus, Unlock } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
@@ -89,10 +90,7 @@ export function CardsPanel({
                         })()}
                   </span>
                   {navigatingCardId === card.id ? (
-                    <Loader2
-                      size={15}
-                      className="shrink-0 animate-spin text-foreground"
-                    />
+                    <AppLoader size={15} className="text-foreground" />
                   ) : (
                     <ChevronRight
                       size={15}

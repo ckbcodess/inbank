@@ -36,7 +36,7 @@ export const STATE_ILLUSTRATIONS = {
   "empty-activity": { placement: "empty", brief: "No transactions or activity yet.", drawn: false },
   "empty-people": { placement: "empty", brief: "No people or billers saved.", drawn: false },
   "empty-groups": { placement: "empty", brief: "No payment groups.", drawn: false },
-  "empty-standing": { placement: "empty", brief: "No standing orders.", drawn: false },
+  "empty-standing": { placement: "empty", brief: "No scheduled payments.", drawn: false },
   "empty-sources": { placement: "empty", brief: "No cards or wallets linked.", drawn: false },
   "empty-statements": { placement: "empty", brief: "No statements available.", drawn: false },
   "empty-rates": { placement: "empty", brief: "No FX rates published today.", drawn: false },

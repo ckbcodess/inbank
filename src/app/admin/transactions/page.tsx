@@ -364,7 +364,7 @@ export default function TransactionMonitoringPage() {
             <ExpandableSearch
               value={query}
               onChange={setQuery}
-              placeholder="Search reference, customer or counterparty..."
+              placeholder="Search reference or customer"
               tooltip="Search transactions"
               inputWidthClassName="w-56 sm:w-70"
             />

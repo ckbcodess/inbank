@@ -32,7 +32,7 @@ import {
   type DashViewProps,
 } from "../parts";
 
-/** What's left once this account's standing orders for the next 30 days have run. */
+/** What's left once this account's scheduled payments for the next 30 days have run. */
 function Forecast({ data, showAmounts }: { data: DashData; showAmounts: boolean }) {
   const account = selectedAccount(data);
   const forecast = forecastFor(data);

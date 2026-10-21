@@ -184,7 +184,7 @@ export default function ReportsPage() {
                 id="rep-q"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Description, counterparty or reference"
+                placeholder="Description or reference"
                 className="pl-8"
               />
             </div>

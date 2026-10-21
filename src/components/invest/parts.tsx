@@ -50,7 +50,7 @@ export function SecurityIcon({ kind, muted = false }: { kind: SecurityKind; mute
   );
 }
 
-/** Label on the left, value on the right, one line each. The same panel the standing order and review screens use. */
+/** Label on the left, value on the right, one line each. The same panel the scheduled payment and review screens use. */
 export function FactsPanel({ rows }: { rows: Array<[string, React.ReactNode]> }) {
   return (
     <div className="flex flex-col rounded-2xl border border-border bg-card p-2 text-[14px]">

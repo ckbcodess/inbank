@@ -191,7 +191,7 @@ export function GroupPaymentFlow({
           <NarrationInput
             value={state.narration}
             onChange={(val) => onChange("narration", val)}
-            placeholder="Group contribution reference"
+            placeholder="e.g. Susu contribution"
           />
 
           {/* 5. Transaction Category (Optional) */}

@@ -171,7 +171,7 @@ export default function AdminEnrolmentsPage() {
           <ExpandableSearch
             value={query}
             onChange={setQuery}
-            placeholder="Search company, reference, TIN or applicant..."
+            placeholder="Search company or reference"
             tooltip="Search applications"
           />
         </div>

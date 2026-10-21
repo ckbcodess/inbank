@@ -287,7 +287,7 @@ export function CreateProfileFlow({ intent, onCreated }: { intent?: AccountInten
         {aboutDone && (
           <div className={`${reveal} gap-5`}>
             <Field label="Postal Address" htmlFor="invest-postal">
-              <Input id="invest-postal" value={postal} onChange={(e) => setPostal(e.target.value)} placeholder="For example, P.O. Box GT 454" autoComplete="street-address" />
+              <Input id="invest-postal" value={postal} onChange={(e) => setPostal(e.target.value)} placeholder="e.g. P.O. Box GT 454" autoComplete="street-address" />
             </Field>
             <Field label="Residential Address" htmlFor="invest-residential">
               <Input id="invest-residential" value={residential} onChange={(e) => setResidential(e.target.value)} autoComplete="street-address" />

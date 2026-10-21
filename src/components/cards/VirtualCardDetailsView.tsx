@@ -1064,7 +1064,7 @@ export function VirtualCardDetailsView({
         >
           <ChevronLeft size={22} strokeWidth={1.8} />
         </button>
-        <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-tight sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate min-w-0">
+        <h1 className="type-page-title font-medium leading-tight sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate min-w-0">
           {cardNickname || "Virtual Card"}
         </h1>
       </div>

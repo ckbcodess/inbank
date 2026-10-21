@@ -552,7 +552,7 @@ export default function TransactionList({
 
       {/* ── Page Header: Title & Export Action (no description underneath) ── */}
       <div className="flex items-center justify-between gap-2 w-full">
-        <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
+        <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
           Transaction History
         </h1>
         <Button
@@ -577,7 +577,7 @@ export default function TransactionList({
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by reference ID,  recipient ...."
+            placeholder="Search reference or recipient"
             className="w-full h-10 sm:h-10 pl-10 pr-10 rounded-xl border border-field-border bg-field text-[14px] sm:text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-0 focus:border-field-border-focus focus:bg-field-focus transition-colors"
           />
           {query && (

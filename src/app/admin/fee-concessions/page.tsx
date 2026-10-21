@@ -90,7 +90,7 @@ export default function FeeConcessionsPage() {
         <ExpandableSearch
           value={query}
           onChange={setQuery}
-          placeholder="Search by customer or fee type..."
+          placeholder="Search by customer or fee"
           tooltip="Search fee concessions"
           inputWidthClassName="w-56 sm:w-70"
         />

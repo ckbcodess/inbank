@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Transaction authorisation, in one place for every flow that moves money (Send & Pay, standing orders, Add Money,
+ * Transaction authorisation, in one place for every flow that moves money (Send & Pay, scheduled payments, Add Money,
  * card requests). There is no transaction PIN: every transaction is approved with a 6-digit one-time code sent by
  * SMS, or read off the phone with a shortcode (see `OtpHelp`). There is no Confirm button: the code is submitted
  * as soon as the sixth digit lands (designer's call, 2026-10-07).

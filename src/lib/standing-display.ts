@@ -1,6 +1,6 @@
 import { formatDate, type InstructionFrequency, type StandingInstruction } from "@/lib/mock-data";
 
-/** The frequencies a standing order can have, in the order they are offered. */
+/** The frequencies a scheduled payment can have, in the order they are offered. */
 export const FREQUENCY_OPTIONS: Array<{ id: InstructionFrequency; label: string }> = [
   { id: "Once", label: "Once" },
   { id: "Daily", label: "Daily" },

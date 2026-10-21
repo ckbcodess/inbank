@@ -117,6 +117,7 @@ export function OtherBankFlow({
           <CollapsedDetailsBadge
             title={verifiedName || state.benName || `Account ${state.benAcct}`}
             subtitle={`${state.bank || "Other Bank"} · ${state.benAcct}`}
+            provider={state.bank || undefined}
             nameCheck={{ confirmed: Boolean(verifiedName), by: state.bank || undefined }}
             onChange={() => setCollapsed(false)}
           />
@@ -146,7 +147,7 @@ export function OtherBankFlow({
                       onChange("benName", resolved);
                     }
                   }}
-                  placeholder="Enter account number or a saved name"
+                  placeholder="Account number or saved name"
                   className="numorainput tabular"
                 />
               </SavedSuggestions>

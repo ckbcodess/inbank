@@ -129,7 +129,7 @@ function MigrateContent() {
             <span className="text-[13px] text-muted-foreground">Staying the same</span>
             {[
               "Your accounts and balances",
-              "Your saved payees and standing orders",
+              "Your saved payees and scheduled payments",
               "Your transaction PIN",
             ].map((item) => (
               <span key={item} className="flex items-center gap-2 text-[14px] text-foreground">
@@ -182,7 +182,7 @@ function MigrateContent() {
           <div className="flex flex-col divide-y divide-border/60 rounded-2xl border border-border">
             <CarriedGroup icon={Landmark} title="Accounts" items={MIGRATED_DATA.accounts.map((a) => ({ name: a.name, detail: a.number }))} />
             <CarriedGroup icon={Users} title="Saved payees" items={MIGRATED_DATA.payees} />
-            <CarriedGroup icon={CalendarClock} title="Standing orders" items={MIGRATED_DATA.standingOrders} />
+            <CarriedGroup icon={CalendarClock} title="Scheduled payments" items={MIGRATED_DATA.standingOrders} />
             <div className="flex items-center gap-2 px-3 py-3">
               <KeyRound size={17} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
               <span className="flex-1 text-[14px] text-foreground">Transaction PIN</span>

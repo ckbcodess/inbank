@@ -439,7 +439,7 @@ export default function EditGroupModal({
                           type="text"
                           value={savedSearch}
                           onChange={(e) => setSavedSearch(e.target.value)}
-                          placeholder="Search saved contacts to add..."
+                          placeholder="Search contacts"
                           className="h-9 w-full pl-8 pr-6 rounded-xl border border-field-border bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                         />
                         {savedSearch && (
@@ -570,7 +570,7 @@ export default function EditGroupModal({
                     type="text"
                     value={searchMember}
                     onChange={(e) => setSearchMember(e.target.value)}
-                    placeholder="Search members in this group..."
+                    placeholder="Search members"
                     className="h-10 w-full pl-8 pr-6 rounded-xl border border-field-border bg-field text-[14px] text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-field-border-focus focus:ring-0 transition"
                   />
                   {searchMember && (

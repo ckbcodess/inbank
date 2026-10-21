@@ -1,13 +1,15 @@
 "use client";
 
 /**
- * Send & Pay — Standing Orders
+ * Send & Pay — Scheduled Payments
  *
  * One calm answer up top (what leaves your accounts each month, and what goes next), then the
- * orders as quiet rows. Each row opens that order's own page, where pause and cancel live.
+ * orders as quiet rows. Each row opens that order in a sheet, where pause and cancel live.
  */
 
+import { useReducer, useState } from "react";
 import Link from "next/link";
+import { ScheduledPaymentSheet } from "@/components/payments/ScheduledPaymentSheet";
 import { ChevronRight, Plus, Repeat } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TrueEmptyState } from "@/components/states/ListStates";
@@ -21,8 +23,11 @@ import { cn } from "@/lib/utils";
 
 export default function StandingOrdersPage() {
   const { showAmounts } = useAmountVisibility();
+  // The scheduled payment open in the sheet. Pause, resume and cancel change the stored list, so redraw after them.
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [, redraw] = useReducer((x: number) => x + 1, 0);
 
-  // Only orders on personal accounts (a company's standing orders are business's own).
+  // Only orders on personal accounts (a company's scheduled payments are business's own).
   const mine = STANDING_INSTRUCTIONS.filter((s) => rowKind(findAccount(s.accountId)) === "RETAIL");
   const active = mine.filter((s) => s.status === "Active").sort((a, b) => a.nextRun.localeCompare(b.nextRun));
   const paused = mine.filter((s) => s.status === "Paused").sort((a, b) => orderTitle(a).localeCompare(orderTitle(b)));
@@ -37,9 +42,10 @@ export default function StandingOrdersPage() {
     const isPaused = si.status === "Paused";
     return (
       <li key={si.id}>
-        <Link
-          href={`/payments/standing/${si.id}`}
-          className="flex w-full items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3"
+        <button
+          type="button"
+          onClick={() => setOpenId(si.id)}
+          className="flex w-full cursor-pointer items-center gap-3 rounded-xl px-2 py-3 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none sm:px-3"
         >
           <span
             className={cn(
@@ -62,7 +68,7 @@ export default function StandingOrdersPage() {
             <span className="tabular text-[12px] text-muted-foreground">{isPaused ? "Paused" : dayLabel(si.nextRun)}</span>
           </span>
           <ChevronRight size={15} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-muted-foreground" />
-        </Link>
+        </button>
       </li>
     );
   }
@@ -70,12 +76,12 @@ export default function StandingOrdersPage() {
   return (
     <div className="flex flex-col gap-10">
       <PageHeader
-        title="Standing Orders"
+        title="Scheduled Payments"
         backTo={{ href: "/payments", label: "Send & Pay" }}
         actions={
           <Button nativeButton={false} render={<Link href="/payments/standing/new" />}>
             <Plus size={15} strokeWidth={1.9} aria-hidden="true" />
-            New standing order
+            New scheduled payment
           </Button>
         }
       />
@@ -83,12 +89,12 @@ export default function StandingOrdersPage() {
       {!hydrated ? null : isEmpty ? (
         <TrueEmptyState
           illustration="empty-standing"
-          title="No standing orders yet"
+          title="No scheduled payments yet"
           description="Automate rent, susu, airtime, data or savings transfers."
           action={
             <Button nativeButton={false} render={<Link href="/payments/standing/new" />}>
               <Plus size={14} strokeWidth={2} className="mr-2" />
-              Create First Standing Order
+              Create First Scheduled Payment
             </Button>
           }
         />
@@ -126,6 +132,8 @@ export default function StandingOrdersPage() {
           )}
         </>
       )}
+
+      <ScheduledPaymentSheet id={openId} onOpenChange={(open) => !open && setOpenId(null)} onChanged={redraw} />
     </div>
   );
 }

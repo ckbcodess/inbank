@@ -62,7 +62,7 @@ const FRONT = "fill-card stroke-foreground/75";
 const BACK = "fill-card stroke-foreground/40";
 const SW = { strokeWidth: 1.6, strokeLinecap: "round", strokeLinejoin: "round" } as const;
 
-/** A calendar, for no standing orders. */
+/** A calendar, for no scheduled payments. */
 export function EmptyArtStanding() {
   return (
     <Frame>

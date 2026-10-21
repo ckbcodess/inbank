@@ -520,7 +520,7 @@ export default function LinkSourceAccountModal({
                           onClick={handleClose}
                           className="text-[12px] text-muted-foreground hover:text-foreground transition-colors"
                         >
-                          Need a standing order or scheduled transfer? <span className="underline underline-offset-2">Use Full Payments</span>
+                          Need to schedule a payment? <span className="underline underline-offset-2">Use Full Payments</span>
                         </Link>
                       </div>
                     </div>

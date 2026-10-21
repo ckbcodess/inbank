@@ -244,7 +244,7 @@ export default function LocateUsPage() {
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search branch name, suburb, city, or service..."
+              placeholder="Search branch, city or service"
               className="pl-8 pr-6 h-9 text-[13px] bg-card border-border"
             />
             {query && (

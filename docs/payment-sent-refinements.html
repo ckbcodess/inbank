@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Payment sent: 10 refinements</title>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+:root{--bg:#f1f1f0;--page:#fafafa;--modal:#fff;--fg:#0a0a0a;--muted:#737373;--line:#ececec;--tile:#f4f4f3;--btn:#ebebeb;--primary:#ffc423;--pfg:#2b1d00;--ok:#15803d;--okbg:#dcfce7;--succ:#3fbf6b;--succ2:#2fa75a}
+.dark{--bg:#050505;--page:#0b0b0b;--modal:#121212;--fg:#f5f5f5;--muted:#9a9a9a;--line:#262626;--tile:#161616;--btn:#242424;--ok:#4ade80;--okbg:#0b2a17;--succ:#43c874;--succ2:#2fa75a}
+*{box-sizing:border-box}body{margin:0;font-family:"Open Sans",system-ui,sans-serif;background:var(--bg);color:var(--fg);font-size:14px}
+header.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;background:var(--page);border-bottom:1px solid var(--line)}
+header.top h1{font-size:18px;font-weight:500;margin:0;letter-spacing:-.02em}header.top p{margin:2px 0 0;color:var(--muted);font-size:12.5px;max-width:980px;line-height:1.5}
+button.theme{border:1px solid var(--line);background:var(--modal);color:var(--fg);border-radius:10px;padding:8px 14px;cursor:pointer;font:inherit;flex-shrink:0}
+main{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:40px 28px;padding:28px;max-width:1700px;margin:0 auto}
+.v h2{font-size:15px;font-weight:500;margin:0 0 3px}.goal{font-size:12px;color:var(--ok);margin:0 0 4px;font-weight:500}.why{color:var(--muted);font-size:12.5px;line-height:1.5;margin:0 0 12px;min-height:56px}
+.screen{width:100%;max-width:400px;height:640px;background:var(--page);border:1px solid var(--line);border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;overflow:hidden;position:relative;padding:28px 20px}
+.v.cur .screen{outline:2px dashed var(--line);outline-offset:6px}
+.tab{font-variant-numeric:tabular-nums}
+.badge{border-radius:99px;background:linear-gradient(135deg,var(--succ),var(--succ2));color:#fff;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;flex-shrink:0}
+.badge:before{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,.25),transparent)}
+.badge.flat{background:var(--succ)}.badge.flat:before{display:none}
+.badge svg{position:relative;stroke-width:3.2;width:48%;height:48%}
+.head{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;width:100%}
+.title{font-size:28px;line-height:36px;font-weight:500;letter-spacing:-.02em;margin:0}
+.msg{font-size:15px;line-height:23px;color:var(--muted);margin:0;max-width:320px}.msg b{color:var(--fg);font-weight:500}
+.togrow{display:flex;align-items:center;justify-content:space-between;width:100%;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--tile);font-size:14px}
+.togrow.flat{border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0;background:transparent;padding:16px 4px}
+.sw{width:40px;height:22px;border-radius:99px;background:var(--btn);position:relative;flex-shrink:0}.sw:after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:99px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:1px solid var(--line);border-radius:12px;background:var(--tile);padding:14px 6px;font-size:13.5px;text-align:center;line-height:18px}.tile svg{width:20px;height:20px;stroke-width:1.7;color:var(--muted)}
+.tiles.plain .tile{border:0;background:var(--tile)}
+.tiles.tall .tile{padding:20px 6px;gap:14px}
+.tiles.tint .tile{border:0;background:transparent;padding:6px}.tiles.tint .tile i{width:44px;height:44px;border-radius:12px;background:var(--tile);display:flex;align-items:center;justify-content:center}
+.circ{display:flex;justify-content:center;gap:28px;width:100%}.circ div{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12.5px}.circ i{width:52px;height:52px;border-radius:99px;background:var(--btn);display:flex;align-items:center;justify-content:center}.circ i svg{width:20px;height:20px;stroke-width:1.7}
+.ft{display:flex;gap:12px;width:100%}.ft.col{flex-direction:column;gap:8px}
+.btn{height:44px;border-radius:8px;background:transparent;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:500;flex:1}
+.btn.p{background:var(--primary);border-color:var(--primary);color:var(--pfg)}.btn.g{border:0;color:var(--muted);font-weight:400;height:36px}
+.meta{display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;color:var(--muted)}.meta svg{width:13px;height:13px;stroke-width:1.8}
+.pin{position:absolute;left:0;right:0;bottom:0;padding:16px 20px 20px;border-top:1px solid var(--line);background:var(--page)}
+.amt{font-size:44px;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.amt small{font-size:.38em;letter-spacing:0;color:var(--muted);margin-right:6px}
+</style></head><body>
+<header class="top"><div><h1>Payment sent: 10 refinements</h1><p>Same screen you have today, kept in the same order: green tick, title, message, Save as Beneficiary, three actions, two buttons. Each variation changes only a few details (badge, type, spacing, how the actions look, where the buttons sit). The dashed frame is the current screen for comparison.</p></div><button class="theme" onclick="document.body.classList.toggle('dark')">Light / dark</button></header>
+<main id="root"></main>
+<script>
+const I=n=>`<i data-lucide="${n}"></i>`;
+const check=`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 24.5L20.5 33L36 15"/></svg>`;
+const B=(s,c="")=>`<div class="badge ${c}" style="width:${s}px;height:${s}px">${check}</div>`;
+const MSG=`You've sent GHS 2,122.00 to Justice Oduro's GCB account. The funds reflect immediately.`;
+const MSGB=`You've sent <b>GHS 2,122.00</b> to <b>Justice Oduro's</b> GCB account. The funds reflect immediately.`;
+const head=(badge,title="Payment sent!",msg=MSG,gap=8)=>`<div class="head" style="gap:${gap}px">${badge}<h1 class="title" style="margin-top:12px">${title}</h1><p class="msg">${msg}</p></div>`;
+const tog=(c="",t="Save as Beneficiary?")=>`<div class="togrow ${c}"><span>${t}</span><span class="sw"></span></div>`;
+const tiles=(c="")=>`<div class="tiles ${c}"><div class="tile">${I("bell")}Share Feedback</div><div class="tile">${I("repeat")}Schedule Payment</div><div class="tile">${I("receipt")}View Receipt</div></div>`;
+const tint=`<div class="tiles tint"><div class="tile"><i>${I("bell")}</i>Share Feedback</div><div class="tile"><i>${I("repeat")}</i>Schedule Payment</div><div class="tile"><i>${I("receipt")}</i>View Receipt</div></div>`;
+const foot=`<div class="ft"><div class="btn">Send another</div><div class="btn p">Back to Overview</div></div>`;
+const V=[
+{cur:1,n:"Today",goal:"For comparison",why:"What the screen looks like now: 100px gradient badge with a sheen, 26px title, boxed toggle row, three bordered tiles, two buttons.",
+ b:head(B(100),"Payment sent!",MSG)+tog()+tiles()+foot},
+{n:"1 · Same, tidied",goal:"Smallest change",why:"Nothing moves. The badge goes flat (the sheen is the only decoration on the screen) and a little smaller, the title gets a touch larger, the amount and name in the message turn from grey to black so the two facts that matter can be read at a glance, and the gaps open up from 16px to 24px.",
+ b:head(B(88,"flat"),"Payment sent!",MSGB)+tog()+tiles()+foot},
+{n:"2 · Amount up top",goal:"The number is the loudest thing",why:"The amount moves out of the sentence and under the badge in large type, the way the rest of the app treats money. The message shrinks to the one thing the amount cannot say: who got it and that it landed.",
+ b:`<div class="head" style="gap:6px">${B(72,"flat")}<h1 class="title" style="margin-top:16px;font-size:20px;line-height:28px">Payment sent</h1><div class="amt" style="margin-top:4px"><small>GHS</small>2,122.00</div><p class="msg" style="margin-top:6px">to Justice Oduro's GCB account. The funds reflect immediately.</p></div>`+tog()+tiles()+foot},
+{n:"3 · Actions as round icons",goal:"Lighter",why:"The three bordered tiles become round icon buttons with a label under each, the same pattern as the beneficiary and group sheets. Less box, the same three choices. The toggle row stays as it is.",
+ b:head(B(88,"flat"),"Payment sent!",MSGB)+tog()+`<div class="circ"><div><i>${I("bell")}</i>Feedback</div><div><i>${I("repeat")}</i>Schedule</div><div><i>${I("receipt")}</i>Receipt</div></div>`+foot},
+{n:"4 · A calm ring around the tick",goal:"A little more presence, no decoration",why:"Keeps the green circle but adds one thin ring outside it, so the tick reads as settled rather than as a button. It is a plain 1px line, not a glow. Everything else follows variation 1.",
+ b:`<div class="head"><div style="width:124px;height:124px;border-radius:99px;border:1px solid color-mix(in srgb,var(--succ) 35%,transparent);display:flex;align-items:center;justify-content:center">${B(92,"flat")}</div><h1 class="title" style="margin-top:12px">Payment sent!</h1><p class="msg">${MSGB}</p></div>`+tog()+tiles("plain")+foot},
+{n:"5 · Buttons stacked",goal:"One obvious next step",why:"Back to Overview becomes a full-width amber button and Send another drops to a quiet text button under it, so there is one clear way out and the second choice does not compete. Better for thumbs on a phone.",
+ b:head(B(88,"flat"),"Payment sent!",MSGB)+tog()+tiles()+`<div class="ft col"><div class="btn p" style="flex:none">Back to Overview</div><div class="btn g" style="flex:none">Send another</div></div>`},
+{n:"6 · Tiles with room",goal:"Easier to hit and to read",why:"The tiles get taller and the icon sits in a soft square, so each one reads as a button rather than a label. The border goes and the fill does the work. Heavier than variation 3, lighter than today's boxes.",
+ b:head(B(88,"flat"),"Payment sent!",MSGB)+tog("flat")+tint+foot},
+{n:"7 · Toggle without a box",goal:"Lighter",why:"The Save as Beneficiary row loses its box and sits between two hairlines. It reads as a setting rather than a card, so the screen has one fewer bordered thing. Tiles lose their borders to match.",
+ b:head(B(88,"flat"),"Payment sent!",MSGB)+tog("flat")+tiles("plain")+foot},
+{n:"8 · A line of proof",goal:"In control",why:"One quiet line under the message gives the reference and time, with a copy icon. It answers 'can I show this to someone?' without adding a receipt block. View Receipt still sits in the tiles for the full version.",
+ b:head(B(88,"flat"),"Payment sent!",MSGB)+`<div class="meta tab">${I("copy")}GCB2610214471 · 21 Oct 2026, 09:42</div>`+tog()+tiles()+foot},
+{n:"9 · Buttons pinned to the foot",goal:"One obvious next step",why:"The content stays centred and the two buttons are pinned to the bottom edge with a hairline above. On a long screen or a short phone the way out is always in the same place. Same buttons, different anchor.",
+ b:`<div style="display:flex;flex-direction:column;align-items:center;gap:24px;width:100%;padding-bottom:60px">${head(B(88,"flat"),"Payment sent!",MSGB)+tog()+tiles()}</div><div class="pin">${foot}</div>`},
+{n:"10 · Outlined tick, quieter",goal:"Warmth that matches the amount",why:"The solid green disc becomes a 2px green outline with a green tick, much quieter for a routine payment. A big filled badge suits a milestone, an outline suits a Tuesday transfer. Everything else follows variation 1.",
+ b:head(`<div style="width:80px;height:80px;border-radius:99px;border:2px solid var(--succ);color:var(--succ);display:flex;align-items:center;justify-content:center">${check.replace("<svg",'<svg style="width:42%;height:42%;stroke-width:3.2"')}</div>`,"Payment sent!",MSGB)+tog()+tiles()+foot},
+];
+const root=document.getElementById("root");
+V.forEach(v=>root.insertAdjacentHTML("beforeend",`<section class="v${v.cur?" cur":""}"><h2>${v.n}</h2><p class="goal">${v.goal}</p><p class="why">${v.why}</p><div class="screen">${v.b}</div></section>`));
+lucide.createIcons();
+</script></body></html>

@@ -4,8 +4,8 @@
  * Dev Mode User Simulation System
  *
  * Provides 3 distinct, realistic customer simulation profiles:
- * 1. "clean": A truly clean user with ZERO setup (0 cards, 0 beneficiaries, 0 transactions, 0 standing orders, 1 fresh unfunded account)
- * 2. "single": A user with exactly 1 account (Current Account GHS 4,250.00, 1 Debit Card, 2 focused beneficiaries, 5 transactions, 1 standing order)
+ * 1. "clean": A truly clean user with ZERO setup (0 cards, 0 beneficiaries, 0 transactions, 0 scheduled payments, 1 fresh unfunded account)
+ * 2. "single": A user with exactly 1 account (Current Account GHS 4,250.00, 1 Debit Card, 2 focused beneficiaries, 5 transactions, 1 scheduled payment)
  * 3. "everyday": An active everyday user with multiple accounts (Current, Savings, USD), 3 cards, 25 beneficiaries, full ledger
  */
 

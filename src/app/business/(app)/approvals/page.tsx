@@ -111,7 +111,7 @@ export default function ApprovalQueuePage() {
         <ExpandableSearch
           value={query}
           onChange={setQuery}
-          placeholder="Search reference, description or counterparty..."
+          placeholder="Search reference or description"
           tooltip="Search approvals"
           inputWidthClassName="w-52 sm:w-70"
         />

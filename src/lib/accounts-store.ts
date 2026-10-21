@@ -37,9 +37,9 @@ export const DEFAULT_LINKED_SOURCES: LinkedSource[] = [
     id: "src-momo-1",
     type: "momo",
     title: "MTN Mobile Money",
-    subtitle: "024 123 4567",
+    subtitle: "024 412 3821",
     operator: "MTN",
-    maskedNumber: "024 123 4567",
+    maskedNumber: "024 412 3821",
   },
   {
     id: "src-momo-2",

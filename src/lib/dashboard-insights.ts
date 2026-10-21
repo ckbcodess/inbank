@@ -328,7 +328,7 @@ function nextRunOnOrAfter(iso: string, frequency: InstructionFrequency, today: s
 }
 
 /**
- * Everything active standing orders will take from `accountId` in the next
+ * Everything active scheduled payments will take from `accountId` in the next
  * `days` days — every run, so a weekly order counts four or five times.
  */
 export function scheduledOutflow(accountId: string, today: string, days = 30): number {
@@ -349,7 +349,7 @@ export function scheduledOutflow(accountId: string, today: string, days = 30): n
   return sumMoney(amounts);
 }
 
-/** Active standing orders leaving `accountId`, soonest first. */
+/** Active scheduled payments leaving `accountId`, soonest first. */
 export function upcomingPayments(accountId: string, today: string, limit = 3): UpcomingPayment[] {
   return STANDING_INSTRUCTIONS.filter((s) => s.accountId === accountId && s.status === "Active")
     .map((s) => ({

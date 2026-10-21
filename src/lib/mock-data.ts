@@ -1190,7 +1190,7 @@ export const BENEFICIARIES: Beneficiary[] = [
   { id: "ben-1", name: "Accra Fabrics Ltd", accountNumber: "0231 4455 8890", bank: "Standard Bank Ghana", currency: "GHS" },
   { id: "ben-2", name: "Tema Logistics", accountNumber: "0554 7781 2200", bank: "Ecobank Ghana", currency: "GHS" },
   { id: "ben-3", name: "Volta Machinery Ltd", accountNumber: "0661 9902 3345", bank: "Absa Ghana", currency: "GHS" },
-  { id: "ben-4", name: "Kumasi Supplies", accountNumber: "0788 3312 0091", bank: "GCB Bank", currency: "GHS" },
+  { id: "ben-4", name: "Kumasi Supplies", accountNumber: "0788 3312 00911", bank: "GCB Bank", currency: "GHS" },
   { id: "ben-5", name: "Shenzhen Textile Group", accountNumber: "CN-8891-40023", bank: "Bank of China", currency: "USD" },
 ];
 
@@ -1860,7 +1860,7 @@ export const STANDING_INSTRUCTIONS: StandingInstruction[] = [
 
 let standingSeq = STANDING_INSTRUCTIONS.length;
 
-/* Standing orders survive a refresh: the list is mirrored to this browser's storage (there is no backend). */
+/* Scheduled payments survive a refresh: the list is mirrored to this browser's storage (there is no backend). */
 const STANDING_KEY = "nibs-standing-orders";
 const STANDING_SEED: StandingInstruction[] = STANDING_INSTRUCTIONS.map((s) => ({ ...s }));
 

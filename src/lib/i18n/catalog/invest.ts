@@ -123,7 +123,7 @@ const invest: Entry[] = [
   ["Non-resident Foreigner", "Étranger non résident", "Extranjero no residente", "外国非居民"],
   ["Postal address", "Adresse postale", "Dirección postal", "邮寄地址"],
   ["Postal Address", "Adresse postale", "Dirección postal", "邮寄地址"],
-  ["For example, P.O. Box GT 454", "Par exemple, BP GT 454", "Por ejemplo, Apartado postal GT 454", "例如：邮政信箱 GT 454"],
+  ["e.g. P.O. Box GT 454", "ex. BP GT 454", "p. ej., Apartado GT 454", "例如：邮政信箱 GT 454"],
   ["Residential address", "Adresse de résidence", "Dirección de residencia", "居住地址"],
   ["Residential Address", "Adresse de résidence", "Dirección de residencia", "居住地址"],
   ["That file type isn’t supported. Choose a JPG, PNG or PDF.", "Ce type de fichier n’est pas pris en charge. Choisissez un JPG, PNG ou PDF.", "Ese tipo de archivo no es compatible. Elige un JPG, PNG o PDF.", "不支持该文件类型。请选择 JPG、PNG 或 PDF。"],

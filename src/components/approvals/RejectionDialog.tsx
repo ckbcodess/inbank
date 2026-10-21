@@ -64,7 +64,7 @@ export default function RejectionDialog({
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={4}
-              placeholder="Explain why this is being rejected so the submitter understands what went wrong."
+              placeholder="Why is this being rejected?"
             />
             <p className="text-[12px] text-muted-foreground">
               {reason.trim().length < 10

@@ -140,18 +140,6 @@ const RATES: Record<string, number> = {
   ZMW: 0.58,
 };
 
-/** The standing order rail each payment rail schedules as. Rails missing here have no Schedule Payment. */
-const SCHEDULABLE_RAILS: Partial<Record<Rail, string>> = {
-  bank: "bank",
-  "wallet-to-bank": "wallet-to-bank",
-  wallet: "wallet",
-  momo: "wallet",
-  proxy: "proxy",
-  group: "group",
-  airtime: "airtime",
-  data: "data",
-};
-
 /** The amount field each rail's Pay again repeat fills. Data bundles are priced by the bundle, so they have none. */
 const REPEAT_AMOUNT_FIELD: Partial<Record<Rail, "bankAmount" | "wAmount" | "airtimeAmount" | "ecgAmount" | "billAmount" | "cardAmount">> = {
   bank: "bankAmount",
@@ -228,7 +216,7 @@ const ALL_RECENT_AVATARS: RecentPayeeAvatar[] = [
     id: "rec-b1",
     name: "Justice Oduro",
     bank: "GCB Bank",
-    acct: "0231 4455 8890",
+    acct: "0231 4455 88901",
     initials: "JO",
     rail: "bank",
     colorBg: "var(--avatar-teal)",
@@ -2091,26 +2079,42 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
         }
         initialSaveBeneficiary={f.saveBeneficiary}
         onSaveBeneficiaryChange={(saved) => set("saveBeneficiary", saved)}
-        hideSchedule={!SCHEDULABLE_RAILS[rail]}
         onSchedulePayment={() => {
-          // The completed payment's details go to the schedule form, which asks only for the schedule.
+          // Whatever was paid goes to the schedule form as it read on the receipt, so any payment can be scheduled
+          // and the customer only chooses when and how often.
+          const viaNumber = rail === "wallet" || rail === "momo" || rail === "airtime" || rail === "data";
+          const numberLabel = viaNumber
+            ? "Number"
+            : rail === "proxy"
+            ? "Proxy ID"
+            : rail === "ecg"
+            ? "Meter number"
+            : rail === "bill" || rail === "ghanagov"
+            ? "Reference"
+            : rail === "card-topup"
+            ? "Card"
+            : "Account";
+          const showBank = !["ecg", "ghanagov", "proxy", "qr"].includes(rail);
+          const bankLabel = viaNumber ? "Network" : rail === "bill" ? "Biller" : rail === "card-topup" ? "Card type" : "Bank";
+          const method = receipt.rows.find(([label]) => label === "Payment Method")?.[1];
+          const isOtherBank = (rail === "bank" && bankCategory === "other") || rail === "ach";
           useScheduleHandoff.getState().setDraft({
-            rail: SCHEDULABLE_RAILS[rail] ?? "",
-            recipient:
-              rail === "bank" || rail === "wallet-to-bank"
-                ? f.benAcct
-                : rail === "proxy"
-                ? f.pxId
-                : rail === "group"
-                ? f.groupName
-                : f.wPhone || f.aPhone,
-            bank: f.bank,
-            network: f.wNetwork,
-            fromId: f.fromId,
-            amount: String(currentAmount),
-            narration: f.bankRef || f.wRef,
+            kind: rail === "data" && topupCategory === "broadband" ? "Broadband" : RAIL_LABEL[rail] || "Payment",
+            recipient: receipt.recipient,
+            details: [
+              ...(receipt.account ? ([[numberLabel, receipt.account]] as Array<[string, string]>) : []),
+              ...(showBank && receipt.bank ? ([[bankLabel, receipt.bank]] as Array<[string, string]>) : []),
+              ...(rail === "data" && bundle ? ([["Bundle", bundle.name]] as Array<[string, string]>) : []),
+              ...(isOtherBank && method ? ([["Payment method", method]] as Array<[string, string]>) : []),
+            ],
+            amount: receipt.amount,
+            fee: receipt.fee,
+            currency: isForeign ? f.wCurrency : "GHS",
+            fromId: account?.id ?? f.fromId,
+            fromLabel: receipt.rows.find(([label]) => label === "From Account")?.[1] ?? account?.name ?? "",
+            narration: f.bankRef || f.wRef || f.pxRef || "",
           });
-          router.push("/payments/standing/new");
+          router.push("/payments/schedule");
         }}
         beneficiaryName={
           f.beneficiaryNickname ||
@@ -2151,7 +2155,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
+          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Which bank do you want to send to?
           </h1>
         </div>
@@ -2242,7 +2246,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
+          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Which wallet do you want to send to?
           </h1>
         </div>
@@ -2312,7 +2316,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
+          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Who is this code for?
           </h1>
         </div>
@@ -2426,7 +2430,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
+          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Which card do you want to top up?
           </h1>
         </div>
@@ -2473,7 +2477,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
+          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Bills
           </h1>
         </div>
@@ -2520,7 +2524,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
+          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Proxy Payments
           </h1>
         </div>
@@ -2658,7 +2662,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
+          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             Group Payments
           </h1>
         </div>
@@ -2736,7 +2740,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
+          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             {isData ? "Who is this internet bundle for?" : "Who is this airtime for?"}
           </h1>
         </div>
@@ -2868,7 +2872,7 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
           >
             <ChevronLeft size={20} strokeWidth={1.8} />
           </button>
-          <h1 className="text-[18px] sm:text-[20px] lg:text-[22px] font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
+          <h1 className="type-page-title font-medium leading-[24px] sm:leading-[28px] tracking-[var(--ls-heading)] text-foreground truncate">
             {getPageTitle()}
           </h1>
         </div>

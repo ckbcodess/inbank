@@ -122,7 +122,7 @@ export function ProxyPayFlow({
                     onChange("benName", resolved);
                   }
                 }}
-                placeholder="Enter Ghana Card, phone, email or handle"
+                placeholder="Ghana Card, phone or email"
                 
               />
 </SavedSuggestions>

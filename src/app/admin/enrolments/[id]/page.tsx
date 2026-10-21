@@ -625,7 +625,7 @@ export default function AdminEnrolmentDetailPage({
             id="callNotes"
             value={callNotes}
             onChange={(e) => setCallNotes(e.target.value)}
-            placeholder="e.g. Confirmed authorization of 3 corporate users and signatory mandate."
+            placeholder="e.g. Verified, mandate signed"
           />
         </Field>
 

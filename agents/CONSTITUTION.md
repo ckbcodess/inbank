@@ -157,7 +157,7 @@ here. Never fall back to dense, boxed layouts.
 
 | Use | Classes |
 |---|---|
-| Page title (via `PageHeader`) | `text-[18px] sm:text-[20px] lg:text-[22px] font-medium tracking-[var(--ls-heading)]` |
+| Page title (via `PageHeader`) | `type-page-title` (18 → 20 → 22px, defined in globals.css) `font-medium tracking-[var(--ls-heading)]` |
 | Hero figure | `text-[40px]`–`[76px]`, `tracking-[var(--ls-heading)]` (`--ls-display` for the biggest), regular, `.tabular` |
 | Section / panel heading | `text-[16px] font-medium` (14px under `sm` where space is tight) |
 | Row primary text | `text-[14px] text-foreground` |
@@ -217,7 +217,9 @@ here. Never fall back to dense, boxed layouts.
   The exception is errors about what the person just typed (a field, a code, a PIN): those sit inline
   under the input (`InlineError`), with a shake on a wrong PIN.
 - **Busy state lives on the button** (`<Button loading>`). Keep `disabled` for validity only.
-  **Loading is a skeleton,** never a bare spinner.
+  **Loading is a skeleton,** never a bare spinner. Where a spinner is right (a button, a pending row, a Work in
+  progress page) it is `AppLoader`, the dashed ring from `ui/loader.tsx`; never a hand-made rotating icon
+  (designer, 2026-10-21).
 - **Destructive and recoverable actions look different.** "Reject" and "Return for clarification"
   never share a style.
 - **A confirmation states its consequence** (including the audit trail) before the commit button.

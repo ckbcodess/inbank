@@ -72,8 +72,8 @@ export function SavedSuggestions({
   requireProvider?: boolean;
   /** What is typed in the field. */
   query: string;
-  /** Called after someone is picked, so the field can drop the text it was searching with. */
-  onPicked?: () => void;
+  /** Called after someone is picked, so the field can drop the text it was searching with or remember who was picked. */
+  onPicked?: (item: SavedRecipient) => void;
   children: React.ReactNode;
 }) {
   const ctx = React.useContext(SavedRecipientsContext);
@@ -122,7 +122,7 @@ export function SavedSuggestions({
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => {
                   ctx.onSelect(item);
-                  onPicked?.();
+                  onPicked?.(item);
                   setFocused(false);
                 }}
                 className="group flex w-full cursor-pointer items-center gap-2 rounded-xl px-2 py-2 text-left transition-colors hover:bg-muted/60"

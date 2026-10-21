@@ -4,7 +4,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronRight, Loader2 } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import { AppLoader } from "@/components/ui/loader";
 import { MiniCardThumbnail } from "@/components/cards/MiniCardThumbnail";
 import { StatusPill, type CardsLayoutProps } from "@/components/cards/CardParts";
 import { cn } from "@/lib/utils";
@@ -40,7 +41,7 @@ export function CardsList({ cards }: CardsLayoutProps) {
                   </div>
                 </div>
                 {isNavigating ? (
-                  <Loader2 size={16} className="shrink-0 animate-spin text-foreground" />
+                  <AppLoader size={16} className="text-foreground" />
                 ) : (
                   <ChevronRight
                     size={16}

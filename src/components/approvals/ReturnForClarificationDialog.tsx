@@ -81,7 +81,7 @@ export default function ReturnForClarificationDialog({
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 rows={4}
-                placeholder="Be specific about what you need — the submitter sees this verbatim."
+                placeholder="What exactly do you need?"
               />
               <p className="text-[12px] text-muted-foreground">
                 {note.trim().length < 10

@@ -73,9 +73,9 @@ export interface DashData {
   cashFlow: CashFlow;
   latestTxns: Transaction[];
   cards: PaymentCard[];
-  /** Active standing orders leaving the selected account, soonest first. */
+  /** Active scheduled payments leaving the selected account, soonest first. */
   upcoming: UpcomingPayment[];
-  /** Everything those standing orders take in the next 30 days. */
+  /** Everything those scheduled payments take in the next 30 days. */
   scheduledNext30: number;
   attention: AttentionItem[];
   /** This customer's regular payees (Pay again). Empty for a brand-new customer. */
@@ -107,7 +107,7 @@ export function selectedAccount(data: DashData): Account | undefined {
 }
 
 /**
- * What's left on the selected account once its standing orders for the next 30
+ * What's left on the selected account once its scheduled payments for the next 30
  * days have run. Null when nothing is scheduled.
  */
 export function forecastFor(data: DashData): { left: number; scheduled: number } | null {

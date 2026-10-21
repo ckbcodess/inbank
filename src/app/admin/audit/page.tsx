@@ -114,7 +114,7 @@ export default function AuditLogPage() {
         <ExpandableSearch
           value={query}
           onChange={setQuery}
-          placeholder="Search by actor, role, action or target..."
+          placeholder="Search by actor or action"
           tooltip="Search audit log"
           inputWidthClassName="w-56 sm:w-70"
         />

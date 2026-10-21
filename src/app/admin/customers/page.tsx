@@ -70,7 +70,7 @@ export default function CustomerManagementPage() {
           <ExpandableSearch
             value={query}
             onChange={setQuery}
-            placeholder="Search by name or customer reference..."
+            placeholder="Search by name or reference"
             tooltip="Search customers"
           />
         </div>

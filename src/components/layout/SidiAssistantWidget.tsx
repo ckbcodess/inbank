@@ -34,9 +34,9 @@ const SUGGESTIONS: SuggestionItem[] = [
   },
   {
     id: "standing-order",
-    title: "Set up a standing order",
+    title: "Set up a scheduled payment",
     icon: ArrowRightLeft,
-    query: "How to set up a standing order",
+    query: "How to set up a scheduled payment",
   },
   {
     id: "highest-expenses",
@@ -50,13 +50,13 @@ const PRESET_ANSWERS: Record<string, string> = {
   summary:
     "Here is your recent account summary for October 2026:\n\n• Total Debits: GHS 3,741.90 across 8 transactions\n• Total Inflow: GHS 8,450.00\n• Top Spending Category: Utilities & Household (38%)\n• Largest Single Expense: Melcom Cantonments (GHS 500.00)\n\nYour operating balance remains healthy at GHS 42,500.00.",
   "standing-order":
-    "To set up an automated standing instruction:\n\n1. Go to Send & Pay in the main navigation.\n2. Select Standing Orders.\n3. Choose your beneficiary, transfer frequency (Weekly or Monthly), and amount.\n4. Authorise with the 6-digit code we send you.\n\nYou can review or cancel active instructions anytime under Send & Pay.",
+    "To set up a scheduled payment:\n\n1. Go to Send & Pay in the main navigation.\n2. Select Scheduled Payments.\n3. Choose your beneficiary, transfer frequency (Weekly or Monthly), and amount.\n4. Authorise with the 6-digit code we send you.\n\nYou can review or cancel active instructions anytime under Send & Pay.",
   "virtual-card":
     "You can generate an instant GCB Virtual Card directly:\n\n1. Open the Cards section.\n2. Tap Request New Card and select Virtual Prepaid Card.\n3. Enter your starting top-up amount from your Current Account.\n\nYour card details (16-digit number, expiry, and CVV) are generated immediately for secure online shopping.",
   "highest-expenses":
     "Here are your highest debit transactions this month:\n\n1. GHS 500.00 — Melcom Stores (Retail & Household)\n2. GHS 320.40 — Shoprite Accra Mall (Groceries)\n3. GHS 249.50 — Melcom Supermarket (Supplies)\n4. GHS 150.00 — ECG Prepaid Electricity (Utilities)\n\nTotal discretionary debits: GHS 1,219.90.",
   "cash-flow":
-    "Here is your liquidity outlook for the next 14 days:\n\n• Current Operating Funds: GHS 42,500.00\n• Upcoming Scheduled Bill: DStv Premium (GHS 245.00 due on 15th)\n• Expected Standing Order: Family support (GHS 200.00)\n• Projected Surplus: +GHS 42,055.00\n\nYou are tracking comfortably within your monthly budget.",
+    "Here is your liquidity outlook for the next 14 days:\n\n• Current Operating Funds: GHS 42,500.00\n• Upcoming Scheduled Bill: DStv Premium (GHS 245.00 due on 15th)\n• Expected Scheduled Payment: Family support (GHS 200.00)\n• Projected Surplus: +GHS 42,055.00\n\nYou are tracking comfortably within your monthly budget.",
   help:
     "I'm here to assist with all your GCB Internet Banking needs!\n\nYou can ask me about:\n• Checking balances, statements & transaction search\n• Domestic bank transfers (GIP, ACH) and GhanaPay QR\n• Mobile Money wallet cash-in and cash-out\n• Card management, limits, blocking and replacements\n• 24/7 GCB Customer Care hotline: +233 302 681 531",
 };
@@ -351,7 +351,7 @@ export function SidiAssistantWidget() {
                   type="text"
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  placeholder="Ask Sidi about anything..."
+                  placeholder="Ask Sidi anything"
                   aria-label="Message Sidi"
                   className="h-8 flex-1 bg-transparent text-[14px] text-foreground outline-none placeholder:text-muted-foreground"
                 />

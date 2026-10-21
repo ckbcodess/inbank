@@ -20,15 +20,58 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Textarea } from "@/components/ui/textarea";
+import { DURATION, EASE } from "@/lib/motion";
 import { TransactionDetailSheet } from "@/components/transactions/TransactionDetailSheet";
 import { findTransaction } from "@/lib/mock-data";
 
 export interface SuccessActionCard {
   id: string;
   label: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
   onClick?: () => void;
   active?: boolean;
+}
+
+/** The short name under each round action; a card the screen doesn't know keeps its own label. */
+const ACTION_LABEL: Record<string, string> = {
+  feedback: "Feedback",
+  schedule: "Schedule",
+  receipt: "Receipt",
+  download: "Receipt",
+};
+
+type FeedbackRating = "great" | "okay" | "bad";
+
+const FEEDBACK_OPTIONS: Array<{
+  id: FeedbackRating;
+  label: string;
+  /** What to ask once they have answered, so the follow-up fits how it went. */
+  prompt: string;
+  emoji: string;
+}> = [
+  { id: "great", label: "Great", prompt: "What worked well?", emoji: "😊" },
+  { id: "okay", label: "Okay", prompt: "What could be better?", emoji: "😐" },
+  { id: "bad", label: "Not good", prompt: "What went wrong?", emoji: "☹️" },
+];
+
+const MESSAGE_AMOUNT = "(?:GHS|GH₵|USD|EUR|GBP|NGN|CNY|CAD|AUD|JPY|CHF|ZAR|XOF)\\s?\\d[\\d,]*(?:\\.\\d+)?";
+
+/** Amounts, and the payee when we know them, read at full strength; the rest of the sentence stays quiet. */
+function emphasise(message: string, name?: string): React.ReactNode {
+  const parts = [MESSAGE_AMOUNT];
+  const payee = name?.trim();
+  if (payee && message.includes(payee)) parts.push(payee.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  return message.split(new RegExp(`(${parts.join("|")})`, "g")).map((chunk, i) =>
+    i % 2 === 1 ? (
+      <span key={i} className="font-medium text-foreground">
+        {chunk}
+      </span>
+    ) : (
+      chunk
+    ),
+  );
 }
 
 /**
@@ -82,7 +125,7 @@ export interface PaymentSuccessScreenProps {
   customActionCards?: SuccessActionCard[];
   /** Custom schedule handler if standard schedule card is used */
   onSchedulePayment?: () => void;
-  /** Leave out the Schedule Payment card (e.g. the payment already is a standing order). */
+  /** Leave out the Schedule Payment card (e.g. the payment already is a scheduled payment). */
   hideSchedule?: boolean;
   /** Name of the beneficiary to display in the toast notification */
   beneficiaryName?: string;
@@ -230,9 +273,8 @@ export function PaymentSuccessScreen({
 }: PaymentSuccessScreenProps) {
   const router = useRouter();
   const [saveBeneficiary, setSaveBeneficiary] = useState(initialSaveBeneficiary);
-  const [feedbackSent, setFeedbackSent] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  const [feedbackRating, setFeedbackRating] = useState<"great" | "okay" | "bad" | null>(null);
+  const [feedbackRating, setFeedbackRating] = useState<FeedbackRating | null>(null);
   const [feedbackComment, setFeedbackComment] = useState("");
   const [burstKey, setBurstKey] = useState(0);
 
@@ -353,6 +395,9 @@ export function PaymentSuccessScreen({
   };
 
   const handleFeedbackClick = () => {
+    // Fresh each time it opens; clearing on submit would collapse the dialog while it fades out.
+    setFeedbackRating(null);
+    setFeedbackComment("");
     setShowFeedbackModal(true);
   };
 
@@ -450,7 +495,7 @@ export function PaymentSuccessScreen({
         className="relative flex flex-col items-center gap-3 text-center w-full"
       >
         {/* Badge Anchor & Interactive Burst Area */}
-        <div className="relative flex size-[130px] sm:size-[140px] items-center justify-center my-1 select-none">
+        <div className="relative flex size-[112px] sm:size-[116px] items-center justify-center my-1 select-none">
           {/* Subtle Dual Concentric Precision Pulse Rings during Checked Phase */}
           {badgePhase === "checked" && (
             <>
@@ -506,11 +551,8 @@ export function PaymentSuccessScreen({
                   damping: 22,
                   mass: 0.85,
                 }}
-                className="group relative z-10 flex size-[100px] sm:size-[108px] items-center justify-center rounded-full bg-gradient-to-br from-success to-success text-white shadow-[0_4px_16px_rgba(0,0,0,0.08)] ring-1 ring-white/20 select-none overflow-hidden"
+                className="group relative z-10 flex size-[88px] items-center justify-center rounded-full bg-success text-white select-none"
               >
-                {/* Static top highlight for depth — no loop, the badge settles still. */}
-                <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/25 to-transparent" />
-
                 {/* Animated SVG Path Drawing Checkmark */}
                 <svg
                   width="48"
@@ -534,18 +576,6 @@ export function PaymentSuccessScreen({
                     }}
                   />
                 </svg>
-
-                {/* ── Single sheen pass, once the check has drawn — then it rests ── */}
-                <motion.div
-                  initial={{ x: "-160%", opacity: 0 }}
-                  animate={{ x: "160%", opacity: [0, 0.7, 0] }}
-                  transition={{
-                    delay: 0.45, // begins right after the checkmark draws
-                    duration: 1.2,
-                    ease: [0.4, 0, 0.2, 1],
-                  }}
-                  className="pointer-events-none absolute inset-0 -skew-x-20 bg-gradient-to-r from-transparent via-white/45 to-transparent w-[160%] z-20"
-                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -569,31 +599,52 @@ export function PaymentSuccessScreen({
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               className="text-[15px] sm:text-[16px] leading-[23px] sm:leading-[25px] text-muted-foreground text-center max-w-[440px]"
             >
-              {message}
+              {emphasise(message, beneficiaryName)}
             </motion.p>
           )}
         </div>
       </motion.div>
 
-      {/* ── Feedback Notification ── */}
-      {feedbackSent && (
+      {/* ── 3. Action Cards Row ── */}
+      {actionCards.length > 0 && revealRest && (
         <motion.div
-          initial={{ opacity: 0, y: -8, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -8 }}
-          className="w-full max-w-[460px] rounded-lg bg-success/10 border border-success/20 text-success-text text-center py-2 px-2 text-[13.5px]"
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-2 flex w-full max-w-[460px] justify-center gap-6"
         >
-          🎉 Thank you! Your feedback helps us improve GCB Internet Banking.
+          {actionCards.map((card) => {
+            const Icon = card.icon;
+
+            return (
+              <button
+                key={card.id}
+                type="button"
+                onClick={card.onClick}
+                className="group flex w-[88px] cursor-pointer flex-col items-center gap-2 text-center active:scale-[0.98] transition-transform duration-press"
+              >
+                <span
+                  className={cn(
+                    "flex size-[52px] items-center justify-center rounded-full bg-muted text-foreground transition-colors duration-hover group-hover:bg-muted/70",
+                    card.active && "bg-primary/15 ring-1 ring-primary/40"
+                  )}
+                >
+                  <Icon size={20} strokeWidth={1.7} className="shrink-0" />
+                </span>
+                <span className="text-[12px] leading-[17px] text-foreground">{ACTION_LABEL[card.id] ?? card.label}</span>
+              </button>
+            );
+          })}
         </motion.div>
       )}
 
-      {/* ── 3. Save As Beneficiary Toggle Row (Tactile Spring Flip) ── */}
+      {/* ── 4. Save As Beneficiary Toggle Row (Tactile Spring Flip), beneath the actions ── */}
       {showSaveBeneficiary && revealRest && (
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="flex items-center justify-between px-[18px] py-[16px] rounded-xl border border-border dark:border-border bg-tile dark:bg-card w-full max-w-[460px] shadow-xs"
+          className="flex items-center justify-between px-[18px] py-[16px] rounded-xl border border-border dark:border-border bg-tile dark:bg-card w-full max-w-[460px] mt-2 shadow-xs"
         >
           <span className="text-[14px] font-normal text-foreground">{saveBeneficiaryLabel}</span>
           <motion.button
@@ -619,47 +670,13 @@ export function PaymentSuccessScreen({
         </motion.div>
       )}
 
-      {/* ── 4. Action Cards Row ── */}
-      {actionCards.length > 0 && revealRest && (
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-          className={cn("grid gap-2 w-full max-w-[460px]", actionCards.length === 3 ? "grid-cols-3" : "grid-cols-2")}
-        >
-          {actionCards.map((card) => {
-            const Icon = card.icon;
-
-            return (
-              <button
-                key={card.id}
-                type="button"
-                onClick={card.onClick}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-3 rounded-xl border border-border dark:border-border bg-tile dark:bg-card py-3 px-2 hover:bg-muted/50 active:scale-[0.98] transition cursor-pointer group text-center shadow-xs",
-                  card.active && "border-primary ring-1 ring-primary/40 bg-muted/25"
-                )}
-              >
-                <Icon
-                  size={20}
-                  className="text-muted-foreground group-hover:text-foreground transition-colors shrink-0"
-                />
-                <span className="text-[13.5px] font-normal text-foreground group-hover:text-foreground leading-[18px]">
-                  {card.label}
-                </span>
-              </button>
-            );
-          })}
-        </motion.div>
-      )}
-
       {/* ── 5. Bottom Action Buttons ── */}
       {revealRest && (
       <motion.div
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        className="flex items-center gap-3 w-full max-w-[460px] pt-1"
+        className="flex items-center gap-3 w-full max-w-[460px] pt-2"
       >
         {onSecondaryAction && (
           <button
@@ -687,77 +704,82 @@ export function PaymentSuccessScreen({
       </motion.div>
       )}
 
-      {/* ── Interactive Share Feedback Modal ── */}
+      {/* ── Share Feedback: one question first, the follow-up opens once they have answered ── */}
       <Dialog open={showFeedbackModal} onOpenChange={setShowFeedbackModal}>
-        <DialogContent className="max-w-[420px] p-5">
+        <DialogContent size="sm">
           <DialogHeader>
-            <DialogTitle className="text-[17px] font-medium text-foreground">
-              Share Feedback
-            </DialogTitle>
+            <DialogTitle>How was your payment experience today?</DialogTitle>
           </DialogHeader>
-          <DialogBody className="flex flex-col gap-3 py-2">
-            <p className="text-[13.5px] text-muted-foreground">
-              How was your payment experience today?
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { id: "great", label: "Great", emoji: "😊" },
-                { id: "okay", label: "Okay", emoji: "😐" },
-                { id: "bad", label: "Not good", emoji: "☹️" },
-              ].map((opt) => (
-                <button
-                  key={opt.id}
-                  type="button"
-                  onClick={() => setFeedbackRating(opt.id as "great" | "okay" | "bad")}
-                  className={cn(
-                    "flex flex-col items-center justify-center gap-2 rounded-xl border p-2 text-center transition-colors cursor-pointer",
-                    feedbackRating === opt.id
-                      ? "border-primary bg-primary/10 text-primary font-medium"
-                      : "border-border/70 hover:bg-muted/50 text-foreground"
-                  )}
+          <DialogBody className="flex flex-col gap-8 pb-4 pt-2">
+            <div role="radiogroup" aria-label="Payment experience" className="flex justify-center gap-6">
+                {FEEDBACK_OPTIONS.map((opt) => {
+                  const selected = feedbackRating === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      onClick={() => setFeedbackRating(opt.id)}
+                      className="group flex w-[88px] cursor-pointer flex-col items-center gap-2 outline-none"
+                    >
+                      <span
+                        className={cn(
+                          "flex size-14 items-center justify-center rounded-full border transition-colors duration-hover group-focus-visible:ring-1 group-focus-visible:ring-ring",
+                          selected
+                            ? "border-[var(--active-border)] bg-[var(--active-bg)] text-foreground"
+                            : "border-transparent bg-muted group-hover:bg-muted/70"
+                        )}
+                      >
+                        <span className="text-[26px] leading-none" aria-hidden="true">
+                          {opt.emoji}
+                        </span>
+                      </span>
+                      <span className={cn("text-[13px]", selected ? "font-medium text-foreground" : "text-muted-foreground")}>
+                        {opt.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+            {feedbackRating && (
+              <motion.div
+                key={feedbackRating}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: DURATION.reveal, ease: EASE.settle }}
+              >
+                <Field
+                  label={FEEDBACK_OPTIONS.find((o) => o.id === feedbackRating)?.prompt}
+                  htmlFor="feedback-comment"
+                  optional
                 >
-                  <span className="text-[24px]">{opt.emoji}</span>
-                  <span className="text-[12.5px]">{opt.label}</span>
-                </button>
-              ))}
-            </div>
-            <div className="flex flex-col gap-2 pt-1">
-              <label htmlFor="feedback-comment" className="text-[12.5px] text-muted-foreground">
-                Comments (optional)
-              </label>
-              <textarea
-                id="feedback-comment"
-                value={feedbackComment}
-                onChange={(e) => setFeedbackComment(e.target.value)}
-                placeholder="Tell us what went well or what we can improve..."
-                rows={3}
-                className="w-full rounded-lg border border-border/70 bg-card p-2 text-[13px] text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:border-primary"
-              />
-            </div>
+                  <Textarea
+                    id="feedback-comment"
+                    value={feedbackComment}
+                    onChange={(e) => setFeedbackComment(e.target.value)}
+                    placeholder="Add a note"
+                    rows={3}
+                  />
+                </Field>
+              </motion.div>
+            )}
           </DialogBody>
-          <DialogFooter className="flex gap-2 sm:justify-end pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowFeedbackModal(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="button"
-              onClick={() => {
-                setShowFeedbackModal(false);
-                setFeedbackSent(true);
-                toast.success("Thank you! Your feedback helps us improve GCB Internet Banking.");
-                setFeedbackRating(null);
-                setFeedbackComment("");
-                setTimeout(() => setFeedbackSent(false), 4000);
-              }}
-              disabled={!feedbackRating}
-            >
-              Submit Feedback
-            </Button>
-          </DialogFooter>
+          {feedbackRating && (
+            <DialogFooter>
+              <Button
+                type="button"
+                onClick={() => {
+                  setShowFeedbackModal(false);
+                  toast.success("Thank you! Your feedback helps us improve GCB Internet Banking.");
+                }}
+                className="h-10 w-full rounded-lg text-[14px]"
+              >
+                Submit Feedback
+              </Button>
+            </DialogFooter>
+          )}
         </DialogContent>
       </Dialog>
 

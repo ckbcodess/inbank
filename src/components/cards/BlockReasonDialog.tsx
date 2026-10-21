@@ -84,7 +84,7 @@ export function BlockReasonDialog({
                     autoFocus
                     value={otherDetails}
                     onChange={(e) => setOtherDetails(e.target.value)}
-                    placeholder="e.g. Damaged chip, replacing soon"
+                    placeholder="e.g. Damaged chip"
                   />
                 </Field>
               </div>
