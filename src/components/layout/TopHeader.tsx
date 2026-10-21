@@ -16,10 +16,8 @@ import {
   Monitor,
   Moon,
   Settings,
-  ShieldCheck,
   Sun,
   SunMoon,
-  User,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState, Suspense } from "react";
@@ -50,6 +48,7 @@ import { SimpleTooltip } from "@/components/ui/tooltip";
 import HeaderBreadcrumbs from "./HeaderBreadcrumbs";
 import { useTranslation } from "@/lib/i18n/LanguageProvider";
 import { switchTheme } from "@/lib/theme-transition";
+import { openSettings } from "@/lib/settings-modal";
 
 interface TopHeaderProps {
   actor: Actor;
@@ -237,34 +236,14 @@ export default function TopHeader({
 
             {!business && (
               <>
-            {/* Core Navigation Links */}
+            {/* Profile, security and alerts are one Settings modal for customers; staff still go to the page. */}
             <DropdownMenuItem
-              onClick={() => router.push(actor.shell === "customer" ? "/settings?tab=profile" : "/settings")}
-              className="flex items-center justify-between py-2 px-2 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
-            >
-              <span className="flex items-center gap-2">
-                <User size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
-                <span>{t("header.profile", "Profile")}</span>
-              </span>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-              onClick={() => router.push("/settings")}
+              onClick={() => (actor.shell === "customer" ? openSettings() : router.push("/settings"))}
               className="flex items-center justify-between py-2 px-2 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
             >
               <span className="flex items-center gap-2">
                 <Settings size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
                 <span>{t("header.settings", "Settings")}</span>
-              </span>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-              onClick={() => router.push(actor.shell === "customer" ? "/settings?tab=security" : "/settings?tab=security")}
-              className="flex items-center justify-between py-2 px-2 text-[13.5px] cursor-pointer rounded-lg text-foreground hover:bg-muted/70 transition-colors"
-            >
-              <span className="flex items-center gap-2">
-                <ShieldCheck size={16} strokeWidth={1.8} className="shrink-0 text-muted-foreground" aria-hidden="true" />
-                <span>{t("header.security", "Security")}</span>
               </span>
             </DropdownMenuItem>
 

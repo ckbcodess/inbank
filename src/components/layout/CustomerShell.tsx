@@ -9,7 +9,7 @@
  * with the Admin Portal shell (section 12.1).
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Sidebar from "./Sidebar";
 import TopHeader from "./TopHeader";
@@ -27,6 +27,7 @@ import { getNavigation } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { FxQuickModal } from "@/components/fx/FxQuickModal";
+import SettingsDialog from "@/components/settings/SettingsDialog";
 import { BottomNav } from "./BottomNav";
 
 const COLLAPSE_KEY = "nibs-sidebar-collapsed";
@@ -151,8 +152,8 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
           onToggleCollapse={toggleCollapse}
         />
 
-        <div className="flex min-w-0 flex-1 flex-col overflow-hidden p-0 sm:p-2 lg:p-3">
-          <div className="shell-card relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-none border-0 shadow-none sm:rounded-2xl sm:border sm:border-border">
+        <div className="flex min-w-0 flex-1 flex-col overflow-hidden p-0 transition-[padding] duration-move ease-settle sm:p-2 lg:p-3">
+          <div className="shell-card relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-none border-0 shadow-none transition-[border-radius] duration-move ease-settle sm:rounded-2xl sm:border sm:border-border">
             <TopHeader
               actor={actor}
               onMenuToggle={() => setSidebarOpen((p) => !p)}
@@ -167,7 +168,7 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
               <div
                 key={pathname}
                 className={cn(
-                  "@container page-stagger mx-auto w-full px-3 pt-5 pb-28 sm:px-6 sm:pt-10 sm:pb-12 lg:px-10 lg:pt-10 lg:pb-12 xl:px-10",
+                  "@container page-stagger mx-auto w-full px-3 pt-5 pb-28 transition-[padding] duration-move ease-settle sm:px-6 sm:pt-10 sm:pb-12 lg:px-10 lg:pt-10 lg:pb-12 xl:px-10",
                   pathname === "/overview" || pathname === "/business/overview" ? "max-w-[1440px]" : "max-w-[960px]",
                 )}
               >
@@ -179,6 +180,11 @@ export default function CustomerShell({ children }: { children: React.ReactNode 
         </div>
       </div>
       {!isBusinessProfile(activeProfile) && <FxQuickModal />}
+      {!isBusinessProfile(activeProfile) && (
+        <Suspense fallback={null}>
+          <SettingsDialog />
+        </Suspense>
+      )}
       {splash !== "off" && <AppSplash leaving={splash === "leaving"} />}
     </>
   );
