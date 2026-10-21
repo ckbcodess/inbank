@@ -289,7 +289,7 @@ export default function Sidebar({
           + half the 16px icon = 28px, the middle of the sidebar. The header's pl-3 plus half its size-8 mark
           lands on the same 28px line. */}
       <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3 py-2">
-        <div className="flex flex-col gap-0.5">
+        <div className="flex min-h-full flex-col gap-0.5">
           {groups.map((grp, gi) => {
             const hasActiveChild = grp.items.some((i) => isItemActive(i, pathname, items));
             const isDropdown =
@@ -301,7 +301,7 @@ export default function Sidebar({
               const DropIcon = ICON_MAP[DROPDOWN_GROUPS[name].icon] ?? LayoutGrid;
               const open = openGroups[name] ?? hasActiveChild;
               return (
-                <div key={name} className={`flex flex-col gap-0.5 ${gi > 0 ? "mt-2" : ""}`}>
+                <div key={name} className={`flex flex-col gap-0.5 ${gi > 0 ? "mt-4" : ""}`}>
                   <button
                     type="button"
                     onClick={() => setOpenGroups((p) => ({ ...p, [name]: !open }))}
@@ -329,12 +329,12 @@ export default function Sidebar({
               );
             }
 
-            // Flat group — separated from the previous group by spacing (expanded)
-            // or a divider (collapsed). No section title.
+            // Flat group — set off from the previous group by a 16px gap. No section title.
+            // "support" is pinned to the bottom.
             return (
               <div
                 key={grp.name ?? `g-${gi}`}
-                className={`flex flex-col gap-0.5 ${gi > 0 ? "mt-2" : ""}`}
+                className={`flex flex-col gap-0.5 ${grp.name === "support" ? "mt-auto pt-4" : gi > 0 ? "mt-4" : ""}`}
               >
                 {grp.items.map((item) => renderNavLink(item))}
               </div>

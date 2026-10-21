@@ -27,10 +27,9 @@ export interface NavItem {
 
 /** The secondary products and services, gathered in the collapsible "More Services" dropdown. */
 const MORE_SERVICES: NavItem[] = [
-  { key: "transactions", label: "Transactions", path: "/transactions", icon: "ArrowLeftRight", group: "More Services" },
   { key: "lifestyle", label: "Lifestyle", path: "/lifestyle", icon: "Sparkles", group: "More Services" },
-  { key: "eaglesave", label: "EagleSave", path: "/eaglesave", icon: "PiggyBank", group: "More Services" },
   { key: "fx-rates", label: "FX Rates", path: "/fx-rates", icon: "TrendingUp", group: "More Services" },
+  { key: "eaglesave", label: "EagleSave", path: "/eaglesave", icon: "PiggyBank", group: "More Services" },
 ];
 
 /**
@@ -47,10 +46,11 @@ function retailNav(): NavItem[] {
     { key: "insure", label: "Insure", path: "/insure", icon: "Shield", group: "products" },
     { key: "invest", label: "Invest", path: "/invest", icon: "LineChart", group: "products" },
     { key: "loans", label: "Loans", path: "/loans", icon: "Landmark", group: "products" },
-    { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "products" },
+    { key: "beneficiaries", label: "Beneficiaries", path: "/beneficiaries", icon: "UserCheck", group: "records" },
+    { key: "transactions", label: "Transactions", path: "/transactions", icon: "ArrowLeftRight", group: "records" },
     ...MORE_SERVICES,
+    // Profile and settings live in the header's account menu, so the sidebar carries only Help.
     { key: "help", label: "Help & Support", path: "/help", icon: "CircleHelp", group: "support" },
-    { key: "profile", label: "My Profile", path: "/settings", icon: "Settings", group: "support" },
   ];
 }
 
