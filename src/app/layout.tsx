@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 import { DevStateProvider } from "@/components/providers/DevStateProvider";
 import PersonaFlowSwitcher from "@/components/dev/PersonaFlowSwitcher";
 import { ColorTuner } from "@/components/dev/ColorTuner";
-import { ListCardTuner } from "@/components/dev/ListCardTuner";
 import { MotionProvider } from "@/components/providers/MotionProvider";
 import { SHOW_DEMO_HUB, SHOW_DEMO_TOOLS } from "@/lib/demo-tools";
 import TourOverlay from "@/components/dev/TourOverlay";
@@ -72,7 +71,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       </Suspense>
                     )}
                     {SHOW_DEMO_TOOLS && <ColorTuner />}
-                    {SHOW_DEMO_TOOLS && <ListCardTuner />}
                     <TourOverlay />
                     <SidiAssistantWidget />
                   </DevStateProvider>
