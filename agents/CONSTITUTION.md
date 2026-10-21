@@ -93,6 +93,11 @@ here. Never fall back to dense, boxed layouts.
   amount chips unless asked for. No grids of secondary-stat tiles. No badges that state the obvious
   ("Live", "Active", "Today's fixing"). No tile whose only job is to fill a grid cell. No subtitle
   under a title that already explains itself.
+- **One scrollbar.** Every scroll area, in a modal, sheet, list, table wrapper or page, uses the thin, quiet scrollbar
+  that `globals.css` applies to every element. A new scroll area gets it by existing. Never style a scrollbar by hand,
+  never ship the browser default, and hide one (`no-scrollbar`, `hide-scrollbar`) only for a reason, such as a horizontal
+  chip row. `custom-scrollbar` is the same scrollbar plus `scrollbar-gutter: stable`, for page and pane roots whose
+  content must not shift when scrolling starts (designer, 2026-10-21).
 - **Fill the container.** Functional components stretch to `w-full` and line up with their siblings.
   Narrow `max-w-*` is only for deliberate single-column pages (detail pages, flows, auth, modals).
 - **Comfortable hit targets.** Icon-only controls are at least 40px (`size-10`). Connected inputs get

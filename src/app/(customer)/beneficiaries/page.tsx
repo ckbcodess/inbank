@@ -887,7 +887,7 @@ export default function BeneficiariesPage() {
 
       {/* ── Progressive Add / Edit Beneficiary Sheet ── */}
       <Sheet open={formOpen} onOpenChange={setFormOpen}>
-        <SheetContent side="right" className="flex flex-col h-[92dvh]">
+        <SheetContent side="right" className="flex flex-col">
           {/* Header */}
           <SheetHeader>
             <SheetTitle>

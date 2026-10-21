@@ -306,7 +306,7 @@ export default function EditGroupModal({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent
           side="right"
-          className="p-0 flex flex-col gap-0 overflow-hidden h-[92dvh] sm:max-w-lg md:max-w-xl"
+          className="p-0 flex flex-col gap-0 overflow-hidden sm:max-w-lg md:max-w-xl"
           showCloseButton={false}
         >
           {/* Header */}
