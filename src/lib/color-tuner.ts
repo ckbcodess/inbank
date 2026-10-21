@@ -29,6 +29,7 @@ const GROUP_RULES: [string, RegExp][] = [
   ["Status", /^(success|warning|destructive|info)/],
   ["Interactive & Hovers", /^(hover|item-hover|tile-hover|field-hover|menu-item-hover)/],
   ["Fields and menus", /^(field|menu|input$)/],
+  ["Glass border", /^edge-glass-/],
   ["Borders", /(^border$|-border$|-border-focus$|^duo-outline$)/],
   ["Tints and banners", /^(tint-|banner-)/],
   ["Charts", /^(chart|cat-|spend-)/],

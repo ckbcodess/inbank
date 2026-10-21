@@ -64,8 +64,14 @@ export function TileChip({
   );
 }
 
+/**
+ * The tile's fill is opaque, so the glass stroke (the list box's `--edge-glass-*` tokens) is a gradient border: the fill
+ * on the padding box, the gradient on the border box. The fill is a variable so hover can swap it.
+ */
 const TILE =
-  "group flex w-full items-center justify-between gap-3 rounded-2xl bg-[var(--tile)] p-3 text-left transition duration-150 hover:bg-[var(--tile-hover)] active:scale-[0.99]";
+  "group flex w-full items-center justify-between gap-3 rounded-2xl border border-transparent border-[length:var(--edge-glass-width)] p-3 text-left transition duration-150 active:scale-[0.99] " +
+  "[--tile-fill:var(--tile)] hover:[--tile-fill:var(--tile-hover)] " +
+  "[background:linear-gradient(var(--tile-fill),var(--tile-fill))_padding-box,linear-gradient(var(--edge-glass-angle),var(--edge-glass-start),var(--edge-glass-mid)_var(--edge-glass-mid-at),var(--edge-glass-end))_border-box]";
 
 export function ActionTile({
   icon: Icon,
@@ -122,7 +128,7 @@ export function ActionTile({
       className={cn(
         TILE,
         compactOnMobile && "max-sm:p-3",
-        "cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[var(--tile)] disabled:active:scale-100",
+        "cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:[--tile-fill:var(--tile)] disabled:active:scale-100",
         className,
       )}
     >
