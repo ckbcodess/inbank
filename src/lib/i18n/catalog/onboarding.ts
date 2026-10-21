@@ -200,6 +200,7 @@ const onboarding: Entry[] = [
   ["Login to GCB Internet Banking", "Connexion à la banque en ligne GCB", "Inicia sesión en la banca en línea de GCB", "登录 GCB 网上银行"],
   ["Don’t have an account?", "Vous n’avez pas de compte ?", "¿No tienes una cuenta?", "还没有账户？"],
   ["Register", "S’inscrire", "Registrarse", "注册"],
+  ["New to Internet Banking?", "Nouveau sur la banque en ligne ?", "¿Nuevo en la banca por internet?", "初次使用网上银行？"],
   ["We’ll send a verification code to this number.", "Nous enverrons un code de vérification à ce numéro.", "Enviaremos un código de verificación a este número.", "我们将向此号码发送验证码。"],
   ["Verify Mobile Number", "Vérifier le numéro de mobile", "Verificar número de móvil", "验证手机号码"],
   ["Dial", "Composez le", "Marca", "拨打"],

@@ -432,7 +432,7 @@
   --warning: var(--amber-500);
   --border: var(--gray-200);
   /* The gradient stroke of the list box (ListCard): catches light at the top-left, fades, then picks up again at the corner. */
-  --edge-glass-angle: 169deg;
+  --edge-glass-angle: 180deg;
   --edge-glass-mid-at: 18%;
   --edge-glass-width: 0.5px;
   --edge-glass-start: var(--white);
