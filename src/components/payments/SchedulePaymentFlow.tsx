@@ -25,6 +25,7 @@ import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
 import TransactionOtpModal from "./TransactionOtpModal";
 import { useAuthorisation } from "./useAuthorisation";
 import { ProceedButton } from "./flows/shared";
+import { ReviewSummary } from "@/components/ui/review-summary";
 
 type Screen = "form" | "review" | "success";
 
@@ -155,7 +156,21 @@ export function SchedulePaymentFlow() {
       <div className="mx-auto flex w-full max-w-2xl animate-in flex-col gap-6 duration-200 ease-out fade-in">
         {header("Schedule Summary", () => setScreen("form"), "Back to the schedule")}
         <div className="flex flex-col gap-4">
-          {rowsCard([...paymentRows, ...scheduleRows, ["Total per payment", money(total)]])}
+          <ReviewSummary
+            details={[
+              ["To", draft.recipient],
+              ...draft.details,
+              ["From", draft.fromLabel],
+              ...(draft.narration ? ([["Narration", draft.narration]] as Array<[string, string]>) : []),
+              ...scheduleRows,
+            ].map(([label, value]) => ({ label, value }))}
+            breakdown={[
+              { label: "Amount", value: money(draft.amount), tabular: true },
+              ...(draft.fee > 0 ? [{ label: "Fee", value: money(draft.fee), tabular: true }] : []),
+            ]}
+            total={money(total)}
+            totalLabel="Total per payment"
+          />
           <div className="flex gap-2 pt-2">
             <Button type="button" variant="outline" className="h-11 flex-1 rounded-2xl text-[15px]" onClick={() => setScreen("form")}>
               Back to Edit

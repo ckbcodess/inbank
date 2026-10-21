@@ -30,6 +30,8 @@ import { businessAccounts } from "@/lib/corporate/accounts";
 import { formatDate, formatMoney, saveStandingInstruction, type InstructionFrequency } from "@/lib/mock-data";
 import { FREQUENCY_OPTIONS, cadencePhrase, todayIso } from "@/lib/standing-display";
 
+import { ReviewSummary } from "@/components/ui/review-summary";
+
 type Step = "details" | "review" | "done";
 
 const digits = (v: string) => v.replace(/[^0-9]/g, "");
@@ -127,20 +129,11 @@ export default function StandingOrderForm() {
           title="Review Standing Order"
           backTo={{ href: "/business/payments/standing/new", label: "Edit Standing Order", onClick: () => setStep("details") }}
         />
-        <section className="flex flex-col gap-2" aria-label="Amount">
-          <span className="text-[13px] text-muted-foreground">Each payment</span>
-          <span className="tabular text-[40px] font-normal leading-none tracking-[var(--ls-heading)] sm:text-[48px]">
-            {formatMoney(numAmount, "GHS", true)}
-          </span>
-        </section>
-        <dl className="flex flex-col divide-y divide-border">
-          {rows.map(([label, value]) => (
-            <div key={label} className="flex items-start justify-between gap-4 py-3">
-              <dt className="shrink-0 text-[13px] text-muted-foreground">{label}</dt>
-              <dd className="min-w-0 text-right text-[14px] text-foreground tabular">{value}</dd>
-            </div>
-          ))}
-        </dl>
+        <ReviewSummary
+          details={rows.map(([label, value]) => ({ label, value }))}
+          total={formatMoney(numAmount, "GHS", true)}
+          totalLabel="Each payment"
+        />
         <p className="text-[13px] leading-relaxed text-muted-foreground">
           Each payment goes out on its date without asking again, and you can pause or cancel the order from its page whenever you like.
         </p>

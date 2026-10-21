@@ -25,7 +25,8 @@ import { TrueEmptyState } from "@/components/states/ListStates";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { AmountInput, FromAccountSelector, InsufficientFundsAlert, ProceedButton } from "@/components/payments/flows/shared";
-import { AccountRequired, AuthSummary, FactsPanel, MaturityInstructionField, TREASURY_HOME, INVEST_HOME, PRODUCTS_HREF, TREASURY_PRODUCTS_HREF } from "@/components/invest/parts";
+import { ReviewSummary } from "@/components/ui/review-summary";
+import { AccountRequired, AuthSummary, MaturityInstructionField, TREASURY_HOME, INVEST_HOME, PRODUCTS_HREF, TREASURY_PRODUCTS_HREF } from "@/components/invest/parts";
 import { CreateProfileFlow } from "@/components/invest/CreateProfileFlow";
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { useCustomerAccounts } from "@/lib/use-customer-accounts";
@@ -188,16 +189,7 @@ export function BuyFlow() {
       <div className="flex flex-col gap-6">
         <PageHeader title="Review and Confirm" backTo={{ href: backTo.href, label: "Buy", onClick: () => setScreen("form") }} />
         <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6">
-          <section className="flex flex-col gap-2 px-1">
-            <span className="text-[13px] text-muted-foreground">You pay</span>
-            <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(cost)}</span>
-            {sec.kind === "bill" && (
-              <span className="tabular text-[14px] text-muted-foreground">
-                {`and receive ${money(face)} on ${formatDate(sec.maturity)}`}
-              </span>
-            )}
-          </section>
-          <FactsPanel rows={rows} />
+          <ReviewSummary details={rows.map(([label, value]) => ({ label, value }))} total={money(cost)} totalLabel="You pay" />
           {sec.market === "primary" && (
             <p className="px-1 text-[13px] leading-relaxed text-muted-foreground">
               The final rate is set at the auction, so what you pay and what you receive can shift slightly.

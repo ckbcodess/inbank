@@ -295,6 +295,9 @@
   --ticket-ink: #0a0a0a;
   --ticket-rule: #cbc8bf;
   --tile-hover: var(--gray-200);
+  /* The action tile on a modal, dialog or sheet: a step lighter than the page tile. */
+  --tile-modal: var(--tile);
+  --tile-modal-hover: var(--tile-hover);
   /* Shared list item hover token for lists, accounts, and dashboard panels (replaces raw muted/tile-hover) */
   --item-hover: color-mix(in srgb, var(--black) 4%, transparent);
   /* Hub tile icon (INTERFACE §E): amber-500 on light. */
@@ -539,6 +542,8 @@
   --ticket-ink: #0a0a0a;
   --ticket-rule: #cbc8bf;
   --tile-hover: var(--gray-850);
+  --tile-modal: var(--gray-875);
+  --tile-modal-hover: var(--gray-850);
   --item-hover: color-mix(in srgb, var(--white) 5%, transparent);
   --tile-accent: var(--amber-400);
   --account-card: color-mix(in srgb, var(--smoke-300) 7.8%, transparent);

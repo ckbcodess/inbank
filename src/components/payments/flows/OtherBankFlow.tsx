@@ -125,6 +125,7 @@ export function OtherBankFlow({
           <div className="flex flex-col gap-2">
             <BankSelect value={state.bank || ""} onChange={(val) => onChange("bank", val)} options={OTHER_BANKS} />
 
+            {isBankValid && (
             <div className="relative flex items-center">
               <SavedSuggestions provider={state.bank} requireProvider query={nameQuery || state.benAcct} onPicked={() => setNameQuery("")}>
                 <Input
@@ -147,11 +148,12 @@ export function OtherBankFlow({
                       onChange("benName", resolved);
                     }
                   }}
-                  placeholder="Account number or saved name"
+                  placeholder="Enter new account number or saved beneficiary name"
                   className="numorainput tabular"
                 />
               </SavedSuggestions>
             </div>
+            )}
 
             {/* Verification Status */}
             <AccountVerificationStatus

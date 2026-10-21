@@ -491,7 +491,7 @@ export function FirstRunWelcome({
                       </p>
 
                       <div className="flex flex-col gap-3 pt-1">
-                        <ActionTile
+                        <ActionTile variant="modal"
                           icon={Smartphone}
                           title="Fund with Mobile Money Wallet"
                           onClick={() => {
@@ -508,7 +508,7 @@ export function FirstRunWelcome({
                             }
                           }}
                         />
-                        <ActionTile
+                        <ActionTile variant="modal"
                           icon={CreditCard}
                           title="Fund with a Card"
                           onClick={() => {

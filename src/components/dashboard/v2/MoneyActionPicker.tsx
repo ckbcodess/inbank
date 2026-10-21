@@ -68,7 +68,7 @@ export function MoneyActionPicker({
     <Modal open={open} onOpenChange={onOpenChange} title={TITLE[kind]} size="sm" bodyClassName="gap-3 pb-4">
       {/* Topping up your own account comes first: it's what "top up" means before anything else. */}
       {kind === "topup" && (
-        <ActionTile icon={Wallet} title="My Account" description="Mobile money or any bank card" onClick={fundAccount} />
+        <ActionTile variant="modal" icon={Wallet} title="My Account" description="Mobile money or any bank card" onClick={fundAccount} />
       )}
 
       {groups.map((group, i) => (
@@ -77,7 +77,7 @@ export function MoneyActionPicker({
           <ul className="flex flex-col gap-3">
             {group.options.map((o) => (
               <li key={o.id}>
-                <ActionTile
+                <ActionTile variant="modal"
                   href={withFrom(o.href, accountId)}
                   onClick={() => onOpenChange(false)}
                   icon={o.icon}

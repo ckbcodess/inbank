@@ -56,6 +56,7 @@ import { useSession } from "@/lib/session-store";
 import { resolveDefaultAccountId, useAccountPrefs } from "@/lib/accounts-store";
 import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
 import TransactionOtpModal from "./TransactionOtpModal";
+import { ReviewSummary } from "@/components/ui/review-summary";
 import { useAuthorisation } from "./useAuthorisation";
 import {
   FromAccountSelector,
@@ -666,9 +667,6 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
       ...(rail === "bank" && !f.bank.includes("GCB") ? ([["Payment method", getPaymentMethodName(f.paymentMethod)]] as Array<[string, string]>) : []),
       ...(f.category ? ([["Category", f.category]] as Array<[string, string]>) : []),
       ...(f.narration.trim() ? ([["Narration", f.narration.trim()]] as Array<[string, string]>) : []),
-      ["Amount", formatMoney(numAmount, "GHS", true)],
-      ["Fee", feeAmount === 0 ? "Free" : formatMoney(feeAmount, "GHS", true)],
-      ["Total per payment", formatMoney(totalPerCycle, "GHS", true)],
     ];
     return (
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 animate-in fade-in duration-200 ease-out">
@@ -688,15 +686,15 @@ export function StandingOrderFlow({ onDone }: { onDone?: () => void }) {
         </div>
 
         <div className="flex flex-col gap-4">
-          {/* Review: label on the left, value on the right, one line each, no dividers */}
-          <div className="flex flex-col rounded-2xl border border-border bg-card p-2 text-[14px]">
-            {reviewRows.map(([label, value]) => (
-              <div key={label} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3">
-                <span className="shrink-0 text-muted-foreground">{label}</span>
-                <span className="tabular min-w-0 truncate text-right text-foreground">{value}</span>
-              </div>
-            ))}
-          </div>
+          <ReviewSummary
+            details={reviewRows.map(([label, value]) => ({ label, value }))}
+            breakdown={[
+              { label: "Amount", value: formatMoney(numAmount, "GHS", true), tabular: true },
+              { label: "Fee", value: feeAmount === 0 ? "Free" : formatMoney(feeAmount, "GHS", true), tabular: true },
+            ]}
+            total={formatMoney(totalPerCycle, "GHS", true)}
+            totalLabel="Total per payment"
+          />
 
           <div className="flex gap-2 pt-2">
             <Button

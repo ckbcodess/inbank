@@ -468,6 +468,9 @@ const recent: Entry[] = [
   ["Money received", "Argent reçu", "Dinero recibido", "已收到款项"],
   ["Payment sent", "Paiement envoyé", "Pago enviado", "付款已发送"],
   ["Airtime topped up", "Crédit de communication rechargé", "Saldo recargado", "话费已充值"],
+  // ── Review summaries ──
+  ["Total Once Approved", "Total une fois approuvé", "Total una vez aprobado", "批准后总额"],
+  ["You get back at maturity", "Vous récupérez à l’échéance", "Recibes al vencimiento", "到期时您将收回"],
   // ── Transaction sheet: loading the details ──
   ["Couldn’t load the details of this payment.", "Impossible de charger les détails de ce paiement.", "No se pudieron cargar los detalles de este pago.", "无法加载此付款的详情。"],
   ["Share, save and repeat are ready once the details load.", "Le partage, l’enregistrement et la répétition seront disponibles une fois les détails chargés.", "Compartir, guardar y repetir estarán disponibles cuando se carguen los detalles.", "详情加载完成后即可分享、保存和重复。"],

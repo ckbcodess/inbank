@@ -37,6 +37,8 @@ interface ActionTileProps {
   compactOnMobile?: boolean;
   /** Draw the icon straight on the tile, with no chip behind it (used with the two-tone hub icons). */
   bareIcon?: boolean;
+  /** `modal`: a lighter fill, for a tile that sits on a modal, dialog or sheet instead of the page. */
+  variant?: "default" | "modal";
   className?: string;
 }
 
@@ -70,8 +72,14 @@ export function TileChip({
  */
 const TILE =
   "group flex w-full items-center justify-between gap-3 rounded-2xl border border-transparent border-[length:var(--edge-glass-width)] p-3 text-left transition duration-150 active:scale-[0.99] " +
-  "[--tile-fill:var(--tile)] hover:[--tile-fill:var(--tile-hover)] " +
+  "[--tile-fill:var(--tile-rest)] hover:[--tile-fill:var(--tile-over)] " +
   "[background:linear-gradient(var(--tile-fill),var(--tile-fill))_padding-box,linear-gradient(var(--edge-glass-angle),var(--edge-glass-start),var(--edge-glass-mid)_var(--edge-glass-mid-at),var(--edge-glass-end))_border-box]";
+
+/** The two fills of each variant: at rest, and under the pointer. */
+const TILE_FILL = {
+  default: "[--tile-rest:var(--tile)] [--tile-over:var(--tile-hover)]",
+  modal: "[--tile-rest:var(--tile-modal)] [--tile-over:var(--tile-modal-hover)]",
+} as const;
 
 export function ActionTile({
   icon: Icon,
@@ -85,6 +93,7 @@ export function ActionTile({
   disabled,
   compactOnMobile = false,
   bareIcon = false,
+  variant = "default",
   className,
 }: ActionTileProps) {
   const body = (
@@ -114,7 +123,7 @@ export function ActionTile({
 
   if (href && !disabled) {
     return (
-      <Link href={href} onClick={onClick} className={cn(TILE, compactOnMobile && "max-sm:p-3", className)}>
+      <Link href={href} onClick={onClick} className={cn(TILE, TILE_FILL[variant], compactOnMobile && "max-sm:p-3", className)}>
         {body}
       </Link>
     );
@@ -127,8 +136,9 @@ export function ActionTile({
       disabled={disabled}
       className={cn(
         TILE,
+        TILE_FILL[variant],
         compactOnMobile && "max-sm:p-3",
-        "cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:[--tile-fill:var(--tile)] disabled:active:scale-100",
+        "cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:[--tile-fill:var(--tile-rest)] disabled:active:scale-100",
         className,
       )}
     >

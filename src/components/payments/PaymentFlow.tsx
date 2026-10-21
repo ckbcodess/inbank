@@ -62,6 +62,7 @@ import { resolveDefaultAccountId, useAccountPrefs } from "@/lib/accounts-store";
 import { roundMoney, sumMoney } from "@/lib/money";
 import { PaymentSuccessScreen } from "./PaymentSuccessScreen";
 import TransactionOtpModal from "./TransactionOtpModal";
+import { ReviewSummary } from "@/components/ui/review-summary";
 import { useAuthorisation } from "./useAuthorisation";
 import { REGISTERED_WALLET } from "./flows/OwnWalletPicker";
 import { groupAvatarTint, RailBeneficiaryStrip } from "./flows/beneficiaries";
@@ -3370,154 +3371,71 @@ export function PaymentFlow({ group }: { group: FlowGroup }) {
          * =================================================================== */}
         {stage === 2 && (
           <div className="flex flex-col gap-5 animate-in fade-in slide-in-from-top-2 duration-200 ease-out">
-            <div className="flex flex-col gap-2 items-center justify-center w-full">
-              {/* Card 1: Transaction Details */}
-              <div className="flex flex-col w-full rounded-2xl border border-border bg-card overflow-hidden divide-y divide-border/60 shadow-xs">
-                {/* From Row */}
-                <div className="flex items-center justify-between px-3 py-2 w-full">
-                  <span className="text-[13.5px] text-muted-foreground">From</span>
-                  <span className="text-[13.5px] font-normal text-foreground">
-                    {rail === "wallet-to-bank" ? "MTN Mobile Money (∗∗∗3821)" : `${account?.name} (∗∗∗${account?.number.slice(-4)})`}
-                  </span>
-                </div>
-
-                {/* To Row */}
-                <div className="flex items-center justify-between px-3 py-2 w-full">
-                  <span className="text-[13.5px] text-muted-foreground">To</span>
-                  <span className="text-[13.5px] font-normal text-foreground">
-                    {recipientDisplayName}
-                  </span>
-                </div>
-
-                {/* Destination Account / Number Row */}
-                {reviewAccountValue && (
-                  <div className="flex items-center justify-between px-3 py-2 w-full">
-                    <span className="text-[13.5px] text-muted-foreground">{reviewAccountLabel}</span>
-                    <span className="text-[13.5px] font-normal text-foreground tabular">
-                      {reviewAccountValue}
-                    </span>
-                  </div>
-                )}
-
-                {/* Bank / Provider Row */}
-                {reviewInstitutionValue && (
-                  <div className="flex items-center justify-between px-3 py-2 w-full">
-                    <span className="text-[13.5px] text-muted-foreground">{reviewInstitutionLabel}</span>
-                    <span className="text-[13.5px] font-normal text-foreground">
-                      {reviewInstitutionValue}
-                    </span>
-                  </div>
-                )}
-
-                {/* Outside Ghana: the details they entered that the rows above don't cover */}
-                {rail === "swift" &&
-                  [
-                    ["Country", f.wCountry],
-                    [CODE_TYPE_LABELS[f.wMode] ?? "Bank code", f.wSwift],
-                    ["Bank address", f.wBankAddress],
-                    ["Beneficiary address", f.wBenAddress],
-                    ["Email", f.wBenEmail],
-                    ["Contact", f.wBenPhone],
-                    ["Charges", CHARGE_OPTIONS.find((c) => c.id === f.wCharges)?.label ?? ""],
-                  ]
-                    .filter(([, value]) => value)
-                    .map(([label, value]) => (
-                      <div key={label} className="flex items-center justify-between gap-3 px-3 py-2 w-full">
-                        <span className="text-[13.5px] text-muted-foreground shrink-0">{label}</span>
-                        <span className="text-[13.5px] font-normal text-foreground text-right truncate max-w-[260px]">
-                          {value}
-                        </span>
-                      </div>
-                    ))}
-
-                {/* Payment Method Row */}
-                {((rail === "bank" && bankCategory === "other") || rail === "ach") && f.paymentMethod && (
-                  <div className="flex items-center justify-between px-3 py-2 w-full">
-                    <span className="text-[13.5px] text-muted-foreground">Payment Method</span>
-                    <span className="text-[13.5px] font-normal text-foreground">
-                      {getPaymentMethodName(f.paymentMethod)}
-                    </span>
-                  </div>
-                )}
-
-                {/* Reference Row */}
-                {(f.bankRef || f.wRef || f.pxRef || f.grpRef || (rail === "data" ? bundle?.name : "")) && (
-                  <div className="flex items-center justify-between px-3 py-2 w-full">
-                    <span className="text-[13.5px] text-muted-foreground">Reference</span>
-                    <span className="text-[13.5px] font-normal text-foreground truncate max-w-[220px]">
-                      {f.bankRef || f.wRef || f.pxRef || f.grpRef || (rail === "data" ? bundle?.name : "")}
-                    </span>
-                  </div>
-                )}
-
-                {/* Payment Timing / Schedule Row */}
-                <div className="flex items-center justify-between px-3 py-2 w-full">
-                  <span className="text-[13.5px] text-muted-foreground">Payment Timing</span>
-                  <span className="text-[13.5px] font-normal text-foreground">
-                    {f.isScheduled
-                      ? `Scheduled · ${f.scheduleFrequency === "once" ? "One-off" : f.scheduleFrequency.charAt(0).toUpperCase() + f.scheduleFrequency.slice(1)} (${f.scheduleDate})`
-                      : "Immediate Transfer"}
-                  </span>
-                </div>
-
-                {/* Save Beneficiary Row */}
-                {f.saveBeneficiary && (
-                  <div className="flex items-center justify-between px-3 py-2 w-full">
-                    <span className="text-[13.5px] text-muted-foreground">Save Beneficiary</span>
-                    <span className="text-[13.5px] font-normal text-success-text flex items-center gap-2">
-                      <CheckCircle2 size={14} strokeWidth={1.9} className="shrink-0" />
-                      <span>Yes {f.beneficiaryNickname ? `(“${f.beneficiaryNickname}”)` : ""}</span>
-                    </span>
-                  </div>
-                )}
-
-                {/* Arrives Row */}
-                <div className="flex items-center justify-between px-3 py-2 w-full">
-                  <span className="text-[13.5px] text-muted-foreground">Arrives</span>
-                  <span className="text-[13.5px] font-normal text-foreground">
-                    {f.isScheduled ? `Executes on ${f.scheduleDate}` : deliverySpeed}
-                  </span>
-                </div>
-              </div>
-
-              {/* Divider Line */}
-              <div className="w-full border-t border-border/70 my-1" />
-
-              {/* Card 2: Amount & Fee Breakdown Container (Visible by default) */}
-              <div className="flex flex-col w-full rounded-2xl border border-border bg-card overflow-hidden shadow-xs divide-y divide-border/60">
-                <div className="flex items-center justify-between px-3 py-2 w-full">
-                  <span className="text-[13.5px] text-muted-foreground">Transfer Amount</span>
-                  <span className="text-[13.5px] font-normal text-foreground tabular">
-                    {formatMoney(currentAmount, isForeign ? f.wCurrency : "GHS", true)}
-                  </span>
-                </div>
-                {feeDetails.feeAmount > 0 && (
-                  <div className="flex items-center justify-between px-3 py-2 w-full">
-                    <span className="text-[13.5px] text-muted-foreground">
-                      Fee
-                      {rail === "swift" && f.wCharges === "recipient" ? " (taken from the amount)" : ""}
-                    </span>
-                    <span className="text-[13.5px] font-normal text-foreground tabular">
-                      {formatMoney(feeDetails.feeAmount, "GHS", true)}
-                    </span>
-                  </div>
-                )}
-                {isForeign && (
-                  <div className="flex items-center justify-between px-3 py-2 w-full">
-                    <span className="text-[13.5px] text-muted-foreground">Exchange Rate</span>
-                    <span className="text-[13.5px] font-normal text-foreground tabular">1 {f.wCurrency} = {rate} GHS</span>
-                  </div>
-                )}
-
-                {/* Total Row */}
-                <div className="flex items-center justify-between px-3 py-3 w-full bg-muted/40 dark:bg-muted/20">
-                  <span className="text-[13.5px] text-foreground font-normal">Total Debit</span>
-                  <span className="text-[26px] sm:text-[28px] font-semibold text-foreground tracking-[var(--ls-display)] tabular">
-                    {formatMoney(totalDebit, "GHS", true)}
-                  </span>
-                </div>
-              </div>
-            </div>
+            <ReviewSummary
+              details={[
+                {
+                  label: "From",
+                  value: rail === "wallet-to-bank" ? "MTN Mobile Money (∗∗∗3821)" : `${account?.name} (∗∗∗${account?.number.slice(-4)})`,
+                },
+                { label: "To", value: recipientDisplayName },
+                ...(reviewAccountValue ? [{ label: reviewAccountLabel, value: reviewAccountValue, tabular: true }] : []),
+                ...(reviewInstitutionValue ? [{ label: reviewInstitutionLabel, value: reviewInstitutionValue }] : []),
+                // Outside Ghana: the details they entered that the rows above don't cover
+                ...(rail === "swift"
+                  ? [
+                      ["Country", f.wCountry],
+                      [CODE_TYPE_LABELS[f.wMode] ?? "Bank code", f.wSwift],
+                      ["Bank address", f.wBankAddress],
+                      ["Beneficiary address", f.wBenAddress],
+                      ["Email", f.wBenEmail],
+                      ["Contact", f.wBenPhone],
+                      ["Charges", CHARGE_OPTIONS.find((c) => c.id === f.wCharges)?.label ?? ""],
+                    ]
+                      .filter(([, value]) => value)
+                      .map(([label, value]) => ({ label, value }))
+                  : []),
+                ...(((rail === "bank" && bankCategory === "other") || rail === "ach") && f.paymentMethod
+                  ? [{ label: "Payment Method", value: getPaymentMethodName(f.paymentMethod) }]
+                  : []),
+                ...(f.bankRef || f.wRef || f.pxRef || f.grpRef || (rail === "data" ? bundle?.name : "")
+                  ? [{ label: "Reference", value: f.bankRef || f.wRef || f.pxRef || f.grpRef || (rail === "data" ? bundle?.name : "") }]
+                  : []),
+                {
+                  label: "Payment Timing",
+                  value: f.isScheduled
+                    ? `Scheduled · ${f.scheduleFrequency === "once" ? "One-off" : f.scheduleFrequency.charAt(0).toUpperCase() + f.scheduleFrequency.slice(1)} (${f.scheduleDate})`
+                    : "Immediate Transfer",
+                },
+                ...(f.saveBeneficiary
+                  ? [
+                      {
+                        label: "Save Beneficiary",
+                        value: (
+                          <span className="inline-flex items-center gap-2 text-success-text">
+                            <CheckCircle2 size={14} strokeWidth={1.9} className="shrink-0" />
+                            <span>Yes {f.beneficiaryNickname ? `(“${f.beneficiaryNickname}”)` : ""}</span>
+                          </span>
+                        ),
+                      },
+                    ]
+                  : []),
+                { label: "Arrives", value: f.isScheduled ? `Executes on ${f.scheduleDate}` : deliverySpeed },
+              ]}
+              breakdown={[
+                { label: "Transfer Amount", value: formatMoney(currentAmount, isForeign ? f.wCurrency : "GHS", true), tabular: true },
+                ...(feeDetails.feeAmount > 0
+                  ? [
+                      {
+                        label: `Fee${rail === "swift" && f.wCharges === "recipient" ? " (taken from the amount)" : ""}`,
+                        value: formatMoney(feeDetails.feeAmount, "GHS", true),
+                        tabular: true,
+                      },
+                    ]
+                  : []),
+                ...(isForeign ? [{ label: "Exchange Rate", value: `1 ${f.wCurrency} = ${rate} GHS`, tabular: true }] : []),
+              ]}
+              total={formatMoney(totalDebit, "GHS", true)}
+            />
 
             {/* Disclaimer */}
             <p className="text-[12px] text-muted-foreground text-center px-3 -mt-1">

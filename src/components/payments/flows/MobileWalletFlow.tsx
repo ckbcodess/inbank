@@ -175,12 +175,13 @@ export function MobileWalletFlow({
                   options={NETWORKS}
                 />
 
+                {state.wNetwork && (
                 <SavedSuggestions provider={state.wNetwork} requireProvider query={nameQuery || state.wPhone} onPicked={() => setNameQuery("")}>
                 <PhoneInput
                   value={state.wPhone}
                   search={nameQuery}
                   onSearch={setNameQuery}
-                  placeholder="24 123 4567 or a saved name"
+                  placeholder="Enter new mobile number or saved beneficiary name"
                   onValueChange={(val) => {
                     onChange("wPhone", val);
                     const detected = detectTelcoNetwork(val);
@@ -195,6 +196,7 @@ export function MobileWalletFlow({
                   aria-label="Mobile number"
                 />
               </SavedSuggestions>
+                )}
               </>
             )}
 

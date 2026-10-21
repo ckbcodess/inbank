@@ -145,7 +145,7 @@ export function OtherGcbFlow({
                       }
                     }
                   }}
-                  placeholder="13-digit account or saved name"
+                  placeholder="Enter new account number or saved beneficiary name"
                   className="numorainput tabular"
                 />
               </SavedSuggestions>

@@ -420,7 +420,7 @@ export default function LinkSourceAccountModal({
                       hint: "Link your bank card to get started quickly and securely.",
                     },
                   ] as const).map((opt) => (
-                    <ActionTile key={opt.to} icon={opt.icon} title={opt.title} description={opt.hint} onClick={() => setScreen(opt.to)} />
+                    <ActionTile variant="modal" key={opt.to} icon={opt.icon} title={opt.title} description={opt.hint} onClick={() => setScreen(opt.to)} />
                   ))}
                 </div>
               </div>
@@ -432,7 +432,7 @@ export default function LinkSourceAccountModal({
                   { to: "link_new_momo", icon: Smartphone, title: "Mobile money wallet", hint: "MTN MoMo, Telecel Cash, AT Money, GhanaPay or G-Money" },
                   { to: "link_new_card", icon: CreditCard, title: "Bank card", hint: "Visa, Mastercard or UnionPay" },
                 ] as const).map((opt) => (
-                  <ActionTile key={opt.to} icon={opt.icon} title={opt.title} description={opt.hint} onClick={() => setScreen(opt.to)} />
+                  <ActionTile variant="modal" key={opt.to} icon={opt.icon} title={opt.title} description={opt.hint} onClick={() => setScreen(opt.to)} />
                 ))}
               </div>
             )}
@@ -442,14 +442,14 @@ export default function LinkSourceAccountModal({
                 <div className="flex flex-col gap-3 pt-1">
                   {/* Transfer between accounts: only with another account to move from */}
                   {canTransferBetween && (
-                    <ActionTile
+                    <ActionTile variant="modal"
                       icon={ArrowLeftRight}
                       title="Transfer between accounts"
                       description="Move money from your other GCB accounts instantly."
                       onClick={() => setScreen("internal_transfer")}
                     />
                   )}
-                  <ActionTile
+                  <ActionTile variant="modal"
                     icon={Wallet}
                     title="From linked mobile wallet or card"
                     description="Fund using your linked MTN MoMo, Telecel Cash, or Visa/Mastercard."

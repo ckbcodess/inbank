@@ -703,9 +703,10 @@ const payments: Entry[] = [
   ["Until I Cancel", "Jusqu’à ce que j’annule", "Hasta que la cancele", "直至我取消"],
   ["Save as Favourite Group?", "Enregistrer comme groupe favori ?", "¿Guardar como grupo favorito?", "保存为常用群组？"],
   ["What worked, and what didn't?", "Ce qui a bien marché, et ce qui ne va pas ?", "¿Qué funcionó y qué no?", "哪些做得好，哪些不好？"],
-  ["Account number or saved name", "Numéro de compte ou nom enregistré", "Número de cuenta o nombre guardado", "账号或已保存的名称"],
-  ["13-digit account or saved name", "Compte à 13 chiffres ou nom enregistré", "Cuenta de 13 dígitos o nombre guardado", "13 位账号或已保存的名称"],
+  ["Enter new account number or saved beneficiary name", "Saisissez le nouveau numéro de compte ou le nom d’un bénéficiaire enregistré", "Introduce el nuevo número de cuenta o el nombre de un beneficiario guardado", "输入新账号或已保存的收款人姓名"],
+  ["Enter new account number or saved beneficiary name", "Saisissez le nouveau numéro de compte ou le nom d’un bénéficiaire enregistré", "Introduce el nuevo número de cuenta o el nombre de un beneficiario guardado", "输入新账号或已保存的收款人姓名"],
   ["Ghana Card, phone or email", "Carte Ghana, téléphone ou e-mail", "Tarjeta Ghana, teléfono o correo", "加纳卡、电话或邮箱"],
+  ["Enter new mobile number or saved beneficiary name", "Saisissez le nouveau numéro mobile ou le nom d’un bénéficiaire enregistré", "Introduce el nuevo número móvil o el nombre de un beneficiario guardado", "输入新手机号或已保存的收款人姓名"],
 ];
 
 export default payments;

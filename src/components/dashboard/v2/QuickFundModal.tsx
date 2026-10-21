@@ -250,7 +250,7 @@ export function QuickFundFlow({
           {/* STAGE 0: SELECT PAYMENT METHOD */}
           {stage === "select" && (
             <div className="flex flex-col gap-3 pt-1">
-              <ActionTile
+              <ActionTile variant="modal"
                 icon={Smartphone}
                 title="Fund with Mobile Money Wallet"
                 onClick={() => {
@@ -259,7 +259,7 @@ export function QuickFundFlow({
                   setStage("form");
                 }}
               />
-              <ActionTile
+              <ActionTile variant="modal"
                 icon={CreditCard}
                 title="Fund with a Card"
                 onClick={() => {

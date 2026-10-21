@@ -42,6 +42,8 @@ import { findTransaction, formatMoney } from "@/lib/mock-data";
 import { roundMoney } from "@/lib/money";
 import { useSession } from "@/lib/session-store";
 
+import { ReviewSummary } from "@/components/ui/review-summary";
+
 type Step = "details" | "review" | "submitted";
 
 /** "Absa Bank Ghana" on a ledger line is "Absa Bank Ghana Limited" in the bank list. */
@@ -131,7 +133,6 @@ export default function SupplierPaymentFlow() {
       ["Supplier's bank", `${bank} · ${account}`],
       ["Sent by", `${methodOption.name} · ${methodOption.speed.toLowerCase()}`],
       ...(reference ? ([["Invoice or reference", reference]] as Array<[string, string]>) : []),
-      ["Fee", formatMoney(fee, "GHS", true)],
     ];
   }
 
@@ -217,26 +218,15 @@ export default function SupplierPaymentFlow() {
           backTo={{ href: "/business/payments/supplier", label: "Edit Payment", onClick: () => setStep("details") }}
         />
 
-        <section className="flex flex-col gap-2" aria-label="Amount">
-          <span className="text-[13px] text-muted-foreground">You are paying</span>
-          <span className="tabular text-[40px] font-normal leading-none tracking-[var(--ls-heading)] sm:text-[48px]">
-            {formatMoney(numAmount, "GHS", true)}
-          </span>
-          <span className="tabular text-[13px] text-muted-foreground">
-            {direct
-              ? `${formatMoney(total, "GHS", true)} leaves ${fromAccount.name}, fee included.`
-              : `${formatMoney(total, "GHS", true)} leaves ${fromAccount.name} once approved, fee included.`}
-          </span>
-        </section>
-
-        <dl className="flex flex-col divide-y divide-border">
-          {summaryRows().map(([label, value]) => (
-            <div key={label} className="flex items-start justify-between gap-4 py-3">
-              <dt className="shrink-0 text-[13px] text-muted-foreground">{label}</dt>
-              <dd className="min-w-0 text-right text-[14px] text-foreground tabular">{value}</dd>
-            </div>
-          ))}
-        </dl>
+        <ReviewSummary
+          details={summaryRows().map(([label, value]) => ({ label, value }))}
+          breakdown={[
+            { label: "Amount", value: formatMoney(numAmount, "GHS", true), tabular: true },
+            { label: "Fee", value: formatMoney(fee, "GHS", true), tabular: true },
+          ]}
+          total={formatMoney(total, "GHS", true)}
+          totalLabel={direct ? "Total Debit" : "Total Once Approved"}
+        />
 
         {!direct && (
           <p className="text-[13px] leading-relaxed text-muted-foreground">

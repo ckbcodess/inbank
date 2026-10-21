@@ -21,7 +21,8 @@ import { TrueEmptyState } from "@/components/states/ListStates";
 import TransactionOtpModal from "@/components/payments/TransactionOtpModal";
 import { PaymentSuccessScreen } from "@/components/payments/PaymentSuccessScreen";
 import { AmountInput, FromAccountSelector, InsufficientFundsAlert, ProceedButton } from "@/components/payments/flows/shared";
-import { AuthSummary, FactsPanel, INVEST_HOME } from "@/components/invest/parts";
+import { ReviewSummary } from "@/components/ui/review-summary";
+import { AuthSummary, INVEST_HOME } from "@/components/invest/parts";
 import { DepositInstructionField, OutcomeFailure, postDepositEntry } from "@/components/invest/term-deposit-parts";
 import { formatDate, formatMoney } from "@/lib/mock-data";
 import { sumMoney } from "@/lib/money";
@@ -153,24 +154,18 @@ export function NewDepositFlow() {
       <div className="flex flex-col gap-6">
         <PageHeader title="Review and Confirm" backTo={{ href: back.href, label: "New Term Deposit", onClick: () => setScreen("form") }} />
         <div className="mx-auto flex w-full max-w-[600px] flex-col gap-6">
-          <section className="flex flex-col gap-2 px-1">
-            <span className="text-[13px] text-muted-foreground">You deposit</span>
-            <span className="tabular text-[40px] leading-none tracking-[var(--ls-heading)] text-foreground">{money(num)}</span>
-            <span className="tabular text-[14px] text-muted-foreground">
-              {instruction === "rollover"
-                ? `and receive ${money(interest)} in interest on ${formatDate(maturity)}`
-                : `and get ${money(atMaturity)} back on ${formatDate(maturity)}`}
-            </span>
-          </section>
-          <FactsPanel
-            rows={[
+          <ReviewSummary
+            details={[
               ["From", from ? `${from.name} · ${from.number}` : ""],
               ["Deposit period", `${tenure} days`],
               ["Interest rate", `${rate}%`],
               ["Interest earned", money(interest)],
+              ...(instruction === "rollover" ? [] : [["You get back at maturity", money(atMaturity)]]),
               ["Matures", formatDate(maturity)],
               ["When it matures", depositInstructionLabel(instruction)],
-            ]}
+            ].map(([label, value]) => ({ label, value }))}
+            total={money(num)}
+            totalLabel="You deposit"
           />
           <div className="flex gap-2">
             <Button type="button" variant="outline" className="h-11 flex-1 rounded-2xl text-[15px]" onClick={() => setScreen("form")}>
