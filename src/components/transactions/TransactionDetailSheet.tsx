@@ -12,8 +12,11 @@ import {
 import { findAccount, type Transaction } from "@/lib/mock-data";
 import { getTransactionType } from "@/lib/transaction-type";
 import { receiptFields } from "@/lib/receipt-fields";
+import { useTransactionDetail } from "@/lib/transaction-detail";
+import { Bone } from "@/components/states/PageSkeletons";
 import { ShareReceiptDialog, type ReceiptFormat } from "./ShareReceiptDialog";
 import { cn } from "@/lib/utils";
+import { roundMoney } from "@/lib/money";
 
 interface TransactionDetailSheetProps {
   transaction: Transaction | null;
@@ -69,6 +72,10 @@ export function TransactionDetailSheet({
   }, [incoming]);
   const transaction = incoming ?? last;
 
+  // The row already knows the amount, who, when and the status; the rest comes from the detail call.
+  const { status: detailStatus, retry } = useTransactionDetail(transaction);
+  const detailReady = detailStatus === "ready";
+
   if (!transaction) return null;
 
   const account = findAccount(transaction.accountId);
@@ -91,8 +98,10 @@ export function TransactionDetailSheet({
     maximumFractionDigits: 2,
   })}`;
 
-  const feeAmount = typeof transaction.fee === "number" ? transaction.fee : 0;
-  const totalDebited = transaction.amount + feeAmount;
+  // A fee is shown only when one was recorded: a missing fee is unknown, not zero.
+  const feeKnown = typeof transaction.fee === "number";
+  const feeAmount = feeKnown ? transaction.fee! : 0;
+  const totalDebited = roundMoney(transaction.amount + feeAmount);
   const formattedFee = `${currencyCode} ${feeAmount.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -102,8 +111,8 @@ export function TransactionDetailSheet({
     maximumFractionDigits: 2,
   })}`;
 
-  const channelType = getTransactionType(transaction) || "Channel Type";
-  const dateTimeString = formatFullDate(transaction.date, transaction.time || "8:42 AM");
+  const channelType = getTransactionType(transaction);
+  const dateTimeString = formatFullDate(transaction.date, transaction.time);
 
   // The who-and-where rows follow the kind of transaction (bank transfer, mobile money, airtime, bill...)
   const detailFields = receiptFields(transaction);
@@ -111,12 +120,12 @@ export function TransactionDetailSheet({
   const fromLabel = isCredit ? "Credited To" : "From Account";
   const totalLabel = isCredit ? "Total Credited" : "Total Debited";
 
-  const fromAccountLabel = account
-    ? `${account.type} (***${account.number.slice(-4)})`
-    : "Savings Account (***1100)";
+  const fromAccountLabel = account ? `${account.type} (***${account.number.slice(-4)})` : "";
 
-  const narration = transaction.description || "For Bananas";
-  const categoryLabel = transaction.category || "Transport";
+  // Rows with nothing behind them are left out rather than filled with a stand-in.
+  const narration = transaction.description?.trim() ?? "";
+  const categoryLabel = !isCredit && transaction.category ? transaction.category : "";
+  const showBreakdown = feeKnown;
 
   const handleCopyRef = async () => {
     try {
@@ -146,23 +155,21 @@ export function TransactionDetailSheet({
       ...detailFields.map((f) => `${f.label}: ${f.value}`),
       `Status: ${statusLabel}`,
       `Transaction ID: ${transaction.reference}`,
-      `${fromLabel}: ${fromAccountLabel}`,
-      `Narration: ${narration}`,
-      `Category: ${categoryLabel}`,
+      ...(fromAccountLabel ? [`${fromLabel}: ${fromAccountLabel}`] : []),
+      ...(narration ? [`Narration: ${narration}`] : []),
+      ...(categoryLabel ? [`Category: ${categoryLabel}`] : []),
       ...(masked
         ? ["Amounts and fees are hidden on this receipt."]
-        : [
-            `Amount: ${formattedAmount}`,
-            `Fee: ${formattedFee}`,
-            `${totalLabel}: ${formattedTotal}`,
-          ]),
+        : showBreakdown
+          ? [`Amount: ${formattedAmount}`, `Fee: ${formattedFee}`, `${totalLabel}: ${formattedTotal}`]
+          : []),
     ];
     return lines.join("\n");
   };
 
   const saveReceiptPdf = (masked: boolean) => {
     const esc = (v: string) => v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    const amountRows: [string, string][] = masked
+    const amountRows: [string, string][] = masked || !showBreakdown
       ? []
       : [
           ["Amount", formattedAmount],
@@ -175,9 +182,9 @@ export function TransactionDetailSheet({
       ...detailFields.map((f): [string, string] => [f.label, f.value]),
       ["Status", statusLabel],
       ["Transaction ID", transaction.reference],
-      [fromLabel, fromAccountLabel],
-      ["Narration", narration],
-      ["Category", categoryLabel],
+      ...(fromAccountLabel ? [[fromLabel, fromAccountLabel] as [string, string]] : []),
+      ...(narration ? [["Narration", narration] as [string, string]] : []),
+      ...(categoryLabel ? [["Category", categoryLabel] as [string, string]] : []),
       ...amountRows,
     ];
 
@@ -272,7 +279,26 @@ export function TransactionDetailSheet({
 
               {/* ── Section 1: who and where, for this kind of transaction ── */}
               <div className="flex flex-col gap-3 py-5">
-                {detailFields.map((f, i) => (
+                {detailStatus === "loading" &&
+                  [0, 1, 2].map((i) => (
+                    <div key={i} className="flex items-center justify-between gap-3">
+                      <Bone className="h-4 w-16" />
+                      <Bone className="h-4 w-28" />
+                    </div>
+                  ))}
+                {detailStatus === "error" && (
+                  <div className="flex items-center justify-between gap-3 text-[13.5px]">
+                    <span className="text-muted-foreground">Couldn’t load the details of this payment.</span>
+                    <button
+                      type="button"
+                      onClick={retry}
+                      className="shrink-0 cursor-pointer font-medium text-foreground underline underline-offset-2"
+                    >
+                      Try again
+                    </button>
+                  </div>
+                )}
+                {detailReady && detailFields.map((f, i) => (
                   <div key={f.label} className="flex items-center justify-between gap-3 text-[13.5px]">
                     <span className="text-muted-foreground font-normal">{f.label}</span>
                     <span
@@ -307,70 +333,110 @@ export function TransactionDetailSheet({
 
                 <div className="flex items-center justify-between text-[13.5px]">
                   <span className="text-muted-foreground font-normal">Transaction ID</span>
-                  <button
-                    type="button"
-                    onClick={handleCopyRef}
-                    className="group flex items-center gap-2 text-foreground font-medium tabular cursor-pointer"
-                    title="Copy"
-                  >
-                    <span>{transaction.reference}</span>
-                    {copied ? (
-                      <Check size={13} strokeWidth={1.8} className="text-success-text" />
-                    ) : (
-                      <Copy
-                        size={13}
-                        strokeWidth={1.7}
-                        className="text-muted-foreground group-hover:text-foreground transition-colors"
-                      />
-                    )}
-                  </button>
+                  {detailReady ? (
+                    <button
+                      type="button"
+                      onClick={handleCopyRef}
+                      className="group flex items-center gap-2 text-foreground font-medium tabular cursor-pointer"
+                      title="Copy"
+                    >
+                      <span>{transaction.reference}</span>
+                      {copied ? (
+                        <Check size={13} strokeWidth={1.8} className="text-success-text" />
+                      ) : (
+                        <Copy
+                          size={13}
+                          strokeWidth={1.7}
+                          className="text-muted-foreground group-hover:text-foreground transition-colors"
+                        />
+                      )}
+                    </button>
+                  ) : (
+                    detailStatus === "loading" && <Bone className="h-4 w-28" />
+                  )}
                 </div>
 
-                <div className="flex items-center justify-between text-[13.5px]">
-                  <span className="text-muted-foreground font-normal">{fromLabel}</span>
-                  <span className="text-foreground font-medium text-right">
-                    {fromAccountLabel}
-                  </span>
-                </div>
+                {fromAccountLabel && (
+                  <div className="flex items-center justify-between text-[13.5px]">
+                    <span className="text-muted-foreground font-normal">{fromLabel}</span>
+                    <span className="text-foreground font-medium text-right">
+                      {fromAccountLabel}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* ── Section 3: Narration & Category ── */}
-              <div className="flex flex-col gap-3 relative py-5 before:absolute before:inset-x-0 before:top-0 before:h-px before:content-[''] before:bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]">
-                <div className="flex items-center justify-between text-[13.5px]">
-                  <span className="text-muted-foreground font-normal">Narration</span>
-                  <span className="text-foreground font-medium text-right truncate max-w-[200px]">
-                    {narration}
-                  </span>
+              {(detailStatus === "loading" || (detailReady && (narration || categoryLabel))) && (
+                <div className="flex flex-col gap-3 relative py-5 before:absolute before:inset-x-0 before:top-0 before:h-px before:content-[''] before:bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]">
+                  {detailStatus === "loading" ? (
+                    <>
+                      <div className="flex items-center justify-between gap-3">
+                        <Bone className="h-4 w-16" />
+                        <Bone className="h-4 w-32" />
+                      </div>
+                      <div className="flex items-center justify-between gap-3">
+                        <Bone className="h-4 w-16" />
+                        <Bone className="h-4 w-20" />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {narration && (
+                        <div className="flex items-center justify-between text-[13.5px]">
+                          <span className="text-muted-foreground font-normal">Narration</span>
+                          <span className="text-foreground font-medium text-right truncate max-w-[200px]">
+                            {narration}
+                          </span>
+                        </div>
+                      )}
+                      {categoryLabel && (
+                        <div className="flex items-center justify-between text-[13.5px]">
+                          <span className="text-muted-foreground font-normal">Category</span>
+                          <span className="text-foreground font-medium text-right">
+                            {categoryLabel}
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
-                <div className="flex items-center justify-between text-[13.5px]">
-                  <span className="text-muted-foreground font-normal">Category</span>
-                  <span className="text-foreground font-medium text-right">
-                    {categoryLabel}
-                  </span>
-                </div>
-              </div>
+              )}
 
-              {/* ── Section 4: Breakdown (Amount, Fee, Total Debited) ── */}
-              <div className="flex flex-col gap-3 relative py-5 before:absolute before:inset-x-0 before:top-0 before:h-px before:content-[''] before:bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]">
-                <div className="flex items-center justify-between text-[13.5px]">
-                  <span className="text-muted-foreground font-normal">Amount</span>
-                  <span className="text-foreground font-medium tabular text-right">
-                    {formattedAmount}
-                  </span>
+              {/* ── Section 4: Breakdown (Amount, Fee, Total Debited), once a fee is on record ── */}
+              {(detailStatus === "loading" || (detailReady && showBreakdown)) && (
+                <div className="flex flex-col gap-3 relative py-5 before:absolute before:inset-x-0 before:top-0 before:h-px before:content-[''] before:bg-[repeating-linear-gradient(to_right,var(--border)_0_6px,transparent_6px_16px)]">
+                  {detailStatus === "loading" ? (
+                    [0, 1, 2].map((i) => (
+                      <div key={i} className="flex items-center justify-between gap-3">
+                        <Bone className="h-4 w-16" />
+                        <Bone className="h-4 w-24" />
+                      </div>
+                    ))
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between text-[13.5px]">
+                        <span className="text-muted-foreground font-normal">Amount</span>
+                        <span className="text-foreground font-medium tabular text-right">
+                          {formattedAmount}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-[13.5px]">
+                        <span className="text-muted-foreground font-normal">Fee</span>
+                        <span className="text-foreground font-medium tabular text-right">
+                          {formattedFee}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-[13.5px]">
+                        <span className="text-muted-foreground font-normal">{totalLabel}</span>
+                        <span className="text-foreground font-medium tabular text-right">
+                          {formattedTotal}
+                        </span>
+                      </div>
+                    </>
+                  )}
                 </div>
-                <div className="flex items-center justify-between text-[13.5px]">
-                  <span className="text-muted-foreground font-normal">Fee</span>
-                  <span className="text-foreground font-medium tabular text-right">
-                    {formattedFee}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-[13.5px]">
-                  <span className="text-muted-foreground font-normal">{totalLabel}</span>
-                  <span className="text-foreground font-medium tabular text-right">
-                    {formattedTotal}
-                  </span>
-                </div>
-              </div>
+              )}
             </div>
           </div>
 
@@ -382,7 +448,8 @@ export function TransactionDetailSheet({
                 <button
                   type="button"
                   onClick={() => setShareFormat("text")}
-                  className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
+                  disabled={!detailReady}
+                  className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
                     <Share2 size={20} strokeWidth={2} />
@@ -396,7 +463,8 @@ export function TransactionDetailSheet({
                 <button
                   type="button"
                   onClick={() => setShareFormat("pdf")}
-                  className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
+                  disabled={!detailReady}
+                  className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
                     <FileDown size={20} strokeWidth={2} />
@@ -411,7 +479,8 @@ export function TransactionDetailSheet({
                   <button
                     type="button"
                     onClick={handleRepeat}
-                    className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1"
+                  disabled={!detailReady}
+                    className="group flex flex-col items-center gap-2 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl p-1 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <div className="size-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-xs transition-transform duration-fast active:scale-95 group-hover:brightness-95">
                       <RotateCw size={20} strokeWidth={2} />
@@ -422,6 +491,13 @@ export function TransactionDetailSheet({
                   </button>
                 )}
               </div>
+              {!detailReady && (
+                <p className="mt-3 text-center text-[12px] text-muted-foreground">
+                  {detailStatus === "loading"
+                    ? "Share, save and repeat are ready once the details load."
+                    : "Share, save and repeat need the details. Try loading them again."}
+                </p>
+              )}
             </div>
           </div>
         </SheetContent>

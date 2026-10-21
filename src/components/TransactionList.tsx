@@ -44,6 +44,13 @@ import {
   TrueEmptyState,
 } from "@/components/states/ListStates";
 import { LIST_STATE_LABEL, type ListState } from "@/lib/states";
+import type { DevStateGroup } from "@/components/providers/DevStateProvider";
+import {
+  hydrateTransactionDev,
+  setTransactionDev,
+  useTransactionDev,
+  type DetailMode,
+} from "@/lib/transaction-dev";
 import {
   findAccount,
   TRANSACTION_CATEGORIES,
@@ -203,6 +210,27 @@ export default function TransactionList({
   const pageSize = 10;
 
   const availableAccounts = accounts;
+
+  // Dev Mode menu: how the detail sheet behaves when the "get one transaction" call is slow or fails.
+  const dev = useTransactionDev();
+  useEffect(() => {
+    hydrateTransactionDev();
+  }, []);
+  const devGroups = useMemo<DevStateGroup[]>(
+    () => [
+      {
+        label: "Transaction detail",
+        states: [
+          { id: "instant", label: "Loads instantly" },
+          { id: "slow", label: "Loads slowly" },
+          { id: "fail", label: "Fails to load" },
+        ],
+        value: dev.detail,
+        onChange: (id) => setTransactionDev({ detail: id as DetailMode }),
+      },
+    ],
+    [dev.detail],
+  );
 
   const results = useMemo(() => {
     return transactions.filter((t) => {
@@ -547,6 +575,7 @@ export default function TransactionList({
           value={state}
           onChange={setState}
           labels={LIST_STATE_LABEL}
+          groups={devGroups}
         />
       )}
 

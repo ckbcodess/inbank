@@ -186,6 +186,10 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 ## Inbox
 
 ### 2026-10-21
+- Decision: the transaction sheet shows what the row knows at once and fills the rest through `useTransactionDetail` (lib/transaction-detail.ts), with a skeleton and a retry. In the prototype it only simulates the call; swap in `GET /transactions/:id`. Dev switches on the list (detail instant/slow/fail) live in lib/transaction-dev.ts. A 5,000-row stress switch was tried and removed; it held up in the browser.
+- Decision: the sheet leaves out rows with no data instead of inventing them (time, narration, category, account, fee). A missing fee is unknown, not zero, so the Amount / Fee / Total block shows only when `fee` is recorded.
+- Gap: no seeded transaction has a `fee`, so the breakdown block is hidden for all demo data. Seed fees from the fee table (one source per fact) or decide the sheet's rule.
+- Gap: for a real backend the list still filters, searches, pages and exports in the browser. It needs server-side search and filters, cursor paging (new items shift page numbers), a server total, server CSV, and exact amounts (minor units or strings). The open transaction should be an id in the URL, and receipts server-issued.
 
 - Override: input placeholders are 14px on touch too. `globals.css` forces inputs to 16px on `pointer: coarse` (stops iOS zoom); placeholders now opt out via `input::placeholder` at 14px. CONSTITUTION §5 says placeholders match the value's size; the designer asked for the smaller placeholder on mobile. If it should become permanent, propose the constitution change.
 - Decision: placeholders shortened to about 30 characters or fewer, keeping the example or the intent (for example "Search by name or number", "Card nickname"). New FR/ES/ZH rows added. Left as-is: the Sidi widget strings (no catalog rows at all, pre-existing gap).
