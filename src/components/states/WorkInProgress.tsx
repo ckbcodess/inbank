@@ -1,9 +1,10 @@
-import { Hammer } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
+import { AppLoader } from "@/components/ui/loader";
 
 /**
  * Placeholder for a surface that is not built yet. Honest and quiet — no
- * marketing, no fake progress bar. Just says where things stand.
+ * marketing, no fake progress bar. A spinner (the app's own loader) marks it as still being worked on, and the
+ * words say where things stand.
  */
 export function WorkInProgress({ title }: { title: string }) {
   return (
@@ -11,7 +12,7 @@ export function WorkInProgress({ title }: { title: string }) {
       <PageHeader title={title} />
       <div className="flex min-h-[52vh] flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-card px-5 py-12 text-center">
         <span className="flex size-10 items-center justify-center rounded-full bg-muted text-muted-foreground">
-          <Hammer size={20} strokeWidth={1.8} aria-hidden="true" />
+          <AppLoader size={22} />
         </span>
         <div className="flex flex-col gap-2">
           <h2 className="text-[18px] tracking-[var(--ls-tight)] text-foreground">Work in progress</h2>

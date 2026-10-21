@@ -199,7 +199,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - Gap: the add-beneficiary sheet and EditGroupModal grow as fields appear and now jump instead of holding one height; wrap their bodies in `SmoothHeight` if that feels abrupt.
 - Candidate pattern: URL-param modal (`?settings=…` with `history.replaceState`, no Back step, deep-linkable). Reuse for other large modals if one appears.
 - Gap: Settings step-up code is the demo `000000`, and "Change password" doesn't check the current password. Proxy Pay ID may belong in Receive money, not Profile. Business and admin have no Settings modal (admin header item still goes to `/settings`).
-- Gap: `/eaglesave` has no route; the nav entry is the only mention in `src`.
+- Decision: every Work in progress page shows the app's spinner (`AppLoader`) in the circle instead of the hammer. `/eaglesave` and `/help` now exist as Work in progress pages, so their nav items no longer 404. Still placeholders: Insure, Loans, Lifestyle, EagleSave, Help & Support.
 - Gap: Beneficiaries and Transactions are separate groups to the sidebar renderer, so the More Services header sits one group gap below them rather than inside the same block.
 
 ### 2026-10-20
@@ -975,7 +975,7 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - Decision: QR. The receiving account picker sits above the QR code. The hub's QR tile opens Scan & Pay (`mode=scan`), and the personal QR modal opens My QR (`mode=myqr`).
 - Decision: Telecel Broadband asks for its account number (was "User ID"). MTN TurboNet still asks for a paired mobile number, since that product is mobile-based.
 - Decision: sidebar reworked to Home, Accounts, Send & Pay, Cards, Insure, Invest, Loans, Beneficiaries, More Services (Lifestyle, EagleSave, FX Rates), Help & Support, My Profile (`lib/navigation.ts`).
-- Gap: `/help` and `/eaglesave` have no pages yet, so those two nav items will 404. My Profile points at `/settings`, and Sign Out isn't in the nav.
+- Gap (resolved 2026-10-21): `/help` and `/eaglesave` now have Work in progress pages, so they no longer 404. My Profile has since left the sidebar.
 - Gap: Help & Support's sub-items (Contact Us, FAQs, Report an Issue, Track Complaint) have no pages, and the nav has no dropdown for them.
 - Decision: Pay again repeats the last amount. Each payee's link carries `amount`, and `PaymentFlow` fills the rail's amount field (`REPEAT_AMOUNT_FIELD`), which stays editable. Mock amounts are invented per payee; they don't come from the transaction history, since the demo payees don't appear in it.
 - Gap: Pay again is payee-based, not a list of past transactions. Narration and the source account aren't carried over. If the designer meant the list to be past transactions, that's a rebuild.
