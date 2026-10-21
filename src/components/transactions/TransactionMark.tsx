@@ -68,7 +68,7 @@ const LOGO_RAILS = new Set(["bill", "qr", "card", "airtime", "data", "wallet-to-
 /**
  * The leading mark of a transaction row: one quiet circle, a hairline outline with a grey line icon for the kind of
  * payment (what it was). A company we have a logo for shows its logo instead, because that is recognition rather than
- * decoration. Money that came in gets a small grey arrow on the corner, a hairline disc with no colour; money out has
+ * decoration. Money that came in gets a small green badge on the corner with a white arrow; money out has
  * none (the minus sign on the amount already says it). The arrow sits over whatever the mark shows, a logo or an icon.
  */
 export function TransactionMark({
@@ -99,7 +99,9 @@ export function TransactionMark({
         <Image
           src={logo.src}
           alt=""
-          // Asked for at twice the drawn size, so phone screens (2x and 3x) get a sharp copy
+          // Drawn at 36px, and the files in /public/brands are already cut to 144px at most (a few KB each), so they are
+          // served as they are: going through the image optimizer cost a round trip and an encode for every new logo.
+          unoptimized
           width={72}
           height={72}
           className={logo.round ? "size-full rounded-full object-cover" : "size-5 object-contain"}
@@ -110,7 +112,7 @@ export function TransactionMark({
         <span
           role="img"
           aria-label="Money in"
-          className="absolute -bottom-1 -right-1 flex size-[17px] items-center justify-center rounded-full bg-card text-muted-foreground shadow-[0_0_0_2px_var(--card),0_0_0_3px_var(--border)]"
+          className="absolute -bottom-1 -right-1 flex size-[17px] items-center justify-center rounded-full bg-success text-card ring-2 ring-card"
         >
           <ArrowDownLeft size={10} strokeWidth={2.2} aria-hidden="true" />
         </span>
