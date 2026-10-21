@@ -216,7 +216,7 @@ function LoginForm() {
             size="lg"
             className="h-10 sm:h-10 w-full text-[14.5px]"
           >
-            {bankingType === "business" ? "New to Business Internet Banking? Register" : "New to Internet Banking? Register"}
+            Register
           </Button>
         </div>
       </form>

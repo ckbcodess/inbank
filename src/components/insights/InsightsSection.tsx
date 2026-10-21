@@ -14,6 +14,7 @@
  * grain that reads cleanest leads.
  */
 
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useMemo, useState } from "react";
 import { PieChart, TrendingDown, TrendingUp } from "lucide-react";
 import {
@@ -60,30 +61,10 @@ const GRAINS: readonly Grain[] = ["daily", "weekly", "monthly"] as const;
 /** Sentinel for "no account filter" — Select needs a non-empty value. */
 const ALL_ACCOUNTS = "all";
 
+const GRAIN_OPTIONS = GRAINS.map((grain) => ({ value: grain, label: GRAIN_LABEL[grain] }));
+
 function GrainSwitch({ value, onChange }: { value: Grain; onChange: (next: Grain) => void }) {
-  return (
-    <div
-      role="group"
-      aria-label="Period"
-      className="inline-flex w-fit flex-wrap rounded-xl bg-chip p-1"
-    >
-      {GRAINS.map((grain) => (
-        <button
-          key={grain}
-          type="button"
-          onClick={() => onChange(grain)}
-          aria-pressed={value === grain}
-          className={`flex items-center gap-2 rounded-lg px-3 py-2 text-[13px] transition cursor-pointer ${
-            value === grain
-              ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
-              : "text-chip-foreground hover:text-chip-selected-foreground"
-          }`}
-        >
-          {GRAIN_LABEL[grain]}
-        </button>
-      ))}
-    </div>
-  );
+  return <SegmentedControl aria-label="Period" options={GRAIN_OPTIONS} value={value} onChange={onChange} />;
 }
 
 /** Money-in / money-out readouts that double as the cash-flow chart's legend. */

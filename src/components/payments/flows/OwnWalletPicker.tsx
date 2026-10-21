@@ -13,7 +13,7 @@
  */
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { AlertCircle, BadgeCheck, Link2, Plus } from "lucide-react";
+import { AlertCircle, Link2, Plus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import type { Account } from "@/lib/mock-data";
 import { useLinkedSources } from "@/lib/accounts-store";
@@ -33,12 +33,24 @@ export interface OwnWallet {
   tag: "Registered" | "Linked";
 }
 
-/** Where an own number comes from, as an icon: the number registered with the bank, or one the customer linked. */
+/**
+ * Where an own number comes from, as an icon: the number registered with the bank wears a solid amber badge with a
+ * check (no outline), one the customer linked wears a quiet link icon.
+ */
 export function WalletTag({ tag }: { tag: OwnWallet["tag"] }) {
-  const Icon = tag === "Registered" ? BadgeCheck : Link2;
   return (
-    <span role="img" aria-label={tag} title={tag} className="inline-flex shrink-0 items-center text-muted-foreground">
-      <Icon size={14} strokeWidth={1.8} aria-hidden="true" />
+    <span role="img" aria-label={tag} title={tag} className="inline-flex shrink-0 items-center">
+      {tag === "Registered" ? (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path
+            d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"
+            fill="var(--primary)"
+          />
+          <path d="m9 12 2 2 4-4" stroke="var(--primary-foreground)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : (
+        <Link2 size={14} strokeWidth={1.8} aria-hidden="true" className="text-muted-foreground" />
+      )}
     </span>
   );
 }

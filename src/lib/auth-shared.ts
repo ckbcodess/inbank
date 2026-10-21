@@ -108,9 +108,9 @@ export function hasConsecutiveDigits(pin: string): boolean {
   return false;
 }
 
+/** Three of the same digit in a row (1112, 4443). A PIN like 1212 or 1231 is fine. */
 export function hasRepeatingDigits(pin: string): boolean {
-  if (pin.length < 2) return false;
-  return new Set(pin).size < pin.length;
+  return /(\d)\1{2}/.test(pin);
 }
 
 export function pinMeetsRules(pin: string): boolean {

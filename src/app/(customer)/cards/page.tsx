@@ -73,6 +73,7 @@ import {
 } from "@/lib/cards-dev-store";
 
 import { Field } from "@/components/ui/field";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 const SIMULATION_STATES: readonly CardSimulationPreset[] = [
   "clean",
   "out_for_delivery",
@@ -94,6 +95,14 @@ const LIST_STATES: readonly ListState[] = [
 ] as const;
 
 /** Dev Mode's layout pick survives a reload (per browser, a reviewing convenience). */
+type CardTypeFilter = "all" | "Virtual" | "Debit" | "Prepaid";
+const CARD_TYPE_FILTERS: readonly { value: CardTypeFilter; label: string }[] = [
+  { value: "all", label: "All Cards" },
+  { value: "Virtual", label: "Virtual" },
+  { value: "Debit", label: "Debit" },
+  { value: "Prepaid", label: "Prepaid" },
+];
+
 function readLayout(): CardsLayout {
   try {
     const stored =
@@ -149,9 +158,7 @@ function CardsPageContent() {
   const [isSingleUse, setIsSingleUse] = useState(false);
 
   // Filter state
-  const [typeFilter, setTypeFilter] = useState<
-    "all" | "Virtual" | "Debit" | "Prepaid"
-  >("all");
+  const [typeFilter, setTypeFilter] = useState<CardTypeFilter>("all");
 
   // Trigger state refresh on creation
   const [refreshCount, setRefreshCount] = useState(0);
@@ -394,28 +401,12 @@ function CardsPageContent() {
         </div>
       )}
 
-      {/* Segmented control filter (styled like the Payments page) */}
-      <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-chip p-1">
-        {(["all", "Virtual", "Debit", "Prepaid"] as const).map((t) => {
-          const isActive = typeFilter === t;
-          const label = t === "all" ? "All Cards" : t;
-          return (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTypeFilter(t)}
-              aria-pressed={isActive}
-              className={`flex shrink-0 items-center gap-2 rounded-lg px-2 py-2 sm:px-3 sm:py-2 text-[12.5px] sm:text-[13px] whitespace-nowrap transition cursor-pointer ${
-                isActive
-                  ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
-                  : "text-chip-foreground hover:text-chip-selected-foreground"
-              }`}
-            >
-              {label}
-            </button>
-          );
-        })}
-      </div>
+      <SegmentedControl
+        aria-label="Card type"
+        options={CARD_TYPE_FILTERS}
+        value={typeFilter}
+        onChange={setTypeFilter}
+      />
 
       {effective === "loading" && (
         <CardsSkeleton />

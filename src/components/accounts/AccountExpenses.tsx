@@ -14,6 +14,7 @@
  * money into savings is never shown as an expense.
  */
 
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useMemo, useState } from "react";
 import { Calendar, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -242,28 +243,10 @@ export function AccountExpensesView({
   );
 }
 
+const VIEW_OPTIONS = (["category", "type"] as const).map((v) => ({ value: v, label: VIEW_LABEL[v] }));
+
 function ViewTabs({ value, onChange }: { value: ExpenseView; onChange: (v: ExpenseView) => void }) {
-  return (
-    <div className="flex items-center rounded-xl bg-chip p-1" role="group" aria-label="Group expenses by">
-      {(["category", "type"] as const).map((v) => {
-        const isActive = value === v;
-        return (
-          <button
-            key={v}
-            type="button"
-            aria-pressed={isActive}
-            onClick={() => onChange(v)}
-            className={cn(
-              "whitespace-nowrap rounded-lg px-3 py-2 text-[13px] transition-colors cursor-pointer",
-              isActive ? "bg-chip-selected text-chip-selected-foreground shadow-xs" : "text-chip-foreground hover:text-chip-selected-foreground",
-            )}
-          >
-            {VIEW_LABEL[v]}
-          </button>
-        );
-      })}
-    </div>
-  );
+  return <SegmentedControl aria-label="Group expenses by" options={VIEW_OPTIONS} value={value} onChange={onChange} />;
 }
 
 function PeriodMenu({ value, onChange }: { value: ExpensePeriod; onChange: (p: ExpensePeriod) => void }) {

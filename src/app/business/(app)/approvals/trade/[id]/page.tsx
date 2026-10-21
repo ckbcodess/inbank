@@ -18,6 +18,7 @@
  *   decision-submitted        — transient
  */
 
+import { Fact } from "@/components/ui/fact";
 import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -416,11 +417,3 @@ export default function TradeApprovalDetailsPage({ params }: { params: Promise<{
   );
 }
 
-function Fact({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
-  return (
-    <div>
-      <dt className="text-[12px] text-muted-foreground">{label}</dt>
-      <dd className={`mt-0.5 text-[13px] text-foreground ${mono ? "tabular" : ""}`}>{value}</dd>
-    </div>
-  );
-}

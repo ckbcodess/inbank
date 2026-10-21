@@ -14,7 +14,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CashoutTicketArrival } from "./CashoutTicketArrival";
-import { GcbEagleEmblem, playDelightChime } from "./PaymentSuccessScreen";
+import { playDelightChime } from "./PaymentSuccessScreen";
+import { GcbEagleEmblem } from "@/components/brand/GcbEagleEmblem";
 
 /** How far above its final place the title waits during the eagle moment: just under the eagle, in the ticket's space (px). */
 const TITLE_LIFT = -150;

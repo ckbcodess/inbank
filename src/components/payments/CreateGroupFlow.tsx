@@ -23,6 +23,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
@@ -58,6 +59,10 @@ const DEFAULT_FALLBACK_CONTACTS: GroupMember[] = [
   { id: "c-7", name: "Current Account", destination: "2329938299", type: "bank", networkOrBank: "GCB Bank", defaultAmount: 200 },
 ];
 
+const SPLIT_OPTIONS = [
+  { value: "equal", label: "Equal Split" },
+  { value: "custom", label: "Custom Amounts" },
+] as const;
 const WALLET_NETWORKS = ["MTN Mobile Money", "Telecel Cash", "AT Money", "GhanaPay", "G-Money"];
 
 export default function CreateGroupFlow({
@@ -558,33 +563,13 @@ export default function CreateGroupFlow({
       {/* ────────────────────────────────────────────────────────────────────────── */}
       {step === 2 && (
         <div className="flex flex-col gap-5">
-          {/* Segmented Tab Pill: [ Equal Split | Custom Amounts ] */}
-          <div className="rounded-2xl bg-chip p-1 border border-border/80 flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => setSplitType("equal")}
-              className={cn(
-                "flex-1 py-2 px-3 text-center rounded-xl text-[13.5px] font-medium transition cursor-pointer",
-                splitType === "equal"
-                  ? "bg-chip-selected text-chip-selected-foreground shadow-xs border border-border/60"
-                  : "text-chip-foreground hover:text-chip-selected-foreground"
-              )}
-            >
-              Equal Split
-            </button>
-            <button
-              type="button"
-              onClick={() => setSplitType("custom")}
-              className={cn(
-                "flex-1 py-2 px-3 text-center rounded-xl text-[13.5px] font-medium transition cursor-pointer",
-                splitType === "custom"
-                  ? "bg-chip-selected text-chip-selected-foreground shadow-xs border border-border/60"
-                  : "text-chip-foreground hover:text-chip-selected-foreground"
-              )}
-            >
-              Custom Amounts
-            </button>
-          </div>
+          <SegmentedControl
+            aria-label="How to split"
+            fullWidth
+            options={SPLIT_OPTIONS}
+            value={splitType}
+            onChange={setSplitType}
+          />
 
           {/* Equal Split Input using the payment flow's AmountInput */}
           {splitType === "equal" ? (

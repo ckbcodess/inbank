@@ -9,6 +9,7 @@
  *   - Pay: 4 cards (Bills, Internet, Airtime, Card Top up)
  */
 
+import { SectionHeading } from "@/components/ui/section-heading";
 import Link from "next/link";
 import PageHeader from "@/components/layout/PageHeader";
 import { useMemo } from "react";
@@ -192,9 +193,7 @@ function ActionSection({
 }) {
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex min-h-7 items-center px-1">
-        <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">{title}</h2>
-      </div>
+      <SectionHeading title={title} />
       <div className="grid grid-cols-2 gap-2 sm:gap-3">
         {actions.map((action) => (
           <ActionTile key={action.id} href={action.href} icon={LOOKS.get(action.id)?.[look] ?? action.icon} title={action.title} compactOnMobile bareIcon />

@@ -300,7 +300,7 @@
   /* Hub tile icon (INTERFACE §E): amber-500 on light. */
   --tile-accent: var(--amber-500);
   /* Account Details balance card (Figma 1896:15407) — slate tint over the page. */
-  --account-card: color-mix(in srgb, var(--smoke-600) 21.2%, transparent);
+  --account-card: color-mix(in srgb, var(--smoke-600) 7.8%, transparent);
   --popover: var(--menu);
   /* GCB Bank PLC brand amber: #FFC423 */
   --primary: var(--amber-400);
@@ -431,6 +431,13 @@
   --success: var(--green-600);
   --warning: var(--amber-500);
   --border: var(--gray-200);
+  /* The gradient stroke of the list box (ListCard): catches light at the top-left, fades, then picks up again at the corner. */
+  --edge-glass-angle: 169deg;
+  --edge-glass-mid-at: 18%;
+  --edge-glass-width: 0.5px;
+  --edge-glass-start: var(--white);
+  --edge-glass-mid: var(--gray-100);
+  --edge-glass-end: color-mix(in srgb, var(--gray-200) 67%, transparent);
   --ring: var(--gray-300);
   /* Secondary chart palette (complementary warm hue) */
   /*
@@ -652,6 +659,9 @@
   --success: var(--green-500);
   --warning: var(--amber-500);
   --border: var(--gray-800);
+  --edge-glass-start: color-mix(in srgb, var(--white) 12%, transparent);
+  --edge-glass-mid: color-mix(in srgb, var(--white) 5%, transparent);
+  --edge-glass-end: color-mix(in srgb, var(--white) 6%, transparent);
   --ring: var(--amber-400);
   /* Same eight hue families, re-stepped for the dark surface — a selected dark
      palette, not an automatic flip. All five clear 3:1 on #171717. */
@@ -891,8 +901,8 @@ a,
    the card's lower edge melts into the sidebar and backdrop instead of ending on a near-miss colour. The floating
    top bar and the phone bottom bar use the top colour, so they always match the card. */
 :root {
-  --shell-top: var(--white);
-  --shell-bottom: var(--white);
+  --shell-top: color-mix(in srgb, var(--gray-50) 20%, var(--white));
+  --shell-bottom: color-mix(in srgb, var(--gray-50) 20%, var(--white));
   /* The backdrop behind the card: the sidebar and the margin around the card are one continuous gradient. */
   --shell-surface-top: var(--surface);
   --shell-surface-bottom: var(--surface);

@@ -10,6 +10,7 @@
  * A row opens its details. Looking never starts anything.
  */
 
+import { ListCard } from "@/components/ui/list-card";
 import { Clock } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import { TrueEmptyState } from "@/components/states/ListStates";
@@ -31,11 +32,11 @@ function Group({ title, line, offers }: { title?: string; line?: string; offers:
           {line && <p className="text-[13px] text-muted-foreground">{line}</p>}
         </div>
       )}
-      <ul className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">
+      <ListCard>
         {offers.map((o) => (
           <OfferRow key={o.key} offer={o} showAmounts={showAmounts} />
         ))}
-      </ul>
+      </ListCard>
     </section>
   );
 }

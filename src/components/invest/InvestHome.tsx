@@ -12,6 +12,8 @@
  * option's details say so before they do.
  */
 
+import { SectionHeading } from "@/components/ui/section-heading";
+import { ListCard } from "@/components/ui/list-card";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -177,11 +179,8 @@ export function InvestHome() {
   function section(title: string, children: React.ReactNode, action?: React.ReactNode) {
     return (
       <section className="flex flex-col gap-3">
-        <div className="flex min-h-7 items-center justify-between gap-3 px-1">
-          <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">{title}</h2>
-          {action}
-        </div>
-        <ul className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">{children}</ul>
+        <SectionHeading title={title} action={action} />
+        <ListCard>{children}</ListCard>
       </section>
     );
   }
@@ -191,17 +190,13 @@ export function InvestHome() {
       return (
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-3">
-            <div className="flex min-h-7 items-center px-1">
-              <span className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">Term Deposits</span>
-            </div>
+            <SectionHeading title="Term Deposits" />
             <div className="rounded-2xl border border-border bg-card p-1">
               <InvestRowBones rows={2} />
             </div>
           </div>
           <div className="flex flex-col gap-3">
-            <div className="flex min-h-7 items-center px-1">
-              <span className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">Treasury Bills &amp; Bonds</span>
-            </div>
+            <SectionHeading title="Treasury Bills & Bonds" />
             <div className="rounded-2xl border border-border bg-card p-1">
               <InvestRowBones rows={2} />
             </div>

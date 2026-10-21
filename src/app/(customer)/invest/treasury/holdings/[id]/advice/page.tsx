@@ -6,6 +6,8 @@
  * bills have one payment, at maturity.
  */
 
+import { SectionHeading } from "@/components/ui/section-heading";
+import { ListCard } from "@/components/ui/list-card";
 import { useParams } from "next/navigation";
 import PageHeader from "@/components/layout/PageHeader";
 import { Badge } from "@/components/ui/badge";
@@ -73,10 +75,8 @@ export default function HoldingAdvicePage() {
         <FactsPanel rows={rows} />
 
         <section className="flex flex-col gap-3">
-          <div className="flex min-h-7 items-center px-1">
-            <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">What it pays</h2>
-          </div>
-          <ul className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2 text-[14px]">
+          <SectionHeading title="What it pays" />
+          <ListCard className="text-[14px]">
             {coupons.map((d, i) => (
               <li key={d} className="flex items-center justify-between gap-5 rounded-xl px-2 py-3">
                 <span className="flex items-center gap-2 text-foreground">
@@ -90,7 +90,7 @@ export default function HoldingAdvicePage() {
               <span className="tabular text-foreground">{formatDate(h.maturity)}</span>
               <span className="tabular text-foreground">{money(h.kind === "bond" ? sumMoney([h.face, coupon]) : h.face)}</span>
             </li>
-          </ul>
+          </ListCard>
           <p className="px-1 text-[12px] text-muted-foreground">
             {h.kind === "bond"
               ? "The last payment is the face value plus the final interest payment."

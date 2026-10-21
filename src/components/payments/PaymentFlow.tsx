@@ -11,15 +11,15 @@
  *   Receipt: Full transaction receipt with Share, Repeat, and Done actions.
  */
 
+import { HorizontalScrollStrip } from "@/components/ui/horizontal-scroll-strip";
 import { GCBLogo } from "@/components/ui/GCBLogo";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useScheduleHandoff } from "@/lib/schedule-handoff";
 import {
   ArrowLeftRight,
   CheckCircle2,
   ChevronLeft,
-  ChevronRight,
   CreditCard,
   Globe,
   Landmark,
@@ -755,91 +755,6 @@ type ReceiptData = {
 };
 
 
-function HorizontalScrollStrip({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-
-  const checkScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const { scrollLeft, scrollWidth, clientWidth } = el;
-    setCanScrollLeft(scrollLeft > 6);
-    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 6);
-  }, []);
-
-  useEffect(() => {
-    checkScroll();
-    const el = scrollRef.current;
-    if (!el) return;
-
-    const observer = new ResizeObserver(() => checkScroll());
-    observer.observe(el);
-
-    window.addEventListener("resize", checkScroll);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", checkScroll);
-    };
-  }, [checkScroll]);
-
-  const scroll = (direction: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const scrollAmount = Math.max(180, el.clientWidth * 0.65);
-    el.scrollBy({
-      left: direction === "right" ? scrollAmount : -scrollAmount,
-      behavior: "smooth",
-    });
-  };
-
-  return (
-    <div className={`relative w-full ${className}`}>
-      {/* Contextual Left Chevron with gradient mask */}
-      {canScrollLeft && (
-        <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center pr-4 pl-0 bg-gradient-to-r from-card via-card/70 to-transparent dark:via-card/40 pointer-events-none animate-in fade-in duration-200">
-          <button
-            type="button"
-            onClick={() => scroll("left")}
-            className="pointer-events-auto flex size-7 items-center justify-center rounded-full border border-border/80 bg-card/90 text-foreground shadow-sm backdrop-blur-md transition active:scale-95 cursor-pointer -ml-1"
-            aria-label="Scroll left"
-          >
-            <ChevronLeft size={16} strokeWidth={2.2} />
-          </button>
-        </div>
-      )}
-
-      {/* Horizontally scrollable track */}
-      <div
-        ref={scrollRef}
-        onScroll={checkScroll}
-        className="flex items-center gap-4 overflow-x-auto pb-2 scrollbar-none scroll-smooth"
-      >
-        {children}
-      </div>
-
-      {/* Contextual Right Smart Chevron with gradient mask */}
-      {canScrollRight && (
-        <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center pl-5 pr-0 bg-gradient-to-l from-card via-card/70 to-transparent dark:via-card/40 pointer-events-none animate-in fade-in duration-200">
-          <button
-            type="button"
-            onClick={() => scroll("right")}
-            className="pointer-events-auto flex size-7 items-center justify-center rounded-full border border-border/80 bg-card/90 text-foreground shadow-sm backdrop-blur-md transition active:scale-95 cursor-pointer -mr-1"
-            aria-label="Scroll right"
-          >
-            <ChevronRight size={16} strokeWidth={2.2} />
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
 
 const ACTIVE_CASHOUT_CODES = [
   { code: "782-419", who: "Myself", amount: 200, expires: "Expires in 18 hrs", phone: "0241234567" },

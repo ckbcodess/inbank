@@ -11,6 +11,9 @@
  * 5. Clean, uncluttered Add Beneficiary modal with progressive disclosure.
  */
 
+import { SearchField } from "@/components/ui/search-field";
+import { ListCard } from "@/components/ui/list-card";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { PayeeAvatar } from "@/components/ui/payee-avatar";
@@ -20,13 +23,11 @@ import {
   Landmark,
   Pencil,
   Plus,
-  Search,
   Send,
   Smartphone,
   Trash2,
   User,
   Wallet,
-  X,
 } from "lucide-react";
 import { CediReceiptIcon } from "@/components/ui/cedi-receipt-icon";
 import { Button } from "@/components/ui/button";
@@ -749,64 +750,29 @@ export default function BeneficiariesPage() {
 
       {/* Two tabs: Beneficiaries and Groups */}
       <div className="flex items-center justify-between">
-        <div className="inline-flex w-fit max-w-full items-center overflow-x-auto no-scrollbar flex-nowrap rounded-xl bg-chip p-1">
-          {(
-            [
-              { id: "people", label: "Beneficiaries", count: beneficiaries.length },
-              { id: "groups", label: "Groups", count: groups.length },
-            ] as const
-          ).map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => {
-                setActiveTab(t.id);
-                setTypeFilter("all");
-                setQuery("");
-              }}
-              aria-pressed={activeTab === t.id}
-              className={`flex shrink-0 whitespace-nowrap items-center gap-2 rounded-lg px-3 py-2 text-[13px] transition cursor-pointer ${
-                activeTab === t.id
-                  ? "bg-chip-selected text-chip-selected-foreground shadow-sm font-medium"
-                  : "text-chip-foreground hover:text-chip-selected-foreground"
-              }`}
-            >
-              <span>{t.label}</span>
-              <span className="text-[11px] text-muted-foreground font-normal tabular">{t.count}</span>
-            </button>
-          ))}
-        </div>
+        <SegmentedControl
+          aria-label="Beneficiaries or groups"
+          options={[
+            { value: "people", label: "Beneficiaries", count: beneficiaries.length },
+            { value: "groups", label: "Groups", count: groups.length },
+          ]}
+          value={activeTab}
+          onChange={(tab) => {
+            setActiveTab(tab);
+            setTypeFilter("all");
+            setQuery("");
+          }}
+        />
       </div>
 
       {/* Search, with one type dropdown beside it */}
       <div className="flex w-full items-center gap-2">
-        <div className="relative flex-1">
-          <Search
-            size={18}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-          />
-          <Input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={
-              activeTab === "people"
-                ? "Search by name or number"
-                : "Search by group or member"
-            }
-            className="pl-10 pr-10"
-          />
-          {query && (
-            <button
-              type="button"
-              onClick={() => setQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 cursor-pointer"
-              aria-label="Clear search query"
-            >
-              <X size={15} />
-            </button>
-          )}
-        </div>
+        <SearchField
+          value={query}
+          onChange={setQuery}
+          placeholder={activeTab === "people" ? "Search by name or number" : "Search by group or member"}
+          clearLabel="Clear search query"
+        />
 
         {activeTab === "people" && kindsPresent.length > 1 && (
           <Select value={typeFilter} onValueChange={(v) => v && setTypeFilter(v as TypeFilter)}>
@@ -854,9 +820,7 @@ export default function BeneficiariesPage() {
             />
           )
         ) : (
-          <div className="rounded-2xl border border-border bg-card">
-            <ul className="flex flex-col gap-0.5 p-2">{filteredList.map(renderBeneficiaryRow)}</ul>
-          </div>
+          <ListCard>{filteredList.map(renderBeneficiaryRow)}</ListCard>
         ))}
 
       {/* PAYMENT GROUPS LIST */}
@@ -880,9 +844,7 @@ export default function BeneficiariesPage() {
             />
           )
         ) : (
-          <div className="rounded-2xl border border-border bg-card">
-            <ul className="flex flex-col gap-0.5 p-2">{filteredGroups.map(renderGroupRow)}</ul>
-          </div>
+          <ListCard>{filteredGroups.map(renderGroupRow)}</ListCard>
         ))}
 
       {/* ── Progressive Add / Edit Beneficiary Sheet ── */}

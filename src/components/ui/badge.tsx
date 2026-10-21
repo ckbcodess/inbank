@@ -20,8 +20,8 @@ const badgeVariants = cva(
           "bg-pill-warning text-pill-warning-text",
         info:
           "bg-pill-info text-pill-info-text",
-        /* Neutral pill for facts about the customer's own setup (such as the default account), not a status. */
-        brand: "bg-pill-neutral text-pill-neutral-text",
+        /* Amber pill for facts about the customer's own setup (such as the default account), not a status. */
+        brand: "bg-primary text-primary-foreground",
         outline:
           "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
         ghost:

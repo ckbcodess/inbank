@@ -5,6 +5,8 @@
  * orders as quiet rows. Each row opens that order's own page, where pause and cancel live.
  */
 
+import { SectionHeading } from "@/components/ui/section-heading";
+import { ListCard } from "@/components/ui/list-card";
 import Link from "next/link";
 import { ChevronRight, Plus, Repeat } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -101,19 +103,15 @@ export default function BusinessStandingOrdersPage() {
 
           {active.length > 0 && (
             <section className="flex flex-col gap-3">
-              <div className="flex min-h-7 items-center px-1">
-                <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">Coming up</h2>
-              </div>
-              <ul className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">{active.map(renderRow)}</ul>
+              <SectionHeading title="Coming up" />
+              <ListCard>{active.map(renderRow)}</ListCard>
             </section>
           )}
 
           {paused.length > 0 && (
             <section className="flex flex-col gap-3">
-              <div className="flex min-h-7 items-center px-1">
-                <h2 className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">Paused</h2>
-              </div>
-              <ul className="flex flex-col gap-0.5 rounded-2xl border border-border bg-card p-2">{paused.map(renderRow)}</ul>
+              <SectionHeading title="Paused" />
+              <ListCard>{paused.map(renderRow)}</ListCard>
             </section>
           )}
         </>

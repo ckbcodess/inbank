@@ -2,6 +2,7 @@
 
 /** List — the original rows: thumbnail, name, status, chevron. */
 
+import { ListCard } from "@/components/ui/list-card";
 import { useState } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
@@ -14,8 +15,7 @@ export function CardsList({ cards }: CardsLayoutProps) {
   const [navigatingId, setNavigatingId] = useState<string | null>(null);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-card">
-      <ul className="flex flex-col gap-0.5 p-2">
+    <ListCard>
         {cards.map((card) => {
           const isNavigating = navigatingId === card.id;
           return (
@@ -53,7 +53,6 @@ export function CardsList({ cards }: CardsLayoutProps) {
             </li>
           );
         })}
-      </ul>
-    </div>
+      </ListCard>
   );
 }

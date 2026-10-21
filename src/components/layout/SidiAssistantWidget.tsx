@@ -164,7 +164,7 @@ export function SidiAssistantWidget() {
   return (
     <>
       {/* Floating launcher: the avatar, which opens into a pill with its name on hover or focus. */}
-      <div data-intro={intro} className="group/fab fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-3.5 z-40 select-none sm:right-5">
+      <div data-intro={intro} className="group/fab fixed bottom-[calc(7rem+env(safe-area-inset-bottom))] md:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] right-3.5 z-40 select-none sm:right-5">
         {/* A golden glow circling the edge while hovered: a soft blurred halo behind a thin sharp ring. Not on the close button. */}
         {!open && (
           <span
@@ -233,10 +233,10 @@ export function SidiAssistantWidget() {
             exit={{ opacity: 0, y: 8, scale: 0.97, transition: { duration: DURATION.hover, ease: EASE.settle } }}
             transition={SPRING.settle}
             className={cn(
-              "fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] right-3.5 z-50 flex flex-col overflow-hidden rounded-2xl border border-border bg-modal text-left shadow-2xl transition-[width,height] duration-reveal ease-settle sm:right-5",
+              "fixed bottom-[calc(11.5rem+env(safe-area-inset-bottom))] md:bottom-[calc(5.5rem+env(safe-area-inset-bottom))] right-3.5 z-50 flex flex-col overflow-hidden rounded-2xl border border-border bg-modal text-left shadow-2xl transition-[width,height] duration-reveal ease-settle sm:right-5",
               isExpanded
-                ? "h-[720px] max-h-[calc(100dvh-8rem)] w-[calc(100vw-2rem)] sm:w-[540px]"
-                : "h-[560px] max-h-[calc(100dvh-8rem)] w-[calc(100vw-2rem)] sm:w-[390px]",
+                ? "h-[720px] max-h-[calc(100dvh-14rem)] md:max-h-[calc(100dvh-8rem)] w-[calc(100vw-2rem)] sm:w-[540px]"
+                : "h-[560px] max-h-[calc(100dvh-14rem)] md:max-h-[calc(100dvh-8rem)] w-[calc(100vw-2rem)] sm:w-[390px]",
             )}
           >
             {/* Header */}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
+import { RangePills } from "@/components/ui/range-pills";
 import { SPEND_RANGES, type SpendBreakdown, type SpendRange } from "@/lib/dashboard-insights";
 import { createAnnularWedgePath, useTweenedArcs, type Arc } from "@/components/charts/arc-tween";
 
@@ -193,33 +194,42 @@ export function SpendsRadialChart({
               const fillColor = isDark ? slice.darkColor : slice.lightColor;
 
               return (
-                <path
-                  key={slice.id}
-                  d={slice.path}
-                  className="cursor-pointer outline-none transition-[opacity,transform,filter] duration-200"
-                  style={{
-                    fill: fillColor,
-                    opacity: isDimmed ? 0.35 : 1,
-                    transformOrigin: `${cx}px ${cy}px`,
-                    transform: isHovered ? "scale(1.025)" : "scale(1)",
-                    filter: isHovered ? "url(#segment-glow)" : undefined,
-                  }}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`${slice.label}, ${Math.round(slice.proportion * 100)}%`}
-                  aria-pressed={isHovered}
-                  onMouseEnter={() => setHoveredCategory(slice)}
-                  onMouseLeave={() => setHoveredCategory(null)}
-                  onFocus={() => setHoveredCategory(slice)}
-                  onBlur={() => setHoveredCategory(null)}
-                  onClick={() => setHoveredCategory(isHovered ? null : slice)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setHoveredCategory(isHovered ? null : slice);
-                    }
-                  }}
-                />
+                <g key={slice.id}>
+                  {/* What is drawn. It grows on hover, so it never takes the pointer: the edge moving out from under the cursor was what made the hover flicker. */}
+                  <path
+                    d={slice.path}
+                    aria-hidden="true"
+                    className="pointer-events-none transition-[opacity,transform,filter] duration-200"
+                    style={{
+                      fill: fillColor,
+                      opacity: isDimmed ? 0.35 : 1,
+                      transformOrigin: `${cx}px ${cy}px`,
+                      transform: isHovered ? "scale(1.025)" : "scale(1)",
+                      filter: isHovered ? "url(#segment-glow)" : undefined,
+                    }}
+                  />
+                  {/* What listens: the slice at its resting size, drawn over the top and invisible, so the hit area holds still. */}
+                  <path
+                    d={slice.path}
+                    fill="transparent"
+                    className="cursor-pointer outline-none"
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${slice.label}, ${Math.round(slice.proportion * 100)}%`}
+                    aria-pressed={isHovered}
+                    onMouseEnter={() => setHoveredCategory(slice)}
+                    onMouseLeave={() => setHoveredCategory(null)}
+                    onFocus={() => setHoveredCategory(slice)}
+                    onBlur={() => setHoveredCategory(null)}
+                    onClick={() => setHoveredCategory(isHovered ? null : slice)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setHoveredCategory(isHovered ? null : slice);
+                      }
+                    }}
+                  />
+                </g>
               );
             })}
 
@@ -263,31 +273,15 @@ export function SpendsRadialChart({
         </div>
       </div>
 
-      {/* Time Range Filter Pills */}
-      <div className="flex w-full items-center gap-2">
-        {SPEND_RANGES.map((rg) => {
-          const isActive = selectedRange === rg;
-          return (
-            <button
-              key={rg}
-              type="button"
-              aria-pressed={isActive}
-              onClick={() => {
-                setSelectedRange(rg);
-                setHoveredCategory(null);
-              }}
-              className={cn(
-                "flex-1 rounded-full py-1 text-[12px] tabular transition-colors cursor-pointer text-center outline-none select-none",
-                isActive
-                  ? "bg-foreground text-background shadow-xs"
-                  : "border border-border/80 bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
-            >
-              {rg}
-            </button>
-          );
-        })}
-      </div>
+      <RangePills
+        aria-label="Spending period"
+        options={SPEND_RANGES}
+        value={selectedRange}
+        onChange={(rg) => {
+          setSelectedRange(rg);
+          setHoveredCategory(null);
+        }}
+      />
     </div>
   );
 }

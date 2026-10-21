@@ -11,6 +11,8 @@
  * - Pagination: "Showing 1–10 of X payments" + Previous / page numbers / Next.
  */
 
+import { SearchField } from "@/components/ui/search-field";
+import { ListCard } from "@/components/ui/list-card";
 import { getTransactionType, transactionRail } from "@/lib/transaction-type";
 import { TransactionStatusText } from "@/components/StatusBadge";
 import { amountStyling } from "@/lib/transaction-display";
@@ -20,8 +22,6 @@ import {
   ArrowDownToLine,
   ChevronLeft,
   ChevronRight,
-  Search,
-  X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -568,29 +568,7 @@ export default function TransactionList({
 
       {/* Full-width search with the Filters button beside it */}
       <div className="flex w-full items-center gap-2">
-        <div className="relative flex-1">
-          <Search
-            size={18}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
-          />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search reference or recipient"
-            className="w-full h-10 sm:h-10 pl-10 pr-10 rounded-xl border border-field-border bg-field text-[14px] sm:text-[14px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-0 focus:border-field-border-focus focus:bg-field-focus transition-colors"
-          />
-          {query && (
-            <button
-              type="button"
-              onClick={() => setQuery("")}
-              aria-label="Clear search"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 cursor-pointer"
-            >
-              <X size={15} />
-            </button>
-          )}
-        </div>
+        <SearchField value={query} onChange={setQuery} placeholder="Search reference or recipient" />
         <FilterPanel
           groups={filterGroups}
           onClear={clearFilterGroups}
@@ -683,8 +661,7 @@ export default function TransactionList({
             className="flex flex-col gap-3"
           >
           {/* One list at every breakpoint, in the same white box as Beneficiaries and Accounts. */}
-          <div className="rounded-2xl border border-border bg-card">
-          <div className="flex flex-col gap-0.5 p-2">
+          <ListCard as="div">
             {paginatedRows.map((t) => {
               const { colorClass, prefix } = amountStyling(t);
 
@@ -727,8 +704,7 @@ export default function TransactionList({
                 </div>
               );
             })}
-          </div>
-          </div>
+          </ListCard>
 
           {effective === "partial-load" && <PartialLoadFooter />}
 

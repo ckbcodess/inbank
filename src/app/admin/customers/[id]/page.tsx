@@ -10,6 +10,7 @@
  * customer shell's User Details uses (12.6: build once, not twice).
  */
 
+import { Fact } from "@/components/ui/fact";
 import { use, useState } from "react";
 import Link from "next/link";
 import { Building2, CreditCard, ShieldAlert, UserCog } from "lucide-react";
@@ -73,9 +74,9 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
         </div>
 
         <dl className="grid grid-cols-1 gap-x-6 gap-y-3 pt-4 sm:grid-cols-4">
-          <Fact label="Segment" value="Corporate" />
-          <Fact label="Accounts" value="4" />
-          <Fact label="Users" value={String(CUSTOMER_USERS.length)} />
+          <Fact mono label="Segment" value="Corporate" />
+          <Fact mono label="Accounts" value="4" />
+          <Fact mono label="Users" value={String(CUSTOMER_USERS.length)} />
           <div className="flex flex-col">
             <dt className="text-[12px] text-muted-foreground">Enrolment</dt>
             <dd className="mt-1">
@@ -154,11 +155,3 @@ export default function CustomerDetailsPage({ params }: { params: Promise<{ id: 
   );
 }
 
-function Fact({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <dt className="text-[12px] text-muted-foreground">{label}</dt>
-      <dd className="mt-0.5 text-[13px] text-foreground tabular">{value}</dd>
-    </div>
-  );
-}

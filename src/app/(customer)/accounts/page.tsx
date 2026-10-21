@@ -31,7 +31,6 @@ import {
   CheckCircle2,
   ChevronRight,
   Clock,
-  Info,
   Landmark,
   MoreHorizontal,
   Plus,
@@ -60,7 +59,8 @@ import { useCustomerAccounts } from "@/lib/use-customer-accounts";
 import PageHeader from "@/components/layout/PageHeader";
 import { TileChip } from "@/components/ui/action-tile";
 import { SourceMark } from "@/components/ui/source-mark";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { SectionHeading } from "@/components/ui/section-heading";
+import { LIST_CARD_CLASS } from "@/components/ui/list-card";
 import { cn } from "@/lib/utils";
 import { digitsOf, REGISTERED_WALLET, WalletTag, type OwnWallet } from "@/components/payments/flows/OwnWalletPicker";
 import {
@@ -93,68 +93,6 @@ const SCENARIO_LABEL = Object.fromEntries(ACCOUNTS_SCENARIOS.map((s) => [s.id, s
 
 /* ── Small pieces ─────────────────────────────────────────────────────────── */
 
-function SectionHeading({
-  id,
-  title,
-  hint,
-  action,
-}: {
-  id: string;
-  title: string;
-  /** A short explanation of the section, shown from an info icon beside the title. */
-  hint?: string;
-  action?: React.ReactNode;
-}) {
-  const [hintOpen, setHintOpen] = useState(false);
-  const iconButton =
-    "-m-3 inline-flex cursor-pointer items-center justify-center rounded-full p-3 text-muted-foreground outline-none transition-colors hover:text-foreground focus-visible:text-foreground";
-
-  return (
-    <div className="flex min-h-7 items-center justify-between gap-3 px-1">
-      <div className="flex items-center gap-2">
-        <h2 id={id} className="text-[16px] font-medium tracking-[var(--ls-tight)] text-foreground">
-          {title}
-        </h2>
-        {hint && (
-          <>
-            {/* A mouse hovers for a tooltip; a finger can't, so on a phone the same icon opens a bottom sheet. */}
-            <Tooltip>
-              <TooltipTrigger
-                delay={0}
-                render={<button type="button" aria-label={`About ${title}`} className={cn(iconButton, "max-sm:hidden")} />}
-              >
-                <Info size={15} strokeWidth={1.8} aria-hidden="true" />
-              </TooltipTrigger>
-              <TooltipContent side="bottom" align="start" className="w-64 whitespace-normal text-[12px] font-normal leading-relaxed">
-                {hint}
-              </TooltipContent>
-            </Tooltip>
-            <button
-              type="button"
-              aria-label={`About ${title}`}
-              onClick={() => setHintOpen(true)}
-              className={cn(iconButton, "sm:hidden")}
-            >
-              <Info size={15} strokeWidth={1.8} aria-hidden="true" />
-            </button>
-            <Dialog open={hintOpen} onOpenChange={setHintOpen}>
-              <DialogContent size="sm" showCloseButton>
-                <DialogHeader showCloseButton={false}>
-                  <DialogTitle>{title}</DialogTitle>
-                </DialogHeader>
-                <DialogBody>
-                  <p className="text-[14px] leading-relaxed text-muted-foreground">{hint}</p>
-                </DialogBody>
-              </DialogContent>
-            </Dialog>
-          </>
-        )}
-      </div>
-      {action}
-    </div>
-  );
-}
-
 /** Section action: the system ghost button — no fill until hover. */
 function SectionAction({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
   return (
@@ -166,7 +104,8 @@ function SectionAction({ onClick, children }: { onClick: () => void; children: R
 }
 
 /** Same white list card as the Cards page. */
-const LIST = "overflow-hidden rounded-2xl border border-border bg-card";
+/** Rows manage their own inset here, because the box also holds skeletons and error states. */
+const LIST = cn(LIST_CARD_CLASS, "gap-0 p-0");
 
 function RowMenu({ label, children }: { label: string; children: React.ReactNode }) {
   return (

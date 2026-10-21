@@ -8,7 +8,7 @@
 import { cn } from "@/lib/utils";
 
 interface SegmentedControlProps<T extends string> {
-  options: readonly { value: T; label: string }[];
+  options: readonly { value: T; label: string; /** A small figure beside the label, such as how many are in that segment. */ count?: number }[];
   value: T;
   onChange: (value: T) => void;
   /** Names the group for assistive tech. */
@@ -54,6 +54,7 @@ export function SegmentedControl<T extends string>({
             )}
           >
             {o.label}
+            {o.count !== undefined && <span className="text-[11px] font-normal text-muted-foreground tabular">{o.count}</span>}
           </button>
         );
       })}

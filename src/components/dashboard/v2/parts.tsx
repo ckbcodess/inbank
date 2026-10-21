@@ -137,7 +137,7 @@ export function dayLabel(iso: string): string {
 export function Card({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     // Phone: 16px inside a 16px gutter, so rows keep their width; desktop keeps the roomier 20px.
-    <div className={cn("flex h-[260px] flex-col gap-2 rounded-2xl border border-border bg-panel p-3 sm:p-4 overflow-hidden", className)}>
+    <div className={cn("flex flex-col gap-2 sm:h-[260px] rounded-2xl border border-border bg-panel p-3 sm:p-4 overflow-hidden", className)}>
       {children}
     </div>
   );

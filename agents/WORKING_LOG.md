@@ -999,6 +999,9 @@ the outcome first if it passes the memory test. Consolidation tidies up this fil
 - Gap: `emphasise` only bolds the payee when a caller passes `beneficiaryName` (only `PaymentFlow` does). Other rails bold the amount only.
 - Decision: the Share Feedback dialog (in `PaymentSuccessScreen`) is progressive. One question and three round faces first; picking one reveals a follow-up note field worded for that answer, and Submit appears only then. The inline thank-you banner is gone (the toast already says it).
 - Override: the designer wants the emoji faces (😊 😐 ☹️) kept for the feedback ratings, against the Lucide-only icon rule (CONSTITUTION §7).
+- Decision: period pickers (1w, 1m, 3m, 6m, 1y) use `RangePills` (`components/ui/range-pills.tsx`): outlined pills, the chosen one amber like the sidebar's active item. Used by `SpendsRadialChart` and `DashboardAnalyticsWidget`.
+- Decision: repeated UI is now shared. `SegmentedControl` (now with optional `count`) drives the Cards filter, Beneficiaries tabs, Insights period, Account expenses view and Create Group split. New in `components/ui`: `SectionHeading` (title, optional info hint, optional action), `ListCard` (the white rows box, `as="div"` for non-list children), `SearchField`, `Fact`, `HorizontalScrollStrip`; `GcbEagleEmblem` is in `components/brand`. Payment sent now uses `Switch` and `RoundAction`.
+- Gap: still hand-drawn and not worth a component yet: the theme switch in `TopHeader` (icon-only round segments), the `bg-card` panels in admin and business pages (they hold tables and forms, not rows), `AttentionBand` and `Collapsible` in `MinimalKit`, and the Feedback face picker (a selectable choice, not an action).
 
 ## Consolidation history
 - **2026-10-03:** Bootstrap. Built the five files from these sources:

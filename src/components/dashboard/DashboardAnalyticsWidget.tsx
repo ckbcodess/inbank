@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { RangePills } from "@/components/ui/range-pills";
 import { useAmountVisibility } from "@/components/providers/AmountVisibilityProvider";
 
 export function DashboardAnalyticsWidget() {
@@ -271,26 +272,13 @@ export function DashboardAnalyticsWidget() {
         </div>
       </div>
 
-      {/* Time Switcher Tabs */}
-      <div className="flex items-center gap-2 border-t border-border/50 pt-3">
-        {ranges.map((r) => {
-          const isActive = selectedRange === r;
-          return (
-            <button
-              key={r}
-              type="button"
-              onClick={() => setSelectedRange(r)}
-              className={`flex-1 rounded-full py-1 text-[11.5px] font-medium transition-colors cursor-pointer text-center active:scale-[0.96] transition-transform ${
-                isActive
-                  ? "bg-foreground text-background shadow-2xs"
-                  : "border border-border/80 bg-transparent text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-              }`}
-            >
-              {r}
-            </button>
-          );
-        })}
-      </div>
+      <RangePills
+        aria-label="Spending period"
+        options={ranges}
+        value={selectedRange}
+        onChange={setSelectedRange}
+        className="border-t border-border/50 pt-3"
+      />
     </div>
   );
 }
