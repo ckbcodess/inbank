@@ -656,9 +656,6 @@ export function FirstRunWelcome({
                                 required
                                 autoFocus
                               />
-                              <p className="px-0.5 text-[11.5px] text-muted-foreground">
-                                A verification code will be sent to confirm this number.
-                              </p>
 </Field>
 
                             {/* Network Provider Selector */}

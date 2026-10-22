@@ -382,6 +382,8 @@ const invest: Entry[] = [
   ["Reset to {0}", "Réinitialiser à {0}", "Restablecer a {0}", "重置为 {0}"],
   ["Minimum deposit is {0}", "Le dépôt minimum est de {0}", "El depósito mínimo es {0}", "最低存款额为 {0}"],
   ["Enter at least {0} to invest.", "Saisissez au moins {0} pour investir.", "Introduce al menos {0} para invertir.", "请输入至少 {0} 进行投资。"],
+  ["Face Value to Cash In, Up to {0}", "Valeur nominale à encaisser, jusqu’à {0}", "Valor nominal a cobrar, hasta {0}", "兑现面值，最高 {0}"],
+  ["Amount to Redeem, Less Than {0}", "Montant à retirer, moins de {0}", "Importe a retirar, menos de {0}", "赎回金额，少于 {0}"],
 ];
 
 export default invest;

@@ -55,7 +55,7 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
       <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
         <PageHeader title={title} backTo={{ href: INVEST_HOME, label: "Invest" }} />
         <TrueEmptyState
-          icon={<XCircle size={22} strokeWidth={1.8} />}
+          icon={<XCircle size={22} />}
           title="We couldn’t find this deposit"
           description="It may have been closed. Your other deposits are still on your Invest page."
           action={
@@ -141,11 +141,10 @@ export function RedeemDepositFlow({ mode }: { mode: "partial" | "close" }) {
             <AmountInput
               value={amount}
               onChange={setAmount}
-              label="Amount to Redeem"
+              label={`Amount to Redeem, Less Than ${money(d.principal)}`}
               hasError={wholeByAccident}
               error={wholeByAccident ? <InlineError message="That’s the whole deposit. Choose Close the Deposit to take it all out." className="text-left" /> : undefined}
             />
-            <p className="px-1 text-[12px] text-muted-foreground">{`Less than the ${money(d.principal)} in the deposit.`}</p>
           </div>
         )}
 

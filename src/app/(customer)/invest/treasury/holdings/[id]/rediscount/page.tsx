@@ -112,11 +112,10 @@ export default function RediscountPage() {
             <AmountInput
               value={amount}
               onChange={setAmount}
-              label="Face Value to Cash In"
+              label={`Face Value to Cash In, Up to ${money(h.face)}`}
               hasError={wholeByAccident}
               error={wholeByAccident ? <InlineError message="That’s the whole investment. Choose Full Rediscount to cash it all in." className="text-left" /> : undefined}
             />
-            <p className="px-1 pt-2 text-[12px] text-muted-foreground">{`Up to ${money(h.face)}, the face value.`}</p>
           </div>
         )}
 

@@ -280,13 +280,6 @@ export function QuickFundFlow({
                   {/* Phone Input with +233 */}
                   <Field label="Mobile Number" htmlFor="quickFundPhone">
                     <PhoneInput id="quickFundPhone" value={phone} onValueChange={setPhone} required />
-                    {registeredPhone && (
-                      <p className="px-0.5 text-[12.5px] text-muted-foreground">
-                        {usingRegistered
-                          ? "The number you registered with."
-                          : "Not your registered number, so we'll text a code to confirm it's yours."}
-                      </p>
-                    )}
 </Field>
 
                   {/* Telco Selector */}

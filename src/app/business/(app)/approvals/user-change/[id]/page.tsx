@@ -77,6 +77,9 @@ export default function UserChangeApprovalPage({ params }: { params: Promise<{ i
 
       {mine ? (
         <section className="flex flex-col gap-5">
+          <p className="text-[13px] text-muted-foreground">
+            {`It applies as soon as you approve, and we tell ${name.split(" ")[0]} by SMS and email.`}
+          </p>
           <Field label="Reason" htmlFor="decline-reason" optional error={reasonError}>
             <Textarea
               id="decline-reason"
@@ -90,9 +93,6 @@ export default function UserChangeApprovalPage({ params }: { params: Promise<{ i
               }}
             />
           </Field>
-          <p className="text-[13px] text-muted-foreground">
-            {`It applies as soon as you approve, and we tell ${name.split(" ")[0]} by SMS and email.`}
-          </p>
           <div className="flex flex-wrap gap-3">
             <Button onClick={() => setOtpOpen(true)}>Approve Change</Button>
             <Button variant="outline" onClick={decline}>

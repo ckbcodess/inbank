@@ -1848,9 +1848,6 @@ export function VirtualCardDetailsView({
                   />
 </Field>
               </div>
-              <span className="text-[11.5px] text-muted-foreground block -mt-1">
-                This PIN will be required for ATM cash withdrawals and point-of-sale transactions.
-              </span>
               <InlineError message={activationError} className="text-left" />
             </DialogBody>
 

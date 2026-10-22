@@ -317,11 +317,10 @@ export function InternationalWireFlow({
                     type="text"
                     value={state.wSwift}
                     onChange={(e) => onChange("wSwift", codeType.clean(e.target.value))}
-                    placeholder={codeType.placeholder}
+                    placeholder={`${codeType.hint}, ${codeType.placeholder}`}
                     className="tabular uppercase tracking-wider placeholder:normal-case placeholder:tracking-normal"
                   />
                 </Field>
-                <p className="px-1 pt-2 text-[12.5px] text-muted-foreground">{codeType.hint}</p>
               </div>
             )}
           </div>
@@ -512,15 +511,15 @@ export function InternationalWireFlow({
               </SelectTrigger>
               <SelectContent>
                 {CHARGE_OPTIONS.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.label}
+                  <SelectItem key={c.id} value={c.id} label={c.label}>
+                    <span className="flex flex-col">
+                      <span>{c.label}</span>
+                      <span className="text-[12px] text-muted-foreground">{c.note}</span>
+                    </span>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <p className="px-1 text-[12.5px] text-muted-foreground">
-              {CHARGE_OPTIONS.find((c) => c.id === state.wCharges)?.note}
-            </p>
 </Field>
 
           {/* 4. Narration / Purpose of Payment */}

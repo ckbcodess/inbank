@@ -790,6 +790,10 @@ export default function LinkSourceAccountModal({
                 ════════════════════════════════════════════════════════════════════ */}
             {screen === "link_new_card" && (
               <form id={`${modalId}-card-form`} onSubmit={handleAddNewCard} className="flex flex-col gap-4">
+                <p className="flex items-start gap-2 text-[12px] leading-relaxed text-muted-foreground">
+                  <ShieldCheck size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
+                  Your bank will ask you to confirm it&apos;s you, then bring you back here.
+                </p>
                 <Field label="Card Number" htmlFor={`${modalId}-cardNum`}>
                   <Input
                     id={`${modalId}-cardNum`}
