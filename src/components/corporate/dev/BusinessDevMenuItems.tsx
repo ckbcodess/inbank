@@ -7,7 +7,7 @@
  * limit and accounts the screens enforce. A flow signs in as the role it needs first, then opens the screen.
  */
 
-import { Check } from "lucide-react";
+import { Check } from "@/components/ui/icons";
 import { useRouter } from "next/navigation";
 import { DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { COMPANY_USERS, roleHasLimit } from "@/lib/corporate/controls";
@@ -20,6 +20,8 @@ const USERS = ["u-dual", "u-reviewer", "u-approver", "u-corpadmin", "u-sole"] as
 
 const FLOWS: { label: string; hint: string; actorId: string; href: string }[] = [
   { label: "Pay a supplier", hint: "Inputter · within their limit", actorId: "u-dual", href: "/business/payments/supplier" },
+  { label: "Pay in bulk", hint: "Inputter · upload or enter, fix lines, submit", actorId: "u-dual", href: "/business/payments/bulk" },
+  { label: "A released batch", hint: "Inputter · each payment's own status, one failed", actorId: "u-dual", href: "/business/payments/bulk/batch-0090" },
   { label: "A payment waiting for review", hint: "Inputter · the approval path on the receipt", actorId: "u-dual", href: "/business/transactions/txn-apr-001" },
   { label: "A payment sent back", hint: "Inputter · the comment, Edit and Resubmit", actorId: "u-dual", href: "/business/transactions/txn-ret-001" },
   { label: "Review a payment", hint: "Reviewer · pass on or send back", actorId: "u-reviewer", href: "/business/approvals/payment/apr-001" },
@@ -72,7 +74,7 @@ export function BusinessDevMenuItems() {
               <span className={selected ? "text-foreground font-medium" : "text-foreground"}>{title}</span>
               <span className="tabular mt-0.5 text-[11px] text-muted-foreground">{subtitle}</span>
             </span>
-            {selected && <Check size={14} strokeWidth={2} className="mt-0.5 shrink-0 text-primary" />}
+            {selected && <Check size={14} className="mt-0.5 shrink-0 text-primary" />}
           </DropdownMenuItem>
         );
       })}

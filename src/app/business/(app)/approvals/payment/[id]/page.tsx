@@ -108,7 +108,16 @@ export default function PaymentApprovalPage({ params }: { params: Promise<{ id: 
       <section className="flex flex-col gap-3">
         <h2 className="min-h-6 text-[16px] font-medium text-foreground">Approval Path</h2>
         <ApprovalTrail item={item} />
-        {record && (
+        {item.batchId && (
+          <Link
+            href={`/business/payments/bulk/${item.batchId}`}
+            className="inline-flex items-center gap-1 self-start text-[13px] text-muted-foreground underline underline-offset-4 transition-colors duration-hover hover:text-foreground"
+          >
+            See every payment in this batch
+            <ArrowUpRight size={14} aria-hidden="true" />
+          </Link>
+        )}
+        {record && !item.batchId && (
           <Link
             href={`/business/transactions/${record.id}`}
             className="inline-flex items-center gap-1 self-start text-[13px] text-muted-foreground underline underline-offset-4 transition-colors duration-hover hover:text-foreground"

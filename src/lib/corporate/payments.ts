@@ -10,6 +10,7 @@
  */
 
 import { APPROVAL_QUEUE, currentStep, type ApprovalItem } from "./approvals";
+import { releaseBatch, returnBatch } from "./bulk";
 import { approvalPath, recordRelease } from "./controls";
 import { recordTransaction, TRANSACTIONS, type Transaction } from "../mock-data";
 import { roundMoney } from "../money";
@@ -135,6 +136,7 @@ export function approveStep(approvalId: string, by: string, comment?: string): A
     item.status = "authorised";
     item.trail.push({ by, role: "Authoriser", action: "authorised", at, comment: note });
     if (item.currency === "GHS") recordRelease(item.amount);
+    if (item.batchId) releaseBatch(item.batchId);
     const txn = ledgerEntry(item);
     if (txn) txn.state = "pending";
   } else {
@@ -152,6 +154,7 @@ export function sendBack(approvalId: string, by: string, comment: string): Appro
   const at = nowStamp();
   item.status = "returned";
   item.trail.push({ by, role: step.kind === "review" ? "Reviewer" : "Authoriser", action: "returned", at, comment: comment.trim() });
+  if (item.batchId) returnBatch(item.batchId);
   const txn = ledgerEntry(item);
   if (txn) {
     txn.state = "returned";

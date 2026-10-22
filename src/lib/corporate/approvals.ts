@@ -41,6 +41,8 @@ export interface ApprovalItem {
   amount: number;
   /** The account it would leave. Only people who can see that account see the request (UAR-05). */
   accountId?: string;
+  /** Set when the request is a bulk batch: the approver sees its lines, and release pays each one. */
+  batchId?: string;
   submittedBy: string;
   submittedAt: string;
   priority: "standard" | "urgent";
