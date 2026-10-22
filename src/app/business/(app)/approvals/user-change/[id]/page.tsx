@@ -77,10 +77,11 @@ export default function UserChangeApprovalPage({ params }: { params: Promise<{ i
 
       {mine ? (
         <section className="flex flex-col gap-5">
-          <Field label="Reason" htmlFor="decline-reason" optional hint="Needed if you decline." error={reasonError}>
+          <Field label="Reason" htmlFor="decline-reason" optional error={reasonError}>
             <Textarea
               id="decline-reason"
               rows={3}
+              placeholder="Needed if you decline"
               value={reason}
               aria-invalid={Boolean(reasonError)}
               onChange={(e) => {

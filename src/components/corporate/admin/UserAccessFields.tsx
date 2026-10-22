@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   BANK_SETUP,
-  ROLE_LINE,
   roleHasLimit,
   roleNeedsMandate,
   type CompanyRole,
@@ -43,7 +42,6 @@ export default function UserAccessFields({
       <Field
         label="Role"
         htmlFor="user-role"
-        hint={draft.onMandate ? ROLE_LINE[draft.role] : `${ROLE_LINE[draft.role]} Reviewers and authorisers must be signatories on your mandate.`}
       >
         <Select value={draft.role} onValueChange={(v) => v && onChange({ ...draft, role: v as CompanyRole })}>
           <SelectTrigger id="user-role" className="w-full">
@@ -63,13 +61,13 @@ export default function UserAccessFields({
         <Field
           label="Limit for One Payment"
           htmlFor="user-limit"
-          hint={`Your bank allows up to ${formatMoney(BANK_SETUP.maxUserLimit, "GHS", true)} for one person.`}
           error={limitError}
         >
           <Input
             id="user-limit"
             inputMode="decimal"
             className="tabular"
+            placeholder={`Up to ${formatMoney(BANK_SETUP.maxUserLimit, "GHS", true)}`}
             value={draft.limit ? String(draft.limit) : ""}
             aria-invalid={Boolean(limitError)}
             onChange={(e) => onChange({ ...draft, limit: Number(e.target.value.replace(/[^0-9.]/g, "")) || 0 })}
@@ -77,7 +75,7 @@ export default function UserAccessFields({
         </Field>
       )}
 
-      <Field label="Accounts" hint="Only the accounts your bank enabled for internet banking." error={accountsError}>
+      <Field label="Accounts" error={accountsError}>
         <div className="flex flex-col gap-1">
           {BANK_SETUP.enabledAccountIds.map((id) => {
             const account = findAccount(id);

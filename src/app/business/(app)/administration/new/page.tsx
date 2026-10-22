@@ -108,13 +108,12 @@ export default function AddUserPage() {
               <Field label="Full Name" htmlFor="new-name">
                 <Input id="new-name" autoComplete="off" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
               </Field>
-              <Field label="Position" htmlFor="new-designation" hint="For example, Accounts Officer.">
-                <Input id="new-designation" autoComplete="off" value={designation} onChange={(e) => setDesignation(e.target.value)} />
+              <Field label="Position" htmlFor="new-designation">
+                <Input id="new-designation" autoComplete="off" placeholder="For example, Accounts Officer" value={designation} onChange={(e) => setDesignation(e.target.value)} />
               </Field>
               <Field
                 label="Mobile Number"
                 htmlFor="new-mobile"
-                hint="Their sign-in number."
                 error={mobile && !isCompleteGhanaMobile(mobile) ? "Enter a full Ghana mobile number." : ""}
               >
                 <PhoneInput id="new-mobile" value={mobile} onValueChange={setMobile} />

@@ -107,7 +107,7 @@ export function DepositInstructionField({
 }) {
   const current = DEPOSIT_INSTRUCTIONS.find((i) => i.id === value);
   return (
-    <Field label={label} hint={current?.detail}>
+    <Field label={label}>
       <Select value={value} onValueChange={(v) => v && onChange(v as DepositInstruction)}>
         <SelectTrigger>
           <span className="truncate text-[14px] text-foreground">{current?.label}</span>

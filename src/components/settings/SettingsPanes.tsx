@@ -292,7 +292,7 @@ function ChangeDetail({
           </div>
         ) : null}
         {kind === "mobile" ? (
-          <Field label="New Mobile Number" htmlFor="new-mobile" hint="For example 024 123 4567.">
+          <Field label="New Mobile Number" htmlFor="new-mobile">
             <PhoneInput id="new-mobile" value={value} onValueChange={setValue} />
           </Field>
         ) : kind === "email" ? (
@@ -439,9 +439,8 @@ function PasswordStep({ onDone }: { onDone: () => void }) {
         <Field
           label="New Password"
           htmlFor="new-password"
-          hint={`${PASSWORD_RULES.map((r) => r.label).join(", ")}.`}
         >
-          <Input id="new-password" type="password" autoComplete="new-password" value={next} onChange={(e) => setNext(e.target.value)} />
+          <Input id="new-password" type="password" autoComplete="new-password" placeholder={PASSWORD_RULES.map((r) => r.label).join(", ")} value={next} onChange={(e) => setNext(e.target.value)} />
         </Field>
         <Field label="Confirm New Password" htmlFor="confirm-password" error={mismatch ? "The passwords don’t match." : null}>
           <Input
@@ -506,7 +505,7 @@ export function PreferencesPane({ onBackToMenu }: PaneProps) {
                     current === value ? "bg-background text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  <Icon size={14} strokeWidth={1.8} aria-hidden="true" />
+                  <Icon size={14} aria-hidden="true" />
                   <span className="max-sm:sr-only">{label}</span>
                 </button>
               ))}

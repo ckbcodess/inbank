@@ -46,7 +46,7 @@ export function SecurityIcon({ kind, muted = false }: { kind: SecurityKind; mute
   const Icon = kind === "bond" ? Landmark : FileText;
   return (
     <span className={cn("flex size-8 shrink-0 items-center justify-center rounded-xl bg-muted", muted ? "text-muted-foreground" : "text-foreground")}>
-      <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
+      <Icon size={16} aria-hidden="true" />
     </span>
   );
 }
@@ -91,7 +91,7 @@ export function MaturityInstructionField({
 }) {
   const current = MATURITY_INSTRUCTIONS.find((m) => m.id === value);
   return (
-    <Field label={label} hint={current?.detail}>
+    <Field label={label}>
       <Select value={value} onValueChange={(v) => v && onChange(v as MaturityInstructionId)}>
         <SelectTrigger>
           <span className="truncate text-[14px] text-foreground">{current?.label}</span>
@@ -117,7 +117,7 @@ export function HoldingNotFound({ title = "Investment" }: { title?: string }) {
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={title} backTo={{ href: INVEST_HOME, label: "Invest" }} />
       <TrueEmptyState
-        icon={<FileText size={22} strokeWidth={1.8} />}
+        icon={<FileText size={22} />}
         title="We couldn’t find this investment"
         description="It may have matured or been cashed in. Your other investments are still on your Invest page."
         action={
@@ -148,7 +148,7 @@ export function AccountRequired({
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-6">
       <PageHeader title={title} backTo={backTo} />
       <TrueEmptyState
-        icon={<ShieldCheck size={22} strokeWidth={1.8} />}
+        icon={<ShieldCheck size={22} />}
         title={pending ? "Your securities account is being set up" : "You need a securities account first"}
         description={
           pending

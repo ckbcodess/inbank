@@ -135,14 +135,14 @@ function NewToGcbContent() {
           <Field label="Your Name" htmlFor="contactName">
             <Input id="contactName" autoComplete="name" value={contactName} onChange={(e) => setContactName(e.target.value)} />
           </Field>
-          <Field label="Mobile Number" htmlFor="contactMobile" hint="We'll call you on this number." error={mobileError}>
+          <Field label="Mobile Number" htmlFor="contactMobile" error={mobileError}>
             <PhoneInput id="contactMobile" value={mobile} onValueChange={setMobile} />
           </Field>
           <Field label="Email" htmlFor="contactEmail">
             <Input id="contactEmail" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </Field>
-          <Field label="Town or City" htmlFor="town" hint="So we can match you with a branch nearby.">
-            <Input id="town" autoComplete="address-level2" value={town} onChange={(e) => setTown(e.target.value)} />
+          <Field label="Town or City" htmlFor="town">
+            <Input id="town" placeholder="So we can match you with a nearby branch" autoComplete="address-level2" value={town} onChange={(e) => setTown(e.target.value)} />
           </Field>
         </div>
 

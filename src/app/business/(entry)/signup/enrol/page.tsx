@@ -611,15 +611,16 @@ function CorporateEnrolmentFlow() {
                 <Field label="Full Name" htmlFor="otherName">
                   <Input id="otherName" autoComplete="name" value={otherName} onChange={(e) => setOtherName(e.target.value)} autoFocus />
                 </Field>
-                <Field label="Position" htmlFor="otherDesignation" hint="For example, Company Secretary.">
+                <Field label="Position" htmlFor="otherDesignation">
                   <Input
                     id="otherDesignation"
+                    placeholder="For example, Company Secretary"
                     autoComplete="organization-title"
                     value={otherDesignation}
                     onChange={(e) => setOtherDesignation(e.target.value)}
                   />
                 </Field>
-                <Field label="Mobile Number" htmlFor="otherMobile" hint="We'll send a code here." error={otherError}>
+                <Field label="Mobile Number" htmlFor="otherMobile" error={otherError}>
                   <PhoneInput id="otherMobile" value={otherMobile} onValueChange={setOtherMobile} />
                 </Field>
                 <Field label="Email" htmlFor="otherEmail">
@@ -779,12 +780,11 @@ function CorporateEnrolmentFlow() {
                 <Field
                   label="Ghana Card Number"
                   htmlFor="newGhanaCard"
-                  hint="They confirm it when they activate."
                   error={newUserError}
                 >
                   <GhanaCardInput id="newGhanaCard" value={newGhanaCard} onValueChange={setNewGhanaCard} />
                 </Field>
-                <Field label="Role" htmlFor="newRole" hint="Reviewers and authorisers must be signatories on your mandate.">
+                <Field label="Role" htmlFor="newRole">
                   <Select value={newRole} onValueChange={(v) => v && setNewRole(v as CorporateAppRole)}>
                     <SelectTrigger id="newRole" className="w-full">
                       <SelectValue />

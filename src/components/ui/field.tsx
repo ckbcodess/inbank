@@ -5,7 +5,10 @@ import { Label } from "@/components/ui/label"
 
 /**
  * The one way to put a label on a form control. It owns the label's casing (Title Case, from `Label`), size and
- * spacing, the "(Optional)" suffix, and the hint and error lines, so a screen only says what the field is called.
+ * spacing, the "(Optional)" suffix, and the error line, so a screen only says what the field is called.
+ *
+ * There is no hint line, on purpose (designer, 2026-10-22; CONSTITUTION §9): help goes in the control's placeholder.
+ * The only thing that sits under a field is an error about what was just typed.
  * The control itself is `Input`, `Textarea`, a `Select`, `PhoneInput` or a date picker; the only fields that
  * are not built from these are the one-time code boxes and the amount field.
  */
@@ -13,7 +16,6 @@ export function Field({
   label,
   htmlFor,
   optional,
-  hint,
   error,
   action,
   className,
@@ -22,8 +24,6 @@ export function Field({
   label: React.ReactNode
   htmlFor?: string
   optional?: boolean
-  /** Quiet helper text under the control. */
-  hint?: React.ReactNode
   /** Error about what was just typed. Shown under the control, replacing the hint. */
   error?: string | null | false
   /** A small control at the end of the label row, such as a "Saved" link. */
@@ -45,8 +45,6 @@ export function Field({
         <p role="alert" className="text-[12px] text-destructive">
           {error}
         </p>
-      ) : hint ? (
-        <p className="text-[12px] text-muted-foreground">{hint}</p>
       ) : null}
     </div>
   )

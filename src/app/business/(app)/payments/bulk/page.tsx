@@ -213,8 +213,8 @@ export default function BulkPaymentPage() {
 
       <section className="flex flex-col gap-5">
         <FromAccountSelector accounts={accounts} value={fromId} onChange={setFromId} />
-        <Field label="Batch Name" htmlFor="batch-name" hint="For example, October payroll.">
-          <Input id="batch-name" value={batchName} onChange={(e) => setBatchName(e.target.value)} />
+        <Field label="Batch Name" htmlFor="batch-name">
+          <Input id="batch-name" placeholder="For example, October payroll" value={batchName} onChange={(e) => setBatchName(e.target.value)} />
         </Field>
       </section>
 

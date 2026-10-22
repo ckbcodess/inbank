@@ -134,12 +134,12 @@ export default function PaymentApprovalPage({ params }: { params: Promise<{ id: 
             label="Comment"
             htmlFor="approval-comment"
             optional
-            hint={`Needed if you send it back. ${inputter} and later approvers see it.`}
             error={commentError}
           >
             <Textarea
               id="approval-comment"
               rows={3}
+              placeholder={`Needed if you send it back. ${inputter} and later approvers see it.`}
               value={comment}
               aria-invalid={Boolean(commentError)}
               onChange={(e) => {

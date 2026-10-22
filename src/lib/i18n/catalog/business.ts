@@ -489,6 +489,13 @@ const business: Entry[] = [
   ["Use GIP, ACH or ACH NRT as the payment type.", "Utilisez GIP, ACH ou ACH NRT comme type de paiement.", "Use GIP, ACH o ACH NRT como tipo de pago.", "付款方式请使用 GIP、ACH 或 ACH NRT。"],
   ["The amount should be more than zero.", "Le montant doit être supérieur à zéro.", "El importe debe ser mayor que cero.", "金额应大于零。"],
   ["Same as line {0}: same account, amount and reference.", "Identique à la ligne {0} : même compte, montant et référence.", "Igual que la línea {0}: misma cuenta, importe y referencia.", "与第 {0} 行相同：账户、金额和参考号一致。"],
+  ["For example, Accounts Officer", "Par exemple, chargé de comptabilité", "Por ejemplo, oficial de cuentas", "例如，会计专员"],
+  ["Needed if you decline", "Obligatoire en cas de refus", "Obligatorio si lo rechaza", "拒绝时必填"],
+  ["For example, October payroll", "Par exemple, paie d’octobre", "Por ejemplo, nómina de octubre", "例如，十月工资"],
+  ["For example, Company Secretary", "Par exemple, secrétaire général", "Por ejemplo, secretario de la empresa", "例如，公司秘书"],
+  ["So we can match you with a nearby branch", "Pour vous orienter vers une agence proche", "Para asignarle una sucursal cercana", "以便为您匹配附近的网点"],
+  ["Up to {0}", "Jusqu’à {0}", "Hasta {0}", "最高 {0}"],
+  ["Up to GHS {0}", "Jusqu’à GHS {0}", "Hasta GHS {0}", "最高 GHS {0}"],
 ];
 
 export default business;

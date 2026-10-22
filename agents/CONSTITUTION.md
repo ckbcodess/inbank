@@ -160,7 +160,7 @@ here. Never fall back to dense, boxed layouts.
 - **Casing:**
   - Never all caps or letter-spaced labels. Older `uppercase` uses get converted when a file is touched.
   - Form field labels are Title Case, enforced by `Label` / `Field` (designer, 2026-10-07).
-  - Questions, descriptions, helper text and micro-labels are sentence case.
+  - Questions, descriptions, placeholders and micro-labels are sentence case.
   - Option labels, tile labels and non-question headers are Title Case.
 
 | Use | Classes |
@@ -173,7 +173,7 @@ here. Never fall back to dense, boxed layouts.
 | Body, table cells | `text-[13px] text-foreground` |
 | Form input values and placeholders (`Input`, `Textarea`, select triggers) | `text-[14px] text-foreground`. The placeholder is the same size as the value; never size it separately. |
 | Form labels | `text-[13px] font-medium text-foreground` (never muted) |
-| Meta, captions, micro-labels, field helper text | `text-[12px] text-muted-foreground`, sentence case |
+| Meta, captions, micro-labels | `text-[12px] text-muted-foreground`, sentence case |
 | Long-form paragraphs | add `leading-relaxed` |
 
 ## 6. Shape and spacing
@@ -240,7 +240,12 @@ here. Never fall back to dense, boxed layouts.
 - **Back returns to where the person came from** (`useContextualBack`), never a hardcoded parent.
 - **Forms reveal themselves step by step** (see PATTERNS.md). Never render every field at once.
 - **Never put two controls that do the same thing on one screen.**
-- **One field, one set of components.** Every labelled control is a `Field` (`components/ui/field.tsx`) around `Input`, `Textarea`, `Select`, `PhoneInput` or a date picker. The label's casing (Title Case), size and spacing, the "(Optional)" suffix, the hint and the error line all come from there; a screen only says what the field is called. Never style an input by hand, never write a raw `<input>` or `<label>` for a text field, and never size a placeholder (it matches the value). The only bespoke fields are the one-time code boxes (`OtpInput`) and the amount field.
+- **One field, one set of components.** Every labelled control is a `Field` (`components/ui/field.tsx`) around `Input`, `Textarea`, `Select`, `PhoneInput` or a date picker. The label's casing (Title Case), size and spacing, the "(Optional)" suffix and the error line all come from there; a screen only says what the field is called. Never style an input by hand, never write a raw `<input>` or `<label>` for a text field, and never size a placeholder (it matches the value). The only bespoke fields are the one-time code boxes (`OtpInput`) and the amount field.
+- **Nothing sits under a field but an error** (designer, 2026-10-22). Help, examples and limits go in the placeholder
+  ("For example, October payroll", "Up to GHS 1,000,000.00"), never in a line beneath the control. `Field` has no hint
+  prop, so this is enforced. Where a control has no placeholder (a select, a date, a checkbox group), say it in the
+  options themselves or leave it out. The only lines allowed under a field are an error about what was just typed, a
+  live check the person is satisfying as they type (password or PIN requirements), and the reason a control is disabled.
 
 ## 10. Engineering invariants
 

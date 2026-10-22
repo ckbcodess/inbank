@@ -211,12 +211,12 @@ export default function StandingOrderForm() {
                 <Field label="First Payment" htmlFor="start" error={startError}>
                   <Input id="start" type="date" min={todayIso()} value={startDate} onChange={(e) => setStartDate(e.target.value)} aria-invalid={Boolean(startError)} />
                 </Field>
-                <Field label="Last Payment" htmlFor="end" optional hint="Leave empty to keep it going until you cancel." error={endError}>
+                <Field label="Last Payment" htmlFor="end" optional error={endError}>
                   <Input id="end" type="date" min={startDate} value={endDate} onChange={(e) => setEndDate(e.target.value)} aria-invalid={Boolean(endError)} />
                 </Field>
               </div>
 
-              <Field label="Name" htmlFor="name" optional hint="What you will call it, for example Office rent.">
+              <Field label="Name" htmlFor="name" optional>
                 <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Office rent" />
               </Field>
 
